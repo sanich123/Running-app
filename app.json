@@ -12,9 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -33,6 +31,15 @@
       "eas": {
         "projectId": "413aa829-bbae-467c-9201-4688b894f2f7"
       }
-    }
+    },
+    "plugins": [
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsImpl": "mapbox",
+          "RNMapboxMapsDownloadToken": "sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWtvam9oazBrZjcza29kZ2hhMmtlcjEifQ.PkCRRfGrD8iiEOIBB9BLcg"
+        }
+      ]
+    ]
   }
 }
