@@ -1,8 +1,10 @@
 import { StyleSheet } from "react-native";
 import EditScreenInfo from "../../components/EditScreenInfo";
 import { Text, View } from "../../components/Themed";
+import useGetLocation from "../../hooks/use-get-location";
 
 export default function Feed() {
+  useGetLocation();
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Feed</Text>
