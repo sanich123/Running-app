@@ -1,35 +1,45 @@
 **To watch our wonderful android app, you should go by these steps:**
 
-1. If you dont't have eas-cli 
+download ExpoGo from Google Play
+
+1. If you dont't have eas-cli (eas it's a thing, that build an apk file to android and you can install an app in your phone)
 ```
 npm install -g eas-cli
 ```
 2. Install the dependencies
 ```
-npm install 
+npm i **(or if you have yarn installed globally just type yarn)**
 ```
-*//npx expo install expo-dev-client expo-location* must be in the package.json
+3. You can choose two options: 
 
-Build an apk file 
+3.1 Build an apk file 
 ```
 npm run buildApk 
 ```
-*//eas build --profile development --platform android*
+When it will be necessary, type the following in the command line:
 
-3. When it will be necessary, type the following in the command line:
 ```
 'user' : sanich123 
 
 'password' : 7fwd7rlm
 ```
-With QR-code or the direct link download the app.
+It'll be over 10 minutes, when eas will build your apk-file.
+
+3.2 Download an apk file from expo.dev
+
+type my login/password
+
+![image](https://github.com/sanich123/Running-app/assets/70276651/ae7f6723-d2d5-490b-818a-174bc7179660)
+
+download apk file and install it on your phone
 
 4. To run development 
 ```
 npm run startDev 
 ```
-*//npx expo start --dev-client*
 
-5. Scan the QR-code in ExpoGo
+you'll see the qr-code
+
+5. Scan the QR-code in ExpoGo app on your phone
 
 6. Fucking enjoy your app into the mobile
