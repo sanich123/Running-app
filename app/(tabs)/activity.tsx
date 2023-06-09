@@ -47,6 +47,9 @@ export default function Activity() {
           </ShapeSource>
         </MapView>
       </View>
+      <View>
+        <Text>Здесь будет какой-то текст</Text>
+      </View>
     </View>
   );
 }

@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { MOCK_LOCATIONS } from "../constants/mocks/mocks";
-
 import { Camera } from "@rnmapbox/maps";
+
 export default function useFakeLocations() {
   const [duration, setDuration] = useState(0);
   const [locations, setLocations] = useState([MOCK_LOCATIONS[0]]);
   const camera = useRef<Camera>(null);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setDuration((duration) => duration + 1);
