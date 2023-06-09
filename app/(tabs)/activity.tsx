@@ -4,8 +4,9 @@ import { Text, View } from "../../components/Themed";
 import "expo-dev-client";
 import React, { useState } from "react";
 
-import Mapbox, { PointAnnotation, Callout, MapView, Camera, UserLocation, MarkerView } from "@rnmapbox/maps";
+import Mapbox, { PointAnnotation, Callout, MapView, Camera, UserLocation, MarkerView, ShapeSource, LineLayer } from "@rnmapbox/maps";
 import { useAppSelector } from "../../redux/hooks/hooks";
+import useFakeLocations from "../../hooks/use-fake-locations";
 
 export default function Activity() {
   const {
@@ -13,19 +14,39 @@ export default function Activity() {
       coords: { latitude, longitude },
     },
   } = useAppSelector(({ location }) => location);
+  const locations = useFakeLocations();
 
   return (
     <View style={styles.page}>
       <View style={styles.container}>
         <MapView style={styles.map}>
-          <Camera zoomLevel={15} centerCoordinate={[longitude, latitude]} animationMode="flyTo" animationDuration={2000} followUserLocation />
-          <MarkerView coordinate={[longitude, latitude]} />
+          <UserLocation androidRenderMode="compass" animated />
+          <Camera centerCoordinate={[longitude, latitude]} animationMode="flyTo" animationDuration={2000} followUserLocation />
           <PointAnnotation coordinate={[longitude, latitude]} id="home">
-            <View
-              style={styles.customHome}
-            ></View>
-            <Callout title="Че тыкаешь?"/>
+            <View style={styles.customHome}></View>
+            <Callout title="Че тыкаешь?" />
           </PointAnnotation>
+          <ShapeSource
+          id="shape-source"
+            shape={{
+              type: "FeatureCollection",
+              features: [
+                {
+                  type: "Feature",
+                  properties: {},
+                  geometry: {
+                    type: "LineString",
+                    coordinates: [
+                      [31.59757761529764, 46.63755091385189],
+                      [27.711524020005644, 46.19689011566155],
+                    ],
+                  },
+                },
+              ],
+            }}
+          >
+            <LineLayer id="line-layer" style={{ lineColor: "orange", lineWidth: 5 }} />
+          </ShapeSource>
         </MapView>
       </View>
     </View>
