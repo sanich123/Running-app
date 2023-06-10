@@ -1,20 +1,13 @@
 import { Text, View } from "../Themed";
 import { Pressable, StyleSheet } from "react-native";
 import { useState } from "react";
-import useFakeLocations from "../../hooks/use-fake-locations";
-import { useTimer } from "use-timer";
 
-export default function StartBtn() {
+export default function StartBtn({ setStatus }: { setStatus: (arg: string) => void}) {
   const [modalOpen, setModalOpen] = useState(false);
-  const { startTimer } = useFakeLocations();
-
 
   return (
-    <Pressable
-      style={styles.startBtn}
-      onPress={() => startTimer()}
-    >
-      <Text style={styles.textStyle}>{modalOpen ? "Stop" : "Start"}</Text>
+    <Pressable style={styles.startBtn} onPress={() => setStatus('started')}>
+      <Text style={styles.textStyle}>Start</Text>
     </Pressable>
   );
 }
