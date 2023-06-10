@@ -11,9 +11,9 @@ export default function Map() {
       coords: { latitude, longitude },
     },
   } = useAppSelector(({ location }) => location);
-  const { locations, cameraRef, lastView, duration } = useFakeLocations();
+  const { locations, cameraRef, lastView } = useFakeLocations();
   const { map, customHome } = styles;
-
+  console.log(latitude, longitude);
   return (
     <MapView style={map}>
       <UserLocation androidRenderMode="compass" animated />

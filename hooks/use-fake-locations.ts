@@ -5,18 +5,22 @@ import { formatDuration } from "../utils/time-formatter";
 import { useTimer } from "use-timer";
 
 export default function useFakeLocations() {
-  const { time, start, pause, reset, status } = useTimer();
   const [duration, setDuration] = useState(0);
+
   const [locations, setLocations] = useState([MOCK_LOCATIONS[0]]);
   const camera = useRef<Camera>(null);
-  console.log(time < MOCK_LOCATIONS.length, locations)
 
   useEffect(() => {
-
-    if (time < MOCK_LOCATIONS.length) {
-      setLocations([...locations, MOCK_LOCATIONS[time]]);
+    const interval = setInterval(() => {
+      setDuration((duration) => duration + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+  useEffect(() => {
+    if (duration < MOCK_LOCATIONS.length) {
+      setLocations([...locations, MOCK_LOCATIONS[duration]]);
     }
-  }, [time]);
+  }, [duration]);
 
   useEffect(() => {
     camera.current?.setCamera({
@@ -28,7 +32,5 @@ export default function useFakeLocations() {
     locations,
     lastView: locations[locations.length - 1],
     cameraRef: camera,
-    duration: formatDuration(duration),
-    startTimer: () => start(),
   };
 }
