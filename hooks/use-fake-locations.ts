@@ -1,24 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import { MOCK_LOCATIONS } from "../constants/mocks/mocks";
 import { Camera } from "@rnmapbox/maps";
+import { getDistance, getDistanceFromMocks } from "../utils/location-utils";
 import { STATUSES } from "../constants/enums";
 
 export default function useFakeLocations() {
-  const [status, setStatus] = useState("initial");
+  const [status, setStatus] = useState(STATUSES.initial);
   const [duration, setDuration] = useState(0);
+  const [distance, setDistance] = useState(0);
   const [locations, setLocations] = useState([MOCK_LOCATIONS[0]]);
   const camera = useRef<Camera>(null);
 
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined;
     if (status === STATUSES.started || status === STATUSES.continue) {
-      interval = setInterval(() => setDuration((duration) => duration + 1), 1000);
+      interval = setInterval(() => setDuration((duration) => duration + 1), 2000);
       return () => clearInterval(interval);
     }
     if (status === STATUSES.stopped) {
       clearInterval(interval);
       setDuration(0);
       setLocations([MOCK_LOCATIONS[0]]);
+      setDistance(0);
     }
     if (status === STATUSES.paused) {
       clearInterval(interval);
@@ -28,6 +31,8 @@ export default function useFakeLocations() {
   useEffect(() => {
     if (duration < MOCK_LOCATIONS.length) {
       setLocations([...locations, MOCK_LOCATIONS[duration]]);
+      const currDistance = MOCK_LOCATIONS[0] ? getDistanceFromMocks(MOCK_LOCATIONS[0], MOCK_LOCATIONS[duration]) : 0;
+      setDistance(distance + currDistance);
     }
   }, [duration]);
 
@@ -44,5 +49,6 @@ export default function useFakeLocations() {
     setStatus,
     duration,
     status,
+    distance,
   };
 }
