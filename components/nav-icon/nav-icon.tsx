@@ -1,6 +1,6 @@
-import { PointAnnotation, Callout } from "@rnmapbox/maps";
-import { View } from "../Themed";
-import { StyleSheet } from "react-native";
+import { PointAnnotation, Callout } from '@rnmapbox/maps';
+import { View } from '../Themed';
+import { StyleSheet } from 'react-native';
 
 export default function NavIcon({ lastView }: { lastView: number[] }) {
   return (
@@ -15,8 +15,8 @@ const styles = StyleSheet.create({
   customHome: {
     height: 20,
     width: 20,
-    backgroundColor: "yellow",
-    borderColor: "orange",
+    backgroundColor: 'yellow',
+    borderColor: 'orange',
     borderWidth: 2,
     borderRadius: 50,
   },

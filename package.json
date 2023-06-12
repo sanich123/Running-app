@@ -9,7 +9,7 @@
     "test": "jest --watchAll",
     "build-apk": "eas build --profile development --platform android",
     "start-dev": "npx expo start --dev-client",
-    "eslint": "eslint --fix"
+    "eslint": "eslint --fix app components"
   },
   "jest": {
     "preset": "jest-expo"

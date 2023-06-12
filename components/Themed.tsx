@@ -7,10 +7,7 @@ import { Text as DefaultText, useColorScheme, View as DefaultView } from 'react-
 
 import Colors from '../constants/Colors';
 
-export function useThemeColor(
-  props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
+export function useThemeColor(props: { light?: string; dark?: string }, colorName: keyof typeof Colors.light & keyof typeof Colors.dark) {
   const theme = useColorScheme() ?? 'light';
   const colorFromProps = props[theme];
 

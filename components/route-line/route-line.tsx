@@ -1,24 +1,24 @@
-import { ShapeSource, LineLayer } from "@rnmapbox/maps";
+import { ShapeSource, LineLayer } from '@rnmapbox/maps';
 
 export default function RouteLine({ locations }: { locations: number[][] }) {
   return (
     <ShapeSource
       id="shape-source"
       shape={{
-        type: "FeatureCollection",
+        type: 'FeatureCollection',
         features: [
           {
-            type: "Feature",
+            type: 'Feature',
             properties: {},
             geometry: {
-              type: "LineString",
+              type: 'LineString',
               coordinates: locations,
             },
           },
         ],
       }}
     >
-      <LineLayer id="line-layer" style={{ lineColor: "orange", lineWidth: 5 }} />
+      <LineLayer id="line-layer" style={{ lineColor: 'orange', lineWidth: 5 }} />
     </ShapeSource>
   );
 }

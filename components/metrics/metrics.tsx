@@ -1,6 +1,6 @@
-import { formatDuration } from "../../utils/time-formatter";
-import { View, Text } from "../Themed";
-import { StyleSheet } from "react-native";
+import { formatDuration } from '../../utils/time-formatter';
+import { View, Text } from '../Themed';
+import { StyleSheet } from 'react-native';
 
 type MetricsProps = {
   velocity: number;
@@ -31,15 +31,15 @@ export default function Metrics({ velocity, distance, duration }: MetricsProps) 
 const styles = StyleSheet.create({
   containerMetrics: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingTop: 20,
     paddingLeft: 20,
     paddingRight: 20,
-    justifyContent: "space-between",
-    height: "60%",
+    justifyContent: 'space-between',
+    height: '60%',
   },
   metricsHeader: {
     fontSize: 25,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });
