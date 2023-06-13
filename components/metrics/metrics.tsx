@@ -1,3 +1,4 @@
+import { STATUSES } from '../../constants/enums';
 import { formatDuration } from '../../utils/time-formatter';
 import { View, Text } from '../Themed';
 import { StyleSheet } from 'react-native';
@@ -6,12 +7,14 @@ type MetricsProps = {
   velocity: number;
   distance: number;
   duration: number;
+  status: STATUSES;
+  mapVisible: boolean;
 };
 
-export default function Metrics({ velocity, distance, duration }: MetricsProps) {
+export default function Metrics({ velocity, distance, duration, status, mapVisible }: MetricsProps) {
   const { containerMetrics, metricsHeader } = styles;
   return (
-    <View style={containerMetrics}>
+    <View style={[containerMetrics, (status === STATUSES.started || status === STATUSES.continue) && { height: '80%' }, mapVisible && { height: '15%' }]}>
       <View>
         <Text style={metricsHeader}>Темп: </Text>
         <Text>{velocity} мин/км</Text>
@@ -30,13 +33,13 @@ export default function Metrics({ velocity, distance, duration }: MetricsProps) 
 
 const styles = StyleSheet.create({
   containerMetrics: {
-    flex: 1,
+    // flex: 1,
     flexDirection: 'row',
     paddingTop: 20,
     paddingLeft: 20,
     paddingRight: 20,
     justifyContent: 'space-between',
-    height: '60%',
+    height: '15%',
   },
   metricsHeader: {
     fontSize: 25,

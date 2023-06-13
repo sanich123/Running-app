@@ -1,7 +1,11 @@
 export const enum STATUSES {
+  initial = 'initial',
   started = 'started',
   paused = 'paused',
   continue = 'continue',
-  initial = 'initial',
-  stopped = 'stopped',
+}
+
+export const enum LANGUAGES {
+  russian = 'russian',
+  english = 'english',
 }

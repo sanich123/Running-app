@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { MOCK_LOCATIONS } from "../constants/mocks/mocks";
-import { Camera } from "@rnmapbox/maps";
-import { getDistance, getDistanceFromMocks } from "../utils/location-utils";
-import { STATUSES } from "../constants/enums";
+import { useEffect, useRef, useState } from 'react';
+import { MOCK_LOCATIONS } from '../constants/mocks/mocks';
+import { Camera } from '@rnmapbox/maps';
+import { getDistanceFromMocks } from '../utils/location-utils';
+import { STATUSES } from '../constants/enums';
 
 export default function useFakeLocations() {
   const [status, setStatus] = useState(STATUSES.initial);
@@ -14,10 +14,10 @@ export default function useFakeLocations() {
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined;
     if (status === STATUSES.started || status === STATUSES.continue) {
-      interval = setInterval(() => setDuration((duration) => duration + 1), 2000);
+      interval = setInterval(() => setDuration((stateDuration) => stateDuration + 1), 2000);
       return () => clearInterval(interval);
     }
-    if (status === STATUSES.stopped) {
+    if (status === STATUSES.initial) {
       clearInterval(interval);
       setDuration(0);
       setLocations([MOCK_LOCATIONS[0]]);
@@ -34,6 +34,7 @@ export default function useFakeLocations() {
       const currDistance = MOCK_LOCATIONS[0] ? getDistanceFromMocks(MOCK_LOCATIONS[0], MOCK_LOCATIONS[duration]) : 0;
       setDistance(distance + currDistance);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [duration]);
 
   useEffect(() => {

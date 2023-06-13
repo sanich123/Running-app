@@ -3,27 +3,39 @@ import { View, Text } from '../Themed';
 import { STATUSES } from '../../constants/enums';
 import StartBtn from '../start-stop-btn/start-stop-btn';
 import { FontAwesome } from '@expo/vector-icons';
+import { LANGUAGE } from '../../constants/languages/languages';
+import { useAppSelector } from '../../redux/hooks/hooks';
 
-type StartStopPauseBtnsProps = {
+type ControlBtnsProps = {
   status: STATUSES;
   setStatus: (arg: STATUSES) => void;
+  setMapVisible: (arg: boolean) => void;
+  mapVisible: boolean;
 };
 
-export default function StartStopPauseBtns({ status, setStatus }: StartStopPauseBtnsProps) {
+export default function ControlBtns({ status, setStatus, setMapVisible, mapVisible }: ControlBtnsProps) {
   const { containerStartBtn, containerPauseStopBtns, textStyle, startBtn } = styles;
+  const { language } = useAppSelector(({ changeThemeLang }) => changeThemeLang);
+
   return (
     <View style={containerStartBtn}>
       {status === STATUSES.paused && (
         <View style={containerPauseStopBtns}>
-          <Pressable style={startBtn} onPress={() => setStatus(status === STATUSES.paused ? STATUSES.continue : STATUSES.paused)}>
-            <Text style={textStyle}>{status === STATUSES.paused ? 'Resume' : 'Pause'}</Text>
+          <Pressable
+            style={startBtn}
+            onPress={() => {
+              setStatus(status === STATUSES.paused ? STATUSES.continue : STATUSES.paused);
+              setMapVisible(false);
+            }}
+          >
+            <Text style={textStyle}>{LANGUAGE[language].activity.controlBtns.resume}</Text>
           </Pressable>
         </View>
       )}
 
       <StartBtn status={status} setStatus={setStatus} />
-      {(status === STATUSES.paused || status === STATUSES.started) && (
-        <Pressable style={[startBtn, { width: 50, height: 50 }]}>
+      {(status === STATUSES.started || status === STATUSES.continue) && (
+        <Pressable style={[startBtn, { width: 50, height: 50 }]} onPress={() => setMapVisible(!mapVisible)}>
           <FontAwesome name="map-marker" size={25} color={'white'} />
         </Pressable>
       )}
