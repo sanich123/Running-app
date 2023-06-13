@@ -7,17 +7,31 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "buildApk": "eas build --profile development --platform android",
-    "startDev": "npx expo start --dev-client"
+    "build-apk": "eas build --profile development --platform android",
+    "start-dev": "npx expo start --dev-client",
+    "eslint": "eslint --fix app components"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
+    "@react-native-picker/picker": "2.4.8",
     "@react-navigation/native": "^6.0.2",
     "@reduxjs/toolkit": "^1.9.5",
     "@rnmapbox/maps": "^10.0.7-rc.1",
+    "@turf/turf": "^6.5.0",
+    "@types/react-native": "^0.72.2",
+    "@typescript-eslint/eslint-plugin": "^5.22.0",
+    "@typescript-eslint/parser": "^5.22.0",
+    "eslint": "^8.14.0",
+    "eslint-config-htmlacademy": "^5.1.2",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "expo": "~48.0.18",
     "expo-dev-client": "~2.2.1",
     "expo-font": "~11.1.1",
@@ -28,6 +42,8 @@
     "expo-status-bar": "~1.4.4",
     "expo-system-ui": "~2.2.1",
     "expo-web-browser": "~12.1.1",
+    "moment": "^2.29.4",
+    "prettier": "^2.6.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.71.8",
@@ -35,8 +51,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-web": "~0.18.10",
     "react-redux": "^8.0.7",
-    "@turf/turf": "^6.5.0",
-    "moment": "^2.29.4"
+    "turf": "^3.0.14"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
