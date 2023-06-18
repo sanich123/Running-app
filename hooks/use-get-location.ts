@@ -1,29 +1,49 @@
-import { useEffect, useState } from "react";
-import { LocationObject, requestForegroundPermissionsAsync, getCurrentPositionAsync } from "expo-location";
-import { useAppDispatch } from "../redux/hooks/hooks";
-import { setInitialLocation } from "../redux/location-slice/location-slice";
-import Mapbox from "@rnmapbox/maps";
+import { useEffect, useState } from 'react';
+import { LocationObject, requestForegroundPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
+import { useAppDispatch } from '../redux/hooks/hooks';
+import { setInitialLocation } from '../redux/location-slice/location-slice';
+import Mapbox from '@rnmapbox/maps';
 
 export default function useGetLocation() {
-  Mapbox.setWellKnownTileServer("Mapbox");
-  Mapbox.setAccessToken("pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g");
+  Mapbox.setWellKnownTileServer('Mapbox');
+  Mapbox.setAccessToken('pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g');
 
-  const [location, setLocation] = useState<LocationObject>();
-  const [error, setErrorMsg] = useState(false);
+  const [location, setLocation] = useState<LocationObject>({
+    coords: {
+      accuracy: 0,
+      altitude: 0,
+      altitudeAccuracy: 0,
+      heading: 0,
+      latitude: 0,
+      longitude: 0,
+      speed: 0,
+    },
+    mocked: false,
+    timestamp: 0,
+  });
+  const [error, setError] = useState(false);
+  const [readyToShowLocation, setReadyToShowLocation] = useState(false);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     (async () => {
-      let { status } = await requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg(true);
-        return;
+      try {
+        const { status } = await requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          setError(true);
+          return;
+        }
+        const currentPosition = await getCurrentPositionAsync();
+        if (currentPosition) {
+          setLocation(currentPosition);
+          setReadyToShowLocation(true);
+          dispatch(setInitialLocation(currentPosition));
+        }
+      } catch {
+        setError(true);
       }
-      let location = await getCurrentPositionAsync();
-      setLocation(location);
-      dispatch(setInitialLocation(location))
     })();
   }, []);
-  
-  return { location, error };
+
+  return { location, error, readyToShowLocation };
 }
