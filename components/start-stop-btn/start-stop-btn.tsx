@@ -6,6 +6,7 @@ import { ReactNode } from 'react';
 import { useAppSelector } from '../../redux/hooks/hooks';
 import { LANGUAGE } from '../../constants/languages/languages';
 import { useLinkTo } from '@react-navigation/native';
+
 type StartStopBtnProps = {
   status: STATUSES;
   setStatus: (arg: STATUSES) => void;
@@ -57,5 +58,6 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 28,
     textTransform: 'uppercase',
+    color: 'white',
   },
 });

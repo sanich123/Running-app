@@ -14,7 +14,7 @@ type ControlBtnsProps = {
 };
 
 export default function ControlBtns({ status, setStatus, setMapVisible, mapVisible }: ControlBtnsProps) {
-  const { containerStartBtn, containerPauseStopBtns, textStyle, startBtn } = styles;
+  const { containerStartBtn, containerPauseStopBtns, textStyle, pinBtn } = styles;
   const { language } = useAppSelector(({ changeThemeLang }) => changeThemeLang);
 
   return (
@@ -22,7 +22,7 @@ export default function ControlBtns({ status, setStatus, setMapVisible, mapVisib
       {status === STATUSES.paused && (
         <View style={containerPauseStopBtns}>
           <Pressable
-            style={startBtn}
+            style={pinBtn}
             onPress={() => {
               setStatus(status === STATUSES.paused ? STATUSES.continue : STATUSES.paused);
               setMapVisible(false);
@@ -35,7 +35,7 @@ export default function ControlBtns({ status, setStatus, setMapVisible, mapVisib
 
       <StartBtn status={status} setStatus={setStatus} />
       {(status === STATUSES.started || status === STATUSES.continue) && (
-        <Pressable style={[startBtn, { width: 50, height: 50 }]} onPress={() => setMapVisible(!mapVisible)}>
+        <Pressable style={[pinBtn, { width: 50, height: 50 }]} onPress={() => setMapVisible(!mapVisible)}>
           <FontAwesome name="map-marker" size={25} color={'white'} />
         </Pressable>
       )}
@@ -44,15 +44,14 @@ export default function ControlBtns({ status, setStatus, setMapVisible, mapVisib
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   containerStartBtn: {
-    height: '40%',
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    gap: 15,
   },
-  startBtn: {
+  pinBtn: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'red',
@@ -63,6 +62,7 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 22,
     textTransform: 'uppercase',
+    color: 'white',
   },
   containerPauseStopBtns: {
     flexDirection: 'row',

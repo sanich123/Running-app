@@ -4,7 +4,7 @@ export const LANGUAGE = {
   [LANGUAGES.russian]: {
     activity: {
       controlBtns: {
-        start: 'Старт',
+        start: 'Run',
         finish: 'Конец',
         resume: 'Продолжить',
       },
@@ -13,7 +13,7 @@ export const LANGUAGE = {
   [LANGUAGES.english]: {
     activity: {
       controlBtns: {
-        start: 'Start',
+        start: 'Run',
         finish: 'Finish',
         resume: 'Resume',
       },

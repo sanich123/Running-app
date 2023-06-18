@@ -1,7 +1,11 @@
+import { View } from '../Themed';
+import Distance from './distance';
+import LastKm from './last-km';
+import Pace from './pace';
+import Steps from './steps';
+import Time from './time';
 import { STATUSES } from '../../constants/enums';
-import { formatDuration } from '../../utils/time-formatter';
-import { View, Text } from '../Themed';
-import { StyleSheet } from 'react-native';
+import { metricsStyles } from './metrics-styles';
 
 type MetricsProps = {
   velocity: number;
@@ -12,37 +16,16 @@ type MetricsProps = {
 };
 
 export default function Metrics({ velocity, distance, duration, status, mapVisible }: MetricsProps) {
-  const { containerMetrics, metricsHeader } = styles;
+  const { containerMetrics } = metricsStyles;
+  const isStartedOrContinue = status === STATUSES.started || status === STATUSES.continue;
+
   return (
-    <View style={[containerMetrics, (status === STATUSES.started || status === STATUSES.continue) && { height: '80%' }, mapVisible && { height: '15%' }]}>
-      <View>
-        <Text style={metricsHeader}>Темп: </Text>
-        <Text>{velocity} мин/км</Text>
-      </View>
-      <View>
-        <Text style={metricsHeader}>Дистанция: </Text>
-        <Text>{(distance / 1000).toFixed(3)} км</Text>
-      </View>
-      <View>
-        <Text style={metricsHeader}>Время: </Text>
-        <Text>{formatDuration(duration)}</Text>
-      </View>
+    <View style={[containerMetrics, isStartedOrContinue && { height: '80%' }, mapVisible && { height: '15%' }]}>
+      <Time isStartedOrContinue={isStartedOrContinue} mapVisible={mapVisible} duration={duration} />
+      {!mapVisible && isStartedOrContinue && <Steps />}
+      <Pace isStartedOrContinue={isStartedOrContinue} mapVisible={mapVisible} velocity={velocity} />
+      {!mapVisible && isStartedOrContinue && <LastKm isStartedOrContinue={isStartedOrContinue} />}
+      <Distance isStartedOrContinue={isStartedOrContinue} mapVisible={mapVisible} distance={distance} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  containerMetrics: {
-    // flex: 1,
-    flexDirection: 'row',
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-    justifyContent: 'space-between',
-    height: '15%',
-  },
-  metricsHeader: {
-    fontSize: 25,
-    fontWeight: 'bold',
-  },
-});

@@ -4,7 +4,7 @@ import { LANGUAGES } from '../../constants/enums';
 export const changeThemeLang = createSlice({
   name: 'changeThemeLang',
   initialState: {
-    language: LANGUAGES.russian,
+    language: LANGUAGES.english,
     theme: 'light',
   },
   reducers: {
