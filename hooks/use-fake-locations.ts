@@ -3,13 +3,14 @@ import { MOCK_LOCATIONS } from '../constants/mocks/mocks';
 import { Camera } from '@rnmapbox/maps';
 import { getDistanceFromMocks } from '../utils/location-utils';
 import { STATUSES } from '../constants/enums';
+import { LocationObject } from 'expo-location';
 
 export default function useFakeLocations() {
   const [status, setStatus] = useState(STATUSES.initial);
   const [duration, setDuration] = useState(0);
   const [distance, setDistance] = useState(0);
-  const [locations, setLocations] = useState([MOCK_LOCATIONS[0]]);
-  const camera = useRef<Camera>(null);
+  const [locations, setLocations] = useState<LocationObject[]>([MOCK_LOCATIONS[0]]);
+  const cameraRef = useRef<Camera>(null);
 
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined;
@@ -38,15 +39,15 @@ export default function useFakeLocations() {
   }, [duration]);
 
   useEffect(() => {
-    camera.current?.setCamera({
-      centerCoordinate: locations[locations.length - 1],
+    cameraRef.current?.setCamera({
+      centerCoordinate: [locations[locations.length - 1].coords.longitude, locations[locations.length - 1].coords.latitude],
     });
   }, [locations]);
 
   return {
     locations,
-    lastView: locations[locations.length - 1],
-    cameraRef: camera,
+    lastView: [locations[locations.length - 1].coords.longitude, locations[locations.length - 1].coords.latitude],
+    cameraRef,
     setStatus,
     duration,
     status,
