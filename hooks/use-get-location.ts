@@ -3,24 +3,13 @@ import { LocationObject, requestForegroundPermissionsAsync, getCurrentPositionAs
 import { useAppDispatch } from '../redux/hooks/hooks';
 import { setInitialLocation } from '../redux/location-slice/location-slice';
 import Mapbox from '@rnmapbox/maps';
+import { INITIAL_MOCK_LOCATION } from '../constants/mocks/mocks';
 
 export default function useGetLocation() {
   Mapbox.setWellKnownTileServer('Mapbox');
   Mapbox.setAccessToken('pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g');
 
-  const [location, setLocation] = useState<LocationObject>({
-    coords: {
-      accuracy: 0,
-      altitude: 0,
-      altitudeAccuracy: 0,
-      heading: 0,
-      latitude: 0,
-      longitude: 0,
-      speed: 0,
-    },
-    mocked: false,
-    timestamp: 0,
-  });
+  const [location, setLocation] = useState<LocationObject>(INITIAL_MOCK_LOCATION);
   const [error, setError] = useState(false);
   const [readyToShowLocation, setReadyToShowLocation] = useState(false);
   const dispatch = useAppDispatch();
@@ -43,6 +32,7 @@ export default function useGetLocation() {
         setError(true);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { location, error, readyToShowLocation };

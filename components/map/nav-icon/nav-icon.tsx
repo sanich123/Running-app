@@ -1,5 +1,5 @@
 import { PointAnnotation, Callout } from '@rnmapbox/maps';
-import { View } from '../Themed';
+import { View } from '../../Themed';
 import { StyleSheet } from 'react-native';
 
 export default function NavIcon({ lastView }: { lastView: number[] }) {

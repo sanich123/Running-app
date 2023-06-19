@@ -1,5 +1,5 @@
-import { View, Text } from '../Themed';
-import { metricsStyles } from './metrics-styles';
+import { View, Text } from '../../Themed';
+import { metricsStyles } from '../metrics-styles';
 
 export default function LastKm({ isStartedOrContinue }: { isStartedOrContinue: boolean }) {
   const { basicWrapper, metricsWrapper, metricsHeader } = metricsStyles;

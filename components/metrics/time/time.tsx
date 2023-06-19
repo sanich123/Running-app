@@ -1,6 +1,6 @@
-import { formatDuration } from '../../utils/time-formatter';
-import { View, Text } from '../Themed';
-import { metricsStyles } from './metrics-styles';
+import { formatDuration } from '../../../utils/time-formatter';
+import { View, Text } from '../../Themed';
+import { metricsStyles } from '../metrics-styles';
 
 type TimeProps = {
   mapVisible: boolean;

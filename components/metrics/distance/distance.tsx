@@ -1,5 +1,5 @@
-import { View, Text } from '../Themed';
-import { metricsStyles } from './metrics-styles';
+import { View, Text } from '../../Themed';
+import { metricsStyles } from '../metrics-styles';
 
 type DistanceProps = {
   mapVisible: boolean;

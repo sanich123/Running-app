@@ -1,9 +1,9 @@
 import { View } from '../Themed';
-import Distance from './distance';
-import LastKm from './last-km';
-import Pace from './pace';
-import Steps from './steps';
-import Time from './time';
+import Distance from './distance/distance';
+import LastKm from './last-km/last-km';
+import Pace from './pace/pace';
+import Steps from './steps/steps';
+import Time from './time/time';
 import { STATUSES } from '../../constants/enums';
 import { metricsStyles } from './metrics-styles';
 
