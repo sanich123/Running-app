@@ -1,10 +1,12 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { SplashScreen, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { Provider } from 'react-redux';
+
+import SplashIcon from '../components/splash-screen/splash-screen';
 import { store } from '../redux/store';
 
 export {
@@ -34,7 +36,7 @@ export default function RootLayout() {
 
   return (
     <>
-      {!loaded && <SplashScreen />}
+      {!loaded && <SplashIcon />}
       {loaded && (
         <Provider store={store}>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

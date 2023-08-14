@@ -1,12 +1,8 @@
 {
   "parser": "@typescript-eslint/parser",
   "extends": [
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-    "plugin:react-hooks/recommended",
-    "plugin:prettier/recommended",
-    "htmlacademy/react-typescript"
+    "universe/native",
+    "prettier"
   ],
   "env": {
     "browser": true,

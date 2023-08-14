@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 
 import { Text, View } from '../components/Themed';
 
@@ -11,8 +11,7 @@ export default function SaveResult() {
 
       <TextInput style={textInput} placeholder="Title your ran" />
       <TextInput style={[textInput, largeInput]} placeholder="How'd it go? Share more about your activity and use @ to tag someone." multiline />
-      {/* Use a light status bar on iOS to account for the black space above the modal */}
-      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+      <StatusBar style="auto" />
     </View>
   );
 }

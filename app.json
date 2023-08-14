@@ -7,12 +7,14 @@
     "icon": "./assets/images/icon-run.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "splash": { 
+    "splash": {
       "image": "./assets/images/icon-run.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -39,7 +41,8 @@
           "RNMapboxMapsImpl": "mapbox",
           "RNMapboxMapsDownloadToken": "sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWtvam9oazBrZjcza29kZ2hhMmtlcjEifQ.PkCRRfGrD8iiEOIBB9BLcg"
         }
-      ]
+      ],
+      "expo-router"
     ]
   }
 }
