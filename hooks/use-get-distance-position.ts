@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { LocationObject, watchPositionAsync } from 'expo-location';
 import * as turf from '@turf/turf';
-import { POSITION_OPTIONS } from '../constants/const';
+import { LocationObject, watchPositionAsync } from 'expo-location';
+import { useEffect, useRef, useState } from 'react';
 import MapView from 'react-native-maps';
+
+import { POSITION_OPTIONS } from '../constants/const';
 
 export default function useGetDistancePosition({ initialLocation }: { initialLocation: LocationObject }) {
   const [positions, setPositions] = useState<LocationObject[]>([]);
@@ -34,6 +35,7 @@ export default function useGetDistancePosition({ initialLocation }: { initialLoc
         setPace(pace);
       });
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

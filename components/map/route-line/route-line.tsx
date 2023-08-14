@@ -14,7 +14,7 @@ export default function RouteLine({ locations }: { locations: LocationObject[] }
             properties: {},
             geometry: {
               type: 'LineString',
-              coordinates: coordinates,
+              coordinates,
             },
           },
         ],

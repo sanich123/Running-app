@@ -1,5 +1,5 @@
-import { LocationObject } from 'expo-location';
 import * as turf from '@turf/turf';
+import { LocationObject } from 'expo-location';
 
 export function getDistance(origin: LocationObject, destination: LocationObject) {
   const from = turf.point([origin.coords.longitude, origin.coords.latitude]);

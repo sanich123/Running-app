@@ -1,8 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { Location } from "@rnmapbox/maps";
+import { createSlice } from '@reduxjs/toolkit';
+import { Location } from '@rnmapbox/maps';
 
 export const location = createSlice({
-  name: "location",
+  name: 'location',
   initialState: {
     initialLocation: {} as Location,
     duration: 0,
@@ -12,8 +12,8 @@ export const location = createSlice({
       state.initialLocation = action.payload;
     },
     setDuration: (state, action) => {
-        state.duration = action.payload;
-    }
+      state.duration = action.payload;
+    },
   },
 });
 

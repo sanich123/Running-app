@@ -1,10 +1,11 @@
-import { StyleSheet, Pressable } from 'react-native';
-import { View, Text } from '../Themed';
-import { useAppSelector } from '../../redux/hooks/hooks';
-import StartBtn from './start-stop-btn/start-stop-btn';
 import { FontAwesome } from '@expo/vector-icons';
-import { LANGUAGE } from '../../constants/languages/languages';
+import { StyleSheet, Pressable } from 'react-native';
+
+import StartBtn from './start-stop-btn/start-stop-btn';
 import { STATUSES } from '../../constants/enums';
+import { LANGUAGE } from '../../constants/languages/languages';
+import { useAppSelector } from '../../redux/hooks/hooks';
+import { View, Text } from '../Themed';
 
 type ControlsProps = {
   status: STATUSES;
@@ -39,7 +40,7 @@ export default function Controls({ setStatus, setMapVisible, mapVisible, status 
 
       {isStartedOrContinue && (
         <Pressable style={[pinBtn, { width: 50, height: 50 }]} onPress={() => setMapVisible(!mapVisible)}>
-          <FontAwesome name="map-marker" size={25} color={'white'} />
+          <FontAwesome name="map-marker" size={25} color="white" />
         </Pressable>
       )}
     </View>

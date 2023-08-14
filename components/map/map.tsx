@@ -1,9 +1,10 @@
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
-import { RefObject } from 'react';
-import RouteLine from './route-line/route-line';
-import NavIcon from './nav-icon/nav-icon';
-import useGetLocation from '../../hooks/use-get-location';
 import { LocationObject } from 'expo-location';
+import { RefObject } from 'react';
+
+import NavIcon from './nav-icon/nav-icon';
+import RouteLine from './route-line/route-line';
+import useGetLocation from '../../hooks/use-get-location';
 
 type MapProps = {
   mapVisible: boolean;

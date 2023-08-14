@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { MOCK_LOCATIONS } from '../constants/mocks/mocks';
 import { Camera } from '@rnmapbox/maps';
-import { getDistanceFromMocks } from '../utils/location-utils';
-import { STATUSES } from '../constants/enums';
 import { LocationObject } from 'expo-location';
+import { useEffect, useRef, useState } from 'react';
+
+import { STATUSES } from '../constants/enums';
+import { MOCK_LOCATIONS } from '../constants/mocks/mocks';
+import { getDistanceFromMocks } from '../utils/location-utils';
 
 export default function useFakeLocations() {
   const [status, setStatus] = useState(STATUSES.initial);

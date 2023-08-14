@@ -1,11 +1,12 @@
+import { useState } from 'react';
 import { StyleSheet } from 'react-native';
+
 import { View } from '../../components/Themed';
-import useFakeLocations from '../../hooks/use-fake-locations';
+import Controls from '../../components/controls/controls';
 import Map from '../../components/map/map';
 import Metrics from '../../components/metrics/metrics';
-import Controls from '../../components/controls/controls';
 import { STATUSES } from '../../constants/enums';
-import { useState } from 'react';
+import useFakeLocations from '../../hooks/use-fake-locations';
 
 export default function Activity() {
   const { setStatus, status, locations, duration, cameraRef, lastView, distance } = useFakeLocations();

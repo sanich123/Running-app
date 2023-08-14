@@ -1,11 +1,12 @@
-import { STATUSES } from '../../../constants/enums';
-import { Text } from '../../Themed';
-import { Pressable, StyleSheet } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { ReactNode } from 'react';
-import { useAppSelector } from '../../../redux/hooks/hooks';
-import { LANGUAGE } from '../../../constants/languages/languages';
 import { useLinkTo } from '@react-navigation/native';
+import { ReactNode } from 'react';
+import { Pressable, StyleSheet } from 'react-native';
+
+import { STATUSES } from '../../../constants/enums';
+import { LANGUAGE } from '../../../constants/languages/languages';
+import { useAppSelector } from '../../../redux/hooks/hooks';
+import { Text } from '../../Themed';
 
 type StartStopBtnProps = {
   status: STATUSES;
