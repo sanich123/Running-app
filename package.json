@@ -7,11 +7,9 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "prebuild": "npx expo prebuild --platform android --clean",
-    "build:apk": "eas build --profile development --platform android",
+    "build-apk": "eas build --profile development --platform android",
     "start-dev": "npx expo start --dev-client",
-    "eslint": "eslint --fix app components",
-    "check:expo": "npx expo-doctor"
+    "eslint": "eslint --fix app components"
   },
   "jest": {
     "preset": "jest-expo"
@@ -23,9 +21,10 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@rnmapbox/maps": "^10.0.7-rc.1",
     "@turf/turf": "^6.5.0",
+    "@types/react-native": "^0.72.2",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
-    "eslint": "^7",
+    "eslint": "^8.14.0",
     "eslint-config-htmlacademy": "^5.1.2",
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-typescript": "^2.7.1",
