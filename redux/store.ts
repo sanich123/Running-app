@@ -1,10 +1,13 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
+
 import changeThemeLangReducer from './change-lang-slice/change-lang-slice';
 import { graphiqlApi } from './graphql-api/graphql-api';
 import { loadState } from './localstorage-store';
+import locationSlice from './location-slice/location-slice';
 
 const rootReducer = combineReducers({
   changeThemeLang: changeThemeLangReducer,
+  location: locationSlice,
   [graphiqlApi.reducerPath]: graphiqlApi.reducer,
 });
 

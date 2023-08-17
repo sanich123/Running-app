@@ -5,7 +5,7 @@ export function loadState() {
       return undefined;
     }
     return JSON.parse(serializedState);
-  } catch (e) {
+  } catch {
     return undefined;
   }
 }
@@ -14,7 +14,7 @@ export function saveState(state: unknown): void {
   try {
     const serializedState = JSON.stringify(state);
     return localStorage.setItem('redux', serializedState);
-  } catch (e) {
+  } catch {
     /* empty */
   }
 }
