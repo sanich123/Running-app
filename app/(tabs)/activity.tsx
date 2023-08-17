@@ -17,9 +17,13 @@ export default function Activity() {
   return (
     <View style={page}>
       <View style={mapContainer}>
-        {shouldShowMap && <Map mapVisible={mapVisible} cameraRef={cameraRef} locations={locations} lastView={lastView} />}
+        {shouldShowMap && (
+          <Map mapVisible={mapVisible} cameraRef={cameraRef} locations={locations} lastView={lastView} />
+        )}
 
-        {status !== STATUSES.initial && <Metrics velocity={11} distance={distance} duration={duration} status={status} mapVisible={mapVisible} />}
+        {status !== STATUSES.initial && (
+          <Metrics velocity={11} distance={distance} duration={duration} status={status} mapVisible={mapVisible} />
+        )}
       </View>
       <View style={monitor}>
         <Controls status={status} setStatus={setStatus} setMapVisible={setMapVisible} mapVisible={mapVisible} />

@@ -10,7 +10,11 @@ export default function SaveResult() {
       <Text style={title}>Save Activity</Text>
 
       <TextInput style={textInput} placeholder="Title your ran" />
-      <TextInput style={[textInput, largeInput]} placeholder="How'd it go? Share more about your activity and use @ to tag someone." multiline />
+      <TextInput
+        style={[textInput, largeInput]}
+        placeholder="How'd it go? Share more about your activity and use @ to tag someone."
+        multiline
+      />
       <StatusBar style="auto" />
     </View>
   );

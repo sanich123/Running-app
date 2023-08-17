@@ -29,8 +29,7 @@ export default function Controls({ setStatus, setMapVisible, mapVisible, status 
             onPress={() => {
               setStatus(paused ? STATUSES.continue : STATUSES.paused);
               setMapVisible(false);
-            }}
-          >
+            }}>
             <Text style={textStyle}>{LANGUAGE[language].activity.controlBtns.resume}</Text>
           </Pressable>
         </View>

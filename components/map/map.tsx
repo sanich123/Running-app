@@ -20,7 +20,15 @@ export default function Map({ mapVisible, cameraRef, locations, lastView }: MapP
   return (
     <MapView style={[{ flex: 1 }, mapVisible && { height: '60%' }]}>
       <UserLocation androidRenderMode="compass" animated />
-      {readyToShowLocation && <Camera ref={cameraRef} centerCoordinate={[longitude, latitude]} animationMode="flyTo" animationDuration={1000} zoomLevel={11} />}
+      {readyToShowLocation && (
+        <Camera
+          ref={cameraRef}
+          centerCoordinate={[longitude, latitude]}
+          animationMode="flyTo"
+          animationDuration={1000}
+          zoomLevel={11}
+        />
+      )}
       <NavIcon lastView={lastView} />
       {locations.length > 1 && <RouteLine locations={locations} />}
     </MapView>

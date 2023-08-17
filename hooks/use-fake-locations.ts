@@ -41,7 +41,10 @@ export default function useFakeLocations() {
 
   useEffect(() => {
     cameraRef.current?.setCamera({
-      centerCoordinate: [locations[locations.length - 1].coords.longitude, locations[locations.length - 1].coords.latitude],
+      centerCoordinate: [
+        locations[locations.length - 1].coords.longitude,
+        locations[locations.length - 1].coords.latitude,
+      ],
     });
   }, [locations]);
 

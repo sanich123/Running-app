@@ -25,7 +25,12 @@ export default function useGetDistancePosition({ initialLocation }: { initialLoc
   useEffect(() => {
     (async function setPosition() {
       return await watchPositionAsync(POSITION_OPTIONS, (position: LocationObject) => {
-        const region = { latitudeDelta: 0.01, longitudeDelta: 0.0121, longitude: position.coords.longitude, latitude: position.coords.latitude };
+        const region = {
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.0121,
+          longitude: position.coords.longitude,
+          latitude: position.coords.latitude,
+        };
         mapRef.current?.animateToRegion(region, 1000);
         const currDistance = positions[0] ? distanceBetween(currentPosition, position) : 0;
         // const duration = positions[0] ? position.timestamp - positions[0].timestamp : 0;

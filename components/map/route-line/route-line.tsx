@@ -18,8 +18,7 @@ export default function RouteLine({ locations }: { locations: LocationObject[] }
             },
           },
         ],
-      }}
-    >
+      }}>
       <LineLayer id="line-layer" style={{ lineColor: 'orange', lineWidth: 5 }} />
     </ShapeSource>
   );

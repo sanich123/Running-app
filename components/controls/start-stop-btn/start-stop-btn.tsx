@@ -40,8 +40,7 @@ export default function StartStopBtn({ setStatus, status }: StartStopBtnProps) {
         if (status === STATUSES.paused) {
           linkTo('/save-activity');
         }
-      }}
-    >
+      }}>
       <Text style={textStyle}>{responseIcon[status]}</Text>
     </Pressable>
   );

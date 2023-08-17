@@ -7,7 +7,15 @@ import { Text, View } from './Themed';
 import Colors from '../constants/Colors';
 
 export default function EditScreenInfo({ path }: { path: string }) {
-  const { getStartedContainer, getStartedText, codeHighlightContainer, homeScreenFilename, helpContainer, helpLink, helpLinkText } = styles;
+  const {
+    getStartedContainer,
+    getStartedText,
+    codeHighlightContainer,
+    homeScreenFilename,
+    helpContainer,
+    helpLink,
+    helpLinkText,
+  } = styles;
   return (
     <View>
       <View style={getStartedContainer}>
@@ -15,7 +23,10 @@ export default function EditScreenInfo({ path }: { path: string }) {
           Open up the code for this screen:
         </Text>
 
-        <View style={[codeHighlightContainer, homeScreenFilename]} darkColor="rgba(255,255,255,0.05)" lightColor="rgba(0,0,0,0.05)">
+        <View
+          style={[codeHighlightContainer, homeScreenFilename]}
+          darkColor="rgba(255,255,255,0.05)"
+          lightColor="rgba(0,0,0,0.05)">
           <MonoText>{path}</MonoText>
         </View>
 
@@ -25,7 +36,9 @@ export default function EditScreenInfo({ path }: { path: string }) {
       </View>
 
       <View style={helpContainer}>
-        <ExternalLink style={helpLink} href="https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet">
+        <ExternalLink
+          style={helpLink}
+          href="https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet">
           <Text style={helpLinkText} lightColor={Colors.light.tint}>
             Tap here if your app doesnt automatically update after making changes
           </Text>
