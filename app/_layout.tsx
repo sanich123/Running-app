@@ -3,12 +3,13 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, AppRegistry } from 'react-native';
+import { PaperProvider, MD3LightTheme } from 'react-native-paper';
 import { Provider } from 'react-redux';
 
+import { expo as appName } from '../../project/app.json';
 import SplashIcon from '../components/splash-screen/splash-screen';
 import { store } from '../redux/store';
-
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -26,7 +27,14 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
   const colorScheme = useColorScheme();
-
+  const theme = {
+    ...MD3LightTheme,
+    colors: {
+      ...MD3LightTheme.colors,
+      primary: 'tomato',
+      secondary: 'yellow',
+    },
+  };
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) {
@@ -40,13 +48,17 @@ export default function RootLayout() {
       {loaded && (
         <Provider store={store}>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-            </Stack>
+            <PaperProvider theme={theme}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+              </Stack>
+            </PaperProvider>
           </ThemeProvider>
         </Provider>
       )}
     </>
   );
 }
+
+AppRegistry.registerComponent(appName.name, () => RootLayout);
