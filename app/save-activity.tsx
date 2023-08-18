@@ -1,11 +1,12 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
-import { TextInput, SegmentedButtons, Button, Switch, Text } from 'react-native-paper';
+import { SegmentedButtons, Button, Switch, Text } from 'react-native-paper';
 
 import { View } from '../components/Themed';
+import TextInputs from '../components/text-inputs/text-inputs';
 import { EMOTIONS_TYPES, SPORT_TYPES } from '../constants/btns-props';
 import UseGetActivityInfo from '../hooks/use-get-activity-info';
+import { getFromAsyncStorage, setToAsyncStorage } from '../utils/async-storage-utils';
 
 export default function SaveResult() {
   const { container, switcherWrapper, marginTop } = styles;
@@ -21,25 +22,10 @@ export default function SaveResult() {
     isSwitchOn,
     setIsSwitchOn,
   } = UseGetActivityInfo();
+
   return (
     <View style={container}>
-      <TextInput
-        mode="outlined"
-        value={title}
-        onChangeText={(title) => setTitle(title)}
-        placeholder="Title your run"
-        left={<TextInput.Icon icon="pencil" />}
-        style={marginTop}
-      />
-      <TextInput
-        mode="outlined"
-        value={description}
-        onChangeText={(description) => setDescription(description)}
-        placeholder="How'd it go? Share more about your activity"
-        multiline
-        style={[marginTop, { minHeight: 150 }]}
-        left={<TextInput.Icon icon="pencil" />}
-      />
+      <TextInputs title={title} description={description} setTitle={setTitle} setDescription={setDescription} />
       <SegmentedButtons value={sport} onValueChange={setSport} buttons={SPORT_TYPES} style={marginTop} />
       <SegmentedButtons value={emotion} onValueChange={setEmotion} buttons={EMOTIONS_TYPES} style={marginTop} />
       <View style={switcherWrapper}>
@@ -50,29 +36,14 @@ export default function SaveResult() {
       <Button
         icon="hand-okay"
         mode="contained"
-        onPress={async () => {
-          try {
-            await AsyncStorage.setItem('userData', JSON.stringify({ title, description, sport, emotion, isSwitchOn }));
-          } catch (error) {
-            console.log(`During saving to the async storage an error occured`, error);
-          }
-        }}
+        onPress={async () => setToAsyncStorage('userData', { title, description, sport, emotion, isSwitchOn })}
         style={marginTop}>
         Save
       </Button>
       <Button
         icon="delete-outline"
         mode="outlined"
-        onPress={async () => {
-          try {
-            const userData = await AsyncStorage.getItem('userData');
-            if (userData) {
-              console.log(JSON.parse(userData));
-            }
-          } catch (error) {
-            console.log(`During parsing from the async storage an error occured`, error);
-          }
-        }}
+        onPress={async () => getFromAsyncStorage('userData')}
         style={marginTop}>
         Discard
       </Button>
