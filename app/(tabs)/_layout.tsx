@@ -22,8 +22,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'feed',
+          tabBarLabel: 'Feed',
           tabBarIcon: ({ color }) => <TabBarIcon name="feed" color={color} />,
+          headerStyle: { backgroundColor: '#f4511e' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: 'bold' },
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -43,7 +46,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="activity"
         options={{
-          title: 'activity',
+          tabBarLabel: 'Activity',
           tabBarIcon: ({ color }) => <TabBarIcon name="trophy" color={color} />,
         }}
       />
@@ -51,6 +54,7 @@ export default function TabLayout() {
         name="progress"
         options={{
           title: 'progress',
+          tabBarLabel: 'Progress',
           tabBarIcon: ({ color }) => <TabBarIcon name="arrow-circle-up" color={color} />,
         }}
       />
@@ -58,6 +62,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'profile',
+          tabBarLabel: 'Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="wrench" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
