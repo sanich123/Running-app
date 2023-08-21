@@ -1,12 +1,31 @@
 import { Stack } from 'expo-router';
 import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { View, StyleSheet, ToastAndroid } from 'react-native';
+import { Button, Text, TextInput } from 'react-native-paper';
+
+import { logInWithEmailAndPassword, registerWithEmailAndPassword } from '../../firebase/email-auth';
 
 export default function SignIn() {
+  const emailMatcher = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+  const passwordMatcher = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$/g;
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
+
+  function emailPasswordHandler(email: string, password: string) {
+    if (!emailMatcher.test(email)) {
+      ToastAndroid.show('Your email does not match the required pattern', ToastAndroid.SHORT);
+      setEmailError(true);
+      setTimeout(() => setEmailError(false), 2000);
+    }
+    if (!passwordMatcher.test(password)) {
+      ToastAndroid.show('Your password should match the pattern', ToastAndroid.SHORT);
+      setPasswordError(true);
+      setTimeout(() => setPasswordError(false), 2000);
+    }
+  }
 
   return (
     <>
@@ -20,6 +39,11 @@ export default function SignIn() {
           left={<TextInput.Icon icon="email" />}
           style={{ marginTop: 15 }}
         />
+        {emailError && (
+          <Text
+            variant="titleSmall"
+            style={{ color: 'red' }}>{`Your email doesn't match the required pattern: ${emailMatcher}`}</Text>
+        )}
         <TextInput
           label="Password"
           value={password}
@@ -30,11 +54,22 @@ export default function SignIn() {
           right={<TextInput.Icon icon="eye" onPress={() => setPasswordIsVisible(!passwordIsNotVisible)} />}
           style={{ marginTop: 15 }}
         />
+        {passwordError && (
+          <Text
+            variant="titleSmall"
+            style={{ color: 'red' }}>{`Your password doesn't match the required pattern: ${passwordMatcher}`}</Text>
+        )}
         <Button
           icon="login"
           mode="outlined"
           style={{ marginTop: 15 }}
-          onPress={() => alert(JSON.stringify({ email, password }))}>
+          onPress={() => {
+            emailPasswordHandler(email, password);
+            registerWithEmailAndPassword(email, password);
+          }}>
+          Register
+        </Button>
+        <Button mode="outlined" style={{ marginTop: 15 }} onPress={() => logInWithEmailAndPassword(email, password)}>
           Login
         </Button>
       </View>

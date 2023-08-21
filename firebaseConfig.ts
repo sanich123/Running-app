@@ -1,5 +1,6 @@
+import { useLinkTo } from '@react-navigation/native';
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -15,3 +16,13 @@ const firebaseConfig = {
 const FIREBASE_APP = initializeApp(firebaseConfig);
 export const currentAuth = getAuth(FIREBASE_APP);
 export const db = getFirestore(FIREBASE_APP);
+
+onAuthStateChanged(currentAuth, (user) => {
+  if (!user) {
+    const linkTo = useLinkTo();
+    setTimeout(() => linkTo('/sign-in'), 0);
+  } else {
+    // User is signed out
+    // ...
+  }
+});

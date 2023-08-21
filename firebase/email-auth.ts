@@ -13,13 +13,13 @@ export async function logInWithEmailAndPassword(email: string, password: string)
   }
 }
 
-export async function registerWithEmailAndPassword(name: string, email: string, password: string): Promise<void> {
+export async function registerWithEmailAndPassword(email: string, password: string): Promise<void> {
   try {
     const res = await createUserWithEmailAndPassword(currentAuth, email, password);
+    console.log(res);
     const user = res.user;
     await addDoc(collection(db, 'users'), {
       uid: user.uid,
-      name,
       authProvider: 'local',
       email,
     });
