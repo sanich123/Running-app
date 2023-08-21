@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react-native';
 
-import SaveResult from '../app/save-activity';
-import { DESCRIPTION_PLACEHOLDER, TITLE_PLACEHOLDER } from '../components/text-inputs/text-inputs-const';
+import SaveResult from '../../app/(save-activity)/save-activity';
+import { DESCRIPTION_PLACEHOLDER, TITLE_PLACEHOLDER } from '../../components/text-inputs/text-inputs-const';
 jest.useFakeTimers();
 describe('Save-activity page', () => {
   it('should correctly renders', () => {

@@ -34,6 +34,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@rnmapbox/maps": "^10.0.7-rc.1",
     "@turf/turf": "^6.5.0",
+    "appwrite": "^11.0.1",
     "expo": "^49.0.0",
     "expo-dev-client": "~2.4.6",
     "expo-font": "~11.4.0",

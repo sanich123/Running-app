@@ -2,12 +2,12 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 import { SegmentedButtons } from 'react-native-paper';
 
-import { View } from '../components/Themed';
-import AcceptDeclineBtns from '../components/accept-decline-btns/accept-decline-btns';
-import Checkbox from '../components/checkbox/checkbox';
-import TextInputs from '../components/text-inputs/text-inputs';
-import { EMOTIONS_TYPES, SPORT_TYPES } from '../constants/btns-props';
-import UseGetActivityInfo from '../hooks/use-get-activity-info';
+import { View } from '../../components/Themed';
+import AcceptDeclineBtns from '../../components/accept-decline-btns/accept-decline-btns';
+import Checkbox from '../../components/checkbox/checkbox';
+import TextInputs from '../../components/text-inputs/text-inputs';
+import { EMOTIONS_TYPES, SPORT_TYPES } from '../../constants/btns-props';
+import UseGetActivityInfo from '../../hooks/use-get-activity-info';
 
 export default function SaveResult() {
   const {

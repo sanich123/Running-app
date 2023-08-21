@@ -1,12 +1,23 @@
+import { useLinkTo } from '@react-navigation/native';
+import { useEffect } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { StyleSheet } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
 import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View } from '../../components/Themed';
+import { currentAuth } from '../../firebaseConfig';
 import useGetLocation from '../../hooks/use-get-location';
 
 export default function Feed() {
   useGetLocation();
+  const [user] = useAuthState(currentAuth);
+  const linkTo = useLinkTo();
+  useEffect(() => {
+    if (!user) {
+      setTimeout(() => linkTo('/sign-in'), 0);
+    }
+  }, [user]);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Feed</Text>

@@ -1,20 +1,19 @@
 import { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-
-import { View } from '../../components/Themed';
-import { signInWithSocialNetwork } from '../../firebase/social-auth';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
         label="Email"
         value={email}
         onChangeText={(text) => setEmail(text)}
         placeholder="Type your email"
+        left={<TextInput.Icon icon="email" />}
         style={{ marginTop: 15 }}
       />
       <TextInput
@@ -23,6 +22,7 @@ export default function Login() {
         onChangeText={(password) => setPassword(password)}
         placeholder="Type your password"
         secureTextEntry={passwordIsNotVisible}
+        left={<TextInput.Icon icon="form-textbox-password" />}
         right={<TextInput.Icon icon="eye" onPress={() => setPasswordIsVisible(!passwordIsNotVisible)} />}
         style={{ marginTop: 15 }}
       />
@@ -33,9 +33,14 @@ export default function Login() {
         onPress={() => alert(JSON.stringify({ email, password }))}>
         Login
       </Button>
-      <Button icon="google" mode="outlined" style={{ marginTop: 15 }} onPress={signInWithSocialNetwork}>
-        Login with Google
-      </Button>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+});
