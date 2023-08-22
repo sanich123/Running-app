@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
 import EditScreenInfo from '../../components/EditScreenInfo';
+
 import { View, Text } from '../../components/Themed';
 import useGetLocation from '../../utils/hooks/use-get-location';
 

@@ -1,7 +1,9 @@
 import { StyleSheet } from 'react-native';
 
 import EditScreenInfo from '../../components/EditScreenInfo';
+
 import { View, Text } from '../../components/Themed';
+
 
 export default function Profile() {
   return (

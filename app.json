@@ -41,8 +41,7 @@
           "RNMapboxMapsDownloadToken": "sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWtvam9oazBrZjcza29kZ2hhMmtlcjEifQ.PkCRRfGrD8iiEOIBB9BLcg"
         }
       ],
-      "expo-router",
-      "@react-native-google-signin/google-signin"
+      "expo-router"
     ]
   }
 }
