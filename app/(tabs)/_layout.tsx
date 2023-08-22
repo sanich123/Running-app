@@ -2,11 +2,9 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import { Pressable, useColorScheme } from 'react-native';
 
+import { logOut } from '../../auth/firebase/email-auth';
 import Colors from '../../constants/Colors';
 
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
 function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>['name']; color: string }) {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
@@ -22,28 +20,30 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'feed',
+          tabBarLabel: 'Feed',
           tabBarIcon: ({ color }) => <TabBarIcon name="feed" color={color} />,
+          headerStyle: { backgroundColor: '#f4511e' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: 'bold' },
           headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+            <Pressable>
+              {({ pressed }) => (
+                <FontAwesome
+                  name="sign-out"
+                  size={25}
+                  color={Colors[colorScheme ?? 'light'].text}
+                  style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  onPress={() => logOut()}
+                />
+              )}
+            </Pressable>
           ),
         }}
       />
       <Tabs.Screen
         name="activity"
         options={{
-          title: 'activity',
+          tabBarLabel: 'Activity',
           tabBarIcon: ({ color }) => <TabBarIcon name="trophy" color={color} />,
         }}
       />
@@ -51,6 +51,7 @@ export default function TabLayout() {
         name="progress"
         options={{
           title: 'progress',
+          tabBarLabel: 'Progress',
           tabBarIcon: ({ color }) => <TabBarIcon name="arrow-circle-up" color={color} />,
         }}
       />
@@ -58,6 +59,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'profile',
+          tabBarLabel: 'Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="wrench" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>

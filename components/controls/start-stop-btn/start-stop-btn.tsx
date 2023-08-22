@@ -38,7 +38,7 @@ export default function StartStopBtn({ setStatus, status }: StartStopBtnProps) {
       onPress={() => {
         setStatus(responseStatus[status]);
         if (status === STATUSES.paused) {
-          linkTo('/save-activity');
+          linkTo('/(save-activity)/save-activity');
         }
       }}>
       <Text style={textStyle}>{responseIcon[status]}</Text>

@@ -6,7 +6,7 @@ import Controls from '../../components/controls/controls';
 import Map from '../../components/map/map';
 import Metrics from '../../components/metrics/metrics';
 import { STATUSES } from '../../constants/enums';
-import useFakeLocations from '../../hooks/use-fake-locations';
+import useFakeLocations from '../../utils/hooks/use-fake-locations';
 
 export default function Activity() {
   const { setStatus, status, locations, duration, cameraRef, lastView, distance } = useFakeLocations();
@@ -47,3 +47,4 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+
