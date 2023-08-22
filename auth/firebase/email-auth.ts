@@ -1,5 +1,6 @@
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { addDoc, collection } from 'firebase/firestore';
+import { ToastAndroid } from 'react-native';
 
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../firebaseConfig';
 
@@ -9,7 +10,7 @@ export async function logInWithEmailAndPassword(email: string, password: string)
     return user;
   } catch (err) {
     if (err instanceof Error) {
-      console.log(err.message);
+      ToastAndroid.show(err.message, ToastAndroid.SHORT);
     }
   }
 }
@@ -17,7 +18,6 @@ export async function logInWithEmailAndPassword(email: string, password: string)
 export async function registerWithEmailAndPassword(email: string, password: string): Promise<void> {
   try {
     const res = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
-    console.log(res);
     const user = res.user;
     await addDoc(collection(FIREBASE_DB, 'users'), {
       uid: user.uid,
@@ -26,7 +26,7 @@ export async function registerWithEmailAndPassword(email: string, password: stri
     });
   } catch (err) {
     if (err instanceof Error) {
-      console.log(err.message);
+      ToastAndroid.show(err.message, ToastAndroid.SHORT);
     }
   }
 }

@@ -1,80 +1,34 @@
 import { Stack } from 'expo-router';
-import { useState } from 'react';
-import { View, StyleSheet, ToastAndroid } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
 
-import { logInWithEmailAndPassword, registerWithEmailAndPassword } from '../../auth/firebase/email-auth';
+import EmailInput from '../../components/email-input/email-input';
+import LoginBtn from '../../components/login-btn/login-btn';
+import PasswordInput from '../../components/password-input/password-input';
+import RegisterBtn from '../../components/register-btn/register-btn';
+import usePasswordEmail from '../../utils/hooks/use-password-email';
 
 export default function SignIn() {
-  const emailMatcher = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-  const passwordMatcher = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$/g;
-  const [email, setEmail] = useState('someemail@gmail.com');
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [password, setPassword] = useState('7FWD7rlm');
-  const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
-
-  function emailPasswordHandler(email: string, password: string) {
-    if (!emailMatcher.test(email)) {
-      ToastAndroid.show('Your email does not match the required pattern', ToastAndroid.SHORT);
-      setEmailError(true);
-      setTimeout(() => setEmailError(false), 2000);
-    }
-    if (!passwordMatcher.test(password)) {
-      ToastAndroid.show('Your password should match the pattern', ToastAndroid.SHORT);
-      setPasswordError(true);
-      setTimeout(() => setPasswordError(false), 2000);
-    }
-  }
+  const { email, password, emailError, passwordError, setEmail, setEmailError, setPasswordError, setPassword } =
+    usePasswordEmail();
 
   return (
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
       <View style={styles.container}>
-        <TextInput
-          label="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          placeholder="Type your email"
-          left={<TextInput.Icon icon="email" />}
-          style={{ marginTop: 15 }}
+        <EmailInput email={email} setEmail={setEmail} emailError={emailError} setEmailError={setEmailError} />
+        <PasswordInput
+          password={password}
+          setPassword={setPassword}
+          passwordError={passwordError}
+          setPasswordError={setPasswordError}
         />
-        {emailError && (
-          <Text
-            variant="titleSmall"
-            style={{ color: 'red' }}>{`Your email doesn't match the required pattern: ${emailMatcher}`}</Text>
-        )}
-        <TextInput
-          label="Password"
-          value={password}
-          onChangeText={(password) => setPassword(password)}
-          placeholder="Type your password"
-          secureTextEntry={passwordIsNotVisible}
-          left={<TextInput.Icon icon="form-textbox-password" />}
-          right={<TextInput.Icon icon="eye" onPress={() => setPasswordIsVisible(!passwordIsNotVisible)} />}
-          style={{ marginTop: 15 }}
+        <RegisterBtn
+          email={email}
+          password={password}
+          setEmailError={setEmailError}
+          setPasswordError={setPasswordError}
         />
-        {passwordError && (
-          <Text
-            variant="titleSmall"
-            style={{ color: 'red' }}>{`Your password doesn't match the required pattern: ${passwordMatcher}`}</Text>
-        )}
-        <Button
-          icon="login"
-          mode="outlined"
-          style={{ marginTop: 15 }}
-          onPress={() => {
-            emailPasswordHandler(email, password);
-            registerWithEmailAndPassword(email, password);
-          }}>
-          Register
-        </Button>
-        <Button
-          mode="outlined"
-          style={{ marginTop: 15 }}
-          onPress={async () => await logInWithEmailAndPassword(email, password)}>
-          Login
-        </Button>
+        <LoginBtn email={email} password={password} setEmailError={setEmailError} setPasswordError={setPasswordError} />
       </View>
     </>
   );
