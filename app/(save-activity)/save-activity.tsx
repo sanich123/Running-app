@@ -7,7 +7,7 @@ import AcceptDeclineBtns from '../../components/accept-decline-btns/accept-decli
 import Checkbox from '../../components/checkbox/checkbox';
 import TextInputs from '../../components/text-inputs/text-inputs';
 import { EMOTIONS_TYPES, SPORT_TYPES } from '../../constants/btns-props';
-import UseGetActivityInfo from '../../hooks/use-get-activity-info';
+import UseGetActivityInfo from '../../utils/hooks/use-get-activity-info';
 
 export default function SaveResult() {
   const {
@@ -47,5 +47,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 10,
     paddingRight: 10,
+    paddingTop: 50,
   },
 });

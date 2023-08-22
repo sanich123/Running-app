@@ -3,7 +3,7 @@ import { LocationObject, watchPositionAsync } from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
 import MapView from 'react-native-maps';
 
-import { POSITION_OPTIONS } from '../constants/const';
+import { POSITION_OPTIONS } from '../../constants/const';
 
 export default function useGetDistancePosition({ initialLocation }: { initialLocation: LocationObject }) {
   const [positions, setPositions] = useState<LocationObject[]>([]);

@@ -6,6 +6,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
+
   return (
     <View style={styles.container}>
       <TextInput

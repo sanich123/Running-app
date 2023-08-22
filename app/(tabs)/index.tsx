@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
 import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View } from '../../components/Themed';
-import useGetLocation from '../../hooks/use-get-location';
+import { View, Text } from '../../components/Themed';
+import useGetLocation from '../../utils/hooks/use-get-location';
 
 export default function Feed() {
   useGetLocation();

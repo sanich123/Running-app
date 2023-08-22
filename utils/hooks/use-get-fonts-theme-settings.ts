@@ -11,8 +11,9 @@ export function useGetFontsThemeSettings() {
     // Ensure that reloading on `/modal` keeps a back button present.
     initialRouteName: '(tabs)',
   };
+
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
 

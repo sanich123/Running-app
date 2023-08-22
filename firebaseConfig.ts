@@ -1,6 +1,7 @@
-import { useLinkTo } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { initializeAuth } from 'firebase/auth';
+import { getReactNativePersistence } from 'firebase/auth/react-native';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -13,16 +14,8 @@ const firebaseConfig = {
   measurementId: 'G-3TE0WYH8JX',
 };
 
-const FIREBASE_APP = initializeApp(firebaseConfig);
-export const currentAuth = getAuth(FIREBASE_APP);
-export const db = getFirestore(FIREBASE_APP);
-
-onAuthStateChanged(currentAuth, (user) => {
-  if (!user) {
-    const linkTo = useLinkTo();
-    setTimeout(() => linkTo('/sign-in'), 0);
-  } else {
-    // User is signed out
-    // ...
-  }
+export const FIREBASE_APP = initializeApp(firebaseConfig);
+export const FIREBASE_DB = getFirestore(FIREBASE_APP);
+export const FIREBASE_AUTH = initializeAuth(FIREBASE_APP, {
+  persistence: getReactNativePersistence(AsyncStorage),
 });

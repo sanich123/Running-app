@@ -2,9 +2,9 @@ import Mapbox from '@rnmapbox/maps';
 import { LocationObject, requestForegroundPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 import { useEffect, useState } from 'react';
 
-import { INITIAL_MOCK_LOCATION } from '../constants/mocks/mocks';
-import { useAppDispatch } from '../redux/hooks/hooks';
-import { setInitialLocation } from '../redux/location-slice/location-slice';
+import { INITIAL_MOCK_LOCATION } from '../../constants/mocks/mocks';
+import { useAppDispatch } from '../../redux/hooks/hooks';
+import { setInitialLocation } from '../../redux/location-slice/location-slice';
 
 export default function useGetLocation() {
   Mapbox.setWellKnownTileServer('Mapbox');

@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 
-import { logInWithEmailAndPassword, registerWithEmailAndPassword } from '../../firebase/email-auth';
+import { logInWithEmailAndPassword, registerWithEmailAndPassword } from '../../auth/firebase/email-auth';
 
 export default function SignIn() {
   const emailMatcher = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
   const passwordMatcher = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$/g;
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('someemail@gmail.com');
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('7FWD7rlm');
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
 
   function emailPasswordHandler(email: string, password: string) {
@@ -69,7 +69,10 @@ export default function SignIn() {
           }}>
           Register
         </Button>
-        <Button mode="outlined" style={{ marginTop: 15 }} onPress={() => logInWithEmailAndPassword(email, password)}>
+        <Button
+          mode="outlined"
+          style={{ marginTop: 15 }}
+          onPress={async () => await logInWithEmailAndPassword(email, password)}>
           Login
         </Button>
       </View>

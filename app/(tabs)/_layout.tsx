@@ -1,21 +1,17 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { Pressable, useColorScheme } from 'react-native';
 
+import { logOut } from '../../auth/firebase/email-auth';
 import Colors from '../../constants/Colors';
-import { currentAuth } from '../../firebaseConfig';
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
+
 function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>['name']; color: string }) {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const [user] = useAuthState(currentAuth);
-  console.log('user from useAuthState', user);
+
   return (
     <Tabs
       screenOptions={{
@@ -29,20 +25,19 @@ export default function TabLayout() {
           headerStyle: { backgroundColor: '#f4511e' },
           headerTintColor: '#fff',
           headerTitleStyle: { fontWeight: 'bold' },
-          // headerRight: () => (
-          //   <Link href="/modal" asChild>
-          //     <Pressable>
-          //       {({ pressed }) => (
-          //         <FontAwesome
-          //           name="info-circle"
-          //           size={25}
-          //           color={Colors[colorScheme ?? 'light'].text}
-          //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-          //         />
-          //       )}
-          //     </Pressable>
-          //   </Link>
-          // ),
+          headerRight: () => (
+            <Pressable>
+              {({ pressed }) => (
+                <FontAwesome
+                  name="sign-out"
+                  size={25}
+                  color={Colors[colorScheme ?? 'light'].text}
+                  style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  onPress={() => logOut()}
+                />
+              )}
+            </Pressable>
+          ),
         }}
       />
       <Tabs.Screen
