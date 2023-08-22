@@ -1,7 +1,6 @@
 node_modules/
 .expo/
 dist/
-*.log
 npm-debug.*
 *.jks
 *.p8
@@ -11,7 +10,7 @@ npm-debug.*
 *.orig.*
 web-build/
 __tests__
-/yarn.lock
+yarn.lock
 # macOS
 .DS_Store
 
