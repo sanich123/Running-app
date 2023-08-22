@@ -11,7 +11,7 @@ npm-debug.*
 *.orig.*
 web-build/
 __tests__
-/yarn.lock
+yarn.lock
 # macOS
 .DS_Store
 
