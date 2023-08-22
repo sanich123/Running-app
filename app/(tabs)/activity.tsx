@@ -6,7 +6,6 @@ import Controls from '../../components/controls/controls';
 import Map from '../../components/map/map';
 import Metrics from '../../components/metrics/metrics';
 import { STATUSES } from '../../constants/enums';
-
 import useFakeLocations from '../../utils/hooks/use-fake-locations';
 
 export default function Activity() {
