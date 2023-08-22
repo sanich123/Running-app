@@ -4,7 +4,8 @@ import { RefObject } from 'react';
 
 import NavIcon from './nav-icon/nav-icon';
 import RouteLine from './route-line/route-line';
-import useGetLocation from '../../hooks/use-get-location';
+
+import useGetLocation from '../../utils/hooks/use-get-location';
 
 type MapProps = {
   mapVisible: boolean;
