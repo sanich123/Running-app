@@ -6,7 +6,7 @@ jest.useFakeTimers();
 describe('Save-activity page', () => {
   it('should correctly renders', () => {
     render(<SaveResult />);
-    expect(screen.getAllByRole('button')).toHaveLength(11);
+    expect(screen.getAllByRole('button')).toHaveLength(10);
 
     const titleInput = screen.getByPlaceholderText(TITLE_PLACEHOLDER);
     const descriptionInput = screen.getByPlaceholderText(DESCRIPTION_PLACEHOLDER);
