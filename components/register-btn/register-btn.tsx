@@ -3,7 +3,19 @@ import { Button } from 'react-native-paper';
 import { registerWithEmailAndPassword } from '../../auth/firebase/email-auth';
 import { emailPasswordHandler, emailPasswordHandlerProps } from '../../utils/validate-email-password';
 
-export default function RegisterBtn({ email, password, setEmailError, setPasswordError }: emailPasswordHandlerProps) {
+type RegisterBtnProps = {
+  nickname: string;
+  setNicknameError: (arg: boolean) => void;
+};
+
+export default function RegisterBtn({
+  email,
+  password,
+  setEmailError,
+  setPasswordError,
+  nickname,
+  setNicknameError,
+}: emailPasswordHandlerProps & RegisterBtnProps) {
   return (
     <Button
       icon="login"
@@ -11,7 +23,7 @@ export default function RegisterBtn({ email, password, setEmailError, setPasswor
       style={{ marginTop: 15 }}
       onPress={async () => {
         if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
-          await registerWithEmailAndPassword(email, password);
+          await registerWithEmailAndPassword(nickname, email, password);
         }
       }}>
       Register
