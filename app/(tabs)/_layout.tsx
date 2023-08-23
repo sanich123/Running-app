@@ -2,7 +2,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import { Pressable, useColorScheme } from 'react-native';
 
-import { logOut } from '../../auth/firebase/email-auth';
+import HeaderRight from '../../components/header-right/header-right';
 import Colors from '../../constants/Colors';
 
 function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>['name']; color: string }) {
@@ -25,19 +25,7 @@ export default function TabLayout() {
           headerStyle: { backgroundColor: '#f4511e' },
           headerTintColor: '#fff',
           headerTitleStyle: { fontWeight: 'bold' },
-          headerRight: () => (
-            <Pressable>
-              {({ pressed }) => (
-                <FontAwesome
-                  name="sign-out"
-                  size={25}
-                  color={Colors[colorScheme ?? 'light'].text}
-                  style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  onPress={() => logOut()}
-                />
-              )}
-            </Pressable>
-          ),
+          headerRight: () => <HeaderRight />,
         }}
       />
       <Tabs.Screen

@@ -5,7 +5,7 @@ import { Button } from 'react-native-paper';
 
 export default function ChoosePhotoBtn() {
   const [image, setImage] = useState(null);
-  const pickImage = async () => {
+  async function pickImage() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -18,11 +18,11 @@ export default function ChoosePhotoBtn() {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
-  };
+  }
   return (
     <>
       <Button mode="outlined" icon="camera" onPress={pickImage} style={{ marginTop: 15 }}>
-        Save an image
+        Upload an image
       </Button>
       {image && <Image source={{ uri: image }} style={styles.imageStyle} />}
     </>
@@ -31,8 +31,8 @@ export default function ChoosePhotoBtn() {
 
 const styles = StyleSheet.create({
   imageStyle: {
-    width: 200,
-    height: 200,
     marginTop: 15,
+    width: 220,
+    height: 220,
   },
 });
