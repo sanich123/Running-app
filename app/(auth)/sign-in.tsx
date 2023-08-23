@@ -61,7 +61,6 @@ export default function SignIn() {
             setEmailError={setEmailError}
             setPasswordError={setPasswordError}
             nickname={nickname}
-            setNicknameError={setNicknameError}
           />
         )}
         {isLogin && (

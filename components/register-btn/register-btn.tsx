@@ -5,7 +5,6 @@ import { emailPasswordHandler, emailPasswordHandlerProps } from '../../utils/val
 
 type RegisterBtnProps = {
   nickname: string;
-  setNicknameError: (arg: boolean) => void;
 };
 
 export default function RegisterBtn({
@@ -14,7 +13,6 @@ export default function RegisterBtn({
   setEmailError,
   setPasswordError,
   nickname,
-  setNicknameError,
 }: emailPasswordHandlerProps & RegisterBtnProps) {
   return (
     <Button
