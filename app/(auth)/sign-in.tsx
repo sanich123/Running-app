@@ -1,89 +1,81 @@
 import { Stack } from 'expo-router';
-import { useState } from 'react';
-import { View, StyleSheet, ToastAndroid } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
+import { View } from 'react-native';
 
-import { logInWithEmailAndPassword, registerWithEmailAndPassword } from '../../auth/firebase/email-auth';
+import EmailInput from '../../components/email-input/email-input';
+import LoginBtn from '../../components/login-btn/login-btn';
+import LoginNavigation from '../../components/login-navigation/login-navigation';
+import NicknameInput from '../../components/nickname-input/nickname-input';
+import PasswordInput from '../../components/password-input/password-input';
+import RegisterBtn from '../../components/register-btn/register-btn';
+import RegisterNavigation from '../../components/register-navigation/register-navigation';
+import ResetBtn from '../../components/reset-btn/reset-btn';
+import RersetNavigation from '../../components/reset-navigation/reset-navigation';
+import { signInStyles } from '../../styles/sign-in-page/sign-in-page';
+import { SignInContext } from '../../utils/context/sign-in';
+import usePasswordEmail from '../../utils/hooks/use-password-email';
 
 export default function SignIn() {
-  const emailMatcher = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-  const passwordMatcher = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$/g;
-  const [email, setEmail] = useState('someemail@gmail.com');
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [password, setPassword] = useState('7FWD7rlm');
-  const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
-
-  function emailPasswordHandler(email: string, password: string) {
-    if (!emailMatcher.test(email)) {
-      ToastAndroid.show('Your email does not match the required pattern', ToastAndroid.SHORT);
-      setEmailError(true);
-      setTimeout(() => setEmailError(false), 2000);
-    }
-    if (!passwordMatcher.test(password)) {
-      ToastAndroid.show('Your password should match the pattern', ToastAndroid.SHORT);
-      setPasswordError(true);
-      setTimeout(() => setPasswordError(false), 2000);
-    }
-  }
+  const {
+    email,
+    emailError,
+    passwordError,
+    password,
+    nickname,
+    nicknameError,
+    isRegister,
+    isReset,
+    isLogin,
+    isLoading,
+    setEmail,
+    setEmailError,
+    setPasswordError,
+    setPassword,
+    setNickname,
+    setNicknameError,
+    setIsRegister,
+    setIsReset,
+    setIsLogin,
+    setIsLoading,
+  } = usePasswordEmail();
 
   return (
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
-      <View style={styles.container}>
-        <TextInput
-          label="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          placeholder="Type your email"
-          left={<TextInput.Icon icon="email" />}
-          style={{ marginTop: 15 }}
-        />
-        {emailError && (
-          <Text
-            variant="titleSmall"
-            style={{ color: 'red' }}>{`Your email doesn't match the required pattern: ${emailMatcher}`}</Text>
-        )}
-        <TextInput
-          label="Password"
-          value={password}
-          onChangeText={(password) => setPassword(password)}
-          placeholder="Type your password"
-          secureTextEntry={passwordIsNotVisible}
-          left={<TextInput.Icon icon="form-textbox-password" />}
-          right={<TextInput.Icon icon="eye" onPress={() => setPasswordIsVisible(!passwordIsNotVisible)} />}
-          style={{ marginTop: 15 }}
-        />
-        {passwordError && (
-          <Text
-            variant="titleSmall"
-            style={{ color: 'red' }}>{`Your password doesn't match the required pattern: ${passwordMatcher}`}</Text>
-        )}
-        <Button
-          icon="login"
-          mode="outlined"
-          style={{ marginTop: 15 }}
-          onPress={() => {
-            emailPasswordHandler(email, password);
-            registerWithEmailAndPassword(email, password);
-          }}>
-          Register
-        </Button>
-        <Button
-          mode="outlined"
-          style={{ marginTop: 15 }}
-          onPress={async () => await logInWithEmailAndPassword(email, password)}>
-          Login
-        </Button>
-      </View>
+      <SignInContext.Provider
+        value={{
+          email,
+          emailError,
+          passwordError,
+          password,
+          nickname,
+          nicknameError,
+          isRegister,
+          isReset,
+          isLogin,
+          isLoading,
+          setEmail,
+          setEmailError,
+          setPasswordError,
+          setPassword,
+          setNickname,
+          setNicknameError,
+          setIsRegister,
+          setIsReset,
+          setIsLogin,
+          setIsLoading,
+        }}>
+        <View style={signInStyles.container}>
+          {isRegister && <NicknameInput />}
+          <EmailInput />
+          {!isReset && <PasswordInput />}
+          {isRegister && <RegisterBtn />}
+          {isLogin && <LoginBtn />}
+          {isReset && <ResetBtn />}
+          {isRegister && <RegisterNavigation />}
+          {isLogin && <LoginNavigation />}
+          {(isReset || isLogin) && <RersetNavigation />}
+        </View>
+      </SignInContext.Provider>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-});
