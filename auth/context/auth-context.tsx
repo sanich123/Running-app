@@ -31,14 +31,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const useProtectedRoute = () => {
     useEffect(() => {
-      const inTabsGroup = segments[0] === '(tabs)' || segments[0] === '(save-activity)';
+      const inTabsGroup = segments[0] === '(tabs)';
 
       if (!user && inTabsGroup) {
         router.replace('/(auth)/sign-in');
         console.log('NOT AUTHENTICATED: ');
       } else if (user && !inTabsGroup) {
         console.log('AUTHENTICATED: ', user);
-        router.replace('/(tabs)/');
+        router.replace('/');
       }
     }, [user, segments]);
   };
