@@ -1,6 +1,5 @@
 import { useContext } from 'react';
-import { StyleSheet } from 'react-native';
-import { TextInput, Text } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 
 import { nicknameMatcher } from '../../constants/email-password-regexp';
 import { SignInContext } from '../../utils/context/sign-in';
@@ -9,13 +8,8 @@ export default function NicknameInput() {
   const { nickname, nicknameError, setNickname, setNicknameError } = useContext(SignInContext);
   return (
     <>
-      {nicknameError && (
-        <Text
-          variant="titleSmall"
-          style={styles.error}>{`Your nickname doesn't match the required pattern: ${nicknameMatcher}`}</Text>
-      )}
       <TextInput
-        label="Nickname"
+        label={nicknameError ? `Must be at least 2 symbols` : 'Nickname'}
         value={nickname}
         onChangeText={(nickname) => setNickname(nickname)}
         onEndEditing={() => (!nicknameMatcher.test(nickname) ? setNicknameError(true) : setNicknameError(false))}
@@ -23,17 +17,8 @@ export default function NicknameInput() {
         left={<TextInput.Icon icon="login" />}
         style={{ marginTop: 15 }}
         accessibilityRole="text"
+        mode="outlined"
       />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  error: {
-    color: 'red',
-    display: 'flex',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    marginBottom: -15,
-  },
-});
