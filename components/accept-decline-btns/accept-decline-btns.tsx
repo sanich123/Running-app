@@ -39,7 +39,7 @@ export default function AcceptDeclineBtns({ title, description, sport, emotion, 
                 text: 'Fucking yes',
                 onPress: () => {
                   ToastAndroid.show('Redirecting to the main page!', ToastAndroid.SHORT);
-                  linkTo('/');
+                  linkTo('/home');
                 },
                 style: 'cancel',
               },

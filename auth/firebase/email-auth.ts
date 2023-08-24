@@ -8,15 +8,14 @@ import { addDoc, collection } from 'firebase/firestore';
 import { ToastAndroid } from 'react-native';
 
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../firebaseConfig';
+import { errorHandler } from '../../utils/error-handler';
 
 export async function logInWithEmailAndPassword(email: string, password: string) {
   try {
     const { user } = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
     return user;
   } catch (err) {
-    if (err instanceof Error) {
-      ToastAndroid.show(err.message, ToastAndroid.SHORT);
-    }
+    errorHandler(err);
   }
 }
 
@@ -31,9 +30,7 @@ export async function registerWithEmailAndPassword(username: string, email: stri
     });
     console.log(user);
   } catch (err) {
-    if (err instanceof Error) {
-      ToastAndroid.show(err.message, ToastAndroid.SHORT);
-    }
+    errorHandler(err);
   }
 }
 
@@ -41,9 +38,7 @@ export function logOut() {
   try {
     signOut(FIREBASE_AUTH);
   } catch (err) {
-    if (err instanceof Error) {
-      ToastAndroid.show(err.message, ToastAndroid.SHORT);
-    }
+    errorHandler(err);
   }
 }
 
@@ -52,6 +47,6 @@ export async function sendPasswordReset(email) {
     await sendPasswordResetEmail(FIREBASE_AUTH, email);
     ToastAndroid.show('Password reset link sent!', ToastAndroid.SHORT);
   } catch (err) {
-    ToastAndroid.show(err.message, ToastAndroid.SHORT);
+    errorHandler(err);
   }
 }
