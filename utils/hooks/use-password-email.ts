@@ -11,6 +11,7 @@ export default function usePasswordEmail() {
   const [isRegister, setIsRegister] = useState(true);
   const [isReset, setIsReset] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   return {
     email,
     emailError,
@@ -22,6 +23,7 @@ export default function usePasswordEmail() {
     isRegister,
     isReset,
     isLogin,
+    isLoading,
     setEmail,
     setEmailError,
     setPasswordError,
@@ -32,5 +34,6 @@ export default function usePasswordEmail() {
     setIsRegister,
     setIsReset,
     setIsLogin,
+    setIsLoading,
   };
 }

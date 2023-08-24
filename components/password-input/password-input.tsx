@@ -1,17 +1,12 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { TextInput, Text } from 'react-native-paper';
 
 import { passwordMatcher } from '../../constants/email-password-regexp';
+import { SignInContext } from '../../utils/context/sign-in';
 
-type PasswordInputProps = {
-  password: string;
-  setPassword: (arg: string) => void;
-  passwordError: boolean;
-  setPasswordError: (arg: boolean) => void;
-};
-
-export default function PasswordInput({ password, setPassword, passwordError, setPasswordError }: PasswordInputProps) {
+export default function PasswordInput() {
+  const { password, setPassword, passwordError, setPasswordError } = useContext(SignInContext);
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(false);
   return (
     <>

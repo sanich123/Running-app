@@ -1,22 +1,36 @@
-import { ToastAndroid } from 'react-native';
+import { useContext } from 'react';
 import { Button } from 'react-native-paper';
 
 import { logInWithEmailAndPassword } from '../../auth/firebase/email-auth';
-import { emailPasswordHandler, emailPasswordHandlerProps } from '../../utils/validate-email-password';
+import { SignInContext } from '../../utils/context/sign-in';
+import { errorHandler } from '../../utils/error-handler';
+import { emailPasswordHandler } from '../../utils/validate-email-password';
 
-export default function LoginBtn({ email, password, setEmailError, setPasswordError }: emailPasswordHandlerProps) {
+export default function LoginBtn() {
+  const { email, password, isLoading, setIsLoading, setEmailError, setPasswordError } = useContext(SignInContext);
+
   async function submitHandler() {
-    if (emailPasswordHandler({ email, password, setEmailError, setPasswordError }))
-      try {
+    try {
+      if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
+        setIsLoading(true);
         await logInWithEmailAndPassword(email, password);
-      } catch (e) {
-        if (e instanceof Error) {
-          ToastAndroid.show(e.message, ToastAndroid.SHORT);
-        }
+        setIsLoading(false);
       }
+    } catch (e) {
+      errorHandler(e);
+    } finally {
+      setIsLoading(false);
+    }
   }
+
   return (
-    <Button mode="outlined" style={{ marginTop: 15 }} onPress={submitHandler} accessibilityRole="button">
+    <Button
+      mode="outlined"
+      icon="account"
+      style={{ marginTop: 15 }}
+      onPress={submitHandler}
+      accessibilityRole="button"
+      loading={isLoading}>
       Login
     </Button>
   );

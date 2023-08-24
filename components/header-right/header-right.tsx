@@ -1,18 +1,23 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import { Pressable, useColorScheme } from 'react-native';
+import { Pressable, useColorScheme, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '../../auth/context/auth-context';
 import { logOut } from '../../auth/firebase/email-auth';
 import Colors from '../../constants/Colors';
+import { Text } from '../Themed';
 
 export default function HeaderRight() {
   const { user } = useAuth();
   const colorScheme = useColorScheme();
 
   return (
-    <>
-      {user && <Link href="/profile">{user?.email}</Link>}
+    <View style={styles.layout}>
+      {user && (
+        <Link href="/profile">
+          <Text>{user?.email}</Text>
+        </Link>
+      )}
       <Pressable>
         {({ pressed }) => (
           <FontAwesome
@@ -24,6 +29,15 @@ export default function HeaderRight() {
           />
         )}
       </Pressable>
-    </>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 5,
+  },
+});

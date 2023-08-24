@@ -1,16 +1,12 @@
+import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { TextInput, Text } from 'react-native-paper';
 
 import { nicknameMatcher } from '../../constants/email-password-regexp';
+import { SignInContext } from '../../utils/context/sign-in';
 
-type NicknameInputProps = {
-  nickname: string;
-  nicknameError: boolean;
-  setNickname: (arg: string) => void;
-  setNicknameError: (arg: boolean) => void;
-};
-
-export default function NicknameInput({ nickname, nicknameError, setNickname, setNicknameError }: NicknameInputProps) {
+export default function NicknameInput() {
+  const { nickname, nicknameError, setNickname, setNicknameError } = useContext(SignInContext);
   return (
     <>
       {nicknameError && (

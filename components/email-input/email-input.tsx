@@ -1,16 +1,12 @@
+import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { TextInput, Text } from 'react-native-paper';
 
 import { emailMatcher } from '../../constants/email-password-regexp';
+import { SignInContext } from '../../utils/context/sign-in';
 
-type EmailInputProps = {
-  email: string;
-  emailError: boolean;
-  setEmail: (arg: string) => void;
-  setEmailError: (arg: boolean) => void;
-};
-
-export default function EmailInput({ email, setEmail, emailError, setEmailError }: EmailInputProps) {
+export default function EmailInput() {
+  const { email, setEmail, emailError, setEmailError } = useContext(SignInContext);
   return (
     <>
       {emailError && (
