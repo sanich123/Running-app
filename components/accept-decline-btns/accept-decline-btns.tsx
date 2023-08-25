@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { ToastAndroid, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 
-import { setToAsyncStorage } from '../../utils/async-storage-utils';
+import { useAppSelector } from '../../redux/hooks/hooks';
+import { getFromAsyncStorage, setToAsyncStorage } from '../../utils/async-storage-utils';
 import { errorHandler } from '../../utils/error-handler';
 
 type AcceptDeclineBtnsProps = {
@@ -16,12 +17,14 @@ type AcceptDeclineBtnsProps = {
 export default function AcceptDeclineBtns({ title, description, sport, emotion, isSwitchOn }: AcceptDeclineBtnsProps) {
   const linkTo = useLinkTo();
   const [isLoading, setIsLoading] = useState(false);
-
+  const { finishedActivity } = useAppSelector(({ location }) => location);
   async function submitHandler() {
     try {
       setIsLoading(true);
-      const savedData = { title, description, sport, emotion, isSwitchOn };
-      setToAsyncStorage('userData', savedData);
+      const dataToSave = { ...finishedActivity, title, description, sport, emotion, isSwitchOn };
+      await setToAsyncStorage('userData', dataToSave);
+      const savedInStorageData = await getFromAsyncStorage('userData');
+      console.log(savedInStorageData);
       ToastAndroid.show('Successfully saved data!', ToastAndroid.SHORT);
       linkTo('/');
       setIsLoading(false);

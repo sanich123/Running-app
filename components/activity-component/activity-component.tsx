@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import { STATUSES } from '../../constants/enums';
+import { ActivityComponentContext } from '../../utils/context/activity-component';
 import useFakeLocations from '../../utils/hooks/use-fake-locations';
-import { getTotalSpeed } from '../../utils/location-utils';
 import Controls from '../controls/controls';
 import Map from '../map/map';
 import Metrics from '../metrics/metrics';
@@ -14,26 +14,21 @@ export default function ActivityComponent() {
   const [mapVisible, setMapVisible] = useState(false);
   const shouldShowMap = status === STATUSES.initial || status === STATUSES.paused || mapVisible;
   return (
-    <View style={page}>
-      <View style={mapContainer}>
-        {shouldShowMap && (
-          <Map mapVisible={mapVisible} cameraRef={cameraRef} locations={locations} lastView={lastView} />
-        )}
+    <ActivityComponentContext.Provider
+      value={{ setStatus, status, locations, duration, cameraRef, lastView, distance, mapVisible, setMapVisible }}>
+      <View style={page}>
+        <View style={mapContainer}>
+          {shouldShowMap && (
+            <Map mapVisible={mapVisible} cameraRef={cameraRef} locations={locations} lastView={lastView} />
+          )}
 
-        {status !== STATUSES.initial && (
-          <Metrics
-            velocity={getTotalSpeed(distance, duration)}
-            distance={distance}
-            duration={duration}
-            status={status}
-            mapVisible={mapVisible}
-          />
-        )}
+          {status !== STATUSES.initial && <Metrics />}
+        </View>
+        <View style={monitor}>
+          <Controls />
+        </View>
       </View>
-      <View style={monitor}>
-        <Controls status={status} setStatus={setStatus} setMapVisible={setMapVisible} mapVisible={mapVisible} />
-      </View>
-    </View>
+    </ActivityComponentContext.Provider>
   );
 }
 
