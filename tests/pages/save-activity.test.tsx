@@ -1,11 +1,17 @@
 import { render, screen } from '@testing-library/react-native';
+import { Provider } from 'react-redux';
 
 import SaveResult from '../../app/(tabs)/activity/save-activity';
 import { DESCRIPTION_PLACEHOLDER, TITLE_PLACEHOLDER } from '../../components/text-inputs/text-inputs-const';
+import { store } from '../../redux/store';
 jest.useFakeTimers();
 describe('Save-activity page', () => {
   it('should correctly renders', () => {
-    render(<SaveResult />);
+    render(
+      <Provider store={store}>
+        <SaveResult />
+      </Provider>,
+    );
     expect(screen.getAllByRole('button')).toHaveLength(11);
 
     const titleInput = screen.getByPlaceholderText(TITLE_PLACEHOLDER);
