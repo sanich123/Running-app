@@ -5,8 +5,8 @@ import { View, Text } from '../../../components/Themed';
 import useGetLocation from '../../../utils/hooks/use-get-location';
 
 export default function Feed() {
-  useGetLocation();
-
+  const { location, error, readyToShowLocation } = useGetLocation();
+  // console.log(location, error, readyToShowLocation);
   return (
     <View style={styles.container}>
       <Text>Здесь будут новости от друзей</Text>

@@ -26,7 +26,7 @@ export default function Map({ mapVisible, cameraRef, locations, lastView }: MapP
           centerCoordinate={[longitude, latitude]}
           animationMode="flyTo"
           animationDuration={1000}
-          zoomLevel={11}
+          zoomLevel={25}
         />
       )}
       <NavIcon lastView={lastView} />

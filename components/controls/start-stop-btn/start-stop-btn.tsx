@@ -38,7 +38,8 @@ export default function StartStopBtn({ setStatus, status }: StartStopBtnProps) {
       onPress={() => {
         setStatus(responseStatus[status]);
         if (status === STATUSES.paused) {
-          linkTo('/(tabs)/activity/save-activity');
+          console.log('and here');
+          linkTo('/save-activity');
         }
       }}>
       <Text style={textStyle}>{responseIcon[status]}</Text>

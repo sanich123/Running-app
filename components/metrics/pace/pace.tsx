@@ -12,7 +12,7 @@ export default function Pace({ mapVisible, isStartedOrContinue, velocity }: Pace
   return (
     <View style={[basicWrapper, !mapVisible && isStartedOrContinue && metricsWrapper && bigPace]}>
       <Text style={metricsHeader}>Pace: </Text>
-      <Text style={[metricsText, !mapVisible && isStartedOrContinue && bigHeader]}>{velocity} мин/км</Text>
+      <Text style={[metricsText, !mapVisible && isStartedOrContinue && bigHeader]}>{velocity} км/ч</Text>
     </View>
   );
 }
