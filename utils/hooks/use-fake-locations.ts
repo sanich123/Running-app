@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { STATUSES } from '../../constants/enums';
-import { MOCK_LOCATIONS } from '../../constants/mocks/mocks';
 import { generateNextLocation, getDistance } from '../location-utils';
 
 export default function useFakeLocations() {
@@ -12,8 +11,9 @@ export default function useFakeLocations() {
   const [status, setStatus] = useState(STATUSES.initial);
   const [duration, setDuration] = useState(0);
   const [distance, setDistance] = useState(0);
-  const [locations, setLocations] = useState<LocationObject[]>([initialLocation || MOCK_LOCATIONS[0]]);
+  const [locations, setLocations] = useState<LocationObject[]>([initialLocation]);
   const cameraRef = useRef<Camera>(null);
+
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined;
     if (status === STATUSES.started || status === STATUSES.continue) {
@@ -23,7 +23,7 @@ export default function useFakeLocations() {
     if (status === STATUSES.initial) {
       clearInterval(interval);
       setDuration(0);
-      setLocations(initialLocation);
+      setLocations([initialLocation]);
       setDistance(0);
     }
     if (status === STATUSES.paused) {
@@ -49,7 +49,7 @@ export default function useFakeLocations() {
 
   return {
     locations,
-    lastView: [locations[locations.length - 1].coords.longitude, locations[locations.length - 1].coords.latitude],
+    lastView: [locations[locations.length - 1].coords?.longitude, locations[locations.length - 1].coords?.latitude],
     cameraRef,
     setStatus,
     duration,

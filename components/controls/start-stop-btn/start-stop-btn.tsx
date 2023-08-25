@@ -1,19 +1,20 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useLinkTo } from '@react-navigation/native';
-import { ReactNode } from 'react';
+import { ReactNode, useContext } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { STATUSES } from '../../../constants/enums';
 import { LANGUAGE } from '../../../constants/languages/languages';
 import { useAppSelector } from '../../../redux/hooks/hooks';
+import { saveFinishedActivity } from '../../../redux/location-slice/location-slice';
+import { ActivityComponentContext } from '../../../utils/context/activity-component';
+import { getTotalSpeed } from '../../../utils/location-utils';
 import { Text } from '../../Themed';
 
-type StartStopBtnProps = {
-  status: STATUSES;
-  setStatus: (arg: STATUSES) => void;
-};
-
-export default function StartStopBtn({ setStatus, status }: StartStopBtnProps) {
+export default function StartStopBtn() {
+  const { setStatus, status, locations, duration, distance } = useContext(ActivityComponentContext);
+  const dispatch = useDispatch();
   const { startBtn, textStyle } = styles;
   const { language } = useAppSelector(({ changeThemeLang }) => changeThemeLang);
   const linkTo = useLinkTo();
@@ -38,8 +39,10 @@ export default function StartStopBtn({ setStatus, status }: StartStopBtnProps) {
       onPress={() => {
         setStatus(responseStatus[status]);
         if (status === STATUSES.paused) {
-          console.log('and here');
-          linkTo('/save-activity');
+          dispatch(
+            saveFinishedActivity({ locations, duration, speed: getTotalSpeed(distance, duration), date: Date.now() }),
+          );
+          linkTo('/(tabs)/activity/save-activity');
         }
       }}>
       <Text style={textStyle}>{responseIcon[status]}</Text>
