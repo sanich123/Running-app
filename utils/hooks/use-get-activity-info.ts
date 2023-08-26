@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
-export default function UseGetActivityInfo() {
+export default function useGetActivityInfo() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [sport, setSport] = useState('');
   const [emotion, setEmotion] = useState('');
   const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState('');
   return {
     title,
     setTitle,
@@ -17,5 +18,7 @@ export default function UseGetActivityInfo() {
     setEmotion,
     isSwitchOn,
     setIsSwitchOn,
+    photoUrl,
+    setPhotoUrl,
   };
 }

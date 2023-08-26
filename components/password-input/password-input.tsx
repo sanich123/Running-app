@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { TextInput } from 'react-native-paper';
 
-import { passwordMatcher } from '../../constants/email-password-regexp';
+import { passwordMatcher } from '../../constants/regexp';
 import { SignInContext } from '../../utils/context/sign-in';
 
 export default function PasswordInput() {

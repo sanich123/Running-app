@@ -1,12 +1,11 @@
+import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
 
-type CheckboxProps = {
-  isSwitchOn: boolean;
-  setIsSwitchOn: (arg: boolean) => void;
-};
+import { SaveActivityContext } from '../../utils/context/save-activity';
 
-export default function Checkbox({ isSwitchOn, setIsSwitchOn }: CheckboxProps) {
+export default function Checkbox() {
+  const { isSwitchOn, setIsSwitchOn } = useContext(SaveActivityContext);
   return (
     <View style={styles.switcherWrapper}>
       <Switch value={isSwitchOn} onValueChange={() => setIsSwitchOn(!isSwitchOn)} testID="Switcher" />

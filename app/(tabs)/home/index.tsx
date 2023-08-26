@@ -8,6 +8,7 @@ import useGetLocation from '../../../utils/hooks/use-get-location';
 
 export default function Feed() {
   const { readyToShowLocation } = useGetLocation();
+  console.log(readyToShowLocation);
   const { data, error, isLoading } = useGetUsersQuery('');
 
   console.log(data);
@@ -35,7 +36,7 @@ export default function Feed() {
           <Link href="/(tabs)/home/[id]">
             <Text>Страница с возможность редактирования комментария по id</Text>
           </Link>
-          <Link href="/home/modal">
+          <Link href="/(tabs)/home/modal">
             <Text>Открывается модалка</Text>
           </Link>
 

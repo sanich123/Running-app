@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { TextInput } from 'react-native-paper';
 
-import { nicknameMatcher } from '../../constants/email-password-regexp';
+import { nicknameMatcher } from '../../constants/regexp';
 import { SignInContext } from '../../utils/context/sign-in';
 
 export default function NicknameInput() {

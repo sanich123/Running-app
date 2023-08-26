@@ -1,27 +1,22 @@
 import { useLinkTo } from '@react-navigation/native';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { ToastAndroid, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { useAppSelector } from '../../redux/hooks/hooks';
 import { getFromAsyncStorage, setToAsyncStorage } from '../../utils/async-storage-utils';
+import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
 
-type AcceptDeclineBtnsProps = {
-  title: string;
-  description: string;
-  sport: string;
-  emotion: string;
-  isSwitchOn: boolean;
-};
-export default function AcceptDeclineBtns({ title, description, sport, emotion, isSwitchOn }: AcceptDeclineBtnsProps) {
+export default function AcceptDeclineBtns() {
+  const { title, description, sport, emotion, isSwitchOn, photoUrl } = useContext(SaveActivityContext);
   const linkTo = useLinkTo();
   const [isLoading, setIsLoading] = useState(false);
   const { finishedActivity } = useAppSelector(({ location }) => location);
   async function submitHandler() {
     try {
       setIsLoading(true);
-      const dataToSave = { ...finishedActivity, title, description, sport, emotion, isSwitchOn };
+      const dataToSave = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrl };
       await setToAsyncStorage('userData', dataToSave);
       const savedInStorageData = await getFromAsyncStorage('userData');
       console.log(savedInStorageData);

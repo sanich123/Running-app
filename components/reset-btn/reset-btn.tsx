@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Button } from 'react-native-paper';
 
 import { sendPasswordReset } from '../../auth/firebase/email-auth';
-import { emailMatcher } from '../../constants/email-password-regexp';
+import { emailMatcher } from '../../constants/regexp';
 import { SignInContext } from '../../utils/context/sign-in';
 import { errorHandler } from '../../utils/error-handler';
 

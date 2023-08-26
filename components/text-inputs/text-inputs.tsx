@@ -1,15 +1,11 @@
+import { useContext } from 'react';
 import { TextInput } from 'react-native-paper';
 
 import { TITLE_PLACEHOLDER, DESCRIPTION_PLACEHOLDER } from './text-inputs-const';
+import { SaveActivityContext } from '../../utils/context/save-activity';
 
-type TextInputsProps = {
-  setTitle: (arg: string) => void;
-  setDescription: (arg: string) => void;
-  title: string;
-  description: string;
-};
-
-export default function TextInputs({ setTitle, setDescription, title, description }: TextInputsProps) {
+export default function TextInputs() {
+  const { setTitle, setDescription, title, description } = useContext(SaveActivityContext);
   return (
     <>
       <TextInput
