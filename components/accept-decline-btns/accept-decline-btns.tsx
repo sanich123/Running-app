@@ -26,7 +26,7 @@ export default function AcceptDeclineBtns({ title, description, sport, emotion, 
       const savedInStorageData = await getFromAsyncStorage('userData');
       console.log(savedInStorageData);
       ToastAndroid.show('Successfully saved data!', ToastAndroid.SHORT);
-      linkTo('/');
+      linkTo('/home');
       setIsLoading(false);
     } catch (error) {
       errorHandler(error);
