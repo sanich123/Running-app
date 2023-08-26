@@ -24,6 +24,8 @@ export default function SaveResult() {
     setIsSwitchOn,
     photoUrl,
     setPhotoUrl,
+    isDisabled,
+    setIsDisabled,
   } = useGetActivityInfo();
 
   return (
@@ -42,6 +44,8 @@ export default function SaveResult() {
           setIsSwitchOn,
           photoUrl,
           setPhotoUrl,
+          isDisabled,
+          setIsDisabled,
         }}>
         <TextInputs />
         <SegmentedButtons value={sport} onValueChange={setSport} buttons={SPORT_TYPES} style={{ marginTop: 15 }} />

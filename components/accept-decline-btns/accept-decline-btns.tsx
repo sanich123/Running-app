@@ -9,29 +9,42 @@ import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
 
 export default function AcceptDeclineBtns() {
-  const { title, description, sport, emotion, isSwitchOn, photoUrl } = useContext(SaveActivityContext);
+  const { title, description, sport, emotion, isSwitchOn, photoUrl, isDisabled, setIsDisabled } =
+    useContext(SaveActivityContext);
   const linkTo = useLinkTo();
   const [isLoading, setIsLoading] = useState(false);
   const { finishedActivity } = useAppSelector(({ location }) => location);
+
   async function submitHandler() {
     try {
+      setIsDisabled(true);
       setIsLoading(true);
       const dataToSave = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrl };
       await setToAsyncStorage('userData', dataToSave);
       const savedInStorageData = await getFromAsyncStorage('userData');
       console.log(savedInStorageData);
+      setIsDisabled(false);
       ToastAndroid.show('Successfully saved data!', ToastAndroid.SHORT);
       linkTo('/home');
       setIsLoading(false);
     } catch (error) {
+      setIsDisabled(false);
+      setIsLoading(false);
       errorHandler(error);
     } finally {
+      setIsLoading(false);
       setIsLoading(false);
     }
   }
   return (
     <>
-      <Button icon="hand-okay" mode="contained" onPress={submitHandler} loading={isLoading} style={{ marginTop: 15 }}>
+      <Button
+        icon="hand-okay"
+        mode="contained"
+        onPress={submitHandler}
+        loading={isLoading}
+        style={{ marginTop: 15 }}
+        disabled={isDisabled}>
         {`Sav${isLoading ? 'ing' : 'e'}`}
       </Button>
       <Button
@@ -57,7 +70,8 @@ export default function AcceptDeclineBtns() {
             },
           );
         }}
-        style={{ marginTop: 15 }}>
+        style={{ marginTop: 15 }}
+        disabled={isDisabled}>
         Discard
       </Button>
     </>

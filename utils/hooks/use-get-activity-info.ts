@@ -7,6 +7,7 @@ export default function useGetActivityInfo() {
   const [emotion, setEmotion] = useState('');
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [photoUrl, setPhotoUrl] = useState('');
+  const [isDisabled, setIsDisabled] = useState(false);
   return {
     title,
     setTitle,
@@ -20,5 +21,7 @@ export default function useGetActivityInfo() {
     setIsSwitchOn,
     photoUrl,
     setPhotoUrl,
+    isDisabled,
+    setIsDisabled,
   };
 }

@@ -1,5 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
-import { ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { ToastAndroid } from 'react-native';
 
 import { errorHandler } from './error-handler';
 import { EXT_MATCHER } from '../constants/regexp';
@@ -29,7 +30,6 @@ export async function getAccessToGallery() {
   try {
     return await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
@@ -43,7 +43,26 @@ export function getInfoFromUri(uri: string) {
   return `images/img-${new Date().getTime()}.${extension}`;
 }
 
-export async function uploadToFirebaseStorage(fileName: string, blob: Blob) {
+export async function uploadToFirebaseStorage(
+  fileName: string,
+  blob: Blob,
+  setProgressPercent: (arg: number) => void,
+  setIsLoading: (arg: boolean) => void,
+  setPhotoUrl: (arg: string) => void,
+) {
   const storageRef = ref(FIREBASE_STORAGE, fileName);
-  return await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' });
+  const updateTask = uploadBytesResumable(storageRef, blob, { contentType: 'image/jpeg' });
+  updateTask.on(
+    'state_changed',
+    ({ bytesTransferred, totalBytes }) => setProgressPercent(Number((bytesTransferred / totalBytes).toFixed(2))),
+    (error) => console.log(error),
+    async () => {
+      setIsLoading(false);
+      ToastAndroid.show('File has successfully uploaded', ToastAndroid.SHORT);
+      const url = await getDownloadURL(ref(FIREBASE_STORAGE, fileName));
+      setPhotoUrl(url);
+      ToastAndroid.show('Url to file has successfully received', ToastAndroid.SHORT);
+    },
+  );
+  return updateTask;
 }

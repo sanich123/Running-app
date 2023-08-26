@@ -13,4 +13,6 @@ export const SaveActivityContext = createContext({
   setIsSwitchOn: (arg: boolean) => {},
   photoUrl: '',
   setPhotoUrl: (arg: string) => {},
+  isDisabled: false,
+  setIsDisabled: (arg: boolean) => {},
 });
