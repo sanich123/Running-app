@@ -2,7 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import { ScrollView, StyleSheet } from 'react-native';
 import { SegmentedButtons } from 'react-native-paper';
 
-import { View } from '../../../components/Themed';
 import AcceptDeclineBtns from '../../../components/accept-decline-btns/accept-decline-btns';
 import Checkbox from '../../../components/checkbox/checkbox';
 import ChoosePhotoBtn from '../../../components/choose-photo-btn/choose-photo-btn';
