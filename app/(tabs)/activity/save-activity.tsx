@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { SegmentedButtons } from 'react-native-paper';
 
 import { View } from '../../../components/Themed';
@@ -25,7 +25,8 @@ export default function SaveResult() {
   } = UseGetActivityInfo();
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      {/* <View style={styles.container}> */}
       <TextInputs title={title} description={description} setTitle={setTitle} setDescription={setDescription} />
       <SegmentedButtons value={sport} onValueChange={setSport} buttons={SPORT_TYPES} style={{ marginTop: 15 }} />
       <SegmentedButtons value={emotion} onValueChange={setEmotion} buttons={EMOTIONS_TYPES} style={{ marginTop: 15 }} />
@@ -40,7 +41,7 @@ export default function SaveResult() {
       />
 
       <StatusBar style="auto" />
-    </View>
+    </ScrollView>
   );
 }
 

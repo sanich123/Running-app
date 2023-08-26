@@ -24,7 +24,13 @@ export default function RegisterBtn() {
     }
   }
   return (
-    <Button icon="login" mode="outlined" style={{ marginTop: 15 }} loading={isLoading} onPress={registerHandler}>
+    <Button
+      rippleColor="#FF000020"
+      icon="login"
+      mode="outlined"
+      style={{ marginTop: 15 }}
+      loading={isLoading}
+      onPress={registerHandler}>
       Register
     </Button>
   );
