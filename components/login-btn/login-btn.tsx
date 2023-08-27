@@ -24,13 +24,7 @@ export default function LoginBtn() {
   }
 
   return (
-    <Button
-      mode="outlined"
-      icon="account"
-      style={{ marginTop: 15 }}
-      onPress={submitHandler}
-      accessibilityRole="button"
-      loading={isLoading}>
+    <Button mode="outlined" icon="account" onPress={submitHandler} accessibilityRole="button" loading={isLoading}>
       Login
     </Button>
   );

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { TextInput } from 'react-native-paper';
+import { HelperText, TextInput } from 'react-native-paper';
 
 import { emailMatcher } from '../../constants/regexp';
 import { SignInContext } from '../../utils/context/sign-in';
@@ -7,16 +7,21 @@ import { SignInContext } from '../../utils/context/sign-in';
 export default function EmailInput() {
   const { email, setEmail, emailError, setEmailError } = useContext(SignInContext);
   return (
-    <TextInput
-      label={emailError ? 'Must be valid email address' : 'Email'}
-      value={email}
-      onChangeText={(text) => setEmail(text)}
-      onEndEditing={() => (!emailMatcher.test(email) ? setEmailError(true) : setEmailError(false))}
-      placeholder="Type your email"
-      left={<TextInput.Icon icon="email" />}
-      style={{ marginTop: 15 }}
-      accessibilityRole="text"
-      mode="outlined"
-    />
+    <>
+      <TextInput
+        label="Email"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+        onEndEditing={() => (!emailMatcher.test(email) ? setEmailError(true) : setEmailError(false))}
+        placeholder="Type your email"
+        left={<TextInput.Icon icon="email" />}
+        style={{ marginTop: 10 }}
+        accessibilityRole="text"
+        mode="outlined"
+      />
+      <HelperText type="error" visible={emailError} padding="none">
+        Email must be valid email address
+      </HelperText>
+    </>
   );
 }

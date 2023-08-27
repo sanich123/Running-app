@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
 import { FlatList, ScrollView, StyleSheet } from 'react-native';
-import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import { ActivityIndicator, MD2Colors, FAB } from 'react-native-paper';
 
 import { View, Text } from '../../../components/Themed';
 import { useGetUsersQuery } from '../../../redux/runnich-api/runnich-api';
@@ -45,6 +45,7 @@ export default function Feed() {
               <Text>An error occured during fetching the data</Text>
             </View>
           )}
+          <FAB icon="plus" style={styles.fab} onPress={() => console.log('Pressed')} />
         </View>
       </ScrollView>
     </>
@@ -60,5 +61,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });

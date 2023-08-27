@@ -25,7 +25,7 @@ export default function ResetBtn() {
     }
   }
   return (
-    <Button icon="refresh" mode="outlined" style={{ marginTop: 15 }} loading={isLoading} onPress={resetHandler}>
+    <Button icon="refresh" mode="outlined" loading={isLoading} onPress={resetHandler}>
       Reset
     </Button>
   );
