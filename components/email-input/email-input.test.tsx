@@ -9,7 +9,7 @@ describe('Email input', () => {
     act(() => jest.runAllTimers());
     const textInput = screen.getByDisplayValue('aovoronin.piano@gmail.com');
     expect(textInput).toBeDefined();
-    expect(screen.getAllByText(/email/i)).toHaveLength(3);
+    expect(screen.getAllByText(/email/i)).toHaveLength(4);
     await act(async () => await user.clear(textInput));
     await act(async () => await user.type(textInput, 'Some words'));
   });

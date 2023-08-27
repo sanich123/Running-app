@@ -8,6 +8,6 @@ describe('Password input', () => {
     render(<PasswordInput />);
     expect(screen.getByDisplayValue('7FWD&rlm')).toBeDefined();
     expect(screen.getByRole('text')).toBeDefined();
-    expect(screen.getAllByText(/password/i)).toHaveLength(3);
+    expect(screen.getAllByText(/password/i)).toHaveLength(4);
   });
 });
