@@ -2,6 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { Slot } from 'expo-router';
 import { AppRegistry } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
+import { enGB, registerTranslation } from 'react-native-paper-dates';
 import { Provider } from 'react-redux';
 
 import { expo as appName } from '../../project/app.json';
@@ -12,7 +13,7 @@ import { useGetFontsThemeSettings } from '../utils/hooks/use-get-fonts-theme-set
 
 export default function RootLayout() {
   const { loaded, colorScheme, theme } = useGetFontsThemeSettings();
-
+  registerTranslation('en-GB', enGB);
   return (
     <>
       {!loaded && <SplashIcon />}
