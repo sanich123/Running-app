@@ -1,4 +1,4 @@
-import { useLinkTo } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { useContext, useState } from 'react';
 import { ToastAndroid, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -11,7 +11,7 @@ import { errorHandler } from '../../utils/error-handler';
 export default function AcceptDeclineBtns() {
   const { title, description, sport, emotion, isSwitchOn, photoUrl, isDisabled, setIsDisabled } =
     useContext(SaveActivityContext);
-  const linkTo = useLinkTo();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { finishedActivity } = useAppSelector(({ location }) => location);
 
@@ -25,7 +25,7 @@ export default function AcceptDeclineBtns() {
       console.log(savedInStorageData);
       setIsDisabled(false);
       ToastAndroid.show('Successfully saved data!', ToastAndroid.SHORT);
-      linkTo('/home');
+      router.back();
       setIsLoading(false);
     } catch (error) {
       setIsDisabled(false);
@@ -59,7 +59,7 @@ export default function AcceptDeclineBtns() {
                 text: 'Fucking yes',
                 onPress: () => {
                   ToastAndroid.show('Redirecting to the main page!', ToastAndroid.SHORT);
-                  linkTo('/home');
+                  router.push('/home');
                 },
                 style: 'cancel',
               },

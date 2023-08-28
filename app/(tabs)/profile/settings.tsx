@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { ScrollView, StyleSheet, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -42,7 +43,7 @@ export default function ProfileSettings() {
     setIsLoading,
     setIsDisabled,
   } = useGetSettings();
-
+  const router = useRouter();
   return (
     <ScrollView>
       <SaveSettingsContext.Provider
@@ -97,6 +98,7 @@ export default function ProfileSettings() {
                 }
                 const userSettings = { gender, sport, name, surname, city, weight, bio, birthday, profilePhoto };
                 await setToAsyncStorage('userSettings', userSettings);
+                router.back();
                 console.log(userSettings);
                 setIsDisabled(false);
                 setIsLoading(false);
