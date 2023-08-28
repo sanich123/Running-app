@@ -7,7 +7,7 @@ import { SaveSettingsContext } from '../../utils/context/settings';
 import { getAccessToGallery } from '../../utils/file-sending';
 
 export default function AvatarIcon() {
-  const { image, setImage } = useContext(SaveSettingsContext);
+  const { image, setImage, isDisabled } = useContext(SaveSettingsContext);
   return (
     <Pressable
       onPress={async () => {
@@ -16,7 +16,8 @@ export default function AvatarIcon() {
           const uri = result.assets[0].uri;
           setImage(uri);
         }
-      }}>
+      }}
+      disabled={isDisabled}>
       {!image && (
         <Avatar.Image
           size={100}

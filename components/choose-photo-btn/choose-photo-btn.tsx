@@ -42,7 +42,7 @@ export default function ChoosePhotoBtn() {
         disabled={isDisabled}>
         Upload an image
       </Button>
-      <ProgressBar progress={progress} color={MD3Colors.error50} style={{ marginTop: 15 }} />
+      {image && <ProgressBar progress={progress} color={MD3Colors.error50} style={{ marginTop: 15 }} />}
       {image && <Image source={{ uri: image }} style={styles.imageStyle} />}
     </>
   );

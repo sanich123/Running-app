@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, StyleSheet } from 'react-native';
-import { SegmentedButtons } from 'react-native-paper';
 
 import AcceptDeclineBtns from '../../../components/accept-decline-btns/accept-decline-btns';
 import Checkbox from '../../../components/checkbox/checkbox';
 import ChoosePhotoBtn from '../../../components/choose-photo-btn/choose-photo-btn';
+import EmotionBtns from '../../../components/segmented-btns/emotion-btns';
+import SportsBtns from '../../../components/segmented-btns/sports-btns';
 import TextInputs from '../../../components/text-inputs/text-inputs';
-import { EMOTIONS_TYPES, SPORT_TYPES } from '../../../constants/btns-props';
 import { SaveActivityContext } from '../../../utils/context/save-activity';
 import useGetActivityInfo from '../../../utils/hooks/use-get-activity-info';
 
@@ -33,28 +33,23 @@ export default function SaveResult() {
       <SaveActivityContext.Provider
         value={{
           title,
-          setTitle,
           description,
-          setDescription,
           sport,
-          setSport,
           emotion,
-          setEmotion,
           isSwitchOn,
-          setIsSwitchOn,
           photoUrl,
-          setPhotoUrl,
           isDisabled,
           setIsDisabled,
+          setTitle,
+          setDescription,
+          setSport,
+          setEmotion,
+          setIsSwitchOn,
+          setPhotoUrl,
         }}>
         <TextInputs />
-        <SegmentedButtons value={sport} onValueChange={setSport} buttons={SPORT_TYPES} style={{ marginTop: 15 }} />
-        <SegmentedButtons
-          value={emotion}
-          onValueChange={setEmotion}
-          buttons={EMOTIONS_TYPES}
-          style={{ marginTop: 15 }}
-        />
+        <SportsBtns isDisabled={isDisabled} setSport={setSport} sport={sport} />
+        <EmotionBtns isDisabled={isDisabled} setEmotion={setEmotion} emotion={emotion} />
         <Checkbox />
         <ChoosePhotoBtn />
         <AcceptDeclineBtns />

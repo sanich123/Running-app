@@ -26,9 +26,8 @@ export default function ProfileSettings() {
     city,
     weight,
     bio,
-    inputDate,
+    birthday,
     image,
-    photoUrl,
     isLoading,
     isDisabled,
     setGender,
@@ -38,42 +37,12 @@ export default function ProfileSettings() {
     setCity,
     setWeight,
     setBio,
-    setInputDate,
+    setBirthday,
     setImage,
     setIsLoading,
     setIsDisabled,
-    setPhotoUrl,
   } = useGetSettings();
 
-  async function submitHandler() {
-    try {
-      setIsDisabled(true);
-      setIsLoading(true);
-      if (image) {
-        const blob = await getBlobFromUri(image);
-        const fileName = getInfoFromUri(image);
-        const storageRef = ref(FIREBASE_STORAGE, fileName);
-        await uploadBytes(storageRef, blob as Blob, { contentType: 'image/jpeg' });
-        ToastAndroid.show('Successfully upload photo', ToastAndroid.SHORT);
-        const url = await getDownloadURL(storageRef);
-        setPhotoUrl(url);
-        ToastAndroid.show('Url to file has successfully received', ToastAndroid.SHORT);
-      }
-
-      const userSettings = { gender, sport, name, surname, city, weight, bio, inputDate, photoUrl };
-      await setToAsyncStorage('userSettings', userSettings);
-      console.log(userSettings);
-      setIsDisabled(false);
-      setIsLoading(false);
-    } catch (error) {
-      setIsDisabled(false);
-      setIsLoading(false);
-      errorHandler(error);
-    } finally {
-      setIsLoading(false);
-      setIsLoading(false);
-    }
-  }
   return (
     <ScrollView>
       <SaveSettingsContext.Provider
@@ -85,8 +54,9 @@ export default function ProfileSettings() {
           city,
           weight,
           bio,
-          inputDate,
+          birthday,
           image,
+          isLoading,
           isDisabled,
           setGender,
           setSport,
@@ -95,22 +65,50 @@ export default function ProfileSettings() {
           setCity,
           setWeight,
           setBio,
-          setInputDate,
+          setBirthday,
           setImage,
+          setIsLoading,
           setIsDisabled,
         }}>
         <View style={styles.container}>
           <AvatarIcon />
           <InputsNameSurname />
           <InputsWeightCity />
-          <SportsBtns />
+          <SportsBtns sport={sport} setSport={setSport} isDisabled={isDisabled} />
           <InputBio />
           <GenderBtns />
           <InputDatepicker />
           <Button
             mode="outlined"
             style={{ width: 200, marginLeft: 15, marginRight: 15 }}
-            onPress={submitHandler}
+            onPress={async () => {
+              try {
+                setIsDisabled(true);
+                setIsLoading(true);
+                let profilePhoto = '';
+                if (image) {
+                  const blob = await getBlobFromUri(image);
+                  const fileName = getInfoFromUri(image);
+                  const storageRef = ref(FIREBASE_STORAGE, fileName);
+                  await uploadBytes(storageRef, blob as Blob, { contentType: 'image/jpeg' });
+                  ToastAndroid.show('Successfully upload photo', ToastAndroid.SHORT);
+                  profilePhoto = await getDownloadURL(storageRef);
+                  ToastAndroid.show('Url to file has successfully received', ToastAndroid.SHORT);
+                }
+                const userSettings = { gender, sport, name, surname, city, weight, bio, birthday, profilePhoto };
+                await setToAsyncStorage('userSettings', userSettings);
+                console.log(userSettings);
+                setIsDisabled(false);
+                setIsLoading(false);
+              } catch (error) {
+                setIsDisabled(false);
+                setIsLoading(false);
+                errorHandler(error);
+              } finally {
+                setIsLoading(false);
+                setIsLoading(false);
+              }
+            }}
             loading={isLoading}>
             Save
           </Button>

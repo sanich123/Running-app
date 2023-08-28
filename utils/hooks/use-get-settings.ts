@@ -8,11 +8,10 @@ export default function useGetSettings() {
   const [city, setCity] = useState('');
   const [weight, setWeight] = useState('');
   const [bio, setBio] = useState('');
-  const [inputDate, setInputDate] = useState(undefined);
+  const [birthday, setBirthday] = useState(undefined);
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState('');
 
   return {
     gender,
@@ -22,11 +21,10 @@ export default function useGetSettings() {
     city,
     weight,
     bio,
-    inputDate,
+    birthday,
     image,
     isLoading,
     isDisabled,
-    photoUrl,
     setGender,
     setSport,
     setName,
@@ -34,10 +32,9 @@ export default function useGetSettings() {
     setCity,
     setWeight,
     setBio,
-    setInputDate,
+    setBirthday,
     setImage,
     setIsLoading,
     setIsDisabled,
-    setPhotoUrl,
   };
 }

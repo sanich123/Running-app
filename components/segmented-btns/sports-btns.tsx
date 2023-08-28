@@ -1,11 +1,12 @@
-import { useContext } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
 
-import { SaveSettingsContext } from '../../utils/context/settings';
+type SportBtnsProps = {
+  sport: string;
+  isDisabled: boolean;
+  setSport: (arg: string) => void;
+};
 
-export default function SportsBtns() {
-  const { sport, isDisabled, setSport } = useContext(SaveSettingsContext);
-
+export default function SportsBtns({ sport, isDisabled, setSport }: SportBtnsProps) {
   return (
     <SegmentedButtons
       value={sport}
@@ -27,7 +28,7 @@ export default function SportsBtns() {
         },
         { value: 'Bike', label: 'Riding', icon: 'bike', showSelectedCheck: true, disabled: isDisabled },
       ]}
-      style={{ marginTop: 15, paddingLeft: 15, paddingRight: 15 }}
+      style={{ marginTop: 15 }}
     />
   );
 }

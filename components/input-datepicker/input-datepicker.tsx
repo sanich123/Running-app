@@ -5,14 +5,14 @@ import { DatePickerInput } from 'react-native-paper-dates';
 import { SaveSettingsContext } from '../../utils/context/settings';
 
 export default function InputDatepicker() {
-  const { inputDate, setInputDate, isDisabled } = useContext(SaveSettingsContext);
+  const { birthday, setBirthday, isDisabled } = useContext(SaveSettingsContext);
   return (
     <View style={{ width: '100%', paddingRight: 15, paddingLeft: 15 }}>
       <DatePickerInput
         locale="en-GB"
         label="Birthdate"
-        value={inputDate}
-        onChange={(date) => setInputDate(date)}
+        value={birthday}
+        onChange={(date) => setBirthday(date)}
         inputMode="start"
         mode="outlined"
         disabled={isDisabled}
