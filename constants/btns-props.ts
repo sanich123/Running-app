@@ -29,14 +29,3 @@ export const EMOTIONS_TYPES = [
   },
   { value: 'fucked', label: 'Fucked', icon: 'emoticon-poop-outline', showSelectedCheck: true },
 ];
-
-export const GENDER_TYPES = [
-  {
-    value: 'male',
-    label: 'Male',
-    icon: 'human-male',
-    showSelectedCheck: true,
-  },
-  { value: 'female', label: 'Female', icon: 'human-female', showSelectedCheck: true },
-  { value: 'packman', label: 'Packman', icon: 'pac-man', showSelectedCheck: true },
-];
