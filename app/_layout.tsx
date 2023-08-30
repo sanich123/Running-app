@@ -8,7 +8,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import { expo as appName } from '../../project/app.json';
 import { AuthProvider } from '../auth/context/auth-context';
-import { Text } from '../components/Themed';
 import SplashIcon from '../components/splash-screen/splash-screen';
 import { persistor, store } from '../redux/store';
 import { useGetFontsThemeSettings } from '../utils/hooks/use-get-fonts-theme-settings';
@@ -21,7 +20,7 @@ export default function RootLayout() {
       {!loaded && <SplashIcon />}
       {loaded && (
         <Provider store={store}>
-          <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>
+          <PersistGate loading={null} persistor={persistor}>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
               <PaperProvider theme={theme}>
                 <AuthProvider>

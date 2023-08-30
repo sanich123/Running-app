@@ -9,7 +9,6 @@ import { nicknameMatcher } from '../../constants/regexp';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../firebaseConfig';
 import { useSignUpUserMutation } from '../../redux/runnich-api/runnich-api';
 import { getRegisterInfo } from '../../redux/user-info-slice/user-info-slice';
-import { setToAsyncStorage } from '../../utils/async-storage-utils';
 import { SignInContext } from '../../utils/context/sign-in';
 import { errorHandler } from '../../utils/error-handler';
 import { emailPasswordHandler } from '../../utils/validate-email-password';
@@ -47,7 +46,8 @@ export default function RegisterBtn() {
           errorHandler(err);
         }
       })();
-      (async () => await setToAsyncStorage('userInfo', { id, login, email }))();
+      setIsLoading(false);
+      setIsDisabled(false);
     }
     if (error) {
       ToastAndroid.show('Something wrong with your registration, try again', ToastAndroid.SHORT);
@@ -69,15 +69,6 @@ export default function RegisterBtn() {
             setIsLoading(true);
             setIsDisabled(true);
             await signUpUser({ login: nickname, email, password }).unwrap();
-            console.log('Этот код выполнился');
-            // .then((data) => {
-            //   console.log(data);
-            // })
-            // .catch((error) => console.log(error));
-            // await registerWithEmailAndPassword(nickname, email, password);
-
-            setIsLoading(false);
-            setIsDisabled(false);
           }
         } catch (error) {
           errorHandler(error);

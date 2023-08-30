@@ -5,7 +5,7 @@ import { signInStyles } from '../../styles/sign-in-page/sign-in-page';
 import { SignInContext } from '../../utils/context/sign-in';
 
 export default function RegisterNavigation() {
-  const { setIsLogin, setIsRegister } = useContext(SignInContext);
+  const { setIsLogin, setIsRegister, isDisabled } = useContext(SignInContext);
   const { btnWrapper, navigateBtn } = signInStyles;
   return (
     <View style={btnWrapper}>
@@ -15,7 +15,8 @@ export default function RegisterNavigation() {
         onPress={() => {
           setIsLogin(true);
           setIsRegister(false);
-        }}>
+        }}
+        disabled={isDisabled}>
         <Text style={{ color: 'white' }}>Login</Text>
       </Pressable>
     </View>

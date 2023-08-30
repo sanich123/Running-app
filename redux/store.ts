@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
+import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
 import changeThemeLangReducer from './change-lang-slice/change-lang-slice';
 import { loadState } from './localstorage-store';
@@ -26,7 +26,12 @@ const rootReducer = persistReducer(
 export const store = configureStore({
   reducer: rootReducer,
   preloadedState: loadState(),
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(runnichApi.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(runnichApi.middleware),
 });
 
 export const persistor = persistStore(store);

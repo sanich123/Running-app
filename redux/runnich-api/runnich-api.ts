@@ -16,7 +16,15 @@ export const runnichApi = createApi({
         body,
       }),
     }),
+    signInUser: builder.mutation({
+      query: (body) => ({
+        url: '/auth/signin',
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useGetUsersQuery, useSignUpUserMutation } = runnichApi;
+export const { useGetUsersQuery, useSignUpUserMutation, useSignInUserMutation } = runnichApi;
