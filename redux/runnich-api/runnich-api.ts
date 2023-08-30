@@ -1,18 +1,22 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export type QueryObj = {
-  url: string;
-  request: string;
-};
-
 export const runnichApi = createApi({
   reducerPath: 'runnichApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://runnich-service.onrender.com/' }),
+  tagTypes: ['activities', 'profile'],
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://runich-backend.onrender.com' }),
   endpoints: (builder) => ({
     getUsers: builder.query({
-      query: () => 'user',
+      query: () => '/user',
+    }),
+    signUpUser: builder.mutation({
+      query: (body) => ({
+        url: '/auth/signup',
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body,
+      }),
     }),
   }),
 });
 
-export const { useGetUsersQuery } = runnichApi;
+export const { useGetUsersQuery, useSignUpUserMutation } = runnichApi;

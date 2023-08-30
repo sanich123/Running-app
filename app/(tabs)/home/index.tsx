@@ -1,17 +1,19 @@
 import { Link } from 'expo-router';
 import { FlatList, ScrollView, StyleSheet } from 'react-native';
 import { ActivityIndicator, MD2Colors, FAB } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import { View, Text } from '../../../components/Themed';
 import { useGetUsersQuery } from '../../../redux/runnich-api/runnich-api';
 import useGetLocation from '../../../utils/hooks/use-get-location';
 
 export default function Feed() {
+  const { email, id, login } = useSelector(({ userInfo }) => userInfo);
+  console.log(`email = ${email}`, `id=${id}`, `login=${login}`);
   const { readyToShowLocation } = useGetLocation();
   console.log(readyToShowLocation);
   const { data, error, isLoading } = useGetUsersQuery('');
 
-  console.log(data);
   return (
     <>
       {data && (

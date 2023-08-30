@@ -5,7 +5,7 @@ import { nicknameMatcher } from '../../constants/regexp';
 import { SignInContext } from '../../utils/context/sign-in';
 
 export default function NicknameInput() {
-  const { nickname, nicknameError, setNickname, setNicknameError } = useContext(SignInContext);
+  const { nickname, nicknameError, setNickname, setNicknameError, isDisabled } = useContext(SignInContext);
   return (
     <>
       <TextInput
@@ -18,6 +18,7 @@ export default function NicknameInput() {
         style={{ marginTop: 10 }}
         accessibilityRole="text"
         mode="outlined"
+        disabled={isDisabled}
       />
       <HelperText type="error" visible={nicknameError} padding="none">
         Must be at least 2 symbols

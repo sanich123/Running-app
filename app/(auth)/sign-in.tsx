@@ -26,6 +26,7 @@ export default function SignIn() {
     isReset,
     isLogin,
     isLoading,
+    isDisabled,
     setEmail,
     setEmailError,
     setPasswordError,
@@ -36,6 +37,7 @@ export default function SignIn() {
     setIsReset,
     setIsLogin,
     setIsLoading,
+    setIsDisabled,
   } = usePasswordEmail();
 
   return (
@@ -53,6 +55,7 @@ export default function SignIn() {
           isReset,
           isLogin,
           isLoading,
+          isDisabled,
           setEmail,
           setEmailError,
           setPasswordError,
@@ -63,6 +66,7 @@ export default function SignIn() {
           setIsReset,
           setIsLogin,
           setIsLoading,
+          setIsDisabled,
         }}>
         <View style={signInStyles.container}>
           {isRegister && <NicknameInput />}

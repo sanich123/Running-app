@@ -76,6 +76,7 @@
     "jest-expo": "~49.0.0",
     "prettier": "^3",
     "react-test-renderer": "18.2.0",
+    "redux-persist": "^6.0.0",
     "sharp-cli": "^4.1.1",
     "typescript": "^5.1.3"
   },
