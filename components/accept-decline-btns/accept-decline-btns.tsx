@@ -1,31 +1,41 @@
 import { useRouter } from 'expo-router';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ToastAndroid, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import { useAppSelector } from '../../redux/hooks/hooks';
-import { getFromAsyncStorage, setToAsyncStorage } from '../../utils/async-storage-utils';
+import { useAddActivityByUserIdMutation } from '../../redux/runnich-api/runnich-api';
 import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
 
 export default function AcceptDeclineBtns() {
+  const { id } = useSelector(({ userInfo }) => userInfo);
+  const [sendActivity, { error, data }] = useAddActivityByUserIdMutation();
   const { title, description, sport, emotion, isSwitchOn, photoUrl, isDisabled, setIsDisabled } =
     useContext(SaveActivityContext);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { finishedActivity } = useAppSelector(({ location }) => location);
-
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+      ToastAndroid.show('Successfully sended data to server!', ToastAndroid.SHORT);
+      router.back();
+    }
+    if (error) {
+      ToastAndroid.show('Some error occured', ToastAndroid.SHORT);
+      console.log(error);
+      setIsDisabled(false);
+      setIsLoading(false);
+    }
+  }, [data, error]);
   async function submitHandler() {
     try {
       setIsDisabled(true);
       setIsLoading(true);
       const dataToSave = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrl };
-      console.log(dataToSave);
-      await setToAsyncStorage('userData', dataToSave);
-      const savedInStorageData = await getFromAsyncStorage('userData');
-      console.log(savedInStorageData);
-      ToastAndroid.show('Successfully saved data!', ToastAndroid.SHORT);
-      router.back();
+      await sendActivity({ dataToSave, id }).unwrap();
       setIsDisabled(false);
       setIsLoading(false);
     } catch (error) {

@@ -7,6 +7,7 @@ export const userInfoSlice = createSlice({
     id: '',
     login: '',
     settings: {
+      duration: 0,
       gender: '',
       sport: '',
       name: '',

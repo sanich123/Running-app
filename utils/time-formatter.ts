@@ -10,3 +10,12 @@ export function calculateAge(dateOfBirth: Date) {
 
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
+
+export function formatDate(dateString: Date) {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}

@@ -1,53 +1,69 @@
-import { Link } from 'expo-router';
-import { FlatList, ScrollView, StyleSheet } from 'react-native';
-import { ActivityIndicator, MD2Colors, FAB } from 'react-native-paper';
+import { Camera, MapView } from '@rnmapbox/maps';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, MD2Colors, Button, Card, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { View, Text } from '../../../components/Themed';
-import { useGetUsersQuery } from '../../../redux/runnich-api/runnich-api';
+import AvatarShowable from '../../../components/avatar/avatar-showable';
+import RouteLine from '../../../components/map/route-line/route-line';
+import { useGetActivitiesByUserIdQuery } from '../../../redux/runnich-api/runnich-api';
+import useFakeLocations from '../../../utils/hooks/use-fake-locations';
 import useGetLocation from '../../../utils/hooks/use-get-location';
+import { formatDate } from '../../../utils/time-formatter';
 
 export default function Feed() {
-  const { email, id, login } = useSelector(({ userInfo }) => userInfo);
-  console.log(`email = ${email}`, `id=${id}`, `login=${login}`);
-  const { readyToShowLocation } = useGetLocation();
-  console.log(readyToShowLocation);
-  const { data, error, isLoading } = useGetUsersQuery('');
+  const { id, settings } = useSelector(({ userInfo }) => userInfo);
+  const { name, surname } = settings;
+  useGetLocation();
+  const { cameraRef } = useFakeLocations();
 
+  const { data: activities, error, isLoading } = useGetActivitiesByUserIdQuery(id);
+  console.log(activities);
   return (
     <>
-      {data && (
-        <FlatList
-          data={data}
-          renderItem={({ item }) => (
-            <View>
-              <Text>{item.login}</Text>
-            </View>
-          )}
-          keyExtractor={(item) => item.id}
-        />
-      )}
       <ScrollView>
+        {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
+        {activities &&
+          activities.map(({ description, title, date, sport, id, locations }) => (
+            <Card key={id}>
+              <Card.Content
+                style={{ display: 'flex', flexDirection: 'row', columnGap: 5, marginBottom: 10, alignItems: 'center' }}>
+                <AvatarShowable size={40} />
+                <View style={{ display: 'flex' }}>
+                  <Text variant="titleLarge">
+                    {name} {surname}
+                  </Text>
+                  <Text variant="bodyMedium">
+                    {formatDate(date)}, {sport}
+                  </Text>
+                </View>
+              </Card.Content>
+              <View style={{ height: 200 }}>
+                <MapView style={{ flex: 1 }}>
+                  <Camera
+                    animationMode="flyTo"
+                    animationDuration={1000}
+                    zoomLevel={10}
+                    ref={cameraRef}
+                    centerCoordinate={[locations[0].coords.latitude, locations[0].coords.longitude]}
+                  />
+                  {locations.length > 1 && <RouteLine locations={locations} />}
+                </MapView>
+              </View>
+
+              <Card.Actions>
+                <Button>Cancel</Button>
+                <Button>Ok</Button>
+              </Card.Actions>
+            </Card>
+          ))}
+
         <View style={styles.container}>
-          {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
-
-          <Text>Здесь будут новости от друзей</Text>
-          <Link href="/(tabs)/home/show-map">
-            <Text>Страница с просмотром карты тренировки</Text>
-          </Link>
-          <Link href="/(tabs)/home/[id]">
-            <Text>Страница с возможность редактирования комментария по id</Text>
-          </Link>
-          <Link href="/(tabs)/home/modal">
-            <Text>Открывается модалка</Text>
-          </Link>
-
           {error && (
             <View>
               <Text>An error occured during fetching the data</Text>
             </View>
           )}
-          <FAB icon="plus" style={styles.fab} onPress={() => console.log('Pressed')} />
+          {/* <FAB icon="plus" style={styles.fab} onPress={() => console.log('Pressed')} /> */}
         </View>
       </ScrollView>
     </>

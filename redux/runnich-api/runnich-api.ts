@@ -5,12 +5,14 @@ export const runnichApi = createApi({
   tagTypes: ['activities', 'profile'],
   baseQuery: fetchBaseQuery({ baseUrl: 'https://runich-backend.onrender.com' }),
   endpoints: (builder) => ({
-    getUsers: builder.query({
-      query: () => '/user',
-    }),
+    getUsers: builder.query({ query: () => '/user' }),
     getUserProfileById: builder.query({
       query: (id) => `/profile/${id}`,
       providesTags: ['profile'],
+    }),
+    getActivitiesByUserId: builder.query({
+      query: (id) => `/activity/${id}`,
+      providesTags: ['activities'],
     }),
     signUpUser: builder.mutation({
       query: (body) => ({
@@ -37,11 +39,22 @@ export const runnichApi = createApi({
       }),
       invalidatesTags: ['profile'],
     }),
+    addActivityByUserId: builder.mutation({
+      query: ({ body, id }) => ({
+        url: `/activity/${id}`,
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body,
+      }),
+      invalidatesTags: ['activities'],
+    }),
   }),
 });
 
 export const {
   useGetUsersQuery,
+  useGetActivitiesByUserIdQuery,
+  useAddActivityByUserIdMutation,
   useSignUpUserMutation,
   useSignInUserMutation,
   useSendProfileInfoMutation,
