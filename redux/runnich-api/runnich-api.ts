@@ -24,7 +24,16 @@ export const runnichApi = createApi({
         body,
       }),
     }),
+    sendProfileInfo: builder.mutation({
+      query: (body) => ({
+        url: '/profile',
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useGetUsersQuery, useSignUpUserMutation, useSignInUserMutation } = runnichApi;
+export const { useGetUsersQuery, useSignUpUserMutation, useSignInUserMutation, useSendProfileInfoMutation } =
+  runnichApi;

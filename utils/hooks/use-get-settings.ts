@@ -1,15 +1,28 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function useGetSettings() {
-  const [gender, setGender] = useState('');
-  const [sport, setSport] = useState('');
-  const [name, setName] = useState('');
-  const [surname, setSurname] = useState('');
-  const [city, setCity] = useState('');
-  const [weight, setWeight] = useState('');
-  const [bio, setBio] = useState('');
-  const [birthday, setBirthday] = useState(undefined);
-  const [image, setImage] = useState(null);
+  const {
+    gender: savedGender,
+    sport: savedSport,
+    name: savedName,
+    surname: savedSurname,
+    city: savedCity,
+    weight: savedWeight,
+    bio: savedBio,
+    birthday: savedBirthday,
+    profilePhoto: savedProfilePhoto,
+  } = useSelector(({ userInfo }) => userInfo.settings);
+
+  const [gender, setGender] = useState(savedGender);
+  const [sport, setSport] = useState(savedSport);
+  const [name, setName] = useState(savedName);
+  const [surname, setSurname] = useState(savedSurname);
+  const [city, setCity] = useState(savedCity);
+  const [weight, setWeight] = useState(savedWeight);
+  const [bio, setBio] = useState(savedBio);
+  const [birthday, setBirthday] = useState(savedBirthday ? new Date(savedBirthday) : undefined);
+  const [image, setImage] = useState(savedProfilePhoto ? savedProfilePhoto : null);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 

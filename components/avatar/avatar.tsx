@@ -17,7 +17,8 @@ export default function AvatarIcon() {
           setImage(uri);
         }
       }}
-      disabled={isDisabled}>
+      disabled={isDisabled}
+      style={isDisabled && { opacity: 0.5 }}>
       {!image && (
         <Avatar.Image
           size={100}

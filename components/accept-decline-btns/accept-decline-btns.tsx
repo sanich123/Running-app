@@ -20,12 +20,13 @@ export default function AcceptDeclineBtns() {
       setIsDisabled(true);
       setIsLoading(true);
       const dataToSave = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrl };
+      console.log(dataToSave);
       await setToAsyncStorage('userData', dataToSave);
       const savedInStorageData = await getFromAsyncStorage('userData');
       console.log(savedInStorageData);
-      setIsDisabled(false);
       ToastAndroid.show('Successfully saved data!', ToastAndroid.SHORT);
       router.back();
+      setIsDisabled(false);
       setIsLoading(false);
     } catch (error) {
       setIsDisabled(false);

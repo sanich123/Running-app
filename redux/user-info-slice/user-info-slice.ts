@@ -6,6 +6,17 @@ export const userInfoSlice = createSlice({
     email: '',
     id: '',
     login: '',
+    settings: {
+      gender: '',
+      sport: '',
+      name: '',
+      surname: '',
+      city: '',
+      weight: '',
+      bio: '',
+      birthday: '',
+      profilePhoto: '',
+    },
   },
   reducers: {
     getRegisterInfo: (state, action) => {
@@ -14,8 +25,11 @@ export const userInfoSlice = createSlice({
       state.id = id;
       state.login = login;
     },
+    saveSettingsInfo: (state, action) => {
+      state.settings = action.payload;
+    },
   },
 });
 
-export const { getRegisterInfo } = userInfoSlice.actions;
+export const { getRegisterInfo, saveSettingsInfo } = userInfoSlice.actions;
 export default userInfoSlice.reducer;
