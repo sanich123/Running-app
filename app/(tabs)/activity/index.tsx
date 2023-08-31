@@ -10,7 +10,7 @@ import { setInitialLocation } from '../../../redux/location-slice/location-slice
 export default function Activity() {
   const dispatch = useDispatch();
   const { initialLocation } = useSelector(({ location }) => location);
-  if (!initialLocation) {
+  if (!initialLocation.coords) {
     return (
       <View>
         <Text>Our app is only available, when we have your location</Text>

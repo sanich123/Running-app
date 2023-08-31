@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet } from 'react-native';
 
 import { View } from '../../../components/Themed';
-import AvatarIcon from '../../../components/avatar/avatar';
+import AvatarIconEditable from '../../../components/avatar/avatar-editable';
 import InputBio from '../../../components/input-bio/input-bio';
 import InputDatepicker from '../../../components/input-datepicker/input-datepicker';
 import InputsNameSurname from '../../../components/inputs-name-surname/inputs-name-surname';
@@ -65,7 +65,7 @@ export default function ProfileSettings() {
           setIsDisabled,
         }}>
         <View style={styles.container}>
-          <AvatarIcon />
+          <AvatarIconEditable />
           <InputsNameSurname />
           <InputsWeightCity />
           <SportsBtns sport={sport} setSport={setSport} isDisabled={isDisabled} />

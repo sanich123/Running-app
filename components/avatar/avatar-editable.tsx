@@ -6,8 +6,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { SaveSettingsContext } from '../../utils/context/settings';
 import { getAccessToGallery } from '../../utils/file-sending';
 
-export default function AvatarIcon() {
+export default function AvatarIconEditable() {
   const { image, setImage, isDisabled } = useContext(SaveSettingsContext);
+
   return (
     <Pressable
       onPress={async () => {

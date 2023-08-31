@@ -8,6 +8,10 @@ export const runnichApi = createApi({
     getUsers: builder.query({
       query: () => '/user',
     }),
+    getUserProfileById: builder.query({
+      query: (id) => `/profile/${id}`,
+      providesTags: ['profile'],
+    }),
     signUpUser: builder.mutation({
       query: (body) => ({
         url: '/auth/signup',
@@ -31,9 +35,15 @@ export const runnichApi = createApi({
         headers: { 'Content-type': 'application/json' },
         body,
       }),
+      invalidatesTags: ['profile'],
     }),
   }),
 });
 
-export const { useGetUsersQuery, useSignUpUserMutation, useSignInUserMutation, useSendProfileInfoMutation } =
-  runnichApi;
+export const {
+  useGetUsersQuery,
+  useSignUpUserMutation,
+  useSignInUserMutation,
+  useSendProfileInfoMutation,
+  useGetUserProfileByIdQuery,
+} = runnichApi;
