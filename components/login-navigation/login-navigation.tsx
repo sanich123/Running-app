@@ -18,7 +18,7 @@ export default function LoginNavigation() {
           setIsRegister(false);
         }}
         disabled={isDisabled}>
-        <Text style={{ color: 'white' }}>Reset</Text>
+        <Text style={[{ color: 'white' }, isDisabled && { opacity: 0.5 }]}>Reset</Text>
       </Pressable>
     </View>
   );

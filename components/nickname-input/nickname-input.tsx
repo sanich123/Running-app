@@ -14,7 +14,7 @@ export default function NicknameInput() {
         onChangeText={(nickname) => setNickname(nickname)}
         onEndEditing={() => (!nicknameMatcher.test(nickname) ? setNicknameError(true) : setNicknameError(false))}
         placeholder="Type your login"
-        left={<TextInput.Icon icon="login" />}
+        left={<TextInput.Icon icon="login" disabled={isDisabled} />}
         style={{ marginTop: 10 }}
         accessibilityRole="text"
         mode="outlined"

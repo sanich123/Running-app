@@ -17,7 +17,7 @@ export default function RegisterNavigation() {
           setIsRegister(false);
         }}
         disabled={isDisabled}>
-        <Text style={{ color: 'white' }}>Login</Text>
+        <Text style={[{ color: 'white' }, isDisabled && { opacity: 0.5 }]}>Login</Text>
       </Pressable>
     </View>
   );

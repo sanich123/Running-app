@@ -11,23 +11,23 @@ import { calculateAge } from '../../../utils/time-formatter';
 export default function Profile() {
   const { id } = useSelector(({ userInfo }) => userInfo);
   const { isLoading, error, data: profileInfo } = useGetUserProfileByIdQuery(id);
-  const { name, surname, birthday, city, bio } = profileInfo;
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <AvatarShowable size={120} />
+        <AvatarShowable size={100} />
         <View style={styles.nicknameWrapper}>
           <Text variant="displaySmall">
-            {name ? name : 'Your name'} {surname ? surname : 'Your surname'}
+            {profileInfo?.name || 'Your name'} {profileInfo?.surname || 'Your surname'}
           </Text>
           <Text variant="titleLarge">
-            {city ? city : 'Your homeland'}, {birthday ? `${calculateAge(new Date(birthday))} years old` : 'Your age'}
+            {profileInfo?.city || 'Your homeland'},{' '}
+            {profileInfo?.birthday ? `${calculateAge(new Date(profileInfo?.birthday))} years old` : 'Your age'}
           </Text>
         </View>
       </View>
       <View style={styles.bio}>
-        <Text variant="titleMedium">{bio ? bio : 'Your biography'}</Text>
+        <Text variant="titleMedium">{profileInfo?.bio || 'Your biography'}</Text>
       </View>
 
       <Button mode="outlined" icon="logout" onPress={() => logOut()} style={{ marginTop: 15 }}>

@@ -16,8 +16,14 @@ export default function PasswordInput() {
         onEndEditing={() => (!passwordMatcher.test(password) ? setPasswordError(true) : setPasswordError(false))}
         placeholder="Type your password"
         secureTextEntry={passwordIsNotVisible}
-        left={<TextInput.Icon icon="form-textbox-password" />}
-        right={<TextInput.Icon icon="eye" onPress={() => setPasswordIsVisible(!passwordIsNotVisible)} />}
+        left={<TextInput.Icon icon="form-textbox-password" disabled={isDisabled} />}
+        right={
+          <TextInput.Icon
+            icon="eye"
+            onPress={() => setPasswordIsVisible(!passwordIsNotVisible)}
+            disabled={isDisabled}
+          />
+        }
         style={{ marginTop: 10 }}
         accessibilityRole="text"
         mode="outlined"

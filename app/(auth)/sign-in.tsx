@@ -9,7 +9,7 @@ import PasswordInput from '../../components/password-input/password-input';
 import RegisterBtn from '../../components/register-btn/register-btn';
 import RegisterNavigation from '../../components/register-navigation/register-navigation';
 import ResetBtn from '../../components/reset-btn/reset-btn';
-import RersetNavigation from '../../components/reset-navigation/reset-navigation';
+import ResetNavigation from '../../components/reset-navigation/reset-navigation';
 import { signInStyles } from '../../styles/sign-in-page/sign-in-page';
 import { SignInContext } from '../../utils/context/sign-in';
 import usePasswordEmail from '../../utils/hooks/use-password-email';
@@ -77,7 +77,7 @@ export default function SignIn() {
           {isReset && <ResetBtn />}
           {isRegister && <RegisterNavigation />}
           {isLogin && <LoginNavigation />}
-          {(isReset || isLogin) && <RersetNavigation />}
+          {(isReset || isLogin) && <ResetNavigation />}
         </View>
       </SignInContext.Provider>
     </>

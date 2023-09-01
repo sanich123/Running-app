@@ -14,7 +14,7 @@ export default function EmailInput() {
         onChangeText={(text) => setEmail(text)}
         onEndEditing={() => (!emailMatcher.test(email) ? setEmailError(true) : setEmailError(false))}
         placeholder="Type your email"
-        left={<TextInput.Icon icon="email" />}
+        left={<TextInput.Icon icon="email" disabled={isDisabled} />}
         style={{ marginTop: 10 }}
         accessibilityRole="text"
         mode="outlined"

@@ -80,7 +80,7 @@ export default function RegisterBtn() {
         }
       }}
       disabled={isDisabled}>
-      Register
+      {`Register${isLoading ? 'ing' : ''}`}
     </Button>
   );
 }

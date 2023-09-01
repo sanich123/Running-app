@@ -12,8 +12,10 @@ export const runnichApi = createApi({
     }),
     getActivitiesByUserId: builder.query({
       query: (id) => `/activity/${id}`,
+      keepUnusedDataFor: 30,
       providesTags: ['activities'],
     }),
+
     signUpUser: builder.mutation({
       query: (body) => ({
         url: '/auth/signup',
@@ -48,12 +50,21 @@ export const runnichApi = createApi({
       }),
       invalidatesTags: ['activities'],
     }),
+    deleteActivityById: builder.mutation({
+      query: (id) => ({
+        url: `/activity/${id}`,
+        method: 'DELETE',
+        headers: { 'Content-type': 'application/json' },
+      }),
+      invalidatesTags: ['activities'],
+    }),
   }),
 });
 
 export const {
   useGetUsersQuery,
   useGetActivitiesByUserIdQuery,
+  useDeleteActivityByIdMutation,
   useAddActivityByUserIdMutation,
   useSignUpUserMutation,
   useSignInUserMutation,

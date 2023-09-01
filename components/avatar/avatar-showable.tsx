@@ -8,14 +8,15 @@ import { useGetUserProfileByIdQuery } from '../../redux/runnich-api/runnich-api'
 export default function AvatarShowable({ size }: { size: number }) {
   const { id } = useSelector(({ userInfo }) => userInfo);
   const { isLoading, error, data: profileInfo } = useGetUserProfileByIdQuery(id);
+
   return (
     <>
       {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
       {error && <Text>{`An error occured, ${error.toString()}`}</Text>}
-      {profileInfo && profileInfo.profilePhoto && (
+      {profileInfo && profileInfo?.profilePhoto && (
         <Image source={{ uri: profileInfo.profilePhoto }} style={{ width: size, height: size, borderRadius: 70 }} />
       )}
-      {!profileInfo.profilePhoto && !isLoading && (
+      {!profileInfo?.profilePhoto && !isLoading && (
         <Avatar.Image
           size={size}
           source={() => <Icon name="person" size={size} />}

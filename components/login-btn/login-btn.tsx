@@ -55,7 +55,7 @@ export default function LoginBtn() {
       accessibilityRole="button"
       loading={isLoading}
       disabled={isDisabled}>
-      Login
+      {`Login${isLoading ? 'ing' : ''}`}
     </Button>
   );
 }
