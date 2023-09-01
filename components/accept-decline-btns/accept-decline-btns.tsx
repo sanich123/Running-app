@@ -4,7 +4,6 @@ import { ToastAndroid, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { useAppSelector } from '../../redux/hooks/hooks';
 import { useAddActivityByUserIdMutation } from '../../redux/runnich-api/runnich-api';
 import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
@@ -16,7 +15,7 @@ export default function AcceptDeclineBtns() {
     useContext(SaveActivityContext);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const { finishedActivity } = useAppSelector(({ location }) => location);
+  const { finishedActivity } = useSelector(({ location }) => location);
   useEffect(() => {
     if (data) {
       console.log(data);
@@ -34,8 +33,9 @@ export default function AcceptDeclineBtns() {
     try {
       setIsDisabled(true);
       setIsLoading(true);
-      const dataToSave = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrl };
-      await sendActivity({ dataToSave, id }).unwrap();
+      const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrl };
+      console.log(body);
+      await sendActivity({ body, id }).unwrap();
       setIsDisabled(false);
       setIsLoading(false);
     } catch (error) {

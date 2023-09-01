@@ -10,7 +10,6 @@ export const location = createSlice({
       locations: [] as Location[],
       duration: 0,
       speed: 0,
-      date: Date.now(),
     },
   },
   reducers: {

@@ -9,6 +9,7 @@ import { useGetActivitiesByUserIdQuery } from '../../../redux/runnich-api/runnic
 import useFakeLocations from '../../../utils/hooks/use-fake-locations';
 import useGetLocation from '../../../utils/hooks/use-get-location';
 import { formatDate } from '../../../utils/time-formatter';
+import { useEffect } from 'react';
 
 export default function Feed() {
   const { id, settings } = useSelector(({ userInfo }) => userInfo);
@@ -16,7 +17,15 @@ export default function Feed() {
   useGetLocation();
   const { cameraRef } = useFakeLocations();
 
-  const { data: activities, error, isLoading } = useGetActivitiesByUserIdQuery(id);
+  const {
+    data: activities,
+    error,
+    isLoading,
+  } = useGetActivitiesByUserIdQuery(id, {
+    refetchOnMountOrArgChange: true,
+    pollingInterval: 60_000,
+  });
+
   console.log(activities);
   return (
     <>
