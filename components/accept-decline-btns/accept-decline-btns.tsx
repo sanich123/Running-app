@@ -34,6 +34,7 @@ export default function AcceptDeclineBtns() {
       setIsDisabled(true);
       setIsLoading(true);
       const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrl };
+      console.log(body);
       await sendActivity({ body, id }).unwrap();
       setIsDisabled(false);
       setIsLoading(false);

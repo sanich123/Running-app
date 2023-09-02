@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 import { useDeleteActivityByIdMutation } from '../../redux/runnich-api/runnich-api';
 import useFakeLocations from '../../utils/hooks/use-fake-locations';
-import { formatDate } from '../../utils/time-formatter';
+import { formatDate, formatDuration } from '../../utils/time-formatter';
 import AvatarShowable from '../avatar/avatar-showable';
 import RouteLine from '../map/route-line/route-line';
 
@@ -18,36 +18,61 @@ type activityCardProps = {
   id: string;
   locations: LocationObject[];
   photoUrl: string;
+  duration: number;
+  speed: number;
 };
 
-export default function ActivityCard({ description, title, date, sport, id, locations, photoUrl }: activityCardProps) {
+export default function ActivityCard({
+  description,
+  title,
+  date,
+  sport,
+  id,
+  locations,
+  photoUrl,
+  duration,
+  speed,
+}: activityCardProps) {
   const { settings } = useSelector(({ userInfo }) => userInfo);
   const { name, surname } = settings;
   const { cameraRef } = useFakeLocations();
   const [deleteActivityById] = useDeleteActivityByIdMutation();
-  console.log(photoUrl);
   return (
     <Card key={id}>
       <Card.Content
         style={{ display: 'flex', flexDirection: 'row', columnGap: 5, marginBottom: 10, alignItems: 'center' }}>
         <AvatarShowable size={40} />
         <View style={{ display: 'flex' }}>
-          <Text variant="titleLarge">
+          <Text variant="bodyLarge">
             {name} {surname}
           </Text>
-          <Text variant="bodyMedium">
+          <Text variant="bodySmall">
             {formatDate(date)}, {sport}
           </Text>
+          <Text variant="headlineSmall">{title}</Text>
         </View>
-        <Text variant="bodyLarge">{title}</Text>
       </Card.Content>
+      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', height: 60 }}>
+        <View style={{ display: 'flex' }}>
+          <Text variant="titleMedium">Distance: </Text>
+          <Text variant="bodyMedium">{duration}</Text>
+        </View>
+        <View style={{ display: 'flex' }}>
+          <Text variant="titleMedium">Time:</Text>
+          <Text variant="bodyMedium">{formatDuration(duration)}</Text>
+        </View>
+        <View style={{ display: 'flex' }}>
+          <Text variant="titleMedium">Pace:</Text>
+          <Text variant="bodyMedium">{speed} км/ч</Text>
+        </View>
+      </View>
       <View style={{ height: 200 }}>
-        {photoUrl && <Image source={{ uri: photoUrl }} style={{ flex: 1 }} />}
+        {photoUrl && <Image source={{ uri: photoUrl }} style={{ flex: 1 }} resizeMode="cover" />}
         {!photoUrl && (
-          <MapView style={{ flex: 1 }}>
+          <MapView style={{ flex: 1 }} scaleBarEnabled={false}>
             <Camera
-              animationMode="flyTo"
-              animationDuration={1000}
+              // animationMode="flyTo"
+              // animationDuration={1000}
               zoomLevel={25}
               ref={cameraRef}
               centerCoordinate={[locations[0].coords.latitude, locations[0].coords.longitude]}
@@ -86,7 +111,7 @@ export default function ActivityCard({ description, title, date, sport, id, loca
                 .unwrap()
                 .then((success) => console.log(success))
                 .catch((error) => console.log(error));
-              ToastAndroid.show('Здесь будет функционал sharing', ToastAndroid.SHORT);
+              ToastAndroid.show('Successfully delete an activity', ToastAndroid.SHORT);
             }}
           />
         </View>

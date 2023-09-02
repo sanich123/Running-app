@@ -14,7 +14,11 @@ export default function AvatarShowable({ size }: { size: number }) {
       {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
       {error && <Text>{`An error occured, ${error.toString()}`}</Text>}
       {profileInfo && profileInfo?.profilePhoto && (
-        <Image source={{ uri: profileInfo.profilePhoto }} style={{ width: size, height: size, borderRadius: 70 }} />
+        <Image
+          source={{ uri: profileInfo.profilePhoto }}
+          style={{ width: size, height: size, borderRadius: 70 }}
+          resizeMode="cover"
+        />
       )}
       {!profileInfo?.profilePhoto && !isLoading && (
         <Avatar.Image
