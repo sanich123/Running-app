@@ -1,73 +1,118 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+import { headers, TAGS, BASE_URL, ROUTES } from '../../constants/api/api-contsts';
+
+const { activities, profile, comments, likes } = TAGS;
+const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp } = ROUTES;
+
 export const runnichApi = createApi({
   reducerPath: 'runnichApi',
-  tagTypes: ['activities', 'profile'],
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://runich-backend.onrender.com' }),
+  tagTypes: [activities, profile, comments, likes],
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (builder) => ({
-    getUsers: builder.query({ query: () => '/user' }),
     getUserProfileById: builder.query({
-      query: (id) => `/profile/${id}`,
-      providesTags: ['profile'],
+      query: (id) => `/${routeProfile}/${id}`,
+      providesTags: [profile],
     }),
     getActivitiesByUserId: builder.query({
-      query: (id) => `/activity/${id}`,
+      query: (id) => `/${activity}/${id}`,
       keepUnusedDataFor: 30,
-      providesTags: ['activities'],
+      providesTags: [activities],
     }),
-
+    getFriendsByUserId: builder.query({
+      query: (id: string) => `/${friend}/${id}`,
+    }),
+    getCommentsByActivityId: builder.query({
+      query: (id: string) => `/${comment}/${id}`,
+      providesTags: [comments],
+    }),
+    getLikesByActivityId: builder.query({
+      query: (id: string) => `/${like}/${id}`,
+      providesTags: [likes],
+    }),
     signUpUser: builder.mutation({
       query: (body) => ({
-        url: '/auth/signup',
+        url: `/${auth}/${signUp}`,
         method: 'POST',
-        headers: { 'Content-type': 'application/json' },
+        headers,
         body,
       }),
     }),
     signInUser: builder.mutation({
       query: (body) => ({
-        url: '/auth/signin',
+        url: `/${auth}/${signIn}`,
         method: 'POST',
-        headers: { 'Content-type': 'application/json' },
+        headers,
         body,
       }),
     }),
     sendProfileInfo: builder.mutation({
       query: (body) => ({
-        url: '/profile',
+        url: `/${routeProfile}`,
         method: 'POST',
-        headers: { 'Content-type': 'application/json' },
+        headers,
         body,
       }),
-      invalidatesTags: ['profile'],
+      invalidatesTags: [profile],
     }),
     addActivityByUserId: builder.mutation({
       query: ({ body, id }) => ({
-        url: `/activity/${id}`,
+        url: `/${activity}/${id}`,
         method: 'POST',
-        headers: { 'Content-type': 'application/json' },
+        headers,
         body,
       }),
-      invalidatesTags: ['activities'],
+      invalidatesTags: [activities],
     }),
     deleteActivityById: builder.mutation({
       query: (id) => ({
-        url: `/activity/${id}`,
+        url: `/${activity}/${id}`,
         method: 'DELETE',
-        headers: { 'Content-type': 'application/json' },
+        headers,
       }),
-      invalidatesTags: ['activities'],
+      invalidatesTags: [activities],
+    }),
+    addFriend: builder.mutation({
+      query: (body: { userId: string; friendId: string }) => ({
+        url: `/${friend}`,
+        method: 'POST',
+        headers,
+        body,
+      }),
+    }),
+    postCommentWithActivityId: builder.mutation({
+      query: ({ body, id }: { body: { comment: string; authorId: string }; id: string }) => ({
+        url: `/${comment}/${id}`,
+        method: 'POST',
+        headers,
+        body,
+      }),
+      invalidatesTags: [comments],
+    }),
+    sendOrDeleteLike: builder.mutation({
+      query: (body) => ({
+        url: `/${like}`,
+        method: 'POST',
+        headers,
+        body,
+      }),
+      invalidatesTags: [likes],
     }),
   }),
 });
 
 export const {
-  useGetUsersQuery,
+  useGetUserProfileByIdQuery,
   useGetActivitiesByUserIdQuery,
-  useDeleteActivityByIdMutation,
-  useAddActivityByUserIdMutation,
+  useGetFriendsByUserIdQuery,
+  useGetCommentsByActivityIdQuery,
+  useGetLikesByActivityIdQuery,
   useSignUpUserMutation,
   useSignInUserMutation,
   useSendProfileInfoMutation,
-  useGetUserProfileByIdQuery,
+  useAddActivityByUserIdMutation,
+  useDeleteActivityByIdMutation,
+  useAddFriendMutation,
+  usePostCommentWithActivityIdMutation,
+  useSendOrDeleteLikeMutation,
 } = runnichApi;
