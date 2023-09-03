@@ -16,6 +16,7 @@ export default function SaveSettingsBtn() {
   const { id } = useSelector(({ userInfo }) => userInfo);
   const [sendProfileInfo, { data, error }] = useSendProfileInfoMutation();
   const router = useRouter();
+  const dispatch = useDispatch();
   const {
     isDisabled,
     setIsDisabled,
@@ -31,7 +32,7 @@ export default function SaveSettingsBtn() {
     birthday,
     isLoading,
   } = useContext(SaveSettingsContext);
-  const dispatch = useDispatch();
+
   useEffect(() => {
     if (data) {
       ToastAndroid.show('Your data has successfully sended!', ToastAndroid.SHORT);
@@ -86,7 +87,7 @@ export default function SaveSettingsBtn() {
       }}
       loading={isLoading}
       disabled={isDisabled}>
-      Save
+      {`Sav${isLoading ? 'ing' : 'e'}`}
     </Button>
   );
 }
