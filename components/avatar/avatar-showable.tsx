@@ -1,19 +1,17 @@
 import { Image, Text } from 'react-native';
 import { ActivityIndicator, Avatar, MD2Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
 
 import { useGetUserProfileByIdQuery } from '../../redux/runnich-api/runnich-api';
 
-export default function AvatarShowable({ size }: { size: number }) {
-  const { id } = useSelector(({ userInfo }) => userInfo);
+export default function AvatarShowable({ size, id }: { size: number; id: string }) {
   const { isLoading, error, data: profileInfo } = useGetUserProfileByIdQuery(id);
 
   return (
     <>
       {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
       {error && <Text>{`An error occured, ${error.toString()}`}</Text>}
-      {profileInfo && profileInfo?.profilePhoto && (
+      {profileInfo?.profilePhoto && (
         <Image
           source={{ uri: profileInfo.profilePhoto }}
           style={{ width: size, height: size, borderRadius: 70 }}

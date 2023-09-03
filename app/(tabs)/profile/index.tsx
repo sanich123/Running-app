@@ -15,7 +15,7 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <AvatarShowable size={100} />
+        <AvatarShowable size={100} id={id} />
         <View style={styles.nicknameWrapper}>
           <Text variant="displaySmall">
             {profileInfo?.name || 'Your name'} {profileInfo?.surname || 'Your surname'}
