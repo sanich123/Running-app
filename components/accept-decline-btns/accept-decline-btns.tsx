@@ -4,8 +4,10 @@ import { ToastAndroid, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
+
 import { useAddActivityByUserIdMutation } from '../../redux/runnich-api/runnich-api';
 import { SaveActivityContext } from '../../utils/context/save-activity';
+
 import { errorHandler } from '../../utils/error-handler';
 
 export default function AcceptDeclineBtns() {
@@ -15,6 +17,7 @@ export default function AcceptDeclineBtns() {
     useContext(SaveActivityContext);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
   const { finishedActivity } = useSelector(({ location }) => location);
   useEffect(() => {
     if (data) {
@@ -29,14 +32,17 @@ export default function AcceptDeclineBtns() {
       setIsLoading(false);
     }
   }, [data, error]);
+
   async function submitHandler() {
     try {
       setIsDisabled(true);
       setIsLoading(true);
+
       const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrl };
       console.log(body);
       await sendActivity({ body, id }).unwrap();
       setIsDisabled(false);
+
       setIsLoading(false);
     } catch (error) {
       setIsDisabled(false);

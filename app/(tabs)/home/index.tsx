@@ -10,6 +10,7 @@ import { useGetActivitiesByUserIdQuery } from '../../../redux/runnich-api/runnic
 import useGetLocation from '../../../utils/hooks/use-get-location';
 
 export default function Feed() {
+
   const { id } = useSelector(({ userInfo }) => userInfo);
   useGetLocation();
   const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdQuery(id);

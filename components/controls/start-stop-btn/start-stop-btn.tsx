@@ -40,6 +40,7 @@ export default function StartStopBtn() {
         setStatus(responseStatus[status]);
         if (status === STATUSES.paused) {
           dispatch(saveFinishedActivity({ locations, duration, speed: getTotalSpeed(distance, duration), distance }));
+
           linkTo('/(tabs)/activity/save-activity');
         }
       }}>
