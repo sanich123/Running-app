@@ -4,10 +4,8 @@ import { ToastAndroid, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-
 import { useAddActivityByUserIdMutation } from '../../redux/runnich-api/runnich-api';
 import { SaveActivityContext } from '../../utils/context/save-activity';
-
 import { errorHandler } from '../../utils/error-handler';
 
 export default function AcceptDeclineBtns() {
