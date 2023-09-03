@@ -1,11 +1,12 @@
 import { useState, useCallback } from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
-import { Text, ActivityIndicator, Divider, FAB, Searchbar } from 'react-native-paper';
+import { ActivityIndicator, Divider, Searchbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { View } from '../../../components/Themed';
 import ActivityCard from '../../../components/activity-card/activity-card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
+import ErrorComponent from '../../../components/error-component/error-component';
+import FloatingBtn from '../../../components/floating-btn/floating-btn';
 import { useGetActivitiesByUserIdQuery } from '../../../redux/runnich-api/runnich-api';
 import useGetLocation from '../../../utils/hooks/use-get-location';
 
@@ -52,21 +53,8 @@ export default function Feed() {
           />
         )}
         {isLoading && <ActivityIndicator />}
-        {error && (
-          <View>
-            <Text>An error occured</Text>
-          </View>
-        )}
-        <FAB
-          icon="plus"
-          style={{
-            position: 'absolute',
-            margin: 16,
-            right: 0,
-            bottom: 40,
-          }}
-          onPress={() => console.log('Pressed')}
-        />
+        {error ? <ErrorComponent error={error} /> : null}
+        <FloatingBtn onPressFn={console.log} />
       </SafeAreaView>
     </>
   );

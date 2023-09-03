@@ -1,18 +1,17 @@
-import { Camera, MapView } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
 import { usePathname, useRouter } from 'expo-router';
 import { View, ToastAndroid, Image, Pressable } from 'react-native';
 import { Text, Card, IconButton, MD3Colors } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import useFakeLocations from '../../utils/hooks/use-fake-locations';
 import { formatDate, formatDuration } from '../../utils/time-formatter';
 import ActivityCardCommentBtn from '../activity-card-comment-btn/activity-card-comment-btn';
 import ActivityCardDeleteBtn from '../activity-card-delete-btn/activity-card-delete-btn';
 import ActivityCardLikeBtn from '../activity-card-like-btn/activity-card-like-btn';
 import ActivityCardLikesWrapper from '../activity-card-likes-wrapper/activity-card-likes-wrapper';
 import AvatarShowable from '../avatar/avatar-showable';
-import RouteLine from '../map/route-line/route-line';
+import DisplayActivityMap from '../display-activiy-map/display-activity-map';
+import ShowMetrics from '../show-metrics/show-metrics';
 
 type ActivityCardProps = {
   description: string;
@@ -41,10 +40,9 @@ export default function ActivityCard({
 }: ActivityCardProps) {
   const { id: userId, settings } = useSelector(({ userInfo }) => userInfo);
   const { name, surname } = settings;
-  const { cameraRef } = useFakeLocations();
-
   const router = useRouter();
   const pathname = usePathname();
+
   return (
     <Card key={id}>
       <Pressable onPress={() => router.push(`/home/${id}`)}>
@@ -64,18 +62,9 @@ export default function ActivityCard({
         </Card.Content>
 
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', height: 60 }}>
-          <View style={{ display: 'flex' }}>
-            <Text variant="titleMedium">Distance: </Text>
-            <Text variant="bodyMedium">{distance / 1000} км</Text>
-          </View>
-          <View style={{ display: 'flex' }}>
-            <Text variant="titleMedium">Time:</Text>
-            <Text variant="bodyMedium">{formatDuration(duration)}</Text>
-          </View>
-          <View style={{ display: 'flex' }}>
-            <Text variant="titleMedium">Pace:</Text>
-            <Text variant="bodyMedium">{speed} км/ч</Text>
-          </View>
+          <ShowMetrics title="Distance: " metrics={`${distance / 1000} км`} />
+          <ShowMetrics title="Time: " metrics={`${formatDuration(duration)}`} />
+          <ShowMetrics title="Pace: " metrics={`${speed} км/ч`} />
         </View>
       </Pressable>
       {pathname.includes('/home/') && (
@@ -85,18 +74,7 @@ export default function ActivityCard({
       )}
       <View style={{ height: 200 }}>
         {photoUrl && <Image source={{ uri: photoUrl }} style={{ flex: 1 }} resizeMode="cover" />}
-        {!photoUrl && (
-          <MapView style={{ flex: 1 }} scaleBarEnabled={false}>
-            <Camera
-              animationMode="flyTo"
-              animationDuration={1000}
-              zoomLevel={25}
-              ref={cameraRef}
-              centerCoordinate={[locations[0].coords.latitude, locations[0].coords.longitude]}
-            />
-            {locations.length > 1 && <RouteLine locations={locations} />}
-          </MapView>
-        )}
+        {!photoUrl && <DisplayActivityMap locations={locations} />}
       </View>
       <ActivityCardLikesWrapper activityId={id} />
       <Card.Actions>

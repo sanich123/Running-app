@@ -1,8 +1,8 @@
 import { usePathname } from 'expo-router';
-import { View, Text } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
 import ActivityCard from '../../../components/activity-card/activity-card';
+import ErrorComponent from '../../../components/error-component/error-component';
 import { useGetActivityByActivityIdQuery } from '../../../redux/runnich-api/runnich-api';
 
 export default function ViewActivityFullInfo() {
@@ -12,11 +12,7 @@ export default function ViewActivityFullInfo() {
   return (
     <>
       {isLoading && <ActivityIndicator />}
-      {error && (
-        <View>
-          <Text>An error occured</Text>
-        </View>
-      )}
+      {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <ActivityCard
           description={activity.description}

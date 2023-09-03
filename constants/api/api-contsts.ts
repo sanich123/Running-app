@@ -19,4 +19,5 @@ export const ROUTES = {
   auth: 'auth',
   signIn: 'signin',
   signUp: 'signup',
+  activityId: 'activityId',
 } as const;

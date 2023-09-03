@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { headers, TAGS, BASE_URL, ROUTES } from '../../constants/api/api-contsts';
 
 const { activities, profile, comments, likes } = TAGS;
-const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp } = ROUTES;
+const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp, activityId } = ROUTES;
 
 export const runnichApi = createApi({
   reducerPath: 'runnichApi',
@@ -20,7 +20,7 @@ export const runnichApi = createApi({
       providesTags: [activities],
     }),
     getActivityByActivityId: builder.query({
-      query: (id) => `/${activity}/activityId/${id}`,
+      query: (id) => `/${activity}/${activityId}/${id}`,
     }),
     getFriendsByUserId: builder.query({
       query: (id: string) => `/${friend}/${id}`,

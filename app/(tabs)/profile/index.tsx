@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { logOut } from '../../../auth/firebase/email-auth';
 import { View } from '../../../components/Themed';
 import AvatarShowable from '../../../components/avatar/avatar-showable';
+import ErrorComponent from '../../../components/error-component/error-component';
 import { useGetUserProfileByIdQuery } from '../../../redux/runnich-api/runnich-api';
 import { calculateAge } from '../../../utils/time-formatter';
 
@@ -34,7 +35,7 @@ export default function Profile() {
         LogOut
       </Button>
       {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
-      {error && <Text variant="headlineSmall">{`An error occured, ${error.toString()}`}</Text>}
+      {error ? <ErrorComponent error={error} /> : null}
     </View>
   );
 }

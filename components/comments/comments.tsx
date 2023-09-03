@@ -4,6 +4,7 @@ import { ActivityIndicator } from 'react-native-paper';
 import { useGetCommentsByActivityIdQuery } from '../../redux/runnich-api/runnich-api';
 import { formatDate } from '../../utils/time-formatter';
 import AvatarShowable from '../avatar/avatar-showable';
+import ErrorComponent from '../error-component/error-component';
 import UserNameSurname from '../user-name-surname/user-name-surname';
 
 export default function Comments({ id }: { id: string }) {
@@ -11,11 +12,7 @@ export default function Comments({ id }: { id: string }) {
   return (
     <>
       {isLoading && <ActivityIndicator />}
-      {error && (
-        <View>
-          <Text>An error occured</Text>
-        </View>
-      )}
+      {error ? <ErrorComponent error={error} /> : null}
       {comments?.map(({ authorId, comment, id, date }) => (
         <View key={id}>
           <AvatarShowable size={25} id={authorId} />

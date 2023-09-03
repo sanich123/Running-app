@@ -1,61 +1,32 @@
-import { Camera, MapView } from '@rnmapbox/maps';
 import { usePathname } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ScrollView, ToastAndroid, View } from 'react-native';
-import { ActivityIndicator, Card, FAB, Text, TextInput } from 'react-native-paper';
+import { useState } from 'react';
+import { ScrollView, View } from 'react-native';
+import { ActivityIndicator, Card, FAB, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import AvatarShowable from '../../../../components/avatar/avatar-showable';
+import CommentInput from '../../../../components/comment-input/comment-input';
 import Comments from '../../../../components/comments/comments';
-import RouteLine from '../../../../components/map/route-line/route-line';
-import {
-  useGetActivityByActivityIdQuery,
-  usePostCommentWithActivityIdMutation,
-} from '../../../../redux/runnich-api/runnich-api';
-import useFakeLocations from '../../../../utils/hooks/use-fake-locations';
+import DisplayActivityMap from '../../../../components/display-activiy-map/display-activity-map';
+import ErrorComponent from '../../../../components/error-component/error-component';
+import { useGetActivityByActivityIdQuery } from '../../../../redux/runnich-api/runnich-api';
 import { formatDate } from '../../../../utils/time-formatter';
+import FloatingBtn from '../../../../components/floating-btn/floating-btn';
 
 export default function Comment() {
   const pathname = usePathname();
   const activityId = pathname.replace('/home/comment/', '');
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(activityId);
-  const { cameraRef } = useFakeLocations();
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
   const { id: userId } = useSelector(({ userInfo }) => userInfo);
-  const [postComment, { isLoading: isCommentSending, error: commentSendingError, data: commentResponse }] =
-    usePostCommentWithActivityIdMutation();
-  const [comment, setComment] = useState('');
-  useEffect(() => {
-    if (commentResponse) {
-      ToastAndroid.show('Successfully sent comment!', ToastAndroid.SHORT);
-      console.log(commentResponse);
-      setComment('');
-    }
-    if (commentSendingError) {
-      ToastAndroid.show('An error occured!', ToastAndroid.SHORT);
-      console.log(commentSendingError);
-    }
-  }, [commentSendingError, commentResponse]);
+
   return (
     <ScrollView>
       {isLoading && <ActivityIndicator />}
-      {error && (
-        <View>
-          <Text>An error occured</Text>
-        </View>
-      )}
+      {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <View style={{ flex: 1 }}>
-          <MapView style={{ display: 'flex', height: 200 }} scaleBarEnabled={false}>
-            <Camera
-              animationMode="flyTo"
-              animationDuration={1000}
-              zoomLevel={25}
-              ref={cameraRef}
-              centerCoordinate={[activity.locations[0].coords.latitude, activity.locations[0].coords.longitude]}
-            />
-            {activity.locations.length > 1 && <RouteLine locations={activity.locations} />}
-          </MapView>
+          <DisplayActivityMap locations={activity.locations} />
           <Card.Content
             style={{ display: 'flex', flexDirection: 'row', columnGap: 5, marginBottom: 10, alignItems: 'center' }}>
             <AvatarShowable size={40} id={userId} />
@@ -71,39 +42,8 @@ export default function Comment() {
             </View>
           </Card.Content>
           <Comments id={activityId} />
-          {isShowingTextInput && (
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 'auto', marginBottom: 20 }}
-              placeholder="Add a comment"
-              value={comment}
-              onChangeText={(comment) => setComment(comment)}
-              disabled={isCommentSending}
-              right={
-                <TextInput.Icon
-                  icon="pencil"
-                  onPress={async () => {
-                    const body = { comment, authorId: userId };
-                    await postComment({ body, id: activityId }).unwrap();
-                  }}
-                />
-              }
-              label="Comment"
-              autoFocus
-            />
-          )}
-          {!isShowingTextInput && (
-            <FAB
-              icon="comment"
-              style={{
-                position: 'absolute',
-                margin: 16,
-                right: 0,
-                bottom: 40,
-              }}
-              onPress={() => setIsShowingTextInput(true)}
-            />
-          )}
+          {isShowingTextInput && <CommentInput userId={userId} activityId={activityId} />}
+          {!isShowingTextInput && <FloatingBtn onPressFn={() => setIsShowingTextInput(true)} />}
         </View>
       )}
     </ScrollView>
