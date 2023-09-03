@@ -19,6 +19,9 @@ export const runnichApi = createApi({
       keepUnusedDataFor: 30,
       providesTags: [activities],
     }),
+    getActivityByActivityId: builder.query({
+      query: (id) => `/${activity}/activityId/${id}`,
+    }),
     getFriendsByUserId: builder.query({
       query: (id: string) => `/${friend}/${id}`,
     }),
@@ -104,6 +107,7 @@ export const runnichApi = createApi({
 export const {
   useGetUserProfileByIdQuery,
   useGetActivitiesByUserIdQuery,
+  useGetActivityByActivityIdQuery,
   useGetFriendsByUserIdQuery,
   useGetCommentsByActivityIdQuery,
   useGetLikesByActivityIdQuery,

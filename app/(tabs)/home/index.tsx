@@ -19,7 +19,7 @@ export default function Feed() {
     refetch();
     setTimeout(() => setRefreshing(false), 2000);
   }, []);
-  console.log(activities);
+
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
@@ -29,7 +29,7 @@ export default function Feed() {
             data={activities}
             refreshing={refreshing}
             renderItem={({ item }) => {
-              const { description, title, date, sport, id, locations, photoUrl, duration, speed } = item;
+              const { description, title, date, sport, id, locations, photoUrl, duration, speed, distance } = item;
               return (
                 <ActivityCard
                   description={description}
@@ -42,6 +42,7 @@ export default function Feed() {
                   photoUrl={photoUrl}
                   duration={duration}
                   speed={speed}
+                  distance={distance}
                 />
               );
             }}
