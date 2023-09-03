@@ -9,9 +9,9 @@ import CommentInput from '../../../../components/comment-input/comment-input';
 import Comments from '../../../../components/comments/comments';
 import DisplayActivityMap from '../../../../components/display-activiy-map/display-activity-map';
 import ErrorComponent from '../../../../components/error-component/error-component';
+import FloatingBtn from '../../../../components/floating-btn/floating-btn';
 import { useGetActivityByActivityIdQuery } from '../../../../redux/runnich-api/runnich-api';
 import { formatDate } from '../../../../utils/time-formatter';
-import FloatingBtn from '../../../../components/floating-btn/floating-btn';
 
 export default function Comment() {
   const pathname = usePathname();

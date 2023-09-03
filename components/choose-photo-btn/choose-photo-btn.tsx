@@ -38,7 +38,7 @@ export default function ChoosePhotoBtn() {
             setIsDisabled(false);
             setIsLoading(false);
           }
-         }}
+        }}
         style={{ marginTop: 15 }}
         loading={isLoading}
         disabled={isDisabled}>
