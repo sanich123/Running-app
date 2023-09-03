@@ -11,8 +11,8 @@ export const signInStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    columnGap: 15,
-    marginTop: 15,
+    columnGap: 10,
+    marginTop: 10,
   },
   navigateBtn: {
     display: 'flex',

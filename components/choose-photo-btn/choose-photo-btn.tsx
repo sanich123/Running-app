@@ -1,29 +1,48 @@
-import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, MD3Colors, ProgressBar } from 'react-native-paper';
+
+import { SaveActivityContext } from '../../utils/context/save-activity';
+import { errorHandler } from '../../utils/error-handler';
+import { getAccessToGallery, getBlobFromUri, getInfoFromUri, uploadToFirebaseStorage } from '../../utils/file-sending';
 
 export default function ChoosePhotoBtn() {
+  const { setPhotoUrl, isDisabled, setIsDisabled } = useContext(SaveActivityContext);
   const [image, setImage] = useState(null);
-  async function pickImage() {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgressPercent] = useState(0);
 
-    console.log(result);
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  }
   return (
     <>
-      <Button mode="outlined" icon="camera" onPress={pickImage} style={{ marginTop: 15 }}>
+      <Button
+        mode="outlined"
+        icon="camera"
+        onPress={async () => {
+          setIsDisabled(true);
+          setIsLoading(true);
+          const result = await getAccessToGallery();
+          if (!result.canceled) {
+            try {
+              const uri = result.assets[0].uri;
+              setImage(uri);
+              const blob = await getBlobFromUri(result.assets[0].uri);
+              const fileName = getInfoFromUri(uri);
+              await uploadToFirebaseStorage(fileName, blob as Blob, setProgressPercent, setIsLoading, setPhotoUrl);
+              setIsDisabled(false);
+            } catch (error) {
+              errorHandler(error);
+              setIsDisabled(false);
+            }
+          }
+          setIsDisabled(false);
+          setIsLoading(false);
+        }}
+        style={{ marginTop: 15 }}
+        loading={isLoading}
+        disabled={isDisabled}>
         Upload an image
       </Button>
+      {image && <ProgressBar progress={progress} color={MD3Colors.error50} style={{ marginTop: 15 }} />}
       {image && <Image source={{ uri: image }} style={styles.imageStyle} />}
     </>
   );

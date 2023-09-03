@@ -1,6 +1,6 @@
 import { ToastAndroid } from 'react-native';
 
-import { emailMatcher, passwordMatcher } from '../constants/email-password-regexp';
+import { emailMatcher, passwordMatcher } from '../constants/regexp';
 
 export type emailPasswordHandlerProps = {
   email: string;
