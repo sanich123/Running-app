@@ -6,8 +6,6 @@ import { Button } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
 import HeaderRight from '../../components/header-right/header-right';
-import { useAuth } from '../../auth/context/auth-context';
-import HeaderRight from '../../components/header-right/header-right';
 import Colors from '../../constants/Colors';
 
 function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>['name']; color: string }) {
@@ -28,8 +26,6 @@ export default function TabLayout() {
       <Tabs.Screen
         name="home"
         redirect={!user}
-        name="home"
-        redirect={!user}
         options={{
           tabBarLabel: 'Feed',
           tabBarIcon: ({ color }) => <TabBarIcon name="feed" color={color} />,
@@ -37,23 +33,19 @@ export default function TabLayout() {
           headerTintColor: '#fff',
           headerTitleStyle: { fontWeight: 'bold' },
           headerRight: () => <HeaderRight />,
-          headerRight: () => <HeaderRight />,
         }}
       />
       <Tabs.Screen
         name="activity"
         redirect={!user}
-        redirect={!user}
         options={{
           tabBarLabel: 'Activity',
           tabBarIcon: ({ color }) => <TabBarIcon name="trophy" color={color} />,
-          headerShown: false,
           headerShown: false,
         }}
       />
       <Tabs.Screen
         name="progress"
-        redirect={!user}
         redirect={!user}
         options={{
           title: 'progress',
@@ -63,7 +55,6 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="profile"
-        redirect={!user}
         redirect={!user}
         options={{
           title: 'profile',
