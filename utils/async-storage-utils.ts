@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ToastAndroid } from 'react-native';
 
 export async function getFromAsyncStorage(property: string) {
   try {
@@ -8,7 +9,7 @@ export async function getFromAsyncStorage(property: string) {
     }
     return result;
   } catch (error) {
-    console.log('An error occured during getting from AsyncStorage', error);
+    ToastAndroid.show(`An error occured during getting from AsyncStorage. ${error.message}`, ToastAndroid.SHORT);
   }
 }
 
@@ -17,6 +18,6 @@ export async function setToAsyncStorage(property: string, value: object | string
     const stringifiedValue = JSON.stringify(value);
     return await AsyncStorage.setItem(property, stringifiedValue);
   } catch (error) {
-    console.log('An error occured while saving to the asyncStorage', error);
+    ToastAndroid.show(`An error occured during getting from AsyncStorage. ${error.message}`, ToastAndroid.SHORT);
   }
 }

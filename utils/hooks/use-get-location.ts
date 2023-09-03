@@ -24,6 +24,7 @@ export default function useGetLocation() {
           return;
         }
         const currentPosition = await getCurrentPositionAsync();
+        console.log(`Received currentPosition`, currentPosition);
         if (currentPosition) {
           setLocation(currentPosition);
           setReadyToShowLocation(true);

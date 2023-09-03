@@ -1,49 +1,33 @@
-import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { getCurrentPositionAsync } from 'expo-location';
+import { ToastAndroid } from 'react-native';
+import { Button } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { View } from '../../../components/Themed';
-import Controls from '../../../components/controls/controls';
-import Map from '../../../components/map/map';
-import Metrics from '../../../components/metrics/metrics';
-import { STATUSES } from '../../../constants/enums';
-import useFakeLocations from '../../../utils/hooks/use-fake-locations';
+import { View, Text } from '../../../components/Themed';
+import ActivityComponent from '../../../components/activity-component/activity-component';
+import { setInitialLocation } from '../../../redux/location-slice/location-slice';
 
 export default function Activity() {
-  const { setStatus, status, locations, duration, cameraRef, lastView, distance } = useFakeLocations();
-  const { page, monitor, mapContainer } = styles;
-  const [mapVisible, setMapVisible] = useState(false);
-  const shouldShowMap = status === STATUSES.initial || status === STATUSES.paused || mapVisible;
-
-  return (
-    <View style={page}>
-      <View style={mapContainer}>
-        {shouldShowMap && (
-          <Map mapVisible={mapVisible} cameraRef={cameraRef} locations={locations} lastView={lastView} />
-        )}
-
-        {status !== STATUSES.initial && (
-          <Metrics velocity={11} distance={distance} duration={duration} status={status} mapVisible={mapVisible} />
-        )}
+  const dispatch = useDispatch();
+  const { initialLocation } = useSelector(({ location }) => location);
+  if (!initialLocation.coords) {
+    return (
+      <View>
+        <Text>Our app is only available, when we have your location</Text>
+        <Button
+          mode="outlined"
+          onPress={async () => {
+            const currentPosition = await getCurrentPositionAsync();
+            ToastAndroid.show(`Position from activity component ${currentPosition.toString()}`, ToastAndroid.SHORT);
+            if (currentPosition) {
+              dispatch(setInitialLocation(currentPosition));
+            }
+          }}>
+          Get fucking location!
+        </Button>
       </View>
-      <View style={monitor}>
-        <Controls status={status} setStatus={setStatus} setMapVisible={setMapVisible} mapVisible={mapVisible} />
-      </View>
-    </View>
-  );
+    );
+  } else {
+    return <ActivityComponent />;
+  }
 }
-
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  mapContainer: {
-    height: '80%',
-    width: '100%',
-  },
-  monitor: {
-    height: '20%',
-    width: '100%',
-  },
-});

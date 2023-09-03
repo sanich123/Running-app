@@ -4,8 +4,8 @@ import { View, Text, Pressable } from 'react-native';
 import { signInStyles } from '../../styles/sign-in-page/sign-in-page';
 import { SignInContext } from '../../utils/context/sign-in';
 
-export default function RersetNavigation() {
-  const { setIsLogin, setIsRegister, setIsReset } = useContext(SignInContext);
+export default function ResetNavigation() {
+  const { setIsLogin, setIsRegister, setIsReset, isDisabled } = useContext(SignInContext);
   const { btnWrapper, navigateBtn } = signInStyles;
   return (
     <View style={btnWrapper}>
@@ -16,8 +16,9 @@ export default function RersetNavigation() {
           setIsRegister(true);
           setIsLogin(false);
           setIsReset(false);
-        }}>
-        <Text style={{ color: 'white' }}>Register</Text>
+        }}
+        disabled={isDisabled}>
+        <Text style={[{ color: 'white' }, isDisabled && { opacity: 0.5 }]}>Register</Text>
       </Pressable>
     </View>
   );

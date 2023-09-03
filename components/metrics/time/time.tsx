@@ -1,14 +1,14 @@
+import { useContext } from 'react';
+
+import { STATUSES } from '../../../constants/enums';
+import { ActivityComponentContext } from '../../../utils/context/activity-component';
 import { formatDuration } from '../../../utils/time-formatter';
 import { View, Text } from '../../Themed';
 import { metricsStyles } from '../metrics-styles';
 
-type TimeProps = {
-  mapVisible: boolean;
-  isStartedOrContinue: boolean;
-  duration: number;
-};
-
-export default function Time({ mapVisible, isStartedOrContinue, duration }: TimeProps) {
+export default function Time() {
+  const { mapVisible, status, duration } = useContext(ActivityComponentContext);
+  const isStartedOrContinue = status === STATUSES.started || status === STATUSES.continue;
   const { basicWrapper, metricsWrapper, metricsHeader, metricsText } = metricsStyles;
   return (
     <View style={[basicWrapper, !mapVisible && isStartedOrContinue && metricsWrapper]}>

@@ -1,16 +1,17 @@
 import { Camera } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { STATUSES } from '../../constants/enums';
-import { MOCK_LOCATIONS } from '../../constants/mocks/mocks';
-import { getDistanceFromMocks } from '../location-utils';
+import { generateNextLocation, getDistance } from '../location-utils';
 
 export default function useFakeLocations() {
+  const { initialLocation } = useSelector(({ location }) => location);
   const [status, setStatus] = useState(STATUSES.initial);
   const [duration, setDuration] = useState(0);
   const [distance, setDistance] = useState(0);
-  const [locations, setLocations] = useState<LocationObject[]>([MOCK_LOCATIONS[0]]);
+  const [locations, setLocations] = useState<LocationObject[]>([initialLocation]);
   const cameraRef = useRef<Camera>(null);
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function useFakeLocations() {
     if (status === STATUSES.initial) {
       clearInterval(interval);
       setDuration(0);
-      setLocations([MOCK_LOCATIONS[0]]);
+      setLocations([initialLocation]);
       setDistance(0);
     }
     if (status === STATUSES.paused) {
@@ -31,12 +32,10 @@ export default function useFakeLocations() {
   }, [status]);
 
   useEffect(() => {
-    if (duration < MOCK_LOCATIONS.length) {
-      setLocations([...locations, MOCK_LOCATIONS[duration]]);
-      const currDistance = MOCK_LOCATIONS[0] ? getDistanceFromMocks(MOCK_LOCATIONS[0], MOCK_LOCATIONS[duration]) : 0;
-      setDistance(distance + currDistance);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const currentLocation = generateNextLocation(locations[locations.length - 1]);
+    setLocations([...locations, currentLocation]);
+    const currDistance = locations[0] ? getDistance(locations[0], currentLocation) : 0;
+    setDistance(distance + currDistance);
   }, [duration]);
 
   useEffect(() => {
@@ -50,7 +49,7 @@ export default function useFakeLocations() {
 
   return {
     locations,
-    lastView: [locations[locations.length - 1].coords.longitude, locations[locations.length - 1].coords.latitude],
+    lastView: [locations[locations.length - 1].coords?.longitude, locations[locations.length - 1].coords?.latitude],
     cameraRef,
     setStatus,
     duration,

@@ -1,20 +1,16 @@
 import { FontAwesome } from '@expo/vector-icons';
+import { useContext } from 'react';
 import { StyleSheet, Pressable } from 'react-native';
 
 import StartBtn from './start-stop-btn/start-stop-btn';
 import { STATUSES } from '../../constants/enums';
 import { LANGUAGE } from '../../constants/languages/languages';
 import { useAppSelector } from '../../redux/hooks/hooks';
+import { ActivityComponentContext } from '../../utils/context/activity-component';
 import { View, Text } from '../Themed';
 
-type ControlsProps = {
-  status: STATUSES;
-  setStatus: (arg: STATUSES) => void;
-  setMapVisible: (arg: boolean) => void;
-  mapVisible: boolean;
-};
-
-export default function Controls({ setStatus, setMapVisible, mapVisible, status }: ControlsProps) {
+export default function Controls() {
+  const { setStatus, setMapVisible, mapVisible, status } = useContext(ActivityComponentContext);
   const { containerStartBtn, containerPauseStopBtns, textStyle, pinBtn } = styles;
   const { language } = useAppSelector(({ changeThemeLang }) => changeThemeLang);
   const paused = status === STATUSES.paused;
@@ -35,7 +31,7 @@ export default function Controls({ setStatus, setMapVisible, mapVisible, status 
         </View>
       )}
 
-      <StartBtn status={status} setStatus={setStatus} />
+      <StartBtn />
 
       {isStartedOrContinue && (
         <Pressable style={[pinBtn, { width: 50, height: 50 }]} onPress={() => setMapVisible(!mapVisible)}>
