@@ -2,10 +2,12 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useLinkTo } from '@react-navigation/native';
 import { Tabs, usePathname } from 'expo-router';
 import { useColorScheme } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, useTheme } from 'react-native-paper';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
-import HeaderRight from '../../components/header-right/header-right';
+import AvatarShowable from '../../components/avatar/avatar-showable';
 import Colors from '../../constants/Colors';
 
 function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>['name']; color: string }) {
@@ -14,34 +16,57 @@ function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>['nam
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { id } = useSelector(({ userInfo }) => userInfo);
   const { user } = useAuth();
   const pathname = usePathname();
   const linkTo = useLinkTo();
+  const theme = useTheme();
   console.log(pathname);
   return (
     <Tabs
       screenOptions={{
+        tabBarStyle: { height: 60 },
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarInactiveBackgroundColor: theme.colors.primary,
+        tabBarActiveBackgroundColor: theme.colors.primary,
+        tabBarHideOnKeyboard: true,
+        // tabBarShowLabel: false,
       }}>
       <Tabs.Screen
         name="home"
         redirect={!user}
         options={{
+          title: 'Feed',
           tabBarLabel: 'Feed',
-          tabBarIcon: ({ color }) => <TabBarIcon name="feed" color={color} />,
-          headerStyle: { backgroundColor: '#f4511e' },
-          headerTintColor: '#fff',
+          tabBarLabelPosition: 'beside-icon',
+          tabBarLabelStyle: { color: theme.colors.primaryContainer },
+          tabBarIcon: ({ color, focused }) => (
+            <MaterialCommunityIcons name="home" color={theme.colors.primaryContainer} size={focused ? 40 : 35} />
+          ),
+          headerStyle: { backgroundColor: theme.colors.primary },
+          headerTintColor: theme.colors.primaryContainer,
           headerTitleStyle: { fontWeight: 'bold' },
-          headerRight: () => <HeaderRight />,
+          headerRight: () => (
+            <MaterialCommunityIcons
+              name="cog-outline"
+              color={theme.colors.primaryContainer}
+              size={30}
+              style={{ marginRight: 5 }}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="activity"
         redirect={!user}
         options={{
+          title: 'Activity',
           tabBarLabel: 'Activity',
+          tabBarLabelStyle: { color: theme.colors.primaryContainer },
           tabBarIcon: ({ color }) => <TabBarIcon name="trophy" color={color} />,
-          headerShown: false,
+          headerStyle: { backgroundColor: theme.colors.primary },
+          headerTitleStyle: { fontWeight: 'bold' },
+          headerTintColor: '#fff',
         }}
       />
       <Tabs.Screen
@@ -51,6 +76,10 @@ export default function TabLayout() {
           title: 'progress',
           tabBarLabel: 'Progress',
           tabBarIcon: ({ color }) => <TabBarIcon name="arrow-circle-up" color={color} />,
+          headerStyle: { backgroundColor: theme.colors.primary },
+          tabBarLabelStyle: { color: theme.colors.primaryContainer },
+          headerTintColor: theme.colors.primaryContainer,
+          headerTitleStyle: { fontWeight: 'bold' },
         }}
       />
       <Tabs.Screen
@@ -59,7 +88,11 @@ export default function TabLayout() {
         options={{
           title: 'profile',
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => <TabBarIcon name="wrench" color={color} />,
+          tabBarIcon: () => <AvatarShowable size={30} id={id} />,
+          tabBarLabelStyle: { color: theme.colors.primaryContainer },
+          headerTintColor: theme.colors.primaryContainer,
+          headerTitleStyle: { fontWeight: 'bold' },
+          headerStyle: { backgroundColor: theme.colors.primary },
           headerRight: () =>
             pathname !== '/profile/settings' ? (
               <Button

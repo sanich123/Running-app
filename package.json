@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:clear": "expo start --clear",
     "test:watch": "jest --watchAll",
     "test": "jest",
     "build:apk": "eas build --profile development --platform android",
