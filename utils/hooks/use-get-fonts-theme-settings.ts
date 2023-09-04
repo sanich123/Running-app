@@ -1,8 +1,8 @@
 import { FontAwesome } from '@expo/vector-icons';
+import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
-import { MD3LightTheme } from 'react-native-paper';
 export { ErrorBoundary } from 'expo-router';
 
 export function useGetFontsThemeSettings() {
@@ -18,14 +18,7 @@ export function useGetFontsThemeSettings() {
   });
 
   const colorScheme = useColorScheme();
-  const theme = {
-    ...MD3LightTheme,
-    colors: {
-      ...MD3LightTheme.colors,
-      primary: 'tomato',
-      secondary: 'yellow',
-    },
-  };
+  const { theme } = useMaterial3Theme();
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) {

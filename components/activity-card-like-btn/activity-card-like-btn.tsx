@@ -9,7 +9,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
   const { id: userId } = useSelector(({ userInfo }) => userInfo);
   const [sendLike, { data, error: errorSendingLike }] = useSendOrDeleteLikeMutation();
   const { isLoading, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
-  const isLikedByYou = likes?.some(({ authorId }) => authorId === userId);
+  const isLikedByYou = likes?.find(({ authorId }) => authorId === userId);
 
   useEffect(() => {
     if (data) {

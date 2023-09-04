@@ -1,7 +1,7 @@
 import { usePathname } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { ActivityIndicator, Card, FAB, Text } from 'react-native-paper';
+import { ActivityIndicator, Card, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import AvatarShowable from '../../../../components/avatar/avatar-showable';

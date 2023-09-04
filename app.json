@@ -21,8 +21,7 @@
         "foregroundImage": "./assets/images/icon-run.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sanich123.runningapp",
-      "googleServicesFile": "./google-services.json"
+      "package": "com.sanich123.runningapp"
     },
     "web": {
       "bundler": "metro",

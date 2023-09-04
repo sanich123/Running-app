@@ -1,7 +1,7 @@
 import { LocationObject } from 'expo-location';
 import { usePathname, useRouter } from 'expo-router';
-import { View, ToastAndroid, Image, Pressable } from 'react-native';
-import { Text, Card, IconButton, MD3Colors } from 'react-native-paper';
+import { View, Image, Pressable } from 'react-native';
+import { Text, Card } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { formatDate, formatDuration } from '../../utils/time-formatter';
@@ -9,6 +9,7 @@ import ActivityCardCommentBtn from '../activity-card-comment-btn/activity-card-c
 import ActivityCardDeleteBtn from '../activity-card-delete-btn/activity-card-delete-btn';
 import ActivityCardLikeBtn from '../activity-card-like-btn/activity-card-like-btn';
 import ActivityCardLikesWrapper from '../activity-card-likes-wrapper/activity-card-likes-wrapper';
+import ActivityCardShareBtn from '../activity-card-share-btn/activity-card-share-btn';
 import AvatarShowable from '../avatar/avatar-showable';
 import DisplayActivityMap from '../display-activiy-map/display-activity-map';
 import ShowMetrics from '../show-metrics/show-metrics';
@@ -81,12 +82,7 @@ export default function ActivityCard({
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <ActivityCardLikeBtn activityId={id} />
           <ActivityCardCommentBtn activityId={id} />
-          <IconButton
-            icon="share-outline"
-            iconColor={MD3Colors.error50}
-            size={20}
-            onPress={() => ToastAndroid.show('Здесь будет функционал sharing', ToastAndroid.SHORT)}
-          />
+          <ActivityCardShareBtn />
           <ActivityCardDeleteBtn activityId={id} />
         </View>
       </Card.Actions>
