@@ -10,12 +10,20 @@ export const runnichApi = createApi({
   tagTypes: [activities, profile, comments, likes],
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (builder) => ({
+    getUsers: builder.query({
+      query: () => '/user',
+    }),
     getUserProfileById: builder.query({
       query: (id) => `/${routeProfile}/${id}`,
       providesTags: [profile],
     }),
     getActivitiesByUserId: builder.query({
       query: (id) => `/${activity}/${id}`,
+      keepUnusedDataFor: 30,
+      providesTags: [activities],
+    }),
+    getActivitiesByUserIdWithFriendsActivities: builder.query({
+      query: (id) => `/${activity}/${id}/all`,
       keepUnusedDataFor: 30,
       providesTags: [activities],
     }),
@@ -105,8 +113,10 @@ export const runnichApi = createApi({
 });
 
 export const {
+  useGetUsersQuery,
   useGetUserProfileByIdQuery,
   useGetActivitiesByUserIdQuery,
+  useGetActivitiesByUserIdWithFriendsActivitiesQuery,
   useGetActivityByActivityIdQuery,
   useGetFriendsByUserIdQuery,
   useGetCommentsByActivityIdQuery,

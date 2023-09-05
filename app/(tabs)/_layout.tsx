@@ -1,58 +1,70 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useLinkTo } from '@react-navigation/native';
-import { Tabs, usePathname } from 'expo-router';
-import { useColorScheme } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
+import { Tabs, usePathname, useRouter } from 'expo-router';
+import { useColorScheme, Pressable } from 'react-native';
+import { useTheme, Text } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
+import { View } from '../../components/Themed';
 import AvatarShowable from '../../components/avatar/avatar-showable';
 import Colors from '../../constants/Colors';
-
-function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>['name']; color: string }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { id } = useSelector(({ userInfo }) => userInfo);
   const { user } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
   const linkTo = useLinkTo();
   const theme = useTheme();
-  console.log(pathname);
+  const commonSettings = {
+    tabBarLabelStyle: { color: theme.colors.primaryContainer },
+    headerStyle: { backgroundColor: theme.colors.primary },
+    headerTintColor: theme.colors.primaryContainer,
+  };
+
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: { height: 60 },
+        tabBarStyle: {
+          height: 60,
+          elevation: 0,
+          borderTopWidth: 0,
+        },
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         tabBarInactiveBackgroundColor: theme.colors.primary,
         tabBarActiveBackgroundColor: theme.colors.primary,
         tabBarHideOnKeyboard: true,
-        // tabBarShowLabel: false,
       }}>
       <Tabs.Screen
         name="home"
         redirect={!user}
         options={{
+          ...commonSettings,
           title: 'Feed',
           tabBarLabel: 'Feed',
-          tabBarLabelPosition: 'beside-icon',
-          tabBarLabelStyle: { color: theme.colors.primaryContainer },
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons name="home" color={theme.colors.primaryContainer} size={focused ? 40 : 35} />
           ),
-          headerStyle: { backgroundColor: theme.colors.primary },
-          headerTintColor: theme.colors.primaryContainer,
           headerTitleStyle: { fontWeight: 'bold' },
           headerRight: () => (
-            <MaterialCommunityIcons
-              name="cog-outline"
-              color={theme.colors.primaryContainer}
-              size={30}
-              style={{ marginRight: 5 }}
-            />
+            <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: 'transparent' }}>
+              <MaterialCommunityIcons
+                name="account-multiple"
+                color={theme.colors.primaryContainer}
+                size={30}
+                style={{ marginRight: 5 }}
+                onPress={() => router.push('/users')}
+              />
+              <MaterialCommunityIcons
+                name="cog-outline"
+                color={theme.colors.primaryContainer}
+                size={30}
+                style={{ marginRight: 5 }}
+                onPress={() => router.push('/settings')}
+              />
+            </View>
           ),
         }}
       />
@@ -62,47 +74,63 @@ export default function TabLayout() {
         options={{
           title: 'Activity',
           tabBarLabel: 'Activity',
-          tabBarLabelStyle: { color: theme.colors.primaryContainer },
-          tabBarIcon: ({ color }) => <TabBarIcon name="trophy" color={color} />,
-          headerStyle: { backgroundColor: theme.colors.primary },
-          headerTitleStyle: { fontWeight: 'bold' },
-          headerTintColor: '#fff',
+          ...commonSettings,
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons
+              name="record-circle-outline"
+              color={theme.colors.primaryContainer}
+              size={focused ? 40 : 35}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="progress"
         redirect={!user}
         options={{
-          title: 'progress',
+          ...commonSettings,
+          title: 'Progress',
           tabBarLabel: 'Progress',
-          tabBarIcon: ({ color }) => <TabBarIcon name="arrow-circle-up" color={color} />,
-          headerStyle: { backgroundColor: theme.colors.primary },
-          tabBarLabelStyle: { color: theme.colors.primaryContainer },
-          headerTintColor: theme.colors.primaryContainer,
-          headerTitleStyle: { fontWeight: 'bold' },
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons name="chart-bar" color={theme.colors.primaryContainer} size={focused ? 40 : 35} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         redirect={!user}
         options={{
-          title: 'profile',
+          ...commonSettings,
+          title: 'Profile',
           tabBarLabel: 'Profile',
           tabBarIcon: () => <AvatarShowable size={30} id={id} />,
-          tabBarLabelStyle: { color: theme.colors.primaryContainer },
-          headerTintColor: theme.colors.primaryContainer,
           headerTitleStyle: { fontWeight: 'bold' },
-          headerStyle: { backgroundColor: theme.colors.primary },
           headerRight: () =>
             pathname !== '/profile/settings' ? (
-              <Button
-                mode="outlined"
-                icon="account-edit"
-                onPress={() => linkTo('/profile/settings')}
-                style={{ marginRight: 10 }}>
-                Edit
-              </Button>
+              <Pressable onPress={() => linkTo('/profile/settings')}>
+                <Text variant="titleMedium" style={{ color: theme.colors.primaryContainer, marginRight: 15 }}>
+                  Edit
+                </Text>
+              </Pressable>
             ) : null,
+        }}
+      />
+      <Tabs.Screen
+        name="settings/index"
+        options={{
+          title: 'Settings',
+          ...commonSettings,
+          headerTitleStyle: { fontWeight: 'bold' },
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="users/index"
+        options={{
+          title: 'Users',
+          ...commonSettings,
+          headerTitleStyle: { fontWeight: 'bold' },
+          href: null,
         }}
       />
     </Tabs>

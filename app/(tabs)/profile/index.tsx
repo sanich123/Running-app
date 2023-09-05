@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import { ActivityIndicator, Button, MD2Colors, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
@@ -18,7 +18,7 @@ export default function Profile() {
       <View style={styles.header}>
         <AvatarShowable size={100} id={id} />
         <View style={styles.nicknameWrapper}>
-          <Text variant="displaySmall">
+          <Text variant="headlineMedium">
             {profileInfo?.name || 'Your name'} {profileInfo?.surname || 'Your surname'}
           </Text>
           <Text variant="titleLarge">
@@ -30,6 +30,12 @@ export default function Profile() {
       <View style={styles.bio}>
         <Text variant="titleMedium">{profileInfo?.bio || 'Your biography'}</Text>
       </View>
+      <Pressable>
+        <Text variant="bodyLarge">Followers</Text>
+      </Pressable>
+      <Pressable>
+        <Text variant="bodyLarge">Following</Text>
+      </Pressable>
 
       <Button mode="outlined" icon="logout" onPress={() => logOut()} style={{ marginTop: 15 }}>
         LogOut

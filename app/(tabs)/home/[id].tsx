@@ -15,6 +15,7 @@ export default function ViewActivityFullInfo() {
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <ActivityCard
+          userId={activity.userId}
           description={activity.description}
           title={activity.title}
           date={activity.date}

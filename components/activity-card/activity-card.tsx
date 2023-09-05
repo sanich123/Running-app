@@ -2,8 +2,8 @@ import { LocationObject } from 'expo-location';
 import { usePathname, useRouter } from 'expo-router';
 import { View, Image, Pressable } from 'react-native';
 import { Text, Card } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
+import { useGetUserProfileByIdQuery } from '../../redux/runnich-api/runnich-api';
 import { formatDate, formatDuration } from '../../utils/time-formatter';
 import ActivityCardCommentBtn from '../activity-card-comment-btn/activity-card-comment-btn';
 import ActivityCardDeleteBtn from '../activity-card-delete-btn/activity-card-delete-btn';
@@ -20,6 +20,7 @@ type ActivityCardProps = {
   date: Date;
   sport: string;
   id: string;
+  userId: string;
   locations: LocationObject[];
   photoUrl: string;
   duration: number;
@@ -33,14 +34,14 @@ export default function ActivityCard({
   date,
   sport,
   id,
+  userId,
   locations,
   photoUrl,
   duration,
   speed,
   distance,
 }: ActivityCardProps) {
-  const { id: userId, settings } = useSelector(({ userInfo }) => userInfo);
-  const { name, surname } = settings;
+  const { isLoading, error, data: userProfile } = useGetUserProfileByIdQuery(userId);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -49,11 +50,13 @@ export default function ActivityCard({
       <Pressable onPress={() => router.push(`/home/${id}`)}>
         <Card.Content
           style={{ display: 'flex', flexDirection: 'row', columnGap: 5, marginBottom: 10, alignItems: 'center' }}>
-          <AvatarShowable size={40} id={userId} />
+          <Pressable onPress={() => router.push(`/home/profile/${userId}`)}>
+            <AvatarShowable size={40} id={userId} />
+          </Pressable>
 
           <View style={{ display: 'flex' }}>
             <Text variant="bodyLarge">
-              {name} {surname}
+              {userProfile?.name} {userProfile?.surname}
             </Text>
             <Text variant="bodySmall">
               {formatDate(date)}, {sport}

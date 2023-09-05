@@ -47,7 +47,7 @@ export default function SaveSettingsBtn() {
   return (
     <Button
       mode="outlined"
-      style={{ width: 200, marginLeft: 15, marginRight: 15 }}
+      style={{ width: 130, position: 'absolute', top: 15, right: 15 }}
       onPress={async () => {
         try {
           setIsDisabled(true);
