@@ -1,10 +1,15 @@
-import { Pressable } from 'react-native';
-import { Text } from 'react-native-paper';
+import { ActivityIndicator, Text } from 'react-native-paper';
 
-export default function AmountOfFriends({ amountOfFriends }: { amountOfFriends: number }) {
+import { useGetFriendsByUserIdQuery } from '../../redux/runnich-api/runnich-api';
+import ErrorComponent from '../error-component/error-component';
+
+export default function AmountOfFriends({ id }: { id: string }) {
+  const { isLoading, error, data: listOfFriends } = useGetFriendsByUserIdQuery(id);
   return (
-    <Pressable>
-      <Text variant="bodyLarge">{`Friends ${amountOfFriends}`}</Text>
-    </Pressable>
+    <>
+      {isLoading && <ActivityIndicator size="small" />}
+      {error ? <ErrorComponent error={error} /> : null}
+      {listOfFriends ? <Text variant="bodyLarge">{`Friends ${listOfFriends.length}`}</Text> : null}
+    </>
   );
 }

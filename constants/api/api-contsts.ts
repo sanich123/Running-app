@@ -5,6 +5,7 @@ export const TAGS = {
   profile: 'profile',
   comments: 'comments',
   likes: 'likes',
+  friends: 'friends',
 } as const;
 
 export const BASE_URL = 'https://runich-backend.onrender.com';

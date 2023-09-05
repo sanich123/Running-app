@@ -4,6 +4,7 @@ import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { useAddFriendMutation } from '../../redux/runnich-api/runnich-api';
+import { Text } from '../Themed';
 
 export default function AddFriendBtn({ friendId }: { friendId: string }) {
   const router = useRouter();
@@ -46,7 +47,7 @@ export default function AddFriendBtn({ friendId }: { friendId: string }) {
       }}
       disabled={isDisabled}
       loading={isLoading}>
-      Follow
+      <Text>Follow</Text>
     </Button>
   );
 }

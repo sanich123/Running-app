@@ -1,9 +1,11 @@
-import { View, Text } from 'react-native';
+import { Button } from 'react-native-paper';
+
+import { logOut } from '../../../auth/firebase/email-auth';
 
 export default function SettingsScreen() {
   return (
-    <View>
-      <Text>SettingsScreen</Text>
-    </View>
+    <Button mode="outlined" icon="logout" onPress={() => logOut()} style={{ marginTop: 15 }}>
+      LogOut
+    </Button>
   );
 }

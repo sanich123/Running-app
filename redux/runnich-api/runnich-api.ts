@@ -2,16 +2,18 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { headers, TAGS, BASE_URL, ROUTES } from '../../constants/api/api-contsts';
 
-const { activities, profile, comments, likes } = TAGS;
+const { activities, profile, comments, likes, friends } = TAGS;
 const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp, activityId } = ROUTES;
 
 export const runnichApi = createApi({
   reducerPath: 'runnichApi',
-  tagTypes: [activities, profile, comments, likes],
+  tagTypes: [activities, profile, comments, likes, friends, 'users'],
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => '/user',
+      keepUnusedDataFor: 30,
+      providesTags: ['users'],
     }),
     getUserProfileById: builder.query({
       query: (id) => `/${routeProfile}/${id}`,
@@ -19,7 +21,6 @@ export const runnichApi = createApi({
     }),
     getActivitiesByUserId: builder.query({
       query: (id) => `/${activity}/${id}`,
-      keepUnusedDataFor: 30,
       providesTags: [activities],
     }),
     getActivitiesByUserIdWithFriendsActivities: builder.query({
@@ -29,9 +30,11 @@ export const runnichApi = createApi({
     }),
     getActivityByActivityId: builder.query({
       query: (id) => `/${activity}/${activityId}/${id}`,
+      providesTags: [activities],
     }),
     getFriendsByUserId: builder.query({
       query: (id: string) => `/${friend}/${id}`,
+      providesTags: [friends],
     }),
     getCommentsByActivityId: builder.query({
       query: (id: string) => `/${comment}/${id}`,
@@ -90,6 +93,15 @@ export const runnichApi = createApi({
         headers,
         body,
       }),
+      invalidatesTags: [friends, activities, 'users'],
+    }),
+    deleteFriend: builder.mutation({
+      query: (id) => ({
+        url: `/${friend}/${id}`,
+        method: 'DELETE',
+        headers,
+      }),
+      invalidatesTags: [friends, activities, 'users'],
     }),
     postCommentWithActivityId: builder.mutation({
       query: ({ body, id }: { body: { comment: string; authorId: string }; id: string }) => ({
@@ -127,6 +139,7 @@ export const {
   useAddActivityByUserIdMutation,
   useDeleteActivityByIdMutation,
   useAddFriendMutation,
+  useDeleteFriendMutation,
   usePostCommentWithActivityIdMutation,
   useSendOrDeleteLikeMutation,
 } = runnichApi;

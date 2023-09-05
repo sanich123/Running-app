@@ -2,8 +2,8 @@ import { LocationObject } from 'expo-location';
 import { usePathname, useRouter } from 'expo-router';
 import { View, Image, Pressable } from 'react-native';
 import { Text, Card } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
-import { useGetUserProfileByIdQuery } from '../../redux/runnich-api/runnich-api';
 import { formatDate, formatDuration } from '../../utils/time-formatter';
 import ActivityCardCommentBtn from '../activity-card-comment-btn/activity-card-comment-btn';
 import ActivityCardDeleteBtn from '../activity-card-delete-btn/activity-card-delete-btn';
@@ -13,6 +13,7 @@ import ActivityCardShareBtn from '../activity-card-share-btn/activity-card-share
 import AvatarShowable from '../avatar/avatar-showable';
 import DisplayActivityMap from '../display-activiy-map/display-activity-map';
 import ShowMetrics from '../show-metrics/show-metrics';
+import UserNameSurname from '../user-name-surname/user-name-surname';
 
 type ActivityCardProps = {
   description: string;
@@ -41,7 +42,7 @@ export default function ActivityCard({
   speed,
   distance,
 }: ActivityCardProps) {
-  const { isLoading, error, data: userProfile } = useGetUserProfileByIdQuery(userId);
+  const { id: ownerId } = useSelector(({ userInfo }) => userInfo);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -55,10 +56,8 @@ export default function ActivityCard({
           </Pressable>
 
           <View style={{ display: 'flex' }}>
-            <Text variant="bodyLarge">
-              {userProfile?.name} {userProfile?.surname}
-            </Text>
-            <Text variant="bodySmall">
+            <UserNameSurname userId={userId} size="bodyMedium" />
+            <Text variant="bodyMedium">
               {formatDate(date)}, {sport}
             </Text>
             <Text variant="headlineSmall">{title}</Text>
@@ -71,14 +70,17 @@ export default function ActivityCard({
           <ShowMetrics title="Pace: " metrics={`${speed} км/ч`} />
         </View>
       </Pressable>
-      {pathname.includes('/home/') && (
+      {pathname.includes('/home/') ? (
         <View>
           <Text variant="bodyLarge">{description}</Text>
         </View>
-      )}
+      ) : null}
       <View style={{ height: 200 }}>
-        {photoUrl && <Image source={{ uri: photoUrl }} style={{ flex: 1 }} resizeMode="cover" />}
-        {!photoUrl && <DisplayActivityMap locations={locations} />}
+        {photoUrl ? (
+          <Image source={{ uri: photoUrl }} style={{ flex: 1 }} resizeMode="cover" />
+        ) : (
+          <DisplayActivityMap locations={locations} />
+        )}
       </View>
       <ActivityCardLikesWrapper activityId={id} />
       <Card.Actions>
@@ -86,7 +88,7 @@ export default function ActivityCard({
           <ActivityCardLikeBtn activityId={id} />
           <ActivityCardCommentBtn activityId={id} />
           <ActivityCardShareBtn />
-          <ActivityCardDeleteBtn activityId={id} />
+          {ownerId === userId ? <ActivityCardDeleteBtn activityId={id} /> : null}
         </View>
       </Card.Actions>
     </Card>

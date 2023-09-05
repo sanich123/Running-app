@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 
 import { logOut } from '../../../auth/firebase/email-auth';
 import { View } from '../../../components/Themed';
+import AmountOfFriends from '../../../components/amount-of-friends/amount-of-friends';
 import AvatarShowable from '../../../components/avatar/avatar-showable';
 import ErrorComponent from '../../../components/error-component/error-component';
 import { useGetUserProfileByIdQuery } from '../../../redux/runnich-api/runnich-api';
@@ -30,9 +31,7 @@ export default function Profile() {
       <View style={styles.bio}>
         <Text variant="titleMedium">{profileInfo?.bio || 'Your biography'}</Text>
       </View>
-      <Pressable>
-        <Text variant="bodyLarge">Followers</Text>
-      </Pressable>
+      <AmountOfFriends id={id} />
       <Pressable>
         <Text variant="bodyLarge">Following</Text>
       </Pressable>

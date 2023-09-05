@@ -1,66 +1,45 @@
 import { useLocalSearchParams } from 'expo-router';
-import { useEffect } from 'react';
-import { Pressable, StyleSheet, ToastAndroid } from 'react-native';
-import { ActivityIndicator, Button, MD2Colors, Text } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { logOut } from '../../../../auth/firebase/email-auth';
 import { View } from '../../../../components/Themed';
 import AddFriendBtn from '../../../../components/add-friend-btn/add-friend-btn';
 import AmountOfFriends from '../../../../components/amount-of-friends/amount-of-friends';
 import AvatarShowable from '../../../../components/avatar/avatar-showable';
+import DeleteFriendBtn from '../../../../components/delete-friend-btn/delete-friend-btn';
 import ErrorComponent from '../../../../components/error-component/error-component';
-import { useGetFriendsByUserIdQuery, useGetUserProfileByIdQuery } from '../../../../redux/runnich-api/runnich-api';
-import { calculateAge } from '../../../../utils/time-formatter';
+import UserBio from '../../../../components/user-bio/user-bio';
+import UserCityAge from '../../../../components/user-city-age/user-city-age';
+import UserNameSurname from '../../../../components/user-name-surname/user-name-surname';
+import { useGetFriendsByUserIdQuery } from '../../../../redux/runnich-api/runnich-api';
 
 export default function Profile() {
   const { id: friendId } = useLocalSearchParams();
   const { id } = useSelector(({ userInfo }) => userInfo);
   const whoIsViewing = friendId && friendId !== id ? friendId : id;
-  const { isLoading: isProfileLoading, error, data: profileInfo } = useGetUserProfileByIdQuery(whoIsViewing);
-  const {
-    isLoading: isListOfFriendsLoading,
-    error: listOfFriendsError,
-    data: listOfFriends,
-  } = useGetFriendsByUserIdQuery(id);
-  const isFriend = listOfFriends?.some((id) => id === friendId);
-  useEffect(() => {
-    if (listOfFriendsError) {
-      ToastAndroid.show('Не удалось загрузить список друзей', ToastAndroid.SHORT);
-    }
-  }, [listOfFriendsError]);
+  const { isLoading, error, data: listOfFriends } = useGetFriendsByUserIdQuery(id);
+  const friendCell = listOfFriends?.filter(({ friendId: friendIdOnServer }) => friendIdOnServer === friendId);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <AvatarShowable size={100} id={whoIsViewing} />
         <View style={styles.nicknameWrapper}>
-          <Text variant="headlineMedium">
-            {profileInfo?.name || 'Your name'}
-            {profileInfo?.surname || 'Your surname'}
-          </Text>
-          <Text variant="titleLarge">
-            {profileInfo?.city || 'Your homeland'},
-            {profileInfo?.birthday ? `${calculateAge(new Date(profileInfo?.birthday))} years old` : 'Your age'}
-          </Text>
+          <UserNameSurname userId={whoIsViewing} size="headlineSmall" />
+          <UserCityAge userId={whoIsViewing} size="titleLarge" />
         </View>
       </View>
       <View style={styles.bio}>
-        <Text variant="titleMedium">{profileInfo?.bio || 'Your biography'}</Text>
+        <UserBio userId={whoIsViewing} size="titleSmall" />
       </View>
-      {isListOfFriendsLoading && <ActivityIndicator size="small" />}
-      {listOfFriends?.length && <AmountOfFriends amountOfFriends={listOfFriends?.length} />}
-
-      <Pressable>
-        <Text variant="bodyLarge">Following</Text>
-      </Pressable>
-      {!isFriend && <AddFriendBtn friendId={friendId.toString()} />}
-      {friendId && friendId === id && (
-        <Button mode="outlined" icon="logout" onPress={() => logOut()} style={{ marginTop: 15 }}>
-          LogOut
-        </Button>
+      {isLoading && <ActivityIndicator size="small" />}
+      {listOfFriends?.length ? <AmountOfFriends id={friendId.toString()} /> : null}
+      {!friendCell?.length ? (
+        <AddFriendBtn friendId={friendId.toString()} />
+      ) : (
+        <DeleteFriendBtn idOfFriendsCell={friendCell[0].id} />
       )}
-      {isProfileLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
       {error ? <ErrorComponent error={error} /> : null}
     </View>
   );
