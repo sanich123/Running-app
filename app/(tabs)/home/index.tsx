@@ -51,6 +51,7 @@ export default function Feed() {
             }}
             ListEmptyComponent={<EmptyActivitiesList />}
             ListHeaderComponent={<Searchbar placeholder="Search something" value="" />}
+            initialNumToRender={2}
             ItemSeparatorComponent={() => <Divider />}
           />
         )}

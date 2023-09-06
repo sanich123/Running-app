@@ -12,10 +12,8 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "expo": {
-      "experiments": {
-        "typedRoutes": true
-      }
+    "experiments": {
+      "typedRoutes": true
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {

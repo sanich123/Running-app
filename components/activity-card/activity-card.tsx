@@ -1,9 +1,10 @@
 import { LocationObject } from 'expo-location';
 import { usePathname, useRouter } from 'expo-router';
-import { View, Image, Pressable } from 'react-native';
+import { View, Pressable, FlatList, Image } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
+import { getMapBoxImage } from '../../utils/location-utils';
 import { formatDate, formatDuration } from '../../utils/time-formatter';
 import ActivityCardCommentBtn from '../activity-card-comment-btn/activity-card-comment-btn';
 import ActivityCardDeleteBtn from '../activity-card-delete-btn/activity-card-delete-btn';
@@ -11,7 +12,6 @@ import ActivityCardLikeBtn from '../activity-card-like-btn/activity-card-like-bt
 import ActivityCardLikesWrapper from '../activity-card-likes-wrapper/activity-card-likes-wrapper';
 import ActivityCardShareBtn from '../activity-card-share-btn/activity-card-share-btn';
 import AvatarShowable from '../avatar/avatar-showable';
-import DisplayActivityMap from '../display-activiy-map/display-activity-map';
 import ShowMetrics from '../show-metrics/show-metrics';
 import UserNameSurname from '../user-name-surname/user-name-surname';
 
@@ -45,7 +45,7 @@ export default function ActivityCard({
   const { id: ownerId } = useSelector(({ userInfo }) => userInfo);
   const router = useRouter();
   const pathname = usePathname();
-
+  const urls = [getMapBoxImage(locations), photoUrl];
   return (
     <Card key={id}>
       <Pressable onPress={() => router.push(`/home/${id}`)}>
@@ -76,11 +76,11 @@ export default function ActivityCard({
         </View>
       ) : null}
       <View style={{ height: 200 }}>
-        {photoUrl ? (
-          <Image source={{ uri: photoUrl }} style={{ flex: 1 }} resizeMode="cover" />
-        ) : (
-          <DisplayActivityMap locations={locations} />
-        )}
+        <FlatList
+          data={urls}
+          renderItem={({ item }) => <Image source={{ uri: item }} resizeMode="cover" height={200} />}
+          horizontal
+        />
       </View>
       <ActivityCardLikesWrapper activityId={id} />
       <Card.Actions>

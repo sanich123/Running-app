@@ -2,18 +2,18 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { headers, TAGS, BASE_URL, ROUTES } from '../../constants/api/api-contsts';
 
-const { activities, profile, comments, likes, friends } = TAGS;
+const { activities, profile, comments, likes, friends, users } = TAGS;
 const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp, activityId } = ROUTES;
 
 export const runnichApi = createApi({
   reducerPath: 'runnichApi',
-  tagTypes: [activities, profile, comments, likes, friends, 'users'],
+  tagTypes: [activities, profile, comments, likes, friends, users],
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => '/user',
       keepUnusedDataFor: 30,
-      providesTags: ['users'],
+      providesTags: [users],
     }),
     getUserProfileById: builder.query({
       query: (id) => `/${routeProfile}/${id}`,
@@ -25,7 +25,6 @@ export const runnichApi = createApi({
     }),
     getActivitiesByUserIdWithFriendsActivities: builder.query({
       query: (id) => `/${activity}/${id}/all`,
-      keepUnusedDataFor: 30,
       providesTags: [activities],
     }),
     getActivityByActivityId: builder.query({
@@ -93,7 +92,7 @@ export const runnichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [friends, activities, 'users'],
+      invalidatesTags: [friends, activities, users],
     }),
     deleteFriend: builder.mutation({
       query: (id) => ({
@@ -101,7 +100,7 @@ export const runnichApi = createApi({
         method: 'DELETE',
         headers,
       }),
-      invalidatesTags: [friends, activities, 'users'],
+      invalidatesTags: [friends, activities, users],
     }),
     postCommentWithActivityId: builder.mutation({
       query: ({ body, id }: { body: { comment: string; authorId: string }; id: string }) => ({

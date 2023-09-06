@@ -3,8 +3,11 @@
   "compilerOptions": {
     "target": "esnext"
   },
-
-  "lib": ["dom", "esnext", "dom.iterable"],
+  "lib": [
+    "dom",
+    "esnext",
+    "dom.iterable"
+  ],
   "jsx": "react",
   "module": "esnext",
   "moduleResolution": "node",
@@ -18,7 +21,14 @@
   "baseUrl": ".",
   "resolveJsonModule": true,
   "paths": {
-    "src/*": ["src/*"]
+    "src/*": [
+      "src/*"
+    ]
   },
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
 }

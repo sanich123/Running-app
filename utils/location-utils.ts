@@ -1,3 +1,4 @@
+import polyline from '@mapbox/polyline';
 import * as turf from '@turf/turf';
 import { LocationObject } from 'expo-location';
 
@@ -10,6 +11,7 @@ export function getDistance(origin: LocationObject, destination: LocationObject)
 export function getTotalSpeed(distance: number, time: number) {
   return Number((distance / 1000 / (time / 3600)).toFixed(3));
 }
+
 export function generateNextLocation(currentLocation) {
   return {
     coords: {
@@ -26,4 +28,25 @@ export function generateNextLocation(currentLocation) {
     timestamp: currentLocation.timestamp + 1000,
     mocked: false,
   };
+}
+
+export function getMapBoxImage(locations: LocationObject[]) {
+  const polylineLatLang = locations.map(({ coords }) => [coords.latitude, coords.longitude]);
+  const encodedPolyline = polyline.encode(polylineLatLang);
+
+  const initialCoordinate = [locations[0].coords.longitude, locations[0].coords.latitude];
+  const lastCoordinate = [
+    locations[locations.length - 1].coords.longitude,
+    locations[locations.length - 1].coords.latitude,
+  ];
+  const lineOpacity = 0.8;
+  const lineWidth = 2;
+  const lineColor = 'F66767';
+  return `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+9ed4bd(${initialCoordinate[0]},${
+    initialCoordinate[1]
+  }),pin-s-b+000(${lastCoordinate[0]},${
+    lastCoordinate[1]
+  }),path-${lineWidth}+${lineColor}-${lineOpacity}(${encodeURIComponent(
+    encodedPolyline,
+  )})/auto/200x360?access_token=pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g`;
 }
