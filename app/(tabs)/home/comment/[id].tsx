@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 import AvatarShowable from '../../../../components/avatar/avatar-showable';
 import CommentInput from '../../../../components/comment-input/comment-input';
 import Comments from '../../../../components/comments/comments';
-import DisplayActivityMap from '../../../../components/display-activiy-map/display-activity-map';
 import ErrorComponent from '../../../../components/error-component/error-component';
 import FloatingBtn from '../../../../components/floating-btn/floating-btn';
 import { useGetActivityByActivityIdQuery } from '../../../../redux/runnich-api/runnich-api';
@@ -26,7 +25,6 @@ export default function Comment() {
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <View style={{ flex: 1 }}>
-          <DisplayActivityMap locations={activity.locations} />
           <Card.Content
             style={{ display: 'flex', flexDirection: 'row', columnGap: 5, marginBottom: 10, alignItems: 'center' }}>
             <AvatarShowable size={40} id={userId} />
