@@ -12,7 +12,6 @@ export default function ActivityCardMetrics({
 }) {
   return (
     <>
-      <ShowMetrics title="Distance: " metrics={`${distance / 1000} км`} />
       <ShowMetrics title="Time: " metrics={`${formatDuration(duration)}`} />
       <ShowMetrics title="Pace: " metrics={`${speed} км/ч`} />
     </>
