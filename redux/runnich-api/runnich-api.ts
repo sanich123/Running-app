@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { headers, TAGS, BASE_URL, ROUTES } from '../../constants/api/api-contsts';
+import { headers, TAGS, ROUTES } from '../../constants/api/api-contsts';
 
 const { activities, profile, comments, likes, friends, users } = TAGS;
 const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp, activityId } = ROUTES;
@@ -8,7 +8,7 @@ const { profile: routeProfile, activity, friend, comment, like, auth, signIn, si
 export const runnichApi = createApi({
   reducerPath: 'runnichApi',
   tagTypes: [activities, profile, comments, likes, friends, users],
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_URL }),
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => '/user',

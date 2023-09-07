@@ -7,7 +7,7 @@ import { setInitialLocation } from '../../redux/location-slice/location-slice';
 
 export default function useGetLocation() {
   Mapbox.setWellKnownTileServer('Mapbox');
-  Mapbox.setAccessToken('pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g');
+  Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
 
   const [location, setLocation] = useState<LocationObject>();
   const [error, setError] = useState(false);

@@ -1,9 +1,19 @@
-import { View, Text } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { SafeAreaView } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
+
+import DisplayActivityMap from '../../../../components/display-activity-map/display-activity-map';
+import ErrorComponent from '../../../../components/error-component/error-component';
+import { useGetActivityByActivityIdQuery } from '../../../../redux/runnich-api/runnich-api';
 
 export default function ActivityMap() {
+  const { id: activityId } = useLocalSearchParams();
+  const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(activityId.toString());
   return (
-    <View>
-      <Text>Здесь будет открываться по клику карта прошедшего забега</Text>
-    </View>
+    <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
+      {isLoading && <ActivityIndicator />}
+      {error ? <ErrorComponent error={error} /> : null}
+      {activity ? <DisplayActivityMap locations={activity.locations} distance={activity.distance} /> : null}
+    </SafeAreaView>
   );
 }

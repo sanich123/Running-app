@@ -9,8 +9,6 @@ export const TAGS = {
   users: 'users',
 } as const;
 
-export const BASE_URL = 'https://runich-backend.onrender.com';
-
 export const ROUTES = {
   user: 'user',
   profile: 'profile',

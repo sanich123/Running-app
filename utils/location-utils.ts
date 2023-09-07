@@ -42,11 +42,14 @@ export function getMapBoxImage(locations: LocationObject[]) {
   const lineOpacity = 0.8;
   const lineWidth = 2;
   const lineColor = 'F66767';
+  const width = 250;
+  const height = 720;
+  const doublePixels = '@2x';
   return `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+9ed4bd(${initialCoordinate[0]},${
     initialCoordinate[1]
   }),pin-s-b+000(${lastCoordinate[0]},${
     lastCoordinate[1]
   }),path-${lineWidth}+${lineColor}-${lineOpacity}(${encodeURIComponent(
     encodedPolyline,
-  )})/auto/200x360?access_token=pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g`;
+  )})/auto/${width}x${height}${doublePixels}?access_token=${process.env.EXPO_PUBLIC_MAPBOX_TOKEN}`;
 }

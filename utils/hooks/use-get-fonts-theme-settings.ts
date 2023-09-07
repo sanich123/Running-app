@@ -9,7 +9,7 @@ export function useGetFontsThemeSettings() {
   // eslint-disable-next-line camelcase
   const unstable_settings = {
     // Ensure that reloading on `/modal` keeps a back button present.
-    initialRouteName: '(tabs)',
+    initialRouteName: '(tabs)/home',
   };
 
   const [loaded, error] = useFonts({

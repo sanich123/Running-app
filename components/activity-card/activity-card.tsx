@@ -47,6 +47,7 @@ export default function ActivityCard({
   const pathname = usePathname();
   const urls = [getMapBoxImage(locations), photoUrl];
   const windowWidth = Dimensions.get('window').width;
+
   return (
     <Card key={id}>
       <Pressable onPress={() => router.push(`/home/activity/${id}`)}>
