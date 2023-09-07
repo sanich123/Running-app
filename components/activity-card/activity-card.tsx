@@ -1,6 +1,6 @@
 import { LocationObject } from 'expo-location';
 import { usePathname, useRouter } from 'expo-router';
-import { View, Pressable, FlatList, Image } from 'react-native';
+import { View, Pressable, FlatList, Image, Dimensions } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
@@ -46,9 +46,11 @@ export default function ActivityCard({
   const router = useRouter();
   const pathname = usePathname();
   const urls = [getMapBoxImage(locations), photoUrl];
+  const windowWidth = Dimensions.get('window').width;
+
   return (
     <Card key={id}>
-      <Pressable onPress={() => router.push(`/home/${id}`)}>
+      <Pressable onPress={() => router.push(`/home/activity/${id}`)}>
         <Card.Content
           style={{ display: 'flex', flexDirection: 'row', columnGap: 5, marginBottom: 10, alignItems: 'center' }}>
           <Pressable onPress={() => router.push(`/home/profile/${userId}`)}>
@@ -75,13 +77,16 @@ export default function ActivityCard({
           <Text variant="bodyLarge">{description}</Text>
         </View>
       ) : null}
-      <View style={{ height: 200 }}>
-        <FlatList
-          data={urls}
-          renderItem={({ item }) => <Image source={{ uri: item }} resizeMode="cover" height={200} />}
-          horizontal
-        />
-      </View>
+      <FlatList
+        data={urls}
+        renderItem={({ item }) => (
+          <Pressable onPress={() => router.push(`/home/map/${id}`)}>
+            <Image source={{ uri: item }} resizeMode="cover" height={200} width={windowWidth} />
+          </Pressable>
+        )}
+        horizontal
+        initialNumToRender={1}
+      />
       <ActivityCardLikesWrapper activityId={id} />
       <Card.Actions>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
