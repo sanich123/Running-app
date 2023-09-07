@@ -1,12 +1,11 @@
-import { Pressable, StyleSheet } from 'react-native';
-import { ActivityIndicator, Button, MD2Colors, Text } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { logOut } from '../../../auth/firebase/email-auth';
 import { View } from '../../../components/Themed';
-import AmountOfFriends from '../../../components/amount-of-friends/amount-of-friends';
 import AvatarShowable from '../../../components/avatar/avatar-showable';
 import ErrorComponent from '../../../components/error-component/error-component';
+import ProfileFollowersSection from '../../../components/profile-followers-section/profile-followers-section';
 import { useGetUserProfileByIdQuery } from '../../../redux/runnich-api/runnich-api';
 import { calculateAge } from '../../../utils/time-formatter';
 
@@ -31,14 +30,7 @@ export default function Profile() {
       <View style={styles.bio}>
         <Text variant="titleMedium">{profileInfo?.bio || 'Your biography'}</Text>
       </View>
-      <AmountOfFriends id={id} />
-      <Pressable>
-        <Text variant="bodyLarge">Following</Text>
-      </Pressable>
-
-      <Button mode="outlined" icon="logout" onPress={() => logOut()} style={{ marginTop: 15 }}>
-        LogOut
-      </Button>
+      <ProfileFollowersSection />
       {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
       {error ? <ErrorComponent error={error} /> : null}
     </View>

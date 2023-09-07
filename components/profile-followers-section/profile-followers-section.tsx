@@ -29,7 +29,7 @@ export default function ProfileFollowersSection() {
       </View>
       {isLoading && <ActivityIndicator size="small" />}
       {error && <ErrorComponent error={error} />}
-      {!isMineActivity ? (
+      {!isMineActivity && friendId ? (
         !friendCell?.length ? (
           <AddFriendBtn friendId={friendId.toString()} />
         ) : (
