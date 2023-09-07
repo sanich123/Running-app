@@ -11,7 +11,7 @@ export default function UserNameSurname({ userId, size }: { userId: string; size
       {isLoading && <ActivityIndicator />}
       {error ? <ErrorComponent error={error} /> : null}
       {profileInfo ? (
-        <Text variant={size}>
+        <Text variant={size} style={{ fontWeight: 'bold' }}>
           {profileInfo?.name} {profileInfo?.surname}
         </Text>
       ) : null}

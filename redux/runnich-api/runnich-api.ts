@@ -35,6 +35,10 @@ export const runnichApi = createApi({
       query: (id: string) => `/${friend}/${id}`,
       providesTags: [friends],
     }),
+    getFollowersByUserId: builder.query({
+      query: (id: string) => `${friend}/${id}/followers`,
+      providesTags: [friends],
+    }),
     getCommentsByActivityId: builder.query({
       query: (id: string) => `/${comment}/${id}`,
       providesTags: [comments],
@@ -130,6 +134,7 @@ export const {
   useGetActivitiesByUserIdWithFriendsActivitiesQuery,
   useGetActivityByActivityIdQuery,
   useGetFriendsByUserIdQuery,
+  useGetFollowersByUserIdQuery,
   useGetCommentsByActivityIdQuery,
   useGetLikesByActivityIdQuery,
   useSignUpUserMutation,

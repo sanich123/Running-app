@@ -1,46 +1,29 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { View } from '../../../../components/Themed';
-import AddFriendBtn from '../../../../components/add-friend-btn/add-friend-btn';
-import AmountOfFriends from '../../../../components/amount-of-friends/amount-of-friends';
 import AvatarShowable from '../../../../components/avatar/avatar-showable';
-import DeleteFriendBtn from '../../../../components/delete-friend-btn/delete-friend-btn';
-import ErrorComponent from '../../../../components/error-component/error-component';
+import ProfileFollowersSection from '../../../../components/profile-followers-section/profile-followers-section';
 import UserBio from '../../../../components/user-bio/user-bio';
 import UserCityAge from '../../../../components/user-city-age/user-city-age';
 import UserNameSurname from '../../../../components/user-name-surname/user-name-surname';
-import { useGetFriendsByUserIdQuery } from '../../../../redux/runnich-api/runnich-api';
 
 export default function Profile() {
   const { id: friendId } = useLocalSearchParams();
-  const { id } = useSelector(({ userInfo }) => userInfo);
-  const whoIsViewing = friendId && friendId !== id ? friendId : id;
-  const { isLoading, error, data: listOfFriends } = useGetFriendsByUserIdQuery(id);
-  const friendCell = listOfFriends?.filter(({ friendId: friendIdOnServer }) => friendIdOnServer === friendId);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <AvatarShowable size={100} id={whoIsViewing} />
+        <AvatarShowable size={100} id={friendId.toString()} />
         <View style={styles.nicknameWrapper}>
-          <UserNameSurname userId={whoIsViewing} size="headlineSmall" />
-          <UserCityAge userId={whoIsViewing} size="titleLarge" />
+          <UserNameSurname userId={friendId.toString()} size="headlineSmall" />
+          <UserCityAge userId={friendId.toString()} size="titleMedium" />
         </View>
       </View>
       <View style={styles.bio}>
-        <UserBio userId={whoIsViewing} size="titleSmall" />
+        <UserBio userId={friendId.toString()} size="bodyMedium" />
       </View>
-      {isLoading && <ActivityIndicator size="small" />}
-      {listOfFriends?.length ? <AmountOfFriends id={friendId.toString()} /> : null}
-      {!friendCell?.length ? (
-        <AddFriendBtn friendId={friendId.toString()} />
-      ) : (
-        <DeleteFriendBtn idOfFriendsCell={friendCell[0].id} />
-      )}
-      {error ? <ErrorComponent error={error} /> : null}
+      <ProfileFollowersSection />
     </View>
   );
 }

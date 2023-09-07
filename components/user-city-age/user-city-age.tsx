@@ -14,7 +14,7 @@ export default function UserCityAge({ userId, size }: { userId: string; size: Va
       {profileInfo ? (
         <>
           <Text variant={size}>
-            {profileInfo?.city || 'Your homeland'}
+            {profileInfo?.city || 'Default city'},{' '}
             {profileInfo?.birthday ? `${calculateAge(new Date(profileInfo?.birthday))} years old` : 'Your age'}
           </Text>
         </>

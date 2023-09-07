@@ -4,6 +4,7 @@ import { IconButton, MD3Colors } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { useGetLikesByActivityIdQuery, useSendOrDeleteLikeMutation } from '../../redux/runnich-api/runnich-api';
+import { errorHandler } from '../../utils/error-handler';
 
 export default function ActivityCardLikeBtn({ activityId }: { activityId: string }) {
   const { id: userId } = useSelector(({ userInfo }) => userInfo);
@@ -25,11 +26,15 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
   return (
     <IconButton
       icon={`thumb-up${isLikedByYou ? '' : '-outline'}`}
-      iconColor={MD3Colors.error50}
-      size={20}
+      iconColor={MD3Colors.primary50}
+      size={25}
       onPress={async () => {
-        const body = { activityId, authorId: userId };
-        await sendLike(body).unwrap();
+        try {
+          const body = { activityId, authorId: userId };
+          await sendLike(body).unwrap();
+        } catch (error) {
+          errorHandler(error);
+        }
       }}
       disabled={isLoading}
     />

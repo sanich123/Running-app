@@ -42,8 +42,8 @@ export function getMapBoxImage(locations: LocationObject[]) {
   const lineOpacity = 0.8;
   const lineWidth = 2;
   const lineColor = 'F66767';
-  const width = 250;
-  const height = 720;
+  const width = 900;
+  const height = 200;
   const doublePixels = '@2x';
   return `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+9ed4bd(${initialCoordinate[0]},${
     initialCoordinate[1]
