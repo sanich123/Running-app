@@ -20,7 +20,7 @@ export default function DeleteFriendBtn({ idOfFriendCell }: { idOfFriendCell: st
   return (
     <Button
       mode="contained"
-      style={{ marginLeft: 'auto', borderRadius: 5 }}
+      style={{ marginLeft: 'auto', borderRadius: 5, marginRight: 5 }}
       disabled={isLoading}
       loading={isLoading}
       onPress={async () => await deleteFriend(idOfFriendCell).unwrap()}>

@@ -25,7 +25,7 @@ export default function AddFriendBtn({ friendId }: { friendId: string }) {
   return (
     <Button
       mode="contained"
-      style={{ marginLeft: 'auto', borderRadius: 5 }}
+      style={{ marginLeft: 'auto', borderRadius: 5, marginRight: 5 }}
       onPress={async () => {
         setIsLoading(true);
         setIsDisabled(true);
