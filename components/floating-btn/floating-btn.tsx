@@ -8,7 +8,7 @@ export default function FloatingBtn({ onPressFn }: { onPressFn: (arg: any) => vo
         position: 'absolute',
         margin: 16,
         right: 0,
-        bottom: 40,
+        bottom: 0,
       }}
       onPress={onPressFn}
     />

@@ -17,7 +17,6 @@ export default function DisplayActivityMap({ locations, distance }: { locations:
   const center = getCenterOfBounds(modifiedLocations);
   const [{ latitude: swLatitude, longitude: swLongitude }, { latitude: neLatitude, longitude: neLongitude }] =
     getBoundsOfDistance(center, distance);
-  // console.log(center, northEastern);
 
   useEffect(() => {
     if (cameraRef?.current) {

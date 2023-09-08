@@ -19,3 +19,9 @@ export function formatDate(dateString: Date) {
     day: 'numeric',
   });
 }
+
+export function getHoursMinutes(dateString: Date) {
+  const hours = new Date(dateString).getHours();
+  const minutes = new Date(dateString).getMinutes();
+  return `at ${hours < 10 ? `0${hours}` : `${hours}`}:${minutes < 10 ? `0${minutes}` : `${minutes}`}`;
+}
