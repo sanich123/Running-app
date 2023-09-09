@@ -1,19 +1,15 @@
-import { useCallback, useState } from 'react';
 import { View, FlatList, SafeAreaView } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
 import ErrorComponent from '../../../components/error-component/error-component';
 import UserListItem from '../../../components/user-list-item/user-list-item';
 import { useGetUsersQuery } from '../../../redux/runnich-api/runnich-api';
+import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function ListOfUsers() {
   const { isLoading, error, data: users, refetch } = useGetUsersQuery('');
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    refetch();
-    setTimeout(() => setRefreshing(false), 2000);
-  }, []);
+  const { refreshing, onRefresh } = useRefresh(refetch);
+
   return (
     <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
       {users && (

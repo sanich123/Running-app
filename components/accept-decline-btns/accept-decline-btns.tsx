@@ -21,7 +21,7 @@ export default function AcceptDeclineBtns() {
     if (data) {
       console.log(data);
       ToastAndroid.show('Successfully sended data to server!', ToastAndroid.SHORT);
-      router.replace('/(tabs)/home/');
+      router.push('/(tabs)/home/');
     }
     if (error) {
       ToastAndroid.show('Some error occured', ToastAndroid.SHORT);

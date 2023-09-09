@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
@@ -18,15 +18,18 @@ export default function ProfileFollowersSection() {
   const friendCell = listOfFriends?.filter(({ friendId: friendIdOnServer }) => friendIdOnServer === friendId);
   const isMineActivity = friendId === id;
   const router = useRouter();
+  const pathname = usePathname();
   return (
     <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
-      <Pressable onPress={() => router.replace(`/home/following/${friendId}`)}>
+      <Pressable
+        onPress={() => router.push(`/${pathname.includes('home') ? 'home' : 'profile'}/following/${friendId}`)}>
         <View>
           <Text variant="bodySmall">Following</Text>
           <FollowingCount />
         </View>
       </Pressable>
-      <Pressable onPress={() => router.push(`/home/followers/${friendId}`)}>
+      <Pressable
+        onPress={() => router.push(`/${pathname.includes('home') ? 'home' : 'profile'}/followers/${friendId}`)}>
         <View>
           <Text variant="bodySmall">Followers</Text>
           <FollowersCount />
