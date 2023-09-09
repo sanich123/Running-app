@@ -1,6 +1,6 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
@@ -17,16 +17,22 @@ export default function ProfileFollowersSection() {
   const { isLoading, error, data: listOfFriends } = useGetFriendsByUserIdQuery(id);
   const friendCell = listOfFriends?.filter(({ friendId: friendIdOnServer }) => friendIdOnServer === friendId);
   const isMineActivity = friendId === id;
+  const router = useRouter();
   return (
     <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
-      <View>
-        <Text variant="bodySmall">Following</Text>
-        <FollowingCount />
-      </View>
-      <View>
-        <Text variant="bodySmall">Followers</Text>
-        <FollowersCount />
-      </View>
+      <Pressable onPress={() => router.push(`/home/following/${friendId}`)}>
+        <View>
+          <Text variant="bodySmall">Following</Text>
+          <FollowingCount />
+        </View>
+      </Pressable>
+      <Pressable onPress={() => router.push(`/home/followers/${friendId}`)}>
+        <View>
+          <Text variant="bodySmall">Followers</Text>
+          <FollowersCount />
+        </View>
+      </Pressable>
+
       {isLoading && <ActivityIndicator size="small" />}
       {error && <ErrorComponent error={error} />}
       {!isMineActivity && friendId ? (
