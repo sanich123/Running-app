@@ -54,7 +54,6 @@ export default function SaveResult() {
         <ChoosePhotoBtn />
         <AcceptDeclineBtns />
       </SaveActivityContext.Provider>
-
       <StatusBar style="auto" />
     </ScrollView>
   );

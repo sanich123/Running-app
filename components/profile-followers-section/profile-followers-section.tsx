@@ -20,7 +20,7 @@ export default function ProfileFollowersSection() {
   const router = useRouter();
   return (
     <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
-      <Pressable onPress={() => router.push(`/home/following/${friendId}`)}>
+      <Pressable onPress={() => router.replace(`/home/following/${friendId}`)}>
         <View>
           <Text variant="bodySmall">Following</Text>
           <FollowingCount />

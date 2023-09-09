@@ -21,7 +21,7 @@ export default function AcceptDeclineBtns() {
     if (data) {
       console.log(data);
       ToastAndroid.show('Successfully sended data to server!', ToastAndroid.SHORT);
-      router.back();
+      router.replace('/(tabs)/home/');
     }
     if (error) {
       ToastAndroid.show('Some error occured', ToastAndroid.SHORT);
@@ -35,12 +35,9 @@ export default function AcceptDeclineBtns() {
     try {
       setIsDisabled(true);
       setIsLoading(true);
-
       const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrl };
-      console.log(body);
       await sendActivity({ body, id }).unwrap();
       setIsDisabled(false);
-
       setIsLoading(false);
     } catch (error) {
       setIsDisabled(false);

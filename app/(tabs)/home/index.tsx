@@ -1,4 +1,3 @@
-import { useState, useCallback } from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
 import { ActivityIndicator, Divider, Searchbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -9,17 +8,13 @@ import ErrorComponent from '../../../components/error-component/error-component'
 import FloatingBtn from '../../../components/floating-btn/floating-btn';
 import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runnich-api/runnich-api';
 import useGetLocation from '../../../utils/hooks/use-get-location';
+import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
   const { id } = useSelector(({ userInfo }) => userInfo);
   useGetLocation();
   const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(id);
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    refetch();
-    setTimeout(() => setRefreshing(false), 2000);
-  }, []);
+  const { onRefresh, refreshing } = useRefresh(refetch);
 
   return (
     <>

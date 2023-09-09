@@ -18,34 +18,36 @@ import { useGetActivityByActivityIdQuery } from '../../../../redux/runnich-api/r
 
 export default function Comment() {
   const { id: activityId } = useLocalSearchParams();
+  const { id: userId } = useSelector(({ userInfo }) => userInfo);
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(activityId);
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
-  const { id: userId } = useSelector(({ userInfo }) => userInfo);
 
   return (
     <ScrollView>
-      {isLoading && <ActivityIndicator />}
-      {error ? <ErrorComponent error={error} /> : null}
-      {activity && (
-        <View style={[{ flex: 1 }, isLoading && { justifyContent: 'center', alignItems: 'center' }]}>
-          <DisplayActivityMap locations={activity?.locations} distance={activity?.distance} />
-          <Card.Content style={{ display: 'flex', columnGap: 5, marginBottom: 10 }}>
-            <ActivityCardTitle title={activity?.title} />
-            <UserNameSurname userId={activity?.userId} size="titleMedium" />
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
-              <UserSportDate sport={activity?.sport} date={activity?.date} />
-              <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
-            </View>
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
-              <ActivityCardLikeBtn activityId={activity?.id} />
-              <ActivityCardLikesWrapper activityId={activity?.id} />
-            </View>
-          </Card.Content>
-          <Comments id={activityId.toString()} />
-          {isShowingTextInput && <CommentInput userId={userId} activityId={activityId.toString()} />}
-          {!isShowingTextInput && <FloatingBtn onPressFn={() => setIsShowingTextInput(true)} />}
-        </View>
-      )}
+      <View style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
+        {isLoading && <ActivityIndicator />}
+        {error ? <ErrorComponent error={error} /> : null}
+        {activity && (
+          <View style={[{ flex: 1 }, isLoading && { justifyContent: 'center', alignItems: 'center' }]}>
+            <DisplayActivityMap locations={activity?.locations} distance={activity?.distance} />
+            <Card.Content style={{ display: 'flex', columnGap: 5, marginBottom: 10 }}>
+              <ActivityCardTitle title={activity?.title} />
+              <UserNameSurname userId={activity?.userId} size="titleMedium" />
+              <View style={{ display: 'flex', flexDirection: 'row' }}>
+                <UserSportDate sport={activity?.sport} date={activity?.date} />
+                <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
+              </View>
+              <View style={{ display: 'flex', flexDirection: 'row' }}>
+                <ActivityCardLikeBtn activityId={activity?.id} />
+                <ActivityCardLikesWrapper activityId={activity?.id} />
+              </View>
+            </Card.Content>
+            <Comments id={activityId.toString()} />
+            {isShowingTextInput && <CommentInput userId={userId} activityId={activityId.toString()} />}
+            {!isShowingTextInput && <FloatingBtn onPressFn={() => setIsShowingTextInput(true)} />}
+          </View>
+        )}
+      </View>
     </ScrollView>
   );
 }
