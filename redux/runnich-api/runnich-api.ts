@@ -9,10 +9,11 @@ export const runnichApi = createApi({
   reducerPath: 'runnichApi',
   tagTypes: [activities, profile, comments, likes, friends, users],
   baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_URL }),
+  refetchOnMountOrArgChange: 30,
+  refetchOnReconnect: true,
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => '/user',
-      keepUnusedDataFor: 30,
       providesTags: [users],
     }),
     getUserProfileById: builder.query({
