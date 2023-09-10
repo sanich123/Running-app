@@ -15,7 +15,7 @@ export default function ActivityCardMapImagesList({
   id: string;
 }) {
   const windowWidth = Dimensions.get('window').width;
-  const urls = [getMapBoxImage(locations), photoUrl];
+  const urls = photoUrl ? [getMapBoxImage(locations), photoUrl] : [getMapBoxImage(locations)];
   const router = useRouter();
   return (
     <FlatList

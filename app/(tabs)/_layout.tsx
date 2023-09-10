@@ -1,5 +1,5 @@
 import { useLinkTo } from '@react-navigation/native';
-import { Tabs, usePathname, useRouter } from 'expo-router';
+import { Redirect, Tabs, usePathname, useRouter } from 'expo-router';
 import { useColorScheme, Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -23,6 +23,10 @@ export default function TabLayout() {
     headerStyle: { backgroundColor: theme.colors.primary },
     headerTintColor: theme.colors.primaryContainer,
   };
+
+  if (!user) {
+    return <Redirect href="/(auth)/sign-in" />;
+  }
 
   return (
     <Tabs
@@ -128,6 +132,15 @@ export default function TabLayout() {
         name="users/index"
         options={{
           title: 'Users',
+          ...commonSettings,
+          headerTitleStyle: { fontWeight: 'bold' },
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="save-activity/index"
+        options={{
+          title: 'save',
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
