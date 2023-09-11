@@ -5,6 +5,8 @@ import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 import { useGetCommentsByActivityIdQuery } from '../../redux/runnich-api/runnich-api';
 import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
 import AvatarShowable from '../avatar/avatar-showable';
+import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
+import CommentLikesLength from '../comment-likes-length/comment-likes-length';
 import ErrorComponent from '../error-component/error-component';
 import UserNameSurname from '../user-name-surname/user-name-surname';
 
@@ -27,6 +29,16 @@ export default function Comments({ id }: { id: string }) {
           <View style={styles.textCommentWrapper}>
             <Text variant="bodyLarge">{comment}</Text>
           </View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              columnGap: 15,
+            }}>
+            <CommentLikeBtn commentId={id} />
+            <CommentLikesLength id={id} />
+          </View>
+
           <Divider />
         </Fragment>
       ))}

@@ -28,6 +28,10 @@ export const runnichApi = createApi({
       query: (id) => `/${activity}/${id}/all`,
       providesTags: [activities],
     }),
+    getAllActivityPhotosByUserId: builder.query({
+      query: (userId) => `/${activity}/${userId}/photos`,
+      providesTags: [activities],
+    }),
     getActivityByActivityId: builder.query({
       query: (id) => `/${activity}/${activityId}/${id}`,
       providesTags: [activities],
@@ -47,6 +51,10 @@ export const runnichApi = createApi({
     getLikesByActivityId: builder.query({
       query: (id: string) => `/${like}/${id}`,
       providesTags: [likes],
+    }),
+    getLikesByCommentId: builder.query({
+      query: (commentId: string) => `/${comment}/${commentId}/like`,
+      providesTags: [comments],
     }),
     signUpUser: builder.mutation({
       query: (body) => ({
@@ -125,6 +133,15 @@ export const runnichApi = createApi({
       }),
       invalidatesTags: [likes],
     }),
+    sendOrDeleteLikeToComment: builder.mutation({
+      query: ({ body, commentId }) => ({
+        url: `/${comment}/${commentId}/like`,
+        method: 'POST',
+        headers,
+        body,
+      }),
+      invalidatesTags: [comments],
+    }),
   }),
 });
 
@@ -132,12 +149,14 @@ export const {
   useGetUsersQuery,
   useGetUserProfileByIdQuery,
   useGetActivitiesByUserIdQuery,
+  useGetAllActivityPhotosByUserIdQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesQuery,
   useGetActivityByActivityIdQuery,
   useGetFriendsByUserIdQuery,
   useGetFollowersByUserIdQuery,
   useGetCommentsByActivityIdQuery,
   useGetLikesByActivityIdQuery,
+  useGetLikesByCommentIdQuery,
   useSignUpUserMutation,
   useSignInUserMutation,
   useSendProfileInfoMutation,
@@ -147,4 +166,5 @@ export const {
   useDeleteFriendMutation,
   usePostCommentWithActivityIdMutation,
   useSendOrDeleteLikeMutation,
+  useSendOrDeleteLikeToCommentMutation,
 } = runnichApi;
