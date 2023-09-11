@@ -1,7 +1,7 @@
 import { LocationObject } from 'expo-location';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { FlatList, Pressable, Dimensions, Image } from 'react-native';
+import { FlatList, Pressable, Image, useWindowDimensions } from 'react-native';
 
 import { getMapBoxImage } from '../../utils/location-utils';
 
@@ -14,7 +14,7 @@ export default function ActivityCardMapImagesList({
   photoUrl: string;
   id: string;
 }) {
-  const windowWidth = Dimensions.get('window').width;
+  const { width } = useWindowDimensions();
   const urls = photoUrl ? [getMapBoxImage(locations), photoUrl] : [getMapBoxImage(locations)];
   const router = useRouter();
   return (
@@ -22,7 +22,7 @@ export default function ActivityCardMapImagesList({
       data={urls}
       renderItem={({ item, index }) => (
         <Pressable onPress={() => router.push(`/home/${index > 0 ? 'media' : 'map'}/${id}`)}>
-          <Image source={{ uri: item }} resizeMode="cover" height={200} width={windowWidth} />
+          <Image source={{ uri: item }} resizeMode="cover" height={200} width={width} />
         </Pressable>
       )}
       horizontal

@@ -10,18 +10,20 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { width } = useWindowDimensions();
   const router = useRouter();
   return (
-    <View
-      style={[
-        { display: 'flex', flexDirection: 'row', backgroundColor: 'white' },
-        isLoading && { alignItems: 'center', justifyContent: 'center' },
-      ]}>
-      {isLoading && <ActivityIndicator size="large" />}
-      {error ? <ErrorComponent error={error} /> : null}
-      {photos?.map(({ photoUrl }) => (
-        <Pressable key={photoUrl} onPress={() => router.push(`/home/media/${encodeURIComponent(photoUrl)}`)}>
-          <Image key={photoUrl} source={{ uri: photoUrl }} height={width / 4} width={width / 4} />
-        </Pressable>
-      ))}
-    </View>
+    <Pressable onPress={() => router.push(`/(tabs)/home/media-grid/${userId}`)}>
+      <View
+        style={[
+          { display: 'flex', flexDirection: 'row', backgroundColor: 'white' },
+          isLoading && { alignItems: 'center', justifyContent: 'center' },
+        ]}>
+        {isLoading && <ActivityIndicator size="large" />}
+        {error ? <ErrorComponent error={error} /> : null}
+        {photos
+          ?.slice(0, 4)
+          .map(({ photoUrl }) => (
+            <Image key={photoUrl} source={{ uri: photoUrl }} height={width / 4} width={width / 4} />
+          ))}
+      </View>
+    </Pressable>
   );
 }
