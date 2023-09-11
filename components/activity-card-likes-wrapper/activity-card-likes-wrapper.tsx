@@ -14,9 +14,29 @@ export default function ActivityCardLikesWrapper({ activityId }: { activityId: s
       <View style={[styles.likesLayout, !likes?.length && styles.withoutLikesLayout]}>
         {isLoading && <ActivityIndicator />}
         {error ? <Text variant="bodyMedium">An error occured</Text> : null}
-        {likes ? likes?.map(({ authorId, id }) => <AvatarShowable size={30} id={authorId} key={id} />) : null}
+        {likes && (
+          <View style={{ position: 'relative' }}>
+            {likes?.slice(0, 3).map(({ authorId, id }, key) => (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -15,
+                  left: key * 18,
+                  backgroundColor: 'transparent',
+                  borderRadius: 50,
+                  borderColor: 'white',
+                  borderStyle: 'solid',
+                  borderWidth: 1,
+                }}>
+                <AvatarShowable size={30} id={authorId} key={id} />
+              </View>
+            ))}
+          </View>
+        )}
         {likes?.length ? (
-          <Text variant="bodyMedium">{`${likes.length} gave like${likes.length > 1 ? 's' : ''}`}</Text>
+          <Text style={{ marginLeft: 60 }} variant="bodyMedium">{`${likes.length} gave like${
+            likes.length > 1 ? 's' : ''
+          }`}</Text>
         ) : null}
       </View>
     </Pressable>
@@ -29,9 +49,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 10,
+    backgroundColor: 'transparent',
   },
   withoutLikesLayout: {
     paddingTop: 0,
