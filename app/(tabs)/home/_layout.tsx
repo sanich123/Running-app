@@ -10,7 +10,7 @@ export default function HomeStack() {
       <Stack.Screen name="following/[id]" />
       <Stack.Screen name="likes/[id]" />
       <Stack.Screen name="map/[id]" />
-      <Stack.Screen name="media/[id]" />
+      <Stack.Screen name="media/[photoUrl]" />
       <Stack.Screen name="profile/[id]" />
       <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
     </Stack>

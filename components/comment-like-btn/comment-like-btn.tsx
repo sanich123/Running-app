@@ -25,7 +25,7 @@ export default function CommentLikeBtn({ commentId }: { commentId: string }) {
       name={`heart${commentLikes?.length ? '' : '-outline'}`}
       size={20}
       style={[{ marginLeft: 10, marginBottom: 10 }, isLoading && { opacity: 0.5 }]}
-      color={youGaveCommentLike ? 'red' : ''}
+      color={youGaveCommentLike ? 'red' : 'black'}
       onPress={async () => {
         const body = { commentId, authorId: ownerId };
         await sendLikeToComment({ body, commentId }).unwrap();
