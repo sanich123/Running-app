@@ -18,7 +18,7 @@ export default function Comments({ id }: { id: string }) {
       {error ? <ErrorComponent error={error} /> : null}
       {comments?.map(({ authorId, comment, id, date }) => (
         <Fragment key={id}>
-          <View key={id} style={styles.commentWrapper}>
+          <View style={styles.commentWrapper}>
             <AvatarShowable size={25} id={authorId} />
             <View style={{ display: 'flex' }}>
               <UserNameSurname userId={authorId} size="bodyMedium" />
@@ -38,7 +38,6 @@ export default function Comments({ id }: { id: string }) {
             <CommentLikeBtn commentId={id} />
             <CommentLikesLength id={id} />
           </View>
-
           <Divider />
         </Fragment>
       ))}
