@@ -15,7 +15,9 @@ export default function ActivityCardLikesWrapper({ activityId }: { activityId: s
   const { isLoading, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
   const router = useRouter();
   const pathname = usePathname();
-  const lastLikeInTheRow = pathname.includes('comment' || 'activity') ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
+  const isInComment = pathname.includes('comment');
+  const isInActivity = pathname.includes('activity');
+  const lastLikeInTheRow = isInComment || isInActivity ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const SHIFT_RIGHT = 23;
 
   return (
@@ -24,7 +26,7 @@ export default function ActivityCardLikesWrapper({ activityId }: { activityId: s
         style={[
           styles.likesLayout,
           !likes?.length && styles.withoutLikesLayout,
-          pathname.includes('activity') && { marginTop: 10 },
+          isInComment && { width: likes?.length * SHIFT_RIGHT + 13, marginTop: 4 },
         ]}>
         {isLoading && <ActivityIndicator />}
         {error ? <Text variant="bodyMedium">An error occured</Text> : null}
@@ -33,7 +35,7 @@ export default function ActivityCardLikesWrapper({ activityId }: { activityId: s
             {likes?.slice(0, lastLikeInTheRow).map(({ authorId, id }, key) => (
               <Fragment key={id}>
                 {likes.length > MAX_IN_ROW && key === MAX_IN_ROW - 1 ? (
-                  <View style={(styles.lastAvatarWrapper, { left: key * SHIFT_RIGHT + 13 })}>
+                  <View style={[styles.lastAvatarWrapper, { left: key * SHIFT_RIGHT + 13 }]}>
                     <Text variant="bodySmall">{`+${likes?.length - MAX_IN_ROW}`}</Text>
                   </View>
                 ) : null}
@@ -49,7 +51,7 @@ export default function ActivityCardLikesWrapper({ activityId }: { activityId: s
             ))}
           </View>
         )}
-        {likes?.length && !pathname.includes('comment' || 'activity') ? <NumberOfLikes likes={likes} /> : null}
+        {likes?.length && !isInComment && !isInActivity ? <NumberOfLikes likes={likes} /> : null}
       </View>
     </Pressable>
   );
@@ -57,19 +59,20 @@ export default function ActivityCardLikesWrapper({ activityId }: { activityId: s
 
 const styles = StyleSheet.create({
   likesLayout: {
-    flex: 1,
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 20,
-    marginTop: 10,
-    marginBottom: 10,
     marginLeft: 5,
+    marginBottom: 5,
     backgroundColor: 'transparent',
+    height: 40,
   },
   withoutLikesLayout: {
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 0,
+    height: 0,
   },
   avatarWrapper: {
     position: 'absolute',
