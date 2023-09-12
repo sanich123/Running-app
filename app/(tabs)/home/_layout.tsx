@@ -11,6 +11,7 @@ export default function HomeStack() {
       <Stack.Screen name="likes/[id]" />
       <Stack.Screen name="map/[id]" />
       <Stack.Screen name="media/[photoUrl]" />
+      <Stack.Screen name="media-grid/[id]" />
       <Stack.Screen name="profile/[id]" />
       <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
     </Stack>

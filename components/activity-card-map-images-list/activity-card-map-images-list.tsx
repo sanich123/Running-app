@@ -20,11 +20,15 @@ export default function ActivityCardMapImagesList({
   return (
     <FlatList
       data={urls}
-      renderItem={({ item, index }) => (
-        <Pressable onPress={() => router.push(`/home/${index > 0 ? 'media' : 'map'}/${id}`)}>
-          <Image source={{ uri: item }} resizeMode="cover" height={200} width={width} />
-        </Pressable>
-      )}
+      renderItem={({ item, index }) => {
+        const isNotFirst = index > 0;
+        return (
+          <Pressable
+            onPress={() => router.push(isNotFirst ? `/home/media/${encodeURIComponent(photoUrl)}` : `/home/map/${id}`)}>
+            <Image source={{ uri: item }} resizeMode="cover" height={200} width={width} />
+          </Pressable>
+        );
+      }}
       horizontal
       initialNumToRender={1}
     />

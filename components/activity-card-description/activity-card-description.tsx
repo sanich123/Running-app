@@ -1,10 +1,9 @@
-import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 export default function ActivityCardDesription({ description }: { description: string }) {
   return (
-    <View>
-      <Text variant="bodyLarge">{description}</Text>
-    </View>
+    <Text variant="bodyLarge" style={{ marginLeft: 15, marginBottom: 10 }}>
+      {description}
+    </Text>
   );
 }

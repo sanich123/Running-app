@@ -11,10 +11,12 @@ type Likes = {
 export default function NumberOfLikes({ likes }: { likes: Likes[] }) {
   const { id: ownerId } = useSelector(({ userInfo }) => userInfo);
   const isOwnerLiked = likes.some(({ authorId }) => authorId === ownerId);
+  const restLiked = isOwnerLiked ? likes.length - 1 : likes.length;
   return (
     <Text style={{ marginLeft: 65 }} variant="bodyMedium">
-      {`${isOwnerLiked ? 'You and ' : ''}`}
-      {`${isOwnerLiked ? likes.length - 1 : likes.length} gave like${likes.length > 1 ? 's' : ''}`}
+      {`${isOwnerLiked ? 'You ' : ''}`}
+      {isOwnerLiked && restLiked > 0 ? 'and ' : ''}
+      {`${restLiked > 0 ? `${restLiked} ` : ''}gave like${restLiked > 1 ? 's' : ''}`}
     </Text>
   );
 }
