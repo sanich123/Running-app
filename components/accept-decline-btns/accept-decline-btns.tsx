@@ -11,12 +11,12 @@ import { errorHandler } from '../../utils/error-handler';
 export default function AcceptDeclineBtns() {
   const { id } = useSelector(({ userInfo }) => userInfo);
   const [sendActivity, { error, data }] = useAddActivityByUserIdMutation();
-  const { title, description, sport, emotion, isSwitchOn, photoUrl, isDisabled, setIsDisabled } =
+  const { title, description, sport, emotion, isSwitchOn, photoUrls, isDisabled, setIsDisabled } =
     useContext(SaveActivityContext);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-
   const { finishedActivity } = useSelector(({ location }) => location);
+
   useEffect(() => {
     if (data) {
       console.log(data);
@@ -35,7 +35,7 @@ export default function AcceptDeclineBtns() {
     try {
       setIsDisabled(true);
       setIsLoading(true);
-      const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrl };
+      const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrls };
       await sendActivity({ body, id }).unwrap();
       setIsDisabled(false);
       setIsLoading(false);

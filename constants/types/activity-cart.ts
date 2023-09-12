@@ -10,7 +10,7 @@ export type ActivityCardProps = {
   id: string;
   userId: string;
   locations: LocationObject[];
-  photoUrl: string;
+  photoUrls: string[];
   duration: number;
   speed: number;
   distance: number;

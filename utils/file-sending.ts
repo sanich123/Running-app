@@ -48,7 +48,8 @@ export async function uploadToFirebaseStorage(
   blob: Blob,
   setProgressPercent: (arg: number) => void,
   setIsLoading: (arg: boolean) => void,
-  setPhotoUrl: (arg: string) => void,
+  setPhotoUrls: (arg: string[]) => void,
+  photoUrls: string[],
 ) {
   const storageRef = ref(FIREBASE_STORAGE, fileName);
   const updateTask = uploadBytesResumable(storageRef, blob, { contentType: 'image/jpeg' });
@@ -58,10 +59,10 @@ export async function uploadToFirebaseStorage(
     (error) => console.log(error),
     async () => {
       setIsLoading(false);
-      ToastAndroid.show('File has successfully uploaded', ToastAndroid.SHORT);
+      // ToastAndroid.show('File has successfully uploaded', ToastAndroid.SHORT);
       const url = await getDownloadURL(ref(FIREBASE_STORAGE, fileName));
-      setPhotoUrl(url);
-      ToastAndroid.show('Url to file has successfully received', ToastAndroid.SHORT);
+      setPhotoUrls([...photoUrls, url]);
+      // ToastAndroid.show('Url to file has successfully received', ToastAndroid.SHORT);
     },
   );
   return updateTask;

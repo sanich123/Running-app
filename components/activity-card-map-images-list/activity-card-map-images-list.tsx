@@ -7,16 +7,17 @@ import { getMapBoxImage } from '../../utils/location-utils';
 
 export default function ActivityCardMapImagesList({
   locations,
-  photoUrl,
+  photoUrls,
   id,
 }: {
   locations: LocationObject[];
-  photoUrl: string;
+  photoUrls: string[];
   id: string;
 }) {
   const { width } = useWindowDimensions();
-  const urls = photoUrl ? [getMapBoxImage(locations), photoUrl] : [getMapBoxImage(locations)];
+  const urls = photoUrls ? [getMapBoxImage(locations), ...photoUrls] : [getMapBoxImage(locations)];
   const router = useRouter();
+
   return (
     <FlatList
       data={urls}
@@ -24,7 +25,7 @@ export default function ActivityCardMapImagesList({
         const isNotFirst = index > 0;
         return (
           <Pressable
-            onPress={() => router.push(isNotFirst ? `/home/media/${encodeURIComponent(photoUrl)}` : `/home/map/${id}`)}>
+            onPress={() => router.push(isNotFirst ? `/home/media/${encodeURIComponent(item)}` : `/home/map/${id}`)}>
             <Image source={{ uri: item }} resizeMode="cover" height={200} width={width} />
           </Pressable>
         );

@@ -21,7 +21,7 @@ export default function ActivityCard({
   id,
   userId,
   locations,
-  photoUrl,
+  photoUrls,
   duration,
   speed,
   distance,
@@ -49,7 +49,7 @@ export default function ActivityCard({
         </View>
       </Pressable>
       {pathname.includes('/home/') ? <ActivityCardDesription description={description} /> : null}
-      <ActivityCardMapImagesList locations={locations} photoUrl={photoUrl} id={id} />
+      <ActivityCardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
       <ActivityCardLikesWrapper activityId={id} />
       <Card.Actions>
         <View style={styles.activityBtnsWrapper}>

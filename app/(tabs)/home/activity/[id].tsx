@@ -22,7 +22,7 @@ export default function ViewActivityFullInfo() {
           sport={activity.sport}
           id={activity.id}
           locations={activity.locations}
-          photoUrl={activity.photoUrl}
+          photoUrls={activity.photoUrls}
           duration={activity.duration}
           speed={activity.speed}
           distance={activity.distance}

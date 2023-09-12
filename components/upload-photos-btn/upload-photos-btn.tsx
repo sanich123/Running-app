@@ -1,17 +1,16 @@
 import { useContext, useState } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Button, MD3Colors, ProgressBar } from 'react-native-paper';
 
 import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
 import { getAccessToGallery, getBlobFromUri, getInfoFromUri, uploadToFirebaseStorage } from '../../utils/file-sending';
 
-export default function ChoosePhotoBtn() {
-  const { setPhotoUrl, isDisabled, setIsDisabled } = useContext(SaveActivityContext);
-  const [image, setImage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+export default function UploadPhotosBtn() {
+  const { isDisabled, setIsDisabled, images, isLoading, setIsLoading, setPhotoUrls, photoUrls, setImages } =
+    useContext(SaveActivityContext);
   const [progress, setProgressPercent] = useState(0);
-
+  const { width } = useWindowDimensions();
   return (
     <>
       <Button
@@ -24,11 +23,17 @@ export default function ChoosePhotoBtn() {
             const result = await getAccessToGallery();
             if (!result.canceled) {
               const uri = result.assets[0].uri;
-              setImage(uri);
-              const blob = await getBlobFromUri(result.assets[0].uri);
               const fileName = getInfoFromUri(uri);
-              await uploadToFirebaseStorage(fileName, blob as Blob, setProgressPercent, setIsLoading, setPhotoUrl);
-              setIsDisabled(false);
+              const blob = await getBlobFromUri(uri);
+              await uploadToFirebaseStorage(
+                fileName,
+                blob as Blob,
+                setProgressPercent,
+                setIsLoading,
+                setPhotoUrls,
+                photoUrls,
+              );
+              setImages([...images, uri]);
             }
           } catch (error) {
             errorHandler(error);
@@ -44,16 +49,20 @@ export default function ChoosePhotoBtn() {
         disabled={isDisabled}>
         {`Upload${isLoading ? 'ing' : ''} an image`}
       </Button>
-      {image && <ProgressBar progress={progress} color={MD3Colors.error50} style={{ marginTop: 15 }} />}
-      {image && <Image source={{ uri: image }} style={styles.imageStyle} />}
+      {images && <ProgressBar progress={progress} color={MD3Colors.error50} style={{ marginTop: 15 }} />}
+      <View style={styles.imagesWrapper}>
+        {images &&
+          images.map((image) => (
+            <Image key={image} source={{ uri: image }} style={styles.imageStyle} width={width / 3 - 10} height={100} />
+          ))}
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  imagesWrapper: { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', columnGap: 5 },
   imageStyle: {
     marginTop: 15,
-    width: 220,
-    height: 220,
   },
 });

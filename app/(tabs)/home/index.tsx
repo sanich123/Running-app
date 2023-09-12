@@ -25,7 +25,7 @@ export default function Feed() {
             data={activities}
             refreshing={refreshing}
             renderItem={({ item }) => {
-              const { description, title, date, sport, userId, locations, photoUrl, duration, speed, distance, id } =
+              const { description, title, date, sport, userId, locations, photoUrls, duration, speed, distance, id } =
                 item;
               return (
                 <ActivityCard
@@ -37,7 +37,7 @@ export default function Feed() {
                   id={id}
                   locations={locations}
                   key={id}
-                  photoUrl={photoUrl}
+                  photoUrls={photoUrls}
                   duration={duration}
                   speed={speed}
                   distance={distance}
@@ -46,7 +46,7 @@ export default function Feed() {
             }}
             ListEmptyComponent={<EmptyActivitiesList />}
             ListHeaderComponent={<Searchbar placeholder="Search something" value="" />}
-            initialNumToRender={2}
+            initialNumToRender={5}
             ItemSeparatorComponent={() => <Divider />}
           />
         )}
