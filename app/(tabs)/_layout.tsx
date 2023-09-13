@@ -6,8 +6,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
+
 import { View } from '../../components/Themed';
 import AvatarShowable from '../../components/avatar/avatar-showable';
+
 import Colors from '../../constants/Colors';
 
 export default function TabLayout() {
@@ -48,6 +50,7 @@ export default function TabLayout() {
             <MaterialCommunityIcons name="home" color={theme.colors.primaryContainer} size={focused ? 40 : 35} />
           ),
           headerTitleStyle: { fontWeight: 'bold' },
+
           headerRight: () => (
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: 'transparent' }}>
               <MaterialCommunityIcons
