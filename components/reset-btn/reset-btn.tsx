@@ -7,26 +7,36 @@ import { SignInContext } from '../../utils/context/sign-in';
 import { errorHandler } from '../../utils/error-handler';
 
 export default function ResetBtn() {
-  const { email, isLoading, setIsLoading, setEmailError } = useContext(SignInContext);
+  const { email, isLoading, setIsLoading, setEmailError, isDisabled, setIsDisabled } = useContext(SignInContext);
 
-  async function resetHandler() {
-    try {
-      if (emailMatcher.test(email)) {
-        setIsLoading(true);
-        await sendPasswordReset(email);
-        setIsLoading(false);
-      } else {
-        setEmailError(true);
-      }
-    } catch (e) {
-      errorHandler(e);
-    } finally {
-      setIsLoading(false);
-    }
-  }
   return (
-    <Button icon="refresh" mode="outlined" loading={isLoading} onPress={resetHandler}>
-      Reset
+    <Button
+      icon="refresh"
+      mode="outlined"
+      loading={isLoading}
+      onPress={async () => {
+        try {
+          if (emailMatcher.test(email)) {
+            setIsLoading(true);
+            setIsDisabled(true);
+            await sendPasswordReset(email);
+            setIsLoading(false);
+            setIsDisabled(false);
+          } else {
+            setEmailError(true);
+          }
+        } catch (e) {
+          errorHandler(e);
+          setIsLoading(false);
+          setIsDisabled(false);
+        } finally {
+          setIsLoading(false);
+          setIsLoading(false);
+          setIsDisabled(false);
+        }
+      }}
+      disabled={isDisabled}>
+      {`Reset${isLoading ? 'ing' : ''}`}
     </Button>
   );
 }

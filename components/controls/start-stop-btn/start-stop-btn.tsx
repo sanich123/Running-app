@@ -1,5 +1,5 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useLinkTo } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { ReactNode, useContext } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -17,7 +17,7 @@ export default function StartStopBtn() {
   const dispatch = useDispatch();
   const { startBtn, textStyle } = styles;
   const { language } = useAppSelector(({ changeThemeLang }) => changeThemeLang);
-  const linkTo = useLinkTo();
+  const router = useRouter();
 
   const responseStatus: { [key in STATUSES]: STATUSES } = {
     [STATUSES.initial]: STATUSES.started,
@@ -40,8 +40,7 @@ export default function StartStopBtn() {
         setStatus(responseStatus[status]);
         if (status === STATUSES.paused) {
           dispatch(saveFinishedActivity({ locations, duration, speed: getTotalSpeed(distance, duration), distance }));
-
-          linkTo('/(tabs)/activity/save-activity');
+          router.push('/(tabs)/save-activity/');
         }
       }}>
       <Text style={textStyle}>{responseIcon[status]}</Text>

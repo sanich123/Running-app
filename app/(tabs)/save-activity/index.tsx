@@ -3,10 +3,10 @@ import { ScrollView, StyleSheet } from 'react-native';
 
 import AcceptDeclineBtns from '../../../components/accept-decline-btns/accept-decline-btns';
 import Checkbox from '../../../components/checkbox/checkbox';
-import ChoosePhotoBtn from '../../../components/choose-photo-btn/choose-photo-btn';
 import EmotionBtns from '../../../components/segmented-btns/emotion-btns';
 import SportsBtns from '../../../components/segmented-btns/sports-btns';
 import TextInputs from '../../../components/text-inputs/text-inputs';
+import UploadPhotosBtn from '../../../components/upload-photos-btn/upload-photos-btn';
 import { SaveActivityContext } from '../../../utils/context/save-activity';
 import useGetActivityInfo from '../../../utils/hooks/use-get-activity-info';
 
@@ -22,10 +22,14 @@ export default function SaveResult() {
     setEmotion,
     isSwitchOn,
     setIsSwitchOn,
-    photoUrl,
-    setPhotoUrl,
+    photoUrls,
+    setPhotoUrls,
     isDisabled,
     setIsDisabled,
+    images,
+    setImages,
+    isLoading,
+    setIsLoading,
   } = useGetActivityInfo();
 
   return (
@@ -33,28 +37,31 @@ export default function SaveResult() {
       <SaveActivityContext.Provider
         value={{
           title,
+          setTitle,
           description,
           sport,
           emotion,
           isSwitchOn,
-          photoUrl,
+          photoUrls,
           isDisabled,
+          images,
           setIsDisabled,
-          setTitle,
           setDescription,
           setSport,
           setEmotion,
           setIsSwitchOn,
-          setPhotoUrl,
+          setPhotoUrls,
+          setImages,
+          isLoading,
+          setIsLoading,
         }}>
         <TextInputs />
         <SportsBtns isDisabled={isDisabled} setSport={setSport} sport={sport} />
         <EmotionBtns isDisabled={isDisabled} setEmotion={setEmotion} emotion={emotion} />
         <Checkbox />
-        <ChoosePhotoBtn />
+        <UploadPhotosBtn />
         <AcceptDeclineBtns />
       </SaveActivityContext.Provider>
-
       <StatusBar style="auto" />
     </ScrollView>
   );

@@ -6,8 +6,10 @@ export default function useGetActivityInfo() {
   const [sport, setSport] = useState('');
   const [emotion, setEmotion] = useState('');
   const [isSwitchOn, setIsSwitchOn] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState('');
+  const [photoUrls, setPhotoUrls] = useState([] as string[]);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [images, setImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   return {
     title,
     setTitle,
@@ -19,9 +21,13 @@ export default function useGetActivityInfo() {
     setEmotion,
     isSwitchOn,
     setIsSwitchOn,
-    photoUrl,
-    setPhotoUrl,
+    photoUrls,
+    setPhotoUrls,
     isDisabled,
     setIsDisabled,
+    images,
+    setImages,
+    isLoading,
+    setIsLoading,
   };
 }

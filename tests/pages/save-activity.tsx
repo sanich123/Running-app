@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react-native';
 import { Provider } from 'react-redux';
 
-import SaveResult from '../../app/(tabs)/activity/save-activity';
+import SaveResult from '../../app/(tabs)/save-activity';
 import { DESCRIPTION_PLACEHOLDER, TITLE_PLACEHOLDER } from '../../components/text-inputs/text-inputs-const';
 import { store } from '../../redux/store';
 jest.useFakeTimers();

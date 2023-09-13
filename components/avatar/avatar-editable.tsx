@@ -4,6 +4,7 @@ import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { SaveSettingsContext } from '../../utils/context/settings';
+import { errorHandler } from '../../utils/error-handler';
 import { getAccessToGallery } from '../../utils/file-sending';
 
 export default function AvatarIconEditable() {
@@ -12,10 +13,14 @@ export default function AvatarIconEditable() {
   return (
     <Pressable
       onPress={async () => {
-        const result = await getAccessToGallery();
-        if (!result.canceled) {
-          const uri = result.assets[0].uri;
-          setImage(uri);
+        try {
+          const result = await getAccessToGallery();
+          if (!result.canceled) {
+            const uri = result.assets[0].uri;
+            setImage(uri);
+          }
+        } catch (error) {
+          errorHandler(error);
         }
       }}
       disabled={isDisabled}
