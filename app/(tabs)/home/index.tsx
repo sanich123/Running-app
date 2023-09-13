@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { SafeAreaView, FlatList } from 'react-native';
 import { ActivityIndicator, Divider, Searchbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -15,7 +16,7 @@ export default function Feed() {
   useGetLocation();
   const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(id);
   const { onRefresh, refreshing } = useRefresh(refetch);
-
+  const router = useRouter();
   return (
     <>
       <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
@@ -52,7 +53,7 @@ export default function Feed() {
         )}
         {isLoading && <ActivityIndicator size="large" />}
         {error ? <ErrorComponent error={error} /> : null}
-        <FloatingBtn onPressFn={console.log} />
+        <FloatingBtn onPressFn={() => router.push('/save-activity/')} />
       </SafeAreaView>
     </>
   );

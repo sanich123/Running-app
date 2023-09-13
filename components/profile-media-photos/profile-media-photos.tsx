@@ -28,8 +28,8 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
               .slice(0, 4)
               .map((url, index) =>
                 index === 3 ? (
-                  <View style={{ position: 'relative' }}>
-                    <Image key={`${url}+${index}`} source={{ uri: url }} height={width / 4} width={width / 4} />
+                  <View style={{ position: 'relative' }} key={`${url}+${index}`}>
+                    <Image source={{ uri: url }} height={width / 4} width={width / 4} />
                     <Text
                       variant="bodyLarge"
                       style={{ position: 'absolute', color: theme.colors.onPrimary, top: '35%', left: '20%' }}>

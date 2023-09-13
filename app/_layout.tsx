@@ -1,12 +1,12 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Slot } from 'expo-router';
 import { AppRegistry } from 'react-native';
-import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
+import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { enGB, registerTranslation } from 'react-native-paper-dates';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { expo as appName } from '../../project/app.json';
+import { expo } from '../app.json';
 import { AuthProvider } from '../auth/context/auth-context';
 import SplashIcon from '../components/splash-screen/splash-screen';
 import { persistor, store } from '../redux/store';
@@ -23,7 +23,7 @@ export default function RootLayout() {
       {!loaded && <SplashIcon />}
       {loaded && (
         <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
+          <PersistGate loading={<ActivityIndicator size="large" />} persistor={persistor}>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
               <PaperProvider theme={paperTheme}>
                 <AuthProvider>
@@ -38,4 +38,4 @@ export default function RootLayout() {
   );
 }
 
-AppRegistry.registerComponent(appName.name, () => RootLayout);
+AppRegistry.registerComponent(expo.name, () => RootLayout);

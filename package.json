@@ -7,6 +7,7 @@
     "test:watch": "jest --watchAll",
     "test": "jest",
     "build:apk": "eas build --profile development --platform android",
+    "build:preview": "eas build -p android --profile preview",
     "lint": "eslint --fix .",
     "deps:all": "yarn && yarn deps:scan && yarn deps:fix",
     "deps:fix": "npx expo install --fix",
