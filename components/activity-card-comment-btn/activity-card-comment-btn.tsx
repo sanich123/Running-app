@@ -6,8 +6,8 @@ export default function ActivityCardCommentBtn({ activityId }: { activityId: str
   return (
     <IconButton
       icon="comment-outline"
-      iconColor={MD3Colors.error50}
-      size={20}
+      iconColor={MD3Colors.primary50}
+      size={25}
       onPress={() => router.push(`/home/comment/${activityId}`)}
     />
   );

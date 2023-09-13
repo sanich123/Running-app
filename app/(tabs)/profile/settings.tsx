@@ -66,13 +66,13 @@ export default function ProfileSettings() {
         }}>
         <View style={styles.container}>
           <AvatarIconEditable />
+          <SaveSettingsBtn />
           <InputsNameSurname />
           <InputsWeightCity />
           <SportsBtns sport={sport} setSport={setSport} isDisabled={isDisabled} />
           <InputBio />
           <GenderBtns />
           <InputDatepicker />
-          <SaveSettingsBtn />
         </View>
       </SaveSettingsContext.Provider>
     </ScrollView>

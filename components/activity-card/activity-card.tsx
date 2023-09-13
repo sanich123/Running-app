@@ -1,31 +1,17 @@
-import { Camera, MapView } from '@rnmapbox/maps';
-import { LocationObject } from 'expo-location';
 import { usePathname, useRouter } from 'expo-router';
-import { View, ToastAndroid, Image, Pressable } from 'react-native';
-import { Text, Card, IconButton, MD3Colors } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { View, Pressable, StyleSheet } from 'react-native';
+import { Card } from 'react-native-paper';
 
-import useFakeLocations from '../../utils/hooks/use-fake-locations';
-import { formatDate, formatDuration } from '../../utils/time-formatter';
-import ActivityCardCommentBtn from '../activity-card-comment-btn/activity-card-comment-btn';
-import ActivityCardDeleteBtn from '../activity-card-delete-btn/activity-card-delete-btn';
-import ActivityCardLikeBtn from '../activity-card-like-btn/activity-card-like-btn';
+import { ActivityCardProps } from '../../constants/types/activity-cart';
+import ActivityCardBtns from '../activity-card-btns/activity-card-btns';
+import ActivityCardDesription from '../activity-card-description/activity-card-description';
 import ActivityCardLikesWrapper from '../activity-card-likes-wrapper/activity-card-likes-wrapper';
+import ActivityCardMapImagesList from '../activity-card-map-images-list/activity-card-map-images-list';
+import ActivityCardMetrics from '../activity-card-metrics/activity-card-metrics';
+import ActivityCardTitle from '../activity-card-title/activity-card-title';
 import AvatarShowable from '../avatar/avatar-showable';
-import RouteLine from '../map/route-line/route-line';
-
-type ActivityCardProps = {
-  description: string;
-  title: string;
-  date: Date;
-  sport: string;
-  id: string;
-  locations: LocationObject[];
-  photoUrl: string;
-  duration: number;
-  speed: number;
-  distance: number;
-};
+import UserNameSurname from '../user-name-surname/user-name-surname';
+import UserSportDate from '../user-sport-date/user-sport-date';
 
 export default function ActivityCard({
   description,
@@ -33,85 +19,58 @@ export default function ActivityCard({
   date,
   sport,
   id,
+  userId,
   locations,
-  photoUrl,
+  photoUrls,
   duration,
   speed,
   distance,
 }: ActivityCardProps) {
-  const { id: userId, settings } = useSelector(({ userInfo }) => userInfo);
-  const { name, surname } = settings;
-  const { cameraRef } = useFakeLocations();
-
   const router = useRouter();
   const pathname = usePathname();
+
   return (
     <Card key={id}>
-      <Pressable onPress={() => router.push(`/home/${id}`)}>
-        <Card.Content
-          style={{ display: 'flex', flexDirection: 'row', columnGap: 5, marginBottom: 10, alignItems: 'center' }}>
-          <AvatarShowable size={40} id={userId} />
-
-          <View style={{ display: 'flex' }}>
-            <Text variant="bodyLarge">
-              {name} {surname}
-            </Text>
-            <Text variant="bodySmall">
-              {formatDate(date)}, {sport}
-            </Text>
-            <Text variant="headlineSmall">{title}</Text>
+      <Pressable onPress={() => router.push(`/home/activity/${id}`)}>
+        <Card.Content style={styles.cardContent}>
+          <Pressable onPress={() => router.push(`/home/profile/${userId}`)}>
+            <AvatarShowable size={40} id={userId} />
+          </Pressable>
+          <View style={styles.userInfoWrapper}>
+            <UserNameSurname userId={userId} size="titleMedium" />
+            <UserSportDate sport={sport} date={date} />
           </View>
         </Card.Content>
-
-        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', height: 60 }}>
-          <View style={{ display: 'flex' }}>
-            <Text variant="titleMedium">Distance: </Text>
-            <Text variant="bodyMedium">{distance / 1000} км</Text>
-          </View>
-          <View style={{ display: 'flex' }}>
-            <Text variant="titleMedium">Time:</Text>
-            <Text variant="bodyMedium">{formatDuration(duration)}</Text>
-          </View>
-          <View style={{ display: 'flex' }}>
-            <Text variant="titleMedium">Pace:</Text>
-            <Text variant="bodyMedium">{speed} км/ч</Text>
-          </View>
+        <View style={styles.titleWrapper}>
+          <ActivityCardTitle title={title} />
+        </View>
+        <View style={styles.metricsWrapper}>
+          <ActivityCardMetrics distance={distance} duration={duration} speed={speed} />
         </View>
       </Pressable>
-      {pathname.includes('/home/') && (
-        <View>
-          <Text variant="bodyLarge">{description}</Text>
-        </View>
-      )}
-      <View style={{ height: 200 }}>
-        {photoUrl && <Image source={{ uri: photoUrl }} style={{ flex: 1 }} resizeMode="cover" />}
-        {!photoUrl && (
-          <MapView style={{ flex: 1 }} scaleBarEnabled={false}>
-            <Camera
-              animationMode="flyTo"
-              animationDuration={1000}
-              zoomLevel={25}
-              ref={cameraRef}
-              centerCoordinate={[locations[0].coords.latitude, locations[0].coords.longitude]}
-            />
-            {locations.length > 1 && <RouteLine locations={locations} />}
-          </MapView>
-        )}
-      </View>
+      {pathname.includes('/home/') ? <ActivityCardDesription description={description} /> : null}
+      <ActivityCardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
       <ActivityCardLikesWrapper activityId={id} />
       <Card.Actions>
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <ActivityCardLikeBtn activityId={id} />
-          <ActivityCardCommentBtn activityId={id} />
-          <IconButton
-            icon="share-outline"
-            iconColor={MD3Colors.error50}
-            size={20}
-            onPress={() => ToastAndroid.show('Здесь будет функционал sharing', ToastAndroid.SHORT)}
-          />
-          <ActivityCardDeleteBtn activityId={id} />
+        <View style={styles.activityBtnsWrapper}>
+          <ActivityCardBtns activityId={id} userId={userId} />
         </View>
       </Card.Actions>
     </Card>
   );
 }
+
+const styles = StyleSheet.create({
+  cardContent: {
+    display: 'flex',
+    flexDirection: 'row',
+    columnGap: 5,
+    paddingTop: 10,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  userInfoWrapper: { display: 'flex', justifyContent: 'center' },
+  titleWrapper: { marginTop: 5, marginLeft: 15, marginBottom: 5 },
+  metricsWrapper: { display: 'flex', flexDirection: 'row', marginLeft: 15, columnGap: 15, marginBottom: 5 },
+  activityBtnsWrapper: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+});

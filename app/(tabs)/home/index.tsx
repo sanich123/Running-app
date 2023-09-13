@@ -1,45 +1,44 @@
-import { useState, useCallback } from 'react';
+import { useRouter } from 'expo-router';
 import { SafeAreaView, FlatList } from 'react-native';
-import { Text, ActivityIndicator, Divider, FAB, Searchbar } from 'react-native-paper';
+import { ActivityIndicator, Divider, Searchbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { View } from '../../../components/Themed';
 import ActivityCard from '../../../components/activity-card/activity-card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
-import { useGetActivitiesByUserIdQuery } from '../../../redux/runnich-api/runnich-api';
+import ErrorComponent from '../../../components/error-component/error-component';
+import FloatingBtn from '../../../components/floating-btn/floating-btn';
+import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runnich-api/runnich-api';
 import useGetLocation from '../../../utils/hooks/use-get-location';
+import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
   const { id } = useSelector(({ userInfo }) => userInfo);
   useGetLocation();
-  const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdQuery(id);
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    refetch();
-    setTimeout(() => setRefreshing(false), 2000);
-  }, []);
-
+  const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(id);
+  const { onRefresh, refreshing } = useRefresh(refetch);
+  const router = useRouter();
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
         {activities && (
           <FlatList
             onRefresh={onRefresh}
             data={activities}
             refreshing={refreshing}
             renderItem={({ item }) => {
-              const { description, title, date, sport, id, locations, photoUrl, duration, speed, distance } = item;
+              const { description, title, date, sport, userId, locations, photoUrls, duration, speed, distance, id } =
+                item;
               return (
                 <ActivityCard
                   description={description}
                   title={title}
                   date={date}
                   sport={sport}
+                  userId={userId}
                   id={id}
                   locations={locations}
                   key={id}
-                  photoUrl={photoUrl}
+                  photoUrls={photoUrls}
                   duration={duration}
                   speed={speed}
                   distance={distance}
@@ -48,25 +47,13 @@ export default function Feed() {
             }}
             ListEmptyComponent={<EmptyActivitiesList />}
             ListHeaderComponent={<Searchbar placeholder="Search something" value="" />}
+            initialNumToRender={5}
             ItemSeparatorComponent={() => <Divider />}
           />
         )}
-        {isLoading && <ActivityIndicator />}
-        {error && (
-          <View>
-            <Text>An error occured</Text>
-          </View>
-        )}
-        <FAB
-          icon="plus"
-          style={{
-            position: 'absolute',
-            margin: 16,
-            right: 0,
-            bottom: 40,
-          }}
-          onPress={() => console.log('Pressed')}
-        />
+        {isLoading && <ActivityIndicator size="large" />}
+        {error ? <ErrorComponent error={error} /> : null}
+        <FloatingBtn onPressFn={() => router.push('/save-activity/')} />
       </SafeAreaView>
     </>
   );

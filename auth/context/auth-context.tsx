@@ -29,26 +29,23 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     });
   }, []);
 
-  const useProtectedRoute = () => {
-    useEffect(() => {
-      const inTabsGroup = segments[0] === '(tabs)';
+  useEffect(() => {
+    const inTabsGroup = segments[0] === '(tabs)';
 
-      if (!user && inTabsGroup) {
-        router.replace('/(auth)/sign-in');
-        console.log('NOT AUTHENTICATED: ');
-      } else if (user && !inTabsGroup) {
-        console.log('AUTHENTICATED: ', user);
-        router.replace('/');
-      }
-    }, [user, segments]);
-  };
+    if (!user && inTabsGroup) {
+      router.replace('/(auth)/sign-in');
+    } else if (user && !inTabsGroup) {
+      router.replace('/');
+    }
+  }, [user, segments]);
 
-  useProtectedRoute();
-
-  const value = {
-    user,
-    initialized,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        initialized,
+      }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

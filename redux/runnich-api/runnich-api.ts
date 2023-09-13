@@ -1,29 +1,48 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { headers, TAGS, BASE_URL, ROUTES } from '../../constants/api/api-contsts';
+import { headers, TAGS, ROUTES } from '../../constants/api/api-contsts';
 
-const { activities, profile, comments, likes } = TAGS;
-const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp } = ROUTES;
+const { activities, profile, comments, likes, friends, users } = TAGS;
+const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp, activityId } = ROUTES;
 
 export const runnichApi = createApi({
   reducerPath: 'runnichApi',
-  tagTypes: [activities, profile, comments, likes],
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  tagTypes: [activities, profile, comments, likes, friends, users],
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_URL }),
+  refetchOnMountOrArgChange: 30,
+  refetchOnReconnect: true,
   endpoints: (builder) => ({
+    getUsers: builder.query({
+      query: () => '/user',
+      providesTags: [users],
+    }),
     getUserProfileById: builder.query({
       query: (id) => `/${routeProfile}/${id}`,
       providesTags: [profile],
     }),
     getActivitiesByUserId: builder.query({
       query: (id) => `/${activity}/${id}`,
-      keepUnusedDataFor: 30,
+      providesTags: [activities],
+    }),
+    getActivitiesByUserIdWithFriendsActivities: builder.query({
+      query: (id) => `/${activity}/${id}/all`,
+      providesTags: [activities],
+    }),
+    getAllActivityPhotosByUserId: builder.query({
+      query: (userId) => `/${activity}/${userId}/photos`,
       providesTags: [activities],
     }),
     getActivityByActivityId: builder.query({
-      query: (id) => `/${activity}/activityId/${id}`,
+      query: (id) => `/${activity}/${activityId}/${id}`,
+      providesTags: [activities],
     }),
     getFriendsByUserId: builder.query({
       query: (id: string) => `/${friend}/${id}`,
+      providesTags: [friends],
+    }),
+    getFollowersByUserId: builder.query({
+      query: (id: string) => `${friend}/${id}/followers`,
+      providesTags: [friends],
     }),
     getCommentsByActivityId: builder.query({
       query: (id: string) => `/${comment}/${id}`,
@@ -32,6 +51,10 @@ export const runnichApi = createApi({
     getLikesByActivityId: builder.query({
       query: (id: string) => `/${like}/${id}`,
       providesTags: [likes],
+    }),
+    getLikesByCommentId: builder.query({
+      query: (commentId: string) => `/${comment}/${commentId}/like`,
+      providesTags: [comments],
     }),
     signUpUser: builder.mutation({
       query: (body) => ({
@@ -82,6 +105,15 @@ export const runnichApi = createApi({
         headers,
         body,
       }),
+      invalidatesTags: [friends, activities, users],
+    }),
+    deleteFriend: builder.mutation({
+      query: (id) => ({
+        url: `/${friend}/${id}`,
+        method: 'DELETE',
+        headers,
+      }),
+      invalidatesTags: [friends, activities, users],
     }),
     postCommentWithActivityId: builder.mutation({
       query: ({ body, id }: { body: { comment: string; authorId: string }; id: string }) => ({
@@ -101,22 +133,38 @@ export const runnichApi = createApi({
       }),
       invalidatesTags: [likes],
     }),
+    sendOrDeleteLikeToComment: builder.mutation({
+      query: ({ body, commentId }) => ({
+        url: `/${comment}/${commentId}/like`,
+        method: 'POST',
+        headers,
+        body,
+      }),
+      invalidatesTags: [comments],
+    }),
   }),
 });
 
 export const {
+  useGetUsersQuery,
   useGetUserProfileByIdQuery,
   useGetActivitiesByUserIdQuery,
+  useGetAllActivityPhotosByUserIdQuery,
+  useGetActivitiesByUserIdWithFriendsActivitiesQuery,
   useGetActivityByActivityIdQuery,
   useGetFriendsByUserIdQuery,
+  useGetFollowersByUserIdQuery,
   useGetCommentsByActivityIdQuery,
   useGetLikesByActivityIdQuery,
+  useGetLikesByCommentIdQuery,
   useSignUpUserMutation,
   useSignInUserMutation,
   useSendProfileInfoMutation,
   useAddActivityByUserIdMutation,
   useDeleteActivityByIdMutation,
   useAddFriendMutation,
+  useDeleteFriendMutation,
   usePostCommentWithActivityIdMutation,
   useSendOrDeleteLikeMutation,
+  useSendOrDeleteLikeToCommentMutation,
 } = runnichApi;

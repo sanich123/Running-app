@@ -1,9 +1,13 @@
-import { View, Text } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
+import { Fragment } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
 import { useGetCommentsByActivityIdQuery } from '../../redux/runnich-api/runnich-api';
-import { formatDate } from '../../utils/time-formatter';
+import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
 import AvatarShowable from '../avatar/avatar-showable';
+import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
+import CommentLikesLength from '../comment-likes-length/comment-likes-length';
+import ErrorComponent from '../error-component/error-component';
 import UserNameSurname from '../user-name-surname/user-name-surname';
 
 export default function Comments({ id }: { id: string }) {
@@ -11,19 +15,45 @@ export default function Comments({ id }: { id: string }) {
   return (
     <>
       {isLoading && <ActivityIndicator />}
-      {error && (
-        <View>
-          <Text>An error occured</Text>
-        </View>
-      )}
+      {error ? <ErrorComponent error={error} /> : null}
       {comments?.map(({ authorId, comment, id, date }) => (
-        <View key={id}>
-          <AvatarShowable size={25} id={authorId} />
-          <UserNameSurname userId={authorId} />
-          <Text>{formatDate(date)}</Text>
-          <Text>{comment}</Text>
-        </View>
+        <Fragment key={id}>
+          <View style={styles.commentWrapper}>
+            <AvatarShowable size={25} id={authorId} />
+            <View style={{ display: 'flex' }}>
+              <UserNameSurname userId={authorId} size="bodyMedium" />
+              <Text variant="bodySmall">{formatDate(date)}</Text>
+              <Text variant="bodySmall">{getHoursMinutes(date)}</Text>
+            </View>
+          </View>
+          <View style={styles.textCommentWrapper}>
+            <Text variant="bodyLarge">{comment}</Text>
+          </View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              columnGap: 15,
+            }}>
+            <CommentLikeBtn commentId={id} />
+            <CommentLikesLength id={id} />
+          </View>
+          <Divider />
+        </Fragment>
       ))}
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  commentWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 10,
+    paddingTop: 5,
+    paddingLeft: 10,
+    paddingBottom: 5,
+  },
+  textCommentWrapper: { paddingTop: 5, paddingLeft: 10, paddingBottom: 10 },
+});

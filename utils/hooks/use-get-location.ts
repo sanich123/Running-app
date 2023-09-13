@@ -2,15 +2,14 @@ import Mapbox from '@rnmapbox/maps';
 import { LocationObject, requestForegroundPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 import { useEffect, useState } from 'react';
 
-import { INITIAL_MOCK_LOCATION } from '../../constants/mocks/mocks';
 import { useAppDispatch } from '../../redux/hooks/hooks';
 import { setInitialLocation } from '../../redux/location-slice/location-slice';
 
 export default function useGetLocation() {
   Mapbox.setWellKnownTileServer('Mapbox');
-  Mapbox.setAccessToken('pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g');
+  Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
 
-  const [location, setLocation] = useState<LocationObject>(INITIAL_MOCK_LOCATION);
+  const [location, setLocation] = useState<LocationObject>();
   const [error, setError] = useState(false);
   const [readyToShowLocation, setReadyToShowLocation] = useState(false);
   const dispatch = useAppDispatch();

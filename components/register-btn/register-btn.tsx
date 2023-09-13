@@ -19,6 +19,7 @@ export default function RegisterBtn() {
     password,
     nickname,
     isLoading,
+    setNicknameError,
     setEmailError,
     setPasswordError,
     setIsLoading,
@@ -62,13 +63,14 @@ export default function RegisterBtn() {
       loading={isLoading}
       onPress={async () => {
         try {
-          if (
-            nicknameMatcher.test(nickname) &&
-            emailPasswordHandler({ email, password, setEmailError, setPasswordError })
-          ) {
+          if (!nicknameMatcher.test(nickname)) {
+            setNicknameError(true);
+          } else if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
             setIsLoading(true);
             setIsDisabled(true);
             await signUpUser({ login: nickname, email, password }).unwrap();
+          } else if (!nicknameMatcher.test(nickname)) {
+            setNicknameError(true);
           }
         } catch (error) {
           errorHandler(error);
