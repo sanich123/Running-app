@@ -1,6 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
-import { ToastAndroid } from 'react-native';
 
 import { errorHandler } from './error-handler';
 import { EXT_MATCHER } from '../constants/regexp';
@@ -58,11 +57,9 @@ export async function uploadToFirebaseStorage(
     ({ bytesTransferred, totalBytes }) => setProgressPercent(Number((bytesTransferred / totalBytes).toFixed(2))),
     (error) => console.log(error),
     async () => {
-      setIsLoading(false);
-      // ToastAndroid.show('File has successfully uploaded', ToastAndroid.SHORT);
       const url = await getDownloadURL(ref(FIREBASE_STORAGE, fileName));
       setPhotoUrls([...photoUrls, url]);
-      // ToastAndroid.show('Url to file has successfully received', ToastAndroid.SHORT);
+      setIsLoading(false);
     },
   );
   return updateTask;

@@ -1,6 +1,7 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useContext, useState } from 'react';
 import { Image, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { Button, MD3Colors, ProgressBar } from 'react-native-paper';
+import { Button, MD3Colors, ProgressBar, useTheme } from 'react-native-paper';
 
 import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
@@ -11,6 +12,7 @@ export default function UploadPhotosBtn() {
     useContext(SaveActivityContext);
   const [progress, setProgressPercent] = useState(0);
   const { width } = useWindowDimensions();
+  const theme = useTheme();
   return (
     <>
       <Button
@@ -49,11 +51,29 @@ export default function UploadPhotosBtn() {
         disabled={isDisabled}>
         {`Upload${isLoading ? 'ing' : ''} an image`}
       </Button>
-      {images && <ProgressBar progress={progress} color={MD3Colors.error50} style={{ marginTop: 15 }} />}
+      {images?.length ? (
+        <ProgressBar progress={progress} color={MD3Colors.primary50} style={{ marginTop: 15 }} />
+      ) : null}
       <View style={styles.imagesWrapper}>
         {images &&
           images.map((image) => (
-            <Image key={image} source={{ uri: image }} style={styles.imageStyle} width={width / 3 - 10} height={100} />
+            <View style={{ position: 'relative' }}>
+              <MaterialCommunityIcons
+                name="close-circle"
+                color={theme.colors.onPrimaryContainer}
+                size={25}
+                style={{ position: 'absolute', right: 2, top: 16, zIndex: 5 }}
+                onPress={() => setImages(images.filter((uri) => uri !== image))}
+                disabled={isDisabled}
+              />
+              <Image
+                key={image}
+                source={{ uri: image }}
+                style={styles.imageStyle}
+                width={width / 3 - 10}
+                height={100}
+              />
+            </View>
           ))}
       </View>
     </>

@@ -13,6 +13,7 @@ export default function MediaGrid() {
   const theme = useTheme();
   const gap = 3;
   const calculatedWidth = (width - gap * 3) / 4;
+
   return (
     <View
       style={[
@@ -27,11 +28,14 @@ export default function MediaGrid() {
       ]}>
       {isLoading && <ActivityIndicator size="large" />}
       {error ? <ErrorComponent error={error} /> : null}
-      {photos?.map(({ photoUrl }) => (
-        <Pressable key={photoUrl} onPress={() => router.push(`/home/media/${encodeURIComponent(photoUrl)}`)}>
-          <Image key={photoUrl} source={{ uri: photoUrl }} height={calculatedWidth} width={calculatedWidth} />
-        </Pressable>
-      ))}
+      {photos
+        ?.map(({ photoUrls }) => photoUrls)
+        .flat()
+        .map((url, index) => (
+          <Pressable key={`${url}+${index}`} onPress={() => router.push(`/home/media/${encodeURIComponent(url)}`)}>
+            <Image key={`${url}+${index}`} source={{ uri: url }} height={calculatedWidth} width={calculatedWidth} />
+          </Pressable>
+        ))}
     </View>
   );
 }

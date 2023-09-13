@@ -3,7 +3,6 @@ import { ScrollView, StyleSheet } from 'react-native';
 
 import AcceptDeclineBtns from '../../../components/accept-decline-btns/accept-decline-btns';
 import Checkbox from '../../../components/checkbox/checkbox';
-// import ChoosePhotosBtn from '../../../components/choose-photos-btn/choose-photos-btn';
 import EmotionBtns from '../../../components/segmented-btns/emotion-btns';
 import SportsBtns from '../../../components/segmented-btns/sports-btns';
 import TextInputs from '../../../components/text-inputs/text-inputs';
@@ -38,6 +37,7 @@ export default function SaveResult() {
       <SaveActivityContext.Provider
         value={{
           title,
+          setTitle,
           description,
           sport,
           emotion,
@@ -46,7 +46,6 @@ export default function SaveResult() {
           isDisabled,
           images,
           setIsDisabled,
-          setTitle,
           setDescription,
           setSport,
           setEmotion,

@@ -1,5 +1,5 @@
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Pressable, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -21,20 +21,22 @@ export default function ProfileFollowersSection() {
   const pathname = usePathname();
   return (
     <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
-      <Pressable
-        onPress={() => router.push(`/${pathname.includes('home') ? 'home' : 'profile'}/following/${friendId}`)}>
-        <View>
-          <Text variant="bodySmall">Following</Text>
-          <FollowingCount />
-        </View>
-      </Pressable>
-      <Pressable
-        onPress={() => router.push(`/${pathname.includes('home') ? 'home' : 'profile'}/followers/${friendId}`)}>
-        <View>
-          <Text variant="bodySmall">Followers</Text>
-          <FollowersCount />
-        </View>
-      </Pressable>
+      <Suspense fallback={<ActivityIndicator size="large" />}>
+        <Pressable
+          onPress={() => router.push(`/${pathname.includes('home') ? 'home' : 'profile'}/following/${friendId}`)}>
+          <View>
+            <Text variant="bodySmall">Following</Text>
+            <FollowingCount />
+          </View>
+        </Pressable>
+        <Pressable
+          onPress={() => router.push(`/${pathname.includes('home') ? 'home' : 'profile'}/followers/${friendId}`)}>
+          <View>
+            <Text variant="bodySmall">Followers</Text>
+            <FollowersCount />
+          </View>
+        </Pressable>
+      </Suspense>
 
       {isLoading && <ActivityIndicator size="small" />}
       {error && <ErrorComponent error={error} />}
