@@ -15,16 +15,25 @@
     "experiments": {
       "typedRoutes": true
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon-run.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sanich123.runningapp"
+      "package": "com.sanich123.runningapp",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "bundler": "metro",
@@ -50,6 +59,9 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-    ]
+    ],
+    "updates": {
+      "url": "https://u.expo.dev/413aa829-bbae-467c-9201-4688b894f2f7"
+    }
   }
 }
