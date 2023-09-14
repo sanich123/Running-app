@@ -15,9 +15,7 @@
     "experiments": {
       "typedRoutes": true
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "runtimeVersion": {
@@ -30,10 +28,10 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.sanich123.runningapp",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ],
-      "runtimeVersion": "1.0.0"
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "runtimeVersion": {
+        "policy": "sdkVersion"
+      }
     },
     "web": {
       "bundler": "metro",
