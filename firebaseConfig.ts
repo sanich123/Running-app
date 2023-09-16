@@ -16,13 +16,13 @@ const {
 } = process.env;
 
 const firebaseConfig = {
-  apiKey: EXPO_PUBLIC_FIREBASE_APIKEY,
-  authDomain: EXPO_PUBLIC_AUTH_DOMAIN,
-  projectId: EXPO_PUBLIC_PROJECT_ID,
-  storageBucket: EXPO_PUBLIC_STORAGE_BUCKET,
-  messagingSenderId: EXPO_PUBLIC_MESSAGING_SENDER_ID,
-  appId: EXPO_PUBLIC_APP_ID,
-  measurementId: EXPO_PUBLIC_MEASUREMENTID,
+  apiKey: 'AIzaSyDnyP44gzUApSZKnLZihdVMHhzt_gL0GF0',
+  authDomain: 'runich-6be07.firebaseapp.com',
+  projectId: 'runich-6be07',
+  storageBucket: 'runich-6be07.appspot.com',
+  messagingSenderId: 'EXPO_PUBLIC_MESSAGING_SENDER_ID',
+  appId: '1:335123904905:web:22dd72162fb091b9920958',
+  measurementId: 'G-3TE0WYH8JX',
 };
 
 export const FIREBASE_APP = initializeApp(firebaseConfig);
