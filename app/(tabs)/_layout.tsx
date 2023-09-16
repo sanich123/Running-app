@@ -9,7 +9,6 @@ import { useAuth } from '../../auth/context/auth-context';
 
 import { View } from '../../components/Themed';
 import AvatarShowable from '../../components/avatar/avatar-showable';
-
 import Colors from '../../constants/Colors';
 
 export default function TabLayout() {

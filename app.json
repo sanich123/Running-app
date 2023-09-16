@@ -17,14 +17,21 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon-run.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sanich123.runningapp"
+      "package": "com.sanich123.runningapp",
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "runtimeVersion": {
+        "policy": "sdkVersion"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -49,7 +56,16 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Show current location on map."
+        }
       ]
-    ]
+    ],
+    "updates": {
+      "url": "https://u.expo.dev/413aa829-bbae-467c-9201-4688b894f2f7"
+    }
   }
 }
