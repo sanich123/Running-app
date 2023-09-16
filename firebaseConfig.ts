@@ -5,6 +5,16 @@ import { initializeAuth, getReactNativePersistence, GoogleAuthProvider } from 'f
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
+const {
+  EXPO_PUBLIC_FIREBASE_APIKEY,
+  EXPO_PUBLIC_AUTH_DOMAIN,
+  EXPO_PUBLIC_PROJECT_ID,
+  EXPO_PUBLIC_STORAGE_BUCKET,
+  EXPO_PUBLIC_MESSAGING_SENDER_ID,
+  EXPO_PUBLIC_APP_ID,
+  EXPO_PUBLIC_MEASUREMENTID,
+} = process.env;
+
 const firebaseConfig = {
   apiKey: 'AIzaSyDnyP44gzUApSZKnLZihdVMHhzt_gL0GF0',
   authDomain: 'runich-6be07.firebaseapp.com',
