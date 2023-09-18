@@ -6,7 +6,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
-
 import { View } from '../../components/Themed';
 import AvatarShowable from '../../components/avatar/avatar-showable';
 import Colors from '../../constants/Colors';
