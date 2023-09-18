@@ -10,7 +10,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { width } = useWindowDimensions();
   const router = useRouter();
   const theme = useTheme();
-  console.log(photos);
+
   return (
     <>
       {photos?.length > 0 ? (

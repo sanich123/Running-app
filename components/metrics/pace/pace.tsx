@@ -14,7 +14,7 @@ export default function Pace() {
     <View style={[basicWrapper, !mapVisible && isStartedOrContinue && metricsWrapper && bigPace]}>
       <Text style={metricsHeader}>Pace: </Text>
       <Text style={[metricsText, !mapVisible && isStartedOrContinue && bigHeader]}>
-        {getTotalSpeed(distance, duration)} км/ч
+        {distance && duration ? getTotalSpeed(distance, duration) : 0} км/ч
       </Text>
     </View>
   );

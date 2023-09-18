@@ -56,8 +56,8 @@ export default function UploadPhotosBtn() {
       ) : null}
       <View style={styles.imagesWrapper}>
         {images &&
-          images.map((image) => (
-            <View style={{ position: 'relative' }}>
+          images.map((image, index) => (
+            <View style={{ position: 'relative' }} key={`${image}${index}`}>
               <MaterialCommunityIcons
                 name="close-circle"
                 color={theme.colors.onPrimaryContainer}
@@ -66,13 +66,7 @@ export default function UploadPhotosBtn() {
                 onPress={() => setImages(images.filter((uri) => uri !== image))}
                 disabled={isDisabled}
               />
-              <Image
-                key={image}
-                source={{ uri: image }}
-                style={styles.imageStyle}
-                width={width / 3 - 10}
-                height={100}
-              />
+              <Image source={{ uri: image }} style={styles.imageStyle} width={width / 3 - 10} height={100} />
             </View>
           ))}
       </View>
