@@ -1,12 +1,13 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { addDoc, collection } from 'firebase/firestore';
+// import { createUserWithEmailAndPassword } from 'firebase/auth';
+// import { addDoc, collection } from 'firebase/firestore';
 import { useContext, useEffect } from 'react';
 import { ToastAndroid } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
+import { supabase } from '../../auth/supabase/supabase-init';
 import { nicknameMatcher } from '../../constants/regexp';
-import { FIREBASE_AUTH, FIREBASE_DB } from '../../firebaseConfig';
+// import { FIREBASE_AUTH, FIREBASE_DB } from '../../firebaseConfig';
 import { useSignUpUserMutation } from '../../redux/runnich-api/runnich-api';
 import { getRegisterInfo } from '../../redux/user-info-slice/user-info-slice';
 import { SignInContext } from '../../utils/context/sign-in';
@@ -35,14 +36,11 @@ export default function RegisterBtn() {
       dispatch(getRegisterInfo({ id, login, email }));
       (async () => {
         try {
-          const { user } = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
-          await addDoc(collection(FIREBASE_DB, 'users'), {
-            uid: user.uid,
-            name: nickname,
-            authProvider: 'local',
-            email,
-          });
-          console.log(user);
+          const {
+            error,
+            data: { user },
+          } = await supabase.auth.signUp({ email, password });
+          console.log(user?.id, error);
         } catch (err) {
           errorHandler(err);
         }
@@ -51,6 +49,7 @@ export default function RegisterBtn() {
       setIsDisabled(false);
     }
     if (error) {
+      console.log(error);
       ToastAndroid.show('Something wrong with your registration, try again', ToastAndroid.SHORT);
     }
   }, [error, data]);

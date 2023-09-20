@@ -1,9 +1,11 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
+// import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useContext, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
-import { FIREBASE_AUTH } from '../../firebaseConfig';
+import { supabase } from '../../auth/supabase/supabase-init';
+// import { FIREBASE_AUTH } from '../../firebaseConfig';
 import { useSignInUserMutation } from '../../redux/runnich-api/runnich-api';
 import { getRegisterInfo } from '../../redux/user-info-slice/user-info-slice';
 import { SignInContext } from '../../utils/context/sign-in';
@@ -15,20 +17,27 @@ export default function LoginBtn() {
     useContext(SignInContext);
   const [signInUser, { data, error }] = useSignInUserMutation();
   const dispatch = useDispatch();
+
   useEffect(() => {
+    console.log(data, error);
     if (data) {
       const { email, login, id } = data;
       dispatch(getRegisterInfo({ email, login, id }));
       (async () => {
         try {
-          await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+          const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (error) Alert.alert(error.message);
         } catch (e) {
           errorHandler(e);
         }
       })();
       setIsLoading(false);
       setIsLoading(false);
-    } else {
+    }
+    if (error) {
       errorHandler(error);
     }
   });

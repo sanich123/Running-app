@@ -25,6 +25,7 @@ export default function useGetSettings() {
   const [image, setImage] = useState(savedProfilePhoto ? savedProfilePhoto : null);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState('');
 
   return {
     gender,
@@ -38,6 +39,7 @@ export default function useGetSettings() {
     image,
     isLoading,
     isDisabled,
+    photoUrl,
     setGender,
     setSport,
     setName,
@@ -49,5 +51,6 @@ export default function useGetSettings() {
     setImage,
     setIsLoading,
     setIsDisabled,
+    setPhotoUrl,
   };
 }

@@ -11,7 +11,14 @@ export default function EmailInput() {
       <TextInput
         label="Email"
         value={email}
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={(text) => {
+          if (!emailMatcher.test(email)) {
+            setEmailError(true);
+          } else {
+            setEmailError(false);
+          }
+          setEmail(text);
+        }}
         onEndEditing={() => (!emailMatcher.test(email) ? setEmailError(true) : setEmailError(false))}
         placeholder="Type your email"
         left={<TextInput.Icon icon="email" disabled={isDisabled} />}

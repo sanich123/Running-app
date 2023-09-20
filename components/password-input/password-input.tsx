@@ -12,7 +12,14 @@ export default function PasswordInput() {
       <TextInput
         label="Password"
         value={password}
-        onChangeText={(password) => setPassword(password)}
+        onChangeText={(password) => {
+          if (!passwordMatcher.test(password)) {
+            setPasswordError(true);
+          } else {
+            setPasswordError(false);
+          }
+          setPassword(password);
+        }}
         onEndEditing={() => (!passwordMatcher.test(password) ? setPasswordError(true) : setPasswordError(false))}
         placeholder="Type your password"
         secureTextEntry={passwordIsNotVisible}

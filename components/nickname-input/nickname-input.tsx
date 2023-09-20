@@ -11,7 +11,14 @@ export default function NicknameInput() {
       <TextInput
         label="Nickname"
         value={nickname}
-        onChangeText={(nickname) => setNickname(nickname)}
+        onChangeText={(nickname) => {
+          if (!nicknameMatcher.test(nickname)) {
+            setNicknameError(true);
+          } else {
+            setNicknameError(false);
+          }
+          setNickname(nickname);
+        }}
         onEndEditing={() => (!nicknameMatcher.test(nickname) ? setNicknameError(true) : setNicknameError(false))}
         placeholder="Type your login"
         left={<TextInput.Icon icon="login" disabled={isDisabled} />}
@@ -21,7 +28,7 @@ export default function NicknameInput() {
         disabled={isDisabled}
       />
       <HelperText type="error" visible={nicknameError} padding="none">
-        Must be at least 2 symbols
+        Must be at least 2 symbols in English
       </HelperText>
     </>
   );

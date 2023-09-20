@@ -6,6 +6,7 @@ import { SaveSettingsContext } from '../../utils/context/settings';
 
 export default function InputDatepicker() {
   const { birthday, setBirthday, isDisabled } = useContext(SaveSettingsContext);
+
   return (
     <View style={{ width: '100%', paddingRight: 15, paddingLeft: 15 }}>
       <DatePickerInput

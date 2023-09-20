@@ -19,7 +19,8 @@ export default function Feed() {
   const router = useRouter();
   return (
     <>
-      <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
+      <SafeAreaView
+        style={[{ flex: 1 }, (isLoading || !activities.length) && { alignItems: 'center', justifyContent: 'center' }]}>
         {activities && (
           <FlatList
             onRefresh={onRefresh}

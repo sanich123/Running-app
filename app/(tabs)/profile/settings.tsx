@@ -25,6 +25,7 @@ export default function ProfileSettings() {
     image,
     isLoading,
     isDisabled,
+    photoUrl,
     setGender,
     setSport,
     setName,
@@ -36,7 +37,9 @@ export default function ProfileSettings() {
     setImage,
     setIsLoading,
     setIsDisabled,
+    setPhotoUrl,
   } = useGetSettings();
+
   return (
     <ScrollView>
       <SaveSettingsContext.Provider
@@ -52,6 +55,7 @@ export default function ProfileSettings() {
           image,
           isLoading,
           isDisabled,
+          photoUrl,
           setGender,
           setSport,
           setName,
@@ -63,6 +67,7 @@ export default function ProfileSettings() {
           setImage,
           setIsLoading,
           setIsDisabled,
+          setPhotoUrl,
         }}>
         <View style={styles.container}>
           <AvatarIconEditable />

@@ -1,16 +1,16 @@
-import { useSegments, useRouter } from 'expo-router';
-import { User, onAuthStateChanged } from 'firebase/auth';
+import { Session, User } from '@supabase/supabase-js';
+import { useRouter, useSegments } from 'expo-router';
 import { useState, useEffect, createContext, PropsWithChildren, useContext } from 'react';
 
-import { FIREBASE_AUTH } from '../../firebaseConfig';
+import { supabase } from '../supabase/supabase-init';
 
-interface AuthProps {
-  user?: User | null;
-  initialized: boolean;
-}
-export const AuthContext = createContext<AuthProps>({
-  initialized: false,
-});
+type AuthProps = {
+  user: User | null;
+  session: Session | null;
+  initialized?: boolean;
+  signOut?: () => void;
+};
+export const AuthContext = createContext<Partial<AuthProps>>({});
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -19,15 +19,26 @@ export function useAuth() {
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>();
   const [initialized, setInitialized] = useState<boolean>(false);
+  const [session, setSession] = useState<Session | null>(null);
+
   const router = useRouter();
   const segments = useSegments();
 
   useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      setUser(user);
+    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setSession(session);
+      setUser(session ? session.user : null);
       setInitialized(true);
     });
+    return () => {
+      data.subscription.unsubscribe();
+    };
   }, []);
+
+  // Log out the user
+  const signOut = async () => {
+    await supabase.auth.signOut();
+  };
 
   useEffect(() => {
     const inTabsGroup = segments[0] === '(tabs)';
@@ -43,7 +54,9 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     <AuthContext.Provider
       value={{
         user,
+        session,
         initialized,
+        signOut,
       }}>
       {children}
     </AuthContext.Provider>

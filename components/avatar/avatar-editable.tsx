@@ -1,26 +1,36 @@
 import { useContext } from 'react';
-import { Pressable, Image } from 'react-native';
+import { Pressable, Image, ToastAndroid } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import { useAuth } from '../../auth/context/auth-context';
+import { getBase64CodedImage, getSignedUrl, uploadPhoto } from '../../auth/supabase/storage/upload-photo';
 import { SaveSettingsContext } from '../../utils/context/settings';
 import { errorHandler } from '../../utils/error-handler';
 import { getAccessToGallery } from '../../utils/file-sending';
 
 export default function AvatarIconEditable() {
-  const { image, setImage, isDisabled } = useContext(SaveSettingsContext);
-
+  const { image, setImage, isDisabled, setPhotoUrl, setIsDisabled } = useContext(SaveSettingsContext);
+  const { user } = useAuth();
   return (
     <Pressable
       onPress={async () => {
         try {
           const result = await getAccessToGallery();
           if (!result.canceled) {
-            const uri = result.assets[0].uri;
-            setImage(uri);
+            const imgSrc = result.assets[0].uri;
+            setIsDisabled(true);
+            setImage(imgSrc);
+            const base64 = await getBase64CodedImage(imgSrc);
+            const pathToPhoto = await uploadPhoto(imgSrc, user.id, base64);
+            const profilePhoto = await getSignedUrl(pathToPhoto, 100000);
+            ToastAndroid.show('Get url to photo!', ToastAndroid.SHORT);
+            setPhotoUrl(profilePhoto);
+            setIsDisabled(false);
           }
         } catch (error) {
           errorHandler(error);
+          setIsDisabled(false);
         }
       }}
       disabled={isDisabled}

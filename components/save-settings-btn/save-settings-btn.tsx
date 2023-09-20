@@ -1,27 +1,21 @@
-import { useRouter } from 'expo-router';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { ToastAndroid } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { FIREBASE_STORAGE } from '../../firebaseConfig';
-import { useSendProfileInfoMutation } from '../../redux/runnich-api/runnich-api';
+import { useAuth } from '../../auth/context/auth-context';
+import { checkIfProfileExist, insertUserProfile, updateUserProfile } from '../../auth/supabase/db-funcs/edit-profile';
 import { saveSettingsInfo } from '../../redux/user-info-slice/user-info-slice';
 import { SaveSettingsContext } from '../../utils/context/settings';
 import { errorHandler } from '../../utils/error-handler';
-import { getBlobFromUri, getInfoFromUri } from '../../utils/file-sending';
 
 export default function SaveSettingsBtn() {
-  const { id } = useSelector(({ userInfo }) => userInfo);
-  const [sendProfileInfo, { data, error }] = useSendProfileInfoMutation();
-  const router = useRouter();
   const dispatch = useDispatch();
   const {
     isDisabled,
     setIsDisabled,
     setIsLoading,
-    image,
+    photoUrl,
     gender,
     sport,
     name,
@@ -32,18 +26,8 @@ export default function SaveSettingsBtn() {
     birthday,
     isLoading,
   } = useContext(SaveSettingsContext);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    if (data) {
-      ToastAndroid.show('Your data has successfully sended!', ToastAndroid.SHORT);
-      console.log(data);
-      router.back();
-    }
-    if (error) {
-      ToastAndroid.show('An error occured', ToastAndroid.SHORT);
-      console.log(error);
-    }
-  }, [error, data]);
   return (
     <Button
       mode="outlined"
@@ -52,17 +36,8 @@ export default function SaveSettingsBtn() {
         try {
           setIsDisabled(true);
           setIsLoading(true);
-          let profilePhoto = '';
-          if (image) {
-            const blob = await getBlobFromUri(image);
-            const fileName = getInfoFromUri(image);
-            const storageRef = ref(FIREBASE_STORAGE, fileName);
-            await uploadBytes(storageRef, blob as Blob, { contentType: 'image/jpeg' });
-            ToastAndroid.show('Successfully upload photo', ToastAndroid.SHORT);
-            profilePhoto = await getDownloadURL(storageRef);
-            ToastAndroid.show('Url to file has successfully received', ToastAndroid.SHORT);
-          }
           const userSettings = {
+            user_id: user.id,
             gender,
             sport,
             name,
@@ -70,19 +45,25 @@ export default function SaveSettingsBtn() {
             city,
             weight,
             bio,
-            profilePhoto,
+            birthday: birthday ? new Date(birthday) : null,
+            profile_photo: photoUrl,
           };
-          dispatch(saveSettingsInfo({ ...userSettings, birthday: birthday.toString() }));
-          await sendProfileInfo({ ...userSettings, userId: id, birthday }).unwrap();
+          dispatch(saveSettingsInfo({ ...userSettings }));
+
+          const profileAccount = await checkIfProfileExist(user.id);
+          if (!profileAccount.length) {
+            await insertUserProfile(user.id, userSettings);
+            ToastAndroid.show('Profile created!', ToastAndroid.SHORT);
+          } else {
+            await updateUserProfile(user.id, userSettings);
+            ToastAndroid.show('Profile updated!', ToastAndroid.SHORT);
+          }
           setIsDisabled(false);
           setIsLoading(false);
         } catch (error) {
           setIsDisabled(false);
           setIsLoading(false);
           errorHandler(error);
-        } finally {
-          setIsLoading(false);
-          setIsLoading(false);
         }
       }}
       loading={isLoading}
