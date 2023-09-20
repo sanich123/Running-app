@@ -13,7 +13,7 @@ import { calculateAge } from '../../../utils/time-formatter';
 export default function Profile() {
   const { id } = useSelector(({ userInfo }) => userInfo);
   const { isLoading, profileInfo, profileError } = useGetProfileInfo();
-  
+
   return (
     <>
       <ProfileMediaPhotos userId={id} />
