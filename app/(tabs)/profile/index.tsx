@@ -7,13 +7,13 @@ import AvatarShowable from '../../../components/avatar/avatar-showable';
 import ErrorComponent from '../../../components/error-component/error-component';
 import ProfileFollowersSection from '../../../components/profile-followers-section/profile-followers-section';
 import ProfileMediaPhotos from '../../../components/profile-media-photos/profile-media-photos';
-import { useGetUserProfileByIdQuery } from '../../../redux/runnich-api/runnich-api';
+import useGetProfileInfo from '../../../utils/hooks/use-get-profile';
 import { calculateAge } from '../../../utils/time-formatter';
 
 export default function Profile() {
   const { id } = useSelector(({ userInfo }) => userInfo);
-  const { isLoading, error, data: profileInfo } = useGetUserProfileByIdQuery(id);
-
+  const { isLoading, profileInfo, profileError } = useGetProfileInfo();
+  
   return (
     <>
       <ProfileMediaPhotos userId={id} />
@@ -22,20 +22,20 @@ export default function Profile() {
           <AvatarShowable size={100} id={id} />
           <View style={styles.nicknameWrapper}>
             <Text variant="headlineMedium">
-              {profileInfo?.name || 'Your name'} {profileInfo?.surname || 'Your surname'}
+              {profileInfo[0]?.name || 'Your name'} {profileInfo[0]?.surname || 'Your surname'}
             </Text>
             <Text variant="titleLarge">
-              {profileInfo?.city || 'Your homeland'},{' '}
-              {profileInfo?.birthday ? `${calculateAge(new Date(profileInfo?.birthday))} years old` : 'Your age'}
+              {profileInfo[0]?.city || 'Your homeland'},{' '}
+              {profileInfo[0]?.birthday ? `${calculateAge(new Date(profileInfo[0]?.birthday))} years old` : 'Your age'}
             </Text>
           </View>
         </View>
         <View style={styles.bio}>
-          <Text variant="titleMedium">{profileInfo?.bio || 'Your biography'}</Text>
+          <Text variant="titleMedium">{profileInfo[0]?.bio || 'Your biography'}</Text>
         </View>
         <ProfileFollowersSection />
         {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
-        {error ? <ErrorComponent error={error} /> : null}
+        {profileError ? <ErrorComponent error={profileError} /> : null}
       </View>
     </>
   );

@@ -24,7 +24,7 @@ export async function uploadPhoto(image: string, userId: string, base64: string)
   try {
     const { error, data: uploadedPhoto } = await supabase.storage
       .from('avatars')
-      .upload(filePath, decode(base64), { contentType });
+      .upload(filePath, decode(base64), { contentType, cacheControl: '1' });
     if (error) {
       Alert.alert(error.message);
       console.log(error);

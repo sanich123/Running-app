@@ -11,7 +11,7 @@ export default function useGetSettings() {
     weight: savedWeight,
     bio: savedBio,
     birthday: savedBirthday,
-    profilePhoto: savedProfilePhoto,
+    profile_photo: savedProfilePhoto,
   } = useSelector(({ userInfo }) => userInfo.settings);
 
   const [gender, setGender] = useState(savedGender);

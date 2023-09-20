@@ -2,23 +2,24 @@ import { Image } from 'react-native';
 import { ActivityIndicator, Avatar, MD2Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import { useGetUserProfileByIdQuery } from '../../redux/runnich-api/runnich-api';
+import useGetProfileInfo from '../../utils/hooks/use-get-profile';
 import ErrorComponent from '../error-component/error-component';
 
 export default function AvatarShowable({ size, id }: { size: number; id: string }) {
-  const { isLoading, error, data: profileInfo } = useGetUserProfileByIdQuery(id);
+  const { isLoading, profileInfo: profileInfoPhoto, profileError } = useGetProfileInfo('profile_photo');
+  console.log(profileInfoPhoto);
   return (
     <>
       {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
-      {error ? <ErrorComponent error={error} /> : null}
-      {profileInfo?.profilePhoto && (
+      {profileError ? <ErrorComponent error={profileError} /> : null}
+      {!isLoading && profileInfoPhoto[0] && (
         <Image
-          source={{ uri: profileInfo.profilePhoto }}
+          source={{ uri: profileInfoPhoto[0]?.profile_photo }}
           style={{ width: size, height: size, borderRadius: 70 }}
           resizeMode="cover"
         />
       )}
-      {!profileInfo?.profilePhoto && !isLoading && (
+      {!profileInfoPhoto && !isLoading && (
         <Avatar.Image
           size={size}
           source={() => <Icon name="person" size={size} />}
