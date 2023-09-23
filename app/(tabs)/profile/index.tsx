@@ -1,41 +1,41 @@
 import { StyleSheet } from 'react-native';
 import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
+import { useAuth } from '../../../auth/context/auth-context';
 import { View } from '../../../components/Themed';
 import AvatarShowable from '../../../components/avatar/avatar-showable';
 import ErrorComponent from '../../../components/error-component/error-component';
 import ProfileFollowersSection from '../../../components/profile-followers-section/profile-followers-section';
 import ProfileMediaPhotos from '../../../components/profile-media-photos/profile-media-photos';
-import useGetProfileInfo from '../../../utils/hooks/use-get-profile';
+import { useGetUserProfileByIdQuery } from '../../../redux/runnich-api/runnich-api';
 import { calculateAge } from '../../../utils/time-formatter';
 
 export default function Profile() {
-  const { id } = useSelector(({ userInfo }) => userInfo);
-  const { isLoading, profileInfo, profileError } = useGetProfileInfo();
+  const { user } = useAuth();
+  const { isLoading, data: profile, error } = useGetUserProfileByIdQuery(user?.id);
 
   return (
     <>
-      <ProfileMediaPhotos userId={id} />
+      <ProfileMediaPhotos userId={user?.id} />
       <View style={styles.container}>
         <View style={styles.header}>
-          <AvatarShowable size={100} id={id} />
+          <AvatarShowable size={100} id={user?.id} />
           <View style={styles.nicknameWrapper}>
             <Text variant="headlineMedium">
-              {profileInfo[0]?.name || 'Your name'} {profileInfo[0]?.surname || 'Your surname'}
+              {profile?.name || 'Your name'} {profile?.surname || 'Your surname'}
             </Text>
             <Text variant="titleLarge">
-              {profileInfo[0]?.city || 'Your homeland'},{' '}
-              {profileInfo[0]?.birthday ? `${calculateAge(new Date(profileInfo[0]?.birthday))} years old` : 'Your age'}
+              {profile?.city || 'Your homeland'},{' '}
+              {profile?.birthday ? `${calculateAge(new Date(profile?.birthday))} years old` : 'Your age'}
             </Text>
           </View>
         </View>
         <View style={styles.bio}>
-          <Text variant="titleMedium">{profileInfo[0]?.bio || 'Your biography'}</Text>
+          <Text variant="titleMedium">{profile?.bio || 'Your biography'}</Text>
         </View>
         <ProfileFollowersSection />
         {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
-        {profileError ? <ErrorComponent error={profileError} /> : null}
+        {error ? <ErrorComponent error={error} /> : null}
       </View>
     </>
   );

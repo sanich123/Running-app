@@ -34,17 +34,17 @@ export default function RegisterBtn() {
     if (data) {
       const { id, login, email } = data;
       dispatch(getRegisterInfo({ id, login, email }));
-      (async () => {
-        try {
-          const {
-            error,
-            data: { user },
-          } = await supabase.auth.signUp({ email, password });
-          console.log(user?.id, error);
-        } catch (err) {
-          errorHandler(err);
-        }
-      })();
+      // (async () => {
+      //   try {
+      //     const {
+      //       error,
+      //       data: { user },
+      //     } = await supabase.auth.signUp({ email, password });
+      //     console.log(user?.id, error);
+      //   } catch (err) {
+      //     errorHandler(err);
+      //   }
+      // })();
       setIsLoading(false);
       setIsDisabled(false);
     }
@@ -67,7 +67,12 @@ export default function RegisterBtn() {
           } else if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
             setIsLoading(true);
             setIsDisabled(true);
-            await signUpUser({ login: nickname, email, password }).unwrap();
+            const {
+              error,
+              data: { user },
+            } = await supabase.auth.signUp({ email, password });
+            console.log(user?.id, error);
+            // await signUpUser({ login: nickname, email, password }).unwrap();
           } else if (!nicknameMatcher.test(nickname)) {
             setNicknameError(true);
           }
