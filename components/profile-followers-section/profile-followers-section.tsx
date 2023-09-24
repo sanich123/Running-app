@@ -2,8 +2,8 @@ import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import React, { Suspense } from 'react';
 import { Pressable, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
+import { useAuth } from '../../auth/context/auth-context';
 import { useGetFriendsByUserIdQuery } from '../../redux/runnich-api/runnich-api';
 import AddFriendBtn from '../add-friend-btn/add-friend-btn';
 import DeleteFriendBtn from '../delete-friend-btn/delete-friend-btn';
@@ -13,10 +13,10 @@ import FollowingCount from '../following-count/following-count';
 
 export default function ProfileFollowersSection() {
   const { id: friendId } = useLocalSearchParams();
-  const { id } = useSelector(({ userInfo }) => userInfo);
-  const { isLoading, error, data: listOfFriends } = useGetFriendsByUserIdQuery(id);
+  const { user } = useAuth();
+  const { isLoading, error, data: listOfFriends } = useGetFriendsByUserIdQuery(user.id);
   const friendCell = listOfFriends?.filter(({ friendId: friendIdOnServer }) => friendIdOnServer === friendId);
-  const isMineActivity = friendId === id;
+  const isMineActivity = friendId === user.id;
   const router = useRouter();
   const pathname = usePathname();
   return (

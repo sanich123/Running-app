@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import { SafeAreaView, FlatList } from 'react-native';
 import { ActivityIndicator, Divider, Searchbar } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
+import { useAuth } from '../../../auth/context/auth-context';
 import ActivityCard from '../../../components/activity-card/activity-card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
 import ErrorComponent from '../../../components/error-component/error-component';
@@ -12,22 +12,22 @@ import useGetLocation from '../../../utils/hooks/use-get-location';
 import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
-  const { id } = useSelector(({ userInfo }) => userInfo);
+  const { user } = useAuth();
   useGetLocation();
-  const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(id);
+  const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user.id);
   const { onRefresh, refreshing } = useRefresh(refetch);
   const router = useRouter();
   return (
     <>
       <SafeAreaView
-        style={[{ flex: 1 }, (isLoading || !activities.length) && { alignItems: 'center', justifyContent: 'center' }]}>
+        style={[{ flex: 1 }, (isLoading || !activities?.length) && { alignItems: 'center', justifyContent: 'center' }]}>
         {activities && (
           <FlatList
             onRefresh={onRefresh}
             data={activities}
             refreshing={refreshing}
             renderItem={({ item }) => {
-              const { description, title, date, sport, userId, locations, photoUrls, duration, speed, distance, id } =
+              const { description, title, date, sport, locations, photoUrls, duration, speed, distance, id, user_id } =
                 item;
               return (
                 <ActivityCard
@@ -35,7 +35,7 @@ export default function Feed() {
                   title={title}
                   date={date}
                   sport={sport}
-                  userId={userId}
+                  userId={user_id}
                   id={id}
                   locations={locations}
                   key={id}

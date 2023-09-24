@@ -15,7 +15,9 @@
     "experiments": {
       "typedRoutes": true
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "runtimeVersion": {
@@ -28,7 +30,9 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.sanich123.runningapp",
-      "permissions": ["android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
       "runtimeVersion": {
         "policy": "sdkVersion"
       }
@@ -62,7 +66,8 @@
         {
           "locationWhenInUsePermission": "Show current location on map."
         }
-      ]
+      ],
+      "react-native-compressor"
     ],
     "updates": {
       "url": "https://u.expo.dev/413aa829-bbae-467c-9201-4688b894f2f7"

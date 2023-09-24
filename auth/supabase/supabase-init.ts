@@ -2,7 +2,6 @@ import { createClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 import 'react-native-url-polyfill/auto';
 
-// Use a custom secure storage solution for the Supabase client to store the JWT
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
     return SecureStore.getItemAsync(key);
@@ -15,10 +14,10 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
-const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const key = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+const url = 'https://rrlmesbmowaoyzvniffr.supabase.co';
+const key =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJybG1lc2Jtb3dhb3l6dm5pZmZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTUzNTgwODAsImV4cCI6MjAxMDkzNDA4MH0.SKHRR9lL8jnL_YkmzbAKRbhBfgabxqQU7CQwK85p_Oo';
 
-// Initialize the Supabase client
 export const supabase = createClient(url as string, key as string, {
   auth: {
     storage: ExpoSecureStoreAdapter as any,
