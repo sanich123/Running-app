@@ -1,16 +1,13 @@
+import { useRouter } from 'expo-router';
 import { useContext } from 'react';
-import { ToastAndroid } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { checkIfProfileExist, insertUserProfile, updateUserProfile } from '../../auth/supabase/db-funcs/edit-profile';
-import { saveSettingsInfo } from '../../redux/user-info-slice/user-info-slice';
+import { useSendProfileInfoMutation } from '../../redux/runnich-api/runnich-api';
 import { SaveSettingsContext } from '../../utils/context/settings';
 import { errorHandler } from '../../utils/error-handler';
 
 export default function SaveSettingsBtn() {
-  const dispatch = useDispatch();
   const {
     isDisabled,
     setIsDisabled,
@@ -25,8 +22,11 @@ export default function SaveSettingsBtn() {
     bio,
     birthday,
     isLoading,
+    image,
   } = useContext(SaveSettingsContext);
   const { user } = useAuth();
+  const [sendProfileInfo] = useSendProfileInfoMutation();
+  const router = useRouter();
 
   return (
     <Button
@@ -37,7 +37,6 @@ export default function SaveSettingsBtn() {
           setIsDisabled(true);
           setIsLoading(true);
           const userSettings = {
-            user_id: user.id,
             gender,
             sport,
             name,
@@ -46,18 +45,13 @@ export default function SaveSettingsBtn() {
             weight,
             bio,
             birthday: birthday ? new Date(birthday) : null,
-            profile_photo: photoUrl,
+            profilePhoto: photoUrl ? photoUrl : image,
           };
-          dispatch(saveSettingsInfo({ ...userSettings }));
 
-          const profileAccount = await checkIfProfileExist(user.id);
-          if (!profileAccount.length) {
-            await insertUserProfile(user.id, userSettings);
-            ToastAndroid.show('Profile created!', ToastAndroid.SHORT);
-          } else {
-            await updateUserProfile(user.id, userSettings);
-            ToastAndroid.show('Profile updated!', ToastAndroid.SHORT);
-          }
+          await sendProfileInfo({ body: userSettings, id: user.id })
+            .unwrap()
+            .then(() => router.back())
+            .catch((error) => errorHandler(error));
           setIsDisabled(false);
           setIsLoading(false);
         } catch (error) {

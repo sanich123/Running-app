@@ -18,16 +18,15 @@ export async function getExtension(image: string) {
   return splittedImage[splittedImage.length - 1];
 }
 
-export async function uploadPhoto(image: string, userId: string, base64: string) {
+export async function uploadPhoto(userId: string, base64: string) {
   const filePath = `${userId}/${new Date().getTime()}.jpg`;
   const contentType = 'image/jpg';
   try {
     const { error, data: uploadedPhoto } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, decode(base64), { contentType, cacheControl: '1' });
+      .from('files')
+      .upload(filePath, decode(base64), { contentType });
     if (error) {
       Alert.alert(error.message);
-      console.log(error);
     }
     return uploadedPhoto.path;
   } catch (error) {
@@ -35,12 +34,20 @@ export async function uploadPhoto(image: string, userId: string, base64: string)
   }
 }
 
+export async function getPublicUrl(path: string) {
+  try {
+    const { data } = supabase.storage.from('files').getPublicUrl(path);
+    return data.publicUrl;
+  } catch (error) {
+    errorHandler(error);
+  }
+}
+
 export async function getSignedUrl(path: string, expiredTime: number) {
   try {
-    const { error, data } = await supabase.storage.from('avatars').createSignedUrl(path, expiredTime);
+    const { data, error } = await supabase.storage.from('files').createSignedUrl(path, expiredTime);
     if (error) {
       Alert.alert(error.message);
-      console.log(error);
     }
     return data.signedUrl;
   } catch (error) {

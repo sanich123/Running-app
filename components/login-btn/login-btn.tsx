@@ -20,17 +20,13 @@ export default function LoginBtn() {
           if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
             setIsLoading(true);
             setIsDisabled(true);
-            const { error } = await supabase.auth.signInWithPassword({
-              email,
-              password,
-            });
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) Alert.alert(error.message);
+            setIsLoading(false);
+            setIsLoading(false);
           }
         } catch (e) {
           errorHandler(e);
-          setIsLoading(false);
-          setIsLoading(false);
-        } finally {
           setIsLoading(false);
           setIsLoading(false);
         }

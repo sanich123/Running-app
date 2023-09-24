@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { supabase } from '../../auth/supabase/supabase-init';
@@ -34,17 +35,15 @@ export default function RegisterBtn() {
           } else if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
             setIsLoading(true);
             setIsDisabled(true);
-            const {
-              error,
-              data: { user },
-            } = await supabase.auth.signUp({ email, password });
-            console.log(user?.id, error);
+            const { error } = await supabase.auth.signUp({ email, password });
+            if (error) {
+              Alert.alert(error.message);
+            }
+            setIsLoading(false);
+            setIsDisabled(false);
           }
         } catch (error) {
           errorHandler(error);
-          setIsLoading(false);
-          setIsDisabled(false);
-        } finally {
           setIsLoading(false);
           setIsDisabled(false);
         }

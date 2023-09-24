@@ -1,18 +1,21 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Image, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { Button, MD3Colors, ProgressBar, useTheme } from 'react-native-paper';
+import { Image as ImageCompressor } from 'react-native-compressor';
+import { Button, useTheme } from 'react-native-paper';
 
+import { useAuth } from '../../auth/context/auth-context';
+import { getBase64CodedImage, getSignedUrl, uploadPhoto } from '../../auth/supabase/storage/upload-photo';
 import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
-import { getAccessToGallery, getBlobFromUri, getInfoFromUri, uploadToFirebaseStorage } from '../../utils/file-sending';
+import { getAccessToGallery } from '../../utils/file-sending';
 
 export default function UploadPhotosBtn() {
-  const { isDisabled, setIsDisabled, images, isLoading, setIsLoading, setPhotoUrls, photoUrls, setImages } =
-    useContext(SaveActivityContext);
-  const [progress, setProgressPercent] = useState(0);
+  const { isDisabled, setIsDisabled, images, isLoading, setIsLoading, setImages } = useContext(SaveActivityContext);
   const { width } = useWindowDimensions();
   const theme = useTheme();
+  const { user } = useAuth();
+
   return (
     <>
       <Button
@@ -24,18 +27,12 @@ export default function UploadPhotosBtn() {
           try {
             const result = await getAccessToGallery();
             if (!result.canceled) {
-              const uri = result.assets[0].uri;
-              const fileName = getInfoFromUri(uri);
-              const blob = await getBlobFromUri(uri);
-              await uploadToFirebaseStorage(
-                fileName,
-                blob as Blob,
-                setProgressPercent,
-                setIsLoading,
-                setPhotoUrls,
-                photoUrls,
-              );
-              setImages([...images, uri]);
+              const imgSrc = result.assets[0].uri;
+              const compressedImage = await ImageCompressor.compress(imgSrc);
+              const base64 = await getBase64CodedImage(compressedImage);
+              const pathToPhoto = await uploadPhoto(user.id, base64);
+              const url = await getSignedUrl(pathToPhoto, 100000);
+              setImages([...images, url]);
             }
           } catch (error) {
             errorHandler(error);
@@ -51,9 +48,6 @@ export default function UploadPhotosBtn() {
         disabled={isDisabled}>
         {`Upload${isLoading ? 'ing' : ''} an image`}
       </Button>
-      {images?.length ? (
-        <ProgressBar progress={progress} color={MD3Colors.primary50} style={{ marginTop: 15 }} />
-      ) : null}
       <View style={styles.imagesWrapper}>
         {images &&
           images.map((image, index) => (

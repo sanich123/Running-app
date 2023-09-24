@@ -1,5 +1,6 @@
 import { useContext } from 'react';
-import { Pressable, Image, ToastAndroid } from 'react-native';
+import { Pressable, Image } from 'react-native';
+import { Image as ImageCompressor } from 'react-native-compressor';
 import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -12,6 +13,7 @@ import { getAccessToGallery } from '../../utils/file-sending';
 export default function AvatarIconEditable() {
   const { image, setImage, isDisabled, setPhotoUrl, setIsDisabled } = useContext(SaveSettingsContext);
   const { user } = useAuth();
+
   return (
     <Pressable
       onPress={async () => {
@@ -21,11 +23,11 @@ export default function AvatarIconEditable() {
             const imgSrc = result.assets[0].uri;
             setIsDisabled(true);
             setImage(imgSrc);
-            const base64 = await getBase64CodedImage(imgSrc);
-            const pathToPhoto = await uploadPhoto(imgSrc, user.id, base64);
-            const profilePhoto = await getSignedUrl(pathToPhoto, 100000);
-            ToastAndroid.show('Get url to photo!', ToastAndroid.SHORT);
-            setPhotoUrl(profilePhoto);
+            const compressedImage = await ImageCompressor.compress(imgSrc);
+            const base64 = await getBase64CodedImage(compressedImage);
+            const pathToPhoto = await uploadPhoto(user.id, base64);
+            const url = await getSignedUrl(pathToPhoto, 100000);
+            setPhotoUrl(url);
             setIsDisabled(false);
           }
         } catch (error) {

@@ -73,8 +73,8 @@ export const runnichApi = createApi({
       }),
     }),
     sendProfileInfo: builder.mutation({
-      query: (body) => ({
-        url: `/${routeProfile}`,
+      query: ({ body, id }) => ({
+        url: `/user/${id}/${routeProfile}`,
         method: 'POST',
         headers,
         body,
