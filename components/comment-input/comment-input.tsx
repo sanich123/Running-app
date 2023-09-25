@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { ToastAndroid } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
+import { useAuth } from '../../auth/context/auth-context';
 import { usePostCommentWithActivityIdMutation } from '../../redux/runnich-api/runnich-api';
 import { errorHandler } from '../../utils/error-handler';
 
-export default function CommentInput({ userId, activityId }: { userId: string; activityId: string }) {
+export default function CommentInput({ activityId }: { activityId: string }) {
+  const { user } = useAuth();
   const [comment, setComment] = useState('');
   const [postComment, { isLoading: isCommentSending, error: commentSendingError, data: commentResponse }] =
     usePostCommentWithActivityIdMutation();
@@ -33,7 +35,7 @@ export default function CommentInput({ userId, activityId }: { userId: string; a
         <TextInput.Icon
           icon="pencil"
           onPress={async () => {
-            const body = { comment, authorId: userId };
+            const body = { comment, authorId: user.id };
             try {
               await postComment({ body, id: activityId }).unwrap();
             } catch (error) {
