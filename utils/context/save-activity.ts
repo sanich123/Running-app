@@ -11,8 +11,6 @@ export const SaveActivityContext = createContext({
   setEmotion: (arg: string) => {},
   isSwitchOn: false,
   setIsSwitchOn: (arg: boolean) => {},
-  photoUrls: [] as string[],
-  setPhotoUrls: (arg: string[]) => {},
   isDisabled: false,
   setIsDisabled: (arg: boolean) => {},
   images: [],

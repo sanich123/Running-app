@@ -12,7 +12,7 @@ import { errorHandler } from '../../utils/error-handler';
 export default function AcceptDeclineBtns() {
   const { user } = useAuth();
   const [sendActivity, { error, data }] = useAddActivityByUserIdMutation();
-  const { title, description, sport, emotion, isSwitchOn, photoUrls, isDisabled, setIsDisabled } =
+  const { title, description, sport, emotion, isSwitchOn, isDisabled, setIsDisabled, images } =
     useContext(SaveActivityContext);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -36,16 +36,12 @@ export default function AcceptDeclineBtns() {
     try {
       setIsDisabled(true);
       setIsLoading(true);
-      const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrls };
+      const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrls: images };
       await sendActivity({ body, id: user.id }).unwrap();
-      setIsDisabled(false);
-      setIsLoading(false);
     } catch (error) {
-      setIsDisabled(false);
-      setIsLoading(false);
       errorHandler(error);
     } finally {
-      setIsLoading(false);
+      setIsDisabled(false);
       setIsLoading(false);
     }
   }

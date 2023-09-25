@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
+import { useAuth } from '../../auth/context/auth-context';
 import { useGetFriendsByUserIdQuery } from '../../redux/runnich-api/runnich-api';
 import AddFriendBtn from '../add-friend-btn/add-friend-btn';
 import AvatarShowable from '../avatar/avatar-showable';
@@ -12,10 +12,10 @@ import UserCityAge from '../user-city-age/user-city-age';
 import UserNameSurname from '../user-name-surname/user-name-surname';
 
 export default function UserListItem({ userId }: { userId: string }) {
-  const { id: ownerId } = useSelector(({ userInfo }) => userInfo);
-  const { isLoading, error, data: friends } = useGetFriendsByUserIdQuery(ownerId);
+  const { user } = useAuth();
+  const { isLoading, error, data: friends } = useGetFriendsByUserIdQuery(user.id);
   const isFriendOfOwner = friends?.filter(({ friendId }) => friendId === userId);
-  const isMineActivity = userId === ownerId;
+  const isMineActivity = userId === user.id;
   const router = useRouter();
   return (
     <View style={styles.userItemWrapper}>
@@ -24,7 +24,7 @@ export default function UserListItem({ userId }: { userId: string }) {
       </Pressable>
 
       <View style={{ display: 'flex' }}>
-        <UserNameSurname userId={userId} size="bodyLarge" />
+        <UserNameSurname size="bodyLarge" />
         <UserCityAge userId={userId} size="bodyMedium" />
       </View>
 
@@ -32,7 +32,7 @@ export default function UserListItem({ userId }: { userId: string }) {
       {error ? <ErrorComponent error={error} /> : null}
       {!isMineActivity ? (
         isFriendOfOwner?.length ? (
-          <DeleteFriendBtn idOfFriendCell={isFriendOfOwner[0].id} />
+          <DeleteFriendBtn friendId={userId} />
         ) : (
           <AddFriendBtn friendId={userId} />
         )

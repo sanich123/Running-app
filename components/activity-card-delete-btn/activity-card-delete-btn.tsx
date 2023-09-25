@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useContext, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
 import { useDeleteActivityByIdMutation } from '../../redux/runnich-api/runnich-api';
@@ -13,6 +14,7 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
   useEffect(() => {
     if (data) {
       console.log(data);
+
       setIsLoading(false);
       setIsDisabled(false);
     }
@@ -27,10 +29,25 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
       size={20}
       onPress={async () => {
         try {
-          setIsLoading(true);
-          setIsDisabled(true);
-          await deleteActivityById(activityId).unwrap();
-          router.push('/');
+          Alert.alert(
+            'Deleting activity',
+            'Are you sure?',
+            [
+              {
+                text: 'Yes, I am sure',
+                onPress: async () => {
+                  setIsLoading(true);
+                  setIsDisabled(true);
+                  await deleteActivityById(activityId).unwrap();
+                  router.push('/');
+                },
+                style: 'cancel',
+              },
+            ],
+            {
+              cancelable: true,
+            },
+          );
         } catch (error) {
           errorHandler(error);
           setIsLoading(false);

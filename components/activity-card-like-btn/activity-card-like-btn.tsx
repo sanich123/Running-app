@@ -1,17 +1,17 @@
 import { useContext, useEffect } from 'react';
 import { ToastAndroid } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
+import { useAuth } from '../../auth/context/auth-context';
 import { useGetLikesByActivityIdQuery, useSendOrDeleteLikeMutation } from '../../redux/runnich-api/runnich-api';
 import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
 import { errorHandler } from '../../utils/error-handler';
 
 export default function ActivityCardLikeBtn({ activityId }: { activityId: string }) {
-  const { id: userId } = useSelector(({ userInfo }) => userInfo);
+  const { user } = useAuth();
   const [sendLike, { data, error: errorSendingLike }] = useSendOrDeleteLikeMutation();
   const { error, data: likes } = useGetLikesByActivityIdQuery(activityId);
-  const isLikedByYou = likes?.find(({ authorId }) => authorId === userId);
+  const isLikedByYou = likes?.find(({ authorId }) => authorId === user.id);
   const { isDisabled, isLoading, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
         setIsLoading(true);
         setIsDisabled(true);
         try {
-          const body = { activityId, authorId: userId };
+          const body = { activityId, authorId: user.id };
           await sendLike(body).unwrap();
         } catch (error) {
           errorHandler(error);
