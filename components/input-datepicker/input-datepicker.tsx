@@ -1,8 +1,7 @@
+import { SaveSettingsContext } from '@u/context/settings';
 import { useContext } from 'react';
 import { View } from 'react-native';
 import { DatePickerInput } from 'react-native-paper-dates';
-
-import { SaveSettingsContext } from '../../utils/context/settings';
 
 export default function InputDatepicker() {
   const { birthday, setBirthday, isDisabled } = useContext(SaveSettingsContext);

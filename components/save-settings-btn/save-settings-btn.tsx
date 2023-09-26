@@ -1,11 +1,10 @@
+import { useAuth } from '@auth/context/auth-context';
+import { useSendProfileInfoMutation } from '@r/runnich-api/runnich-api';
+import { SaveSettingsContext } from '@u/context/settings';
+import { errorHandler } from '@u/error-handler';
 import { useRouter } from 'expo-router';
 import { useContext } from 'react';
 import { Button } from 'react-native-paper';
-
-import { useAuth } from '../../auth/context/auth-context';
-import { useSendProfileInfoMutation } from '../../redux/runnich-api/runnich-api';
-import { SaveSettingsContext } from '../../utils/context/settings';
-import { errorHandler } from '../../utils/error-handler';
 
 export default function SaveSettingsBtn() {
   const {

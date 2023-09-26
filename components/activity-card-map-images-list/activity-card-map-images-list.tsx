@@ -1,9 +1,8 @@
+import { getMapBoxImage } from '@u/location-utils';
 import { LocationObject } from 'expo-location';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { FlatList, Pressable, Image, useWindowDimensions } from 'react-native';
-
-import { getMapBoxImage } from '../../utils/location-utils';
 
 export default function ActivityCardMapImagesList({
   locations,

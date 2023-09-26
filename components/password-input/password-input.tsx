@@ -1,8 +1,7 @@
+import { passwordMatcher } from '@const/regexp';
+import { SignInContext } from '@u/context/sign-in';
 import { useContext, useState } from 'react';
 import { HelperText, TextInput } from 'react-native-paper';
-
-import { passwordMatcher } from '../../constants/regexp';
-import { SignInContext } from '../../utils/context/sign-in';
 
 export default function PasswordInput() {
   const { password, setPassword, passwordError, setPasswordError, isDisabled } = useContext(SignInContext);

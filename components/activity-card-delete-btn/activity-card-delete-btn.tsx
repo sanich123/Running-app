@@ -1,11 +1,10 @@
+import { useDeleteActivityByIdMutation } from '@r/runnich-api/runnich-api';
+import { ActivityCardBtnsContext } from '@u/context/activity-card-btns';
+import { errorHandler } from '@u/error-handler';
 import { useRouter } from 'expo-router';
 import { useContext, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
-
-import { useDeleteActivityByIdMutation } from '../../redux/runnich-api/runnich-api';
-import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
-import { errorHandler } from '../../utils/error-handler';
 
 export default function ActivityCardDeleteBtn({ activityId }: { activityId: string }) {
   const [deleteActivityById, { data, error }] = useDeleteActivityByIdMutation();

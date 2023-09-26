@@ -1,16 +1,15 @@
+import { View } from '@c/Themed';
+import AvatarIconEditable from '@c/avatar/avatar-editable';
+import InputBio from '@c/input-bio/input-bio';
+import InputDatepicker from '@c/input-datepicker/input-datepicker';
+import InputsNameSurname from '@c/inputs-name-surname/inputs-name-surname';
+import InputsWeightCity from '@c/inputs-weight-city/inputs-weight-city';
+import SaveSettingsBtn from '@c/save-settings-btn/save-settings-btn';
+import GenderBtns from '@c/segmented-btns/gender-btns';
+import SportsBtns from '@c/segmented-btns/sports-btns';
+import { SaveSettingsContext } from '@u/context/settings';
+import useGetSettings from '@u/hooks/use-get-settings';
 import { ScrollView, StyleSheet } from 'react-native';
-
-import { View } from '../../../components/Themed';
-import AvatarIconEditable from '../../../components/avatar/avatar-editable';
-import InputBio from '../../../components/input-bio/input-bio';
-import InputDatepicker from '../../../components/input-datepicker/input-datepicker';
-import InputsNameSurname from '../../../components/inputs-name-surname/inputs-name-surname';
-import InputsWeightCity from '../../../components/inputs-weight-city/inputs-weight-city';
-import SaveSettingsBtn from '../../../components/save-settings-btn/save-settings-btn';
-import GenderBtns from '../../../components/segmented-btns/gender-btns';
-import SportsBtns from '../../../components/segmented-btns/sports-btns';
-import { SaveSettingsContext } from '../../../utils/context/settings';
-import useGetSettings from '../../../utils/hooks/use-get-settings';
 
 export default function ProfileSettings() {
   const {

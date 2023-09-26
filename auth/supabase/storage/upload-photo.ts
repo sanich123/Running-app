@@ -1,8 +1,8 @@
+import { errorHandler } from '@u/error-handler';
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
 
-import { errorHandler } from '../../../utils/error-handler';
 import { supabase } from '../supabase-init';
 
 export async function getBase64CodedImage(image: string) {

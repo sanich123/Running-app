@@ -1,11 +1,10 @@
+import { useAuth } from '@auth/context/auth-context';
+import { useGetLikesByActivityIdQuery, useSendOrDeleteLikeMutation } from '@r/runnich-api/runnich-api';
+import { ActivityCardBtnsContext } from '@u/context/activity-card-btns';
+import { errorHandler } from '@u/error-handler';
 import { useContext, useEffect } from 'react';
 import { ToastAndroid } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
-
-import { useAuth } from '../../auth/context/auth-context';
-import { useGetLikesByActivityIdQuery, useSendOrDeleteLikeMutation } from '../../redux/runnich-api/runnich-api';
-import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
-import { errorHandler } from '../../utils/error-handler';
 
 export default function ActivityCardLikeBtn({ activityId }: { activityId: string }) {
   const { user } = useAuth();

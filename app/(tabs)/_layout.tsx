@@ -1,13 +1,12 @@
+import { useAuth } from '@auth/context/auth-context';
+import { View } from '@c/Themed';
+import AvatarShowable from '@c/avatar/avatar-showable';
+import Colors from '@const/Colors';
 import { useLinkTo } from '@react-navigation/native';
 import { Tabs, usePathname, useRouter } from 'expo-router';
 import { useColorScheme, Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
-import { useAuth } from '../../auth/context/auth-context';
-import { View } from '../../components/Themed';
-import AvatarShowable from '../../components/avatar/avatar-showable';
-import Colors from '../../constants/Colors';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();

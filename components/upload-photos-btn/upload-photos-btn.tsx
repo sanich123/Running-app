@@ -1,14 +1,13 @@
+import { useAuth } from '@auth/context/auth-context';
+import { getBase64CodedImage, getSignedUrl, uploadPhoto } from '@auth/supabase/storage/upload-photo';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { SaveActivityContext } from '@u/context/save-activity';
+import { errorHandler } from '@u/error-handler';
+import { getAccessToGallery } from '@u/file-sending';
 import { useContext } from 'react';
 import { Image, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Image as ImageCompressor } from 'react-native-compressor';
 import { Button, useTheme } from 'react-native-paper';
-
-import { useAuth } from '../../auth/context/auth-context';
-import { getBase64CodedImage, getSignedUrl, uploadPhoto } from '../../auth/supabase/storage/upload-photo';
-import { SaveActivityContext } from '../../utils/context/save-activity';
-import { errorHandler } from '../../utils/error-handler';
-import { getAccessToGallery } from '../../utils/file-sending';
 
 export default function UploadPhotosBtn() {
   const { isDisabled, setIsDisabled, images, isLoading, setIsLoading, setImages } = useContext(SaveActivityContext);

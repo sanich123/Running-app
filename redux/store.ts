@@ -3,7 +3,6 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
 import changeThemeLangReducer from './change-lang-slice/change-lang-slice';
-import { loadState } from './localstorage-store';
 import locationSlice from './location-slice/location-slice';
 import { runnichApi } from './runnich-api/runnich-api';
 import userInfoSlice from './user-info-slice/user-info-slice';
@@ -25,7 +24,6 @@ const rootReducer = persistReducer(
 
 export const store = configureStore({
   reducer: rootReducer,
-  preloadedState: loadState(),
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

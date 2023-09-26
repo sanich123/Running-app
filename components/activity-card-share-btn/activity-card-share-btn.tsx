@@ -1,7 +1,6 @@
+import { ActivityCardBtnsContext } from '@u/context/activity-card-btns';
 import { useContext } from 'react';
 import { IconButton, MD3Colors } from 'react-native-paper';
-
-import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
 
 export default function ActivityCardShareBtn() {
   const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);

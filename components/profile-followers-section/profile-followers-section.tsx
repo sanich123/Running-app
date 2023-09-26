@@ -1,10 +1,10 @@
+import { useAuth } from '@auth/context/auth-context';
+import { useGetFriendsByUserIdQuery } from '@r/runnich-api/runnich-api';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import React, { Suspense } from 'react';
 import { Pressable, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 
-import { useAuth } from '../../auth/context/auth-context';
-import { useGetFriendsByUserIdQuery } from '../../redux/runnich-api/runnich-api';
 import AddFriendBtn from '../add-friend-btn/add-friend-btn';
 import DeleteFriendBtn from '../delete-friend-btn/delete-friend-btn';
 import ErrorComponent from '../error-component/error-component';
@@ -44,7 +44,7 @@ export default function ProfileFollowersSection() {
         !friendCell?.length ? (
           <AddFriendBtn friendId={friendId.toString()} />
         ) : (
-          <DeleteFriendBtn idOfFriendCell={friendCell[0].id} />
+          <DeleteFriendBtn friendId={friendId.toString()} />
         )
       ) : null}
     </View>
