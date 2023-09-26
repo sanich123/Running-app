@@ -1,10 +1,8 @@
+import { emailMatcher } from '@const/regexp';
+import { SignInContext } from '@u/context/sign-in';
+import { errorHandler } from '@u/error-handler';
 import { useContext } from 'react';
 import { Button } from 'react-native-paper';
-
-import { sendPasswordReset } from '../../auth/firebase/email-auth';
-import { emailMatcher } from '../../constants/regexp';
-import { SignInContext } from '../../utils/context/sign-in';
-import { errorHandler } from '../../utils/error-handler';
 
 export default function ResetBtn() {
   const { email, isLoading, setIsLoading, setEmailError, isDisabled, setIsDisabled } = useContext(SignInContext);
@@ -19,7 +17,6 @@ export default function ResetBtn() {
           if (emailMatcher.test(email)) {
             setIsLoading(true);
             setIsDisabled(true);
-            await sendPasswordReset(email);
             setIsLoading(false);
             setIsDisabled(false);
           } else {

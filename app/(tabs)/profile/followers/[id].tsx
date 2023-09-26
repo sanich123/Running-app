@@ -1,19 +1,19 @@
+import { useAuth } from '@auth/context/auth-context';
+import ErrorComponent from '@c/error-component/error-component';
+import UserListItem from '@c/user-list-item/user-list-item';
+import { useGetFollowersByUserIdQuery } from '@r/runnich-api/runnich-api';
+import useRefresh from '@u/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
 import { View, FlatList, SafeAreaView } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
-
-import ErrorComponent from '../../../../components/error-component/error-component';
-import UserListItem from '../../../../components/user-list-item/user-list-item';
-import { useGetFollowersByUserIdQuery } from '../../../../redux/runnich-api/runnich-api';
-import useRefresh from '../../../../utils/hooks/use-refresh';
 
 export default function ListOfFollowers() {
-  const { id: ownerId } = useSelector(({ userInfo }) => userInfo);
+  const { user } = useAuth();
   const { id: userId } = useLocalSearchParams();
-  const whoIsViewing = userId === 'undefined' ? ownerId : userId.toString();
+  const whoIsViewing = userId === 'undefined' ? user.id : userId.toString();
   const { isLoading, error, data: users, refetch } = useGetFollowersByUserIdQuery(whoIsViewing);
   const { refreshing, onRefresh } = useRefresh(refetch);
+  console.log(user.id, userId);
 
   return (
     <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>

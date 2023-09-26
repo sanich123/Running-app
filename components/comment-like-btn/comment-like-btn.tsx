@@ -1,9 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useGetLikesByCommentIdQuery, useSendOrDeleteLikeToCommentMutation } from '@r/runnich-api/runnich-api';
 import { useEffect } from 'react';
 import { ToastAndroid } from 'react-native';
 import { useSelector } from 'react-redux';
-
-import { useGetLikesByCommentIdQuery, useSendOrDeleteLikeToCommentMutation } from '../../redux/runnich-api/runnich-api';
 
 export default function CommentLikeBtn({ commentId }: { commentId: string }) {
   const { id: ownerId } = useSelector(({ userInfo }) => userInfo);

@@ -1,10 +1,10 @@
+import { useAuth } from '@auth/context/auth-context';
 import { Button } from 'react-native-paper';
 
-import { logOut } from '../../../auth/firebase/email-auth';
-
 export default function SettingsScreen() {
+  const { signOut } = useAuth();
   return (
-    <Button mode="outlined" icon="logout" onPress={() => logOut()} style={{ marginTop: 15 }}>
+    <Button mode="outlined" icon="logout" onPress={() => signOut()} style={{ marginTop: 15 }}>
       LogOut
     </Button>
   );

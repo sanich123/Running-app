@@ -1,16 +1,15 @@
+import ErrorComponent from '@c/error-component/error-component';
+import { useGetAllActivityPhotosByUserIdQuery } from '@r/runnich-api/runnich-api';
 import { useRouter } from 'expo-router';
 import { Image, Pressable, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
-
-import { useGetAllActivityPhotosByUserIdQuery } from '../../redux/runnich-api/runnich-api';
-import ErrorComponent from '../error-component/error-component';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { isLoading, data: photos, error } = useGetAllActivityPhotosByUserIdQuery(userId);
   const { width } = useWindowDimensions();
   const router = useRouter();
   const theme = useTheme();
-  console.log(photos);
+
   return (
     <>
       {photos?.length > 0 ? (

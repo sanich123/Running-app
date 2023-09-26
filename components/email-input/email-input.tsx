@@ -1,8 +1,7 @@
+import { emailMatcher } from '@const/regexp';
+import { SignInContext } from '@u/context/sign-in';
 import { useContext } from 'react';
 import { HelperText, TextInput } from 'react-native-paper';
-
-import { emailMatcher } from '../../constants/regexp';
-import { SignInContext } from '../../utils/context/sign-in';
 
 export default function EmailInput() {
   const { email, setEmail, emailError, setEmailError, isDisabled } = useContext(SignInContext);
@@ -11,7 +10,14 @@ export default function EmailInput() {
       <TextInput
         label="Email"
         value={email}
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={(text) => {
+          if (!emailMatcher.test(email)) {
+            setEmailError(true);
+          } else {
+            setEmailError(false);
+          }
+          setEmail(text);
+        }}
         onEndEditing={() => (!emailMatcher.test(email) ? setEmailError(true) : setEmailError(false))}
         placeholder="Type your email"
         left={<TextInput.Icon icon="email" disabled={isDisabled} />}

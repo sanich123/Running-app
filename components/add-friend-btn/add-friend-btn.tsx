@@ -1,17 +1,15 @@
+import { useAuth } from '@auth/context/auth-context';
+import { useAddFriendMutation } from '@r/runnich-api/runnich-api';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { Button } from 'react-native-paper';
-import { useSelector } from 'react-redux';
-
-import { useAddFriendMutation } from '../../redux/runnich-api/runnich-api';
 
 export default function AddFriendBtn({ friendId }: { friendId: string }) {
+  const [addFriend, { data, error }] = useAddFriendMutation();
+  const { user } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [addFriend, { data, error }] = useAddFriendMutation();
-
-  const { id } = useSelector(({ userInfo }) => userInfo);
 
   useEffect(() => {
     if (data) {
@@ -29,16 +27,16 @@ export default function AddFriendBtn({ friendId }: { friendId: string }) {
       onPress={async () => {
         setIsLoading(true);
         setIsDisabled(true);
-        addFriend({ userId: id, friendId: friendId.toString() })
+        addFriend({ body: { userId: user.id }, id: friendId })
           .unwrap()
           .then((success) => {
             console.log(success);
-            setIsLoading(false);
-            setIsDisabled(false);
             router.back();
           })
           .catch((error) => {
             console.log(error);
+          })
+          .finally(() => {
             setIsLoading(false);
             setIsDisabled(false);
           });

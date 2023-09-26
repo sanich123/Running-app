@@ -1,9 +1,8 @@
+import ErrorComponent from '@c/error-component/error-component';
+import { useGetAllActivityPhotosByUserIdQuery } from '@r/runnich-api/runnich-api';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, View, useWindowDimensions, Image } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
-
-import ErrorComponent from '../../../../components/error-component/error-component';
-import { useGetAllActivityPhotosByUserIdQuery } from '../../../../redux/runnich-api/runnich-api';
 
 export default function MediaGrid() {
   const { id: userId } = useLocalSearchParams();

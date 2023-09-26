@@ -1,17 +1,16 @@
+import ActivityCardBtns from '@c/activity-card-btns/activity-card-btns';
+import ActivityCardDesription from '@c/activity-card-description/activity-card-description';
+import ActivityCardLikesWrapper from '@c/activity-card-likes-wrapper/activity-card-likes-wrapper';
+import ActivityCardMapImagesList from '@c/activity-card-map-images-list/activity-card-map-images-list';
+import ActivityCardMetrics from '@c/activity-card-metrics/activity-card-metrics';
+import ActivityCardTitle from '@c/activity-card-title/activity-card-title';
+import AvatarShowable from '@c/avatar/avatar-showable';
+import UserNameSurname from '@c/user-name-surname/user-name-surname';
+import UserSportDate from '@c/user-sport-date/user-sport-date';
+import { ActivityCardProps } from '@const/types/activity-cart';
 import { usePathname, useRouter } from 'expo-router';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
-
-import { ActivityCardProps } from '../../constants/types/activity-cart';
-import ActivityCardBtns from '../activity-card-btns/activity-card-btns';
-import ActivityCardDesription from '../activity-card-description/activity-card-description';
-import ActivityCardLikesWrapper from '../activity-card-likes-wrapper/activity-card-likes-wrapper';
-import ActivityCardMapImagesList from '../activity-card-map-images-list/activity-card-map-images-list';
-import ActivityCardMetrics from '../activity-card-metrics/activity-card-metrics';
-import ActivityCardTitle from '../activity-card-title/activity-card-title';
-import AvatarShowable from '../avatar/avatar-showable';
-import UserNameSurname from '../user-name-surname/user-name-surname';
-import UserSportDate from '../user-sport-date/user-sport-date';
 
 export default function ActivityCard({
   description,
@@ -37,7 +36,7 @@ export default function ActivityCard({
             <AvatarShowable size={40} id={userId} />
           </Pressable>
           <View style={styles.userInfoWrapper}>
-            <UserNameSurname userId={userId} size="titleMedium" />
+            <UserNameSurname size="titleMedium" />
             <UserSportDate sport={sport} date={date} />
           </View>
         </Card.Content>

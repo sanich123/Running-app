@@ -1,11 +1,10 @@
+import { View, Text } from '@c/Themed';
+import ActivityComponent from '@c/activity-component/activity-component';
+import { setInitialLocation } from '@r/location-slice/location-slice';
 import { getCurrentPositionAsync } from 'expo-location';
 import { ToastAndroid } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { View, Text } from '../../../components/Themed';
-import ActivityComponent from '../../../components/activity-component/activity-component';
-import { setInitialLocation } from '../../../redux/location-slice/location-slice';
 
 export default function Activity() {
   const dispatch = useDispatch();

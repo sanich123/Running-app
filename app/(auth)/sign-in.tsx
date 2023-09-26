@@ -1,18 +1,18 @@
+import EmailInput from '@c/email-input/email-input';
+import LoginBtn from '@c/login-btn/login-btn';
+import LoginNavigation from '@c/login-navigation/login-navigation';
+import NicknameInput from '@c/nickname-input/nickname-input';
+import PasswordInput from '@c/password-input/password-input';
+import RegisterBtn from '@c/register-btn/register-btn';
+import RegisterNavigation from '@c/register-navigation/register-navigation';
+import ResetBtn from '@c/reset-btn/reset-btn';
+import ResetNavigation from '@c/reset-navigation/reset-navigation';
+import { SignInContext } from '@u/context/sign-in';
+import usePasswordEmail from '@u/hooks/use-password-email';
 import { Stack } from 'expo-router';
 import { View } from 'react-native';
 
-import EmailInput from '../../components/email-input/email-input';
-import LoginBtn from '../../components/login-btn/login-btn';
-import LoginNavigation from '../../components/login-navigation/login-navigation';
-import NicknameInput from '../../components/nickname-input/nickname-input';
-import PasswordInput from '../../components/password-input/password-input';
-import RegisterBtn from '../../components/register-btn/register-btn';
-import RegisterNavigation from '../../components/register-navigation/register-navigation';
-import ResetBtn from '../../components/reset-btn/reset-btn';
-import ResetNavigation from '../../components/reset-navigation/reset-navigation';
 import { signInStyles } from '../../styles/sign-in-page/sign-in-page';
-import { SignInContext } from '../../utils/context/sign-in';
-import usePasswordEmail from '../../utils/hooks/use-password-email';
 
 export default function SignIn() {
   const {

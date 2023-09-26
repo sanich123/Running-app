@@ -1,9 +1,9 @@
+import { View, Text } from '@c/Themed';
+import { STATUSES } from '@const/enums';
+import { ActivityComponentContext } from '@u/context/activity-component';
+import { getTotalSpeed } from '@u/location-utils';
 import { useContext } from 'react';
 
-import { STATUSES } from '../../../constants/enums';
-import { ActivityComponentContext } from '../../../utils/context/activity-component';
-import { getTotalSpeed } from '../../../utils/location-utils';
-import { View, Text } from '../../Themed';
 import { metricsStyles } from '../metrics-styles';
 
 export default function Pace() {
@@ -14,7 +14,7 @@ export default function Pace() {
     <View style={[basicWrapper, !mapVisible && isStartedOrContinue && metricsWrapper && bigPace]}>
       <Text style={metricsHeader}>Pace: </Text>
       <Text style={[metricsText, !mapVisible && isStartedOrContinue && bigHeader]}>
-        {getTotalSpeed(distance, duration)} км/ч
+        {distance && duration ? getTotalSpeed(distance, duration) : 0} км/ч
       </Text>
     </View>
   );

@@ -1,9 +1,9 @@
+import { View, Text } from '@c/Themed';
+import { STATUSES } from '@const/enums';
+import { ActivityComponentContext } from '@u/context/activity-component';
+import { formatDuration } from '@u/time-formatter';
 import { useContext } from 'react';
 
-import { STATUSES } from '../../../constants/enums';
-import { ActivityComponentContext } from '../../../utils/context/activity-component';
-import { formatDuration } from '../../../utils/time-formatter';
-import { View, Text } from '../../Themed';
 import { metricsStyles } from '../metrics-styles';
 
 export default function Time() {

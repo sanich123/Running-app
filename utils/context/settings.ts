@@ -9,6 +9,7 @@ export const SaveSettingsContext = createContext({
   weight: '',
   bio: '',
   birthday: undefined,
+  photoUrl: '',
   image: null,
   isDisabled: false,
   isLoading: false,
@@ -23,4 +24,5 @@ export const SaveSettingsContext = createContext({
   setBirthday: (arg: Date) => {},
   setImage: (arg: string) => {},
   setIsLoading: (arg: boolean) => {},
+  setPhotoUrl: (arg: string) => {},
 });

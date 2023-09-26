@@ -1,14 +1,13 @@
+import AvatarShowable from '@c/avatar/avatar-showable';
+import CommentLikeBtn from '@c/comment-like-btn/comment-like-btn';
+import CommentLikesLength from '@c/comment-likes-length/comment-likes-length';
+import ErrorComponent from '@c/error-component/error-component';
+import UserNameSurname from '@c/user-name-surname/user-name-surname';
+import { useGetCommentsByActivityIdQuery } from '@r/runnich-api/runnich-api';
+import { formatDate, getHoursMinutes } from '@u/time-formatter';
 import { Fragment } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
-
-import { useGetCommentsByActivityIdQuery } from '../../redux/runnich-api/runnich-api';
-import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
-import AvatarShowable from '../avatar/avatar-showable';
-import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
-import CommentLikesLength from '../comment-likes-length/comment-likes-length';
-import ErrorComponent from '../error-component/error-component';
-import UserNameSurname from '../user-name-surname/user-name-surname';
 
 export default function Comments({ id }: { id: string }) {
   const { isLoading, error, data: comments } = useGetCommentsByActivityIdQuery(id);
@@ -21,7 +20,7 @@ export default function Comments({ id }: { id: string }) {
           <View style={styles.commentWrapper}>
             <AvatarShowable size={25} id={authorId} />
             <View style={{ display: 'flex' }}>
-              <UserNameSurname userId={authorId} size="bodyMedium" />
+              <UserNameSurname size="bodyMedium" />
               <Text variant="bodySmall">{formatDate(date)}</Text>
               <Text variant="bodySmall">{getHoursMinutes(date)}</Text>
             </View>
