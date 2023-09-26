@@ -1,8 +1,7 @@
+import { SaveSettingsContext } from '@u/context/settings';
 import { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
-
-import { SaveSettingsContext } from '../../utils/context/settings';
 
 export default function InputsWeightCity() {
   const { city, setCity, weight, setWeight, isDisabled } = useContext(SaveSettingsContext);

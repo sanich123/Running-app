@@ -1,17 +1,16 @@
+import { useAuth } from '@auth/context/auth-context';
+import ErrorComponent from '@c/error-component/error-component';
+import UserListItem from '@c/user-list-item/user-list-item';
+import { useGetFriendsByUserIdQuery } from '@r/runnich-api/runnich-api';
+import useRefresh from '@u/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
 import { View, FlatList, SafeAreaView } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
-
-import ErrorComponent from '../../../../components/error-component/error-component';
-import UserListItem from '../../../../components/user-list-item/user-list-item';
-import { useGetFriendsByUserIdQuery } from '../../../../redux/runnich-api/runnich-api';
-import useRefresh from '../../../../utils/hooks/use-refresh';
 
 export default function ListOfFollowing() {
   const { id: userId } = useLocalSearchParams();
-  const { id: ownerId } = useSelector(({ userInfo }) => userInfo);
-  const whoIsViewing = userId === 'undefined' ? ownerId : userId.toString();
+  const { user } = useAuth();
+  const whoIsViewing = userId === 'undefined' ? user.id : userId.toString();
   const { isLoading, error, data: users, refetch } = useGetFriendsByUserIdQuery(whoIsViewing);
   const { refreshing, onRefresh } = useRefresh(refetch);
 

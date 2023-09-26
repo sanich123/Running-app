@@ -1,8 +1,8 @@
+import { SignInContext } from '@u/context/sign-in';
 import { useContext } from 'react';
 import { View, Text, Pressable } from 'react-native';
 
 import { signInStyles } from '../../styles/sign-in-page/sign-in-page';
-import { SignInContext } from '../../utils/context/sign-in';
 
 export default function LoginNavigation() {
   const { setIsLogin, setIsRegister, setIsReset, isDisabled } = useContext(SignInContext);

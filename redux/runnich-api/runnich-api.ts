@@ -9,7 +9,7 @@ export const runnichApi = createApi({
   reducerPath: 'runnichApi',
   tagTypes: [activities, profile, comments, likes, friends, users],
   baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_URL }),
-  refetchOnMountOrArgChange: 30,
+  refetchOnMountOrArgChange: true,
   refetchOnReconnect: true,
   endpoints: (builder) => ({
     getUsers: builder.query({
@@ -73,8 +73,8 @@ export const runnichApi = createApi({
       }),
     }),
     sendProfileInfo: builder.mutation({
-      query: (body) => ({
-        url: `/${routeProfile}`,
+      query: ({ body, id }) => ({
+        url: `/user/${id}/${routeProfile}`,
         method: 'POST',
         headers,
         body,
@@ -99,8 +99,8 @@ export const runnichApi = createApi({
       invalidatesTags: [activities],
     }),
     addFriend: builder.mutation({
-      query: (body: { userId: string; friendId: string }) => ({
-        url: `/${friend}`,
+      query: ({ body, id }) => ({
+        url: `/${friend}/${id}`,
         method: 'POST',
         headers,
         body,
@@ -108,10 +108,11 @@ export const runnichApi = createApi({
       invalidatesTags: [friends, activities, users],
     }),
     deleteFriend: builder.mutation({
-      query: (id) => ({
+      query: ({ body, id }) => ({
         url: `/${friend}/${id}`,
         method: 'DELETE',
         headers,
+        body,
       }),
       invalidatesTags: [friends, activities, users],
     }),

@@ -1,17 +1,17 @@
+import { useAuth } from '@auth/context/auth-context';
+import { useAddActivityByUserIdMutation } from '@r/runnich-api/runnich-api';
+import { SaveActivityContext } from '@u/context/save-activity';
+import { errorHandler } from '@u/error-handler';
 import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
 import { ToastAndroid, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { useAddActivityByUserIdMutation } from '../../redux/runnich-api/runnich-api';
-import { SaveActivityContext } from '../../utils/context/save-activity';
-import { errorHandler } from '../../utils/error-handler';
-
 export default function AcceptDeclineBtns() {
-  const { id } = useSelector(({ userInfo }) => userInfo);
+  const { user } = useAuth();
   const [sendActivity, { error, data }] = useAddActivityByUserIdMutation();
-  const { title, description, sport, emotion, isSwitchOn, photoUrls, isDisabled, setIsDisabled } =
+  const { title, description, sport, emotion, isSwitchOn, isDisabled, setIsDisabled, images } =
     useContext(SaveActivityContext);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -35,16 +35,12 @@ export default function AcceptDeclineBtns() {
     try {
       setIsDisabled(true);
       setIsLoading(true);
-      const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrls };
-      await sendActivity({ body, id }).unwrap();
-      setIsDisabled(false);
-      setIsLoading(false);
+      const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrls: images };
+      await sendActivity({ body, id: user.id }).unwrap();
     } catch (error) {
-      setIsDisabled(false);
-      setIsLoading(false);
       errorHandler(error);
     } finally {
-      setIsLoading(false);
+      setIsDisabled(false);
       setIsLoading(false);
     }
   }

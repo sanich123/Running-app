@@ -1,8 +1,7 @@
+import { nicknameMatcher } from '@const/regexp';
+import { SignInContext } from '@u/context/sign-in';
 import { useContext } from 'react';
 import { HelperText, TextInput } from 'react-native-paper';
-
-import { nicknameMatcher } from '../../constants/regexp';
-import { SignInContext } from '../../utils/context/sign-in';
 
 export default function NicknameInput() {
   const { nickname, nicknameError, setNickname, setNicknameError, isDisabled } = useContext(SignInContext);
@@ -11,7 +10,14 @@ export default function NicknameInput() {
       <TextInput
         label="Nickname"
         value={nickname}
-        onChangeText={(nickname) => setNickname(nickname)}
+        onChangeText={(nickname) => {
+          if (!nicknameMatcher.test(nickname)) {
+            setNicknameError(true);
+          } else {
+            setNicknameError(false);
+          }
+          setNickname(nickname);
+        }}
         onEndEditing={() => (!nicknameMatcher.test(nickname) ? setNicknameError(true) : setNicknameError(false))}
         placeholder="Type your login"
         left={<TextInput.Icon icon="login" disabled={isDisabled} />}
@@ -21,7 +27,7 @@ export default function NicknameInput() {
         disabled={isDisabled}
       />
       <HelperText type="error" visible={nicknameError} padding="none">
-        Must be at least 2 symbols
+        Must be at least 2 symbols in English
       </HelperText>
     </>
   );

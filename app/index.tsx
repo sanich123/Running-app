@@ -1,7 +1,6 @@
+import { useAuth } from '@auth/context/auth-context';
 import { Redirect } from 'expo-router';
 import { Text, View } from 'react-native';
-
-import { useAuth } from '../auth/context/auth-context';
 
 export default function Page() {
   const { user } = useAuth();

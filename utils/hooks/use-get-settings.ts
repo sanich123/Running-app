@@ -1,30 +1,24 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+
+import { useAuth } from '../../auth/context/auth-context';
+import { useGetUserProfileByIdQuery } from '../../redux/runnich-api/runnich-api';
 
 export default function useGetSettings() {
-  const {
-    gender: savedGender,
-    sport: savedSport,
-    name: savedName,
-    surname: savedSurname,
-    city: savedCity,
-    weight: savedWeight,
-    bio: savedBio,
-    birthday: savedBirthday,
-    profilePhoto: savedProfilePhoto,
-  } = useSelector(({ userInfo }) => userInfo.settings);
+  const { user } = useAuth();
+  const { data: profileInfo } = useGetUserProfileByIdQuery(user.id);
 
-  const [gender, setGender] = useState(savedGender);
-  const [sport, setSport] = useState(savedSport);
-  const [name, setName] = useState(savedName);
-  const [surname, setSurname] = useState(savedSurname);
-  const [city, setCity] = useState(savedCity);
-  const [weight, setWeight] = useState(savedWeight);
-  const [bio, setBio] = useState(savedBio);
-  const [birthday, setBirthday] = useState(savedBirthday ? new Date(savedBirthday) : undefined);
-  const [image, setImage] = useState(savedProfilePhoto ? savedProfilePhoto : null);
+  const [gender, setGender] = useState(profileInfo?.gender);
+  const [sport, setSport] = useState(profileInfo?.sport);
+  const [name, setName] = useState(profileInfo?.name);
+  const [surname, setSurname] = useState(profileInfo?.surname);
+  const [city, setCity] = useState(profileInfo?.city);
+  const [weight, setWeight] = useState(profileInfo?.weight);
+  const [bio, setBio] = useState(profileInfo?.bio);
+  const [birthday, setBirthday] = useState(profileInfo?.birthday ? new Date(profileInfo?.birthday) : undefined);
+  const [image, setImage] = useState(profileInfo?.profilePhoto);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState('');
 
   return {
     gender,
@@ -38,6 +32,7 @@ export default function useGetSettings() {
     image,
     isLoading,
     isDisabled,
+    photoUrl,
     setGender,
     setSport,
     setName,
@@ -49,5 +44,6 @@ export default function useGetSettings() {
     setImage,
     setIsLoading,
     setIsDisabled,
+    setPhotoUrl,
   };
 }

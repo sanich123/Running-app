@@ -1,10 +1,9 @@
+import DisplayActivityMap from '@c/display-activity-map/display-activity-map';
+import ErrorComponent from '@c/error-component/error-component';
+import { useGetActivityByActivityIdQuery } from '@r/runnich-api/runnich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-
-import DisplayActivityMap from '../../../../components/display-activity-map/display-activity-map';
-import ErrorComponent from '../../../../components/error-component/error-component';
-import { useGetActivityByActivityIdQuery } from '../../../../redux/runnich-api/runnich-api';
 
 export default function ActivityMap() {
   const { id: activityId } = useLocalSearchParams();

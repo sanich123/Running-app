@@ -1,5 +1,5 @@
-import { formatDuration } from '../../utils/time-formatter';
-import ShowMetrics from '../show-metrics/show-metrics';
+import ShowMetrics from '@c/show-metrics/show-metrics';
+import { formatDuration } from '@u/time-formatter';
 
 export default function ActivityCardMetrics({
   distance,

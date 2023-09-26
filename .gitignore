@@ -12,6 +12,9 @@ web-build/
 __tests__
 yarn.lock
 .env
+eas.json
+app.json
+
 # macOS
 .DS_Store
 .idea

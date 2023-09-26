@@ -1,29 +1,29 @@
+import { View } from '@c/Themed';
+import AvatarShowable from '@c/avatar/avatar-showable';
+import ProfileFollowersSection from '@c/profile-followers-section/profile-followers-section';
+import ProfileMediaPhotos from '@c/profile-media-photos/profile-media-photos';
+import UserBio from '@c/user-bio/user-bio';
+import UserCityAge from '@c/user-city-age/user-city-age';
+import UserNameSurname from '@c/user-name-surname/user-name-surname';
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
-import { View } from '../../../../components/Themed';
-import AvatarShowable from '../../../../components/avatar/avatar-showable';
-import ProfileFollowersSection from '../../../../components/profile-followers-section/profile-followers-section';
-import ProfileMediaPhotos from '../../../../components/profile-media-photos/profile-media-photos';
-import UserBio from '../../../../components/user-bio/user-bio';
-import UserCityAge from '../../../../components/user-city-age/user-city-age';
-import UserNameSurname from '../../../../components/user-name-surname/user-name-surname';
-
 export default function Profile() {
-  const { id: friendId } = useLocalSearchParams();
+  const { id: whosProfileViewing } = useLocalSearchParams();
+
   return (
     <>
-      <ProfileMediaPhotos userId={friendId.toString()} />
+      <ProfileMediaPhotos userId={`${whosProfileViewing}`} />
       <View style={styles.container}>
         <View style={styles.header}>
-          <AvatarShowable size={100} id={friendId.toString()} />
+          <AvatarShowable size={100} id={`${whosProfileViewing}`} />
           <View style={styles.nicknameWrapper}>
-            <UserNameSurname userId={friendId.toString()} size="headlineSmall" />
-            <UserCityAge userId={friendId.toString()} size="titleMedium" />
+            <UserNameSurname userId={`${whosProfileViewing}`} size="headlineSmall" />
+            <UserCityAge userId={`${whosProfileViewing}`} size="titleMedium" />
           </View>
         </View>
         <View style={styles.bio}>
-          <UserBio userId={friendId.toString()} size="bodyMedium" />
+          <UserBio userId={`${whosProfileViewing}`} size="bodyMedium" />
         </View>
         <ProfileFollowersSection />
       </View>

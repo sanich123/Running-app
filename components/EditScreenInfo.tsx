@@ -1,10 +1,9 @@
+import Colors from '@const/Colors';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 
-import { ExternalLink } from './ExternalLink';
 import { MonoText } from './StyledText';
 import { Text, View } from './Themed';
-import Colors from '../constants/Colors';
 
 export default function EditScreenInfo({ path }: { path: string }) {
   const {
@@ -13,7 +12,6 @@ export default function EditScreenInfo({ path }: { path: string }) {
     codeHighlightContainer,
     homeScreenFilename,
     helpContainer,
-    helpLink,
     helpLinkText,
   } = styles;
   return (
@@ -36,13 +34,9 @@ export default function EditScreenInfo({ path }: { path: string }) {
       </View>
 
       <View style={helpContainer}>
-        <ExternalLink
-          style={helpLink}
-          href="https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet">
-          <Text style={helpLinkText} lightColor={Colors.light.tint}>
-            Tap here if your app doesnt automatically update after making changes
-          </Text>
-        </ExternalLink>
+        <Text style={helpLinkText} lightColor={Colors.light.tint}>
+          Tap here if your app doesnt automatically update after making changes
+        </Text>
       </View>
     </View>
   );

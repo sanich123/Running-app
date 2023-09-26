@@ -1,7 +1,6 @@
+import { SaveSettingsContext } from '@u/context/settings';
 import { useContext } from 'react';
 import { TextInput } from 'react-native-paper';
-
-import { SaveSettingsContext } from '../../utils/context/settings';
 
 export default function InputBio() {
   const { bio, setBio, isDisabled } = useContext(SaveSettingsContext);

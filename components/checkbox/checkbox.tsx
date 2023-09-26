@@ -1,8 +1,7 @@
+import { SaveActivityContext } from '@u/context/save-activity';
 import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
-
-import { SaveActivityContext } from '../../utils/context/save-activity';
 
 export default function Checkbox() {
   const { isSwitchOn, setIsSwitchOn, isDisabled } = useContext(SaveActivityContext);

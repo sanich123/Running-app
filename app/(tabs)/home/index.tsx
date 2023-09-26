@@ -1,32 +1,32 @@
+import { useAuth } from '@auth/context/auth-context';
+import ActivityCard from '@c/activity-card/activity-card';
+import EmptyActivitiesList from '@c/empty-activities-list/empty-activities-list';
+import ErrorComponent from '@c/error-component/error-component';
+import FloatingBtn from '@c/floating-btn/floating-btn';
+import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@r/runnich-api/runnich-api';
+import useGetLocation from '@u/hooks/use-get-location';
+import useRefresh from '@u/hooks/use-refresh';
 import { useRouter } from 'expo-router';
 import { SafeAreaView, FlatList } from 'react-native';
 import { ActivityIndicator, Divider, Searchbar } from 'react-native-paper';
-import { useSelector } from 'react-redux';
-
-import ActivityCard from '../../../components/activity-card/activity-card';
-import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
-import ErrorComponent from '../../../components/error-component/error-component';
-import FloatingBtn from '../../../components/floating-btn/floating-btn';
-import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runnich-api/runnich-api';
-import useGetLocation from '../../../utils/hooks/use-get-location';
-import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
-  const { id } = useSelector(({ userInfo }) => userInfo);
+  const { user } = useAuth();
   useGetLocation();
-  const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(id);
+  const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user.id);
   const { onRefresh, refreshing } = useRefresh(refetch);
   const router = useRouter();
   return (
     <>
-      <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
+      <SafeAreaView
+        style={[{ flex: 1 }, (isLoading || !activities?.length) && { alignItems: 'center', justifyContent: 'center' }]}>
         {activities && (
           <FlatList
             onRefresh={onRefresh}
             data={activities}
             refreshing={refreshing}
             renderItem={({ item }) => {
-              const { description, title, date, sport, userId, locations, photoUrls, duration, speed, distance, id } =
+              const { description, title, date, sport, locations, photoUrls, duration, speed, distance, id, user_id } =
                 item;
               return (
                 <ActivityCard
@@ -34,7 +34,7 @@ export default function Feed() {
                   title={title}
                   date={date}
                   sport={sport}
-                  userId={userId}
+                  userId={user_id}
                   id={id}
                   locations={locations}
                   key={id}

@@ -1,8 +1,7 @@
+import ErrorComponent from '@c/error-component/error-component';
+import { useGetLikesByCommentIdQuery } from '@r/runnich-api/runnich-api';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
-
-import { useGetLikesByCommentIdQuery } from '../../redux/runnich-api/runnich-api';
-import ErrorComponent from '../error-component/error-component';
 
 export default function CommentLikesLength({ id }: { id: string }) {
   const { id: ownerId } = useSelector(({ userInfo }) => userInfo);
