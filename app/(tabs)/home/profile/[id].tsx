@@ -9,20 +9,21 @@ import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 export default function Profile() {
-  const { id: friendId } = useLocalSearchParams();
+  const { id: whosProfileViewing } = useLocalSearchParams();
+
   return (
     <>
-      <ProfileMediaPhotos userId={friendId.toString()} />
+      <ProfileMediaPhotos userId={`${whosProfileViewing}`} />
       <View style={styles.container}>
         <View style={styles.header}>
-          <AvatarShowable size={100} id={friendId.toString()} />
+          <AvatarShowable size={100} id={`${whosProfileViewing}`} />
           <View style={styles.nicknameWrapper}>
-            <UserNameSurname size="headlineSmall" />
-            <UserCityAge userId={friendId.toString()} size="titleMedium" />
+            <UserNameSurname userId={`${whosProfileViewing}`} size="headlineSmall" />
+            <UserCityAge userId={`${whosProfileViewing}`} size="titleMedium" />
           </View>
         </View>
         <View style={styles.bio}>
-          <UserBio userId={friendId.toString()} size="bodyMedium" />
+          <UserBio userId={`${whosProfileViewing}`} size="bodyMedium" />
         </View>
         <ProfileFollowersSection />
       </View>

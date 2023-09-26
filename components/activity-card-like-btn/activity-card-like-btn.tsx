@@ -10,21 +10,17 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
   const { user } = useAuth();
   const [sendLike, { data, error: errorSendingLike }] = useSendOrDeleteLikeMutation();
   const { error, data: likes } = useGetLikesByActivityIdQuery(activityId);
-  const isLikedByYou = likes?.find(({ authorId }) => authorId === user.id);
+  const isLikedByYou = likes?.some(({ authorId }) => authorId === user.id);
   const { isDisabled, isLoading, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
 
   useEffect(() => {
     if (data) {
-      console.log(likes);
+      console.log(data);
       ToastAndroid.show('Successfully send request to like or dislike', ToastAndroid.SHORT);
-      setIsLoading(false);
-      setIsDisabled(false);
     }
     if (errorSendingLike) {
       console.log(error);
       ToastAndroid.show('An error occured while sending request to like', ToastAndroid.SHORT);
-      setIsLoading(false);
-      setIsDisabled(false);
     }
   }, [data, errorSendingLike]);
 
@@ -37,10 +33,10 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
         setIsLoading(true);
         setIsDisabled(true);
         try {
-          const body = { activityId, authorId: user.id };
-          await sendLike(body).unwrap();
+          await sendLike({ activityId, authorId: user.id }).unwrap();
         } catch (error) {
           errorHandler(error);
+        } finally {
           setIsLoading(false);
           setIsDisabled(false);
         }

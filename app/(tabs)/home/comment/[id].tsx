@@ -29,7 +29,7 @@ export default function Comment() {
             <DisplayActivityMap locations={activity?.locations} distance={activity?.distance} />
             <Card.Content style={{ display: 'flex', columnGap: 5, marginBottom: 10 }}>
               <ActivityCardTitle title={activity?.title} />
-              <UserNameSurname size="titleMedium" />
+              <UserNameSurname userId={activity?.user_id} size="titleMedium" />
               <View style={{ display: 'flex', flexDirection: 'row' }}>
                 <UserSportDate sport={activity?.sport} date={activity?.date} />
                 <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
@@ -39,8 +39,8 @@ export default function Comment() {
                 <ActivityCardLikesWrapper activityId={activity?.id} />
               </View>
             </Card.Content>
-            <Comments id={activityId.toString()} />
-            {isShowingTextInput && <CommentInput activityId={activityId.toString()} />}
+            <Comments id={`${activityId}`} />
+            {isShowingTextInput && <CommentInput activityId={`${activityId}`} />}
             {!isShowingTextInput && <FloatingBtn onPressFn={() => setIsShowingTextInput(true)} />}
           </View>
         )}

@@ -20,7 +20,7 @@ export default function Comments({ id }: { id: string }) {
           <View style={styles.commentWrapper}>
             <AvatarShowable size={25} id={authorId} />
             <View style={{ display: 'flex' }}>
-              <UserNameSurname size="bodyMedium" />
+              <UserNameSurname userId={authorId} size="bodyMedium" />
               <Text variant="bodySmall">{formatDate(date)}</Text>
               <Text variant="bodySmall">{getHoursMinutes(date)}</Text>
             </View>

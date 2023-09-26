@@ -36,7 +36,7 @@ export default function ActivityCard({
             <AvatarShowable size={40} id={userId} />
           </Pressable>
           <View style={styles.userInfoWrapper}>
-            <UserNameSurname size="titleMedium" />
+            <UserNameSurname userId={userId} size="titleMedium" />
             <UserSportDate sport={sport} date={date} />
           </View>
         </Card.Content>

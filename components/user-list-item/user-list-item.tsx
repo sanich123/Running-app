@@ -23,7 +23,7 @@ export default function UserListItem({ userId }: { userId: string }) {
       </Pressable>
 
       <View style={{ display: 'flex' }}>
-        <UserNameSurname size="bodyLarge" />
+        <UserNameSurname userId={userId} size="bodyLarge" />
         <UserCityAge userId={userId} size="bodyMedium" />
       </View>
 

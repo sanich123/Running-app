@@ -12,6 +12,8 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
 
   return (
     <>
+      {error ? <ErrorComponent error={error} /> : null}
+      {isLoading && <ActivityIndicator size="large" />}
       {photos?.length > 0 ? (
         <Pressable onPress={() => router.push(`/(tabs)/home/media-grid/${userId}`)}>
           <View
@@ -19,8 +21,6 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
               { display: 'flex', flexDirection: 'row', backgroundColor: theme.colors.onPrimary },
               isLoading && { alignItems: 'center', justifyContent: 'center' },
             ]}>
-            {isLoading && <ActivityIndicator size="large" />}
-            {error ? <ErrorComponent error={error} /> : null}
             {photos
               ?.map(({ photoUrls }) => photoUrls)
               .flat()

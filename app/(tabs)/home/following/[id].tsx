@@ -1,4 +1,3 @@
-import { useAuth } from '@auth/context/auth-context';
 import ErrorComponent from '@c/error-component/error-component';
 import UserListItem from '@c/user-list-item/user-list-item';
 import { useGetFriendsByUserIdQuery } from '@r/runnich-api/runnich-api';
@@ -9,10 +8,7 @@ import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
 export default function ListOfFollowing() {
   const { id: userId } = useLocalSearchParams();
-  const { user } = useAuth();
-
-  const whoIsViewing = userId === 'undefined' ? user.id : userId.toString();
-  const { isLoading, error, data: users, refetch } = useGetFriendsByUserIdQuery(whoIsViewing);
+  const { isLoading, error, data: users, refetch } = useGetFriendsByUserIdQuery(`${userId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
