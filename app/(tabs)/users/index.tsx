@@ -16,7 +16,7 @@ export default function ListOfUsers() {
           onRefresh={onRefresh}
           refreshing={refreshing}
           data={users}
-          renderItem={({ item }) => <UserListItem userId={item.id} />}
+          renderItem={({ item }) => <UserListItem userId={item?.id} />}
           ListEmptyComponent={
             <View>
               <Text variant="headlineLarge">There are no users, fuck</Text>

@@ -1,12 +1,12 @@
+import { useAuth } from '@auth/context/auth-context';
 import ErrorComponent from '@c/error-component/error-component';
 import { useGetLikesByCommentIdQuery } from '@r/runnich-api/runnich-api';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 export default function CommentLikesLength({ id }: { id: string }) {
-  const { id: ownerId } = useSelector(({ userInfo }) => userInfo);
+  const { user } = useAuth();
   const { isLoading, data: commentLikes, error } = useGetLikesByCommentIdQuery(id);
-  const youGaveCommentLike = commentLikes?.some(({ authorId }) => authorId === ownerId);
+  const youGaveCommentLike = commentLikes?.some(({ authorId }) => authorId === user?.id);
   const commentLikesLength = youGaveCommentLike ? commentLikes?.length - 1 : commentLikes?.length;
   return (
     <>

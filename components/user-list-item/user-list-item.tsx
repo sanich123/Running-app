@@ -12,9 +12,9 @@ import { ActivityIndicator } from 'react-native-paper';
 
 export default function UserListItem({ userId }: { userId: string }) {
   const { user } = useAuth();
-  const { isLoading, error, data: friends } = useGetFriendsByUserIdQuery(user.id);
+  const { isLoading, error, data: friends } = useGetFriendsByUserIdQuery(user?.id);
   const isFriendOfOwner = friends?.filter(({ friendId }) => friendId === userId);
-  const isMineActivity = userId === user.id;
+  const isMineActivity = userId === user?.id;
   const router = useRouter();
   return (
     <View style={styles.userItemWrapper}>
