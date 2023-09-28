@@ -1,15 +1,15 @@
-import { Text } from '@c/Themed';
-import { STATUSES } from '@const/enums';
-import { LANGUAGE } from '@const/languages/languages';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useAppSelector } from '@r/hooks/hooks';
-import { saveFinishedActivity } from '@r/location-slice/location-slice';
-import { ActivityComponentContext } from '@u/context/activity-component';
-import { getTotalSpeed } from '@u/location-utils';
+import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ReactNode, useContext } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
+
+import { STATUSES } from '../../../constants/enums';
+import { LANGUAGE } from '../../../constants/languages/languages';
+import { useAppSelector } from '../../../redux/hooks/hooks';
+import { saveFinishedActivity } from '../../../redux/location-slice/location-slice';
+import { ActivityComponentContext } from '../../../utils/context/activity-component';
+import { getTotalSpeed } from '../../../utils/location-utils';
 
 export default function StartStopBtn() {
   const { setStatus, status, locations, duration, distance } = useContext(ActivityComponentContext);

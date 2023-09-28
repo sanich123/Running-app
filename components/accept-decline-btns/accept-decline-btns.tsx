@@ -1,12 +1,13 @@
-import { useAuth } from '@auth/context/auth-context';
-import { useAddActivityByUserIdMutation } from '@r/runnich-api/runnich-api';
-import { SaveActivityContext } from '@u/context/save-activity';
-import { errorHandler } from '@u/error-handler';
 import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
 import { ToastAndroid, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
+
+import { useAuth } from '../../auth/context/auth-context';
+import { useAddActivityByUserIdMutation } from '../../redux/runnich-api/runnich-api';
+import { SaveActivityContext } from '../../utils/context/save-activity';
+import { errorHandler } from '../../utils/error-handler';
 
 export default function AcceptDeclineBtns() {
   const { user } = useAuth();

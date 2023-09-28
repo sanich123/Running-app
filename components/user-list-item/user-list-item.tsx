@@ -1,14 +1,15 @@
-import { useAuth } from '@auth/context/auth-context';
-import AddFriendBtn from '@c/add-friend-btn/add-friend-btn';
-import AvatarShowable from '@c/avatar/avatar-showable';
-import DeleteFriendBtn from '@c/delete-friend-btn/delete-friend-btn';
-import ErrorComponent from '@c/error-component/error-component';
-import UserCityAge from '@c/user-city-age/user-city-age';
-import UserNameSurname from '@c/user-name-surname/user-name-surname';
-import { useGetFriendsByUserIdQuery } from '@r/runnich-api/runnich-api';
 import { useRouter } from 'expo-router';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
+
+import { useAuth } from '../../auth/context/auth-context';
+import { useGetFriendsByUserIdQuery } from '../../redux/runnich-api/runnich-api';
+import AddFriendBtn from '../add-friend-btn/add-friend-btn';
+import AvatarShowable from '../avatar/avatar-showable';
+import DeleteFriendBtn from '../delete-friend-btn/delete-friend-btn';
+import ErrorComponent from '../error-component/error-component';
+import UserCityAge from '../user-city-age/user-city-age';
+import UserNameSurname from '../user-name-surname/user-name-surname';
 
 export default function UserListItem({ userId }: { userId: string }) {
   const { user } = useAuth();

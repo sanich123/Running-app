@@ -1,7 +1,8 @@
-import { emailMatcher } from '@const/regexp';
-import { SignInContext } from '@u/context/sign-in';
 import { useContext } from 'react';
 import { HelperText, TextInput } from 'react-native-paper';
+
+import { emailMatcher } from '../../constants/regexp';
+import { SignInContext } from '../../utils/context/sign-in';
 
 export default function EmailInput() {
   const { email, setEmail, emailError, setEmailError, isDisabled } = useContext(SignInContext);

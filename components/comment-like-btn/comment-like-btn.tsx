@@ -1,10 +1,11 @@
-import { useAuth } from '@auth/context/auth-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useGetLikesByCommentIdQuery, useSendOrDeleteLikeToCommentMutation } from '@r/runnich-api/runnich-api';
-import { errorHandler } from '@u/error-handler';
 import { useState } from 'react';
 import { ToastAndroid } from 'react-native';
 import { MD3Colors } from 'react-native-paper';
+
+import { useAuth } from '../../auth/context/auth-context';
+import { useSendOrDeleteLikeToCommentMutation, useGetLikesByCommentIdQuery } from '../../redux/runnich-api/runnich-api';
+import { errorHandler } from '../../utils/error-handler';
 
 export default function CommentLikeBtn({ commentId }: { commentId: string }) {
   const { user } = useAuth();

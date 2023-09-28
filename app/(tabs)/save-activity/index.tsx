@@ -1,13 +1,14 @@
-import AcceptDeclineBtns from '@c/accept-decline-btns/accept-decline-btns';
-import Checkbox from '@c/checkbox/checkbox';
-import EmotionBtns from '@c/segmented-btns/emotion-btns';
-import SportsBtns from '@c/segmented-btns/sports-btns';
-import TextInputs from '@c/text-inputs/text-inputs';
-import UploadPhotosBtn from '@c/upload-photos-btn/upload-photos-btn';
-import { SaveActivityContext } from '@u/context/save-activity';
-import useGetActivityInfo from '@u/hooks/use-get-activity-info';
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, StyleSheet } from 'react-native';
+
+import AcceptDeclineBtns from '../../../components/accept-decline-btns/accept-decline-btns';
+import Checkbox from '../../../components/checkbox/checkbox';
+import EmotionBtns from '../../../components/segmented-btns/emotion-btns';
+import SportsBtns from '../../../components/segmented-btns/sports-btns';
+import TextInputs from '../../../components/text-inputs/text-inputs';
+import UploadPhotosBtn from '../../../components/upload-photos-btn/upload-photos-btn';
+import { SaveActivityContext } from '../../../utils/context/save-activity';
+import useGetActivityInfo from '../../../utils/hooks/use-get-activity-info';
 
 export default function SaveResult() {
   const {

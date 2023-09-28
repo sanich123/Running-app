@@ -1,5 +1,4 @@
-import { View, Text } from '@c/Themed';
-
+import { View, Text } from '../../Themed';
 import { metricsStyles } from '../metrics-styles';
 
 export default function Steps() {

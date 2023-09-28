@@ -1,12 +1,12 @@
-import { View } from '@c/Themed';
-import AvatarShowable from '@c/avatar/avatar-showable';
-import ProfileFollowersSection from '@c/profile-followers-section/profile-followers-section';
-import ProfileMediaPhotos from '@c/profile-media-photos/profile-media-photos';
-import UserBio from '@c/user-bio/user-bio';
-import UserCityAge from '@c/user-city-age/user-city-age';
-import UserNameSurname from '@c/user-name-surname/user-name-surname';
 import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import AvatarShowable from '../../../../components/avatar/avatar-showable';
+import ProfileFollowersSection from '../../../../components/profile-followers-section/profile-followers-section';
+import ProfileMediaPhotos from '../../../../components/profile-media-photos/profile-media-photos';
+import UserBio from '../../../../components/user-bio/user-bio';
+import UserCityAge from '../../../../components/user-city-age/user-city-age';
+import UserNameSurname from '../../../../components/user-name-surname/user-name-surname';
 
 export default function Profile() {
   const { id: whosProfileViewing } = useLocalSearchParams();

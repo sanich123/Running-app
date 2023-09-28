@@ -1,5 +1,6 @@
-import { useAuth } from '@auth/context/auth-context';
 import { Text } from 'react-native-paper';
+
+import { useAuth } from '../../auth/context/auth-context';
 
 type Likes = {
   authorId: string;

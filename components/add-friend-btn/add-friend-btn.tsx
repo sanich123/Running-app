@@ -1,7 +1,8 @@
-import { useAuth } from '@auth/context/auth-context';
-import { useAddFriendMutation } from '@r/runnich-api/runnich-api';
 import { useState } from 'react';
 import { Button } from 'react-native-paper';
+
+import { useAuth } from '../../auth/context/auth-context';
+import { useAddFriendMutation } from '../../redux/runnich-api/runnich-api';
 
 export default function AddFriendBtn({ friendId }: { friendId: string }) {
   const [addFriend] = useAddFriendMutation();

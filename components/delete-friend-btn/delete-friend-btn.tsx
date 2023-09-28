@@ -1,8 +1,9 @@
-import { useAuth } from '@auth/context/auth-context';
-import { useDeleteFriendMutation } from '@r/runnich-api/runnich-api';
 import { useEffect } from 'react';
 import { ToastAndroid } from 'react-native';
 import { Button } from 'react-native-paper';
+
+import { useAuth } from '../../auth/context/auth-context';
+import { useDeleteFriendMutation } from '../../redux/runnich-api/runnich-api';
 
 export default function DeleteFriendBtn({ friendId }: { friendId: string }) {
   const { user } = useAuth();
