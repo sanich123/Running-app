@@ -1,9 +1,11 @@
 import { useRouter } from 'expo-router';
 import { useContext } from 'react';
 import { Button } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
 import { useSendProfileInfoMutation } from '../../redux/runnich-api/runnich-api';
+import { saveSettingsInfo } from '../../redux/user-info-slice/user-info-slice';
 import { SaveSettingsContext } from '../../utils/context/settings';
 import { errorHandler } from '../../utils/error-handler';
 
@@ -27,15 +29,16 @@ export default function SaveSettingsBtn() {
   const { user } = useAuth();
   const [sendProfileInfo] = useSendProfileInfoMutation();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   return (
     <Button
       mode="outlined"
       style={{ width: 130, position: 'absolute', top: 15, right: 15 }}
       onPress={async () => {
+        setIsDisabled(true);
+        setIsLoading(true);
         try {
-          setIsDisabled(true);
-          setIsLoading(true);
           const userSettings = {
             gender,
             sport,
@@ -44,19 +47,22 @@ export default function SaveSettingsBtn() {
             city,
             weight,
             bio,
-            birthday: birthday ? new Date(birthday) : null,
+            birthday: birthday ? new Date(birthday).toString() : null,
             profilePhoto: photoUrl ? photoUrl : image,
           };
-
-          await sendProfileInfo({ body: userSettings, id: user.id })
+          dispatch(saveSettingsInfo(userSettings));
+          await sendProfileInfo({
+            body: { ...userSettings, birthday: birthday ? new Date(birthday) : null },
+            id: user.id,
+          })
             .unwrap()
             .then(() => router.back())
-            .catch((error) => errorHandler(error));
-          setIsDisabled(false);
-          setIsLoading(false);
+            .catch((error) => errorHandler(error))
+            .finally(() => {
+              setIsDisabled(false);
+              setIsLoading(false);
+            });
         } catch (error) {
-          setIsDisabled(false);
-          setIsLoading(false);
           errorHandler(error);
         }
       }}

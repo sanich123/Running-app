@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function usePasswordEmail() {
-  const [email, setEmail] = useState('aovoronin.piano@gmail.com');
+  const { email: savedEmail, password: savedPassword } = useSelector(({ userInfo }) => userInfo?.privateInfo);
+  const [email, setEmail] = useState(savedEmail);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [password, setPassword] = useState('7FWD&rlm');
+  const [password, setPassword] = useState(savedPassword);
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
   const [nickname, setNickname] = useState('');
   const [nicknameError, setNicknameError] = useState(false);

@@ -3,11 +3,12 @@ import { createSlice } from '@reduxjs/toolkit';
 export const userInfoSlice = createSlice({
   name: 'userInfoSlice',
   initialState: {
-    email: '',
-    id: '',
-    login: '',
+    privateInfo: {
+      email: '',
+      password: '',
+    },
+    isNeedToUpdateSettings: false,
     settings: {
-      duration: 0,
       gender: '',
       sport: '',
       name: '',
@@ -15,22 +16,20 @@ export const userInfoSlice = createSlice({
       city: '',
       weight: '',
       bio: '',
-      birthday: '',
       profilePhoto: '',
+      birthday: '',
     },
   },
+
   reducers: {
-    getRegisterInfo: (state, action) => {
-      const { id, email, login } = action.payload;
-      state.email = email;
-      state.id = id;
-      state.login = login;
-    },
     saveSettingsInfo: (state, action) => {
       state.settings = action.payload;
+    },
+    saveEmailPassword: (state, action) => {
+      state.privateInfo = action.payload;
     },
   },
 });
 
-export const { getRegisterInfo, saveSettingsInfo } = userInfoSlice.actions;
+export const { saveSettingsInfo, saveEmailPassword } = userInfoSlice.actions;
 export default userInfoSlice.reducer;

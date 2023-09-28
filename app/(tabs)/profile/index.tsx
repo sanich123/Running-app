@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import { useAuth } from '../../../auth/context/auth-context';
 import AvatarShowable from '../../../components/avatar/avatar-showable';
@@ -12,7 +13,8 @@ import { calculateAge } from '../../../utils/time-formatter';
 export default function Profile() {
   const { user } = useAuth();
   const { isLoading, data: profile, error } = useGetUserProfileByIdQuery(user?.id);
-
+  const { settings, isNeedToUpdateSettings } = useSelector(({ userInfo }) => userInfo);
+  console.log(settings, isNeedToUpdateSettings);
   return (
     <>
       <ProfileMediaPhotos userId={user?.id} />
