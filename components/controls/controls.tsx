@@ -1,12 +1,13 @@
-import { View, Text } from '@c/Themed';
-import StartBtn from '@c/controls/start-stop-btn/start-stop-btn';
-import { STATUSES } from '@const/enums';
-import { LANGUAGE } from '@const/languages/languages';
 import { FontAwesome } from '@expo/vector-icons';
-import { useAppSelector } from '@r/hooks/hooks';
-import { ActivityComponentContext } from '@u/context/activity-component';
 import { useContext } from 'react';
 import { StyleSheet, Pressable } from 'react-native';
+
+import StartStopBtn from './start-stop-btn/start-stop-btn';
+import { STATUSES } from '../../constants/enums';
+import { LANGUAGE } from '../../constants/languages/languages';
+import { useAppSelector } from '../../redux/hooks/hooks';
+import { ActivityComponentContext } from '../../utils/context/activity-component';
+import { View, Text } from '../Themed';
 
 export default function Controls() {
   const { setStatus, setMapVisible, mapVisible, status } = useContext(ActivityComponentContext);
@@ -30,7 +31,7 @@ export default function Controls() {
         </View>
       )}
 
-      <StartBtn />
+      <StartStopBtn />
 
       {isStartedOrContinue && (
         <Pressable style={[pinBtn, { width: 50, height: 50 }]} onPress={() => setMapVisible(!mapVisible)}>

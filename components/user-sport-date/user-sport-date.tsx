@@ -1,7 +1,8 @@
-import { SportsProps } from '@const/types/activity-cart';
-import { getIconByTypeOfSport } from '@u/icon-utils';
-import { formatDate, getHoursMinutes } from '@u/time-formatter';
 import { Text } from 'react-native-paper';
+
+import { SportsProps } from '../../constants/types/activity-cart';
+import { getIconByTypeOfSport } from '../../utils/icon-utils';
+import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
 
 export default function UserSportDate({ sport, date }: { sport: SportsProps; date: Date }) {
   return (

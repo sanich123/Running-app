@@ -1,7 +1,7 @@
+import { MapView } from '@rnmapbox/maps';
 import * as turf from '@turf/turf';
 import { LocationObject, watchPositionAsync } from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
-import MapView from 'react-native-maps';
 
 import { POSITION_OPTIONS } from '../../constants/const';
 

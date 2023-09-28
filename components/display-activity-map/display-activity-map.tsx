@@ -1,10 +1,11 @@
-import RouteLine from '@c/map/route-line/route-line';
-import { Camera, MapView } from '@rnmapbox/maps';
-import useFakeLocations from '@u/hooks/use-fake-locations';
+import { MapView, Camera } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
 import { usePathname } from 'expo-router';
 import { getBoundsOfDistance, getCenterOfBounds } from 'geolib';
 import { useEffect } from 'react';
+
+import useFakeLocations from '../../utils/hooks/use-fake-locations';
+import RouteLine from '../map/route-line/route-line';
 
 export default function DisplayActivityMap({ locations, distance }: { locations: LocationObject[]; distance: number }) {
   const pathname = usePathname();

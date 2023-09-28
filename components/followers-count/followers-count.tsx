@@ -1,8 +1,9 @@
-import { useAuth } from '@auth/context/auth-context';
-import ErrorComponent from '@c/error-component/error-component';
-import { useGetFollowersByUserIdQuery } from '@r/runnich-api/runnich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Text } from 'react-native-paper';
+
+import { useAuth } from '../../auth/context/auth-context';
+import { useGetFollowersByUserIdQuery } from '../../redux/runnich-api/runnich-api';
+import ErrorComponent from '../error-component/error-component';
 
 export default function FollowingCount() {
   const { user } = useAuth();

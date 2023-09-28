@@ -1,8 +1,9 @@
-import { emailMatcher } from '@const/regexp';
-import { SignInContext } from '@u/context/sign-in';
-import { errorHandler } from '@u/error-handler';
 import { useContext } from 'react';
 import { Button } from 'react-native-paper';
+
+import { emailMatcher } from '../../constants/regexp';
+import { SignInContext } from '../../utils/context/sign-in';
+import { errorHandler } from '../../utils/error-handler';
 
 export default function ResetBtn() {
   const { email, isLoading, setIsLoading, setEmailError, isDisabled, setIsDisabled } = useContext(SignInContext);

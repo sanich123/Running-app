@@ -1,6 +1,7 @@
-import { SaveSettingsContext } from '@u/context/settings';
 import { useContext } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
+
+import { SaveSettingsContext } from '../../utils/context/settings';
 
 export default function GenderBtns() {
   const { gender, isDisabled, setGender } = useContext(SaveSettingsContext);

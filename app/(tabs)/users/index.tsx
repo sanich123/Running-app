@@ -1,9 +1,10 @@
-import ErrorComponent from '@c/error-component/error-component';
-import UserListItem from '@c/user-list-item/user-list-item';
-import { useGetUsersQuery } from '@r/runnich-api/runnich-api';
-import useRefresh from '@u/hooks/use-refresh';
 import { View, FlatList, SafeAreaView } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
+
+import ErrorComponent from '../../../components/error-component/error-component';
+import UserListItem from '../../../components/user-list-item/user-list-item';
+import { useGetUsersQuery } from '../../../redux/runnich-api/runnich-api';
+import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function ListOfUsers() {
   const { isLoading, error, data: users, refetch } = useGetUsersQuery('');
@@ -16,7 +17,7 @@ export default function ListOfUsers() {
           onRefresh={onRefresh}
           refreshing={refreshing}
           data={users}
-          renderItem={({ item }) => <UserListItem userId={item.id} />}
+          renderItem={({ item }) => <UserListItem userId={item?.id} />}
           ListEmptyComponent={
             <View>
               <Text variant="headlineLarge">There are no users, fuck</Text>

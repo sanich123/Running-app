@@ -1,33 +1,9 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@c/*": [
-        "components/*"
-      ],
-      "@app/*": [
-        "app/*"
-      ],
-      "@auth/*": [
-        "auth/*"
-      ],
-      "@const/*": [
-        "constants/*"
-      ],
-      "@r/*": [
-        "redux/*"
-      ],
-      "@u/*": [
-        "utils/*"
-      ]
-    }
+    "lib": ["dom", "esnext", "dom.iterable"]
   },
-  "lib": [
-    "dom",
-    "esnext",
-    "dom.iterable"
-  ],
+
   "jsx": "react",
   "module": "esnext",
   "moduleResolution": "node",
@@ -39,10 +15,5 @@
   "strict": true,
   "skipLibCheck": true,
   "resolveJsonModule": true,
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

@@ -1,11 +1,12 @@
-import { useAuth } from '@auth/context/auth-context';
-import ActivityCardCommentBtn from '@c/activity-card-comment-btn/activity-card-comment-btn';
-import ActivityCardDeleteBtn from '@c/activity-card-delete-btn/activity-card-delete-btn';
-import ActivityCardLikeBtn from '@c/activity-card-like-btn/activity-card-like-btn';
-import ActivityCardShareBtn from '@c/activity-card-share-btn/activity-card-share-btn';
-import { ActivityCardBtnsContext } from '@u/context/activity-card-btns';
 import { usePathname } from 'expo-router';
 import { useState } from 'react';
+
+import { useAuth } from '../../auth/context/auth-context';
+import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
+import ActivityCardCommentBtn from '../activity-card-comment-btn/activity-card-comment-btn';
+import ActivityCardDeleteBtn from '../activity-card-delete-btn/activity-card-delete-btn';
+import ActivityCardLikeBtn from '../activity-card-like-btn/activity-card-like-btn';
+import ActivityCardShareBtn from '../activity-card-share-btn/activity-card-share-btn';
 
 export default function ActivityCardBtns({ activityId, userId }: { activityId: string; userId: string }) {
   const { user } = useAuth();

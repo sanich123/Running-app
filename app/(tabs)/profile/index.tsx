@@ -1,13 +1,13 @@
-import { useAuth } from '@auth/context/auth-context';
-import { View } from '@c/Themed';
-import AvatarShowable from '@c/avatar/avatar-showable';
-import ErrorComponent from '@c/error-component/error-component';
-import ProfileFollowersSection from '@c/profile-followers-section/profile-followers-section';
-import ProfileMediaPhotos from '@c/profile-media-photos/profile-media-photos';
-import { useGetUserProfileByIdQuery } from '@r/runnich-api/runnich-api';
-import { calculateAge } from '@u/time-formatter';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
+
+import { useAuth } from '../../../auth/context/auth-context';
+import AvatarShowable from '../../../components/avatar/avatar-showable';
+import ErrorComponent from '../../../components/error-component/error-component';
+import ProfileFollowersSection from '../../../components/profile-followers-section/profile-followers-section';
+import ProfileMediaPhotos from '../../../components/profile-media-photos/profile-media-photos';
+import { useGetUserProfileByIdQuery } from '../../../redux/runnich-api/runnich-api';
+import { calculateAge } from '../../../utils/time-formatter';
 
 export default function Profile() {
   const { user } = useAuth();

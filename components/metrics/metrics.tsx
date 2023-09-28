@@ -1,6 +1,3 @@
-import { View } from '@c/Themed';
-import { STATUSES } from '@const/enums';
-import { ActivityComponentContext } from '@u/context/activity-component';
 import { useContext } from 'react';
 
 import Distance from './distance/distance';
@@ -9,6 +6,9 @@ import { metricsStyles } from './metrics-styles';
 import Pace from './pace/pace';
 import Steps from './steps/steps';
 import Time from './time/time';
+import { STATUSES } from '../../constants/enums';
+import { ActivityComponentContext } from '../../utils/context/activity-component';
+import { View } from '../Themed';
 
 export default function Metrics() {
   const { status, mapVisible } = useContext(ActivityComponentContext);

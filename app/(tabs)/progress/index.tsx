@@ -1,6 +1,7 @@
-import EditScreenInfo from '@c/EditScreenInfo';
-import { View, Text } from '@c/Themed';
 import { StyleSheet } from 'react-native';
+
+import EditScreenInfo from '../../../components/EditScreenInfo';
+import { View, Text } from '../../../components/Themed';
 
 export default function Progress() {
   return (

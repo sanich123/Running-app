@@ -1,11 +1,12 @@
-import Controls from '@c/controls/controls';
-import Map from '@c/map/map';
-import Metrics from '@c/metrics/metrics';
-import { STATUSES } from '@const/enums';
-import { ActivityComponentContext } from '@u/context/activity-component';
-import useFakeLocations from '@u/hooks/use-fake-locations';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
+
+import { STATUSES } from '../../constants/enums';
+import { ActivityComponentContext } from '../../utils/context/activity-component';
+import useFakeLocations from '../../utils/hooks/use-fake-locations';
+import Controls from '../controls/controls';
+import Map from '../map/map';
+import Metrics from '../metrics/metrics';
 
 export default function ActivityComponent() {
   const { setStatus, status, locations, duration, cameraRef, lastView, distance } = useFakeLocations();

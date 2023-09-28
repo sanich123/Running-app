@@ -1,5 +1,6 @@
-import { useAuth } from '@auth/context/auth-context';
 import { Button } from 'react-native-paper';
+
+import { useAuth } from '../../../auth/context/auth-context';
 
 export default function SettingsScreen() {
   const { signOut } = useAuth();

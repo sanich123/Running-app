@@ -1,5 +1,6 @@
 import { Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+
+import { useAuth } from '../../auth/context/auth-context';
 
 type Likes = {
   authorId: string;
@@ -9,8 +10,8 @@ type Likes = {
 };
 
 export default function NumberOfLikes({ likes }: { likes: Likes[] }) {
-  const { id: ownerId } = useSelector(({ userInfo }) => userInfo);
-  const isOwnerLiked = likes.some(({ authorId }) => authorId === ownerId);
+  const { user } = useAuth();
+  const isOwnerLiked = likes.some(({ authorId }) => authorId === user?.id);
   const restLiked = isOwnerLiked ? likes.length - 1 : likes.length;
   return (
     <Text style={{ marginLeft: 65 }} variant="bodyMedium">

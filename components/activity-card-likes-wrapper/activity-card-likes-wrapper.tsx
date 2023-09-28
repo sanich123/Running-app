@@ -1,11 +1,11 @@
-import { View } from '@c/Themed';
-import AvatarShowable from '@c/avatar/avatar-showable';
-import NumberOfLikes from '@c/number-of-likes/number-of-likes';
-import { useGetLikesByActivityIdQuery } from '@r/runnich-api/runnich-api';
 import { usePathname, useRouter } from 'expo-router';
 import { Fragment } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Text, ActivityIndicator } from 'react-native-paper';
+
+import { useGetLikesByActivityIdQuery } from '../../redux/runnich-api/runnich-api';
+import AvatarShowable from '../avatar/avatar-showable';
+import NumberOfLikes from '../number-of-likes/number-of-likes';
 
 const MAX_IN_ROW = 9;
 const MAX_NUMBER_IN_ROW_OTHER_PAGE = 3;
