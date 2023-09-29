@@ -13,7 +13,7 @@ export const activity = createSlice({
       description: '',
       sport: '',
       emotion: '',
-      isSwitchOn: '',
+      isSwitchOn: false,
       photoUrls: [] as string[],
     },
   },
