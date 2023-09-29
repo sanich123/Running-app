@@ -3,13 +3,13 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 
 import { ActivityCardProps } from '../../constants/types/activity-cart';
-import ActivityCardBtns from '../activity-card-btns/activity-card-btns';
-import ActivityCardDesription from '../activity-card-description/activity-card-description';
-import ActivityCardLikesWrapper from '../activity-card-likes-wrapper/activity-card-likes-wrapper';
-import ActivityCardMapImagesList from '../activity-card-map-images-list/activity-card-map-images-list';
-import ActivityCardMetrics from '../activity-card-metrics/activity-card-metrics';
-import ActivityCardTitle from '../activity-card-title/activity-card-title';
 import AvatarShowable from '../avatar/avatar-showable';
+import CardBtns from '../card-btns/card-btns';
+import CardDesription from '../card-description/card-description';
+import CardLikes from '../card-likes/card-likes';
+import CardMapImagesList from '../card-map-images-list/card-map-images-list';
+import CardMetrics from '../card-metrics/card-metrics';
+import CardTitle from '../card-title/card-title';
 import UserNameSurname from '../user-name-surname/user-name-surname';
 import UserSportDate from '../user-sport-date/user-sport-date';
 
@@ -42,18 +42,18 @@ export default function ActivityCard({
           </View>
         </Card.Content>
         <View style={styles.titleWrapper}>
-          <ActivityCardTitle title={title} />
+          <CardTitle title={title} />
         </View>
         <View style={styles.metricsWrapper}>
-          <ActivityCardMetrics distance={distance} duration={duration} speed={speed} />
+          <CardMetrics distance={distance} duration={duration} speed={speed} />
         </View>
       </Pressable>
-      {pathname.includes('/home/') ? <ActivityCardDesription description={description} /> : null}
-      <ActivityCardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
-      <ActivityCardLikesWrapper activityId={id} />
+      {pathname.includes('/home/') ? <CardDesription description={description} /> : null}
+      <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
+      <CardLikes activityId={id} />
       <Card.Actions>
         <View style={styles.activityBtnsWrapper}>
-          <ActivityCardBtns activityId={id} userId={userId} />
+          <CardBtns activityId={id} userId={userId} />
         </View>
       </Card.Actions>
     </Card>

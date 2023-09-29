@@ -1,22 +1,56 @@
 import { useRouter } from 'expo-router';
-import { SafeAreaView, FlatList } from 'react-native';
+import { useEffect } from 'react';
+import { SafeAreaView, FlatList, ToastAndroid } from 'react-native';
 import { ActivityIndicator, Divider, Searchbar } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { useAuth } from '../../../auth/context/auth-context';
-import ActivityCard from '../../../components/activity-card/activity-card';
+import ActivityCard from '../../../components/card/card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
 import ErrorComponent from '../../../components/error-component/error-component';
 import FloatingBtn from '../../../components/floating-btn/floating-btn';
-import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
+import { setIsNeedToSendActivity } from '../../../redux/activity/activity';
+import {
+  useAddActivityByUserIdMutation,
+  useGetActivitiesByUserIdWithFriendsActivitiesQuery,
+} from '../../../redux/runich-api/runich-api';
+import { errorHandler } from '../../../utils/error-handler';
 import useGetLocation from '../../../utils/hooks/use-get-location';
 import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
   const { user } = useAuth();
+  const dispatch = useDispatch();
   useGetLocation();
   const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user.id);
+  const [sendActivity] = useAddActivityByUserIdMutation();
   const { onRefresh, refreshing } = useRefresh(refetch);
   const router = useRouter();
+  const { activityToSend, isNeedToSend } = useSelector(({ activity }) => activity);
+
+  useEffect(() => {
+    if (isNeedToSend) {
+      sendActivityToServer();
+    }
+  }, []);
+
+  async function sendActivityToServer() {
+    try {
+      await sendActivity({ body: activityToSend, id: user.id })
+        .unwrap()
+        .then((data) => {
+          console.log(data);
+          ToastAndroid.show('Successfully sended data to server!', ToastAndroid.SHORT);
+          dispatch(setIsNeedToSendActivity(false));
+        })
+        .catch((error) => {
+          ToastAndroid.show('Some error occured', ToastAndroid.SHORT);
+          console.log(error);
+        });
+    } catch (error) {
+      errorHandler(error);
+    }
+  }
   return (
     <>
       <SafeAreaView

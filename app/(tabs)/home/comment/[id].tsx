@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { ActivityIndicator, Card, Text } from 'react-native-paper';
 
-import ActivityCardLikeBtn from '../../../../components/activity-card-like-btn/activity-card-like-btn';
-import ActivityCardLikesWrapper from '../../../../components/activity-card-likes-wrapper/activity-card-likes-wrapper';
-import ActivityCardTitle from '../../../../components/activity-card-title/activity-card-title';
+import ActivityCardLikeBtn from '../../../../components/card-like-btn/card-like-btn';
+import ActivityCardLikesWrapper from '../../../../components/card-likes/card-likes';
+import ActivityCardTitle from '../../../../components/card-title/card-title';
 import CommentInput from '../../../../components/comment-input/comment-input';
 import Comments from '../../../../components/comments/comments';
 import DisplayActivityMap from '../../../../components/display-activity-map/display-activity-map';

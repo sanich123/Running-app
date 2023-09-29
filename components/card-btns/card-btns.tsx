@@ -3,12 +3,12 @@ import { useState } from 'react';
 
 import { useAuth } from '../../auth/context/auth-context';
 import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
-import ActivityCardCommentBtn from '../activity-card-comment-btn/activity-card-comment-btn';
-import ActivityCardDeleteBtn from '../activity-card-delete-btn/activity-card-delete-btn';
-import ActivityCardLikeBtn from '../activity-card-like-btn/activity-card-like-btn';
-import ActivityCardShareBtn from '../activity-card-share-btn/activity-card-share-btn';
+import ActivityCardCommentBtn from '../card-comment-btn/card-comment-btn';
+import ActivityCardDeleteBtn from '../card-delete-btn/card-delete-btn';
+import ActivityCardLikeBtn from '../card-like-btn/card-like-btn';
+import ActivityCardShareBtn from '../card-share-btn/card-share-btn';
 
-export default function ActivityCardBtns({ activityId, userId }: { activityId: string; userId: string }) {
+export default function CardBtns({ activityId, userId }: { activityId: string; userId: string }) {
   const { user } = useAuth();
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);

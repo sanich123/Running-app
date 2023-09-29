@@ -5,7 +5,7 @@ import { Button } from 'react-native-paper';
 
 import { SaveActivityContext } from '../../utils/context/save-activity';
 
-export default function AcceptDeclineBtns() {
+export default function DeclineBtn() {
   const { isDisabled } = useContext(SaveActivityContext);
   const router = useRouter();
 

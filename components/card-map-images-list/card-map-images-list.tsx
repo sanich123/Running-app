@@ -5,7 +5,7 @@ import { FlatList, Pressable, Image, useWindowDimensions } from 'react-native';
 
 import { getMapBoxImage } from '../../utils/location-utils';
 
-export default function ActivityCardMapImagesList({
+export default function CardMapImagesList({
   locations,
   photoUrls,
   id,

@@ -10,7 +10,7 @@ import NumberOfLikes from '../number-of-likes/number-of-likes';
 const MAX_IN_ROW = 9;
 const MAX_NUMBER_IN_ROW_OTHER_PAGE = 3;
 
-export default function ActivityCardLikesWrapper({ activityId }: { activityId: string }) {
+export default function CardLikes({ activityId }: { activityId: string }) {
   const { isLoading, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
   const router = useRouter();
   const pathname = usePathname();

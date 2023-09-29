@@ -1,7 +1,7 @@
 import { formatDuration } from '../../utils/time-formatter';
 import ShowMetrics from '../show-metrics/show-metrics';
 
-export default function ActivityCardMetrics({
+export default function CardMetrics({
   distance,
   duration,
   speed,
