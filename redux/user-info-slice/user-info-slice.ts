@@ -28,8 +28,11 @@ export const userInfoSlice = createSlice({
     saveEmailPassword: (state, action) => {
       state.privateInfo = action.payload;
     },
+    setIsNeedUpdateProfile: (state, action) => {
+      state.isNeedToUpdateSettings = action.payload;
+    },
   },
 });
 
-export const { saveSettingsInfo, saveEmailPassword } = userInfoSlice.actions;
+export const { saveSettingsInfo, saveEmailPassword, setIsNeedUpdateProfile } = userInfoSlice.actions;
 export default userInfoSlice.reducer;
