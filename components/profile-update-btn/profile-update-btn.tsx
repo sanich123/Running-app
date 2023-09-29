@@ -3,7 +3,7 @@ import { Pressable } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
-import { setIsNeedUpdateProfile } from '../../redux/user-info-slice/user-info-slice';
+import { setIsNeedUpdateProfile } from '../../redux/profile/profile';
 
 export default function ProfileUpdateBtn() {
   const dispatch = useDispatch();

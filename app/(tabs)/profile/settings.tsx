@@ -12,8 +12,8 @@ import InputsNameSurname from '../../../components/inputs-name-surname/inputs-na
 import InputsWeightCity from '../../../components/inputs-weight-city/inputs-weight-city';
 import GenderBtns from '../../../components/segmented-btns/gender-btns';
 import SportsBtns from '../../../components/segmented-btns/sports-btns';
-import { useSendProfileInfoMutation } from '../../../redux/runnich-api/runnich-api';
-import { saveSettingsInfo, setIsNeedUpdateProfile } from '../../../redux/user-info-slice/user-info-slice';
+import { saveSettingsInfo, setIsNeedUpdateProfile } from '../../../redux/profile/profile';
+import { useSendProfileInfoMutation } from '../../../redux/runich-api/runich-api';
 import { SaveSettingsContext } from '../../../utils/context/settings';
 import { errorHandler } from '../../../utils/error-handler';
 import useGetSettings from '../../../utils/hooks/use-get-settings';
@@ -49,7 +49,7 @@ export default function ProfileSettings() {
   const [sendProfileInfo] = useSendProfileInfoMutation();
   const router = useRouter();
   const dispatch = useDispatch();
-  const { isNeedToUpdateSettings } = useSelector(({ userInfo }) => userInfo);
+  const { isNeedToUpdateSettings } = useSelector(({ profile }) => profile);
 
   async function sendProfile() {
     try {

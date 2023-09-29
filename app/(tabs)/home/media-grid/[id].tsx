@@ -3,7 +3,7 @@ import { Pressable, View, useWindowDimensions, Image } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 
 import ErrorComponent from '../../../../components/error-component/error-component';
-import { useGetAllActivityPhotosByUserIdQuery } from '../../../../redux/runnich-api/runnich-api';
+import { useGetAllActivityPhotosByUserIdQuery } from '../../../../redux/runich-api/runich-api';
 
 export default function MediaGrid() {
   const { id: userId } = useLocalSearchParams();

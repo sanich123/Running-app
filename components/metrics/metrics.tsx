@@ -10,10 +10,12 @@ import { STATUSES } from '../../constants/enums';
 import { ActivityComponentContext } from '../../utils/context/activity-component';
 import { View } from '../Themed';
 
+const { started, continued } = STATUSES;
+
 export default function Metrics() {
   const { status, mapVisible } = useContext(ActivityComponentContext);
   const { containerMetrics } = metricsStyles;
-  const isStartedOrContinue = status === STATUSES.started || status === STATUSES.continue;
+  const isStartedOrContinue = status === started || status === continued;
 
   return (
     <View style={[containerMetrics, isStartedOrContinue && { height: '80%' }, mapVisible && { height: '15%' }]}>

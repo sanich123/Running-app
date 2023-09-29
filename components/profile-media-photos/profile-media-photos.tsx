@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { Image, Pressable, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 
-import { useGetAllActivityPhotosByUserIdQuery } from '../../redux/runnich-api/runnich-api';
+import { useGetAllActivityPhotosByUserIdQuery } from '../../redux/runich-api/runich-api';
 import ErrorComponent from '../error-component/error-component';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {

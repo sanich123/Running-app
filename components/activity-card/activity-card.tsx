@@ -36,7 +36,7 @@ export default function ActivityCard({
           <Pressable onPress={() => router.push(`/home/profile/${userId}`)}>
             <AvatarShowable size={40} id={userId} />
           </Pressable>
-          <View style={styles.userInfoWrapper}>
+          <View style={styles.profileWrapper}>
             <UserNameSurname userId={userId} size="titleMedium" />
             <UserSportDate sport={sport} date={date} />
           </View>
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: 'center',
   },
-  userInfoWrapper: { display: 'flex', justifyContent: 'center' },
+  profileWrapper: { display: 'flex', justifyContent: 'center' },
   titleWrapper: { marginTop: 5, marginLeft: 15, marginBottom: 5 },
   metricsWrapper: { display: 'flex', flexDirection: 'row', marginLeft: 15, columnGap: 15, marginBottom: 5 },
   activityBtnsWrapper: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },

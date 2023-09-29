@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { supabase } from '../../auth/supabase/supabase-init';
 import { nicknameMatcher } from '../../constants/regexp';
-import { saveEmailPassword } from '../../redux/user-info-slice/user-info-slice';
+import { saveEmailPassword } from '../../redux/profile/profile';
 import { SignInContext } from '../../utils/context/sign-in';
 import { errorHandler } from '../../utils/error-handler';
 import { emailPasswordHandler } from '../../utils/validate-email-password';

@@ -2,10 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
-import changeThemeLangReducer from './change-lang-slice/change-lang-slice';
-import locationSlice from './location-slice/location-slice';
-import { runnichApi } from './runnich-api/runnich-api';
-import userInfoSlice from './user-info-slice/user-info-slice';
+import activity from './activity/activity';
+import language from './language/language';
+import location from './location/location';
+import profile from './profile/profile';
+import { runichApi } from './runich-api/runich-api';
 
 const persistConfig = {
   key: 'root',
@@ -15,10 +16,11 @@ const persistConfig = {
 const rootReducer = persistReducer(
   persistConfig,
   combineReducers({
-    changeThemeLang: changeThemeLangReducer,
-    location: locationSlice,
-    userInfo: userInfoSlice,
-    [runnichApi.reducerPath]: runnichApi.reducer,
+    language,
+    location,
+    profile,
+    activity,
+    [runichApi.reducerPath]: runichApi.reducer,
   }),
 );
 
@@ -29,7 +31,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(runnichApi.middleware),
+    }).concat(runichApi.middleware),
 });
 
 export const persistor = persistStore(store);

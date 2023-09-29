@@ -5,7 +5,7 @@ import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 import { useAuth } from '../../../../auth/context/auth-context';
 import ErrorComponent from '../../../../components/error-component/error-component';
 import UserListItem from '../../../../components/user-list-item/user-list-item';
-import { useGetFriendsByUserIdQuery } from '../../../../redux/runnich-api/runnich-api';
+import { useGetFriendsByUserIdQuery } from '../../../../redux/runich-api/runich-api';
 import useRefresh from '../../../../utils/hooks/use-refresh';
 
 export default function ListOfFollowing() {

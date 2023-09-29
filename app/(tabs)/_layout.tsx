@@ -4,6 +4,7 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useTheme } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
+import ActivitySaveBtn from '../../components/activity-save-btn/activity-save-btn';
 import AvatarShowable from '../../components/avatar/avatar-showable';
 import { ActivityIcon, HomeIcon, ProgressIcon } from '../../components/icons/icons';
 import ProfileEditBtn from '../../components/profile-edit-btn/profile-edit-btn';
@@ -99,10 +100,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="save-activity/index"
         options={{
-          title: 'save',
+          title: '',
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
+          headerRight: () => <ActivitySaveBtn />,
         }}
       />
     </Tabs>

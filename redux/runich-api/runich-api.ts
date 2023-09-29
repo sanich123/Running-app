@@ -5,7 +5,7 @@ import { headers, TAGS, ROUTES } from '../../constants/api/api-contsts';
 const { activities, profile, comments, likes, friends, users } = TAGS;
 const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp, activityId } = ROUTES;
 
-export const runnichApi = createApi({
+export const runichApi = createApi({
   reducerPath: 'runnichApi',
   tagTypes: [activities, profile, comments, likes, friends, users],
   baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_URL }),
@@ -168,4 +168,4 @@ export const {
   usePostCommentWithActivityIdMutation,
   useSendOrDeleteLikeMutation,
   useSendOrDeleteLikeToCommentMutation,
-} = runnichApi;
+} = runichApi;

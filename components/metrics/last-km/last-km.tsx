@@ -5,9 +5,11 @@ import { ActivityComponentContext } from '../../../utils/context/activity-compon
 import { View, Text } from '../../Themed';
 import { metricsStyles } from '../metrics-styles';
 
+const { started, continued } = STATUSES;
+
 export default function LastKm() {
   const { status } = useContext(ActivityComponentContext);
-  const isStartedOrContinue = status === STATUSES.started || status === STATUSES.continue;
+  const isStartedOrContinue = status === started || status === continued;
   const { basicWrapper, metricsWrapper, metricsHeader } = metricsStyles;
 
   return (

@@ -9,12 +9,14 @@ import { useAppSelector } from '../../redux/hooks/hooks';
 import { ActivityComponentContext } from '../../utils/context/activity-component';
 import { View, Text } from '../Themed';
 
+const { started, continued, paused } = STATUSES;
+
 export default function Controls() {
   const { setStatus, setMapVisible, mapVisible, status } = useContext(ActivityComponentContext);
   const { containerStartBtn, containerPauseStopBtns, textStyle, pinBtn } = styles;
-  const { language } = useAppSelector(({ changeThemeLang }) => changeThemeLang);
-  const paused = status === STATUSES.paused;
-  const isStartedOrContinue = status === STATUSES.started || status === STATUSES.continue;
+  const { language } = useAppSelector(({ language }) => language);
+  const isPaused = status === paused;
+  const isStartedOrContinue = status === started || status === continued;
 
   return (
     <View style={containerStartBtn}>
@@ -23,7 +25,7 @@ export default function Controls() {
           <Pressable
             style={pinBtn}
             onPress={() => {
-              setStatus(paused ? STATUSES.continue : STATUSES.paused);
+              setStatus(isPaused ? continued : paused);
               setMapVisible(false);
             }}>
             <Text style={textStyle}>{LANGUAGE[language].activity.controlBtns.resume}</Text>

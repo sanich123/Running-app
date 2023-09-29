@@ -4,7 +4,7 @@ import { Pressable, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { useGetFriendsByUserIdQuery } from '../../redux/runnich-api/runnich-api';
+import { useGetFriendsByUserIdQuery } from '../../redux/runich-api/runich-api';
 import AddFriendBtn from '../add-friend-btn/add-friend-btn';
 import DeleteFriendBtn from '../delete-friend-btn/delete-friend-btn';
 import ErrorComponent from '../error-component/error-component';

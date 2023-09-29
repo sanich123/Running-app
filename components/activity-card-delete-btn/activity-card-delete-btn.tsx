@@ -3,7 +3,7 @@ import { useContext, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
-import { useDeleteActivityByIdMutation } from '../../redux/runnich-api/runnich-api';
+import { useDeleteActivityByIdMutation } from '../../redux/runich-api/runich-api';
 import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
 import { errorHandler } from '../../utils/error-handler';
 

@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
-import { useGetCommentsByActivityIdQuery } from '../../redux/runnich-api/runnich-api';
+import { useGetCommentsByActivityIdQuery } from '../../redux/runich-api/runich-api';
 import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
 import AvatarShowable from '../avatar/avatar-showable';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';

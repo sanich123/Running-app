@@ -2,7 +2,7 @@ import { Image } from 'react-native';
 import { ActivityIndicator, Avatar, MD2Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import { useGetUserProfileByIdQuery } from '../../redux/runnich-api/runnich-api';
+import { useGetUserProfileByIdQuery } from '../../redux/runich-api/runich-api';
 import ErrorComponent from '../error-component/error-component';
 
 export default function AvatarShowable({ size, id }: { size: number; id: string }) {

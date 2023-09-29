@@ -3,7 +3,7 @@ import { LocationObject, requestForegroundPermissionsAsync, getCurrentPositionAs
 import { useEffect, useState } from 'react';
 
 import { useAppDispatch } from '../../redux/hooks/hooks';
-import { setInitialLocation } from '../../redux/location-slice/location-slice';
+import { setInitialLocation } from '../../redux/location/location';
 
 export default function useGetLocation() {
   Mapbox.setWellKnownTileServer('Mapbox');

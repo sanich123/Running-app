@@ -6,7 +6,7 @@ import AvatarShowable from '../../../components/avatar/avatar-showable';
 import ErrorComponent from '../../../components/error-component/error-component';
 import ProfileFollowersSection from '../../../components/profile-followers-section/profile-followers-section';
 import ProfileMediaPhotos from '../../../components/profile-media-photos/profile-media-photos';
-import { useGetUserProfileByIdQuery } from '../../../redux/runnich-api/runnich-api';
+import { useGetUserProfileByIdQuery } from '../../../redux/runich-api/runich-api';
 import { calculateAge } from '../../../utils/time-formatter';
 
 export default function Profile() {

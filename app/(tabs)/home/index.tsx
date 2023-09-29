@@ -7,7 +7,7 @@ import ActivityCard from '../../../components/activity-card/activity-card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
 import ErrorComponent from '../../../components/error-component/error-component';
 import FloatingBtn from '../../../components/floating-btn/floating-btn';
-import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runnich-api/runnich-api';
+import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
 import useGetLocation from '../../../utils/hooks/use-get-location';
 import useRefresh from '../../../utils/hooks/use-refresh';
 

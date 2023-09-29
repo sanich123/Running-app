@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { useGetUserProfileByIdQuery } from '../../redux/runnich-api/runnich-api';
+import { useGetUserProfileByIdQuery } from '../../redux/runich-api/runich-api';
 
 export default function useGetSettings() {
   const { user } = useAuth();

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { errorHandler } from './error-handler';
 import useGetSettings from './hooks/use-get-settings';
 import { useAuth } from '../auth/context/auth-context';
-import { useSendProfileInfoMutation } from '../redux/runnich-api/runnich-api';
+import { useSendProfileInfoMutation } from '../redux/runich-api/runnich-api';
 import { saveSettingsInfo, setIsNeedUpdateProfile } from '../redux/user-info-slice/user-info-slice';
 
 export async function SendProfile() {

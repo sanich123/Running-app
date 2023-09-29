@@ -4,7 +4,7 @@ import { ActivityIndicator } from 'react-native-paper';
 
 import DisplayActivityMap from '../../../../components/display-activity-map/display-activity-map';
 import ErrorComponent from '../../../../components/error-component/error-component';
-import { useGetActivityByActivityIdQuery } from '../../../../redux/runnich-api/runnich-api';
+import { useGetActivityByActivityIdQuery } from '../../../../redux/runich-api/runich-api';
 
 export default function ActivityMap() {
   const { id: activityId } = useLocalSearchParams();

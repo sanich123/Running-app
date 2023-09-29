@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const userInfoSlice = createSlice({
-  name: 'userInfoSlice',
+export const profile = createSlice({
+  name: 'profile',
   initialState: {
     privateInfo: {
       email: '',
@@ -34,5 +34,5 @@ export const userInfoSlice = createSlice({
   },
 });
 
-export const { saveSettingsInfo, saveEmailPassword, setIsNeedUpdateProfile } = userInfoSlice.actions;
-export default userInfoSlice.reducer;
+export const { saveSettingsInfo, saveEmailPassword, setIsNeedUpdateProfile } = profile.actions;
+export default profile.reducer;

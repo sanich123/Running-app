@@ -7,29 +7,30 @@ import { useDispatch } from 'react-redux';
 import { STATUSES } from '../../../constants/enums';
 import { LANGUAGE } from '../../../constants/languages/languages';
 import { useAppSelector } from '../../../redux/hooks/hooks';
-import { saveFinishedActivity } from '../../../redux/location-slice/location-slice';
+import { saveFinishedActivity } from '../../../redux/location/location';
 import { ActivityComponentContext } from '../../../utils/context/activity-component';
 import { getTotalSpeed } from '../../../utils/location-utils';
 
+const { initial, started, paused, continued } = STATUSES;
 export default function StartStopBtn() {
   const { setStatus, status, locations, duration, distance } = useContext(ActivityComponentContext);
   const dispatch = useDispatch();
   const { startBtn, textStyle } = styles;
-  const { language } = useAppSelector(({ changeThemeLang }) => changeThemeLang);
+  const { language } = useAppSelector(({ language }) => language);
   const router = useRouter();
 
   const responseStatus: { [key in STATUSES]: STATUSES } = {
-    [STATUSES.initial]: STATUSES.started,
-    [STATUSES.started]: STATUSES.paused,
-    [STATUSES.paused]: STATUSES.initial,
-    [STATUSES.continue]: STATUSES.paused,
+    [initial]: started,
+    [started]: paused,
+    [paused]: initial,
+    [continued]: paused,
   };
 
   const responseIcon: { [key in STATUSES]: string | ReactNode } = {
-    [STATUSES.initial]: LANGUAGE[language].activity.controlBtns.start,
-    [STATUSES.started]: <FontAwesome name="stop" size={25} style={{ marginRight: 15 }} />,
-    [STATUSES.paused]: LANGUAGE[language].activity.controlBtns.finish,
-    [STATUSES.continue]: <FontAwesome name="stop" size={25} style={{ marginRight: 15 }} />,
+    [initial]: LANGUAGE[language].activity.controlBtns.start,
+    [started]: <FontAwesome name="stop" size={25} style={{ marginRight: 15 }} />,
+    [paused]: LANGUAGE[language].activity.controlBtns.finish,
+    [continued]: <FontAwesome name="stop" size={25} style={{ marginRight: 15 }} />,
   };
 
   return (
@@ -37,7 +38,7 @@ export default function StartStopBtn() {
       style={startBtn}
       onPress={() => {
         setStatus(responseStatus[status]);
-        if (status === STATUSES.paused) {
+        if (status === paused) {
           dispatch(saveFinishedActivity({ locations, duration, speed: getTotalSpeed(distance, duration), distance }));
           router.push('/(tabs)/save-activity/');
         }

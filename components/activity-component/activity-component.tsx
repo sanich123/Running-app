@@ -8,11 +8,13 @@ import Controls from '../controls/controls';
 import Map from '../map/map';
 import Metrics from '../metrics/metrics';
 
+const { initial, paused } = STATUSES;
+
 export default function ActivityComponent() {
   const { setStatus, status, locations, duration, cameraRef, lastView, distance } = useFakeLocations();
   const { page, monitor, mapContainer } = styles;
   const [mapVisible, setMapVisible] = useState(false);
-  const shouldShowMap = status === STATUSES.initial || status === STATUSES.paused || mapVisible;
+  const shouldShowMap = status === initial || status === paused || mapVisible;
   return (
     <ActivityComponentContext.Provider
       value={{ setStatus, status, locations, duration, cameraRef, lastView, distance, mapVisible, setMapVisible }}>
@@ -22,7 +24,7 @@ export default function ActivityComponent() {
             <Map mapVisible={mapVisible} cameraRef={cameraRef} locations={locations} lastView={lastView} />
           )}
 
-          {status !== STATUSES.initial && <Metrics />}
+          {status !== initial && <Metrics />}
         </View>
         <View style={monitor}>
           <Controls />

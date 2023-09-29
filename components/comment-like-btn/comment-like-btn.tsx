@@ -4,7 +4,7 @@ import { ToastAndroid } from 'react-native';
 import { MD3Colors } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { useSendOrDeleteLikeToCommentMutation, useGetLikesByCommentIdQuery } from '../../redux/runnich-api/runnich-api';
+import { useSendOrDeleteLikeToCommentMutation, useGetLikesByCommentIdQuery } from '../../redux/runich-api/runich-api';
 import { errorHandler } from '../../utils/error-handler';
 
 export default function CommentLikeBtn({ commentId }: { commentId: string }) {

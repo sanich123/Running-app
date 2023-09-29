@@ -13,7 +13,7 @@ import ErrorComponent from '../../../../components/error-component/error-compone
 import FloatingBtn from '../../../../components/floating-btn/floating-btn';
 import UserNameSurname from '../../../../components/user-name-surname/user-name-surname';
 import UserSportDate from '../../../../components/user-sport-date/user-sport-date';
-import { useGetActivityByActivityIdQuery } from '../../../../redux/runnich-api/runnich-api';
+import { useGetActivityByActivityIdQuery } from '../../../../redux/runich-api/runich-api';
 
 export default function Comment() {
   const { id: activityId } = useLocalSearchParams();

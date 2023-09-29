@@ -3,7 +3,7 @@ import { ToastAndroid } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { useSendOrDeleteLikeMutation, useGetLikesByActivityIdQuery } from '../../redux/runnich-api/runnich-api';
+import { useSendOrDeleteLikeMutation, useGetLikesByActivityIdQuery } from '../../redux/runich-api/runich-api';
 import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
 import { errorHandler } from '../../utils/error-handler';
 

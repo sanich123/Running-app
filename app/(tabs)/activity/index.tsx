@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { View, Text } from '../../../components/Themed';
 import ActivityComponent from '../../../components/activity-component/activity-component';
-import { setInitialLocation } from '../../../redux/location-slice/location-slice';
+import { setInitialLocation } from '../../../redux/location/location';
 
 export default function Activity() {
   const dispatch = useDispatch();

@@ -6,9 +6,11 @@ import { getTotalSpeed } from '../../../utils/location-utils';
 import { View, Text } from '../../Themed';
 import { metricsStyles } from '../metrics-styles';
 
+const { started, continued } = STATUSES;
+
 export default function Pace() {
   const { mapVisible, distance, duration, status } = useContext(ActivityComponentContext);
-  const isStartedOrContinue = status === STATUSES.started || status === STATUSES.continue;
+  const isStartedOrContinue = status === started || status === continued;
   const { basicWrapper, metricsWrapper, metricsHeader, metricsText, bigPace, bigHeader } = metricsStyles;
   return (
     <View style={[basicWrapper, !mapVisible && isStartedOrContinue && metricsWrapper && bigPace]}>

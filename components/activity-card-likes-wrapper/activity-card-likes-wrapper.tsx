@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text, ActivityIndicator } from 'react-native-paper';
 
-import { useGetLikesByActivityIdQuery } from '../../redux/runnich-api/runnich-api';
+import { useGetLikesByActivityIdQuery } from '../../redux/runich-api/runich-api';
 import AvatarShowable from '../avatar/avatar-showable';
 import NumberOfLikes from '../number-of-likes/number-of-likes';
 

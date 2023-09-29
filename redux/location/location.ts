@@ -5,7 +5,6 @@ export const location = createSlice({
   name: 'location',
   initialState: {
     initialLocation: {} as Location,
-    duration: 0,
     finishedActivity: {
       locations: [] as Location[],
       duration: 0,
@@ -20,11 +19,8 @@ export const location = createSlice({
     saveFinishedActivity: (state, action) => {
       state.finishedActivity = action.payload;
     },
-    setDuration: (state, action) => {
-      state.duration = action.payload;
-    },
   },
 });
 
-export const { setInitialLocation, setDuration, saveFinishedActivity } = location.actions;
+export const { setInitialLocation, saveFinishedActivity } = location.actions;
 export default location.reducer;
