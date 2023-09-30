@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const activity = createSlice({
   name: 'activity',
   initialState: {
+    isNeedToSave: false,
     isNeedToSend: false,
     activityToSend: {
       locations: [] as Location[],
@@ -21,11 +22,14 @@ export const activity = createSlice({
     setIsNeedToSendActivity: (state, action) => {
       state.isNeedToSend = action.payload;
     },
+    setIsNeedToSaveActivity: (state, action) => {
+      state.isNeedToSave = action.payload;
+    },
     saveActivity: (state, action) => {
       state.activityToSend = action.payload;
     },
   },
 });
 
-export const { saveActivity, setIsNeedToSendActivity } = activity.actions;
+export const { saveActivity, setIsNeedToSendActivity, setIsNeedToSaveActivity } = activity.actions;
 export default activity.reducer;

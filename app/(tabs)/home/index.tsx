@@ -1,11 +1,11 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { SafeAreaView, FlatList, ToastAndroid, Pressable } from 'react-native';
-import { ActivityIndicator, Divider, Searchbar, Text } from 'react-native-paper';
+import { SafeAreaView, FlatList, ToastAndroid } from 'react-native';
+import { ActivityIndicator, Divider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useAuth } from '../../../auth/context/auth-context';
-import { View } from '../../../components/Themed';
+import ActivitySendingIndicator from '../../../components/activity-sending-indicator/activity-sendinig-indicator';
 import ActivityCard from '../../../components/card/card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
 import ErrorComponent from '../../../components/error-component/error-component';
@@ -30,13 +30,16 @@ export default function Feed() {
   const { activityToSend, isNeedToSend } = useSelector(({ activity }) => activity);
   const [isErrorSending, setIsErrorSending] = useState(false);
   const [isStartSending, setIsStartSending] = useState(false);
+  const [isSuccessSending, setIsSuccessSending] = useState(false);
+  console.log(isNeedToSend, isStartSending, isErrorSending, isSuccessSending);
 
   useEffect(() => {
     if (isNeedToSend) {
       setIsStartSending(true);
       sendActivityToServer();
+      dispatch(setIsNeedToSendActivity(false));
     }
-  }, []);
+  }, [isNeedToSend]);
 
   async function sendActivityToServer() {
     try {
@@ -45,13 +48,17 @@ export default function Feed() {
         .then((data) => {
           console.log(data);
           ToastAndroid.show('Successfully sended data to server!', ToastAndroid.SHORT);
-          setIsStartSending(false);
           dispatch(setIsNeedToSendActivity(false));
+          setIsSuccessSending(true);
         })
         .catch((error) => {
           setIsErrorSending(true);
           ToastAndroid.show('Some error occured', ToastAndroid.SHORT);
           console.log(error);
+        })
+        .finally(() => {
+          setIsStartSending(false);
+          setTimeout(() => setIsSuccessSending(false), 1000);
         });
     } catch (error) {
       errorHandler(error);
@@ -61,26 +68,6 @@ export default function Feed() {
     <>
       <SafeAreaView
         style={[{ flex: 1 }, (isLoading || !activities?.length) && { alignItems: 'center', justifyContent: 'center' }]}>
-        {(isStartSending || isErrorSending) && (
-          <Pressable
-            onPress={() => {
-              if (isErrorSending) {
-                dispatch(setIsNeedToSendActivity(true));
-              }
-            }}>
-            <View
-              style={{
-                height: 30,
-                position: 'absolute',
-                top: 0,
-                backgroundColor: !isErrorSending ? 'green' : 'red',
-              }}>
-              <Text variant="bodyMedium">
-                {isStartSending ? 'Sending an activity' : 'An error occured, try to refetch manually'}
-              </Text>
-            </View>
-          </Pressable>
-        )}
         {activities && (
           <FlatList
             onRefresh={onRefresh}
@@ -107,7 +94,11 @@ export default function Feed() {
               );
             }}
             ListEmptyComponent={<EmptyActivitiesList />}
-            ListHeaderComponent={<Searchbar placeholder="Search something" value="" />}
+            ListHeaderComponent={
+              (isStartSending || isErrorSending) && (
+                <ActivitySendingIndicator isStartSending={isStartSending} isErrorSending={isErrorSending} />
+              )
+            }
             initialNumToRender={5}
             ItemSeparatorComponent={() => <Divider />}
           />
