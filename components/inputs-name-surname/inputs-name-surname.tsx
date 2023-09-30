@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
+
 import { SaveSettingsContext } from '../../utils/context/settings';
 
 export default function InputsNameSurname() {

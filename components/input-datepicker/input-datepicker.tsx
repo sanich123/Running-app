@@ -1,9 +1,8 @@
 import { useContext } from 'react';
 import { View } from 'react-native';
 import { DatePickerInput } from 'react-native-paper-dates';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import { saveBirthday } from '../../redux/profile/profile';
 import { SaveSettingsContext } from '../../utils/context/settings';
 
 export default function InputDatepicker() {
