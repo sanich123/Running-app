@@ -8,7 +8,6 @@ export default function useGetSettings() {
   const { data: profileInfo } = useGetUserProfileByIdQuery(user.id);
 
   const [gender, setGender] = useState(profileInfo?.gender);
-  const [sport, setSport] = useState(profileInfo?.sport);
   const [name, setName] = useState(profileInfo?.name);
   const [surname, setSurname] = useState(profileInfo?.surname);
   const [city, setCity] = useState(profileInfo?.city);
@@ -22,7 +21,6 @@ export default function useGetSettings() {
 
   return {
     gender,
-    sport,
     name,
     surname,
     city,
@@ -34,7 +32,6 @@ export default function useGetSettings() {
     isDisabled,
     photoUrl,
     setGender,
-    setSport,
     setName,
     setSurname,
     setCity,

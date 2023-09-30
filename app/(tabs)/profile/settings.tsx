@@ -1,9 +1,6 @@
-import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { useAuth } from '../../../auth/context/auth-context';
 import { View } from '../../../components/Themed';
 import AvatarIconEditable from '../../../components/avatar/avatar-editable';
 import InputBio from '../../../components/input-bio/input-bio';
@@ -11,17 +8,13 @@ import InputDatepicker from '../../../components/input-datepicker/input-datepick
 import InputsNameSurname from '../../../components/inputs-name-surname/inputs-name-surname';
 import InputsWeightCity from '../../../components/inputs-weight-city/inputs-weight-city';
 import GenderBtns from '../../../components/segmented-btns/gender-btns';
-import SportsBtns from '../../../components/segmented-btns/sports-btns';
-import { saveSettingsInfo, setIsNeedUpdateProfile } from '../../../redux/profile/profile';
-import { useSendProfileInfoMutation } from '../../../redux/runich-api/runich-api';
+import { saveSettings } from '../../../redux/profile/profile';
 import { SaveSettingsContext } from '../../../utils/context/settings';
-import { errorHandler } from '../../../utils/error-handler';
 import useGetSettings from '../../../utils/hooks/use-get-settings';
 
 export default function ProfileSettings() {
   const {
     gender,
-    sport,
     name,
     surname,
     city,
@@ -33,7 +26,6 @@ export default function ProfileSettings() {
     isDisabled,
     photoUrl,
     setGender,
-    setSport,
     setName,
     setSurname,
     setCity,
@@ -45,59 +37,26 @@ export default function ProfileSettings() {
     setIsDisabled,
     setPhotoUrl,
   } = useGetSettings();
-  const { user } = useAuth();
-  const [sendProfileInfo] = useSendProfileInfoMutation();
-  const router = useRouter();
   const dispatch = useDispatch();
-  const { isNeedToUpdateSettings } = useSelector(({ profile }) => profile);
 
-  async function sendProfile() {
-    try {
-      const userSettings = {
-        gender,
-        sport,
-        name,
-        surname,
-        city,
-        weight,
-        bio,
-        birthday: birthday ? new Date(birthday).toString() : null,
-        profilePhoto: photoUrl ? photoUrl : image,
-      };
-      setIsDisabled(true);
-      setIsLoading(true);
-      dispatch(saveSettingsInfo(userSettings));
-      return await sendProfileInfo({
-        body: { ...userSettings, birthday: birthday ? new Date(birthday) : null },
-        id: user.id,
-      })
-        .unwrap()
-        .then((data) => {
-          console.log(data);
-          router.back();
-          dispatch(setIsNeedUpdateProfile(false));
-        })
-        .catch((error) => errorHandler(error))
-        .finally(() => {
-          setIsDisabled(false);
-          setIsLoading(false);
-        });
-    } catch (error) {
-      errorHandler(error);
-    }
-  }
-  useEffect(() => {
-    if (isNeedToUpdateSettings) {
-      sendProfile();
-    }
-  }, [isNeedToUpdateSettings]);
+  dispatch(
+    saveSettings({
+      gender,
+      name,
+      surname,
+      city,
+      weight,
+      bio,
+      birthday: birthday ? new Date(birthday).toString() : null,
+      profilePhoto: photoUrl ? photoUrl : image,
+    }),
+  );
 
   return (
     <ScrollView>
       <SaveSettingsContext.Provider
         value={{
           gender,
-          sport,
           name,
           surname,
           city,
@@ -109,7 +68,6 @@ export default function ProfileSettings() {
           isDisabled,
           photoUrl,
           setGender,
-          setSport,
           setName,
           setSurname,
           setCity,
@@ -125,7 +83,6 @@ export default function ProfileSettings() {
           <AvatarIconEditable />
           <InputsNameSurname />
           <InputsWeightCity />
-          <SportsBtns sport={sport} setSport={setSport} isDisabled={isDisabled} />
           <InputBio />
           <GenderBtns />
           <InputDatepicker />

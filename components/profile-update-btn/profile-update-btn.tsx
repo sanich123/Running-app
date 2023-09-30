@@ -1,24 +1,46 @@
-import { useState } from 'react';
-import { Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
+import { Pressable, ToastAndroid } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { setIsNeedUpdateProfile } from '../../redux/profile/profile';
+import { useAuth } from '../../auth/context/auth-context';
+import { setIsDisabledWhileSendingProfile } from '../../redux/profile/profile';
+import { useSendProfileInfoMutation } from '../../redux/runich-api/runich-api';
 
 export default function ProfileUpdateBtn() {
-  const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
+  const { user } = useAuth();
+  const { settings } = useSelector(({ profile }) => profile);
+  const { push } = useRouter();
+  const dispatch = useDispatch();
+  const [sendProfile, { isLoading, data, error }] = useSendProfileInfoMutation();
+  useEffect(() => {
+    if (isLoading) {
+      dispatch(setIsDisabledWhileSendingProfile(true));
+    }
+    if (data) {
+      console.log(data);
+      dispatch(setIsDisabledWhileSendingProfile(false));
+      push('/(tabs)/profile');
+    }
+    if (error) {
+      dispatch(setIsDisabledWhileSendingProfile(false));
+      ToastAndroid.show('An error occured during sending profile info. Try again!', ToastAndroid.LONG);
+    }
+  }, [isLoading, data, error]);
   return (
     <Pressable
-      onPress={() => {
-        setIsLoading(true);
-        dispatch(setIsNeedUpdateProfile(true));
-        setIsLoading(false);
+      onPress={async () => {
+        const birthday = settings.birthday ? new Date(settings.birthday) : null;
+        await sendProfile({
+          body: { ...settings, birthday },
+          id: user.id,
+        }).unwrap();
       }}
       disabled={isLoading}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>
-        Update
+        {`Updat${isLoading ? 'ing' : 'e'}`}
       </Text>
     </Pressable>
   );

@@ -1,13 +1,14 @@
 import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { saveIsSwitchOn } from '../../redux/activity/activity';
 import { SaveActivityContext } from '../../utils/context/save-activity';
 
 export default function Checkbox() {
   const { isSwitchOn, setIsSwitchOn, isDisabled } = useContext(SaveActivityContext);
+  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
   const dispatch = useDispatch();
   return (
     <View style={styles.switcherWrapper}>
@@ -18,7 +19,7 @@ export default function Checkbox() {
           setIsSwitchOn(!isSwitchOn);
         }}
         testID="Switcher"
-        disabled={isDisabled}
+        disabled={isDisabled || isDisabledWhileSending}
       />
       <Text variant="titleSmall">Don't publish on Home or Club feeds</Text>
     </View>

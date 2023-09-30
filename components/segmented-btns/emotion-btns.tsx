@@ -1,5 +1,5 @@
 import { SegmentedButtons } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { saveEmotion } from '../../redux/activity/activity';
 
@@ -11,10 +11,11 @@ type EmotionBtnsProps = {
 
 export default function EmotionBtns({ emotion, setEmotion, isDisabled }: EmotionBtnsProps) {
   const dispatch = useDispatch();
+  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
   return (
     <SegmentedButtons
       value={emotion}
-      onValueChange={() => {
+      onValueChange={(emotion) => {
         dispatch(saveEmotion(emotion));
         setEmotion(emotion);
       }}
@@ -24,21 +25,21 @@ export default function EmotionBtns({ emotion, setEmotion, isDisabled }: Emotion
           label: 'Fine',
           icon: 'emoticon-happy-outline',
           showSelectedCheck: true,
-          disabled: isDisabled,
+          disabled: isDisabled || isDisabledWhileSending,
         },
         {
           value: 'normal',
           label: 'Normal',
           icon: 'emoticon-neutral',
           showSelectedCheck: true,
-          disabled: isDisabled,
+          disabled: isDisabled || isDisabledWhileSending,
         },
         {
           value: 'fucked',
           label: 'Fucked',
           icon: 'emoticon-poop-outline',
           showSelectedCheck: true,
-          disabled: isDisabled,
+          disabled: isDisabled || isDisabledWhileSending,
         },
       ]}
       style={{ marginTop: 15 }}

@@ -3,6 +3,7 @@ import { Pressable, Image } from 'react-native';
 import { Image as ImageCompressor } from 'react-native-compressor';
 import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
 import { getBase64CodedImage, uploadPhoto, getSignedUrl } from '../../auth/supabase/storage/upload-photo';
@@ -13,7 +14,7 @@ import { getAccessToGallery } from '../../utils/file-sending';
 export default function AvatarIconEditable() {
   const { image, setImage, isDisabled, setPhotoUrl, setIsDisabled } = useContext(SaveSettingsContext);
   const { user } = useAuth();
-
+  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
   return (
     <Pressable
       onPress={async () => {
@@ -26,7 +27,7 @@ export default function AvatarIconEditable() {
             const compressedImage = await ImageCompressor.compress(imgSrc);
             const base64 = await getBase64CodedImage(compressedImage);
             const pathToPhoto = await uploadPhoto(user.id, base64);
-            const url = await getSignedUrl(pathToPhoto, 100000);
+            const url = await getSignedUrl(pathToPhoto, 1000000);
             setPhotoUrl(url);
             setIsDisabled(false);
           }
@@ -35,8 +36,8 @@ export default function AvatarIconEditable() {
           setIsDisabled(false);
         }
       }}
-      disabled={isDisabled}
-      style={isDisabled && { opacity: 0.5 }}>
+      disabled={isDisabled || isDisabledWhileSendingProfile}
+      style={(isDisabled || isDisabledWhileSendingProfile) && { opacity: 0.5 }}>
       {!image && (
         <Avatar.Image
           size={100}

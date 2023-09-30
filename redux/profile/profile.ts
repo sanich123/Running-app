@@ -7,10 +7,9 @@ export const profile = createSlice({
       email: '',
       password: '',
     },
-    isNeedToUpdateSettings: false,
+    isDisabledWhileSendingProfile: false,
     settings: {
       gender: '',
-      sport: '',
       name: '',
       surname: '',
       city: '',
@@ -28,11 +27,14 @@ export const profile = createSlice({
     saveEmailPassword: (state, action) => {
       state.privateInfo = action.payload;
     },
-    setIsNeedUpdateProfile: (state, action) => {
-      state.isNeedToUpdateSettings = action.payload;
+    saveSettings: (state, action) => {
+      state.settings = action.payload;
+    },
+    setIsDisabledWhileSendingProfile: (state, action) => {
+      state.isDisabledWhileSendingProfile = action.payload;
     },
   },
 });
 
-export const { saveSettingsInfo, saveEmailPassword, setIsNeedUpdateProfile } = profile.actions;
+export const { saveSettingsInfo, saveEmailPassword, saveSettings, setIsDisabledWhileSendingProfile } = profile.actions;
 export default profile.reducer;
