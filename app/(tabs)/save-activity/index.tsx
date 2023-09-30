@@ -1,8 +1,5 @@
-import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
 
 import Checkbox from '../../../components/checkbox/checkbox';
 import DeclineBtn from '../../../components/decline-btn/decline-btn';
@@ -10,16 +7,10 @@ import EmotionBtns from '../../../components/segmented-btns/emotion-btns';
 import SportsBtns from '../../../components/segmented-btns/sports-btns';
 import TextInputs from '../../../components/text-inputs/text-inputs';
 import UploadPhotosBtn from '../../../components/upload-photos-btn/upload-photos-btn';
-import { saveActivity, setIsNeedToSaveActivity, setIsNeedToSendActivity } from '../../../redux/activity/activity';
 import { SaveActivityContext } from '../../../utils/context/save-activity';
 import useGetActivityInfo from '../../../utils/hooks/use-get-activity-info';
 
 export default function SaveResult() {
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const { finishedActivity } = useSelector(({ location }) => location);
-  const { isNeedToSave } = useSelector(({ activity }) => activity);
-
   const {
     title,
     setTitle,
@@ -38,18 +29,6 @@ export default function SaveResult() {
     isLoading,
     setIsLoading,
   } = useGetActivityInfo();
-
-  useEffect(() => {
-    if (isNeedToSave) {
-      const body = { ...finishedActivity, title, description, sport, emotion, isSwitchOn, photoUrls: images };
-      setIsDisabled(true);
-      dispatch(saveActivity(body));
-      dispatch(setIsNeedToSaveActivity(false));
-      dispatch(setIsNeedToSendActivity(true));
-      router.push('/(tabs)/home/');
-      setIsDisabled(false);
-    }
-  }, [isNeedToSave]);
 
   return (
     <ScrollView style={styles.container}>

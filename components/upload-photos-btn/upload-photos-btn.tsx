@@ -3,9 +3,11 @@ import { useContext } from 'react';
 import { Image, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Image as ImageCompressor } from 'react-native-compressor';
 import { Button, useTheme } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
 import { getBase64CodedImage, uploadPhoto, getSignedUrl } from '../../auth/supabase/storage/upload-photo';
+import { savePhotoUrls } from '../../redux/activity/activity';
 import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
 import { getAccessToGallery } from '../../utils/file-sending';
@@ -15,6 +17,7 @@ export default function UploadPhotosBtn() {
   const { width } = useWindowDimensions();
   const theme = useTheme();
   const { user } = useAuth();
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -33,6 +36,7 @@ export default function UploadPhotosBtn() {
               const pathToPhoto = await uploadPhoto(user.id, base64);
               const url = await getSignedUrl(pathToPhoto, 100000);
               setImages([...images, url]);
+              dispatch(savePhotoUrls(images));
             }
           } catch (error) {
             errorHandler(error);

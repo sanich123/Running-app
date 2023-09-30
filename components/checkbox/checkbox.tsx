@@ -1,16 +1,22 @@
 import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 
+import { saveIsSwitchOn } from '../../redux/activity/activity';
 import { SaveActivityContext } from '../../utils/context/save-activity';
 
 export default function Checkbox() {
   const { isSwitchOn, setIsSwitchOn, isDisabled } = useContext(SaveActivityContext);
+  const dispatch = useDispatch();
   return (
     <View style={styles.switcherWrapper}>
       <Switch
         value={isSwitchOn}
-        onValueChange={() => setIsSwitchOn(!isSwitchOn)}
+        onValueChange={() => {
+          dispatch(saveIsSwitchOn(!isSwitchOn));
+          setIsSwitchOn(!isSwitchOn);
+        }}
         testID="Switcher"
         disabled={isDisabled}
       />

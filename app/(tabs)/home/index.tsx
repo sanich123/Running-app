@@ -3,7 +3,6 @@ import { SafeAreaView, FlatList } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
 
 import { useAuth } from '../../../auth/context/auth-context';
-import ActivitySendingIndicator from '../../../components/activity-sending-indicator/activity-sendinig-indicator';
 import ActivityCard from '../../../components/card/card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
 import ErrorComponent from '../../../components/error-component/error-component';
@@ -49,7 +48,7 @@ export default function Feed() {
               );
             }}
             ListEmptyComponent={<EmptyActivitiesList />}
-            ListHeaderComponent={<ActivitySendingIndicator />}
+            // ListHeaderComponent={<ActivitySendingIndicator />}
             initialNumToRender={5}
             ItemSeparatorComponent={() => <Divider />}
           />

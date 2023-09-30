@@ -1,4 +1,7 @@
 import { SegmentedButtons } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
+
+import { saveSport } from '../../redux/activity/activity';
 
 type SportBtnsProps = {
   sport: string;
@@ -7,10 +10,14 @@ type SportBtnsProps = {
 };
 
 export default function SportsBtns({ sport, isDisabled, setSport }: SportBtnsProps) {
+  const dispatch = useDispatch();
   return (
     <SegmentedButtons
       value={sport}
-      onValueChange={setSport}
+      onValueChange={() => {
+        dispatch(saveSport(sport));
+        setSport(sport);
+      }}
       buttons={[
         {
           value: 'run',

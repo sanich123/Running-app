@@ -1,4 +1,7 @@
 import { SegmentedButtons } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
+
+import { saveEmotion } from '../../redux/activity/activity';
 
 type EmotionBtnsProps = {
   emotion: string;
@@ -7,10 +10,14 @@ type EmotionBtnsProps = {
 };
 
 export default function EmotionBtns({ emotion, setEmotion, isDisabled }: EmotionBtnsProps) {
+  const dispatch = useDispatch();
   return (
     <SegmentedButtons
       value={emotion}
-      onValueChange={setEmotion}
+      onValueChange={() => {
+        dispatch(saveEmotion(emotion));
+        setEmotion(emotion);
+      }}
       buttons={[
         {
           value: 'good',

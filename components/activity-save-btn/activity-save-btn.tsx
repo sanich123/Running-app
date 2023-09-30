@@ -1,11 +1,15 @@
+import { useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { setIsNeedToSaveActivity } from '../../redux/activity/activity';
 
 export default function ActivitySaveBtn() {
   const { colors } = useTheme();
+  const router = useRouter();
+  const { finishedActivity } = useSelector(({ location }) => location);
+  const { isNeedToSave, savedActivity } = useSelector(({ activity }) => activity);
   const dispatch = useDispatch();
   return (
     <Pressable onPress={() => dispatch(setIsNeedToSaveActivity(true))}>
