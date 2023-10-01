@@ -12,7 +12,7 @@ export default function Activity() {
   const { initialLocation } = useSelector(({ location }) => location);
   if (!initialLocation.coords) {
     return (
-      <View>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Our app is only available, when we have your location</Text>
         <Button
           mode="outlined"
@@ -27,7 +27,6 @@ export default function Activity() {
         </Button>
       </View>
     );
-  } else {
-    return <ActivityComponent />;
   }
+  return <ActivityComponent />;
 }

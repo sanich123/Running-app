@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import { STATUSES } from '../../constants/enums';
 import { generateNextLocation, getDistance } from '../location-utils';
 
+const { initial, paused, started, continued } = STATUSES;
+
 export default function useFakeLocations() {
   const { initialLocation } = useSelector(({ location }) => location);
   const [status, setStatus] = useState(STATUSES.initial);
@@ -16,17 +18,17 @@ export default function useFakeLocations() {
 
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined;
-    if (status === STATUSES.started || status === STATUSES.continue) {
+    if (status === started || status === continued) {
       interval = setInterval(() => setDuration((stateDuration) => stateDuration + 1), 2000);
       return () => clearInterval(interval);
     }
-    if (status === STATUSES.initial) {
+    if (status === initial) {
       clearInterval(interval);
       setDuration(0);
       setLocations([initialLocation]);
       setDistance(0);
     }
-    if (status === STATUSES.paused) {
+    if (status === paused) {
       clearInterval(interval);
     }
   }, [status]);
