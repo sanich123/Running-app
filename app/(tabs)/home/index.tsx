@@ -48,7 +48,6 @@ export default function Feed() {
               );
             }}
             ListEmptyComponent={<EmptyActivitiesList />}
-            // ListHeaderComponent={<ActivitySendingIndicator />}
             initialNumToRender={5}
             ItemSeparatorComponent={() => <Divider />}
           />
