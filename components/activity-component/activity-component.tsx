@@ -17,17 +17,18 @@ export default function ActivityComponent() {
   const { setStatus, status, locations, duration, cameraRef, lastView, distance } = useFakeLocations();
   const [isMapVisible, setIsMapVisible] = useState(false);
   const { colors } = useTheme();
+  const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;
 
   return (
     <ActivityComponentContext.Provider
       value={{ setStatus, status, locations, duration, cameraRef, lastView, distance, isMapVisible, setIsMapVisible }}>
-      <View style={styles.page}>
-        <View style={styles.mapOrMetricsWrapper}>
+      <View style={page}>
+        <View style={mapOrMetricsWrapper}>
           {(status === initial || isMapVisible) && <Map isMapVisible={isMapVisible} />}
           {status !== initial && <Metrics isMapVisible={isMapVisible} />}
         </View>
-        <View style={styles.controlBtnsWrapper}>
-          <View style={[styles.btnsLayout, { backgroundColor: colors.onSecondary }]}>
+        <View style={controlBtnsWrapper}>
+          <View style={[btnsLayout, { backgroundColor: colors.onSecondary }]}>
             {status === paused && <ActivityPauseBtn />}
             <ActivityStartBtn />
             {status !== initial && <ActivityShowMapBtn />}

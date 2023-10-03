@@ -4,7 +4,7 @@ import { createContext } from 'react';
 import { STATUSES } from '../../constants/enums';
 
 export const ActivityComponentContext = createContext({
-  setStatus: (arg: STATUSES) => { },
+  setStatus: (arg: STATUSES) => {},
   status: 'initial',
   locations: [] as LocationObject[],
   duration: 0,
@@ -12,5 +12,5 @@ export const ActivityComponentContext = createContext({
   lastView: [0, 0],
   distance: 0,
   isMapVisible: true,
-  setIsMapVisible: (arg: boolean) => { },
+  setIsMapVisible: (arg: boolean) => {},
 });
