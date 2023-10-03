@@ -1,38 +1,33 @@
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
-import { LocationObject } from 'expo-location';
-import { RefObject } from 'react';
+import { useContext } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import NavIcon from './nav-icon/nav-icon';
-import RouteLine from './route-line/route-line';
+import { ActivityComponentContext } from '../../utils/context/activity-component';
+import MapNavIcon from '../map-nav-icon/map-nav-icon';
+import MapRouteLine from '../map-route-line/map-route-line';
 
-type MapProps = {
-  mapVisible: boolean;
-  cameraRef: RefObject<Camera>;
-  locations: LocationObject[];
-  lastView: number[];
-};
-
-export default function Map({ mapVisible, cameraRef, locations, lastView }: MapProps) {
+export default function Map({ isMapVisible }: { isMapVisible: boolean }) {
   const { initialLocation } = useSelector(({ location }) => location);
+  const { cameraRef, locations, lastView } = useContext(ActivityComponentContext);
   return (
     <>
-      {initialLocation && (
-        <MapView style={[{ flex: 1 }, mapVisible && { height: '60%' }]}>
+      {initialLocation?.coords ? (
+        <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
           <UserLocation androidRenderMode="compass" animated />
           <Camera
             ref={cameraRef}
-            centerCoordinate={[initialLocation.coords.longitude, initialLocation.coords.latitude]}
+            centerCoordinate={[initialLocation?.coords.longitude, initialLocation?.coords.latitude]}
             animationMode="flyTo"
             animationDuration={1000}
             zoomLevel={25}
           />
-          <NavIcon lastView={lastView} />
-          {locations.length > 1 && <RouteLine locations={locations} />}
+          <MapNavIcon lastView={lastView} />
+          {locations.length > 1 && <MapRouteLine locations={locations} />}
         </MapView>
+      ) : (
+        <ActivityIndicator size="large" />
       )}
-      {!initialLocation && <ActivityIndicator />}
     </>
   );
 }

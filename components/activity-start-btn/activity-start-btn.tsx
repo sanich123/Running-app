@@ -4,20 +4,21 @@ import { ReactNode, useContext } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { STATUSES } from '../../../constants/enums';
-import { LANGUAGE } from '../../../constants/languages/languages';
-import { useAppSelector } from '../../../redux/hooks/hooks';
-import { saveFinishedActivity } from '../../../redux/location/location';
-import { ActivityComponentContext } from '../../../utils/context/activity-component';
-import { getTotalSpeed } from '../../../utils/location-utils';
+import { STATUSES } from '../../constants/enums';
+import { LANGUAGE } from '../../constants/languages/languages';
+import { useAppSelector } from '../../redux/hooks/hooks';
+import { saveFinishedActivity } from '../../redux/location/location';
+import { ActivityComponentContext } from '../../utils/context/activity-component';
+import { getTotalSpeed } from '../../utils/location-utils';
 
 const { initial, started, paused, continued } = STATUSES;
-export default function StartStopBtn() {
+
+export default function ActivityStartBtn() {
   const { setStatus, status, locations, duration, distance } = useContext(ActivityComponentContext);
   const dispatch = useDispatch();
   const { startBtn, textStyle } = styles;
   const { language } = useAppSelector(({ language }) => language);
-  const router = useRouter();
+  const { push } = useRouter();
 
   const responseStatus: { [key in STATUSES]: STATUSES } = {
     [initial]: started,
@@ -40,7 +41,7 @@ export default function StartStopBtn() {
         setStatus(responseStatus[status]);
         if (status === paused) {
           dispatch(saveFinishedActivity({ locations, duration, speed: getTotalSpeed(distance, duration), distance }));
-          router.push('/(tabs)/save-activity/');
+          push('/(tabs)/save-activity/');
         }
       }}>
       <Text style={textStyle}>{responseIcon[status]}</Text>

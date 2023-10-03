@@ -1,17 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export const INITIAL_ACTIVITY = {
+  title: '',
+  description: '',
+  sport: '',
+  emotion: '',
+  isSwitchOn: false,
+  photoUrls: [] as string[],
+};
+
 export const activity = createSlice({
   name: 'activity',
   initialState: {
+    isNeedToResetInputs: false,
     isDisabledWhileSending: false,
-    additionalInfo: {
-      title: '',
-      description: '',
-      sport: '',
-      emotion: '',
-      isSwitchOn: false,
-      photoUrls: [] as string[],
-    },
+    additionalInfo: INITIAL_ACTIVITY,
   },
   reducers: {
     saveTitle: (state, action) => {
@@ -35,6 +38,12 @@ export const activity = createSlice({
     setIsDisableWhileSending: (state, action) => {
       state.isDisabledWhileSending = action.payload;
     },
+    resetAcitivityInfo: (state) => {
+      state.additionalInfo = INITIAL_ACTIVITY;
+    },
+    setIsNeedToResetInputs: (state, action) => {
+      state.isNeedToResetInputs = action.payload;
+    },
   },
 });
 
@@ -46,5 +55,7 @@ export const {
   saveIsSwitchOn,
   savePhotoUrls,
   setIsDisableWhileSending,
+  resetAcitivityInfo,
+  setIsNeedToResetInputs,
 } = activity.actions;
 export default activity.reducer;

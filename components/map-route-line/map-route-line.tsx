@@ -1,7 +1,7 @@
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
 
-export default function RouteLine({ locations }: { locations: LocationObject[] }) {
+export default function MapRouteLine({ locations }: { locations: LocationObject[] }) {
   const coordinates = locations.map(({ coords }) => [coords.longitude, coords.latitude]);
   return (
     <ShapeSource

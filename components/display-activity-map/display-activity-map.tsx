@@ -5,7 +5,7 @@ import { getBoundsOfDistance, getCenterOfBounds } from 'geolib';
 import { useEffect } from 'react';
 
 import useFakeLocations from '../../utils/hooks/use-fake-locations';
-import RouteLine from '../map/route-line/route-line';
+import RouteLine from '../map-route-line/map-route-line';
 
 export default function DisplayActivityMap({ locations, distance }: { locations: LocationObject[]; distance: number }) {
   const pathname = usePathname();

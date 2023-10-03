@@ -10,10 +10,11 @@ const { initial, paused, started, continued } = STATUSES;
 
 export default function useFakeLocations() {
   const { initialLocation } = useSelector(({ location }) => location);
+  const [locations, setLocations] = useState<LocationObject[]>([initialLocation]);
+  const [distance, setDistance] = useState(0);
   const [status, setStatus] = useState(STATUSES.initial);
   const [duration, setDuration] = useState(0);
-  const [distance, setDistance] = useState(0);
-  const [locations, setLocations] = useState<LocationObject[]>([initialLocation]);
+
   const cameraRef = useRef<Camera>(null);
 
   useEffect(() => {
@@ -42,16 +43,13 @@ export default function useFakeLocations() {
 
   useEffect(() => {
     cameraRef.current?.setCamera({
-      centerCoordinate: [
-        locations[locations.length - 1].coords.longitude,
-        locations[locations.length - 1].coords.latitude,
-      ],
+      centerCoordinate: [lastPosition?.longitude, lastPosition?.latitude],
     });
   }, [locations]);
-
+  const lastPosition = locations.length ? locations[locations.length - 1].coords : initialLocation.coords;
   return {
     locations,
-    lastView: [locations[locations.length - 1].coords?.longitude, locations[locations.length - 1].coords?.latitude],
+    lastView: [lastPosition?.longitude, lastPosition?.latitude],
     cameraRef,
     setStatus,
     duration,

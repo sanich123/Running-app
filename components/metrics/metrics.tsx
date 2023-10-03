@@ -1,29 +1,44 @@
 import { useContext } from 'react';
+import { View } from 'react-native';
 
-import Distance from './distance/distance';
-import LastKm from './last-km/last-km';
-import { metricsStyles } from './metrics-styles';
-import Pace from './pace/pace';
-import Steps from './steps/steps';
-import Time from './time/time';
 import { STATUSES } from '../../constants/enums';
 import { ActivityComponentContext } from '../../utils/context/activity-component';
-import { View } from '../Themed';
+import { getTotalSpeed } from '../../utils/location-utils';
+import { formatDuration } from '../../utils/time-formatter';
+import MetricsItem from '../metrics-item/metrics-item';
 
-const { started, continued } = STATUSES;
-
-export default function Metrics() {
-  const { status, mapVisible } = useContext(ActivityComponentContext);
-  const { containerMetrics } = metricsStyles;
-  const isStartedOrContinue = status === started || status === continued;
+export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
+  const { status, duration, distance } = useContext(ActivityComponentContext);
+  const formattedDuration = formatDuration(duration);
+  const formattedSpeed = distance && duration ? getTotalSpeed(distance, duration) : 0;
+  const formattedDistance = (distance / 1000).toFixed(3);
 
   return (
-    <View style={[containerMetrics, isStartedOrContinue && { height: '80%' }, mapVisible && { height: '15%' }]}>
-      <Time />
-      {!mapVisible && isStartedOrContinue && <Steps />}
-      <Pace />
-      {!mapVisible && isStartedOrContinue && <LastKm />}
-      <Distance />
+    <View
+      style={[
+        {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          height: '100%',
+        },
+        { backgroundColor: 'yellow' },
+        status === STATUSES.paused && {
+          height: '100%',
+        },
+        isMapVisible && {
+          height: '15%',
+        },
+      ]}>
+      <>
+        <MetricsItem isMapVisible={isMapVisible} title="Time:" metric={formattedDuration} isCentral={false} />
+        {!isMapVisible && <MetricsItem isMapVisible={isMapVisible} title="Steps:" metric="12345" isCentral={false} />}
+        <MetricsItem isMapVisible={isMapVisible} title="Pace:" metric={`${formattedSpeed} км/ч`} isCentral />
+        {!isMapVisible && (
+          <MetricsItem isMapVisible={isMapVisible} title="Last km:" metric="5.30 min/km" isCentral={false} />
+        )}
+        <MetricsItem isMapVisible={isMapVisible} title="Distance:" metric={formattedDistance} isCentral={false} />
+      </>
     </View>
   );
 }
