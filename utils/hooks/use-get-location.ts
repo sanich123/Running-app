@@ -1,5 +1,11 @@
 import Mapbox from '@rnmapbox/maps';
-import { LocationObject, requestForegroundPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
+import {
+  LocationObject,
+  requestForegroundPermissionsAsync,
+  getCurrentPositionAsync,
+  startLocationUpdatesAsync,
+  requestBackgroundPermissionsAsync,
+} from 'expo-location';
 import { useEffect, useState } from 'react';
 
 import { useAppDispatch } from '../../redux/hooks/hooks';
@@ -17,10 +23,24 @@ export default function useGetLocation() {
   useEffect(() => {
     (async () => {
       try {
-        const { status } = await requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
+        const foregroundPermission = await requestForegroundPermissionsAsync();
+        if (!foregroundPermission.granted) {
           setError(true);
           return;
+        }
+        const backgroundPermission = await requestBackgroundPermissionsAsync();
+        if (!backgroundPermission.granted) {
+          setError(true);
+          return;
+        } else {
+          await startLocationUpdatesAsync('BACKGROUND_LOCATION_TASK', {
+            showsBackgroundLocationIndicator: true,
+            foregroundService: {
+              notificationTitle: 'Location',
+              notificationBody: 'Location tracking in background',
+              notificationColor: '#fff',
+            },
+          });
         }
         const currentPosition = await getCurrentPositionAsync();
         console.log(`Received currentPosition`, currentPosition);

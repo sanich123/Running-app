@@ -4,7 +4,7 @@ import { useTheme } from 'react-native-paper';
 
 import { STATUSES } from '../../constants/enums';
 import { ActivityComponentContext } from '../../utils/context/activity-component';
-import useFakeLocations from '../../utils/hooks/use-fake-locations';
+import useUserLocation from '../../utils/hooks/use-user-location';
 import ActivityPauseBtn from '../activity-pause-btn/activity-pause-btn';
 import ActivityShowMapBtn from '../activity-show-map-btn/activity-show-map-btn';
 import ActivityStartBtn from '../activity-start-btn/activity-start-btn';
@@ -14,7 +14,7 @@ import Metrics from '../metrics/metrics';
 const { initial, paused } = STATUSES;
 
 export default function ActivityComponent() {
-  const { setStatus, status, locations, duration, cameraRef, lastView, distance } = useFakeLocations();
+  const { setStatus, status, locations, duration, cameraRef, lastView, distance } = useUserLocation();
   const [isMapVisible, setIsMapVisible] = useState(false);
   const { colors } = useTheme();
   const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;

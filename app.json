@@ -31,7 +31,8 @@
       },
       "package": "com.sanich123.runningapp",
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "ACCESS_BACKGROUND_LOCATION"
       ],
       "runtimeVersion": {
         "policy": "sdkVersion"

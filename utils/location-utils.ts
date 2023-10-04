@@ -12,6 +12,10 @@ export function getTotalSpeed(distance: number, time: number) {
   return Number((distance / 1000 / (time / 3600)).toFixed(2));
 }
 
+export function getSpeedInMinsInKm(distance: number, time: number) {
+  return (60 / getTotalSpeed(distance, time)).toFixed(2);
+}
+
 export function paceBetween(distance: number, from: LocationObject, to: LocationObject) {
   return Math.round((to.timestamp - from.timestamp) / distance);
 }
