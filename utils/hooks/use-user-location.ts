@@ -1,19 +1,13 @@
 import { Camera } from '@rnmapbox/maps';
-import {
-  Accuracy,
-  LocationObject,
-  hasStartedLocationUpdatesAsync,
-  startLocationUpdatesAsync,
-  stopLocationUpdatesAsync,
-} from 'expo-location';
+import { LocationObject } from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import { isTaskRegisteredAsync } from 'expo-task-manager';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { STATUSES } from '../../constants/enums';
 import { resetLocationsFromBackground, setLocationsFromBackground } from '../../redux/location/location';
 import { store } from '../../redux/store';
+import { startLocationTracking, stopLocationTracking } from '../background-location';
 import { getDistance } from '../location-utils';
 
 const { initial, paused, started, continued } = STATUSES;
@@ -24,7 +18,6 @@ export default function useUserLocation() {
   const { locationsFromBackground } = useSelector(({ location }) => location);
   console.log('from redux in hook', locationsFromBackground, locationsFromBackground.length);
   const { initialLocation } = useSelector(({ location }) => location);
-  // const [locations, setLocations] = useState<LocationObject[]>([initialLocation]);
   const [distance, setDistance] = useState(0);
   const [duration, setDuration] = useState(0);
   const [status, setStatus] = useState(STATUSES.initial);
@@ -64,31 +57,12 @@ export default function useUserLocation() {
     setDistance((distance) => distance + currentDistance);
   }, [locationsFromBackground]);
 
-  async function startLocationTracking() {
-    await startLocationUpdatesAsync(LOCATION_TRACKING, {
-      accuracy: Accuracy.Highest,
-      timeInterval: 5000,
-      distanceInterval: 0,
-    });
-    const hasStarted = await hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
-    setLocationStarted(hasStarted);
-    console.log('tracking started?', hasStarted);
-  }
-  async function stopLocationTracking() {
-    setLocationStarted(false);
-    isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
-      if (tracking) {
-        stopLocationUpdatesAsync(LOCATION_TRACKING);
-      }
-    });
-  }
-
   useEffect(() => {
     if (status === started || status === continued) {
-      startLocationTracking();
+      startLocationTracking({ setLocationStarted });
     }
     if (status === initial || status === paused) {
-      stopLocationTracking();
+      stopLocationTracking({ setLocationStarted });
     }
   }, [status]);
 
