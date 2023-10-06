@@ -3,7 +3,7 @@ import { ToastAndroid } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { usePostCommentWithActivityIdMutation } from '../../redux/runnich-api/runnich-api';
+import { usePostCommentWithActivityIdMutation } from '../../redux/runich-api/runich-api';
 import { errorHandler } from '../../utils/error-handler';
 
 export default function CommentInput({ activityId }: { activityId: string }) {

@@ -1,11 +1,14 @@
 import { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import { SaveSettingsContext } from '../../utils/context/settings';
 
 export default function InputsWeightCity() {
   const { city, setCity, weight, setWeight, isDisabled } = useContext(SaveSettingsContext);
+
+  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
   return (
     <View style={styles.inputWrapper}>
       <TextInput
@@ -15,7 +18,7 @@ export default function InputsWeightCity() {
         placeholder="Where are you from"
         value={city}
         onChangeText={(city) => setCity(city)}
-        disabled={isDisabled}
+        disabled={isDisabled || isDisabledWhileSendingProfile}
       />
       <TextInput
         mode="outlined"
@@ -25,7 +28,7 @@ export default function InputsWeightCity() {
         keyboardType="numeric"
         value={weight}
         onChangeText={(weight) => setWeight(weight)}
-        disabled={isDisabled}
+        disabled={isDisabled || isDisabledWhileSendingProfile}
       />
     </View>
   );

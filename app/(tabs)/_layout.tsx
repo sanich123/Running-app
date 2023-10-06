@@ -1,19 +1,20 @@
-import { useLinkTo } from '@react-navigation/native';
-import { Tabs, usePathname, useRouter } from 'expo-router';
-import { useColorScheme, Pressable, View } from 'react-native';
+import { Tabs, usePathname } from 'expo-router';
+import { useColorScheme } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { useTheme, Text } from 'react-native-paper';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
+import ActivitySaveBtn from '../../components/activity-save-btn/activity-save-btn';
 import AvatarShowable from '../../components/avatar/avatar-showable';
+import { ActivityIcon, HomeIcon, ProgressIcon } from '../../components/icons/icons';
+import ProfileEditBtn from '../../components/profile-edit-btn/profile-edit-btn';
+import ProfileUpdateBtn from '../../components/profile-update-btn/profile-update-btn';
+import UsersSettingsIcons from '../../components/users-settings-icons/users-settings-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { user } = useAuth();
   const pathname = usePathname();
-  const router = useRouter();
-  const linkTo = useLinkTo();
   const theme = useTheme();
   const commonSettings = {
     tabBarLabelStyle: { color: theme.colors.primaryContainer },
@@ -41,29 +42,9 @@ export default function TabLayout() {
           ...commonSettings,
           title: 'Feed',
           tabBarLabel: 'Feed',
-          tabBarIcon: ({ focused }) => (
-            <MaterialCommunityIcons name="home" color={theme.colors.primaryContainer} size={focused ? 40 : 35} />
-          ),
+          tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
           headerTitleStyle: { fontWeight: 'bold' },
-
-          headerRight: () => (
-            <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: 'transparent' }}>
-              <MaterialCommunityIcons
-                name="account-multiple"
-                color={theme.colors.primaryContainer}
-                size={30}
-                style={{ marginRight: 5 }}
-                onPress={() => router.push('/users')}
-              />
-              <MaterialCommunityIcons
-                name="cog-outline"
-                color={theme.colors.primaryContainer}
-                size={30}
-                style={{ marginRight: 5 }}
-                onPress={() => router.push('/settings')}
-              />
-            </View>
-          ),
+          headerRight: () => <UsersSettingsIcons />,
         }}
       />
       <Tabs.Screen
@@ -73,13 +54,7 @@ export default function TabLayout() {
           title: 'Activity',
           tabBarLabel: 'Activity',
           ...commonSettings,
-          tabBarIcon: ({ focused }) => (
-            <MaterialCommunityIcons
-              name="record-circle-outline"
-              color={theme.colors.primaryContainer}
-              size={focused ? 40 : 35}
-            />
-          ),
+          tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
         }}
       />
       <Tabs.Screen
@@ -89,9 +64,7 @@ export default function TabLayout() {
           ...commonSettings,
           title: 'Progress',
           tabBarLabel: 'Progress',
-          tabBarIcon: ({ focused }) => (
-            <MaterialCommunityIcons name="chart-bar" color={theme.colors.primaryContainer} size={focused ? 40 : 35} />
-          ),
+          tabBarIcon: ({ focused }) => <ProgressIcon focused={focused} />,
         }}
       />
       <Tabs.Screen
@@ -103,14 +76,7 @@ export default function TabLayout() {
           tabBarLabel: 'Profile',
           tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
           headerTitleStyle: { fontWeight: 'bold' },
-          headerRight: () =>
-            pathname !== '/profile/settings' ? (
-              <Pressable onPress={() => linkTo('/profile/settings')}>
-                <Text variant="titleMedium" style={{ color: theme.colors.primaryContainer, marginRight: 15 }}>
-                  Edit
-                </Text>
-              </Pressable>
-            ) : null,
+          headerRight: () => (pathname !== '/profile/settings' ? <ProfileEditBtn /> : <ProfileUpdateBtn />),
         }}
       />
       <Tabs.Screen
@@ -134,10 +100,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="save-activity/index"
         options={{
-          title: 'save',
+          title: '',
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
+          headerRight: () => <ActivitySaveBtn />,
         }}
       />
     </Tabs>

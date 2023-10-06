@@ -1,10 +1,12 @@
 import { useContext } from 'react';
 import { TextInput } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import { SaveSettingsContext } from '../../utils/context/settings';
 
 export default function InputBio() {
   const { bio, setBio, isDisabled } = useContext(SaveSettingsContext);
+  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
   return (
     <TextInput
       mode="outlined"
@@ -15,7 +17,7 @@ export default function InputBio() {
       numberOfLines={4}
       value={bio}
       onChangeText={(bio) => setBio(bio)}
-      disabled={isDisabled}
+      disabled={isDisabled || isDisabledWhileSendingProfile}
     />
   );
 }

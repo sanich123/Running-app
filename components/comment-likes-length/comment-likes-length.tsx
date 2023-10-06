@@ -1,7 +1,7 @@
 import { ActivityIndicator, Text } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { useGetLikesByCommentIdQuery } from '../../redux/runnich-api/runnich-api';
+import { useGetLikesByCommentIdQuery } from '../../redux/runich-api/runich-api';
 import ErrorComponent from '../error-component/error-component';
 
 export default function CommentLikesLength({ id }: { id: string }) {

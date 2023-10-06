@@ -1,22 +1,23 @@
 import { useRouter } from 'expo-router';
 import { SafeAreaView, FlatList } from 'react-native';
-import { ActivityIndicator, Divider, Searchbar } from 'react-native-paper';
+import { ActivityIndicator, Divider } from 'react-native-paper';
 
 import { useAuth } from '../../../auth/context/auth-context';
-import ActivityCard from '../../../components/activity-card/activity-card';
+import ActivityCard from '../../../components/card/card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
 import ErrorComponent from '../../../components/error-component/error-component';
 import FloatingBtn from '../../../components/floating-btn/floating-btn';
-import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runnich-api/runnich-api';
+import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
 import useGetLocation from '../../../utils/hooks/use-get-location';
 import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
   const { user } = useAuth();
+  const router = useRouter();
   useGetLocation();
   const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user.id);
   const { onRefresh, refreshing } = useRefresh(refetch);
-  const router = useRouter();
+
   return (
     <>
       <SafeAreaView
@@ -47,7 +48,6 @@ export default function Feed() {
               );
             }}
             ListEmptyComponent={<EmptyActivitiesList />}
-            ListHeaderComponent={<Searchbar placeholder="Search something" value="" />}
             initialNumToRender={5}
             ItemSeparatorComponent={() => <Divider />}
           />

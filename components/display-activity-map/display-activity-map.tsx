@@ -4,8 +4,8 @@ import { usePathname } from 'expo-router';
 import { getBoundsOfDistance, getCenterOfBounds } from 'geolib';
 import { useEffect } from 'react';
 
-import useFakeLocations from '../../utils/hooks/use-fake-locations';
-import RouteLine from '../map/route-line/route-line';
+import useUserLocation from '../../utils/hooks/use-user-location';
+import RouteLine from '../map-route-line/map-route-line';
 
 export default function DisplayActivityMap({ locations, distance }: { locations: LocationObject[]; distance: number }) {
   const pathname = usePathname();
@@ -13,7 +13,7 @@ export default function DisplayActivityMap({ locations, distance }: { locations:
     longitude,
     latitude,
   }));
-  const { cameraRef } = useFakeLocations();
+  const { cameraRef } = useUserLocation();
   const center = getCenterOfBounds(modifiedLocations);
   const [{ latitude: swLatitude, longitude: swLongitude }, { latitude: neLatitude, longitude: neLongitude }] =
     getBoundsOfDistance(center, distance);

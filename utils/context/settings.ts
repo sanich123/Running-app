@@ -2,7 +2,6 @@ import { createContext } from 'react';
 
 export const SaveSettingsContext = createContext({
   gender: '',
-  sport: '',
   name: '',
   surname: '',
   city: '',
@@ -15,7 +14,6 @@ export const SaveSettingsContext = createContext({
   isLoading: false,
   setIsDisabled: (arg: boolean) => {},
   setGender: (arg: string) => {},
-  setSport: (arg: string) => {},
   setName: (arg: string) => {},
   setSurname: (arg: string) => {},
   setCity: (arg: string) => {},

@@ -1,27 +1,46 @@
 import { useContext } from 'react';
+import { View, StyleSheet } from 'react-native';
 
-import Distance from './distance/distance';
-import LastKm from './last-km/last-km';
-import { metricsStyles } from './metrics-styles';
-import Pace from './pace/pace';
-import Steps from './steps/steps';
-import Time from './time/time';
-import { STATUSES } from '../../constants/enums';
 import { ActivityComponentContext } from '../../utils/context/activity-component';
-import { View } from '../Themed';
+import { getSpeedInMinsInKm } from '../../utils/location-utils';
+import { formatDuration } from '../../utils/time-formatter';
+import MetricsItem from '../metrics-item/metrics-item';
 
-export default function Metrics() {
-  const { status, mapVisible } = useContext(ActivityComponentContext);
-  const { containerMetrics } = metricsStyles;
-  const isStartedOrContinue = status === STATUSES.started || status === STATUSES.continue;
+export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
+  const { duration, distance } = useContext(ActivityComponentContext);
+  const formattedDuration = formatDuration(duration);
+  const formattedSpeed = distance && duration ? getSpeedInMinsInKm(distance, duration) : 0;
+  const formattedDistance = (distance / 1000).toFixed(3);
+  const { metricsLayout, withMapHeight } = styles;
 
   return (
-    <View style={[containerMetrics, isStartedOrContinue && { height: '80%' }, mapVisible && { height: '15%' }]}>
-      <Time />
-      {!mapVisible && isStartedOrContinue && <Steps />}
-      <Pace />
-      {!mapVisible && isStartedOrContinue && <LastKm />}
-      <Distance />
+    <View style={[metricsLayout, isMapVisible && withMapHeight]}>
+      <>
+        <MetricsItem isMapVisible={isMapVisible} title="Time:" metric={formattedDuration} isCentral={false} />
+        {!isMapVisible && <MetricsItem isMapVisible={isMapVisible} title="Steps:" metric="12345" isCentral={false} />}
+        <MetricsItem isMapVisible={isMapVisible} title="Pace:" metric={`${formattedSpeed}/km`} isCentral />
+        {!isMapVisible && (
+          <MetricsItem isMapVisible={isMapVisible} title="Last km:" metric="5.30 min/km" isCentral={false} />
+        )}
+        <MetricsItem
+          isMapVisible={isMapVisible}
+          title="Distance:"
+          metric={`${formattedDistance} km`}
+          isCentral={false}
+        />
+      </>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  metricsLayout: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    height: '100%',
+  },
+  withMapHeight: {
+    height: '15%',
+  },
+});

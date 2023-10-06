@@ -3,7 +3,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { useGetFriendsByUserIdQuery } from '../../redux/runnich-api/runnich-api';
+import { useGetFriendsByUserIdQuery } from '../../redux/runich-api/runich-api';
 import AddFriendBtn from '../add-friend-btn/add-friend-btn';
 import AvatarShowable from '../avatar/avatar-showable';
 import DeleteFriendBtn from '../delete-friend-btn/delete-friend-btn';
@@ -16,17 +16,19 @@ export default function UserListItem({ userId }: { userId: string }) {
   const { isLoading, error, data: friends } = useGetFriendsByUserIdQuery(user?.id);
   const isFriendOfOwner = friends?.filter(({ friendId }) => friendId === userId);
   const isMineActivity = userId === user?.id;
-  const router = useRouter();
+  const { push } = useRouter();
+
   return (
     <View style={styles.userItemWrapper}>
-      <Pressable onPress={() => router.push(`/home/profile/${userId}`)}>
+      <Pressable
+        style={{ display: 'flex', flexDirection: 'row', columnGap: 10 }}
+        onPress={() => push(`/home/profile/${userId}`)}>
         <AvatarShowable size={35} id={userId} />
+        <View>
+          <UserNameSurname userId={userId} size="bodyLarge" />
+          <UserCityAge userId={userId} size="bodyMedium" />
+        </View>
       </Pressable>
-
-      <View style={{ display: 'flex' }}>
-        <UserNameSurname userId={userId} size="bodyLarge" />
-        <UserCityAge userId={userId} size="bodyMedium" />
-      </View>
 
       {isLoading && <ActivityIndicator size="small" />}
       {error ? <ErrorComponent error={error} /> : null}

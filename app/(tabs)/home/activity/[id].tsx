@@ -2,9 +2,9 @@ import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
-import ActivityCard from '../../../../components/activity-card/activity-card';
+import ActivityCard from '../../../../components/card/card';
 import ErrorComponent from '../../../../components/error-component/error-component';
-import { useGetActivityByActivityIdQuery } from '../../../../redux/runnich-api/runnich-api';
+import { useGetActivityByActivityIdQuery } from '../../../../redux/runich-api/runich-api';
 
 export default function ViewActivityFullInfo() {
   const { id: activityId } = useLocalSearchParams();

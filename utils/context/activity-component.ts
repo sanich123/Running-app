@@ -11,6 +11,6 @@ export const ActivityComponentContext = createContext({
   cameraRef: null,
   lastView: [0, 0],
   distance: 0,
-  mapVisible: true,
-  setMapVisible: (arg: boolean) => {},
+  isMapVisible: true,
+  setIsMapVisible: (arg: boolean) => {},
 });

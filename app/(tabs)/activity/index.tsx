@@ -5,14 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { View, Text } from '../../../components/Themed';
 import ActivityComponent from '../../../components/activity-component/activity-component';
-import { setInitialLocation } from '../../../redux/location-slice/location-slice';
+import { setInitialLocation } from '../../../redux/location/location';
 
 export default function Activity() {
   const dispatch = useDispatch();
   const { initialLocation } = useSelector(({ location }) => location);
   if (!initialLocation.coords) {
     return (
-      <View>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Our app is only available, when we have your location</Text>
         <Button
           mode="outlined"
@@ -27,7 +27,6 @@ export default function Activity() {
         </Button>
       </View>
     );
-  } else {
-    return <ActivityComponent />;
   }
+  return <ActivityComponent />;
 }

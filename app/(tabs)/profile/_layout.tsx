@@ -2,9 +2,7 @@ import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 
 export default function ProfileStack() {
-  const {
-    colors: { primaryContainer, primary },
-  } = useTheme();
+  const { colors } = useTheme();
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -12,10 +10,9 @@ export default function ProfileStack() {
         name="settings"
         options={{
           title: '',
-          headerTintColor: primaryContainer,
+          headerTintColor: colors.primaryContainer,
           headerTitleStyle: { fontWeight: 'bold' },
-          headerStyle: { backgroundColor: primary },
-          presentation: 'modal',
+          headerStyle: { backgroundColor: colors.primary },
         }}
       />
     </Stack>

@@ -1,12 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
-import AcceptDeclineBtns from '../../../components/accept-decline-btns/accept-decline-btns';
 import Checkbox from '../../../components/checkbox/checkbox';
+import DeclineBtn from '../../../components/decline-btn/decline-btn';
 import EmotionBtns from '../../../components/segmented-btns/emotion-btns';
 import SportsBtns from '../../../components/segmented-btns/sports-btns';
 import TextInputs from '../../../components/text-inputs/text-inputs';
 import UploadPhotosBtn from '../../../components/upload-photos-btn/upload-photos-btn';
+import { setIsNeedToResetInputs } from '../../../redux/activity/activity';
 import { SaveActivityContext } from '../../../utils/context/save-activity';
 import useGetActivityInfo from '../../../utils/hooks/use-get-activity-info';
 
@@ -28,8 +31,23 @@ export default function SaveResult() {
     setImages,
     isLoading,
     setIsLoading,
+    setPhotoUrls,
   } = useGetActivityInfo();
+  const { isNeedToResetInputs } = useSelector(({ activity }) => activity);
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (isNeedToResetInputs) {
+      setTitle('');
+      setDescription('');
+      setSport('');
+      setEmotion('');
+      setIsSwitchOn(false);
+      setPhotoUrls([]);
+      setImages([]);
+      dispatch(setIsNeedToResetInputs(false));
+    }
+  }, [isNeedToResetInputs]);
   return (
     <ScrollView style={styles.container}>
       <SaveActivityContext.Provider
@@ -56,7 +74,7 @@ export default function SaveResult() {
         <EmotionBtns isDisabled={isDisabled} setEmotion={setEmotion} emotion={emotion} />
         <Checkbox />
         <UploadPhotosBtn />
-        <AcceptDeclineBtns />
+        <DeclineBtn />
       </SaveActivityContext.Provider>
       <StatusBar style="auto" />
     </ScrollView>
