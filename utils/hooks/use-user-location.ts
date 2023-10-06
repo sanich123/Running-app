@@ -70,7 +70,7 @@ export default function useUserLocation() {
     cameraRef.current?.setCamera({
       centerCoordinate: [lastPosition?.coords.longitude, lastPosition?.coords.latitude],
     });
-  }, []);
+  }, [locationsFromBackground]);
 
   return {
     locations: locationsFromBackground,

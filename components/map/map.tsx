@@ -17,7 +17,7 @@ export default function Map({ isMapVisible }: { isMapVisible: boolean }) {
           <UserLocation androidRenderMode="compass" animated />
           <Camera
             ref={cameraRef}
-            centerCoordinate={[initialLocation?.coords.longitude, initialLocation?.coords.latitude]}
+            centerCoordinate={lastView}
             animationMode="flyTo"
             animationDuration={1000}
             zoomLevel={25}
