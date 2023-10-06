@@ -1,6 +1,5 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Slot } from 'expo-router';
-import * as TaskManager from 'expo-task-manager';
 import { AppRegistry } from 'react-native';
 import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { enGB, registerTranslation } from 'react-native-paper-dates';
@@ -12,16 +11,6 @@ import { AuthProvider } from '../auth/context/auth-context';
 import SplashIcon from '../components/splash-screen/splash-screen';
 import { persistor, store } from '../redux/store';
 import { useGetFontsThemeSettings } from '../utils/hooks/use-get-fonts-theme-settings';
-
-TaskManager.defineTask('BACKGROUND_LOCATION_TASK', async ({ data, error }) => {
-  if (error) {
-    console.error(error);
-    return;
-  }
-  if (data) {
-    console.log('from background task', data);
-  }
-});
 
 export default function RootLayout() {
   const { loaded, colorScheme, theme } = useGetFontsThemeSettings();
