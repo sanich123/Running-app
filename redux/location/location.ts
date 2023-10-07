@@ -6,6 +6,8 @@ export const location = createSlice({
   name: 'location',
   initialState: {
     initialLocation: {} as Location,
+    distance: 0,
+    duration: 0,
     locationsFromBackground: [] as LocationObject[],
     finishedActivity: {
       locations: [] as Location[],
@@ -26,10 +28,24 @@ export const location = createSlice({
     },
     resetLocationsFromBackground: (state) => {
       state.locationsFromBackground = [];
+      state.duration = 0;
+      state.distance = 0;
+    },
+    setDistance: (state, action) => {
+      state.distance = state.distance + action.payload;
+    },
+    setDuration: (state, action) => {
+      state.duration = state.duration + action.payload;
     },
   },
 });
 
-export const { setInitialLocation, saveFinishedActivity, setLocationsFromBackground, resetLocationsFromBackground } =
-  location.actions;
+export const {
+  setInitialLocation,
+  saveFinishedActivity,
+  setLocationsFromBackground,
+  resetLocationsFromBackground,
+  setDistance,
+  setDuration,
+} = location.actions;
 export default location.reducer;

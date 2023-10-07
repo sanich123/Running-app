@@ -5,21 +5,23 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { STATUSES } from '../../constants/enums';
-import { resetLocationsFromBackground, setLocationsFromBackground } from '../../redux/location/location';
+import { LOCATION_TRACKING } from '../../constants/location';
+import {
+  resetLocationsFromBackground,
+  setDistance,
+  setDuration,
+  setLocationsFromBackground,
+} from '../../redux/location/location';
 import { store } from '../../redux/store';
 import { startLocationTracking, stopLocationTracking } from '../background-location';
 import { getDistance } from '../location-utils';
 
 const { initial, paused, started, continued } = STATUSES;
 
-const LOCATION_TRACKING = 'location-tracking';
-
 export default function useUserLocation() {
-  const { locationsFromBackground } = useSelector(({ location }) => location);
+  const { locationsFromBackground, distance, duration } = useSelector(({ location }) => location);
   console.log('from redux in hook', locationsFromBackground, locationsFromBackground.length);
   const { initialLocation } = useSelector(({ location }) => location);
-  const [distance, setDistance] = useState(0);
-  const [duration, setDuration] = useState(0);
   const [status, setStatus] = useState(STATUSES.initial);
 
   const dispatch = useDispatch();
@@ -30,44 +32,14 @@ export default function useUserLocation() {
     locationsFromBackground.length > 0 ? locationsFromBackground[locationsFromBackground.length - 1] : initialLocation;
 
   useEffect(() => {
-    let interval: string | number | NodeJS.Timeout | undefined;
-    if (status === started || status === continued) {
-      interval = setInterval(() => setDuration((stateDuration) => stateDuration + 1), 1000);
-      return () => clearInterval(interval);
-    }
-    if (status === initial) {
-      clearInterval(interval);
-      setDuration(0);
-      setDistance(0);
-      dispatch(resetLocationsFromBackground());
-    }
-    if (status === paused) {
-      clearInterval(interval);
-    }
-  }, [status]);
-
-  useEffect(() => {
-    const currentDistance =
-      locationsFromBackground.length > 1
-        ? getDistance(
-            locationsFromBackground[locationsFromBackground.length - 1],
-            locationsFromBackground[locationsFromBackground.length - 2],
-          )
-        : 0;
-    const currentDuration =
-      locationsFromBackground.length > 1
-        ? locationsFromBackground[locationsFromBackground.length - 1].timestamp -
-          locationsFromBackground[locationsFromBackground.length - 2].timestamp
-        : 0;
-    setDistance((distance) => distance + currentDistance);
-    setDuration((duration) => duration + currentDuration);
-  }, [locationsFromBackground]);
-
-  useEffect(() => {
     if (status === started || status === continued) {
       startLocationTracking({ setLocationStarted });
     }
-    if (status === initial || status === paused) {
+    if (status === initial) {
+      stopLocationTracking({ setLocationStarted });
+      dispatch(resetLocationsFromBackground());
+    }
+    if (status === paused) {
       stopLocationTracking({ setLocationStarted });
     }
   }, [status]);
@@ -97,22 +69,15 @@ TaskManager.defineTask(
     }
     if (data) {
       const { locations } = data;
-      const position = locations[0];
-      console.log('position from background', position);
-      store.dispatch(setLocationsFromBackground(position));
+      const currentPosition = locations[0];
+      console.log('position from background', currentPosition);
+      const positionsInRedux = store.getState().location.locationsFromBackground;
+      const previousPosition = positionsInRedux.length > 0 ? positionsInRedux[positionsInRedux.length - 1] : null;
+      const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
+      const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
+      store.dispatch(setDistance(currentDistance));
+      store.dispatch(setDuration(currentDuration));
+      store.dispatch(setLocationsFromBackground(currentPosition));
     }
   },
 );
-
-// async function setPosition() {
-//   const locationSubscription = await watchPositionAsync(
-//     { accuracy: Accuracy.Highest, timeInterval: 5000, distanceInterval: 0 },
-//     (position: LocationObject) => {
-//       console.log(`position from android ${new Date(Date.now())}`, position);
-//       const currentDistance = locations[0] ? getDistance(lastPosition, position) : 0;
-//       setDistance((distance) => distance + currentDistance);
-//       setLocations((locations) => [...locations, position]);
-//     },
-//   );
-//   setSubscribeIdToPositionUpdates(locationSubscription);
-// }
