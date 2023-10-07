@@ -54,7 +54,13 @@ export default function useUserLocation() {
             locationsFromBackground[locationsFromBackground.length - 2],
           )
         : 0;
+    const currentDuration =
+      locationsFromBackground.length > 1
+        ? locationsFromBackground[locationsFromBackground.length - 1].timestamp -
+          locationsFromBackground[locationsFromBackground.length - 2].timestamp
+        : 0;
     setDistance((distance) => distance + currentDistance);
+    setDuration((duration) => duration + currentDuration);
   }, [locationsFromBackground]);
 
   useEffect(() => {
