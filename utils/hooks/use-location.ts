@@ -1,15 +1,22 @@
+import { Camera } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import * as DistanceStorage from '../storage/distance-service';
 import * as DurationStorage from '../storage/duration-service';
 import * as LocationStorage from '../storage/location-service';
 
 export function useLocationData(interval = 3000) {
+  const { initialLocation } = useSelector(({ location }) => location);
   const locations = useRef<LocationObject[]>([]);
   const distance = useRef<number>(0);
   const duration = useRef<number>(0);
+  const cameraRef = useRef<Camera>(null);
   const [, setCount] = useState(0);
+  const lastPosition = locations.current.length > 0 ? locations.current[locations.current.length - 1] : initialLocation;
+
+  const lastView = [lastPosition?.coords.longitude, lastPosition?.coords.latitude];
 
   const onLocations = useCallback(
     (stored: LocationObject[]) => {
@@ -51,9 +58,17 @@ export function useLocationData(interval = 3000) {
     return () => window.clearInterval(timerId);
   }, [interval]);
 
+  useEffect(() => {
+    cameraRef.current?.setCamera({
+      centerCoordinate: lastView,
+    });
+  }, [locations]);
+
   return {
     storedLocations: locations.current,
     storedDuration: duration.current,
     storedDistance: distance.current,
+    cameraRef,
+    lastView,
   };
 }
