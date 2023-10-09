@@ -15,7 +15,6 @@ export default function useGetLocation() {
   Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
 
   const [location, setLocation] = useState<LocationObject>();
-  // const [error, setError] = useState(false);
   const [readyToShowLocation, setReadyToShowLocation] = useState(false);
   const dispatch = useAppDispatch();
 

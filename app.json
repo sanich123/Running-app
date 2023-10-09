@@ -4,11 +4,11 @@
     "slug": "running-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon-run.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/icon-run.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,22 +25,20 @@
       }
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon-run.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.sanich123.runningapp",
-      "permissions": [
-        "android.permission.RECORD_AUDIO",
-        "ACCESS_BACKGROUND_LOCATION"
-      ],
+      "permissions": ["android.permission.RECORD_AUDIO", "ACCESS_BACKGROUND_LOCATION"],
       "runtimeVersion": {
         "policy": "sdkVersion"
       }
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/images/icon-run.png"
+      "favicon": "./assets/images/favicon.png"
     },
     "extra": {
       "eas": {

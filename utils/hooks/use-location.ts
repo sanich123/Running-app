@@ -9,7 +9,7 @@ export function useLocationData(interval = 3000) {
   const locations = useRef<LocationObject[]>([]);
   const distance = useRef<number>(0);
   const duration = useRef<number>(0);
-  const [count, setCount] = useState(0);
+  const [, setCount] = useState(0);
 
   const onLocations = useCallback(
     (stored: LocationObject[]) => {
@@ -20,6 +20,7 @@ export function useLocationData(interval = 3000) {
     },
     [setCount, locations],
   );
+
   const onDistance = useCallback(
     (storedDistance: number) => {
       distance.current = storedDistance;
@@ -50,5 +51,9 @@ export function useLocationData(interval = 3000) {
     return () => window.clearInterval(timerId);
   }, [interval]);
 
-  return { storedLocations: locations.current, storedDuration: duration.current, storedDistance: distance.current };
+  return {
+    storedLocations: locations.current,
+    storedDuration: duration.current,
+    storedDistance: distance.current,
+  };
 }

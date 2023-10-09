@@ -11,7 +11,7 @@ import { LOCATION_TRACKING } from '../constants/location';
 export async function startLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {
     accuracy: Accuracy.Highest,
-    timeInterval: 5000,
+    timeInterval: 1000,
     distanceInterval: 0,
   });
   const hasStarted = await hasStartedLocationUpdatesAsync(LOCATION_TRACKING);

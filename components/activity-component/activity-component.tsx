@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { STATUSES } from '../../constants/enums';
 import { ActivityComponentContext } from '../../utils/context/activity-component';
 import { useLocationData } from '../../utils/hooks/use-location';
-import useUserLocation from '../../utils/hooks/use-user-location';
+import useUserLocation from '../../utils/hooks/use-start-stop-tracking';
 import ActivityPauseBtn from '../activity-pause-btn/activity-pause-btn';
 import ActivityShowMapBtn from '../activity-show-map-btn/activity-show-map-btn';
 import ActivityStartBtn from '../activity-start-btn/activity-start-btn';
