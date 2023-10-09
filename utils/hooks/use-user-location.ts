@@ -15,12 +15,15 @@ import {
 import { store } from '../../redux/store';
 import { startLocationTracking, stopLocationTracking } from '../background-location';
 import { getDistance } from '../location-utils';
+import { addDistance, clearDistance } from '../storage/distance-service';
+import { addDuration, clearDuration } from '../storage/duration-service';
+import { addLocation, clearLocations, getLocations } from '../storage/location-service';
 
 const { initial, paused, started, continued } = STATUSES;
 
-export default function useUserLocation() {
+export default function useUserLocation(interval = 3000) {
   const { locationsFromBackground, distance, duration } = useSelector(({ location }) => location);
-  console.log('from redux in hook', locationsFromBackground, locationsFromBackground.length);
+  // console.log('locations from redux', locationsFromBackground, locationsFromBackground.length);
   const { initialLocation } = useSelector(({ location }) => location);
   const [status, setStatus] = useState(STATUSES.initial);
 
@@ -38,6 +41,9 @@ export default function useUserLocation() {
     if (status === initial) {
       stopLocationTracking({ setLocationStarted });
       dispatch(resetLocationsFromBackground());
+      clearLocations();
+      clearDuration();
+      clearDistance();
     }
     if (status === paused) {
       stopLocationTracking({ setLocationStarted });
@@ -70,7 +76,18 @@ TaskManager.defineTask(
     if (data) {
       const { locations } = data;
       const currentPosition = locations[0];
-      console.log('position from background', currentPosition);
+      try {
+        const positionsInStorage = await getLocations();
+        const previousPosition =
+          positionsInStorage.length > 0 ? positionsInStorage[positionsInStorage.length - 1] : null;
+        const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
+        const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
+        await addDistance(currentDistance);
+        await addDuration(currentDuration);
+        await addLocation(currentPosition);
+      } catch (error) {
+        console.log('[tracking]', 'Something went wrong when saving a new location...', error);
+      }
       const positionsInRedux = store.getState().location.locationsFromBackground;
       const previousPosition = positionsInRedux.length > 0 ? positionsInRedux[positionsInRedux.length - 1] : null;
       const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
