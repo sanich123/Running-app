@@ -4,6 +4,7 @@
   "scripts": {
     "start": "expo start",
     "start:clear": "expo start --clear",
+    "start:dev": "SET APP_VARIANT=development && npx expo start",
     "test:watch": "jest --watchAll",
     "test": "jest",
     "build:local": "eas build --platform android --profile development --local",
