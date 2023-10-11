@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 import { STATUSES } from '../../constants/enums';
@@ -18,6 +18,7 @@ export default function ActivityComponent() {
   const { setStatus, status } = useStartStopTracking();
   const { storedLocations, storedDistance, storedDuration, cameraRef, lastView } = useLocationData();
   console.log('locations from asyncStorage', storedLocations, storedLocations.length);
+  ToastAndroid.show(`Locations have ${storedLocations.length}`, ToastAndroid.SHORT);
   const [isMapVisible, setIsMapVisible] = useState(false);
   const { colors } = useTheme();
   const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;

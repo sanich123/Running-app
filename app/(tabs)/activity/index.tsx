@@ -18,7 +18,7 @@ export default function Activity() {
           mode="outlined"
           onPress={async () => {
             const currentPosition = await getCurrentPositionAsync();
-            ToastAndroid.show(`Position from activity component ${currentPosition.toString()}`, ToastAndroid.SHORT);
+            ToastAndroid.show(`Got position ${currentPosition.toString()}`, ToastAndroid.SHORT);
             if (currentPosition) {
               dispatch(setInitialLocation(currentPosition));
             }

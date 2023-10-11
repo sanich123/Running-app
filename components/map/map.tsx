@@ -20,7 +20,7 @@ export default function Map({ isMapVisible }: { isMapVisible: boolean }) {
             centerCoordinate={lastView}
             animationMode="flyTo"
             animationDuration={1000}
-            zoomLevel={25}
+            zoomLevel={18}
           />
           <MapNavIcon lastView={lastView} />
           {locations.length > 1 && <MapRouteLine locations={locations} />}

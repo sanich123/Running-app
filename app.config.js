@@ -4,7 +4,7 @@ export default {
   expo: {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
-    version: '1.0.0',
+    version: '1.0.2',
     orientation: 'portrait',
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
     scheme: 'myapp',
@@ -12,7 +12,7 @@ export default {
     splash: {
       image: './assets/images/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#333333',
     },
     experiments: {
       typedRoutes: true,
@@ -29,10 +29,15 @@ export default {
       versionCode: 2,
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#333333',
       },
       package: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
-      permissions: ['android.permission.RECORD_AUDIO', 'ACCESS_BACKGROUND_LOCATION'],
+      permissions: [
+        'android.permission.RECORD_AUDIO',
+        'ACCESS_BACKGROUND_LOCATION',
+        'ACCESS_COARSE_LOCATION',
+        'ACCESS_FINE_LOCATION',
+      ],
       runtimeVersion: {
         policy: 'sdkVersion',
       },
