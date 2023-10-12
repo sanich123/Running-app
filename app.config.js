@@ -4,7 +4,7 @@ export default {
   expo: {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
-    version: '1.0.3',
+    version: '1.0.4',
     orientation: 'portrait',
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
     scheme: 'myapp',
@@ -26,7 +26,7 @@ export default {
       bundleIdentifier: IS_DEV ? 'com.myapp.dev' : 'com.myapp',
     },
     android: {
-      versionCode: 2,
+      versionCode: 4,
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#333333',
