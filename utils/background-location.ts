@@ -10,15 +10,14 @@ import * as TaskManager from 'expo-task-manager';
 import { ToastAndroid } from 'react-native';
 
 import { getDistance } from './location-utils';
-import { addDistance } from './storage/distance-service';
-import { addDuration } from './storage/duration-service';
-import { addLocation, getLocations } from './storage/location-service';
 import { LOCATION_TRACKING } from '../constants/location';
+import { setLocationsFromBackground, setDistance, setDuration } from '../redux/location/location';
+import { store } from '../redux/store';
 
 export async function startLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {
     accuracy: Accuracy.BestForNavigation,
-    timeInterval: 1000,
+    timeInterval: 2000,
     distanceInterval: 0,
     showsBackgroundLocationIndicator: true,
     foregroundService: {
@@ -54,14 +53,14 @@ TaskManager.defineTask(
       const { locations } = data;
       const currentPosition = locations[0];
       try {
-        const positionsInStorage = await getLocations();
+        const positionsInStorage = store.getState().location.locationsFromBackground;
         const previousPosition =
           positionsInStorage.length > 0 ? positionsInStorage[positionsInStorage.length - 1] : null;
         const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
         const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
-        await addDistance(currentDistance);
-        await addDuration(currentDuration);
-        await addLocation(currentPosition);
+        store.dispatch(setLocationsFromBackground(currentPosition));
+        store.dispatch(setDistance(currentDistance));
+        store.dispatch(setDuration(currentDuration));
       } catch (error) {
         console.log('[tracking]', 'Something went wrong when saving a new location...', error);
       }
