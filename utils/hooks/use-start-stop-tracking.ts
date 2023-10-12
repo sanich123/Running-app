@@ -1,31 +1,30 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { STATUSES } from '../../constants/enums';
+import { resetLocationsFromBackground } from '../../redux/location/location';
 import { startLocationTracking, stopLocationTracking } from '../background-location';
-import { clearDistance } from '../storage/distance-service';
-import { clearDuration } from '../storage/duration-service';
-import { clearLocations } from '../storage/location-service';
 
 const { initial, paused, started, continued } = STATUSES;
 
 export default function useStartStopTracking() {
-  const [status, setStatus] = useState(STATUSES.initial);
+  const { activityStatus } = useSelector(({ location }) => location);
+
   const [locationStarted, setLocationStarted] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (status === started || status === continued) {
+    if (activityStatus === started || activityStatus === continued) {
       startLocationTracking({ setLocationStarted });
     }
-    if (status === initial) {
+    if (activityStatus === initial) {
       stopLocationTracking({ setLocationStarted });
-      clearLocations();
-      clearDuration();
-      clearDistance();
+      dispatch(resetLocationsFromBackground());
     }
-    if (status === paused) {
+    if (activityStatus === paused) {
       stopLocationTracking({ setLocationStarted });
     }
-  }, [status]);
+  }, [activityStatus]);
 
-  return { setStatus, status, locationStarted };
+  return { activityStatus, locationStarted };
 }

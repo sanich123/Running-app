@@ -4,11 +4,11 @@ import { useDispatch } from 'react-redux';
 import { errorHandler } from './error-handler';
 import useGetSettings from './hooks/use-get-settings';
 import { useAuth } from '../auth/context/auth-context';
-import { useSendProfileInfoMutation } from '../redux/runich-api/runnich-api';
-import { saveSettingsInfo, setIsNeedUpdateProfile } from '../redux/user-info-slice/user-info-slice';
+import { saveSettingsInfo } from '../redux/profile/profile';
+import { useSendProfileInfoMutation } from '../redux/runich-api/runich-api';
 
 export async function SendProfile() {
-  const { gender, sport, name, surname, city, weight, bio, birthday, image, photoUrl, setIsLoading, setIsDisabled } =
+  const { gender, name, surname, city, weight, bio, birthday, image, photoUrl, setIsLoading, setIsDisabled } =
     useGetSettings();
   const dispatch = useDispatch();
   const [sendProfileInfo] = useSendProfileInfoMutation();
@@ -17,7 +17,6 @@ export async function SendProfile() {
   try {
     const userSettings = {
       gender,
-      sport,
       name,
       surname,
       city,
@@ -47,4 +46,7 @@ export async function SendProfile() {
   } catch (error) {
     errorHandler(error);
   }
+}
+function setIsNeedUpdateProfile(arg0: boolean): any {
+  throw new Error('Function not implemented.');
 }

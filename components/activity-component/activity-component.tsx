@@ -16,31 +16,36 @@ import Metrics from '../metrics/metrics';
 const { initial, paused } = STATUSES;
 
 export default function ActivityComponent() {
-  const { setStatus, status } = useStartStopTracking();
+  const { locationStarted } = useStartStopTracking();
   const cameraRef = useRef<Camera>(null);
   const {
     locationsFromBackground: locations,
     duration,
     distance,
     initialLocation,
+    activityStatus,
   } = useSelector(({ location }) => location);
+
   const lastPosition = locations.length > 0 ? locations[locations.length - 1] : initialLocation;
   const lastView = [lastPosition?.coords.longitude, lastPosition?.coords.latitude];
+
   console.log('locations in background is working', locations.length);
   ToastAndroid.show(`Locations have ${locations.length}`, ToastAndroid.SHORT);
+
   const [isMapVisible, setIsMapVisible] = useState(false);
   const { colors } = useTheme();
   const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;
+
   useEffect(() => {
     cameraRef.current?.setCamera({
       centerCoordinate: lastView,
     });
   }, [locations]);
+
   return (
     <ActivityComponentContext.Provider
       value={{
-        setStatus,
-        status,
+        status: activityStatus,
         locations,
         duration,
         cameraRef,
@@ -51,14 +56,14 @@ export default function ActivityComponent() {
       }}>
       <View style={page}>
         <View style={mapOrMetricsWrapper}>
-          {(status === initial || isMapVisible) && <Map isMapVisible={isMapVisible} />}
-          {status !== initial && <Metrics isMapVisible={isMapVisible} />}
+          {(activityStatus === initial || isMapVisible) && <Map isMapVisible={isMapVisible} />}
+          {activityStatus !== initial && <Metrics isMapVisible={isMapVisible} />}
         </View>
         <View style={controlBtnsWrapper}>
           <View style={[btnsLayout, { backgroundColor: colors.onSecondary }]}>
-            {status === paused && <ActivityPauseBtn />}
+            {activityStatus === paused && <ActivityPauseBtn />}
             <ActivityStartBtn />
-            {status !== initial && <ActivityShowMapBtn />}
+            {activityStatus !== initial && <ActivityShowMapBtn />}
           </View>
         </View>
       </View>
