@@ -7,8 +7,8 @@
     "start:dev": "SET APP_VARIANT=development && npx expo start",
     "test:watch": "jest --watchAll",
     "test": "jest",
-    "build:local:dev": "eas build --platform android --profile development --local",
-    "build:local:preview": "eas build --platform android --profile preview --local",
+    "build:local:dev": "yarn deps:all && yarn run prebuild && eas build -p android --profile development --local",
+    "build:local:preview": "yarn deps:all && yarn prebuild && eas build -p android --profile preview --local",
     "build:dev": "eas build --profile development --platform android",
     "build:preview": "eas build -p android --profile preview",
     "build:inspect": "eas build:inspect -p android -s archive -o ../build --profile=preview",
@@ -18,9 +18,9 @@
     "deps:scan": "npx expo-doctor@latest",
     "deps:check": "npx expo install --check",
     "prebuild": "npx expo prebuild --platform android",
+    "prepare": "husky install",
     "android": "expo run:android",
-    "ios": "expo run:ios",
-    "prepare": "husky install"
+    "ios": "expo run:ios"
   },
   "jest": {
     "preset": "jest-expo",
