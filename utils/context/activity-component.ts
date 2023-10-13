@@ -4,8 +4,7 @@ import { createContext } from 'react';
 import { STATUSES } from '../../constants/enums';
 
 export const ActivityComponentContext = createContext({
-  setStatus: (arg: STATUSES) => {},
-  status: 'initial',
+  status: STATUSES.initial,
   locations: [] as LocationObject[],
   duration: 0,
   cameraRef: null,

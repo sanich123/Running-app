@@ -17,10 +17,10 @@ export default function Map({ isMapVisible }: { isMapVisible: boolean }) {
           <UserLocation androidRenderMode="compass" animated />
           <Camera
             ref={cameraRef}
-            centerCoordinate={[initialLocation?.coords.longitude, initialLocation?.coords.latitude]}
+            centerCoordinate={lastView}
             animationMode="flyTo"
             animationDuration={1000}
-            zoomLevel={25}
+            zoomLevel={18}
           />
           <MapNavIcon lastView={lastView} />
           {locations.length > 1 && <MapRouteLine locations={locations} />}

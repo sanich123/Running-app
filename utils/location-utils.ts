@@ -9,7 +9,7 @@ export function getDistance(origin: LocationObject, destination: LocationObject)
 }
 
 export function getTotalSpeed(distance: number, time: number) {
-  return Number((distance / 1000 / (time / 3600)).toFixed(2));
+  return Number((distance / 1000 / (time / 3600000)).toFixed(2));
 }
 
 export function getSpeedInMinsInKm(distance: number, time: number) {

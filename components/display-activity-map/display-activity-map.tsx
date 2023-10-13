@@ -4,7 +4,7 @@ import { usePathname } from 'expo-router';
 import { getBoundsOfDistance, getCenterOfBounds } from 'geolib';
 import { useEffect } from 'react';
 
-import useUserLocation from '../../utils/hooks/use-user-location';
+import useUserLocation from '../../utils/hooks/use-start-stop-tracking';
 import RouteLine from '../map-route-line/map-route-line';
 
 export default function DisplayActivityMap({ locations, distance }: { locations: LocationObject[]; distance: number }) {

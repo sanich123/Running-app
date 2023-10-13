@@ -6,7 +6,7 @@ import { enGB, registerTranslation } from 'react-native-paper-dates';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { expo } from '../app.json';
+import expo from '../app.config.js';
 import { AuthProvider } from '../auth/context/auth-context';
 import SplashIcon from '../components/splash-screen/splash-screen';
 import { persistor, store } from '../redux/store';
