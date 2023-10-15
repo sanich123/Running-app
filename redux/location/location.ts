@@ -4,7 +4,11 @@ import { LocationObject } from 'expo-location';
 
 import { STATUSES } from '../../constants/enums';
 
-type LastKmSplit = { lastKilometerDuration: number; kilometerPoint: LocationObject };
+type LastKmSplit = {
+  lastKilometerDuration: number;
+  kilometerPoint: LocationObject;
+  lastKilometerAltitude: number;
+};
 
 export const location = createSlice({
   name: 'location',
@@ -13,6 +17,8 @@ export const location = createSlice({
     initialLocation: {} as Location,
     distance: 0,
     duration: 0,
+    altitude: 0,
+    lastKilometerAltitude: 0,
     lastKilometer: 0,
     lastKilometerDuration: 0,
     currentPace: 0,
@@ -46,6 +52,12 @@ export const location = createSlice({
     setDuration: (state, action) => {
       state.duration = state.duration + action.payload;
     },
+    setAltitude: (state, action) => {
+      state.altitude = state.altitude + action.payload;
+    },
+    setLastKmAltitude: (state, action) => {
+      state.lastKilometerAltitude = state.lastKilometerAltitude + action.payload;
+    },
     setActivityStatus: (state, action) => {
       state.activityStatus = action.payload;
     },
@@ -61,11 +73,16 @@ export const location = createSlice({
     resetLastKm: (state) => {
       state.lastKilometer = 0;
       state.lastKilometerDuration = 0;
+      state.lastKilometerAltitude = 0;
     },
     addDurationAndLocationToKmSplits: (state, action) => {
       state.kilometresSplit = [
         ...state.kilometresSplit,
-        { lastKilometerDuration: state.lastKilometerDuration, kilometerPoint: action.payload },
+        {
+          lastKilometerDuration: state.lastKilometerDuration,
+          kilometerPoint: action.payload,
+          lastKilometerAltitude: state.lastKilometerAltitude,
+        },
       ];
     },
   },
@@ -78,6 +95,8 @@ export const {
   resetLocationsFromBackground,
   setDistance,
   setDuration,
+  setAltitude,
+  setLastKmAltitude,
   setActivityStatus,
   setLastKm,
   resetLastKm,

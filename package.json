@@ -1,10 +1,10 @@
 {
   "name": "running-app",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "scripts": {
     "start": "expo start",
     "start:clear": "expo start --clear",
-    "start:dev": "SET APP_VARIANT=development && npx expo start",
+    "start:dev": "APP_VARIANT=development && npx expo start",
     "test:watch": "jest --watchAll",
     "test": "jest",
     "build:local:dev": "yarn deps:all && yarn run prebuild && eas build -p android --profile development --local",

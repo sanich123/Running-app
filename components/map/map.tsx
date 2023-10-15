@@ -25,15 +25,20 @@ export default function Map({ isMapVisible }: { isMapVisible: boolean }) {
             zoomLevel={18}
           />
           {kilometresSplit?.length > 0
-            ? kilometresSplit?.map(({ kilometerPoint }, index) => (
-                <PointAnnotation
-                  key={`${index}/${kilometerPoint.coords.longitude}, ${kilometerPoint.coords.latitude}`}
-                  coordinate={[kilometerPoint.coords.longitude, kilometerPoint.coords.latitude]}
-                  id={`${index}/${kilometerPoint.coords.longitude}, ${kilometerPoint.coords.latitude}`}>
-                  <View style={styles.customKm} />
-                  <Callout title={`${index + 1} kilometer`} />
-                </PointAnnotation>
-              ))
+            ? kilometresSplit?.map(({ kilometerPoint }, index) => {
+                const {
+                  coords: { longitude, latitude },
+                } = kilometerPoint;
+                return (
+                  <PointAnnotation
+                    key={`${index}/${longitude}, ${latitude}`}
+                    coordinate={[longitude, latitude]}
+                    id={`${index}/${longitude}, ${latitude}`}>
+                    <View style={styles.customKm} />
+                    <Callout title={`${index + 1} kilometer`} />
+                  </PointAnnotation>
+                );
+              })
             : null}
           <MapNavIcon lastView={lastView} />
           {locations.length > 1 && <MapRouteLine locations={locations} />}

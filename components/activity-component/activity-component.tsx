@@ -29,7 +29,7 @@ export default function ActivityComponent() {
   const lastPosition = locations.length > 0 ? locations[locations.length - 1] : initialLocation;
   const lastView = [lastPosition?.coords.longitude, lastPosition?.coords.latitude];
 
-  console.log('locations in background is working', locations.length);
+  // console.log('locations in background is working', locations.length);
   ToastAndroid.show(`Locations have ${locations.length}`, ToastAndroid.SHORT);
 
   const [isMapVisible, setIsMapVisible] = useState(false);

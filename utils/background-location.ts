@@ -20,6 +20,8 @@ import {
   setLastKmDuration,
   addDurationAndLocationToKmSplits,
   setCurrentPace,
+  setAltitude,
+  setLastKmAltitude,
 } from '../redux/location/location';
 import { store } from '../redux/store';
 
@@ -67,9 +69,18 @@ TaskManager.defineTask(
           locationsFromBackground.length > 0 ? locationsFromBackground[locationsFromBackground.length - 1] : null;
         const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
         const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
-        const currentPace = getSpeedInMinsInKm(currentDistance, currentDuration);
+        const currentAltitude = previousPosition
+          ? currentPosition.coords.altitude - previousPosition.coords.altitude
+          : 0;
+
+        const currentPace =
+          (currentDistance && currentDuration) ? getSpeedInMinsInKm(currentDistance, currentDuration) : 0;
         const currentKilometer = lastKilometer + currentDistance;
-        console.log(`the last km is: ${currentKilometer}`);
+
+        console.log(
+          `currDuration: ${currentDuration}, currDistance: ${currentDistance}, currAltitude: ${currentAltitude}, currPace: ${currentPace}, currKilometer: ${currentKilometer}`,
+        );
+
         if (currentKilometer >= 1000) {
           store.dispatch(addDurationAndLocationToKmSplits(currentPosition));
           store.dispatch(resetLastKm());
@@ -77,10 +88,13 @@ TaskManager.defineTask(
           store.dispatch(setLastKm(currentDistance));
           store.dispatch(setLastKmDuration(currentDuration));
           store.dispatch(setCurrentPace(currentPace));
+          store.dispatch(setLastKmAltitude(currentAltitude));
         }
         store.dispatch(setLocationsFromBackground(currentPosition));
         store.dispatch(setDistance(currentDistance));
         store.dispatch(setDuration(currentDuration));
+        store.dispatch(setCurrentPace(currentPace));
+        store.dispatch(setAltitude(currentAltitude));
       } catch (error) {
         console.log('[tracking]', 'Something went wrong when saving a new location...', error);
       }
