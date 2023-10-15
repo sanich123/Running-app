@@ -4,6 +4,8 @@ import { LocationObject } from 'expo-location';
 
 import { STATUSES } from '../../constants/enums';
 
+type LastKmSplit = { lastKilometerDuration: number; kilometerPoint: LocationObject };
+
 export const location = createSlice({
   name: 'location',
   initialState: {
@@ -11,6 +13,10 @@ export const location = createSlice({
     initialLocation: {} as Location,
     distance: 0,
     duration: 0,
+    lastKilometer: 0,
+    lastKilometerDuration: 0,
+    currentPace: 0,
+    kilometresSplit: [] as LastKmSplit[],
     locationsFromBackground: [] as LocationObject[],
     finishedActivity: {
       locations: [] as Location[],
@@ -43,6 +49,25 @@ export const location = createSlice({
     setActivityStatus: (state, action) => {
       state.activityStatus = action.payload;
     },
+    setLastKm: (state, action) => {
+      state.lastKilometer = state.lastKilometer + action.payload;
+    },
+    setLastKmDuration: (state, action) => {
+      state.lastKilometerDuration = state.lastKilometerDuration + action.payload;
+    },
+    setCurrentPace: (state, action) => {
+      state.currentPace = action.payload;
+    },
+    resetLastKm: (state) => {
+      state.lastKilometer = 0;
+      state.lastKilometerDuration = 0;
+    },
+    addDurationAndLocationToKmSplits: (state, action) => {
+      state.kilometresSplit = [
+        ...state.kilometresSplit,
+        { lastKilometerDuration: state.lastKilometerDuration, kilometerPoint: action.payload },
+      ];
+    },
   },
 });
 
@@ -54,5 +79,10 @@ export const {
   setDistance,
   setDuration,
   setActivityStatus,
+  setLastKm,
+  resetLastKm,
+  setLastKmDuration,
+  addDurationAndLocationToKmSplits,
+  setCurrentPace,
 } = location.actions;
 export default location.reducer;

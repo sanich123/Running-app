@@ -9,9 +9,18 @@ import { isTaskRegisteredAsync } from 'expo-task-manager';
 import * as TaskManager from 'expo-task-manager';
 import { ToastAndroid } from 'react-native';
 
-import { getDistance } from './location-utils';
+import { getDistance, getSpeedInMinsInKm } from './location-utils';
 import { LOCATION_TRACKING } from '../constants/location';
-import { setLocationsFromBackground, setDistance, setDuration } from '../redux/location/location';
+import {
+  setLocationsFromBackground,
+  setDistance,
+  setDuration,
+  resetLastKm,
+  setLastKm,
+  setLastKmDuration,
+  addDurationAndLocationToKmSplits,
+  setCurrentPace,
+} from '../redux/location/location';
 import { store } from '../redux/store';
 
 export async function startLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
@@ -53,11 +62,22 @@ TaskManager.defineTask(
       const { locations } = data;
       const currentPosition = locations[0];
       try {
-        const positionsInStorage = store.getState().location.locationsFromBackground;
+        const { locationsFromBackground, lastKilometer } = store.getState().location;
         const previousPosition =
-          positionsInStorage.length > 0 ? positionsInStorage[positionsInStorage.length - 1] : null;
+          locationsFromBackground.length > 0 ? locationsFromBackground[locationsFromBackground.length - 1] : null;
         const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
         const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
+        const currentPace = getSpeedInMinsInKm(currentDistance, currentDuration);
+        const currentKilometer = lastKilometer + currentDistance;
+        console.log(`the last km is: ${currentKilometer}`);
+        if (currentKilometer >= 1000) {
+          store.dispatch(addDurationAndLocationToKmSplits(currentPosition));
+          store.dispatch(resetLastKm());
+        } else {
+          store.dispatch(setLastKm(currentDistance));
+          store.dispatch(setLastKmDuration(currentDuration));
+          store.dispatch(setCurrentPace(currentPace));
+        }
         store.dispatch(setLocationsFromBackground(currentPosition));
         store.dispatch(setDistance(currentDistance));
         store.dispatch(setDuration(currentDuration));
