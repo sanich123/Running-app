@@ -1,5 +1,5 @@
 import { MapView, Camera, UserLocation, PointAnnotation, Callout } from '@rnmapbox/maps';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { useSelector } from 'react-redux';

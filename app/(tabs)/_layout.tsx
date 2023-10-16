@@ -1,7 +1,7 @@
 import { Tabs, usePathname } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { useTheme} from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
 import ActivityCloseBtn from '../../components/activity-close-btn/activity-close-btn';
