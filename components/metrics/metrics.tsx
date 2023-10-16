@@ -4,18 +4,17 @@ import { useSelector } from 'react-redux';
 
 import { ActivityComponentContext } from '../../utils/context/activity-component';
 // import { getSpeedInMinsInKm } from '../../utils/location-utils';
-import { formatDuration } from '../../utils/time-formatter';
+import { formatDuration, formatDurationInMinsSecs } from '../../utils/time-formatter';
 import MetricsItem from '../metrics-item/metrics-item';
 
 export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
   const { duration, distance } = useContext(ActivityComponentContext);
   const formattedDuration = formatDuration(duration);
-  // const formattedSpeed = distance && duration ? getSpeedInMinsInKm(distance, duration) : 0;
   const formattedDistance = (distance / 1000).toFixed(3);
   const { metricsLayout, withMapHeight } = styles;
   const { currentPace, kilometresSplit, altitude } = useSelector(({ location }) => location);
   const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;
-  // console.log(lastKmPace);
+
   return (
     <View style={[metricsLayout, isMapVisible && withMapHeight]}>
       <>
@@ -30,7 +29,12 @@ export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
         )}
         <MetricsItem isMapVisible={isMapVisible} title="Pace:" metric={`${currentPace}/km`} isCentral />
         {!isMapVisible && (
-          <MetricsItem isMapVisible={isMapVisible} title="Last km:" metric="5.30 min/km" isCentral={false} />
+          <MetricsItem
+            isMapVisible={isMapVisible}
+            title="Last km:"
+            metric={formatDurationInMinsSecs(lastKmPace.lastKilometerDuration)}
+            isCentral={false}
+          />
         )}
         <MetricsItem
           isMapVisible={isMapVisible}

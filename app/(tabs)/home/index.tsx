@@ -8,13 +8,13 @@ import EmptyActivitiesList from '../../../components/empty-activities-list/empty
 import ErrorComponent from '../../../components/error-component/error-component';
 import FloatingBtn from '../../../components/floating-btn/floating-btn';
 import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
-import useGetLocation from '../../../utils/hooks/use-get-location';
+import useGetPermissions from '../../../utils/hooks/use-get-permission';
 import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
   const { user } = useAuth();
   const router = useRouter();
-  useGetLocation();
+  useGetPermissions();
   const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user.id);
   const { onRefresh, refreshing } = useRefresh(refetch);
 
