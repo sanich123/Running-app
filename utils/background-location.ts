@@ -74,7 +74,7 @@ TaskManager.defineTask(
           : 0;
 
         const currentPace =
-          (currentDistance && currentDuration) ? getSpeedInMinsInKm(currentDistance, currentDuration) : 0;
+          currentDistance && currentDuration ? getSpeedInMinsInKm(currentDistance, currentDuration) : 0;
         const currentKilometer = lastKilometer + currentDistance;
 
         console.log(
