@@ -7,6 +7,7 @@
     "start:dev": "APP_VARIANT=development && npx expo start",
     "test:watch": "jest --watchAll",
     "test": "jest",
+    "text:debug": "jest --runInBand --detectOpenHandles --forceExit",
     "build:local:dev": "yarn deps:all && yarn run prebuild && eas build -p android --profile development --local",
     "build:local:preview": "yarn deps:all && yarn prebuild && eas build -p android --profile preview --local",
     "build:dev": "eas build --profile development --platform android",
