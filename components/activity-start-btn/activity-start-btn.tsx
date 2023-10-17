@@ -1,20 +1,25 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { ReactNode, useContext } from 'react';
+import { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { STATUSES } from '../../constants/enums';
 import { LANGUAGE } from '../../constants/languages/languages';
 import { useAppSelector } from '../../redux/hooks/hooks';
 import { saveFinishedActivity, setActivityStatus } from '../../redux/location/location';
-import { ActivityComponentContext } from '../../utils/context/activity-component';
 import { getTotalSpeed } from '../../utils/location-utils';
 
 const { initial, started, paused, continued } = STATUSES;
 
 export default function ActivityStartBtn() {
-  const { status, locations, duration, distance } = useContext(ActivityComponentContext);
+  const {
+    activityStatus,
+    locationsFromBackground: locations,
+    duration,
+    distance,
+  } = useSelector(({ location }) => location);
+
   const dispatch = useDispatch();
   const { startBtn, textStyle } = styles;
   const { language } = useAppSelector(({ language }) => language);
@@ -38,13 +43,13 @@ export default function ActivityStartBtn() {
     <Pressable
       style={startBtn}
       onPress={() => {
-        dispatch(setActivityStatus(responseStatus[status]));
-        if (status === paused) {
+        dispatch(setActivityStatus(responseStatus[activityStatus]));
+        if (activityStatus === paused) {
           dispatch(saveFinishedActivity({ locations, duration, speed: getTotalSpeed(distance, duration), distance }));
           push('/(tabs)/save-activity/');
         }
       }}>
-      <Text style={textStyle}>{responseIcon[status]}</Text>
+      <Text style={textStyle}>{responseIcon[activityStatus]}</Text>
     </Pressable>
   );
 }

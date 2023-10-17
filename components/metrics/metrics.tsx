@@ -1,18 +1,14 @@
-import { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { ActivityComponentContext } from '../../utils/context/activity-component';
-// import { getSpeedInMinsInKm } from '../../utils/location-utils';
 import { formatDuration, formatDurationInMinsSecs } from '../../utils/time-formatter';
 import MetricsItem from '../metrics-item/metrics-item';
 
 export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
-  const { duration, distance } = useContext(ActivityComponentContext);
+  const { currentPace, kilometresSplit, altitude, duration, distance } = useSelector(({ location }) => location);
   const formattedDuration = formatDuration(duration);
   const formattedDistance = (distance / 1000).toFixed(3);
   const { metricsLayout, withMapHeight } = styles;
-  const { currentPace, kilometresSplit, altitude } = useSelector(({ location }) => location);
   const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;
 
   return (

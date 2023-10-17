@@ -1,15 +1,26 @@
 import { MapView, Camera, UserLocation, PointAnnotation, Callout } from '@rnmapbox/maps';
-import { useContext } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { ActivityComponentContext } from '../../utils/context/activity-component';
 import MapNavIcon from '../map-nav-icon/map-nav-icon';
 import MapRouteLine from '../map-route-line/map-route-line';
 
 export default function Map({ isMapVisible }: { isMapVisible: boolean }) {
   const { kilometresSplit } = useSelector(({ location }) => location);
-  const { cameraRef, locations, lastView } = useContext(ActivityComponentContext);
+  const cameraRef = useRef<Camera>(null);
+  const { locationsFromBackground: locations } = useSelector(({ location }) => location);
+  const lastPosition = locations.length > 0 ? locations[locations.length - 1] : null;
+  const lastView = lastPosition ? [lastPosition?.coords?.longitude, lastPosition?.coords?.latitude] : null;
+  ToastAndroid.show(`Locations have ${locations.length}`, ToastAndroid.SHORT);
+
+  useEffect(() => {
+    if (lastView && lastView.length > 1) {
+      cameraRef.current?.setCamera({
+        centerCoordinate: lastView,
+      });
+    }
+  }, [locations]);
 
   return (
     <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>

@@ -1,6 +1,5 @@
-import { Camera } from '@rnmapbox/maps';
-import { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, ToastAndroid } from 'react-native';
+import { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
@@ -16,45 +15,14 @@ import Metrics from '../metrics/metrics';
 const { initial, paused } = STATUSES;
 
 export default function ActivityComponent() {
-  const { locationStarted } = useStartStopTracking();
-  const cameraRef = useRef<Camera>(null);
-  const {
-    locationsFromBackground: locations,
-    duration,
-    distance,
-    activityStatus,
-  } = useSelector(({ location }) => location);
-
-  const lastPosition = locations.length > 0 ? locations[locations.length - 1] : null;
-  const lastView = lastPosition ? [lastPosition?.coords?.longitude, lastPosition?.coords?.latitude] : null;
-  console.log('lastPosition', lastPosition, 'lastView', lastView);
-  // console.log('locations in background is working', locations.length);
-  ToastAndroid.show(`Locations have ${locations.length}`, ToastAndroid.SHORT);
-
+  useStartStopTracking();
+  const { activityStatus } = useSelector(({ location }) => location);
   const [isMapVisible, setIsMapVisible] = useState(false);
   const { colors } = useTheme();
   const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;
 
-  useEffect(() => {
-    if (lastView && lastView.length > 1) {
-      cameraRef.current?.setCamera({
-        centerCoordinate: lastView,
-      });
-    }
-  }, [locations]);
-
   return (
-    <ActivityComponentContext.Provider
-      value={{
-        status: activityStatus,
-        locations,
-        duration,
-        cameraRef,
-        lastView,
-        distance,
-        isMapVisible,
-        setIsMapVisible,
-      }}>
+    <ActivityComponentContext.Provider value={{ isMapVisible, setIsMapVisible }}>
       <View style={page}>
         <View style={mapOrMetricsWrapper}>
           {(activityStatus === initial || isMapVisible) && <Map isMapVisible={isMapVisible} />}
