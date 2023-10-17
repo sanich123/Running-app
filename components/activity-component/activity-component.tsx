@@ -22,13 +22,12 @@ export default function ActivityComponent() {
     locationsFromBackground: locations,
     duration,
     distance,
-    initialLocation,
     activityStatus,
   } = useSelector(({ location }) => location);
 
-  const lastPosition = locations.length > 0 ? locations[locations.length - 1] : initialLocation;
-  const lastView = [lastPosition?.coords.longitude, lastPosition?.coords.latitude];
-
+  const lastPosition = locations.length > 0 ? locations[locations.length - 1] : null;
+  const lastView = lastPosition ? [lastPosition?.coords?.longitude, lastPosition?.coords?.latitude] : null;
+  console.log('lastPosition', lastPosition, 'lastView', lastView);
   // console.log('locations in background is working', locations.length);
   ToastAndroid.show(`Locations have ${locations.length}`, ToastAndroid.SHORT);
 
@@ -37,9 +36,11 @@ export default function ActivityComponent() {
   const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;
 
   useEffect(() => {
-    cameraRef.current?.setCamera({
-      centerCoordinate: lastView,
-    });
+    if (lastView && lastView.length > 1) {
+      cameraRef.current?.setCamera({
+        centerCoordinate: lastView,
+      });
+    }
   }, [locations]);
 
   return (

@@ -4,26 +4,38 @@ import { errorHandler } from './error-handler';
 import { setInitialLocation, setLocationsFromBackground } from '../redux/location/location';
 import { store } from '../redux/store';
 
-export async function getLastKnownPosition(setIsLoading?: (arg: boolean) => void) {
+type GetPositionProps = {
+  setIsLoading?: (arg: boolean) => void;
+  setIsError?: (arg: boolean) => void;
+  setIsSuccess?: (arg: boolean) => void;
+};
+
+export async function getLastKnownPosition({ setIsLoading, setIsError, setIsSuccess }: GetPositionProps) {
   try {
     setIsLoading(true);
     const currentPosition = await getLastKnownPositionAsync();
+    setIsLoading(false);
+    setIsSuccess(true);
     store.dispatch(setInitialLocation(currentPosition));
     store.dispatch(setLocationsFromBackground(currentPosition));
-    setIsLoading(false);
+    setTimeout(() => setIsSuccess(false), 2000);
   } catch (error) {
+    setIsError(true);
     errorHandler(error);
   }
 }
 
-export async function getExactPosition(setIsLoading?: (arg: boolean) => void) {
+export async function getExactPosition({ setIsLoading, setIsError, setIsSuccess }: GetPositionProps) {
   try {
     setIsLoading(true);
     const currentPosition = await getCurrentPositionAsync();
+    setIsLoading(false);
+    setIsSuccess(true);
     store.dispatch(setInitialLocation(currentPosition));
     store.dispatch(setLocationsFromBackground(currentPosition));
-    setIsLoading(false);
+    setTimeout(() => setIsSuccess(false), 2000);
   } catch (error) {
+    setIsError(true);
     errorHandler(error);
   }
 }

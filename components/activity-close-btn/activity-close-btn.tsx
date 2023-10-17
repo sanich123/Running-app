@@ -4,7 +4,12 @@ import { useTheme, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { STATUSES } from '../../constants/enums';
-import { resetLastKm, resetLocationsFromBackground, setActivityStatus } from '../../redux/location/location';
+import {
+  resetLastKm,
+  resetLocationsFromBackground,
+  setActivityStatus,
+  setInitialLocation,
+} from '../../redux/location/location';
 
 export default function ActivityCloseBtn() {
   const router = useRouter();
@@ -12,6 +17,13 @@ export default function ActivityCloseBtn() {
   const { duration } = useSelector(({ location }) => location);
   const dispatch = useDispatch();
 
+  async function closeBtnHandler() {
+    dispatch(setActivityStatus(STATUSES.initial));
+    dispatch(resetLocationsFromBackground());
+    dispatch(setInitialLocation({}));
+    dispatch(resetLastKm());
+    router.back();
+  }
   return (
     <Pressable
       onPress={() => {
@@ -22,12 +34,7 @@ export default function ActivityCloseBtn() {
             [
               {
                 text: 'Yes, I am sure',
-                onPress: async () => {
-                  dispatch(setActivityStatus(STATUSES.initial));
-                  dispatch(resetLocationsFromBackground());
-                  dispatch(resetLastKm());
-                  router.back();
-                },
+                onPress: closeBtnHandler,
                 style: 'cancel',
               },
             ],
@@ -36,7 +43,7 @@ export default function ActivityCloseBtn() {
             },
           );
         } else {
-          router.back();
+          closeBtnHandler();
         }
       }}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginLeft: 15 }}>

@@ -47,6 +47,7 @@ export const location = createSlice({
       state.distance = 0;
       state.altitude = 0;
       state.kilometresSplit = [];
+      state.currentPace = 0;
     },
     setDistance: (state, action) => {
       state.distance = state.distance + action.payload;
