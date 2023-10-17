@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { STATUSES } from '../../constants/enums';
 import { LANGUAGE } from '../../constants/languages/languages';
@@ -11,7 +11,8 @@ import { ActivityComponentContext } from '../../utils/context/activity-component
 const { paused, continued } = STATUSES;
 
 export default function ActivityPauseBtn() {
-  const { status, setIsMapVisible } = useContext(ActivityComponentContext);
+  const { activityStatus } = useSelector(({ location }) => location);
+  const { setIsMapVisible } = useContext(ActivityComponentContext);
   const { language } = useAppSelector(({ language }) => language);
   const dispatch = useDispatch();
   return (
@@ -30,7 +31,7 @@ export default function ActivityPauseBtn() {
           height: 90,
         }}
         onPress={() => {
-          dispatch(setActivityStatus(status === paused ? continued : paused));
+          dispatch(setActivityStatus(activityStatus === paused ? continued : paused));
           setIsMapVisible(false);
         }}>
         <Text

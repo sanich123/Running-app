@@ -17,11 +17,11 @@ const { initial, paused } = STATUSES;
 
 export default function Activity() {
   useStartStopTracking();
-  const { activityStatus } = useSelector(({ location }) => location);
+  const { activityStatus, initialLocation } = useSelector(({ location }) => location);
   const [isMapVisible, setIsMapVisible] = useState(false);
   const { colors } = useTheme();
   const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;
-
+  console.log(activityStatus, initialLocation);
   return (
     <>
       <ActivityLocationIndicator />

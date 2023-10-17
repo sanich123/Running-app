@@ -12,7 +12,11 @@ export default function ActivityLocationIndicator() {
           Загружаем данные о местоположении...
         </Text>
       ) : null}
-      {isError ? <Text variant="bodyLarge">An error occured</Text> : null}
+      {isError ? (
+        <Text variant="bodyLarge" style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
+          An error occured
+        </Text>
+      ) : null}
       {isSuccess ? (
         <Text variant="bodyLarge" style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
           Получили данные о местоположении!

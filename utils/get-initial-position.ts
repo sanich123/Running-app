@@ -1,7 +1,7 @@
 import { getCurrentPositionAsync, getLastKnownPositionAsync } from 'expo-location';
 
 import { errorHandler } from './error-handler';
-import { setInitialLocation, setLocationsFromBackground } from '../redux/location/location';
+import { setInitialLocation } from '../redux/location/location';
 import { store } from '../redux/store';
 
 type GetPositionProps = {
@@ -17,7 +17,6 @@ export async function getLastKnownPosition({ setIsLoading, setIsError, setIsSucc
     setIsLoading(false);
     setIsSuccess(true);
     store.dispatch(setInitialLocation(currentPosition));
-    store.dispatch(setLocationsFromBackground(currentPosition));
     setTimeout(() => setIsSuccess(false), 2000);
   } catch (error) {
     setIsError(true);
@@ -32,7 +31,6 @@ export async function getExactPosition({ setIsLoading, setIsError, setIsSuccess 
     setIsLoading(false);
     setIsSuccess(true);
     store.dispatch(setInitialLocation(currentPosition));
-    store.dispatch(setLocationsFromBackground(currentPosition));
     setTimeout(() => setIsSuccess(false), 2000);
   } catch (error) {
     setIsError(true);

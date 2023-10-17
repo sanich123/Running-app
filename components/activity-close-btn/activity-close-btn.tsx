@@ -4,12 +4,7 @@ import { useTheme, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { STATUSES } from '../../constants/enums';
-import {
-  resetLastKm,
-  resetLocationsFromBackground,
-  setActivityStatus,
-  setInitialLocation,
-} from '../../redux/location/location';
+import { resetLastKm, resetLocationsFromBackground, setActivityStatus } from '../../redux/location/location';
 
 export default function ActivityCloseBtn() {
   const router = useRouter();
@@ -20,7 +15,6 @@ export default function ActivityCloseBtn() {
   async function closeBtnHandler() {
     dispatch(setActivityStatus(STATUSES.initial));
     dispatch(resetLocationsFromBackground());
-    dispatch(setInitialLocation({}));
     dispatch(resetLastKm());
     router.back();
   }
