@@ -25,11 +25,11 @@ export default function MetricsItem({
         isMapVisible && styles.isMapVisibleLayout,
       ]}>
       <Text
-        variant={`${isCentralAndIsNotMapVisible ? 'displayLarge' : 'headlineSmall'}`}
+        variant={`${isCentralAndIsNotMapVisible ? 'displayMedium' : 'headlineSmall'}`}
         style={{ fontWeight: 'bold' }}>
         {title}
       </Text>
-      <Text variant={`${isCentralAndIsNotMapVisible ? 'headlineLarge' : 'headlineMedium'}`}>{metric}</Text>
+      <Text variant={`${isCentralAndIsNotMapVisible ? 'headlineLarge' : 'headlineSmall'}`}>{metric}</Text>
     </View>
   );
 }

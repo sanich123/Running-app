@@ -28,7 +28,7 @@ import { store } from '../redux/store';
 export async function startLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {
     accuracy: Accuracy.BestForNavigation,
-    timeInterval: 2000,
+    timeInterval: 1000,
     distanceInterval: 0,
     showsBackgroundLocationIndicator: true,
     foregroundService: {
@@ -43,7 +43,7 @@ export async function startLocationTracking({ setLocationStarted }: { setLocatio
   ToastAndroid.show(`BgTracking started = ${hasStarted}`, ToastAndroid.SHORT);
 }
 
-export async function stopLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
+export async function stopLocationTracking({ setLocationStarted }: { setLocationStarted?: (arg: boolean) => void }) {
   setLocationStarted(false);
   isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
     if (tracking) {

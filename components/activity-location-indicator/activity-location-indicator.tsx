@@ -2,25 +2,28 @@ import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import useGetCurrentLocation from '../../utils/hooks/use-get-current-location';
+import { View } from '../Themed';
 
 export default function ActivityLocationIndicator() {
   const { isLoading, isError, isSuccess } = useGetCurrentLocation();
   return (
     <>
       {isLoading ? (
-        <Text variant="bodyLarge" style={[styles.indicatorLayout, { backgroundColor: 'yellow' }]}>
-          Загружаем данные о местоположении...
-        </Text>
+        <View style={[styles.indicatorLayout, { backgroundColor: 'yellow' }]}>
+          <Text variant="bodyLarge">Getting your position...</Text>
+        </View>
       ) : null}
       {isError ? (
-        <Text variant="bodyLarge" style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
-          An error occured
-        </Text>
+        <View style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
+          <Text variant="bodyLarge" style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
+            An error occured
+          </Text>
+        </View>
       ) : null}
       {isSuccess ? (
-        <Text variant="bodyLarge" style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
-          Получили данные о местоположении!
-        </Text>
+        <View style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
+          <Text variant="bodyLarge">Have got your position!</Text>
+        </View>
       ) : null}
     </>
   );

@@ -1,13 +1,14 @@
 import { View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 
+import { getSpeedInMinsInKm } from '../../utils/location-utils';
 import { formatDuration, formatDurationInMinsSecs } from '../../utils/time-formatter';
 import MetricsItem from '../metrics-item/metrics-item';
 
 export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
-  const { currentPace, kilometresSplit, altitude, duration, distance } = useSelector(({ location }) => location);
+  const { kilometresSplit, altitude, duration, distance } = useSelector(({ location }) => location);
   const formattedDuration = formatDuration(duration);
-  const formattedDistance = (distance / 1000).toFixed(3);
+  const formattedDistance = (distance / 1000).toFixed(2);
   const { metricsLayout, withMapHeight } = styles;
   const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;
 
@@ -23,7 +24,12 @@ export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
             isCentral={false}
           />
         )}
-        <MetricsItem isMapVisible={isMapVisible} title="Pace:" metric={`${currentPace}/km`} isCentral />
+        <MetricsItem
+          isMapVisible={isMapVisible}
+          title="Pace:"
+          metric={`${getSpeedInMinsInKm(distance, duration)} /km`}
+          isCentral
+        />
         {!isMapVisible && (
           <MetricsItem
             isMapVisible={isMapVisible}
