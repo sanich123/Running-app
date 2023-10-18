@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
 import { formatDuration, formatDurationInMinsSecs } from '../../utils/time-formatter';
+import ActivityErrorMsg from '../activity-error-msg/activity-error-msg';
 import MetricsItem from '../metrics-item/metrics-item';
 
 export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
@@ -13,8 +14,9 @@ export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
   const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;
 
   return (
-    <View style={[metricsLayout, isMapVisible && withMapHeight]}>
-      <>
+    <>
+      <ActivityErrorMsg />
+      <View style={[metricsLayout, isMapVisible && withMapHeight]}>
         <MetricsItem isMapVisible={isMapVisible} title="Time:" metric={formattedDuration} isCentral={false} />
         {!isMapVisible && (
           <MetricsItem
@@ -27,7 +29,7 @@ export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
         <MetricsItem
           isMapVisible={isMapVisible}
           title="Pace:"
-          metric={`${getSpeedInMinsInKm(distance, duration)} /km`}
+          metric={`${duration > 0 ? getSpeedInMinsInKm(distance, duration) : 0} /km`}
           isCentral
         />
         {!isMapVisible && (
@@ -44,8 +46,8 @@ export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
           metric={`${formattedDistance} km`}
           isCentral={false}
         />
-      </>
-    </View>
+      </View>
+    </>
   );
 }
 
@@ -55,6 +57,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     height: '100%',
+    position: 'relative',
   },
   withMapHeight: {
     height: '15%',

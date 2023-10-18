@@ -14,6 +14,7 @@ export const location = createSlice({
   name: 'location',
   initialState: {
     activityStatus: STATUSES.initial,
+    isAppShutedByPhone: true,
     initialLocation: {} as Location,
     distance: 0,
     duration: 0,
@@ -88,6 +89,9 @@ export const location = createSlice({
         },
       ];
     },
+    setIsAppShuted: (state, action) => {
+      state.isAppShutedByPhone = action.payload;
+    },
   },
 });
 
@@ -106,5 +110,6 @@ export const {
   setLastKmDuration,
   addDurationAndLocationToKmSplits,
   setCurrentPace,
+  setIsAppShuted,
 } = location.actions;
 export default location.reducer;
