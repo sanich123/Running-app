@@ -53,51 +53,51 @@ export async function stopLocationTracking({ setLocationStarted }: { setLocation
   });
 }
 
-TaskManager.defineTask(
-  LOCATION_TRACKING,
-  async ({ data, error }: { data: { locations: LocationObject[] }; error: TaskManager.TaskManagerError }) => {
-    if (error) {
-      console.log('LOCATION_TRACKING task ERROR:', error);
-      return;
-    }
-    if (data) {
-      const { locations } = data;
-      const currentPosition = locations[0];
-      try {
-        const { locationsFromBackground, lastKilometer } = store.getState().location;
-        const previousPosition =
-          locationsFromBackground.length > 0 ? locationsFromBackground[locationsFromBackground.length - 1] : null;
-        const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
-        const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
-        const currentAltitude = previousPosition
-          ? currentPosition.coords.altitude - previousPosition.coords.altitude
-          : 0;
+type TaskManagerLocationEvent = {
+  data: { locations: LocationObject[] };
+  error: TaskManager.TaskManagerError;
+};
 
-        const currentPace =
-          currentDistance && currentDuration ? getSpeedInMinsInKm(currentDistance, currentDuration) : 0;
-        const currentKilometer = lastKilometer + currentDistance;
+TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLocationEvent) => {
+  if (error) {
+    console.log('LOCATION_TRACKING task ERROR:', error);
+    return;
+  }
+  if (data) {
+    const { locations } = data;
+    const currentPosition = locations[0];
+    try {
+      const { locationsFromBackground, lastKilometer } = store.getState().location;
+      const previousPosition =
+        locationsFromBackground.length > 0 ? locationsFromBackground[locationsFromBackground.length - 1] : null;
+      // const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
+      const currentDuration = previousPosition ? 1000 : 0;
+      const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
+      const currentAltitude = previousPosition ? currentPosition.coords.altitude - previousPosition.coords.altitude : 0;
 
-        console.log(
-          `currDuration: ${currentDuration}, currDistance: ${currentDistance}, currAltitude: ${currentAltitude}, currPace: ${currentPace}, currKilometer: ${currentKilometer}`,
-        );
+      const currentPace = currentDistance && currentDuration ? getSpeedInMinsInKm(currentDistance, currentDuration) : 0;
+      const currentKilometer = lastKilometer + currentDistance;
 
-        if (currentKilometer >= 1000) {
-          store.dispatch(addDurationAndLocationToKmSplits(currentPosition));
-          store.dispatch(resetLastKm());
-        } else {
-          store.dispatch(setLastKm(currentDistance));
-          store.dispatch(setLastKmDuration(currentDuration));
-          store.dispatch(setCurrentPace(currentPace));
-          store.dispatch(setLastKmAltitude(currentAltitude));
-        }
-        store.dispatch(setLocationsFromBackground(currentPosition));
-        store.dispatch(setDistance(currentDistance));
-        store.dispatch(setDuration(currentDuration));
+      console.log(
+        `currDuration: ${currentDuration}, currDistance: ${currentDistance}, currAltitude: ${currentAltitude}, currPace: ${currentPace}, currKilometer: ${currentKilometer}`,
+      );
+
+      if (currentKilometer >= 1000) {
+        store.dispatch(addDurationAndLocationToKmSplits(currentPosition));
+        store.dispatch(resetLastKm());
+      } else {
+        store.dispatch(setLastKm(currentDistance));
+        store.dispatch(setLastKmDuration(currentDuration));
         store.dispatch(setCurrentPace(currentPace));
-        store.dispatch(setAltitude(currentAltitude));
-      } catch (error) {
-        console.log('[tracking]', 'Something went wrong when saving a new location...', error);
+        store.dispatch(setLastKmAltitude(currentAltitude));
       }
+      store.dispatch(setLocationsFromBackground(currentPosition));
+      store.dispatch(setDistance(currentDistance));
+      store.dispatch(setDuration(currentDuration));
+      store.dispatch(setCurrentPace(currentPace));
+      store.dispatch(setAltitude(currentAltitude));
+    } catch (error) {
+      console.log('[tracking]', 'Something went wrong when saving a new location...', error);
     }
-  },
-);
+  }
+});

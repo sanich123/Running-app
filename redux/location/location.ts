@@ -14,7 +14,7 @@ export const location = createSlice({
   name: 'location',
   initialState: {
     activityStatus: STATUSES.initial,
-    isAppShutedByPhone: true,
+    isAppShutedByPhone: false,
     initialLocation: {} as Location,
     distance: 0,
     duration: 0,

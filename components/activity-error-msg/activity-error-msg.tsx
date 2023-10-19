@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setIsAppShuted } from '../../redux/location/location';
 
 export default function ActivityErrorMsg() {
+  const dispatch = useDispatch();
   const { isAppShutedByPhone } = useSelector(({ location }) => location);
 
-  const dispatch = useDispatch();
   useEffect(() => {
     if (isAppShutedByPhone) {
       setTimeout(() => dispatch(setIsAppShuted(false)), 10000);
@@ -37,9 +37,8 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: '100%',
-    height: 110,
+    height: 100,
     paddingLeft: 5,
     paddingRight: 5,
-    paddingTop: 5,
   },
 });
