@@ -6,8 +6,6 @@ import { store } from '../../redux/store';
 
 jest.useFakeTimers();
 describe('Checkbox', () => {
-  beforeEach(() => jest.useFakeTimers());
-  afterAll(() => jest.useRealTimers());
   it('should correctly renders', async () => {
     render(
       <Provider store={store}>

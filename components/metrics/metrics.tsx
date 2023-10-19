@@ -1,26 +1,44 @@
-import { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 
-import { ActivityComponentContext } from '../../utils/context/activity-component';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
-import { formatDuration } from '../../utils/time-formatter';
+import { formatDuration, formatDurationInMinsSecs } from '../../utils/time-formatter';
+import ActivityErrorMsg from '../activity-error-msg/activity-error-msg';
 import MetricsItem from '../metrics-item/metrics-item';
 
-export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
-  const { duration, distance } = useContext(ActivityComponentContext);
+export default function Metrics() {
+  const { kilometresSplit, altitude, duration, distance, isMapVisible } = useSelector(({ location }) => location);
   const formattedDuration = formatDuration(duration);
-  const formattedSpeed = distance && duration ? getSpeedInMinsInKm(distance, duration) : 0;
-  const formattedDistance = (distance / 1000).toFixed(3);
+  const formattedDistance = (distance / 1000).toFixed(2);
   const { metricsLayout, withMapHeight } = styles;
+  const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;
 
   return (
-    <View style={[metricsLayout, isMapVisible && withMapHeight]}>
-      <>
+    <>
+      <ActivityErrorMsg />
+      <View style={[metricsLayout, isMapVisible && withMapHeight]}>
         <MetricsItem isMapVisible={isMapVisible} title="Time:" metric={formattedDuration} isCentral={false} />
-        {!isMapVisible && <MetricsItem isMapVisible={isMapVisible} title="Steps:" metric="12345" isCentral={false} />}
-        <MetricsItem isMapVisible={isMapVisible} title="Pace:" metric={`${formattedSpeed}/km`} isCentral />
         {!isMapVisible && (
-          <MetricsItem isMapVisible={isMapVisible} title="Last km:" metric="5.30 min/km" isCentral={false} />
+          <MetricsItem
+            isMapVisible={isMapVisible}
+            title="Altitude:"
+            metric={`${altitude.toFixed(2)} m`}
+            isCentral={false}
+          />
+        )}
+        <MetricsItem
+          isMapVisible={isMapVisible}
+          title="Pace:"
+          metric={`${duration > 0 ? getSpeedInMinsInKm(distance, duration) : 0} /km`}
+          isCentral
+        />
+        {!isMapVisible && (
+          <MetricsItem
+            isMapVisible={isMapVisible}
+            title="Last km:"
+            metric={formatDurationInMinsSecs(lastKmPace.lastKilometerDuration)}
+            isCentral={false}
+          />
         )}
         <MetricsItem
           isMapVisible={isMapVisible}
@@ -28,8 +46,8 @@ export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
           metric={`${formattedDistance} km`}
           isCentral={false}
         />
-      </>
-    </View>
+      </View>
+    </>
   );
 }
 
@@ -39,6 +57,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     height: '100%',
+    position: 'relative',
   },
   withMapHeight: {
     height: '15%',

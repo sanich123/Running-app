@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
 import activity from './activity/activity';
@@ -33,7 +34,7 @@ export const store = configureStore({
       },
     }).concat(runichApi.middleware),
 });
-
+setupListeners(store.dispatch);
 export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof rootReducer>;

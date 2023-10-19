@@ -1,11 +1,12 @@
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useContext } from 'react';
 import { Pressable } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { ActivityComponentContext } from '../../utils/context/activity-component';
+import { setIsMapVisible } from '../../redux/location/location';
 
 export default function ActivityShowMapBtn() {
-  const { isMapVisible, setIsMapVisible } = useContext(ActivityComponentContext);
+  const dispatch = useDispatch();
+  const { isMapVisible } = useSelector(({ location }) => location);
   return (
     <Pressable
       style={[
@@ -19,7 +20,7 @@ export default function ActivityShowMapBtn() {
         },
         { width: 50, height: 50 },
       ]}
-      onPress={() => setIsMapVisible(!isMapVisible)}>
+      onPress={() => dispatch(setIsMapVisible(!isMapVisible))}>
       <FontAwesome name="map-marker" size={25} color="white" />
     </Pressable>
   );

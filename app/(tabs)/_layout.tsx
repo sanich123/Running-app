@@ -4,6 +4,7 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useTheme } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
+import ActivityCloseBtn from '../../components/activity-close-btn/activity-close-btn';
 import ActivitySaveBtn from '../../components/activity-save-btn/activity-save-btn';
 import AvatarShowable from '../../components/avatar/avatar-showable';
 import { ActivityIcon, HomeIcon, ProgressIcon } from '../../components/icons/icons';
@@ -29,6 +30,7 @@ export default function TabLayout() {
           height: 60,
           elevation: 0,
           borderTopWidth: 0,
+          display: pathname.includes('activity') ? 'none' : 'flex',
         },
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         tabBarInactiveBackgroundColor: theme.colors.primary,
@@ -51,9 +53,10 @@ export default function TabLayout() {
         name="activity"
         redirect={!user}
         options={{
-          title: 'Activity',
+          title: '',
           tabBarLabel: 'Activity',
           ...commonSettings,
+          headerLeft: () => <ActivityCloseBtn />,
           tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
         }}
       />

@@ -20,16 +20,18 @@ export default function Comments({ id }: { id: string }) {
       {error ? <ErrorComponent error={error} /> : null}
       {comments?.map(({ authorId, comment, id, date }) => (
         <Fragment key={id}>
-          <View style={styles.commentWrapper}>
-            <Pressable onPress={() => push(`/home/profile/${authorId}`)}>
-              <AvatarShowable size={25} id={authorId} />
+          <Pressable onPress={() => push(`/home/profile/${authorId}`)}>
+            <View style={styles.commentWrapper}>
+              <AvatarShowable size={28} id={authorId} />
               <View style={{ display: 'flex' }}>
                 <UserNameSurname userId={authorId} size="bodyMedium" />
-                <Text variant="bodySmall">{formatDate(date)}</Text>
-                <Text variant="bodySmall">{getHoursMinutes(date)}</Text>
+                <View style={{ display: 'flex', flexDirection: 'row' }}>
+                  <Text variant="bodySmall">{formatDate(date)} </Text>
+                  <Text variant="bodySmall">{getHoursMinutes(date)}</Text>
+                </View>
               </View>
-            </Pressable>
-          </View>
+            </View>
+          </Pressable>
           <View style={styles.textCommentWrapper}>
             <Text variant="bodyLarge">{comment}</Text>
           </View>

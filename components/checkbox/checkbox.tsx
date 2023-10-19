@@ -21,7 +21,9 @@ export default function Checkbox() {
         testID="Switcher"
         disabled={isDisabled || isDisabledWhileSending}
       />
-      <Text variant="titleSmall">Don't publish on Home or Club feeds</Text>
+      <Text variant="titleSmall" style={isDisabledWhileSending && { opacity: 0.5 }}>
+        Don't publish on Home or Club feeds
+      </Text>
     </View>
   );
 }
