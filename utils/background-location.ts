@@ -70,8 +70,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
       const { locationsFromBackground, lastKilometer } = store.getState().location;
       const previousPosition =
         locationsFromBackground.length > 0 ? locationsFromBackground[locationsFromBackground.length - 1] : null;
-      // const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
-      const currentDuration = previousPosition ? 1000 : 0;
+      const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
       const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
       const currentAltitude = previousPosition ? currentPosition.coords.altitude - previousPosition.coords.altitude : 0;
 

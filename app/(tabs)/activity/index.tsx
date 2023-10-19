@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -10,36 +9,32 @@ import ActivityStartBtn from '../../../components/activity-start-btn/activity-st
 import Map from '../../../components/map/map';
 import Metrics from '../../../components/metrics/metrics';
 import { STATUSES } from '../../../constants/enums';
-import { ActivityComponentContext } from '../../../utils/context/activity-component';
 import useStartStopTracking from '../../../utils/hooks/use-start-stop-tracking';
 
 const { initial, paused } = STATUSES;
 
 export default function Activity() {
   useStartStopTracking();
-  const { activityStatus } = useSelector(({ location }) => location);
-  const [isMapVisible, setIsMapVisible] = useState(true);
+  const { activityStatus, initialLocation, isMapVisible } = useSelector(({ location }) => location);
   const { colors } = useTheme();
   const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;
 
   return (
     <>
-      <ActivityComponentContext.Provider value={{ isMapVisible, setIsMapVisible }}>
-        <View style={page}>
-          <ActivityLocationIndicator />
-          <View style={mapOrMetricsWrapper}>
-            {(activityStatus === initial || isMapVisible) && <Map isMapVisible={isMapVisible} />}
-            {activityStatus !== initial && <Metrics isMapVisible={isMapVisible} />}
-          </View>
-          <View style={controlBtnsWrapper}>
-            <View style={[btnsLayout, { backgroundColor: colors.onSecondary }]}>
-              {activityStatus === paused && <ActivityPauseBtn />}
-              <ActivityStartBtn />
-              {activityStatus !== initial && <ActivityShowMapBtn />}
-            </View>
+      <ActivityLocationIndicator />
+      <View style={page}>
+        <View style={mapOrMetricsWrapper}>
+          {(activityStatus === initial || isMapVisible) && initialLocation.coords && <Map />}
+          {activityStatus !== initial && <Metrics />}
+        </View>
+        <View style={controlBtnsWrapper}>
+          <View style={[btnsLayout, { backgroundColor: colors.onSecondary }]}>
+            {activityStatus === paused && <ActivityPauseBtn />}
+            <ActivityStartBtn />
+            {activityStatus !== initial && <ActivityShowMapBtn />}
           </View>
         </View>
-      </ActivityComponentContext.Provider>
+      </View>
     </>
   );
 }

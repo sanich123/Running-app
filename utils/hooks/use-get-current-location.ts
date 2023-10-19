@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { getExactPosition } from '../get-initial-position';
+import { getLastKnownPosition } from '../get-initial-position';
 
 export default function useGetCurrentLocation() {
   const [isLoading, setIsLoading] = useState(false);
@@ -8,7 +8,7 @@ export default function useGetCurrentLocation() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    getExactPosition({ setIsLoading, setIsError, setIsSuccess });
+    getLastKnownPosition({ setIsLoading, setIsError, setIsSuccess });
   }, []);
 
   return { isLoading, isError, isSuccess };

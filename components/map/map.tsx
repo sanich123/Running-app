@@ -7,37 +7,44 @@ import MapKmSplit from '../map-km-split/map-km-split';
 import MapNavIcon from '../map-nav-icon/map-nav-icon';
 import MapRouteLine from '../map-route-line/map-route-line';
 
-export default function Map({ isMapVisible }: { isMapVisible: boolean }) {
+export default function Map() {
   const cameraRef = useRef<Camera>(null);
-  const { initialLocation, locationsFromBackground: locations } = useSelector(({ location }) => location);
+  const { initialLocation, locationsFromBackground: locations, isMapVisible } = useSelector(({ location }) => location);
 
   const lastPosition = locations.length > 0 ? locations[locations.length - 1] : initialLocation;
   const lastView = [lastPosition?.coords?.longitude, lastPosition?.coords?.latitude];
   ToastAndroid.show(`Locations have ${locations.length}`, ToastAndroid.SHORT);
 
   useEffect(() => {
-    cameraRef.current?.setCamera({
-      centerCoordinate: lastView,
-    });
+    if (lastPosition?.coords) {
+      cameraRef.current?.setCamera({
+        centerCoordinate: lastView,
+      });
+    }
   }, [locations]);
 
   return (
-    <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
-      <UserLocation
-        androidRenderMode="compass"
-        animated
-        onUpdate={(location) => console.log('userlocation', location)}
-      />
-      <Camera
-        ref={cameraRef}
-        centerCoordinate={lastView}
-        animationMode="flyTo"
-        animationDuration={1000}
-        zoomLevel={18}
-      />
-      <MapKmSplit />
-      {lastView.length > 0 ? <MapNavIcon lastView={lastView} /> : null}
-      {locations.length > 1 && <MapRouteLine locations={locations} />}
-    </MapView>
+    <>
+      <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
+        <UserLocation
+          androidRenderMode="compass"
+          animated
+          onUpdate={(location) => console.log('userlocation', location)}
+        />
+        {lastPosition?.coords ? (
+          <Camera
+            ref={cameraRef}
+            centerCoordinate={lastView}
+            animationMode="flyTo"
+            animationDuration={1000}
+            zoomLevel={18}
+          />
+        ) : null}
+
+        <MapKmSplit />
+        {lastPosition?.coords ? <MapNavIcon lastView={lastView} /> : null}
+        {locations.length > 1 && <MapRouteLine locations={locations} />}
+      </MapView>
+    </>
   );
 }

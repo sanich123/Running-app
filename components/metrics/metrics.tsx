@@ -6,8 +6,8 @@ import { formatDuration, formatDurationInMinsSecs } from '../../utils/time-forma
 import ActivityErrorMsg from '../activity-error-msg/activity-error-msg';
 import MetricsItem from '../metrics-item/metrics-item';
 
-export default function Metrics({ isMapVisible }: { isMapVisible: boolean }) {
-  const { kilometresSplit, altitude, duration, distance } = useSelector(({ location }) => location);
+export default function Metrics() {
+  const { kilometresSplit, altitude, duration, distance, isMapVisible } = useSelector(({ location }) => location);
   const formattedDuration = formatDuration(duration);
   const formattedDistance = (distance / 1000).toFixed(2);
   const { metricsLayout, withMapHeight } = styles;
