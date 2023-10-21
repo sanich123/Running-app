@@ -5,7 +5,7 @@ export default function MapRouteLine({ locations }: { locations: LocationObject[
   const coordinates = locations.map(({ coords }) => [coords.longitude, coords.latitude]);
   return (
     <ShapeSource
-      id="shape-source"
+      id={`${locations[0].timestamp}`}
       shape={{
         type: 'FeatureCollection',
         features: [
@@ -19,7 +19,7 @@ export default function MapRouteLine({ locations }: { locations: LocationObject[
           },
         ],
       }}>
-      <LineLayer id="line-layer" style={{ lineColor: 'orange', lineWidth: 5 }} />
+      <LineLayer id={`${locations[0].timestamp}+${locations.length}`} style={{ lineColor: 'orange', lineWidth: 5 }} />
     </ShapeSource>
   );
 }

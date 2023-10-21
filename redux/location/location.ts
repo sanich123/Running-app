@@ -19,12 +19,14 @@ export const location = createSlice({
     initialLocation: {} as Location,
     distance: 0,
     duration: 0,
+    durationWithPauses: 0,
     altitude: 0,
     lastKilometerAltitude: 0,
     lastKilometer: 0,
     lastKilometerDuration: 0,
     currentPace: 0,
     kilometresSplit: [] as LastKmSplit[],
+    locationsWithPauses: [] as LocationObject[][],
     locationsFromBackground: [] as LocationObject[],
     finishedActivity: {
       locations: [] as Location[],
@@ -50,12 +52,16 @@ export const location = createSlice({
       state.altitude = 0;
       state.kilometresSplit = [];
       state.currentPace = 0;
+      state.locationsWithPauses = [];
     },
     setDistance: (state, action) => {
       state.distance = state.distance + action.payload;
     },
     setDuration: (state, action) => {
       state.duration = state.duration + action.payload;
+    },
+    setDurationWithPauses: (state, action) => {
+      state.durationWithPauses = action.payload;
     },
     setAltitude: (state, action) => {
       state.altitude = state.altitude + action.payload;
@@ -96,6 +102,12 @@ export const location = createSlice({
     setIsMapVisible: (state, action) => {
       state.isMapVisible = action.payload;
     },
+    setEmptyLastArrayWhenPaused: (state) => {
+      state.locationsWithPauses = [...state.locationsWithPauses, []];
+    },
+    setLocationsWhenContinued: (state, action) => {
+      state.locationsWithPauses[state.locationsWithPauses.length - 1].push(action.payload);
+    },
   },
 });
 
@@ -116,5 +128,8 @@ export const {
   setCurrentPace,
   setIsAppShuted,
   setIsMapVisible,
+  setEmptyLastArrayWhenPaused,
+  setLocationsWhenContinued,
+  setDurationWithPauses,
 } = location.actions;
 export default location.reducer;

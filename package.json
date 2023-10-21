@@ -1,6 +1,6 @@
 {
   "name": "running-app",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "scripts": {
     "start": "expo start",
     "start:clear": "expo start --clear",
@@ -14,7 +14,7 @@
     "build:preview": "eas build -p android --profile preview",
     "build:inspect": "eas build:inspect -p android -s archive -o ../build --profile=preview",
     "lint": "eslint --fix .",
-    "deps:all": "bun install && bun run deps:scan && bun run deps:fix",
+    "deps:all": "yarn && bun run deps:scan && bun run deps:fix",
     "deps:fix": "npx expo install --fix",
     "deps:scan": "npx expo-doctor@latest",
     "deps:check": "npx expo install --check",

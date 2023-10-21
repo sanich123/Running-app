@@ -9,7 +9,12 @@ import MapRouteLine from '../map-route-line/map-route-line';
 
 export default function Map() {
   const cameraRef = useRef<Camera>(null);
-  const { initialLocation, locationsFromBackground: locations, isMapVisible } = useSelector(({ location }) => location);
+  const {
+    initialLocation,
+    locationsFromBackground: locations,
+    isMapVisible,
+    locationsWithPauses,
+  } = useSelector(({ location }) => location);
 
   const lastPosition = locations.length > 0 ? locations[locations.length - 1] : initialLocation;
   const lastView = [lastPosition?.coords?.longitude, lastPosition?.coords?.latitude];
@@ -43,7 +48,13 @@ export default function Map() {
 
         <MapKmSplit />
         {lastPosition?.coords ? <MapNavIcon lastView={lastView} /> : null}
-        {locations.length > 1 && <MapRouteLine locations={locations} />}
+        {locationsWithPauses[0].length > 1
+          ? locationsWithPauses.map((locations, index) => {
+              if (locations.length > 1) {
+                return <MapRouteLine key={`${index}+${Math.random()}`} locations={locations} />;
+              }
+            })
+          : null}
       </MapView>
     </>
   );

@@ -22,6 +22,7 @@ import {
   setCurrentPace,
   setAltitude,
   setLastKmAltitude,
+  setLocationsWhenContinued,
 } from '../redux/location/location';
 import { store } from '../redux/store';
 
@@ -67,9 +68,12 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
     const { locations } = data;
     const currentPosition = locations[0];
     try {
-      const { locationsFromBackground, lastKilometer } = store.getState().location;
+      const { lastKilometer, locationsWithPauses } = store.getState().location;
+      console.log(locationsWithPauses, currentPosition);
       const previousPosition =
-        locationsFromBackground.length > 0 ? locationsFromBackground[locationsFromBackground.length - 1] : null;
+        locationsWithPauses[0]?.length > 0
+          ? locationsWithPauses[locationsWithPauses.length - 1][locationsWithPauses.length - 1]
+          : null;
       const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
       const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
       const currentAltitude = previousPosition ? currentPosition.coords.altitude - previousPosition.coords.altitude : 0;
@@ -90,11 +94,12 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
         store.dispatch(setCurrentPace(currentPace));
         store.dispatch(setLastKmAltitude(currentAltitude));
       }
-      store.dispatch(setLocationsFromBackground(currentPosition));
       store.dispatch(setDistance(currentDistance));
       store.dispatch(setDuration(currentDuration));
       store.dispatch(setCurrentPace(currentPace));
       store.dispatch(setAltitude(currentAltitude));
+      store.dispatch(setLocationsWhenContinued(currentPosition));
+      store.dispatch(setLocationsFromBackground(currentPosition));
     } catch (error) {
       console.log('[tracking]', 'Something went wrong when saving a new location...', error);
     }
