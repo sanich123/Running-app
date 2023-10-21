@@ -29,7 +29,7 @@ import { store } from '../redux/store';
 export async function startLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {
     accuracy: Accuracy.BestForNavigation,
-    timeInterval: 1000,
+    timeInterval: 3000,
     distanceInterval: 0,
     showsBackgroundLocationIndicator: true,
     foregroundService: {
