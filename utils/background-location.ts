@@ -49,6 +49,7 @@ export async function stopLocationTracking({ setLocationStarted }: { setLocation
   isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
     if (tracking) {
       stopLocationUpdatesAsync(LOCATION_TRACKING);
+
       ToastAndroid.show(`BgTracking stopped`, ToastAndroid.SHORT);
     }
   });
@@ -69,10 +70,10 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
     const currentPosition = locations[0];
     try {
       const { lastKilometer, locationsWithPauses } = store.getState().location;
-      console.log(locationsWithPauses, currentPosition);
+      const lastArrayLength = locationsWithPauses[locationsWithPauses.length - 1]?.length;
       const previousPosition =
         locationsWithPauses[0]?.length > 0
-          ? locationsWithPauses[locationsWithPauses.length - 1][locationsWithPauses.length - 1]
+          ? locationsWithPauses[locationsWithPauses.length - 1][lastArrayLength - 1]
           : null;
       const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
       const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
@@ -80,10 +81,18 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
 
       const currentPace = currentDistance && currentDuration ? getSpeedInMinsInKm(currentDistance, currentDuration) : 0;
       const currentKilometer = lastKilometer + currentDistance;
-
       console.log(
-        `currDuration: ${currentDuration}, currDistance: ${currentDistance}, currAltitude: ${currentAltitude}, currPace: ${currentPace}, currKilometer: ${currentKilometer}`,
+        locationsWithPauses,
+        'length: ',
+        locationsWithPauses.length,
+        `prevPosition: `,
+        previousPosition,
+        `currentPosition: `,
+        currentPosition,
       );
+      // console.log(
+      //   `currDuration: ${currentDuration}, currDistance: ${currentDistance}, currAltitude: ${currentAltitude}, currPace: ${currentPace}, currKilometer: ${currentKilometer}`,
+      // );
 
       if (currentKilometer >= 1000) {
         store.dispatch(addDurationAndLocationToKmSplits(currentPosition));

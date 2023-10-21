@@ -19,8 +19,8 @@ export default function useStartStopTracking() {
     }
     if (activityStatus === initial) {
       stopLocationTracking({ setLocationStarted });
+      // dispatch(setEmptyLastArrayWhenPaused());
       dispatch(resetLocationsFromBackground());
-      dispatch(setEmptyLastArrayWhenPaused());
     }
     if (activityStatus === paused) {
       stopLocationTracking({ setLocationStarted });

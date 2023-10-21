@@ -48,9 +48,9 @@ export default function Map() {
 
         <MapKmSplit />
         {lastPosition?.coords ? <MapNavIcon lastView={lastView} /> : null}
-        {locationsWithPauses[0].length > 1
+        {locationsWithPauses[0]?.length > 1
           ? locationsWithPauses.map((locations, index) => {
-              if (locations.length > 1) {
+              if (locations?.length > 1) {
                 return <MapRouteLine key={`${index}+${Math.random()}`} locations={locations} />;
               }
             })

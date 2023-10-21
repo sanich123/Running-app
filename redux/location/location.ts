@@ -26,7 +26,7 @@ export const location = createSlice({
     lastKilometerDuration: 0,
     currentPace: 0,
     kilometresSplit: [] as LastKmSplit[],
-    locationsWithPauses: [] as LocationObject[][],
+    locationsWithPauses: [[]] as LocationObject[][],
     locationsFromBackground: [] as LocationObject[],
     finishedActivity: {
       locations: [] as Location[],
@@ -106,6 +106,9 @@ export const location = createSlice({
       state.locationsWithPauses = [...state.locationsWithPauses, []];
     },
     setLocationsWhenContinued: (state, action) => {
+      if (state.locationsWithPauses?.length === 0) {
+        state.locationsWithPauses = [...state.locationsWithPauses, []];
+      }
       state.locationsWithPauses[state.locationsWithPauses.length - 1].push(action.payload);
     },
   },
