@@ -11,7 +11,15 @@ import { calculateAge } from '../../../utils/time-formatter';
 
 export default function Profile() {
   const { user } = useAuth();
-  const { isLoading, data: profile, error } = useGetUserProfileByIdQuery(user?.id);
+  const {
+    isLoading,
+    data: profile,
+    error,
+  } = useGetUserProfileByIdQuery(user?.id, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
 
   return (
     <>
