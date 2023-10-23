@@ -14,9 +14,10 @@ export const location = createSlice({
   name: 'location',
   initialState: {
     activityStatus: STATUSES.initial,
+    isTooMuchSpeed: false,
     isAppShutedByPhone: false,
     isMapVisible: true,
-    initialLocation: {} as Location,
+    initialLocation: null,
     distance: 0,
     duration: 0,
     durationWithPauses: 0,
@@ -24,6 +25,7 @@ export const location = createSlice({
     lastKilometerAltitude: 0,
     lastKilometer: 0,
     lastKilometerDuration: 0,
+    lastPosition: null,
     currentPace: 0,
     kilometresSplit: [] as LastKmSplit[],
     locationsWithPauses: [[]] as LocationObject[][],
@@ -111,6 +113,12 @@ export const location = createSlice({
       }
       state.locationsWithPauses[state.locationsWithPauses.length - 1].push(action.payload);
     },
+    setLastPosition: (state, action) => {
+      state.lastPosition = action.payload;
+    },
+    setIsTooMuchSpeed: (state, action) => {
+      state.isTooMuchSpeed = action.payload;
+    },
   },
 });
 
@@ -134,5 +142,6 @@ export const {
   setEmptyLastArrayWhenPaused,
   setLocationsWhenContinued,
   setDurationWithPauses,
+  setLastPosition,
 } = location.actions;
 export default location.reducer;

@@ -29,7 +29,7 @@ export default function Metrics() {
         <MetricsItem
           isMapVisible={isMapVisible}
           title="Pace:"
-          metric={`${duration > 0 ? getSpeedInMinsInKm(distance, duration) : 0} /km`}
+          metric={`${duration && distance ? getSpeedInMinsInKm(distance, duration) : 0} /km`}
           isCentral
         />
         {!isMapVisible && (

@@ -24,7 +24,7 @@ export default function Activity() {
       <ActivityLocationIndicator />
       <View style={page}>
         <View style={mapOrMetricsWrapper}>
-          {(activityStatus === initial || isMapVisible) && initialLocation.coords && <Map />}
+          {(activityStatus === initial || isMapVisible) && initialLocation && <Map />}
           {activityStatus !== initial && <Metrics />}
         </View>
         <View style={controlBtnsWrapper}>

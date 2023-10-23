@@ -9,24 +9,20 @@ import MapRouteLine from '../map-route-line/map-route-line';
 
 export default function Map() {
   const cameraRef = useRef<Camera>(null);
-  const {
-    initialLocation,
-    locationsFromBackground: locations,
-    isMapVisible,
-    locationsWithPauses,
-  } = useSelector(({ location }) => location);
+  const { initialLocation, isMapVisible, locationsWithPauses, lastPosition } = useSelector(({ location }) => location);
 
-  const lastPosition = locations.length > 0 ? locations[locations.length - 1] : initialLocation;
-  const lastView = [lastPosition?.coords?.longitude, lastPosition?.coords?.latitude];
-  ToastAndroid.show(`Locations have ${locations.length}`, ToastAndroid.SHORT);
+  ToastAndroid.show(
+    `Locations have ${locationsWithPauses.reduce((total, el) => total + el.length, 0)}`,
+    ToastAndroid.SHORT,
+  );
 
   useEffect(() => {
-    if (lastPosition?.coords) {
+    if (lastPosition) {
       cameraRef.current?.setCamera({
-        centerCoordinate: lastView,
+        centerCoordinate: [lastPosition.coords.longitude, lastPosition.coords.latitude],
       });
     }
-  }, [locations]);
+  }, [lastPosition]);
 
   return (
     <>
@@ -39,7 +35,7 @@ export default function Map() {
         {lastPosition?.coords ? (
           <Camera
             ref={cameraRef}
-            centerCoordinate={lastView}
+            centerCoordinate={[initialLocation.coords.longitude, initialLocation.coords.latitude]}
             animationMode="flyTo"
             animationDuration={1000}
             zoomLevel={18}
@@ -47,11 +43,11 @@ export default function Map() {
         ) : null}
 
         <MapKmSplit />
-        {lastPosition?.coords ? <MapNavIcon lastView={lastView} /> : null}
+        <MapNavIcon />
         {locationsWithPauses[0]?.length > 1
-          ? locationsWithPauses.map((locations, index) => {
+          ? locationsWithPauses.map((locations) => {
               if (locations?.length > 1) {
-                return <MapRouteLine key={`${index}+${Math.random()}`} locations={locations} />;
+                return <MapRouteLine key={`${Math.random()}+${locations.length}`} locations={locations} />;
               }
             })
           : null}
