@@ -7,18 +7,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../../auth/context/auth-context';
 import { resetAcitivityInfo, setIsDisableWhileSending, setIsNeedToResetInputs } from '../../redux/activity/activity';
 import { useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
-import { getSpeedInMinsInKm } from '../../utils/location-utils';
 
 export default function ActivitySaveBtn() {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { push } = useRouter();
-  const {
-    duration,
-    distance,
-    locationsFromBackground: locations,
-    kilometresSplit,
-  } = useSelector(({ location }) => location);
+  const { finishedActivity } = useSelector(({ location }) => location);
   const { additionalInfo, isDisabledWhileSending } = useSelector(({ activity }) => activity);
   const [sendActivity, { error, data }] = useAddActivityByUserIdMutation();
   const dispatch = useDispatch();
@@ -37,19 +31,13 @@ export default function ActivitySaveBtn() {
       ToastAndroid.show('An error occured during sending activity! Try again.', ToastAndroid.LONG);
     }
   }, [data, error]);
+
   return (
     <Pressable
       onPress={async () => {
         dispatch(setIsDisableWhileSending(true));
         await sendActivity({
-          body: {
-            locations,
-            duration,
-            distance,
-            speed: getSpeedInMinsInKm(distance, duration),
-            kilometresSplit,
-            ...additionalInfo,
-          },
+          body: { ...finishedActivity, ...additionalInfo },
           id: user.id,
         }).unwrap();
       }}

@@ -15,10 +15,10 @@ const { initial, paused } = STATUSES;
 
 export default function Activity() {
   useStartStopTracking();
-  const { activityStatus, initialLocation, isMapVisible } = useSelector(({ location }) => location);
+  const { activityStatus, initialLocation, isMapVisible, kilometresSplit } = useSelector(({ location }) => location);
   const { colors } = useTheme();
   const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;
-
+  console.log(kilometresSplit, 'kilometresSplit');
   return (
     <>
       <ActivityLocationIndicator />

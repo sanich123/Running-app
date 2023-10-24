@@ -35,6 +35,7 @@ export const location = createSlice({
       duration: 0,
       speed: 0,
       distance: 0,
+      kilometresSplit: [],
     },
   },
   reducers: {

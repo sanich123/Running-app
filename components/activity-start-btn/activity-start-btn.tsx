@@ -7,12 +7,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { STATUSES } from '../../constants/enums';
 import { LANGUAGE } from '../../constants/languages/languages';
 import { useAppSelector } from '../../redux/hooks/hooks';
-import { setActivityStatus } from '../../redux/location/location';
+import { saveFinishedActivity, setActivityStatus } from '../../redux/location/location';
+import { getSpeedInMinsInKm } from '../../utils/location-utils';
 
 const { initial, started, paused, continued } = STATUSES;
 
 export default function ActivityStartBtn() {
-  const { activityStatus } = useSelector(({ location }) => location);
+  const {
+    activityStatus,
+    duration,
+    distance,
+    locationsFromBackground: locations,
+    kilometresSplit,
+  } = useSelector(({ location }) => location);
 
   const dispatch = useDispatch();
   const { startBtn, textStyle } = styles;
@@ -37,6 +44,15 @@ export default function ActivityStartBtn() {
     <Pressable
       style={startBtn}
       onPress={() => {
+        dispatch(
+          saveFinishedActivity({
+            duration,
+            distance,
+            locations,
+            kilometresSplit,
+            speed: getSpeedInMinsInKm(distance, duration),
+          }),
+        );
         dispatch(setActivityStatus(responseStatus[activityStatus]));
         if (activityStatus === paused) {
           push('/(tabs)/save-activity/');
