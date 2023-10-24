@@ -143,5 +143,6 @@ export const {
   setLocationsWhenContinued,
   setDurationWithPauses,
   setLastPosition,
+  setIsTooMuchSpeed,
 } = location.actions;
 export default location.reducer;

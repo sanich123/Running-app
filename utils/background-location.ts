@@ -11,6 +11,8 @@ import { ToastAndroid } from 'react-native';
 
 import { getMetrics, saveMetricsToStore } from './save-to-store-metrics';
 import { LOCATION_TRACKING } from '../constants/location';
+import { setIsTooMuchSpeed } from '../redux/location/location';
+import { store } from '../redux/store';
 
 export async function startLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {
@@ -35,7 +37,6 @@ export async function stopLocationTracking({ setLocationStarted }: { setLocation
   isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
     if (tracking) {
       stopLocationUpdatesAsync(LOCATION_TRACKING);
-
       ToastAndroid.show(`BgTracking stopped`, ToastAndroid.SHORT);
     }
   });
@@ -77,6 +78,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
           currentDistance,
         );
       } else {
+        store.dispatch(setIsTooMuchSpeed(true));
         console.log('That was wrong position', 'currentPace: ', currentPace);
       }
     } catch (error) {

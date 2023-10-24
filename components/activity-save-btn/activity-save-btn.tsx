@@ -7,14 +7,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../../auth/context/auth-context';
 import { resetAcitivityInfo, setIsDisableWhileSending, setIsNeedToResetInputs } from '../../redux/activity/activity';
 import { useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
+import { getSpeedInMinsInKm } from '../../utils/location-utils';
 
 export default function ActivitySaveBtn() {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { push } = useRouter();
-  const { finishedActivity } = useSelector(({ location }) => location);
-  const { additionalInfo } = useSelector(({ activity }) => activity);
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
+  const {
+    duration,
+    distance,
+    locationsFromBackground: locations,
+    kilometresSplit,
+  } = useSelector(({ location }) => location);
+  const { additionalInfo, isDisabledWhileSending } = useSelector(({ activity }) => activity);
   const [sendActivity, { error, data }] = useAddActivityByUserIdMutation();
   const dispatch = useDispatch();
 
@@ -36,7 +41,17 @@ export default function ActivitySaveBtn() {
     <Pressable
       onPress={async () => {
         dispatch(setIsDisableWhileSending(true));
-        await sendActivity({ body: { ...finishedActivity, ...additionalInfo }, id: user.id }).unwrap();
+        await sendActivity({
+          body: {
+            locations,
+            duration,
+            distance,
+            speed: getSpeedInMinsInKm(distance, duration),
+            kilometresSplit,
+            ...additionalInfo,
+          },
+          id: user.id,
+        }).unwrap();
       }}
       disabled={isDisabledWhileSending}>
       <Text

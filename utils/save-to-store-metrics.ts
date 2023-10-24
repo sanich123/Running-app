@@ -8,6 +8,7 @@ import {
   setCurrentPace,
   setDistance,
   setDuration,
+  setIsTooMuchSpeed,
   setLastKm,
   setLastKmAltitude,
   setLastKmDuration,
@@ -41,6 +42,7 @@ export function saveMetricsToStore(
   store.dispatch(setLocationsWhenContinued(currentPosition));
   store.dispatch(setLastPosition(currentPosition));
   store.dispatch(setLocationsFromBackground(currentPosition));
+  store.dispatch(setIsTooMuchSpeed(false));
 }
 
 export function getMetrics(currentPosition: LocationObject) {
