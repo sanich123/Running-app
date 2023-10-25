@@ -4,6 +4,10 @@ export function formatDuration(duration: number) {
   return moment.utc(moment.duration(duration, 'ms').asMilliseconds()).format('HH:mm:ss');
 }
 
+export function formatDurationMinsSecs(duration: number) {
+  return moment.utc(moment.duration(duration, 'ms').asMilliseconds()).format('mm:ss');
+}
+
 export function formatDurationInMinsSecs(duration: number) {
   return moment.utc(moment.duration(duration, 'ms').asMilliseconds()).format('mm:ss');
 }
