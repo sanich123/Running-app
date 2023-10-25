@@ -46,7 +46,7 @@ export default function ActivityCard({
           <CardTitle title={title} />
         </View>
         <View style={styles.metricsWrapper}>
-          <CardMetrics distance={distance} duration={duration} speed={speed} />
+          <CardMetrics distance={distance} duration={duration} />
         </View>
       </Pressable>
       {pathname.includes('/home/') ? <CardDesription description={description} /> : null}

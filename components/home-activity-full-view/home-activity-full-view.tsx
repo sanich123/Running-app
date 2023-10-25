@@ -28,7 +28,7 @@ export default function ActivityFullViewMetrics() {
           <View style={styles.columnLayout}>
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">Distance</Text>
-              <Text variant="headlineLarge">{activity.distance / 1000} km</Text>
+              <Text variant="headlineLarge">{(activity.distance / 1000).toFixed(2)} km</Text>
             </View>
 
             <View style={styles.alignedCenter}>

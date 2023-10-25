@@ -34,7 +34,7 @@ export default function ViewActivityFullInfo() {
             />
             <ActivityFullViewMetrics />
             <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>
-              {activity.kilometresSplit?.length && (
+              {activity.kilometresSplit?.length > 0 && (
                 <HomeActivityFullViewKmSplit kilometresSplit={activity.kilometresSplit} />
               )}
             </View>
