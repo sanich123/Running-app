@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
-import { formatDuration, formatDurationInMinsSecs } from '../../utils/time-formatter';
+import { formatDuration, formatDurationMinsSecs } from '../../utils/time-formatter';
 import ActivityErrorMsg from '../activity-error-msg/activity-error-msg';
 import MetricsItem from '../metrics-item/metrics-item';
 
@@ -12,7 +12,7 @@ export default function Metrics() {
   const formattedDistance = (distance / 1000).toFixed(2);
   const { metricsLayout, withMapHeight } = styles;
   const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;
-
+  console.log(getSpeedInMinsInKm(distance, duration));
   return (
     <>
       <ActivityErrorMsg />
@@ -29,14 +29,14 @@ export default function Metrics() {
         <MetricsItem
           isMapVisible={isMapVisible}
           title="Pace:"
-          metric={`${duration && distance ? getSpeedInMinsInKm(distance, duration) : 0} /km`}
+          metric={`${duration && distance ? getSpeedInMinsInKm(distance, duration).paceAsString : 0} /km`}
           isCentral
         />
         {!isMapVisible && (
           <MetricsItem
             isMapVisible={isMapVisible}
             title="Last km:"
-            metric={formatDurationInMinsSecs(lastKmPace.lastKilometerDuration)}
+            metric={formatDurationMinsSecs(lastKmPace.lastKilometerDuration)}
             isCentral={false}
           />
         )}

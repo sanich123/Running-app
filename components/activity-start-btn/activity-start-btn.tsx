@@ -50,7 +50,7 @@ export default function ActivityStartBtn() {
             distance,
             locations,
             kilometresSplit,
-            speed: getSpeedInMinsInKm(distance, duration),
+            speed: getSpeedInMinsInKm(distance, duration).paceAsString,
           }),
         );
         dispatch(setActivityStatus(responseStatus[activityStatus]));

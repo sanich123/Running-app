@@ -27,7 +27,9 @@ export default function ActivityFullViewMetrics() {
 
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">Avg Pace</Text>
-              <Text variant="headlineLarge">{getSpeedInMinsInKm(activity.distance, activity.duration)} /km</Text>
+              <Text variant="headlineLarge">
+                {getSpeedInMinsInKm(activity.distance, activity.duration).paceAsString} /km
+              </Text>
             </View>
           </View>
           <Divider />

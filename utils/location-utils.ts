@@ -8,12 +8,18 @@ export function getDistance(origin: LocationObject, destination: LocationObject)
   return turf.distance(from, to, { units: 'meters' });
 }
 
-export function getTotalSpeed(distance: number, time: number) {
-  return Number((distance / 1000 / (time / 3600000)).toFixed(2));
-}
-
-export function getSpeedInMinsInKm(distance: number, time: number) {
-  return Number((60 / getTotalSpeed(distance, time)).toFixed(2));
+export function getSpeedInMinsInKm(distance, time) {
+  const millisecondsInSecond = 1000;
+  const metersInKilometer = 1000;
+  const totalSeconds = time / millisecondsInSecond;
+  const totalKilometres = distance / metersInKilometer;
+  const paceInSecs = totalSeconds / totalKilometres;
+  const wholeMinutes = Math.trunc(paceInSecs / 60);
+  const restSeconds = Math.round(paceInSecs - wholeMinutes * 60);
+  const modifiedSeconds = restSeconds < 10 ? `0${restSeconds}` : `${restSeconds}`;
+  const paceAsString = `${wholeMinutes}.${modifiedSeconds}`;
+  const paceAsNumber = Number(paceAsString);
+  return { paceAsNumber, paceAsString };
 }
 
 export function paceBetween(distance: number, from: LocationObject, to: LocationObject) {

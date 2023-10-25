@@ -57,7 +57,9 @@ export function getMetrics(currentPosition: LocationObject) {
   const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
   const currentAltitude = previousPosition ? currentPosition.coords.altitude - previousPosition.coords.altitude : 0;
   const isExistingDistanceDuration = currentDistance && currentDuration;
-  const currentPace = isExistingDistanceDuration ? getSpeedInMinsInKm(currentDistance, currentDuration) : 0;
+  const currentPace = isExistingDistanceDuration
+    ? getSpeedInMinsInKm(currentDistance, currentDuration).paceAsNumber
+    : 0;
   const currentKilometer = lastKilometer + currentDistance;
 
   return {
