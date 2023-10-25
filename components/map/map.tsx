@@ -36,7 +36,7 @@ export default function Map() {
         animated
         onUpdate={(location) => console.log('userlocation', location)}
       />
-      {lastPosition?.coords ? (
+      {initialLocation ? (
         <Camera
           ref={cameraRef}
           centerCoordinate={[initialLocation.coords.longitude, initialLocation.coords.latitude]}

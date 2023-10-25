@@ -39,7 +39,7 @@ export default {
         'ACCESS_FINE_LOCATION',
       ],
       runtimeVersion: {
-        policy: 'sdkVersion',
+        policy: 'appVersion',
       },
     },
     web: {
