@@ -13,7 +13,7 @@ export default function ViewActivityFullInfo() {
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(activityId);
 
   return (
-    <ScrollView style={isLoading && { flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <ScrollView contentContainerStyle={isLoading && { flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <View>
         {isLoading && <ActivityIndicator />}
         {error ? <ErrorComponent error={error} /> : null}
