@@ -12,7 +12,7 @@ export default function Metrics() {
   const formattedDistance = (distance / 1000).toFixed(2);
   const { metricsLayout, withMapHeight } = styles;
   const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;
-  console.log(getSpeedInMinsInKm(distance, duration));
+
   return (
     <>
       <ActivityErrorMsg />

@@ -11,6 +11,12 @@ import ErrorComponent from '../error-component/error-component';
 export default function ActivityFullViewMetrics() {
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(activityId);
+  const gainedElevation = Math.round(
+    activity?.kilometresSplit.reduce(
+      (total, { lastKilometerAltitude }) => (lastKilometerAltitude > 0 ? (total += lastKilometerAltitude) : total),
+      0,
+    ),
+  );
 
   return (
     <View style={[styles.layout, isLoading && styles.isCenter]}>
@@ -40,7 +46,7 @@ export default function ActivityFullViewMetrics() {
             </View>
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">Elevation Gain</Text>
-              <Text variant="headlineLarge">200 m</Text>
+              <Text variant="headlineLarge">{gainedElevation} m</Text>
             </View>
           </View>
           <View />
