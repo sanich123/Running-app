@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { SafeAreaView, FlatList } from 'react-native';
-import { ActivityIndicator, Divider, Text } from 'react-native-paper';
+import { ActivityIndicator, Divider } from 'react-native-paper';
 
 import { useAuth } from '../../../auth/context/auth-context';
 import ActivityCard from '../../../components/card/card';
