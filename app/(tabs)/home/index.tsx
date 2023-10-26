@@ -22,7 +22,7 @@ export default function Feed() {
     <>
       <SafeAreaView
         style={[{ flex: 1 }, (isLoading || !activities?.length) && { alignItems: 'center', justifyContent: 'center' }]}>
-        <Text variant="headlineMedium">Text with updates!</Text>
+        {/* <Text variant="headlineMedium">Text with updates!</Text> */}
         {activities && (
           <FlatList
             onRefresh={onRefresh}

@@ -27,7 +27,7 @@ export default function AvatarIconEditable() {
             const compressedImage = await ImageCompressor.compress(imgSrc);
             const base64 = await getBase64CodedImage(compressedImage);
             const pathToPhoto = await uploadPhoto(user.id, base64);
-            const url = await getSignedUrl(pathToPhoto, 1000000);
+            const url = await getSignedUrl(pathToPhoto, 1000000000);
             setPhotoUrl(url);
             setIsDisabled(false);
           }

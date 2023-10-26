@@ -20,9 +20,7 @@ export default {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
-      runtimeVersion: {
-        policy: 'nativeVersion',
-      },
+      runtimeVersion: '1.0.10(10)',
       bundleIdentifier: IS_DEV ? 'com.myapp.dev' : 'com.myapp',
     },
     android: {
@@ -38,9 +36,7 @@ export default {
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
       ],
-      runtimeVersion: {
-        policy: 'nativeVersion',
-      },
+      runtimeVersion: '1.0.10(10)',
     },
     web: {
       bundler: 'metro',
