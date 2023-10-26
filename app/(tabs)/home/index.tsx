@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { SafeAreaView, FlatList } from 'react-native';
-import { ActivityIndicator, Divider } from 'react-native-paper';
+import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
 import { useAuth } from '../../../auth/context/auth-context';
 import ActivityCard from '../../../components/card/card';
@@ -22,7 +22,7 @@ export default function Feed() {
     <>
       <SafeAreaView
         style={[{ flex: 1 }, (isLoading || !activities?.length) && { alignItems: 'center', justifyContent: 'center' }]}>
-        {/* <Text variant="headlineMedium">Text with updates!</Text> */}
+        <Text variant="headlineMedium">Text with updates!</Text>
         {activities && (
           <FlatList
             onRefresh={onRefresh}
