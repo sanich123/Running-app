@@ -60,7 +60,7 @@
     "expo-status-bar": "~1.6.0",
     "expo-system-ui": "~2.4.0",
     "expo-task-manager": "~11.3.0",
-    "expo-updates": "~0.18.16",
+    "expo-updates": "~0.18.17",
     "expo-web-browser": "~12.3.2",
     "geolib": "^3.3.4",
     "moment": "^2.29.4",

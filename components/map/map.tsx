@@ -31,11 +31,8 @@ export default function Map() {
 
   return (
     <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
-      <UserLocation
-        androidRenderMode="compass"
-        animated
-        onUpdate={(location) => console.log('userlocation', location)}
-      />
+      <UserLocation showsUserHeadingIndicator androidRenderMode="compass" animated />
+
       {initialLocation ? (
         <Camera
           ref={cameraRef}

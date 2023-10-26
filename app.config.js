@@ -21,7 +21,7 @@ export default {
     ios: {
       supportsTablet: true,
       runtimeVersion: {
-        policy: 'appVersion',
+        policy: 'nativeVersion',
       },
       bundleIdentifier: IS_DEV ? 'com.myapp.dev' : 'com.myapp',
     },
@@ -39,7 +39,7 @@ export default {
         'ACCESS_FINE_LOCATION',
       ],
       runtimeVersion: {
-        policy: 'appVersion',
+        policy: 'nativeVersion',
       },
     },
     web: {
