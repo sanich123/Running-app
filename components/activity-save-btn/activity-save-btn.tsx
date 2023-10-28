@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { Pressable, ToastAndroid } from 'react-native';
+import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -28,7 +28,7 @@ export default function ActivitySaveBtn() {
     if (error) {
       dispatch(setIsDisableWhileSending(false));
       console.log(error);
-      ToastAndroid.show('An error occured during sending activity! Try again.', ToastAndroid.LONG);
+      // ToastAndroid.show('An error occured during sending activity! Try again.', ToastAndroid.LONG);
     }
   }, [data, error]);
 

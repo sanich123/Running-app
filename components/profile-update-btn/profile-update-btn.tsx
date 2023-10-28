@@ -33,10 +33,11 @@ export default function ProfileUpdateBtn() {
     <Pressable
       onPress={async () => {
         const birthday = settings.birthday ? new Date(settings.birthday) : null;
-        await sendProfile({
-          body: { ...settings, birthday },
-          id: user.id,
-        }).unwrap();
+        console.log({ body: { ...settings, birthday } });
+        // await sendProfile({
+        //   body: { ...settings, birthday },
+        //   id: user.id,
+        // }).unwrap();
       }}
       disabled={isLoading}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>
