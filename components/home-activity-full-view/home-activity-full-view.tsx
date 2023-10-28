@@ -12,7 +12,7 @@ export default function ActivityFullViewMetrics() {
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(activityId);
   const gainedElevation = Math.round(
-    activity?.kilometresSplit.reduce(
+    activity?.kilometresSplit?.reduce(
       (total, { lastKilometerAltitude }) => (lastKilometerAltitude > 0 ? (total += lastKilometerAltitude) : total),
       0,
     ),

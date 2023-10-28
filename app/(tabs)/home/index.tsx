@@ -15,7 +15,16 @@ export default function Feed() {
   const { user } = useAuth();
   const router = useRouter();
   useGetPermissions();
-  const { data: activities, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user.id);
+  const {
+    data: activities,
+    error,
+    isLoading,
+    refetch,
+  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user.id, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
   const { onRefresh, refreshing } = useRefresh(refetch);
 
   return (

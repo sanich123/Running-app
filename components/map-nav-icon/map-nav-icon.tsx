@@ -7,8 +7,8 @@ import { View } from '../Themed';
 export default function NavIcon() {
   const { lastPosition, initialLocation } = useSelector(({ location }) => location);
   const lastView = lastPosition
-    ? [lastPosition.coords.longitude, lastPosition.coords.latitude]
-    : [initialLocation.coords.longitude, initialLocation.coords.latitude];
+    ? [lastPosition?.coords.longitude, lastPosition?.coords.latitude]
+    : [initialLocation?.coords.longitude, initialLocation?.coords.latitude];
   return (
     <>
       {lastPosition || initialLocation ? (

@@ -30,7 +30,7 @@ export const runichApi = createApi({
     getActivitiesByUserIdWithFriendsActivities: builder.query({
       query: (id) => `/${activity}/${id}/all`,
       providesTags: [activities],
-      keepUnusedDataFor: 20,
+      keepUnusedDataFor: 1,
     }),
     getAllActivityPhotosByUserId: builder.query({
       query: (userId) => `/${activity}/${userId}/photos`,
