@@ -13,7 +13,6 @@ export default function useGetSettings() {
   const [city, setCity] = useState(profileInfo?.city);
   const [weight, setWeight] = useState(profileInfo?.weight);
   const [bio, setBio] = useState(profileInfo?.bio);
-  const [birthday, setBirthday] = useState(profileInfo?.birthday ? new Date(profileInfo?.birthday) : undefined);
   const [image, setImage] = useState(profileInfo?.profilePhoto);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -25,19 +24,17 @@ export default function useGetSettings() {
     surname,
     city,
     weight,
-    bio,
-    birthday,
     image,
     isLoading,
     isDisabled,
     photoUrl,
+    bio,
     setGender,
     setName,
     setSurname,
     setCity,
     setWeight,
     setBio,
-    setBirthday,
     setImage,
     setIsLoading,
     setIsDisabled,

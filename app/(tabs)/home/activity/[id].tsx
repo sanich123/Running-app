@@ -15,7 +15,7 @@ export default function ViewActivityFullInfo() {
   return (
     <ScrollView contentContainerStyle={isLoading && { flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <View>
-        {isLoading && <ActivityIndicator />}
+        {isLoading && <ActivityIndicator size="large" />}
         {error ? <ErrorComponent error={error} /> : null}
         {activity && (
           <>

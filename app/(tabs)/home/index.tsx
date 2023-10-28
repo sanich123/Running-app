@@ -20,9 +20,7 @@ export default function Feed() {
 
   return (
     <>
-      <SafeAreaView
-        style={[{ flex: 1 }, (isLoading || !activities?.length) && { alignItems: 'center', justifyContent: 'center' }]}>
-        {/* <Text variant="headlineMedium">Text with updates!</Text> */}
+      <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
         {activities && (
           <FlatList
             onRefresh={onRefresh}
@@ -48,11 +46,15 @@ export default function Feed() {
                 />
               );
             }}
+            contentContainerStyle={
+              activities?.length === 0 && { flex: 1, justifyContent: 'center', alignItems: 'center' }
+            }
             ListEmptyComponent={<EmptyActivitiesList />}
             initialNumToRender={5}
             ItemSeparatorComponent={() => <Divider />}
           />
         )}
+
         {isLoading && <ActivityIndicator size="large" />}
         {error ? <ErrorComponent error={error} /> : null}
         <FloatingBtn onPressFn={() => router.push('/save-activity/')} />

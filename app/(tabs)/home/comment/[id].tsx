@@ -21,9 +21,9 @@ export default function Comment() {
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={[isLoading && { flex: 1, alignItems: 'center', justifyContent: 'center' }]}>
       <View style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
-        {isLoading && <ActivityIndicator />}
+        {isLoading && <ActivityIndicator size="large" />}
         {error ? <ErrorComponent error={error} /> : null}
         {activity && (
           <View style={[{ flex: 1 }, isLoading && { justifyContent: 'center', alignItems: 'center' }]}>

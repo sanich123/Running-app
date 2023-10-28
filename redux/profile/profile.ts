@@ -16,7 +16,6 @@ export const profile = createSlice({
       weight: '',
       bio: '',
       profilePhoto: '',
-      birthday: '',
     },
   },
 

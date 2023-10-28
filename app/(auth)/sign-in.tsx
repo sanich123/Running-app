@@ -4,7 +4,6 @@ import { View } from 'react-native';
 import EmailInput from '../../components/email-input/email-input';
 import LoginBtn from '../../components/login-btn/login-btn';
 import LoginNavigation from '../../components/login-navigation/login-navigation';
-import NicknameInput from '../../components/nickname-input/nickname-input';
 import PasswordInput from '../../components/password-input/password-input';
 import RegisterBtn from '../../components/register-btn/register-btn';
 import RegisterNavigation from '../../components/register-navigation/register-navigation';
@@ -20,8 +19,6 @@ export default function SignIn() {
     emailError,
     passwordError,
     password,
-    nickname,
-    nicknameError,
     isRegister,
     isReset,
     isLogin,
@@ -31,8 +28,6 @@ export default function SignIn() {
     setEmailError,
     setPasswordError,
     setPassword,
-    setNickname,
-    setNicknameError,
     setIsRegister,
     setIsReset,
     setIsLogin,
@@ -49,8 +44,6 @@ export default function SignIn() {
           emailError,
           passwordError,
           password,
-          nickname,
-          nicknameError,
           isRegister,
           isReset,
           isLogin,
@@ -60,8 +53,6 @@ export default function SignIn() {
           setEmailError,
           setPasswordError,
           setPassword,
-          setNickname,
-          setNicknameError,
           setIsRegister,
           setIsReset,
           setIsLogin,
@@ -69,7 +60,6 @@ export default function SignIn() {
           setIsDisabled,
         }}>
         <View style={signInStyles.container}>
-          {isRegister && <NicknameInput />}
           <EmailInput />
           {!isReset && <PasswordInput />}
           {isRegister && <RegisterBtn />}

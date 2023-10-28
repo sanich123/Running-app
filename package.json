@@ -1,6 +1,6 @@
 {
   "name": "running-app",
-  "version": "1.0.10",
+  "version": "1.1.01",
   "scripts": {
     "start": "expo start",
     "start:clear": "expo start --clear",
@@ -70,7 +70,6 @@
     "react-native-compressor": "^1.8.3",
     "react-native-loading-spinner-overlay": "^3.0.1",
     "react-native-paper": "^5.10.1",
-    "react-native-paper-dates": "^0.18.15",
     "react-native-safe-area-context": "4.6.3",
     "react-native-screens": "~3.22.0",
     "react-native-url-polyfill": "^2.0.0",

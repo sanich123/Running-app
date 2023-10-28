@@ -7,7 +7,6 @@ import ErrorComponent from '../../../components/error-component/error-component'
 import ProfileFollowersSection from '../../../components/profile-followers-section/profile-followers-section';
 import ProfileMediaPhotos from '../../../components/profile-media-photos/profile-media-photos';
 import { useGetUserProfileByIdQuery } from '../../../redux/runich-api/runich-api';
-import { calculateAge } from '../../../utils/time-formatter';
 
 export default function Profile() {
   const { user } = useAuth();
@@ -29,16 +28,13 @@ export default function Profile() {
           <AvatarShowable size={100} id={user?.id} />
           <View style={styles.nicknameWrapper}>
             <Text variant="headlineMedium">
-              {profile?.name || 'Your name'} {profile?.surname || 'Your surname'}
+              {profile?.name} {profile?.surname}
             </Text>
-            <Text variant="titleLarge">
-              {profile?.city || 'Your homeland'},{' '}
-              {profile?.birthday ? `${calculateAge(new Date(profile?.birthday))} years old` : 'Your age'}
-            </Text>
+            <Text variant="titleLarge">{profile?.city} </Text>
           </View>
         </View>
         <View style={styles.bio}>
-          <Text variant="titleMedium">{profile?.bio || 'Your biography'}</Text>
+          <Text variant="titleMedium">{profile?.bio}</Text>
         </View>
         <ProfileFollowersSection />
         {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}

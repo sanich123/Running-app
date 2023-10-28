@@ -24,7 +24,6 @@ export default function ActivityCard({
   locations,
   photoUrls,
   duration,
-  speed,
   distance,
 }: ActivityCardProps) {
   const { push } = useRouter();
@@ -49,8 +48,11 @@ export default function ActivityCard({
           <CardMetrics distance={distance} duration={duration} />
         </View>
       </Pressable>
-      {pathname.includes('/home/') ? <CardDesription description={description} /> : null}
-      <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
+      {pathname.includes('/home/') && <CardDesription description={description} />}
+      {(locations?.length || photoUrls?.length > 0) && (
+        <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
+      )}
+
       <View style={{ display: 'flex', flexDirection: 'row' }}>
         <CardLikes activityId={id} />
         <CommentsLength activityId={id} />
