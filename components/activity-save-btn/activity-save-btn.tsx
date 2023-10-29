@@ -36,6 +36,10 @@ export default function ActivitySaveBtn() {
     <Pressable
       onPress={async () => {
         dispatch(setIsDisableWhileSending(true));
+        console.log({
+          body: { ...finishedActivity, ...additionalInfo },
+          id: user.id,
+        });
         await sendActivity({
           body: { ...finishedActivity, ...additionalInfo },
           id: user.id,
