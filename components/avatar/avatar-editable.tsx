@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
 import { getBase64CodedImage, uploadPhoto, getSignedUrl } from '../../auth/supabase/storage/upload-photo';
+import { EXPIRED_TIME } from '../../constants/const';
 import { SaveSettingsContext } from '../../utils/context/settings';
 import { errorHandler } from '../../utils/error-handler';
 import { getAccessToGallery } from '../../utils/file-sending';
@@ -27,7 +28,7 @@ export default function AvatarIconEditable() {
             const compressedImage = await ImageCompressor.compress(imgSrc);
             const base64 = await getBase64CodedImage(compressedImage);
             const pathToPhoto = await uploadPhoto(user.id, base64);
-            const url = await getSignedUrl(pathToPhoto, 1000000000);
+            const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
             setPhotoUrl(url);
             setIsDisabled(false);
           }

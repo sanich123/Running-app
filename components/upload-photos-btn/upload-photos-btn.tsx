@@ -11,6 +11,7 @@ import { savePhotoUrls } from '../../redux/activity/activity';
 import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
 import { getAccessToGallery } from '../../utils/file-sending';
+import { EXPIRED_TIME } from '../../constants/const';
 
 export default function UploadPhotosBtn() {
   const { isDisabled, setIsDisabled, images, isLoading, setIsLoading, setImages } = useContext(SaveActivityContext);
@@ -35,7 +36,7 @@ export default function UploadPhotosBtn() {
               const compressedImage = await ImageCompressor.compress(imgSrc);
               const base64 = await getBase64CodedImage(compressedImage);
               const pathToPhoto = await uploadPhoto(user.id, base64);
-              const url = await getSignedUrl(pathToPhoto, 100000);
+              const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
               setImages([...images, url]);
               dispatch(savePhotoUrls([...images, url]));
             }
