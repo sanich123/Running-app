@@ -1,17 +1,16 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useContext } from 'react';
 import { Image, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { Image as ImageCompressor } from 'react-native-compressor';
 import { Button, useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { getBase64CodedImage, uploadPhoto, getSignedUrl } from '../../auth/supabase/storage/upload-photo';
+import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
 import { EXPIRED_TIME } from '../../constants/const';
 import { savePhotoUrls } from '../../redux/activity/activity';
 import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
-import { getAccessToGallery } from '../../utils/file-sending';
+import { compressAndSendPhoto, getAccessToGallery } from '../../utils/file-sending';
 
 export default function UploadPhotosBtn() {
   const { isDisabled, setIsDisabled, images, isLoading, setIsLoading, setImages } = useContext(SaveActivityContext);
@@ -33,17 +32,13 @@ export default function UploadPhotosBtn() {
             const result = await getAccessToGallery();
             if (!result.canceled) {
               const imgSrc = result.assets[0].uri;
-              const compressedImage = await ImageCompressor.compress(imgSrc);
-              const base64 = await getBase64CodedImage(compressedImage);
-              const pathToPhoto = await uploadPhoto(user.id, base64);
+              const pathToPhoto = await compressAndSendPhoto(imgSrc, user.id);
               const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
               setImages([...images, url]);
               dispatch(savePhotoUrls([...images, url]));
             }
           } catch (error) {
             errorHandler(error);
-            setIsDisabled(false);
-            setIsLoading(false);
           } finally {
             setIsDisabled(false);
             setIsLoading(false);

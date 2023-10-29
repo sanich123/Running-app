@@ -1,16 +1,15 @@
 import { useContext } from 'react';
 import { Pressable, Image } from 'react-native';
-import { Image as ImageCompressor } from 'react-native-compressor';
 import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { getBase64CodedImage, uploadPhoto, getSignedUrl } from '../../auth/supabase/storage/upload-photo';
+import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
 import { EXPIRED_TIME } from '../../constants/const';
 import { SaveSettingsContext } from '../../utils/context/settings';
 import { errorHandler } from '../../utils/error-handler';
-import { getAccessToGallery } from '../../utils/file-sending';
+import { compressAndSendPhoto, getAccessToGallery } from '../../utils/file-sending';
 
 export default function AvatarIconEditable() {
   const { image, setImage, isDisabled, setPhotoUrl, setIsDisabled } = useContext(SaveSettingsContext);
@@ -19,21 +18,19 @@ export default function AvatarIconEditable() {
   return (
     <Pressable
       onPress={async () => {
+        setIsDisabled(true);
         try {
           const result = await getAccessToGallery();
           if (!result.canceled) {
             const imgSrc = result.assets[0].uri;
-            setIsDisabled(true);
             setImage(imgSrc);
-            const compressedImage = await ImageCompressor.compress(imgSrc);
-            const base64 = await getBase64CodedImage(compressedImage);
-            const pathToPhoto = await uploadPhoto(user.id, base64);
+            const pathToPhoto = await compressAndSendPhoto(imgSrc, user.id);
             const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
             setPhotoUrl(url);
-            setIsDisabled(false);
           }
         } catch (error) {
           errorHandler(error);
+        } finally {
           setIsDisabled(false);
         }
       }}

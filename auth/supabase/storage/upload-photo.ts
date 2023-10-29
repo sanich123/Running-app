@@ -13,13 +13,8 @@ export async function getBase64CodedImage(image: string) {
   }
 }
 
-export async function getExtension(image: string) {
-  const splittedImage = image.split('.');
-  return splittedImage[splittedImage.length - 1];
-}
-
-export async function uploadPhoto(userId: string, base64: string) {
-  const filePath = `${userId}/${new Date().getTime()}.jpg`;
+export async function uploadPhoto(userId: string, base64: string, extension: string) {
+  const filePath = `${userId}/${new Date().getTime()}.${extension}`;
   const contentType = 'image/jpg';
   try {
     const { error, data: uploadedPhoto } = await supabase.storage
