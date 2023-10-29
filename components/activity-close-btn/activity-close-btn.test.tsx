@@ -11,7 +11,6 @@ describe('Activity-close-btn', () => {
         <ActivityCloseBtn />
       </Provider>,
     );
-    screen.debug();
     expect(screen.getByText(/close/i)).toBeDefined();
   });
 });
