@@ -12,6 +12,7 @@ export async function compressAndSendPhoto(imgSrc: string, userId: string) {
   const pathToPhoto = await uploadPhoto(userId, base64, extension);
   return pathToPhoto;
 }
+
 export async function getAccessToGallery() {
   try {
     return await ImagePicker.launchImageLibraryAsync({

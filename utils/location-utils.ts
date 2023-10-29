@@ -28,28 +28,6 @@ export function getSpeedInMinsInKm(distance, time) {
   return { paceAsNumber, paceAsString };
 }
 
-export function paceBetween(distance: number, from: LocationObject, to: LocationObject) {
-  return Math.round((to.timestamp - from.timestamp) / distance);
-}
-
-export function generateNextLocation(currentLocation) {
-  return {
-    coords: {
-      latitude:
-        Math.random() > 0.5 ? currentLocation.coords.latitude + 0.000004 : currentLocation.coords.latitude - 0.000004,
-      longitude:
-        Math.random() > 0.5 ? currentLocation.coords.longitude + 0.000004 : currentLocation.coords.longitude - 0.000004,
-      altitude: currentLocation.coords.altitude,
-      accuracy: currentLocation.coords.accuracy,
-      altitudeAccuracy: currentLocation.coords.altitudeAccuracy,
-      heading: currentLocation.coords.heading,
-      speed: currentLocation.coords.speed,
-    },
-    timestamp: currentLocation.timestamp + 1000,
-    mocked: false,
-  };
-}
-
 export function getMapBoxImage(locations: LocationObject[]) {
   if (locations.length) {
     const polylineLatLang = locations.map(({ coords }) => [coords.latitude, coords.longitude]);
