@@ -1,16 +1,11 @@
-import { render, screen } from '@testing-library/react-native';
-import { Provider } from 'react-redux';
+import { screen } from '@testing-library/react-native';
 
 import ActivityCloseBtn from './activity-close-btn';
-import { store } from '../../redux/store';
+import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Activity-close-btn', () => {
   it('should correctly renders', () => {
-    render(
-      <Provider store={store}>
-        <ActivityCloseBtn />
-      </Provider>,
-    );
+    renderWithProviders(<ActivityCloseBtn />);
     expect(screen.getByText(/close/i)).toBeDefined();
   });
 });

@@ -1,16 +1,11 @@
-import { render, screen } from '@testing-library/react-native';
-import { Provider } from 'react-redux';
+import { screen } from '@testing-library/react-native';
 
 import ActivityErrorMsg from './activity-error-msg';
-import { store } from '../../redux/store';
+import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Activity-error-msg', () => {
   it('should correctly renders', () => {
-    render(
-      <Provider store={store}>
-        <ActivityErrorMsg />
-      </Provider>,
-    );
+    renderWithProviders(<ActivityErrorMsg />);
     screen.debug();
   });
 });
