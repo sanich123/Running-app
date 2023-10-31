@@ -14,11 +14,13 @@ const rootReducer = combineReducers({
   [runichApi.reducerPath]: runichApi.reducer,
 });
 
-export const store = configureStore({
+export const mockStore = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(runichApi.middleware),
+  middleware: (getDefaultMiddleware) => {
+    return getDefaultMiddleware().concat(runichApi.middleware);
+  },
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
-export type AppStore = typeof store;
+export type AppStore = typeof mockStore;
 export type AppDispatch = AppStore['dispatch'];

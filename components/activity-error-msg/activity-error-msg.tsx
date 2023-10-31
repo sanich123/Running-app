@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ACTIVITY } from '../../constants/texts/activity';
 import { setIsAppShuted } from '../../redux/location/location';
 
 export default function ActivityErrorMsg() {
@@ -19,10 +20,7 @@ export default function ActivityErrorMsg() {
     <>
       {isAppShutedByPhone ? (
         <View style={[styles.indicatorLayout, { backgroundColor: 'orange' }]}>
-          <Text variant="bodyLarge">
-            Your phone (or, maybe, you) shuted our app in the background. Don't worry, we do our best to recover state
-            of your activity. Note, that activity is paused, so you have to continue manually
-          </Text>
+          <Text variant="bodyLarge">{ACTIVITY.english.ERROR_MSG}</Text>
         </View>
       ) : null}
     </>

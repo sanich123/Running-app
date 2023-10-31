@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import type { PreloadedState } from '@reduxjs/toolkit';
 import type { RenderOptions } from '@testing-library/react';
 import { render } from '@testing-library/react-native';
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 import { Provider } from 'react-redux';
 
 import { AppStore, RootState } from './mock-store';
