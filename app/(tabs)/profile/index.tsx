@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
 
 import { useAuth } from '../../../auth/context/auth-context';
-import AvatarShowable from '../../../components/avatar/avatar-showable';
+import AvatarShowable from '../../../components/avatar-showable/avatar-showable';
 import ErrorComponent from '../../../components/error-component/error-component';
 import ProfileFollowersSection from '../../../components/profile-followers-section/profile-followers-section';
 import ProfileMediaPhotos from '../../../components/profile-media-photos/profile-media-photos';

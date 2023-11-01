@@ -3,7 +3,7 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 
 import { ActivityCardProps } from '../../constants/types/activity-cart';
-import AvatarShowable from '../avatar/avatar-showable';
+import AvatarShowable from '../avatar-showable/avatar-showable';
 import CardBtns from '../card-btns/card-btns';
 import CardDesription from '../card-description/card-description';
 import CardLikes from '../card-likes/card-likes';

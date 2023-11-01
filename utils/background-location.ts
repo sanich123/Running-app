@@ -55,6 +55,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
   if (data) {
     const { locations } = data;
     const currentPosition = locations[0];
+    console.log(currentPosition);
     try {
       const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer, lastArrayLength } =
         getMetrics(currentPosition);

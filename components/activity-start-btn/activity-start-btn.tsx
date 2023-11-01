@@ -43,6 +43,7 @@ export default function ActivityStartBtn() {
   return (
     <Pressable
       style={startBtn}
+      testID="startButton"
       onPress={() => {
         dispatch(
           saveFinishedActivity({

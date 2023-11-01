@@ -9,6 +9,7 @@ export default function ActivityShowMapBtn() {
   const { isMapVisible } = useSelector(({ location }) => location);
   return (
     <Pressable
+      testID="showMapButton"
       style={[
         {
           alignItems: 'center',
