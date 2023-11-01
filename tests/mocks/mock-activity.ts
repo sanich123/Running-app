@@ -54,3 +54,19 @@ export const MOCK_LOCATION = {
   timestamp: 1698824159681,
 };
 export const MOCK_SPEED = getSpeedInMinsInKm(MOCK_DISTANCE, MOCK_DURATION).paceAsNumber;
+
+export const MOCK_PROFILE = {
+  bio: 'Я кароч любитель, но бегаю как профи. Профи меня не любят, потому что я программист и могу бегать в свое удовольствие, но мне как-то пох',
+  birthday: '1991-03-11T21:00:00.000Z',
+  city: 'Москва',
+  createdAt: '2023-09-27T06:03:22.257Z',
+  gender: 'male',
+  id: '4d58948f-571f-44f4-8b00-ec1f494187f5',
+  name: 'Искандер',
+  profilePhoto: 'https://marathonec.ru/wp-content/uploads/2023/05/iskander-yadgarov.jpg',
+  sport: 'run',
+  surname: 'Ядгаров',
+  updatedAt: '2023-09-27T06:03:22.257Z',
+  user_id: '9320e08f-299a-468a-8b03-5a1b5ef28ee1',
+  weight: '70',
+};

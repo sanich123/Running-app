@@ -1,4 +1,4 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { screen } from '@testing-library/react-native';
 
 import ActivitySaveBtn from './activity-save-btn';
 import { mockStore } from '../../tests/utils/mock-store';

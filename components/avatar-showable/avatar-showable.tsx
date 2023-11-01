@@ -7,7 +7,7 @@ import ErrorComponent from '../error-component/error-component';
 
 export default function AvatarShowable({ size, id }: { size: number; id: string }) {
   const { isLoading, data: profile, error } = useGetUserProfileByIdQuery(id);
-  console.log(profile, error);
+
   return (
     <>
       {isLoading && <ActivityIndicator testID="avatarShowableActivityIndicator" animating color={MD2Colors.red800} />}
@@ -22,6 +22,7 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
       )}
       {!profile && !isLoading && (
         <Avatar.Image
+          testID="avatarShowableDefaultIcon"
           size={size}
           source={() => <Icon name="person" size={size} />}
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}

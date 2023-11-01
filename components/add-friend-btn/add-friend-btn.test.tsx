@@ -1,7 +1,6 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { screen } from '@testing-library/react-native';
 
 import AddFriendBtn from './add-friend-btn';
-import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 
 jest.useFakeTimers();

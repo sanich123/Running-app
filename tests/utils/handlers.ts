@@ -1,21 +1,18 @@
-import { HttpResponse, http } from 'msw';
+import { rest } from 'msw';
+
+import { MOCK_LOCATION, MOCK_PROFILE } from '../mocks/mock-activity';
 
 export const handlers = [
-  http.post(`https://runich-backend.onrender.com/activity/someUserId`, () => {
-    HttpResponse.json({
-      data: 'its ok',
-    });
+  rest.post(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/someUserId`, (req, res, ctx) => {
+    return res(ctx.status(201), ctx.json(MOCK_LOCATION));
   }),
-  http.post('https://runich-backend.onrender.com/friend/someFriendId', () => {
-    HttpResponse.json({
-      data: 'ok',
-    });
+  rest.post(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/someFriendId`, (req, res, ctx) => {
+    return res(ctx.status(201), ctx.json(MOCK_LOCATION));
   }),
-  http.get('https://runich-backend.onrender.com/profile/someUserId', () => {
-    HttpResponse.json({
-      data: {
-        profilePhoto: 'somePhotoUrl',
-      },
-    });
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/someUserId`, (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(MOCK_PROFILE));
+  }),
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/someUserIdWithAnError`, (req, res, ctx) => {
+    return res(ctx.status(401), ctx.json({ error: { data: { message: 'Bad request' } } }));
   }),
 ];
