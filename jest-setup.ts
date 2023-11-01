@@ -1,5 +1,5 @@
 import '@testing-library/jest-native/extend-expect';
-
+import 'dotenv/config';
 import { fetch, Headers, Request, Response } from 'cross-fetch';
 
 import { server } from './tests/utils/server';
