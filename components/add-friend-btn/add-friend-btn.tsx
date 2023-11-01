@@ -13,7 +13,9 @@ export default function AddFriendBtn({ friendId }: { friendId: string }) {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
+      if (!process.env.IS_TESTING) {
+        console.log(data);
+      }
     }
     if (error) {
       console.log(error);
