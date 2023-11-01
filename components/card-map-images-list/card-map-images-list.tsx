@@ -15,7 +15,8 @@ export default function CardMapImagesList({
   id: string;
 }) {
   const { width } = useWindowDimensions();
-  const urls = photoUrls ? [getMapBoxImage(locations), ...photoUrls] : [getMapBoxImage(locations)];
+
+  const urls = locations?.length ? [getMapBoxImage(locations), ...photoUrls] : [getMapBoxImage(locations)];
   const router = useRouter();
 
   return (

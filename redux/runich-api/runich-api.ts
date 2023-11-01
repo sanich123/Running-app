@@ -9,10 +9,10 @@ export const runichApi = createApi({
   reducerPath: 'runnichApi',
   tagTypes: [activities, profile, comments, likes, friends, users],
   baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_URL }),
-  refetchOnMountOrArgChange: 30,
+  refetchOnMountOrArgChange: true,
   refetchOnReconnect: true,
   refetchOnFocus: true,
-  keepUnusedDataFor: 30,
+  keepUnusedDataFor: process.env.IS_TESTING ? 0 : 30,
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => '/user',
@@ -21,7 +21,7 @@ export const runichApi = createApi({
     getUserProfileById: builder.query({
       query: (id) => `/${routeProfile}/${id}`,
       providesTags: [profile],
-      keepUnusedDataFor: 10,
+      keepUnusedDataFor: process.env.IS_TESTING ? 0 : 1,
     }),
     getActivitiesByUserId: builder.query({
       query: (id) => `/${activity}/${id}`,
@@ -30,7 +30,7 @@ export const runichApi = createApi({
     getActivitiesByUserIdWithFriendsActivities: builder.query({
       query: (id) => `/${activity}/${id}/all`,
       providesTags: [activities],
-      keepUnusedDataFor: 20,
+      keepUnusedDataFor: process.env.IS_TESTING ? 0 : 1,
     }),
     getAllActivityPhotosByUserId: builder.query({
       query: (userId) => `/${activity}/${userId}/photos`,

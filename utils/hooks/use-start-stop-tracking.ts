@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { STATUSES } from '../../constants/enums';
-import { resetLocationsFromBackground } from '../../redux/location/location';
+import { resetLocationsFromBackground, setEmptyLastArrayWhenPaused } from '../../redux/location/location';
 import { startLocationTracking, stopLocationTracking } from '../background-location';
 
 const { initial, paused, started, continued } = STATUSES;
@@ -23,6 +23,7 @@ export default function useStartStopTracking() {
     }
     if (activityStatus === paused) {
       stopLocationTracking({ setLocationStarted });
+      dispatch(setEmptyLastArrayWhenPaused());
     }
   }, [activityStatus]);
 

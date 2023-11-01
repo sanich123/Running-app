@@ -1,14 +1,22 @@
-import { PointAnnotation, Callout } from '@rnmapbox/maps';
+import { PointAnnotation } from '@rnmapbox/maps';
 import { StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import { View } from '../Themed';
 
-export default function NavIcon({ lastView }: { lastView: number[] }) {
+export default function NavIcon() {
+  const { lastPosition, initialLocation } = useSelector(({ location }) => location);
+  const lastView = lastPosition
+    ? [lastPosition?.coords.longitude, lastPosition?.coords.latitude]
+    : [initialLocation?.coords.longitude, initialLocation?.coords.latitude];
   return (
-    <PointAnnotation key={Math.random().toString()} coordinate={lastView} id="home">
-      <View style={styles.customHome} />
-      <Callout title={`Координаты ${lastView[0]}, ${lastView[1]}`} />
-    </PointAnnotation>
+    <>
+      {lastPosition || initialLocation ? (
+        <PointAnnotation coordinate={lastView} id="home">
+          <View style={styles.customHome} />
+        </PointAnnotation>
+      ) : null}
+    </>
   );
 }
 

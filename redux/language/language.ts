@@ -2,16 +2,14 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { LANGUAGES } from '../../constants/enums';
 
-const { russian, english } = LANGUAGES;
-
 export const language = createSlice({
   name: 'language',
   initialState: {
-    language: english,
+    language: LANGUAGES.english,
   },
   reducers: {
-    changeLanguage: (state) => {
-      state.language = state.language === russian ? english : russian;
+    changeLanguage: (state, action) => {
+      state.language = action.payload;
     },
   },
 });

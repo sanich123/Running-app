@@ -5,7 +5,7 @@ import { Text } from 'react-native-paper';
 
 export default function ErrorComponent({ error }: { error: FetchBaseQueryError | SerializedError }) {
   return (
-    <View>
+    <View testID="errorComponentId">
       <Text variant="bodyMedium">
         {'data' in error ? `${(error.data as { message: string }).message}, ${error.status} code` : null}
         {'message' in error ? error.message : null}

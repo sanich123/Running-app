@@ -2,16 +2,23 @@ import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
 
 import { useAuth } from '../../../auth/context/auth-context';
-import AvatarShowable from '../../../components/avatar/avatar-showable';
+import AvatarShowable from '../../../components/avatar-showable/avatar-showable';
 import ErrorComponent from '../../../components/error-component/error-component';
 import ProfileFollowersSection from '../../../components/profile-followers-section/profile-followers-section';
 import ProfileMediaPhotos from '../../../components/profile-media-photos/profile-media-photos';
 import { useGetUserProfileByIdQuery } from '../../../redux/runich-api/runich-api';
-import { calculateAge } from '../../../utils/time-formatter';
 
 export default function Profile() {
   const { user } = useAuth();
-  const { isLoading, data: profile, error } = useGetUserProfileByIdQuery(user?.id);
+  const {
+    isLoading,
+    data: profile,
+    error,
+  } = useGetUserProfileByIdQuery(user?.id, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
 
   return (
     <>
@@ -21,16 +28,13 @@ export default function Profile() {
           <AvatarShowable size={100} id={user?.id} />
           <View style={styles.nicknameWrapper}>
             <Text variant="headlineMedium">
-              {profile?.name || 'Your name'} {profile?.surname || 'Your surname'}
+              {profile?.name} {profile?.surname}
             </Text>
-            <Text variant="titleLarge">
-              {profile?.city || 'Your homeland'},{' '}
-              {profile?.birthday ? `${calculateAge(new Date(profile?.birthday))} years old` : 'Your age'}
-            </Text>
+            <Text variant="titleLarge">{profile?.city} </Text>
           </View>
         </View>
         <View style={styles.bio}>
-          <Text variant="titleMedium">{profile?.bio || 'Your biography'}</Text>
+          <Text variant="titleMedium">{profile?.bio}</Text>
         </View>
         <ProfileFollowersSection />
         {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}

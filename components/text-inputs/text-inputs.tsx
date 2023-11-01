@@ -16,7 +16,10 @@ export default function TextInputs() {
         mode="outlined"
         value={title}
         onBlur={() => dispatch(saveTitle(title))}
-        onChangeText={(title) => setTitle(title)}
+        onChangeText={(title) => {
+          setTitle(title);
+          dispatch(saveTitle(title));
+        }}
         placeholder={TITLE_PLACEHOLDER}
         left={<TextInput.Icon icon="pencil" />}
         style={{ marginTop: 15 }}
@@ -26,7 +29,10 @@ export default function TextInputs() {
         mode="outlined"
         value={description}
         onBlur={() => dispatch(saveDescription(description))}
-        onChangeText={(description) => setDescription(description)}
+        onChangeText={(description) => {
+          setDescription(description);
+          dispatch(saveDescription(description));
+        }}
         placeholder={DESCRIPTION_PLACEHOLDER}
         multiline
         numberOfLines={4}

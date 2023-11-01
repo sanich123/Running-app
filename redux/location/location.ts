@@ -14,23 +14,28 @@ export const location = createSlice({
   name: 'location',
   initialState: {
     activityStatus: STATUSES.initial,
+    isTooMuchSpeed: false,
     isAppShutedByPhone: false,
     isMapVisible: true,
-    initialLocation: {} as Location,
+    initialLocation: null,
     distance: 0,
     duration: 0,
+    durationWithPauses: 0,
     altitude: 0,
     lastKilometerAltitude: 0,
     lastKilometer: 0,
     lastKilometerDuration: 0,
+    lastPosition: null,
     currentPace: 0,
     kilometresSplit: [] as LastKmSplit[],
+    locationsWithPauses: [[]] as LocationObject[][],
     locationsFromBackground: [] as LocationObject[],
     finishedActivity: {
       locations: [] as Location[],
       duration: 0,
       speed: 0,
       distance: 0,
+      kilometresSplit: [],
     },
   },
   reducers: {
@@ -50,12 +55,16 @@ export const location = createSlice({
       state.altitude = 0;
       state.kilometresSplit = [];
       state.currentPace = 0;
+      state.locationsWithPauses = [];
     },
     setDistance: (state, action) => {
       state.distance = state.distance + action.payload;
     },
     setDuration: (state, action) => {
       state.duration = state.duration + action.payload;
+    },
+    setDurationWithPauses: (state, action) => {
+      state.durationWithPauses = action.payload;
     },
     setAltitude: (state, action) => {
       state.altitude = state.altitude + action.payload;
@@ -96,6 +105,21 @@ export const location = createSlice({
     setIsMapVisible: (state, action) => {
       state.isMapVisible = action.payload;
     },
+    setEmptyLastArrayWhenPaused: (state) => {
+      state.locationsWithPauses = [...state.locationsWithPauses, []];
+    },
+    setLocationsWhenContinued: (state, action) => {
+      if (state.locationsWithPauses?.length === 0) {
+        state.locationsWithPauses = [...state.locationsWithPauses, []];
+      }
+      state.locationsWithPauses[state.locationsWithPauses.length - 1].push(action.payload);
+    },
+    setLastPosition: (state, action) => {
+      state.lastPosition = action.payload;
+    },
+    setIsTooMuchSpeed: (state, action) => {
+      state.isTooMuchSpeed = action.payload;
+    },
   },
 });
 
@@ -116,5 +140,10 @@ export const {
   setCurrentPace,
   setIsAppShuted,
   setIsMapVisible,
+  setEmptyLastArrayWhenPaused,
+  setLocationsWhenContinued,
+  setDurationWithPauses,
+  setLastPosition,
+  setIsTooMuchSpeed,
 } = location.actions;
 export default location.reducer;

@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
-import { formatDuration, formatDurationInMinsSecs } from '../../utils/time-formatter';
+import { formatDuration, formatDurationMinsSecs } from '../../utils/time-formatter';
 import ActivityErrorMsg from '../activity-error-msg/activity-error-msg';
 import MetricsItem from '../metrics-item/metrics-item';
 
@@ -29,14 +29,14 @@ export default function Metrics() {
         <MetricsItem
           isMapVisible={isMapVisible}
           title="Pace:"
-          metric={`${duration > 0 ? getSpeedInMinsInKm(distance, duration) : 0} /km`}
+          metric={`${duration && distance ? getSpeedInMinsInKm(distance, duration).paceAsString : 0} /km`}
           isCentral
         />
         {!isMapVisible && (
           <MetricsItem
             isMapVisible={isMapVisible}
             title="Last km:"
-            metric={formatDurationInMinsSecs(lastKmPace.lastKilometerDuration)}
+            metric={formatDurationMinsSecs(lastKmPace.lastKilometerDuration)}
             isCentral={false}
           />
         )}

@@ -13,8 +13,7 @@ export default function ActivitySaveBtn() {
   const { user } = useAuth();
   const { push } = useRouter();
   const { finishedActivity } = useSelector(({ location }) => location);
-  const { additionalInfo } = useSelector(({ activity }) => activity);
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
+  const { additionalInfo, isDisabledWhileSending } = useSelector(({ activity }) => activity);
   const [sendActivity, { error, data }] = useAddActivityByUserIdMutation();
   const dispatch = useDispatch();
 
@@ -32,11 +31,15 @@ export default function ActivitySaveBtn() {
       ToastAndroid.show('An error occured during sending activity! Try again.', ToastAndroid.LONG);
     }
   }, [data, error]);
+
   return (
     <Pressable
       onPress={async () => {
         dispatch(setIsDisableWhileSending(true));
-        await sendActivity({ body: { ...finishedActivity, ...additionalInfo }, id: user.id }).unwrap();
+        await sendActivity({
+          body: { ...finishedActivity, ...additionalInfo },
+          id: user.id,
+        }).unwrap();
       }}
       disabled={isDisabledWhileSending}>
       <Text

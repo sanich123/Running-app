@@ -15,6 +15,7 @@ export default function ProfileUpdateBtn() {
   const { push } = useRouter();
   const dispatch = useDispatch();
   const [sendProfile, { isLoading, data, error }] = useSendProfileInfoMutation();
+
   useEffect(() => {
     if (isLoading) {
       dispatch(setIsDisabledWhileSendingProfile(true));
@@ -29,16 +30,9 @@ export default function ProfileUpdateBtn() {
       ToastAndroid.show('An error occured during sending profile info. Try again!', ToastAndroid.LONG);
     }
   }, [isLoading, data, error]);
+
   return (
-    <Pressable
-      onPress={async () => {
-        const birthday = settings.birthday ? new Date(settings.birthday) : null;
-        await sendProfile({
-          body: { ...settings, birthday },
-          id: user.id,
-        }).unwrap();
-      }}
-      disabled={isLoading}>
+    <Pressable onPress={async () => await sendProfile({ body: settings, id: user.id }).unwrap()} disabled={isLoading}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>
         {`Updat${isLoading ? 'ing' : 'e'}`}
       </Text>

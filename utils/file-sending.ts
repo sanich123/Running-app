@@ -1,26 +1,17 @@
 import * as ImagePicker from 'expo-image-picker';
+import { Image as ImageCompressor } from 'react-native-compressor';
 
 import { errorHandler } from './error-handler';
+import { getBase64CodedImage, uploadPhoto } from '../auth/supabase/storage/upload-photo';
 
-// export async function getBlobFromUri(uri: string) {
-//   try {
-//     return await new Promise((resolve, reject) => {
-//       const xhr = new XMLHttpRequest();
-//       xhr.onload = function () {
-//         resolve(xhr.response);
-//       };
-//       // eslint-disable-next-line node/handle-callback-err
-//       xhr.onerror = function (e) {
-//         reject(new TypeError('Network request failed'));
-//       };
-//       xhr.responseType = 'blob';
-//       xhr.open('GET', uri, true);
-//       xhr.send(null);
-//     });
-//   } catch (error) {
-//     errorHandler(error);
-//   }
-// }
+export async function compressAndSendPhoto(imgSrc: string, userId: string) {
+  const splittedImg = imgSrc.split('.');
+  const extension = splittedImg[splittedImg.length - 1];
+  const compressedImage = await ImageCompressor.compress(imgSrc);
+  const base64 = await getBase64CodedImage(compressedImage);
+  const pathToPhoto = await uploadPhoto(userId, base64, extension);
+  return pathToPhoto;
+}
 
 export async function getAccessToGallery() {
   try {
@@ -33,31 +24,3 @@ export async function getAccessToGallery() {
     errorHandler(error);
   }
 }
-
-// export function getInfoFromUri(uri: string) {
-//   const extension = (uri.match(EXT_MATCHER) || [])[1];
-//   return `images/img-${new Date().getTime()}.${extension}`;
-// }
-
-// export async function uploadToFirebaseStorage(
-//   fileName: string,
-//   blob: Blob,
-//   setProgressPercent: (arg: number) => void,
-//   setIsLoading: (arg: boolean) => void,
-//   setPhotoUrls: (arg: string[]) => void,
-//   photoUrls: string[],
-// ) {
-//   const storageRef = ref(FIREBASE_STORAGE, fileName);
-//   const updateTask = uploadBytesResumable(storageRef, blob, { contentType: 'image/jpeg' });
-//   updateTask.on(
-//     'state_changed',
-//     ({ bytesTransferred, totalBytes }) => setProgressPercent(Number((bytesTransferred / totalBytes).toFixed(2))),
-//     (error) => console.log(error),
-//     async () => {
-//       const url = await getDownloadURL(ref(FIREBASE_STORAGE, fileName));
-//       setPhotoUrls([...photoUrls, url]);
-//       setIsLoading(false);
-//     },
-//   );
-//   return updateTask;
-// }

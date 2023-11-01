@@ -6,6 +6,7 @@ import { View } from '../Themed';
 
 export default function ActivityLocationIndicator() {
   const { isLoading, isError, isSuccess } = useGetCurrentLocation();
+
   return (
     <>
       {isLoading ? (

@@ -9,42 +9,48 @@ import MapRouteLine from '../map-route-line/map-route-line';
 
 export default function Map() {
   const cameraRef = useRef<Camera>(null);
-  const { initialLocation, locationsFromBackground: locations, isMapVisible } = useSelector(({ location }) => location);
+  const { initialLocation, isMapVisible, locationsWithPauses, lastPosition, isTooMuchSpeed } = useSelector(
+    ({ location }) => location,
+  );
 
-  const lastPosition = locations.length > 0 ? locations[locations.length - 1] : initialLocation;
-  const lastView = [lastPosition?.coords?.longitude, lastPosition?.coords?.latitude];
-  ToastAndroid.show(`Locations have ${locations.length}`, ToastAndroid.SHORT);
-
+  if (isTooMuchSpeed) {
+    ToastAndroid.show('IsTooMuchSpeed, over 3 min/km', ToastAndroid.SHORT);
+  } else {
+    ToastAndroid.show(
+      `Locations have ${locationsWithPauses.reduce((total, el) => total + el.length, 0)}`,
+      ToastAndroid.SHORT,
+    );
+  }
   useEffect(() => {
-    if (lastPosition?.coords) {
+    if (lastPosition) {
       cameraRef.current?.setCamera({
-        centerCoordinate: lastView,
+        centerCoordinate: [lastPosition.coords.longitude, lastPosition.coords.latitude],
       });
     }
-  }, [locations]);
+  }, [lastPosition]);
 
   return (
-    <>
-      <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
-        <UserLocation
-          androidRenderMode="compass"
-          animated
-          onUpdate={(location) => console.log('userlocation', location)}
-        />
-        {lastPosition?.coords ? (
-          <Camera
-            ref={cameraRef}
-            centerCoordinate={lastView}
-            animationMode="flyTo"
-            animationDuration={1000}
-            zoomLevel={18}
-          />
-        ) : null}
+    <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
+      <UserLocation showsUserHeadingIndicator androidRenderMode="compass" animated />
 
-        <MapKmSplit />
-        {lastPosition?.coords ? <MapNavIcon lastView={lastView} /> : null}
-        {locations.length > 1 && <MapRouteLine locations={locations} />}
-      </MapView>
-    </>
+      {initialLocation ? (
+        <Camera
+          ref={cameraRef}
+          centerCoordinate={[initialLocation.coords.longitude, initialLocation.coords.latitude]}
+          animationMode="flyTo"
+          animationDuration={1000}
+          zoomLevel={18}
+        />
+      ) : null}
+      <MapKmSplit />
+      <MapNavIcon />
+      {locationsWithPauses[0]?.length > 1
+        ? locationsWithPauses.map((locations) => {
+            if (locations?.length > 1) {
+              return <MapRouteLine key={`${Math.random()}+${locations.length}`} locations={locations} />;
+            }
+          })
+        : null}
+    </MapView>
   );
 }

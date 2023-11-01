@@ -1,7 +1,7 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
-import AvatarShowable from '../../../../components/avatar/avatar-showable';
+import AvatarShowable from '../../../../components/avatar-showable/avatar-showable';
 import ProfileFollowersSection from '../../../../components/profile-followers-section/profile-followers-section';
 import ProfileMediaPhotos from '../../../../components/profile-media-photos/profile-media-photos';
 import UserBio from '../../../../components/user-bio/user-bio';

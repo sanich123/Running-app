@@ -5,7 +5,7 @@ import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
 import { useGetCommentsByActivityIdQuery } from '../../redux/runich-api/runich-api';
 import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
-import AvatarShowable from '../avatar/avatar-showable';
+import AvatarShowable from '../avatar-showable/avatar-showable';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
 import ErrorComponent from '../error-component/error-component';

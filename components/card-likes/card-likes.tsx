@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Text, ActivityIndicator } from 'react-native-paper';
 
 import { useGetLikesByActivityIdQuery } from '../../redux/runich-api/runich-api';
-import AvatarShowable from '../avatar/avatar-showable';
+import AvatarShowable from '../avatar-showable/avatar-showable';
 import NumberOfLikes from '../number-of-likes/number-of-likes';
 
 const MAX_IN_ROW = 9;

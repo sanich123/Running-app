@@ -10,6 +10,7 @@ type AuthProps = {
   initialized?: boolean;
   signOut?: () => void;
 };
+
 export const AuthContext = createContext<Partial<AuthProps>>({});
 
 export function useAuth() {

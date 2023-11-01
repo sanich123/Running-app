@@ -3,7 +3,7 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 
 import { ActivityCardProps } from '../../constants/types/activity-cart';
-import AvatarShowable from '../avatar/avatar-showable';
+import AvatarShowable from '../avatar-showable/avatar-showable';
 import CardBtns from '../card-btns/card-btns';
 import CardDesription from '../card-description/card-description';
 import CardLikes from '../card-likes/card-likes';
@@ -24,7 +24,6 @@ export default function ActivityCard({
   locations,
   photoUrls,
   duration,
-  speed,
   distance,
 }: ActivityCardProps) {
   const { push } = useRouter();
@@ -46,11 +45,14 @@ export default function ActivityCard({
           <CardTitle title={title} />
         </View>
         <View style={styles.metricsWrapper}>
-          <CardMetrics distance={distance} duration={duration} speed={speed} />
+          <CardMetrics distance={distance} duration={duration} />
         </View>
       </Pressable>
-      {pathname.includes('/home/') ? <CardDesription description={description} /> : null}
-      <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
+      {pathname.includes('/home/') && <CardDesription description={description} />}
+      {(locations?.length || photoUrls?.length > 0) && (
+        <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
+      )}
+
       <View style={{ display: 'flex', flexDirection: 'row' }}>
         <CardLikes activityId={id} />
         <CommentsLength activityId={id} />

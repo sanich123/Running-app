@@ -4,7 +4,7 @@ import { Text } from 'react-native-paper';
 export default function EmptyActivitiesList() {
   return (
     <View>
-      <Text variant="titleLarge">Здесь будут ваши тренировки (если сможете хоть одну записать)</Text>
+      <Text variant="titleLarge">There will be yours and your friends activities...</Text>
     </View>
   );
 }
