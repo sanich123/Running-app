@@ -19,7 +19,6 @@ export default function ActivitySaveBtn() {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       push('/home/');
       dispatch(setIsDisableWhileSending(false));
       dispatch(resetAcitivityInfo());
@@ -43,6 +42,7 @@ export default function ActivitySaveBtn() {
       }}
       disabled={isDisabledWhileSending}>
       <Text
+        testID="activitySaveBtn"
         variant="titleMedium"
         style={{ color: colors.primaryContainer, marginRight: 15, opacity: isDisabledWhileSending ? 0.5 : 1 }}>
         {`Sav${isDisabledWhileSending ? 'ing' : 'e'}`}

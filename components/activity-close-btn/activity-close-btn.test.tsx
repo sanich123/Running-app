@@ -8,7 +8,6 @@ import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 
 jest.spyOn(Alert, 'alert');
-jest.useFakeTimers();
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({
@@ -21,7 +20,7 @@ describe('Activity close btn', () => {
     renderWithProviders(<ActivityCloseBtn />);
     expect(screen.getByText(/close/i)).toBeDefined();
   });
-  it('should correctly interract with the user', async () => {
+  it('should correctly show alert message, when duration is greater than 0', async () => {
     mockStore.dispatch(setDuration(10000));
     renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
     const closeBtn = screen.getByText(/close/i);

@@ -5,7 +5,6 @@ import { setIsMapVisible } from '../../redux/location/location';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 
-jest.useFakeTimers();
 describe('Activity show map btn', () => {
   it('should correctly change isMapVisible predicate', async () => {
     mockStore.dispatch(setIsMapVisible(true));
@@ -13,5 +12,7 @@ describe('Activity show map btn', () => {
     const showMapBtn = screen.getByTestId('showMapButton');
     await userEvent.press(showMapBtn);
     expect(mockStore.getState().location.isMapVisible).toEqual(false);
+    await userEvent.press(showMapBtn);
+    expect(mockStore.getState().location.isMapVisible).toEqual(true);
   });
 });
