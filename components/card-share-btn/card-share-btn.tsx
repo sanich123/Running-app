@@ -6,6 +6,12 @@ import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns'
 export default function ActivityCardShareBtn() {
   const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
   return (
-    <IconButton icon="share-outline" iconColor={MD3Colors.primary50} size={25} disabled={isLoading || isDisabled} />
+    <IconButton
+      testID="iconShareBtn"
+      icon="share-outline"
+      iconColor={MD3Colors.primary50}
+      size={25}
+      disabled={isLoading || isDisabled}
+    />
   );
 }

@@ -25,6 +25,7 @@ export default function CommentInput({ activityId }: { activityId: string }) {
   }, [commentSendingError, commentResponse]);
   return (
     <TextInput
+      testID="commentInput"
       mode="outlined"
       style={{ marginTop: 'auto', marginBottom: 20 }}
       placeholder="Add a comment"
@@ -33,6 +34,7 @@ export default function CommentInput({ activityId }: { activityId: string }) {
       disabled={isCommentSending}
       right={
         <TextInput.Icon
+          testID="commentInputIcon"
           icon="pencil"
           onPress={async () => {
             const body = { comment, authorId: user.id };

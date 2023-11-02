@@ -29,7 +29,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
 
   return (
     <IconButton
-      testID={`iconLikeButton-${isLikedByYou ? 'liked' : ''}`}
+      testID={`iconLikeButton${isLikedByYou ? '-liked' : ''}`}
       icon={`thumb-up${isLikedByYou ? '' : '-outline'}`}
       iconColor={MD3Colors.primary50}
       size={25}

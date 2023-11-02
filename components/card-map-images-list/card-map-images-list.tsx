@@ -27,12 +27,12 @@ export default function CardMapImagesList({
         return (
           <Pressable
             onPress={() => router.push(isNotFirst ? `/home/media/${encodeURIComponent(item)}` : `/home/map/${id}`)}>
-            <Image source={{ uri: item }} resizeMode="cover" height={200} width={width} />
+            <Image testID={item} source={{ uri: item }} resizeMode="cover" height={200} width={width} />
           </Pressable>
         );
       }}
       horizontal
-      initialNumToRender={1}
+      initialNumToRender={2}
     />
   );
 }

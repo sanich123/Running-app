@@ -7,7 +7,7 @@ import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Activity card like btn', () => {
-  it('should correctly renders when liked by you', async () => {
+  it('should correctly renders when activity was liked by you', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
       user: {
         id: 'someUserId',
@@ -26,6 +26,6 @@ describe('Activity card like btn', () => {
       },
     }));
     renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" />, { store: mockStore });
-    expect(await screen.findByTestId('iconLikeButton-')).toBeOnTheScreen();
+    expect(await screen.findByTestId('iconLikeButton')).toBeOnTheScreen();
   });
 });

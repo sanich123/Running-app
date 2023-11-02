@@ -9,6 +9,7 @@ export default function CommentLikesLength({ id }: { id: string }) {
   const { isLoading, data: commentLikes, error } = useGetLikesByCommentIdQuery(id);
   const youGaveCommentLike = commentLikes?.some(({ authorId }) => authorId === user?.id);
   const commentLikesLength = youGaveCommentLike ? commentLikes?.length - 1 : commentLikes?.length;
+
   return (
     <>
       {isLoading && <ActivityIndicator size="small" />}
