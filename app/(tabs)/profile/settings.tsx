@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { View } from '../../../components/Themed';
-import AvatarIconEditable from '../../../components/avatar/avatar-editable';
+import AvatarIconEditable from '../../../components/avatar-editable/avatar-editable';
 import InputBio from '../../../components/input-bio/input-bio';
 import InputsNameSurname from '../../../components/inputs-name-surname/inputs-name-surname';
 import InputsWeightCity from '../../../components/inputs-weight-city/inputs-weight-city';

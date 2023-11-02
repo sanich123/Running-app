@@ -14,6 +14,7 @@ import UserNameSurname from '../user-name-surname/user-name-surname';
 export default function Comments({ id }: { id: string }) {
   const { isLoading, error, data: comments } = useGetCommentsByActivityIdQuery(id);
   const { push } = useRouter();
+
   return (
     <>
       {isLoading && <ActivityIndicator />}
