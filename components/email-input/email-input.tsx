@@ -9,6 +9,7 @@ export default function EmailInput() {
   return (
     <>
       <TextInput
+        testID="inputEmail"
         label="Email"
         value={email}
         onChangeText={(text) => {

@@ -8,7 +8,7 @@ import { SaveActivityContext } from '../../utils/context/save-activity';
 
 export default function DeclineBtn() {
   const { isDisabled } = useContext(SaveActivityContext);
-  const router = useRouter();
+  const { push } = useRouter();
   const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
   return (
     <Button
@@ -23,7 +23,7 @@ export default function DeclineBtn() {
               text: 'Fucking yes',
               onPress: () => {
                 ToastAndroid.show('Redirecting to the main page!', ToastAndroid.SHORT);
-                router.push('/home');
+                push('/home');
               },
               style: 'cancel',
             },

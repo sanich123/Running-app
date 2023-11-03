@@ -11,7 +11,8 @@ export default function DeleteFriendBtn({ friendId }: { friendId: string }) {
 
   useEffect(() => {
     if (data) {
-      ToastAndroid.show('You have successfully added a friend!', ToastAndroid.SHORT);
+      console.log(data);
+      ToastAndroid.show('You have successfully delete a friend!', ToastAndroid.SHORT);
     }
     if (error) {
       ToastAndroid.show('An error occured', ToastAndroid.SHORT);

@@ -10,6 +10,7 @@ export default function FollowingCount() {
 
   const { id: friendId } = useLocalSearchParams();
   const { isLoading, error, data: followers } = useGetFollowersByUserIdQuery(friendId ? friendId?.toString() : user.id);
+
   return (
     <>
       {isLoading && <ActivityIndicator size="small" />}

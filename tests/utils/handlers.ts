@@ -35,4 +35,7 @@ export const handlers = [
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/comment/189d2c10-463c-42f5-9f09-5e9fa6aa2720`, (req, res, ctx) =>
     res(ctx.status(200), ctx.json(MOCK_COMMENTS)),
   ),
+  rest.delete(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/0326e84a-946b-42da-b662-658c4c9a50d9`, (req, res, ctx) =>
+    res(ctx.status(204), ctx.json('')),
+  ),
 ];
