@@ -38,4 +38,10 @@ export const handlers = [
   rest.delete(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/0326e84a-946b-42da-b662-658c4c9a50d9`, (req, res, ctx) =>
     res(ctx.status(204), ctx.json('')),
   ),
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/someFriendId/followers`, (req, res, ctx) =>
+    res(ctx.status(200), ctx.json([1, 2, 3])),
+  ),
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/someFriendId`, (req, res, ctx) =>
+    res(ctx.status(200), ctx.json([1, 2, 3])),
+  ),
 ];
