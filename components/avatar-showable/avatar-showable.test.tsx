@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react-native';
 
 import AvatarShowable from './avatar-showable';
-import { MOCK_PROFILE } from '../../tests/mocks/mock-activity';
+import { MOCK_PROFILE } from '../../tests/mocks/mock-location';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 

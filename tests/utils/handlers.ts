@@ -1,8 +1,9 @@
 import { rest } from 'msw';
 
-import { MOCK_LOCATION, MOCK_PROFILE } from '../mocks/mock-activity';
+import { MOCK_ACTIVITY } from '../mocks/mock-activity';
 import { MOCK_COMMENT_LIKES } from '../mocks/mock-comment-likes';
 import { MOCK_COMMENTS } from '../mocks/mock-comments';
+import { MOCK_LOCATION, MOCK_PROFILE } from '../mocks/mock-location';
 
 export const handlers = [
   rest.post(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/someUserId`, (req, res, ctx) =>
@@ -43,5 +44,8 @@ export const handlers = [
   ),
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/someFriendId`, (req, res, ctx) =>
     res(ctx.status(200), ctx.json([1, 2, 3])),
+  ),
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/activityId/someActivityId`, (req, res, ctx) =>
+    res(ctx.status(200), ctx.json(MOCK_ACTIVITY)),
   ),
 ];

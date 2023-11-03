@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react-native';
 
 import CardMapImagesList from './card-map-images-list';
-import { MOCK_LOCATIONS } from '../../tests/mocks/mock-activity';
+import { MOCK_LOCATIONS } from '../../tests/mocks/mock-location';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 

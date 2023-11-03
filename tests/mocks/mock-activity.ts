@@ -1,72 +1,31 @@
-import { getSpeedInMinsInKm } from '../../utils/location-utils';
+import { MOCK_LOCATIONS } from './mock-locations';
 
-export const MOCK_DURATION = 30851;
-export const MOCK_DISTANCE = 49.781129312191226;
-export const MOCK_LOCATIONS = [
-  {
-    coords: {
-      accuracy: 56.099998474121094,
-      altitude: 204,
-      altitudeAccuracy: 100,
-      heading: 47.17292785644531,
-      latitude: 55.6253046,
-      longitude: 37.305884,
-      speed: 2.253950357437134,
-    },
-    timestamp: 1698824159681,
-  },
-  {
-    coords: {
-      accuracy: 59.847999572753906,
-      altitude: 204,
-      altitudeAccuracy: 100,
-      heading: 47.17292785644531,
-      latitude: 55.62532,
-      longitude: 37.3059135,
-      speed: 1.0208278894424438,
-    },
-    timestamp: 1698824164679,
-  },
-  {
-    coords: {
-      accuracy: 56.099998474121094,
-      altitude: 204,
-      altitudeAccuracy: 100,
-      heading: 47.17292785644531,
-      latitude: 55.6252377,
-      longitude: 37.3057562,
-      speed: 2.217580556869507,
-    },
-    timestamp: 1698824154870,
-  },
-];
-
-export const MOCK_LOCATION = {
-  coords: {
-    accuracy: 56.099998474121094,
-    altitude: 204,
-    altitudeAccuracy: 100,
-    heading: 47.17292785644531,
-    latitude: 55.6253046,
-    longitude: 37.305884,
-    speed: 2.253950357437134,
-  },
-  timestamp: 1698824159681,
-};
-export const MOCK_SPEED = getSpeedInMinsInKm(MOCK_DISTANCE, MOCK_DURATION).paceAsNumber;
-
-export const MOCK_PROFILE = {
-  bio: 'Я кароч любитель, но бегаю как профи. Профи меня не любят, потому что я программист и могу бегать в свое удовольствие, но мне как-то пох',
-  birthday: '1991-03-11T21:00:00.000Z',
-  city: 'Москва',
-  createdAt: '2023-09-27T06:03:22.257Z',
-  gender: 'male',
-  id: '4d58948f-571f-44f4-8b00-ec1f494187f5',
-  name: 'Искандер',
-  profilePhoto: 'https://marathonec.ru/wp-content/uploads/2023/05/iskander-yadgarov.jpg',
+export const MOCK_ACTIVITY = {
+  createdAt: '2023-11-03T15:28:51.031Z',
+  date: '2023-11-03T15:28:51.031Z',
+  description: '',
+  distance: 8396,
+  duration: 3514208,
+  emotion: '',
+  id: 'e315eb5b-989c-4215-9d14-d77f4e7e2974',
+  isSwitchOn: false,
+  kilometresSplit: [
+    { kilometerPoint: MOCK_LOCATIONS[0], lastKilometerAltitude: 3.29998779296875, lastKilometerDuration: 1375579 },
+    { kilometerPoint: MOCK_LOCATIONS[5], lastKilometerAltitude: -14.69999694824219, lastKilometerDuration: 466661 },
+    { kilometerPoint: MOCK_LOCATIONS[10], lastKilometerAltitude: 17.5, lastKilometerDuration: 506888 },
+    { kilometerPoint: MOCK_LOCATIONS[15], lastKilometerAltitude: -1.800003051757812, lastKilometerDuration: 512964 },
+    { kilometerPoint: MOCK_LOCATIONS[20], lastKilometerAltitude: -1.100006103515625, lastKilometerDuration: 491238 },
+    { kilometerPoint: MOCK_LOCATIONS[25], lastKilometerAltitude: 0, lastKilometerDuration: 213956 },
+    { kilometerPoint: MOCK_LOCATIONS[30], lastKilometerAltitude: 0, lastKilometerDuration: 304661 },
+    { kilometerPoint: MOCK_LOCATIONS[35], lastKilometerAltitude: 0, lastKilometerDuration: 353663 },
+  ],
+  locations: MOCK_LOCATIONS,
+  photoUrls: [
+    'https://rrlmesbmowaoyzvniffr.supabase.co/storage/v1/object/sign/files/926f4a53-08b5-43c6-99ee-cf31fdfbb49b/1699025324799.jpeg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJmaWxlcy85MjZmNGE1My0wOGI1LTQzYzYtOTllZS1jZjMxZmRmYmI0OWIvMTY5OTAyNTMyNDc5OS5qcGVnIiwiaWF0IjoxNjk5MDI1MzI3LCJleHAiOjI2OTkwMjUzMjd9.i_vqKxSwp0w2PgwYmFcSMcJ84ewfKq0UbJTm85bhTls',
+  ],
+  speed: 6,
   sport: 'run',
-  surname: 'Ядгаров',
-  updatedAt: '2023-09-27T06:03:22.257Z',
-  user_id: '9320e08f-299a-468a-8b03-5a1b5ef28ee1',
-  weight: '70',
+  title: 'Moscow',
+  updatedAt: '2023-11-03T15:28:51.031Z',
+  user_id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
 };

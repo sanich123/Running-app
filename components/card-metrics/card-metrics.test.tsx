@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react-native';
 
 import CardMetrics from './card-metrics';
-import { MOCK_DISTANCE, MOCK_DURATION } from '../../tests/mocks/mock-activity';
+import { MOCK_DISTANCE, MOCK_DURATION } from '../../tests/mocks/mock-location';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
 import { formatDuration } from '../../utils/time-formatter';
 

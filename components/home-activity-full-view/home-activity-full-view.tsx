@@ -20,7 +20,7 @@ export default function ActivityFullViewMetrics() {
 
   return (
     <View style={[styles.layout, isLoading && styles.isCenter]}>
-      {isLoading && <ActivityIndicator />}
+      {isLoading && <ActivityIndicator testID="activityFullViewMetricsIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <>

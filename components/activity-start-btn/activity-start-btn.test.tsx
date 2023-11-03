@@ -3,7 +3,7 @@ import { screen, userEvent } from '@testing-library/react-native';
 import ActivityStartBtn from './activity-start-btn';
 import { STATUSES } from '../../constants/enums';
 import { setActivityStatus, setDistance, setDuration, setLocationsFromBackground } from '../../redux/location/location';
-import { MOCK_DISTANCE, MOCK_DURATION, MOCK_LOCATION, MOCK_SPEED } from '../../tests/mocks/mock-activity';
+import { MOCK_DISTANCE, MOCK_DURATION, MOCK_LOCATION, MOCK_SPEED } from '../../tests/mocks/mock-location';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 

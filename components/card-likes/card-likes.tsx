@@ -30,19 +30,19 @@ export default function CardLikes({ activityId }: { activityId: string }) {
         {isLoading && <ActivityIndicator testID="cardLikesActivityIndicator" />}
         {error ? <Text variant="bodyMedium">An error occured</Text> : null}
         {likes && (
-          <View key="uniqueKey" style={{ position: 'relative' }}>
-            {likes?.slice(0, lastLikeInTheRow).map(({ authorId, id }, key) => (
-              <Fragment key={id}>
-                {likes.length > MAX_IN_ROW && key === MAX_IN_ROW - 1 ? (
-                  <View style={[styles.lastAvatarWrapper, { left: key * SHIFT_RIGHT + 13 }]}>
+          <View style={{ position: 'relative' }}>
+            {likes?.slice(0, lastLikeInTheRow).map(({ authorId, id }, index) => (
+              <Fragment key={`${id}/${index}/${authorId}`}>
+                {likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 ? (
+                  <View style={[styles.lastAvatarWrapper, { left: index * SHIFT_RIGHT + 13 }]}>
                     <Text variant="bodySmall">{`+${likes?.length - MAX_IN_ROW}`}</Text>
                   </View>
                 ) : null}
                 <View
                   style={[
                     styles.avatarWrapper,
-                    { left: key * SHIFT_RIGHT },
-                    likes.length > MAX_IN_ROW && key === MAX_IN_ROW - 1 && { opacity: 0.1 },
+                    { left: index * SHIFT_RIGHT },
+                    likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 && { opacity: 0.1 },
                   ]}>
                   {!process.env.IS_TESTING ? <AvatarShowable size={30} id={authorId} key={id} /> : null}
                 </View>
