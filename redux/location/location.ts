@@ -50,15 +50,6 @@ export const location = createSlice({
     setLocationsFromBackground: (state, action) => {
       state.locationsFromBackground = [...state.locationsFromBackground, action.payload];
     },
-    resetLocationsFromBackground: (state) => {
-      state.locationsFromBackground = [];
-      state.duration = 0;
-      state.distance = 0;
-      state.altitude = 0;
-      state.kilometresSplit = [];
-      state.currentPace = 0;
-      state.locationsWithPauses = [];
-    },
     setDistance: (state, action) => {
       state.distance = state.distance + action.payload;
     },
@@ -121,6 +112,15 @@ export const location = createSlice({
     },
     setIsTooMuchSpeed: (state, action) => {
       state.isTooMuchSpeed = action.payload;
+    },
+    resetLocationsFromBackground: (state) => {
+      state.locationsFromBackground = [];
+      state.duration = 0;
+      state.distance = 0;
+      state.altitude = 0;
+      state.kilometresSplit = [];
+      state.currentPace = 0;
+      state.locationsWithPauses = [];
     },
   },
 });

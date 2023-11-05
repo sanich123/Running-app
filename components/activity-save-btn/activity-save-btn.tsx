@@ -5,7 +5,7 @@ import { useTheme, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { resetAcitivityInfo, setIsDisableWhileSending, setIsNeedToResetInputs } from '../../redux/activity/activity';
+import { resetActivityInfo, setIsDisableWhileSending, setIsNeedToResetInputs } from '../../redux/activity/activity';
 import { useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
 
 export default function ActivitySaveBtn() {
@@ -21,7 +21,7 @@ export default function ActivitySaveBtn() {
     if (data) {
       push('/home/');
       dispatch(setIsDisableWhileSending(false));
-      dispatch(resetAcitivityInfo());
+      dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
     }
     if (error) {

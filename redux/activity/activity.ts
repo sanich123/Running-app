@@ -38,7 +38,7 @@ export const activity = createSlice({
     setIsDisableWhileSending: (state, action) => {
       state.isDisabledWhileSending = action.payload;
     },
-    resetAcitivityInfo: (state) => {
+    resetActivityInfo: (state) => {
       state.additionalInfo = {
         title: '',
         description: '',
@@ -62,7 +62,7 @@ export const {
   saveIsSwitchOn,
   savePhotoUrls,
   setIsDisableWhileSending,
-  resetAcitivityInfo,
+  resetActivityInfo,
   setIsNeedToResetInputs,
 } = activity.actions;
 export default activity.reducer;

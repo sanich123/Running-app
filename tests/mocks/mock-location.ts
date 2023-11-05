@@ -53,6 +53,7 @@ export const MOCK_LOCATION = {
   },
   timestamp: 1698824159681,
 };
+export const MOCK_ALTITUDE = 204;
 export const MOCK_SPEED = getSpeedInMinsInKm(MOCK_DISTANCE, MOCK_DURATION).paceAsNumber;
 
 export const MOCK_PROFILE = {
