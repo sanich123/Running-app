@@ -9,8 +9,8 @@ import { SignInContext } from '../../utils/context/sign-in';
 import { errorHandler } from '../../utils/error-handler';
 import { emailPasswordHandler } from '../../utils/validate-email-password';
 
-export default function LoginBtn() {
-  const { email, password, isLoading, isDisabled, setIsDisabled, setIsLoading, setEmailError, setPasswordError } =
+export default function LoginBtn({ email, password }: { email: string; password: string }) {
+  const { isLoading, isDisabled, setIsDisabled, setIsLoading, setEmailError, setPasswordError } =
     useContext(SignInContext);
   const dispatch = useDispatch();
 
@@ -24,7 +24,7 @@ export default function LoginBtn() {
         setIsDisabled(true);
         try {
           if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
             if (error) Alert.alert(error.message);
           }
         } catch (e) {

@@ -9,8 +9,8 @@ import { SignInContext } from '../../utils/context/sign-in';
 import { errorHandler } from '../../utils/error-handler';
 import { emailPasswordHandler } from '../../utils/validate-email-password';
 
-export default function RegisterBtn() {
-  const { email, password, isLoading, setEmailError, setPasswordError, setIsLoading, setIsDisabled, isDisabled } =
+export default function RegisterBtn({ email, password }: { email: string; password: string }) {
+  const { isLoading, setEmailError, setPasswordError, setIsLoading, setIsDisabled, isDisabled } =
     useContext(SignInContext);
   const dispatch = useDispatch();
 

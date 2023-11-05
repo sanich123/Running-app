@@ -1,5 +1,7 @@
 import { Stack } from 'expo-router';
+import { useState } from 'react';
 import { View } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import EmailInput from '../../components/email-input/email-input';
 import LoginBtn from '../../components/login-btn/login-btn';
@@ -14,20 +16,19 @@ import { SignInContext } from '../../utils/context/sign-in';
 import usePasswordEmail from '../../utils/hooks/use-password-email';
 
 export default function SignIn() {
+  const { email: savedEmail, password: savedPassword } = useSelector(({ profile }) => profile?.privateInfo);
+  const [email, setEmail] = useState(savedEmail);
+  const [password, setPassword] = useState(savedPassword);
   const {
-    email,
     emailError,
     passwordError,
-    password,
     isRegister,
     isReset,
     isLogin,
     isLoading,
     isDisabled,
-    setEmail,
     setEmailError,
     setPasswordError,
-    setPassword,
     setIsRegister,
     setIsReset,
     setIsLogin,
@@ -40,19 +41,15 @@ export default function SignIn() {
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
       <SignInContext.Provider
         value={{
-          email,
           emailError,
           passwordError,
-          password,
           isRegister,
           isReset,
           isLogin,
           isLoading,
           isDisabled,
-          setEmail,
           setEmailError,
           setPasswordError,
-          setPassword,
           setIsRegister,
           setIsReset,
           setIsLogin,
@@ -60,10 +57,24 @@ export default function SignIn() {
           setIsDisabled,
         }}>
         <View style={signInStyles.container}>
-          <EmailInput />
-          {!isReset && <PasswordInput />}
-          {isRegister && <RegisterBtn />}
-          {isLogin && <LoginBtn />}
+          <EmailInput
+            email={email}
+            setEmail={setEmail}
+            emailError={emailError}
+            setEmailError={setEmailError}
+            isDisabled={false}
+          />
+          {!isReset && (
+            <PasswordInput
+              password={password}
+              setPassword={setPassword}
+              setPasswordError={setPasswordError}
+              passwordError={passwordError}
+              isDisabled={isDisabled}
+            />
+          )}
+          {isRegister && <RegisterBtn password={password} email={email} />}
+          {isLogin && <LoginBtn password={password} email={email} />}
           {isReset && <ResetBtn />}
           {isRegister && <RegisterNavigation />}
           {isLogin && <LoginNavigation />}

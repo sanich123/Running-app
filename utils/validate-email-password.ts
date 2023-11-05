@@ -11,7 +11,7 @@ export type emailPasswordHandlerProps = {
 
 export function emailPasswordHandler({ email, password, setEmailError, setPasswordError }: emailPasswordHandlerProps) {
   const passwordMatches = passwordMatcher.test(password);
-  const emailMatches = emailMatcher.test(email);
+  const emailMatches = emailMatcher.test(email.trim());
   if (!emailMatches || !passwordMatches) {
     if (!emailMatches) {
       ToastAndroid.show('Your email does not match the required pattern', ToastAndroid.SHORT);

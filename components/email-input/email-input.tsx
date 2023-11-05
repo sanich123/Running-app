@@ -1,12 +1,16 @@
-import { useContext } from 'react';
 import { HelperText, TextInput } from 'react-native-paper';
 
 import { emailMatcher } from '../../constants/regexp';
-import { SignInContext } from '../../utils/context/sign-in';
 
-export default function EmailInput() {
-  const { email, setEmail, emailError, setEmailError, isDisabled } = useContext(SignInContext);
+type EmailInputProps = {
+  email: string;
+  setEmail: (arg: string) => void;
+  emailError: boolean;
+  setEmailError: (arg: boolean) => void;
+  isDisabled: boolean;
+};
 
+export default function EmailInput({ email, setEmail, emailError, setEmailError, isDisabled }: EmailInputProps) {
   return (
     <>
       <TextInput
@@ -14,14 +18,14 @@ export default function EmailInput() {
         label="Email"
         value={email}
         onChangeText={(text) => {
-          if (!emailMatcher.test(email)) {
+          if (!emailMatcher.test(email.trim())) {
             setEmailError(true);
           } else {
             setEmailError(false);
           }
           setEmail(text);
         }}
-        onEndEditing={() => (!emailMatcher.test(email) ? setEmailError(true) : setEmailError(false))}
+        onEndEditing={() => (!emailMatcher.test(email.trim()) ? setEmailError(true) : setEmailError(false))}
         placeholder="Type your email"
         left={<TextInput.Icon icon="email" disabled={isDisabled} />}
         style={{ marginTop: 10 }}
