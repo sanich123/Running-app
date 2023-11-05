@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+import { View } from 'react-native';
 import { ActivityIndicator, MD3TypescaleKey, Text } from 'react-native-paper';
 import { VariantProp } from 'react-native-paper/lib/typescript/components/Typography/types';
 
@@ -11,14 +13,14 @@ export default function UserNameSurname({ userId, size }: { userId: string; size
       {isLoading && <ActivityIndicator />}
       {error ? <ErrorComponent error={error} /> : null}
       {profileInfo ? (
-        <>
+        <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text variant={size} style={{ fontWeight: 'bold' }}>
-            {profileInfo?.name}
+            {`${profileInfo?.name} `}
           </Text>
           <Text variant={size} style={{ fontWeight: 'bold' }}>
             {profileInfo?.surname}
           </Text>
-        </>
+        </View>
       ) : null}
     </>
   );

@@ -1,23 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export const PROFILE_INITIAL_STATE = {
+  privateInfo: {
+    email: '',
+    password: '',
+  },
+  isDisabledWhileSendingProfile: false,
+  settings: {
+    gender: '',
+    name: '',
+    surname: '',
+    city: '',
+    weight: '',
+    bio: '',
+    profilePhoto: '',
+  },
+};
+
 export const profile = createSlice({
   name: 'profile',
-  initialState: {
-    privateInfo: {
-      email: '',
-      password: '',
-    },
-    isDisabledWhileSendingProfile: false,
-    settings: {
-      gender: '',
-      name: '',
-      surname: '',
-      city: '',
-      weight: '',
-      bio: '',
-      profilePhoto: '',
-    },
-  },
+  initialState: PROFILE_INITIAL_STATE,
 
   reducers: {
     saveSettingsInfo: (state, action) => {
