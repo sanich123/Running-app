@@ -6,8 +6,10 @@ import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
 
 export default function UserSportDate({ sport, date }: { sport: SportsProps; date: Date }) {
   return (
-    <Text variant="bodyMedium">
-      {getIconByTypeOfSport(sport)} {formatDate(date)} {getHoursMinutes(date)}
-    </Text>
+    <>
+      <Text variant="bodyMedium">{getIconByTypeOfSport(sport)}</Text>
+      <Text variant="bodyMedium">{formatDate(date)}</Text>
+      <Text variant="bodyMedium">{getHoursMinutes(date)}</Text>
+    </>
   );
 }
