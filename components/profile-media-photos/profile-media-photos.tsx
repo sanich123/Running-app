@@ -8,7 +8,7 @@ import ErrorComponent from '../error-component/error-component';
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { isLoading, data: photos, error } = useGetAllActivityPhotosByUserIdQuery(userId);
   const { width } = useWindowDimensions();
-  const router = useRouter();
+  const { push } = useRouter();
   const theme = useTheme();
 
   return (
@@ -16,7 +16,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
       {error ? <ErrorComponent error={error} /> : null}
       {isLoading && <ActivityIndicator size="large" />}
       {photos?.length > 0 ? (
-        <Pressable onPress={() => router.push(`/(tabs)/home/media-grid/${userId}`)}>
+        <Pressable onPress={() => push(`/(tabs)/home/media-grid/${userId}`)}>
           <View
             style={[
               { display: 'flex', flexDirection: 'row', backgroundColor: theme.colors.onPrimary },
