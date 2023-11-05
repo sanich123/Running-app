@@ -17,20 +17,18 @@ export default function ProfileFollowersSection() {
   const { isLoading, error, data: listOfFriends } = useGetFriendsByUserIdQuery(user.id);
   const friendCell = listOfFriends?.filter(({ friendId: friendIdOnServer }) => friendIdOnServer === friendId);
   const isMineActivity = friendId === user.id;
-  const router = useRouter();
+  const { push } = useRouter();
   const pathname = usePathname();
   return (
     <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
       <Suspense fallback={<ActivityIndicator size="large" />}>
-        <Pressable
-          onPress={() => router.push(`/${pathname.includes('home') ? 'home' : 'profile'}/following/${friendId}`)}>
+        <Pressable onPress={() => push(`/${pathname.includes('home') ? 'home' : 'profile'}/following/${friendId}`)}>
           <View>
             <Text variant="bodySmall">Following</Text>
             <FollowingCount />
           </View>
         </Pressable>
-        <Pressable
-          onPress={() => router.push(`/${pathname.includes('home') ? 'home' : 'profile'}/followers/${friendId}`)}>
+        <Pressable onPress={() => push(`/${pathname.includes('home') ? 'home' : 'profile'}/followers/${friendId}`)}>
           <View>
             <Text variant="bodySmall">Followers</Text>
             <FollowersCount />

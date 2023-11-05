@@ -1,4 +1,5 @@
 import { LocationObject } from 'expo-location';
+import { Fragment } from 'react';
 import { View } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
 
@@ -36,7 +37,7 @@ export default function HomeActivityFullViewKmSplit({ kilometresSplit }: { kilom
         </View>
       </View>
       {kilometresSplit.map(({ lastKilometerAltitude, lastKilometerDuration }, index) => (
-        <>
+        <Fragment key={`${lastKilometerAltitude}/${lastKilometerDuration}/${index}`}>
           <View
             style={{ flex: 1, flexDirection: 'row', width: '100%', paddingTop: 5 }}
             key={`${index}/${lastKilometerAltitude * lastKilometerDuration}`}>
@@ -63,7 +64,7 @@ export default function HomeActivityFullViewKmSplit({ kilometresSplit }: { kilom
             </View>
           </View>
           <Divider />
-        </>
+        </Fragment>
       ))}
     </>
   );

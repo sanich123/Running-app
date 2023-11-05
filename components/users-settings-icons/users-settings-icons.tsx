@@ -6,22 +6,24 @@ import { View } from '../Themed';
 
 export default function UsersSettingsIcons() {
   const { colors } = useTheme();
-  const router = useRouter();
+  const { push } = useRouter();
   return (
     <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: 'transparent' }}>
       <MaterialCommunityIcons
+        testID="usersIcon"
         name="account-multiple"
         color={colors.primaryContainer}
         size={30}
         style={{ marginRight: 5 }}
-        onPress={() => router.push('/users')}
+        onPress={() => push('/users')}
       />
       <MaterialCommunityIcons
+        testID="settingsIcon"
         name="cog-outline"
         color={colors.primaryContainer}
         size={30}
         style={{ marginRight: 5 }}
-        onPress={() => router.push('/settings')}
+        onPress={() => push('/settings')}
       />
     </View>
   );

@@ -5,7 +5,7 @@ import { useTheme, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
-import { resetAcitivityInfo, setIsDisableWhileSending, setIsNeedToResetInputs } from '../../redux/activity/activity';
+import { resetActivityInfo, setIsDisableWhileSending, setIsNeedToResetInputs } from '../../redux/activity/activity';
 import { useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
 
 export default function ActivitySaveBtn() {
@@ -19,10 +19,9 @@ export default function ActivitySaveBtn() {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       push('/home/');
       dispatch(setIsDisableWhileSending(false));
-      dispatch(resetAcitivityInfo());
+      dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
     }
     if (error) {
@@ -43,6 +42,7 @@ export default function ActivitySaveBtn() {
       }}
       disabled={isDisabledWhileSending}>
       <Text
+        testID="activitySaveBtn"
         variant="titleMedium"
         style={{ color: colors.primaryContainer, marginRight: 15, opacity: isDisabledWhileSending ? 0.5 : 1 }}>
         {`Sav${isDisabledWhileSending ? 'ing' : 'e'}`}

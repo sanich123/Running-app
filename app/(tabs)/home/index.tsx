@@ -26,10 +26,9 @@ export default function Feed() {
     refetchOnReconnect: true,
   });
   const { onRefresh, refreshing } = useRefresh(refetch);
-
   return (
     <>
-      <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
+      <SafeAreaView style={[{ flex: 1 }, (isLoading || error) && { alignItems: 'center', justifyContent: 'center' }]}>
         {activities && (
           <FlatList
             onRefresh={onRefresh}

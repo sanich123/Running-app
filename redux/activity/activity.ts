@@ -1,21 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const INITIAL_ACTIVITY = {
-  title: '',
-  description: '',
-  sport: '',
-  emotion: '',
-  isSwitchOn: false,
-  photoUrls: [] as string[],
+export const ACTIVITY_INITIAL_STATE = {
+  isNeedToResetInputs: false,
+  isDisabledWhileSending: false,
+  additionalInfo: {
+    title: '',
+    description: '',
+    sport: '',
+    emotion: '',
+    isSwitchOn: false,
+    photoUrls: [] as string[],
+  },
 };
 
 export const activity = createSlice({
   name: 'activity',
-  initialState: {
-    isNeedToResetInputs: false,
-    isDisabledWhileSending: false,
-    additionalInfo: INITIAL_ACTIVITY,
-  },
+  initialState: ACTIVITY_INITIAL_STATE,
   reducers: {
     saveTitle: (state, action) => {
       state.additionalInfo.title = action.payload;
@@ -38,8 +38,15 @@ export const activity = createSlice({
     setIsDisableWhileSending: (state, action) => {
       state.isDisabledWhileSending = action.payload;
     },
-    resetAcitivityInfo: (state) => {
-      state.additionalInfo = INITIAL_ACTIVITY;
+    resetActivityInfo: (state) => {
+      state.additionalInfo = {
+        title: '',
+        description: '',
+        sport: '',
+        emotion: '',
+        isSwitchOn: false,
+        photoUrls: [] as string[],
+      };
     },
     setIsNeedToResetInputs: (state, action) => {
       state.isNeedToResetInputs = action.payload;
@@ -55,7 +62,7 @@ export const {
   saveIsSwitchOn,
   savePhotoUrls,
   setIsDisableWhileSending,
-  resetAcitivityInfo,
+  resetActivityInfo,
   setIsNeedToResetInputs,
 } = activity.actions;
 export default activity.reducer;

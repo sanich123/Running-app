@@ -13,7 +13,7 @@ __tests__
 yarn.lock
 .env
 eas.json
-
+coverage
 # macOS
 .DS_Store
 .idea

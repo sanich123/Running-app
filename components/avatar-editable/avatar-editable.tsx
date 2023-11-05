@@ -17,6 +17,7 @@ export default function AvatarIconEditable() {
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
   return (
     <Pressable
+      testID="avatarEditableButton"
       onPress={async () => {
         setIsDisabled(true);
         try {

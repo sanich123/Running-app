@@ -11,6 +11,7 @@ export default function InputsNameSurname() {
   return (
     <View style={styles.inputWrapper}>
       <TextInput
+        testID="inputName"
         mode="outlined"
         style={{ width: 170 }}
         label="First Name"
@@ -20,6 +21,7 @@ export default function InputsNameSurname() {
         disabled={isDisabled || isDisabledWhileSendingProfile}
       />
       <TextInput
+        testID="inputSurname"
         mode="outlined"
         style={{ width: 170 }}
         label="Last Name"

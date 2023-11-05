@@ -9,6 +9,7 @@ export default function InputBio() {
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
   return (
     <TextInput
+      testID="inputBio"
       mode="outlined"
       style={{ width: 365 }}
       label="Bio"

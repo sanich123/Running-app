@@ -5,6 +5,7 @@
     "start": "expo start",
     "start:clear": "expo start --clear",
     "start:dev": "APP_VARIANT=development && npx expo start",
+    "test:coverage": "jest --coverage",
     "test:watch": "jest --watchAll",
     "test": "IS_TESTING=true jest",
     "test:debug": "IS_TESTING=true jest --runInBand --detectOpenHandles --forceExit",
@@ -24,6 +25,11 @@
     "ios": "expo run:ios"
   },
   "jest": {
+    "collectCoverage": true,
+    "coverageReporters": [
+      "json",
+      "html"
+    ],
     "preset": "jest-expo",
     "setupFilesAfterEnv": [
       "@testing-library/jest-native/extend-expect",

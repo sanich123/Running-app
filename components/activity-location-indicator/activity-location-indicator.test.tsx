@@ -25,4 +25,13 @@ describe('Activity location indicator', () => {
     renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
     expect(screen.getByText('Have got your position!')).toBeDefined();
   });
+  it('should correctly render isError state', () => {
+    jest.spyOn(useGetCurrentLocation, 'default').mockImplementation(() => ({
+      isLoading: false,
+      isError: true,
+      isSuccess: false,
+    }));
+    renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
+    expect(screen.getByText('An error occured')).toBeDefined();
+  });
 });

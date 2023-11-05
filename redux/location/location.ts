@@ -10,34 +10,36 @@ type LastKmSplit = {
   lastKilometerAltitude: number;
 };
 
+export const LOCATION_INITIAL_STATE = {
+  activityStatus: STATUSES.initial,
+  isTooMuchSpeed: false,
+  isAppShutedByPhone: false,
+  isMapVisible: true,
+  initialLocation: null,
+  distance: 0,
+  duration: 0,
+  durationWithPauses: 0,
+  altitude: 0,
+  lastKilometerAltitude: 0,
+  lastKilometer: 0,
+  lastKilometerDuration: 0,
+  lastPosition: null,
+  currentPace: 0,
+  kilometresSplit: [] as LastKmSplit[],
+  locationsWithPauses: [[]] as LocationObject[][],
+  locationsFromBackground: [] as LocationObject[],
+  finishedActivity: {
+    locations: [] as Location[],
+    duration: 0,
+    speed: 0,
+    distance: 0,
+    kilometresSplit: [],
+  },
+};
+
 export const location = createSlice({
   name: 'location',
-  initialState: {
-    activityStatus: STATUSES.initial,
-    isTooMuchSpeed: false,
-    isAppShutedByPhone: false,
-    isMapVisible: true,
-    initialLocation: null,
-    distance: 0,
-    duration: 0,
-    durationWithPauses: 0,
-    altitude: 0,
-    lastKilometerAltitude: 0,
-    lastKilometer: 0,
-    lastKilometerDuration: 0,
-    lastPosition: null,
-    currentPace: 0,
-    kilometresSplit: [] as LastKmSplit[],
-    locationsWithPauses: [[]] as LocationObject[][],
-    locationsFromBackground: [] as LocationObject[],
-    finishedActivity: {
-      locations: [] as Location[],
-      duration: 0,
-      speed: 0,
-      distance: 0,
-      kilometresSplit: [],
-    },
-  },
+  initialState: LOCATION_INITIAL_STATE,
   reducers: {
     setInitialLocation: (state, action) => {
       state.initialLocation = action.payload;
@@ -47,15 +49,6 @@ export const location = createSlice({
     },
     setLocationsFromBackground: (state, action) => {
       state.locationsFromBackground = [...state.locationsFromBackground, action.payload];
-    },
-    resetLocationsFromBackground: (state) => {
-      state.locationsFromBackground = [];
-      state.duration = 0;
-      state.distance = 0;
-      state.altitude = 0;
-      state.kilometresSplit = [];
-      state.currentPace = 0;
-      state.locationsWithPauses = [];
     },
     setDistance: (state, action) => {
       state.distance = state.distance + action.payload;
@@ -119,6 +112,15 @@ export const location = createSlice({
     },
     setIsTooMuchSpeed: (state, action) => {
       state.isTooMuchSpeed = action.payload;
+    },
+    resetLocationsFromBackground: (state) => {
+      state.locationsFromBackground = [];
+      state.duration = 0;
+      state.distance = 0;
+      state.altitude = 0;
+      state.kilometresSplit = [];
+      state.currentPace = 0;
+      state.locationsWithPauses = [];
     },
   },
 });

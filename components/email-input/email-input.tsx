@@ -6,9 +6,11 @@ import { SignInContext } from '../../utils/context/sign-in';
 
 export default function EmailInput() {
   const { email, setEmail, emailError, setEmailError, isDisabled } = useContext(SignInContext);
+
   return (
     <>
       <TextInput
+        testID="inputEmail"
         label="Email"
         value={email}
         onChangeText={(text) => {

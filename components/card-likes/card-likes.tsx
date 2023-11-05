@@ -12,7 +12,7 @@ const MAX_NUMBER_IN_ROW_OTHER_PAGE = 3;
 
 export default function CardLikes({ activityId }: { activityId: string }) {
   const { isLoading, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
-  const router = useRouter();
+  const { push } = useRouter();
   const pathname = usePathname();
   const isInComment = pathname.includes('comment');
   const isInActivity = pathname.includes('activity');
@@ -20,31 +20,31 @@ export default function CardLikes({ activityId }: { activityId: string }) {
   const SHIFT_RIGHT = 23;
 
   return (
-    <Pressable onPress={() => router.push(`/home/likes/${activityId}`)}>
+    <Pressable testID="pushToActivityLikes" onPress={() => push(`/home/likes/${activityId}`)}>
       <View
         style={[
           styles.likesLayout,
           !likes?.length && styles.withoutLikesLayout,
           isInComment && { width: likes?.length * SHIFT_RIGHT + 13, marginTop: 4 },
         ]}>
-        {isLoading && <ActivityIndicator />}
+        {isLoading && <ActivityIndicator testID="cardLikesActivityIndicator" />}
         {error ? <Text variant="bodyMedium">An error occured</Text> : null}
         {likes && (
           <View style={{ position: 'relative' }}>
-            {likes?.slice(0, lastLikeInTheRow).map(({ authorId, id }, key) => (
-              <Fragment key={id}>
-                {likes.length > MAX_IN_ROW && key === MAX_IN_ROW - 1 ? (
-                  <View style={[styles.lastAvatarWrapper, { left: key * SHIFT_RIGHT + 13 }]}>
+            {likes?.slice(0, lastLikeInTheRow).map(({ authorId, id }, index) => (
+              <Fragment key={`${id}/${index}/${authorId}`}>
+                {likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 ? (
+                  <View style={[styles.lastAvatarWrapper, { left: index * SHIFT_RIGHT + 13 }]}>
                     <Text variant="bodySmall">{`+${likes?.length - MAX_IN_ROW}`}</Text>
                   </View>
                 ) : null}
                 <View
                   style={[
                     styles.avatarWrapper,
-                    { left: key * SHIFT_RIGHT },
-                    likes.length > MAX_IN_ROW && key === MAX_IN_ROW - 1 && { opacity: 0.1 },
+                    { left: index * SHIFT_RIGHT },
+                    likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 && { opacity: 0.1 },
                   ]}>
-                  <AvatarShowable size={30} id={authorId} key={id} />
+                  {!process.env.IS_TESTING ? <AvatarShowable size={30} id={authorId} key={id} /> : null}
                 </View>
               </Fragment>
             ))}

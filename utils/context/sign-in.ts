@@ -1,10 +1,10 @@
 import { createContext } from 'react';
 
 export const SignInContext = createContext({
-  email: 'aovoronin.piano@gmail.com',
+  email: '',
   emailError: false,
   passwordError: false,
-  password: '7FWD&rlm',
+  password: '',
   isRegister: true,
   isReset: false,
   isLogin: false,

@@ -17,11 +17,10 @@ export default function ProfileUpdateBtn() {
   const [sendProfile, { isLoading, data, error }] = useSendProfileInfoMutation();
 
   useEffect(() => {
-    if (isLoading) {
-      dispatch(setIsDisabledWhileSendingProfile(true));
-    }
     if (data) {
-      console.log(data);
+      if (!process.env.IS_TESTING) {
+        console.log(data);
+      }
       dispatch(setIsDisabledWhileSendingProfile(false));
       push('/(tabs)/profile');
     }
@@ -29,10 +28,15 @@ export default function ProfileUpdateBtn() {
       dispatch(setIsDisabledWhileSendingProfile(false));
       ToastAndroid.show('An error occured during sending profile info. Try again!', ToastAndroid.LONG);
     }
-  }, [isLoading, data, error]);
+  }, [data, error]);
 
   return (
-    <Pressable onPress={async () => await sendProfile({ body: settings, id: user.id }).unwrap()} disabled={isLoading}>
+    <Pressable
+      onPress={async () => {
+        dispatch(setIsDisabledWhileSendingProfile(true));
+        await sendProfile({ body: settings, id: user.id }).unwrap();
+      }}
+      disabled={isLoading}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>
         {`Updat${isLoading ? 'ing' : 'e'}`}
       </Text>

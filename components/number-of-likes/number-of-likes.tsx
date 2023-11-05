@@ -5,7 +5,7 @@ import { useAuth } from '../../auth/context/auth-context';
 type Likes = {
   authorId: string;
   activityId: string;
-  date: Date;
+  date: string;
   id: string;
 };
 

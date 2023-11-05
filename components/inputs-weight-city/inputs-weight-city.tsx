@@ -12,6 +12,7 @@ export default function InputsWeightCity() {
   return (
     <View style={styles.inputWrapper}>
       <TextInput
+        testID="inputCity"
         mode="outlined"
         style={{ width: 170 }}
         label="City"
@@ -21,6 +22,7 @@ export default function InputsWeightCity() {
         disabled={isDisabled || isDisabledWhileSendingProfile}
       />
       <TextInput
+        testID="inputWeight"
         mode="outlined"
         style={{ width: 170 }}
         label="Weight (kg)"

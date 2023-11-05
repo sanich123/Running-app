@@ -14,7 +14,6 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
   useEffect(() => {
     if (data) {
       console.log(data);
-
       setIsLoading(false);
       setIsDisabled(false);
     }
@@ -24,6 +23,7 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
   }, [data, error]);
   return (
     <IconButton
+      testID="activityCardDeleteBtn"
       icon="delete"
       iconColor={MD3Colors.primary50}
       size={20}

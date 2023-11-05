@@ -16,8 +16,10 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
 
   useEffect(() => {
     if (data) {
-      console.log(data);
-      ToastAndroid.show('Successfully send request to like or dislike', ToastAndroid.SHORT);
+      if (!process.env.IS_TESTING) {
+        console.log(data);
+        ToastAndroid.show('Successfully send request to like or dislike', ToastAndroid.SHORT);
+      }
     }
     if (errorSendingLike) {
       console.log(error);
@@ -27,6 +29,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
 
   return (
     <IconButton
+      testID={`iconLikeButton${isLikedByYou ? '-liked' : ''}`}
       icon={`thumb-up${isLikedByYou ? '' : '-outline'}`}
       iconColor={MD3Colors.primary50}
       size={25}

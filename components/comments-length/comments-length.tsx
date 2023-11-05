@@ -8,9 +8,10 @@ import ErrorComponent from '../error-component/error-component';
 export default function CommentsLength({ activityId }: { activityId: string }) {
   const { isLoading, error, data: comments } = useGetCommentsByActivityIdQuery(activityId);
   const { push } = useRouter();
+
   return (
     <>
-      {isLoading && <ActivityIndicator size="small" />}
+      {isLoading && <ActivityIndicator size="small" testID="commentsLengthActivityIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
       {comments?.length ? (
         <Pressable
