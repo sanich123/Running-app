@@ -1,11 +1,13 @@
-import { useContext } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { SaveSettingsContext } from '../../utils/context/settings';
+type GenderBtnsProps = {
+  gender: string;
+  setGender: (arg: string) => void;
+  isDisabled: boolean;
+};
 
-export default function GenderBtns() {
-  const { gender, isDisabled, setGender } = useContext(SaveSettingsContext);
+export default function GenderBtns({ gender, isDisabled, setGender }: GenderBtnsProps) {
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
   return (
     <SegmentedButtons

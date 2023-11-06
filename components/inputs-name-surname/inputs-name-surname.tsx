@@ -1,12 +1,16 @@
-import { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { SaveSettingsContext } from '../../utils/context/settings';
+type InputsNameSurnameProps = {
+  name: string;
+  surname: string;
+  setName: (arg: string) => void;
+  setSurname: (arg: string) => void;
+  isDisabled: boolean;
+};
 
-export default function InputsNameSurname() {
-  const { name, surname, setName, setSurname, isDisabled } = useContext(SaveSettingsContext);
+export default function InputsNameSurname({ name, surname, setName, setSurname, isDisabled }: InputsNameSurnameProps) {
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
   return (
     <View style={styles.inputWrapper}>

@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { Pressable, Image } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -7,12 +6,24 @@ import { useSelector } from 'react-redux';
 import { useAuth } from '../../auth/context/auth-context';
 import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
 import { EXPIRED_TIME } from '../../constants/const';
-import { SaveSettingsContext } from '../../utils/context/settings';
 import { errorHandler } from '../../utils/error-handler';
 import { compressAndSendPhoto, getAccessToGallery } from '../../utils/file-sending';
 
-export default function AvatarIconEditable() {
-  const { image, setImage, isDisabled, setPhotoUrl, setIsDisabled } = useContext(SaveSettingsContext);
+type AvatarIconEditableProps = {
+  image: string;
+  isDisabled: boolean;
+  setImage: (arg: string) => void;
+  setPhotoUrl: (arg: string) => void;
+  setIsDisabled: (arg: boolean) => void;
+};
+
+export default function AvatarIconEditable({
+  image,
+  setImage,
+  isDisabled,
+  setPhotoUrl,
+  setIsDisabled,
+}: AvatarIconEditableProps) {
   const { user } = useAuth();
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
   return (
@@ -44,7 +55,13 @@ export default function AvatarIconEditable() {
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         />
       )}
-      {image && <Image source={{ uri: image }} style={{ width: 150, height: 150, borderRadius: 70 }} />}
+      {image && (
+        <Image
+          testID="avatarEditableImage"
+          source={{ uri: image }}
+          style={{ width: 150, height: 150, borderRadius: 70 }}
+        />
+      )}
     </Pressable>
   );
 }

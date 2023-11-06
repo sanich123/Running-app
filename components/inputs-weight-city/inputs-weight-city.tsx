@@ -1,13 +1,16 @@
-import { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { SaveSettingsContext } from '../../utils/context/settings';
+type InputsWeightCityProps = {
+  city: string;
+  weight: string;
+  isDisabled: boolean;
+  setCity: (arg: string) => void;
+  setWeight: (arg: string) => void;
+};
 
-export default function InputsWeightCity() {
-  const { city, setCity, weight, setWeight, isDisabled } = useContext(SaveSettingsContext);
-
+export default function InputsWeightCity({ city, setCity, weight, setWeight, isDisabled }: InputsWeightCityProps) {
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
   return (
     <View style={styles.inputWrapper}>

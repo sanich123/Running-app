@@ -1,11 +1,13 @@
-import { useContext } from 'react';
 import { TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { SaveSettingsContext } from '../../utils/context/settings';
+type InputBioProps = {
+  bio: string;
+  setBio: (arg: string) => void;
+  isDisabled: boolean;
+};
 
-export default function InputBio() {
-  const { bio, setBio, isDisabled } = useContext(SaveSettingsContext);
+export default function InputBio({ bio, setBio, isDisabled }: InputBioProps) {
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
   return (
     <TextInput
