@@ -9,9 +9,8 @@ import MapRouteLine from '../map-route-line/map-route-line';
 
 export default function Map() {
   const cameraRef = useRef<Camera>(null);
-  const { initialLocation, isMapVisible, locationsWithPauses, lastPosition, isTooMuchSpeed } = useSelector(
-    ({ location }) => location,
-  );
+  const { initialLocation, isMapVisible, locationsWithPauses, lastPosition, isTooMuchSpeed, kilometresSplit } =
+    useSelector(({ location }) => location);
 
   if (isTooMuchSpeed) {
     ToastAndroid.show('IsTooMuchSpeed, over 3 min/km', ToastAndroid.SHORT);
@@ -42,7 +41,7 @@ export default function Map() {
           zoomLevel={18}
         />
       ) : null}
-      <MapKmSplit />
+      <MapKmSplit kilometresSplit={kilometresSplit} />
       <MapNavIcon />
       {locationsWithPauses[0]?.length > 1
         ? locationsWithPauses.map((locations) => {

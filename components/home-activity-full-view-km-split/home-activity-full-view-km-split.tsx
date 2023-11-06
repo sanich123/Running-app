@@ -5,7 +5,7 @@ import { Text, Divider } from 'react-native-paper';
 
 import { formatDurationMinsSecs } from '../../utils/time-formatter';
 
-type KilometresSplit = {
+export type KilometresSplit = {
   lastKilometerAltitude: number;
   lastKilometerDuration: number;
   kilometerPoint: LocationObject;

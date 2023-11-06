@@ -1,9 +1,9 @@
 import { Callout, PointAnnotation } from '@rnmapbox/maps';
 import { View, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
 
-export default function MapKmSplit() {
-  const { kilometresSplit } = useSelector(({ location }) => location);
+import { KilometresSplit } from '../home-activity-full-view-km-split/home-activity-full-view-km-split';
+
+export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: KilometresSplit[] }) {
   return (
     <>
       {kilometresSplit?.length > 0

@@ -13,7 +13,9 @@ export default function ActivityMap() {
     <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
       {isLoading && <ActivityIndicator size="large" />}
       {error ? <ErrorComponent error={error} /> : null}
-      {activity ? <DisplayActivityMap locations={activity.locations} distance={activity.distance} /> : null}
+      {activity ? (
+        <DisplayActivityMap locations={activity.locations} kilometresSplit={activity.kilometresSplit} />
+      ) : null}
     </SafeAreaView>
   );
 }
