@@ -6,33 +6,38 @@ import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Sports btns', () => {
-  it('should correctly renders', () => {
-    renderWithProviders(<SportsBtns isDisabled={false} setSport={jest.fn()} sport="" />, {
-      store: mockStore,
-    });
-    ['Running', 'Swimming', 'Riding'].map((emotion) => expect(screen.getByText(new RegExp(emotion))).toBeOnTheScreen());
-  });
-  it('should interract with the user', async () => {
-    const setSportFn = jest.fn();
-    renderWithProviders(<SportsBtns isDisabled={false} setSport={setSportFn} sport="" />, {
+  it('should correctly handle global state', async () => {
+    renderWithProviders(<SportsBtns isDisabled={false} />, {
       store: mockStore,
     });
     const runningInput = screen.getByText('Running');
     const swimmingInput = screen.getByText('Swimming');
     const ridingInput = screen.getByText('Riding');
     await userEvent.press(runningInput);
-    expect(setSportFn).toHaveBeenCalled();
-    expect(setSportFn).toHaveBeenCalledWith('run');
+    expect(mockStore.getState().activity.additionalInfo.sport).toEqual('run');
     await userEvent.press(swimmingInput);
-    expect(setSportFn).toHaveBeenCalled();
-    expect(setSportFn).toHaveBeenCalledWith('swim');
+    expect(mockStore.getState().activity.additionalInfo.sport).toEqual('swim');
     await userEvent.press(ridingInput);
-    expect(setSportFn).toHaveBeenCalled();
-    expect(setSportFn).toHaveBeenCalledWith('Bike');
+    expect(mockStore.getState().activity.additionalInfo.sport).toEqual('Bike');
+  });
+  it('should correctly renders', () => {
+    renderWithProviders(<SportsBtns isDisabled={false} />, { store: mockStore });
+    ['Running', 'Swimming', 'Riding'].map((emotion) => expect(screen.getByText(new RegExp(emotion))).toBeOnTheScreen());
+  });
+  it('should interract with the user', async () => {
+    renderWithProviders(<SportsBtns isDisabled={false} />, { store: mockStore });
+    const runningInput = screen.getByTestId('runningBtn');
+    const swimmingInput = screen.getByTestId('swimmingBtn');
+    const ridingInput = screen.getByTestId('ridingBtn');
+    await userEvent.press(runningInput);
+    expect(runningInput.props.accessibilityState.checked).toEqual(true);
+    await userEvent.press(swimmingInput);
+    expect(swimmingInput.props.accessibilityState.checked).toEqual(true);
+    await userEvent.press(ridingInput);
+    expect(ridingInput.props.accessibilityState.checked).toEqual(true);
   });
   it('should correctly handle isDisabled state', () => {
-    const setSportFn = jest.fn();
-    renderWithProviders(<SportsBtns isDisabled setSport={setSportFn} sport="" />, {
+    renderWithProviders(<SportsBtns isDisabled />, {
       store: mockStore,
     });
     const runningInput = screen.getByText('Running');
@@ -42,8 +47,7 @@ describe('Sports btns', () => {
   });
   it('should correctly handle isDisabledWhileSending state', () => {
     mockStore.dispatch(setIsDisableWhileSending(true));
-    const setSportFn = jest.fn();
-    renderWithProviders(<SportsBtns isDisabled setSport={setSportFn} sport="" />, {
+    renderWithProviders(<SportsBtns isDisabled />, {
       store: mockStore,
     });
     const runningInput = screen.getByText('Running');
@@ -51,19 +55,4 @@ describe('Sports btns', () => {
     const ridingInput = screen.getByText('Riding');
     [runningInput, swimmingInput, ridingInput].map((input) => expect(input).toBeDisabled());
   });
-  // it('should correctly handle global state', async () => {
-  //   const setSportFn = jest.fn();
-  //   renderWithProviders(<SportsBtns isDisabled={false} setSport={setSportFn} sport="" />, {
-  //     store: mockStore,
-  //   });
-  //   const runningInput = screen.getByText('Running');
-  //   const swimmingInput = screen.getByText('Swimming');
-  //   const ridingInput = screen.getByText('Riding');
-  //   await userEvent.press(runningInput);
-  //   expect(mockStore.getState().activity.additionalInfo.sport).toEqual('run');
-  //   await userEvent.press(swimmingInput);
-  //   expect(mockStore.getState().activity.additionalInfo.sport).toEqual('swim');
-  //   await userEvent.press(ridingInput);
-  //   expect(mockStore.getState().activity.additionalInfo.sport).toEqual('Bike');
-  // });
 });

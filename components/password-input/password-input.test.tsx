@@ -17,7 +17,7 @@ describe('Password input', () => {
     );
     expect(screen.getByRole('text')).toBeOnTheScreen();
     expect(
-      screen.getByText('        Password must contain one capital, one normal letter, one number, length 4-8 symbols'),
+      screen.getByText('Password must contain one capital, one normal letter, one number, length 4-8 symbols'),
     ).toBeOnTheScreen();
   });
   it('should correctly handle typing', async () => {

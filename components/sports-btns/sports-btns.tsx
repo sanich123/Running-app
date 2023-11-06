@@ -1,17 +1,21 @@
+import { useEffect, useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { saveSport } from '../../redux/activity/activity';
 
-type SportBtnsProps = {
-  sport: string;
-  isDisabled: boolean;
-  setSport: (arg: string) => void;
-};
-
-export default function SportsBtns({ sport, isDisabled, setSport }: SportBtnsProps) {
+export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
+  const [sport, setSport] = useState('run');
   const dispatch = useDispatch();
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
+  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
+
+  useEffect(() => {
+    if (isNeedToResetInputs) {
+      setSport('run');
+      dispatch(saveSport('run'));
+    }
+  }, [isNeedToResetInputs]);
+
   return (
     <SegmentedButtons
       value={sport}
@@ -26,6 +30,7 @@ export default function SportsBtns({ sport, isDisabled, setSport }: SportBtnsPro
           icon: 'run',
           showSelectedCheck: true,
           disabled: isDisabled || isDisabledWhileSending,
+          testID: 'runningBtn',
         },
         {
           value: 'swim',
@@ -33,6 +38,7 @@ export default function SportsBtns({ sport, isDisabled, setSport }: SportBtnsPro
           icon: 'swim',
           showSelectedCheck: true,
           disabled: isDisabled || isDisabledWhileSending,
+          testID: 'swimmingBtn',
         },
         {
           value: 'Bike',
@@ -40,6 +46,7 @@ export default function SportsBtns({ sport, isDisabled, setSport }: SportBtnsPro
           icon: 'bike',
           showSelectedCheck: true,
           disabled: isDisabled || isDisabledWhileSending,
+          testID: 'ridingBtn',
         },
       ]}
       style={{ marginTop: 15 }}

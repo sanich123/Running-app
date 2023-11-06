@@ -10,7 +10,7 @@ export default function UserNameSurname({ userId, size }: { userId: string; size
   const { isLoading, error, data: profileInfo } = useGetUserProfileByIdQuery(userId);
   return (
     <>
-      {isLoading && <ActivityIndicator />}
+      {isLoading && <ActivityIndicator testID="userNameSurnameIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
       {profileInfo ? (
         <View style={{ flex: 1, flexDirection: 'row' }}>

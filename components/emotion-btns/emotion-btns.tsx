@@ -1,17 +1,21 @@
+import { useEffect, useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { saveEmotion } from '../../redux/activity/activity';
 
-type EmotionBtnsProps = {
-  emotion: string;
-  setEmotion: (arg: string) => void;
-  isDisabled: boolean;
-};
-
-export default function EmotionBtns({ emotion, setEmotion, isDisabled }: EmotionBtnsProps) {
+export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
+  const [emotion, setEmotion] = useState('normal');
   const dispatch = useDispatch();
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
+  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
+
+  useEffect(() => {
+    if (isNeedToResetInputs) {
+      setEmotion('normal');
+      dispatch(saveEmotion('normal'));
+    }
+  }, [isNeedToResetInputs]);
+
   return (
     <SegmentedButtons
       value={emotion}
@@ -26,6 +30,7 @@ export default function EmotionBtns({ emotion, setEmotion, isDisabled }: Emotion
           icon: 'emoticon-happy-outline',
           showSelectedCheck: true,
           disabled: isDisabled || isDisabledWhileSending,
+          testID: 'goodInput',
         },
         {
           value: 'normal',
@@ -33,6 +38,7 @@ export default function EmotionBtns({ emotion, setEmotion, isDisabled }: Emotion
           icon: 'emoticon-neutral',
           showSelectedCheck: true,
           disabled: isDisabled || isDisabledWhileSending,
+          testID: 'normalInput',
         },
         {
           value: 'fucked',
@@ -40,6 +46,7 @@ export default function EmotionBtns({ emotion, setEmotion, isDisabled }: Emotion
           icon: 'emoticon-poop-outline',
           showSelectedCheck: true,
           disabled: isDisabled || isDisabledWhileSending,
+          testID: 'fuckedInput',
         },
       ]}
       style={{ marginTop: 15 }}

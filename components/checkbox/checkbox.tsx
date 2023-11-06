@@ -1,15 +1,22 @@
-import { useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { saveIsSwitchOn } from '../../redux/activity/activity';
-import { SaveActivityContext } from '../../utils/context/save-activity';
 
-export default function Checkbox() {
-  const { isSwitchOn, setIsSwitchOn, isDisabled } = useContext(SaveActivityContext);
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
+export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isNeedToResetInputs) {
+      setIsSwitchOn(false);
+      dispatch(saveIsSwitchOn(false));
+    }
+  }, [isNeedToResetInputs]);
+
   return (
     <View style={styles.switcherWrapper}>
       <Switch

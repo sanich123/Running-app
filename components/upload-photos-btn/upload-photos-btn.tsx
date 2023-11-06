@@ -1,24 +1,33 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useContext } from 'react';
-import { Image, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
+import { useEffect, useState } from 'react';
+import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
 import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
 import { EXPIRED_TIME } from '../../constants/const';
 import { savePhotoUrls } from '../../redux/activity/activity';
-import { SaveActivityContext } from '../../utils/context/save-activity';
 import { errorHandler } from '../../utils/error-handler';
 import { compressAndSendPhoto, getAccessToGallery } from '../../utils/file-sending';
+import PreviewImages from '../preview-images/preview-images';
 
-export default function UploadPhotosBtn() {
-  const { isDisabled, setIsDisabled, images, isLoading, setIsLoading, setImages } = useContext(SaveActivityContext);
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
-  const { width } = useWindowDimensions();
-  const theme = useTheme();
+type UploadPhotoBtnProps = {
+  isDisabled: boolean;
+  setIsDisabled: (arg: boolean) => void;
+};
+
+export default function UploadPhotosBtn({ isDisabled, setIsDisabled }: UploadPhotoBtnProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [images, setImages] = useState([]);
+  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
   const { user } = useAuth();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isNeedToResetInputs) {
+      dispatch(savePhotoUrls([]));
+      setImages([]);
+    }
+  }, [isNeedToResetInputs]);
 
   return (
     <>
@@ -49,29 +58,7 @@ export default function UploadPhotosBtn() {
         disabled={isDisabled || isDisabledWhileSending}>
         {`Upload${isLoading ? 'ing' : ''} an image`}
       </Button>
-      <View style={styles.imagesWrapper}>
-        {images &&
-          images.map((image, index) => (
-            <View style={{ position: 'relative' }} key={`${image}${index}`}>
-              <MaterialCommunityIcons
-                name="close-circle"
-                color={theme.colors.onPrimaryContainer}
-                size={25}
-                style={{ position: 'absolute', right: 2, top: 16, zIndex: 5 }}
-                onPress={() => setImages(images.filter((uri) => uri !== image))}
-                disabled={isDisabled || isDisabledWhileSending}
-              />
-              <Image source={{ uri: image }} style={styles.imageStyle} width={width / 3 - 10} height={100} />
-            </View>
-          ))}
-      </View>
+      <PreviewImages images={images} setImages={setImages} isDisabled={isDisabled} />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  imagesWrapper: { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', columnGap: 5 },
-  imageStyle: {
-    marginTop: 15,
-  },
-});
