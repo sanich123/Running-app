@@ -14,13 +14,17 @@ jest.mock('expo-router', () => ({
 }));
 describe('Decline btn', () => {
   it('should correctly renders', () => {
-    renderWithProviders(<DeclineBtn />, { store: mockStore });
+    renderWithProviders(<DeclineBtn isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(/discard/i)).toBeOnTheScreen();
   });
   it('should correctly handle alert, when user clicked', async () => {
-    renderWithProviders(<DeclineBtn />, { store: mockStore });
+    renderWithProviders(<DeclineBtn isDisabled={false} />, { store: mockStore });
     const discardBtn = screen.getByText(/discard/i);
     await userEvent.press(discardBtn);
     expect(Alert.alert).toHaveBeenCalled();
+  });
+  it('should correctly handle isDisabled state', () => {
+    renderWithProviders(<DeclineBtn isDisabled />, { store: mockStore });
+    expect(screen.getByText(/discard/i)).toBeDisabled();
   });
 });

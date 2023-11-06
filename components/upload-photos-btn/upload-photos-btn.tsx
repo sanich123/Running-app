@@ -42,6 +42,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled }: UploadPho
             if (!result.canceled) {
               const imgSrc = result.assets[0].uri;
               const pathToPhoto = await compressAndSendPhoto(imgSrc, user.id);
+              console.log(pathToPhoto);
               const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
               setImages([...images, url]);
               dispatch(savePhotoUrls([...images, url]));
