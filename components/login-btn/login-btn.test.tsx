@@ -6,7 +6,7 @@ import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Login btn', () => {
   it('should correctly renders', () => {
-    renderWithProviders(<LoginBtn />, { store: mockStore });
+    renderWithProviders(<LoginBtn email="" password="" />, { store: mockStore });
     expect(screen.getByText('Login')).toBeOnTheScreen();
   });
 });

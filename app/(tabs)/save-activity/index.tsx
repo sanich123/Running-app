@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Checkbox from '../../../components/checkbox/checkbox';
 import DeclineBtn from '../../../components/decline-btn/decline-btn';
-import EmotionBtns from '../../../components/segmented-btns/emotion-btns';
-import SportsBtns from '../../../components/segmented-btns/sports-btns';
+import EmotionBtns from '../../../components/emotion-btns/emotion-btns';
+import SportsBtns from '../../../components/sports-btns/sports-btns';
 import TextInputs from '../../../components/text-inputs/text-inputs';
 import UploadPhotosBtn from '../../../components/upload-photos-btn/upload-photos-btn';
 import { setIsNeedToResetInputs } from '../../../redux/activity/activity';

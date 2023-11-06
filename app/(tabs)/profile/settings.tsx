@@ -11,7 +11,6 @@ import InputsNameSurname from '../../../components/inputs-name-surname/inputs-na
 import InputsWeightCity from '../../../components/inputs-weight-city/inputs-weight-city';
 import { saveSettingsInfo } from '../../../redux/profile/profile';
 import { useGetUserProfileByIdQuery } from '../../../redux/runich-api/runich-api';
-import { SaveSettingsContext } from '../../../utils/context/settings';
 
 export default function ProfileSettings() {
   const { user } = useAuth();
@@ -23,11 +22,10 @@ export default function ProfileSettings() {
   const [weight, setWeight] = useState(profileInfo?.weight);
   const [bio, setBio] = useState(profileInfo?.bio);
   const [image, setImage] = useState(profileInfo?.profilePhoto);
-  const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [photoUrl, setPhotoUrl] = useState('');
   const dispatch = useDispatch();
-
+  //delete useGetSEttings?
   dispatch(
     saveSettingsInfo({
       gender,
@@ -41,32 +39,25 @@ export default function ProfileSettings() {
   );
 
   return (
-    <SaveSettingsContext.Provider
-      value={{
-        isLoading,
-        photoUrl,
-        setIsLoading,
-      }}>
-      <View style={styles.container}>
-        <AvatarIconEditable
-          image={image}
-          setImage={setImage}
-          setIsDisabled={setIsDisabled}
-          setPhotoUrl={setPhotoUrl}
-          isDisabled={isDisabled}
-        />
-        <InputsNameSurname
-          name={name}
-          surname={surname}
-          setName={setName}
-          setSurname={setSurname}
-          isDisabled={isDisabled}
-        />
-        <InputsWeightCity city={city} setCity={setCity} weight={weight} setWeight={setWeight} isDisabled={isDisabled} />
-        <InputBio bio={bio} setBio={setBio} isDisabled={isDisabled} />
-        <GenderBtns gender={gender} setGender={setGender} isDisabled={isDisabled} />
-      </View>
-    </SaveSettingsContext.Provider>
+    <View style={styles.container}>
+      <AvatarIconEditable
+        image={image}
+        setImage={setImage}
+        setIsDisabled={setIsDisabled}
+        setPhotoUrl={setPhotoUrl}
+        isDisabled={isDisabled}
+      />
+      <InputsNameSurname
+        name={name}
+        surname={surname}
+        setName={setName}
+        setSurname={setSurname}
+        isDisabled={isDisabled}
+      />
+      <InputsWeightCity city={city} setCity={setCity} weight={weight} setWeight={setWeight} isDisabled={isDisabled} />
+      <InputBio bio={bio} setBio={setBio} isDisabled={isDisabled} />
+      <GenderBtns gender={gender} setGender={setGender} isDisabled={isDisabled} />
+    </View>
   );
 }
 
