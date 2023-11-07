@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { View, StyleSheet, Image, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, Image, useWindowDimensions, Pressable } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
@@ -18,15 +18,18 @@ export default function PreviewImages({ setImages, images, isDisabled }: Preview
       {images &&
         images.map((image, index) => (
           <View style={{ position: 'relative' }} key={`${image}/${index}`}>
-            <MaterialCommunityIcons
-              testID="deleteIcon"
-              name="close-circle"
-              color={colors.onPrimaryContainer}
-              size={25}
-              style={{ position: 'absolute', right: 2, top: 16, zIndex: 5 }}
+            <Pressable
               onPress={() => setImages(images.filter((uri) => uri !== image))}
               disabled={isDisabled || isDisabledWhileSending}
-            />
+              testID="deleteIcon"
+              style={{ zIndex: 5 }}>
+              <MaterialCommunityIcons
+                name="close-circle"
+                color={colors.onPrimaryContainer}
+                size={25}
+                style={{ position: 'absolute', right: 2, top: 16 }}
+              />
+            </Pressable>
             <Image
               testID={`imagePreview-${index}`}
               source={{ uri: image }}
