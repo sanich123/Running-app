@@ -17,7 +17,7 @@ export default function Comments({ id }: { id: string }) {
 
   return (
     <>
-      {isLoading && <ActivityIndicator />}
+      {isLoading && <ActivityIndicator testID="commentsActivityIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
       {comments?.map(({ authorId, comment, id, date }) => (
         <Fragment key={id}>

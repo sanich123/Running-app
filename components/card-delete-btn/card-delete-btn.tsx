@@ -21,6 +21,7 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
       console.log(error);
     }
   }, [data, error]);
+
   return (
     <IconButton
       testID="activityCardDeleteBtn"

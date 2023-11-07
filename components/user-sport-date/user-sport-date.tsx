@@ -12,7 +12,6 @@ export default function UserSportDate({ sport, date }: { sport: SportsProps; dat
         <Text variant="bodyMedium">{getIconByTypeOfSport(sport)} </Text>
         <Text variant="bodyMedium">{formatDate(date)}</Text>
       </View>
-
       <Text variant="bodyMedium">{getHoursMinutes(date)}</Text>
     </View>
   );

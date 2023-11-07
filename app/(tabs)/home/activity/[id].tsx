@@ -29,7 +29,6 @@ export default function ViewActivityFullInfo() {
               locations={activity.locations}
               photoUrls={activity.photoUrls}
               duration={activity.duration}
-              speed={activity.speed}
               distance={activity.distance}
             />
             <ActivityFullViewMetrics />

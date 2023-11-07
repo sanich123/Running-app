@@ -13,7 +13,7 @@ import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
   const { user } = useAuth();
-  const router = useRouter();
+  const { push } = useRouter();
   useGetPermissions();
   const {
     data: activities,
@@ -62,10 +62,9 @@ export default function Feed() {
             ItemSeparatorComponent={() => <Divider />}
           />
         )}
-
-        {isLoading && <ActivityIndicator size="large" />}
+        {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
         {error ? <ErrorComponent error={error} /> : null}
-        <FloatingBtn onPressFn={() => router.push('/save-activity/')} />
+        <FloatingBtn onPressFn={() => push('/save-activity/')} />
       </SafeAreaView>
     </>
   );

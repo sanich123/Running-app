@@ -8,7 +8,9 @@ export default function useGetPermissions() {
       if (foregroundPermission.granted) {
         const backgroundPermission = await requestBackgroundPermissionsAsync();
         if (backgroundPermission.granted) {
-          console.log('Permission to access location granted');
+          if (!process.env.IS_TESTING) {
+            console.log('Permission to access location granted');
+          }
         }
       }
     })();

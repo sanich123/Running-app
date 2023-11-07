@@ -13,6 +13,7 @@ export default function CardBtns({ activityId, userId }: { activityId: string; u
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>
       <ActivityCardLikeBtn activityId={activityId} />
