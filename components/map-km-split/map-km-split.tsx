@@ -1,5 +1,6 @@
 import { Callout, PointAnnotation } from '@rnmapbox/maps';
 import { View, StyleSheet } from 'react-native';
+import { Text } from 'react-native-paper';
 
 import { KilometresSplit } from '../home-activity-full-view-km-split/home-activity-full-view-km-split';
 
@@ -11,12 +12,12 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: Kilom
             const {
               coords: { longitude, latitude },
             } = kilometerPoint;
+            const key = `${index}/${longitude},${latitude}`;
             return (
-              <PointAnnotation
-                key={`${index}/${longitude}, ${latitude}`}
-                coordinate={[longitude, latitude]}
-                id={`${index}/${longitude}, ${latitude}`}>
-                <View style={styles.customKm} />
+              <PointAnnotation key={key} coordinate={[longitude, latitude]} id={key}>
+                <View style={styles.customKm}>
+                  <Text variant="bodySmall">{index + 1}</Text>
+                </View>
                 <Callout title={`${index + 1} kilometer`} />
               </PointAnnotation>
             );
@@ -28,11 +29,14 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: Kilom
 
 const styles = StyleSheet.create({
   customKm: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     height: 20,
     width: 20,
-    backgroundColor: 'blue',
     borderColor: 'orange',
-    borderWidth: 2,
+    backgroundColor: 'white',
+    borderWidth: 1,
     borderRadius: 50,
   },
 });

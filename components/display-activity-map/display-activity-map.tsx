@@ -1,7 +1,8 @@
 import { MapView, Camera } from '@rnmapbox/maps';
+import bbox from '@turf/bbox';
 import { LocationObject } from 'expo-location';
 import { usePathname } from 'expo-router';
-import { getBounds } from 'geolib';
+import lineString from 'turf-linestring';
 
 import { KilometresSplit } from '../home-activity-full-view-km-split/home-activity-full-view-km-split';
 import MapKmSplit from '../map-km-split/map-km-split';
@@ -14,12 +15,9 @@ type DisplayActivityMapProps = {
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
   const pathname = usePathname();
-  const modifiedLocations = locations.map(({ coords: { longitude, latitude } }) => ({
-    latitude,
-    longitude,
-  }));
-
-  const { maxLat, maxLng, minLat, minLng } = getBounds(modifiedLocations);
+  const modifiedLocationsForTurf = locations.map(({ coords: { longitude, latitude } }) => [latitude, longitude]);
+  const line = lineString(modifiedLocationsForTurf);
+  const [minLat, minLng, maxLat, maxLng] = bbox(line);
 
   return (
     <MapView style={[{ flex: 1 }, pathname.includes('/comment') && { height: 200 }]} scaleBarEnabled={false}>

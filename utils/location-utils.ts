@@ -1,11 +1,12 @@
 import polyline from '@mapbox/polyline';
-import * as turf from '@turf/turf';
+import distance from '@turf/distance';
 import { LocationObject } from 'expo-location';
+import point from 'turf-point';
 
 export function getDistance(origin: LocationObject, destination: LocationObject) {
-  const from = turf.point([origin.coords.longitude, origin.coords.latitude]);
-  const to = turf.point([destination.coords.longitude, destination.coords.latitude]);
-  return turf.distance(from, to, { units: 'meters' });
+  const from = point([origin.coords.longitude, origin.coords.latitude]);
+  const to = point([destination.coords.longitude, destination.coords.latitude]);
+  return distance(from, to, { units: 'meters' });
 }
 
 export function getSpeedInMinsInKm(distance, time) {

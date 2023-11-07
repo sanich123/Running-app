@@ -31,7 +31,6 @@ export default function Map() {
   return (
     <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
       <UserLocation showsUserHeadingIndicator androidRenderMode="compass" animated />
-
       {initialLocation ? (
         <Camera
           ref={cameraRef}
@@ -46,7 +45,8 @@ export default function Map() {
       {locationsWithPauses[0]?.length > 1
         ? locationsWithPauses.map((locations) => {
             if (locations?.length > 1) {
-              return <MapRouteLine key={`${Math.random()}+${locations.length}`} locations={locations} />;
+              const key = `${locations[0].coords.longitude}, ${locations[locations.length - 1].coords.latitude}`;
+              return <MapRouteLine key={key} locations={locations} />;
             }
           })
         : null}
