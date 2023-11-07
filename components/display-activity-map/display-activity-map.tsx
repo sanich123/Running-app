@@ -20,7 +20,7 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
   const [minLat, minLng, maxLat, maxLng] = bbox(line);
 
   return (
-    <MapView style={[{ flex: 1 }, pathname.includes('/comment') && { height: 200 }]} scaleBarEnabled={false}>
+    <MapView style={[{ flex: 1 }, pathname.includes('/comment') && { height: 300 }]} scaleBarEnabled={false}>
       <Camera
         animationMode="flyTo"
         animationDuration={1000}

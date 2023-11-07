@@ -27,7 +27,7 @@ export default function Comment() {
         {error ? <ErrorComponent error={error} /> : null}
         {activity && (
           <View style={[{ flex: 1 }, isLoading && { justifyContent: 'center', alignItems: 'center' }]}>
-            <DisplayActivityMap locations={activity?.locations} distance={activity?.distance} />
+            <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
             <Card.Content style={{ display: 'flex', columnGap: 5, marginBottom: 10 }}>
               <ActivityCardTitle title={activity?.title} />
               <UserNameSurname userId={activity?.user_id} size="titleMedium" />
