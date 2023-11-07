@@ -19,6 +19,7 @@ export default function PreviewImages({ setImages, images, isDisabled }: Preview
         images.map((image, index) => (
           <View style={{ position: 'relative' }} key={`${image}/${index}`}>
             <MaterialCommunityIcons
+              testID="deleteIcon"
               name="close-circle"
               color={colors.onPrimaryContainer}
               size={25}
@@ -26,7 +27,13 @@ export default function PreviewImages({ setImages, images, isDisabled }: Preview
               onPress={() => setImages(images.filter((uri) => uri !== image))}
               disabled={isDisabled || isDisabledWhileSending}
             />
-            <Image source={{ uri: image }} style={styles.imageStyle} width={width / 3 - 10} height={100} />
+            <Image
+              testID={`imagePreview-${index}`}
+              source={{ uri: image }}
+              style={styles.imageStyle}
+              width={width / 3 - 10}
+              height={100}
+            />
           </View>
         ))}
     </View>
