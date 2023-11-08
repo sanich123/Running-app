@@ -11,6 +11,6 @@ describe('User bio', () => {
   });
   it('should correctly handle an error', async () => {
     renderWithProviders(<UserBio userId="someUserIdWithAnError" size="bodyLarge" />, { store: mockStore });
-    expect(await screen.findByText('undefined, 401 code')).toBeOnTheScreen();
+    expect(await screen.findByText('bad request, 401 code')).toBeOnTheScreen();
   });
 });

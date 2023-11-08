@@ -1,5 +1,5 @@
 import { Image } from 'react-native';
-import { ActivityIndicator, Avatar, MD2Colors } from 'react-native-paper';
+import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { useGetUserProfileByIdQuery } from '../../redux/runich-api/runich-api';
@@ -10,7 +10,6 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
 
   return (
     <>
-      {isLoading && <ActivityIndicator testID="avatarShowableActivityIndicator" animating color={MD2Colors.red800} />}
       {error ? <ErrorComponent error={error} /> : null}
       {!isLoading && profile?.profilePhoto && (
         <Image
@@ -25,6 +24,14 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
           testID="avatarShowableDefaultIcon"
           size={size}
           source={() => <Icon name="person" size={size} />}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        />
+      )}
+      {isLoading && (
+        <Avatar.Icon
+          testID="avatarShowableLoadingIcon"
+          size={size}
+          icon="arrow-down-thin-circle-outline"
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         />
       )}

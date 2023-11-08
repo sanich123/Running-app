@@ -26,8 +26,11 @@ export const handlers = [
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/7857abb1-b125-4f39-becf-8f30216b46ec`, (req, res, ctx) =>
     res(ctx.status(200), ctx.json(MOCK_PROFILE)),
   ),
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/a6135312-595f-4524-b3f3-496a05165d22`, (req, res, ctx) =>
+    res(ctx.status(200), ctx.json(MOCK_PROFILE)),
+  ),
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/someUserIdWithAnError`, (req, res, ctx) =>
-    res(ctx.status(401), ctx.json(new Error('Bad request'))),
+    res(ctx.status(401), ctx.json({ message: 'bad request' })),
   ),
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/like/someActivityId`, (req, res, ctx) =>
     res(ctx.status(200), ctx.json([{ authorId: 'someUserId' }])),
