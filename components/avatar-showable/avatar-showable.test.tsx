@@ -15,7 +15,6 @@ describe('Avatar showable', () => {
   it('should correctly renders, when an error occured', async () => {
     renderWithProviders(<AvatarShowable size={25} id="someUserIdWithAnError" />, { store: mockStore });
     expect(screen.getByTestId('avatarShowableLoadingIcon')).toBeOnTheScreen();
-    expect(await screen.findByTestId('errorComponentId')).toBeOnTheScreen();
-    expect(await screen.findByText('An error occured')).toBeOnTheScreen();
+    expect(await screen.findByTestId('avatarShowableErrorIcon')).toBeOnTheScreen();
   });
 });

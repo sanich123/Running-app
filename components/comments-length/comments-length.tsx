@@ -1,17 +1,16 @@
 import { useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 
 import { useGetCommentsByActivityIdQuery } from '../../redux/runich-api/runich-api';
 import ErrorComponent from '../error-component/error-component';
 
 export default function CommentsLength({ activityId }: { activityId: string }) {
-  const { isLoading, error, data: comments } = useGetCommentsByActivityIdQuery(activityId);
+  const { error, data: comments } = useGetCommentsByActivityIdQuery(activityId);
   const { push } = useRouter();
 
   return (
     <>
-      {isLoading && <ActivityIndicator size="small" testID="commentsLengthActivityIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
       {comments?.length ? (
         <Pressable

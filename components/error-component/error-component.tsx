@@ -10,6 +10,7 @@ export default function ErrorComponent({ error }: { error: FetchBaseQueryError |
       <Text variant="bodyMedium">
         {'data' in error ? `${(error.data as { message: string }).message}, ${error.status} code` : null}
         {'message' in error ? error.message : null}
+        {'error' in error ? error.error : null}
       </Text>
     </View>
   );

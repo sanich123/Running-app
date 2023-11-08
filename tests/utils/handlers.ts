@@ -32,6 +32,9 @@ export const handlers = [
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/someUserIdWithAnError`, (req, res, ctx) =>
     res(ctx.status(401), ctx.json({ message: 'bad request' })),
   ),
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/someUserIdWithoutPhoto`, (req, res, ctx) =>
+    res(ctx.status(200), ctx.json(undefined)),
+  ),
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/like/someActivityId`, (req, res, ctx) =>
     res(ctx.status(200), ctx.json([{ authorId: 'someUserId' }])),
   ),

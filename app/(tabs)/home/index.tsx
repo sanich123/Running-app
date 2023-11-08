@@ -35,8 +35,7 @@ export default function Feed() {
             data={activities}
             refreshing={refreshing}
             renderItem={({ item }) => {
-              const { description, title, date, sport, locations, photoUrls, duration, speed, distance, id, user_id } =
-                item;
+              const { description, title, date, sport, locations, photoUrls, duration, distance, id, user_id } = item;
               return (
                 <ActivityCard
                   description={description}
@@ -49,7 +48,6 @@ export default function Feed() {
                   key={id}
                   photoUrls={photoUrls}
                   duration={duration}
-                  speed={speed}
                   distance={distance}
                 />
               );

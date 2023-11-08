@@ -13,7 +13,6 @@ jest.mock('expo-router', () => ({
 describe('Comments length', () => {
   it('should correctly renders received comments length', async () => {
     renderWithProviders(<CommentsLength activityId="189d2c10-463c-42f5-9f09-5e9fa6aa2720" />, { store: mockStore });
-    expect(screen.getByTestId('commentsLengthActivityIndicator'));
     expect(await screen.findByText('8 comments')).toBeOnTheScreen();
   });
 });

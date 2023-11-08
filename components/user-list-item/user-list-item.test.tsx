@@ -67,6 +67,6 @@ describe('User list item', () => {
     }));
     renderWithProviders(<UserListItem userId="someUserIdWithAnError" />, { store: mockStore });
     expect(screen.getByTestId('avatarShowableLoadingIcon')).toBeOnTheScreen();
-    expect(await screen.findAllByText('An error occured')).toHaveLength(3);
+    expect(await screen.findAllByText('An error occured')).toHaveLength(2);
   });
 });

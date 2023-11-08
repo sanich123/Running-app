@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { ToastAndroid } from 'react-native';
-import { ActivityIndicator, Button } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 
 import { useAuth } from '../../auth/context/auth-context';
 import {
@@ -35,24 +35,21 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
 
   return (
     <>
-      {isLoadingListOfFriends && <ActivityIndicator size="small" />}
       {listOfFriendsError && <ErrorComponent error={listOfFriendsError} />}
-      {listOfFriends && (
-        <Button
-          mode="contained"
-          style={{ marginLeft: 'auto', borderRadius: 5, marginRight: 5 }}
-          disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
-          loading={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
-          onPress={async () =>
-            friendCell?.length > 0
-              ? await deleteFriend({ body: { userId: user.id }, id: friendId }).unwrap()
-              : await addFriend({ body: { userId: user.id }, id: friendId }).unwrap()
-          }>
-          {`${friendCell.length > 0 ? 'Unf' : 'F'}ollow${
-            isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend ? 'ing' : ''
-          }`}
-        </Button>
-      )}
+      <Button
+        mode="contained"
+        style={{ marginLeft: 'auto', borderRadius: 5, marginRight: 5 }}
+        disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
+        loading={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
+        onPress={async () =>
+          friendCell?.length > 0
+            ? await deleteFriend({ body: { userId: user.id }, id: friendId }).unwrap()
+            : await addFriend({ body: { userId: user.id }, id: friendId }).unwrap()
+        }>
+        {isLoadingListOfFriends
+          ? ''
+          : `${friendCell.length > 0 ? 'Unf' : 'F'}ollow${isLoadingDeleteFriend || isLoadingAddFriend ? 'ing' : ''}`}
+      </Button>
     </>
   );
 }
