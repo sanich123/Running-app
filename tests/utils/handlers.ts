@@ -3,6 +3,8 @@ import { rest } from 'msw';
 import { MOCK_ACTIVITY } from '../mocks/mock-activity';
 import { MOCK_COMMENT_LIKES } from '../mocks/mock-comment-likes';
 import { MOCK_COMMENTS } from '../mocks/mock-comments';
+import { MOCK_FOLLOWERS } from '../mocks/mock-followers';
+import { MOCK_FRIENDS } from '../mocks/mock-friends';
 import { MOCK_LOCATION, MOCK_PROFILE } from '../mocks/mock-location';
 
 export const handlers = [
@@ -60,11 +62,12 @@ export const handlers = [
   rest.delete(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/0326e84a-946b-42da-b662-658c4c9a50d9`, (req, res, ctx) =>
     res(ctx.status(204), ctx.json('')),
   ),
-  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/someFriendId/followers`, (req, res, ctx) =>
-    res(ctx.status(200), ctx.json([1, 2, 3])),
+  rest.get(
+    `${process.env.EXPO_PUBLIC_BASE_URL}/friend/7857abb1-b125-4f39-becf-8f30216b46ec/followers`,
+    (req, res, ctx) => res(ctx.status(200), ctx.json(MOCK_FOLLOWERS)),
   ),
-  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/someFriendId`, (req, res, ctx) =>
-    res(ctx.status(200), ctx.json([1, 2, 3])),
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/926f4a53-08b5-43c6-99ee-cf31fdfbb49b`, (req, res, ctx) =>
+    res(ctx.status(200), ctx.json(MOCK_FRIENDS)),
   ),
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/activityId/someActivityId`, (req, res, ctx) =>
     res(ctx.status(200), ctx.json(MOCK_ACTIVITY)),

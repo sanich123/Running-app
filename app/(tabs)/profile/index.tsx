@@ -1,15 +1,20 @@
+import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
 
 import { useAuth } from '../../../auth/context/auth-context';
+import AddDeleteFriendBtn from '../../../components/add-delete-friend-btn/add-delete-friend-btn';
 import AvatarShowable from '../../../components/avatar-showable/avatar-showable';
 import ErrorComponent from '../../../components/error-component/error-component';
-import ProfileFollowersSection from '../../../components/profile-followers-section/profile-followers-section';
+import FollowersCount from '../../../components/followers-count/followers-count';
+import FollowingCount from '../../../components/following-count/following-count';
 import ProfileMediaPhotos from '../../../components/profile-media-photos/profile-media-photos';
 import { useGetUserProfileByIdQuery } from '../../../redux/runich-api/runich-api';
 
 export default function Profile() {
+  const { id: friendId } = useLocalSearchParams();
   const { user } = useAuth();
+  const isMineActivity = friendId === user.id;
   const {
     isLoading,
     data: profile,
@@ -36,7 +41,11 @@ export default function Profile() {
         <View style={styles.bio}>
           <Text variant="titleMedium">{profile?.bio}</Text>
         </View>
-        <ProfileFollowersSection />
+        <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+          <FollowingCount />
+          <FollowersCount />
+          {!isMineActivity && friendId && <AddDeleteFriendBtn friendId={`${friendId}`} />}
+        </View>
         {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
         {error ? <ErrorComponent error={error} /> : null}
       </View>

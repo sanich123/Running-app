@@ -2,14 +2,15 @@ import { screen } from '@testing-library/react-native';
 
 import FollowingCount from './following-count';
 import * as auth from '../../auth/context/auth-context';
+import { MOCK_FRIENDS } from '../../tests/mocks/mock-friends';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 
 jest.mock('expo-router', () => ({
-  useLocalSearchParams: () => ({
-    id: 'someFriendId',
-  }),
+  useLocalSearchParams: () => ({ id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b' }),
+  usePathname: () => 'somePathname',
+  useRouter: () => ({ push: jest.fn() }),
 }));
 
 describe('Following count', () => {
@@ -21,6 +22,7 @@ describe('Following count', () => {
       },
     }));
     renderWithProviders(<FollowingCount />, { store: mockStore });
-    expect(await screen.findByText('3')).toBeOnTheScreen();
+    expect(await screen.findByText('Following')).toBeOnTheScreen();
+    expect(await screen.findByText(`${MOCK_FRIENDS.length}`)).toBeOnTheScreen();
   });
 });
