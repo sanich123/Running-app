@@ -56,7 +56,7 @@
     "base64-arraybuffer": "^1.0.2",
     "expo": "^49.0.11",
     "expo-av": "~13.4.1",
-    "expo-dev-client": "~2.4.11",
+    "expo-dev-client": "~2.4.12",
     "expo-file-system": "~15.4.4",
     "expo-font": "~11.4.0",
     "expo-image-picker": "~14.3.2",
