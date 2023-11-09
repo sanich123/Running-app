@@ -2,6 +2,7 @@ import { screen } from '@testing-library/react-native';
 
 import Feed from '../../app/(tabs)/home';
 import * as auth from '../../auth/context/auth-context';
+import { LANGUAGES } from '../../constants/enums';
 import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
 import { MOCK_ACTIVITY } from '../mocks/mock-activity';
 import { USER_AUTH_MOCKS } from '../mocks/use-auth';
@@ -30,8 +31,8 @@ describe('Home index', () => {
     expect(await screen.findByText('Moscow')).toBeOnTheScreen();
     expect(await screen.findByText('Искандер')).toBeOnTheScreen();
     expect(await screen.findByText('Ядгаров')).toBeOnTheScreen();
-    expect(await screen.findByText(formatDate(new Date(MOCK_ACTIVITY.date)))).toBeOnTheScreen();
-    expect(await screen.findByText(getHoursMinutes(new Date(MOCK_ACTIVITY.date)))).toBeOnTheScreen();
+    expect(await screen.findByText(formatDate(new Date(MOCK_ACTIVITY.date), LANGUAGES.english))).toBeOnTheScreen();
+    expect(await screen.findByText(getHoursMinutes(new Date(MOCK_ACTIVITY.date), LANGUAGES.english))).toBeOnTheScreen();
   });
   it('should correctly renders empty list', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

@@ -2,7 +2,9 @@ import { LocationObject } from 'expo-location';
 import { Fragment } from 'react';
 import { View } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
+import { KM_SPLITS } from './const';
 import { formatDurationMinsSecs } from '../../utils/time-formatter';
 
 export type KilometresSplit = {
@@ -13,26 +15,27 @@ export type KilometresSplit = {
 
 export default function HomeActivityFullViewKmSplit({ kilometresSplit }: { kilometresSplit: KilometresSplit[] }) {
   const fastestKm = Math.min(...kilometresSplit.map(({ lastKilometerDuration }) => lastKilometerDuration));
+  const { language } = useSelector(({ language }) => language);
 
   return (
     <>
       <Text variant="displaySmall" style={{ paddingBottom: 20, paddingTop: 20 }}>
-        Splits
+        {KM_SPLITS[language].splits}
       </Text>
       <View style={{ flex: 1, flexDirection: 'row', width: '100%', paddingBottom: 20 }}>
         <View style={{ flex: 2 }}>
           <Text variant="labelLarge" style={{ fontWeight: 'bold' }}>
-            KM
+            {KM_SPLITS[language].km}
           </Text>
         </View>
         <View style={{ flex: 16 }}>
           <Text variant="labelLarge" style={{ fontWeight: 'bold' }}>
-            PACE
+            {KM_SPLITS[language].pace}
           </Text>
         </View>
         <View style={{ display: 'flex' }}>
           <Text variant="labelLarge" style={{ fontWeight: 'bold' }}>
-            ELEV
+            {KM_SPLITS[language].elev}
           </Text>
         </View>
       </View>
