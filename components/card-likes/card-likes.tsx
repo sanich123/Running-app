@@ -26,7 +26,7 @@ export default function CardLikes({ activityId }: { activityId: string }) {
         style={[
           styles.likesLayout,
           !likes?.length && styles.withoutLikesLayout,
-          isInComment && { width: likes?.length * SHIFT_RIGHT + 13, marginTop: 4 },
+          (isInComment || isInActivity) && { width: likes?.length * SHIFT_RIGHT + 13, marginTop: 4 },
         ]}>
         {error ? <ErrorComponent error={error} /> : null}
         {likes && (

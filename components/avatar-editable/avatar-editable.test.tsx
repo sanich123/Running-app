@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react-native';
 
 import AvatarIconEditable from './avatar-editable';
+import { AvatarEditableTestIds } from './const';
 import { setIsDisabledWhileSendingProfile } from '../../redux/profile/profile';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
@@ -22,7 +23,7 @@ describe('Avatar icon editable', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByTestId('avatarEditableButton')).toBeOnTheScreen();
+    expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeOnTheScreen();
   });
   it('should renders an image', () => {
     renderWithProviders(
@@ -35,8 +36,8 @@ describe('Avatar icon editable', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByTestId('avatarEditableImage')).toBeOnTheScreen();
-    expect(screen.getByTestId('avatarEditableImage').props.source.uri).toEqual('some url');
+    const img = screen.getByTestId(AvatarEditableTestIds.successImg);
+    expect(img.props.source.uri).toEqual('some url');
   });
   it('should be disabled, when isDisabled', () => {
     renderWithProviders(
@@ -49,7 +50,7 @@ describe('Avatar icon editable', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByTestId('avatarEditableButton')).toBeDisabled();
+    expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeDisabled();
   });
   it('should be disabled, when isDisabledWhileSendingProfile', () => {
     mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
@@ -63,6 +64,6 @@ describe('Avatar icon editable', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByTestId('avatarEditableButton')).toBeDisabled();
+    expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeDisabled();
   });
 });

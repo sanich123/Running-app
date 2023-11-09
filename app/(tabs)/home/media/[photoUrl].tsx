@@ -11,6 +11,7 @@ export default function Media() {
         source={{ uri: decodeURIComponent(photoUrl.toString()) }}
         height={height - 50}
         width={width}
+        resizeMode="cover"
       />
     </View>
   );

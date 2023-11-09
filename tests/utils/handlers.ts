@@ -12,7 +12,7 @@ export const handlers = [
     res(ctx.status(201), ctx.json(MOCK_LOCATION)),
   ),
   rest.post(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/someWrongUserId`, (req, res, ctx) => {
-    return res(ctx.status(404), ctx.json({ error: { data: { message: 'Bad request' } } }));
+    return res(ctx.status(404), ctx.json({ message: 'Bad request' }));
   }),
   rest.post(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/someFriendId`, (req, res, ctx) =>
     res(ctx.status(201), ctx.json(MOCK_LOCATION)),

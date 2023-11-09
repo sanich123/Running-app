@@ -1,20 +1,14 @@
-import { Pressable, Image } from 'react-native';
+import { Pressable, Image, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
+import { AvatarEditableTestIds, AvatarIconEditableProps } from './const';
 import { useAuth } from '../../auth/context/auth-context';
 import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
 import { EXPIRED_TIME } from '../../constants/const';
 import { errorHandler } from '../../utils/error-handler';
 import { compressAndSendPhoto, getAccessToGallery } from '../../utils/file-sending';
-
-type AvatarIconEditableProps = {
-  image: string;
-  isDisabled: boolean;
-  setImage: (arg: string) => void;
-  setPhotoUrl: (arg: string) => void;
-  setIsDisabled: (arg: boolean) => void;
-};
+import { AvatarShowableIcons } from '../avatar-showable/const';
 
 export default function AvatarIconEditable({
   image,
@@ -25,9 +19,10 @@ export default function AvatarIconEditable({
 }: AvatarIconEditableProps) {
   const { user } = useAuth();
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
+
   return (
     <Pressable
-      testID="avatarEditableButton"
+      testID={AvatarEditableTestIds.editBtn}
       onPress={async () => {
         setIsDisabled(true);
         try {
@@ -49,15 +44,15 @@ export default function AvatarIconEditable({
       style={(isDisabled || isDisabledWhileSendingProfile) && { opacity: 0.5 }}>
       {!image && (
         <Avatar.Icon
-          testID="avatarShowableDefaultIcon"
+          testID={AvatarEditableTestIds.default}
           size={150}
-          icon="account-circle-outline"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          icon={AvatarShowableIcons.default}
+          style={styles.isInCenter}
         />
       )}
       {image && (
         <Image
-          testID="avatarEditableImage"
+          testID={AvatarEditableTestIds.successImg}
           source={{ uri: image }}
           style={{ width: 150, height: 150, borderRadius: 70 }}
         />
@@ -65,3 +60,7 @@ export default function AvatarIconEditable({
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  isInCenter: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
+});

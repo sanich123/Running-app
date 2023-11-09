@@ -1,16 +1,11 @@
-import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_ICON, RESPONSE_STATUS } from './const ';
 import { STATUSES } from '../../constants/enums';
-import { LANGUAGE } from '../../constants/languages/languages';
-import { useAppSelector } from '../../redux/hooks/hooks';
 import { saveFinishedActivity, setActivityStatus } from '../../redux/location/location';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
-
-const { initial, started, paused, continued } = STATUSES;
 
 export default function ActivityStartBtn() {
   const {
@@ -23,27 +18,12 @@ export default function ActivityStartBtn() {
 
   const dispatch = useDispatch();
   const { startBtn, textStyle } = styles;
-  const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
-
-  const responseStatus: { [key in STATUSES]: STATUSES } = {
-    [initial]: started,
-    [started]: paused,
-    [paused]: initial,
-    [continued]: paused,
-  };
-
-  const responseIcon: { [key in STATUSES]: string | ReactNode } = {
-    [initial]: LANGUAGE[language].activity.controlBtns.start,
-    [started]: <FontAwesome name="stop" size={25} style={{ marginRight: 15 }} />,
-    [paused]: LANGUAGE[language].activity.controlBtns.finish,
-    [continued]: <FontAwesome name="stop" size={25} style={{ marginRight: 15 }} />,
-  };
 
   return (
     <Pressable
       style={startBtn}
-      testID="startButton"
+      testID={ACTIVITY_START_BTN_TEST_ID}
       onPress={() => {
         dispatch(
           saveFinishedActivity({
@@ -54,12 +34,12 @@ export default function ActivityStartBtn() {
             speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
           }),
         );
-        dispatch(setActivityStatus(responseStatus[activityStatus]));
-        if (activityStatus === paused) {
+        dispatch(setActivityStatus(RESPONSE_STATUS[activityStatus]));
+        if (activityStatus === STATUSES.paused) {
           push('/(tabs)/save-activity/');
         }
       }}>
-      <Text style={textStyle}>{responseIcon[activityStatus]}</Text>
+      <Text style={textStyle}>{RESPONSE_ICON[activityStatus]}</Text>
     </Pressable>
   );
 }

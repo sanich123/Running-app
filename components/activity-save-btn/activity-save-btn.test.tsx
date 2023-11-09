@@ -1,8 +1,12 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { ToastAndroid } from 'react-native';
 
 import ActivitySaveBtn from './activity-save-btn';
+import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import * as auth from '../../auth/context/auth-context';
+import { LANGUAGES } from '../../constants/enums';
 import { saveDescription, saveEmotion, saveSport, saveTitle } from '../../redux/activity/activity';
+import { changeLanguage } from '../../redux/language/language';
 import { saveFinishedActivity } from '../../redux/location/location';
 import { MOCK_DISTANCE, MOCK_DURATION, MOCK_LOCATION, MOCK_SPEED } from '../../tests/mocks/mock-location';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
@@ -14,11 +18,16 @@ jest.mock('expo-router', () => ({
     push: jest.fn(),
   }),
 }));
-
+jest.spyOn(ToastAndroid, 'show');
 describe('Activity save btn', () => {
-  it('should correctly renders', () => {
-    renderWithProviders(<ActivitySaveBtn />);
-    expect(screen.getByText(/save/i)).toBeDefined();
+  it('should correctly renders in english', () => {
+    renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    expect(screen.getByText(ACTIVITY_SAVE_BTN.english.save)).toBeOnTheScreen();
+  });
+  it('should correctly renders in russian', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    expect(screen.getByText(ACTIVITY_SAVE_BTN.russian.save)).toBeOnTheScreen();
   });
   it('should correctly change global state', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
@@ -28,7 +37,7 @@ describe('Activity save btn', () => {
       },
     }));
     renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
-    const saveBtn = screen.getByTestId(/activitySaveBtn/i);
+    const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
     expect(mockStore.getState().activity.isNeedToResetInputs).toEqual(true);
@@ -37,10 +46,7 @@ describe('Activity save btn', () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
       user: {
         id: 'someUserId',
-        app_metadata: undefined,
-        user_metadata: undefined,
-        aud: '',
-        created_at: '',
+        ...USER_AUTH_MOCKS,
       },
     }));
     mockStore.dispatch(
@@ -57,7 +63,7 @@ describe('Activity save btn', () => {
     mockStore.dispatch(saveSport('run'));
     mockStore.dispatch(saveEmotion('good'));
     renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
-    const saveBtn = screen.getByTestId(/activitySaveBtn/i);
+    const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
     expect(mockStore.getState().activity.isNeedToResetInputs).toEqual(true);

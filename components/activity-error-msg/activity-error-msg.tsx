@@ -3,16 +3,18 @@ import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ACTIVITY } from '../../constants/texts/activity';
+import { ACTIVITY_ERROR_MSG } from './const';
 import { setIsAppShuted } from '../../redux/location/location';
+import { TIMEOUT_MESSAGE } from '../activity-location-indicator/const';
 
 export default function ActivityErrorMsg() {
   const dispatch = useDispatch();
   const { isAppShutedByPhone } = useSelector(({ location }) => location);
+  const { language } = useSelector(({ language }) => language);
 
   useEffect(() => {
     if (isAppShutedByPhone) {
-      setTimeout(() => dispatch(setIsAppShuted(false)), 10000);
+      setTimeout(() => dispatch(setIsAppShuted(false)), TIMEOUT_MESSAGE);
     }
   }, [isAppShutedByPhone]);
 
@@ -20,7 +22,7 @@ export default function ActivityErrorMsg() {
     <>
       {isAppShutedByPhone ? (
         <View style={[styles.indicatorLayout, { backgroundColor: 'orange' }]}>
-          <Text variant="bodyLarge">{ACTIVITY.english.ERROR_MSG}</Text>
+          <Text variant="bodyLarge">{ACTIVITY_ERROR_MSG[language].errorMsg}</Text>
         </View>
       ) : null}
     </>

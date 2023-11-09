@@ -4,6 +4,7 @@ import { Pressable, ToastAndroid } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import { useAuth } from '../../auth/context/auth-context';
 import { resetActivityInfo, setIsDisableWhileSending, setIsNeedToResetInputs } from '../../redux/activity/activity';
 import { useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
@@ -14,6 +15,7 @@ export default function ActivitySaveBtn() {
   const { push } = useRouter();
   const { finishedActivity } = useSelector(({ location }) => location);
   const { additionalInfo, isDisabledWhileSending } = useSelector(({ activity }) => activity);
+  const { language } = useSelector(({ language }) => language);
   const [sendActivity, { error, data }] = useAddActivityByUserIdMutation();
   const dispatch = useDispatch();
 
@@ -27,12 +29,13 @@ export default function ActivitySaveBtn() {
     if (error) {
       dispatch(setIsDisableWhileSending(false));
       console.log(error);
-      ToastAndroid.show('An error occured during sending activity! Try again.', ToastAndroid.LONG);
+      ToastAndroid.show(ACTIVITY_SAVE_BTN[language].errorMsg, ToastAndroid.LONG);
     }
   }, [data, error]);
 
   return (
     <Pressable
+      testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
         dispatch(setIsDisableWhileSending(true));
         await sendActivity({
@@ -42,10 +45,9 @@ export default function ActivitySaveBtn() {
       }}
       disabled={isDisabledWhileSending}>
       <Text
-        testID="activitySaveBtn"
         variant="titleMedium"
         style={{ color: colors.primaryContainer, marginRight: 15, opacity: isDisabledWhileSending ? 0.5 : 1 }}>
-        {`Sav${isDisabledWhileSending ? 'ing' : 'e'}`}
+        {isDisabledWhileSending ? ACTIVITY_SAVE_BTN[language].saving : ACTIVITY_SAVE_BTN[language].save}
       </Text>
     </Pressable>
   );
