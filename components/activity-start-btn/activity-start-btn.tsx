@@ -1,8 +1,10 @@
+import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_ICON, RESPONSE_STATUS } from './const ';
+import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, STOP_ICON } from './const ';
 import { STATUSES } from '../../constants/enums';
 import { saveFinishedActivity, setActivityStatus } from '../../redux/location/location';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
@@ -15,10 +17,18 @@ export default function ActivityStartBtn() {
     locationsFromBackground: locations,
     kilometresSplit,
   } = useSelector(({ location }) => location);
+  const { language } = useSelector(({ language }) => language);
 
   const dispatch = useDispatch();
   const { startBtn, textStyle } = styles;
   const { push } = useRouter();
+
+  const RESPONSE_ICON: { [key in STATUSES]: string | ReactNode } = {
+    [STATUSES.initial]: ACTIVITY_START_BTN[language].start,
+    [STATUSES.started]: <FontAwesome testID={STOP_ICON} name="stop" size={25} style={{ marginRight: 15 }} />,
+    [STATUSES.paused]: ACTIVITY_START_BTN[language].finish,
+    [STATUSES.continued]: <FontAwesome testID={STOP_ICON} name="stop" size={25} style={{ marginRight: 15 }} />,
+  };
 
   return (
     <Pressable

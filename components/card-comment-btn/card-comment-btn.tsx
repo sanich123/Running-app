@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { useContext } from 'react';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
+import { COMMENT_BTN_ICON, COMMENT_BTN_TEST_ID } from './const';
 import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
 
 export default function ActivityCardCommentBtn({ activityId }: { activityId: string }) {
@@ -9,8 +10,8 @@ export default function ActivityCardCommentBtn({ activityId }: { activityId: str
   const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
   return (
     <IconButton
-      testID="activityCardCommentBtnIcon"
-      icon="comment-outline"
+      testID={COMMENT_BTN_TEST_ID}
+      icon={COMMENT_BTN_ICON}
       iconColor={MD3Colors.primary50}
       size={25}
       onPress={() => push(`/home/comment/${activityId}`)}

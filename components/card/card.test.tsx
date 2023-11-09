@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react-native';
 
 import ActivityCard from './card';
+import { SportsProps } from './const ';
 import * as auth from '../../auth/context/auth-context';
-import { SportsProps } from '../../constants/types/activity-cart';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';

@@ -2,7 +2,7 @@ import { usePathname, useRouter } from 'expo-router';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 
-import { ActivityCardProps } from '../../constants/types/activity-cart';
+import { ActivityCardProps } from './const ';
 import AvatarShowable from '../avatar-showable/avatar-showable';
 import CardBtns from '../card-btns/card-btns';
 import CardDesription from '../card-description/card-description';
@@ -76,8 +76,26 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: 'center',
   },
-  profileWrapper: { display: 'flex', justifyContent: 'center' },
-  titleWrapper: { marginTop: 5, marginLeft: 15, marginBottom: 5 },
-  metricsWrapper: { display: 'flex', flexDirection: 'row', marginLeft: 15, columnGap: 15, marginBottom: 5 },
-  activityBtnsWrapper: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  profileWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  titleWrapper: {
+    marginTop: 5,
+    marginLeft: 15,
+    marginBottom: 5,
+  },
+  metricsWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginLeft: 15,
+    columnGap: 15,
+    marginBottom: 5,
+  },
+  activityBtnsWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 });

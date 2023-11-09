@@ -1,5 +1,4 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { ToastAndroid } from 'react-native';
 
 import ActivitySaveBtn from './activity-save-btn';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
@@ -14,11 +13,9 @@ import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
+  useRouter: () => ({ push: jest.fn() }),
 }));
-jest.spyOn(ToastAndroid, 'show');
+
 describe('Activity save btn', () => {
   it('should correctly renders in english', () => {
     renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
