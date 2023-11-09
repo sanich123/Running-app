@@ -1,7 +1,7 @@
-import { Image, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Avatar } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/Ionicons';
 
+import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 import { useGetUserProfileByIdQuery } from '../../redux/runich-api/runich-api';
 
 export default function AvatarShowable({ size, id }: { size: number; id: string }) {
@@ -10,13 +10,13 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
   return (
     <>
       {isLoading && (
-        <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: size, height: size }}>
-          <ActivityIndicator size="small" testID="avatarShowableLoadingIcon" />
+        <View style={[styles.placeInCenter && { width: size, height: size }]}>
+          <ActivityIndicator size="small" testID={AvatarShowableTestIds.isLoading} />
         </View>
       )}
       {profile && profile?.profilePhoto && (
         <Image
-          testID="avatarShowableImage"
+          testID={AvatarShowableTestIds.success}
           source={{ uri: profile?.profilePhoto }}
           style={{ width: size, height: size, borderRadius: 70 }}
           resizeMode="cover"
@@ -24,21 +24,28 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
       )}
       {error && (
         <Avatar.Icon
-          testID="avatarShowableErrorIcon"
+          testID={AvatarShowableTestIds.error}
           size={size}
-          icon="web-cancel"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          icon={AvatarShowableIcons.error}
+          style={styles.placeInCenter}
         />
       )}
-
-      {!isLoading && !profile && (
-        <Avatar.Image
-          testID="avatarShowableDefaultIcon"
+      {!error && !isLoading && !profile && (
+        <Avatar.Icon
+          testID={AvatarShowableTestIds.default}
           size={size}
-          source={() => <Icon name="person" size={size} />}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          icon={AvatarShowableIcons.default}
+          style={styles.placeInCenter}
         />
       )}
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  placeInCenter: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

@@ -1,6 +1,5 @@
 import { Pressable, Image } from 'react-native';
 import { Avatar } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
@@ -49,9 +48,10 @@ export default function AvatarIconEditable({
       disabled={isDisabled || isDisabledWhileSendingProfile}
       style={(isDisabled || isDisabledWhileSendingProfile) && { opacity: 0.5 }}>
       {!image && (
-        <Avatar.Image
-          size={100}
-          source={() => <Icon name="person" size={64} />}
+        <Avatar.Icon
+          testID="avatarShowableDefaultIcon"
+          size={150}
+          icon="account-circle-outline"
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         />
       )}
