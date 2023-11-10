@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
-import { ActivityIndicator, Button, Divider } from 'react-native-paper';
+import { ActivityIndicator, Divider } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
 import { useAuth } from '../../../auth/context/auth-context';
@@ -29,12 +30,12 @@ export default function Feed() {
   });
   const { onRefresh, refreshing } = useRefresh(refetch);
 
-  // useEffect(() => {
-  //   if (error) {
-  //     refetch();
-  //     dispatch(runichApi.util.resetApiState());
-  //   }
-  // }, [error]);
+  useEffect(() => {
+    if (error) {
+      dispatch(runichApi.util.resetApiState());
+      refetch();
+    }
+  }, []);
 
   return (
     <>
@@ -71,18 +72,7 @@ export default function Feed() {
           />
         )}
         {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
-        {error ? (
-          <>
-            <Button
-              onPress={() => {
-                dispatch(runichApi.util.resetApiState());
-                refetch();
-              }}>
-              Refetch
-            </Button>
-            <ErrorComponent error={error} />
-          </>
-        ) : null}
+        {error ? <ErrorComponent error={error} /> : null}
         <FloatingBtn onPressFn={() => push('/save-activity/')} />
       </SafeAreaView>
     </>

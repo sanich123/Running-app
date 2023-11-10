@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../../../auth/context/auth-context';
 import { LANGUAGES } from '../../../constants/enums';
 import { changeLanguage } from '../../../redux/language/language';
+import { runichApi } from '../../../redux/runich-api/runich-api';
 
 export default function SettingsScreen() {
   const { signOut } = useAuth();
@@ -32,6 +33,13 @@ export default function SettingsScreen() {
       />
       <Button mode="outlined" icon="logout" onPress={() => signOut()} style={{ marginTop: 15 }}>
         LogOut
+      </Button>
+      <Button
+        mode="outlined"
+        icon="logout"
+        onPress={() => dispatch(runichApi.util.resetApiState())}
+        style={{ marginTop: 15 }}>
+        Clear cache manually
       </Button>
     </>
   );

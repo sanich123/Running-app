@@ -11,7 +11,7 @@ export default function InputBio({ bio, setBio, isDisabled }: InputBioProps) {
       testID={INPUT_BIO_TEST_ID}
       mode="outlined"
       style={{ width: 365 }}
-      label="Bio"
+      label={INPUT_BIO[language].label}
       placeholder={INPUT_BIO[language].placeholder}
       multiline
       numberOfLines={4}
