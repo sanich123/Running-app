@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { ActivityIndicator, Text, Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { HOME_ACTIVITY_FULL_VIEW } from './const';
+import { HOME_ACTIVITY_FULL_VIEW, HOME_ACTIVITY_FULL_VIEW_TEST_ID } from './const';
 import { useGetActivityByActivityIdQuery } from '../../redux/runich-api/runich-api';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
 import { formatDuration } from '../../utils/time-formatter';
@@ -23,7 +23,7 @@ export default function ActivityFullViewMetrics() {
 
   return (
     <View style={[styles.layout, isLoading && styles.isCenter]}>
-      {isLoading && <ActivityIndicator testID="activityFullViewMetricsIndicator" />}
+      {isLoading && <ActivityIndicator testID={HOME_ACTIVITY_FULL_VIEW_TEST_ID} />}
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <>

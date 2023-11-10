@@ -3,6 +3,7 @@ import { screen } from '@testing-library/react-native';
 import CommentsLength from './comments-length';
 import { COMMENTS_ENDING, COMMENTS_LENGTH_TEST_ID, getWordEnding } from './const';
 import { LANGUAGES } from '../../constants/enums';
+import { changeLanguage } from '../../redux/language/language';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 jest.mock('expo-router', () => ({
@@ -13,10 +14,34 @@ jest.mock('expo-router', () => ({
   },
 }));
 describe('Comments length', () => {
-  it('should correctly renders received comments length', async () => {
+  it('should correctly renders received comments length in english, when length ends on 5-9', async () => {
     renderWithProviders(<CommentsLength activityId="189d2c10-463c-42f5-9f09-5e9fa6aa2720" />, { store: mockStore });
     expect(await screen.findByTestId(COMMENTS_LENGTH_TEST_ID)).toBeOnTheScreen();
-    expect(await screen.findByText('8 comments')).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(`8 ${COMMENTS_ENDING.english.manyComments}`))).toBeOnTheScreen();
+  });
+  it('should correctly renders received comments length in russian, when length ends on 5-9', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    renderWithProviders(<CommentsLength activityId="189d2c10-463c-42f5-9f09-5e9fa6aa2720" />, { store: mockStore });
+    expect(await screen.findByTestId(COMMENTS_LENGTH_TEST_ID)).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(`8 ${COMMENTS_ENDING.russian.fiveZeroComments}`))).toBeOnTheScreen();
+  });
+  it('should correctly renders received comments length in english, when length ends on 1', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    renderWithProviders(<CommentsLength activityId="activityIdWithOneComment" />, { store: mockStore });
+    expect(await screen.findByTestId(COMMENTS_LENGTH_TEST_ID)).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(`1 ${COMMENTS_ENDING.english.oneComment}`))).toBeOnTheScreen();
+  });
+  it('should correctly renders received comments length in russian, when length ends on 1', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    renderWithProviders(<CommentsLength activityId="activityIdWithOneComment" />, { store: mockStore });
+    expect(await screen.findByTestId(COMMENTS_LENGTH_TEST_ID)).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(`1 ${COMMENTS_ENDING.russian.oneComment}`))).toBeOnTheScreen();
+  });
+  it('should correctly renders received comments length in russian, when length ends on 2-4', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    renderWithProviders(<CommentsLength activityId="activityIdWithTwoComments" />, { store: mockStore });
+    expect(await screen.findByTestId(COMMENTS_LENGTH_TEST_ID)).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(`2 ${COMMENTS_ENDING.russian.twoFourComments}`))).toBeOnTheScreen();
   });
   it('should correctly get end of the comments length', () => {
     expect(getWordEnding(1, LANGUAGES.english)).toEqual(COMMENTS_ENDING.english.oneComment);

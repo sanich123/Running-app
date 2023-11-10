@@ -56,6 +56,12 @@ export const handlers = [
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/comment/189d2c10-463c-42f5-9f09-5e9fa6aa2720`, (req, res, ctx) =>
     res(ctx.status(200), ctx.json(MOCK_COMMENTS)),
   ),
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/comment/activityIdWithOneComment`, (req, res, ctx) =>
+    res(ctx.status(200), ctx.json(MOCK_COMMENTS.slice(0, 1))),
+  ),
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/comment/activityIdWithTwoComments`, (req, res, ctx) =>
+    res(ctx.status(200), ctx.json(MOCK_COMMENTS.slice(0, 2))),
+  ),
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/comment/e315eb5b-989c-4215-9d14-d77f4e7e2974`, (req, res, ctx) =>
     res(ctx.status(200), ctx.json(MOCK_COMMENTS)),
   ),
