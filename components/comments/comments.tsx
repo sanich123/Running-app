@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import { useGetCommentsByActivityIdQuery } from '../../redux/runich-api/runich-api';
 import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
@@ -14,6 +15,7 @@ import UserNameSurname from '../user-name-surname/user-name-surname';
 export default function Comments({ id }: { id: string }) {
   const { isLoading, error, data: comments } = useGetCommentsByActivityIdQuery(id);
   const { push } = useRouter();
+  const { language } = useSelector(({ language }) => language);
 
   return (
     <>
@@ -27,8 +29,8 @@ export default function Comments({ id }: { id: string }) {
               <View style={{ display: 'flex' }}>
                 <UserNameSurname userId={authorId} size="bodyMedium" />
                 <View style={{ display: 'flex', flexDirection: 'row' }}>
-                  <Text variant="bodySmall">{formatDate(date)} </Text>
-                  <Text variant="bodySmall">{getHoursMinutes(date)}</Text>
+                  <Text variant="bodySmall">{formatDate(date, language)} </Text>
+                  <Text variant="bodySmall">{getHoursMinutes(date, language)}</Text>
                 </View>
               </View>
             </View>

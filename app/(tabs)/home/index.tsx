@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
 
@@ -26,6 +27,13 @@ export default function Feed() {
     refetchOnReconnect: true,
   });
   const { onRefresh, refreshing } = useRefresh(refetch);
+
+  useEffect(() => {
+    if (error) {
+      refetch();
+    }
+  }, [error]);
+
   return (
     <>
       <SafeAreaView style={[{ flex: 1 }, (isLoading || error) && { alignItems: 'center', justifyContent: 'center' }]}>
