@@ -18,7 +18,6 @@ describe('Password input', () => {
     );
     expect(screen.getByRole('text')).toBeOnTheScreen();
     expect(screen.getByText(PASSWORD_INPUT.english.helperText)).toBeOnTheScreen();
-    screen.debug();
   });
   it('should correctly handle typing', async () => {
     const setPasswordFn = jest.fn();
