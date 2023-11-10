@@ -2,6 +2,8 @@ import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
+import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
+
 type InputsNameSurnameProps = {
   name: string;
   surname: string;
@@ -12,24 +14,25 @@ type InputsNameSurnameProps = {
 
 export default function InputsNameSurname({ name, surname, setName, setSurname, isDisabled }: InputsNameSurnameProps) {
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
+  const { language } = useSelector(({ language }) => language);
   return (
     <View style={styles.inputWrapper}>
       <TextInput
-        testID="inputName"
+        testID={NAME_TEST_ID}
         mode="outlined"
         style={{ width: 170 }}
         label="First Name"
-        placeholder="Type your name"
+        placeholder={NAME_SURNAME[language].namePlaceholder}
         value={name}
         onChangeText={(name) => setName(name)}
         disabled={isDisabled || isDisabledWhileSendingProfile}
       />
       <TextInput
-        testID="inputSurname"
+        testID={SURNAME_TEST_ID}
         mode="outlined"
         style={{ width: 170 }}
         label="Last Name"
-        placeholder="Type your surname"
+        placeholder={NAME_SURNAME[language].surnamePlaceholder}
         value={surname}
         onChangeText={(surname) => setSurname(surname)}
         disabled={isDisabled || isDisabledWhileSendingProfile}

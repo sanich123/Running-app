@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 import { Alert } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { LOGIN_BTN } from './const';
 import { supabase } from '../../auth/supabase/supabase-init';
 import { saveEmailPassword } from '../../redux/profile/profile';
 import { SignInContext } from '../../utils/context/sign-in';
@@ -13,6 +14,7 @@ export default function LoginBtn({ email, password }: { email: string; password:
   const { isLoading, isDisabled, setIsDisabled, setIsLoading, setEmailError, setPasswordError } =
     useContext(SignInContext);
   const dispatch = useDispatch();
+  const { language } = useSelector(({ language }) => language);
 
   return (
     <Button
@@ -37,7 +39,7 @@ export default function LoginBtn({ email, password }: { email: string; password:
       accessibilityRole="button"
       loading={isLoading}
       disabled={isDisabled}>
-      {`Login${isLoading ? 'ing' : ''}`}
+      {isLoading ? LOGIN_BTN[language].logining : LOGIN_BTN[language].login}
     </Button>
   );
 }

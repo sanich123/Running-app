@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 import { Alert } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { REGISTER_BTN } from './const';
 import { supabase } from '../../auth/supabase/supabase-init';
 import { saveEmailPassword } from '../../redux/profile/profile';
 import { SignInContext } from '../../utils/context/sign-in';
@@ -13,6 +14,7 @@ export default function RegisterBtn({ email, password }: { email: string; passwo
   const { isLoading, setEmailError, setPasswordError, setIsLoading, setIsDisabled, isDisabled } =
     useContext(SignInContext);
   const dispatch = useDispatch();
+  const { language } = useSelector(({ language }) => language);
 
   return (
     <Button
@@ -37,7 +39,7 @@ export default function RegisterBtn({ email, password }: { email: string; passwo
         }
       }}
       disabled={isDisabled}>
-      {`Register${isLoading ? 'ing' : ''}`}
+      {isLoading ? REGISTER_BTN[language].registering : REGISTER_BTN[language].register}
     </Button>
   );
 }

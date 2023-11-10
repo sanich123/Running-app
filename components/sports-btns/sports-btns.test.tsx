@@ -1,7 +1,10 @@
 import { screen, userEvent } from '@testing-library/react-native';
 
+import { RIDE_BTN_TEST_ID, RUN_BTN_TEST_ID, SPORTS_BTNS, SPORTS_BTNS_VALUES, SWIM_BTN_TEST_ID } from './const';
 import SportsBtns from './sports-btns';
+import { LANGUAGES } from '../../constants/enums';
 import { setIsDisableWhileSending } from '../../redux/activity/activity';
+import { changeLanguage } from '../../redux/language/language';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 
@@ -10,25 +13,35 @@ describe('Sports btns', () => {
     renderWithProviders(<SportsBtns isDisabled={false} />, {
       store: mockStore,
     });
-    const runningInput = screen.getByText('Running');
-    const swimmingInput = screen.getByText('Swimming');
-    const ridingInput = screen.getByText('Riding');
+    const runningInput = screen.getByText(SPORTS_BTNS.english.labelRun);
+    const swimmingInput = screen.getByText(SPORTS_BTNS.english.labelSwim);
+    const ridingInput = screen.getByText(SPORTS_BTNS.english.labelBike);
     await userEvent.press(runningInput);
-    expect(mockStore.getState().activity.additionalInfo.sport).toEqual('run');
+    expect(mockStore.getState().activity.additionalInfo.sport).toEqual(SPORTS_BTNS_VALUES.run);
     await userEvent.press(swimmingInput);
-    expect(mockStore.getState().activity.additionalInfo.sport).toEqual('swim');
+    expect(mockStore.getState().activity.additionalInfo.sport).toEqual(SPORTS_BTNS_VALUES.swim);
     await userEvent.press(ridingInput);
-    expect(mockStore.getState().activity.additionalInfo.sport).toEqual('Bike');
+    expect(mockStore.getState().activity.additionalInfo.sport).toEqual(SPORTS_BTNS_VALUES.bike);
   });
-  it('should correctly renders', () => {
+  it('should correctly render labels in english', () => {
     renderWithProviders(<SportsBtns isDisabled={false} />, { store: mockStore });
-    ['Running', 'Swimming', 'Riding'].map((emotion) => expect(screen.getByText(new RegExp(emotion))).toBeOnTheScreen());
+    [SPORTS_BTNS.english.labelRun, SPORTS_BTNS.english.labelSwim, SPORTS_BTNS.english.labelBike].map((sport) =>
+      expect(screen.getByText(new RegExp(sport))).toBeOnTheScreen(),
+    );
+  });
+  it('should correctly render labels in russian', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    renderWithProviders(<SportsBtns isDisabled={false} />, { store: mockStore });
+    [SPORTS_BTNS.russian.labelRun, SPORTS_BTNS.russian.labelSwim, SPORTS_BTNS.russian.labelBike].map((sport) =>
+      expect(screen.getByText(new RegExp(sport))).toBeOnTheScreen(),
+    );
   });
   it('should interract with the user', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<SportsBtns isDisabled={false} />, { store: mockStore });
-    const runningInput = screen.getByTestId('runningBtn');
-    const swimmingInput = screen.getByTestId('swimmingBtn');
-    const ridingInput = screen.getByTestId('ridingBtn');
+    const runningInput = screen.getByTestId(RUN_BTN_TEST_ID);
+    const swimmingInput = screen.getByTestId(SWIM_BTN_TEST_ID);
+    const ridingInput = screen.getByTestId(RIDE_BTN_TEST_ID);
     await userEvent.press(runningInput);
     expect(runningInput.props.accessibilityState.checked).toEqual(true);
     await userEvent.press(swimmingInput);
@@ -40,9 +53,9 @@ describe('Sports btns', () => {
     renderWithProviders(<SportsBtns isDisabled />, {
       store: mockStore,
     });
-    const runningInput = screen.getByText('Running');
-    const swimmingInput = screen.getByText('Swimming');
-    const ridingInput = screen.getByText('Riding');
+    const runningInput = screen.getByText(SPORTS_BTNS.english.labelRun);
+    const swimmingInput = screen.getByText(SPORTS_BTNS.english.labelSwim);
+    const ridingInput = screen.getByText(SPORTS_BTNS.english.labelBike);
     [runningInput, swimmingInput, ridingInput].map((input) => expect(input).toBeDisabled());
   });
   it('should correctly handle isDisabledWhileSending state', () => {
@@ -50,9 +63,9 @@ describe('Sports btns', () => {
     renderWithProviders(<SportsBtns isDisabled />, {
       store: mockStore,
     });
-    const runningInput = screen.getByText('Running');
-    const swimmingInput = screen.getByText('Swimming');
-    const ridingInput = screen.getByText('Riding');
+    const runningInput = screen.getByText(SPORTS_BTNS.english.labelRun);
+    const swimmingInput = screen.getByText(SPORTS_BTNS.english.labelSwim);
+    const ridingInput = screen.getByText(SPORTS_BTNS.english.labelBike);
     [runningInput, swimmingInput, ridingInput].map((input) => expect(input).toBeDisabled());
   });
 });

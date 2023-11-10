@@ -1,5 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 
+import { NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 import InputsNameSurname from './inputs-name-surname';
 import { setIsDisabledWhileSendingProfile } from '../../redux/profile/profile';
 import { mockStore } from '../../tests/utils/mock-store';
@@ -11,8 +12,8 @@ describe('Inputs name-surname', () => {
       <InputsNameSurname name="" surname="" setName={jest.fn()} setSurname={jest.fn()} isDisabled={false} />,
       { store: mockStore },
     );
-    expect(screen.getByTestId('inputName')).toBeOnTheScreen();
-    expect(screen.getByTestId('inputSurname')).toBeOnTheScreen();
+    expect(screen.getByTestId(NAME_TEST_ID)).toBeOnTheScreen();
+    expect(screen.getByTestId(SURNAME_TEST_ID)).toBeOnTheScreen();
   });
   it('should correctly handle user typing', async () => {
     const setNameFn = jest.fn();
@@ -21,8 +22,8 @@ describe('Inputs name-surname', () => {
       <InputsNameSurname name="" surname="" setName={setNameFn} setSurname={setSurnameFn} isDisabled={false} />,
       { store: mockStore },
     );
-    const inputName = screen.getByTestId('inputName');
-    const inputSurname = screen.getByTestId('inputSurname');
+    const inputName = screen.getByTestId(NAME_TEST_ID);
+    const inputSurname = screen.getByTestId(SURNAME_TEST_ID);
     await userEvent.type(inputName, 'Vova');
     expect(setNameFn).toHaveBeenCalledTimes(4);
     await userEvent.type(inputSurname, 'Putin');
@@ -36,8 +37,8 @@ describe('Inputs name-surname', () => {
       <InputsNameSurname name="" surname="" setName={setNameFn} setSurname={setSurnameFn} isDisabled={false} />,
       { store: mockStore },
     );
-    const inputName = screen.getByTestId('inputName');
-    const inputSurname = screen.getByTestId('inputSurname');
+    const inputName = screen.getByTestId(NAME_TEST_ID);
+    const inputSurname = screen.getByTestId(SURNAME_TEST_ID);
     expect(inputName).toBeDisabled();
     expect(inputSurname).toBeDisabled();
   });
@@ -50,8 +51,8 @@ describe('Inputs name-surname', () => {
         store: mockStore,
       },
     );
-    const inputName = screen.getByTestId('inputName');
-    const inputSurname = screen.getByTestId('inputSurname');
+    const inputName = screen.getByTestId(NAME_TEST_ID);
+    const inputSurname = screen.getByTestId(SURNAME_TEST_ID);
     expect(inputName).toBeDisabled();
     expect(inputSurname).toBeDisabled();
   });

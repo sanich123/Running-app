@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { TEXT_INPUTS, TEXT_INPUTS_DESCRIPTION_LEFT_ICON, TEXT_INPUTS_TITLE_LEFT_ICON } from './const';
 import { saveDescription, saveTitle } from '../../redux/activity/activity';
 
 export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
@@ -9,6 +10,7 @@ export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
   const [description, setDescription] = useState('');
   const dispatch = useDispatch();
   const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
+  const { language } = useSelector(({ language }) => language);
 
   useEffect(() => {
     if (isNeedToResetInputs) {
@@ -29,8 +31,8 @@ export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
           setTitle(title);
           dispatch(saveTitle(title));
         }}
-        placeholder="Title your run"
-        left={<TextInput.Icon icon="pencil" />}
+        placeholder={TEXT_INPUTS[language].titlePlaceholder}
+        left={<TextInput.Icon icon="pencil" testID={TEXT_INPUTS_TITLE_LEFT_ICON} />}
         style={{ marginTop: 15 }}
         disabled={isDisabled || isDisabledWhileSending}
       />
@@ -42,11 +44,11 @@ export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
           setDescription(description);
           dispatch(saveDescription(description));
         }}
-        placeholder="How'd it go? Share more about your activity"
+        placeholder={TEXT_INPUTS[language].descriptionPlaceholder}
         multiline
         numberOfLines={4}
         style={{ minHeight: 150, marginTop: 15 }}
-        left={<TextInput.Icon icon="pencil" />}
+        left={<TextInput.Icon icon="pencil" testID={TEXT_INPUTS_DESCRIPTION_LEFT_ICON} />}
         disabled={isDisabled || isDisabledWhileSending}
       />
     </>

@@ -1,20 +1,21 @@
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
-import { ActivityIndicator, Divider } from 'react-native-paper';
+import { ActivityIndicator, Button, Divider } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 
 import { useAuth } from '../../../auth/context/auth-context';
 import ActivityCard from '../../../components/card/card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
 import ErrorComponent from '../../../components/error-component/error-component';
 import FloatingBtn from '../../../components/floating-btn/floating-btn';
-import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
+import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
 import useGetPermissions from '../../../utils/hooks/use-get-permission';
 import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
   const { user } = useAuth();
   const { push } = useRouter();
+  const dispatch = useDispatch();
   useGetPermissions();
   const {
     data: activities,
@@ -28,11 +29,12 @@ export default function Feed() {
   });
   const { onRefresh, refreshing } = useRefresh(refetch);
 
-  useEffect(() => {
-    if (error) {
-      refetch();
-    }
-  }, [error]);
+  // useEffect(() => {
+  //   if (error) {
+  //     refetch();
+  //     dispatch(runichApi.util.resetApiState());
+  //   }
+  // }, [error]);
 
   return (
     <>
@@ -69,7 +71,18 @@ export default function Feed() {
           />
         )}
         {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
-        {error ? <ErrorComponent error={error} /> : null}
+        {error ? (
+          <>
+            <Button
+              onPress={() => {
+                dispatch(runichApi.util.resetApiState());
+                refetch();
+              }}>
+              Refetch
+            </Button>
+            <ErrorComponent error={error} />
+          </>
+        ) : null}
         <FloatingBtn onPressFn={() => push('/save-activity/')} />
       </SafeAreaView>
     </>

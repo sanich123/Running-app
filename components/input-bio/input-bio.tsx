@@ -1,21 +1,18 @@
 import { TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-type InputBioProps = {
-  bio: string;
-  setBio: (arg: string) => void;
-  isDisabled: boolean;
-};
+import { INPUT_BIO, INPUT_BIO_TEST_ID, InputBioProps } from './const';
 
 export default function InputBio({ bio, setBio, isDisabled }: InputBioProps) {
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
+  const { language } = useSelector(({ language }) => language);
   return (
     <TextInput
-      testID="inputBio"
+      testID={INPUT_BIO_TEST_ID}
       mode="outlined"
       style={{ width: 365 }}
       label="Bio"
-      placeholder="Type a few words about yourself"
+      placeholder={INPUT_BIO[language].placeholder}
       multiline
       numberOfLines={4}
       value={bio}
