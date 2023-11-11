@@ -14,7 +14,7 @@ export default function UserNameSurname({ userId, size }: { userId: string; size
       {profileInfo ? (
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text variant={size} style={{ fontWeight: 'bold' }}>
-            {`${profileInfo?.name}`}
+            {`${profileInfo?.name} `}
           </Text>
           <Text variant={size} style={{ fontWeight: 'bold' }}>
             {profileInfo?.surname}

@@ -6,8 +6,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import { useAuth } from '../../auth/context/auth-context';
-import { resetActivityInfo, setIsDisableWhileSending, setIsNeedToResetInputs } from '../../redux/activity/activity';
-import { useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
+import {
+  resetActivityInfo,
+  saveUnsendedActivity,
+  setIsDisableWhileSending,
+  setIsHaveUnsyncedActivity,
+  setIsNeedToResetInputs,
+} from '../../redux/activity/activity';
+import { runichApi, useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
 
 export default function ActivitySaveBtn() {
   const { colors } = useTheme();
@@ -20,16 +26,24 @@ export default function ActivitySaveBtn() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setIsDisableWhileSending(false));
     if (data) {
-      push('/home/');
-      dispatch(setIsDisableWhileSending(false));
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
+      push('/home/');
     }
     if (error) {
-      dispatch(setIsDisableWhileSending(false));
+      dispatch(
+        saveUnsendedActivity({
+          body: { ...finishedActivity, ...additionalInfo },
+          id: user.id,
+        }),
+      );
+      dispatch(setIsHaveUnsyncedActivity(true));
+      dispatch(runichApi.util.resetApiState());
       console.log(error);
       ToastAndroid.show(ACTIVITY_SAVE_BTN[language].errorMsg, ToastAndroid.LONG);
+      push('/home/');
     }
   }, [data, error]);
 

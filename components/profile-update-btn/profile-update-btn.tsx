@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { UPDATE_BTN, UPDATE_BTN_ERROR_MSG } from './const';
 import { useAuth } from '../../auth/context/auth-context';
 import { setIsDisabledWhileSendingProfile } from '../../redux/profile/profile';
-import { useSendProfileInfoMutation } from '../../redux/runich-api/runich-api';
+import { runichApi, useSendProfileInfoMutation } from '../../redux/runich-api/runich-api';
 
 export default function ProfileUpdateBtn() {
   const { colors } = useTheme();
@@ -28,6 +28,7 @@ export default function ProfileUpdateBtn() {
     }
     if (error) {
       dispatch(setIsDisabledWhileSendingProfile(false));
+      dispatch(runichApi.util.resetApiState());
       ToastAndroid.show(UPDATE_BTN_ERROR_MSG, ToastAndroid.LONG);
     }
   }, [data, error]);

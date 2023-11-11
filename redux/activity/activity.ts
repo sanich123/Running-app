@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const ACTIVITY_INITIAL_STATE = {
   isNeedToResetInputs: false,
   isDisabledWhileSending: false,
+  isHaveUnsyncedActivity: false,
   additionalInfo: {
     title: '',
     description: '',
@@ -11,6 +12,7 @@ export const ACTIVITY_INITIAL_STATE = {
     isSwitchOn: false,
     photoUrls: [] as string[],
   },
+  unsyncedActivities: [],
 };
 
 export const activity = createSlice({
@@ -51,6 +53,15 @@ export const activity = createSlice({
     setIsNeedToResetInputs: (state, action) => {
       state.isNeedToResetInputs = action.payload;
     },
+    saveUnsendedActivity: (state, action) => {
+      state.unsyncedActivities = [...state.unsyncedActivities, action.payload];
+    },
+    refreshUnsendedActivitiesList: (state, action) => {
+      state.unsyncedActivities = action.payload;
+    },
+    setIsHaveUnsyncedActivity: (state, action) => {
+      state.isHaveUnsyncedActivity = action.payload;
+    },
   },
 });
 
@@ -64,5 +75,8 @@ export const {
   setIsDisableWhileSending,
   resetActivityInfo,
   setIsNeedToResetInputs,
+  saveUnsendedActivity,
+  setIsHaveUnsyncedActivity,
+  refreshUnsendedActivitiesList,
 } = activity.actions;
 export default activity.reducer;

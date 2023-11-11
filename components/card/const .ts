@@ -1,12 +1,12 @@
 import { LocationObject } from 'expo-location';
 
-export type SportsProps = 'run' | 'swim' | 'bike';
+import { SPORTS_BTNS_VALUES } from '../sports-btns/const';
 
 export type ActivityCardProps = {
   description: string;
   title: string;
   date: Date;
-  sport: SportsProps;
+  sport: SPORTS_BTNS_VALUES;
   id: string;
   userId: string;
   locations: LocationObject[];

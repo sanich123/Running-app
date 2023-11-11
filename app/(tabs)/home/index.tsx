@@ -2,13 +2,14 @@ import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { useAuth } from '../../../auth/context/auth-context';
 import ActivityCard from '../../../components/card/card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
 import ErrorComponent from '../../../components/error-component/error-component';
 import FloatingBtn from '../../../components/floating-btn/floating-btn';
+import UnsendedActivitiesIndicator from '../../../components/unsended-activities/unsended-activities-indicator';
 import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
 import useGetPermissions from '../../../utils/hooks/use-get-permission';
 import useRefresh from '../../../utils/hooks/use-refresh';
@@ -29,17 +30,18 @@ export default function Feed() {
     refetchOnReconnect: true,
   });
   const { onRefresh, refreshing } = useRefresh(refetch);
+  const { isHaveUnsyncedActivity } = useSelector(({ activity }) => activity);
 
   useEffect(() => {
     if (error) {
       dispatch(runichApi.util.resetApiState());
-      refetch();
     }
   }, []);
 
   return (
     <>
       <SafeAreaView style={[{ flex: 1 }, (isLoading || error) && { alignItems: 'center', justifyContent: 'center' }]}>
+        {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
         {activities && (
           <FlatList
             onRefresh={onRefresh}

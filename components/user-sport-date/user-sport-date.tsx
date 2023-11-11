@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux';
 
 import { getIconByTypeOfSport } from '../../utils/icon-utils';
 import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
-import { SportsProps } from '../card/const ';
+import { SPORTS_BTNS_VALUES } from '../sports-btns/const';
 
-export default function UserSportDate({ sport, date }: { sport: SportsProps; date: Date }) {
+export default function UserSportDate({ sport, date }: { sport: SPORTS_BTNS_VALUES; date: Date }) {
   const { language } = useSelector(({ language }) => language);
   return (
     <View>

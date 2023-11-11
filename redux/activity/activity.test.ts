@@ -7,9 +7,12 @@ import reducer, {
   savePhotoUrls,
   saveSport,
   saveTitle,
+  saveUnsendedActivity,
   setIsDisableWhileSending,
+  setIsHaveUnsyncedActivity,
   setIsNeedToResetInputs,
 } from './activity';
+import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 
 describe('Activity slice', () => {
   const PHOTO_URLS = ['someUrl1', 'someUrl2'];
@@ -96,5 +99,24 @@ describe('Activity slice', () => {
     reducer(ACTIVITY_INITIAL_STATE, saveSport(MOCK_SPORT));
     reducer(ACTIVITY_INITIAL_STATE, saveDescription(MOCK_DESCRIPTION));
     expect(reducer(ACTIVITY_INITIAL_STATE, resetActivityInfo())).toEqual(ACTIVITY_INITIAL_STATE);
+  });
+  it('should correctly save unsendedActivity', () => {
+    expect(reducer(ACTIVITY_INITIAL_STATE, saveUnsendedActivity(MOCK_ACTIVITY))).toEqual({
+      ...ACTIVITY_INITIAL_STATE,
+      unsyncedActivities: [MOCK_ACTIVITY],
+    });
+  });
+  it('should change isHaveUnsyncedActivity flag', () => {
+    expect(reducer(ACTIVITY_INITIAL_STATE, setIsHaveUnsyncedActivity(true))).toEqual({
+      ...ACTIVITY_INITIAL_STATE,
+      isHaveUnsyncedActivity: true,
+    });
+  });
+  it('should correctly refresh unsynced activities list', () => {
+    const state = reducer(ACTIVITY_INITIAL_STATE, saveUnsendedActivity(MOCK_ACTIVITY));
+    expect(reducer(state, saveUnsendedActivity(MOCK_ACTIVITY))).toEqual({
+      ...ACTIVITY_INITIAL_STATE,
+      unsyncedActivities: [MOCK_ACTIVITY, MOCK_ACTIVITY],
+    });
   });
 });

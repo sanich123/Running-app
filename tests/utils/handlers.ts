@@ -6,13 +6,14 @@ import { MOCK_COMMENTS } from '../mocks/mock-comments';
 import { MOCK_FOLLOWERS } from '../mocks/mock-followers';
 import { MOCK_FRIENDS } from '../mocks/mock-friends';
 import { MOCK_LOCATION, MOCK_PROFILE } from '../mocks/mock-location';
+import { BAD_REQUEST } from '../mocks/mock-requests';
 
 export const handlers = [
   rest.post(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/someUserId`, (req, res, ctx) =>
-    res(ctx.status(201), ctx.json(MOCK_LOCATION)),
+    res(ctx.status(201), ctx.json(MOCK_ACTIVITY)),
   ),
   rest.post(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/someWrongUserId`, (req, res, ctx) => {
-    return res(ctx.status(404), ctx.json({ message: 'Bad request' }));
+    return res(ctx.status(404), ctx.json(BAD_REQUEST));
   }),
   rest.post(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/someFriendId`, (req, res, ctx) =>
     res(ctx.status(201), ctx.json(MOCK_LOCATION)),
