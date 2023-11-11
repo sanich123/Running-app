@@ -14,7 +14,7 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
           <ActivityIndicator size="small" testID={AvatarShowableTestIds.isLoading} />
         </View>
       )}
-      {profile && profile?.profilePhoto && (
+      {!error && profile && profile?.profilePhoto && (
         <Image
           testID={AvatarShowableTestIds.success}
           source={{ uri: profile?.profilePhoto }}
