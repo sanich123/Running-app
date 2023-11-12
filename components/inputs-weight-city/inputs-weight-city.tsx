@@ -12,7 +12,7 @@ export default function InputsWeightCity({ city, setCity, weight, setWeight, isD
       <TextInput
         testID={CITY_TEST_ID}
         mode="outlined"
-        style={{ width: 170 }}
+        style={{ width: '50%' }}
         label={WEIGHT_CITY[language].cityLabel}
         placeholder={WEIGHT_CITY[language].cityPlaceholder}
         value={city}
@@ -22,7 +22,7 @@ export default function InputsWeightCity({ city, setCity, weight, setWeight, isD
       <TextInput
         testID={WEIGHT_TEST_ID}
         mode="outlined"
-        style={{ width: 170 }}
+        style={{ width: '50%' }}
         label={WEIGHT_CITY[language].weightLabel}
         placeholder={WEIGHT_CITY[language].weightPlaceholder}
         keyboardType="numeric"
@@ -40,5 +40,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 25,
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginLeft: 15,
+    marginRight: 15,
   },
 });

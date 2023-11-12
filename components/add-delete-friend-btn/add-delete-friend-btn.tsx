@@ -28,10 +28,10 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
 
   useEffect(() => {
     if (!process.env.IS_TESTING) {
-      if (!isLoadingDeleteFriend && !friendDeletingError) {
+      if (friendDeleted) {
         ToastAndroid.show(ADD_DELETE_FRIEND_BTN[language].successUnfollowing, ToastAndroid.SHORT);
       }
-      if (!isLoadingAddFriend && !friendAddingError) {
+      if (friendAdded) {
         ToastAndroid.show(ADD_DELETE_FRIEND_BTN[language].successFollowing, ToastAndroid.SHORT);
       }
       if (friendDeletingError || friendAddingError) {

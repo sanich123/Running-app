@@ -1,7 +1,9 @@
 import { useRouter } from 'expo-router';
 import { Image, Pressable, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
+import { LANGUAGES } from '../../constants/enums';
 import { useGetAllActivityPhotosByUserIdQuery } from '../../redux/runich-api/runich-api';
 import ErrorComponent from '../error-component/error-component';
 
@@ -10,6 +12,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const theme = useTheme();
+  const { language } = useSelector(({ language }) => language);
 
   return (
     <>
@@ -28,14 +31,16 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
               .slice(0, 4)
               .map((url, index) =>
                 index === 3 ? (
-                  <View style={{ position: 'relative' }} key={`${url}+${index}`}>
-                    <Image source={{ uri: url }} height={width / 4} width={width / 4} />
-                    <Text
-                      variant="bodyLarge"
-                      style={{ position: 'absolute', color: theme.colors.onPrimary, top: '35%', left: '20%' }}>
-                      All media
+                  <>
+                    <View
+                      style={{ position: 'relative', opacity: 0.2, backgroundColor: 'grey' }}
+                      key={`${url}+${index}`}>
+                      <Image source={{ uri: url }} height={width / 4} width={width / 4} />
+                    </View>
+                    <Text variant="titleMedium" style={{ position: 'absolute', top: '35%', right: 12, zIndex: 10 }}>
+                      {language === LANGUAGES.english ? 'All photos' : 'Все фото'}
                     </Text>
-                  </View>
+                  </>
                 ) : (
                   <Image key={`${url}+${index}`} source={{ uri: url }} height={width / 4} width={width / 4} />
                 ),

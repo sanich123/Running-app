@@ -20,8 +20,8 @@ export default function InputsNameSurname({ name, surname, setName, setSurname, 
       <TextInput
         testID={NAME_TEST_ID}
         mode="outlined"
-        style={{ width: 170 }}
-        label="First Name"
+        style={{ width: '50%' }}
+        label={NAME_SURNAME[language].nameLabel}
         placeholder={NAME_SURNAME[language].namePlaceholder}
         value={name}
         onChangeText={(name) => setName(name)}
@@ -30,8 +30,8 @@ export default function InputsNameSurname({ name, surname, setName, setSurname, 
       <TextInput
         testID={SURNAME_TEST_ID}
         mode="outlined"
-        style={{ width: 170 }}
-        label="Last Name"
+        style={{ width: '50%' }}
+        label={NAME_SURNAME[language].surnameLabel}
         placeholder={NAME_SURNAME[language].surnamePlaceholder}
         value={surname}
         onChangeText={(surname) => setSurname(surname)}
@@ -47,5 +47,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 25,
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginLeft: 15,
+    marginRight: 15,
   },
 });

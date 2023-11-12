@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { UNSENDED_ACTIVITIES } from './const';
@@ -60,6 +60,9 @@ export default function UnsendedActivitiesIndicator() {
             {successSending && UNSENDED_ACTIVITIES[language].success}
             {errorSending && UNSENDED_ACTIVITIES[language].error}
           </Text>
+          <Button loading={isLoading} onPress={async () => activitySender()}>
+            Manually
+          </Button>
         </View>
       )}
     </>

@@ -33,6 +33,8 @@ export default function ActivitySaveBtn() {
       push('/home/');
     }
     if (error) {
+      dispatch(resetActivityInfo());
+      dispatch(setIsNeedToResetInputs(true));
       dispatch(
         saveUnsendedActivity({
           body: { ...finishedActivity, ...additionalInfo },

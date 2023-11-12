@@ -2,7 +2,7 @@
   "name": "running-app",
   "version": "1.1.5",
   "scripts": {
-    "start": "expo start",
+    "start": "EXPO_PUBLIC_IS_PRODUCTION=true expo start",
     "start:clear": "expo start --clear",
     "start:dev": "APP_VARIANT=development && npx expo start",
     "test:coverage": "jest --coverage",
