@@ -2,9 +2,12 @@ import { screen } from '@testing-library/react-native';
 // import * as ImagePicker from 'expo-image-picker';
 // import { Image } from 'react-native-compressor';
 
+import { UPLOAD_PHOTO_BTN } from './ const';
 import UploadPhotosBtn from './upload-photos-btn';
 // import * as auth from '../../auth/context/auth-context';
 // import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
+import { LANGUAGES } from '../../constants/enums';
+import { changeLanguage } from '../../redux/language/language';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 
@@ -15,10 +18,16 @@ jest.mock('react-native-compressor', () => ({
 }));
 
 describe('Upload photos btn', () => {
-  it('should correctly renders', () => {
+  it('should correctly renders in english', () => {
     const setIsDisabled = jest.fn();
     renderWithProviders(<UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} />, { store: mockStore });
-    expect(screen.getByText('Upload an image')).toBeOnTheScreen();
+    expect(screen.getByText(UPLOAD_PHOTO_BTN.english.isInitial)).toBeOnTheScreen();
+  });
+  it('should correctly renders in russian', () => {
+    const setIsDisabled = jest.fn();
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    renderWithProviders(<UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} />, { store: mockStore });
+    expect(screen.getByText(UPLOAD_PHOTO_BTN.russian.isInitial)).toBeOnTheScreen();
   });
   // it('should correctly interract with the user', async () => {
   //   jest.spyOn(ImagePicker, 'launchImageLibraryAsync').mockImplementation(() =>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { UPLOAD_PHOTO_BTN } from './ const';
 import { useAuth } from '../../auth/context/auth-context';
 import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
 import { EXPIRED_TIME } from '../../constants/const';
@@ -21,6 +22,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled }: UploadPho
   const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
   const { user } = useAuth();
   const dispatch = useDispatch();
+  const { language } = useSelector(({ language }) => language);
 
   useEffect(() => {
     if (isNeedToResetInputs) {
@@ -57,7 +59,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled }: UploadPho
         style={{ marginTop: 15 }}
         loading={isLoading}
         disabled={isDisabled || isDisabledWhileSending}>
-        {`Upload${isLoading ? 'ing' : ''} an image`}
+        {isLoading ? UPLOAD_PHOTO_BTN[language].isLoading : UPLOAD_PHOTO_BTN[language].isInitial}
       </Button>
       <PreviewImages images={images} setImages={setImages} isDisabled={isDisabled} />
     </>

@@ -3,9 +3,11 @@ import { screen } from '@testing-library/react-native';
 import UserListItem from './user-list-item';
 import * as auth from '../../auth/context/auth-context';
 import { MOCK_PROFILE } from '../../tests/mocks/mock-location';
+import { MOCK_BAD_REQUEST } from '../../tests/mocks/mock-requests';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
+import { ADD_DELETE_FRIEND_BTN } from '../add-delete-friend-btn/const';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -40,7 +42,7 @@ describe('User list item', () => {
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
     const avatar = await screen.findByTestId('avatarShowableImage');
     expect(avatar.props.source.uri).toEqual(MOCK_PROFILE.profilePhoto);
-    expect(await screen.getByText('Follow')).toBeOnTheScreen();
+    expect(screen.getByText(ADD_DELETE_FRIEND_BTN.english.follow)).toBeOnTheScreen();
   });
   it('should correctly show unfollow btn, when user is in the list of friends', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
@@ -56,7 +58,7 @@ describe('User list item', () => {
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
     const avatar = await screen.findByTestId('avatarShowableImage');
     expect(avatar.props.source.uri).toEqual(MOCK_PROFILE.profilePhoto);
-    expect(await screen.getByText('Unfollow')).toBeOnTheScreen();
+    expect(await screen.getByText(ADD_DELETE_FRIEND_BTN.english.unfollow)).toBeOnTheScreen();
   });
   it('should correctly handle errors, when occured', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
@@ -67,6 +69,6 @@ describe('User list item', () => {
     }));
     renderWithProviders(<UserListItem userId="someUserIdWithAnError" />, { store: mockStore });
     expect(screen.getByTestId('avatarShowableLoadingIcon')).toBeOnTheScreen();
-    expect(await screen.findAllByText('An error occured')).toHaveLength(2);
+    expect(await screen.findAllByText(`An error: ${MOCK_BAD_REQUEST.status}`)).toHaveLength(2);
   });
 });
