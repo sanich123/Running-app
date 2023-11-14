@@ -4,7 +4,7 @@ import { ScrollView, View } from 'react-native';
 import { ActivityIndicator, Card, Text } from 'react-native-paper';
 
 import ActivityCardLikeBtn from '../../../../components/card-like-btn/card-like-btn';
-import ActivityCardLikesWrapper from '../../../../components/card-likes/card-likes';
+import CardLikes from '../../../../components/card-likes/card-likes';
 import ActivityCardTitle from '../../../../components/card-title/card-title';
 import CommentInput from '../../../../components/comment-input/comment-input';
 import Comments from '../../../../components/comments/comments';
@@ -17,35 +17,34 @@ import { useGetActivityByActivityIdQuery } from '../../../../redux/runich-api/ru
 
 export default function Comment() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(activityId);
+  const { isLoading, data: activity, error, isError, refetch } = useGetActivityByActivityIdQuery(activityId);
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
 
   return (
-    <ScrollView contentContainerStyle={[isLoading && { flex: 1, alignItems: 'center', justifyContent: 'center' }]}>
-      <View style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
-        {isLoading && <ActivityIndicator size="large" />}
-        {error ? <ErrorComponent error={error} /> : null}
-        {activity && (
-          <View style={[{ flex: 1 }, isLoading && { justifyContent: 'center', alignItems: 'center' }]}>
-            <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
-            <Card.Content style={{ display: 'flex', columnGap: 5, marginBottom: 10 }}>
-              <ActivityCardTitle title={activity?.title} />
-              <UserNameSurname userId={activity?.user_id} size="titleMedium" />
-              <View style={{ display: 'flex', flexDirection: 'row' }}>
-                <UserSportDate sport={activity?.sport} date={activity?.date} />
-                <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
-              </View>
-              <View style={{ display: 'flex', flexDirection: 'row' }}>
-                <ActivityCardLikeBtn activityId={activity?.id} />
-                <ActivityCardLikesWrapper activityId={activity?.id} />
-              </View>
-            </Card.Content>
-            <Comments id={`${activityId}`} />
-            {isShowingTextInput && <CommentInput activityId={`${activityId}`} />}
-            {!isShowingTextInput && <FloatingBtn onPressFn={() => setIsShowingTextInput(true)} />}
-          </View>
-        )}
-      </View>
+    <ScrollView
+      contentContainerStyle={[(isLoading || isError) && { flex: 1, alignItems: 'center', justifyContent: 'center' }]}>
+      {isLoading && <ActivityIndicator size="large" />}
+      {error ? <ErrorComponent error={error} refetchFn={refetch} /> : null}
+      {activity && (
+        <View style={[{ flex: 1 }, isLoading && { justifyContent: 'center', alignItems: 'center' }]}>
+          <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
+          <Card.Content style={{ display: 'flex', columnGap: 5, marginBottom: 10 }}>
+            <ActivityCardTitle title={activity?.title} />
+            <UserNameSurname userId={activity?.user_id} size="titleMedium" />
+            <View style={{ display: 'flex', flexDirection: 'row' }}>
+              <UserSportDate sport={activity?.sport} date={activity?.date} />
+              <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
+            </View>
+            <View style={{ display: 'flex', flexDirection: 'row' }}>
+              <ActivityCardLikeBtn activityId={activity?.id} />
+              <CardLikes activityId={activity?.id} />
+            </View>
+          </Card.Content>
+          <Comments id={`${activityId}`} />
+          {isShowingTextInput && <CommentInput activityId={`${activityId}`} />}
+          {!isShowingTextInput && <FloatingBtn onPressFn={() => setIsShowingTextInput(true)} />}
+        </View>
+      )}
     </ScrollView>
   );
 }

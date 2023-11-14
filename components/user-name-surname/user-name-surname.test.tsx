@@ -10,7 +10,7 @@ import { renderWithProviders } from '../../tests/utils/test-utils';
 import { errorExtracter } from '../../utils/error-handler';
 
 describe('User name surname', () => {
-  it('should correctly renders with isLoading and data', async () => {
+  it('should correctly renders with data', async () => {
     renderWithProviders(<UserNameSurname userId="someUserId" size="bodyLarge" />, { store: mockStore });
     expect(await screen.findByText(MOCK_PROFILE.name)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();

@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { ToastAndroid } from 'react-native';
-import { IconButton, MD3Colors } from 'react-native-paper';
+import { ActivityIndicator, IconButton, MD3Colors } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import {
@@ -19,7 +19,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
   const { user } = useAuth();
   const [sendLike, { data, error: errorSendingLike }] = useSendOrDeleteLikeMutation();
   const { language } = useSelector(({ language }) => language);
-  const { error, data: likes } = useGetLikesByActivityIdQuery(activityId);
+  const { isLoading: isLoadingLikes, isError, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
   const isLikedByYou = likes?.some(({ authorId }) => authorId === user.id);
   const { isDisabled, isLoading, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
 
@@ -36,24 +36,29 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
   }, [data, errorSendingLike]);
 
   return (
-    <IconButton
-      testID={isLikedByYou ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
-      icon={isLikedByYou ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
-      iconColor={MD3Colors.primary50}
-      size={25}
-      onPress={async () => {
-        setIsLoading(true);
-        setIsDisabled(true);
-        try {
-          await sendLike({ activityId, authorId: user.id }).unwrap();
-        } catch (error) {
-          errorHandler(error);
-        } finally {
-          setIsLoading(false);
-          setIsDisabled(false);
-        }
-      }}
-      disabled={isLoading || isDisabled}
-    />
+    <>
+      {isLoadingLikes && <ActivityIndicator size="small" />}
+      {!isLoadingLikes && (
+        <IconButton
+          testID={isLikedByYou ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
+          icon={isLikedByYou ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
+          iconColor={MD3Colors.primary50}
+          size={25}
+          onPress={async () => {
+            setIsLoading(true);
+            setIsDisabled(true);
+            try {
+              await sendLike({ activityId, authorId: user.id }).unwrap();
+            } catch (error) {
+              errorHandler(error);
+            } finally {
+              setIsLoading(false);
+              setIsDisabled(false);
+            }
+          }}
+          disabled={isLoading || isDisabled || isError}
+        />
+      )}
+    </>
   );
 }

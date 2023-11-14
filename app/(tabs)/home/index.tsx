@@ -74,7 +74,7 @@ export default function Feed() {
           />
         )}
         {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
-        {error ? <ErrorComponent error={error} /> : null}
+        {error ? <ErrorComponent error={error} refetchFn={refetch} /> : null}
         <FloatingBtn onPressFn={() => push('/save-activity/')} />
       </SafeAreaView>
     </>

@@ -18,7 +18,7 @@ describe('Comment likes length', () => {
     }));
     renderWithProviders(<CommentLikesLength id="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
     expect(
-      await screen.findByText(new RegExp(`${NUMBER_OF_LIKES.english.and}3${NUMBER_OF_LIKES.english.manyGaveLikes}`)),
+      await screen.findByText(new RegExp(`${NUMBER_OF_LIKES.english.and}3 ${NUMBER_OF_LIKES.english.manyGaveLikes}`)),
     ).toBeOnTheScreen();
   });
   it('should correctly renders in russian, when you and others gave likes', async () => {
@@ -31,7 +31,7 @@ describe('Comment likes length', () => {
     }));
     renderWithProviders(<CommentLikesLength id="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
     expect(
-      await screen.findByText(new RegExp(`${NUMBER_OF_LIKES.russian.and}3${NUMBER_OF_LIKES.russian.manyGaveLikes}`)),
+      await screen.findByText(new RegExp(`${NUMBER_OF_LIKES.russian.and}3 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`)),
     ).toBeOnTheScreen();
   });
   it('should correctly renders in english, when you didnt like', async () => {
@@ -43,7 +43,7 @@ describe('Comment likes length', () => {
       },
     }));
     renderWithProviders(<CommentLikesLength id="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
-    expect(await screen.findByText(new RegExp(`4${NUMBER_OF_LIKES.english.manyGaveLikes}`))).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(`4 ${NUMBER_OF_LIKES.english.manyGaveLikes}`))).toBeOnTheScreen();
   });
   it('should correctly renders in russian, when you didnt like', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
@@ -54,6 +54,6 @@ describe('Comment likes length', () => {
       },
     }));
     renderWithProviders(<CommentLikesLength id="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
-    expect(await screen.findByText(new RegExp(`4${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(`4 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
   });
 });

@@ -5,11 +5,13 @@ export const COMMENTS_ENDING = {
   [LANGUAGES.english]: {
     oneComment: 'comment',
     manyComments: 'comments',
+    error: 'An error',
   },
   [LANGUAGES.russian]: {
     oneComment: 'комментарий',
     twoFourComments: 'комментария',
     fiveZeroComments: 'комментариев',
+    error: 'Ошибка',
   },
 };
 

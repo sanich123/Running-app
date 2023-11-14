@@ -5,14 +5,13 @@ import { Text } from 'react-native-paper';
 
 import { useGetLikesByActivityIdQuery } from '../../redux/runich-api/runich-api';
 import AvatarShowable from '../avatar-showable/avatar-showable';
-import ErrorComponent from '../error-component/error-component';
 import NumberOfLikes from '../number-of-likes/number-of-likes';
 
 const MAX_IN_ROW = 9;
 const MAX_NUMBER_IN_ROW_OTHER_PAGE = 3;
 
 export default function CardLikes({ activityId }: { activityId: string }) {
-  const { error, data: likes } = useGetLikesByActivityIdQuery(activityId);
+  const { error, isError, data: likes } = useGetLikesByActivityIdQuery(activityId);
   const { push } = useRouter();
   const pathname = usePathname();
   const isInComment = pathname.includes('comment');
@@ -21,14 +20,17 @@ export default function CardLikes({ activityId }: { activityId: string }) {
   const SHIFT_RIGHT = 23;
 
   return (
-    <Pressable testID="pushToActivityLikes" onPress={() => push(`/home/likes/${activityId}`)}>
+    <Pressable
+      testID="pushToActivityLikes"
+      onPress={() => push(`/home/likes/${activityId}`)}
+      disabled={isError}
+      style={isError && { opacity: 0.5 }}>
       <View
         style={[
           styles.likesLayout,
           !likes?.length && styles.withoutLikesLayout,
           (isInComment || isInActivity) && { width: likes?.length * SHIFT_RIGHT + 13, marginTop: 4 },
         ]}>
-        {error ? <ErrorComponent error={error} /> : null}
         {likes && (
           <View style={{ position: 'relative' }}>
             {likes?.slice(0, lastLikeInTheRow).map(({ authorId, id }, index) => (
@@ -50,7 +52,7 @@ export default function CardLikes({ activityId }: { activityId: string }) {
             ))}
           </View>
         )}
-        {likes?.length && !isInComment && !isInActivity ? <NumberOfLikes likes={likes} /> : null}
+        {likes?.length && !isInComment && !isInActivity ? <NumberOfLikes likes={likes} error={error} /> : null}
       </View>
     </Pressable>
   );

@@ -19,7 +19,7 @@ describe('Comments', () => {
     expect(
       await screen.findByText(getHoursMinutes(new Date(MOCK_COMMENTS[0].date), LANGUAGES.english)),
     ).toBeOnTheScreen();
-    expect(await screen.findByText(new RegExp(`4${NUMBER_OF_LIKES.english.manyGaveLikes}`))).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(`4 ${NUMBER_OF_LIKES.english.manyGaveLikes}`))).toBeOnTheScreen();
   });
   it('should correctly renders with data from server in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
@@ -29,7 +29,7 @@ describe('Comments', () => {
     expect(
       await screen.findByText(getHoursMinutes(new Date(MOCK_COMMENTS[0].date), LANGUAGES.russian)),
     ).toBeOnTheScreen();
-    expect(await screen.findByText(new RegExp(`4${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(`4 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
   });
   it('should correctly handle when an error occured', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

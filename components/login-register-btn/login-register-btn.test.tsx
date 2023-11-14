@@ -51,4 +51,26 @@ describe('Login btn', () => {
     );
     expect(screen.getByText(LOGIN_BTN.russian.login)).toBeOnTheScreen();
   });
+  it('should correctly handle disable state', () => {
+    const setIsDisabled = jest.fn();
+    const setIsLoading = jest.fn();
+    const setEmailError = jest.fn();
+    const setPasswordError = jest.fn();
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    renderWithProviders(
+      <LoginRegisterBtn
+        email=""
+        password=""
+        isLoading={false}
+        isDisabled
+        isRegister={false}
+        setIsDisabled={setIsDisabled}
+        setIsLoading={setIsLoading}
+        setEmailError={setEmailError}
+        setPasswordError={setPasswordError}
+      />,
+      { store: mockStore },
+    );
+    expect(screen.getByText(LOGIN_BTN.russian.login)).toBeDisabled();
+  });
 });
