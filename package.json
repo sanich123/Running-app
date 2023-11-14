@@ -22,7 +22,8 @@
     "prebuild": "npx expo prebuild --platform android",
     "prepare": "husky install",
     "android": "expo run:android",
-    "ios": "expo run:ios"
+    "ios": "expo run:ios",
+    "migrate:bun": "npx synp --source-file yarn.lock && npm i --lockfile-version 3 --frozen-lockfile && bun pm migrate"
   },
   "jest": {
     "collectCoverage": true,
