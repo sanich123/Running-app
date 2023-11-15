@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, STOP_ICON } from './const ';
-import { STATUSES } from '../../constants/enums';
+import { LANGUAGES, STATUSES } from '../../constants/enums';
 import { saveFinishedActivity, setActivityStatus } from '../../redux/location/location';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
 
@@ -18,7 +18,7 @@ export default function ActivityStartBtn() {
     kilometresSplit,
   } = useSelector(({ location }) => location);
   const { language } = useSelector(({ language }) => language);
-
+  const isRussianText = language === LANGUAGES.russian && activityStatus === STATUSES.paused;
   const dispatch = useDispatch();
   const { startBtn, textStyle } = styles;
   const { push } = useRouter();
@@ -49,7 +49,7 @@ export default function ActivityStartBtn() {
           push('/(tabs)/save-activity/');
         }
       }}>
-      <Text style={textStyle}>{RESPONSE_ICON[activityStatus]}</Text>
+      <Text style={[textStyle, isRussianText && { fontSize: 18 }]}>{RESPONSE_ICON[activityStatus]}</Text>
     </Pressable>
   );
 }

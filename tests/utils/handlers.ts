@@ -6,7 +6,8 @@ import { MOCK_COMMENTS } from '../mocks/mock-comments';
 import { MOCK_FOLLOWERS } from '../mocks/mock-followers';
 import { MOCK_FRIENDS } from '../mocks/mock-friends';
 import { MOCK_LOCATION, MOCK_PROFILE } from '../mocks/mock-location';
-import { BAD_REQUEST } from '../mocks/mock-requests';
+import { MOCK_PHOTOS } from '../mocks/mock-photos';
+import { BAD_REQUEST, MOCK_BAD_REQUEST } from '../mocks/mock-requests';
 
 export const handlers = [
   rest.post(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/someUserId`, (req, res, ctx) =>
@@ -95,6 +96,14 @@ export const handlers = [
     res(ctx.status(200), ctx.json([])),
   ),
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/someIdThatRejectsWithAnError/all`, (req, res, ctx) =>
-    res(ctx.status(401), ctx.json({ message: 'bad request' })),
+    res(ctx.status(401), ctx.json(MOCK_BAD_REQUEST)),
+  ),
+  //get all photos 200
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/someUserId/photos`, (req, res, ctx) =>
+    res(ctx.status(200), ctx.json(MOCK_PHOTOS)),
+  ),
+  //get all photos error 400
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/someWrongUserId/photos`, (req, res, ctx) =>
+    res(ctx.status(400), ctx.json(BAD_REQUEST)),
   ),
 ];

@@ -10,13 +10,14 @@ import {
   useDeleteFriendMutation,
   useGetFriendsByUserIdQuery,
 } from '../../redux/runich-api/runich-api';
-import ErrorComponent from '../error-component/error-component';
+import { errorExtracter } from '../../utils/error-handler';
 
 export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
   const { user } = useAuth();
   const {
     isLoading: isLoadingListOfFriends,
     error: listOfFriendsError,
+    isError,
     data: listOfFriends,
   } = useGetFriendsByUserIdQuery(user.id);
   const { language } = useSelector(({ language }) => language);
@@ -41,36 +42,38 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
   }, [friendDeleted, friendAdded, friendDeletingError, friendAddingError]);
 
   return (
-    <>
-      {listOfFriendsError && <ErrorComponent error={listOfFriendsError} />}
-      <Button
-        mode="contained"
-        style={{ marginLeft: 'auto', borderRadius: 5, marginRight: 5 }}
-        disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
-        loading={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
-        onPress={async () =>
-          friendCell?.length > 0
-            ? await deleteFriend({ body: { userId: user.id }, id: friendId }).unwrap()
-            : await addFriend({ body: { userId: user.id }, id: friendId }).unwrap()
-        }>
-        {isLoadingListOfFriends && ''}
-        {!isLoadingListOfFriends &&
-          !isLoadingDeleteFriend &&
-          !isLoadingAddFriend &&
-          friendCell?.length > 0 &&
-          ADD_DELETE_FRIEND_BTN[language].unfollow}
-        {!isLoadingListOfFriends &&
-          !isLoadingDeleteFriend &&
-          !isLoadingAddFriend &&
-          !friendCell?.length &&
-          ADD_DELETE_FRIEND_BTN[language].follow}
-        {(isLoadingAddFriend || isLoadingDeleteFriend) &&
-          friendCell?.length > 0 &&
-          ADD_DELETE_FRIEND_BTN[language].unfollowing}
-        {(isLoadingAddFriend || isLoadingDeleteFriend) &&
-          !friendCell?.length &&
-          ADD_DELETE_FRIEND_BTN[language].following}
-      </Button>
-    </>
+    <Button
+      mode="contained"
+      style={{ marginLeft: 'auto', borderRadius: 5, marginRight: 5 }}
+      disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend || isError}
+      loading={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
+      onPress={async () =>
+        friendCell?.length > 0
+          ? await deleteFriend({ body: { userId: user.id }, id: friendId }).unwrap()
+          : await addFriend({ body: { userId: user.id }, id: friendId }).unwrap()
+      }>
+      {!isError && isLoadingListOfFriends && ''}
+      {!isError &&
+        !isLoadingListOfFriends &&
+        !isLoadingDeleteFriend &&
+        !isLoadingAddFriend &&
+        friendCell?.length > 0 &&
+        ADD_DELETE_FRIEND_BTN[language].unfollow}
+      {!isError &&
+        !isLoadingListOfFriends &&
+        !isLoadingDeleteFriend &&
+        !isLoadingAddFriend &&
+        !friendCell?.length &&
+        ADD_DELETE_FRIEND_BTN[language].follow}
+      {!isError &&
+        (isLoadingAddFriend || isLoadingDeleteFriend) &&
+        friendCell?.length > 0 &&
+        ADD_DELETE_FRIEND_BTN[language].unfollowing}
+      {!isError &&
+        (isLoadingAddFriend || isLoadingDeleteFriend) &&
+        !friendCell?.length &&
+        ADD_DELETE_FRIEND_BTN[language].following}
+      {isError && `${ADD_DELETE_FRIEND_BTN[language].errorMsg}: ${errorExtracter(listOfFriendsError)}`}
+    </Button>
   );
 }

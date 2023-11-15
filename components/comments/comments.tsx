@@ -13,14 +13,14 @@ import ErrorComponent from '../error-component/error-component';
 import UserNameSurname from '../user-name-surname/user-name-surname';
 
 export default function Comments({ id }: { id: string }) {
-  const { isLoading, error, data: comments, refetch } = useGetCommentsByActivityIdQuery(id);
+  const { isLoading, error, data: comments } = useGetCommentsByActivityIdQuery(id);
   const { push } = useRouter();
   const { language } = useSelector(({ language }) => language);
 
   return (
     <View style={(isLoading || error) && styles.isInCenter}>
       {isLoading && <ActivityIndicator testID="commentsActivityIndicator" />}
-      {error ? <ErrorComponent error={error} refetchFn={refetch} /> : null}
+      {error ? <ErrorComponent error={error} /> : null}
       {!error &&
         comments?.map(({ authorId, comment, id, date }) => (
           <Fragment key={id}>

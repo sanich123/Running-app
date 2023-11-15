@@ -8,7 +8,7 @@ export const ADD_DELETE_FRIEND_BTN = {
     unfollowing: 'Deleting...',
     successUnfollowing: 'You have successfully delete a friend!',
     successFollowing: 'You have successfully add a friend!',
-    errorMsg: 'An error occured',
+    errorMsg: 'An error',
   },
   [LANGUAGES.russian]: {
     follow: 'Отслеживать',
@@ -17,6 +17,6 @@ export const ADD_DELETE_FRIEND_BTN = {
     unfollowing: 'Удаляю...',
     successUnfollowing: 'Удалили этого пидора из друзей. Так держать!',
     successFollowing: 'Добавили этого пидора в друзей. Так держать!',
-    errorMsg: 'Произошла ошибка',
+    errorMsg: 'Ошибка',
   },
 };

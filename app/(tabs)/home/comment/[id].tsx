@@ -17,14 +17,14 @@ import { useGetActivityByActivityIdQuery } from '../../../../redux/runich-api/ru
 
 export default function Comment() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error, isError, refetch } = useGetActivityByActivityIdQuery(activityId);
+  const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(activityId);
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
 
   return (
     <ScrollView
       contentContainerStyle={[(isLoading || isError) && { flex: 1, alignItems: 'center', justifyContent: 'center' }]}>
       {isLoading && <ActivityIndicator size="large" />}
-      {error ? <ErrorComponent error={error} refetchFn={refetch} /> : null}
+      {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <View style={[{ flex: 1 }, isLoading && { justifyContent: 'center', alignItems: 'center' }]}>
           <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />

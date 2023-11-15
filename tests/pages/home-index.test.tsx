@@ -54,7 +54,7 @@ describe('Home index', () => {
     }));
     renderWithProviders(<Feed />, { store: mockStore });
     expect(screen.getByTestId('homeActivityIndicator')).toBeOnTheScreen();
-    expect(await screen.findByText('An error occured')).toBeOnTheScreen();
-    expect(await screen.findByText('bad request, 401 code')).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp('An error occured'))).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp('401'))).toBeOnTheScreen();
   });
 });

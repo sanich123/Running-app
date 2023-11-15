@@ -1,14 +1,15 @@
 import { useRouter } from 'expo-router';
-import { Image, Pressable, View, useWindowDimensions } from 'react-native';
+import { Fragment } from 'react';
+import { Image, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { LANGUAGES } from '../../constants/enums';
+import { PROFILE_MEDIA } from './const';
 import { useGetAllActivityPhotosByUserIdQuery } from '../../redux/runich-api/runich-api';
-import ErrorComponent from '../error-component/error-component';
+import { errorExtracter } from '../../utils/error-handler';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
-  const { isLoading, data: photos, error } = useGetAllActivityPhotosByUserIdQuery(userId);
+  const { isLoading, isError, data: photos, error, isSuccess } = useGetAllActivityPhotosByUserIdQuery(userId);
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const theme = useTheme();
@@ -16,38 +17,48 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
 
   return (
     <>
-      {error ? <ErrorComponent error={error} /> : null}
-      {isLoading && <ActivityIndicator size="large" />}
-      {photos?.length > 0 ? (
-        <Pressable onPress={() => push(`/(tabs)/home/media-grid/${userId}`)}>
-          <View
-            style={[
-              { display: 'flex', flexDirection: 'row', backgroundColor: theme.colors.onPrimary },
-              isLoading && { alignItems: 'center', justifyContent: 'center' },
-            ]}>
-            {photos
+      <Pressable onPress={() => push(`/(tabs)/home/media-grid/${userId}`)} disabled={isError || isLoading}>
+        <View
+          style={[
+            styles.layout,
+            { backgroundColor: theme.colors.onPrimary },
+            (isLoading || isError) && styles.isInCenter,
+          ]}>
+          {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${errorExtracter(error)}`}</Text>}
+          {isLoading && <ActivityIndicator size="large" />}
+          {!isError &&
+            isSuccess &&
+            photos
               ?.map(({ photoUrls }) => photoUrls)
               .flat()
               .slice(0, 4)
               .map((url, index) =>
                 index === 3 ? (
-                  <>
-                    <View
-                      style={{ position: 'relative', opacity: 0.2, backgroundColor: 'grey' }}
-                      key={`${url}+${index}`}>
+                  <Fragment key={`${url}+${index}`}>
+                    <View style={{ position: 'relative', opacity: 0.2, backgroundColor: 'grey' }}>
                       <Image source={{ uri: url }} height={width / 4} width={width / 4} />
                     </View>
                     <Text variant="titleMedium" style={{ position: 'absolute', top: '35%', right: 12, zIndex: 10 }}>
-                      {language === LANGUAGES.english ? 'All photos' : 'Все фото'}
+                      {PROFILE_MEDIA[language].label}
                     </Text>
-                  </>
+                  </Fragment>
                 ) : (
                   <Image key={`${url}+${index}`} source={{ uri: url }} height={width / 4} width={width / 4} />
                 ),
               )}
-          </View>
-        </Pressable>
-      ) : null}
+        </View>
+      </Pressable>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  isInCenter: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react-native';
 
+import { FOLLOWING_COUNT } from './const';
 import FollowingCount from './following-count';
 import * as auth from '../../auth/context/auth-context';
 import { MOCK_FRIENDS } from '../../tests/mocks/mock-friends';
@@ -14,7 +15,7 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Following count', () => {
-  it('should correctly renders', async () => {
+  it('should correctly renders data in english', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
       user: {
         id: 'someUserId',
@@ -22,7 +23,7 @@ describe('Following count', () => {
       },
     }));
     renderWithProviders(<FollowingCount />, { store: mockStore });
-    expect(await screen.findByText('Following')).toBeOnTheScreen();
+    expect(await screen.findByText(FOLLOWING_COUNT.english.followings)).toBeOnTheScreen();
     expect(await screen.findByText(`${MOCK_FRIENDS.length}`)).toBeOnTheScreen();
   });
 });

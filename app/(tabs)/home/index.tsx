@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { SafeAreaView, FlatList } from 'react-native';
+import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -40,7 +40,7 @@ export default function Feed() {
 
   return (
     <>
-      <SafeAreaView style={[{ flex: 1 }, (isLoading || error) && { alignItems: 'center', justifyContent: 'center' }]}>
+      <SafeAreaView style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
         {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
         {activities && (
           <FlatList
@@ -65,18 +65,24 @@ export default function Feed() {
                 />
               );
             }}
-            contentContainerStyle={
-              activities?.length === 0 && { flex: 1, justifyContent: 'center', alignItems: 'center' }
-            }
+            contentContainerStyle={activities?.length === 0 && styles.isInCenter}
             ListEmptyComponent={<EmptyActivitiesList />}
             initialNumToRender={5}
             ItemSeparatorComponent={() => <Divider />}
           />
         )}
         {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
-        {error ? <ErrorComponent error={error} refetchFn={refetch} /> : null}
+        {error ? <ErrorComponent error={error} /> : null}
         <FloatingBtn onPressFn={() => push('/save-activity/')} />
       </SafeAreaView>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  isInCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

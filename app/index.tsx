@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../auth/context/auth-context';
 import { STATUSES } from '../constants/enums';
 import { setActivityStatus, setIsAppShuted } from '../redux/location/location';
+import { getKeyFromAsyncStorage } from '../utils/async-storage';
 
 export default function Page() {
   const { user } = useAuth();
@@ -18,6 +19,7 @@ export default function Page() {
     console.log('redirecting to login');
     return <Redirect href="/sign-in" />;
   } else if (user) {
+    getKeyFromAsyncStorage('language');
     if (activityStatus !== STATUSES.initial) {
       dispatch(setIsAppShuted(true));
       dispatch(setActivityStatus(STATUSES.paused));

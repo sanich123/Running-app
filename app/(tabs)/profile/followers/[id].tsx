@@ -9,11 +9,11 @@ import useRefresh from '../../../../utils/hooks/use-refresh';
 
 export default function ListOfFollowers() {
   const { user } = useAuth();
-  const { isLoading, error, data: users, refetch } = useGetFollowersByUserIdQuery(user?.id);
+  const { isLoading, isError, error, data: users, refetch } = useGetFollowersByUserIdQuery(user?.id);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
-    <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
+    <SafeAreaView style={[{ flex: 1 }, (isLoading || isError) && { alignItems: 'center', justifyContent: 'center' }]}>
       {users && (
         <FlatList
           onRefresh={onRefresh}
