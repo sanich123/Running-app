@@ -1,5 +1,6 @@
 import { usePathname } from 'expo-router';
 import { useState } from 'react';
+import { View } from 'react-native';
 
 import { useAuth } from '../../auth/context/auth-context';
 import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
@@ -16,12 +17,20 @@ export default function CardBtns({ activityId, userId }: { activityId: string; u
 
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>
-      <ActivityCardLikeBtn activityId={activityId} />
-      <ActivityCardCommentBtn activityId={activityId} />
-      <ActivityCardShareBtn />
-      {user.id === userId && pathname.includes(`/home/activity/${activityId}`) ? (
-        <ActivityCardDeleteBtn activityId={activityId} />
-      ) : null}
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <ActivityCardLikeBtn activityId={activityId} />
+        <ActivityCardCommentBtn activityId={activityId} />
+        <ActivityCardShareBtn />
+        {user.id === userId && pathname.includes(`/home/activity/${activityId}`) ? (
+          <ActivityCardDeleteBtn activityId={activityId} />
+        ) : null}
+      </View>
     </ActivityCardBtnsContext.Provider>
   );
 }

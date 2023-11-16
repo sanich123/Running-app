@@ -1,5 +1,4 @@
 import { NetInfoCellularGeneration } from '@react-native-community/netinfo';
-import { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -7,7 +6,6 @@ import { useSelector } from 'react-redux';
 import { NETWORK_INDICATOR } from './const';
 
 export default function NetworkIndicator() {
-  const [isVisible, setIsVisible] = useState(true);
   const {
     networkState: { type, isInternetReachable, details },
   } = useSelector(({ network }) => network);
@@ -15,12 +13,6 @@ export default function NetworkIndicator() {
   const isSlowNetwork =
     details?.cellularGeneration === NetInfoCellularGeneration['3g'] ||
     details?.cellularGeneration === NetInfoCellularGeneration['2g'];
-
-  useEffect(() => {
-    if (isVisible) {
-      setTimeout(() => setIsVisible(false), 5000);
-    }
-  }, [isVisible]);
 
   return (
     <View

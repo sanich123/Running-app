@@ -41,9 +41,7 @@ export default function ActivityCard({
             </View>
           </Pressable>
         </Card.Content>
-        <View style={styles.titleWrapper}>
-          <CardTitle title={title} />
-        </View>
+        {title && <CardTitle title={title} />}
         <View style={styles.metricsWrapper}>
           <CardMetrics distance={distance} duration={duration} />
         </View>
@@ -59,9 +57,7 @@ export default function ActivityCard({
       </View>
 
       <Card.Actions>
-        <View style={styles.activityBtnsWrapper}>
-          <CardBtns activityId={id} userId={userId} />
-        </View>
+        <CardBtns activityId={id} userId={userId} />
       </Card.Actions>
     </Card>
   );
@@ -80,22 +76,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
   },
-  titleWrapper: {
-    marginTop: 5,
-    marginLeft: 15,
-    marginBottom: 5,
-  },
   metricsWrapper: {
     display: 'flex',
     flexDirection: 'row',
     marginLeft: 15,
     columnGap: 15,
     marginBottom: 5,
-  },
-  activityBtnsWrapper: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
   },
 });

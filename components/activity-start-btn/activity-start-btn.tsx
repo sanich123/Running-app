@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, STOP_ICON } from './const ';
 import { LANGUAGES, STATUSES } from '../../constants/enums';
+import { setIsManualAdding } from '../../redux/activity/activity';
 import { saveFinishedActivity, setActivityStatus } from '../../redux/location/location';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
 
@@ -46,6 +47,7 @@ export default function ActivityStartBtn() {
         );
         dispatch(setActivityStatus(RESPONSE_STATUS[activityStatus]));
         if (activityStatus === STATUSES.paused) {
+          dispatch(setIsManualAdding(false));
           push('/(tabs)/save-activity/');
         }
       }}>

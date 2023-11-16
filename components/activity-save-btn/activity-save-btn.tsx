@@ -13,6 +13,7 @@ import {
   setIsHaveUnsyncedActivity,
   setIsNeedToResetInputs,
 } from '../../redux/activity/activity';
+import { resetLocationsFromBackground } from '../../redux/location/location';
 import { runichApi, useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
 
 export default function ActivitySaveBtn() {
@@ -30,17 +31,19 @@ export default function ActivitySaveBtn() {
     if (data) {
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
+      dispatch(resetLocationsFromBackground());
       push('/home/');
     }
     if (error) {
-      dispatch(resetActivityInfo());
-      dispatch(setIsNeedToResetInputs(true));
       dispatch(
         saveUnsendedActivity({
           body: { ...finishedActivity, ...additionalInfo },
           id: user.id,
         }),
       );
+      dispatch(resetActivityInfo());
+      dispatch(setIsNeedToResetInputs(true));
+      dispatch(resetLocationsFromBackground());
       dispatch(setIsHaveUnsyncedActivity(true));
       dispatch(runichApi.util.resetApiState());
       console.log(error);
@@ -54,6 +57,10 @@ export default function ActivitySaveBtn() {
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
         dispatch(setIsDisableWhileSending(true));
+        console.log({
+          body: { ...finishedActivity, ...additionalInfo },
+          id: user.id,
+        });
         await sendActivity({
           body: { ...finishedActivity, ...additionalInfo },
           id: user.id,

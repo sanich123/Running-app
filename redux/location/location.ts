@@ -10,6 +10,14 @@ type LastKmSplit = {
   lastKilometerAltitude: number;
 };
 
+export const FINISHED_ACTIVITY_INITIAL_STATE = {
+  locations: [] as Location[],
+  duration: 0,
+  speed: 0,
+  distance: 0,
+  kilometresSplit: [],
+};
+
 export const LOCATION_INITIAL_STATE = {
   activityStatus: STATUSES.initial,
   isTooMuchSpeed: false,
@@ -28,13 +36,7 @@ export const LOCATION_INITIAL_STATE = {
   kilometresSplit: [] as LastKmSplit[],
   locationsWithPauses: [[]] as LocationObject[][],
   locationsFromBackground: [] as LocationObject[],
-  finishedActivity: {
-    locations: [] as Location[],
-    duration: 0,
-    speed: 0,
-    distance: 0,
-    kilometresSplit: [],
-  },
+  finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
 };
 
 export const location = createSlice({
@@ -122,6 +124,9 @@ export const location = createSlice({
       state.currentPace = 0;
       state.locationsWithPauses = [];
     },
+    resetFinishedActivity: (state) => {
+      state.finishedActivity = FINISHED_ACTIVITY_INITIAL_STATE;
+    },
   },
 });
 
@@ -147,5 +152,6 @@ export const {
   setDurationWithPauses,
   setLastPosition,
   setIsTooMuchSpeed,
+  resetFinishedActivity,
 } = location.actions;
 export default location.reducer;

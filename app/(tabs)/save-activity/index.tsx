@@ -15,7 +15,7 @@ import { setIsNeedToResetInputs } from '../../../redux/activity/activity';
 
 export default function SaveResult() {
   const [isDisabled, setIsDisabled] = useState(false);
-  const { isNeedToResetInputs } = useSelector(({ activity }) => activity);
+  const { isNeedToResetInputs, isManualAdding } = useSelector(({ activity }) => activity);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function SaveResult() {
       <SportsBtns isDisabled={isDisabled} />
       <EmotionBtns isDisabled={isDisabled} />
       <Checkbox isDisabled={isDisabled} />
-      <DateTimePicker />
+      {isManualAdding && <DateTimePicker />}
       <UploadPhotosBtn isDisabled={isDisabled} setIsDisabled={setIsDisabled} />
       <DeclineBtn isDisabled={isDisabled} />
       <StatusBar style="auto" />

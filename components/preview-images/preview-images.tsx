@@ -22,7 +22,7 @@ export default function PreviewImages({ setImages, images, isDisabled }: Preview
               onPress={() => setImages(images.filter((uri) => uri !== image))}
               disabled={isDisabled || isDisabledWhileSending}
               testID="deleteIcon"
-              style={{ zIndex: 5 }}>
+              style={[{ zIndex: 5 }, (isDisabled || isDisabledWhileSending) && { opacity: 0.5 }]}>
               <MaterialCommunityIcons
                 name="close-circle"
                 color={colors.onPrimaryContainer}
@@ -33,7 +33,7 @@ export default function PreviewImages({ setImages, images, isDisabled }: Preview
             <Image
               testID={`imagePreview-${index}`}
               source={{ uri: image }}
-              style={styles.imageStyle}
+              style={[styles.imageStyle, (isDisabled || isDisabledWhileSending) && { opacity: 0.5 }]}
               width={width / 3 - 10}
               height={100}
             />
@@ -44,7 +44,12 @@ export default function PreviewImages({ setImages, images, isDisabled }: Preview
 }
 
 const styles = StyleSheet.create({
-  imagesWrapper: { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', columnGap: 5 },
+  imagesWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    columnGap: 5,
+  },
   imageStyle: {
     marginTop: 15,
   },
