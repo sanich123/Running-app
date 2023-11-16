@@ -7,6 +7,7 @@ import Checkbox from '../../../components/checkbox/checkbox';
 import DateTimePicker from '../../../components/date-picker/date-picker';
 import DeclineBtn from '../../../components/decline-btn/decline-btn';
 import EmotionBtns from '../../../components/emotion-btns/emotion-btns';
+import InputsDistanceTime from '../../../components/inputs-distance-time/inputs-distance-time';
 import NetworkIndicator from '../../../components/network-indicator/network-indicator';
 import SportsBtns from '../../../components/sports-btns/sports-btns';
 import TextInputs from '../../../components/text-inputs/text-inputs';
@@ -32,6 +33,7 @@ export default function SaveResult() {
       <EmotionBtns isDisabled={isDisabled} />
       <Checkbox isDisabled={isDisabled} />
       {isManualAdding && <DateTimePicker />}
+      {isManualAdding && <InputsDistanceTime />}
       <UploadPhotosBtn isDisabled={isDisabled} setIsDisabled={setIsDisabled} />
       <DeclineBtn isDisabled={isDisabled} />
       <StatusBar style="auto" />
