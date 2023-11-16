@@ -1,3 +1,4 @@
+import NetInfo from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
 import { Redirect } from 'expo-router';
 import { Text, View } from 'react-native';
@@ -14,6 +15,10 @@ export default function Page() {
   const dispatch = useDispatch();
   Mapbox.setWellKnownTileServer('Mapbox');
   Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
+
+  NetInfo.addEventListener((networkState) => {
+    console.log(networkState);
+  });
 
   if (!user) {
     console.log('redirecting to login');
