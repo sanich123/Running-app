@@ -4,6 +4,7 @@ export const ACTIVITY_INITIAL_STATE = {
   isNeedToResetInputs: false,
   isDisabledWhileSending: false,
   isHaveUnsyncedActivity: false,
+  isManualAdding: false,
   additionalInfo: {
     title: '',
     description: '',
@@ -62,6 +63,9 @@ export const activity = createSlice({
     setIsHaveUnsyncedActivity: (state, action) => {
       state.isHaveUnsyncedActivity = action.payload;
     },
+    setIsManualAdding: (state, action) => {
+      state.isManualAdding = action.payload;
+    },
   },
 });
 
@@ -78,5 +82,6 @@ export const {
   saveUnsendedActivity,
   setIsHaveUnsyncedActivity,
   refreshUnsendedActivitiesList,
+  setIsManualAdding,
 } = activity.actions;
 export default activity.reducer;
