@@ -57,10 +57,6 @@ export default function ActivitySaveBtn() {
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
         dispatch(setIsDisableWhileSending(true));
-        console.log({
-          body: { ...finishedActivity, ...additionalInfo },
-          id: user.id,
-        });
         await sendActivity({
           body: { ...finishedActivity, ...additionalInfo },
           id: user.id,
