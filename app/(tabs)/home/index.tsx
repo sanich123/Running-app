@@ -32,8 +32,7 @@ export default function Feed() {
   });
   const { onRefresh, refreshing } = useRefresh(refetch);
   const { isHaveUnsyncedActivity } = useSelector(({ activity }) => activity);
-  const { networkState } = useSelector(({ network }) => network);
-  console.log(networkState);
+
   useEffect(() => {
     if (error) {
       dispatch(runichApi.util.resetApiState());
