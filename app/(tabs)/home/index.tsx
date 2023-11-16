@@ -9,6 +9,7 @@ import ActivityCard from '../../../components/card/card';
 import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
 import ErrorComponent from '../../../components/error-component/error-component';
 import FloatingBtn from '../../../components/floating-btn/floating-btn';
+import NetworkIndicator from '../../../components/network-indicator/network-indicator';
 import UnsendedActivitiesIndicator from '../../../components/unsended-activities/unsended-activities-indicator';
 import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
 import useGetPermissions from '../../../utils/hooks/use-get-permission';
@@ -31,7 +32,8 @@ export default function Feed() {
   });
   const { onRefresh, refreshing } = useRefresh(refetch);
   const { isHaveUnsyncedActivity } = useSelector(({ activity }) => activity);
-
+  const { networkState } = useSelector(({ network }) => network);
+  console.log(networkState);
   useEffect(() => {
     if (error) {
       dispatch(runichApi.util.resetApiState());
@@ -42,6 +44,7 @@ export default function Feed() {
     <>
       <SafeAreaView style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
         {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
+        <NetworkIndicator />
         {activities && (
           <FlatList
             onRefresh={onRefresh}
