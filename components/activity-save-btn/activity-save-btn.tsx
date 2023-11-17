@@ -15,32 +15,39 @@ import {
 } from '../../redux/activity/activity';
 import { resetLocationsFromBackground } from '../../redux/location/location';
 import { runichApi, useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
+import { getSpeedInMinsInKm } from '../../utils/location-utils';
+import { getMillisecondsFromHoursMinutes } from '../../utils/time-formatter';
 
 export default function ActivitySaveBtn() {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { push } = useRouter();
   const { finishedActivity } = useSelector(({ location }) => location);
-  const { additionalInfo, isDisabledWhileSending } = useSelector(({ activity }) => activity);
+  const {
+    additionalInfo,
+    isDisabledWhileSending,
+    isManualAdding,
+    manualDate,
+    manualHours,
+    manualMinutes,
+    manualDistance,
+  } = useSelector(({ activity }) => activity);
   const { language } = useSelector(({ language }) => language);
   const [sendActivity, { error, data }] = useAddActivityByUserIdMutation();
   const dispatch = useDispatch();
+  let activityToSend;
 
   useEffect(() => {
     dispatch(setIsDisableWhileSending(false));
     if (data) {
+      console.log(data);
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
       dispatch(resetLocationsFromBackground());
       push('/home/');
     }
     if (error) {
-      dispatch(
-        saveUnsendedActivity({
-          body: { ...finishedActivity, ...additionalInfo },
-          id: user.id,
-        }),
-      );
+      dispatch(saveUnsendedActivity(activityToSend));
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
       dispatch(resetLocationsFromBackground());
@@ -57,10 +64,27 @@ export default function ActivitySaveBtn() {
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
         dispatch(setIsDisableWhileSending(true));
-        await sendActivity({
-          body: { ...finishedActivity, ...additionalInfo },
-          id: user.id,
-        }).unwrap();
+        if (isManualAdding) {
+          activityToSend = {
+            body: {
+              ...additionalInfo,
+              date: manualDate,
+              distance: manualDistance * 1000,
+              duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
+              speed: getSpeedInMinsInKm(manualDistance, getMillisecondsFromHoursMinutes(manualHours, manualMinutes))
+                .paceAsNumber,
+              locations: [],
+            },
+            id: user.id,
+          };
+          await sendActivity(activityToSend);
+        } else {
+          activityToSend = {
+            body: { ...finishedActivity, ...additionalInfo },
+            id: user.id,
+          };
+          await sendActivity(activityToSend).unwrap();
+        }
       }}
       disabled={isDisabledWhileSending}>
       <Text

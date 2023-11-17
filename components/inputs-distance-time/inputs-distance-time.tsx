@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { INPUTS_DISTANCE_TIME } from './const';
+import { setManualDistance, setManualHours, setManualMinutes } from '../../redux/activity/activity';
 
 export default function InputsDistanceTime() {
   const [distance, setDistance] = useState('0');
   const [hours, setHours] = useState('0');
   const [minutes, setMinutes] = useState('0');
-
+  const dispatch = useDispatch();
   const { language } = useSelector(({ language }) => language);
+  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
 
   return (
     <View style={styles.inputWrapper}>
@@ -21,7 +23,11 @@ export default function InputsDistanceTime() {
         placeholder={INPUTS_DISTANCE_TIME[language].distancePlaceholder}
         keyboardType="numeric"
         value={distance}
-        onChangeText={(distance) => setDistance(distance)}
+        onChangeText={(distance) => {
+          setDistance(distance);
+          dispatch(setManualDistance(distance));
+        }}
+        disabled={isDisabledWhileSending}
       />
       <TextInput
         mode="outlined"
@@ -30,7 +36,11 @@ export default function InputsDistanceTime() {
         placeholder={INPUTS_DISTANCE_TIME[language].hoursPlaceholder}
         keyboardType="numeric"
         value={hours}
-        onChangeText={(hours) => setHours(hours)}
+        onChangeText={(hours) => {
+          setHours(hours);
+          dispatch(setManualHours(hours));
+        }}
+        disabled={isDisabledWhileSending}
       />
       <TextInput
         mode="outlined"
@@ -39,7 +49,11 @@ export default function InputsDistanceTime() {
         placeholder={INPUTS_DISTANCE_TIME[language].minutesPlaceholder}
         keyboardType="numeric"
         value={minutes}
-        onChangeText={(minutes) => setMinutes(minutes)}
+        onChangeText={(minutes) => {
+          setMinutes(minutes);
+          dispatch(setManualMinutes(minutes));
+        }}
+        disabled={isDisabledWhileSending}
       />
     </View>
   );

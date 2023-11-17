@@ -32,3 +32,9 @@ export function getHoursMinutes(dateString: Date, language: LANGUAGES) {
     minutes < 10 ? `0${minutes}` : `${minutes}`
   }`;
 }
+
+export function getMillisecondsFromHoursMinutes(hours: number, minutes: number) {
+  const millisecondsInHour = 3600000;
+  const millisecondsInMinute = 60000;
+  return hours * millisecondsInHour + minutes * millisecondsInMinute;
+}

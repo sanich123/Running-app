@@ -14,6 +14,10 @@ export const ACTIVITY_INITIAL_STATE = {
     photoUrls: [] as string[],
   },
   unsyncedActivities: [],
+  manualDate: null,
+  manualHours: 0,
+  manualMinutes: 0,
+  manualDistance: 0,
 };
 
 export const activity = createSlice({
@@ -66,6 +70,18 @@ export const activity = createSlice({
     setIsManualAdding: (state, action) => {
       state.isManualAdding = action.payload;
     },
+    setManualDate: (state, action) => {
+      state.manualDate = action.payload;
+    },
+    setManualHours: (state, action) => {
+      state.manualHours = Number(action.payload);
+    },
+    setManualMinutes: (state, action) => {
+      state.manualMinutes = Number(action.payload);
+    },
+    setManualDistance: (state, action) => {
+      state.manualDistance = Number(action.payload);
+    },
   },
 });
 
@@ -74,6 +90,7 @@ export const {
   saveDescription,
   saveSport,
   saveEmotion,
+  setManualDate,
   saveIsSwitchOn,
   savePhotoUrls,
   setIsDisableWhileSending,
@@ -83,5 +100,8 @@ export const {
   setIsHaveUnsyncedActivity,
   refreshUnsendedActivitiesList,
   setIsManualAdding,
+  setManualHours,
+  setManualMinutes,
+  setManualDistance,
 } = activity.actions;
 export default activity.reducer;
