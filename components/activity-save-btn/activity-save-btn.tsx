@@ -22,7 +22,6 @@ export default function ActivitySaveBtn() {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { push } = useRouter();
-  const { finishedActivity } = useSelector(({ location }) => location);
   const {
     additionalInfo,
     isDisabledWhileSending,
@@ -31,28 +30,33 @@ export default function ActivitySaveBtn() {
     manualHours,
     manualMinutes,
     manualDistance,
+    finishedActivity,
   } = useSelector(({ activity }) => activity);
   const { language } = useSelector(({ language }) => language);
-  const [sendActivity, { error, data }] = useAddActivityByUserIdMutation();
+  const [sendActivity, { error, data, isSuccess, isError }] = useAddActivityByUserIdMutation();
   const dispatch = useDispatch();
   let activityToSend;
 
   useEffect(() => {
     dispatch(setIsDisableWhileSending(false));
-    if (data) {
+
+    if (isSuccess) {
       if (!process.env.IS_TESTING) {
         console.log(data);
+      }
+      if (data?.message) {
+        ToastAndroid.show(data?.message, ToastAndroid.LONG);
       }
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
       dispatch(resetLocationsFromBackground());
       push('/home/');
     }
-    if (error) {
-      dispatch(saveUnsendedActivity(activityToSend));
+    if (isError) {
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
       dispatch(resetLocationsFromBackground());
+      dispatch(saveUnsendedActivity(activityToSend));
       dispatch(setIsHaveUnsyncedActivity(true));
       dispatch(runichApi.util.resetApiState());
       console.log(error);
@@ -66,27 +70,21 @@ export default function ActivitySaveBtn() {
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
         dispatch(setIsDisableWhileSending(true));
-        if (isManualAdding) {
-          activityToSend = {
-            body: {
-              ...additionalInfo,
-              date: manualDate,
-              distance: manualDistance * 1000,
-              duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
-              speed: getSpeedInMinsInKm(manualDistance, getMillisecondsFromHoursMinutes(manualHours, manualMinutes))
-                .paceAsNumber,
-              locations: [],
-            },
-            id: user.id,
-          };
-          await sendActivity(activityToSend);
-        } else {
-          activityToSend = {
-            body: { ...finishedActivity, ...additionalInfo },
-            id: user.id,
-          };
-          await sendActivity(activityToSend).unwrap();
-        }
+        activityToSend = {
+          body: isManualAdding
+            ? {
+                ...additionalInfo,
+                date: manualDate || new Date(),
+                distance: manualDistance * 1000,
+                duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
+                speed: getSpeedInMinsInKm(manualDistance, getMillisecondsFromHoursMinutes(manualHours, manualMinutes))
+                  .paceAsNumber,
+                locations: [],
+              }
+            : { ...finishedActivity, ...additionalInfo },
+          id: user.id,
+        };
+        await sendActivity(activityToSend).unwrap();
       }}
       disabled={isDisabledWhileSending}>
       <Text

@@ -49,10 +49,10 @@ describe('Activity start btn', () => {
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
     const startBtn = screen.getByTestId(ACTIVITY_START_BTN_TEST_ID);
     await userEvent.press(startBtn);
-    expect(mockStore.getState().location.finishedActivity.distance).toEqual(MOCK_DISTANCE);
-    expect(mockStore.getState().location.finishedActivity.duration).toEqual(MOCK_DURATION);
-    expect(mockStore.getState().location.finishedActivity.speed).toEqual(MOCK_SPEED);
-    expect(mockStore.getState().location.finishedActivity.locations).toHaveLength(1);
+    expect(mockStore.getState().activity.finishedActivity.distance).toEqual(MOCK_DISTANCE);
+    expect(mockStore.getState().activity.finishedActivity.duration).toEqual(MOCK_DURATION);
+    expect(mockStore.getState().activity.finishedActivity.speed).toEqual(MOCK_SPEED);
+    expect(mockStore.getState().activity.finishedActivity.locations).toHaveLength(1);
   });
   it('should correctly renders start in russian', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

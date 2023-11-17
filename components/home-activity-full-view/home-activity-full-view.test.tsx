@@ -32,6 +32,6 @@ describe('Home activity full view', () => {
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.russian.movingTime)).toBeOnTheScreen();
     expect(await screen.findByText('00:58:34')).toBeOnTheScreen();
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.russian.elevationGain)).toBeOnTheScreen();
-    expect(await screen.findByText(`21 ${HOME_ACTIVITY_FULL_VIEW.russian.m}`)).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(`21 ${HOME_ACTIVITY_FULL_VIEW.russian.m}`))).toBeOnTheScreen();
   });
 });

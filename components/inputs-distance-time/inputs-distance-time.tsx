@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +12,15 @@ export default function InputsDistanceTime() {
   const [minutes, setMinutes] = useState('0');
   const dispatch = useDispatch();
   const { language } = useSelector(({ language }) => language);
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
+  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
+
+  useEffect(() => {
+    if (isNeedToResetInputs) {
+      setDistance('0');
+      setHours('0');
+      setMinutes('0');
+    }
+  }, [isNeedToResetInputs]);
 
   return (
     <View style={styles.inputWrapper}>
@@ -64,7 +72,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 25,
+    gap: 13,
     paddingRight: 10,
     marginRight: 15,
     marginTop: 10,

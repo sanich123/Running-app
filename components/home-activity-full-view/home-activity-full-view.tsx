@@ -53,7 +53,7 @@ export default function ActivityFullViewMetrics() {
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].elevationGain}</Text>
               <Text variant="headlineLarge">
-                {gainedElevation} {`${HOME_ACTIVITY_FULL_VIEW[language].m}`}
+                {activity?.kilometresSplit?.length > 0 && `${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}
               </Text>
             </View>
           </View>
@@ -66,8 +66,17 @@ export default function ActivityFullViewMetrics() {
 }
 
 const styles = StyleSheet.create({
-  layout: { display: 'flex', paddingTop: 40, paddingLeft: 20, paddingRight: 20, paddingBottom: 40 },
-  isCenter: { alignItems: 'center', justifyContent: 'center' },
+  layout: {
+    display: 'flex',
+    paddingTop: 40,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 40,
+  },
+  isCenter: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   columnLayout: {
     display: 'flex',
     flexDirection: 'row',
@@ -75,5 +84,9 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
   },
-  alignedCenter: { display: 'flex', justifyContent: 'center', alignItems: 'center' },
+  alignedCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Location } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
 
 import { STATUSES } from '../../constants/enums';
@@ -8,14 +7,6 @@ type LastKmSplit = {
   lastKilometerDuration: number;
   kilometerPoint: LocationObject;
   lastKilometerAltitude: number;
-};
-
-export const FINISHED_ACTIVITY_INITIAL_STATE = {
-  locations: [] as Location[],
-  duration: 0,
-  speed: 0,
-  distance: 0,
-  kilometresSplit: [],
 };
 
 export const LOCATION_INITIAL_STATE = {
@@ -36,7 +27,6 @@ export const LOCATION_INITIAL_STATE = {
   kilometresSplit: [] as LastKmSplit[],
   locationsWithPauses: [[]] as LocationObject[][],
   locationsFromBackground: [] as LocationObject[],
-  finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
 };
 
 export const location = createSlice({
@@ -45,9 +35,6 @@ export const location = createSlice({
   reducers: {
     setInitialLocation: (state, action) => {
       state.initialLocation = action.payload;
-    },
-    saveFinishedActivity: (state, action) => {
-      state.finishedActivity = action.payload;
     },
     setLocationsFromBackground: (state, action) => {
       state.locationsFromBackground = [...state.locationsFromBackground, action.payload];
@@ -124,15 +111,11 @@ export const location = createSlice({
       state.currentPace = 0;
       state.locationsWithPauses = [];
     },
-    resetFinishedActivity: (state) => {
-      state.finishedActivity = FINISHED_ACTIVITY_INITIAL_STATE;
-    },
   },
 });
 
 export const {
   setInitialLocation,
-  saveFinishedActivity,
   setLocationsFromBackground,
   resetLocationsFromBackground,
   setDistance,
@@ -152,6 +135,5 @@ export const {
   setDurationWithPauses,
   setLastPosition,
   setIsTooMuchSpeed,
-  resetFinishedActivity,
 } = location.actions;
 export default location.reducer;

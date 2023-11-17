@@ -4,9 +4,14 @@ import ActivitySaveBtn from './activity-save-btn';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import * as auth from '../../auth/context/auth-context';
 import { LANGUAGES } from '../../constants/enums';
-import { saveDescription, saveEmotion, saveSport, saveTitle } from '../../redux/activity/activity';
+import {
+  saveDescription,
+  saveEmotion,
+  saveFinishedActivity,
+  saveSport,
+  saveTitle,
+} from '../../redux/activity/activity';
 import { changeLanguage } from '../../redux/language/language';
-import { saveFinishedActivity } from '../../redux/location/location';
 import { MOCK_DISTANCE, MOCK_DURATION, MOCK_LOCATION, MOCK_SPEED } from '../../tests/mocks/mock-location';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';

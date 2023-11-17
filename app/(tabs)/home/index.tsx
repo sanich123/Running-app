@@ -11,8 +11,7 @@ import ErrorComponent from '../../../components/error-component/error-component'
 import FloatingBtn from '../../../components/floating-btn/floating-btn';
 import NetworkIndicator from '../../../components/network-indicator/network-indicator';
 import UnsendedActivitiesIndicator from '../../../components/unsended-activities/unsended-activities-indicator';
-import { setIsManualAdding } from '../../../redux/activity/activity';
-import { resetFinishedActivity } from '../../../redux/location/location';
+import { resetFinishedActivity, resetManualData, setIsManualAdding } from '../../../redux/activity/activity';
 import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
 import useGetPermissions from '../../../utils/hooks/use-get-permission';
 import useRefresh from '../../../utils/hooks/use-refresh';
@@ -81,6 +80,7 @@ export default function Feed() {
           onPressFn={() => {
             dispatch(setIsManualAdding(true));
             dispatch(resetFinishedActivity());
+            dispatch(resetManualData());
             push('/save-activity/');
           }}
         />
