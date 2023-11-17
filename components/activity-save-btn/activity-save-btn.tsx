@@ -40,7 +40,9 @@ export default function ActivitySaveBtn() {
   useEffect(() => {
     dispatch(setIsDisableWhileSending(false));
     if (data) {
-      console.log(data);
+      if (!process.env.IS_TESTING) {
+        console.log(data);
+      }
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
       dispatch(resetLocationsFromBackground());
