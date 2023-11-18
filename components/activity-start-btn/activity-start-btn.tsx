@@ -8,7 +8,7 @@ import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, STOP_I
 import { LANGUAGES, STATUSES } from '../../constants/enums';
 import { saveFinishedActivity, setIsManualAdding } from '../../redux/activity/activity';
 import { setActivityStatus } from '../../redux/location/location';
-import { getSpeedInMinsInKm } from '../../utils/location-utils';
+import { getReducedLocations, getSpeedInMinsInKm } from '../../utils/location-utils';
 
 export default function ActivityStartBtn() {
   const {
@@ -40,7 +40,7 @@ export default function ActivityStartBtn() {
           saveFinishedActivity({
             duration,
             distance,
-            locations,
+            locations: getReducedLocations(locations),
             kilometresSplit,
             speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
           }),

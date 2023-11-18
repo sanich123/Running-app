@@ -1,8 +1,10 @@
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
 
+import { getReducedLocations } from '../../utils/location-utils';
+
 export default function MapRouteLine({ locations }: { locations: LocationObject[] }) {
-  const coordinates = locations.map(({ coords }) => [coords.longitude, coords.latitude]);
+  const coordinates = getReducedLocations(locations).map(({ coords }) => [coords.longitude, coords.latitude]);
   return (
     <ShapeSource
       id={`${locations[0].timestamp}`}

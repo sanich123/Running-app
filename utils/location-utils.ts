@@ -54,3 +54,11 @@ export function getMapBoxImage(locations: LocationObject[]) {
     )})/auto/${width}x${height}${doublePixels}?access_token=${process.env.EXPO_PUBLIC_MAPBOX_TOKEN}`;
   }
 }
+
+export function getReducedLocations(locations: LocationObject[]) {
+  if (locations.length > 2000) {
+    const reducerCoefficient = Math.floor(locations.length / 1000);
+    return locations.filter((_, i) => i % reducerCoefficient === 0);
+  }
+  return locations;
+}
