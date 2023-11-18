@@ -20,11 +20,12 @@ export default function FollowingCount() {
     data: listOfFriends,
   } = useGetFriendsByUserIdQuery((friendId as string) ?? user.id);
   const { language } = useSelector(({ language }) => language);
+
   return (
     <Pressable
       onPress={() => push(`/${pathname.includes('home') ? 'home' : 'profile'}/following/${friendId}`)}
       disabled={isError || isLoading}
-      style={(isLoading || isError) && { opacity: 0.5 }}>
+      style={(isError || isLoading) && { opacity: 0.5 }}>
       <Text variant="bodySmall">
         {isError ? `${FOLLOWING_COUNT[language].error}:` : FOLLOWING_COUNT[language].followings}
       </Text>

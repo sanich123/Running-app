@@ -12,3 +12,5 @@ export const DATE_TIME_PICKER = {
     cancel: 'Отменить',
   },
 };
+
+export const DATE_TIME_PICKER_BTN_ID = 'dateTimePickerBtn';

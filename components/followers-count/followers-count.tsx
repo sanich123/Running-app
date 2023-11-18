@@ -10,22 +10,17 @@ import { errorExtracter } from '../../utils/error-handler';
 
 export default function FollowersCount() {
   const { user } = useAuth();
-  const { id: friendId } = useLocalSearchParams();
-  const {
-    isLoading,
-    isError,
-    error,
-    data: followers,
-  } = useGetFollowersByUserIdQuery(friendId ? (friendId as string) : user.id);
-  const pathname = usePathname();
   const { push } = useRouter();
+  const pathname = usePathname();
+  const { id: friendId } = useLocalSearchParams();
+  const { isLoading, isError, error, data: followers } = useGetFollowersByUserIdQuery((friendId as string) ?? user.id);
   const { language } = useSelector(({ language }) => language);
 
   return (
     <Pressable
       onPress={() => push(`/${pathname.includes('home') ? 'home' : 'profile'}/followers/${friendId}`)}
       disabled={isError || isLoading}
-      style={(isLoading || isError) && { opacity: 0.5 }}>
+      style={(isError || isLoading) && { opacity: 0.5 }}>
       <Text variant="bodySmall">
         {isError ? `${FOLLOWERS_COUNT[language].error}:` : FOLLOWERS_COUNT[language].followers}
       </Text>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { UPLOAD_PHOTO_BTN } from './ const';
+import { UPLOAD_PHOTO_BTN, UploadPhotoBtnProps } from './ const';
 import { useAuth } from '../../auth/context/auth-context';
 import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
 import { EXPIRED_TIME } from '../../constants/const';
@@ -10,11 +10,6 @@ import { savePhotoUrls } from '../../redux/activity/activity';
 import { errorHandler } from '../../utils/error-handler';
 import { compressAndSendPhoto, getAccessToGallery } from '../../utils/file-sending';
 import PreviewImages from '../preview-images/preview-images';
-
-type UploadPhotoBtnProps = {
-  isDisabled: boolean;
-  setIsDisabled: (arg: boolean) => void;
-};
 
 export default function UploadPhotosBtn({ isDisabled, setIsDisabled }: UploadPhotoBtnProps) {
   const [isLoading, setIsLoading] = useState(false);

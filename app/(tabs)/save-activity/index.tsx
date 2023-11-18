@@ -32,8 +32,8 @@ export default function SaveResult() {
       <SportsBtns isDisabled={isDisabled} />
       <EmotionBtns isDisabled={isDisabled} />
       <Checkbox isDisabled={isDisabled} />
-      {isManualAdding && <DateTimePicker />}
-      {isManualAdding && <InputsDistanceTime />}
+      {isManualAdding && <DateTimePicker isDisabled={isDisabled} />}
+      {isManualAdding && <InputsDistanceTime isDisabled={isDisabled} />}
       <UploadPhotosBtn isDisabled={isDisabled} setIsDisabled={setIsDisabled} />
       <DeclineBtn isDisabled={isDisabled} />
       <StatusBar style="auto" />

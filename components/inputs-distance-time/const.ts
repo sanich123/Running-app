@@ -2,19 +2,23 @@ import { LANGUAGES } from '../../constants/enums';
 
 export const INPUTS_DISTANCE_TIME = {
   [LANGUAGES.english]: {
-    distanceLabel: 'Distance, km',
-    hoursLabel: 'Hours, h',
-    minutesLabel: 'Minutes, min',
-    distancePlaceholder: 'Type a distance',
-    hoursPlaceholder: 'Type a time in hours',
-    minutesPlaceholder: 'Type a time in minutes',
+    distanceLabel: 'Km',
+    hoursLabel: 'Hours',
+    minutesLabel: 'Minutes',
+    distancePlaceholder: 'Distance',
+    hoursPlaceholder: 'Hours',
+    minutesPlaceholder: 'Minutes',
   },
   [LANGUAGES.russian]: {
-    distanceLabel: 'Дистанция, км',
-    hoursLabel: 'Время, ч',
-    minutesLabel: 'Время, мин',
-    distancePlaceholder: 'Введите дистанцию',
-    hoursPlaceholder: 'Введите время в часах',
-    minutesPlaceholder: 'Введите время в минутах',
+    distanceLabel: 'Км',
+    hoursLabel: 'Часы',
+    minutesLabel: 'Минуты',
+    distancePlaceholder: 'Дистанция',
+    hoursPlaceholder: 'Часы',
+    minutesPlaceholder: 'Минуты',
   },
 };
+
+export const INPUT_DISTANCE_ID = 'inputDistance';
+export const INPUT_HOURS_ID = 'inputHours';
+export const INPUT_MINUTES_ID = 'inputMiniutes';
