@@ -39,7 +39,6 @@ export default function ActivitySaveBtn() {
 
   useEffect(() => {
     dispatch(setIsDisableWhileSending(false));
-
     if (isSuccess) {
       if (!process.env.IS_TESTING) {
         console.log(data);
