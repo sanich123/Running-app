@@ -42,9 +42,7 @@ export default function ActivityCard({
           </Pressable>
         </Card.Content>
         {title && <CardTitle title={title} />}
-        <View style={styles.metricsWrapper}>
-          <CardMetrics distance={distance} duration={duration} />
-        </View>
+        <CardMetrics distance={distance} duration={duration} />
       </Pressable>
       {pathname.includes('/home/') && <CardDesription description={description} />}
       {(locations?.length || photoUrls?.length > 0) && (
@@ -75,12 +73,5 @@ const styles = StyleSheet.create({
   profileWrapper: {
     display: 'flex',
     justifyContent: 'center',
-  },
-  metricsWrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginLeft: 15,
-    columnGap: 15,
-    marginBottom: 5,
   },
 });

@@ -41,6 +41,7 @@ export default function SettingsScreen() {
             label: 'Russian',
           },
         ]}
+        style={{ marginTop: 15 }}
       />
       <Button mode="outlined" icon="logout" onPress={() => signOut()} style={{ marginTop: 15 }}>
         LogOut

@@ -2,6 +2,7 @@ import { Tabs, usePathname } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useTheme } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import { useAuth } from '../../auth/context/auth-context';
 import ActivityCloseBtn from '../../components/activity-close-btn/activity-close-btn';
@@ -11,12 +12,14 @@ import { ActivityIcon, HomeIcon, ProgressIcon } from '../../components/icons/ico
 import ProfileEditBtn from '../../components/profile-edit-btn/profile-edit-btn';
 import ProfileUpdateBtn from '../../components/profile-update-btn/profile-update-btn';
 import UsersSettingsIcons from '../../components/users-settings-icons/users-settings-icons';
+import { LANGUAGES } from '../../constants/enums';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { user } = useAuth();
   const pathname = usePathname();
   const theme = useTheme();
+  const { language } = useSelector(({ language }) => language);
   const commonSettings = {
     tabBarLabelStyle: { color: theme.colors.primaryContainer },
     headerStyle: { backgroundColor: theme.colors.primary },
@@ -42,8 +45,7 @@ export default function TabLayout() {
         redirect={!user}
         options={{
           ...commonSettings,
-          title: 'Feed',
-          tabBarLabel: 'Feed',
+          title: language === LANGUAGES.english ? 'Feed' : 'Лента',
           tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
           headerTitleStyle: { fontWeight: 'bold' },
           headerRight: () => <UsersSettingsIcons />,

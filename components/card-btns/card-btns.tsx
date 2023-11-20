@@ -1,6 +1,6 @@
 import { usePathname } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useAuth } from '../../auth/context/auth-context';
 import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
@@ -14,23 +14,27 @@ export default function CardBtns({ activityId, userId }: { activityId: string; u
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const isMineActivvity = user.id === userId;
 
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
+      <View style={styles.layout}>
         <ActivityCardLikeBtn activityId={activityId} />
         <ActivityCardCommentBtn activityId={activityId} />
         <ActivityCardShareBtn />
-        {user.id === userId && pathname.includes(`/home/activity/${activityId}`) ? (
+        {isMineActivvity && pathname.includes(`/home/activity/${activityId}`) && (
           <ActivityCardDeleteBtn activityId={activityId} />
-        ) : null}
+        )}
       </View>
     </ActivityCardBtnsContext.Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+});
