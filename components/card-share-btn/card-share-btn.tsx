@@ -1,19 +1,34 @@
-// import * as Sharing from 'expo-sharing';
+import { usePathname } from 'expo-router';
+import * as Sharing from 'expo-sharing';
 import { MutableRefObject, ReactNode, useContext } from 'react';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { captureRef } from 'react-native-view-shot';
 
 import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
+import { errorHandler } from '../../utils/error-handler';
 
-export default function ActivityCardShareBtn({ cardRef }: { cardRef: MutableRefObject<ReactNode> }) {
-  const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
+type CardShareBtnProps = {
+  cardRef: MutableRefObject<ReactNode>;
+  fullViewRef: MutableRefObject<ReactNode>;
+};
+
+export default function ActivityCardShareBtn({ cardRef, fullViewRef }: CardShareBtnProps) {
+  const { isLoading, isDisabled, setIsDisabled } = useContext(ActivityCardBtnsContext);
+  const pathname = usePathname();
+  const isFullView = pathname.includes('activity');
 
   return (
     <IconButton
       onPress={async () => {
-        const snapshot = await captureRef(cardRef, { format: 'jpg' });
-        console.log(snapshot);
-        // await Sharing.shareAsync(';lk');
+        setIsDisabled(true);
+        try {
+          const snapshot = await captureRef(isFullView ? fullViewRef : cardRef);
+          await Sharing.shareAsync(snapshot);
+        } catch (error) {
+          errorHandler(error);
+        } finally {
+          setIsDisabled(false);
+        }
       }}
       testID="iconShareBtn"
       icon="share-outline"

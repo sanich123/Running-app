@@ -13,9 +13,10 @@ type CardBtnsProps = {
   activityId: string;
   userId: string;
   cardRef: MutableRefObject<ReactNode>;
+  fullViewRef: MutableRefObject<ReactNode>;
 };
 
-export default function CardBtns({ activityId, userId, cardRef }: CardBtnsProps) {
+export default function CardBtns({ activityId, userId, cardRef, fullViewRef }: CardBtnsProps) {
   const { user } = useAuth();
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +28,7 @@ export default function CardBtns({ activityId, userId, cardRef }: CardBtnsProps)
       <View style={styles.layout}>
         <ActivityCardLikeBtn activityId={activityId} />
         <ActivityCardCommentBtn activityId={activityId} />
-        <ActivityCardShareBtn cardRef={cardRef} />
+        <ActivityCardShareBtn cardRef={cardRef} fullViewRef={fullViewRef} />
         {isMineActivvity && pathname.includes(`/home/activity/${activityId}`) && (
           <ActivityCardDeleteBtn activityId={activityId} />
         )}

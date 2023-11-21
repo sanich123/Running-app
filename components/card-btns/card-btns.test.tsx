@@ -22,7 +22,12 @@ describe('Card btns', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(<CardBtns activityId="someActivityId" userId="someUserId" />, { store: mockStore });
+    renderWithProviders(
+      <CardBtns activityId="someActivityId" userId="someUserId" cardRef={undefined} fullViewRef={undefined} />,
+      {
+        store: mockStore,
+      },
+    );
     expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED)).toBeOnTheScreen();
     expect(await screen.findByTestId(COMMENT_BTN_TEST_ID)).toBeOnTheScreen();
     expect(await screen.findByTestId(CARD_DELETE_BTN_TEST_ID)).toBeOnTheScreen();
@@ -34,7 +39,12 @@ describe('Card btns', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(<CardBtns activityId="someActivityId" userId="someUserId" />, { store: mockStore });
+    renderWithProviders(
+      <CardBtns activityId="someActivityId" userId="someUserId" cardRef={undefined} fullViewRef={undefined} />,
+      {
+        store: mockStore,
+      },
+    );
     expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();
     expect(await screen.findByTestId(COMMENT_BTN_TEST_ID)).toBeOnTheScreen();
   });

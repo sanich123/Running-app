@@ -1,4 +1,5 @@
 import { LocationObject } from 'expo-location';
+import { MutableRefObject, ReactNode } from 'react';
 
 import { SPORTS_BTNS_VALUES } from '../sports-btns/const';
 
@@ -13,4 +14,5 @@ export type ActivityCardProps = {
   photoUrls: string[];
   duration: number;
   distance: number;
+  fullViewRef: MutableRefObject<ReactNode>;
 };

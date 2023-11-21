@@ -1,5 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
-import { ScrollView, View } from 'react-native';
+import { useRef } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
 import ActivityCard from '../../../../components/card/card';
@@ -10,16 +11,18 @@ import { useGetActivityByActivityIdQuery } from '../../../../redux/runich-api/ru
 
 export default function ViewActivityFullInfo() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(activityId);
+  const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(activityId);
+  const fullViewRef = useRef();
 
   return (
-    <ScrollView contentContainerStyle={isLoading && { flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <View>
+    <ScrollView contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
+      <View ref={fullViewRef} collapsable={false}>
         {isLoading && <ActivityIndicator size="large" />}
         {error ? <ErrorComponent error={error} /> : null}
         {activity && (
           <>
             <ActivityCard
+              fullViewRef={fullViewRef}
               userId={activity.user_id}
               description={activity.description}
               title={activity.title}
@@ -43,3 +46,11 @@ export default function ViewActivityFullInfo() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  isInCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

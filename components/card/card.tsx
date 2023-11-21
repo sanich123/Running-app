@@ -1,8 +1,7 @@
 import { usePathname, useRouter } from 'expo-router';
 import { useRef } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
-import { Card, IconButton, MD3Colors, Text } from 'react-native-paper';
-import { captureRef } from 'react-native-view-shot';
+import { Card } from 'react-native-paper';
 
 import { ActivityCardProps } from './const ';
 import AvatarShowable from '../avatar-showable/avatar-showable';
@@ -27,6 +26,7 @@ export default function ActivityCard({
   photoUrls,
   duration,
   distance,
+  fullViewRef,
 }: ActivityCardProps) {
   const { push } = useRouter();
   const pathname = usePathname();
@@ -34,45 +34,33 @@ export default function ActivityCard({
 
   return (
     <Card key={id}>
-      <Pressable onPress={() => push(`/home/activity/${id}`)}>
-        <Card.Content>
-          <Pressable style={styles.cardContent} onPress={() => push(`/home/profile/${userId}`)}>
-            <AvatarShowable size={40} id={userId} />
-            <View style={styles.profileWrapper}>
-              <UserNameSurname userId={userId} size="titleMedium" />
-              <UserSportDate sport={sport} date={date} />
-            </View>
-          </Pressable>
-        </Card.Content>
-        {title && <CardTitle title={title} />}
-        <CardMetrics distance={distance} duration={duration} />
-      </Pressable>
-      {pathname.includes('/home/') && <CardDesription description={description} />}
-      {(locations?.length || photoUrls?.length > 0) && (
-        <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
-      )}
+      <View ref={cardRef} collapsable={false}>
+        <Pressable onPress={() => push(`/home/activity/${id}`)}>
+          <Card.Content>
+            <Pressable style={styles.cardContent} onPress={() => push(`/home/profile/${userId}`)}>
+              <AvatarShowable size={40} id={userId} />
+              <View style={styles.profileWrapper}>
+                <UserNameSurname userId={userId} size="titleMedium" />
+                <UserSportDate sport={sport} date={date} />
+              </View>
+            </Pressable>
+          </Card.Content>
+          {title && <CardTitle title={title} />}
+          <CardMetrics distance={distance} duration={duration} />
+        </Pressable>
+        {pathname.includes('/home/') && <CardDesription description={description} />}
+        {(locations?.length || photoUrls?.length > 0) && (
+          <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
+        )}
 
-      <View style={{ display: 'flex', flexDirection: 'row' }}>
-        <CardLikes activityId={id} />
-        <CommentsLength activityId={id} />
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <CardLikes activityId={id} />
+          <CommentsLength activityId={id} />
+        </View>
       </View>
-      <View ref={cardRef}>
-        <Text variant="bodyLarge">Some text</Text>
-      </View>
+
       <Card.Actions>
-        <IconButton
-          onPress={async () => {
-            const snapshot = await captureRef(cardRef.current);
-            console.log(snapshot);
-            // await Sharing.shareAsync(';lk');
-          }}
-          testID="iconShareBtn"
-          icon="share-outline"
-          iconColor={MD3Colors.primary50}
-          size={25}
-          // disabled={isLoading || isDisabled}
-        />
-        <CardBtns activityId={id} userId={userId} cardRef={cardRef} />
+        <CardBtns activityId={id} userId={userId} cardRef={cardRef} fullViewRef={fullViewRef} />
       </Card.Actions>
     </Card>
   );
