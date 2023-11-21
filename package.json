@@ -1,6 +1,6 @@
 {
   "name": "running-app",
-  "version": "1.1.8",
+  "version": "1.1.10",
   "scripts": {
     "start": "EXPO_PUBLIC_IS_PRODUCTION=true expo start",
     "start:clear": "expo start --clear",
@@ -87,6 +87,7 @@
     "react-native-screens": "~3.22.0",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-vector-icons": "^10.0.0",
+    "react-native-view-shot": "3.7.0",
     "react-native-web": "~0.19.6",
     "react-redux": "^8.0.7",
     "turf-linestring": "^1.0.2",

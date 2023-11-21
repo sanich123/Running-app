@@ -1,6 +1,8 @@
 import { usePathname, useRouter } from 'expo-router';
+import { useRef } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
-import { Card } from 'react-native-paper';
+import { Card, IconButton, MD3Colors, Text } from 'react-native-paper';
+import { captureRef } from 'react-native-view-shot';
 
 import { ActivityCardProps } from './const ';
 import AvatarShowable from '../avatar-showable/avatar-showable';
@@ -28,6 +30,7 @@ export default function ActivityCard({
 }: ActivityCardProps) {
   const { push } = useRouter();
   const pathname = usePathname();
+  const cardRef = useRef();
 
   return (
     <Card key={id}>
@@ -53,9 +56,23 @@ export default function ActivityCard({
         <CardLikes activityId={id} />
         <CommentsLength activityId={id} />
       </View>
-
+      <View ref={cardRef}>
+        <Text variant="bodyLarge">Some text</Text>
+      </View>
       <Card.Actions>
-        <CardBtns activityId={id} userId={userId} />
+        <IconButton
+          onPress={async () => {
+            const snapshot = await captureRef(cardRef.current);
+            console.log(snapshot);
+            // await Sharing.shareAsync(';lk');
+          }}
+          testID="iconShareBtn"
+          icon="share-outline"
+          iconColor={MD3Colors.primary50}
+          size={25}
+          // disabled={isLoading || isDisabled}
+        />
+        <CardBtns activityId={id} userId={userId} cardRef={cardRef} />
       </Card.Actions>
     </Card>
   );

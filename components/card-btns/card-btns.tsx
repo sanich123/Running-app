@@ -1,5 +1,5 @@
 import { usePathname } from 'expo-router';
-import { useState } from 'react';
+import { MutableRefObject, ReactNode, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useAuth } from '../../auth/context/auth-context';
@@ -9,7 +9,13 @@ import ActivityCardDeleteBtn from '../card-delete-btn/card-delete-btn';
 import ActivityCardLikeBtn from '../card-like-btn/card-like-btn';
 import ActivityCardShareBtn from '../card-share-btn/card-share-btn';
 
-export default function CardBtns({ activityId, userId }: { activityId: string; userId: string }) {
+type CardBtnsProps = {
+  activityId: string;
+  userId: string;
+  cardRef: MutableRefObject<ReactNode>;
+};
+
+export default function CardBtns({ activityId, userId, cardRef }: CardBtnsProps) {
   const { user } = useAuth();
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +27,7 @@ export default function CardBtns({ activityId, userId }: { activityId: string; u
       <View style={styles.layout}>
         <ActivityCardLikeBtn activityId={activityId} />
         <ActivityCardCommentBtn activityId={activityId} />
-        <ActivityCardShareBtn />
+        <ActivityCardShareBtn cardRef={cardRef} />
         {isMineActivvity && pathname.includes(`/home/activity/${activityId}`) && (
           <ActivityCardDeleteBtn activityId={activityId} />
         )}

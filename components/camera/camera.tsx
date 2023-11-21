@@ -26,7 +26,7 @@ export default function CameraLauncher() {
     <View style={{ width: 50 }}>
       {!permission && <ActivityIndicator size="small" />}
       {!permission?.granted && <Text>You have no permission..</Text>}
-      {permission && (
+      {permission?.granted && (
         <Camera type={type}>
           <View style={{ width: 50 }}>
             <TouchableOpacity onPress={toggleCameraType}>
