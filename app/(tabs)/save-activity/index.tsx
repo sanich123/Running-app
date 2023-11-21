@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CameraLauncher from '../../../components/camera/camera';
 import Checkbox from '../../../components/checkbox/checkbox';
 import DateTimePicker from '../../../components/date-picker/date-picker';
 import DeclineBtn from '../../../components/decline-btn/decline-btn';
@@ -35,6 +36,7 @@ export default function SaveResult() {
       {isManualAdding && <DateTimePicker isDisabled={isDisabled} />}
       {isManualAdding && <InputsDistanceTime isDisabled={isDisabled} />}
       <UploadPhotosBtn isDisabled={isDisabled} setIsDisabled={setIsDisabled} />
+      <CameraLauncher />
       <DeclineBtn isDisabled={isDisabled} />
       <StatusBar style="auto" />
     </ScrollView>

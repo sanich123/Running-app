@@ -4,7 +4,7 @@ export default {
   expo: {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
-    version: '1.1.6',
+    version: '1.1.8',
     orientation: 'portrait',
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
     scheme: 'myapp',
@@ -20,11 +20,11 @@ export default {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
-      runtimeVersion: '1.1.6(13)',
+      runtimeVersion: '1.1.8(15)',
       bundleIdentifier: IS_DEV ? 'com.myapp.dev' : 'com.myapp',
     },
     android: {
-      versionCode: 13,
+      versionCode: 15,
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#333333',
@@ -36,7 +36,7 @@ export default {
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
       ],
-      runtimeVersion: '1.1.6(13)',
+      runtimeVersion: '1.1.8(15)',
     },
     web: {
       bundler: 'metro',
@@ -71,6 +71,20 @@ export default {
         },
       ],
       'react-native-compressor',
+      [
+        'expo-camera',
+        {
+          cameraPermission: 'Allow $(PRODUCT_NAME) to access your camera.',
+        },
+      ],
+      [
+        'expo-media-library',
+        {
+          photosPermission: 'Allow $(PRODUCT_NAME) to access your photos.',
+          savePhotosPermission: 'Allow $(PRODUCT_NAME) to save photos.',
+          isAccessMediaLocationEnabled: true,
+        },
+      ],
     ],
     updates: {
       url: 'https://u.expo.dev/413aa829-bbae-467c-9201-4688b894f2f7',
