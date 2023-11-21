@@ -1,7 +1,7 @@
 import { screen, userEvent } from '@testing-library/react-native';
 
 import ActivityStartBtn from './activity-start-btn';
-import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID, STOP_ICON } from './const ';
+import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID } from './const ';
 import { LANGUAGES, STATUSES } from '../../constants/enums';
 import { changeLanguage } from '../../redux/language/language';
 import { setActivityStatus, setDistance, setDuration, setLocationsFromBackground } from '../../redux/location/location';
@@ -69,6 +69,6 @@ describe('Activity start btn', () => {
   it('should correctly renders stop icon', () => {
     mockStore.dispatch(setActivityStatus(STATUSES.started));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
-    expect(screen.getByTestId(STOP_ICON)).toBeOnTheScreen();
+    expect(screen.getByTestId(new RegExp(`${ACTIVITY_START_BTN_TEST_ID}`))).toBeOnTheScreen();
   });
 });

@@ -3,7 +3,10 @@ import 'dotenv/config';
 import { fetch, Headers, Request, Response } from 'cross-fetch';
 
 import { server } from './tests/utils/server';
+
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
+jest.mock('expo-font');
+jest.mock('expo-asset');
 
 global.fetch = fetch;
 global.Headers = Headers;
@@ -19,7 +22,3 @@ afterEach(() => {
   jest.clearAllMocks();
   server.resetHandlers();
 });
-
-// server.events.on('request:start', ({ request }) => {
-//   console.log('MSW intercepted:', request.method, request.url);
-// });
