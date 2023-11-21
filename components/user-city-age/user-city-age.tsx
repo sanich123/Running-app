@@ -1,20 +1,18 @@
-import { ActivityIndicator, MD3TypescaleKey, Text } from 'react-native-paper';
+import { MD3TypescaleKey, Text } from 'react-native-paper';
 import { VariantProp } from 'react-native-paper/lib/typescript/components/Typography/types';
+import { useSelector } from 'react-redux';
 
+import { LANGUAGES } from '../../constants/enums';
 import { useGetUserProfileByIdQuery } from '../../redux/runich-api/runich-api';
-import ErrorComponent from '../error-component/error-component';
+import { errorExtracter } from '../../utils/error-handler';
 
 export default function UserCityAge({ userId, size }: { userId: string; size: VariantProp<MD3TypescaleKey> }) {
-  const { isLoading, error, data: profileInfo } = useGetUserProfileByIdQuery(userId);
+  const { error, data: profileInfo } = useGetUserProfileByIdQuery(userId);
+  const { language } = useSelector(({ language }) => language);
   return (
-    <>
-      {isLoading && <ActivityIndicator />}
-      {error ? <ErrorComponent error={error} /> : null}
-      {profileInfo ? (
-        <>
-          <Text variant={size}>{profileInfo?.city}</Text>
-        </>
-      ) : null}
-    </>
+    <Text variant={size}>
+      {!error && profileInfo && profileInfo?.city}
+      {error && `${language === LANGUAGES.english ? 'An error' : 'Ошибка'}: ${errorExtracter(error)}`}
+    </Text>
   );
 }

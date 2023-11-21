@@ -2,7 +2,6 @@ import reducer, {
   LOCATION_INITIAL_STATE,
   addDurationAndLocationToKmSplits,
   resetLocationsFromBackground,
-  saveFinishedActivity,
   setActivityStatus,
   setAltitude,
   setCurrentPace,
@@ -22,7 +21,6 @@ import reducer, {
   setLocationsWhenContinued,
 } from './location';
 import { STATUSES } from '../../constants/enums';
-import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import {
   MOCK_ALTITUDE,
   MOCK_DISTANCE,
@@ -30,17 +28,9 @@ import {
   MOCK_LOCATION,
   MOCK_SPEED,
 } from '../../tests/mocks/mock-location';
-import { MOCK_LOCATIONS } from '../../tests/mocks/mock-locations';
 import { mockStore } from '../../tests/utils/mock-store';
 
 describe('Location slice', () => {
-  const MOCK_FINISHED_ACTIVITY = {
-    locations: MOCK_LOCATIONS,
-    duration: MOCK_DURATION,
-    speed: MOCK_SPEED,
-    distance: MOCK_DISTANCE,
-    kilometresSplit: MOCK_ACTIVITY.kilometresSplit,
-  };
   it('should handle initial state properly', () => {
     expect(reducer(undefined, { type: undefined })).toEqual(LOCATION_INITIAL_STATE);
   });
@@ -50,12 +40,7 @@ describe('Location slice', () => {
       initialLocation: MOCK_LOCATION,
     });
   });
-  it('should change finishedActivity', () => {
-    expect(reducer(LOCATION_INITIAL_STATE, saveFinishedActivity(MOCK_FINISHED_ACTIVITY))).toEqual({
-      ...LOCATION_INITIAL_STATE,
-      finishedActivity: MOCK_FINISHED_ACTIVITY,
-    });
-  });
+
   it('should change locationsFromBackground', () => {
     expect(reducer(LOCATION_INITIAL_STATE, setLocationsFromBackground(MOCK_LOCATION))).toEqual({
       ...LOCATION_INITIAL_STATE,

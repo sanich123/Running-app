@@ -17,7 +17,8 @@ describe('Card likes', () => {
     renderWithProviders(<CardLikes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" />, {
       store: mockStore,
     });
-    expect(screen.getByTestId('cardLikesActivityIndicator'));
+    expect(screen.getByTestId('pushToActivityLikes')).toBeOnTheScreen();
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
+    expect(await screen.findByTestId('avatarShowableImage')).toBeOnTheScreen();
   });
 });

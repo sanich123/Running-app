@@ -2,7 +2,9 @@ import { useRouter } from 'expo-router';
 import { useContext, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
+import { CARD_DELETE_BTN, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN_TEST_ID } from './const';
 import { useDeleteActivityByIdMutation } from '../../redux/runich-api/runich-api';
 import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
 import { errorHandler } from '../../utils/error-handler';
@@ -11,6 +13,7 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
   const [deleteActivityById, { data, error }] = useDeleteActivityByIdMutation();
   const { isLoading, isDisabled, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
   const router = useRouter();
+  const { language } = useSelector(({ language }) => language);
   useEffect(() => {
     if (data) {
       console.log(data);
@@ -21,20 +24,21 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
       console.log(error);
     }
   }, [data, error]);
+
   return (
     <IconButton
-      testID="activityCardDeleteBtn"
-      icon="delete"
+      testID={CARD_DELETE_BTN_TEST_ID}
+      icon={CARD_DELETE_BTN_ICON}
       iconColor={MD3Colors.primary50}
       size={20}
       onPress={async () => {
         try {
           Alert.alert(
-            'Deleting activity',
-            'Are you sure?',
+            CARD_DELETE_BTN[language].deleteActivity,
+            CARD_DELETE_BTN[language].question,
             [
               {
-                text: 'Yes, I am sure',
+                text: CARD_DELETE_BTN[language].accept,
                 onPress: async () => {
                   setIsLoading(true);
                   setIsDisabled(true);

@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react-native';
 
 import ActivityCardLikeBtn from './card-like-btn';
+import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from './const';
 import * as auth from '../../auth/context/auth-context';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
@@ -15,7 +16,7 @@ describe('Activity card like btn', () => {
       },
     }));
     renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" />, { store: mockStore });
-    const likesBtn = await screen.findByTestId('iconLikeButton-liked');
+    const likesBtn = await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED);
     expect(likesBtn).toBeOnTheScreen();
   });
   it('should correctly renders, when you didnt liked activity', async () => {
@@ -26,6 +27,6 @@ describe('Activity card like btn', () => {
       },
     }));
     renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" />, { store: mockStore });
-    expect(await screen.findByTestId('iconLikeButton')).toBeOnTheScreen();
+    expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();
   });
 });

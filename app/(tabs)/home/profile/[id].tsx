@@ -1,8 +1,11 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
+import { useAuth } from '../../../../auth/context/auth-context';
+import AddDeleteFriendBtn from '../../../../components/add-delete-friend-btn/add-delete-friend-btn';
 import AvatarShowable from '../../../../components/avatar-showable/avatar-showable';
-import ProfileFollowersSection from '../../../../components/profile-followers-section/profile-followers-section';
+import FollowersCount from '../../../../components/followers-count/followers-count';
+import FollowingCount from '../../../../components/following-count/following-count';
 import ProfileMediaPhotos from '../../../../components/profile-media-photos/profile-media-photos';
 import UserBio from '../../../../components/user-bio/user-bio';
 import UserCityAge from '../../../../components/user-city-age/user-city-age';
@@ -10,6 +13,8 @@ import UserNameSurname from '../../../../components/user-name-surname/user-name-
 
 export default function Profile() {
   const { id: whosProfileViewing } = useLocalSearchParams();
+  const { user } = useAuth();
+  const isMineActivity = whosProfileViewing === user.id;
 
   return (
     <>
@@ -25,7 +30,11 @@ export default function Profile() {
         <View style={styles.bio}>
           <UserBio userId={`${whosProfileViewing}`} size="bodyMedium" />
         </View>
-        <ProfileFollowersSection />
+        <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+          <FollowingCount />
+          <FollowersCount />
+          {!isMineActivity && whosProfileViewing && <AddDeleteFriendBtn friendId={`${whosProfileViewing}`} />}
+        </View>
       </View>
     </>
   );

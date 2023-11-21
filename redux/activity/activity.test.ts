@@ -3,13 +3,19 @@ import reducer, {
   resetActivityInfo,
   saveDescription,
   saveEmotion,
+  saveFinishedActivity,
   saveIsSwitchOn,
   savePhotoUrls,
   saveSport,
   saveTitle,
+  saveUnsendedActivity,
   setIsDisableWhileSending,
+  setIsHaveUnsyncedActivity,
   setIsNeedToResetInputs,
 } from './activity';
+import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
+import { MOCK_DISTANCE, MOCK_DURATION, MOCK_SPEED } from '../../tests/mocks/mock-location';
+import { MOCK_LOCATIONS } from '../../tests/mocks/mock-locations';
 
 describe('Activity slice', () => {
   const PHOTO_URLS = ['someUrl1', 'someUrl2'];
@@ -17,6 +23,13 @@ describe('Activity slice', () => {
   const MOCK_DESCRIPTION = 'Some description';
   const MOCK_SPORT = 'Some sport';
   const MOCK_EMOTION = 'Some emotion';
+  const MOCK_FINISHED_ACTIVITY = {
+    locations: MOCK_LOCATIONS,
+    duration: MOCK_DURATION,
+    speed: MOCK_SPEED,
+    distance: MOCK_DISTANCE,
+    kilometresSplit: MOCK_ACTIVITY.kilometresSplit,
+  };
   it('should handle initial state properly', () => {
     expect(reducer(undefined, { type: undefined })).toEqual(ACTIVITY_INITIAL_STATE);
   });
@@ -96,5 +109,30 @@ describe('Activity slice', () => {
     reducer(ACTIVITY_INITIAL_STATE, saveSport(MOCK_SPORT));
     reducer(ACTIVITY_INITIAL_STATE, saveDescription(MOCK_DESCRIPTION));
     expect(reducer(ACTIVITY_INITIAL_STATE, resetActivityInfo())).toEqual(ACTIVITY_INITIAL_STATE);
+  });
+  it('should correctly save unsendedActivity', () => {
+    expect(reducer(ACTIVITY_INITIAL_STATE, saveUnsendedActivity(MOCK_ACTIVITY))).toEqual({
+      ...ACTIVITY_INITIAL_STATE,
+      unsyncedActivities: [MOCK_ACTIVITY],
+    });
+  });
+  it('should change isHaveUnsyncedActivity flag', () => {
+    expect(reducer(ACTIVITY_INITIAL_STATE, setIsHaveUnsyncedActivity(true))).toEqual({
+      ...ACTIVITY_INITIAL_STATE,
+      isHaveUnsyncedActivity: true,
+    });
+  });
+  it('should correctly refresh unsynced activities list', () => {
+    const state = reducer(ACTIVITY_INITIAL_STATE, saveUnsendedActivity(MOCK_ACTIVITY));
+    expect(reducer(state, saveUnsendedActivity(MOCK_ACTIVITY))).toEqual({
+      ...ACTIVITY_INITIAL_STATE,
+      unsyncedActivities: [MOCK_ACTIVITY, MOCK_ACTIVITY],
+    });
+  });
+  it('should change finishedActivity', () => {
+    expect(reducer(ACTIVITY_INITIAL_STATE, saveFinishedActivity(MOCK_FINISHED_ACTIVITY))).toEqual({
+      ...ACTIVITY_INITIAL_STATE,
+      finishedActivity: MOCK_FINISHED_ACTIVITY,
+    });
   });
 });

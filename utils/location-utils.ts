@@ -1,11 +1,12 @@
 import polyline from '@mapbox/polyline';
-import * as turf from '@turf/turf';
+import distance from '@turf/distance';
 import { LocationObject } from 'expo-location';
+import point from 'turf-point';
 
 export function getDistance(origin: LocationObject, destination: LocationObject) {
-  const from = turf.point([origin.coords.longitude, origin.coords.latitude]);
-  const to = turf.point([destination.coords.longitude, destination.coords.latitude]);
-  return turf.distance(from, to, { units: 'meters' });
+  const from = point([origin.coords.longitude, origin.coords.latitude]);
+  const to = point([destination.coords.longitude, destination.coords.latitude]);
+  return distance(from, to, { units: 'meters' });
 }
 
 export function getSpeedInMinsInKm(distance, time) {
@@ -52,4 +53,12 @@ export function getMapBoxImage(locations: LocationObject[]) {
       encodedPolyline,
     )})/auto/${width}x${height}${doublePixels}?access_token=${process.env.EXPO_PUBLIC_MAPBOX_TOKEN}`;
   }
+}
+
+export function getReducedLocations(locations: LocationObject[]) {
+  if (locations.length > 2000) {
+    const reducerCoefficient = Math.floor(locations.length / 1000);
+    return locations.filter((_, i) => i % reducerCoefficient === 0);
+  }
+  return locations;
 }

@@ -1,11 +1,15 @@
+import NetInfo from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
 import { Redirect } from 'expo-router';
+import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useAuth } from '../auth/context/auth-context';
 import { STATUSES } from '../constants/enums';
 import { setActivityStatus, setIsAppShuted } from '../redux/location/location';
+import { changeNetworkState } from '../redux/network/network';
+import { getKeyFromAsyncStorage } from '../utils/async-storage';
 
 export default function Page() {
   const { user } = useAuth();
@@ -14,10 +18,18 @@ export default function Page() {
   Mapbox.setWellKnownTileServer('Mapbox');
   Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
 
+  useEffect(() => {
+    const networkListener = NetInfo.addEventListener((networkState) => {
+      dispatch(changeNetworkState(networkState));
+    });
+    return () => networkListener();
+  }, []);
+
   if (!user) {
     console.log('redirecting to login');
     return <Redirect href="/sign-in" />;
   } else if (user) {
+    getKeyFromAsyncStorage('language');
     if (activityStatus !== STATUSES.initial) {
       dispatch(setIsAppShuted(true));
       dispatch(setActivityStatus(STATUSES.paused));

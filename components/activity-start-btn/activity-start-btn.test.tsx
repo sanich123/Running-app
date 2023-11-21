@@ -1,7 +1,9 @@
 import { screen, userEvent } from '@testing-library/react-native';
 
 import ActivityStartBtn from './activity-start-btn';
-import { STATUSES } from '../../constants/enums';
+import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID, STOP_ICON } from './const ';
+import { LANGUAGES, STATUSES } from '../../constants/enums';
+import { changeLanguage } from '../../redux/language/language';
 import { setActivityStatus, setDistance, setDuration, setLocationsFromBackground } from '../../redux/location/location';
 import { MOCK_DISTANCE, MOCK_DURATION, MOCK_LOCATION, MOCK_SPEED } from '../../tests/mocks/mock-location';
 import { mockStore } from '../../tests/utils/mock-store';
@@ -13,20 +15,21 @@ jest.mock('expo-router', () => ({
   }),
 }));
 describe('Activity start btn', () => {
-  it('should correctly renders', () => {
+  it('should correctly renders in english', () => {
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
-    expect(screen.getByText(/run/i)).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_START_BTN.english.start)).toBeOnTheScreen();
   });
+
   it('should correctly change from initial to started status', async () => {
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
-    const startBtn = screen.getByText(/run/i);
+    const startBtn = screen.getByText(ACTIVITY_START_BTN.english.start);
     await userEvent.press(startBtn);
     expect(mockStore.getState().location.activityStatus).toEqual(STATUSES.started);
   });
   it('should correctly change from started to paused status', async () => {
     mockStore.dispatch(setActivityStatus(STATUSES.started));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
-    const startBtn = screen.getByTestId(/startButton/i);
+    const startBtn = screen.getByTestId(ACTIVITY_START_BTN_TEST_ID);
     await userEvent.press(startBtn);
     expect(mockStore.getState().location.activityStatus).toEqual(STATUSES.paused);
   });
@@ -34,8 +37,8 @@ describe('Activity start btn', () => {
   it('should correctly change from paused to initial status', async () => {
     mockStore.dispatch(setActivityStatus(STATUSES.paused));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
-    expect(screen.getByText(/finish/i)).toBeOnTheScreen();
-    const startBtn = screen.getByTestId(/startButton/i);
+    expect(screen.getByText(ACTIVITY_START_BTN.english.finish)).toBeOnTheScreen();
+    const startBtn = screen.getByTestId(ACTIVITY_START_BTN_TEST_ID);
     await userEvent.press(startBtn);
     expect(mockStore.getState().location.activityStatus).toEqual(STATUSES.initial);
   });
@@ -44,11 +47,28 @@ describe('Activity start btn', () => {
     mockStore.dispatch(setDistance(MOCK_DISTANCE));
     mockStore.dispatch(setLocationsFromBackground(MOCK_LOCATION));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
-    const startBtn = screen.getByTestId(/startButton/i);
+    const startBtn = screen.getByTestId(ACTIVITY_START_BTN_TEST_ID);
     await userEvent.press(startBtn);
-    expect(mockStore.getState().location.finishedActivity.distance).toEqual(MOCK_DISTANCE);
-    expect(mockStore.getState().location.finishedActivity.duration).toEqual(MOCK_DURATION);
-    expect(mockStore.getState().location.finishedActivity.speed).toEqual(MOCK_SPEED);
-    expect(mockStore.getState().location.finishedActivity.locations).toHaveLength(1);
+    expect(mockStore.getState().activity.finishedActivity.distance).toEqual(MOCK_DISTANCE);
+    expect(mockStore.getState().activity.finishedActivity.duration).toEqual(MOCK_DURATION);
+    expect(mockStore.getState().activity.finishedActivity.speed).toEqual(MOCK_SPEED);
+    expect(mockStore.getState().activity.finishedActivity.locations).toHaveLength(1);
+  });
+  it('should correctly renders start in russian', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    mockStore.dispatch(setActivityStatus(STATUSES.initial));
+    renderWithProviders(<ActivityStartBtn />, { store: mockStore });
+    expect(screen.getByText(ACTIVITY_START_BTN.russian.start)).toBeOnTheScreen();
+  });
+  it('should correctly renders finish in russian', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    mockStore.dispatch(setActivityStatus(STATUSES.paused));
+    renderWithProviders(<ActivityStartBtn />, { store: mockStore });
+    expect(screen.getByText(ACTIVITY_START_BTN.russian.finish)).toBeOnTheScreen();
+  });
+  it('should correctly renders stop icon', () => {
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    renderWithProviders(<ActivityStartBtn />, { store: mockStore });
+    expect(screen.getByTestId(STOP_ICON)).toBeOnTheScreen();
   });
 });

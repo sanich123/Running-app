@@ -5,28 +5,28 @@ import { FlatList, Pressable, Image, useWindowDimensions } from 'react-native';
 
 import { getMapBoxImage } from '../../utils/location-utils';
 
-export default function CardMapImagesList({
-  locations,
-  photoUrls,
-  id,
-}: {
+type CardMapImagesListProps = {
   locations: LocationObject[];
   photoUrls: string[];
   id: string;
-}) {
-  const { width } = useWindowDimensions();
+};
 
-  const urls = locations?.length ? [getMapBoxImage(locations), ...photoUrls] : [getMapBoxImage(locations)];
-  const router = useRouter();
+export default function CardMapImagesList({ locations, photoUrls, id }: CardMapImagesListProps) {
+  const { width } = useWindowDimensions();
+  const urls = locations?.length ? [getMapBoxImage(locations), ...photoUrls] : [...photoUrls];
+  const { push } = useRouter();
 
   return (
     <FlatList
       data={urls}
       renderItem={({ item, index }) => {
+        const zeroLocations = locations?.length === 0;
         const isNotFirst = index > 0;
         return (
           <Pressable
-            onPress={() => router.push(isNotFirst ? `/home/media/${encodeURIComponent(item)}` : `/home/map/${id}`)}>
+            onPress={() =>
+              push(zeroLocations || isNotFirst ? `/home/media/${encodeURIComponent(item)}` : `/home/map/${id}`)
+            }>
             <Image testID={item} source={{ uri: item }} resizeMode="cover" height={200} width={width} />
           </Pressable>
         );

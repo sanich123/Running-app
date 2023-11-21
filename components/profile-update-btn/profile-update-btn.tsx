@@ -4,9 +4,10 @@ import { Pressable, ToastAndroid } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { UPDATE_BTN, UPDATE_BTN_ERROR_MSG } from './const';
 import { useAuth } from '../../auth/context/auth-context';
 import { setIsDisabledWhileSendingProfile } from '../../redux/profile/profile';
-import { useSendProfileInfoMutation } from '../../redux/runich-api/runich-api';
+import { runichApi, useSendProfileInfoMutation } from '../../redux/runich-api/runich-api';
 
 export default function ProfileUpdateBtn() {
   const { colors } = useTheme();
@@ -15,6 +16,7 @@ export default function ProfileUpdateBtn() {
   const { push } = useRouter();
   const dispatch = useDispatch();
   const [sendProfile, { isLoading, data, error }] = useSendProfileInfoMutation();
+  const { language } = useSelector(({ language }) => language);
 
   useEffect(() => {
     if (data) {
@@ -26,7 +28,8 @@ export default function ProfileUpdateBtn() {
     }
     if (error) {
       dispatch(setIsDisabledWhileSendingProfile(false));
-      ToastAndroid.show('An error occured during sending profile info. Try again!', ToastAndroid.LONG);
+      dispatch(runichApi.util.resetApiState());
+      ToastAndroid.show(UPDATE_BTN_ERROR_MSG, ToastAndroid.LONG);
     }
   }, [data, error]);
 
@@ -38,7 +41,8 @@ export default function ProfileUpdateBtn() {
       }}
       disabled={isLoading}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>
-        {`Updat${isLoading ? 'ing' : 'e'}`}
+        {!isLoading && UPDATE_BTN[language].update}
+        {isLoading && UPDATE_BTN[language].updating}
       </Text>
     </Pressable>
   );

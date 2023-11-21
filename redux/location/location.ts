@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Location } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
 
 import { STATUSES } from '../../constants/enums';
@@ -28,13 +27,6 @@ export const LOCATION_INITIAL_STATE = {
   kilometresSplit: [] as LastKmSplit[],
   locationsWithPauses: [[]] as LocationObject[][],
   locationsFromBackground: [] as LocationObject[],
-  finishedActivity: {
-    locations: [] as Location[],
-    duration: 0,
-    speed: 0,
-    distance: 0,
-    kilometresSplit: [],
-  },
 };
 
 export const location = createSlice({
@@ -43,9 +35,6 @@ export const location = createSlice({
   reducers: {
     setInitialLocation: (state, action) => {
       state.initialLocation = action.payload;
-    },
-    saveFinishedActivity: (state, action) => {
-      state.finishedActivity = action.payload;
     },
     setLocationsFromBackground: (state, action) => {
       state.locationsFromBackground = [...state.locationsFromBackground, action.payload];
@@ -127,7 +116,6 @@ export const location = createSlice({
 
 export const {
   setInitialLocation,
-  saveFinishedActivity,
   setLocationsFromBackground,
   resetLocationsFromBackground,
   setDistance,

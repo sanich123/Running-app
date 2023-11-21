@@ -1,8 +1,9 @@
 import { usePathname, useRouter } from 'expo-router';
+import { useRef } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 
-import { ActivityCardProps } from '../../constants/types/activity-cart';
+import { ActivityCardProps } from './const ';
 import AvatarShowable from '../avatar-showable/avatar-showable';
 import CardBtns from '../card-btns/card-btns';
 import CardDesription from '../card-description/card-description';
@@ -25,43 +26,41 @@ export default function ActivityCard({
   photoUrls,
   duration,
   distance,
+  fullViewRef,
 }: ActivityCardProps) {
   const { push } = useRouter();
   const pathname = usePathname();
+  const cardRef = useRef();
 
   return (
     <Card key={id}>
-      <Pressable onPress={() => push(`/home/activity/${id}`)}>
-        <Card.Content>
-          <Pressable style={styles.cardContent} onPress={() => push(`/home/profile/${userId}`)}>
-            <AvatarShowable size={40} id={userId} />
-            <View style={styles.profileWrapper}>
-              <UserNameSurname userId={userId} size="titleMedium" />
-              <UserSportDate sport={sport} date={date} />
-            </View>
-          </Pressable>
-        </Card.Content>
-        <View style={styles.titleWrapper}>
-          <CardTitle title={title} />
-        </View>
-        <View style={styles.metricsWrapper}>
+      <View ref={cardRef} collapsable={false}>
+        <Pressable onPress={() => push(`/home/activity/${id}`)}>
+          <Card.Content>
+            <Pressable style={styles.cardContent} onPress={() => push(`/home/profile/${userId}`)}>
+              <AvatarShowable size={40} id={userId} />
+              <View style={styles.profileWrapper}>
+                <UserNameSurname userId={userId} size="titleMedium" />
+                <UserSportDate sport={sport} date={date} />
+              </View>
+            </Pressable>
+          </Card.Content>
+          {title && <CardTitle title={title} />}
           <CardMetrics distance={distance} duration={duration} />
-        </View>
-      </Pressable>
-      {pathname.includes('/home/') && <CardDesription description={description} />}
-      {(locations?.length || photoUrls?.length > 0) && (
-        <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
-      )}
+        </Pressable>
+        {pathname.includes('/home/') && <CardDesription description={description} />}
+        {(locations?.length || photoUrls?.length > 0) && (
+          <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
+        )}
 
-      <View style={{ display: 'flex', flexDirection: 'row' }}>
-        <CardLikes activityId={id} />
-        <CommentsLength activityId={id} />
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <CardLikes activityId={id} />
+          <CommentsLength activityId={id} />
+        </View>
       </View>
 
       <Card.Actions>
-        <View style={styles.activityBtnsWrapper}>
-          <CardBtns activityId={id} userId={userId} />
-        </View>
+        <CardBtns activityId={id} userId={userId} cardRef={cardRef} fullViewRef={fullViewRef} />
       </Card.Actions>
     </Card>
   );
@@ -76,8 +75,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: 'center',
   },
-  profileWrapper: { display: 'flex', justifyContent: 'center' },
-  titleWrapper: { marginTop: 5, marginLeft: 15, marginBottom: 5 },
-  metricsWrapper: { display: 'flex', flexDirection: 'row', marginLeft: 15, columnGap: 15, marginBottom: 5 },
-  activityBtnsWrapper: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  profileWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
 });

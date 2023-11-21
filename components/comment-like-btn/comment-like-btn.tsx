@@ -10,7 +10,7 @@ import { errorHandler } from '../../utils/error-handler';
 export default function CommentLikeBtn({ commentId }: { commentId: string }) {
   const { user } = useAuth();
   const [sendLikeToComment, { data, error }] = useSendOrDeleteLikeToCommentMutation();
-  const { data: commentLikes } = useGetLikesByCommentIdQuery(commentId);
+  const { isError, data: commentLikes } = useGetLikesByCommentIdQuery(commentId);
   const youGaveCommentLike = commentLikes?.some(({ authorId }) => authorId === user?.id);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function CommentLikeBtn({ commentId }: { commentId: string }) {
       testID={`commentLikeBtn${youGaveCommentLike ? '-active' : ''}`}
       name={`heart${commentLikes?.length ? '' : '-outline'}`}
       size={20}
-      style={[{ marginLeft: 10, marginBottom: 10 }, isLoading && { opacity: 0.5 }]}
+      style={[{ marginLeft: 10, marginBottom: 10 }, (isLoading || isError) && { opacity: 0.5 }]}
       color={youGaveCommentLike ? MD3Colors.error50 : MD3Colors.primary50}
       onPress={async () => {
         const body = { commentId, authorId: user.id };
@@ -40,7 +40,7 @@ export default function CommentLikeBtn({ commentId }: { commentId: string }) {
           setIsLoading(false);
         }
       }}
-      disabled={isLoading}
+      disabled={isLoading || isError}
     />
   );
 }

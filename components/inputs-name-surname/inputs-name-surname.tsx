@@ -1,31 +1,38 @@
-import { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { SaveSettingsContext } from '../../utils/context/settings';
+import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 
-export default function InputsNameSurname() {
-  const { name, surname, setName, setSurname, isDisabled } = useContext(SaveSettingsContext);
+type InputsNameSurnameProps = {
+  name: string;
+  surname: string;
+  setName: (arg: string) => void;
+  setSurname: (arg: string) => void;
+  isDisabled: boolean;
+};
+
+export default function InputsNameSurname({ name, surname, setName, setSurname, isDisabled }: InputsNameSurnameProps) {
   const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
+  const { language } = useSelector(({ language }) => language);
   return (
     <View style={styles.inputWrapper}>
       <TextInput
-        testID="inputName"
+        testID={NAME_TEST_ID}
         mode="outlined"
-        style={{ width: 170 }}
-        label="First Name"
-        placeholder="Type your name"
+        style={{ width: '50%' }}
+        label={NAME_SURNAME[language].nameLabel}
+        placeholder={NAME_SURNAME[language].namePlaceholder}
         value={name}
         onChangeText={(name) => setName(name)}
         disabled={isDisabled || isDisabledWhileSendingProfile}
       />
       <TextInput
-        testID="inputSurname"
+        testID={SURNAME_TEST_ID}
         mode="outlined"
-        style={{ width: 170 }}
-        label="Last Name"
-        placeholder="Type your surname"
+        style={{ width: '50%' }}
+        label={NAME_SURNAME[language].surnameLabel}
+        placeholder={NAME_SURNAME[language].surnamePlaceholder}
         value={surname}
         onChangeText={(surname) => setSurname(surname)}
         disabled={isDisabled || isDisabledWhileSendingProfile}
@@ -40,5 +47,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 25,
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginLeft: 15,
+    marginRight: 15,
   },
 });

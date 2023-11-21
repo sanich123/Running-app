@@ -1,7 +1,7 @@
 import { usePathname, useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { Text, ActivityIndicator } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 
 import { useGetLikesByActivityIdQuery } from '../../redux/runich-api/runich-api';
 import AvatarShowable from '../avatar-showable/avatar-showable';
@@ -11,7 +11,7 @@ const MAX_IN_ROW = 9;
 const MAX_NUMBER_IN_ROW_OTHER_PAGE = 3;
 
 export default function CardLikes({ activityId }: { activityId: string }) {
-  const { isLoading, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
+  const { error, isError, data: likes } = useGetLikesByActivityIdQuery(activityId);
   const { push } = useRouter();
   const pathname = usePathname();
   const isInComment = pathname.includes('comment');
@@ -20,15 +20,17 @@ export default function CardLikes({ activityId }: { activityId: string }) {
   const SHIFT_RIGHT = 23;
 
   return (
-    <Pressable testID="pushToActivityLikes" onPress={() => push(`/home/likes/${activityId}`)}>
+    <Pressable
+      testID="pushToActivityLikes"
+      onPress={() => push(`/home/likes/${activityId}`)}
+      disabled={isError}
+      style={isError && { opacity: 0.5 }}>
       <View
         style={[
           styles.likesLayout,
           !likes?.length && styles.withoutLikesLayout,
-          isInComment && { width: likes?.length * SHIFT_RIGHT + 13, marginTop: 4 },
+          (isInComment || isInActivity) && { width: likes?.length * SHIFT_RIGHT + 13, marginTop: 4 },
         ]}>
-        {isLoading && <ActivityIndicator testID="cardLikesActivityIndicator" />}
-        {error ? <Text variant="bodyMedium">An error occured</Text> : null}
         {likes && (
           <View style={{ position: 'relative' }}>
             {likes?.slice(0, lastLikeInTheRow).map(({ authorId, id }, index) => (
@@ -44,13 +46,13 @@ export default function CardLikes({ activityId }: { activityId: string }) {
                     { left: index * SHIFT_RIGHT },
                     likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 && { opacity: 0.1 },
                   ]}>
-                  {!process.env.IS_TESTING ? <AvatarShowable size={30} id={authorId} key={id} /> : null}
+                  <AvatarShowable size={30} id={authorId} key={id} />
                 </View>
               </Fragment>
             ))}
           </View>
         )}
-        {likes?.length && !isInComment && !isInActivity ? <NumberOfLikes likes={likes} /> : null}
+        {likes?.length && !isInComment && !isInActivity ? <NumberOfLikes likes={likes} error={error} /> : null}
       </View>
     </Pressable>
   );
