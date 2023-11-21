@@ -1,7 +1,8 @@
 import { Camera, CameraType } from 'expo-camera';
+import * as MediaLibrary from 'expo-media-library';
 import { useEffect, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { ActivityIndicator, Text } from 'react-native-paper';
 
 export default function CameraLauncher() {
   const [type, setType] = useState(CameraType.back);
@@ -15,11 +16,16 @@ export default function CameraLauncher() {
     setType((current) => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
   useEffect(() => {
-    requestPermission();
+    (async () => {
+      requestPermission();
+      await MediaLibrary.requestPermissionsAsync();
+    })();
   }, []);
 
   return (
     <View style={{ width: 50 }}>
+      {!permission && <ActivityIndicator size="small" />}
+      {!permission?.granted && <Text>You have no permission..</Text>}
       {permission && (
         <Camera type={type}>
           <View style={{ width: 50 }}>
