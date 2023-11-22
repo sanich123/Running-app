@@ -13,6 +13,7 @@ export const ACTIVITY_INITIAL_STATE = {
   isDisabledWhileSending: false,
   isHaveUnsyncedActivity: false,
   isManualAdding: false,
+  isCameraVisible: false,
   finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
   additionalInfo: {
     title: '',
@@ -103,6 +104,9 @@ export const activity = createSlice({
       state.manualHours = 0;
       state.manualMinutes = 0;
     },
+    setCameraIsVisible: (state, action) => {
+      state.isCameraVisible = action.payload;
+    },
   },
 });
 
@@ -127,5 +131,6 @@ export const {
   saveFinishedActivity,
   resetFinishedActivity,
   resetManualData,
+  setCameraIsVisible,
 } = activity.actions;
 export default activity.reducer;

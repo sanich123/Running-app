@@ -20,6 +20,7 @@ export default function TabLayout() {
   const pathname = usePathname();
   const theme = useTheme();
   const { language } = useSelector(({ language }) => language);
+  const { isCameraVisible } = useSelector(({ activity }) => activity);
   const commonSettings = {
     tabBarLabelStyle: { color: theme.colors.primaryContainer },
     headerStyle: { backgroundColor: theme.colors.primary },
@@ -77,7 +78,7 @@ export default function TabLayout() {
         redirect={!user}
         options={{
           ...commonSettings,
-          title: 'Profile',
+          title: language === LANGUAGES.english ? 'Profile' : 'Профиль',
           tabBarLabel: 'Profile',
           tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
           headerTitleStyle: { fontWeight: 'bold' },
@@ -87,7 +88,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings/index"
         options={{
-          title: 'Settings',
+          title: language === LANGUAGES.english ? 'Settings' : 'Настройки',
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
@@ -96,7 +97,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="users/index"
         options={{
-          title: 'Users',
+          title: language === LANGUAGES.english ? 'Users' : 'Пользователи',
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
@@ -109,7 +110,8 @@ export default function TabLayout() {
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
-          headerRight: () => <ActivitySaveBtn />,
+          headerShown: !isCameraVisible,
+          headerRight: !isCameraVisible ? () => <ActivitySaveBtn /> : null,
         }}
       />
     </Tabs>

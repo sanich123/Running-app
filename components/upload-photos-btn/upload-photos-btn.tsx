@@ -57,7 +57,6 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled }: UploadPho
           justifyContent: 'center',
           marginTop: 15,
           width: '45%',
-          height: 120,
         }}
         loading={isLoading}
         disabled={isDisabled || isDisabledWhileSending}>
