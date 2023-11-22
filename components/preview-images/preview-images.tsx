@@ -13,11 +13,12 @@ export default function PreviewImages({ setImages, images, isDisabled }: Preview
   const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
+
   return (
     <View style={styles.imagesWrapper}>
-      {images &&
+      {images.length > 0 &&
         images.map((image, index) => (
-          <View style={{ position: 'relative' }} key={`${image}/${index}`}>
+          <View style={{ position: 'relative', zIndex: 0 }} key={`${image}/${index}`}>
             <Pressable
               onPress={() => setImages(images.filter((uri) => uri !== image))}
               disabled={isDisabled || isDisabledWhileSending}
@@ -27,7 +28,7 @@ export default function PreviewImages({ setImages, images, isDisabled }: Preview
                 name="close-circle"
                 color={colors.onPrimaryContainer}
                 size={25}
-                style={{ position: 'absolute', right: 2, top: 16 }}
+                style={{ position: 'absolute', right: 2, top: 16, zIndex: 10 }}
               />
             </Pressable>
             <Image
