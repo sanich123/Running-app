@@ -30,7 +30,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled }: UploadPho
     <>
       <Button
         mode="outlined"
-        icon="camera"
+        icon="upload-outline"
         onPress={async () => {
           setIsDisabled(true);
           setIsLoading(true);
@@ -51,7 +51,14 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled }: UploadPho
             setIsLoading(false);
           }
         }}
-        style={{ marginTop: 15 }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: 15,
+          width: '45%',
+          height: 120,
+        }}
         loading={isLoading}
         disabled={isDisabled || isDisabledWhileSending}>
         {isLoading ? UPLOAD_PHOTO_BTN[language].isLoading : UPLOAD_PHOTO_BTN[language].isInitial}

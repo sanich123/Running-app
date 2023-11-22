@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CameraLauncher from '../../../components/camera/camera';
@@ -17,6 +18,7 @@ import { setIsNeedToResetInputs } from '../../../redux/activity/activity';
 
 export default function SaveResult() {
   const [isDisabled, setIsDisabled] = useState(false);
+  const [isCameraVisible, setIsCameraVisible] = useState(false);
   const { isNeedToResetInputs, isManualAdding } = useSelector(({ activity }) => activity);
   const dispatch = useDispatch();
 
@@ -27,17 +29,38 @@ export default function SaveResult() {
   }, [isNeedToResetInputs]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={!isCameraVisible && styles.container}>
       <NetworkIndicator />
-      <TextInputs isDisabled={isDisabled} />
-      <SportsBtns isDisabled={isDisabled} />
-      <EmotionBtns isDisabled={isDisabled} />
-      <Checkbox isDisabled={isDisabled} />
-      {isManualAdding && <DateTimePicker isDisabled={isDisabled} />}
-      {isManualAdding && <InputsDistanceTime isDisabled={isDisabled} />}
-      <UploadPhotosBtn isDisabled={isDisabled} setIsDisabled={setIsDisabled} />
-      <CameraLauncher />
-      <DeclineBtn isDisabled={isDisabled} />
+      {isCameraVisible && <CameraLauncher setIsCameraVisible={setIsCameraVisible} />}
+      {!isCameraVisible && (
+        <>
+          <TextInputs isDisabled={isDisabled} />
+          <SportsBtns isDisabled={isDisabled} />
+          <EmotionBtns isDisabled={isDisabled} />
+          <Checkbox isDisabled={isDisabled} />
+          {isManualAdding && <DateTimePicker isDisabled={isDisabled} />}
+          {isManualAdding && <InputsDistanceTime isDisabled={isDisabled} />}
+          <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Button
+              mode="outlined"
+              icon="camera"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: 15,
+                width: '45%',
+                height: 120,
+              }}
+              onPress={() => setIsCameraVisible(true)}>
+              Take a pic
+            </Button>
+
+            <UploadPhotosBtn isDisabled={isDisabled} setIsDisabled={setIsDisabled} />
+          </View>
+          <DeclineBtn isDisabled={isDisabled} />
+        </>
+      )}
       <StatusBar style="auto" />
     </ScrollView>
   );
