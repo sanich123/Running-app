@@ -27,7 +27,7 @@ export default function CameraLauncher() {
   return (
     <>
       {!permission && (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.isLoadingView}>
           <ActivityIndicator size="large" />
           <Text variant="bodyLarge">Getting your permission</Text>
         </View>
@@ -73,4 +73,5 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: 50,
   },
+  isLoadingView: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });
