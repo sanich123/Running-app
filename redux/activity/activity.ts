@@ -49,6 +49,12 @@ export const activity = createSlice({
     saveIsSwitchOn: (state, action) => {
       state.additionalInfo.isSwitchOn = action.payload;
     },
+    addPhotoUrl: (state, action) => {
+      state.additionalInfo.photoUrls = [...state.additionalInfo.photoUrls, action.payload];
+    },
+    deletePhotoUrl: (state, action) => {
+      state.additionalInfo.photoUrls = state.additionalInfo.photoUrls.filter((url) => url !== action.payload);
+    },
     savePhotoUrls: (state, action) => {
       state.additionalInfo.photoUrls = action.payload;
     },
@@ -132,5 +138,7 @@ export const {
   resetFinishedActivity,
   resetManualData,
   setCameraIsVisible,
+  addPhotoUrl,
+  deletePhotoUrl,
 } = activity.actions;
 export default activity.reducer;

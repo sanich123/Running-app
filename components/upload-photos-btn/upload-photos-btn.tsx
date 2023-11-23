@@ -6,14 +6,12 @@ import { UPLOAD_PHOTO_BTN, UploadPhotoBtnProps } from './ const';
 import { useAuth } from '../../auth/context/auth-context';
 import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
 import { EXPIRED_TIME } from '../../constants/const';
-import { savePhotoUrls } from '../../redux/activity/activity';
+import { addPhotoUrl, savePhotoUrls } from '../../redux/activity/activity';
 import { errorHandler } from '../../utils/error-handler';
 import { compressAndSendPhoto, getAccessToGallery } from '../../utils/file-sending';
-import PreviewImages from '../preview-images/preview-images';
 
-export default function UploadPhotosBtn({ isDisabled, setIsDisabled }: UploadPhotoBtnProps) {
+export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, images }: UploadPhotoBtnProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [images, setImages] = useState([]);
   const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
   const { user } = useAuth();
   const dispatch = useDispatch();
@@ -27,42 +25,38 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled }: UploadPho
   }, [isNeedToResetInputs]);
 
   return (
-    <>
-      <Button
-        mode="outlined"
-        icon="upload-outline"
-        onPress={async () => {
-          setIsDisabled(true);
-          setIsLoading(true);
-          try {
-            const result = await getAccessToGallery();
-            if (!result.canceled) {
-              const imgSrc = result.assets[0].uri;
-              const pathToPhoto = await compressAndSendPhoto(imgSrc, user.id);
-              console.log(pathToPhoto);
-              const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
-              setImages([...images, url]);
-              dispatch(savePhotoUrls([...images, url]));
-            }
-          } catch (error) {
-            errorHandler(error);
-          } finally {
-            setIsDisabled(false);
-            setIsLoading(false);
+    <Button
+      mode="outlined"
+      icon="upload-outline"
+      onPress={async () => {
+        setIsDisabled(true);
+        setIsLoading(true);
+        try {
+          const result = await getAccessToGallery();
+          if (!result.canceled) {
+            const imgSrc = result.assets[0].uri;
+            const pathToPhoto = await compressAndSendPhoto(imgSrc, user.id);
+            const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
+            setImages([...images, url]);
+            dispatch(addPhotoUrl(url));
           }
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginTop: 15,
-          width: '45%',
-        }}
-        loading={isLoading}
-        disabled={isDisabled || isDisabledWhileSending}>
-        {isLoading ? UPLOAD_PHOTO_BTN[language].isLoading : UPLOAD_PHOTO_BTN[language].isInitial}
-      </Button>
-      <PreviewImages images={images} setImages={setImages} isDisabled={isDisabled} />
-    </>
+        } catch (error) {
+          errorHandler(error);
+        } finally {
+          setIsDisabled(false);
+          setIsLoading(false);
+        }
+      }}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 15,
+        width: '45%',
+      }}
+      loading={isLoading}
+      disabled={isDisabled || isDisabledWhileSending}>
+      {isLoading ? UPLOAD_PHOTO_BTN[language].isLoading : UPLOAD_PHOTO_BTN[language].isInitial}
+    </Button>
   );
 }

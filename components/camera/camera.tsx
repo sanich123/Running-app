@@ -73,5 +73,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: 50,
   },
-  isLoadingView: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  isLoadingView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

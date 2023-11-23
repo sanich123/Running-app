@@ -3,6 +3,8 @@ import { LANGUAGES } from '../../constants/enums';
 export type UploadPhotoBtnProps = {
   isDisabled: boolean;
   setIsDisabled: (arg: boolean) => void;
+  setImages: (arg: string[]) => void;
+  images: string[];
 };
 
 export const UPLOAD_PHOTO_BTN = {
