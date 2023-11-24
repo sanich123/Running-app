@@ -1,6 +1,6 @@
 import { LANGUAGES } from '../../constants/enums';
 
-export const ACTIVITY_CLOSE_BTN = {
+export const ACTIVITY_CLOSE_BTN: ActivityCloseBtn = {
   [LANGUAGES.russian]: {
     btnText: 'Закрыть',
     alertName: 'Удаление активности',
@@ -14,3 +14,9 @@ export const ACTIVITY_CLOSE_BTN = {
     alertAccept: 'Yes, I am sure',
   },
 } as const;
+
+export type ActivityCloseBtn = {
+  [key in LANGUAGES]: {
+    [key: string]: string;
+  };
+};

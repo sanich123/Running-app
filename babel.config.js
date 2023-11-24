@@ -12,6 +12,9 @@ module.exports = function (api) {
         {
           alias: {
             '@C': './components',
+            '@const': './constants',
+            '@R': './redux',
+            '@U': './utils',
           },
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },

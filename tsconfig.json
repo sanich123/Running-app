@@ -15,13 +15,16 @@
     "baseUrl": "./",
     "paths": {
       "@C/*": ["components/*"],
-    }
+      "@const/*": ["constants/*"],
+      "@R/*": ["redux/*"],
+      "@U/*": ["utils/*"]
+    },
+    "noImplicitAny": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
   },
-  "noImplicitAny": true,
-  "noFallthroughCasesInSwitch": true,
-  "allowSyntheticDefaultImports": true,
-  "esModuleInterop": true,
-  "forceConsistentCasingInFileNames": true,
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
   "exclude": ["node_modules"]
 }
