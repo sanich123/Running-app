@@ -1,15 +1,14 @@
+import { useAuth } from '@A/context/auth-context';
+import { setIsAppShuted, setActivityStatus } from '@R/location/location';
+import { changeNetworkState } from '@R/network/network';
+import { getKeyFromAsyncStorage } from '@U/async-storage';
+import { STATUSES } from '@const/enums';
 import NetInfo from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
 import { Redirect } from 'expo-router';
 import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { useAuth } from '../auth/context/auth-context';
-import { STATUSES } from '../constants/enums';
-import { setActivityStatus, setIsAppShuted } from '../redux/location/location';
-import { changeNetworkState } from '../redux/network/network';
-import { getKeyFromAsyncStorage } from '../utils/async-storage';
 
 export default function Page() {
   const { user } = useAuth();

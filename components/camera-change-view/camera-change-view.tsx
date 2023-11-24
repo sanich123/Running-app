@@ -2,7 +2,12 @@ import { CameraType } from 'expo-camera';
 import { Pressable } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 
-export default function CameraChangeView({ setType, type }: { type: CameraType; setType: (arg: CameraType) => void }) {
+type CamerChangeViewProps = {
+  type: CameraType;
+  setType: (arg: CameraType) => void;
+};
+
+export default function CameraChangeView({ setType, type }: CamerChangeViewProps) {
   const { colors } = useTheme();
   return (
     <Pressable

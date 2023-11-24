@@ -1,3 +1,4 @@
+import { passwordMatcher } from '@const/regexp';
 import { useState } from 'react';
 import { HelperText, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -9,7 +10,6 @@ import {
   PASSWORD_INPUT_TEST_ID,
   PasswordInputProps,
 } from './const';
-import { passwordMatcher } from '../../constants/regexp';
 
 export default function PasswordInput({
   password,
@@ -24,7 +24,7 @@ export default function PasswordInput({
     <>
       <TextInput
         testID={PASSWORD_INPUT_TEST_ID}
-        label={PASSWORD_INPUT[language].label}
+        label={PASSWORD_INPUT[language as keyof typeof PASSWORD_INPUT].label}
         value={password}
         onChangeText={(password) => {
           if (!passwordMatcher.test(password)) {
@@ -35,7 +35,7 @@ export default function PasswordInput({
           setPassword(password);
         }}
         onEndEditing={() => (!passwordMatcher.test(password) ? setPasswordError(true) : setPasswordError(false))}
-        placeholder={PASSWORD_INPUT[language].placeholder}
+        placeholder={PASSWORD_INPUT[language as keyof typeof PASSWORD_INPUT].placeholder}
         secureTextEntry={passwordIsNotVisible}
         left={<TextInput.Icon icon="form-textbox-password" testID={PASSWORD_INPUT_LEFT_ICON} disabled={isDisabled} />}
         right={
@@ -52,7 +52,7 @@ export default function PasswordInput({
         disabled={isDisabled}
       />
       <HelperText type="error" visible={passwordError} padding="none">
-        {PASSWORD_INPUT[language].helperText}
+        {PASSWORD_INPUT[language as keyof typeof PASSWORD_INPUT].helperText}
       </HelperText>
     </>
   );

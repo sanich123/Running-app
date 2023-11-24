@@ -19,7 +19,7 @@ export const EMAIL_INPUT = {
     label: 'Электронная почта',
     helper: 'Эл.почта должна быть валидной',
   },
-};
+} as const;
 
 export const EMAIL_INPUT_TEST_ID = 'inputEmail';
 export const EMAIL_INPUT_LEFT_ICON = 'inputEmailLeftIcon';

@@ -1,12 +1,12 @@
+import { useAuth } from '@A/context/auth-context';
+import { useGetFriendsByUserIdQuery } from '@R/runich-api/runich-api';
+import { errorExtracter } from '@U/error-handler';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { FOLLOWING_COUNT } from './const';
-import { useAuth } from '../../auth/context/auth-context';
-import { useGetFriendsByUserIdQuery } from '../../redux/runich-api/runich-api';
-import { errorExtracter } from '../../utils/error-handler';
 
 export default function FollowingCount() {
   const { user } = useAuth();
@@ -27,7 +27,9 @@ export default function FollowingCount() {
       disabled={isError || isLoading}
       style={(isError || isLoading) && { opacity: 0.5 }}>
       <Text variant="bodySmall">
-        {isError ? `${FOLLOWING_COUNT[language].error}:` : FOLLOWING_COUNT[language].followings}
+        {isError
+          ? `${FOLLOWING_COUNT[language as keyof typeof FOLLOWING_COUNT].error}:`
+          : FOLLOWING_COUNT[language as keyof typeof FOLLOWING_COUNT].followings}
       </Text>
       {isLoading && <ActivityIndicator size="small" />}
       {!isLoading && (

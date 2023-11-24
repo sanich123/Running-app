@@ -1,10 +1,9 @@
+import { errorHandler } from '@U/error-handler';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { MutableRefObject } from 'react';
 import { Pressable } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
-
-import { errorHandler } from '../../utils/error-handler';
 
 type CameraShotBtnProps = {
   cameraRef: MutableRefObject<Camera>;

@@ -7,4 +7,4 @@ export const EDIT_BTN = {
   [LANGUAGES.russian]: {
     edit: 'Редактировать',
   },
-};
+} as const;

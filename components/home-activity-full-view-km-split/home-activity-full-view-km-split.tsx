@@ -1,3 +1,4 @@
+import { formatDurationMinsSecs } from '@U/time-formatter';
 import { LocationObject } from 'expo-location';
 import { Fragment } from 'react';
 import { View } from 'react-native';
@@ -5,7 +6,6 @@ import { Text, Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { KM_SPLITS } from './const';
-import { formatDurationMinsSecs } from '../../utils/time-formatter';
 
 export type KilometresSplit = {
   lastKilometerAltitude: number;
@@ -20,22 +20,22 @@ export default function HomeActivityFullViewKmSplit({ kilometresSplit }: { kilom
   return (
     <>
       <Text variant="displaySmall" style={{ paddingBottom: 20, paddingTop: 20 }}>
-        {KM_SPLITS[language].splits}
+        {KM_SPLITS[language as keyof typeof KM_SPLITS].splits}
       </Text>
       <View style={{ flex: 1, flexDirection: 'row', width: '100%', paddingBottom: 20 }}>
         <View style={{ flex: 2 }}>
           <Text variant="labelLarge" style={{ fontWeight: 'bold' }}>
-            {KM_SPLITS[language].km}
+            {KM_SPLITS[language as keyof typeof KM_SPLITS].km}
           </Text>
         </View>
         <View style={{ flex: 16 }}>
           <Text variant="labelLarge" style={{ fontWeight: 'bold' }}>
-            {KM_SPLITS[language].pace}
+            {KM_SPLITS[language as keyof typeof KM_SPLITS].pace}
           </Text>
         </View>
         <View style={{ display: 'flex' }}>
           <Text variant="labelLarge" style={{ fontWeight: 'bold' }}>
-            {KM_SPLITS[language].elev}
+            {KM_SPLITS[language as keyof typeof KM_SPLITS].elev}
           </Text>
         </View>
       </View>

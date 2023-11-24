@@ -9,7 +9,8 @@ export const LOGIN_BTN = {
     login: 'Логин',
     logining: 'Логинимся..',
   },
-};
+} as const;
+
 export const REGISTER_BTN = {
   [LANGUAGES.english]: {
     register: 'Register',
@@ -19,7 +20,8 @@ export const REGISTER_BTN = {
     register: 'Регистрация',
     registering: 'Регистрирую..',
   },
-};
+} as const;
+
 export type LoginBtnProps = {
   email: string;
   password: string;

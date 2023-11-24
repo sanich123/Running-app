@@ -10,10 +10,16 @@ export default function RegisterNavigation({ isRegister, setIsRegister, isDisabl
   const { language } = useSelector(({ language }) => language);
   return (
     <View style={btnWrapper}>
-      <Text>{isRegister ? REGISTER_NAVIGATION[language].text : LOGIN_NAVIGATION[language].text}</Text>
+      <Text>
+        {isRegister
+          ? REGISTER_NAVIGATION[language as keyof typeof REGISTER_NAVIGATION].text
+          : LOGIN_NAVIGATION[language as keyof typeof LOGIN_NAVIGATION].text}
+      </Text>
       <Pressable style={navigateBtn} onPress={() => setIsRegister(!isRegister)} disabled={isDisabled}>
         <Text variant="bodyMedium" style={[{ color: 'white' }, isDisabled && { opacity: 0.5 }]}>
-          {isRegister ? REGISTER_NAVIGATION[language].btn : LOGIN_NAVIGATION[language].btn}
+          {isRegister
+            ? REGISTER_NAVIGATION[language as keyof typeof REGISTER_NAVIGATION].btn
+            : LOGIN_NAVIGATION[language as keyof typeof LOGIN_NAVIGATION].btn}
         </Text>
       </Pressable>
     </View>

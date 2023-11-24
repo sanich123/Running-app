@@ -1,10 +1,10 @@
+import { saveEmotion } from '@R/activity/activity';
+import { store } from '@R/store';
 import { useEffect, useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS, EMOTIONS_BTNS_VALUES, EMOTION_BTNS } from './const';
-import { saveEmotion } from '../../redux/activity/activity';
-import { store } from '../../redux/store';
+import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS } from './const';
 
 export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
   const [emotion, setEmotion] = useState<EMOTIONS_BTNS_VALUES>(store.getState().activity.additionalInfo.emotion);
@@ -22,14 +22,14 @@ export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
   return (
     <SegmentedButtons
       value={emotion}
-      onValueChange={(emotion) => {
+      onValueChange={(emotion: EMOTIONS_BTNS_VALUES) => {
         dispatch(saveEmotion(emotion));
         setEmotion(emotion);
       }}
       buttons={[
         {
           value: EMOTIONS_BTNS_VALUES.good,
-          label: EMOTION_BTNS[language].fineLabel,
+          label: EMOTION_BTNS[language as keyof typeof EMOTION_BTNS].fineLabel,
           icon: EMOTIONS_BTNS_ICONS.iconHappy,
           showSelectedCheck: true,
           disabled: isDisabled || isDisabledWhileSending,
@@ -37,7 +37,7 @@ export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
         },
         {
           value: EMOTIONS_BTNS_VALUES.normal,
-          label: EMOTION_BTNS[language].normalLabel,
+          label: EMOTION_BTNS[language as keyof typeof EMOTION_BTNS].normalLabel,
           icon: EMOTIONS_BTNS_ICONS.iconNeutral,
           showSelectedCheck: true,
           disabled: isDisabled || isDisabledWhileSending,
@@ -45,7 +45,7 @@ export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
         },
         {
           value: EMOTIONS_BTNS_VALUES.fucked,
-          label: EMOTION_BTNS[language].fuckedLabel,
+          label: EMOTION_BTNS[language as keyof typeof EMOTION_BTNS].fuckedLabel,
           icon: EMOTIONS_BTNS_ICONS.iconFucked,
           showSelectedCheck: true,
           disabled: isDisabled || isDisabledWhileSending,

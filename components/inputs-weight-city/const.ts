@@ -7,6 +7,7 @@ export type InputsWeightCityProps = {
   setCity: (arg: string) => void;
   setWeight: (arg: string) => void;
 };
+
 export const WEIGHT_CITY = {
   [LANGUAGES.english]: {
     cityPlaceholder: 'Where are you from',
@@ -20,7 +21,7 @@ export const WEIGHT_CITY = {
     cityLabel: 'Город',
     weightLabel: 'Вес (кг)',
   },
-};
+} as const;
 
 export const CITY_TEST_ID = 'inputCity';
 export const WEIGHT_TEST_ID = 'inputWeight';

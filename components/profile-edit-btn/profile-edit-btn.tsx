@@ -12,7 +12,7 @@ export default function ProfileEditBtn() {
   return (
     <Pressable onPress={() => push('/profile/settings')}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>
-        {EDIT_BTN[language].edit}
+        {EDIT_BTN[language as keyof typeof EDIT_BTN].edit}
       </Text>
     </Pressable>
   );

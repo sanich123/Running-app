@@ -13,4 +13,4 @@ export const KM_SPLITS = {
     elev: 'ВЫС',
     km: 'КМ',
   },
-};
+} as const;

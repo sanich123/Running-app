@@ -9,4 +9,4 @@ export const FOLLOWING_COUNT = {
     error: 'Ошибка',
     followings: 'Отслеж.',
   },
-};
+} as const;

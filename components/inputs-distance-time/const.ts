@@ -17,7 +17,7 @@ export const INPUTS_DISTANCE_TIME = {
     hoursPlaceholder: 'Часы',
     minutesPlaceholder: 'Минуты',
   },
-};
+} as const;
 
 export const INPUT_DISTANCE_ID = 'inputDistance';
 export const INPUT_HOURS_ID = 'inputHours';

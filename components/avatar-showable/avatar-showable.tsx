@@ -1,8 +1,8 @@
+import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
 import { Image, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Avatar } from 'react-native-paper';
 
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
-import { useGetUserProfileByIdQuery } from '../../redux/runich-api/runich-api';
 
 export default function AvatarShowable({ size, id }: { size: number; id: string }) {
   const { isLoading, data: profile, error } = useGetUserProfileByIdQuery(id);

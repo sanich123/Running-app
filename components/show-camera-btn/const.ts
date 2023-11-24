@@ -7,4 +7,4 @@ export const SHOW_CAMERA_BTN = {
   [LANGUAGES.russian]: {
     text: 'Сфоткаццо',
   },
-};
+} as const;

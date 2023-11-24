@@ -1,25 +1,17 @@
+import MapKmSplit from '@C/map-km-split/map-km-split';
+import MapNavIcon from '@C/map-nav-icon/map-nav-icon';
+import MapRouteLine from '@C/map-route-line/map-route-line';
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
+import { LocationObject } from 'expo-location';
 import { useEffect, useRef } from 'react';
-import { ToastAndroid } from 'react-native';
 import { useSelector } from 'react-redux';
-
-import MapKmSplit from '../map-km-split/map-km-split';
-import MapNavIcon from '../map-nav-icon/map-nav-icon';
-import MapRouteLine from '../map-route-line/map-route-line';
 
 export default function Map() {
   const cameraRef = useRef<Camera>(null);
-  const { initialLocation, isMapVisible, locationsWithPauses, lastPosition, isTooMuchSpeed, kilometresSplit } =
-    useSelector(({ location }) => location);
+  const { initialLocation, isMapVisible, locationsWithPauses, lastPosition, kilometresSplit } = useSelector(
+    ({ location }) => location,
+  );
 
-  if (isTooMuchSpeed) {
-    ToastAndroid.show('IsTooMuchSpeed, over 3 min/km', ToastAndroid.SHORT);
-  } else {
-    ToastAndroid.show(
-      `Locations have ${locationsWithPauses.reduce((total, el) => total + el.length, 0)}`,
-      ToastAndroid.SHORT,
-    );
-  }
   useEffect(() => {
     if (lastPosition) {
       cameraRef.current?.setCamera({
@@ -43,7 +35,7 @@ export default function Map() {
       <MapKmSplit kilometresSplit={kilometresSplit} />
       <MapNavIcon />
       {locationsWithPauses[0]?.length > 1
-        ? locationsWithPauses.map((locations) => {
+        ? locationsWithPauses.map((locations: LocationObject[]) => {
             if (locations?.length > 1) {
               const key = `${locations[0].coords.longitude}, ${locations[locations.length - 1].coords.latitude}`;
               return <MapRouteLine key={key} locations={locations} />;

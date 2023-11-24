@@ -1,14 +1,13 @@
+import CameraChangeView from '@C/camera-change-view/camera-change-view';
+import CameraCloseBtn from '@C/camera-close/camera-close-btn';
+import CameraFlash from '@C/camera-flash/camera-flash';
+import CameraShotBtn from '@C/camera-shot-btn/camera-shot-btn';
+import PreviewImages from '@C/preview-images/preview-images';
 import { Camera, CameraType, FlashMode } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-
-import CameraChangeView from '../camera-change-view/camera-change-view';
-import CameraCloseBtn from '../camera-close/camera-close-btn';
-import CameraFlash from '../camera-flash/camera-flash';
-import CameraShotBtn from '../camera-shot-btn/camera-shot-btn';
-import PreviewImages from '../preview-images/preview-images';
 
 export default function CameraLauncher() {
   const cameraRef = useRef(null);

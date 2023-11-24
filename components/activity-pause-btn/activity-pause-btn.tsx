@@ -1,9 +1,9 @@
+import { setActivityStatus } from '@R/location/location';
+import { STATUSES, LANGUAGES } from '@const/enums';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ACTIVITY_PAUSE_BTN } from './const';
-import { LANGUAGES, STATUSES } from '../../constants/enums';
-import { setActivityStatus } from '../../redux/location/location';
 
 const { paused, continued } = STATUSES;
 
@@ -17,7 +17,9 @@ export default function ActivityPauseBtn() {
       <Pressable
         style={styles.btnStyle}
         onPress={() => dispatch(setActivityStatus(activityStatus === paused ? continued : paused))}>
-        <Text style={[styles.textStyle, isRussianText && { fontSize: 15 }]}>{ACTIVITY_PAUSE_BTN[language].resume}</Text>
+        <Text style={[styles.textStyle, isRussianText && { fontSize: 15 }]}>
+          {ACTIVITY_PAUSE_BTN[language as keyof typeof ACTIVITY_PAUSE_BTN].resume}
+        </Text>
       </Pressable>
     </View>
   );

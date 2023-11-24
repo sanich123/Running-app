@@ -1,7 +1,6 @@
+import { getReducedLocations } from '@U/location-utils';
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
-
-import { getReducedLocations } from '../../utils/location-utils';
 
 export default function MapRouteLine({ locations }: { locations: LocationObject[] }) {
   const coordinates = getReducedLocations(locations).map(({ coords }) => [coords.longitude, coords.latitude]);

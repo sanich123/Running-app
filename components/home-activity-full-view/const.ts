@@ -20,4 +20,4 @@ export const HOME_ACTIVITY_FULL_VIEW = {
     km: 'км',
     m: 'м',
   },
-};
+} as const;

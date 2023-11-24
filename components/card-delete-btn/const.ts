@@ -11,7 +11,7 @@ export const CARD_DELETE_BTN = {
     question: 'Вы уверены?',
     accept: 'Да, я уверен',
   },
-};
+} as const;
 
 export const CARD_DELETE_BTN_TEST_ID = 'activityCardDeleteBtn';
 export const CARD_DELETE_BTN_ICON = 'delete';

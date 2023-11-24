@@ -11,7 +11,7 @@ export const NETWORK_INDICATOR = {
     slowNetwork: 'You have slow connection, 3g or 2g',
     type: 'Тип соединения',
   },
-};
+} as const;
 
 export const MOCK_NETWORK_STATE = {
   details: {

@@ -13,8 +13,8 @@ export default function InputsWeightCity({ city, setCity, weight, setWeight, isD
         testID={CITY_TEST_ID}
         mode="outlined"
         style={{ width: '50%' }}
-        label={WEIGHT_CITY[language].cityLabel}
-        placeholder={WEIGHT_CITY[language].cityPlaceholder}
+        label={WEIGHT_CITY[language as keyof typeof WEIGHT_CITY].cityLabel}
+        placeholder={WEIGHT_CITY[language as keyof typeof WEIGHT_CITY].cityPlaceholder}
         value={city}
         onChangeText={(city) => setCity(city)}
         disabled={isDisabled || isDisabledWhileSendingProfile}
@@ -23,8 +23,8 @@ export default function InputsWeightCity({ city, setCity, weight, setWeight, isD
         testID={WEIGHT_TEST_ID}
         mode="outlined"
         style={{ width: '50%' }}
-        label={WEIGHT_CITY[language].weightLabel}
-        placeholder={WEIGHT_CITY[language].weightPlaceholder}
+        label={WEIGHT_CITY[language as keyof typeof WEIGHT_CITY].weightLabel}
+        placeholder={WEIGHT_CITY[language as keyof typeof WEIGHT_CITY].weightPlaceholder}
         keyboardType="numeric"
         value={weight}
         onChangeText={(weight) => setWeight(weight)}

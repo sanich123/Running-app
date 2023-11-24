@@ -9,6 +9,6 @@ export const UPDATE_BTN = {
     update: 'Обновить',
     updating: 'Обновляю..',
   },
-};
+} as const;
 
 export const UPDATE_BTN_ERROR_MSG = 'An error occured during sending profile info. Try again!';

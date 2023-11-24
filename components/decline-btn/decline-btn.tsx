@@ -16,11 +16,11 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
       mode="outlined"
       onPress={() => {
         Alert.alert(
-          DECLINE_BTN[language].action,
-          DECLINE_BTN[language].question,
+          DECLINE_BTN[language as keyof typeof DECLINE_BTN].action,
+          DECLINE_BTN[language as keyof typeof DECLINE_BTN].question,
           [
             {
-              text: DECLINE_BTN[language].accept,
+              text: DECLINE_BTN[language as keyof typeof DECLINE_BTN].accept,
               onPress: () => push('/home'),
               style: 'cancel',
             },
@@ -30,7 +30,7 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
       }}
       style={{ marginTop: 15 }}
       disabled={isDisabled || isDisabledWhileSending}>
-      {DECLINE_BTN[language].cancel}
+      {DECLINE_BTN[language as keyof typeof DECLINE_BTN].cancel}
     </Button>
   );
 }

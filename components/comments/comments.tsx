@@ -1,16 +1,15 @@
+import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import CommentLikeBtn from '@C/comment-like-btn/comment-like-btn';
+import CommentLikesLength from '@C/comment-likes-length/comment-likes-length';
+import ErrorComponent from '@C/error-component/error-component';
+import UserNameSurname from '@C/user-name-surname/user-name-surname';
+import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
+import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import { useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
-
-import { useGetCommentsByActivityIdQuery } from '../../redux/runich-api/runich-api';
-import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
-import AvatarShowable from '../avatar-showable/avatar-showable';
-import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
-import CommentLikesLength from '../comment-likes-length/comment-likes-length';
-import ErrorComponent from '../error-component/error-component';
-import UserNameSurname from '../user-name-surname/user-name-surname';
 
 export default function Comments({ id }: { id: string }) {
   const { isLoading, error, data: comments } = useGetCommentsByActivityIdQuery(id);
@@ -22,35 +21,37 @@ export default function Comments({ id }: { id: string }) {
       {isLoading && <ActivityIndicator testID="commentsActivityIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
       {!error &&
-        comments?.map(({ authorId, comment, id, date }) => (
-          <Fragment key={id}>
-            <Pressable onPress={() => push(`/home/profile/${authorId}`)}>
-              <View style={styles.commentWrapper}>
-                <AvatarShowable size={28} id={authorId} />
-                <View style={{ display: 'flex' }}>
-                  <UserNameSurname userId={authorId} size="bodyMedium" />
-                  <View style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Text variant="bodySmall">{formatDate(date, language)} </Text>
-                    <Text variant="bodySmall">{getHoursMinutes(date, language)}</Text>
+        comments?.map(
+          ({ authorId, comment, id, date }: { authorId: string; comment: string; id: string; date: Date }) => (
+            <Fragment key={id}>
+              <Pressable onPress={() => push(`/home/profile/${authorId}`)}>
+                <View style={styles.commentWrapper}>
+                  <AvatarShowable size={28} id={authorId} />
+                  <View style={{ display: 'flex' }}>
+                    <UserNameSurname userId={authorId} size="bodyMedium" />
+                    <View style={{ display: 'flex', flexDirection: 'row' }}>
+                      <Text variant="bodySmall">{formatDate(date, language)} </Text>
+                      <Text variant="bodySmall">{getHoursMinutes(date, language)}</Text>
+                    </View>
                   </View>
                 </View>
+              </Pressable>
+              <View style={styles.textCommentWrapper}>
+                <Text variant="bodyLarge">{comment}</Text>
               </View>
-            </Pressable>
-            <View style={styles.textCommentWrapper}>
-              <Text variant="bodyLarge">{comment}</Text>
-            </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                columnGap: 15,
-              }}>
-              <CommentLikeBtn commentId={id} />
-              <CommentLikesLength id={id} />
-            </View>
-            <Divider />
-          </Fragment>
-        ))}
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  columnGap: 15,
+                }}>
+                <CommentLikeBtn commentId={id} />
+                <CommentLikesLength id={id} />
+              </View>
+              <Divider />
+            </Fragment>
+          ),
+        )}
     </View>
   );
 }

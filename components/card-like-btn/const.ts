@@ -12,4 +12,4 @@ export const CARD_LIKE_BTN = {
   [LANGUAGES.russian]: {
     errorMsg: 'Произошла ошибка во время отправки лайка',
   },
-};
+} as const;

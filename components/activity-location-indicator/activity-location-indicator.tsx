@@ -1,10 +1,9 @@
-import { StyleSheet } from 'react-native';
+import useGetCurrentLocation from '@U/hooks/use-get-current-location';
+import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { ACTIVITY_LOCATION_INDICATOR } from './const';
-import useGetCurrentLocation from '../../utils/hooks/use-get-current-location';
-import { View } from '../Themed';
 
 export default function ActivityLocationIndicator() {
   const { isLoading, isError, isSuccess } = useGetCurrentLocation();
@@ -13,19 +12,23 @@ export default function ActivityLocationIndicator() {
     <>
       {isLoading ? (
         <View style={[styles.indicatorLayout, { backgroundColor: 'yellow' }]}>
-          <Text variant="bodyLarge">{ACTIVITY_LOCATION_INDICATOR[language].isLoading}</Text>
+          <Text variant="bodyLarge">
+            {ACTIVITY_LOCATION_INDICATOR[language as keyof typeof ACTIVITY_LOCATION_INDICATOR].isLoading}
+          </Text>
         </View>
       ) : null}
       {isError ? (
         <View style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
           <Text variant="bodyLarge" style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
-            {ACTIVITY_LOCATION_INDICATOR[language].isError}
+            {ACTIVITY_LOCATION_INDICATOR[language as keyof typeof ACTIVITY_LOCATION_INDICATOR].isError}
           </Text>
         </View>
       ) : null}
       {isSuccess ? (
         <View style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
-          <Text variant="bodyLarge">{ACTIVITY_LOCATION_INDICATOR[language].isSuccess}</Text>
+          <Text variant="bodyLarge">
+            {ACTIVITY_LOCATION_INDICATOR[language as keyof typeof ACTIVITY_LOCATION_INDICATOR].isSuccess}
+          </Text>
         </View>
       ) : null}
     </>

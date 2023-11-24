@@ -1,11 +1,11 @@
 import { setActivityStatus, resetLastKm } from '@R/location/location';
+import { STATUSES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { Alert, Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ACTIVITY_CLOSE_BTN } from './const';
-import { STATUSES } from '../../constants/enums';
 
 export default function ActivityCloseBtn() {
   const router = useRouter();

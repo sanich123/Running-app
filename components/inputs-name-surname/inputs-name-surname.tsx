@@ -21,8 +21,8 @@ export default function InputsNameSurname({ name, surname, setName, setSurname, 
         testID={NAME_TEST_ID}
         mode="outlined"
         style={{ width: '50%' }}
-        label={NAME_SURNAME[language].nameLabel}
-        placeholder={NAME_SURNAME[language].namePlaceholder}
+        label={NAME_SURNAME[language as keyof typeof NAME_SURNAME].nameLabel}
+        placeholder={NAME_SURNAME[language as keyof typeof NAME_SURNAME].namePlaceholder}
         value={name}
         onChangeText={(name) => setName(name)}
         disabled={isDisabled || isDisabledWhileSendingProfile}
@@ -31,8 +31,8 @@ export default function InputsNameSurname({ name, surname, setName, setSurname, 
         testID={SURNAME_TEST_ID}
         mode="outlined"
         style={{ width: '50%' }}
-        label={NAME_SURNAME[language].surnameLabel}
-        placeholder={NAME_SURNAME[language].surnamePlaceholder}
+        label={NAME_SURNAME[language as keyof typeof NAME_SURNAME].surnameLabel}
+        placeholder={NAME_SURNAME[language as keyof typeof NAME_SURNAME].surnamePlaceholder}
         value={surname}
         onChangeText={(surname) => setSurname(surname)}
         disabled={isDisabled || isDisabledWhileSendingProfile}

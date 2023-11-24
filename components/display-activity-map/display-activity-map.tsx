@@ -2,6 +2,7 @@ import { MapView, Camera } from '@rnmapbox/maps';
 import bbox from '@turf/bbox';
 import { LocationObject } from 'expo-location';
 import { usePathname } from 'expo-router';
+//@ts-ignore
 import lineString from 'turf-linestring';
 
 import { KilometresSplit } from '../home-activity-full-view-km-split/home-activity-full-view-km-split';

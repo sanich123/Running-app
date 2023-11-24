@@ -30,4 +30,4 @@ export const NUMBER_OF_LIKES = {
     manyGaveLikes: 'лайкнули',
     error: 'Ошибка',
   },
-};
+} as const;

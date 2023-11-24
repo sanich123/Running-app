@@ -8,7 +8,9 @@ export default function EmptyActivitiesList() {
   const { language } = useSelector(({ language }) => language);
   return (
     <View>
-      <Text variant="titleLarge">{EMPTY_ACTIVITIES_LIST[language].emptyActivities}</Text>
+      <Text variant="titleLarge">
+        {EMPTY_ACTIVITIES_LIST[language as keyof typeof EMPTY_ACTIVITIES_LIST].emptyActivities}
+      </Text>
     </View>
   );
 }

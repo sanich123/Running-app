@@ -1,12 +1,12 @@
+import { supabase } from '@A/supabase/supabase-init';
+import { saveEmailPassword } from '@R/profile/profile';
+import { errorHandler } from '@U/error-handler';
+import { emailPasswordHandler } from '@U/validate-email-password';
 import { Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { LOGIN_BTN, LoginBtnProps, REGISTER_BTN } from './const';
-import { supabase } from '../../auth/supabase/supabase-init';
-import { saveEmailPassword } from '../../redux/profile/profile';
-import { errorHandler } from '../../utils/error-handler';
-import { emailPasswordHandler } from '../../utils/validate-email-password';
+import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN } from './const';
 
 export default function LoginRegisterBtn({
   email,
@@ -49,10 +49,10 @@ export default function LoginRegisterBtn({
           setIsDisabled(false);
         }
       }}>
-      {isRegister && !isLoading && REGISTER_BTN[language].register}
-      {isRegister && isLoading && REGISTER_BTN[language].registering}
-      {!isRegister && !isLoading && LOGIN_BTN[language].login}
-      {!isRegister && isLoading && LOGIN_BTN[language].logining}
+      {isRegister && !isLoading && REGISTER_BTN[language as keyof typeof REGISTER_BTN].register}
+      {isRegister && isLoading && REGISTER_BTN[language as keyof typeof REGISTER_BTN].registering}
+      {!isRegister && !isLoading && LOGIN_BTN[language as keyof typeof LOGIN_BTN].login}
+      {!isRegister && isLoading && LOGIN_BTN[language as keyof typeof LOGIN_BTN].logining}
     </Button>
   );
 }

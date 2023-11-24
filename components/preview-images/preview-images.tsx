@@ -1,9 +1,8 @@
+import PreviewImage from '@C/preview-image/preview-image';
+import PreviewImageCloseBtn from '@C/preview-image-close-btn/preview-image-close-btn';
+import PreviewUploadableImage from '@C/preview-uploadable-image/preview-uploadable-image';
 import { View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
-
-import PreviewImage from '../preview-image/preview-image';
-import PreviewImageCloseBtn from '../preview-image-close-btn/preview-image-close-btn';
-import PreviewUploadableImage from '../preview-uploadable-image/preview-uploadable-image';
 
 export type PreviewImagesProps = {
   images: string[];

@@ -1,3 +1,15 @@
+import { useAuth } from '@A/context/auth-context';
+import {
+  setIsDisableWhileSending,
+  resetActivityInfo,
+  setIsNeedToResetInputs,
+  saveUnsendedActivity,
+  setIsHaveUnsyncedActivity,
+} from '@R/activity/activity';
+import { resetLocationsFromBackground } from '@R/location/location';
+import { useAddActivityByUserIdMutation, runichApi } from '@R/runich-api/runich-api';
+import { getSpeedInMinsInKm } from '@U/location-utils';
+import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable, ToastAndroid } from 'react-native';
@@ -5,18 +17,6 @@ import { useTheme, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
-import { useAuth } from '../../auth/context/auth-context';
-import {
-  resetActivityInfo,
-  saveUnsendedActivity,
-  setIsDisableWhileSending,
-  setIsHaveUnsyncedActivity,
-  setIsNeedToResetInputs,
-} from '../../redux/activity/activity';
-import { resetLocationsFromBackground } from '../../redux/location/location';
-import { runichApi, useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
-import { getSpeedInMinsInKm } from '../../utils/location-utils';
-import { getMillisecondsFromHoursMinutes } from '../../utils/time-formatter';
 
 export default function ActivitySaveBtn() {
   const { colors } = useTheme();
@@ -35,7 +35,8 @@ export default function ActivitySaveBtn() {
   const { language } = useSelector(({ language }) => language);
   const [sendActivity, { error, data, isSuccess, isError }] = useAddActivityByUserIdMutation();
   const dispatch = useDispatch();
-  let activityToSend;
+
+  let activityToSend: { body: any; id: string };
 
   useEffect(() => {
     dispatch(setIsDisableWhileSending(false));
@@ -59,7 +60,7 @@ export default function ActivitySaveBtn() {
       dispatch(setIsHaveUnsyncedActivity(true));
       dispatch(runichApi.util.resetApiState());
       console.log(error);
-      ToastAndroid.show(ACTIVITY_SAVE_BTN[language].errorMsg, ToastAndroid.LONG);
+      ToastAndroid.show(ACTIVITY_SAVE_BTN[language as keyof typeof ACTIVITY_SAVE_BTN].errorMsg, ToastAndroid.LONG);
       push('/home/');
     }
   }, [data, error]);
@@ -89,7 +90,9 @@ export default function ActivitySaveBtn() {
       <Text
         variant="titleMedium"
         style={{ color: colors.primaryContainer, marginRight: 15, opacity: isDisabledWhileSending ? 0.5 : 1 }}>
-        {isDisabledWhileSending ? ACTIVITY_SAVE_BTN[language].saving : ACTIVITY_SAVE_BTN[language].save}
+        {isDisabledWhileSending
+          ? ACTIVITY_SAVE_BTN[language as keyof typeof ACTIVITY_SAVE_BTN].saving
+          : ACTIVITY_SAVE_BTN[language as keyof typeof ACTIVITY_SAVE_BTN].save}
       </Text>
     </Pressable>
   );

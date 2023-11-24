@@ -1,10 +1,9 @@
+import { useAuth } from '@A/context/auth-context';
+import { usePostCommentWithActivityIdMutation } from '@R/runich-api/runich-api';
+import { errorHandler } from '@U/error-handler';
 import { useEffect, useState } from 'react';
 import { ToastAndroid } from 'react-native';
 import { TextInput } from 'react-native-paper';
-
-import { useAuth } from '../../auth/context/auth-context';
-import { usePostCommentWithActivityIdMutation } from '../../redux/runich-api/runich-api';
-import { errorHandler } from '../../utils/error-handler';
 
 export default function CommentInput({ activityId }: { activityId: string }) {
   const { user } = useAuth();

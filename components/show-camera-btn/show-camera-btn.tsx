@@ -17,7 +17,7 @@ export default function ShowCameraBtn({ isDisabled }: { isDisabled: boolean }) {
       style={styles.showCameraBtn}
       onPress={() => dispatch(setCameraIsVisible(true))}
       disabled={isDisabledWhileSending || isDisabled}>
-      {SHOW_CAMERA_BTN[language].text}
+      {SHOW_CAMERA_BTN[language as keyof typeof SHOW_CAMERA_BTN].text}
     </Button>
   );
 }

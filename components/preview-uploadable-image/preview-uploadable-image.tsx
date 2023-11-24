@@ -1,15 +1,14 @@
+import { useAuth } from '@A/context/auth-context';
+import { getSignedUrl } from '@A/supabase/storage/upload-photo';
+import PreviewImage from '@C/preview-image/preview-image';
+import { addPhotoUrl } from '@R/activity/activity';
+import { errorHandler } from '@U/error-handler';
+import { compressAndSendPhoto } from '@U/file-sending';
+import { EXPIRED_TIME } from '@const/const';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
-
-import { useAuth } from '../../auth/context/auth-context';
-import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
-import { EXPIRED_TIME } from '../../constants/const';
-import { addPhotoUrl } from '../../redux/activity/activity';
-import { errorHandler } from '../../utils/error-handler';
-import { compressAndSendPhoto } from '../../utils/file-sending';
-import PreviewImage from '../preview-image/preview-image';
 
 type PreviewUploadableImageProps = {
   image: string;

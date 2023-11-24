@@ -22,8 +22,11 @@ export default function NetworkIndicator() {
         isInternetReachable && !isSlowNetwork && { display: 'none' },
       ]}>
       <Text variant="bodyLarge">
-        {!isInternetReachable && NETWORK_INDICATOR[language].offline}
-        {isSlowNetwork && `${NETWORK_INDICATOR[language].slowNetwork}, ${NETWORK_INDICATOR[language].type}: ${type}`}
+        {!isInternetReachable && NETWORK_INDICATOR[language as keyof typeof NETWORK_INDICATOR].offline}
+        {isSlowNetwork &&
+          `${NETWORK_INDICATOR[language as keyof typeof NETWORK_INDICATOR].slowNetwork}, ${
+            NETWORK_INDICATOR[language as keyof typeof NETWORK_INDICATOR].type
+          }: ${type}`}
       </Text>
     </View>
   );

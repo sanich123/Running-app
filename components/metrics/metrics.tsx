@@ -21,38 +21,38 @@ export default function Metrics() {
       <View style={[metricsLayout, isMapVisible && withMapHeight]}>
         <MetricsItem
           isMapVisible={isMapVisible}
-          title={`${MAP_METRICS[language].time}:`}
+          title={`${MAP_METRICS[language as keyof typeof MAP_METRICS].time}:`}
           metric={formattedDuration}
           isCentral={false}
         />
         {!isMapVisible && (
           <MetricsItem
             isMapVisible={isMapVisible}
-            title={`${MAP_METRICS[language].altitude}:`}
-            metric={`${altitude.toFixed(2)} ${`${MAP_METRICS[language].m}`}`}
+            title={`${MAP_METRICS[language as keyof typeof MAP_METRICS].altitude}:`}
+            metric={`${altitude.toFixed(2)} ${`${MAP_METRICS[language as keyof typeof MAP_METRICS].m}`}`}
             isCentral={false}
           />
         )}
         <MetricsItem
           isMapVisible={isMapVisible}
-          title={`${MAP_METRICS[language].pace}:`}
-          metric={`${
-            duration && distance ? getSpeedInMinsInKm(distance, duration).paceAsString : 0
-          } /${`${MAP_METRICS[language].km}`}`}
+          title={`${MAP_METRICS[language as keyof typeof MAP_METRICS].pace}:`}
+          metric={`${duration && distance ? getSpeedInMinsInKm(distance, duration).paceAsString : 0} /${`${
+            MAP_METRICS[language as keyof typeof MAP_METRICS].km
+          }`}`}
           isCentral
         />
         {!isMapVisible && (
           <MetricsItem
             isMapVisible={isMapVisible}
-            title={`${MAP_METRICS[language].lastKm}:`}
+            title={`${MAP_METRICS[language as keyof typeof MAP_METRICS].lastKm}:`}
             metric={formatDurationMinsSecs(lastKmPace.lastKilometerDuration)}
             isCentral={false}
           />
         )}
         <MetricsItem
           isMapVisible={isMapVisible}
-          title={`${MAP_METRICS[language].distance}:`}
-          metric={`${formattedDistance} ${`${MAP_METRICS[language].km}`}`}
+          title={`${MAP_METRICS[language as keyof typeof MAP_METRICS].distance}:`}
+          metric={`${formattedDistance} ${`${MAP_METRICS[language as keyof typeof MAP_METRICS].km}`}`}
           isCentral={false}
         />
       </View>

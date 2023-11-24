@@ -1,10 +1,9 @@
+import { PreviewImagesProps } from '@C/preview-images/preview-images';
+import { deletePhotoUrl } from '@R/activity/activity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { deletePhotoUrl } from '../../redux/activity/activity';
-import { PreviewImagesProps } from '../preview-images/preview-images';
 
 export default function PreviewImageCloseBtn({
   setImages,
