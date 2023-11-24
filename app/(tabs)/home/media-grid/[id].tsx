@@ -1,9 +1,8 @@
+import ErrorComponent from '@C/error-component/error-component';
+import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, View, useWindowDimensions, Image, StyleSheet } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
-
-import ErrorComponent from '../../../../components/error-component/error-component';
-import { useGetAllActivityPhotosByUserIdQuery } from '../../../../redux/runich-api/runich-api';
 
 export default function MediaGrid() {
   const { id: userId } = useLocalSearchParams();
@@ -29,9 +28,9 @@ export default function MediaGrid() {
       {isSuccess &&
         !isError &&
         photos
-          ?.map(({ photoUrls }) => photoUrls)
+          ?.map(({ photoUrls }: { photoUrls: string[] }) => photoUrls)
           .flat()
-          .map((url, index) => (
+          .map((url: string, index: number) => (
             <Pressable key={`${url}+${index}`} onPress={() => push(`/home/media/${encodeURIComponent(url)}`)}>
               <Image key={`${url}+${index}`} source={{ uri: url }} height={calculatedWidth} width={calculatedWidth} />
             </Pressable>

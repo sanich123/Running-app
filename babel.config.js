@@ -15,6 +15,7 @@ module.exports = function (api) {
             '@const': './constants',
             '@R': './redux',
             '@U': './utils',
+            '@A': './auth',
           },
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },

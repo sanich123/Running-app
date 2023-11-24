@@ -1,10 +1,9 @@
+import ErrorComponent from '@C/error-component/error-component';
+import UserListItem from '@C/user-list-item/user-list-item';
+import { useGetUsersQuery } from '@R/runich-api/runich-api';
+import useRefresh from '@U/hooks/use-refresh';
 import { View, FlatList, SafeAreaView } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
-
-import ErrorComponent from '../../../components/error-component/error-component';
-import UserListItem from '../../../components/user-list-item/user-list-item';
-import { useGetUsersQuery } from '../../../redux/runich-api/runich-api';
-import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function ListOfUsers() {
   const { isLoading, isError, error, data: users, refetch } = useGetUsersQuery('');

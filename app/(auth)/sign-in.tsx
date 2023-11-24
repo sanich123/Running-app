@@ -1,13 +1,12 @@
+import EmailInput from '@C/email-input/email-input';
+import LoginRegisterBtn from '@C/login-register-btn/login-register-btn';
+import LoginRegisterNavigation from '@C/login-register-navigation/login-register-navigation';
+import PasswordInput from '@C/password-input/password-input';
+import usePasswordEmail from '@U/hooks/use-password-email';
 import { Stack } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
-
-import EmailInput from '../../components/email-input/email-input';
-import LoginRegisterBtn from '../../components/login-register-btn/login-register-btn';
-import LoginRegisterNavigation from '../../components/login-register-navigation/login-register-navigation';
-import PasswordInput from '../../components/password-input/password-input';
-import { signInStyles } from '../../styles/sign-in-page/sign-in-page';
-import usePasswordEmail from '../../utils/hooks/use-password-email';
+import { signInStyles } from 'styles/sign-in-page/sign-in-page';
 
 export default function SignIn() {
   const {

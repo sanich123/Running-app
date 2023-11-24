@@ -1,21 +1,20 @@
+import CameraLauncher from '@C/camera/camera';
+import Checkbox from '@C/checkbox/checkbox';
+import DateTimePicker from '@C/date-picker/date-picker';
+import DeclineBtn from '@C/decline-btn/decline-btn';
+import EmotionBtns from '@C/emotion-btns/emotion-btns';
+import InputsDistanceTime from '@C/inputs-distance-time/inputs-distance-time';
+import NetworkIndicator from '@C/network-indicator/network-indicator';
+import PreviewImages from '@C/preview-images/preview-images';
+import ShowCameraBtn from '@C/show-camera-btn/show-camera-btn';
+import SportsBtns from '@C/sports-btns/sports-btns';
+import TextInputs from '@C/text-inputs/text-inputs';
+import UploadPhotosBtn from '@C/upload-photos-btn/upload-photos-btn';
+import { setIsNeedToResetInputs } from '@R/activity/activity';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-
-import CameraLauncher from '../../../components/camera/camera';
-import Checkbox from '../../../components/checkbox/checkbox';
-import DateTimePicker from '../../../components/date-picker/date-picker';
-import DeclineBtn from '../../../components/decline-btn/decline-btn';
-import EmotionBtns from '../../../components/emotion-btns/emotion-btns';
-import InputsDistanceTime from '../../../components/inputs-distance-time/inputs-distance-time';
-import NetworkIndicator from '../../../components/network-indicator/network-indicator';
-import PreviewImages from '../../../components/preview-images/preview-images';
-import ShowCameraBtn from '../../../components/show-camera-btn/show-camera-btn';
-import SportsBtns from '../../../components/sports-btns/sports-btns';
-import TextInputs from '../../../components/text-inputs/text-inputs';
-import UploadPhotosBtn from '../../../components/upload-photos-btn/upload-photos-btn';
-import { setIsNeedToResetInputs } from '../../../redux/activity/activity';
 
 export default function SaveResult() {
   const [isDisabled, setIsDisabled] = useState(false);

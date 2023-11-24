@@ -1,11 +1,10 @@
+import ErrorComponent from '@C/error-component/error-component';
+import UserListItem from '@C/user-list-item/user-list-item';
+import { useGetFriendsByUserIdQuery } from '@R/runich-api/runich-api';
+import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
 import { View, FlatList, SafeAreaView } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
-
-import ErrorComponent from '../../../../components/error-component/error-component';
-import UserListItem from '../../../../components/user-list-item/user-list-item';
-import { useGetFriendsByUserIdQuery } from '../../../../redux/runich-api/runich-api';
-import useRefresh from '../../../../utils/hooks/use-refresh';
 
 export default function ListOfFollowing() {
   const { id: userId } = useLocalSearchParams();

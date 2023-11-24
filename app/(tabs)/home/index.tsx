@@ -1,20 +1,19 @@
+import { useAuth } from '@A/context/auth-context';
 import ActivityCard from '@C/card/card';
 import EmptyActivitiesList from '@C/empty-activities-list/empty-activities-list';
+import ErrorComponent from '@C/error-component/error-component';
+import FloatingBtn from '@C/floating-btn/floating-btn';
+import NetworkIndicator from '@C/network-indicator/network-indicator';
+import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
 import { setIsManualAdding, resetFinishedActivity, resetManualData } from '@R/activity/activity';
+import { useGetActivitiesByUserIdWithFriendsActivitiesQuery, runichApi } from '@R/runich-api/runich-api';
+import useGetPermissions from '@U/hooks/use-get-permission';
+import useRefresh from '@U/hooks/use-refresh';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { useAuth } from '../../../auth/context/auth-context';
-import ErrorComponent from '../../../components/error-component/error-component';
-import FloatingBtn from '../../../components/floating-btn/floating-btn';
-import NetworkIndicator from '../../../components/network-indicator/network-indicator';
-import UnsendedActivitiesIndicator from '../../../components/unsended-activities/unsended-activities-indicator';
-import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
-import useGetPermissions from '../../../utils/hooks/use-get-permission';
-import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
   const { user } = useAuth();

@@ -1,13 +1,12 @@
+import { changeLanguage } from '@R/language/language';
+import { runichApi } from '@R/runich-api/runich-api';
+import { errorHandler } from '@U/error-handler';
+import { LANGUAGES } from '@const/enums';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from 'auth/context/auth-context';
 import { useState } from 'react';
 import { Button, SegmentedButtons } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { useAuth } from '../../../auth/context/auth-context';
-import { LANGUAGES } from '../../../constants/enums';
-import { changeLanguage } from '../../../redux/language/language';
-import { runichApi } from '../../../redux/runich-api/runich-api';
-import { errorHandler } from '../../../utils/error-handler';
 
 export default function SettingsScreen() {
   const { signOut } = useAuth();
@@ -26,7 +25,7 @@ export default function SettingsScreen() {
     <>
       <SegmentedButtons
         value={languageValue}
-        onValueChange={(value) => {
+        onValueChange={(value: LANGUAGES) => {
           setLanguage(value);
           dispatch(changeLanguage(value));
           setToAsyncStorage('language', value);

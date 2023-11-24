@@ -1,18 +1,17 @@
+import ActivityCloseBtn from '@C/activity-close-btn/activity-close-btn';
+import ActivitySaveBtn from '@C/activity-save-btn/activity-save-btn';
+import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import { HomeIcon, ActivityIcon, ProgressIcon } from '@C/icons/icons';
+import ProfileEditBtn from '@C/profile-edit-btn/profile-edit-btn';
+import ProfileUpdateBtn from '@C/profile-update-btn/profile-update-btn';
+import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
+import { LANGUAGES } from '@const/enums';
+import { useAuth } from 'auth/context/auth-context';
 import { Tabs, usePathname } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
-
-import { useAuth } from '../../auth/context/auth-context';
-import ActivityCloseBtn from '../../components/activity-close-btn/activity-close-btn';
-import ActivitySaveBtn from '../../components/activity-save-btn/activity-save-btn';
-import AvatarShowable from '../../components/avatar-showable/avatar-showable';
-import { ActivityIcon, HomeIcon, ProgressIcon } from '../../components/icons/icons';
-import ProfileEditBtn from '../../components/profile-edit-btn/profile-edit-btn';
-import ProfileUpdateBtn from '../../components/profile-update-btn/profile-update-btn';
-import UsersSettingsIcons from '../../components/users-settings-icons/users-settings-icons';
-import { LANGUAGES } from '../../constants/enums';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();

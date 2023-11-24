@@ -17,7 +17,8 @@
       "@C/*": ["components/*"],
       "@const/*": ["constants/*"],
       "@R/*": ["redux/*"],
-      "@U/*": ["utils/*"]
+      "@U/*": ["utils/*"],
+      "@A/*": ["auth/*"]
     },
     "noImplicitAny": true,
     "noFallthroughCasesInSwitch": true,
