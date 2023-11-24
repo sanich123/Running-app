@@ -1,5 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import { EMOTIONS_BTNS_VALUES } from '../../components/emotion-btns/const';
+import { SPORTS_BTNS_VALUES } from '../../components/sports-btns/const';
+
 export const FINISHED_ACTIVITY_INITIAL_STATE = {
   locations: [] as Location[],
   duration: 0,
@@ -18,8 +21,8 @@ export const ACTIVITY_INITIAL_STATE = {
   additionalInfo: {
     title: '',
     description: '',
-    sport: '',
-    emotion: '',
+    sport: SPORTS_BTNS_VALUES.run,
+    emotion: EMOTIONS_BTNS_VALUES.normal,
     isSwitchOn: false,
     photoUrls: [] as string[],
   },
@@ -62,8 +65,8 @@ export const activity = createSlice({
       state.additionalInfo = {
         title: '',
         description: '',
-        sport: '',
-        emotion: '',
+        sport: SPORTS_BTNS_VALUES.run,
+        emotion: EMOTIONS_BTNS_VALUES.normal,
         isSwitchOn: false,
         photoUrls: [] as string[],
       };

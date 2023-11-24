@@ -27,6 +27,8 @@ export default function PreviewUploadableImage({ image, index, isDisabled }: Pre
 
   return (
     <Pressable
+      testID="previewUploadable"
+      disabled={isDisabled}
       onPress={async () => {
         setIsLoading(true);
         try {

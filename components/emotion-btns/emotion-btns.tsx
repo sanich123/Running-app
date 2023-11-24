@@ -4,9 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS, EMOTIONS_BTNS_VALUES, EMOTION_BTNS } from './const';
 import { saveEmotion } from '../../redux/activity/activity';
+import { store } from '../../redux/store';
 
 export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
-  const [emotion, setEmotion] = useState<EMOTIONS_BTNS_VALUES>(EMOTIONS_BTNS_VALUES.normal);
+  const [emotion, setEmotion] = useState<EMOTIONS_BTNS_VALUES>(store.getState().activity.additionalInfo.emotion);
   const dispatch = useDispatch();
   const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
   const { language } = useSelector(({ language }) => language);

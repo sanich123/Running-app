@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { DATE_TIME_PICKER, DATE_TIME_PICKER_BTN_ID } from './const';
 import { setManualDate } from '../../redux/activity/activity';
+import { store } from '../../redux/store';
 
 export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) {
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(store.getState().activity.manualDate || new Date());
   const [open, setOpen] = useState(false);
   const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
   const { language } = useSelector(({ language }) => language);

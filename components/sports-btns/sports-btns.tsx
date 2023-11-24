@@ -4,9 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RIDE_BTN_TEST_ID, RUN_BTN_TEST_ID, SPORTS_BTNS, SPORTS_BTNS_VALUES, SWIM_BTN_TEST_ID } from './const';
 import { saveSport } from '../../redux/activity/activity';
+import { store } from '../../redux/store';
 
 export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
-  const [sport, setSport] = useState<SPORTS_BTNS_VALUES>(SPORTS_BTNS_VALUES.run);
+  const [sport, setSport] = useState<SPORTS_BTNS_VALUES>(store.getState().activity.additionalInfo.sport);
   const dispatch = useDispatch();
   const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
   const { language } = useSelector(({ language }) => language);

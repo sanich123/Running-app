@@ -46,7 +46,7 @@ export default function SaveResult() {
           {isManualAdding && <DateTimePicker isDisabled={isDisabled} />}
           {isManualAdding && <InputsDistanceTime isDisabled={isDisabled} />}
           <View style={styles.cameraUploadBtns}>
-            <ShowCameraBtn />
+            <ShowCameraBtn isDisabled={isDisabled} />
             <UploadPhotosBtn
               isDisabled={isDisabled}
               setIsDisabled={setIsDisabled}

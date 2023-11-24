@@ -5,12 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { CHECKBOX, CHECKBOX_TEST_ID } from './const';
 import { saveIsSwitchOn } from '../../redux/activity/activity';
+import { store } from '../../redux/store';
 
 export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
-  const [isSwitchOn, setIsSwitchOn] = useState(false);
-  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
-  const dispatch = useDispatch();
   const { language } = useSelector(({ language }) => language);
+  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
+  const [isSwitchOn, setIsSwitchOn] = useState(store.getState().activity.additionalInfo.isSwitchOn);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (isNeedToResetInputs) {
       setIsSwitchOn(false);

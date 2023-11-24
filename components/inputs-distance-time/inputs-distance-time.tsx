@@ -5,11 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { INPUTS_DISTANCE_TIME, INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID } from './const';
 import { setManualDistance, setManualHours, setManualMinutes } from '../../redux/activity/activity';
+import { store } from '../../redux/store';
 
 export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean }) {
-  const [distance, setDistance] = useState('0');
-  const [hours, setHours] = useState('0');
-  const [minutes, setMinutes] = useState('0');
+  const [distance, setDistance] = useState(store.getState().activity.manualDistance.toString());
+  const [hours, setHours] = useState(store.getState().activity.manualHours.toString());
+  const [minutes, setMinutes] = useState(store.getState().activity.manualMinutes.toString());
   const dispatch = useDispatch();
   const { language } = useSelector(({ language }) => language);
   const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);

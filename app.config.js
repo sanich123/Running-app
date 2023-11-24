@@ -16,6 +16,7 @@ export default {
     },
     experiments: {
       typedRoutes: true,
+      tsconfigPaths: true,
     },
     assetBundlePatterns: ['**/*'],
     ios: {

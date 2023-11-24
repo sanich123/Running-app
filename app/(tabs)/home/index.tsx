@@ -1,3 +1,5 @@
+import ActivityCard from '@C/card/card';
+import EmptyActivitiesList from '@C/empty-activities-list/empty-activities-list';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
@@ -5,8 +7,6 @@ import { ActivityIndicator, Divider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useAuth } from '../../../auth/context/auth-context';
-import ActivityCard from '../../../components/card/card';
-import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
 import ErrorComponent from '../../../components/error-component/error-component';
 import FloatingBtn from '../../../components/floating-btn/floating-btn';
 import NetworkIndicator from '../../../components/network-indicator/network-indicator';

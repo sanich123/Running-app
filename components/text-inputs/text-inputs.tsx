@@ -9,7 +9,7 @@ import { store } from '../../redux/store';
 export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
   const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
   const [title, setTitle] = useState(store.getState().activity.additionalInfo.title);
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState(store.getState().activity.additionalInfo.description);
   const dispatch = useDispatch();
 
   const { language } = useSelector(({ language }) => language);
