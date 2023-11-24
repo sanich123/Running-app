@@ -1,11 +1,12 @@
 import reducer, {
   ACTIVITY_INITIAL_STATE,
+  addPhotoUrl,
+  deletePhotoUrl,
   resetActivityInfo,
   saveDescription,
   saveEmotion,
   saveFinishedActivity,
   saveIsSwitchOn,
-  savePhotoUrls,
   saveSport,
   saveTitle,
   saveUnsendedActivity,
@@ -18,7 +19,6 @@ import { MOCK_DISTANCE, MOCK_DURATION, MOCK_SPEED } from '../../tests/mocks/mock
 import { MOCK_LOCATIONS } from '../../tests/mocks/mock-locations';
 
 describe('Activity slice', () => {
-  const PHOTO_URLS = ['someUrl1', 'someUrl2'];
   const MOCK_TITLE = 'Some title';
   const MOCK_DESCRIPTION = 'Some description';
   const MOCK_SPORT = 'Some sport';
@@ -79,13 +79,24 @@ describe('Activity slice', () => {
     });
   });
   it('should correctly change photoUrls', () => {
-    expect(reducer(ACTIVITY_INITIAL_STATE, savePhotoUrls(PHOTO_URLS))).toEqual({
+    expect(reducer(ACTIVITY_INITIAL_STATE, addPhotoUrl('someUrl'))).toEqual({
       ...ACTIVITY_INITIAL_STATE,
       additionalInfo: {
         ...ACTIVITY_INITIAL_STATE.additionalInfo,
-        photoUrls: PHOTO_URLS,
+        photoUrls: ['someUrl'],
       },
     });
+  });
+
+  it('should correctly change photoUrls', () => {
+    const stateWithPhotoUrls = {
+      ...ACTIVITY_INITIAL_STATE,
+      additionalInfo: {
+        ...ACTIVITY_INITIAL_STATE.additionalInfo,
+        photoUrls: ['someUrl'],
+      },
+    };
+    expect(reducer(stateWithPhotoUrls, deletePhotoUrl('someUrl'))).toEqual(ACTIVITY_INITIAL_STATE);
   });
   it('should correctly change isDisableWhileSending', () => {
     expect(reducer(ACTIVITY_INITIAL_STATE, setIsDisableWhileSending(true))).toEqual({
@@ -103,7 +114,7 @@ describe('Activity slice', () => {
     reducer(ACTIVITY_INITIAL_STATE, saveTitle(MOCK_TITLE));
     reducer(ACTIVITY_INITIAL_STATE, setIsNeedToResetInputs(true));
     reducer(ACTIVITY_INITIAL_STATE, setIsDisableWhileSending(true));
-    reducer(ACTIVITY_INITIAL_STATE, savePhotoUrls(PHOTO_URLS));
+    reducer(ACTIVITY_INITIAL_STATE, addPhotoUrl('Some url'));
     reducer(ACTIVITY_INITIAL_STATE, saveIsSwitchOn(true));
     reducer(ACTIVITY_INITIAL_STATE, saveEmotion(MOCK_EMOTION));
     reducer(ACTIVITY_INITIAL_STATE, saveSport(MOCK_SPORT));

@@ -1,8 +1,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { deletePhotoUrl } from '../../redux/activity/activity';
 import { PreviewImagesProps } from '../preview-images/preview-images';
 
 export default function PreviewImageCloseBtn({
@@ -12,10 +13,14 @@ export default function PreviewImageCloseBtn({
   image,
 }: PreviewImagesProps & { image: string }) {
   const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
+  const dispatch = useDispatch();
   const { colors } = useTheme();
   return (
     <Pressable
-      onPress={() => setImages(images.filter((photo) => photo !== image))}
+      onPress={() => {
+        setImages(images.filter((photo) => photo !== image));
+        dispatch(deletePhotoUrl(image));
+      }}
       disabled={isDisabled || isDisabledWhileSending}
       testID="deleteIcon"
       style={[{ zIndex: 5 }, (isDisabled || isDisabledWhileSending) && { opacity: 0.5 }]}>

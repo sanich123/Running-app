@@ -5,6 +5,7 @@ import { ActivityIndicator, Card, Text } from 'react-native-paper';
 
 import ActivityCardLikeBtn from '../../../../components/card-like-btn/card-like-btn';
 import CardLikes from '../../../../components/card-likes/card-likes';
+import CardMapImagesList from '../../../../components/card-map-images-list/card-map-images-list';
 import ActivityCardTitle from '../../../../components/card-title/card-title';
 import CommentInput from '../../../../components/comment-input/comment-input';
 import Comments from '../../../../components/comments/comments';
@@ -27,7 +28,13 @@ export default function Comment() {
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <View style={[{ flex: 1 }, isLoading && { justifyContent: 'center', alignItems: 'center' }]}>
-          <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
+          {activity?.locations.length > 0 && (
+            <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
+          )}
+          {!activity?.locations?.length && activity?.photoUrls?.length > 0 && (
+            <CardMapImagesList locations={[]} photoUrls={activity?.photoUrls} id={`${activityId}`} />
+          )}
+
           <Card.Content style={{ display: 'flex', columnGap: 5, marginBottom: 10 }}>
             <ActivityCardTitle title={activity?.title} />
             <UserNameSurname userId={activity?.user_id} size="titleMedium" />

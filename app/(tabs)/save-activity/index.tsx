@@ -27,6 +27,7 @@ export default function SaveResult() {
   } = useSelector(({ activity }) => activity);
   const dispatch = useDispatch();
   const [images, setImages] = useState([]);
+
   useEffect(() => {
     if (isNeedToResetInputs) {
       dispatch(setIsNeedToResetInputs(false));

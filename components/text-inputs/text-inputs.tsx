@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { TEXT_INPUTS, TEXT_INPUTS_DESCRIPTION_LEFT_ICON, TEXT_INPUTS_TITLE_LEFT_ICON } from './const';
 import { saveDescription, saveTitle } from '../../redux/activity/activity';
+import { store } from '../../redux/store';
 
 export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
-  const [title, setTitle] = useState('');
+  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
+  const [title, setTitle] = useState(store.getState().activity.additionalInfo.title);
   const [description, setDescription] = useState('');
   const dispatch = useDispatch();
-  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
+
   const { language } = useSelector(({ language }) => language);
 
   useEffect(() => {

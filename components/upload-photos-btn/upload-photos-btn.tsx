@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -6,7 +7,7 @@ import { UPLOAD_PHOTO_BTN, UploadPhotoBtnProps } from './ const';
 import { useAuth } from '../../auth/context/auth-context';
 import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
 import { EXPIRED_TIME } from '../../constants/const';
-import { addPhotoUrl, savePhotoUrls } from '../../redux/activity/activity';
+import { addPhotoUrl, resetPhotoUrls } from '../../redux/activity/activity';
 import { errorHandler } from '../../utils/error-handler';
 import { compressAndSendPhoto, getAccessToGallery } from '../../utils/file-sending';
 
@@ -19,7 +20,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
 
   useEffect(() => {
     if (isNeedToResetInputs) {
-      dispatch(savePhotoUrls([]));
+      dispatch(resetPhotoUrls());
       setImages([]);
     }
   }, [isNeedToResetInputs]);
@@ -47,16 +48,20 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
           setIsLoading(false);
         }
       }}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 15,
-        width: '45%',
-      }}
+      style={styles.uploadBtn}
       loading={isLoading}
       disabled={isDisabled || isDisabledWhileSending}>
       {isLoading ? UPLOAD_PHOTO_BTN[language].isLoading : UPLOAD_PHOTO_BTN[language].isInitial}
     </Button>
   );
 }
+
+const styles = StyleSheet.create({
+  uploadBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 15,
+    width: '45%',
+  },
+});

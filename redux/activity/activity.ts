@@ -55,9 +55,6 @@ export const activity = createSlice({
     deletePhotoUrl: (state, action) => {
       state.additionalInfo.photoUrls = state.additionalInfo.photoUrls.filter((url) => url !== action.payload);
     },
-    savePhotoUrls: (state, action) => {
-      state.additionalInfo.photoUrls = action.payload;
-    },
     setIsDisableWhileSending: (state, action) => {
       state.isDisabledWhileSending = action.payload;
     },
@@ -110,6 +107,9 @@ export const activity = createSlice({
       state.manualHours = 0;
       state.manualMinutes = 0;
     },
+    resetPhotoUrls: (state) => {
+      state.additionalInfo.photoUrls = [];
+    },
     setCameraIsVisible: (state, action) => {
       state.isCameraVisible = action.payload;
     },
@@ -123,7 +123,6 @@ export const {
   saveEmotion,
   setManualDate,
   saveIsSwitchOn,
-  savePhotoUrls,
   setIsDisableWhileSending,
   resetActivityInfo,
   setIsNeedToResetInputs,
@@ -140,5 +139,6 @@ export const {
   setCameraIsVisible,
   addPhotoUrl,
   deletePhotoUrl,
+  resetPhotoUrls,
 } = activity.actions;
 export default activity.reducer;
