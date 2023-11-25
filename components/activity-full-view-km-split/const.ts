@@ -1,5 +1,3 @@
-import { LocationObject } from 'expo-location';
-
 import { LANGUAGES } from '../../constants/enums';
 
 export const KM_SPLITS = {
@@ -16,9 +14,3 @@ export const KM_SPLITS = {
     km: 'КМ',
   },
 } as const;
-
-export type KilometresSplit = {
-  lastKilometerAltitude: number;
-  lastKilometerDuration: number;
-  kilometerPoint: LocationObject;
-};

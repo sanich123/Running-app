@@ -1,8 +1,9 @@
 import { MOCK_LOCATION, MOCK_DISTANCE, MOCK_DURATION, MOCK_ALTITUDE, MOCK_SPEED } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
+import { STATUSES } from '@const/enums';
 
+import { LOCATION_INITIAL_STATE } from './const';
 import reducer, {
-  LOCATION_INITIAL_STATE,
   addDurationAndLocationToKmSplits,
   resetLocationsFromBackground,
   setActivityStatus,
@@ -23,7 +24,6 @@ import reducer, {
   setLocationsFromBackground,
   setLocationsWhenContinued,
 } from './location';
-import { STATUSES } from '../../constants/enums';
 
 describe('Location slice', () => {
   it('should handle initial state properly', () => {

@@ -106,4 +106,5 @@ export const {
   deletePhotoUrl,
   resetPhotoUrls,
 } = activity.actions;
+
 export default activity.reducer;

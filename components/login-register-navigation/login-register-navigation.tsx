@@ -3,7 +3,7 @@ import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { LOGIN_NAVIGATION, REGISTER_NAVIGATION, RegisterNavigationProps } from './const';
-import { signInStyles } from '../../styles/sign-in-page/sign-in-page';
+import { signInStyles } from '../../app/(auth)/sign-in';
 
 export default function RegisterNavigation({ isRegister, setIsRegister, isDisabled }: RegisterNavigationProps) {
   const { btnWrapper, navigateBtn } = signInStyles;

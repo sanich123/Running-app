@@ -1,11 +1,13 @@
+import { resetActivityInfo, resetFinishedActivity, resetManualData } from '@R/activity/activity';
 import { useRouter } from 'expo-router';
 import { Alert } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { DECLINE_BTN } from './const';
 
 export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
+  const dispatch = useDispatch();
   const { push } = useRouter();
   const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
   const { language } = useSelector(({ language }) => language);
@@ -21,7 +23,12 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
           [
             {
               text: DECLINE_BTN[language as keyof typeof DECLINE_BTN].accept,
-              onPress: () => push('/home'),
+              onPress: () => {
+                dispatch(resetActivityInfo());
+                dispatch(resetFinishedActivity());
+                dispatch(resetManualData());
+                push('/home');
+              },
               style: 'cancel',
             },
           ],

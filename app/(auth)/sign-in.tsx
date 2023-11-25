@@ -5,8 +5,7 @@ import PasswordInput from '@C/password-input/password-input';
 import usePasswordEmail from '@U/hooks/use-password-email';
 import { Stack } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
-import { signInStyles } from 'styles/sign-in-page/sign-in-page';
+import { View, StyleSheet } from 'react-native';
 
 export default function SignIn() {
   const {
@@ -59,3 +58,27 @@ export default function SignIn() {
     </>
   );
 }
+
+export const signInStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  btnWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    columnGap: 10,
+    marginTop: 10,
+  },
+  navigateBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#518be8',
+    borderRadius: 8,
+    padding: 8,
+  },
+});

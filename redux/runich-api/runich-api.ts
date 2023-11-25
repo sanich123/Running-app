@@ -19,25 +19,25 @@ export const runichApi = createApi({
       providesTags: [users],
     }),
     getUserProfileById: builder.query({
-      query: (id) => `/${routeProfile}/${id}`,
+      query: (id: string) => `/${routeProfile}/${id}`,
       providesTags: [profile],
       keepUnusedDataFor: process.env.IS_TESTING ? 0 : 1,
     }),
     getActivitiesByUserId: builder.query({
-      query: (id) => `/${activity}/${id}`,
+      query: (id: string) => `/${activity}/${id}`,
       providesTags: [activities],
     }),
     getActivitiesByUserIdWithFriendsActivities: builder.query({
-      query: (id) => `/${activity}/${id}/all`,
+      query: (id: string) => `/${activity}/${id}/all`,
       providesTags: [activities],
       keepUnusedDataFor: process.env.IS_TESTING ? 0 : 1,
     }),
     getAllActivityPhotosByUserId: builder.query({
-      query: (userId) => `/${activity}/${userId}/photos`,
+      query: (userId: string) => `/${activity}/${userId}/photos`,
       providesTags: [activities],
     }),
     getActivityByActivityId: builder.query({
-      query: (id) => `/${activity}/${activityId}/${id}`,
+      query: (id: string) => `/${activity}/${activityId}/${id}`,
       providesTags: [activities],
     }),
     getFriendsByUserId: builder.query({
