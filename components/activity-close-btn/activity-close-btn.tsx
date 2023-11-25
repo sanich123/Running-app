@@ -1,4 +1,5 @@
 import { setActivityStatus, resetLastKm } from '@R/location/location';
+import { useAppSelector } from '@R/store';
 import { STATUSES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { Alert, Pressable } from 'react-native';
@@ -11,7 +12,7 @@ export default function ActivityCloseBtn() {
   const router = useRouter();
   const { colors } = useTheme();
   const { duration } = useSelector(({ location }) => location);
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   const dispatch = useDispatch();
 
   async function closeBtnHandler() {
@@ -26,8 +27,8 @@ export default function ActivityCloseBtn() {
         dispatch(setActivityStatus(STATUSES.paused));
         if (duration > 0) {
           Alert.alert(
-            ACTIVITY_CLOSE_BTN[language as keyof typeof ACTIVITY_CLOSE_BTN].alertName,
-            ACTIVITY_CLOSE_BTN[language as keyof typeof ACTIVITY_CLOSE_BTN].alertQuestion,
+            ACTIVITY_CLOSE_BTN[language].alertName,
+            ACTIVITY_CLOSE_BTN[language].alertQuestion,
             [
               {
                 text: ACTIVITY_CLOSE_BTN[language as keyof typeof ACTIVITY_CLOSE_BTN].alertAccept,
@@ -44,7 +45,7 @@ export default function ActivityCloseBtn() {
         }
       }}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginLeft: 15 }}>
-        {ACTIVITY_CLOSE_BTN[language as keyof typeof ACTIVITY_CLOSE_BTN].btnText}
+        {ACTIVITY_CLOSE_BTN[language].btnText}
       </Text>
     </Pressable>
   );
