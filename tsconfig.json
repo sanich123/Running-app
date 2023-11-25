@@ -18,7 +18,8 @@
       "@const/*": ["constants/*"],
       "@R/*": ["redux/*"],
       "@U/*": ["utils/*"],
-      "@A/*": ["auth/*"]
+      "@A/*": ["auth/*"],
+      "@T/*": ["tests/*"]
     },
     "noImplicitAny": true,
     "noFallthroughCasesInSwitch": true,

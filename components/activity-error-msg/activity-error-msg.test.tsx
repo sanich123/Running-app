@@ -1,12 +1,12 @@
+import { changeLanguage } from '@R/language/language';
+import { setIsAppShuted } from '@R/location/location';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
-import ActivityErrorMsg from '../../components/activity-error-msg/activity-error-msg';
-import { ACTIVITY_ERROR_MSG } from '../../components/activity-error-msg/const';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { setIsAppShuted } from '../../redux/location/location';
-import { mockStore } from '../utils/mock-store';
-import { renderWithProviders } from '../utils/test-utils';
+import ActivityErrorMsg from './activity-error-msg';
+import { ACTIVITY_ERROR_MSG } from './const';
 
 describe('Activity-error-msg', () => {
   it('should correctly render error message in english, when initially', () => {

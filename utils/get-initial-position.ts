@@ -1,8 +1,8 @@
+import { setInitialLocation } from '@R/location/location';
+import { store } from '@R/store';
 import { getCurrentPositionAsync, getLastKnownPositionAsync } from 'expo-location';
 
 import { errorHandler } from './error-handler';
-import { setInitialLocation } from '../redux/location/location';
-import { store } from '../redux/store';
 
 type GetPositionProps = {
   setIsLoading?: (arg: boolean) => void;

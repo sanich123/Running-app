@@ -16,6 +16,7 @@ module.exports = function (api) {
             '@R': './redux',
             '@U': './utils',
             '@A': './auth',
+            '@T': './tests',
           },
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },

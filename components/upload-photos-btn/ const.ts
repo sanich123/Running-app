@@ -16,4 +16,4 @@ export const UPLOAD_PHOTO_BTN = {
     isLoading: 'Загружаю..',
     isInitial: 'Загрузить',
   },
-};
+} as const;

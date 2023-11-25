@@ -41,7 +41,7 @@ export default function SplashIcon() {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onLayout={onLayoutRootView}>
-      <Text>Runich!</Text>
+      <Text>Превед, медвед!</Text>
     </View>
   );
 }

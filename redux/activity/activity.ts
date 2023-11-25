@@ -1,14 +1,14 @@
+import { EMOTIONS_BTNS_VALUES } from '@C/emotion-btns/const';
+import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
+import { LastKmSplit } from '@const/types/location';
 import { createSlice } from '@reduxjs/toolkit';
-
-import { EMOTIONS_BTNS_VALUES } from '../../components/emotion-btns/const';
-import { SPORTS_BTNS_VALUES } from '../../components/sports-btns/const';
 
 export const FINISHED_ACTIVITY_INITIAL_STATE = {
   locations: [] as Location[],
   duration: 0,
   speed: 0,
   distance: 0,
-  kilometresSplit: [],
+  kilometresSplit: [] as LastKmSplit[],
 };
 
 export const ACTIVITY_INITIAL_STATE = {
@@ -27,7 +27,7 @@ export const ACTIVITY_INITIAL_STATE = {
     photoUrls: [] as string[],
   },
   unsyncedActivities: [],
-  manualDate: null,
+  manualDate: null as Date,
   manualHours: 0,
   manualMinutes: 0,
   manualDistance: 0,

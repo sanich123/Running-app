@@ -1,11 +1,10 @@
+import { useAuth } from '@A/context/auth-context';
+import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
+import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import UserCityAge from '@C/user-city-age/user-city-age';
+import UserNameSurname from '@C/user-name-surname/user-name-surname';
 import { useRouter } from 'expo-router';
 import { View, StyleSheet, Pressable } from 'react-native';
-
-import { useAuth } from '../../auth/context/auth-context';
-import AddDeleteFriendBtn from '../add-delete-friend-btn/add-delete-friend-btn';
-import AvatarShowable from '../avatar-showable/avatar-showable';
-import UserCityAge from '../user-city-age/user-city-age';
-import UserNameSurname from '../user-name-surname/user-name-surname';
 
 export default function UserListItem({ userId }: { userId: string }) {
   const { user } = useAuth();

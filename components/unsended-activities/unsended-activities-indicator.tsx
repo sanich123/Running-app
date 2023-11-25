@@ -1,11 +1,11 @@
+import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '@R/activity/activity';
+import { useAddActivityByUserIdMutation } from '@R/runich-api/runich-api';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { UNSENDED_ACTIVITIES } from './const';
-import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '../../redux/activity/activity';
-import { useAddActivityByUserIdMutation } from '../../redux/runich-api/runich-api';
 
 export default function UnsendedActivitiesIndicator() {
   const { unsyncedActivities, isHaveUnsyncedActivity } = useSelector(({ activity }) => activity);
@@ -55,10 +55,12 @@ export default function UnsendedActivitiesIndicator() {
           <Text variant="bodyLarge">
             {isInitial &&
               unsyncedActivities.length > 0 &&
-              `${UNSENDED_ACTIVITIES[language].initialBegin} ${unsyncedActivities.length} ${UNSENDED_ACTIVITIES[language].initialEnd}`}
-            {isLoading && UNSENDED_ACTIVITIES[language].isLoading}
-            {successSending && UNSENDED_ACTIVITIES[language].success}
-            {errorSending && UNSENDED_ACTIVITIES[language].error}
+              `${UNSENDED_ACTIVITIES[language as keyof typeof UNSENDED_ACTIVITIES].initialBegin} ${
+                unsyncedActivities.length
+              } ${UNSENDED_ACTIVITIES[language as keyof typeof UNSENDED_ACTIVITIES].initialEnd}`}
+            {isLoading && UNSENDED_ACTIVITIES[language as keyof typeof UNSENDED_ACTIVITIES].isLoading}
+            {successSending && UNSENDED_ACTIVITIES[language as keyof typeof UNSENDED_ACTIVITIES].success}
+            {errorSending && UNSENDED_ACTIVITIES[language as keyof typeof UNSENDED_ACTIVITIES].error}
           </Text>
           <Button loading={isLoading} onPress={async () => activitySender()}>
             Manually

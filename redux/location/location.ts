@@ -1,20 +1,15 @@
+import { LastKmSplit } from '@const/types/location';
 import { createSlice } from '@reduxjs/toolkit';
 import { LocationObject } from 'expo-location';
 
 import { STATUSES } from '../../constants/enums';
-
-type LastKmSplit = {
-  lastKilometerDuration: number;
-  kilometerPoint: LocationObject;
-  lastKilometerAltitude: number;
-};
 
 export const LOCATION_INITIAL_STATE = {
   activityStatus: STATUSES.initial,
   isTooMuchSpeed: false,
   isAppShutedByPhone: false,
   isMapVisible: true,
-  initialLocation: null,
+  initialLocation: null as LocationObject,
   distance: 0,
   duration: 0,
   durationWithPauses: 0,
@@ -22,7 +17,7 @@ export const LOCATION_INITIAL_STATE = {
   lastKilometerAltitude: 0,
   lastKilometer: 0,
   lastKilometerDuration: 0,
-  lastPosition: null,
+  lastPosition: null as LocationObject,
   currentPace: 0,
   kilometresSplit: [] as LastKmSplit[],
   locationsWithPauses: [[]] as LocationObject[][],

@@ -46,3 +46,9 @@ export type LocationObjectCoords = {
    */
   speed: number | null;
 };
+
+export type LastKmSplit = {
+  lastKilometerDuration: number;
+  kilometerPoint: LocationObject;
+  lastKilometerAltitude: number;
+};
