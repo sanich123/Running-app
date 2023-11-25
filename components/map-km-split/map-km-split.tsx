@@ -1,4 +1,4 @@
-import { KilometresSplit } from '@C/home-activity-full-view-km-split/home-activity-full-view-km-split';
+import { KilometresSplit } from '@C/activity-full-view-km-split/home-activity-full-view-km-split';
 import { Callout, PointAnnotation } from '@rnmapbox/maps';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';

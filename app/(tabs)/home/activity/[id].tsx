@@ -1,7 +1,7 @@
 import ActivityCard from '@C/card/card';
 import ErrorComponent from '@C/error-component/error-component';
-import ActivityFullViewMetrics from '@C/home-activity-full-view/home-activity-full-view';
-import HomeActivityFullViewKmSplit from '@C/home-activity-full-view-km-split/home-activity-full-view-km-split';
+import ActivityFullViewMetrics from '@C/activity-full-view/home-activity-full-view';
+import HomeActivityFullViewKmSplit from '@C/activity-full-view-km-split/home-activity-full-view-km-split';
 import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { useRef } from 'react';
