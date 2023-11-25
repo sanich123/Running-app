@@ -1,5 +1,5 @@
 import { setActivityStatus, resetLastKm } from '@R/location/location';
-import { useAppSelector } from '@R/store';
+import { useAppSelector } from '@R/typed-hooks';
 import { STATUSES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { Alert, Pressable } from 'react-native';
