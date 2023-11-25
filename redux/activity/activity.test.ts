@@ -3,7 +3,6 @@ import { MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location
 import { MOCK_LOCATIONS } from '@T/mocks/mock-locations';
 
 import reducer, {
-  ACTIVITY_INITIAL_STATE,
   addPhotoUrl,
   deletePhotoUrl,
   resetActivityInfo,
@@ -18,6 +17,7 @@ import reducer, {
   setIsHaveUnsyncedActivity,
   setIsNeedToResetInputs,
 } from './activity';
+import { ACTIVITY_INITIAL_STATE } from './const';
 
 describe('Activity slice', () => {
   const MOCK_TITLE = 'Some title';

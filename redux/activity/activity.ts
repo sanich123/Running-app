@@ -1,37 +1,6 @@
-import { EMOTIONS_BTNS_VALUES } from '@C/emotion-btns/const';
-import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
-import { LastKmSplit } from '@const/types/location';
 import { createSlice } from '@reduxjs/toolkit';
 
-export const FINISHED_ACTIVITY_INITIAL_STATE = {
-  locations: [] as Location[],
-  duration: 0,
-  speed: 0,
-  distance: 0,
-  kilometresSplit: [] as LastKmSplit[],
-};
-
-export const ACTIVITY_INITIAL_STATE = {
-  isNeedToResetInputs: false,
-  isDisabledWhileSending: false,
-  isHaveUnsyncedActivity: false,
-  isManualAdding: false,
-  isCameraVisible: false,
-  finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
-  additionalInfo: {
-    title: '',
-    description: '',
-    sport: SPORTS_BTNS_VALUES.run,
-    emotion: EMOTIONS_BTNS_VALUES.normal,
-    isSwitchOn: false,
-    photoUrls: [] as string[],
-  },
-  unsyncedActivities: [],
-  manualDate: null as Date,
-  manualHours: 0,
-  manualMinutes: 0,
-  manualDistance: 0,
-};
+import { ACTIVITY_INITIAL_STATE, ADDITIONAL_INFO_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from './const';
 
 export const activity = createSlice({
   name: 'activity',
@@ -62,14 +31,7 @@ export const activity = createSlice({
       state.isDisabledWhileSending = action.payload;
     },
     resetActivityInfo: (state) => {
-      state.additionalInfo = {
-        title: '',
-        description: '',
-        sport: SPORTS_BTNS_VALUES.run,
-        emotion: EMOTIONS_BTNS_VALUES.normal,
-        isSwitchOn: false,
-        photoUrls: [] as string[],
-      };
+      state.additionalInfo = ADDITIONAL_INFO_INITIAL_STATE;
     },
     setIsNeedToResetInputs: (state, action) => {
       state.isNeedToResetInputs = action.payload;
