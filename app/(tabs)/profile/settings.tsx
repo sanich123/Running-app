@@ -5,14 +5,14 @@ import InputsNameSurname from '@C/inputs-name-surname/inputs-name-surname';
 import InputsWeightCity from '@C/inputs-weight-city/inputs-weight-city';
 import { saveSettingsInfo } from '@R/profile/profile';
 import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
+import { useAppDispatch } from '@R/typed-hooks';
 import { useAuth } from 'auth/context/auth-context';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 export default function ProfileSettings() {
   const { user } = useAuth();
-  const { data: profileInfo } = useGetUserProfileByIdQuery(user.id);
+  const { data: profileInfo } = useGetUserProfileByIdQuery(user ? user.id : '');
   const [gender, setGender] = useState(profileInfo?.gender);
   const [name, setName] = useState(profileInfo?.name);
   const [surname, setSurname] = useState(profileInfo?.surname);
@@ -22,7 +22,7 @@ export default function ProfileSettings() {
   const [image, setImage] = useState(profileInfo?.profilePhoto);
   const [isDisabled, setIsDisabled] = useState(false);
   const [photoUrl, setPhotoUrl] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   //delete useGetSEttings?
   dispatch(
     saveSettingsInfo({

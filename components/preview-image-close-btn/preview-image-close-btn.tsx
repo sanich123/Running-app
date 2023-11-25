@@ -1,9 +1,9 @@
 import { PreviewImagesProps } from '@C/preview-images/preview-images';
 import { deletePhotoUrl } from '@R/activity/activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
 export default function PreviewImageCloseBtn({
   setImages,
@@ -11,8 +11,8 @@ export default function PreviewImageCloseBtn({
   isDisabled,
   image,
 }: PreviewImagesProps & { image: string }) {
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
-  const dispatch = useDispatch();
+  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const dispatch = useAppDispatch();
   const { colors } = useTheme();
   return (
     <Pressable

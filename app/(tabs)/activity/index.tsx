@@ -4,17 +4,17 @@ import ActivityShowMapBtn from '@C/activity-show-map-btn/activity-show-map-btn';
 import ActivityStartBtn from '@C/activity-start-btn/activity-start-btn';
 import Map from '@C/map/map';
 import Metrics from '@C/metrics/metrics';
+import { useAppSelector } from '@R/typed-hooks';
 import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
 import { STATUSES } from '@const/enums';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 const { initial, paused } = STATUSES;
 
 export default function Activity() {
   useStartStopTracking();
-  const { activityStatus, isMapVisible } = useSelector(({ location }) => location);
+  const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
   const { colors } = useTheme();
   const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;
 

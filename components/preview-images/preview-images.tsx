@@ -1,8 +1,8 @@
 import PreviewImage from '@C/preview-image/preview-image';
 import PreviewImageCloseBtn from '@C/preview-image-close-btn/preview-image-close-btn';
 import PreviewUploadableImage from '@C/preview-uploadable-image/preview-uploadable-image';
+import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
 
 export type PreviewImagesProps = {
   images: string[];
@@ -11,7 +11,7 @@ export type PreviewImagesProps = {
 };
 
 export default function PreviewImages({ setImages, images, isDisabled }: PreviewImagesProps) {
-  const { isCameraVisible } = useSelector(({ activity }) => activity);
+  const { isCameraVisible } = useAppSelector(({ activity }) => activity);
 
   return (
     <View style={styles.imagesWrapper}>

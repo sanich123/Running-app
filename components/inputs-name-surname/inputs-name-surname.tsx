@@ -1,6 +1,6 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 
@@ -13,16 +13,16 @@ type InputsNameSurnameProps = {
 };
 
 export default function InputsNameSurname({ name, surname, setName, setSurname, isDisabled }: InputsNameSurnameProps) {
-  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
-  const { language } = useSelector(({ language }) => language);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={styles.inputWrapper}>
       <TextInput
         testID={NAME_TEST_ID}
         mode="outlined"
         style={{ width: '50%' }}
-        label={NAME_SURNAME[language as keyof typeof NAME_SURNAME].nameLabel}
-        placeholder={NAME_SURNAME[language as keyof typeof NAME_SURNAME].namePlaceholder}
+        label={NAME_SURNAME[language].nameLabel}
+        placeholder={NAME_SURNAME[language].namePlaceholder}
         value={name}
         onChangeText={(name) => setName(name)}
         disabled={isDisabled || isDisabledWhileSendingProfile}
@@ -31,8 +31,8 @@ export default function InputsNameSurname({ name, surname, setName, setSurname, 
         testID={SURNAME_TEST_ID}
         mode="outlined"
         style={{ width: '50%' }}
-        label={NAME_SURNAME[language as keyof typeof NAME_SURNAME].surnameLabel}
-        placeholder={NAME_SURNAME[language as keyof typeof NAME_SURNAME].surnamePlaceholder}
+        label={NAME_SURNAME[language].surnameLabel}
+        placeholder={NAME_SURNAME[language].surnamePlaceholder}
         value={surname}
         onChangeText={(surname) => setSurname(surname)}
         disabled={isDisabled || isDisabledWhileSendingProfile}

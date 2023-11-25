@@ -1,10 +1,10 @@
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { Image, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { PROFILE_MEDIA } from './const';
 
@@ -13,7 +13,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const theme = useTheme();
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
 
   return (
     <>
@@ -24,11 +24,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
             { backgroundColor: theme.colors.onPrimary },
             (isLoading || isError) && styles.isInCenter,
           ]}>
-          {isError && (
-            <Text variant="bodyLarge">{`${
-              PROFILE_MEDIA[language as keyof typeof PROFILE_MEDIA].error
-            }: ${errorExtracter(error)}`}</Text>
-          )}
+          {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${errorExtracter(error)}`}</Text>}
           {isLoading && <ActivityIndicator size="large" />}
           {!isError &&
             isSuccess &&
@@ -43,7 +39,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                       <Image source={{ uri: url }} height={width / 4} width={width / 4} />
                     </View>
                     <Text variant="titleMedium" style={{ position: 'absolute', top: '35%', right: 12, zIndex: 10 }}>
-                      {PROFILE_MEDIA[language as keyof typeof PROFILE_MEDIA].label}
+                      {PROFILE_MEDIA[language].label}
                     </Text>
                   </Fragment>
                 ) : (

@@ -1,18 +1,18 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { TextInput } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { INPUT_BIO, INPUT_BIO_TEST_ID, InputBioProps } from './const';
 
 export default function InputBio({ bio, setBio, isDisabled }: InputBioProps) {
-  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
-  const { language } = useSelector(({ language }) => language);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <TextInput
       testID={INPUT_BIO_TEST_ID}
       mode="outlined"
       style={{ width: 365 }}
-      label={INPUT_BIO[language as keyof typeof INPUT_BIO].label}
-      placeholder={INPUT_BIO[language as keyof typeof INPUT_BIO].placeholder}
+      label={INPUT_BIO[language].label}
+      placeholder={INPUT_BIO[language].placeholder}
       multiline
       numberOfLines={4}
       value={bio}

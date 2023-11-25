@@ -8,13 +8,13 @@ import {
 } from '@R/activity/activity';
 import { resetLocationsFromBackground } from '@R/location/location';
 import { useAddActivityByUserIdMutation, runichApi } from '@R/runich-api/runich-api';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable, ToastAndroid } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 
@@ -31,10 +31,10 @@ export default function ActivitySaveBtn() {
     manualMinutes,
     manualDistance,
     finishedActivity,
-  } = useSelector(({ activity }) => activity);
-  const { language } = useSelector(({ language }) => language);
+  } = useAppSelector(({ activity }) => activity);
+  const { language } = useAppSelector(({ language }) => language);
   const [sendActivity, { error, data, isSuccess, isError }] = useAddActivityByUserIdMutation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   let activityToSend: { body: any; id: string };
 
@@ -60,7 +60,7 @@ export default function ActivitySaveBtn() {
       dispatch(setIsHaveUnsyncedActivity(true));
       dispatch(runichApi.util.resetApiState());
       console.log(error);
-      ToastAndroid.show(ACTIVITY_SAVE_BTN[language as keyof typeof ACTIVITY_SAVE_BTN].errorMsg, ToastAndroid.LONG);
+      ToastAndroid.show(ACTIVITY_SAVE_BTN[language].errorMsg, ToastAndroid.LONG);
       push('/home/');
     }
   }, [data, error]);
@@ -69,30 +69,30 @@ export default function ActivitySaveBtn() {
     <Pressable
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
-        dispatch(setIsDisableWhileSending(true));
-        activityToSend = {
-          body: isManualAdding
-            ? {
-                ...additionalInfo,
-                date: manualDate || new Date(),
-                distance: manualDistance * 1000,
-                duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
-                speed: getSpeedInMinsInKm(manualDistance, getMillisecondsFromHoursMinutes(manualHours, manualMinutes))
-                  .paceAsNumber,
-                locations: [],
-              }
-            : { ...finishedActivity, ...additionalInfo },
-          id: user.id,
-        };
-        await sendActivity(activityToSend).unwrap();
+        if (user) {
+          dispatch(setIsDisableWhileSending(true));
+          activityToSend = {
+            body: isManualAdding
+              ? {
+                  ...additionalInfo,
+                  date: manualDate || new Date(),
+                  distance: manualDistance * 1000,
+                  duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
+                  speed: getSpeedInMinsInKm(manualDistance, getMillisecondsFromHoursMinutes(manualHours, manualMinutes))
+                    .paceAsNumber,
+                  locations: [],
+                }
+              : { ...finishedActivity, ...additionalInfo },
+            id: user.id,
+          };
+          await sendActivity(activityToSend).unwrap();
+        }
       }}
       disabled={isDisabledWhileSending}>
       <Text
         variant="titleMedium"
         style={{ color: colors.primaryContainer, marginRight: 15, opacity: isDisabledWhileSending ? 0.5 : 1 }}>
-        {isDisabledWhileSending
-          ? ACTIVITY_SAVE_BTN[language as keyof typeof ACTIVITY_SAVE_BTN].saving
-          : ACTIVITY_SAVE_BTN[language as keyof typeof ACTIVITY_SAVE_BTN].save}
+        {isDisabledWhileSending ? ACTIVITY_SAVE_BTN[language].saving : ACTIVITY_SAVE_BTN[language].save}
       </Text>
     </Pressable>
   );

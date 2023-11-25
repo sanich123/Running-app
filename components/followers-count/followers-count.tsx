@@ -1,10 +1,10 @@
 import { useAuth } from '@A/context/auth-context';
 import { useGetFollowersByUserIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { FOLLOWERS_COUNT } from './const';
 
@@ -14,7 +14,7 @@ export default function FollowersCount() {
   const pathname = usePathname();
   const { id: friendId } = useLocalSearchParams();
   const { isLoading, isError, error, data: followers } = useGetFollowersByUserIdQuery((friendId as string) ?? user.id);
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
 
   return (
     <Pressable
@@ -22,9 +22,7 @@ export default function FollowersCount() {
       disabled={isError || isLoading}
       style={(isError || isLoading) && { opacity: 0.5 }}>
       <Text variant="bodySmall">
-        {isError
-          ? `${FOLLOWERS_COUNT[language as keyof typeof FOLLOWERS_COUNT].error}:`
-          : FOLLOWERS_COUNT[language as keyof typeof FOLLOWERS_COUNT].followers}
+        {isError ? `${FOLLOWERS_COUNT[language].error}:` : FOLLOWERS_COUNT[language].followers}
       </Text>
       {isLoading && <ActivityIndicator size="small" />}
       {!isLoading && <Text variant="titleLarge">{isError ? `${errorExtracter(error)}` : `${followers?.length}`}</Text>}

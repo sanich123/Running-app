@@ -1,22 +1,22 @@
 import { useAuth } from '@A/context/auth-context';
 import { getSignedUrl } from '@A/supabase/storage/upload-photo';
 import { resetPhotoUrls, addPhotoUrl } from '@R/activity/activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendPhoto } from '@U/file-sending';
 import { EXPIRED_TIME } from '@const/const';
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { UploadPhotoBtnProps, UPLOAD_PHOTO_BTN } from './ const';
 
 export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, images }: UploadPhotoBtnProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
+  const dispatch = useAppDispatch();
   const { user } = useAuth();
-  const dispatch = useDispatch();
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
+  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isNeedToResetInputs) {
@@ -34,12 +34,18 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
         setIsLoading(true);
         try {
           const result = await getAccessToGallery();
-          if (!result.canceled) {
+          if (result && !result.canceled) {
             const imgSrc = result.assets[0].uri;
-            const pathToPhoto = await compressAndSendPhoto(imgSrc, user.id);
-            const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
-            setImages([...images, url]);
-            dispatch(addPhotoUrl(url));
+            if (user && 'id' in user) {
+              const pathToPhoto = await compressAndSendPhoto(imgSrc, user.id);
+              if (pathToPhoto) {
+                const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
+                if (url) {
+                  setImages([...images, url]);
+                  dispatch(addPhotoUrl(url));
+                }
+              }
+            }
           }
         } catch (error) {
           errorHandler(error);
@@ -51,9 +57,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
       style={styles.uploadBtn}
       loading={isLoading}
       disabled={isDisabled || isDisabledWhileSending}>
-      {isLoading
-        ? UPLOAD_PHOTO_BTN[language as keyof typeof UPLOAD_PHOTO_BTN].isLoading
-        : UPLOAD_PHOTO_BTN[language as keyof typeof UPLOAD_PHOTO_BTN].isInitial}
+      {isLoading ? UPLOAD_PHOTO_BTN[language].isLoading : UPLOAD_PHOTO_BTN[language].isInitial}
     </Button>
   );
 }

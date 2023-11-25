@@ -1,14 +1,14 @@
 import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { LANGUAGES } from '@const/enums';
 import { View } from 'react-native';
 import { MD3TypescaleKey, Text } from 'react-native-paper';
 import { VariantProp } from 'react-native-paper/lib/typescript/components/Typography/types';
-import { useSelector } from 'react-redux';
 
 export default function UserNameSurname({ userId, size }: { userId: string; size: VariantProp<MD3TypescaleKey> }) {
   const { error, data: profileInfo } = useGetUserProfileByIdQuery(userId);
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <>
       <View style={{ flex: 1, flexDirection: 'row' }}>

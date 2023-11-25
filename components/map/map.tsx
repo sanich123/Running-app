@@ -1,14 +1,14 @@
 import MapKmSplit from '@C/map-km-split/map-km-split';
 import MapNavIcon from '@C/map-nav-icon/map-nav-icon';
 import MapRouteLine from '@C/map-route-line/map-route-line';
+import { useAppSelector } from '@R/typed-hooks';
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
 import { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 
 export default function Map() {
   const cameraRef = useRef<Camera>(null);
-  const { initialLocation, isMapVisible, locationsWithPauses, lastPosition, kilometresSplit } = useSelector(
+  const { initialLocation, isMapVisible, locationsWithPauses, lastPosition, kilometresSplit } = useAppSelector(
     ({ location }) => location,
   );
 

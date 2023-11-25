@@ -1,11 +1,11 @@
 import { setCameraIsVisible } from '@R/activity/activity';
+import { useAppDispatch } from '@R/typed-hooks';
 import { Pressable } from 'react-native';
 import { useTheme, Icon } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
 
 export default function CameraCloseBtn() {
   const { colors } = useTheme();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   return (
     <Pressable
       onPress={() => dispatch(setCameraIsVisible(false))}

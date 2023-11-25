@@ -2,13 +2,13 @@ import { useAuth } from '@A/context/auth-context';
 import { getSignedUrl } from '@A/supabase/storage/upload-photo';
 import PreviewImage from '@C/preview-image/preview-image';
 import { addPhotoUrl } from '@R/activity/activity';
+import { useAppDispatch } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { compressAndSendPhoto } from '@U/file-sending';
 import { EXPIRED_TIME } from '@const/const';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
 
 type PreviewUploadableImageProps = {
   image: string;
@@ -18,7 +18,7 @@ type PreviewUploadableImageProps = {
 
 export default function PreviewUploadableImage({ image, index, isDisabled }: PreviewUploadableImageProps) {
   const { user } = useAuth();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -31,12 +31,16 @@ export default function PreviewUploadableImage({ image, index, isDisabled }: Pre
       onPress={async () => {
         setIsLoading(true);
         try {
-          const pathToPhoto = await compressAndSendPhoto(image, user.id);
-          const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
-          dispatch(addPhotoUrl(url));
-          setIsLoading(false);
-          setIsSuccess(true);
-          setTimeout(() => setIsSuccess(false), 3000);
+          if (user) {
+            const pathToPhoto = await compressAndSendPhoto(image, user.id);
+            if (pathToPhoto) {
+              const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
+              dispatch(addPhotoUrl(url));
+              setIsLoading(false);
+              setIsSuccess(true);
+              setTimeout(() => setIsSuccess(false), 3000);
+            }
+          }
         } catch (error) {
           errorHandler(error);
           setIsError(true);

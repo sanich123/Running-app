@@ -1,5 +1,5 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { Image, useWindowDimensions } from 'react-native';
-import { useSelector } from 'react-redux';
 
 type PreviewImageProps = {
   image: string;
@@ -8,7 +8,7 @@ type PreviewImageProps = {
 };
 
 export default function PreviewImage({ image, index, isDisabled }: PreviewImageProps) {
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
+  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { width } = useWindowDimensions();
   return (
     <Image

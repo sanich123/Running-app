@@ -1,11 +1,11 @@
 import { useAuth } from '@A/context/auth-context';
 import { useSendOrDeleteLikeMutation, useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { errorHandler } from '@U/error-handler';
 import { useContext, useEffect } from 'react';
 import { ToastAndroid } from 'react-native';
 import { ActivityIndicator, IconButton, MD3Colors } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import {
   CARD_LIKE_BTN,
@@ -18,9 +18,9 @@ import {
 export default function ActivityCardLikeBtn({ activityId }: { activityId: string }) {
   const { user } = useAuth();
   const [sendLike, { data, error: errorSendingLike }] = useSendOrDeleteLikeMutation();
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   const { isLoading: isLoadingLikes, isError, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
-  const isLikedByYou = likes?.some(({ authorId }: { authorId: string }) => authorId === user.id);
+  const isLikedByYou = likes?.some(({ authorId }: { authorId: string }) => authorId === user?.id);
   const { isDisabled, isLoading, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
     }
     if (errorSendingLike) {
       console.log(error);
-      ToastAndroid.show(CARD_LIKE_BTN[language as keyof typeof CARD_LIKE_BTN].errorMsg, ToastAndroid.SHORT);
+      ToastAndroid.show(CARD_LIKE_BTN[language].errorMsg, ToastAndroid.SHORT);
     }
   }, [data, errorSendingLike]);
 
@@ -48,7 +48,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
             setIsLoading(true);
             setIsDisabled(true);
             try {
-              await sendLike({ activityId, authorId: user.id }).unwrap();
+              await sendLike({ activityId, authorId: user?.id }).unwrap();
             } catch (error) {
               errorHandler(error);
             } finally {

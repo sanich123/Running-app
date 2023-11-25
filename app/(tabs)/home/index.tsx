@@ -7,31 +7,31 @@ import NetworkIndicator from '@C/network-indicator/network-indicator';
 import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
 import { setIsManualAdding, resetFinishedActivity, resetManualData } from '@R/activity/activity';
 import { useGetActivitiesByUserIdWithFriendsActivitiesQuery, runichApi } from '@R/runich-api/runich-api';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
 import useRefresh from '@U/hooks/use-refresh';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
 export default function Feed() {
   const { user } = useAuth();
   const { push } = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   useGetPermissions();
   const {
     data: activities,
     error,
     isLoading,
     refetch,
-  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user.id, {
+  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user?.id ?? '', {
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
   const { onRefresh, refreshing } = useRefresh(refetch);
-  const { isHaveUnsyncedActivity } = useSelector(({ activity }) => activity);
+  const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
 
   useEffect(() => {
     if (error) {

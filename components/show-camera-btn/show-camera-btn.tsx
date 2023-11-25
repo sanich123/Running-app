@@ -1,14 +1,14 @@
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { SHOW_CAMERA_BTN } from './const';
 import { setCameraIsVisible } from '../../redux/activity/activity';
 
 export default function ShowCameraBtn({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useDispatch();
-  const { language } = useSelector(({ language }) => language);
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
+  const dispatch = useAppDispatch();
+  const { language } = useAppSelector(({ language }) => language);
+  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
 
   return (
     <Button
@@ -17,7 +17,7 @@ export default function ShowCameraBtn({ isDisabled }: { isDisabled: boolean }) {
       style={styles.showCameraBtn}
       onPress={() => dispatch(setCameraIsVisible(true))}
       disabled={isDisabledWhileSending || isDisabled}>
-      {SHOW_CAMERA_BTN[language as keyof typeof SHOW_CAMERA_BTN].text}
+      {SHOW_CAMERA_BTN[language].text}
     </Button>
   );
 }

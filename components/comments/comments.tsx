@@ -4,17 +4,17 @@ import CommentLikesLength from '@C/comment-likes-length/comment-likes-length';
 import ErrorComponent from '@C/error-component/error-component';
 import UserNameSurname from '@C/user-name-surname/user-name-surname';
 import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import { useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 export default function Comments({ id }: { id: string }) {
   const { isLoading, error, data: comments } = useGetCommentsByActivityIdQuery(id);
   const { push } = useRouter();
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
 
   return (
     <View style={(isLoading || error) && styles.isInCenter}>

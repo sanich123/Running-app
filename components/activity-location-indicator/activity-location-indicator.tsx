@@ -1,34 +1,30 @@
+import { useAppSelector } from '@R/typed-hooks';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { ACTIVITY_LOCATION_INDICATOR } from './const';
 
 export default function ActivityLocationIndicator() {
   const { isLoading, isError, isSuccess } = useGetCurrentLocation();
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <>
       {isLoading ? (
         <View style={[styles.indicatorLayout, { backgroundColor: 'yellow' }]}>
-          <Text variant="bodyLarge">
-            {ACTIVITY_LOCATION_INDICATOR[language as keyof typeof ACTIVITY_LOCATION_INDICATOR].isLoading}
-          </Text>
+          <Text variant="bodyLarge">{ACTIVITY_LOCATION_INDICATOR[language].isLoading}</Text>
         </View>
       ) : null}
       {isError ? (
         <View style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
           <Text variant="bodyLarge" style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
-            {ACTIVITY_LOCATION_INDICATOR[language as keyof typeof ACTIVITY_LOCATION_INDICATOR].isError}
+            {ACTIVITY_LOCATION_INDICATOR[language].isError}
           </Text>
         </View>
       ) : null}
       {isSuccess ? (
         <View style={[styles.indicatorLayout, { backgroundColor: 'green' }]}>
-          <Text variant="bodyLarge">
-            {ACTIVITY_LOCATION_INDICATOR[language as keyof typeof ACTIVITY_LOCATION_INDICATOR].isSuccess}
-          </Text>
+          <Text variant="bodyLarge">{ACTIVITY_LOCATION_INDICATOR[language].isSuccess}</Text>
         </View>
       ) : null}
     </>

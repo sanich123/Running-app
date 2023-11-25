@@ -1,19 +1,18 @@
 import { setActivityStatus, resetLastKm } from '@R/location/location';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { STATUSES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { Alert, Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { ACTIVITY_CLOSE_BTN } from './const';
 
 export default function ActivityCloseBtn() {
   const router = useRouter();
   const { colors } = useTheme();
-  const { duration } = useSelector(({ location }) => location);
+  const { duration } = useAppSelector(({ location }) => location);
   const { language } = useAppSelector(({ language }) => language);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   async function closeBtnHandler() {
     dispatch(setActivityStatus(STATUSES.initial));
@@ -31,7 +30,7 @@ export default function ActivityCloseBtn() {
             ACTIVITY_CLOSE_BTN[language].alertQuestion,
             [
               {
-                text: ACTIVITY_CLOSE_BTN[language as keyof typeof ACTIVITY_CLOSE_BTN].alertAccept,
+                text: ACTIVITY_CLOSE_BTN[language].alertAccept,
                 onPress: closeBtnHandler,
                 style: 'cancel',
               },

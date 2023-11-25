@@ -5,21 +5,21 @@ import { HomeIcon, ActivityIcon, ProgressIcon } from '@C/icons/icons';
 import ProfileEditBtn from '@C/profile-edit-btn/profile-edit-btn';
 import ProfileUpdateBtn from '@C/profile-update-btn/profile-update-btn';
 import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
+import { useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { Tabs, usePathname } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useTheme } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { user } = useAuth();
   const pathname = usePathname();
   const theme = useTheme();
-  const { language } = useSelector(({ language }) => language);
-  const { isCameraVisible } = useSelector(({ activity }) => activity);
+  const { language } = useAppSelector(({ language }) => language);
+  const { isCameraVisible } = useAppSelector(({ activity }) => activity);
   const commonSettings = {
     tabBarLabelStyle: { color: theme.colors.primaryContainer },
     headerStyle: { backgroundColor: theme.colors.primary },
@@ -72,18 +72,20 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => <ProgressIcon focused={focused} />,
         }}
       />
-      <Tabs.Screen
-        name="profile"
-        redirect={!user}
-        options={{
-          ...commonSettings,
-          title: language === LANGUAGES.english ? 'Profile' : 'Профиль',
-          tabBarLabel: 'Profile',
-          tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
-          headerTitleStyle: { fontWeight: 'bold' },
-          headerRight: () => (pathname !== '/profile/settings' ? <ProfileEditBtn /> : <ProfileUpdateBtn />),
-        }}
-      />
+      {user && (
+        <Tabs.Screen
+          name="profile"
+          redirect={!user}
+          options={{
+            ...commonSettings,
+            title: language === LANGUAGES.english ? 'Profile' : 'Профиль',
+            tabBarLabel: 'Profile',
+            tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
+            headerTitleStyle: { fontWeight: 'bold' },
+            headerRight: () => (pathname !== '/profile/settings' ? <ProfileEditBtn /> : <ProfileUpdateBtn />),
+          }}
+        />
+      )}
       <Tabs.Screen
         name="settings/index"
         options={{
@@ -110,7 +112,7 @@ export default function TabLayout() {
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
           headerShown: !isCameraVisible,
-          headerRight: !isCameraVisible ? () => <ActivitySaveBtn /> : null,
+          headerRight: !isCameraVisible ? () => <ActivitySaveBtn /> : undefined,
         }}
       />
     </Tabs>

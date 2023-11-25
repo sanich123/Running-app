@@ -11,10 +11,10 @@ import SportsBtns from '@C/sports-btns/sports-btns';
 import TextInputs from '@C/text-inputs/text-inputs';
 import UploadPhotosBtn from '@C/upload-photos-btn/upload-photos-btn';
 import { setIsNeedToResetInputs } from '@R/activity/activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
 
 export default function SaveResult() {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -23,9 +23,9 @@ export default function SaveResult() {
     isManualAdding,
     isCameraVisible,
     additionalInfo: { photoUrls },
-  } = useSelector(({ activity }) => activity);
-  const dispatch = useDispatch();
-  const [images, setImages] = useState([]);
+  } = useAppSelector(({ activity }) => activity);
+  const dispatch = useAppDispatch();
+  const [images, setImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (isNeedToResetInputs) {

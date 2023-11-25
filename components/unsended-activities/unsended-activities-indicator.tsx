@@ -1,19 +1,19 @@
 import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '@R/activity/activity';
 import { useAddActivityByUserIdMutation } from '@R/runich-api/runich-api';
+import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { UNSENDED_ACTIVITIES } from './const';
 
 export default function UnsendedActivitiesIndicator() {
-  const { unsyncedActivities, isHaveUnsyncedActivity } = useSelector(({ activity }) => activity);
+  const { unsyncedActivities, isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   const [errorSending, setErrorSending] = useState(false);
   const [successSending, setIsSuccessSending] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const isInitial = !isLoading && !successSending && !errorSending;
 
   async function activitySender() {
@@ -55,12 +55,10 @@ export default function UnsendedActivitiesIndicator() {
           <Text variant="bodyLarge">
             {isInitial &&
               unsyncedActivities.length > 0 &&
-              `${UNSENDED_ACTIVITIES[language as keyof typeof UNSENDED_ACTIVITIES].initialBegin} ${
-                unsyncedActivities.length
-              } ${UNSENDED_ACTIVITIES[language as keyof typeof UNSENDED_ACTIVITIES].initialEnd}`}
-            {isLoading && UNSENDED_ACTIVITIES[language as keyof typeof UNSENDED_ACTIVITIES].isLoading}
-            {successSending && UNSENDED_ACTIVITIES[language as keyof typeof UNSENDED_ACTIVITIES].success}
-            {errorSending && UNSENDED_ACTIVITIES[language as keyof typeof UNSENDED_ACTIVITIES].error}
+              `${UNSENDED_ACTIVITIES[language].initialBegin} ${unsyncedActivities.length} ${UNSENDED_ACTIVITIES[language].initialEnd}`}
+            {isLoading && UNSENDED_ACTIVITIES[language].isLoading}
+            {successSending && UNSENDED_ACTIVITIES[language].success}
+            {errorSending && UNSENDED_ACTIVITIES[language].error}
           </Text>
           <Button loading={isLoading} onPress={async () => activitySender()}>
             Manually

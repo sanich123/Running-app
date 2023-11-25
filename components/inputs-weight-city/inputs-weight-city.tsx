@@ -1,20 +1,20 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { CITY_TEST_ID, InputsWeightCityProps, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
 
 export default function InputsWeightCity({ city, setCity, weight, setWeight, isDisabled }: InputsWeightCityProps) {
-  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
-  const { language } = useSelector(({ language }) => language);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={styles.inputWrapper}>
       <TextInput
         testID={CITY_TEST_ID}
         mode="outlined"
         style={{ width: '50%' }}
-        label={WEIGHT_CITY[language as keyof typeof WEIGHT_CITY].cityLabel}
-        placeholder={WEIGHT_CITY[language as keyof typeof WEIGHT_CITY].cityPlaceholder}
+        label={WEIGHT_CITY[language].cityLabel}
+        placeholder={WEIGHT_CITY[language].cityPlaceholder}
         value={city}
         onChangeText={(city) => setCity(city)}
         disabled={isDisabled || isDisabledWhileSendingProfile}
@@ -23,8 +23,8 @@ export default function InputsWeightCity({ city, setCity, weight, setWeight, isD
         testID={WEIGHT_TEST_ID}
         mode="outlined"
         style={{ width: '50%' }}
-        label={WEIGHT_CITY[language as keyof typeof WEIGHT_CITY].weightLabel}
-        placeholder={WEIGHT_CITY[language as keyof typeof WEIGHT_CITY].weightPlaceholder}
+        label={WEIGHT_CITY[language].weightLabel}
+        placeholder={WEIGHT_CITY[language].weightPlaceholder}
         keyboardType="numeric"
         value={weight}
         onChangeText={(weight) => setWeight(weight)}

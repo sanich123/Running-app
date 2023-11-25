@@ -1,16 +1,16 @@
 import { resetActivityInfo, resetFinishedActivity, resetManualData } from '@R/activity/activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useRouter } from 'expo-router';
 import { Alert } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { DECLINE_BTN } from './const';
 
 export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { push } = useRouter();
-  const { isDisabledWhileSending } = useSelector(({ activity }) => activity);
-  const { language } = useSelector(({ language }) => language);
+  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { language } = useAppSelector(({ language }) => language);
 
   return (
     <Button
@@ -18,11 +18,11 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
       mode="outlined"
       onPress={() => {
         Alert.alert(
-          DECLINE_BTN[language as keyof typeof DECLINE_BTN].action,
-          DECLINE_BTN[language as keyof typeof DECLINE_BTN].question,
+          DECLINE_BTN[language].action,
+          DECLINE_BTN[language].question,
           [
             {
-              text: DECLINE_BTN[language as keyof typeof DECLINE_BTN].accept,
+              text: DECLINE_BTN[language].accept,
               onPress: () => {
                 dispatch(resetActivityInfo());
                 dispatch(resetFinishedActivity());
@@ -37,7 +37,7 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
       }}
       style={{ marginTop: 15 }}
       disabled={isDisabled || isDisabledWhileSending}>
-      {DECLINE_BTN[language as keyof typeof DECLINE_BTN].cancel}
+      {DECLINE_BTN[language].cancel}
     </Button>
   );
 }
