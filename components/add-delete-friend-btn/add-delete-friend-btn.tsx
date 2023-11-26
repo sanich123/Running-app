@@ -49,8 +49,9 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
         if (user) {
           if (friendCell?.length > 0) {
             await deleteFriend({ body: { userId: user.id }, id: friendId }).unwrap();
+          } else {
+            await addFriend({ body: { userId: user.id }, id: friendId }).unwrap();
           }
-          await addFriend({ body: { userId: user.id }, id: friendId }).unwrap();
         }
       }}>
       {!isError && isLoadingListOfFriends && ''}

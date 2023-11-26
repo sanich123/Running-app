@@ -59,7 +59,7 @@ export default function SignIn() {
   );
 }
 
-export const signInStyles = StyleSheet.create({
+const signInStyles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',

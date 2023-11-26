@@ -1,12 +1,11 @@
 import { useAppSelector } from '@R/typed-hooks';
-import { View, Pressable } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { LOGIN_NAVIGATION, REGISTER_NAVIGATION, RegisterNavigationProps } from './const';
-import { signInStyles } from '../../app/(auth)/sign-in';
 
 export default function RegisterNavigation({ isRegister, setIsRegister, isDisabled }: RegisterNavigationProps) {
-  const { btnWrapper, navigateBtn } = signInStyles;
+  const { btnWrapper, navigateBtn } = styles;
   const { language } = useAppSelector(({ language }) => language);
 
   return (
@@ -20,3 +19,22 @@ export default function RegisterNavigation({ isRegister, setIsRegister, isDisabl
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  btnWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    columnGap: 10,
+    marginTop: 10,
+  },
+  navigateBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#518be8',
+    borderRadius: 8,
+    padding: 8,
+  },
+});
