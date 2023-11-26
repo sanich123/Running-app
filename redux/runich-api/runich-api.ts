@@ -1,9 +1,11 @@
+import { ActivityToSend } from '@R/activity/types';
+import { ProfileSettings } from '@R/profile/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { headers, TAGS, ROUTES } from '../../constants/api/api-contsts';
 
 const { activities, profile, comments, likes, friends, users } = TAGS;
-const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp, activityId } = ROUTES;
+const { profile: routeProfile, activity, friend, comment, like, activityId } = ROUTES;
 
 export const runichApi = createApi({
   reducerPath: 'runnichApi',
@@ -60,24 +62,8 @@ export const runichApi = createApi({
       query: (commentId: string) => `/${comment}/${commentId}/like`,
       providesTags: [comments],
     }),
-    signUpUser: builder.mutation({
-      query: (body) => ({
-        url: `/${auth}/${signUp}`,
-        method: 'POST',
-        headers,
-        body,
-      }),
-    }),
-    signInUser: builder.mutation({
-      query: (body) => ({
-        url: `/${auth}/${signIn}`,
-        method: 'POST',
-        headers,
-        body,
-      }),
-    }),
     sendProfileInfo: builder.mutation({
-      query: ({ body, id }) => ({
+      query: ({ body, id }: { body: ProfileSettings; id: string }) => ({
         url: `/user/${id}/${routeProfile}`,
         method: 'POST',
         headers,
@@ -86,7 +72,7 @@ export const runichApi = createApi({
       invalidatesTags: [profile],
     }),
     addActivityByUserId: builder.mutation({
-      query: ({ body, id }) => ({
+      query: ({ body, id }: { body: ActivityToSend; id: string }) => ({
         url: `/${activity}/${id}`,
         method: 'POST',
         headers,
@@ -95,7 +81,7 @@ export const runichApi = createApi({
       invalidatesTags: [activities],
     }),
     deleteActivityById: builder.mutation({
-      query: (id) => ({
+      query: (id: string) => ({
         url: `/${activity}/${id}`,
         method: 'DELETE',
         headers,
@@ -103,7 +89,7 @@ export const runichApi = createApi({
       invalidatesTags: [activities],
     }),
     addFriend: builder.mutation({
-      query: ({ body, id }) => ({
+      query: ({ body, id }: { body: { userId: string }; id: string }) => ({
         url: `/${friend}/${id}`,
         method: 'POST',
         headers,
@@ -112,7 +98,7 @@ export const runichApi = createApi({
       invalidatesTags: [friends, activities, users],
     }),
     deleteFriend: builder.mutation({
-      query: ({ body, id }) => ({
+      query: ({ body, id }: { body: { userId: string }; id: string }) => ({
         url: `/${friend}/${id}`,
         method: 'DELETE',
         headers,
@@ -130,7 +116,7 @@ export const runichApi = createApi({
       invalidatesTags: [comments],
     }),
     sendOrDeleteLike: builder.mutation({
-      query: (body) => ({
+      query: (body: { activityId: string; authorId: string }) => ({
         url: `/${like}`,
         method: 'POST',
         headers,
@@ -139,7 +125,7 @@ export const runichApi = createApi({
       invalidatesTags: [likes],
     }),
     sendOrDeleteLikeToComment: builder.mutation({
-      query: ({ body, commentId }) => ({
+      query: ({ body, commentId }: { body: { commentId: string; authorId: string }; commentId: string }) => ({
         url: `/${comment}/${commentId}/like`,
         method: 'POST',
         headers,
@@ -162,8 +148,6 @@ export const {
   useGetCommentsByActivityIdQuery,
   useGetLikesByActivityIdQuery,
   useGetLikesByCommentIdQuery,
-  useSignUpUserMutation,
-  useSignInUserMutation,
   useSendProfileInfoMutation,
   useAddActivityByUserIdMutation,
   useDeleteActivityByIdMutation,

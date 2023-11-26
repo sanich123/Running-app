@@ -1,7 +1,7 @@
 import ErrorComponent from '@C/error-component/error-component';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Pressable, View, useWindowDimensions, Image, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, useWindowDimensions, Image, StyleSheet } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 
 export default function MediaGrid() {
@@ -14,7 +14,7 @@ export default function MediaGrid() {
   const calculatedWidth = (width - gap * 3) / 4;
 
   return (
-    <View
+    <ScrollView
       style={[
         {
           backgroundColor: theme.colors.background,
@@ -35,7 +35,7 @@ export default function MediaGrid() {
               <Image key={`${url}+${index}`} source={{ uri: url }} height={calculatedWidth} width={calculatedWidth} />
             </Pressable>
           ))}
-    </View>
+    </ScrollView>
   );
 }
 

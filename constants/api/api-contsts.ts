@@ -17,7 +17,5 @@ export const ROUTES = {
   comment: 'comment',
   like: 'like',
   auth: 'auth',
-  signIn: 'signin',
-  signUp: 'signup',
   activityId: 'activityId',
 } as const;

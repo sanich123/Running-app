@@ -1,9 +1,5 @@
-import reducer, {
-  PROFILE_INITIAL_STATE,
-  saveEmailPassword,
-  saveSettingsInfo,
-  setIsDisabledWhileSendingProfile,
-} from './profile';
+import { PROFILE_INITIAL_STATE } from './const';
+import reducer, { saveEmailPassword, saveSettingsInfo, setIsDisabledWhileSendingProfile } from './profile';
 
 describe('Profile slice', () => {
   const MOCK_EMAIL_PASSWORD = { email: 'someEmail@yandex.ru', password: 'some password' };

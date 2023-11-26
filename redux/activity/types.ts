@@ -1,14 +1,15 @@
 import { EMOTIONS_BTNS_VALUES } from '@C/emotion-btns/const';
 import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
-import { LastKmSplit } from '@const/types/location';
+import { LastKmSplit } from '@R/location/types';
 import { LocationObject } from 'expo-location';
 
 export interface FinishedActivity {
+  date: Date;
   locations: LocationObject[];
   duration: number;
   speed: number;
   distance: number;
-  kilometresSplit: LastKmSplit[];
+  kilometresSplit?: LastKmSplit[];
 }
 
 export interface AdditionalInfoType {
@@ -27,7 +28,9 @@ export interface ManualData {
   manualDistance: number;
 }
 
-export type UnsyncedActivities = (FinishedActivity & AdditionalInfoType)[] | (AdditionalInfoType & ManualData)[];
+export type ActivityToSend = (FinishedActivity | ManualData) & AdditionalInfoType;
+
+export type UnsyncedActivities = ActivityToSend[];
 
 export interface ActivityInitialState {
   isNeedToResetInputs: boolean;

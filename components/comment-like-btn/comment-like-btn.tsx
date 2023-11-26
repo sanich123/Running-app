@@ -31,14 +31,16 @@ export default function CommentLikeBtn({ commentId }: { commentId: string }) {
       style={[{ marginLeft: 10, marginBottom: 10 }, (isLoading || isError) && { opacity: 0.5 }]}
       color={youGaveCommentLike ? MD3Colors.error50 : MD3Colors.primary50}
       onPress={async () => {
-        const body = { commentId, authorId: user.id };
-        setIsLoading(true);
-        try {
-          await sendLikeToComment({ body, commentId }).unwrap();
-        } catch (error) {
-          errorHandler(error);
-        } finally {
-          setIsLoading(false);
+        if (user) {
+          const body = { commentId, authorId: user.id };
+          setIsLoading(true);
+          try {
+            await sendLikeToComment({ body, commentId }).unwrap();
+          } catch (error) {
+            errorHandler(error);
+          } finally {
+            setIsLoading(false);
+          }
         }
       }}
       disabled={isLoading || isError}

@@ -6,6 +6,7 @@ import {
   saveUnsendedActivity,
   setIsHaveUnsyncedActivity,
 } from '@R/activity/activity';
+import { ActivityToSend } from '@R/activity/types';
 import { resetLocationsFromBackground } from '@R/location/location';
 import { useAddActivityByUserIdMutation, runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -19,6 +20,7 @@ import { useTheme, Text } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 
 export default function ActivitySaveBtn() {
+  const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { user } = useAuth();
   const { push } = useRouter();
@@ -34,9 +36,8 @@ export default function ActivitySaveBtn() {
   } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);
   const [sendActivity, { error, data, isSuccess, isError }] = useAddActivityByUserIdMutation();
-  const dispatch = useAppDispatch();
 
-  let activityToSend: { body: any; id: string };
+  let activityToSend: { body: ActivityToSend; id: string };
 
   useEffect(() => {
     dispatch(setIsDisableWhileSending(false));

@@ -48,7 +48,9 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
             setIsLoading(true);
             setIsDisabled(true);
             try {
-              await sendLike({ activityId, authorId: user?.id }).unwrap();
+              if (user) {
+                await sendLike({ activityId, authorId: user?.id }).unwrap();
+              }
             } catch (error) {
               errorHandler(error);
             } finally {
