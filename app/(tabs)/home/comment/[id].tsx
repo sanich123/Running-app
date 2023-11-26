@@ -12,17 +12,16 @@ import UserSportDate from '@C/user-sport-date/user-sport-date';
 import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Card, Text } from 'react-native-paper';
 
 export default function Comment() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(activityId);
+  const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(`${activityId}`);
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
 
   return (
-    <ScrollView
-      contentContainerStyle={[(isLoading || isError) && { flex: 1, alignItems: 'center', justifyContent: 'center' }]}>
+    <ScrollView contentContainerStyle={[(isLoading || isError) && styles.isInCenter]}>
       {isLoading && <ActivityIndicator size="large" />}
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
@@ -54,3 +53,11 @@ export default function Comment() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  isInCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
