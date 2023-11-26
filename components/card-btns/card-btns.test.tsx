@@ -23,7 +23,12 @@ describe('Card btns', () => {
       },
     }));
     renderWithProviders(
-      <CardBtns activityId="someActivityId" userId="someUserId" cardRef={undefined} fullViewRef={undefined} />,
+      <CardBtns
+        activityId="someActivityId"
+        userId="someUserId"
+        cardRef={{ current: '' }}
+        fullViewRef={{ current: '' }}
+      />,
       {
         store: mockStore,
       },
@@ -40,7 +45,12 @@ describe('Card btns', () => {
       },
     }));
     renderWithProviders(
-      <CardBtns activityId="someActivityId" userId="someUserId" cardRef={undefined} fullViewRef={undefined} />,
+      <CardBtns
+        activityId="someActivityId"
+        userId="someUserId"
+        cardRef={{ current: '' }}
+        fullViewRef={{ current: '' }}
+      />,
       {
         store: mockStore,
       },

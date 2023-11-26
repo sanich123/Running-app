@@ -20,7 +20,7 @@ export default function CardBtns({ activityId, userId, cardRef, fullViewRef }: C
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const isMineActivvity = user.id === userId;
+  const isMineActivvity = user?.id === userId;
 
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>

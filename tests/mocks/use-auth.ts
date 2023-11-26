@@ -1,1 +1,10 @@
-export const USER_AUTH_MOCKS = { app_metadata: undefined, user_metadata: undefined, aud: '', created_at: '' } as const;
+export const USER_AUTH_MOCKS = {
+  app_metadata: {
+    someProp: 'some value',
+  },
+  user_metadata: {
+    someProp: 'some value',
+  },
+  aud: '',
+  created_at: '',
+} as const;

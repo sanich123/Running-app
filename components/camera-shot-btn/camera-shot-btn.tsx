@@ -6,7 +6,7 @@ import { Pressable } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 
 type CameraShotBtnProps = {
-  cameraRef: MutableRefObject<Camera>;
+  cameraRef: MutableRefObject<Camera | null>;
   setPhotos: (arg: string[]) => void;
   photos: string[];
 };
@@ -17,13 +17,17 @@ export default function CameraShotBtn({ cameraRef, setPhotos, photos }: CameraSh
     <Pressable
       onPress={async () => {
         try {
-          const newPhoto = await cameraRef?.current.takePictureAsync({
-            quality: 1,
-            base64: true,
-            exif: false,
-          });
-          setPhotos([...photos, newPhoto.uri]);
-          MediaLibrary.saveToLibraryAsync(newPhoto.uri);
+          if (cameraRef?.current) {
+            const newPhoto = await cameraRef?.current.takePictureAsync({
+              quality: 1,
+              base64: true,
+              exif: false,
+            });
+            if (newPhoto) {
+              setPhotos([...photos, newPhoto.uri]);
+              MediaLibrary.saveToLibraryAsync(newPhoto.uri);
+            }
+          }
         } catch (error) {
           errorHandler(error);
         }
