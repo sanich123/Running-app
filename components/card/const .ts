@@ -14,5 +14,5 @@ export type ActivityCardProps = {
   photoUrls: string[];
   duration: number;
   distance: number;
-  fullViewRef: MutableRefObject<ReactNode> | null;
+  fullViewRef: MutableRefObject<ReactNode | null>;
 };

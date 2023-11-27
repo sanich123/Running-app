@@ -67,7 +67,7 @@ export const activity = createSlice({
       state.finishedActivity = FINISHED_ACTIVITY_INITIAL_STATE;
     },
     resetManualData: (state) => {
-      state.manualDate = null;
+      state.manualDate = new Date();
       state.manualDistance = 0;
       state.manualHours = 0;
       state.manualMinutes = 0;

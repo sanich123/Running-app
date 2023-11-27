@@ -1,4 +1,4 @@
-import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '@R/activity/activity';
+import { refreshUnsendedActivitiesList } from '@R/activity/activity';
 import { useAddActivityByUserIdMutation } from '@R/runich-api/runich-api';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
@@ -9,7 +9,7 @@ import { UNSENDED_ACTIVITIES } from './const';
 
 export default function UnsendedActivitiesIndicator() {
   const { unsyncedActivities, isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
-  const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
+  const [sendActivity, { isLoading, isError, isSuccess, data, error }] = useAddActivityByUserIdMutation();
   const { language } = useAppSelector(({ language }) => language);
   const [errorSending, setErrorSending] = useState(false);
   const [successSending, setIsSuccessSending] = useState(false);
@@ -18,29 +18,24 @@ export default function UnsendedActivitiesIndicator() {
 
   async function activitySender() {
     const lastActivity = unsyncedActivities[unsyncedActivities.length - 1];
-    await sendActivity(lastActivity)
-      .then((response) => {
-        if ('error' in response) {
-          if ((response.error.status as number) >= 400) {
-            setErrorSending(true);
-            setTimeout(() => setErrorSending(false), 2000);
-          }
-        } else {
-          setIsSuccessSending(true);
-          const reducedUnsyncedList = unsyncedActivities.slice(0, -1);
-          dispatch(refreshUnsendedActivitiesList(reducedUnsyncedList));
-          if (!unsyncedActivities.length) {
-            dispatch(setIsHaveUnsyncedActivity(true));
-          }
-          setTimeout(() => setIsSuccessSending(false), 2000);
-        }
-      })
-      .catch((error) => {
-        console.log('failure', error);
-        setErrorSending(true);
-        setTimeout(() => setErrorSending(false), 2000);
-      });
+    await sendActivity(lastActivity).unwrap();
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      if (!process.env.IS_TESTING) {
+        console.log('response', data);
+      }
+      setIsSuccessSending(true);
+      const reducedUnsyncedList = unsyncedActivities.slice(0, -1);
+      dispatch(refreshUnsendedActivitiesList(reducedUnsyncedList));
+    }
+    if (isError) {
+      console.log('failure', error);
+      setErrorSending(true);
+      setTimeout(() => setErrorSending(false), 2000);
+    }
+  }, [isSuccess, isError]);
 
   useEffect(() => {
     if (isHaveUnsyncedActivity) {

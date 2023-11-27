@@ -12,7 +12,7 @@ type CardBtnsProps = {
   activityId: string;
   userId: string;
   cardRef: MutableRefObject<ReactNode>;
-  fullViewRef: MutableRefObject<ReactNode>;
+  fullViewRef: MutableRefObject<ReactNode | null>;
 };
 
 export default function CardBtns({ activityId, userId, cardRef, fullViewRef }: CardBtnsProps) {

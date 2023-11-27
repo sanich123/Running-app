@@ -53,7 +53,6 @@ export default function Feed() {
               const { description, title, date, sport, locations, photoUrls, duration, distance, id, user_id } = item;
               return (
                 <ActivityCard
-                  fullViewRef={null}
                   description={description}
                   title={title}
                   date={date}
@@ -65,6 +64,7 @@ export default function Feed() {
                   photoUrls={photoUrls}
                   duration={duration}
                   distance={distance}
+                  fullViewRef={null}
                 />
               );
             }}

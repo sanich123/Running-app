@@ -19,7 +19,7 @@ export default function ActivityCard({ ...rest }: ActivityCardProps) {
   const { description, title, date, sport, id, userId, locations, photoUrls, duration, distance, fullViewRef } = rest;
   const { push } = useRouter();
   const pathname = usePathname();
-  const cardRef = useRef();
+  const cardRef = useRef(null);
 
   return (
     <Card key={id}>

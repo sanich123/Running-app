@@ -4,7 +4,7 @@ import { LastKmSplit } from '@R/location/types';
 import { LocationObject } from 'expo-location';
 
 export interface FinishedActivity {
-  date: Date;
+  date?: Date;
   locations: LocationObject[];
   duration: number;
   speed: number;
@@ -28,7 +28,10 @@ export interface ManualData {
   manualDistance: number;
 }
 
-export type ActivityToSend = (FinishedActivity | ManualData) & AdditionalInfoType;
+export type ActivityToSend = {
+  body: FinishedActivity & AdditionalInfoType;
+  id: string;
+};
 
 export type UnsyncedActivities = ActivityToSend[];
 
@@ -41,7 +44,7 @@ export interface ActivityInitialState {
   finishedActivity: FinishedActivity;
   additionalInfo: AdditionalInfoType;
   unsyncedActivities: UnsyncedActivities;
-  manualDate: Date;
+  manualDate: Date | null;
   manualHours: number;
   manualMinutes: number;
   manualDistance: number;

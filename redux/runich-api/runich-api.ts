@@ -1,7 +1,8 @@
+import { ActivityToSend } from '@R/activity/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { API_NAME, Methods, Routes, Tags, headers } from './const';
-import { SendActivity, SendComment, SendCommentLike, SendFriend, SendLike, SendProfile } from './types';
+import { SendComment, SendCommentLike, SendFriend, SendLike, SendProfile } from './types';
 
 const { profile, activity, friend, comment, like, activityId, user, all, photos, followers } = Routes;
 
@@ -70,7 +71,7 @@ export const runichApi = createApi({
       invalidatesTags: [Tags.profile],
     }),
     addActivityByUserId: builder.mutation({
-      query: ({ body, id }: SendActivity) => ({
+      query: ({ body, id }: ActivityToSend) => ({
         url: `/${activity}/${id}`,
         method: Methods.post,
         headers,
