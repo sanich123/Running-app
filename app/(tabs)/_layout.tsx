@@ -49,6 +49,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
           headerTitleStyle: { fontWeight: 'bold' },
           headerRight: () => <UsersSettingsIcons />,
+          headerShown: pathname === '/home',
         }}
       />
       <Tabs.Screen
@@ -83,6 +84,7 @@ export default function TabLayout() {
             tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
             headerTitleStyle: { fontWeight: 'bold' },
             headerRight: () => (pathname !== '/profile/settings' ? <ProfileEditBtn /> : <ProfileUpdateBtn />),
+            headerShown: pathname === '/profile',
           }}
         />
       )}
