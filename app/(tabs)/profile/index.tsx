@@ -13,12 +13,12 @@ import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
 export default function Profile() {
   const { id: friendId } = useLocalSearchParams();
   const { user } = useAuth();
-  const isMineActivity = friendId === user.id;
+  const isMineActivity = friendId === user?.id;
   const {
     isLoading,
     data: profile,
     error,
-  } = useGetUserProfileByIdQuery(user?.id, {
+  } = useGetUserProfileByIdQuery(`${user?.id}`, {
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -26,32 +26,35 @@ export default function Profile() {
 
   return (
     <>
-      <ProfileMediaPhotos userId={user?.id} />
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <AvatarShowable size={100} id={user?.id} />
-          <View style={styles.nicknameWrapper}>
-            <Text variant="headlineMedium">
-              {profile?.name} {profile?.surname}
-            </Text>
-            <Text variant="titleLarge">{profile?.city} </Text>
+      {user && (
+        <>
+          <ProfileMediaPhotos userId={user.id} />
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <AvatarShowable size={100} id={user.id} />
+              <View style={styles.nicknameWrapper}>
+                <Text variant="headlineMedium">
+                  {profile?.name} {profile?.surname}
+                </Text>
+                <Text variant="titleLarge">{profile?.city} </Text>
+              </View>
+            </View>
+            <View style={styles.bio}>
+              <Text variant="titleMedium">{profile?.bio}</Text>
+            </View>
+            <View style={styles.followersWrapper}>
+              <FollowingCount />
+              <FollowersCount />
+              {!isMineActivity && friendId && <AddDeleteFriendBtn friendId={`${friendId}`} />}
+            </View>
+            {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
+            {error ? <ErrorComponent error={error} /> : null}
           </View>
-        </View>
-        <View style={styles.bio}>
-          <Text variant="titleMedium">{profile?.bio}</Text>
-        </View>
-        <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
-          <FollowingCount />
-          <FollowersCount />
-          {!isMineActivity && friendId && <AddDeleteFriendBtn friendId={`${friendId}`} />}
-        </View>
-        {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
-        {error ? <ErrorComponent error={error} /> : null}
-      </View>
+        </>
+      )}
     </>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -72,5 +75,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     marginTop: 20,
     marginBottom: 20,
+  },
+  followersWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 20,
+    alignItems: 'center',
   },
 });

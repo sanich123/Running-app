@@ -8,7 +8,7 @@ import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
 export default function LikesList() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, error, data: likes, refetch } = useGetLikesByActivityIdQuery(activityId.toString());
+  const { isLoading, error, data: likes, refetch } = useGetLikesByActivityIdQuery(`${activityId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (

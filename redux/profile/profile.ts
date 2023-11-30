@@ -15,9 +15,41 @@ export const profile = createSlice({
     setIsDisabledWhileSendingProfile: (state, action) => {
       state.isDisabledWhileSendingProfile = action.payload;
     },
+    savePhotoUrl: (state, action) => {
+      state.settings.profilePhoto = action.payload;
+    },
+    saveName: (state, action) => {
+      state.settings.name = action.payload;
+    },
+    saveSurname: (state, action) => {
+      state.settings.surname = action.payload;
+    },
+    saveWeight: (state, action) => {
+      state.settings.weight = action.payload;
+    },
+    saveCity: (state, action) => {
+      state.settings.city = action.payload;
+    },
+    saveBio: (state, action) => {
+      state.settings.bio = action.payload;
+    },
+    saveGender: (state, action) => {
+      state.settings.gender = action.payload;
+    },
   },
 });
 
-export const { saveSettingsInfo, saveEmailPassword, setIsDisabledWhileSendingProfile } = profile.actions;
+export const {
+  saveSettingsInfo,
+  saveEmailPassword,
+  setIsDisabledWhileSendingProfile,
+  savePhotoUrl,
+  saveName,
+  saveSurname,
+  saveWeight,
+  saveCity,
+  saveBio,
+  saveGender,
+} = profile.actions;
 
 export default profile.reducer;

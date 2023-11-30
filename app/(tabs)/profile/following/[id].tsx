@@ -10,8 +10,7 @@ import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 export default function ListOfFollowing() {
   const { id: userId } = useLocalSearchParams();
   const { user } = useAuth();
-  const whoIsViewing = userId === 'undefined' ? user.id : userId.toString();
-  const { isLoading, error, data: users, refetch } = useGetFriendsByUserIdQuery(whoIsViewing);
+  const { isLoading, error, data: users, refetch } = useGetFriendsByUserIdQuery(userId ? `${userId}` : `${user?.id}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (

@@ -1,6 +1,6 @@
 import { resetLocationsFromBackground, setEmptyLastArrayWhenPaused } from '@R/location/location';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
-import { startLocationTracking, stopLocationTracking } from '@U/background-location';
+import { startLocationTracking, stopLocationTracking } from '@U/background-location/background-location';
 import { STATUSES } from '@const/enums';
 import { useEffect, useState } from 'react';
 

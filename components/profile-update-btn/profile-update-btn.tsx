@@ -43,8 +43,7 @@ export default function ProfileUpdateBtn() {
       }}
       disabled={isLoading}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>
-        {!isLoading && UPDATE_BTN[language].update}
-        {isLoading && UPDATE_BTN[language].updating}
+        {isLoading ? UPDATE_BTN[language].updating : UPDATE_BTN[language].update}
       </Text>
     </Pressable>
   );

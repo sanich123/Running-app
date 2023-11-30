@@ -25,6 +25,7 @@ export default function TabLayout() {
     headerStyle: { backgroundColor: theme.colors.primary },
     headerTintColor: theme.colors.primaryContainer,
   };
+  console.log(pathname);
 
   return (
     <Tabs
@@ -84,7 +85,7 @@ export default function TabLayout() {
             tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
             headerTitleStyle: { fontWeight: 'bold' },
             headerRight: () => (pathname !== '/profile/settings' ? <ProfileEditBtn /> : <ProfileUpdateBtn />),
-            headerShown: pathname === '/profile',
+            headerShown: pathname === '/profile' || pathname === '/profile/settings',
           }}
         />
       )}

@@ -1,12 +1,22 @@
-import { useAppSelector } from '@R/typed-hooks';
+import { useAuth } from '@A/context/auth-context';
+import { saveCity, saveWeight } from '@R/profile/profile';
+import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
-import { CITY_TEST_ID, InputsWeightCityProps, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
+import { CITY_TEST_ID, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
 
-export default function InputsWeightCity({ city, setCity, weight, setWeight, isDisabled }: InputsWeightCityProps) {
+export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }) {
+  const dispatch = useAppDispatch();
   const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
+  const { user } = useAuth();
+  const { data: profileInfo } = useGetUserProfileByIdQuery(`${user?.id}`);
+  const [city, setCity] = useState(profileInfo?.city);
+  const [weight, setWeight] = useState(profileInfo?.weight);
+
   return (
     <View style={styles.inputWrapper}>
       <TextInput
@@ -16,7 +26,10 @@ export default function InputsWeightCity({ city, setCity, weight, setWeight, isD
         label={WEIGHT_CITY[language].cityLabel}
         placeholder={WEIGHT_CITY[language].cityPlaceholder}
         value={city}
-        onChangeText={(city) => setCity(city)}
+        onChangeText={(city) => {
+          setCity(city);
+          dispatch(saveCity(city));
+        }}
         disabled={isDisabled || isDisabledWhileSendingProfile}
       />
       <TextInput
@@ -27,7 +40,10 @@ export default function InputsWeightCity({ city, setCity, weight, setWeight, isD
         placeholder={WEIGHT_CITY[language].weightPlaceholder}
         keyboardType="numeric"
         value={weight}
-        onChangeText={(weight) => setWeight(weight)}
+        onChangeText={(weight) => {
+          setWeight(weight);
+          dispatch(saveWeight(weight));
+        }}
         disabled={isDisabled || isDisabledWhileSendingProfile}
       />
     </View>

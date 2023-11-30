@@ -7,7 +7,7 @@ import { ActivityIndicator } from 'react-native-paper';
 
 export default function ActivityMap() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(activityId.toString());
+  const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(`${activityId}`);
   return (
     <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
       {isLoading && <ActivityIndicator size="large" />}

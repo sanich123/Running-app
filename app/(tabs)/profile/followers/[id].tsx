@@ -8,7 +8,7 @@ import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
 export default function ListOfFollowers() {
   const { user } = useAuth();
-  const { isLoading, isError, error, data: users, refetch } = useGetFollowersByUserIdQuery(user?.id);
+  const { isLoading, isError, error, data: users, refetch } = useGetFollowersByUserIdQuery(`${user?.id}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (

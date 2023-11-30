@@ -12,7 +12,7 @@ export type LocationInitialState = {
   isTooMuchSpeed: boolean;
   isAppShutedByPhone: boolean;
   isMapVisible: boolean;
-  initialLocation: LocationObject;
+  initialLocation: LocationObject | null;
   distance: number;
   duration: number;
   altitude: number;
@@ -20,7 +20,7 @@ export type LocationInitialState = {
   lastKilometerAltitude: number;
   lastKilometer: number;
   lastKilometerDuration: number;
-  lastPosition: LocationObject;
+  lastPosition: LocationObject | null;
   currentPace: number;
   kilometresSplit: LastKmSplit[];
   locationsWithPauses: LocationObject[][];

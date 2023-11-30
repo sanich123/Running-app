@@ -13,7 +13,7 @@ import { StyleSheet, View } from 'react-native';
 export default function Profile() {
   const { id: whosProfileViewing } = useLocalSearchParams();
   const { user } = useAuth();
-  const isMineActivity = whosProfileViewing === user.id;
+  const isMineActivity = whosProfileViewing === user?.id;
 
   return (
     <>

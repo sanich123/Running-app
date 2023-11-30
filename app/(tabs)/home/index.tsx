@@ -25,7 +25,7 @@ export default function Feed() {
     error,
     isLoading,
     refetch,
-  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user?.id ?? '', {
+  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(`${user?.id}`, {
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -64,7 +64,7 @@ export default function Feed() {
                   photoUrls={photoUrls}
                   duration={duration}
                   distance={distance}
-                  fullViewRef={null}
+                  fullViewRef={{ current: null }}
                 />
               );
             }}
