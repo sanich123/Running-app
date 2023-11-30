@@ -1,17 +1,16 @@
+import { useAuth } from '@A/context/auth-context';
+import { NUMBER_OF_LIKES } from '@C/number-of-likes/const';
+import { useGetLikesByCommentIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
+import { errorExtracter } from '@U/error-handler';
 import { Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
-
-import { useAuth } from '../../auth/context/auth-context';
-import { useGetLikesByCommentIdQuery } from '../../redux/runich-api/runich-api';
-import { errorExtracter } from '../../utils/error-handler';
-import { NUMBER_OF_LIKES } from '../number-of-likes/const';
 
 export default function CommentLikesLength({ id }: { id: string }) {
   const { user } = useAuth();
   const { data: commentLikes, error, isError } = useGetLikesByCommentIdQuery(id);
-  const youGaveCommentLike = commentLikes?.some(({ authorId }) => authorId === user?.id);
+  const youGaveCommentLike = commentLikes?.some(({ authorId }: { authorId: string }) => authorId === user?.id);
   const commentLikesLength = youGaveCommentLike ? commentLikes?.length - 1 : commentLikes?.length;
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <>
       {!isError && commentLikes?.length > 0 && (

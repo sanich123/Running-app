@@ -1,11 +1,11 @@
+import * as auth from '@A/context/auth-context';
+import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 
 import ActivityCardLikeBtn from './card-like-btn';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from './const';
-import * as auth from '../../auth/context/auth-context';
-import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Activity card like btn', () => {
   it('should correctly renders when activity was liked by you', async () => {

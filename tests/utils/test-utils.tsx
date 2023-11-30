@@ -9,6 +9,7 @@ import { AppStore, RootState } from './mock-store';
 import activity from '../../redux/activity/activity';
 import language from '../../redux/language/language';
 import location from '../../redux/location/location';
+import network from '../../redux/network/network';
 import profile from '../../redux/profile/profile';
 import { runichApi } from '../../redux/runich-api/runich-api';
 
@@ -22,7 +23,7 @@ export function renderWithProviders(
   {
     preloadedState = {},
     store = configureStore({
-      reducer: { language, location, profile, activity, [runichApi.reducerPath]: runichApi.reducer },
+      reducer: { network, language, location, profile, activity, [runichApi.reducerPath]: runichApi.reducer },
       preloadedState,
     }),
     ...renderOptions

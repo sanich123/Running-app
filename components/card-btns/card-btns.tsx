@@ -1,19 +1,18 @@
+import { useAuth } from '@A/context/auth-context';
+import ActivityCardCommentBtn from '@C/card-comment-btn/card-comment-btn';
+import ActivityCardDeleteBtn from '@C/card-delete-btn/card-delete-btn';
+import ActivityCardLikeBtn from '@C/card-like-btn/card-like-btn';
+import ActivityCardShareBtn from '@C/card-share-btn/card-share-btn';
+import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { usePathname } from 'expo-router';
 import { MutableRefObject, ReactNode, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-
-import { useAuth } from '../../auth/context/auth-context';
-import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
-import ActivityCardCommentBtn from '../card-comment-btn/card-comment-btn';
-import ActivityCardDeleteBtn from '../card-delete-btn/card-delete-btn';
-import ActivityCardLikeBtn from '../card-like-btn/card-like-btn';
-import ActivityCardShareBtn from '../card-share-btn/card-share-btn';
 
 type CardBtnsProps = {
   activityId: string;
   userId: string;
   cardRef: MutableRefObject<ReactNode>;
-  fullViewRef: MutableRefObject<ReactNode>;
+  fullViewRef: MutableRefObject<ReactNode | null>;
 };
 
 export default function CardBtns({ activityId, userId, cardRef, fullViewRef }: CardBtnsProps) {
@@ -21,7 +20,7 @@ export default function CardBtns({ activityId, userId, cardRef, fullViewRef }: C
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const isMineActivvity = user.id === userId;
+  const isMineActivvity = user?.id === userId;
 
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>

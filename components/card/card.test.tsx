@@ -1,12 +1,12 @@
 import { screen } from '@testing-library/react-native';
 
 import ActivityCard from './card';
-import { SportsProps } from './const ';
 import * as auth from '../../auth/context/auth-context';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
+import { SPORTS_BTNS_VALUES } from '../sports-btns/const';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -27,13 +27,14 @@ describe('Activity card', () => {
         description={description}
         title={title}
         date={new Date(date)}
-        sport={sport as SportsProps}
+        sport={sport as SPORTS_BTNS_VALUES}
         id={id}
         userId="someUserId"
         locations={locations}
         photoUrls={photoUrls}
         duration={duration}
         distance={distance}
+        fullViewRef={null}
       />,
       { store: mockStore },
     );

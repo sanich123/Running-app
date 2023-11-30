@@ -5,7 +5,7 @@ import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'r
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import expo from '../app.config.js';
+import expo from '../app.config';
 import { AuthProvider } from '../auth/context/auth-context';
 import SplashIcon from '../components/splash-screen/splash-screen';
 import { persistor, store } from '../redux/store';
@@ -36,4 +36,4 @@ export default function RootLayout() {
   );
 }
 
-AppRegistry.registerComponent(expo.name, () => RootLayout);
+AppRegistry.registerComponent(expo.expo.name, () => RootLayout);

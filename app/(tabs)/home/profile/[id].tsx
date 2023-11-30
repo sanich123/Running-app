@@ -1,15 +1,14 @@
+import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
+import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import FollowersCount from '@C/followers-count/followers-count';
+import FollowingCount from '@C/following-count/following-count';
+import ProfileMediaPhotos from '@C/profile-media-photos/profile-media-photos';
+import UserBio from '@C/user-bio/user-bio';
+import UserCityAge from '@C/user-city-age/user-city-age';
+import UserNameSurname from '@C/user-name-surname/user-name-surname';
+import { useAuth } from 'auth/context/auth-context';
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-
-import { useAuth } from '../../../../auth/context/auth-context';
-import AddDeleteFriendBtn from '../../../../components/add-delete-friend-btn/add-delete-friend-btn';
-import AvatarShowable from '../../../../components/avatar-showable/avatar-showable';
-import FollowersCount from '../../../../components/followers-count/followers-count';
-import FollowingCount from '../../../../components/following-count/following-count';
-import ProfileMediaPhotos from '../../../../components/profile-media-photos/profile-media-photos';
-import UserBio from '../../../../components/user-bio/user-bio';
-import UserCityAge from '../../../../components/user-city-age/user-city-age';
-import UserNameSurname from '../../../../components/user-name-surname/user-name-surname';
 
 export default function Profile() {
   const { id: whosProfileViewing } = useLocalSearchParams();

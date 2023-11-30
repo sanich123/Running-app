@@ -1,6 +1,7 @@
+import { useAppSelector } from '@R/typed-hooks';
+import { passwordMatcher } from '@const/regexp';
 import { useState } from 'react';
 import { HelperText, TextInput } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import {
   PASSWORD_INPUT,
@@ -9,7 +10,6 @@ import {
   PASSWORD_INPUT_TEST_ID,
   PasswordInputProps,
 } from './const';
-import { passwordMatcher } from '../../constants/regexp';
 
 export default function PasswordInput({
   password,
@@ -19,7 +19,7 @@ export default function PasswordInput({
   isDisabled,
 }: PasswordInputProps) {
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(false);
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <>
       <TextInput

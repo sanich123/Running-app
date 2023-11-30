@@ -1,9 +1,10 @@
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen, userEvent } from '@testing-library/react-native';
 
 import { PASSWORD_INPUT, PASSWORD_INPUT_LEFT_ICON, PASSWORD_INPUT_RIGHT_ICON } from './const';
 import PasswordInput from './password-input';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
+
 describe('Password input', () => {
   it('should correctly renders', () => {
     renderWithProviders(

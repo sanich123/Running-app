@@ -1,19 +1,19 @@
+import { useDeleteActivityByIdMutation } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
+import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
+import { errorHandler } from '@U/error-handler';
 import { useRouter } from 'expo-router';
 import { useContext, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
-import { CARD_DELETE_BTN, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN_TEST_ID } from './const';
-import { useDeleteActivityByIdMutation } from '../../redux/runich-api/runich-api';
-import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
-import { errorHandler } from '../../utils/error-handler';
+import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from './const';
 
 export default function ActivityCardDeleteBtn({ activityId }: { activityId: string }) {
   const [deleteActivityById, { data, error }] = useDeleteActivityByIdMutation();
   const { isLoading, isDisabled, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
   const router = useRouter();
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   useEffect(() => {
     if (data) {
       console.log(data);

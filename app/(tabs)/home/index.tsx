@@ -1,38 +1,37 @@
+import { useAuth } from '@A/context/auth-context';
+import ActivityCard from '@C/card/card';
+import EmptyActivitiesList from '@C/empty-activities-list/empty-activities-list';
+import ErrorComponent from '@C/error-component/error-component';
+import FloatingBtn from '@C/floating-btn/floating-btn';
+import NetworkIndicator from '@C/network-indicator/network-indicator';
+import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
+import { setIsManualAdding, resetFinishedActivity, resetManualData } from '@R/activity/activity';
+import { useGetActivitiesByUserIdWithFriendsActivitiesQuery, runichApi } from '@R/runich-api/runich-api';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import useGetPermissions from '@U/hooks/use-get-permission';
+import useRefresh from '@U/hooks/use-refresh';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { useAuth } from '../../../auth/context/auth-context';
-import ActivityCard from '../../../components/card/card';
-import EmptyActivitiesList from '../../../components/empty-activities-list/empty-activities-list';
-import ErrorComponent from '../../../components/error-component/error-component';
-import FloatingBtn from '../../../components/floating-btn/floating-btn';
-import NetworkIndicator from '../../../components/network-indicator/network-indicator';
-import UnsendedActivitiesIndicator from '../../../components/unsended-activities/unsended-activities-indicator';
-import { resetFinishedActivity, resetManualData, setIsManualAdding } from '../../../redux/activity/activity';
-import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '../../../redux/runich-api/runich-api';
-import useGetPermissions from '../../../utils/hooks/use-get-permission';
-import useRefresh from '../../../utils/hooks/use-refresh';
 
 export default function Feed() {
   const { user } = useAuth();
   const { push } = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   useGetPermissions();
   const {
     data: activities,
     error,
     isLoading,
     refetch,
-  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user.id, {
+  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(user?.id ?? '', {
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
   const { onRefresh, refreshing } = useRefresh(refetch);
-  const { isHaveUnsyncedActivity } = useSelector(({ activity }) => activity);
+  const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
 
   useEffect(() => {
     if (error) {
@@ -54,7 +53,6 @@ export default function Feed() {
               const { description, title, date, sport, locations, photoUrls, duration, distance, id, user_id } = item;
               return (
                 <ActivityCard
-                  fullViewRef={null}
                   description={description}
                   title={title}
                   date={date}
@@ -66,6 +64,7 @@ export default function Feed() {
                   photoUrls={photoUrls}
                   duration={duration}
                   distance={distance}
+                  fullViewRef={null}
                 />
               );
             }}

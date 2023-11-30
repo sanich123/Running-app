@@ -1,10 +1,10 @@
+import { setIsDisableWhileSending } from '@R/activity/activity';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 
 import { INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID } from './const';
 import InputsDistanceTime from './inputs-distance-time';
-import { setIsDisableWhileSending } from '../../redux/activity/activity';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Inputs manual distance duration', () => {
   it('shoudl correctly renders', () => {

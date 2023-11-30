@@ -1,13 +1,13 @@
+import ShowMetrics from '@C/show-metrics/show-metrics';
+import { useAppSelector } from '@R/typed-hooks';
+import { getSpeedInMinsInKm } from '@U/location-utils';
+import { formatDuration } from '@U/time-formatter';
 import { View, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
 
 import { CARD_METRICS } from './const';
-import { getSpeedInMinsInKm } from '../../utils/location-utils';
-import { formatDuration } from '../../utils/time-formatter';
-import ShowMetrics from '../show-metrics/show-metrics';
 
 export default function CardMetrics({ distance, duration }: { distance: number; duration: number }) {
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={styles.metricsWrapper}>
       <ShowMetrics title={`${CARD_METRICS[language].time}: `} metrics={`${formatDuration(duration)}`} />

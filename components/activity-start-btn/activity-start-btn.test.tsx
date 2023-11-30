@@ -1,13 +1,13 @@
+import { changeLanguage } from '@R/language/language';
+import { setActivityStatus, setDuration, setDistance, setLocationsFromBackground } from '@R/location/location';
+import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION, MOCK_SPEED } from '@T/mocks/mock-location';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { STATUSES, LANGUAGES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
 
 import ActivityStartBtn from './activity-start-btn';
 import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID } from './const ';
-import { LANGUAGES, STATUSES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { setActivityStatus, setDistance, setDuration, setLocationsFromBackground } from '../../redux/location/location';
-import { MOCK_DISTANCE, MOCK_DURATION, MOCK_LOCATION, MOCK_SPEED } from '../../tests/mocks/mock-location';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({

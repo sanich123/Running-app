@@ -1,15 +1,15 @@
+import * as auth from '@A/context/auth-context';
+import { changeLanguage } from '@R/language/language';
+import { MOCK_LIKES } from '@T/mocks/mock-likes';
+import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { errorExtracter } from '@U/error-handler';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import { NUMBER_OF_LIKES } from './const';
 import NumberOfLikes from './number-of-likes';
-import * as auth from '../../auth/context/auth-context';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { MOCK_LIKES } from '../../tests/mocks/mock-likes';
-import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
-import { errorExtracter } from '../../utils/error-handler';
 
 describe('Number of likes', () => {
   it('should correctly renders, when you liked', () => {

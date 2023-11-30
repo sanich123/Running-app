@@ -1,11 +1,11 @@
+import { changeLanguage } from '@R/language/language';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import { LOGIN_BTN } from './const';
 import LoginRegisterBtn from './login-register-btn';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Login btn', () => {
   it('should correctly renders in english', () => {

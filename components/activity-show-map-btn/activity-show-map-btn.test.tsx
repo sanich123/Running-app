@@ -1,10 +1,10 @@
+import { setIsMapVisible } from '@R/location/location';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen, userEvent } from '@testing-library/react-native';
 
 import ActivityShowMapBtn from './activity-show-map-btn';
 import { ACTIVITY_SHOW_MAP_TEST_ID } from './const';
-import { setIsMapVisible } from '../../redux/location/location';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Activity show map btn', () => {
   it('should correctly change isMapVisible predicate', async () => {

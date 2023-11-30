@@ -1,13 +1,12 @@
+import ActivityFullViewMetrics from '@C/activity-full-view/activity-full-view';
+import ActivityFullViewKmSplit from '@C/activity-full-view-km-split/activity-full-view-km-split';
+import ActivityCard from '@C/card/card';
+import ErrorComponent from '@C/error-component/error-component';
+import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { useRef } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-
-import ActivityCard from '../../../../components/card/card';
-import ErrorComponent from '../../../../components/error-component/error-component';
-import ActivityFullViewMetrics from '../../../../components/home-activity-full-view/home-activity-full-view';
-import HomeActivityFullViewKmSplit from '../../../../components/home-activity-full-view-km-split/home-activity-full-view-km-split';
-import { useGetActivityByActivityIdQuery } from '../../../../redux/runich-api/runich-api';
 
 export default function ViewActivityFullInfo() {
   const { id: activityId } = useLocalSearchParams();
@@ -37,7 +36,7 @@ export default function ViewActivityFullInfo() {
             <ActivityFullViewMetrics />
             <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>
               {activity.kilometresSplit?.length > 0 && (
-                <HomeActivityFullViewKmSplit kilometresSplit={activity.kilometresSplit} />
+                <ActivityFullViewKmSplit kilometresSplit={activity.kilometresSplit} />
               )}
             </View>
           </>

@@ -1,33 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { LocationObject } from 'expo-location';
 
-import { STATUSES } from '../../constants/enums';
-
-type LastKmSplit = {
-  lastKilometerDuration: number;
-  kilometerPoint: LocationObject;
-  lastKilometerAltitude: number;
-};
-
-export const LOCATION_INITIAL_STATE = {
-  activityStatus: STATUSES.initial,
-  isTooMuchSpeed: false,
-  isAppShutedByPhone: false,
-  isMapVisible: true,
-  initialLocation: null,
-  distance: 0,
-  duration: 0,
-  durationWithPauses: 0,
-  altitude: 0,
-  lastKilometerAltitude: 0,
-  lastKilometer: 0,
-  lastKilometerDuration: 0,
-  lastPosition: null,
-  currentPace: 0,
-  kilometresSplit: [] as LastKmSplit[],
-  locationsWithPauses: [[]] as LocationObject[][],
-  locationsFromBackground: [] as LocationObject[],
-};
+import { LOCATION_INITIAL_STATE } from './const';
 
 export const location = createSlice({
   name: 'location',
@@ -136,4 +109,5 @@ export const {
   setLastPosition,
   setIsTooMuchSpeed,
 } = location.actions;
+
 export default location.reducer;

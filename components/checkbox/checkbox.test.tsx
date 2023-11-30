@@ -1,12 +1,12 @@
+import { setIsDisableWhileSending } from '@R/activity/activity';
+import { changeLanguage } from '@R/language/language';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import Checkbox from './checkbox';
 import { CHECKBOX, CHECKBOX_TEST_ID } from './const';
-import { LANGUAGES } from '../../constants/enums';
-import { setIsDisableWhileSending } from '../../redux/activity/activity';
-import { changeLanguage } from '../../redux/language/language';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Checkbox', () => {
   it('should correctly renders in english', async () => {

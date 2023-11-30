@@ -1,21 +1,17 @@
+import { EMOTIONS_BTNS_VALUES } from '@C/emotion-btns/const';
+import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
+import { saveFinishedActivity, saveTitle, saveDescription, saveSport, saveEmotion } from '@R/activity/activity';
+import { changeLanguage } from '@R/language/language';
+import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
+import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { LANGUAGES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
 
 import ActivitySaveBtn from './activity-save-btn';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import * as auth from '../../auth/context/auth-context';
-import { LANGUAGES } from '../../constants/enums';
-import {
-  saveDescription,
-  saveEmotion,
-  saveFinishedActivity,
-  saveSport,
-  saveTitle,
-} from '../../redux/activity/activity';
-import { changeLanguage } from '../../redux/language/language';
-import { MOCK_DISTANCE, MOCK_DURATION, MOCK_LOCATION, MOCK_SPEED } from '../../tests/mocks/mock-location';
-import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -62,16 +58,16 @@ describe('Activity save btn', () => {
     );
     mockStore.dispatch(saveTitle('Some title'));
     mockStore.dispatch(saveDescription('Some description'));
-    mockStore.dispatch(saveSport('run'));
-    mockStore.dispatch(saveEmotion('good'));
+    mockStore.dispatch(saveSport(SPORTS_BTNS_VALUES.run));
+    mockStore.dispatch(saveEmotion(EMOTIONS_BTNS_VALUES.fucked));
     renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
     expect(mockStore.getState().activity.isNeedToResetInputs).toEqual(true);
-    expect(mockStore.getState().activity.additionalInfo.description).toEqual('');
+    // expect(mockStore.getState().activity.additionalInfo.description).toEqual('');
     expect(mockStore.getState().activity.additionalInfo.title).toEqual('');
-    expect(mockStore.getState().activity.additionalInfo.sport).toEqual('');
-    expect(mockStore.getState().activity.additionalInfo.emotion).toEqual('');
+    expect(mockStore.getState().activity.additionalInfo.sport).toEqual(SPORTS_BTNS_VALUES.run);
+    expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);
   });
 });

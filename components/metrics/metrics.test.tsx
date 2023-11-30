@@ -1,12 +1,12 @@
+import { changeLanguage } from '@R/language/language';
+import { setIsMapVisible } from '@R/location/location';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import { MAP_METRICS } from './const';
 import Metrics from './metrics';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { setIsMapVisible } from '../../redux/location/location';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Metrics', () => {
   it('should correctly renders in english, when initial store', () => {

@@ -1,12 +1,12 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { CITY_TEST_ID, InputsWeightCityProps, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
 
 export default function InputsWeightCity({ city, setCity, weight, setWeight, isDisabled }: InputsWeightCityProps) {
-  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
-  const { language } = useSelector(({ language }) => language);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={styles.inputWrapper}>
       <TextInput

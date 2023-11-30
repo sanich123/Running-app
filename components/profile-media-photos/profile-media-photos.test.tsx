@@ -1,13 +1,13 @@
+import { changeLanguage } from '@R/language/language';
+import { BAD_REQUEST } from '@T/mocks/mock-requests';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { errorExtracter } from '@U/error-handler';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import { PROFILE_MEDIA } from './const';
 import ProfileMediaPhotos from './profile-media-photos';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { BAD_REQUEST } from '../../tests/mocks/mock-requests';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
-import { errorExtracter } from '../../utils/error-handler';
 
 describe('Profile media photos', () => {
   it('should correctly renders data in english', async () => {

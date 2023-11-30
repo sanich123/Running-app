@@ -1,11 +1,10 @@
+import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import NumberOfLikes from '@C/number-of-likes/number-of-likes';
+import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import { usePathname, useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-
-import { useGetLikesByActivityIdQuery } from '../../redux/runich-api/runich-api';
-import AvatarShowable from '../avatar-showable/avatar-showable';
-import NumberOfLikes from '../number-of-likes/number-of-likes';
 
 const MAX_IN_ROW = 9;
 const MAX_NUMBER_IN_ROW_OTHER_PAGE = 3;
@@ -33,23 +32,25 @@ export default function CardLikes({ activityId }: { activityId: string }) {
         ]}>
         {likes && (
           <View style={{ position: 'relative' }}>
-            {likes?.slice(0, lastLikeInTheRow).map(({ authorId, id }, index) => (
-              <Fragment key={`${id}/${index}/${authorId}`}>
-                {likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 ? (
-                  <View style={[styles.lastAvatarWrapper, { left: index * SHIFT_RIGHT + 13 }]}>
-                    <Text variant="bodySmall">{`+${likes?.length - MAX_IN_ROW}`}</Text>
+            {likes
+              ?.slice(0, lastLikeInTheRow)
+              .map(({ authorId, id }: { authorId: string; id: string }, index: number) => (
+                <Fragment key={`${id}/${index}/${authorId}`}>
+                  {likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 ? (
+                    <View style={[styles.lastAvatarWrapper, { left: index * SHIFT_RIGHT + 13 }]}>
+                      <Text variant="bodySmall">{`+${likes?.length - MAX_IN_ROW}`}</Text>
+                    </View>
+                  ) : null}
+                  <View
+                    style={[
+                      styles.avatarWrapper,
+                      { left: index * SHIFT_RIGHT },
+                      likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 && { opacity: 0.1 },
+                    ]}>
+                    <AvatarShowable size={30} id={authorId} key={id} />
                   </View>
-                ) : null}
-                <View
-                  style={[
-                    styles.avatarWrapper,
-                    { left: index * SHIFT_RIGHT },
-                    likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 && { opacity: 0.1 },
-                  ]}>
-                  <AvatarShowable size={30} id={authorId} key={id} />
-                </View>
-              </Fragment>
-            ))}
+                </Fragment>
+              ))}
           </View>
         )}
         {likes?.length && !isInComment && !isInActivity ? <NumberOfLikes likes={likes} error={error} /> : null}

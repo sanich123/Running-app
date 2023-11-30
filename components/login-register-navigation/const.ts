@@ -9,7 +9,7 @@ export const REGISTER_NAVIGATION = {
     text: 'Уже есть аккаунт?',
     btn: 'Залогиниться',
   },
-};
+} as const;
 
 export const LOGIN_NAVIGATION = {
   [LANGUAGES.english]: {
@@ -20,7 +20,7 @@ export const LOGIN_NAVIGATION = {
     text: 'Нет аккаунта?',
     btn: 'Зарегаться',
   },
-};
+} as const;
 
 export type RegisterNavigationProps = {
   setIsRegister: (arg: boolean) => void;

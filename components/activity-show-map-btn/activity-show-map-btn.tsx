@@ -1,13 +1,13 @@
+import { setIsMapVisible } from '@R/location/location';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { FontAwesome } from '@expo/vector-icons';
 import { Pressable } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { ACTIVITY_SHOW_MAP_TEST_ID } from './const';
-import { setIsMapVisible } from '../../redux/location/location';
 
 export default function ActivityShowMapBtn() {
-  const dispatch = useDispatch();
-  const { isMapVisible } = useSelector(({ location }) => location);
+  const dispatch = useAppDispatch();
+  const { isMapVisible } = useAppSelector(({ location }) => location);
   return (
     <Pressable
       testID={ACTIVITY_SHOW_MAP_TEST_ID}

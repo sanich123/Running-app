@@ -1,12 +1,12 @@
+import { setIsDisableWhileSending } from '@R/activity/activity';
+import { changeLanguage } from '@R/language/language';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { LANGUAGES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
 
 import { RIDE_BTN_TEST_ID, RUN_BTN_TEST_ID, SPORTS_BTNS, SPORTS_BTNS_VALUES, SWIM_BTN_TEST_ID } from './const';
 import SportsBtns from './sports-btns';
-import { LANGUAGES } from '../../constants/enums';
-import { setIsDisableWhileSending } from '../../redux/activity/activity';
-import { changeLanguage } from '../../redux/language/language';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Sports btns', () => {
   it('should correctly handle global state', async () => {

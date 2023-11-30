@@ -1,6 +1,5 @@
+import { LANGUAGES } from '@const/enums';
 import { createSlice } from '@reduxjs/toolkit';
-
-import { LANGUAGES } from '../../constants/enums';
 
 export const LANGUAGE_INITIAL_STATE = {
   language: LANGUAGES.english,

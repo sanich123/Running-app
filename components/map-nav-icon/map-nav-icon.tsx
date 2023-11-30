@@ -1,11 +1,11 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { PointAnnotation } from '@rnmapbox/maps';
 import { StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
 
 import { View } from '../Themed';
 
 export default function NavIcon() {
-  const { lastPosition, initialLocation } = useSelector(({ location }) => location);
+  const { lastPosition, initialLocation } = useAppSelector(({ location }) => location);
   const lastView = lastPosition
     ? [lastPosition?.coords.longitude, lastPosition?.coords.latitude]
     : [initialLocation?.coords.longitude, initialLocation?.coords.latitude];

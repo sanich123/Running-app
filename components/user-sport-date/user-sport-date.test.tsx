@@ -1,12 +1,12 @@
+import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
+import { changeLanguage } from '@R/language/language';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { formatDate, getHoursMinutes } from '@U/time-formatter';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import UserSportDate from './user-sport-date';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
-import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
-import { SPORTS_BTNS_VALUES } from '../sports-btns/const';
 
 describe('User sport date', () => {
   it('should correctly renders in english', async () => {

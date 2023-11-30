@@ -1,16 +1,18 @@
+import { saveIsSwitchOn } from '@R/activity/activity';
+import { store } from '@R/store';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { CHECKBOX, CHECKBOX_TEST_ID } from './const';
-import { saveIsSwitchOn } from '../../redux/activity/activity';
+import { CHECKBOX_TEST_ID, CHECKBOX } from './const';
 
 export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
-  const [isSwitchOn, setIsSwitchOn] = useState(false);
-  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
-  const dispatch = useDispatch();
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
+  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
+  const [isSwitchOn, setIsSwitchOn] = useState(store.getState().activity.additionalInfo.isSwitchOn);
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     if (isNeedToResetInputs) {
       setIsSwitchOn(false);

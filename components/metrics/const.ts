@@ -19,4 +19,4 @@ export const MAP_METRICS = {
     km: 'км',
     m: 'м',
   },
-};
+} as const;

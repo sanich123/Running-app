@@ -1,13 +1,13 @@
+import * as auth from '@A/context/auth-context';
+import { ADD_DELETE_FRIEND_BTN } from '@C/add-delete-friend-btn/const';
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
+import { MOCK_BAD_REQUEST } from '@T/mocks/mock-requests';
+import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 
 import UserListItem from './user-list-item';
-import * as auth from '../../auth/context/auth-context';
-import { MOCK_PROFILE } from '../../tests/mocks/mock-location';
-import { MOCK_BAD_REQUEST } from '../../tests/mocks/mock-requests';
-import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
-import { ADD_DELETE_FRIEND_BTN } from '../add-delete-friend-btn/const';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),

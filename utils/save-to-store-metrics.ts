@@ -1,22 +1,22 @@
-import { LocationObject } from 'expo-location';
-
-import { getDistance, getSpeedInMinsInKm } from './location-utils';
 import {
   addDurationAndLocationToKmSplits,
   resetLastKm,
-  setAltitude,
+  setLastKm,
+  setLastKmDuration,
   setCurrentPace,
+  setLastKmAltitude,
   setDistance,
   setDuration,
-  setIsTooMuchSpeed,
-  setLastKm,
-  setLastKmAltitude,
-  setLastKmDuration,
+  setAltitude,
+  setLocationsWhenContinued,
   setLastPosition,
   setLocationsFromBackground,
-  setLocationsWhenContinued,
-} from '../redux/location/location';
-import { store } from '../redux/store';
+  setIsTooMuchSpeed,
+} from '@R/location/location';
+import { store } from '@R/store';
+import { LocationObject } from 'expo-location';
+
+import { getDistance, getSpeedInMinsInKm } from './location-utils';
 
 export function saveMetricsToStore(
   currentKilometer: number,

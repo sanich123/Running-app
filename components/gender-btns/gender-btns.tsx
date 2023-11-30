@@ -1,15 +1,15 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { SegmentedButtons } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { GENDER_BTNS, GENDER_BTNS_VALUES, GenderBtnsProps } from './const';
 
 export default function GenderBtns({ gender, isDisabled, setGender }: GenderBtnsProps) {
-  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
-  const { language } = useSelector(({ language }) => language);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <SegmentedButtons
       value={gender}
-      onValueChange={(gender) => setGender(gender)}
+      onValueChange={(gender: GENDER_BTNS_VALUES) => setGender(gender)}
       buttons={[
         {
           value: GENDER_BTNS_VALUES.male,

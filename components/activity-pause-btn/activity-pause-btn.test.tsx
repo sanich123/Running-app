@@ -1,12 +1,12 @@
+import { changeLanguage } from '@R/language/language';
+import { setActivityStatus } from '@R/location/location';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { STATUSES, LANGUAGES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
 
 import ActivityPauseBtn from './activity-pause-btn';
 import { ACTIVITY_PAUSE_BTN } from './const';
-import { LANGUAGES, STATUSES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { setActivityStatus } from '../../redux/location/location';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Activity pause btn', () => {
   it('should render resume, when paused', () => {

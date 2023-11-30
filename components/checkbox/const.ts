@@ -7,6 +7,6 @@ export const CHECKBOX = {
   [LANGUAGES.russian]: {
     public: 'Эта активность будет видна вашим друзьям?',
   },
-};
+} as const;
 
 export const CHECKBOX_TEST_ID = 'switcher';

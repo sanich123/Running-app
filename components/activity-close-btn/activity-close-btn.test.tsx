@@ -1,13 +1,13 @@
+import { changeLanguage } from '@R/language/language';
+import { setDuration } from '@R/location/location';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { LANGUAGES, STATUSES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 
 import ActivityCloseBtn from './activity-close-btn';
 import { ACTIVITY_CLOSE_BTN } from './const';
-import { LANGUAGES, STATUSES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { setDuration } from '../../redux/location/location';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 jest.spyOn(Alert, 'alert');
 

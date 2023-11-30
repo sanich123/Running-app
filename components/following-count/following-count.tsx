@@ -1,12 +1,12 @@
+import { useAuth } from '@A/context/auth-context';
+import { useGetFriendsByUserIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
+import { errorExtracter } from '@U/error-handler';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { FOLLOWING_COUNT } from './const';
-import { useAuth } from '../../auth/context/auth-context';
-import { useGetFriendsByUserIdQuery } from '../../redux/runich-api/runich-api';
-import { errorExtracter } from '../../utils/error-handler';
 
 export default function FollowingCount() {
   const { user } = useAuth();
@@ -18,8 +18,8 @@ export default function FollowingCount() {
     error,
     isError,
     data: listOfFriends,
-  } = useGetFriendsByUserIdQuery((friendId as string) ?? user.id);
-  const { language } = useSelector(({ language }) => language);
+  } = useGetFriendsByUserIdQuery((friendId as string) ?? user?.id);
+  const { language } = useAppSelector(({ language }) => language);
 
   return (
     <Pressable

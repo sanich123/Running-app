@@ -9,4 +9,4 @@ export const FOLLOWERS_COUNT = {
     error: 'Ошибка',
     followers: 'Фолловеры',
   },
-};
+} as const;

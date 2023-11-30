@@ -1,13 +1,13 @@
+import { changeLanguage } from '@R/language/language';
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
+import { MOCK_BAD_REQUEST } from '@T/mocks/mock-requests';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { errorExtracter } from '@U/error-handler';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import UserNameSurname from './user-name-surname';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { MOCK_PROFILE } from '../../tests/mocks/mock-location';
-import { MOCK_BAD_REQUEST } from '../../tests/mocks/mock-requests';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
-import { errorExtracter } from '../../utils/error-handler';
 
 describe('User name surname', () => {
   it('should correctly renders with data', async () => {

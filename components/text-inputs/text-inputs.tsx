@@ -1,16 +1,17 @@
+import { saveTitle, saveDescription } from '@R/activity/activity';
+import { store } from '@R/store';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
 import { TextInput } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { TEXT_INPUTS, TEXT_INPUTS_DESCRIPTION_LEFT_ICON, TEXT_INPUTS_TITLE_LEFT_ICON } from './const';
-import { saveDescription, saveTitle } from '../../redux/activity/activity';
+import { TEXT_INPUTS, TEXT_INPUTS_TITLE_LEFT_ICON, TEXT_INPUTS_DESCRIPTION_LEFT_ICON } from './const';
 
 export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const dispatch = useDispatch();
-  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
-  const { language } = useSelector(({ language }) => language);
+  const dispatch = useAppDispatch();
+  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
+  const { language } = useAppSelector(({ language }) => language);
+  const [title, setTitle] = useState(store.getState().activity.additionalInfo.title);
+  const [description, setDescription] = useState(store.getState().activity.additionalInfo.description);
 
   useEffect(() => {
     if (isNeedToResetInputs) {

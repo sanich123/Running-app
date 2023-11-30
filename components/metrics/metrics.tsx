@@ -1,5 +1,5 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
 
 import { MAP_METRICS } from './const';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
@@ -8,8 +8,8 @@ import ActivityErrorMsg from '../activity-error-msg/activity-error-msg';
 import MetricsItem from '../metrics-item/metrics-item';
 
 export default function Metrics() {
-  const { kilometresSplit, altitude, duration, distance, isMapVisible } = useSelector(({ location }) => location);
-  const { language } = useSelector(({ language }) => language);
+  const { kilometresSplit, altitude, duration, distance, isMapVisible } = useAppSelector(({ location }) => location);
+  const { language } = useAppSelector(({ language }) => language);
   const formattedDuration = formatDuration(duration);
   const formattedDistance = (distance / 1000).toFixed(2);
   const { metricsLayout, withMapHeight } = styles;
@@ -45,7 +45,7 @@ export default function Metrics() {
           <MetricsItem
             isMapVisible={isMapVisible}
             title={`${MAP_METRICS[language].lastKm}:`}
-            metric={formatDurationMinsSecs(lastKmPace.lastKilometerDuration)}
+            metric={formatDurationMinsSecs(lastKmPace ? lastKmPace.lastKilometerDuration : 0)}
             isCentral={false}
           />
         )}

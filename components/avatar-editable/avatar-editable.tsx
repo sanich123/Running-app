@@ -1,14 +1,14 @@
+import { useAuth } from '@A/context/auth-context';
+import { getSignedUrl } from '@A/supabase/storage/upload-photo';
+import { AvatarShowableIcons } from '@C/avatar-showable/const';
+import { useAppSelector } from '@R/typed-hooks';
+import { errorHandler } from '@U/error-handler';
+import { getAccessToGallery, compressAndSendPhoto } from '@U/file-sending';
+import { EXPIRED_TIME } from '@const/const';
 import { Pressable, Image, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
-import { AvatarEditableTestIds, AvatarIconEditableProps } from './const';
-import { useAuth } from '../../auth/context/auth-context';
-import { getSignedUrl } from '../../auth/supabase/storage/upload-photo';
-import { EXPIRED_TIME } from '../../constants/const';
-import { errorHandler } from '../../utils/error-handler';
-import { compressAndSendPhoto, getAccessToGallery } from '../../utils/file-sending';
-import { AvatarShowableIcons } from '../avatar-showable/const';
+import { AvatarIconEditableProps, AvatarEditableTestIds } from './const';
 
 export default function AvatarIconEditable({
   image,
@@ -18,7 +18,7 @@ export default function AvatarIconEditable({
   setIsDisabled,
 }: AvatarIconEditableProps) {
   const { user } = useAuth();
-  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
 
   return (
     <Pressable
@@ -27,12 +27,18 @@ export default function AvatarIconEditable({
         setIsDisabled(true);
         try {
           const result = await getAccessToGallery();
-          if (!result.canceled) {
+          if (result && !result.canceled) {
             const imgSrc = result.assets[0].uri;
             setImage(imgSrc);
-            const pathToPhoto = await compressAndSendPhoto(imgSrc, user.id);
-            const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
-            setPhotoUrl(url);
+            if (user) {
+              const pathToPhoto = await compressAndSendPhoto(imgSrc, user.id);
+              if (pathToPhoto) {
+                const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
+                if (url) {
+                  setPhotoUrl(url);
+                }
+              }
+            }
           }
         } catch (error) {
           errorHandler(error);
@@ -62,5 +68,9 @@ export default function AvatarIconEditable({
 }
 
 const styles = StyleSheet.create({
-  isInCenter: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  isInCenter: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

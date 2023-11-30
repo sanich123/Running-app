@@ -23,4 +23,4 @@ export const GENDER_BTNS = {
     femaleLabel: 'Баба',
     packmanLabel: 'ХЗ',
   },
-};
+} as const;

@@ -1,8 +1,8 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 
 export default function usePasswordEmail() {
-  const { email: savedEmail, password: savedPassword } = useSelector(({ profile }) => profile?.privateInfo);
+  const { email: savedEmail, password: savedPassword } = useAppSelector(({ profile }) => profile?.privateInfo);
   const [email, setEmail] = useState(savedEmail);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);

@@ -14,11 +14,11 @@ export const ACTIVITY_START_BTN = {
     start: 'RUN',
     finish: 'ЗАКОНЧ.',
   },
-};
+} as const;
 
 export const RESPONSE_STATUS: { [key in STATUSES]: STATUSES } = {
   [initial]: started,
   [started]: paused,
   [paused]: initial,
   [continued]: paused,
-};
+} as const;

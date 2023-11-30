@@ -15,22 +15,11 @@ import CommentsLength from '../comments-length/comments-length';
 import UserNameSurname from '../user-name-surname/user-name-surname';
 import UserSportDate from '../user-sport-date/user-sport-date';
 
-export default function ActivityCard({
-  description,
-  title,
-  date,
-  sport,
-  id,
-  userId,
-  locations,
-  photoUrls,
-  duration,
-  distance,
-  fullViewRef,
-}: ActivityCardProps) {
+export default function ActivityCard({ ...rest }: ActivityCardProps) {
+  const { description, title, date, sport, id, userId, locations, photoUrls, duration, distance, fullViewRef } = rest;
   const { push } = useRouter();
   const pathname = usePathname();
-  const cardRef = useRef();
+  const cardRef = useRef(null);
 
   return (
     <Card key={id}>
@@ -52,13 +41,11 @@ export default function ActivityCard({
         {(locations?.length || photoUrls?.length > 0) && (
           <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
         )}
-
         <View style={{ display: 'flex', flexDirection: 'row' }}>
           <CardLikes activityId={id} />
           <CommentsLength activityId={id} />
         </View>
       </View>
-
       <Card.Actions>
         <CardBtns activityId={id} userId={userId} cardRef={cardRef} fullViewRef={fullViewRef} />
       </Card.Actions>

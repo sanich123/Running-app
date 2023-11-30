@@ -1,11 +1,11 @@
+import { useAppSelector } from '@R/typed-hooks';
+import { emailMatcher } from '@const/regexp';
 import { HelperText, TextInput } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
-import { EMAIL_INPUT, EMAIL_INPUT_LEFT_ICON, EMAIL_INPUT_TEST_ID, EmailInputProps } from './const';
-import { emailMatcher } from '../../constants/regexp';
+import { EmailInputProps, EMAIL_INPUT_TEST_ID, EMAIL_INPUT, EMAIL_INPUT_LEFT_ICON } from './const';
 
 export default function EmailInput({ email, setEmail, emailError, setEmailError, isDisabled }: EmailInputProps) {
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <>
       <TextInput

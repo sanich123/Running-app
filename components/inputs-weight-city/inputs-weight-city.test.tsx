@@ -1,9 +1,9 @@
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen, userEvent } from '@testing-library/react-native';
 
 import { CITY_TEST_ID, WEIGHT_TEST_ID } from './const';
 import InputsWeightCity from './inputs-weight-city';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Inputs weight-city', () => {
   it('should correctly renders', () => {

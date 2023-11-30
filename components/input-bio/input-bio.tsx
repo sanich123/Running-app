@@ -1,11 +1,11 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { TextInput } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { INPUT_BIO, INPUT_BIO_TEST_ID, InputBioProps } from './const';
 
 export default function InputBio({ bio, setBio, isDisabled }: InputBioProps) {
-  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
-  const { language } = useSelector(({ language }) => language);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <TextInput
       testID={INPUT_BIO_TEST_ID}

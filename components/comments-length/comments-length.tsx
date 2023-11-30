@@ -1,15 +1,15 @@
+import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
+import { errorExtracter } from '@U/error-handler';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
-import { COMMENTS_ENDING, COMMENTS_LENGTH_TEST_ID, getWordEnding } from './const';
-import { useGetCommentsByActivityIdQuery } from '../../redux/runich-api/runich-api';
-import { errorExtracter } from '../../utils/error-handler';
+import { COMMENTS_LENGTH_TEST_ID, COMMENTS_ENDING, getWordEnding } from './const';
 
 export default function CommentsLength({ activityId }: { activityId: string }) {
   const { error, isError, data: comments } = useGetCommentsByActivityIdQuery(activityId);
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
 
   return (

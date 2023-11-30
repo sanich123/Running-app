@@ -1,13 +1,13 @@
+import * as auth from '@A/context/auth-context';
+import { COMMENT_BTN_TEST_ID } from '@C/card-comment-btn/const';
+import { CARD_DELETE_BTN_TEST_ID } from '@C/card-delete-btn/const';
+import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '@C/card-like-btn/const';
+import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 
 import CardBtns from './card-btns';
-import * as auth from '../../auth/context/auth-context';
-import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
-import { COMMENT_BTN_TEST_ID } from '../card-comment-btn/const';
-import { CARD_DELETE_BTN_TEST_ID } from '../card-delete-btn/const';
-import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '../card-like-btn/const';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -23,7 +23,12 @@ describe('Card btns', () => {
       },
     }));
     renderWithProviders(
-      <CardBtns activityId="someActivityId" userId="someUserId" cardRef={undefined} fullViewRef={undefined} />,
+      <CardBtns
+        activityId="someActivityId"
+        userId="someUserId"
+        cardRef={{ current: '' }}
+        fullViewRef={{ current: '' }}
+      />,
       {
         store: mockStore,
       },
@@ -40,7 +45,12 @@ describe('Card btns', () => {
       },
     }));
     renderWithProviders(
-      <CardBtns activityId="someActivityId" userId="someUserId" cardRef={undefined} fullViewRef={undefined} />,
+      <CardBtns
+        activityId="someActivityId"
+        userId="someUserId"
+        cardRef={{ current: '' }}
+        fullViewRef={{ current: '' }}
+      />,
       {
         store: mockStore,
       },

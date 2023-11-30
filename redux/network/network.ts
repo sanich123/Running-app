@@ -18,7 +18,6 @@ export const NETWORK_INITIAL_STATE = {
 export const network = createSlice({
   name: 'network',
   initialState: NETWORK_INITIAL_STATE,
-
   reducers: {
     changeNetworkState: (state, action) => {
       state.networkState = action.payload;

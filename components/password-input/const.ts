@@ -1,4 +1,4 @@
-import { LANGUAGES } from '../../constants/enums';
+import { LANGUAGES } from '@const/enums';
 
 export type PasswordInputProps = {
   password: string;
@@ -7,6 +7,7 @@ export type PasswordInputProps = {
   setPasswordError: (arg: boolean) => void;
   isDisabled: boolean;
 };
+
 export const PASSWORD_INPUT = {
   [LANGUAGES.english]: {
     label: 'Password',
@@ -18,7 +19,7 @@ export const PASSWORD_INPUT = {
     placeholder: 'Введите ваш пароль',
     helperText: 'Пароль должен состоять из одной заглавной, одной строчной буквы, одной цифры, не менее 4 символов',
   },
-};
+} as const;
 
 export const PASSWORD_INPUT_TEST_ID = 'passwordInput';
 export const PASSWORD_INPUT_LEFT_ICON = 'passwordInputPasswordLeftIcon';

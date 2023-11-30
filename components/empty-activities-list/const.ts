@@ -7,4 +7,4 @@ export const EMPTY_ACTIVITIES_LIST = {
   [LANGUAGES.russian]: {
     emptyActivities: 'Здесь будут ваши и ваших друзей активности',
   },
-};
+} as const;

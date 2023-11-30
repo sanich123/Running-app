@@ -13,4 +13,4 @@ export const CARD_METRICS = {
     time: 'Время',
     km: 'км',
   },
-};
+} as const;

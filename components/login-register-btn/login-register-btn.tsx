@@ -1,12 +1,12 @@
+import { supabase } from '@A/supabase/supabase-init';
+import { saveEmailPassword } from '@R/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { errorHandler } from '@U/error-handler';
+import { emailPasswordHandler } from '@U/validate-email-password';
 import { Alert } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { LOGIN_BTN, LoginBtnProps, REGISTER_BTN } from './const';
-import { supabase } from '../../auth/supabase/supabase-init';
-import { saveEmailPassword } from '../../redux/profile/profile';
-import { errorHandler } from '../../utils/error-handler';
-import { emailPasswordHandler } from '../../utils/validate-email-password';
+import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN } from './const';
 
 export default function LoginRegisterBtn({
   email,
@@ -19,8 +19,8 @@ export default function LoginRegisterBtn({
   setEmailError,
   setPasswordError,
 }: LoginBtnProps) {
-  const dispatch = useDispatch();
-  const { language } = useSelector(({ language }) => language);
+  const dispatch = useAppDispatch();
+  const { language } = useAppSelector(({ language }) => language);
 
   return (
     <Button

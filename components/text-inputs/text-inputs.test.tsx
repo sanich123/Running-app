@@ -1,12 +1,12 @@
+import { setIsDisableWhileSending } from '@R/activity/activity';
+import { changeLanguage } from '@R/language/language';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { LANGUAGES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
 
 import { TEXT_INPUTS } from './const';
 import TextInputs from './text-inputs';
-import { LANGUAGES } from '../../constants/enums';
-import { setIsDisableWhileSending } from '../../redux/activity/activity';
-import { changeLanguage } from '../../redux/language/language';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Text inputs', () => {
   it('should correctly renders with placeholders in english', () => {

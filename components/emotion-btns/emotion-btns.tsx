@@ -1,15 +1,16 @@
+import { saveEmotion } from '@R/activity/activity';
+import { store } from '@R/store';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS, EMOTIONS_BTNS_VALUES, EMOTION_BTNS } from './const';
-import { saveEmotion } from '../../redux/activity/activity';
+import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS } from './const';
 
 export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
-  const [emotion, setEmotion] = useState<EMOTIONS_BTNS_VALUES>(EMOTIONS_BTNS_VALUES.normal);
-  const dispatch = useDispatch();
-  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
-  const { language } = useSelector(({ language }) => language);
+  const [emotion, setEmotion] = useState<string>(store.getState().activity.additionalInfo.emotion);
+  const dispatch = useAppDispatch();
+  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
+  const { language } = useAppSelector(({ language }) => language);
 
   useEffect(() => {
     if (isNeedToResetInputs) {
@@ -21,7 +22,7 @@ export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
   return (
     <SegmentedButtons
       value={emotion}
-      onValueChange={(emotion) => {
+      onValueChange={(emotion: string) => {
         dispatch(saveEmotion(emotion));
         setEmotion(emotion);
       }}

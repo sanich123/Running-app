@@ -1,12 +1,12 @@
+import { changeLanguage } from '@R/language/language';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import * as useGetCurrentLocation from '@U/hooks/use-get-current-location';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import ActivityLocationIndicator from './activity-location-indicator';
 import { ACTIVITY_LOCATION_INDICATOR } from './const';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
-import * as useGetCurrentLocation from '../../utils/hooks/use-get-current-location';
 
 describe('Activity location indicator', () => {
   it('should correctly render isLoading state', () => {

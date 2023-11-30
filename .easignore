@@ -1,4 +1,6 @@
 .husky
 tests
+coverage
 .easignore
 .gitignore
+jest-setup.ts

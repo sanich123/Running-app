@@ -1,33 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const FINISHED_ACTIVITY_INITIAL_STATE = {
-  locations: [] as Location[],
-  duration: 0,
-  speed: 0,
-  distance: 0,
-  kilometresSplit: [],
-};
-
-export const ACTIVITY_INITIAL_STATE = {
-  isNeedToResetInputs: false,
-  isDisabledWhileSending: false,
-  isHaveUnsyncedActivity: false,
-  isManualAdding: false,
-  finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
-  additionalInfo: {
-    title: '',
-    description: '',
-    sport: '',
-    emotion: '',
-    isSwitchOn: false,
-    photoUrls: [] as string[],
-  },
-  unsyncedActivities: [],
-  manualDate: null,
-  manualHours: 0,
-  manualMinutes: 0,
-  manualDistance: 0,
-};
+import { ACTIVITY_INITIAL_STATE, ADDITIONAL_INFO_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from './const';
 
 export const activity = createSlice({
   name: 'activity',
@@ -48,21 +21,17 @@ export const activity = createSlice({
     saveIsSwitchOn: (state, action) => {
       state.additionalInfo.isSwitchOn = action.payload;
     },
-    savePhotoUrls: (state, action) => {
-      state.additionalInfo.photoUrls = action.payload;
+    addPhotoUrl: (state, action) => {
+      state.additionalInfo.photoUrls = [...state.additionalInfo.photoUrls, action.payload];
+    },
+    deletePhotoUrl: (state, action) => {
+      state.additionalInfo.photoUrls = state.additionalInfo.photoUrls.filter((url) => url !== action.payload);
     },
     setIsDisableWhileSending: (state, action) => {
       state.isDisabledWhileSending = action.payload;
     },
     resetActivityInfo: (state) => {
-      state.additionalInfo = {
-        title: '',
-        description: '',
-        sport: '',
-        emotion: '',
-        isSwitchOn: false,
-        photoUrls: [] as string[],
-      };
+      state.additionalInfo = ADDITIONAL_INFO_INITIAL_STATE;
     },
     setIsNeedToResetInputs: (state, action) => {
       state.isNeedToResetInputs = action.payload;
@@ -98,10 +67,16 @@ export const activity = createSlice({
       state.finishedActivity = FINISHED_ACTIVITY_INITIAL_STATE;
     },
     resetManualData: (state) => {
-      state.manualDate = null;
+      state.manualDate = new Date();
       state.manualDistance = 0;
       state.manualHours = 0;
       state.manualMinutes = 0;
+    },
+    resetPhotoUrls: (state) => {
+      state.additionalInfo.photoUrls = [];
+    },
+    setCameraIsVisible: (state, action) => {
+      state.isCameraVisible = action.payload;
     },
   },
 });
@@ -113,7 +88,6 @@ export const {
   saveEmotion,
   setManualDate,
   saveIsSwitchOn,
-  savePhotoUrls,
   setIsDisableWhileSending,
   resetActivityInfo,
   setIsNeedToResetInputs,
@@ -127,5 +101,10 @@ export const {
   saveFinishedActivity,
   resetFinishedActivity,
   resetManualData,
+  setCameraIsVisible,
+  addPhotoUrl,
+  deletePhotoUrl,
+  resetPhotoUrls,
 } = activity.actions;
+
 export default activity.reducer;

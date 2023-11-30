@@ -1,13 +1,14 @@
+import * as auth from '@A/context/auth-context';
+import { changeLanguage } from '@R/language/language';
+import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import AddDeleteFriendBtn from './add-delete-friend-btn';
 import { ADD_DELETE_FRIEND_BTN } from './const';
-import * as auth from '../../auth/context/auth-context';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
+
 describe('Delete friend btn', () => {
   it('should correctly renders as unfollow btn, when passed friendId is in an array of friends of the user', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

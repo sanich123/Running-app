@@ -1,22 +1,21 @@
+import { useAuth } from '@A/context/auth-context';
+import { setIsAppShuted, setActivityStatus } from '@R/location/location';
+import { changeNetworkState } from '@R/network/network';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { getKeyFromAsyncStorage } from '@U/async-storage';
+import { STATUSES } from '@const/enums';
 import NetInfo from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
 import { Redirect } from 'expo-router';
 import { useEffect } from 'react';
 import { Text, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { useAuth } from '../auth/context/auth-context';
-import { STATUSES } from '../constants/enums';
-import { setActivityStatus, setIsAppShuted } from '../redux/location/location';
-import { changeNetworkState } from '../redux/network/network';
-import { getKeyFromAsyncStorage } from '../utils/async-storage';
 
 export default function Page() {
   const { user } = useAuth();
-  const { activityStatus } = useSelector(({ location }) => location);
-  const dispatch = useDispatch();
+  const { activityStatus } = useAppSelector(({ location }) => location);
+  const dispatch = useAppDispatch();
   Mapbox.setWellKnownTileServer('Mapbox');
-  Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
+  Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null);
 
   useEffect(() => {
     const networkListener = NetInfo.addEventListener((networkState) => {

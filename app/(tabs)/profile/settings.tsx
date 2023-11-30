@@ -1,20 +1,18 @@
+import AvatarIconEditable from '@C/avatar-editable/avatar-editable';
+import GenderBtns from '@C/gender-btns/gender-btns';
+import InputBio from '@C/input-bio/input-bio';
+import InputsNameSurname from '@C/inputs-name-surname/inputs-name-surname';
+import InputsWeightCity from '@C/inputs-weight-city/inputs-weight-city';
+import { saveSettingsInfo } from '@R/profile/profile';
+import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
+import { useAppDispatch } from '@R/typed-hooks';
+import { useAuth } from 'auth/context/auth-context';
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { useDispatch } from 'react-redux';
-
-import { useAuth } from '../../../auth/context/auth-context';
-import { View } from '../../../components/Themed';
-import AvatarIconEditable from '../../../components/avatar-editable/avatar-editable';
-import GenderBtns from '../../../components/gender-btns/gender-btns';
-import InputBio from '../../../components/input-bio/input-bio';
-import InputsNameSurname from '../../../components/inputs-name-surname/inputs-name-surname';
-import InputsWeightCity from '../../../components/inputs-weight-city/inputs-weight-city';
-import { saveSettingsInfo } from '../../../redux/profile/profile';
-import { useGetUserProfileByIdQuery } from '../../../redux/runich-api/runich-api';
+import { StyleSheet, View } from 'react-native';
 
 export default function ProfileSettings() {
   const { user } = useAuth();
-  const { data: profileInfo } = useGetUserProfileByIdQuery(user.id);
+  const { data: profileInfo } = useGetUserProfileByIdQuery(user ? user.id : '');
   const [gender, setGender] = useState(profileInfo?.gender);
   const [name, setName] = useState(profileInfo?.name);
   const [surname, setSurname] = useState(profileInfo?.surname);
@@ -24,7 +22,7 @@ export default function ProfileSettings() {
   const [image, setImage] = useState(profileInfo?.profilePhoto);
   const [isDisabled, setIsDisabled] = useState(false);
   const [photoUrl, setPhotoUrl] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   //delete useGetSEttings?
   dispatch(
     saveSettingsInfo({

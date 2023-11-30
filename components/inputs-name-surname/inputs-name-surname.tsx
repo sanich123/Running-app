@@ -1,6 +1,6 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 
@@ -13,8 +13,8 @@ type InputsNameSurnameProps = {
 };
 
 export default function InputsNameSurname({ name, surname, setName, setSurname, isDisabled }: InputsNameSurnameProps) {
-  const { isDisabledWhileSendingProfile } = useSelector(({ profile }) => profile);
-  const { language } = useSelector(({ language }) => language);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={styles.inputWrapper}>
       <TextInput

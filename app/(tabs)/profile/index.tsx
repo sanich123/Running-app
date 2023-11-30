@@ -1,15 +1,14 @@
+import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
+import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import ErrorComponent from '@C/error-component/error-component';
+import FollowersCount from '@C/followers-count/followers-count';
+import FollowingCount from '@C/following-count/following-count';
+import ProfileMediaPhotos from '@C/profile-media-photos/profile-media-photos';
+import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
+import { useAuth } from 'auth/context/auth-context';
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
-
-import { useAuth } from '../../../auth/context/auth-context';
-import AddDeleteFriendBtn from '../../../components/add-delete-friend-btn/add-delete-friend-btn';
-import AvatarShowable from '../../../components/avatar-showable/avatar-showable';
-import ErrorComponent from '../../../components/error-component/error-component';
-import FollowersCount from '../../../components/followers-count/followers-count';
-import FollowingCount from '../../../components/following-count/following-count';
-import ProfileMediaPhotos from '../../../components/profile-media-photos/profile-media-photos';
-import { useGetUserProfileByIdQuery } from '../../../redux/runich-api/runich-api';
 
 export default function Profile() {
   const { id: friendId } = useLocalSearchParams();

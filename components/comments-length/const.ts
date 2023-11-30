@@ -13,7 +13,7 @@ export const COMMENTS_ENDING = {
     fiveZeroComments: 'комментариев',
     error: 'Ошибка',
   },
-};
+} as const;
 
 export function getWordEnding(commentsLength: number, language: LANGUAGES) {
   const commentsLengthString = commentsLength.toString();

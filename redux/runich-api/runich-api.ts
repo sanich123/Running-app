@@ -1,13 +1,14 @@
+import { ActivityToSend } from '@R/activity/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { headers, TAGS, ROUTES } from '../../constants/api/api-contsts';
+import { API_NAME, Methods, Routes, Tags, headers } from './const';
+import { SendComment, SendCommentLike, SendFriend, SendLike, SendProfile } from './types';
 
-const { activities, profile, comments, likes, friends, users } = TAGS;
-const { profile: routeProfile, activity, friend, comment, like, auth, signIn, signUp, activityId } = ROUTES;
+const { profile, activity, friend, comment, like, activityId, user, all, photos, followers } = Routes;
 
 export const runichApi = createApi({
-  reducerPath: 'runnichApi',
-  tagTypes: [activities, profile, comments, likes, friends, users],
+  reducerPath: API_NAME,
+  tagTypes: [Tags.activities, Tags.profile, Tags.comments, Tags.likes, Tags.friends, Tags.users],
   baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_URL }),
   refetchOnMountOrArgChange: true,
   refetchOnReconnect: true,
@@ -15,137 +16,121 @@ export const runichApi = createApi({
   keepUnusedDataFor: process.env.IS_TESTING ? 0 : 30,
   endpoints: (builder) => ({
     getUsers: builder.query({
-      query: () => '/user',
-      providesTags: [users],
+      query: () => `/${user}`,
+      providesTags: [Tags.users],
     }),
     getUserProfileById: builder.query({
-      query: (id) => `/${routeProfile}/${id}`,
-      providesTags: [profile],
+      query: (id: string) => `/${profile}/${id}`,
+      providesTags: [Tags.profile],
       keepUnusedDataFor: process.env.IS_TESTING ? 0 : 1,
     }),
     getActivitiesByUserId: builder.query({
-      query: (id) => `/${activity}/${id}`,
-      providesTags: [activities],
+      query: (id: string) => `/${activity}/${id}`,
+      providesTags: [Tags.activities],
     }),
     getActivitiesByUserIdWithFriendsActivities: builder.query({
-      query: (id) => `/${activity}/${id}/all`,
-      providesTags: [activities],
+      query: (id: string) => `/${activity}/${id}/${all}`,
+      providesTags: [Tags.activities],
       keepUnusedDataFor: process.env.IS_TESTING ? 0 : 1,
     }),
     getAllActivityPhotosByUserId: builder.query({
-      query: (userId) => `/${activity}/${userId}/photos`,
-      providesTags: [activities],
+      query: (userId: string) => `/${activity}/${userId}/${photos}`,
+      providesTags: [Tags.activities],
     }),
     getActivityByActivityId: builder.query({
-      query: (id) => `/${activity}/${activityId}/${id}`,
-      providesTags: [activities],
+      query: (id: string) => `/${activity}/${activityId}/${id}`,
+      providesTags: [Tags.activities],
     }),
     getFriendsByUserId: builder.query({
       query: (id: string) => `/${friend}/${id}`,
-      providesTags: [friends],
+      providesTags: [Tags.friends],
     }),
     getFollowersByUserId: builder.query({
-      query: (id: string) => `${friend}/${id}/followers`,
-      providesTags: [friends],
+      query: (id: string) => `${friend}/${id}/${followers}`,
+      providesTags: [Tags.friends],
     }),
     getCommentsByActivityId: builder.query({
       query: (id: string) => `/${comment}/${id}`,
-      providesTags: [comments],
+      providesTags: [Tags.comments],
     }),
     getLikesByActivityId: builder.query({
       query: (id: string) => `/${like}/${id}`,
-      providesTags: [likes],
+      providesTags: [Tags.likes],
     }),
     getLikesByCommentId: builder.query({
-      query: (commentId: string) => `/${comment}/${commentId}/like`,
-      providesTags: [comments],
-    }),
-    signUpUser: builder.mutation({
-      query: (body) => ({
-        url: `/${auth}/${signUp}`,
-        method: 'POST',
-        headers,
-        body,
-      }),
-    }),
-    signInUser: builder.mutation({
-      query: (body) => ({
-        url: `/${auth}/${signIn}`,
-        method: 'POST',
-        headers,
-        body,
-      }),
+      query: (commentId: string) => `/${comment}/${commentId}/${like}`,
+      providesTags: [Tags.comments],
     }),
     sendProfileInfo: builder.mutation({
-      query: ({ body, id }) => ({
-        url: `/user/${id}/${routeProfile}`,
-        method: 'POST',
+      query: ({ body, id }: SendProfile) => ({
+        url: `/${user}/${id}/${profile}`,
+        method: Methods.post,
         headers,
         body,
       }),
-      invalidatesTags: [profile],
+      invalidatesTags: [Tags.profile],
     }),
     addActivityByUserId: builder.mutation({
-      query: ({ body, id }) => ({
+      query: ({ body, id }: ActivityToSend) => ({
         url: `/${activity}/${id}`,
-        method: 'POST',
+        method: Methods.post,
         headers,
         body,
       }),
-      invalidatesTags: [activities],
+      invalidatesTags: [Tags.activities],
     }),
     deleteActivityById: builder.mutation({
-      query: (id) => ({
+      query: (id: string) => ({
         url: `/${activity}/${id}`,
-        method: 'DELETE',
+        method: Methods.delete,
         headers,
       }),
-      invalidatesTags: [activities],
+      invalidatesTags: [Tags.activities],
     }),
     addFriend: builder.mutation({
-      query: ({ body, id }) => ({
+      query: ({ body, id }: SendFriend) => ({
         url: `/${friend}/${id}`,
-        method: 'POST',
+        method: Methods.post,
         headers,
         body,
       }),
-      invalidatesTags: [friends, activities, users],
+      invalidatesTags: [Tags.friends, Tags.activities, Tags.users],
     }),
     deleteFriend: builder.mutation({
-      query: ({ body, id }) => ({
+      query: ({ body, id }: SendFriend) => ({
         url: `/${friend}/${id}`,
-        method: 'DELETE',
+        method: Methods.delete,
         headers,
         body,
       }),
-      invalidatesTags: [friends, activities, users],
+      invalidatesTags: [Tags.friends, Tags.activities, Tags.users],
     }),
     postCommentWithActivityId: builder.mutation({
-      query: ({ body, id }: { body: { comment: string; authorId: string }; id: string }) => ({
+      query: ({ body, id }: SendComment) => ({
         url: `/${comment}/${id}`,
-        method: 'POST',
+        method: Methods.post,
         headers,
         body,
       }),
-      invalidatesTags: [comments],
+      invalidatesTags: [Tags.comments],
     }),
     sendOrDeleteLike: builder.mutation({
-      query: (body) => ({
+      query: (body: SendLike) => ({
         url: `/${like}`,
-        method: 'POST',
+        method: Methods.post,
         headers,
         body,
       }),
-      invalidatesTags: [likes],
+      invalidatesTags: [Tags.likes],
     }),
     sendOrDeleteLikeToComment: builder.mutation({
-      query: ({ body, commentId }) => ({
-        url: `/${comment}/${commentId}/like`,
-        method: 'POST',
+      query: ({ body, commentId }: SendCommentLike) => ({
+        url: `/${comment}/${commentId}/${like}`,
+        method: Methods.post,
         headers,
         body,
       }),
-      invalidatesTags: [comments],
+      invalidatesTags: [Tags.comments],
     }),
   }),
 });
@@ -162,8 +147,6 @@ export const {
   useGetCommentsByActivityIdQuery,
   useGetLikesByActivityIdQuery,
   useGetLikesByCommentIdQuery,
-  useSignUpUserMutation,
-  useSignInUserMutation,
   useSendProfileInfoMutation,
   useAddActivityByUserIdMutation,
   useDeleteActivityByIdMutation,

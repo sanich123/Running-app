@@ -1,9 +1,9 @@
+import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { useRouter } from 'expo-router';
 import { useContext } from 'react';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
-import { COMMENT_BTN_ICON, COMMENT_BTN_TEST_ID } from './const';
-import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
+import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
 
 export default function ActivityCardCommentBtn({ activityId }: { activityId: string }) {
   const { push } = useRouter();

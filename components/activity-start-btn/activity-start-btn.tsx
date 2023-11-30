@@ -1,14 +1,14 @@
+import { saveFinishedActivity, setIsManualAdding } from '@R/activity/activity';
+import { setActivityStatus } from '@R/location/location';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { getReducedLocations, getSpeedInMinsInKm } from '@U/location-utils';
+import { LANGUAGES, STATUSES } from '@const/enums';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, STOP_ICON } from './const ';
-import { LANGUAGES, STATUSES } from '../../constants/enums';
-import { saveFinishedActivity, setIsManualAdding } from '../../redux/activity/activity';
-import { setActivityStatus } from '../../redux/location/location';
-import { getReducedLocations, getSpeedInMinsInKm } from '../../utils/location-utils';
+import { ACTIVITY_START_BTN, STOP_ICON, ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS } from './const ';
 
 export default function ActivityStartBtn() {
   const {
@@ -17,10 +17,10 @@ export default function ActivityStartBtn() {
     distance,
     locationsFromBackground: locations,
     kilometresSplit,
-  } = useSelector(({ location }) => location);
-  const { language } = useSelector(({ language }) => language);
+  } = useAppSelector(({ location }) => location);
+  const { language } = useAppSelector(({ language }) => language);
   const isRussianText = language === LANGUAGES.russian && activityStatus === STATUSES.paused;
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { startBtn, textStyle } = styles;
   const { push } = useRouter();
 

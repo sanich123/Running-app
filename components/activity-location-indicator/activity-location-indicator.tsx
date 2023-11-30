@@ -1,14 +1,13 @@
-import { StyleSheet } from 'react-native';
+import { useAppSelector } from '@R/typed-hooks';
+import useGetCurrentLocation from '@U/hooks/use-get-current-location';
+import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { ACTIVITY_LOCATION_INDICATOR } from './const';
-import useGetCurrentLocation from '../../utils/hooks/use-get-current-location';
-import { View } from '../Themed';
 
 export default function ActivityLocationIndicator() {
   const { isLoading, isError, isSuccess } = useGetCurrentLocation();
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <>
       {isLoading ? (

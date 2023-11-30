@@ -1,11 +1,10 @@
+import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
+import { errorHandler } from '@U/error-handler';
 import { usePathname } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import { MutableRefObject, ReactNode, useContext } from 'react';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { captureRef } from 'react-native-view-shot';
-
-import { ActivityCardBtnsContext } from '../../utils/context/activity-card-btns';
-import { errorHandler } from '../../utils/error-handler';
 
 type CardShareBtnProps = {
   cardRef: MutableRefObject<ReactNode>;

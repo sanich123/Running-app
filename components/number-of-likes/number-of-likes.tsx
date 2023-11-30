@@ -1,15 +1,15 @@
+import { useAuth } from '@A/context/auth-context';
+import { useAppSelector } from '@R/typed-hooks';
+import { errorExtracter } from '@U/error-handler';
 import { Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
-import { NUMBER_OF_LIKES, NumOfLikesProps } from './const';
-import { useAuth } from '../../auth/context/auth-context';
-import { errorExtracter } from '../../utils/error-handler';
+import { NumOfLikesProps, NUMBER_OF_LIKES } from './const';
 
 export default function NumberOfLikes({ likes, error }: NumOfLikesProps) {
   const { user } = useAuth();
   const isOwnerLiked = likes.some(({ authorId }) => authorId === user?.id);
   const restLiked = isOwnerLiked ? likes.length - 1 : likes.length;
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   const twoIcons = likes.length === 2;
   const threeIcons = likes.length >= 3;
 

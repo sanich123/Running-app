@@ -1,3 +1,6 @@
+import { setIsTooMuchSpeed } from '@R/location/location';
+import { store } from '@R/store';
+import { LOCATION_TRACKING } from '@const/location';
 import {
   Accuracy,
   hasStartedLocationUpdatesAsync,
@@ -10,9 +13,6 @@ import * as TaskManager from 'expo-task-manager';
 import { ToastAndroid } from 'react-native';
 
 import { getMetrics, saveMetricsToStore } from './save-to-store-metrics';
-import { LOCATION_TRACKING } from '../constants/location';
-import { setIsTooMuchSpeed } from '../redux/location/location';
-import { store } from '../redux/store';
 
 export async function startLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {

@@ -9,4 +9,4 @@ export const PROFILE_MEDIA = {
     label: 'Все фото',
     error: 'Ошибка',
   },
-};
+} as const;

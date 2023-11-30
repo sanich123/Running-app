@@ -1,16 +1,12 @@
+import { useAuth } from '@A/context/auth-context';
+import { useGetFriendsByUserIdQuery, useDeleteFriendMutation, useAddFriendMutation } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
+import { errorExtracter } from '@U/error-handler';
 import { useEffect } from 'react';
 import { ToastAndroid } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { ADD_DELETE_FRIEND_BTN } from './const';
-import { useAuth } from '../../auth/context/auth-context';
-import {
-  useAddFriendMutation,
-  useDeleteFriendMutation,
-  useGetFriendsByUserIdQuery,
-} from '../../redux/runich-api/runich-api';
-import { errorExtracter } from '../../utils/error-handler';
 
 export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
   const { user } = useAuth();
@@ -19,9 +15,11 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
     error: listOfFriendsError,
     isError,
     data: listOfFriends,
-  } = useGetFriendsByUserIdQuery(user.id);
-  const { language } = useSelector(({ language }) => language);
-  const friendCell = listOfFriends?.filter(({ friendId: friendIdOnServer }) => friendIdOnServer === friendId);
+  } = useGetFriendsByUserIdQuery(user?.id ?? '');
+  const { language } = useAppSelector(({ language }) => language);
+  const friendCell = listOfFriends?.filter(
+    ({ friendId: friendIdOnServer }: { friendId: string }) => friendIdOnServer === friendId,
+  );
   const [deleteFriend, { isLoading: isLoadingDeleteFriend, data: friendDeleted, error: friendDeletingError }] =
     useDeleteFriendMutation();
   const [addFriend, { isLoading: isLoadingAddFriend, data: friendAdded, error: friendAddingError }] =
@@ -47,11 +45,15 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
       style={{ marginLeft: 'auto', borderRadius: 5, marginRight: 5 }}
       disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend || isError}
       loading={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
-      onPress={async () =>
-        friendCell?.length > 0
-          ? await deleteFriend({ body: { userId: user.id }, id: friendId }).unwrap()
-          : await addFriend({ body: { userId: user.id }, id: friendId }).unwrap()
-      }>
+      onPress={async () => {
+        if (user) {
+          if (friendCell?.length > 0) {
+            await deleteFriend({ body: { userId: user.id }, id: friendId }).unwrap();
+          } else {
+            await addFriend({ body: { userId: user.id }, id: friendId }).unwrap();
+          }
+        }
+      }}>
       {!isError && isLoadingListOfFriends && ''}
       {!isError &&
         !isLoadingListOfFriends &&

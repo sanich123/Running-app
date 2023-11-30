@@ -1,15 +1,16 @@
+import { saveSport } from '@R/activity/activity';
+import { store } from '@R/store';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { RIDE_BTN_TEST_ID, RUN_BTN_TEST_ID, SPORTS_BTNS, SPORTS_BTNS_VALUES, SWIM_BTN_TEST_ID } from './const';
-import { saveSport } from '../../redux/activity/activity';
+import { SPORTS_BTNS_VALUES, SPORTS_BTNS, RUN_BTN_TEST_ID, SWIM_BTN_TEST_ID, RIDE_BTN_TEST_ID } from './const';
 
 export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
-  const [sport, setSport] = useState<SPORTS_BTNS_VALUES>(SPORTS_BTNS_VALUES.run);
-  const dispatch = useDispatch();
-  const { isDisabledWhileSending, isNeedToResetInputs } = useSelector(({ activity }) => activity);
-  const { language } = useSelector(({ language }) => language);
+  const dispatch = useAppDispatch();
+  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
+  const { language } = useAppSelector(({ language }) => language);
+  const [sport, setSport] = useState<string>(store.getState().activity.additionalInfo.sport);
 
   useEffect(() => {
     if (isNeedToResetInputs) {
@@ -21,7 +22,7 @@ export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
   return (
     <SegmentedButtons
       value={sport}
-      onValueChange={(sport) => {
+      onValueChange={(sport: string) => {
         setSport(sport);
         dispatch(saveSport(sport));
       }}

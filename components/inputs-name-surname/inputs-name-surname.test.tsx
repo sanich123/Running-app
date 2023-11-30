@@ -1,10 +1,10 @@
+import { setIsDisabledWhileSendingProfile } from '@R/profile/profile';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen, userEvent } from '@testing-library/react-native';
 
 import { NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 import InputsNameSurname from './inputs-name-surname';
-import { setIsDisabledWhileSendingProfile } from '../../redux/profile/profile';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Inputs name-surname', () => {
   it('should correctly renders', () => {

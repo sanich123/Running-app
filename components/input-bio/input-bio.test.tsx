@@ -1,10 +1,10 @@
+import { setIsDisabledWhileSendingProfile } from '@R/profile/profile';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen, userEvent } from '@testing-library/react-native';
 
 import { INPUT_BIO_TEST_ID } from './const';
 import InputBio from './input-bio';
-import { setIsDisabledWhileSendingProfile } from '../../redux/profile/profile';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Input bio', () => {
   it('should correctly renders', () => {

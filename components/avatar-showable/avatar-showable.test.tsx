@@ -1,10 +1,10 @@
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 
 import AvatarShowable from './avatar-showable';
 import { AvatarShowableTestIds } from './const';
-import { MOCK_PROFILE } from '../../tests/mocks/mock-location';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Avatar showable', () => {
   it('should correctly handle isLoading and success state', async () => {

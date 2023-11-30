@@ -1,13 +1,12 @@
+import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
+import { useAppSelector } from '@R/typed-hooks';
+import { getIconByTypeOfSport } from '@U/icon-utils';
+import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
-
-import { getIconByTypeOfSport } from '../../utils/icon-utils';
-import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
-import { SPORTS_BTNS_VALUES } from '../sports-btns/const';
 
 export default function UserSportDate({ sport, date }: { sport: SPORTS_BTNS_VALUES; date: Date }) {
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <View>
       <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>

@@ -1,19 +1,19 @@
+import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
+import { errorExtracter } from '@U/error-handler';
 import { useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { Image, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { PROFILE_MEDIA } from './const';
-import { useGetAllActivityPhotosByUserIdQuery } from '../../redux/runich-api/runich-api';
-import { errorExtracter } from '../../utils/error-handler';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { isLoading, isError, data: photos, error, isSuccess } = useGetAllActivityPhotosByUserIdQuery(userId);
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const theme = useTheme();
-  const { language } = useSelector(({ language }) => language);
+  const { language } = useAppSelector(({ language }) => language);
 
   return (
     <>
@@ -29,10 +29,10 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
           {!isError &&
             isSuccess &&
             photos
-              ?.map(({ photoUrls }) => photoUrls)
+              ?.map(({ photoUrls }: { photoUrls: string[] }) => photoUrls)
               .flat()
               .slice(0, 4)
-              .map((url, index) =>
+              .map((url: string, index: number) =>
                 index === 3 ? (
                   <Fragment key={`${url}+${index}`}>
                     <View style={{ position: 'relative', opacity: 0.2, backgroundColor: 'grey' }}>

@@ -13,7 +13,7 @@ export const NAME_SURNAME = {
     nameLabel: 'Имя',
     surnameLabel: 'Фамилия',
   },
-};
+} as const;
 
 export const NAME_TEST_ID = 'inputName';
 export const SURNAME_TEST_ID = 'inputSurname';

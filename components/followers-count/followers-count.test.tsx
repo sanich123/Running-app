@@ -1,11 +1,11 @@
+import * as auth from '@A/context/auth-context';
+import { MOCK_FOLLOWERS } from '@T/mocks/mock-followers';
+import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 
 import FollowersCount from './followers-count';
-import * as auth from '../../auth/context/auth-context';
-import { MOCK_FOLLOWERS } from '../../tests/mocks/mock-followers';
-import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ id: '7857abb1-b125-4f39-becf-8f30216b46ec' }),
