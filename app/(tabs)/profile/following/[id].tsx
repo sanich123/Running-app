@@ -8,11 +8,11 @@ import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
 export default function ListOfFollowing() {
   const { id: userId } = useLocalSearchParams();
-  const { isLoading, error, data: users, refetch } = useGetFriendsByUserIdQuery(`${userId}`);
+  const { isLoading, error, isError, data: users, refetch } = useGetFriendsByUserIdQuery(`${userId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
-    <SafeAreaView style={[{ flex: 1 }, isLoading && styles.isInCenter]}>
+    <SafeAreaView style={[{ flex: 1 }, (isLoading || isError) && styles.isInCenter]}>
       {users && (
         <FlatList
           onRefresh={onRefresh}

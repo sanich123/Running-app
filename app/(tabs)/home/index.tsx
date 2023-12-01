@@ -10,6 +10,7 @@ import { useGetActivitiesByUserIdWithFriendsActivitiesQuery, runichApi } from '@
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
 import useRefresh from '@U/hooks/use-refresh';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
@@ -81,7 +82,7 @@ export default function Feed() {
             dispatch(setIsManualAdding(true));
             dispatch(resetFinishedActivity());
             dispatch(resetManualData());
-            push('/save-activity/');
+            push(`/${ROUTES.saveActivity}/`);
           }}
         />
       </SafeAreaView>

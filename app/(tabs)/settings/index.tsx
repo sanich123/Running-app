@@ -47,7 +47,6 @@ export default function SettingsScreen() {
           LogOut
         </Button>
       )}
-
       <Button
         mode="outlined"
         icon="logout"

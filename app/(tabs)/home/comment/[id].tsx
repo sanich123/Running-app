@@ -24,7 +24,7 @@ export default function Comment() {
       {isLoading && <ActivityIndicator size="large" />}
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
-        <View style={[{ flex: 1 }, isLoading && { justifyContent: 'center', alignItems: 'center' }]}>
+        <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
           {(activity?.locations?.length || activity?.photoUrls?.length > 0) && (
             <CardMapImagesList
               locations={activity?.locations?.length > 0 ? activity?.locations : []}
@@ -32,14 +32,14 @@ export default function Comment() {
               id={`${activityId}`}
             />
           )}
-          <Card.Content style={{ display: 'flex', columnGap: 5, marginBottom: 10 }}>
+          <Card.Content style={styles.contentLayout}>
             <CardTitle title={activity?.title} />
             <UserNameSurname userId={activity?.user_id} size="titleMedium" />
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
+            <View style={styles.columnsLayout}>
               <UserSportDate sport={activity?.sport} date={activity?.date} />
               <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
             </View>
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
+            <View style={styles.columnsLayout}>
               <ActivityCardLikeBtn activityId={activity?.id} />
               <CardLikes activityId={activity?.id} />
             </View>
@@ -58,5 +58,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  inCenter: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentLayout: {
+    display: 'flex',
+    columnGap: 5,
+    marginBottom: 10,
+  },
+  columnsLayout: {
+    display: 'flex',
+    flexDirection: 'row',
   },
 });

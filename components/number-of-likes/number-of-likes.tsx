@@ -22,12 +22,12 @@ export default function NumberOfLikes({ likes, error }: NumOfLikesProps) {
       )}
       {!error && (
         <Text
-          style={[{ marginLeft: 20 }, twoIcons && { marginLeft: 20 }, threeIcons && { marginLeft: 65 }]}
+          style={[{ marginLeft: 20 }, twoIcons && { marginLeft: 45 }, threeIcons && { marginLeft: 65 }]}
           variant="bodyMedium">
           {`${isOwnerLiked ? NUMBER_OF_LIKES[language].you : ''}`}
           {isOwnerLiked && restLiked > 0 ? NUMBER_OF_LIKES[language].and : ''}
           {`${restLiked > 0 ? `${restLiked}` : ''} ${
-            restLiked > 0 ? NUMBER_OF_LIKES[language].manyGaveLikes : NUMBER_OF_LIKES[language].oneGaveLikes
+            likes.length === 1 ? NUMBER_OF_LIKES[language].oneGaveLikes : NUMBER_OF_LIKES[language].manyGaveLikes
           }`}
         </Text>
       )}

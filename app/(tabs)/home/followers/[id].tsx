@@ -3,7 +3,7 @@ import UserListItem from '@C/user-list-item/user-list-item';
 import { useGetFollowersByUserIdQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
-import { View, FlatList, SafeAreaView } from 'react-native';
+import { View, FlatList, SafeAreaView, StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
 export default function ListOfFollowers() {
@@ -12,7 +12,7 @@ export default function ListOfFollowers() {
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
-    <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
+    <SafeAreaView style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
       {users && (
         <FlatList
           onRefresh={onRefresh}
@@ -21,7 +21,7 @@ export default function ListOfFollowers() {
           renderItem={({ item }) => <UserListItem userId={item.user_id} />}
           ListEmptyComponent={
             <View>
-              <Text variant="headlineLarge">There are no followers, fuck </Text>
+              <Text variant="headlineLarge">There are no followers</Text>
             </View>
           }
           ItemSeparatorComponent={() => <Divider />}
@@ -32,3 +32,10 @@ export default function ListOfFollowers() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  isInCenter: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

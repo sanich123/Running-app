@@ -10,7 +10,7 @@ import { useAuth } from 'auth/context/auth-context';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
+import { ActivityIndicator, Text } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
 export default function Profile() {
@@ -50,7 +50,7 @@ export default function Profile() {
         <>
           <ProfileMediaPhotos userId={user.id} />
           <View style={[styles.container, (isLoading || isError) && styles.isInCenter]}>
-            {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
+            {isLoading && <ActivityIndicator size="large" />}
             {error ? <ErrorComponent error={error} /> : null}
             {isSuccess && (
               <>
@@ -86,7 +86,10 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: 20,
   },
-  isInCenter: { justifyContent: 'center', alignItems: 'center' },
+  isInCenter: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   header: {
     display: 'flex',
     flexDirection: 'row',
