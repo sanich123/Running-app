@@ -1,6 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
 import { saveName, saveSurname } from '@R/profile/profile';
-import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
@@ -10,12 +8,10 @@ import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 
 export default function InputsNameSurname({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
-  const { data: profileInfo } = useGetUserProfileByIdQuery(`${user?.id}`);
-  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { isDisabledWhileSendingProfile, settings } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
-  const [name, setName] = useState(profileInfo?.name);
-  const [surname, setSurname] = useState(profileInfo?.surname);
+  const [name, setName] = useState(settings?.name);
+  const [surname, setSurname] = useState(settings?.surname);
 
   return (
     <View style={styles.inputWrapper}>

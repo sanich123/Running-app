@@ -1,11 +1,9 @@
 import { useAuth } from '@A/context/auth-context';
-import { getSignedUrl } from '@A/supabase/storage/upload-photo';
 import PreviewImage from '@C/preview-image/preview-image';
 import { addPhotoUrl } from '@R/activity/activity';
 import { useAppDispatch } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { compressAndSendPhoto } from '@U/file-sending';
-import { EXPIRED_TIME } from '@const/const';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
@@ -32,9 +30,8 @@ export default function PreviewUploadableImage({ image, index, isDisabled }: Pre
         setIsLoading(true);
         try {
           if (user) {
-            const pathToPhoto = await compressAndSendPhoto(image, user.id);
-            if (pathToPhoto) {
-              const url = await getSignedUrl(pathToPhoto, EXPIRED_TIME);
+            const url = await compressAndSendPhoto(image, user.id);
+            if (url) {
               dispatch(addPhotoUrl(url));
               setIsLoading(false);
               setIsSuccess(true);

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { PROFILE_INITIAL_STATE } from './const';
+import { PROFILE_INITIAL_STATE, PROFILE_SETTINGS_INITIAL_STATE } from './const';
 
 export const profile = createSlice({
   name: 'profile',
@@ -36,6 +36,9 @@ export const profile = createSlice({
     saveGender: (state, action) => {
       state.settings.gender = action.payload;
     },
+    resetSettings: (state) => {
+      state.settings = PROFILE_SETTINGS_INITIAL_STATE;
+    },
   },
 });
 
@@ -50,6 +53,7 @@ export const {
   saveCity,
   saveBio,
   saveGender,
+  resetSettings,
 } = profile.actions;
 
 export default profile.reducer;

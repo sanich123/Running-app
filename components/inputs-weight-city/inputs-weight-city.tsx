@@ -1,6 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
 import { saveCity, saveWeight } from '@R/profile/profile';
-import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
@@ -10,12 +8,10 @@ import { CITY_TEST_ID, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
 
 export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();
-  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { isDisabledWhileSendingProfile, settings } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
-  const { user } = useAuth();
-  const { data: profileInfo } = useGetUserProfileByIdQuery(`${user?.id}`);
-  const [city, setCity] = useState(profileInfo?.city);
-  const [weight, setWeight] = useState(profileInfo?.weight);
+  const [city, setCity] = useState(settings?.city);
+  const [weight, setWeight] = useState(settings?.weight);
 
   return (
     <View style={styles.inputWrapper}>

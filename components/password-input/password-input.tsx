@@ -18,7 +18,7 @@ export default function PasswordInput({
   setPasswordError,
   isDisabled,
 }: PasswordInputProps) {
-  const [passwordIsNotVisible, setPasswordIsVisible] = useState(false);
+  const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
   const { language } = useAppSelector(({ language }) => language);
   return (
     <>

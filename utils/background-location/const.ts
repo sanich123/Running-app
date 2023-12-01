@@ -19,3 +19,6 @@ export const BACKGROUND_NOTIFICATION = {
     turnOff: 'Чтобы выключить надо зайти в приложение и выключить его',
   },
 };
+
+export const TIME_INTERVAL = 3000;
+export const DISTANCE_INTERVAL = 0;

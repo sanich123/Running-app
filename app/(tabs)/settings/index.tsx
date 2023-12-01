@@ -1,6 +1,7 @@
 import { changeLanguage } from '@R/language/language';
 import { runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { storeData } from '@U/async-storage';
 import { LANGUAGES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { useState } from 'react';
@@ -19,6 +20,7 @@ export default function SettingsScreen() {
         onValueChange={(value: string) => {
           setLanguage(value);
           dispatch(changeLanguage(value));
+          storeData(value, 'language');
         }}
         buttons={[
           {

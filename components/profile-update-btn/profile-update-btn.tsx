@@ -1,5 +1,5 @@
 import { useAuth } from '@A/context/auth-context';
-import { setIsDisabledWhileSendingProfile } from '@R/profile/profile';
+import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/profile/profile';
 import { useSendProfileInfoMutation, runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useRouter } from 'expo-router';
@@ -24,6 +24,7 @@ export default function ProfileUpdateBtn() {
         console.log(data);
       }
       dispatch(setIsDisabledWhileSendingProfile(false));
+      dispatch(resetSettings());
       push('/(tabs)/profile');
     }
     if (error) {

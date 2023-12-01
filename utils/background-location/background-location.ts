@@ -10,14 +10,20 @@ import { isTaskRegisteredAsync } from 'expo-task-manager';
 import * as TaskManager from 'expo-task-manager';
 import { ToastAndroid } from 'react-native';
 
-import { BACKGROUND_NOTIFICATION, LOCATION_TRACKING, TaskManagerLocationEvent } from './const';
+import {
+  BACKGROUND_NOTIFICATION,
+  DISTANCE_INTERVAL,
+  LOCATION_TRACKING,
+  TIME_INTERVAL,
+  TaskManagerLocationEvent,
+} from './const';
 import { getMetrics, saveMetricsToStore } from '../save-to-store-metrics';
 
 export async function startLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {
     accuracy: Accuracy.BestForNavigation,
-    timeInterval: 3000,
-    distanceInterval: 0,
+    timeInterval: TIME_INTERVAL,
+    distanceInterval: DISTANCE_INTERVAL,
     showsBackgroundLocationIndicator: true,
     foregroundService: {
       notificationTitle: BACKGROUND_NOTIFICATION[store.getState().language.language].isActive,

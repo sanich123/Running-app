@@ -9,6 +9,7 @@ export default function ProfileEditBtn() {
   const { push } = useRouter();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
+
   return (
     <Pressable onPress={() => push('/profile/settings')}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>

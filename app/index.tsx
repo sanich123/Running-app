@@ -2,6 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import { setIsAppShuted, setActivityStatus } from '@R/location/location';
 import { changeNetworkState } from '@R/network/network';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { getData } from '@U/async-storage';
 import { STATUSES } from '@const/enums';
 import NetInfo from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
@@ -27,6 +28,7 @@ export default function Page() {
     console.log('redirecting to login');
     return <Redirect href="/sign-in" />;
   } else if (user) {
+    getData('language');
     if (activityStatus !== STATUSES.initial) {
       dispatch(setIsAppShuted(true));
       dispatch(setActivityStatus(STATUSES.paused));
