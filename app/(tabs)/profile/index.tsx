@@ -49,8 +49,7 @@ export default function Profile() {
       {user && (
         <>
           <ProfileMediaPhotos userId={user.id} />
-          <View
-            style={[styles.container, (isLoading || isError) && { justifyContent: 'center', alignItems: 'center' }]}>
+          <View style={[styles.container, (isLoading || isError) && styles.isInCenter]}>
             {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
             {error ? <ErrorComponent error={error} /> : null}
             {isSuccess && (
@@ -87,6 +86,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: 20,
   },
+  isInCenter: { justifyContent: 'center', alignItems: 'center' },
   header: {
     display: 'flex',
     flexDirection: 'row',

@@ -4,7 +4,6 @@ import CardMapImagesList from '@C/card-map-images-list/card-map-images-list';
 import CardTitle from '@C/card-title/card-title';
 import CommentInput from '@C/comment-input/comment-input';
 import Comments from '@C/comments/comments';
-import DisplayActivityMap from '@C/display-activity-map/display-activity-map';
 import ErrorComponent from '@C/error-component/error-component';
 import FloatingBtn from '@C/floating-btn/floating-btn';
 import UserNameSurname from '@C/user-name-surname/user-name-surname';
@@ -26,13 +25,13 @@ export default function Comment() {
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <View style={[{ flex: 1 }, isLoading && { justifyContent: 'center', alignItems: 'center' }]}>
-          {activity?.locations.length > 0 && (
-            <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
+          {(activity?.locations?.length || activity?.photoUrls?.length > 0) && (
+            <CardMapImagesList
+              locations={activity?.locations?.length > 0 ? activity?.locations : []}
+              photoUrls={activity?.photoUrls}
+              id={`${activityId}`}
+            />
           )}
-          {!activity?.locations?.length && activity?.photoUrls?.length > 0 && (
-            <CardMapImagesList locations={[]} photoUrls={activity?.photoUrls} id={`${activityId}`} />
-          )}
-
           <Card.Content style={{ display: 'flex', columnGap: 5, marginBottom: 10 }}>
             <CardTitle title={activity?.title} />
             <UserNameSurname userId={activity?.user_id} size="titleMedium" />

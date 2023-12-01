@@ -1,3 +1,4 @@
+import { LastKmSplit } from '@R/location/types';
 import { MapView, Camera } from '@rnmapbox/maps';
 import bbox from '@turf/bbox';
 import { LocationObject } from 'expo-location';
@@ -5,13 +6,12 @@ import { usePathname } from 'expo-router';
 //@ts-ignore
 import lineString from 'turf-linestring';
 
-import { KilometresSplit } from '../activity-full-view-km-split/activity-full-view-km-split';
 import MapKmSplit from '../map-km-split/map-km-split';
 import RouteLine from '../map-route-line/map-route-line';
 
 type DisplayActivityMapProps = {
   locations: LocationObject[];
-  kilometresSplit: KilometresSplit[];
+  kilometresSplit: LastKmSplit[];
 };
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {

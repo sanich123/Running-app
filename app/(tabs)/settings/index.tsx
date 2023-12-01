@@ -1,4 +1,5 @@
 import { changeLanguage } from '@R/language/language';
+import { resetSettings } from '@R/profile/profile';
 import { runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { storeData } from '@U/async-storage';
@@ -35,7 +36,14 @@ export default function SettingsScreen() {
         style={{ marginTop: 15 }}
       />
       {signOut && (
-        <Button mode="outlined" icon="logout" onPress={() => signOut()} style={{ marginTop: 15 }}>
+        <Button
+          mode="outlined"
+          icon="logout"
+          onPress={() => {
+            dispatch(resetSettings());
+            signOut();
+          }}
+          style={{ marginTop: 15 }}>
           LogOut
         </Button>
       )}

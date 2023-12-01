@@ -13,8 +13,13 @@ export default function FollowersCount() {
   const { push } = useRouter();
   const pathname = usePathname();
   const { id: friendId } = useLocalSearchParams();
-  const { isLoading, isError, error, data: followers } = useGetFollowersByUserIdQuery((friendId as string) ?? user.id);
   const { language } = useAppSelector(({ language }) => language);
+  const {
+    isLoading,
+    isError,
+    error,
+    data: followers,
+  } = useGetFollowersByUserIdQuery(friendId ? `${friendId}` : `${user?.id}`);
 
   return (
     <Pressable

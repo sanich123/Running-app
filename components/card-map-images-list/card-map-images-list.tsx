@@ -23,9 +23,11 @@ export default function CardMapImagesList({ locations, photoUrls, id }: CardMapI
         const isNotFirst = index > 0;
         return (
           <Pressable
-            onPress={() =>
-              push(zeroLocations || isNotFirst ? `/home/media/${encodeURIComponent(item)}` : `/home/map/${id}`)
-            }>
+            onPress={() => {
+              if (item) {
+                push(zeroLocations || isNotFirst ? `/home/media/${encodeURIComponent(item)}` : `/home/map/${id}`);
+              }
+            }}>
             <Image testID={item} source={{ uri: item }} resizeMode="cover" height={200} width={width} />
           </Pressable>
         );

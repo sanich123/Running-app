@@ -13,17 +13,19 @@ export default function FollowingCount() {
   const { push } = useRouter();
   const pathname = usePathname();
   const { id: friendId } = useLocalSearchParams();
+  const { language } = useAppSelector(({ language }) => language);
   const {
     isLoading,
     error,
     isError,
     data: listOfFriends,
-  } = useGetFriendsByUserIdQuery((friendId as string) ?? user?.id);
-  const { language } = useAppSelector(({ language }) => language);
+  } = useGetFriendsByUserIdQuery(friendId ? `${friendId}` : `${user?.id}`);
 
   return (
     <Pressable
-      onPress={() => push(`/${pathname.includes('home') ? 'home' : 'profile'}/following/${friendId}`)}
+      onPress={() =>
+        push(`/${pathname.includes('home') ? 'home' : 'profile'}/following/${friendId ? friendId : user?.id}`)
+      }
       disabled={isError || isLoading}
       style={(isError || isLoading) && { opacity: 0.5 }}>
       <Text variant="bodySmall">
