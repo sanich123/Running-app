@@ -4,7 +4,7 @@ export default {
   expo: {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
-    version: '1.1.10',
+    version: '1.1.11',
     orientation: 'portrait',
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
     scheme: 'myapp',
@@ -21,7 +21,7 @@ export default {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
-      runtimeVersion: '1.1.10(16)',
+      runtimeVersion: '1.1.11(16)',
       bundleIdentifier: IS_DEV ? 'com.myapp.dev' : 'com.myapp',
     },
     android: {
@@ -37,7 +37,7 @@ export default {
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
       ],
-      runtimeVersion: '1.1.10(16)',
+      runtimeVersion: '1.1.11(16)',
     },
     web: {
       bundler: 'metro',
