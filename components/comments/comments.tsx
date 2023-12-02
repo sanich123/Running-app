@@ -4,8 +4,10 @@ import CommentLikesLength from '@C/comment-likes-length/comment-likes-length';
 import ErrorComponent from '@C/error-component/error-component';
 import UserNameSurname from '@C/user-name-surname/user-name-surname';
 import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
+import { CommentResponse } from '@R/runich-api/types';
 import { useAppSelector } from '@R/typed-hooks';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
@@ -21,43 +23,40 @@ export default function Comments({ id }: { id: string }) {
       {isLoading && <ActivityIndicator testID="commentsActivityIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
       {!error &&
-        comments?.map(
-          ({ authorId, comment, id, date }: { authorId: string; comment: string; id: string; date: Date }) => (
-            <Fragment key={id}>
-              <Pressable onPress={() => push(`/home/profile/${authorId}`)}>
-                <View style={styles.commentWrapper}>
-                  <AvatarShowable size={28} id={authorId} />
-                  <View style={{ display: 'flex' }}>
-                    <UserNameSurname userId={authorId} size="bodyMedium" />
-                    <View style={{ display: 'flex', flexDirection: 'row' }}>
-                      <Text variant="bodySmall">{formatDate(date, language)} </Text>
-                      <Text variant="bodySmall">{getHoursMinutes(date, language)}</Text>
-                    </View>
+        comments?.map(({ authorId, comment, id, date }: CommentResponse) => (
+          <Fragment key={id}>
+            <Pressable onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${authorId}`)}>
+              <View style={styles.commentWrapper}>
+                <AvatarShowable size={28} id={authorId} />
+                <View style={{ display: 'flex' }}>
+                  <UserNameSurname userId={authorId} size="bodyMedium" />
+                  <View style={styles.dateTimeWrapper}>
+                    <Text variant="bodySmall">{formatDate(date, language)} </Text>
+                    <Text variant="bodySmall">{getHoursMinutes(date, language)}</Text>
                   </View>
                 </View>
-              </Pressable>
-              <View style={styles.textCommentWrapper}>
-                <Text variant="bodyLarge">{comment}</Text>
               </View>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  columnGap: 15,
-                }}>
-                <CommentLikeBtn commentId={id} />
-                <CommentLikesLength id={id} />
-              </View>
-              <Divider />
-            </Fragment>
-          ),
-        )}
+            </Pressable>
+            <View style={styles.textCommentWrapper}>
+              <Text variant="bodyLarge">{comment}</Text>
+            </View>
+            <View style={styles.likesWrapper}>
+              <CommentLikeBtn commentId={id} />
+              <CommentLikesLength id={id} />
+            </View>
+            <Divider />
+          </Fragment>
+        ))}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  isInCenter: { display: 'flex', justifyContent: 'center', alignItems: 'center' },
+  isInCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   commentWrapper: {
     display: 'flex',
     flexDirection: 'row',
@@ -72,4 +71,10 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingBottom: 10,
   },
+  likesWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    columnGap: 15,
+  },
+  dateTimeWrapper: { display: 'flex', flexDirection: 'row' },
 });

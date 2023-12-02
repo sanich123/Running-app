@@ -1,4 +1,5 @@
 import { getMapBoxImage } from '@U/location-utils';
+import { ROUTES } from '@const/enums';
 import { LocationObject } from 'expo-location';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -25,7 +26,11 @@ export default function CardMapImagesList({ locations, photoUrls, id }: CardMapI
           <Pressable
             onPress={() => {
               if (item) {
-                push(zeroLocations || isNotFirst ? `/home/media/${encodeURIComponent(item)}` : `/home/map/${id}`);
+                push(
+                  zeroLocations || isNotFirst
+                    ? `/${ROUTES.home}/${ROUTES.media}/${encodeURIComponent(item)}`
+                    : `/${ROUTES.home}/${ROUTES.map}/${id}`,
+                );
               }
             }}>
             <Image testID={item} source={{ uri: item }} resizeMode="cover" height={200} width={width} />

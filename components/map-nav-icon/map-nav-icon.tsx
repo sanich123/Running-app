@@ -4,15 +4,18 @@ import { StyleSheet } from 'react-native';
 
 import { View } from '../Themed';
 
-export default function NavIcon() {
+export default function MapNavIcon() {
   const { lastPosition, initialLocation } = useAppSelector(({ location }) => location);
-  const lastView = lastPosition
-    ? [lastPosition?.coords.longitude, lastPosition?.coords.latitude]
-    : [initialLocation?.coords.longitude, initialLocation?.coords.latitude];
   return (
     <>
-      {lastPosition || initialLocation ? (
-        <PointAnnotation coordinate={lastView} id="home">
+      {initialLocation?.coords ? (
+        <PointAnnotation
+          coordinate={
+            lastPosition
+              ? [lastPosition.coords.longitude, lastPosition.coords.latitude]
+              : [initialLocation.coords.longitude, initialLocation.coords.latitude]
+          }
+          id="home">
           <View style={styles.customHome} />
         </PointAnnotation>
       ) : null}

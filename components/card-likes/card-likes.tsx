@@ -1,6 +1,7 @@
 import AvatarShowable from '@C/avatar-showable/avatar-showable';
 import NumberOfLikes from '@C/number-of-likes/number-of-likes';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
+import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -13,15 +14,15 @@ export default function CardLikes({ activityId }: { activityId: string }) {
   const { error, isError, data: likes } = useGetLikesByActivityIdQuery(activityId);
   const { push } = useRouter();
   const pathname = usePathname();
-  const isInComment = pathname.includes('comment');
-  const isInActivity = pathname.includes('activity');
+  const isInComment = pathname.includes(ROUTES.comment);
+  const isInActivity = pathname.includes(ROUTES.activity);
   const lastLikeInTheRow = isInComment || isInActivity ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const SHIFT_RIGHT = 23;
 
   return (
     <Pressable
       testID="pushToActivityLikes"
-      onPress={() => push(`/home/likes/${activityId}`)}
+      onPress={() => push(`/${ROUTES.home}/${ROUTES.likes}/${activityId}`)}
       disabled={isError}
       style={isError && { opacity: 0.5 }}>
       <View

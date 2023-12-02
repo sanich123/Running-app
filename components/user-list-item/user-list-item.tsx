@@ -3,6 +3,7 @@ import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
 import AvatarShowable from '@C/avatar-showable/avatar-showable';
 import UserCityAge from '@C/user-city-age/user-city-age';
 import UserNameSurname from '@C/user-name-surname/user-name-surname';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { View, StyleSheet, Pressable } from 'react-native';
 
@@ -14,8 +15,8 @@ export default function UserListItem({ userId }: { userId: string }) {
   return (
     <View style={styles.userItemWrapper}>
       <Pressable
-        style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', columnGap: 10 }}
-        onPress={() => push(`/home/profile/${userId}`)}>
+        style={styles.pressableAreaWrapper}
+        onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${userId}`)}>
         <AvatarShowable size={35} id={userId} />
         <View>
           <UserNameSurname userId={userId} size="bodyLarge" />
@@ -36,5 +37,11 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: 5,
+  },
+  pressableAreaWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 10,
   },
 });

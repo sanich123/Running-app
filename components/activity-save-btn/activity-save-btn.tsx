@@ -12,6 +12,7 @@ import { useAddActivityByUserIdMutation } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ToastAndroid } from 'react-native';
@@ -50,7 +51,7 @@ export default function ActivitySaveBtn() {
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
       dispatch(resetLocationsFromBackground());
-      push('/home/');
+      push(`/${ROUTES.home}/`);
     }
     if (isError && error) {
       dispatch(saveUnsendedActivity(activityToSend));
@@ -62,7 +63,7 @@ export default function ActivitySaveBtn() {
           dispatch(resetActivityInfo());
           dispatch(setIsNeedToResetInputs(true));
           dispatch(resetLocationsFromBackground());
-          push('/home/');
+          push(`/${ROUTES.home}/`);
         }
       }
     }

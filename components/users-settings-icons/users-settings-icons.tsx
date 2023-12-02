@@ -1,3 +1,4 @@
+import { ROUTES } from '@const/enums';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from 'react-native-paper';
@@ -15,7 +16,7 @@ export default function UsersSettingsIcons() {
         color={colors.primaryContainer}
         size={30}
         style={{ marginRight: 5 }}
-        onPress={() => push('/users')}
+        onPress={() => push(`/${ROUTES.users}`)}
       />
       <MaterialCommunityIcons
         testID="settingsIcon"
@@ -23,7 +24,7 @@ export default function UsersSettingsIcons() {
         color={colors.primaryContainer}
         size={30}
         style={{ marginRight: 5 }}
-        onPress={() => push('/settings')}
+        onPress={() => push(`/${ROUTES.settings}`)}
       />
     </View>
   );

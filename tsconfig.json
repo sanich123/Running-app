@@ -9,6 +9,7 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "noEmit": true,
+    "noEmitOnError": true,
     "target": "es6",
     "skipLibCheck": true,
     "resolveJsonModule": true,

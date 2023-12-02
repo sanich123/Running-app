@@ -2,6 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/profile/profile';
 import { useSendProfileInfoMutation, runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable, ToastAndroid } from 'react-native';
@@ -25,7 +26,7 @@ export default function ProfileUpdateBtn() {
       }
       dispatch(setIsDisabledWhileSendingProfile(false));
       dispatch(resetSettings());
-      push('/(tabs)/profile');
+      push(`/${ROUTES.profile}`);
     }
     if (error) {
       dispatch(setIsDisabledWhileSendingProfile(false));

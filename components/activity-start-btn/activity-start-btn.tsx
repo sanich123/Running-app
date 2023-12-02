@@ -2,15 +2,15 @@ import { saveFinishedActivity, setIsManualAdding } from '@R/activity/activity';
 import { setActivityStatus } from '@R/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location-utils';
-import { LANGUAGES, STATUSES } from '@const/enums';
+import { LANGUAGES, ROUTES, STATUSES } from '@const/enums';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { ACTIVITY_START_BTN, STOP_ICON, ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS } from './const ';
+import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON, ResponseIcon } from './const ';
 
 export default function ActivityStartBtn() {
+  const dispatch = useAppDispatch();
   const {
     activityStatus,
     duration,
@@ -19,21 +19,18 @@ export default function ActivityStartBtn() {
     kilometresSplit,
   } = useAppSelector(({ location }) => location);
   const { language } = useAppSelector(({ language }) => language);
-  const isRussianText = language === LANGUAGES.russian && activityStatus === STATUSES.paused;
-  const dispatch = useAppDispatch();
-  const { startBtn, textStyle } = styles;
   const { push } = useRouter();
+  const isRussianText = language === LANGUAGES.russian && activityStatus === STATUSES.paused;
 
-  const RESPONSE_ICON: { [key in STATUSES]: string | ReactNode } = {
+  const RESPONSE_ICON: ResponseIcon = {
     [STATUSES.initial]: ACTIVITY_START_BTN[language].start,
     [STATUSES.started]: <FontAwesome testID={STOP_ICON} name="stop" size={25} style={{ marginRight: 15 }} />,
     [STATUSES.paused]: ACTIVITY_START_BTN[language].finish,
     [STATUSES.continued]: <FontAwesome testID={STOP_ICON} name="stop" size={25} style={{ marginRight: 15 }} />,
   };
-
   return (
     <Pressable
-      style={startBtn}
+      style={styles.startBtn}
       testID={ACTIVITY_START_BTN_TEST_ID}
       onPress={() => {
         dispatch(
@@ -48,10 +45,10 @@ export default function ActivityStartBtn() {
         dispatch(setActivityStatus(RESPONSE_STATUS[activityStatus]));
         if (activityStatus === STATUSES.paused) {
           dispatch(setIsManualAdding(false));
-          push('/(tabs)/save-activity/');
+          push(`/${ROUTES.saveActivity}/`);
         }
       }}>
-      <Text style={[textStyle, isRussianText && { fontSize: 18 }]}>{RESPONSE_ICON[activityStatus]}</Text>
+      <Text style={[styles.textStyle, isRussianText && { fontSize: 18 }]}>{RESPONSE_ICON[activityStatus]}</Text>
     </Pressable>
   );
 }

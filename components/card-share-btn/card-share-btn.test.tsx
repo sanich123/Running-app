@@ -7,7 +7,7 @@ jest.mock('expo-router', () => ({
 }));
 describe('Activity card share btn', () => {
   it('should correctly renders', () => {
-    render(<ActivityCardShareBtn cardRef={undefined} fullViewRef={undefined} />);
+    render(<ActivityCardShareBtn cardRef={{ current: undefined }} fullViewRef={{ current: undefined }} />);
     expect(screen.getByTestId('iconShareBtn')).toBeOnTheScreen();
   });
 });

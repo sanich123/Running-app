@@ -1,3 +1,4 @@
+import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { useRef } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
@@ -24,9 +25,9 @@ export default function ActivityCard({ ...rest }: ActivityCardProps) {
   return (
     <Card key={id}>
       <View ref={cardRef} collapsable={false}>
-        <Pressable onPress={() => push(`/home/activity/${id}`)}>
+        <Pressable onPress={() => push(`/${ROUTES.home}/${ROUTES.activity}/${id}`)}>
           <Card.Content>
-            <Pressable style={styles.cardContent} onPress={() => push(`/home/profile/${userId}`)}>
+            <Pressable style={styles.cardContent} onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${userId}`)}>
               <AvatarShowable size={40} id={userId} />
               <View style={styles.profileWrapper}>
                 <UserNameSurname userId={userId} size="titleMedium" />
@@ -37,7 +38,7 @@ export default function ActivityCard({ ...rest }: ActivityCardProps) {
           {title && <CardTitle title={title} />}
           <CardMetrics distance={distance} duration={duration} />
         </Pressable>
-        {pathname.includes('/home/') && <CardDesription description={description} />}
+        {pathname.includes(`/${ROUTES.home}/`) && <CardDesription description={description} />}
         {(locations?.length || photoUrls?.length > 0) && (
           <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
         )}

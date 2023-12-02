@@ -2,6 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import { useGetFriendsByUserIdQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
+import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
@@ -24,7 +25,11 @@ export default function FollowingCount() {
   return (
     <Pressable
       onPress={() =>
-        push(`/${pathname.includes('home') ? 'home' : 'profile'}/following/${friendId ? friendId : user?.id}`)
+        push(
+          `/${pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.profile}/${ROUTES.following}/${
+            friendId ? friendId : user?.id
+          }`,
+        )
       }
       disabled={isError || isLoading}
       style={(isError || isLoading) && { opacity: 0.5 }}>

@@ -23,7 +23,9 @@ export async function uploadPhoto(userId: string, base64: string, extension: str
     if (error) {
       Alert.alert(error.message);
     }
-    return uploadedPhoto.path;
+    if (uploadedPhoto) {
+      return uploadedPhoto.path;
+    }
   } catch (error) {
     errorHandler(error);
   }
@@ -44,7 +46,7 @@ export async function getSignedUrl(path: string, expiredTime: number) {
     if (error) {
       Alert.alert(error.message);
     }
-    return data.signedUrl;
+    return data?.signedUrl;
   } catch (error) {
     errorHandler(error);
   }

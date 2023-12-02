@@ -54,17 +54,17 @@ describe('Activity start btn', () => {
     expect(mockStore.getState().activity.finishedActivity.speed).toEqual(MOCK_SPEED);
     expect(mockStore.getState().activity.finishedActivity.locations).toHaveLength(1);
   });
-  it('should correctly renders start in russian', () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    mockStore.dispatch(setActivityStatus(STATUSES.initial));
-    renderWithProviders(<ActivityStartBtn />, { store: mockStore });
-    expect(screen.getByText(ACTIVITY_START_BTN.russian.start)).toBeOnTheScreen();
-  });
   it('should correctly renders finish in russian', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(setActivityStatus(STATUSES.paused));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_START_BTN.russian.finish)).toBeOnTheScreen();
+  });
+  it('should correctly renders start in russian', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    mockStore.dispatch(setActivityStatus(STATUSES.initial));
+    renderWithProviders(<ActivityStartBtn />, { store: mockStore });
+    expect(screen.getByText(ACTIVITY_START_BTN.russian.start)).toBeOnTheScreen();
   });
   it('should correctly renders stop icon', () => {
     mockStore.dispatch(setActivityStatus(STATUSES.started));

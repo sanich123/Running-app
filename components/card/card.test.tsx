@@ -34,7 +34,7 @@ describe('Activity card', () => {
         photoUrls={photoUrls}
         duration={duration}
         distance={distance}
-        fullViewRef={null}
+        fullViewRef={{ current: undefined }}
       />,
       { store: mockStore },
     );

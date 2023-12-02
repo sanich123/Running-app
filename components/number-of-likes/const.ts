@@ -12,7 +12,7 @@ export type Likes = {
 
 export type NumOfLikesProps = {
   likes: Likes[];
-  error: FetchBaseQueryError | SerializedError;
+  error?: FetchBaseQueryError | SerializedError;
 };
 
 export const NUMBER_OF_LIKES = {
