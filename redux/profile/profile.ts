@@ -6,9 +6,6 @@ export const profile = createSlice({
   name: 'profile',
   initialState: PROFILE_INITIAL_STATE,
   reducers: {
-    saveSettingsInfo: (state, action) => {
-      state.settings = action.payload;
-    },
     saveEmailPassword: (state, action) => {
       state.privateInfo = action.payload;
     },
@@ -43,7 +40,6 @@ export const profile = createSlice({
 });
 
 export const {
-  saveSettingsInfo,
   saveEmailPassword,
   setIsDisabledWhileSendingProfile,
   savePhotoUrl,
