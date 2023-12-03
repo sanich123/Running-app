@@ -17,6 +17,7 @@
     "build:inspect": "eas build:inspect -p android -s archive -o ../build --profile=preview",
     "lint": "eslint --fix .",
     "check:ts": "tsc",
+    "check:all": "yarn lint && yarn check:ts && yarn test",
     "deps:all": "yarn && bun run deps:scan && bun run deps:fix",
     "deps:fix": "npx expo install --fix",
     "deps:scan": "npx expo-doctor@latest",
