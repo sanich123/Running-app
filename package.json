@@ -54,7 +54,7 @@
     "@react-native-community/netinfo": "9.3.10",
     "@react-navigation/native": "^6.0.2",
     "@reduxjs/toolkit": "^1.9.5",
-    "@rnmapbox/maps": "^10.0.14",
+    "@rnmapbox/maps": "^10.1.1",
     "@supabase/supabase-js": "^2.33.2",
     "@turf/bbox": "^6.5.0",
     "@turf/distance": "^6.5.0",
@@ -138,5 +138,6 @@
     "tabWidth": 2,
     "printWidth": 120,
     "bracketSameLine": true
-  }
+  },
+  "packageManager": "yarn@4.0.2"
 }

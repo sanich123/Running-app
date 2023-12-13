@@ -17,7 +17,6 @@ describe('Password input', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByRole('text')).toBeOnTheScreen();
     expect(screen.getByText(PASSWORD_INPUT.english.helperText)).toBeOnTheScreen();
   });
   it('should correctly handle typing', async () => {
@@ -51,8 +50,8 @@ describe('Password input', () => {
       />,
       { store: mockStore },
     );
-    const passwordInput = screen.getByRole('text');
-    await userEvent.type(passwordInput, '7FWD');
+    const passwordInputByTestId = screen.getByTestId('passwordInput');
+    await userEvent.type(passwordInputByTestId, '7FWD');
     expect(setPasswordError).toHaveBeenCalledTimes(5);
     expect(setPasswordError).toHaveBeenCalledWith(true);
   });
@@ -69,8 +68,8 @@ describe('Password input', () => {
       />,
       { store: mockStore },
     );
-    const passwordInput = screen.getByRole('text');
-    expect(passwordInput).toBeDisabled();
+    const passwordInputByTestId = screen.getByTestId('passwordInput');
+    expect(passwordInputByTestId).toBeDisabled();
   });
   it('should have left and right icons', async () => {
     const setPasswordFn = jest.fn();

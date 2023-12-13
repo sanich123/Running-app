@@ -14,7 +14,7 @@ export default function Page() {
   const { user } = useAuth();
   const { activityStatus } = useAppSelector(({ location }) => location);
   const dispatch = useAppDispatch();
-  Mapbox.setWellKnownTileServer('Mapbox');
+
   Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null);
 
   useEffect(() => {

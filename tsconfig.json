@@ -22,6 +22,7 @@
       "@A/*": ["auth/*"],
       "@T/*": ["tests/*"]
     },
+    "types": ["@testing-library/jest-native", "jest"],
     "noImplicitAny": true,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,

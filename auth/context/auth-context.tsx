@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>();
   const [initialized, setInitialized] = useState<boolean>(false);
   const [session, setSession] = useState<Session | null>(null);
-
   const router = useRouter();
   const segments = useSegments();
 
