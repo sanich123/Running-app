@@ -1,9 +1,9 @@
-import { KilometresSplit } from '@C/activity-full-view-km-split/home-activity-full-view-km-split';
+import { LastKmSplit } from '@R/location/types';
 import { Callout, PointAnnotation } from '@rnmapbox/maps';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 
-export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: KilometresSplit[] }) {
+export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: LastKmSplit[] }) {
   return (
     <>
       {kilometresSplit?.length > 0

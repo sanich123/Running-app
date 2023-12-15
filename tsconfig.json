@@ -9,6 +9,7 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "noEmit": true,
+    "noEmitOnError": true,
     "target": "es6",
     "skipLibCheck": true,
     "resolveJsonModule": true,
@@ -21,6 +22,7 @@
       "@A/*": ["auth/*"],
       "@T/*": ["tests/*"]
     },
+    "types": ["@testing-library/jest-native", "jest"],
     "noImplicitAny": true,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,

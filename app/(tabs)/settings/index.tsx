@@ -1,6 +1,8 @@
 import { changeLanguage } from '@R/language/language';
+import { resetSettings } from '@R/profile/profile';
 import { runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { storeData } from '@U/async-storage';
 import { LANGUAGES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { useState } from 'react';
@@ -19,6 +21,7 @@ export default function SettingsScreen() {
         onValueChange={(value: string) => {
           setLanguage(value);
           dispatch(changeLanguage(value));
+          storeData(value, 'language');
         }}
         buttons={[
           {
@@ -33,11 +36,17 @@ export default function SettingsScreen() {
         style={{ marginTop: 15 }}
       />
       {signOut && (
-        <Button mode="outlined" icon="logout" onPress={() => signOut()} style={{ marginTop: 15 }}>
+        <Button
+          mode="outlined"
+          icon="logout"
+          onPress={() => {
+            dispatch(resetSettings());
+            signOut();
+          }}
+          style={{ marginTop: 15 }}>
           LogOut
         </Button>
       )}
-
       <Button
         mode="outlined"
         icon="logout"

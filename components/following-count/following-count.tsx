@@ -2,6 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import { useGetFriendsByUserIdQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
+import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
@@ -13,17 +14,23 @@ export default function FollowingCount() {
   const { push } = useRouter();
   const pathname = usePathname();
   const { id: friendId } = useLocalSearchParams();
+  const { language } = useAppSelector(({ language }) => language);
   const {
     isLoading,
     error,
     isError,
     data: listOfFriends,
-  } = useGetFriendsByUserIdQuery((friendId as string) ?? user?.id);
-  const { language } = useAppSelector(({ language }) => language);
+  } = useGetFriendsByUserIdQuery(friendId ? `${friendId}` : `${user?.id}`);
 
   return (
     <Pressable
-      onPress={() => push(`/${pathname.includes('home') ? 'home' : 'profile'}/following/${friendId}`)}
+      onPress={() =>
+        push(
+          `/${pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.profile}/${ROUTES.following}/${
+            friendId ? friendId : user?.id
+          }`,
+        )
+      }
       disabled={isError || isLoading}
       style={(isError || isLoading) && { opacity: 0.5 }}>
       <Text variant="bodySmall">

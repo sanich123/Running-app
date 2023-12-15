@@ -1,28 +1,33 @@
 import { setIsTooMuchSpeed } from '@R/location/location';
 import { store } from '@R/store';
-import { LOCATION_TRACKING } from '@const/location';
 import {
   Accuracy,
   hasStartedLocationUpdatesAsync,
   startLocationUpdatesAsync,
   stopLocationUpdatesAsync,
-  LocationObject,
 } from 'expo-location';
 import { isTaskRegisteredAsync } from 'expo-task-manager';
 import * as TaskManager from 'expo-task-manager';
 import { ToastAndroid } from 'react-native';
 
-import { getMetrics, saveMetricsToStore } from './save-to-store-metrics';
+import {
+  BACKGROUND_NOTIFICATION,
+  DISTANCE_INTERVAL,
+  LOCATION_TRACKING,
+  TIME_INTERVAL,
+  TaskManagerLocationEvent,
+} from './const';
+import { getMetrics, saveMetricsToStore } from '../save-to-store-metrics';
 
 export async function startLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {
     accuracy: Accuracy.BestForNavigation,
-    timeInterval: 3000,
-    distanceInterval: 0,
+    timeInterval: TIME_INTERVAL,
+    distanceInterval: DISTANCE_INTERVAL,
     showsBackgroundLocationIndicator: true,
     foregroundService: {
-      notificationTitle: 'Runich is active',
-      notificationBody: 'To turn off, go back to the app and switch something off.',
+      notificationTitle: BACKGROUND_NOTIFICATION[store.getState().language.language].isActive,
+      notificationBody: BACKGROUND_NOTIFICATION[store.getState().language.language].turnOff,
       notificationColor: '#333333',
     },
   });
@@ -33,7 +38,10 @@ export async function startLocationTracking({ setLocationStarted }: { setLocatio
 }
 
 export async function stopLocationTracking({ setLocationStarted }: { setLocationStarted?: (arg: boolean) => void }) {
-  setLocationStarted(false);
+  if (setLocationStarted) {
+    setLocationStarted(false);
+  }
+
   isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
     if (tracking) {
       stopLocationUpdatesAsync(LOCATION_TRACKING);
@@ -41,11 +49,6 @@ export async function stopLocationTracking({ setLocationStarted }: { setLocation
     }
   });
 }
-
-type TaskManagerLocationEvent = {
-  data: { locations: LocationObject[] };
-  error: TaskManager.TaskManagerError;
-};
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLocationEvent) => {
   if (error) {

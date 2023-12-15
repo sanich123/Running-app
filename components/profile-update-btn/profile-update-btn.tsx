@@ -1,7 +1,8 @@
 import { useAuth } from '@A/context/auth-context';
-import { setIsDisabledWhileSendingProfile } from '@R/profile/profile';
+import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/profile/profile';
 import { useSendProfileInfoMutation, runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable, ToastAndroid } from 'react-native';
@@ -24,7 +25,8 @@ export default function ProfileUpdateBtn() {
         console.log(data);
       }
       dispatch(setIsDisabledWhileSendingProfile(false));
-      push('/(tabs)/profile');
+      dispatch(resetSettings());
+      push(`/${ROUTES.profile}`);
     }
     if (error) {
       dispatch(setIsDisabledWhileSendingProfile(false));
@@ -43,8 +45,7 @@ export default function ProfileUpdateBtn() {
       }}
       disabled={isLoading}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>
-        {!isLoading && UPDATE_BTN[language].update}
-        {isLoading && UPDATE_BTN[language].updating}
+        {isLoading ? UPDATE_BTN[language].updating : UPDATE_BTN[language].update}
       </Text>
     </Pressable>
   );

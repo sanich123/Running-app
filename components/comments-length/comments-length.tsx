@@ -1,6 +1,7 @@
 import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -17,7 +18,7 @@ export default function CommentsLength({ activityId }: { activityId: string }) {
       disabled={isError}
       testID={COMMENTS_LENGTH_TEST_ID}
       style={styles.isInCenter}
-      onPress={() => push(`/home/comment/${activityId}`)}>
+      onPress={() => push(`/${ROUTES.home}/${ROUTES.comment}/${activityId}`)}>
       <Text variant="bodyMedium">
         {isError && `${COMMENTS_ENDING[language].error}: ${errorExtracter(error)}`}
         {!isError && comments?.length > 0 && `${comments?.length} ${getWordEnding(comments?.length, language)}`}

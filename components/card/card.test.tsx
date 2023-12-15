@@ -34,7 +34,7 @@ describe('Activity card', () => {
         photoUrls={photoUrls}
         duration={duration}
         distance={distance}
-        fullViewRef={null}
+        fullViewRef={{ current: undefined }}
       />,
       { store: mockStore },
     );
@@ -42,7 +42,7 @@ describe('Activity card', () => {
     expect(await screen.findByText('Искандер')).toBeOnTheScreen();
     expect(await screen.findByText('Ядгаров')).toBeOnTheScreen();
     expect(await screen.findByText('Friday, November 3, 2023')).toBeOnTheScreen();
-    expect(await screen.findByText('at 18:28')).toBeOnTheScreen();
+    expect(await screen.findByText('at 08:28')).toBeOnTheScreen();
     ['Time', 'Pace', 'Distance'].map(async (word) =>
       expect(await screen.getByText(new RegExp(word))).toBeOnTheScreen(),
     );

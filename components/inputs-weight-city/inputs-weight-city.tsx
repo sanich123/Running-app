@@ -1,12 +1,18 @@
-import { useAppSelector } from '@R/typed-hooks';
+import { saveCity, saveWeight } from '@R/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
-import { CITY_TEST_ID, InputsWeightCityProps, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
+import { CITY_TEST_ID, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
 
-export default function InputsWeightCity({ city, setCity, weight, setWeight, isDisabled }: InputsWeightCityProps) {
-  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }) {
+  const dispatch = useAppDispatch();
+  const { isDisabledWhileSendingProfile, settings } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
+  const [city, setCity] = useState(settings?.city);
+  const [weight, setWeight] = useState(settings?.weight);
+
   return (
     <View style={styles.inputWrapper}>
       <TextInput
@@ -16,7 +22,10 @@ export default function InputsWeightCity({ city, setCity, weight, setWeight, isD
         label={WEIGHT_CITY[language].cityLabel}
         placeholder={WEIGHT_CITY[language].cityPlaceholder}
         value={city}
-        onChangeText={(city) => setCity(city)}
+        onChangeText={(city) => {
+          setCity(city);
+          dispatch(saveCity(city));
+        }}
         disabled={isDisabled || isDisabledWhileSendingProfile}
       />
       <TextInput
@@ -27,7 +36,10 @@ export default function InputsWeightCity({ city, setCity, weight, setWeight, isD
         placeholder={WEIGHT_CITY[language].weightPlaceholder}
         keyboardType="numeric"
         value={weight}
-        onChangeText={(weight) => setWeight(weight)}
+        onChangeText={(weight) => {
+          setWeight(weight);
+          dispatch(saveWeight(weight));
+        }}
         disabled={isDisabled || isDisabledWhileSendingProfile}
       />
     </View>

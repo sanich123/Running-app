@@ -10,8 +10,8 @@ import { ActivityIndicator } from 'react-native-paper';
 
 export default function ViewActivityFullInfo() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(activityId);
-  const fullViewRef = useRef();
+  const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(`${activityId}`);
+  const fullViewRef = useRef(null);
 
   return (
     <ScrollView contentContainerStyle={(isLoading || isError) && styles.isInCenter}>

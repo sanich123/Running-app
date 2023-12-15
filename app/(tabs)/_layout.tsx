@@ -6,7 +6,7 @@ import ProfileEditBtn from '@C/profile-edit-btn/profile-edit-btn';
 import ProfileUpdateBtn from '@C/profile-update-btn/profile-update-btn';
 import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
 import { useAppSelector } from '@R/typed-hooks';
-import { LANGUAGES } from '@const/enums';
+import { LABELS, ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { Tabs, usePathname } from 'expo-router';
 import { useColorScheme } from 'react-native';
@@ -25,6 +25,7 @@ export default function TabLayout() {
     headerStyle: { backgroundColor: theme.colors.primary },
     headerTintColor: theme.colors.primaryContainer,
   };
+  console.log(pathname);
 
   return (
     <Tabs
@@ -33,7 +34,7 @@ export default function TabLayout() {
           height: 60,
           elevation: 0,
           borderTopWidth: 0,
-          display: pathname.includes('activity') ? 'none' : 'flex',
+          display: pathname.includes(ROUTES.activity) ? 'none' : 'flex',
         },
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         tabBarInactiveBackgroundColor: theme.colors.primary,
@@ -41,73 +42,74 @@ export default function TabLayout() {
         tabBarHideOnKeyboard: true,
       }}>
       <Tabs.Screen
-        name="home"
+        name={ROUTES.home}
         redirect={!user}
         options={{
           ...commonSettings,
-          title: language === LANGUAGES.english ? 'Feed' : 'Лента',
+          title: LABELS[language].feed,
           tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
           headerTitleStyle: { fontWeight: 'bold' },
           headerRight: () => <UsersSettingsIcons />,
-          headerShown: pathname === '/home',
+          headerShown: pathname === `/${ROUTES.home}`,
         }}
       />
       <Tabs.Screen
-        name="activity"
+        name={ROUTES.activity}
         redirect={!user}
         options={{
           title: '',
-          tabBarLabel: 'Activity',
+          tabBarLabel: LABELS[language].activity,
           ...commonSettings,
           headerLeft: () => <ActivityCloseBtn />,
           tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
         }}
       />
       <Tabs.Screen
-        name="progress"
+        name={ROUTES.progress}
         redirect={!user}
         options={{
           ...commonSettings,
-          title: 'Progress',
-          tabBarLabel: 'Progress',
+          title: LABELS[language].statistics,
+          tabBarLabel: LABELS[language].statistics,
           tabBarIcon: ({ focused }) => <ProgressIcon focused={focused} />,
         }}
       />
       {user && (
         <Tabs.Screen
-          name="profile"
+          name={ROUTES.profile}
           redirect={!user}
           options={{
             ...commonSettings,
-            title: language === LANGUAGES.english ? 'Profile' : 'Профиль',
-            tabBarLabel: 'Profile',
+            title: LABELS[language].profile,
+            tabBarLabel: LABELS[language].profile,
             tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
             headerTitleStyle: { fontWeight: 'bold' },
-            headerRight: () => (pathname !== '/profile/settings' ? <ProfileEditBtn /> : <ProfileUpdateBtn />),
-            headerShown: pathname === '/profile',
+            headerRight: () =>
+              pathname !== `/${ROUTES.profile}/${ROUTES.settings}` ? <ProfileEditBtn /> : <ProfileUpdateBtn />,
+            headerShown: pathname === `/${ROUTES.profile}` || pathname === `/${ROUTES.profile}/${ROUTES.settings}`,
           }}
         />
       )}
       <Tabs.Screen
-        name="settings/index"
+        name={`${ROUTES.settings}/${ROUTES.index}`}
         options={{
-          title: language === LANGUAGES.english ? 'Settings' : 'Настройки',
+          title: LABELS[language].settings,
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
         }}
       />
       <Tabs.Screen
-        name="users/index"
+        name={`${ROUTES.users}/${ROUTES.index}`}
         options={{
-          title: language === LANGUAGES.english ? 'Users' : 'Пользователи',
+          title: LABELS[language].users,
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
         }}
       />
       <Tabs.Screen
-        name="save-activity/index"
+        name={`${ROUTES.saveActivity}/${ROUTES.index}`}
         options={{
           title: '',
           ...commonSettings,

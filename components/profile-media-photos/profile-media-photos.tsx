@@ -1,6 +1,7 @@
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { Image, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
@@ -17,7 +18,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
 
   return (
     <>
-      <Pressable onPress={() => push(`/(tabs)/home/media-grid/${userId}`)} disabled={isError || isLoading}>
+      <Pressable onPress={() => push(`/${ROUTES.home}/${ROUTES.mediaGrid}/${userId}`)} disabled={isError || isLoading}>
         <View
           style={[
             styles.layout,

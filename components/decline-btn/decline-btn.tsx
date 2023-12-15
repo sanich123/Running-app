@@ -1,5 +1,6 @@
 import { resetActivityInfo, resetFinishedActivity, resetManualData } from '@R/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { Alert } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -27,7 +28,7 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
                 dispatch(resetActivityInfo());
                 dispatch(resetFinishedActivity());
                 dispatch(resetManualData());
-                push('/home');
+                push(`/${ROUTES.home}`);
               },
               style: 'cancel',
             },

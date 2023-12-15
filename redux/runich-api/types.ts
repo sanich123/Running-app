@@ -38,3 +38,5 @@ export type SendCommentLike = {
   };
   commentId: string;
 };
+
+export type CommentResponse = { authorId: string; comment: string; id: string; date: Date };

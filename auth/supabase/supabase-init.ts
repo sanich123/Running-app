@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 import 'react-native-url-polyfill/auto';
 
 const ExpoSecureStoreAdapter = {
-  getItem: async (key) => {
+  getItem: async (key: string) => {
     let attempts = 0;
     while (attempts < 5) {
       try {

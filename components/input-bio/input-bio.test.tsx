@@ -7,28 +7,24 @@ import { INPUT_BIO_TEST_ID } from './const';
 import InputBio from './input-bio';
 
 describe('Input bio', () => {
-  it('should correctly renders', () => {
-    renderWithProviders(<InputBio bio="some bio" setBio={jest.fn()} isDisabled={false} />, { store: mockStore });
-    expect(screen.getByTestId(INPUT_BIO_TEST_ID)).toBeOnTheScreen();
+  it('should correctly renders', async () => {
+    renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
+    const textInput = screen.getByTestId(INPUT_BIO_TEST_ID);
+    expect(textInput).toBeOnTheScreen();
+    await userEvent.type(textInput, 'some text');
+    expect(mockStore.getState().profile.settings.bio).toEqual('some text');
   });
-  it('should correctly handle user input', async () => {
-    const setBioFn = jest.fn();
-    renderWithProviders(<InputBio bio="" setBio={setBioFn} isDisabled={false} />, { store: mockStore });
-    const bioInput = screen.getByTestId(INPUT_BIO_TEST_ID);
-    await userEvent.type(bioInput, 'some text');
-    expect(setBioFn).toHaveBeenCalledTimes(9);
-  });
-  it('should correctly handle isDisabledWhenSendingProfile state', () => {
+  it('should correctly handle isDisabledWhenSendingProfile state', async () => {
     mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
-    const setBioFn = jest.fn();
-    renderWithProviders(<InputBio bio="" setBio={setBioFn} isDisabled={false} />, { store: mockStore });
+    renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
     const bioInput = screen.getByTestId(INPUT_BIO_TEST_ID);
     expect(bioInput).toBeDisabled();
+    expect(await screen.findAllByText(/bio/i)).toHaveLength(3);
   });
-  it('should correctly handle isDisabled state', () => {
-    const setBioFn = jest.fn();
-    renderWithProviders(<InputBio bio="" setBio={setBioFn} isDisabled />, { store: mockStore });
+  it('should correctly handle isDisabled state', async () => {
+    renderWithProviders(<InputBio isDisabled />, { store: mockStore });
     const bioInput = screen.getByTestId(INPUT_BIO_TEST_ID);
     expect(bioInput).toBeDisabled();
+    expect(await screen.findAllByText(/bio/i)).toHaveLength(3);
   });
 });

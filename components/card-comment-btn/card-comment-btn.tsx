@@ -1,4 +1,5 @@
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { useContext } from 'react';
 import { IconButton, MD3Colors } from 'react-native-paper';
@@ -14,7 +15,7 @@ export default function ActivityCardCommentBtn({ activityId }: { activityId: str
       icon={COMMENT_BTN_ICON}
       iconColor={MD3Colors.primary50}
       size={25}
-      onPress={() => push(`/home/comment/${activityId}`)}
+      onPress={() => push(`/${ROUTES.home}/${ROUTES.comment}/${activityId}`)}
       disabled={isLoading || isDisabled}
     />
   );

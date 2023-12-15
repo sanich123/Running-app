@@ -5,9 +5,9 @@ import { getCurrentPositionAsync, getLastKnownPositionAsync } from 'expo-locatio
 import { errorHandler } from './error-handler';
 
 type GetPositionProps = {
-  setIsLoading?: (arg: boolean) => void;
-  setIsError?: (arg: boolean) => void;
-  setIsSuccess?: (arg: boolean) => void;
+  setIsLoading: (arg: boolean) => void;
+  setIsError: (arg: boolean) => void;
+  setIsSuccess: (arg: boolean) => void;
 };
 
 export async function getLastKnownPosition({ setIsLoading, setIsError, setIsSuccess }: GetPositionProps) {
