@@ -4,3 +4,5 @@ coverage
 .easignore
 .gitignore
 jest-setup.ts
+android
+ios

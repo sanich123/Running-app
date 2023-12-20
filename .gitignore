@@ -14,6 +14,8 @@ yarn.lock
 .env
 eas.json
 coverage
+.yarn
+
 # macOS
 .DS_Store
 .idea
