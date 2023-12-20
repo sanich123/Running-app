@@ -10,7 +10,7 @@
     "test": "IS_TESTING=true jest",
     "test:windows": "set IS_TESTING=true&&jest",
     "test:debug": "set IS_TESTING=true&&jest --runInBand --detectOpenHandles --forceExit",
-    "build:local:dev:android": "eas build -p android --profile development --local",
+    "build:local:dev:android": "APP_VARIANT=development eas build -p android --profile development --local",
     "build:local:dev:ios": "eas build -p ios --profile development --local",
     "build:local:preview:android": "eas build -p android --profile preview --local",
     "build:local:preview:ios": "eas build -p ios --profile preview --local",
