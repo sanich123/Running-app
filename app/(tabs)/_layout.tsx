@@ -31,9 +31,6 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarStyle: {
-          height: 60,
-          elevation: 0,
-          borderTopWidth: 0,
           display: pathname.includes(ROUTES.activity) ? 'none' : 'flex',
         },
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,

@@ -1,5 +1,5 @@
 import { ROUTES } from '@const/enums';
-import { usePathname, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useRef } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
@@ -17,9 +17,22 @@ import UserNameSurname from '../user-name-surname/user-name-surname';
 import UserSportDate from '../user-sport-date/user-sport-date';
 
 export default function ActivityCard({ ...rest }: ActivityCardProps) {
-  const { description, title, date, sport, id, userId, locations, photoUrls, duration, distance, fullViewRef } = rest;
+  const {
+    description,
+    title,
+    date,
+    sport,
+    id,
+    userId,
+    locations,
+    photoUrls,
+    duration,
+    distance,
+    fullViewRef,
+    isShowDescription,
+  } = rest;
   const { push } = useRouter();
-  const pathname = usePathname();
+  // const pathname = usePathname();
   const cardRef = useRef(null);
 
   return (
@@ -38,7 +51,7 @@ export default function ActivityCard({ ...rest }: ActivityCardProps) {
           {title && <CardTitle title={title} />}
           <CardMetrics distance={distance} duration={duration} />
         </Pressable>
-        {pathname.includes(`/${ROUTES.home}/`) && <CardDesription description={description} />}
+        {isShowDescription && <CardDesription description={description} />}
         {(locations?.length || photoUrls?.length > 0) && (
           <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
         )}
