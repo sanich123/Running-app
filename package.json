@@ -133,7 +133,12 @@
       "node_modules",
       ".expo",
       "android",
-      "assets"
+      "assets",
+      "ios",
+      ".husky",
+      "assets",
+      "coverage",
+      ".yarn"
     ]
   },
   "prettier": {

@@ -12,9 +12,12 @@ web-build/
 __tests__
 yarn.lock
 .env
-eas.json
+
 coverage
 .yarn
+android
+ios
+
 
 # macOS
 .DS_Store

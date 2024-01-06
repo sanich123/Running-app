@@ -1,0 +1,44 @@
+{
+  "build": {
+    "production": {
+      "node": "20.10.0",
+      "channel": "production"
+    },
+    "preview": {
+      "distribution": "internal",
+      "extends": "production",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g",
+        "EXPO_PUBLIC_BASE_URL": "https://runich-backend.onrender.com",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://rrlmesbmowaoyzvniffr.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJybG1lc2Jtb3dhb3l6dm5pZmZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTUzNTgwODAsImV4cCI6MjAxMDkzNDA4MH0.SKHRR9lL8jnL_YkmzbAKRbhBfgabxqQU7CQwK85p_Oo"
+      },
+      "channel": "preview"
+    },
+    "development": {
+      "extends": "production",
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "development"
+      },
+      "channel": "development"
+    },
+    "ios-simulator": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      }
+    }
+  }
+}
