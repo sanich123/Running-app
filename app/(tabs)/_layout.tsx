@@ -4,7 +4,6 @@ import AvatarShowable from '@C/avatar-showable/avatar-showable';
 import { HomeIcon, ActivityIcon, ProgressIcon } from '@C/icons/icons';
 import ProfileEditBtn from '@C/profile-edit-btn/profile-edit-btn';
 import ProfileUpdateBtn from '@C/profile-update-btn/profile-update-btn';
-import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
 import { useAppSelector } from '@R/typed-hooks';
 import { LABELS, ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
@@ -45,9 +44,8 @@ export default function TabLayout() {
           ...commonSettings,
           title: LABELS[language].feed,
           tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
-          headerTitleStyle: { fontWeight: 'bold' },
-          headerRight: () => <UsersSettingsIcons />,
-          headerShown: pathname === `/${ROUTES.home}`,
+          // headerTitleStyle: { fontWeight: 'bold' },
+          headerShown: false,
         }}
       />
       <Tabs.Screen
