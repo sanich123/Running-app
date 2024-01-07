@@ -24,6 +24,7 @@ describe('Activity card', () => {
     const { description, title, date, sport, id, locations, photoUrls, duration, distance } = MOCK_ACTIVITY;
     renderWithProviders(
       <ActivityCard
+        isShowDeleteBtn
         isShowDescription
         description={description}
         title={title}

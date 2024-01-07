@@ -24,6 +24,7 @@ describe('Card btns', () => {
     }));
     renderWithProviders(
       <CardBtns
+        isShowDeleteBtn
         activityId="someActivityId"
         userId="someUserId"
         cardRef={{ current: '' }}
@@ -46,6 +47,7 @@ describe('Card btns', () => {
     }));
     renderWithProviders(
       <CardBtns
+        isShowDeleteBtn
         activityId="someActivityId"
         userId="someUserId"
         cardRef={{ current: '' }}
