@@ -4,6 +4,7 @@ import { MutableRefObject, ReactNode } from 'react';
 import { SPORTS_BTNS_VALUES } from '../sports-btns/const';
 
 export type ActivityCardProps = {
+  isShowDeleteBtn: boolean;
   isShowDescription: boolean;
   description: string;
   title: string;

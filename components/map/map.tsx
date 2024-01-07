@@ -1,5 +1,5 @@
 import MapKmSplit from '@C/map-km-split/map-km-split';
-import MapNavIcon from '@C/map-nav-icon/map-nav-icon';
+// import MapNavIcon from '@C/map-nav-icon/map-nav-icon';
 import MapRouteLine from '@C/map-route-line/map-route-line';
 import { useAppSelector } from '@R/typed-hooks';
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
@@ -33,7 +33,7 @@ export default function Map() {
         />
       ) : null}
       <MapKmSplit kilometresSplit={kilometresSplit} />
-      <MapNavIcon />
+      {/* <MapNavIcon /> */}
       {locationsWithPauses[0]?.length > 1
         ? locationsWithPauses.map((locations: LocationObject[]) => {
             if (locations?.length > 1) {

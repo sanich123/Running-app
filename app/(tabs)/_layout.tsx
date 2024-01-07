@@ -2,8 +2,6 @@ import ActivityCloseBtn from '@C/activity-close-btn/activity-close-btn';
 import ActivitySaveBtn from '@C/activity-save-btn/activity-save-btn';
 import AvatarShowable from '@C/avatar-showable/avatar-showable';
 import { HomeIcon, ActivityIcon, ProgressIcon } from '@C/icons/icons';
-import ProfileEditBtn from '@C/profile-edit-btn/profile-edit-btn';
-import ProfileUpdateBtn from '@C/profile-update-btn/profile-update-btn';
 import { useAppSelector } from '@R/typed-hooks';
 import { LABELS, ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
@@ -44,7 +42,6 @@ export default function TabLayout() {
           ...commonSettings,
           title: LABELS[language].feed,
           tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
-          // headerTitleStyle: { fontWeight: 'bold' },
           headerShown: false,
         }}
       />
@@ -76,12 +73,8 @@ export default function TabLayout() {
           options={{
             ...commonSettings,
             title: LABELS[language].profile,
-            tabBarLabel: LABELS[language].profile,
             tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
-            headerTitleStyle: { fontWeight: 'bold' },
-            headerRight: () =>
-              pathname !== `/${ROUTES.profile}/${ROUTES.settings}` ? <ProfileEditBtn /> : <ProfileUpdateBtn />,
-            headerShown: pathname === `/${ROUTES.profile}` || pathname === `/${ROUTES.profile}/${ROUTES.settings}`,
+            headerShown: false,
           }}
         />
       )}

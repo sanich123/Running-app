@@ -23,6 +23,7 @@ export default function ViewActivityFullInfo() {
         {activity && (
           <>
             <ActivityCard
+              isShowDeleteBtn
               isShowDescription
               fullViewRef={fullViewRef}
               userId={activity.user_id}

@@ -43,6 +43,7 @@ export default function Feed() {
               const { description, title, date, sport, locations, photoUrls, duration, distance, id, user_id } = item;
               return (
                 <ActivityCard
+                  isShowDeleteBtn={false}
                   isShowDescription={false}
                   description={description}
                   title={title}

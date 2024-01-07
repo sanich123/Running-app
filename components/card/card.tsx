@@ -30,9 +30,9 @@ export default function ActivityCard({ ...rest }: ActivityCardProps) {
     distance,
     fullViewRef,
     isShowDescription,
+    isShowDeleteBtn,
   } = rest;
   const { push } = useRouter();
-  // const pathname = usePathname();
   const cardRef = useRef(null);
 
   return (
@@ -61,7 +61,13 @@ export default function ActivityCard({ ...rest }: ActivityCardProps) {
         </View>
       </View>
       <Card.Actions>
-        <CardBtns activityId={id} userId={userId} cardRef={cardRef} fullViewRef={fullViewRef} />
+        <CardBtns
+          activityId={id}
+          userId={userId}
+          cardRef={cardRef}
+          fullViewRef={fullViewRef}
+          isShowDeleteBtn={isShowDeleteBtn}
+        />
       </Card.Actions>
     </Card>
   );
