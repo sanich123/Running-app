@@ -1,4 +1,8 @@
+import { AuthProvider } from '@auth/context/auth-context';
+import SplashIcon from '@c/splash-screen/splash-screen';
+import { persistor, store } from '@r/store';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useGetFontsThemeSettings } from '@u/hooks/use-get-fonts-theme-settings';
 import { Slot } from 'expo-router';
 import { AppRegistry } from 'react-native';
 import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
