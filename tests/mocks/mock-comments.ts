@@ -1,0 +1,58 @@
+export const MOCK_COMMENTS = [
+  {
+    activityId: '189d2c10-463c-42f5-9f09-5e9fa6aa2720',
+    authorId: '7857abb1-b125-4f39-becf-8f30216b46ec',
+    comment: 'Рамзанчик, да ты жирный',
+    date: '2023-09-27T04:38:08.951Z',
+    id: '2fd0916a-1fb8-44c4-bb6a-021c092f2713',
+  },
+  {
+    activityId: '189d2c10-463c-42f5-9f09-5e9fa6aa2720',
+    authorId: '5285b856-c61a-4434-8725-011c01ab9f41',
+    comment: 'Вован дело говорит, худей',
+    date: '2023-09-27T04:44:12.626Z',
+    id: 'f9e88a23-ddca-43eb-918d-26f3ee8c6397',
+  },
+  {
+    activityId: '189d2c10-463c-42f5-9f09-5e9fa6aa2720',
+    authorId: 'c59f5f96-2f92-43f2-8d99-c5a555739dd6',
+    comment: 'Рамзанчик, дон, надо меньше кушать! А то до 80 не доживешь',
+    date: '2023-09-27T04:55:46.022Z',
+    id: '3f12827f-2314-410f-88be-c020fd7d4095',
+  },
+  {
+    activityId: '189d2c10-463c-42f5-9f09-5e9fa6aa2720',
+    authorId: '10d0d69c-6043-44d4-8a3c-eeff96172b42',
+    comment: 'Поцоны дело говорят ',
+    date: '2023-09-27T05:01:48.564Z',
+    id: 'e9559f8c-4f2d-4891-935a-2c5668e5fb61',
+  },
+  {
+    activityId: '189d2c10-463c-42f5-9f09-5e9fa6aa2720',
+    authorId: '0589538a-f303-483e-9a73-a71590a6ac64',
+    comment: '+1',
+    date: '2023-09-27T05:50:54.453Z',
+    id: '3d55a078-02c9-4193-accc-4f3cc0a8ff3c',
+  },
+  {
+    activityId: '189d2c10-463c-42f5-9f09-5e9fa6aa2720',
+    authorId: '9320e08f-299a-468a-8b03-5a1b5ef28ee1',
+    comment: 'Ахматыч, реальный свин уже в зеркале, давай глистов тебе подсадим',
+    date: '2023-09-27T06:08:17.971Z',
+    id: '748c7166-7b30-4331-a6e6-a6547f3501a0',
+  },
+  {
+    activityId: '189d2c10-463c-42f5-9f09-5e9fa6aa2720',
+    authorId: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
+    comment: 'Дон, скидывай 20 кг',
+    date: '2023-09-27T06:16:06.935Z',
+    id: '3db2cacf-6fb3-4372-bfd8-3477a0400216',
+  },
+  {
+    activityId: '189d2c10-463c-42f5-9f09-5e9fa6aa2720',
+    authorId: '0326e84a-946b-42da-b662-658c4c9a50d9',
+    comment: 'Харе меня чмырить, поцы!',
+    date: '2023-09-27T07:14:55.372Z',
+    id: 'ec1e13a6-0ebc-468a-aa22-7b21355574b4',
+  },
+];

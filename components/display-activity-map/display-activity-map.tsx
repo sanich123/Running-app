@@ -1,39 +1,35 @@
-import RouteLine from '@c/map/route-line/route-line';
-import { Camera, MapView } from '@rnmapbox/maps';
-import useFakeLocations from '@u/hooks/use-fake-locations';
+import { LastKmSplit } from '@R/location/types';
+import { MapView, Camera } from '@rnmapbox/maps';
+import bbox from '@turf/bbox';
 import { LocationObject } from 'expo-location';
 import { usePathname } from 'expo-router';
-import { getBoundsOfDistance, getCenterOfBounds } from 'geolib';
-import { useEffect } from 'react';
+//@ts-ignore
+import lineString from 'turf-linestring';
 
-export default function DisplayActivityMap({ locations, distance }: { locations: LocationObject[]; distance: number }) {
+import MapKmSplit from '../map-km-split/map-km-split';
+import RouteLine from '../map-route-line/map-route-line';
+
+type DisplayActivityMapProps = {
+  locations: LocationObject[];
+  kilometresSplit: LastKmSplit[];
+};
+
+export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
   const pathname = usePathname();
-  const modifiedLocations = locations.map(({ coords: { longitude, latitude } }) => ({
-    longitude,
-    latitude,
-  }));
-  const { cameraRef } = useFakeLocations();
-  const center = getCenterOfBounds(modifiedLocations);
-  const [{ latitude: swLatitude, longitude: swLongitude }, { latitude: neLatitude, longitude: neLongitude }] =
-    getBoundsOfDistance(center, distance);
-
-  useEffect(() => {
-    if (cameraRef?.current) {
-      cameraRef.current.fitBounds([neLongitude, neLatitude], [swLongitude, swLatitude]);
-    }
-  }, []);
+  const modifiedLocationsForTurf = locations.map(({ coords: { longitude, latitude } }) => [latitude, longitude]);
+  const line = lineString(modifiedLocationsForTurf);
+  const [minLat, minLng, maxLat, maxLng] = bbox(line);
 
   return (
-    <MapView style={[{ flex: 1 }, pathname.includes('/comment') && { height: 200 }]} scaleBarEnabled={false}>
+    <MapView style={[{ flex: 1 }, pathname.includes('/comment') && { height: 300 }]} scaleBarEnabled={false}>
       <Camera
         animationMode="flyTo"
         animationDuration={1000}
-        zoomLevel={25}
-        ref={cameraRef}
-        centerCoordinate={[center.longitude, center.latitude]}
-        bounds={{ ne: [neLongitude, neLatitude], sw: [swLongitude, swLatitude] }}
+        bounds={{ ne: [minLng, minLat], sw: [maxLng, maxLat] }}
+        padding={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20, paddingTop: 20 }}
       />
       {locations.length > 1 && <RouteLine locations={locations} />}
+      <MapKmSplit kilometresSplit={kilometresSplit} />
     </MapView>
   );
 }

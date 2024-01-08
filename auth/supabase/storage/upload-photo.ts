@@ -1,8 +1,8 @@
-import { errorHandler } from '@u/error-handler';
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
 
+import { errorHandler } from '../../../utils/error-handler';
 import { supabase } from '../supabase-init';
 
 export async function getBase64CodedImage(image: string) {
@@ -13,13 +13,8 @@ export async function getBase64CodedImage(image: string) {
   }
 }
 
-export async function getExtension(image: string) {
-  const splittedImage = image.split('.');
-  return splittedImage[splittedImage.length - 1];
-}
-
-export async function uploadPhoto(userId: string, base64: string) {
-  const filePath = `${userId}/${new Date().getTime()}.jpg`;
+export async function uploadPhoto(userId: string, base64: string, extension: string) {
+  const filePath = `${userId}/${new Date().getTime()}.${extension}`;
   const contentType = 'image/jpg';
   try {
     const { error, data: uploadedPhoto } = await supabase.storage
@@ -28,7 +23,9 @@ export async function uploadPhoto(userId: string, base64: string) {
     if (error) {
       Alert.alert(error.message);
     }
-    return uploadedPhoto.path;
+    if (uploadedPhoto) {
+      return uploadedPhoto.path;
+    }
   } catch (error) {
     errorHandler(error);
   }
@@ -49,7 +46,7 @@ export async function getSignedUrl(path: string, expiredTime: number) {
     if (error) {
       Alert.alert(error.message);
     }
-    return data.signedUrl;
+    return data?.signedUrl;
   } catch (error) {
     errorHandler(error);
   }

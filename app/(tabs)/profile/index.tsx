@@ -1,51 +1,94 @@
-import { useAuth } from '@auth/context/auth-context';
-import { View } from '@c/Themed';
-import AvatarShowable from '@c/avatar/avatar-showable';
-import ErrorComponent from '@c/error-component/error-component';
-import ProfileFollowersSection from '@c/profile-followers-section/profile-followers-section';
-import ProfileMediaPhotos from '@c/profile-media-photos/profile-media-photos';
-import { useGetUserProfileByIdQuery } from '@r/runnich-api/runnich-api';
-import { calculateAge } from '@u/time-formatter';
-import { StyleSheet } from 'react-native';
-import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper';
+import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
+import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import ErrorComponent from '@C/error-component/error-component';
+import FollowersCount from '@C/followers-count/followers-count';
+import FollowingCount from '@C/following-count/following-count';
+import ProfileMediaPhotos from '@C/profile-media-photos/profile-media-photos';
+import { saveBio, saveCity, saveGender, saveName, savePhotoUrl, saveSurname, saveWeight } from '@R/profile/profile';
+import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
+import { useAuth } from 'auth/context/auth-context';
+import { useLocalSearchParams } from 'expo-router';
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 
 export default function Profile() {
+  const { id: friendId } = useLocalSearchParams();
+  const dispatch = useDispatch();
   const { user } = useAuth();
-  const { isLoading, data: profile, error } = useGetUserProfileByIdQuery(user?.id);
+  const isMineActivity = friendId === user?.id;
+  const {
+    isLoading,
+    isSuccess,
+    isError,
+    data: profile,
+    error,
+  } = useGetUserProfileByIdQuery(`${user?.id}`, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      if (profile) {
+        dispatch(saveGender(profile?.gender));
+        dispatch(saveName(profile?.name));
+        dispatch(saveSurname(profile?.surname));
+        dispatch(saveCity(profile?.city));
+        dispatch(saveWeight(profile?.weight));
+        dispatch(saveBio(profile?.bio));
+        dispatch(savePhotoUrl(profile?.profilePhoto));
+      }
+    }
+  }, [profile]);
 
   return (
     <>
-      <ProfileMediaPhotos userId={user?.id} />
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <AvatarShowable size={100} id={user?.id} />
-          <View style={styles.nicknameWrapper}>
-            <Text variant="headlineMedium">
-              {profile?.name || 'Your name'} {profile?.surname || 'Your surname'}
-            </Text>
-            <Text variant="titleLarge">
-              {profile?.city || 'Your homeland'},{' '}
-              {profile?.birthday ? `${calculateAge(new Date(profile?.birthday))} years old` : 'Your age'}
-            </Text>
+      {user && (
+        <>
+          <ProfileMediaPhotos userId={user.id} />
+          <View style={[styles.container, (isLoading || isError) && styles.isInCenter]}>
+            {isLoading && <ActivityIndicator size="large" />}
+            {error ? <ErrorComponent error={error} /> : null}
+            {isSuccess && (
+              <>
+                <View style={styles.header}>
+                  <AvatarShowable size={100} id={user.id} />
+                  <View style={styles.nicknameWrapper}>
+                    <Text variant="headlineMedium">
+                      {profile?.name} {profile?.surname}
+                    </Text>
+                    <Text variant="titleLarge">{profile?.city} </Text>
+                  </View>
+                </View>
+                <View style={styles.bio}>
+                  <Text variant="titleMedium">{profile?.bio}</Text>
+                </View>
+                <View style={styles.followersWrapper}>
+                  <FollowingCount />
+                  <FollowersCount />
+                  {!isMineActivity && friendId && <AddDeleteFriendBtn friendId={`${friendId}`} />}
+                </View>
+              </>
+            )}
           </View>
-        </View>
-        <View style={styles.bio}>
-          <Text variant="titleMedium">{profile?.bio || 'Your biography'}</Text>
-        </View>
-        <ProfileFollowersSection />
-        {isLoading && <ActivityIndicator animating color={MD2Colors.red800} />}
-        {error ? <ErrorComponent error={error} /> : null}
-      </View>
+        </>
+      )}
     </>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingLeft: 20,
     paddingRight: 20,
     paddingTop: 20,
+  },
+  isInCenter: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     display: 'flex',
@@ -60,5 +103,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     marginTop: 20,
     marginBottom: 20,
+  },
+  followersWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 20,
+    alignItems: 'center',
   },
 });

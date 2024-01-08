@@ -1,64 +1,66 @@
-import AcceptDeclineBtns from '@c/accept-decline-btns/accept-decline-btns';
-import Checkbox from '@c/checkbox/checkbox';
-import EmotionBtns from '@c/segmented-btns/emotion-btns';
-import SportsBtns from '@c/segmented-btns/sports-btns';
-import TextInputs from '@c/text-inputs/text-inputs';
-import UploadPhotosBtn from '@c/upload-photos-btn/upload-photos-btn';
-import { SaveActivityContext } from '@u/context/save-activity';
-import useGetActivityInfo from '@u/hooks/use-get-activity-info';
+import CameraLauncher from '@C/camera/camera';
+import Checkbox from '@C/checkbox/checkbox';
+import DateTimePicker from '@C/date-picker/date-picker';
+import DeclineBtn from '@C/decline-btn/decline-btn';
+import EmotionBtns from '@C/emotion-btns/emotion-btns';
+import InputsDistanceTime from '@C/inputs-distance-time/inputs-distance-time';
+import NetworkIndicator from '@C/network-indicator/network-indicator';
+import PreviewImages from '@C/preview-images/preview-images';
+import ShowCameraBtn from '@C/show-camera-btn/show-camera-btn';
+import SportsBtns from '@C/sports-btns/sports-btns';
+import TextInputs from '@C/text-inputs/text-inputs';
+import UploadPhotosBtn from '@C/upload-photos-btn/upload-photos-btn';
+import { setIsNeedToResetInputs } from '@R/activity/activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { StatusBar } from 'expo-status-bar';
-import { ScrollView, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 export default function SaveResult() {
+  const [isDisabled, setIsDisabled] = useState(false);
   const {
-    title,
-    setTitle,
-    description,
-    setDescription,
-    sport,
-    setSport,
-    emotion,
-    setEmotion,
-    isSwitchOn,
-    setIsSwitchOn,
-    isDisabled,
-    setIsDisabled,
-    images,
-    setImages,
-    isLoading,
-    setIsLoading,
-  } = useGetActivityInfo();
+    isNeedToResetInputs,
+    isManualAdding,
+    isCameraVisible,
+    additionalInfo: { photoUrls },
+  } = useAppSelector(({ activity }) => activity);
+  const dispatch = useAppDispatch();
+  const [images, setImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (isNeedToResetInputs) {
+      dispatch(setIsNeedToResetInputs(false));
+    }
+  }, [isNeedToResetInputs]);
 
   return (
-    <ScrollView style={styles.container}>
-      <SaveActivityContext.Provider
-        value={{
-          title,
-          setTitle,
-          description,
-          sport,
-          emotion,
-          isSwitchOn,
-          isDisabled,
-          images,
-          setIsDisabled,
-          setDescription,
-          setSport,
-          setEmotion,
-          setIsSwitchOn,
-          setImages,
-          isLoading,
-          setIsLoading,
-        }}>
-        <TextInputs />
-        <SportsBtns isDisabled={isDisabled} setSport={setSport} sport={sport} />
-        <EmotionBtns isDisabled={isDisabled} setEmotion={setEmotion} emotion={emotion} />
-        <Checkbox />
-        <UploadPhotosBtn />
-        <AcceptDeclineBtns />
-      </SaveActivityContext.Provider>
-      <StatusBar style="auto" />
-    </ScrollView>
+    <>
+      {!isCameraVisible ? (
+        <ScrollView style={!isCameraVisible && styles.container}>
+          <NetworkIndicator />
+          <TextInputs isDisabled={isDisabled} />
+          <SportsBtns isDisabled={isDisabled} />
+          <EmotionBtns isDisabled={isDisabled} />
+          <Checkbox isDisabled={isDisabled} />
+          {isManualAdding && <DateTimePicker isDisabled={isDisabled} />}
+          {isManualAdding && <InputsDistanceTime isDisabled={isDisabled} />}
+          <View style={styles.cameraUploadBtns}>
+            <ShowCameraBtn isDisabled={isDisabled} />
+            <UploadPhotosBtn
+              isDisabled={isDisabled}
+              setIsDisabled={setIsDisabled}
+              setImages={setImages}
+              images={images}
+            />
+          </View>
+          <PreviewImages images={photoUrls} setImages={setImages} isDisabled={isDisabled} />
+          <DeclineBtn isDisabled={isDisabled} />
+          <StatusBar style="auto" />
+        </ScrollView>
+      ) : (
+        <CameraLauncher />
+      )}
+    </>
   );
 }
 
@@ -67,5 +69,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 10,
     paddingRight: 10,
+  },
+  cameraUploadBtns: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });

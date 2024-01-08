@@ -1,11 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { setupListeners } from '@reduxjs/toolkit/query';
+import { persistStore, persistReducer } from 'redux-persist';
 
-import changeThemeLangReducer from './change-lang-slice/change-lang-slice';
-import locationSlice from './location-slice/location-slice';
-import { runnichApi } from './runnich-api/runnich-api';
-import userInfoSlice from './user-info-slice/user-info-slice';
+import activity from './activity/activity';
+import language from './language/language';
+import location from './location/location';
+import network from './network/network';
+import profile from './profile/profile';
+import { runichApi } from './runich-api/runich-api';
 
 const persistConfig = {
   key: 'root',
@@ -15,10 +18,12 @@ const persistConfig = {
 const rootReducer = persistReducer(
   persistConfig,
   combineReducers({
-    changeThemeLang: changeThemeLangReducer,
-    location: locationSlice,
-    userInfo: userInfoSlice,
-    [runnichApi.reducerPath]: runnichApi.reducer,
+    network,
+    language,
+    location,
+    profile,
+    activity,
+    [runichApi.reducerPath]: runichApi.reducer,
   }),
 );
 
@@ -26,14 +31,12 @@ export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    }).concat(runnichApi.middleware),
+      serializableCheck: false,
+    }).concat(runichApi.middleware),
 });
-
+setupListeners(store.dispatch);
 export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = typeof store;
-export type AppDispatch = AppStore['dispatch'];
+export type AppDispatch = typeof store.dispatch;

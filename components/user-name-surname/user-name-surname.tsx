@@ -1,19 +1,25 @@
-import ErrorComponent from '@c/error-component/error-component';
-import { useGetUserProfileByIdQuery } from '@r/runnich-api/runnich-api';
-import { ActivityIndicator, MD3TypescaleKey, Text } from 'react-native-paper';
+import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
+import { errorExtracter } from '@U/error-handler';
+import { LANGUAGES } from '@const/enums';
+import { View } from 'react-native';
+import { MD3TypescaleKey, Text } from 'react-native-paper';
 import { VariantProp } from 'react-native-paper/lib/typescript/components/Typography/types';
 
 export default function UserNameSurname({ userId, size }: { userId: string; size: VariantProp<MD3TypescaleKey> }) {
-  const { isLoading, error, data: profileInfo } = useGetUserProfileByIdQuery(userId);
+  const { error, data: profileInfo } = useGetUserProfileByIdQuery(userId);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <>
-      {isLoading && <ActivityIndicator />}
-      {error ? <ErrorComponent error={error} /> : null}
-      {profileInfo ? (
+      <View style={{ flex: 1, flexDirection: 'row' }}>
         <Text variant={size} style={{ fontWeight: 'bold' }}>
-          {profileInfo?.name} {profileInfo?.surname}
+          {!error && profileInfo && `${profileInfo?.name} `}
+          {error && `${language === LANGUAGES.english ? 'An error' : 'Ошибка'}: ${errorExtracter(error)}`}
         </Text>
-      ) : null}
+        <Text variant={size} style={{ fontWeight: 'bold' }}>
+          {!error && profileInfo && profileInfo?.surname}
+        </Text>
+      </View>
     </>
   );
 }

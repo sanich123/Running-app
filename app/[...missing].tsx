@@ -1,4 +1,4 @@
-import { View, Text } from '@c/Themed';
+import { View, Text } from '@C/Themed';
 import { Link, Stack } from 'expo-router';
 import { StyleSheet } from 'react-native';
 

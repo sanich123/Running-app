@@ -12,14 +12,19 @@ web-build/
 __tests__
 yarn.lock
 .env
-eas.json
-app.json
+
+coverage
+.yarn
+android
+ios
+
 
 # macOS
 .DS_Store
 .idea
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
+
 
 
 # @generated expo-cli sync-2b81b286409207a5da26e14c78851eb30d8ccbdb

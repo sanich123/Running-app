@@ -1,85 +1,84 @@
-import EmailInput from '@c/email-input/email-input';
-import LoginBtn from '@c/login-btn/login-btn';
-import LoginNavigation from '@c/login-navigation/login-navigation';
-import NicknameInput from '@c/nickname-input/nickname-input';
-import PasswordInput from '@c/password-input/password-input';
-import RegisterBtn from '@c/register-btn/register-btn';
-import RegisterNavigation from '@c/register-navigation/register-navigation';
-import ResetBtn from '@c/reset-btn/reset-btn';
-import ResetNavigation from '@c/reset-navigation/reset-navigation';
-import { SignInContext } from '@u/context/sign-in';
-import usePasswordEmail from '@u/hooks/use-password-email';
+import EmailInput from '@C/email-input/email-input';
+import LoginRegisterBtn from '@C/login-register-btn/login-register-btn';
+import LoginRegisterNavigation from '@C/login-register-navigation/login-register-navigation';
+import PasswordInput from '@C/password-input/password-input';
+import usePasswordEmail from '@U/hooks/use-password-email';
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
-
-import { signInStyles } from '../../styles/sign-in-page/sign-in-page';
+import { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 
 export default function SignIn() {
   const {
     email,
+    password,
     emailError,
     passwordError,
-    password,
-    nickname,
-    nicknameError,
-    isRegister,
-    isReset,
-    isLogin,
     isLoading,
     isDisabled,
     setEmail,
+    setPassword,
     setEmailError,
     setPasswordError,
-    setPassword,
-    setNickname,
-    setNicknameError,
-    setIsRegister,
-    setIsReset,
-    setIsLogin,
     setIsLoading,
     setIsDisabled,
   } = usePasswordEmail();
+  const [isRegister, setIsRegister] = useState(true);
 
   return (
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
-      <SignInContext.Provider
-        value={{
-          email,
-          emailError,
-          passwordError,
-          password,
-          nickname,
-          nicknameError,
-          isRegister,
-          isReset,
-          isLogin,
-          isLoading,
-          isDisabled,
-          setEmail,
-          setEmailError,
-          setPasswordError,
-          setPassword,
-          setNickname,
-          setNicknameError,
-          setIsRegister,
-          setIsReset,
-          setIsLogin,
-          setIsLoading,
-          setIsDisabled,
-        }}>
-        <View style={signInStyles.container}>
-          {isRegister && <NicknameInput />}
-          <EmailInput />
-          {!isReset && <PasswordInput />}
-          {isRegister && <RegisterBtn />}
-          {isLogin && <LoginBtn />}
-          {isReset && <ResetBtn />}
-          {isRegister && <RegisterNavigation />}
-          {isLogin && <LoginNavigation />}
-          {(isReset || isLogin) && <ResetNavigation />}
-        </View>
-      </SignInContext.Provider>
+      <View style={signInStyles.container}>
+        <EmailInput
+          email={email}
+          setEmail={setEmail}
+          emailError={emailError}
+          setEmailError={setEmailError}
+          isDisabled={isDisabled}
+        />
+        <PasswordInput
+          password={password}
+          setPassword={setPassword}
+          setPasswordError={setPasswordError}
+          passwordError={passwordError}
+          isDisabled={isDisabled}
+        />
+        <LoginRegisterBtn
+          isRegister={isRegister}
+          password={password}
+          email={email}
+          isDisabled={isDisabled}
+          isLoading={isLoading}
+          setIsDisabled={setIsDisabled}
+          setIsLoading={setIsLoading}
+          setEmailError={setEmailError}
+          setPasswordError={setPasswordError}
+        />
+        <LoginRegisterNavigation isRegister={isRegister} isDisabled={isDisabled} setIsRegister={setIsRegister} />
+      </View>
     </>
   );
 }
+
+const signInStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  btnWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    columnGap: 10,
+    marginTop: 10,
+  },
+  navigateBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#518be8',
+    borderRadius: 8,
+    padding: 8,
+  },
+});

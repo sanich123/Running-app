@@ -1,33 +1,34 @@
-import { useAuth } from '@auth/context/auth-context';
-import { View } from '@c/Themed';
-import AvatarShowable from '@c/avatar/avatar-showable';
-import Colors from '@const/Colors';
-import { useLinkTo } from '@react-navigation/native';
-import { Tabs, usePathname, useRouter } from 'expo-router';
-import { useColorScheme, Pressable } from 'react-native';
-import { useTheme, Text } from 'react-native-paper';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ActivityCloseBtn from '@C/activity-close-btn/activity-close-btn';
+import ActivitySaveBtn from '@C/activity-save-btn/activity-save-btn';
+import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import { HomeIcon, ActivityIcon, ProgressIcon } from '@C/icons/icons';
+import { useAppSelector } from '@R/typed-hooks';
+import { LABELS, ROUTES } from '@const/enums';
+import { useAuth } from 'auth/context/auth-context';
+import { Tabs, usePathname } from 'expo-router';
+import { useColorScheme } from 'react-native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { useTheme } from 'react-native-paper';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { user } = useAuth();
   const pathname = usePathname();
-  const router = useRouter();
-  const linkTo = useLinkTo();
   const theme = useTheme();
+  const { language } = useAppSelector(({ language }) => language);
+  const { isCameraVisible } = useAppSelector(({ activity }) => activity);
   const commonSettings = {
     tabBarLabelStyle: { color: theme.colors.primaryContainer },
     headerStyle: { backgroundColor: theme.colors.primary },
     headerTintColor: theme.colors.primaryContainer,
   };
+  console.log(pathname);
 
   return (
     <Tabs
       screenOptions={{
         tabBarStyle: {
-          height: 60,
-          elevation: 0,
-          borderTopWidth: 0,
+          display: pathname.includes(ROUTES.activity) ? 'none' : 'flex',
         },
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         tabBarInactiveBackgroundColor: theme.colors.primary,
@@ -35,109 +36,75 @@ export default function TabLayout() {
         tabBarHideOnKeyboard: true,
       }}>
       <Tabs.Screen
-        name="home"
+        name={ROUTES.home}
         redirect={!user}
         options={{
           ...commonSettings,
-          title: 'Feed',
-          tabBarLabel: 'Feed',
-          tabBarIcon: ({ focused }) => (
-            <MaterialCommunityIcons name="home" color={theme.colors.primaryContainer} size={focused ? 40 : 35} />
-          ),
-          headerTitleStyle: { fontWeight: 'bold' },
-
-          headerRight: () => (
-            <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: 'transparent' }}>
-              <MaterialCommunityIcons
-                name="account-multiple"
-                color={theme.colors.primaryContainer}
-                size={30}
-                style={{ marginRight: 5 }}
-                onPress={() => router.push('/users')}
-              />
-              <MaterialCommunityIcons
-                name="cog-outline"
-                color={theme.colors.primaryContainer}
-                size={30}
-                style={{ marginRight: 5 }}
-                onPress={() => router.push('/settings')}
-              />
-            </View>
-          ),
+          title: LABELS[language].feed,
+          tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="activity"
+        name={ROUTES.activity}
         redirect={!user}
         options={{
-          title: 'Activity',
-          tabBarLabel: 'Activity',
+          title: '',
+          tabBarLabel: LABELS[language].activity,
           ...commonSettings,
-          tabBarIcon: ({ focused }) => (
-            <MaterialCommunityIcons
-              name="record-circle-outline"
-              color={theme.colors.primaryContainer}
-              size={focused ? 40 : 35}
-            />
-          ),
+          headerLeft: () => <ActivityCloseBtn />,
+          tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
         }}
       />
       <Tabs.Screen
-        name="progress"
+        name={ROUTES.progress}
         redirect={!user}
         options={{
           ...commonSettings,
-          title: 'Progress',
-          tabBarLabel: 'Progress',
-          tabBarIcon: ({ focused }) => (
-            <MaterialCommunityIcons name="chart-bar" color={theme.colors.primaryContainer} size={focused ? 40 : 35} />
-          ),
+          title: LABELS[language].statistics,
+          tabBarLabel: LABELS[language].statistics,
+          tabBarIcon: ({ focused }) => <ProgressIcon focused={focused} />,
         }}
       />
+      {user && (
+        <Tabs.Screen
+          name={ROUTES.profile}
+          redirect={!user}
+          options={{
+            ...commonSettings,
+            title: LABELS[language].profile,
+            tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
+            headerShown: false,
+          }}
+        />
+      )}
       <Tabs.Screen
-        name="profile"
-        redirect={!user}
+        name={`${ROUTES.settings}/${ROUTES.index}`}
         options={{
-          ...commonSettings,
-          title: 'Profile',
-          tabBarLabel: 'Profile',
-          tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
-          headerTitleStyle: { fontWeight: 'bold' },
-          headerRight: () =>
-            pathname !== '/profile/settings' ? (
-              <Pressable onPress={() => linkTo('/profile/settings')}>
-                <Text variant="titleMedium" style={{ color: theme.colors.primaryContainer, marginRight: 15 }}>
-                  Edit
-                </Text>
-              </Pressable>
-            ) : null,
-        }}
-      />
-      <Tabs.Screen
-        name="settings/index"
-        options={{
-          title: 'Settings',
+          title: LABELS[language].settings,
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
         }}
       />
       <Tabs.Screen
-        name="users/index"
+        name={`${ROUTES.users}/${ROUTES.index}`}
         options={{
-          title: 'Users',
+          title: LABELS[language].users,
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
         }}
       />
       <Tabs.Screen
-        name="save-activity/index"
+        name={`${ROUTES.saveActivity}/${ROUTES.index}`}
         options={{
-          title: 'save',
+          title: '',
           ...commonSettings,
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
+          headerShown: !isCameraVisible,
+          headerRight: !isCameraVisible ? () => <ActivitySaveBtn /> : undefined,
         }}
       />
     </Tabs>

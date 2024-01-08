@@ -1,32 +1,59 @@
-import ActivityCard from '@c/activity-card/activity-card';
-import ErrorComponent from '@c/error-component/error-component';
-import { useGetActivityByActivityIdQuery } from '@r/runnich-api/runnich-api';
+import ActivityFullViewMetrics from '@C/activity-full-view/activity-full-view';
+import ActivityFullViewKmSplit from '@C/activity-full-view-km-split/activity-full-view-km-split';
+import ActivityCard from '@C/card/card';
+import ErrorComponent from '@C/error-component/error-component';
+import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
-import { SafeAreaView } from 'react-native';
+import { useRef } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
 export default function ViewActivityFullInfo() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(activityId);
+  const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(`${activityId}`);
+  const fullViewRef = useRef(null);
+
   return (
-    <SafeAreaView style={[{ flex: 1 }, isLoading && { alignItems: 'center', justifyContent: 'center' }]}>
-      {isLoading && <ActivityIndicator />}
-      {error ? <ErrorComponent error={error} /> : null}
-      {activity && (
-        <ActivityCard
-          userId={activity.user_id}
-          description={activity.description}
-          title={activity.title}
-          date={activity.date}
-          sport={activity.sport}
-          id={activity.id}
-          locations={activity.locations}
-          photoUrls={activity.photoUrls}
-          duration={activity.duration}
-          speed={activity.speed}
-          distance={activity.distance}
-        />
-      )}
-    </SafeAreaView>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
+      <View ref={fullViewRef} collapsable={false}>
+        {isLoading && <ActivityIndicator size="large" />}
+        {error ? <ErrorComponent error={error} /> : null}
+        {activity && (
+          <>
+            <ActivityCard
+              isShowDeleteBtn
+              isShowDescription
+              fullViewRef={fullViewRef}
+              userId={activity.user_id}
+              description={activity.description}
+              title={activity.title}
+              date={activity.date}
+              sport={activity.sport}
+              id={activity.id}
+              locations={activity.locations}
+              photoUrls={activity.photoUrls}
+              duration={activity.duration}
+              distance={activity.distance}
+            />
+            <ActivityFullViewMetrics />
+            <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>
+              {activity.kilometresSplit?.length > 0 && (
+                <ActivityFullViewKmSplit kilometresSplit={activity.kilometresSplit} />
+              )}
+            </View>
+          </>
+        )}
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  isInCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

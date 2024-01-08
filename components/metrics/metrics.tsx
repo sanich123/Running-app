@@ -1,27 +1,74 @@
-import { View } from '@c/Themed';
-import { STATUSES } from '@const/enums';
-import { ActivityComponentContext } from '@u/context/activity-component';
-import { useContext } from 'react';
+import { useAppSelector } from '@R/typed-hooks';
+import { View, StyleSheet } from 'react-native';
 
-import Distance from './distance/distance';
-import LastKm from './last-km/last-km';
-import { metricsStyles } from './metrics-styles';
-import Pace from './pace/pace';
-import Steps from './steps/steps';
-import Time from './time/time';
+import { MAP_METRICS } from './const';
+import { getSpeedInMinsInKm } from '../../utils/location-utils';
+import { formatDuration, formatDurationMinsSecs } from '../../utils/time-formatter';
+import ActivityErrorMsg from '../activity-error-msg/activity-error-msg';
+import MetricsItem from '../metrics-item/metrics-item';
 
 export default function Metrics() {
-  const { status, mapVisible } = useContext(ActivityComponentContext);
-  const { containerMetrics } = metricsStyles;
-  const isStartedOrContinue = status === STATUSES.started || status === STATUSES.continue;
+  const { kilometresSplit, altitude, duration, distance, isMapVisible } = useAppSelector(({ location }) => location);
+  const { language } = useAppSelector(({ language }) => language);
+  const formattedDuration = formatDuration(duration);
+  const formattedDistance = (distance / 1000).toFixed(2);
+  const { metricsLayout, withMapHeight } = styles;
+  const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;
 
   return (
-    <View style={[containerMetrics, isStartedOrContinue && { height: '80%' }, mapVisible && { height: '15%' }]}>
-      <Time />
-      {!mapVisible && isStartedOrContinue && <Steps />}
-      <Pace />
-      {!mapVisible && isStartedOrContinue && <LastKm />}
-      <Distance />
-    </View>
+    <>
+      <ActivityErrorMsg />
+      <View style={[metricsLayout, isMapVisible && withMapHeight]}>
+        <MetricsItem
+          isMapVisible={isMapVisible}
+          title={`${MAP_METRICS[language].time}:`}
+          metric={formattedDuration}
+          isCentral={false}
+        />
+        {!isMapVisible && (
+          <MetricsItem
+            isMapVisible={isMapVisible}
+            title={`${MAP_METRICS[language].altitude}:`}
+            metric={`${altitude.toFixed(2)} ${`${MAP_METRICS[language].m}`}`}
+            isCentral={false}
+          />
+        )}
+        <MetricsItem
+          isMapVisible={isMapVisible}
+          title={`${MAP_METRICS[language].pace}:`}
+          metric={`${
+            duration && distance ? getSpeedInMinsInKm(distance, duration).paceAsString : 0
+          } /${`${MAP_METRICS[language].km}`}`}
+          isCentral
+        />
+        {!isMapVisible && (
+          <MetricsItem
+            isMapVisible={isMapVisible}
+            title={`${MAP_METRICS[language].lastKm}:`}
+            metric={formatDurationMinsSecs(lastKmPace ? lastKmPace.lastKilometerDuration : 0)}
+            isCentral={false}
+          />
+        )}
+        <MetricsItem
+          isMapVisible={isMapVisible}
+          title={`${MAP_METRICS[language].distance}:`}
+          metric={`${formattedDistance} ${`${MAP_METRICS[language].km}`}`}
+          isCentral={false}
+        />
+      </View>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  metricsLayout: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    height: '100%',
+    position: 'relative',
+  },
+  withMapHeight: {
+    height: '15%',
+  },
+});

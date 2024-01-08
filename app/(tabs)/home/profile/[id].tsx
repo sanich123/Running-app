@@ -1,15 +1,19 @@
-import { View } from '@c/Themed';
-import AvatarShowable from '@c/avatar/avatar-showable';
-import ProfileFollowersSection from '@c/profile-followers-section/profile-followers-section';
-import ProfileMediaPhotos from '@c/profile-media-photos/profile-media-photos';
-import UserBio from '@c/user-bio/user-bio';
-import UserCityAge from '@c/user-city-age/user-city-age';
-import UserNameSurname from '@c/user-name-surname/user-name-surname';
+import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
+import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import FollowersCount from '@C/followers-count/followers-count';
+import FollowingCount from '@C/following-count/following-count';
+import ProfileMediaPhotos from '@C/profile-media-photos/profile-media-photos';
+import UserBio from '@C/user-bio/user-bio';
+import UserCityAge from '@C/user-city-age/user-city-age';
+import UserNameSurname from '@C/user-name-surname/user-name-surname';
+import { useAuth } from 'auth/context/auth-context';
 import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 export default function Profile() {
   const { id: whosProfileViewing } = useLocalSearchParams();
+  const { user } = useAuth();
+  const isMineActivity = whosProfileViewing === user?.id;
 
   return (
     <>
@@ -17,7 +21,10 @@ export default function Profile() {
       <View style={styles.container}>
         <View style={styles.header}>
           <AvatarShowable size={100} id={`${whosProfileViewing}`} />
+          <AvatarShowable size={100} id={`${whosProfileViewing}`} />
           <View style={styles.nicknameWrapper}>
+            <UserNameSurname userId={`${whosProfileViewing}`} size="headlineSmall" />
+            <UserCityAge userId={`${whosProfileViewing}`} size="titleMedium" />
             <UserNameSurname userId={`${whosProfileViewing}`} size="headlineSmall" />
             <UserCityAge userId={`${whosProfileViewing}`} size="titleMedium" />
           </View>
@@ -25,7 +32,11 @@ export default function Profile() {
         <View style={styles.bio}>
           <UserBio userId={`${whosProfileViewing}`} size="bodyMedium" />
         </View>
-        <ProfileFollowersSection />
+        <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+          <FollowingCount />
+          <FollowersCount />
+          {!isMineActivity && whosProfileViewing && <AddDeleteFriendBtn friendId={`${whosProfileViewing}`} />}
+        </View>
       </View>
     </>
   );

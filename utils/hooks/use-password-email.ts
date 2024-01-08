@@ -1,16 +1,12 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 
 export default function usePasswordEmail() {
-  const [email, setEmail] = useState('aovoronin.piano@gmail.com');
+  const { email: savedEmail, password: savedPassword } = useAppSelector(({ profile }) => profile?.privateInfo);
+  const [email, setEmail] = useState(savedEmail);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [password, setPassword] = useState('7FWD&rlm');
-  const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
-  const [nickname, setNickname] = useState('');
-  const [nicknameError, setNicknameError] = useState(false);
-  const [isRegister, setIsRegister] = useState(true);
-  const [isReset, setIsReset] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [password, setPassword] = useState(savedPassword);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   return {
@@ -18,24 +14,12 @@ export default function usePasswordEmail() {
     emailError,
     passwordError,
     password,
-    passwordIsNotVisible,
-    nickname,
-    nicknameError,
-    isRegister,
-    isReset,
-    isLogin,
     isLoading,
     isDisabled,
     setEmail,
     setEmailError,
     setPasswordError,
     setPassword,
-    setPasswordIsVisible,
-    setNickname,
-    setNicknameError,
-    setIsRegister,
-    setIsReset,
-    setIsLogin,
     setIsLoading,
     setIsDisabled,
   };

@@ -1,41 +1,29 @@
-import { useAuth } from '@auth/context/auth-context';
-import AddFriendBtn from '@c/add-friend-btn/add-friend-btn';
-import AvatarShowable from '@c/avatar/avatar-showable';
-import DeleteFriendBtn from '@c/delete-friend-btn/delete-friend-btn';
-import ErrorComponent from '@c/error-component/error-component';
-import UserCityAge from '@c/user-city-age/user-city-age';
-import UserNameSurname from '@c/user-name-surname/user-name-surname';
-import { useGetFriendsByUserIdQuery } from '@r/runnich-api/runnich-api';
+import { useAuth } from '@A/context/auth-context';
+import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
+import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import UserCityAge from '@C/user-city-age/user-city-age';
+import UserNameSurname from '@C/user-name-surname/user-name-surname';
+import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
 
 export default function UserListItem({ userId }: { userId: string }) {
   const { user } = useAuth();
-  const { isLoading, error, data: friends } = useGetFriendsByUserIdQuery(user.id);
-  const isFriendOfOwner = friends?.filter(({ friendId }) => friendId === userId);
-  const isMineActivity = userId === user.id;
-  const router = useRouter();
+  const isMineActivity = userId === user?.id;
+  const { push } = useRouter();
+
   return (
     <View style={styles.userItemWrapper}>
-      <Pressable onPress={() => router.push(`/home/profile/${userId}`)}>
+      <Pressable
+        style={styles.pressableAreaWrapper}
+        onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${userId}`)}>
         <AvatarShowable size={35} id={userId} />
+        <View>
+          <UserNameSurname userId={userId} size="bodyLarge" />
+          <UserCityAge userId={userId} size="bodyMedium" />
+        </View>
       </Pressable>
-
-      <View style={{ display: 'flex' }}>
-        <UserNameSurname userId={userId} size="bodyLarge" />
-        <UserCityAge userId={userId} size="bodyMedium" />
-      </View>
-
-      {isLoading && <ActivityIndicator size="small" />}
-      {error ? <ErrorComponent error={error} /> : null}
-      {!isMineActivity ? (
-        isFriendOfOwner?.length ? (
-          <DeleteFriendBtn friendId={userId} />
-        ) : (
-          <AddFriendBtn friendId={userId} />
-        )
-      ) : null}
+      {!isMineActivity && <AddDeleteFriendBtn friendId={userId} />}
     </View>
   );
 }
@@ -49,5 +37,11 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: 5,
+  },
+  pressableAreaWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 10,
   },
 });

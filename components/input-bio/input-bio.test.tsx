@@ -1,0 +1,30 @@
+import { setIsDisabledWhileSendingProfile } from '@R/profile/profile';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { screen, userEvent } from '@testing-library/react-native';
+
+import { INPUT_BIO_TEST_ID } from './const';
+import InputBio from './input-bio';
+
+describe('Input bio', () => {
+  it('should correctly renders', async () => {
+    renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
+    const textInput = screen.getByTestId(INPUT_BIO_TEST_ID);
+    expect(textInput).toBeOnTheScreen();
+    await userEvent.type(textInput, 'some text');
+    expect(mockStore.getState().profile.settings.bio).toEqual('some text');
+  });
+  it('should correctly handle isDisabledWhenSendingProfile state', async () => {
+    mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
+    renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
+    const bioInput = screen.getByTestId(INPUT_BIO_TEST_ID);
+    expect(bioInput).toBeDisabled();
+    expect(await screen.findAllByText(/bio/i)).toHaveLength(3);
+  });
+  it('should correctly handle isDisabled state', async () => {
+    renderWithProviders(<InputBio isDisabled />, { store: mockStore });
+    const bioInput = screen.getByTestId(INPUT_BIO_TEST_ID);
+    expect(bioInput).toBeDisabled();
+    expect(await screen.findAllByText(/bio/i)).toHaveLength(3);
+  });
+});

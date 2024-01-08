@@ -1,20 +1,18 @@
-import { AuthProvider } from '@auth/context/auth-context';
-import SplashIcon from '@c/splash-screen/splash-screen';
-import { persistor, store } from '@r/store';
+import { AuthProvider } from '@A/context/auth-context';
+import SplashIcon from '@C/splash-screen/splash-screen';
+import { persistor, store } from '@R/store';
+import { useGetFontsThemeSettings } from '@U/hooks/use-get-fonts-theme-settings';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useGetFontsThemeSettings } from '@u/hooks/use-get-fonts-theme-settings';
 import { Slot } from 'expo-router';
 import { AppRegistry } from 'react-native';
 import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
-import { enGB, registerTranslation } from 'react-native-paper-dates';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { expo } from '../app.json';
+import expo from '../app.config';
 
 export default function RootLayout() {
   const { loaded, colorScheme, theme } = useGetFontsThemeSettings();
-  registerTranslation('en-GB', enGB);
 
   const paperTheme =
     colorScheme === 'dark' ? { ...MD3DarkTheme, colors: theme.dark } : { ...MD3LightTheme, colors: theme.light };
@@ -38,4 +36,4 @@ export default function RootLayout() {
   );
 }
 
-AppRegistry.registerComponent(expo.name, () => RootLayout);
+AppRegistry.registerComponent(expo.expo.name, () => RootLayout);

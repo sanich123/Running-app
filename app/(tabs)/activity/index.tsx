@@ -1,32 +1,62 @@
-import { View, Text } from '@c/Themed';
-import ActivityComponent from '@c/activity-component/activity-component';
-import { setInitialLocation } from '@r/location-slice/location-slice';
-import { getCurrentPositionAsync } from 'expo-location';
-import { ToastAndroid } from 'react-native';
-import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
+import ActivityLocationIndicator from '@C/activity-location-indicator/activity-location-indicator';
+import ActivityPauseBtn from '@C/activity-pause-btn/activity-pause-btn';
+import ActivityShowMapBtn from '@C/activity-show-map-btn/activity-show-map-btn';
+import ActivityStartBtn from '@C/activity-start-btn/activity-start-btn';
+import Map from '@C/map/map';
+import Metrics from '@C/metrics/metrics';
+import { useAppSelector } from '@R/typed-hooks';
+import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
+import { STATUSES } from '@const/enums';
+import { StyleSheet, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
+
+const { initial, paused } = STATUSES;
 
 export default function Activity() {
-  const dispatch = useDispatch();
-  const { initialLocation } = useSelector(({ location }) => location);
-  if (!initialLocation.coords) {
-    return (
-      <View>
-        <Text>Our app is only available, when we have your location</Text>
-        <Button
-          mode="outlined"
-          onPress={async () => {
-            const currentPosition = await getCurrentPositionAsync();
-            ToastAndroid.show(`Position from activity component ${currentPosition.toString()}`, ToastAndroid.SHORT);
-            if (currentPosition) {
-              dispatch(setInitialLocation(currentPosition));
-            }
-          }}>
-          Get fucking location!
-        </Button>
+  useStartStopTracking();
+  const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
+  const { colors } = useTheme();
+  const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;
+
+  return (
+    <>
+      <ActivityLocationIndicator />
+      <View style={page}>
+        <View style={mapOrMetricsWrapper}>
+          {(activityStatus === initial || isMapVisible) && <Map />}
+          {activityStatus !== initial && <Metrics />}
+        </View>
+        <View style={controlBtnsWrapper}>
+          <View style={[btnsLayout, { backgroundColor: colors.onSecondary }]}>
+            {activityStatus === paused && <ActivityPauseBtn />}
+            <ActivityStartBtn />
+            {activityStatus !== initial && <ActivityShowMapBtn />}
+          </View>
+        </View>
       </View>
-    );
-  } else {
-    return <ActivityComponent />;
-  }
+    </>
+  );
 }
+
+const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mapOrMetricsWrapper: {
+    height: '80%',
+    width: '100%',
+  },
+  controlBtnsWrapper: {
+    height: '20%',
+    width: '100%',
+  },
+  btnsLayout: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    gap: 15,
+  },
+});

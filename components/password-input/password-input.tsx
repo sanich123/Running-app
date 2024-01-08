@@ -1,15 +1,30 @@
+import { useAppSelector } from '@R/typed-hooks';
 import { passwordMatcher } from '@const/regexp';
-import { SignInContext } from '@u/context/sign-in';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { HelperText, TextInput } from 'react-native-paper';
 
-export default function PasswordInput() {
-  const { password, setPassword, passwordError, setPasswordError, isDisabled } = useContext(SignInContext);
-  const [passwordIsNotVisible, setPasswordIsVisible] = useState(false);
+import {
+  PASSWORD_INPUT,
+  PASSWORD_INPUT_LEFT_ICON,
+  PASSWORD_INPUT_RIGHT_ICON,
+  PASSWORD_INPUT_TEST_ID,
+  PasswordInputProps,
+} from './const';
+
+export default function PasswordInput({
+  password,
+  setPassword,
+  passwordError,
+  setPasswordError,
+  isDisabled,
+}: PasswordInputProps) {
+  const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <>
       <TextInput
-        label="Password"
+        testID={PASSWORD_INPUT_TEST_ID}
+        label={PASSWORD_INPUT[language].label}
         value={password}
         onChangeText={(password) => {
           if (!passwordMatcher.test(password)) {
@@ -20,11 +35,12 @@ export default function PasswordInput() {
           setPassword(password);
         }}
         onEndEditing={() => (!passwordMatcher.test(password) ? setPasswordError(true) : setPasswordError(false))}
-        placeholder="Type your password"
+        placeholder={PASSWORD_INPUT[language].placeholder}
         secureTextEntry={passwordIsNotVisible}
-        left={<TextInput.Icon icon="form-textbox-password" disabled={isDisabled} />}
+        left={<TextInput.Icon icon="form-textbox-password" testID={PASSWORD_INPUT_LEFT_ICON} disabled={isDisabled} />}
         right={
           <TextInput.Icon
+            testID={PASSWORD_INPUT_RIGHT_ICON}
             icon="eye"
             onPress={() => setPasswordIsVisible(!passwordIsNotVisible)}
             disabled={isDisabled}
@@ -36,7 +52,7 @@ export default function PasswordInput() {
         disabled={isDisabled}
       />
       <HelperText type="error" visible={passwordError} padding="none">
-        Password must contain one capital, one normal letter, one number, length 4-8 symbols
+        {PASSWORD_INPUT[language].helperText}
       </HelperText>
     </>
   );

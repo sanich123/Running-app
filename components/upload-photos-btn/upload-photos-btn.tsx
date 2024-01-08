@@ -1,75 +1,68 @@
-import { useAuth } from '@auth/context/auth-context';
-import { getBase64CodedImage, getSignedUrl, uploadPhoto } from '@auth/supabase/storage/upload-photo';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { SaveActivityContext } from '@u/context/save-activity';
-import { errorHandler } from '@u/error-handler';
-import { getAccessToGallery } from '@u/file-sending';
-import { useContext } from 'react';
-import { Image, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { Image as ImageCompressor } from 'react-native-compressor';
-import { Button, useTheme } from 'react-native-paper';
+import { useAuth } from '@A/context/auth-context';
+import { resetPhotoUrls, addPhotoUrl } from '@R/activity/activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { errorHandler } from '@U/error-handler';
+import { getAccessToGallery, compressAndSendPhoto } from '@U/file-sending';
+import { useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { Button } from 'react-native-paper';
 
-export default function UploadPhotosBtn() {
-  const { isDisabled, setIsDisabled, images, isLoading, setIsLoading, setImages } = useContext(SaveActivityContext);
-  const { width } = useWindowDimensions();
-  const theme = useTheme();
+import { UploadPhotoBtnProps, UPLOAD_PHOTO_BTN } from './ const';
+
+export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, images }: UploadPhotoBtnProps) {
+  const dispatch = useAppDispatch();
   const { user } = useAuth();
+  const { language } = useAppSelector(({ language }) => language);
+  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isNeedToResetInputs) {
+      dispatch(resetPhotoUrls());
+      setImages([]);
+    }
+  }, [isNeedToResetInputs]);
 
   return (
-    <>
-      <Button
-        mode="outlined"
-        icon="camera"
-        onPress={async () => {
-          setIsDisabled(true);
-          setIsLoading(true);
-          try {
-            const result = await getAccessToGallery();
-            if (!result.canceled) {
-              const imgSrc = result.assets[0].uri;
-              const compressedImage = await ImageCompressor.compress(imgSrc);
-              const base64 = await getBase64CodedImage(compressedImage);
-              const pathToPhoto = await uploadPhoto(user.id, base64);
-              const url = await getSignedUrl(pathToPhoto, 100000);
-              setImages([...images, url]);
+    <Button
+      mode="outlined"
+      icon="upload-outline"
+      onPress={async () => {
+        setIsDisabled(true);
+        setIsLoading(true);
+        try {
+          const result = await getAccessToGallery();
+          if (result && !result.canceled) {
+            const imgSrc = result.assets[0].uri;
+            if (user) {
+              const url = await compressAndSendPhoto(imgSrc, user.id);
+              if (url) {
+                setImages([...images, url]);
+                dispatch(addPhotoUrl(url));
+              }
             }
-          } catch (error) {
-            errorHandler(error);
-            setIsDisabled(false);
-            setIsLoading(false);
-          } finally {
-            setIsDisabled(false);
-            setIsLoading(false);
           }
-        }}
-        style={{ marginTop: 15 }}
-        loading={isLoading}
-        disabled={isDisabled}>
-        {`Upload${isLoading ? 'ing' : ''} an image`}
-      </Button>
-      <View style={styles.imagesWrapper}>
-        {images &&
-          images.map((image, index) => (
-            <View style={{ position: 'relative' }} key={`${image}${index}`}>
-              <MaterialCommunityIcons
-                name="close-circle"
-                color={theme.colors.onPrimaryContainer}
-                size={25}
-                style={{ position: 'absolute', right: 2, top: 16, zIndex: 5 }}
-                onPress={() => setImages(images.filter((uri) => uri !== image))}
-                disabled={isDisabled}
-              />
-              <Image source={{ uri: image }} style={styles.imageStyle} width={width / 3 - 10} height={100} />
-            </View>
-          ))}
-      </View>
-    </>
+        } catch (error) {
+          errorHandler(error);
+        } finally {
+          setIsDisabled(false);
+          setIsLoading(false);
+        }
+      }}
+      style={styles.uploadBtn}
+      loading={isLoading}
+      disabled={isDisabled || isDisabledWhileSending}>
+      {isLoading ? UPLOAD_PHOTO_BTN[language].isLoading : UPLOAD_PHOTO_BTN[language].isInitial}
+    </Button>
   );
 }
 
 const styles = StyleSheet.create({
-  imagesWrapper: { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', columnGap: 5 },
-  imageStyle: {
+  uploadBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 15,
+    width: '45%',
   },
 });
