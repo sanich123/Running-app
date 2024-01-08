@@ -14,7 +14,7 @@ import { setIsNeedToResetInputs } from '@R/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function SaveResult() {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -55,7 +55,7 @@ export default function SaveResult() {
           </View>
           <PreviewImages images={photoUrls} setImages={setImages} isDisabled={isDisabled} />
           <DeclineBtn isDisabled={isDisabled} />
-          <StatusBar style="auto" />
+          <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
         </ScrollView>
       ) : (
         <CameraLauncher />
