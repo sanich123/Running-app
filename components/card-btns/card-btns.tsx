@@ -4,7 +4,6 @@ import ActivityCardDeleteBtn from '@C/card-delete-btn/card-delete-btn';
 import ActivityCardLikeBtn from '@C/card-like-btn/card-like-btn';
 import ActivityCardShareBtn from '@C/card-share-btn/card-share-btn';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { usePathname } from 'expo-router';
 import { MutableRefObject, ReactNode, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -13,11 +12,11 @@ type CardBtnsProps = {
   userId: string;
   cardRef: MutableRefObject<ReactNode>;
   fullViewRef: MutableRefObject<ReactNode | null>;
+  isShowDeleteBtn: boolean;
 };
 
-export default function CardBtns({ activityId, userId, cardRef, fullViewRef }: CardBtnsProps) {
+export default function CardBtns({ activityId, userId, cardRef, fullViewRef, isShowDeleteBtn }: CardBtnsProps) {
   const { user } = useAuth();
-  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const isMineActivvity = user?.id === userId;
@@ -28,9 +27,7 @@ export default function CardBtns({ activityId, userId, cardRef, fullViewRef }: C
         <ActivityCardLikeBtn activityId={activityId} />
         <ActivityCardCommentBtn activityId={activityId} />
         <ActivityCardShareBtn cardRef={cardRef} fullViewRef={fullViewRef} />
-        {isMineActivvity && pathname.includes(`/home/activity/${activityId}`) && (
-          <ActivityCardDeleteBtn activityId={activityId} />
-        )}
+        {isMineActivvity && isShowDeleteBtn && <ActivityCardDeleteBtn activityId={activityId} />}
       </View>
     </ActivityCardBtnsContext.Provider>
   );

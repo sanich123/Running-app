@@ -14,13 +14,17 @@ export default function ViewActivityFullInfo() {
   const fullViewRef = useRef(null);
 
   return (
-    <ScrollView contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
       <View ref={fullViewRef} collapsable={false}>
         {isLoading && <ActivityIndicator size="large" />}
         {error ? <ErrorComponent error={error} /> : null}
         {activity && (
           <>
             <ActivityCard
+              isShowDeleteBtn
+              isShowDescription
               fullViewRef={fullViewRef}
               userId={activity.user_id}
               description={activity.description}

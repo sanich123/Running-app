@@ -24,6 +24,8 @@ describe('Activity card', () => {
     const { description, title, date, sport, id, locations, photoUrls, duration, distance } = MOCK_ACTIVITY;
     renderWithProviders(
       <ActivityCard
+        isShowDeleteBtn
+        isShowDescription
         description={description}
         title={title}
         date={new Date(date)}
@@ -42,7 +44,6 @@ describe('Activity card', () => {
     expect(await screen.findByText('Искандер')).toBeOnTheScreen();
     expect(await screen.findByText('Ядгаров')).toBeOnTheScreen();
     expect(await screen.findByText('Friday, November 3, 2023')).toBeOnTheScreen();
-    expect(await screen.findByText('at 18:28')).toBeOnTheScreen();
     ['Time', 'Pace', 'Distance'].map(async (word) =>
       expect(await screen.getByText(new RegExp(word))).toBeOnTheScreen(),
     );

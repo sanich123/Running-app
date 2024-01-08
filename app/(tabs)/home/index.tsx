@@ -6,13 +6,12 @@ import FloatingBtn from '@C/floating-btn/floating-btn';
 import NetworkIndicator from '@C/network-indicator/network-indicator';
 import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
 import { setIsManualAdding, resetFinishedActivity, resetManualData } from '@R/activity/activity';
-import { useGetActivitiesByUserIdWithFriendsActivitiesQuery, runichApi } from '@R/runich-api/runich-api';
+import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
 import useRefresh from '@U/hooks/use-refresh';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
 import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
 
@@ -26,19 +25,9 @@ export default function Feed() {
     error,
     isLoading,
     refetch,
-  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(`${user?.id}`, {
-    refetchOnMountOrArgChange: true,
-    refetchOnFocus: true,
-    refetchOnReconnect: true,
-  });
+  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(`${user?.id}`);
   const { onRefresh, refreshing } = useRefresh(refetch);
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
-
-  useEffect(() => {
-    if (error) {
-      dispatch(runichApi.util.resetApiState());
-    }
-  }, []);
 
   return (
     <>
@@ -54,6 +43,8 @@ export default function Feed() {
               const { description, title, date, sport, locations, photoUrls, duration, distance, id, user_id } = item;
               return (
                 <ActivityCard
+                  isShowDeleteBtn={false}
+                  isShowDescription={false}
                   description={description}
                   title={title}
                   date={date}
