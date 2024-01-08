@@ -21,10 +21,7 @@ export default function Profile() {
       <View style={styles.container}>
         <View style={styles.header}>
           <AvatarShowable size={100} id={`${whosProfileViewing}`} />
-          <AvatarShowable size={100} id={`${whosProfileViewing}`} />
           <View style={styles.nicknameWrapper}>
-            <UserNameSurname userId={`${whosProfileViewing}`} size="headlineSmall" />
-            <UserCityAge userId={`${whosProfileViewing}`} size="titleMedium" />
             <UserNameSurname userId={`${whosProfileViewing}`} size="headlineSmall" />
             <UserCityAge userId={`${whosProfileViewing}`} size="titleMedium" />
           </View>
