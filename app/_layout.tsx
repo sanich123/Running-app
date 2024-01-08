@@ -6,6 +6,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { Slot } from 'expo-router';
 import { AppRegistry } from 'react-native';
 import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
+import { RootSiblingParent } from 'react-native-root-siblings';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
@@ -25,7 +26,9 @@ export default function RootLayout() {
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
               <PaperProvider theme={paperTheme}>
                 <AuthProvider>
-                  <Slot />
+                  <RootSiblingParent>
+                    <Slot />
+                  </RootSiblingParent>
                 </AuthProvider>
               </PaperProvider>
             </ThemeProvider>

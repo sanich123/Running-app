@@ -10,12 +10,13 @@ import { ActivityToSend } from '@R/activity/types';
 import { resetLocationsFromBackground } from '@R/location/location';
 import { useAddActivityByUserIdMutation } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { getSpeedInMinsInKm } from '@U/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, ToastAndroid } from 'react-native';
+import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
 
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
@@ -46,7 +47,7 @@ export default function ActivitySaveBtn() {
         console.log('success', data);
       }
       if (data?.message) {
-        ToastAndroid.show(data?.message, ToastAndroid.LONG);
+        showCrossPlatformToast(data?.message, ToastDuration.long);
       }
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
@@ -57,7 +58,7 @@ export default function ActivitySaveBtn() {
       dispatch(saveUnsendedActivity(activityToSend));
       dispatch(setIsHaveUnsyncedActivity(true));
       console.log('error', error, activityToSend);
-      ToastAndroid.show(ACTIVITY_SAVE_BTN[language].errorMsg, ToastAndroid.LONG);
+      showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsg, ToastDuration.long);
       if ('status' in error) {
         if (error.status === 'FETCH_ERROR') {
           dispatch(resetActivityInfo());

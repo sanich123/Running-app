@@ -2,10 +2,11 @@ import { useAuth } from '@A/context/auth-context';
 import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/profile/profile';
 import { useSendProfileInfoMutation, runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { Pressable, ToastAndroid } from 'react-native';
+import { Pressable } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
 import { UPDATE_BTN_ERROR_MSG, UPDATE_BTN } from './const';
@@ -31,7 +32,7 @@ export default function ProfileUpdateBtn() {
     if (error) {
       dispatch(setIsDisabledWhileSendingProfile(false));
       dispatch(runichApi.util.resetApiState());
-      ToastAndroid.show(UPDATE_BTN_ERROR_MSG, ToastAndroid.LONG);
+      showCrossPlatformToast(UPDATE_BTN_ERROR_MSG, ToastDuration.short);
     }
   }, [data, error]);
 

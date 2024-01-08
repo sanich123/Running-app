@@ -1,9 +1,9 @@
 import { useAuth } from '@A/context/auth-context';
 import { useSendOrDeleteLikeToCommentMutation, useGetLikesByCommentIdQuery } from '@R/runich-api/runich-api';
+import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { ToastAndroid } from 'react-native';
 import { MD3Colors } from 'react-native-paper';
 
 export default function CommentLikeBtn({ commentId }: { commentId: string }) {
@@ -18,7 +18,7 @@ export default function CommentLikeBtn({ commentId }: { commentId: string }) {
       console.log(data);
     }
     if (error) {
-      ToastAndroid.show('Не удалось отправить лайк к комментарию', ToastAndroid.SHORT);
+      showCrossPlatformToast('Не удалось отправить лайк к комментарию', ToastDuration.short);
       console.log(error);
     }
   }, [data, error]);

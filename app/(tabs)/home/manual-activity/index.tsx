@@ -1,5 +1,5 @@
 import SaveResult from '@C/save-activity-page/save-activity-page';
 
-export default function AutomaticActivity() {
+export default function ManualActivity() {
   return <SaveResult />;
 }

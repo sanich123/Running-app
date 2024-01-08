@@ -2,9 +2,9 @@ import { useAuth } from '@A/context/auth-context';
 import { useSendOrDeleteLikeMutation, useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
+import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { useContext, useEffect } from 'react';
-import { ToastAndroid } from 'react-native';
 import { ActivityIndicator, IconButton, MD3Colors } from 'react-native-paper';
 
 import {
@@ -31,7 +31,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
     }
     if (errorSendingLike) {
       console.log(error);
-      ToastAndroid.show(CARD_LIKE_BTN[language].errorMsg, ToastAndroid.SHORT);
+      showCrossPlatformToast(CARD_LIKE_BTN[language].errorMsg, ToastDuration.short);
     }
   }, [data, errorSendingLike]);
 

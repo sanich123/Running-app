@@ -1,5 +1,6 @@
 import { setIsTooMuchSpeed } from '@R/location/location';
 import { store } from '@R/store';
+import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import {
   Accuracy,
   hasStartedLocationUpdatesAsync,
@@ -8,7 +9,6 @@ import {
 } from 'expo-location';
 import { isTaskRegisteredAsync } from 'expo-task-manager';
 import * as TaskManager from 'expo-task-manager';
-import { ToastAndroid } from 'react-native';
 
 import {
   BACKGROUND_NOTIFICATION,
@@ -34,7 +34,7 @@ export async function startLocationTracking({ setLocationStarted }: { setLocatio
   const hasStarted = await hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
   setLocationStarted(hasStarted);
   console.log('tracking started?', hasStarted);
-  ToastAndroid.show(`BgTracking started = ${hasStarted}`, ToastAndroid.SHORT);
+  showCrossPlatformToast(`BgTracking started = ${hasStarted}`, ToastDuration.long);
 }
 
 export async function stopLocationTracking({ setLocationStarted }: { setLocationStarted?: (arg: boolean) => void }) {
@@ -45,7 +45,7 @@ export async function stopLocationTracking({ setLocationStarted }: { setLocation
   isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
     if (tracking) {
       stopLocationUpdatesAsync(LOCATION_TRACKING);
-      ToastAndroid.show(`BgTracking stopped`, ToastAndroid.SHORT);
+      showCrossPlatformToast(`BgTracking stopped`, ToastDuration.long);
     }
   });
 }

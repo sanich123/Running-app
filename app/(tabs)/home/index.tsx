@@ -10,7 +10,6 @@ import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-ap
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
 import useRefresh from '@U/hooks/use-refresh';
-import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
@@ -68,12 +67,13 @@ export default function Feed() {
         )}
         {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
         {error ? <ErrorComponent error={error} /> : null}
+
         <FloatingBtn
           onPressFn={() => {
             dispatch(setIsManualAdding(true));
             dispatch(resetFinishedActivity());
             dispatch(resetManualData());
-            push(`/${ROUTES.saveActivity}/`);
+            push('/(tabs)/home/manual-activity');
           }}
         />
       </SafeAreaView>
