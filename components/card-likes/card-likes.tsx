@@ -25,12 +25,7 @@ export default function CardLikes({ activityId }: { activityId: string }) {
       onPress={() => push(`/${ROUTES.home}/${ROUTES.likes}/${activityId}`)}
       disabled={isError}
       style={isError && { opacity: 0.5 }}>
-      <View
-        style={[
-          styles.likesLayout,
-          !likes?.length && styles.withoutLikesLayout,
-          (isInComment || isInActivity) && { width: likes?.length * SHIFT_RIGHT + 13, marginTop: 4 },
-        ]}>
+      <View style={[styles.likesLayout, !likes?.length && styles.withoutLikesLayout]}>
         {likes && (
           <View style={{ position: 'relative' }}>
             {likes

@@ -17,10 +17,7 @@ export default function HomeStack() {
       }}>
       <Stack.Screen name={ROUTES.index} />
       <Stack.Screen name={`${ROUTES.comment}/[id]`} options={{ title: LABELS[language].comment }} />
-      <Stack.Screen
-        name={`${ROUTES.activity}/[id]`}
-        options={{ title: LABELS[language].activity, presentation: 'modal' }}
-      />
+      <Stack.Screen name={`${ROUTES.activity}/[id]`} options={{ title: LABELS[language].activity }} />
       <Stack.Screen name={`${ROUTES.followers}/[id]`} options={{ title: LABELS[language].followers }} />
       <Stack.Screen name={`${ROUTES.following}/[id]`} options={{ title: LABELS[language].followings }} />
       <Stack.Screen name={`${ROUTES.likes}/[id]`} options={{ title: LABELS[language].likes }} />
