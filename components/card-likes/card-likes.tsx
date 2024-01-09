@@ -9,6 +9,7 @@ import { Text } from 'react-native-paper';
 
 const MAX_IN_ROW = 9;
 const MAX_NUMBER_IN_ROW_OTHER_PAGE = 3;
+const SHIFT_RIGHT = 23;
 
 export default function CardLikes({ activityId }: { activityId: string }) {
   const { error, isError, data: likes } = useGetLikesByActivityIdQuery(activityId);
@@ -17,7 +18,8 @@ export default function CardLikes({ activityId }: { activityId: string }) {
   const isInComment = pathname.includes(ROUTES.comment);
   const isInActivity = pathname.includes(ROUTES.activity);
   const lastLikeInTheRow = isInComment || isInActivity ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
-  const SHIFT_RIGHT = 23;
+  const lessThanNineLikes = (isInComment || isInActivity) && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
+  const moreThanNineLikes = (isInComment || isInActivity) && likes?.length > 0 && likes?.length > MAX_IN_ROW;
 
   return (
     <Pressable
@@ -25,7 +27,12 @@ export default function CardLikes({ activityId }: { activityId: string }) {
       onPress={() => push(`/${ROUTES.home}/${ROUTES.likes}/${activityId}`)}
       disabled={isError}
       style={isError && { opacity: 0.5 }}>
-      <View style={[styles.likesLayout, !likes?.length && styles.withoutLikesLayout]}>
+      <View
+        style={[
+          styles.likesLayout,
+          lessThanNineLikes && { width: likes?.length * SHIFT_RIGHT + 10 },
+          moreThanNineLikes && { width: MAX_IN_ROW * SHIFT_RIGHT + 10 },
+        ]}>
         {likes && (
           <View style={{ position: 'relative' }}>
             {likes
@@ -61,16 +68,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 20,
-    marginLeft: 5,
-    marginBottom: 5,
     backgroundColor: 'transparent',
-    height: 40,
-  },
-  withoutLikesLayout: {
-    paddingTop: 0,
-    paddingBottom: 0,
-    paddingLeft: 0,
-    height: 0,
+    height: 45,
+    width: 'auto',
   },
   avatarWrapper: {
     position: 'absolute',
