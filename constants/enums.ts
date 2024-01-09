@@ -26,6 +26,7 @@ export enum ROUTES {
   media = 'media',
   mediaGrid = 'media-grid',
   profile = 'profile',
+  manualActivity = 'manual-activity',
 }
 
 export const LABELS = {

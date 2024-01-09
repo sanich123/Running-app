@@ -13,7 +13,7 @@ export const runichApi = createApi({
   refetchOnMountOrArgChange: true,
   refetchOnReconnect: true,
   refetchOnFocus: true,
-  keepUnusedDataFor: process.env.IS_TESTING ? 0 : 30,
+  // keepUnusedDataFor: process.env.IS_TESTING ? 0 : 30,
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => `/${user}`,
@@ -22,7 +22,7 @@ export const runichApi = createApi({
     getUserProfileById: builder.query({
       query: (id: string) => `/${profile}/${id}`,
       providesTags: [Tags.profile],
-      keepUnusedDataFor: process.env.IS_TESTING ? 0 : 1,
+      // keepUnusedDataFor: process.env.IS_TESTING ? 0 : 1,
     }),
     getActivitiesByUserId: builder.query({
       query: (id: string) => `/${activity}/${id}`,
@@ -31,7 +31,7 @@ export const runichApi = createApi({
     getActivitiesByUserIdWithFriendsActivities: builder.query({
       query: (id: string) => `/${activity}/${id}/${all}`,
       providesTags: [Tags.activities],
-      keepUnusedDataFor: process.env.IS_TESTING ? 0 : 1,
+      // keepUnusedDataFor: process.env.IS_TESTING ? 0 : 1,
     }),
     getAllActivityPhotosByUserId: builder.query({
       query: (userId: string) => `/${activity}/${userId}/${photos}`,

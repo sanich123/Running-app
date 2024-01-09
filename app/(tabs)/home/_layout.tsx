@@ -1,17 +1,22 @@
+import ActivitySaveBtn from '@C/activity-save-btn/activity-save-btn';
 import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
 import { useAppSelector } from '@R/typed-hooks';
 import { LABELS, ROUTES } from '@const/enums';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 
 export default function HomeStack() {
   const theme = useTheme();
   const { language } = useAppSelector(({ language }) => language);
+  const pathname = usePathname();
+  console.log(pathname);
+
   return (
     <Stack
       screenOptions={{
         headerStyle: { backgroundColor: theme.colors.primary },
-        headerRight: () => <UsersSettingsIcons />,
+        headerRight: () =>
+          pathname === `/${ROUTES.home}/${ROUTES.manualActivity}` ? <ActivitySaveBtn /> : <UsersSettingsIcons />,
         headerTintColor: theme.colors.primaryContainer,
         title: LABELS[language].feed,
       }}>
@@ -25,7 +30,7 @@ export default function HomeStack() {
       <Stack.Screen name={`${ROUTES.media}/[photoUrl]`} options={{ title: LABELS[language].photo }} />
       <Stack.Screen name={`${ROUTES.mediaGrid}/[id]`} options={{ title: LABELS[language].photos }} />
       <Stack.Screen name={`${ROUTES.profile}/[id]`} options={{ title: LABELS[language].profile }} />
-      <Stack.Screen name="manual-activity/index" options={{ presentation: 'modal' }} />
+      <Stack.Screen name={`${ROUTES.manualActivity}/${ROUTES.index}`} options={{ presentation: 'modal' }} />
     </Stack>
   );
 }
