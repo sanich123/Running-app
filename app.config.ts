@@ -20,6 +20,9 @@ export default {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
+      entitlements: {
+        'com.apple.developer.networking.wifi-info': true,
+      },
       supportsTablet: true,
       runtimeVersion: '1.1.11(16)',
       bundleIdentifier: IS_DEV ? 'com.myapp.dev' : 'com.myapp',
