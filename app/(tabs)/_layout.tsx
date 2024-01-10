@@ -37,7 +37,6 @@ export default function TabLayout() {
       }}>
       <Tabs.Screen
         name={ROUTES.home}
-        redirect={!user}
         options={{
           ...commonSettings,
           title: LABELS[language].feed,
@@ -47,7 +46,6 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name={ROUTES.activity}
-        redirect={!user}
         options={{
           title: '',
           tabBarLabel: LABELS[language].activity,
@@ -58,7 +56,6 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name={ROUTES.progress}
-        redirect={!user}
         options={{
           ...commonSettings,
           title: LABELS[language].statistics,
@@ -69,7 +66,6 @@ export default function TabLayout() {
       {user && (
         <Tabs.Screen
           name={ROUTES.profile}
-          redirect={!user}
           options={{
             ...commonSettings,
             title: LABELS[language].profile,
