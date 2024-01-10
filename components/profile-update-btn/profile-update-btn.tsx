@@ -3,7 +3,6 @@ import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/profile/prof
 import { useSendProfileInfoMutation, runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
-import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable } from 'react-native';
@@ -27,7 +26,7 @@ export default function ProfileUpdateBtn() {
       }
       dispatch(setIsDisabledWhileSendingProfile(false));
       dispatch(resetSettings());
-      push(`/${ROUTES.profile}`);
+      push('/profile/');
     }
     if (error) {
       dispatch(setIsDisabledWhileSendingProfile(false));
