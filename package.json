@@ -48,7 +48,6 @@
     "preset": "jest-expo",
     "setupFilesAfterEnv": [
       "@testing-library/jest-native/extend-expect",
-      "@rnmapbox/maps/setup-jest",
       "./jest-setup.ts"
     ],
     "setupFiles": [
