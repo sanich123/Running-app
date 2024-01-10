@@ -48,13 +48,14 @@
     "preset": "jest-expo",
     "setupFilesAfterEnv": [
       "@testing-library/jest-native/extend-expect",
+      "@rnmapbox/maps/setup-jest",
       "./jest-setup.ts"
     ],
     "setupFiles": [
       "./tests/set-up-async-storage/set-up-async-storage.ts"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|firebase|@firebase)"
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|firebase|@firebase|@rnmapbox)"
     ],
     "moduleNameMapper": {
       "^@c/(.*)": "<rootDir>/components/$1",
@@ -73,12 +74,12 @@
     "@react-native-community/netinfo": "9.3.10",
     "@react-navigation/native": "^6.0.2",
     "@reduxjs/toolkit": "^1.9.5",
-    "@rnmapbox/maps": "^10.1.1",
+    "@rnmapbox/maps": "^10.1.5",
     "@supabase/supabase-js": "^2.33.2",
     "@turf/bbox": "^6.5.0",
     "@turf/distance": "^6.5.0",
     "base64-arraybuffer": "^1.0.2",
-    "expo": "^49.0.11",
+    "expo": "^49.0.21",
     "expo-camera": "~13.4.4",
     "expo-dev-client": "~2.4.12",
     "expo-file-system": "~15.4.5",

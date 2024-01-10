@@ -1,10 +1,10 @@
 import MapKmSplit from '@C/map-km-split/map-km-split';
-// import MapNavIcon from '@C/map-nav-icon/map-nav-icon';
 import MapRouteLine from '@C/map-route-line/map-route-line';
 import { useAppSelector } from '@R/typed-hooks';
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
 import { useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
 
 export default function Map() {
   const cameraRef = useRef<Camera>(null);
@@ -22,7 +22,12 @@ export default function Map() {
 
   return (
     <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
-      <UserLocation showsUserHeadingIndicator androidRenderMode="compass" animated />
+      {Platform.OS === 'ios' ? (
+        <UserLocation showsUserHeadingIndicator animated />
+      ) : (
+        <UserLocation showsUserHeadingIndicator androidRenderMode="compass" animated />
+      )}
+
       {initialLocation ? (
         <Camera
           ref={cameraRef}
