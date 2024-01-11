@@ -28,7 +28,7 @@ export default function FollowersCount() {
         push(`/${pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.profile}/${ROUTES.followers}/${friendId}`)
       }
       disabled={isError || isLoading}
-      style={(isError || isLoading) && { opacity: 0.5 }}>
+      style={({ pressed }) => ({ opacity: pressed || isError || isLoading ? 0.5 : 1 })}>
       <Text variant="bodySmall">
         {isError ? `${FOLLOWERS_COUNT[language].error}:` : FOLLOWERS_COUNT[language].followers}
       </Text>

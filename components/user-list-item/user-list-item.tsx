@@ -15,7 +15,7 @@ export default function UserListItem({ userId }: { userId: string }) {
   return (
     <View style={styles.userItemWrapper}>
       <Pressable
-        style={styles.pressableAreaWrapper}
+        style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.pressableAreaWrapper]}
         onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${userId}`)}>
         <AvatarShowable size={35} id={userId} />
         <View>

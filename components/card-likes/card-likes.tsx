@@ -26,7 +26,7 @@ export default function CardLikes({ activityId }: { activityId: string }) {
       testID="pushToActivityLikes"
       onPress={() => push(`/${ROUTES.home}/${ROUTES.likes}/${activityId}`)}
       disabled={isError}
-      style={isError && { opacity: 0.5 }}>
+      style={({ pressed }) => ({ opacity: pressed || isError ? 0.5 : 1 })}>
       <View
         style={[
           styles.likesLayout,

@@ -1,6 +1,5 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useTheme } from 'react-native-paper';
+import { IconButton, useTheme } from 'react-native-paper';
 
 import { View } from '../Themed';
 
@@ -9,21 +8,21 @@ export default function UsersSettingsIcons() {
   const { push } = useRouter();
   return (
     <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: 'transparent' }}>
-      <MaterialCommunityIcons
+      <IconButton
         testID="usersIcon"
-        name="account-multiple"
-        color={colors.primaryContainer}
+        icon="account-multiple"
+        iconColor={colors.primaryContainer}
         size={30}
-        style={{ marginRight: 5 }}
         onPress={() => push(`/users/`)}
+        style={{ marginRight: -15 }}
       />
-      <MaterialCommunityIcons
+      <IconButton
         testID="settingsIcon"
-        name="cog-outline"
-        color={colors.primaryContainer}
+        icon="cog-outline"
+        iconColor={colors.primaryContainer}
         size={30}
-        style={{ marginRight: 5 }}
         onPress={() => push(`/settings/`)}
+        style={{ marginRight: -15 }}
       />
     </View>
   );

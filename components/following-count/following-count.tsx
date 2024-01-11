@@ -32,7 +32,7 @@ export default function FollowingCount() {
         )
       }
       disabled={isError || isLoading}
-      style={(isError || isLoading) && { opacity: 0.5 }}>
+      style={({ pressed }) => ({ opacity: pressed || isError || isLoading ? 0.5 : 1 })}>
       <Text variant="bodySmall">
         {isError ? `${FOLLOWING_COUNT[language].error}:` : FOLLOWING_COUNT[language].followings}
       </Text>

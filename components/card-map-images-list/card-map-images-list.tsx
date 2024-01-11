@@ -32,7 +32,8 @@ export default function CardMapImagesList({ locations, photoUrls, id }: CardMapI
                     : `/${ROUTES.home}/${ROUTES.map}/${id}`,
                 );
               }
-            }}>
+            }}
+            style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
             <Image testID={item} source={{ uri: item }} resizeMode="cover" height={200} width={width} />
           </Pressable>
         );

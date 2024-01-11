@@ -38,9 +38,13 @@ export default function ActivityCard({ ...rest }: ActivityCardProps) {
   return (
     <Card key={id}>
       <View ref={cardRef} collapsable={false}>
-        <Pressable onPress={() => push(`/${ROUTES.home}/${ROUTES.activity}/${id}`)}>
+        <Pressable
+          onPress={() => push(`/${ROUTES.home}/${ROUTES.activity}/${id}`)}
+          style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
           <Card.Content>
-            <Pressable style={styles.cardContent} onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${userId}`)}>
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.cardContent]}
+              onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${userId}`)}>
               <AvatarShowable size={40} id={userId} />
               <View style={styles.profileWrapper}>
                 <UserNameSurname userId={userId} size="titleMedium" />

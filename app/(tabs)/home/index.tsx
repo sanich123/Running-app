@@ -11,8 +11,9 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
 import useRefresh from '@U/hooks/use-refresh';
 import { useRouter } from 'expo-router';
-import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Feed() {
   const { user } = useAuth();
@@ -30,7 +31,9 @@ export default function Feed() {
 
   return (
     <>
-      <SafeAreaView style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
+      <SafeAreaView
+        edges={['bottom', 'left', 'right']}
+        style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
         {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
         <NetworkIndicator />
         {activities && (
@@ -83,7 +86,6 @@ export default function Feed() {
 
 const styles = StyleSheet.create({
   isInCenter: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
