@@ -13,7 +13,7 @@ export default function ListOfFollowing() {
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
+    <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
       {users && (
         <FlatList
           onRefresh={onRefresh}

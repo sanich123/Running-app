@@ -11,7 +11,7 @@ export default function ActivityMap() {
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(`${activityId}`);
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
+    <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
       {isLoading && <ActivityIndicator size="large" />}
       {error ? <ErrorComponent error={error} /> : null}
       {activity ? (

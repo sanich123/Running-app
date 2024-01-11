@@ -31,9 +31,7 @@ export default function Feed() {
 
   return (
     <>
-      <SafeAreaView
-        edges={['bottom', 'left', 'right']}
-        style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
+      <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
         {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
         <NetworkIndicator />
         {activities && (
