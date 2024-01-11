@@ -6,37 +6,32 @@ import { useAppSelector } from '@R/typed-hooks';
 import { LABELS, ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { Tabs, usePathname } from 'expo-router';
-import { useColorScheme } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const { user } = useAuth();
   const pathname = usePathname();
-  const theme = useTheme();
+  const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const { isCameraVisible } = useAppSelector(({ activity }) => activity);
-  const commonSettings = {
-    tabBarLabelStyle: { color: theme.colors.primaryContainer },
-    headerStyle: { backgroundColor: theme.colors.primary },
-    headerTintColor: theme.colors.primaryContainer,
-  };
   console.log(pathname);
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        tabBarInactiveBackgroundColor: theme.colors.primary,
-        tabBarActiveBackgroundColor: theme.colors.primary,
+        tabBarInactiveBackgroundColor: colors.primary,
+        tabBarActiveBackgroundColor: colors.primary,
         tabBarHideOnKeyboard: true,
+        tabBarStyle: {
+          height: 80,
+        },
       }}>
       <Tabs.Screen
         name={ROUTES.home}
         options={{
-          ...commonSettings,
-          title: LABELS[language].feed,
+          tabBarLabelStyle: { color: colors.primaryContainer },
+          title: '',
           tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
           headerShown: false,
         }}
@@ -48,8 +43,10 @@ export default function TabLayout() {
           tabBarStyle: {
             display: 'none',
           },
-          tabBarLabel: LABELS[language].activity,
-          ...commonSettings,
+          headerTitleStyle: { fontWeight: 'bold' },
+          headerStyle: { backgroundColor: colors.primary },
+          headerTintColor: colors.primaryContainer,
+          tabBarLabelStyle: { color: colors.primaryContainer },
           headerLeft: () => <ActivityCloseBtn />,
           tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
         }}
@@ -58,9 +55,13 @@ export default function TabLayout() {
         <Tabs.Screen
           name={ROUTES.profile}
           options={{
-            ...commonSettings,
-            title: LABELS[language].profile,
-            tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
+            title: '',
+            tabBarIcon: ({ focused }) => (
+              <View style={{ paddingTop: 12 }}>
+                <AvatarShowable size={focused ? 50 : 45} id={user.id} />
+              </View>
+            ),
+            tabBarLabelStyle: { color: colors.primaryContainer },
             headerShown: false,
           }}
         />
@@ -69,8 +70,10 @@ export default function TabLayout() {
         name={`${ROUTES.settings}/${ROUTES.index}`}
         options={{
           title: LABELS[language].settings,
-          ...commonSettings,
+          tabBarLabelStyle: { color: colors.primaryContainer },
           headerTitleStyle: { fontWeight: 'bold' },
+          headerStyle: { backgroundColor: colors.primary },
+          headerTintColor: colors.primaryContainer,
           href: null,
         }}
       />
@@ -78,8 +81,10 @@ export default function TabLayout() {
         name={`${ROUTES.users}/${ROUTES.index}`}
         options={{
           title: LABELS[language].users,
-          ...commonSettings,
+          tabBarLabelStyle: { color: colors.primaryContainer },
           headerTitleStyle: { fontWeight: 'bold' },
+          headerStyle: { backgroundColor: colors.primary },
+          headerTintColor: colors.primaryContainer,
           href: null,
         }}
       />
@@ -87,7 +92,7 @@ export default function TabLayout() {
         name={`${ROUTES.saveActivity}/${ROUTES.index}`}
         options={{
           title: '',
-          ...commonSettings,
+          tabBarLabelStyle: { color: colors.primaryContainer },
           headerTitleStyle: { fontWeight: 'bold' },
           href: null,
           headerShown: !isCameraVisible,

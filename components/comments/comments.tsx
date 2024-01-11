@@ -25,7 +25,9 @@ export default function Comments({ id }: { id: string }) {
       {!error &&
         comments?.map(({ authorId, comment, id, date }: CommentResponse) => (
           <Fragment key={id}>
-            <Pressable onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${authorId}`)}>
+            <Pressable
+              onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${authorId}`)}
+              style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
               <View style={styles.commentWrapper}>
                 <AvatarShowable size={28} id={authorId} />
                 <View style={{ display: 'flex' }}>

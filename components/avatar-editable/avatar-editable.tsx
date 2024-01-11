@@ -37,7 +37,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
         }
       }}
       disabled={isDisabled || isDisabledWhileSendingProfile}
-      style={(isDisabled || isDisabledWhileSendingProfile) && { opacity: 0.5 }}>
+      style={({ pressed }) => ({ opacity: pressed || isDisabled || isDisabledWhileSendingProfile ? 0.5 : 1 })}>
       {settings?.profilePhoto ? (
         <Image
           testID={AvatarEditableTestIds.successImg}

@@ -12,7 +12,8 @@ export default function CameraChangeView({ setType, type }: CamerChangeViewProps
   return (
     <Pressable
       onPress={() => setType(type === CameraType.back ? CameraType.front : CameraType.back)}
-      testID="changeViewBtnTestId">
+      testID="changeViewBtnTestId"
+      style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
       <Icon source="swap-horizontal-bold" size={50} color={colors.primaryContainer} />
     </Pressable>
   );

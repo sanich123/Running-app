@@ -35,6 +35,7 @@ export default function MediaGrid() {
             .map((url: string, index: number) => (
               <Pressable
                 key={`${url}+${index}`}
+                style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
                 onPress={() => push(`/${ROUTES.home}/${ROUTES.media}/${encodeURIComponent(url)}`)}>
                 <Image key={`${url}+${index}`} source={{ uri: url }} height={calculatedWidth} width={calculatedWidth} />
               </Pressable>

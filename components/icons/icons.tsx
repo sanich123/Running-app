@@ -1,19 +1,18 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useTheme } from 'react-native-paper';
+import { IconButton, useTheme } from 'react-native-paper';
 
 export function HomeIcon({ focused }: { focused: boolean }) {
   const { colors } = useTheme();
-  return <MaterialCommunityIcons name="home" color={colors.primaryContainer} size={focused ? 40 : 35} />;
-}
-
-export function ActivityIcon({ focused }: { focused: boolean }) {
-  const { colors } = useTheme();
   return (
-    <MaterialCommunityIcons name="record-circle-outline" color={colors.primaryContainer} size={focused ? 40 : 35} />
+    <IconButton
+      icon="home"
+      iconColor={colors.primaryContainer}
+      size={focused ? 55 : 50}
+      style={{ opacity: focused ? 1 : 0.5, paddingTop: 13 }}
+      animated
+    />
   );
 }
 
-export function ProgressIcon({ focused }: { focused: boolean }) {
-  const { colors } = useTheme();
-  return <MaterialCommunityIcons name="chart-bar" color={colors.primaryContainer} size={focused ? 40 : 35} />;
+export function ActivityIcon({ focused }: { focused: boolean }) {
+  return <IconButton icon="play" iconColor="red" size={focused ? 100 : 80} animated style={[{ paddingTop: 10 }]} />;
 }

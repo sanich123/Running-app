@@ -10,7 +10,11 @@ type CameraShotBtnProps = {
   setPhotos: (arg: string[]) => void;
   photos: string[];
 };
-
+const CAMERA_SETTINGS = {
+  quality: 1,
+  base64: true,
+  exif: false,
+};
 export default function CameraShotBtn({ cameraRef, setPhotos, photos }: CameraShotBtnProps) {
   const { colors } = useTheme();
   return (
@@ -18,11 +22,7 @@ export default function CameraShotBtn({ cameraRef, setPhotos, photos }: CameraSh
       onPress={async () => {
         try {
           if (cameraRef?.current) {
-            const newPhoto = await cameraRef?.current.takePictureAsync({
-              quality: 1,
-              base64: true,
-              exif: false,
-            });
+            const newPhoto = await cameraRef?.current.takePictureAsync(CAMERA_SETTINGS);
             if (newPhoto) {
               setPhotos([...photos, newPhoto.uri]);
               MediaLibrary.saveToLibraryAsync(newPhoto.uri);
@@ -31,7 +31,8 @@ export default function CameraShotBtn({ cameraRef, setPhotos, photos }: CameraSh
         } catch (error) {
           errorHandler(error);
         }
-      }}>
+      }}
+      style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
       <Icon source="record-circle-outline" size={80} color={colors.primaryContainer} />
     </Pressable>
   );

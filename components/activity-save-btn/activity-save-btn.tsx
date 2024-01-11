@@ -94,7 +94,8 @@ export default function ActivitySaveBtn() {
           await sendActivity(savedActivity).unwrap();
         }
       }}
-      disabled={isDisabledWhileSending}>
+      disabled={isDisabledWhileSending}
+      style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
       <Text
         variant="titleMedium"
         style={{ color: colors.primaryContainer, marginRight: 15, opacity: isDisabledWhileSending ? 0.5 : 1 }}>

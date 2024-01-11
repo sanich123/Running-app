@@ -18,7 +18,10 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
 
   return (
     <>
-      <Pressable onPress={() => push(`/${ROUTES.home}/${ROUTES.mediaGrid}/${userId}`)} disabled={isError || isLoading}>
+      <Pressable
+        onPress={() => push(`/${ROUTES.home}/${ROUTES.mediaGrid}/${userId}`)}
+        disabled={isError || isLoading}
+        style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
         <View
           style={[
             styles.layout,

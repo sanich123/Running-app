@@ -30,7 +30,7 @@ export default function ActivityStartBtn() {
   };
   return (
     <Pressable
-      style={styles.startBtn}
+      style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.startBtn]}
       testID={ACTIVITY_START_BTN_TEST_ID}
       onPress={() => {
         dispatch(

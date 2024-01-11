@@ -11,7 +11,10 @@ export default function RegisterNavigation({ isRegister, setIsRegister, isDisabl
   return (
     <View style={btnWrapper}>
       <Text>{isRegister ? REGISTER_NAVIGATION[language].text : LOGIN_NAVIGATION[language].text}</Text>
-      <Pressable style={navigateBtn} onPress={() => setIsRegister(!isRegister)} disabled={isDisabled}>
+      <Pressable
+        style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, navigateBtn]}
+        onPress={() => setIsRegister(!isRegister)}
+        disabled={isDisabled}>
         <Text variant="bodyMedium" style={[{ color: 'white' }, isDisabled && { opacity: 0.5 }]}>
           {isRegister ? REGISTER_NAVIGATION[language].btn : LOGIN_NAVIGATION[language].btn}
         </Text>
