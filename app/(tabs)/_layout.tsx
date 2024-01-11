@@ -1,7 +1,7 @@
 import ActivityCloseBtn from '@C/activity-close-btn/activity-close-btn';
 import ActivitySaveBtn from '@C/activity-save-btn/activity-save-btn';
 import AvatarShowable from '@C/avatar-showable/avatar-showable';
-import { HomeIcon, ActivityIcon, ProgressIcon } from '@C/icons/icons';
+import { HomeIcon, ActivityIcon } from '@C/icons/icons';
 import { useAppSelector } from '@R/typed-hooks';
 import { LABELS, ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
@@ -52,15 +52,6 @@ export default function TabLayout() {
           ...commonSettings,
           headerLeft: () => <ActivityCloseBtn />,
           tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name={ROUTES.progress}
-        options={{
-          ...commonSettings,
-          title: LABELS[language].statistics,
-          tabBarLabel: LABELS[language].statistics,
-          tabBarIcon: ({ focused }) => <ProgressIcon focused={focused} />,
         }}
       />
       {user && (
