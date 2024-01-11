@@ -27,9 +27,6 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: {
-          display: pathname.includes(ROUTES.activity) ? 'none' : 'flex',
-        },
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         tabBarInactiveBackgroundColor: theme.colors.primary,
         tabBarActiveBackgroundColor: theme.colors.primary,
@@ -48,6 +45,9 @@ export default function TabLayout() {
         name={ROUTES.activity}
         options={{
           title: '',
+          tabBarStyle: {
+            display: 'none',
+          },
           tabBarLabel: LABELS[language].activity,
           ...commonSettings,
           headerLeft: () => <ActivityCloseBtn />,
