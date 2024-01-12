@@ -45,7 +45,7 @@ export default function ActivityStartBtn() {
         dispatch(setActivityStatus(RESPONSE_STATUS[activityStatus]));
         if (activityStatus === STATUSES.paused) {
           dispatch(setIsManualAdding(false));
-          push(`/${ROUTES.saveActivity}/`);
+          push(`/(tabs)/${ROUTES.home}/${ROUTES.manualActivity}/`);
         }
       }}>
       <Text style={[styles.textStyle, isRussianText && { fontSize: 18 }]}>{RESPONSE_ICON[activityStatus]}</Text>

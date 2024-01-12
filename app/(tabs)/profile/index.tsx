@@ -18,17 +18,7 @@ export default function Profile() {
   const dispatch = useDispatch();
   const { user } = useAuth();
   const isMineActivity = friendId === user?.id;
-  const {
-    isLoading,
-    isSuccess,
-    isError,
-    data: profile,
-    error,
-  } = useGetUserProfileByIdQuery(`${user?.id}`, {
-    refetchOnMountOrArgChange: true,
-    refetchOnFocus: true,
-    refetchOnReconnect: true,
-  });
+  const { isLoading, isSuccess, isError, data: profile, error } = useGetUserProfileByIdQuery(`${user?.id}`);
 
   useEffect(() => {
     if (isSuccess) {

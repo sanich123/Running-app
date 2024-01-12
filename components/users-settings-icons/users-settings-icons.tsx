@@ -13,7 +13,7 @@ export default function UsersSettingsIcons() {
         icon="account-multiple"
         iconColor={colors.primaryContainer}
         size={30}
-        onPress={() => push(`/users/`)}
+        onPress={() => push('/home/users/')}
         style={{ marginRight: -15 }}
       />
       <IconButton
@@ -21,7 +21,7 @@ export default function UsersSettingsIcons() {
         icon="cog-outline"
         iconColor={colors.primaryContainer}
         size={30}
-        onPress={() => push(`/settings/`)}
+        onPress={() => push('/home/settings/')}
         style={{ marginRight: -15 }}
       />
     </View>

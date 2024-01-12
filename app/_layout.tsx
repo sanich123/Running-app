@@ -19,8 +19,9 @@ export default function RootLayout() {
     colorScheme === 'dark' ? { ...MD3DarkTheme, colors: theme.dark } : { ...MD3LightTheme, colors: theme.light };
   return (
     <>
-      {!loaded && <SplashIcon />}
-      {loaded && (
+      {!loaded ? (
+        <SplashIcon />
+      ) : (
         <Provider store={store}>
           <PersistGate loading={<ActivityIndicator size="large" />} persistor={persistor}>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

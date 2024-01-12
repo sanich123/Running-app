@@ -27,6 +27,7 @@ export enum ROUTES {
   mediaGrid = 'media-grid',
   profile = 'profile',
   manualActivity = 'manual-activity',
+  profileSettings = 'profile-settings',
 }
 
 export const LABELS = {
@@ -44,6 +45,7 @@ export const LABELS = {
     map: 'Map',
     photo: 'Photo',
     photos: 'Photos',
+    profileSettings: 'Profile settings',
   },
   [LANGUAGES.russian]: {
     feed: 'Лента',
@@ -59,5 +61,6 @@ export const LABELS = {
     map: 'Карта',
     photo: 'Фотография',
     photos: 'Фотографии',
+    profileSettings: 'Настройки профиля',
   },
 };
