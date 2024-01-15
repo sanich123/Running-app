@@ -28,7 +28,11 @@ export default function Feed() {
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
   const prefetchUsers = runichApi.usePrefetch('getUsers');
 
-  useEffect(() => prefetchUsers(''), []);
+  useEffect(() => {
+    if (!process.env.IS_TESTING) {
+      prefetchUsers('');
+    }
+  }, []);
 
   return (
     <>
@@ -37,7 +41,7 @@ export default function Feed() {
         style={[{ flex: 1 }, (isLoading || error || activities?.length === 0) && styles.isInCenter]}>
         {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
         <NetworkIndicator />
-        {activities?.length > 0 && <OptimizedList activities={activities} refetch={refetch} />}
+        {activities && <OptimizedList activities={activities} refetch={refetch} />}
         {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
         {error ? <ErrorComponent error={error} /> : null}
         <FloatingBtn
