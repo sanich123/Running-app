@@ -1,3 +1,4 @@
+import { runichApi } from '@R/runich-api/runich-api';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { useRef } from 'react';
@@ -34,16 +35,24 @@ export default function ActivityCard({ ...rest }: ActivityCardProps) {
   } = rest;
   const { push } = useRouter();
   const cardRef = useRef(null);
+  const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
+  const prefetchProfile = runichApi.usePrefetch('getUserProfileById');
+  const prefetchProfilePhotos = runichApi.usePrefetch('getAllActivityPhotosByUserId');
 
   return (
     <Card>
       <View ref={cardRef} collapsable={false}>
         <Pressable
+          onPressIn={() => prefetchFullActivity(`${id}`)}
           onPress={() => push(`/${ROUTES.home}/${ROUTES.activity}/${id}`)}
           style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
           <Card.Content>
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.cardContent]}
+              onPressIn={() => {
+                prefetchProfile(userId);
+                prefetchProfilePhotos(userId);
+              }}
               onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${userId}`)}>
               <AvatarShowable size={40} id={userId} />
               <View style={styles.profileWrapper}>
