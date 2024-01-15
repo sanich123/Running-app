@@ -1,5 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
 import ActivityCard from '@C/card/card';
+import { ActivityCardProps } from '@C/card/const ';
 import EmptyActivitiesList from '@C/empty-activities-list/empty-activities-list';
 import ErrorComponent from '@C/error-component/error-component';
 import FloatingBtn from '@C/floating-btn/floating-btn';
@@ -10,8 +11,9 @@ import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-ap
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
 import useRefresh from '@U/hooks/use-refresh';
+import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
-import { FlatList, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -31,15 +33,17 @@ export default function Feed() {
 
   return (
     <>
-      <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
+      <SafeAreaView
+        edges={['left', 'right']}
+        style={[{ flex: 1 }, (isLoading || error || activities?.length === 0) && styles.isInCenter]}>
         {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
         <NetworkIndicator />
         {activities && (
-          <FlatList
+          <FlashList
             onRefresh={onRefresh}
             data={activities}
             refreshing={refreshing}
-            renderItem={({ item }) => {
+            renderItem={({ item }: { item: ActivityCardProps & { user_id: string } }) => {
               const { description, title, date, sport, locations, photoUrls, duration, distance, id, user_id } = item;
               return (
                 <ActivityCard
@@ -60,9 +64,8 @@ export default function Feed() {
                 />
               );
             }}
-            contentContainerStyle={activities?.length === 0 && styles.isInCenter}
+            estimatedItemSize={450}
             ListEmptyComponent={<EmptyActivitiesList />}
-            initialNumToRender={5}
             ItemSeparatorComponent={() => <Divider />}
           />
         )}
