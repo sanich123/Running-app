@@ -43,6 +43,7 @@ export default function Feed() {
             onRefresh={onRefresh}
             data={activities}
             refreshing={refreshing}
+            keyExtractor={(item) => item.id}
             renderItem={({ item }: { item: ActivityCardProps & { user_id: string } }) => {
               const { description, title, date, sport, locations, photoUrls, duration, distance, id, user_id } = item;
               return (
@@ -56,7 +57,6 @@ export default function Feed() {
                   userId={user_id}
                   id={id}
                   locations={locations}
-                  key={id}
                   photoUrls={photoUrls}
                   duration={duration}
                   distance={distance}
@@ -64,7 +64,7 @@ export default function Feed() {
                 />
               );
             }}
-            estimatedItemSize={450}
+            estimatedItemSize={200}
             ListEmptyComponent={<EmptyActivitiesList />}
             ItemSeparatorComponent={() => <Divider />}
           />

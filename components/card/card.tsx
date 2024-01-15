@@ -36,7 +36,7 @@ export default function ActivityCard({ ...rest }: ActivityCardProps) {
   const cardRef = useRef(null);
 
   return (
-    <Card key={id}>
+    <Card>
       <View ref={cardRef} collapsable={false}>
         <Pressable
           onPress={() => push(`/${ROUTES.home}/${ROUTES.activity}/${id}`)}
