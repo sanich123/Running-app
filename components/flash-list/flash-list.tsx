@@ -3,6 +3,7 @@ import EmptyActivitiesList from '@C/empty-activities-list/empty-activities-list'
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import useRefresh from '@U/hooks/use-refresh';
 import { FlashList } from '@shopify/flash-list';
+import { useEffect } from 'react';
 import { FlatList, Platform } from 'react-native';
 import { Divider } from 'react-native-paper';
 
@@ -20,9 +21,11 @@ export default function OptimizedList({
   const isEarylIos = Platform.OS === 'ios' && parseInt(Platform.Version, 10) <= 13;
   const isOldVersion = isEarlyAndroid || isEarylIos;
 
-  if (isOldVersion) {
-    showCrossPlatformToast('You have an old version of the phone', ToastDuration.long);
-  }
+  useEffect(() => {
+    if (isOldVersion) {
+      showCrossPlatformToast('You have an old version of the phone', ToastDuration.long);
+    }
+  }, []);
 
   return (
     <>
