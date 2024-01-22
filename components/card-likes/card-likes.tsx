@@ -51,7 +51,7 @@ export default memo(
                         { left: index * SHIFT_RIGHT },
                         likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 && { opacity: 0.1 },
                       ]}>
-                      {/* <AvatarShowable size={30} id={authorId} key={id} /> */}
+                      <AvatarShowable size={30} id={authorId} key={id} />
                     </View>
                   </Fragment>
                 ))}
