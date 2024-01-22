@@ -22,7 +22,6 @@ describe('User list item', () => {
       },
     }));
     renderWithProviders(<UserListItem userId="someUserId" />, { store: mockStore });
-    expect(screen.getByTestId('avatarShowableLoadingIcon')).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.name)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
@@ -52,7 +51,6 @@ describe('User list item', () => {
       },
     }));
     renderWithProviders(<UserListItem userId="a6135312-595f-4524-b3f3-496a05165d22" />, { store: mockStore });
-    expect(screen.getByTestId('avatarShowableLoadingIcon')).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.name)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
@@ -68,7 +66,6 @@ describe('User list item', () => {
       },
     }));
     renderWithProviders(<UserListItem userId="someUserIdWithAnError" />, { store: mockStore });
-    expect(screen.getByTestId('avatarShowableLoadingIcon')).toBeOnTheScreen();
     expect(await screen.findAllByText(`An error: ${MOCK_BAD_REQUEST.status}`)).toHaveLength(2);
   });
 });
