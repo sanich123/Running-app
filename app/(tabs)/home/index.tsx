@@ -24,7 +24,7 @@ export default function Feed() {
     error,
     isLoading,
     refetch,
-  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(`${user?.id}`, { refetchOnMountOrArgChange: true });
+  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(`${user?.id}`);
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
   const prefetchUsers = runichApi.usePrefetch('getUsers');
 

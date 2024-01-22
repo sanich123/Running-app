@@ -1,6 +1,5 @@
 import ActivityCard from '@C/card/card';
 import { ActivityCardProps } from '@C/card/const ';
-
 export type ActivitiesType = (ActivityCardProps & { user_id: string })[];
 
 export function renderCardsFunction({ item }: { item: ActivityCardProps & { user_id: string } }) {
@@ -23,4 +22,4 @@ export function renderCardsFunction({ item }: { item: ActivityCardProps & { user
       fullViewRef={{ current: null }}
     />
   );
-}
+};
