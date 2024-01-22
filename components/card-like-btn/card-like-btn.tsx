@@ -20,7 +20,9 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
   const [sendLike, { data, error: errorSendingLike }] = useSendOrDeleteLikeMutation();
   const { language } = useAppSelector(({ language }) => language);
   const { isLoading: isLoadingLikes, isError, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
-  const isLikedByYou = likes?.some(({ authorId }: { authorId: string }) => authorId === user?.id);
+  const isLikedByYou = likes?.length
+    ? likes?.some(({ authorId }: { authorId: string }) => authorId === user?.id)
+    : null;
   const { isDisabled, isLoading, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
 
   useEffect(() => {

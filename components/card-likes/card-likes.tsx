@@ -33,7 +33,7 @@ export default function CardLikes({ activityId }: { activityId: string }) {
           lessThanNineLikes && { width: likes?.length * SHIFT_RIGHT + 10 },
           moreThanNineLikes && { width: MAX_IN_ROW * SHIFT_RIGHT + 10 },
         ]}>
-        {likes && (
+        {likes?.length ? (
           <View style={{ position: 'relative' }}>
             {likes
               ?.slice(0, lastLikeInTheRow)
@@ -55,7 +55,7 @@ export default function CardLikes({ activityId }: { activityId: string }) {
                 </Fragment>
               ))}
           </View>
-        )}
+        ) : null}
         {likes?.length && !isInComment && !isInActivity ? <NumberOfLikes likes={likes} error={error} /> : null}
       </View>
     </Pressable>
