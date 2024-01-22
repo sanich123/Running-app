@@ -1,27 +1,22 @@
 import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
 import { memo } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Avatar } from 'react-native-paper';
+import { Image, StyleSheet } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import { Avatar } from 'react-native-paper';
 
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
 export default memo(
   function AvatarShowable({ size, id }: { size: number; id: string }) {
-    const { isLoading, data: profile, error } = useGetUserProfileByIdQuery(id);
-    console.log('Перерисовка компонента аватар ', id, new Date().toLocaleTimeString());
+    const { data: profile, error } = useGetUserProfileByIdQuery(id);
     return (
       <>
-        {isLoading && (
-          <View style={[styles.placeInCenter && { width: size, height: size }]}>
-            <ActivityIndicator size="small" testID={AvatarShowableTestIds.isLoading} />
-          </View>
-        )}
         {!error && profile && profile?.profilePhoto && (
-          <Image
+          <FastImage
             testID={AvatarShowableTestIds.success}
-            source={{ uri: profile?.profilePhoto }}
+            source={{ uri: profile?.profilePhoto, priority: FastImage.priority.high }}
             style={{ width: size, height: size, borderRadius: 70 }}
-            resizeMode="cover"
+            resizeMode={FastImage.resizeMode.cover}
           />
         )}
         {error && (
@@ -32,7 +27,7 @@ export default memo(
             style={styles.placeInCenter}
           />
         )}
-        {!error && !isLoading && !profile && (
+        {!error && !profile && (
           <Avatar.Icon
             testID={AvatarShowableTestIds.default}
             size={size}

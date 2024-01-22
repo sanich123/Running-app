@@ -5,7 +5,7 @@ import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { useContext, useEffect } from 'react';
-import { ActivityIndicator, IconButton, MD3Colors } from 'react-native-paper';
+import { IconButton, MD3Colors } from 'react-native-paper';
 
 import {
   CARD_LIKE_BTN,
@@ -19,7 +19,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
   const { user } = useAuth();
   const [sendLike, { data, error: errorSendingLike }] = useSendOrDeleteLikeMutation();
   const { language } = useAppSelector(({ language }) => language);
-  const { isLoading: isLoadingLikes, isError, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
+  const { isError, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
   const isLikedByYou = likes?.length
     ? likes?.some(({ authorId }: { authorId: string }) => authorId === user?.id)
     : null;
@@ -39,30 +39,27 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
 
   return (
     <>
-      {isLoadingLikes && <ActivityIndicator size="small" />}
-      {!isLoadingLikes && (
-        <IconButton
-          testID={isLikedByYou ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
-          icon={isLikedByYou ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
-          iconColor={MD3Colors.primary50}
-          size={25}
-          onPress={async () => {
-            setIsLoading(true);
-            setIsDisabled(true);
-            try {
-              if (user) {
-                await sendLike({ activityId, authorId: user?.id }).unwrap();
-              }
-            } catch (error) {
-              errorHandler(error);
-            } finally {
-              setIsLoading(false);
-              setIsDisabled(false);
+      <IconButton
+        testID={isLikedByYou ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
+        icon={isLikedByYou ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
+        iconColor={MD3Colors.primary50}
+        size={25}
+        onPress={async () => {
+          setIsLoading(true);
+          setIsDisabled(true);
+          try {
+            if (user) {
+              await sendLike({ activityId, authorId: user?.id }).unwrap();
             }
-          }}
-          disabled={isLoading || isDisabled || isError}
-        />
-      )}
+          } catch (error) {
+            errorHandler(error);
+          } finally {
+            setIsLoading(false);
+            setIsDisabled(false);
+          }
+        }}
+        disabled={isLoading || isDisabled || isError}
+      />
     </>
   );
 }
