@@ -5,7 +5,7 @@ import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 
 import { FOLLOWERS_COUNT } from './const';
 
@@ -32,8 +32,11 @@ export default function FollowersCount() {
       <Text variant="bodySmall">
         {isError ? `${FOLLOWERS_COUNT[language].error}:` : FOLLOWERS_COUNT[language].followers}
       </Text>
-      {isLoading && <ActivityIndicator size="small" />}
-      {!isLoading && <Text variant="titleLarge">{isError ? `${errorExtracter(error)}` : `${followers?.length}`}</Text>}
+      {!isLoading ? (
+        <Text variant="titleLarge">{isError ? `${errorExtracter(error)}` : `${followers?.length}`}</Text>
+      ) : (
+        <Text variant="titleLarge"> </Text>
+      )}
     </Pressable>
   );
 }

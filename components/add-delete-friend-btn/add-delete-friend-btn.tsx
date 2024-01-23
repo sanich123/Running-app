@@ -44,7 +44,7 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
       mode="contained"
       style={{ marginLeft: 'auto', borderRadius: 5, marginRight: 5 }}
       disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend || isError}
-      loading={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
+      // loading={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
       onPress={async () => {
         if (user) {
           if (friendCell?.length > 0) {

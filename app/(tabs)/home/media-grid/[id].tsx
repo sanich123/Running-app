@@ -3,7 +3,7 @@ import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, useWindowDimensions, Image, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 
 export default function MediaGrid() {
   const { id: userId } = useLocalSearchParams();
@@ -25,7 +25,6 @@ export default function MediaGrid() {
           styles.layout,
           (isLoading || isError) && styles.isInCenter,
         ]}>
-        {isLoading && <ActivityIndicator size="large" />}
         {isError ? <ErrorComponent error={error} /> : null}
         {isSuccess &&
           !isError &&

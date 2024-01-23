@@ -6,13 +6,13 @@ export function HomeIcon({ focused }: { focused: boolean }) {
     <IconButton
       icon="home"
       iconColor={colors.primaryContainer}
-      size={focused ? 55 : 50}
-      style={{ opacity: focused ? 1 : 0.5, paddingTop: 13 }}
+      size={45}
+      style={{ opacity: focused ? 1 : 0.5 }}
       animated
     />
   );
 }
 
 export function ActivityIcon({ focused }: { focused: boolean }) {
-  return <IconButton icon="play" iconColor="red" size={focused ? 100 : 80} animated style={[{ paddingTop: 10 }]} />;
+  return <IconButton icon="play" iconColor="red" size={100} animated />;
 }

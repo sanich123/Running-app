@@ -26,6 +26,7 @@ export default function ListOfUsers() {
             </View>
           }
           ItemSeparatorComponent={() => <Divider />}
+          initialNumToRender={15}
         />
       )}
       {isLoading && <ActivityIndicator size="large" />}

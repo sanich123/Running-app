@@ -1,9 +1,9 @@
 import AvatarShowable from '@C/avatar-showable/avatar-showable';
-import { HomeIcon, ActivityIcon } from '@C/icons/icons';
+import { ActivityIcon, HomeIcon } from '@C/icons/icons';
 import { ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { Tabs, usePathname } from 'expo-router';
-import { Platform, View } from 'react-native';
+// import { Platform, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function TabLayout() {
@@ -14,16 +14,18 @@ export default function TabLayout() {
     title: '',
     headerShown: false,
   };
+
   console.log(pathname);
 
   return (
     <Tabs
       screenOptions={{
-        tabBarInactiveBackgroundColor: colors.primary,
+        tabBarInactiveBackgroundColor: colors.onBackground,
         tabBarActiveBackgroundColor: colors.primary,
         tabBarHideOnKeyboard: true,
+        tabBarShowLabel: false,
         tabBarStyle: {
-          height: Platform.OS === 'android' ? 55 : 80,
+          borderRadius: 20,
         },
       }}>
       <Tabs.Screen
@@ -33,7 +35,14 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
           tabBarStyle: {
             display: pathname.includes(ROUTES.manualActivity) ? 'none' : 'flex',
+            height: 60,
+            position: 'absolute',
+            bottom: 16,
+            right: 16,
+            left: 16,
+            borderTopWidth: 0,
           },
+          tabBarShowLabel: false,
         }}
       />
       <Tabs.Screen
@@ -51,11 +60,15 @@ export default function TabLayout() {
           name={ROUTES.profile}
           options={{
             ...commonSettings,
-            tabBarIcon: ({ focused }) => (
-              <View style={{ paddingTop: 12 }}>
-                <AvatarShowable size={focused ? 50 : 45} id={user.id} />
-              </View>
-            ),
+            tabBarIcon: ({ focused }) => <AvatarShowable size={45} id={user.id} />,
+            tabBarStyle: {
+              height: 60,
+              position: 'absolute',
+              bottom: 16,
+              right: 16,
+              left: 16,
+              borderTopWidth: 0,
+            },
           }}
         />
       )}
