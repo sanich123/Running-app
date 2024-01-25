@@ -4,6 +4,7 @@ import { ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { Tabs, usePathname } from 'expo-router';
 // import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function TabLayout() {
@@ -20,12 +21,21 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarInactiveBackgroundColor: colors.onBackground,
-        tabBarActiveBackgroundColor: colors.primary,
+        // tabBarInactiveBackgroundColor: colors.onBackground,
+        // tabBarActiveBackgroundColor: colors.primary,
         tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
         tabBarStyle: {
-          borderRadius: 20,
+          position: 'absolute',
+          bottom: 16,
+          right: 12,
+          left: 12,
+          height: 72,
+          elevation: 0,
+          backgroundColor: colors.primary,
+          borderRadius: 10,
+          borderTopWidth: 0,
+          display: pathname.includes(ROUTES.manualActivity) || pathname.includes(ROUTES.activity) ? 'none' : 'flex',
         },
       }}>
       <Tabs.Screen
@@ -33,15 +43,6 @@ export default function TabLayout() {
         options={{
           ...commonSettings,
           tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
-          tabBarStyle: {
-            display: pathname.includes(ROUTES.manualActivity) ? 'none' : 'flex',
-            height: 60,
-            position: 'absolute',
-            bottom: 16,
-            right: 16,
-            left: 16,
-            borderTopWidth: 0,
-          },
           tabBarShowLabel: false,
         }}
       />
@@ -50,9 +51,6 @@ export default function TabLayout() {
         options={{
           ...commonSettings,
           tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
-          tabBarStyle: {
-            display: 'none',
-          },
         }}
       />
       {user && (
@@ -60,15 +58,22 @@ export default function TabLayout() {
           name={ROUTES.profile}
           options={{
             ...commonSettings,
-            tabBarIcon: ({ focused }) => <AvatarShowable size={45} id={user.id} />,
-            tabBarStyle: {
-              height: 60,
-              position: 'absolute',
-              bottom: 16,
-              right: 16,
-              left: 16,
-              borderTopWidth: 0,
-            },
+            tabBarIcon: ({ focused }) => (
+              <View
+                style={
+                  focused && {
+                    borderRadius: 25,
+                    backgroundColor: 'white',
+                    width: 50,
+                    height: 50,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }
+                }>
+                <AvatarShowable size={45} id={user.id} />
+              </View>
+            ),
           }}
         />
       )}
