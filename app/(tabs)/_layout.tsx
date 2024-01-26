@@ -3,7 +3,7 @@ import { ActivityIcon, HomeIcon } from '@C/icons/icons';
 import { ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { Tabs, usePathname } from 'expo-router';
-import { Platform, View, Pressable } from 'react-native';
+import { Platform, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function TabLayout() {
