@@ -3,8 +3,7 @@ import { ActivityIcon, HomeIcon } from '@C/icons/icons';
 import { ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { Tabs, usePathname } from 'expo-router';
-// import { Platform, View } from 'react-native';
-import { View } from 'react-native';
+import { Platform, View, Pressable } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function TabLayout() {
@@ -26,14 +25,10 @@ export default function TabLayout() {
         tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
         tabBarStyle: {
-          position: 'absolute',
-          bottom: 16,
-          right: 12,
-          left: 12,
-          height: 72,
-          elevation: 0,
+          height: Platform.OS === 'android' ? 72 : 82,
           backgroundColor: colors.primary,
-          borderRadius: 10,
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
           borderTopWidth: 0,
           display: pathname.includes(ROUTES.manualActivity) || pathname.includes(ROUTES.activity) ? 'none' : 'flex',
         },
@@ -42,7 +37,11 @@ export default function TabLayout() {
         name={ROUTES.home}
         options={{
           ...commonSettings,
-          tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <View style={[{ marginTop: Platform.OS === 'ios' ? 25 : 0, opacity: !focused ? 0.5 : 1 }]}>
+              <HomeIcon focused={focused} />
+            </View>
+          ),
           tabBarShowLabel: false,
         }}
       />
@@ -60,17 +59,21 @@ export default function TabLayout() {
             ...commonSettings,
             tabBarIcon: ({ focused }) => (
               <View
-                style={
+                style={[
+                  {
+                    marginTop: Platform.OS === 'ios' ? 25 : 0,
+                  },
                   focused && {
-                    borderRadius: 25,
+                    borderRadius: 27,
+
                     backgroundColor: 'white',
-                    width: 50,
-                    height: 50,
+                    width: 54,
+                    height: 54,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                  }
-                }>
+                  },
+                ]}>
                 <AvatarShowable size={45} id={user.id} />
               </View>
             ),
