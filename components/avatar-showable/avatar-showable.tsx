@@ -1,6 +1,6 @@
 import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
 import { memo } from 'react';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { Avatar } from 'react-native-paper';
 
@@ -12,9 +12,9 @@ export default memo(
     return (
       <>
         {!error && profile && profile?.profilePhoto && (
-          <Image
+          <FastImage
             testID={AvatarShowableTestIds.success}
-            source={{ uri: profile?.profilePhoto }}
+            source={{ uri: profile?.profilePhoto, priority: FastImage.priority.high }}
             style={{ width: size, height: size, borderRadius: 70 }}
             resizeMode={FastImage.resizeMode.cover}
           />
