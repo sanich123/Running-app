@@ -2,7 +2,7 @@ import AvatarShowable from '@C/avatar-showable/avatar-showable';
 import NumberOfLikes from '@C/number-of-likes/number-of-likes';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import { ROUTES } from '@const/enums';
-import { usePathname, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Fragment, memo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -11,16 +11,18 @@ const MAX_IN_ROW = 9;
 const MAX_NUMBER_IN_ROW_OTHER_PAGE = 3;
 const SHIFT_RIGHT = 23;
 
+export enum CardLikesSize {
+  big = 'big',
+  small = 'small',
+}
+
 export default memo(
-  function CardLikes({ activityId }: { activityId: string }) {
+  function CardLikes({ activityId, size }: { activityId: string; size: CardLikesSize }) {
     const { error, isError, data: likes } = useGetLikesByActivityIdQuery(activityId);
     const { push } = useRouter();
-    const pathname = usePathname();
-    const isInComment = pathname.includes(ROUTES.comment);
-    const isInActivity = pathname.includes(ROUTES.activity);
-    const lastLikeInTheRow = isInComment || isInActivity ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
-    const lessThanNineLikes = (isInComment || isInActivity) && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
-    const moreThanNineLikes = (isInComment || isInActivity) && likes?.length > 0 && likes?.length > MAX_IN_ROW;
+    const lastLikeInTheRow = size === CardLikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
+    const lessThanNineLikes = size === CardLikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
+    const moreThanNineLikes = size === CardLikesSize.big && likes?.length > 0 && likes?.length > MAX_IN_ROW;
 
     return (
       <Pressable
@@ -57,7 +59,7 @@ export default memo(
                 ))}
             </View>
           ) : null}
-          {likes?.length && !isInComment && !isInActivity ? <NumberOfLikes likes={likes} error={error} /> : null}
+          {likes?.length && size === CardLikesSize.small ? <NumberOfLikes likes={likes} error={error} /> : null}
         </View>
       </Pressable>
     );

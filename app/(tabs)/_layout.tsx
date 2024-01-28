@@ -14,21 +14,18 @@ export default function TabLayout() {
     title: '',
     headerShown: false,
   };
-
   console.log(pathname);
 
   return (
     <Tabs
       screenOptions={{
-        // tabBarInactiveBackgroundColor: colors.onBackground,
-        // tabBarActiveBackgroundColor: colors.primary,
+        // tabBarInactiveBackgroundColor: colors.primary,
+        // tabBarActiveBackgroundColor: colors.onPrimaryContainer,
         tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
         tabBarStyle: {
           height: Platform.OS === 'android' ? 72 : 82,
           backgroundColor: colors.primary,
-          borderTopLeftRadius: 25,
-          borderTopRightRadius: 25,
           borderTopWidth: 0,
           display: pathname.includes(ROUTES.manualActivity) || pathname.includes(ROUTES.activity) ? 'none' : 'flex',
         },
@@ -65,7 +62,6 @@ export default function TabLayout() {
                   },
                   focused && {
                     borderRadius: 27,
-
                     backgroundColor: 'white',
                     width: 54,
                     height: 54,

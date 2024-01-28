@@ -19,7 +19,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
   const { user } = useAuth();
   const [sendLike, { data, error: errorSendingLike }] = useSendOrDeleteLikeMutation();
   const { language } = useAppSelector(({ language }) => language);
-  const { isError, error, data: likes } = useGetLikesByActivityIdQuery(activityId);
+  const { isError, data: likes } = useGetLikesByActivityIdQuery(activityId);
   const isLikedByYou = likes?.length
     ? likes?.some(({ authorId }: { authorId: string }) => authorId === user?.id)
     : null;
@@ -32,7 +32,7 @@ export default function ActivityCardLikeBtn({ activityId }: { activityId: string
       }
     }
     if (errorSendingLike) {
-      console.log(error);
+      console.log(errorSendingLike);
       showCrossPlatformToast(CARD_LIKE_BTN[language].errorMsg, ToastDuration.short);
     }
   }, [data, errorSendingLike]);

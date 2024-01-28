@@ -21,7 +21,7 @@ export default function LikesList() {
           data={likes}
           renderItem={({ item }) => <UserListItem userId={item.authorId} />}
           ListEmptyComponent={
-            <View>
+            <View style={styles.isInCenter}>
               <Text variant="headlineLarge">There are no users, who liked your activity</Text>
             </View>
           }

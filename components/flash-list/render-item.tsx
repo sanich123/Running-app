@@ -3,7 +3,8 @@ import { ActivityCardProps } from '@C/card/const ';
 export type ActivitiesType = (ActivityCardProps & { user_id: string })[];
 
 export function renderCardsFunction({ item }: { item: ActivityCardProps & { user_id: string } }) {
-  const { description, title, date, sport, locations, photoUrls, duration, distance, id, user_id } = item;
+  const { description, title, date, sport, locations, photoUrls, duration, distance, id, user_id, likes, comments } =
+    item;
   console.log('Перерсовка компонента ', title, new Date().toLocaleTimeString());
   return (
     <ActivityCard
@@ -21,6 +22,8 @@ export function renderCardsFunction({ item }: { item: ActivityCardProps & { user
       duration={duration}
       distance={distance}
       fullViewRef={{ current: null }}
+      likes={likes}
+      comments={comments}
     />
   );
 }

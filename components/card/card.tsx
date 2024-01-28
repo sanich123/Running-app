@@ -1,7 +1,7 @@
 import { runichApi } from '@R/runich-api/runich-api';
 import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
-import { useRef, memo } from 'react';
+import { usePathname, useRouter } from 'expo-router';
+import { useRef, memo, useEffect } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 
@@ -9,7 +9,7 @@ import { ActivityCardProps } from './const ';
 import AvatarShowable from '../avatar-showable/avatar-showable';
 import CardBtns from '../card-btns/card-btns';
 import CardDesription from '../card-description/card-description';
-import CardLikes from '../card-likes/card-likes';
+import CardLikes, { CardLikesSize } from '../card-likes/card-likes';
 import CardMapImagesList from '../card-map-images-list/card-map-images-list';
 import CardMetrics from '../card-metrics/card-metrics';
 import CardTitle from '../card-title/card-title';
@@ -39,21 +39,23 @@ export default memo(
     const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
     const prefetchProfile = runichApi.usePrefetch('getUserProfileById');
     const prefetchProfilePhotos = runichApi.usePrefetch('getAllActivityPhotosByUserId');
+    const pathname = usePathname();
+
+    useEffect(() => {
+      prefetchProfile(userId);
+      prefetchProfilePhotos(userId);
+      prefetchFullActivity(`${id}`);
+    }, []);
 
     return (
       <Card>
         <View ref={cardRef} collapsable={false}>
           <Pressable
-            onPressIn={() => prefetchFullActivity(`${id}`)}
             onPress={() => push(`/${ROUTES.home}/${ROUTES.activity}/${id}`)}
             style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
             <Card.Content>
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.cardContent]}
-                onPressIn={() => {
-                  prefetchProfile(userId);
-                  prefetchProfilePhotos(userId);
-                }}
                 onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${userId}`)}>
                 <AvatarShowable size={40} id={userId} />
                 <View style={styles.profileWrapper}>
@@ -70,7 +72,10 @@ export default memo(
             <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
           )}
           <View style={{ display: 'flex', flexDirection: 'row' }}>
-            <CardLikes activityId={id} />
+            <CardLikes
+              activityId={id}
+              size={pathname.includes(ROUTES.activity) ? CardLikesSize.big : CardLikesSize.small}
+            />
             <CommentsLength activityId={id} />
           </View>
         </View>

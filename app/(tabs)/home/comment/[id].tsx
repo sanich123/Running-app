@@ -1,5 +1,5 @@
 import ActivityCardLikeBtn from '@C/card-like-btn/card-like-btn';
-import CardLikes from '@C/card-likes/card-likes';
+import CardLikes, { CardLikesSize } from '@C/card-likes/card-likes';
 import CardMapImagesList from '@C/card-map-images-list/card-map-images-list';
 import CardTitle from '@C/card-title/card-title';
 import CommentInput from '@C/comment-input/comment-input';
@@ -41,7 +41,7 @@ export default function Comment() {
             </View>
             <View style={styles.columnsLayout}>
               <ActivityCardLikeBtn activityId={activity?.id} />
-              <CardLikes activityId={activity?.id} />
+              <CardLikes activityId={activity?.id} size={CardLikesSize.big} />
             </View>
           </Card.Content>
           <Comments id={`${activityId}`} />

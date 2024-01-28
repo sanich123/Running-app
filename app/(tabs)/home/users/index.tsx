@@ -28,7 +28,7 @@ export default function ListOfUsers() {
             />
           )}
           ListEmptyComponent={
-            <View>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
               <Text variant="headlineLarge">There are no users</Text>
             </View>
           }
