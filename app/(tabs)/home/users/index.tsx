@@ -1,5 +1,5 @@
 import ErrorComponent from '@C/error-component/error-component';
-import UserListItem from '@C/user-list-item/user-list-item';
+import UserListItemSimple from '@C/user-list-item-simple/user-list-item-simple';
 import { useGetUsersQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { View, FlatList } from 'react-native';
@@ -9,7 +9,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function ListOfUsers() {
   const { isLoading, isError, error, data: users, refetch } = useGetUsersQuery('');
   const { refreshing, onRefresh } = useRefresh(refetch);
-
   return (
     <SafeAreaView
       edges={['bottom', 'left', 'right']}
@@ -19,7 +18,15 @@ export default function ListOfUsers() {
           onRefresh={onRefresh}
           refreshing={refreshing}
           data={users}
-          renderItem={({ item }) => <UserListItem userId={item?.id} />}
+          renderItem={({ item: { city, name, surname, profilePhoto, user_id } }) => (
+            <UserListItemSimple
+              city={city}
+              name={name}
+              surname={surname}
+              profilePhoto={profilePhoto}
+              user_id={user_id}
+            />
+          )}
           ListEmptyComponent={
             <View>
               <Text variant="headlineLarge">There are no users</Text>
