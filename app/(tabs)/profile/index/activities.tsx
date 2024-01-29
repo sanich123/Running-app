@@ -6,7 +6,7 @@ import { StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function Page() {
+export default function Activities() {
   const { user } = useAuth();
   const { data: userActivities, isError, isLoading, error, refetch } = useGetActivitiesByUserIdQuery(`${user?.id}`);
 

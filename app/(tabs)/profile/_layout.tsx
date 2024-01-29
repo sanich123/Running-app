@@ -14,7 +14,7 @@ export default function ProfileStack() {
 
   return (
     <Stack
-      initialRouteName="index/index"
+      initialRouteName="index/profile"
       screenOptions={{
         headerStyle: { backgroundColor: colors.primary },
         headerTintColor: colors.primaryContainer,
@@ -61,6 +61,14 @@ export default function ProfileStack() {
       <Stack.Screen
         name={`${ROUTES.profile}/[id]`}
         options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].profile }}
+      />
+      <Stack.Screen
+        name={`${ROUTES.activity}/[id]`}
+        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].activity }}
+      />
+      <Stack.Screen
+        name={`${ROUTES.map}/[id]`}
+        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].map }}
       />
     </Stack>
   );

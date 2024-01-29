@@ -4,7 +4,6 @@ export type ActivitiesType = (ActivityCardProps & { user_id: string })[];
 
 export function renderCardsFunction({ item }: { item: ActivityCardProps & { user_id: string } }) {
   const { description, title, date, sport, locations, photoUrls, duration, distance, id, user_id } = item;
-  console.log('Перерсовка компонента ', title, new Date().toLocaleTimeString());
   return (
     <ActivityCard
       isShowDeleteBtn={false}

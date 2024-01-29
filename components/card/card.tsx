@@ -40,7 +40,7 @@ export default memo(
     const prefetchProfile = runichApi.usePrefetch('getUserProfileById');
     const prefetchProfilePhotos = runichApi.usePrefetch('getAllActivityPhotosByUserId');
     const pathname = usePathname();
-
+    const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
     useEffect(() => {
       prefetchProfile(userId);
       prefetchProfilePhotos(userId);
@@ -51,12 +51,12 @@ export default memo(
       <Card>
         <View ref={cardRef} collapsable={false}>
           <Pressable
-            onPress={() => push(`/${ROUTES.home}/${ROUTES.activity}/${id}`)}
+            onPress={() => push(`/${place}/${ROUTES.activity}/${id}`)}
             style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
             <Card.Content>
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.cardContent]}
-                onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${userId}`)}>
+                onPress={() => push(`/${place}/${ROUTES.profile}/${userId}`)}>
                 <AvatarShowable size={40} id={userId} />
                 <View style={styles.profileWrapper}>
                   <UserNameSurname userId={userId} size="titleMedium" />
