@@ -12,7 +12,8 @@ export default function CameraFlash({ setFlashEnable, flashEnable }: CameraFlash
   return (
     <Pressable
       onPress={() => setFlashEnable(flashEnable === FlashMode.off ? FlashMode.on : FlashMode.off)}
-      testID="cameraFlashTestId">
+      testID="cameraFlashTestId"
+      style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
       <Icon source="flash" size={50} color={colors.primaryContainer} />
     </Pressable>
   );

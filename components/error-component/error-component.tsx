@@ -5,7 +5,12 @@ import { Text } from 'react-native-paper';
 
 export default function ErrorComponent({ error }: { error: FetchBaseQueryError | SerializedError }) {
   return (
-    <Pressable testID="errorComponentId" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <Pressable
+      testID="errorComponentId"
+      style={({ pressed }) => [
+        { opacity: pressed ? 0.5 : 1 },
+        { display: 'flex', justifyContent: 'center', alignItems: 'center' },
+      ]}>
       <Text variant="bodyMedium">An error occured</Text>
       <Text variant="bodyMedium">
         {'data' in error ? `${(error.data as { message: string }).message}, ${error.status} code` : null}

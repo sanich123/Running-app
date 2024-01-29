@@ -24,6 +24,7 @@ export default function ActivityCloseBtn() {
     <Pressable
       onPress={async () => {
         dispatch(setActivityStatus(STATUSES.paused));
+
         if (duration > 0) {
           Alert.alert(
             ACTIVITY_CLOSE_BTN[language].alertName,
@@ -42,7 +43,8 @@ export default function ActivityCloseBtn() {
         } else {
           closeBtnHandler();
         }
-      }}>
+      }}
+      style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
       <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginLeft: 15 }}>
         {ACTIVITY_CLOSE_BTN[language].btnText}
       </Text>

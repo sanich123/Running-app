@@ -15,7 +15,7 @@ export default function ActivityPauseBtn() {
   return (
     <View style={styles.layout}>
       <Pressable
-        style={styles.btnStyle}
+        style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.btnStyle]}
         onPress={() => dispatch(setActivityStatus(activityStatus === paused ? continued : paused))}>
         <Text style={[styles.textStyle, isRussianText && { fontSize: 15 }]}>{ACTIVITY_PAUSE_BTN[language].resume}</Text>
       </Pressable>

@@ -1,7 +1,7 @@
 import { getMapBoxImage } from '@U/location-utils';
 import { ROUTES } from '@const/enums';
 import { LocationObject } from 'expo-location';
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import React from 'react';
 import { FlatList, Pressable, Image, useWindowDimensions } from 'react-native';
 
@@ -15,7 +15,8 @@ export default function CardMapImagesList({ locations, photoUrls, id }: CardMapI
   const { width } = useWindowDimensions();
   const urls = locations?.length ? [getMapBoxImage(locations), ...photoUrls] : [...photoUrls];
   const { push } = useRouter();
-
+  const pathname = usePathname();
+  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   return (
     <FlatList
       data={urls}
@@ -28,11 +29,12 @@ export default function CardMapImagesList({ locations, photoUrls, id }: CardMapI
               if (item) {
                 push(
                   zeroLocations || isNotFirst
-                    ? `/${ROUTES.home}/${ROUTES.media}/${encodeURIComponent(item)}`
-                    : `/${ROUTES.home}/${ROUTES.map}/${id}`,
+                    ? `/${place}/${ROUTES.media}/${encodeURIComponent(item)}`
+                    : `/${place}/${ROUTES.map}/${id}`,
                 );
               }
-            }}>
+            }}
+            style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
             <Image testID={item} source={{ uri: item }} resizeMode="cover" height={200} width={width} />
           </Pressable>
         );

@@ -1,9 +1,9 @@
 import { useAuth } from '@A/context/auth-context';
 import { usePostCommentWithActivityIdMutation } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
+import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { useEffect, useState } from 'react';
-import { ToastAndroid } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
@@ -17,12 +17,12 @@ export default function CommentInput({ activityId }: { activityId: string }) {
 
   useEffect(() => {
     if (commentResponse) {
-      ToastAndroid.show('Successfully sent comment!', ToastAndroid.SHORT);
+      showCrossPlatformToast('Successfully sent comment!', ToastDuration.short);
       console.log(commentResponse);
       setComment('');
     }
     if (commentSendingError) {
-      ToastAndroid.show('An error occured!', ToastAndroid.SHORT);
+      showCrossPlatformToast('An error occured!', ToastDuration.short);
       console.log(commentSendingError);
     }
   }, [commentSendingError, commentResponse]);

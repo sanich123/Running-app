@@ -5,7 +5,7 @@ import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { Image, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 
 import { PROFILE_MEDIA } from './const';
 
@@ -18,7 +18,10 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
 
   return (
     <>
-      <Pressable onPress={() => push(`/${ROUTES.home}/${ROUTES.mediaGrid}/${userId}`)} disabled={isError || isLoading}>
+      <Pressable
+        onPress={() => push(`/${ROUTES.home}/${ROUTES.mediaGrid}/${userId}`)}
+        disabled={isError || isLoading}
+        style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
         <View
           style={[
             styles.layout,
@@ -26,7 +29,6 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
             (isLoading || isError) && styles.isInCenter,
           ]}>
           {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${errorExtracter(error)}`}</Text>}
-          {isLoading && <ActivityIndicator size="large" />}
           {!isError &&
             isSuccess &&
             photos

@@ -10,7 +10,7 @@ import { UPDATE_BTN } from './const';
 import ProfileUpdateBtn from './profile-update-btn';
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), back: jest.fn() }),
 }));
 describe('Profile update btn', () => {
   it('should correctly renders in english', () => {

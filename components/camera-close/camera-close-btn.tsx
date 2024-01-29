@@ -9,8 +9,8 @@ export default function CameraCloseBtn() {
   return (
     <Pressable
       onPress={() => dispatch(setCameraIsVisible(false))}
-      style={{ marginLeft: 'auto', marginTop: 50 }}
-      testID="cameraCloseBtn">
+      testID="cameraCloseBtn"
+      style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, { marginLeft: 'auto', marginTop: 50 }]}>
       <Icon source="close" size={50} color={colors.primaryContainer} />
     </Pressable>
   );

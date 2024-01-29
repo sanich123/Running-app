@@ -10,10 +10,7 @@ export default function useGetProfileInfo(column: string = '') {
   const { user } = useAuth();
   useEffect(() => {
     async function getProfileInfo() {
-      const { error, data } = await supabase
-        .from('accounts')
-        .select(column)
-        .eq('user_id', user?.id);
+      const { error, data } = await supabase.from('accounts').select(column).eq('user_id', user?.id);
 
       if (error) {
         setError(error);

@@ -20,7 +20,6 @@ export default function SplashIcon() {
         setAppIsReady(true);
       }
     }
-
     prepare();
   }, []);
 
@@ -41,7 +40,7 @@ export default function SplashIcon() {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onLayout={onLayoutRootView}>
-      <Text>Превед, медвед!</Text>
+      <Text>Добро пожаловать!</Text>
     </View>
   );
 }

@@ -1,30 +1,32 @@
 import { ROUTES } from '@const/enums';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { useTheme } from 'react-native-paper';
+import { usePathname, useRouter } from 'expo-router';
+import { IconButton, useTheme } from 'react-native-paper';
 
 import { View } from '../Themed';
 
 export default function UsersSettingsIcons() {
   const { colors } = useTheme();
   const { push } = useRouter();
+  const pathname = usePathname();
+  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
+
   return (
     <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: 'transparent' }}>
-      <MaterialCommunityIcons
+      <IconButton
         testID="usersIcon"
-        name="account-multiple"
-        color={colors.primaryContainer}
+        icon="account-multiple"
+        iconColor={colors.primaryContainer}
         size={30}
-        style={{ marginRight: 5 }}
-        onPress={() => push(`/${ROUTES.users}`)}
+        onPress={() => push(`/${place}/users/`)}
+        style={{ marginRight: -15 }}
       />
-      <MaterialCommunityIcons
+      <IconButton
         testID="settingsIcon"
-        name="cog-outline"
-        color={colors.primaryContainer}
+        icon="cog-outline"
+        iconColor={colors.primaryContainer}
         size={30}
-        style={{ marginRight: 5 }}
-        onPress={() => push(`/${ROUTES.settings}`)}
+        onPress={() => push(`/${place}/settings/`)}
+        style={{ marginRight: -15 }}
       />
     </View>
   );

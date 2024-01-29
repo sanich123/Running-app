@@ -1,112 +1,81 @@
-import ActivityCloseBtn from '@C/activity-close-btn/activity-close-btn';
-import ActivitySaveBtn from '@C/activity-save-btn/activity-save-btn';
 import AvatarShowable from '@C/avatar-showable/avatar-showable';
-import { HomeIcon, ActivityIcon, ProgressIcon } from '@C/icons/icons';
-import { useAppSelector } from '@R/typed-hooks';
-import { LABELS, ROUTES } from '@const/enums';
+import { ActivityIcon, HomeIcon } from '@C/icons/icons';
+import { ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { Tabs, usePathname } from 'expo-router';
-import { useColorScheme } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { Platform, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const { user } = useAuth();
   const pathname = usePathname();
-  const theme = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
-  const { isCameraVisible } = useAppSelector(({ activity }) => activity);
+  const { colors } = useTheme();
   const commonSettings = {
-    tabBarLabelStyle: { color: theme.colors.primaryContainer },
-    headerStyle: { backgroundColor: theme.colors.primary },
-    headerTintColor: theme.colors.primaryContainer,
+    title: '',
+    headerShown: false,
   };
   console.log(pathname);
 
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: {
-          display: pathname.includes(ROUTES.activity) ? 'none' : 'flex',
-        },
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        tabBarInactiveBackgroundColor: theme.colors.primary,
-        tabBarActiveBackgroundColor: theme.colors.primary,
+        // tabBarInactiveBackgroundColor: colors.primary,
+        // tabBarActiveBackgroundColor: colors.onPrimaryContainer,
         tabBarHideOnKeyboard: true,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          height: Platform.OS === 'android' ? 72 : 82,
+          backgroundColor: colors.primary,
+          borderTopWidth: 0,
+          display: pathname.includes(ROUTES.manualActivity) || pathname.includes(ROUTES.activity) ? 'none' : 'flex',
+        },
       }}>
       <Tabs.Screen
         name={ROUTES.home}
-        redirect={!user}
         options={{
           ...commonSettings,
-          title: LABELS[language].feed,
-          tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
-          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <View style={[{ marginTop: Platform.OS === 'ios' ? 25 : 0, opacity: !focused ? 0.5 : 1 }]}>
+              <HomeIcon focused={focused} />
+            </View>
+          ),
+          tabBarShowLabel: false,
         }}
       />
       <Tabs.Screen
         name={ROUTES.activity}
-        redirect={!user}
         options={{
-          title: '',
-          tabBarLabel: LABELS[language].activity,
           ...commonSettings,
-          headerLeft: () => <ActivityCloseBtn />,
           tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name={ROUTES.progress}
-        redirect={!user}
-        options={{
-          ...commonSettings,
-          title: LABELS[language].statistics,
-          tabBarLabel: LABELS[language].statistics,
-          tabBarIcon: ({ focused }) => <ProgressIcon focused={focused} />,
         }}
       />
       {user && (
         <Tabs.Screen
           name={ROUTES.profile}
-          redirect={!user}
           options={{
             ...commonSettings,
-            title: LABELS[language].profile,
-            tabBarIcon: () => <AvatarShowable size={30} id={user.id} />,
-            headerShown: false,
+            tabBarIcon: ({ focused }) => (
+              <View
+                style={[
+                  {
+                    marginTop: Platform.OS === 'ios' ? 25 : 0,
+                  },
+                  focused && {
+                    borderRadius: 27,
+                    backgroundColor: 'white',
+                    width: 54,
+                    height: 54,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  },
+                ]}>
+                <AvatarShowable size={45} id={user.id} />
+              </View>
+            ),
           }}
         />
       )}
-      <Tabs.Screen
-        name={`${ROUTES.settings}/${ROUTES.index}`}
-        options={{
-          title: LABELS[language].settings,
-          ...commonSettings,
-          headerTitleStyle: { fontWeight: 'bold' },
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name={`${ROUTES.users}/${ROUTES.index}`}
-        options={{
-          title: LABELS[language].users,
-          ...commonSettings,
-          headerTitleStyle: { fontWeight: 'bold' },
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name={`${ROUTES.saveActivity}/${ROUTES.index}`}
-        options={{
-          title: '',
-          ...commonSettings,
-          headerTitleStyle: { fontWeight: 'bold' },
-          href: null,
-          headerShown: !isCameraVisible,
-          headerRight: !isCameraVisible ? () => <ActivitySaveBtn /> : undefined,
-        }}
-      />
     </Tabs>
   );
 }

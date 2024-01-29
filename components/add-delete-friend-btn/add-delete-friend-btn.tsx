@@ -1,9 +1,9 @@
 import { useAuth } from '@A/context/auth-context';
 import { useGetFriendsByUserIdQuery, useDeleteFriendMutation, useAddFriendMutation } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
+import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorExtracter } from '@U/error-handler';
 import { useEffect } from 'react';
-import { ToastAndroid } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { ADD_DELETE_FRIEND_BTN } from './const';
@@ -28,13 +28,13 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
   useEffect(() => {
     if (!process.env.IS_TESTING) {
       if (friendDeleted) {
-        ToastAndroid.show(ADD_DELETE_FRIEND_BTN[language].successUnfollowing, ToastAndroid.SHORT);
+        showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].successUnfollowing, ToastDuration.short);
       }
       if (friendAdded) {
-        ToastAndroid.show(ADD_DELETE_FRIEND_BTN[language].successFollowing, ToastAndroid.SHORT);
+        showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].successFollowing, ToastDuration.short);
       }
       if (friendDeletingError || friendAddingError) {
-        ToastAndroid.show(ADD_DELETE_FRIEND_BTN[language].errorMsg, ToastAndroid.SHORT);
+        showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].errorMsg, ToastDuration.short);
       }
     }
   }, [friendDeleted, friendAdded, friendDeletingError, friendAddingError]);
@@ -44,7 +44,7 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
       mode="contained"
       style={{ marginLeft: 'auto', borderRadius: 5, marginRight: 5 }}
       disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend || isError}
-      loading={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
+      // loading={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend}
       onPress={async () => {
         if (user) {
           if (friendCell?.length > 0) {

@@ -5,7 +5,7 @@ import FollowersCount from '@C/followers-count/followers-count';
 import FollowingCount from '@C/following-count/following-count';
 import ProfileMediaPhotos from '@C/profile-media-photos/profile-media-photos';
 import { saveBio, saveCity, saveGender, saveName, savePhotoUrl, saveSurname, saveWeight } from '@R/profile/profile';
-import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
+import { runichApi, useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
 import { useAuth } from 'auth/context/auth-context';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
@@ -18,17 +18,12 @@ export default function Profile() {
   const dispatch = useDispatch();
   const { user } = useAuth();
   const isMineActivity = friendId === user?.id;
-  const {
-    isLoading,
-    isSuccess,
-    isError,
-    data: profile,
-    error,
-  } = useGetUserProfileByIdQuery(`${user?.id}`, {
-    refetchOnMountOrArgChange: true,
-    refetchOnFocus: true,
-    refetchOnReconnect: true,
-  });
+  const { isLoading, isSuccess, isError, data: profile, error } = useGetUserProfileByIdQuery(`${user?.id}`);
+
+  const prefetchUserActivities = runichApi.usePrefetch('getActivitiesByUserId');
+  useEffect(() => {
+    prefetchUserActivities(`${user?.id}`);
+  }, []);
 
   useEffect(() => {
     if (isSuccess) {

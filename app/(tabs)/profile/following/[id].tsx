@@ -3,8 +3,9 @@ import UserListItem from '@C/user-list-item/user-list-item';
 import { useGetFriendsByUserIdQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
-import { View, FlatList, SafeAreaView, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ListOfFollowing() {
   const { id: userId } = useLocalSearchParams();
@@ -12,7 +13,9 @@ export default function ListOfFollowing() {
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
-    <SafeAreaView style={[{ flex: 1 }, (isLoading || isError) && styles.isInCenter]}>
+    <SafeAreaView
+      edges={['bottom', 'left', 'right']}
+      style={[{ flex: 1 }, (isLoading || isError) && styles.isInCenter]}>
       {users && (
         <FlatList
           onRefresh={onRefresh}

@@ -45,7 +45,8 @@ export default function PreviewUploadableImage({ image, index, isDisabled }: Pre
         } finally {
           setIsLoading(false);
         }
-      }}>
+      }}
+      style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
       <PreviewImage image={image} isDisabled={isDisabled} index={index} />
       <Text variant="bodyLarge" style={{ position: 'absolute', top: 50, left: 10, color: colors.onPrimaryContainer }}>
         {isLoading && 'Adding..'}

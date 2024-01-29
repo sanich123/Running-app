@@ -8,7 +8,6 @@ import NetInfo from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
 import { Redirect } from 'expo-router';
 import { useEffect } from 'react';
-import { Text, View } from 'react-native';
 
 export default function Page() {
   const { user } = useAuth();
@@ -25,7 +24,6 @@ export default function Page() {
   }, []);
 
   if (!user) {
-    console.log('redirecting to login');
     return <Redirect href="/sign-in" />;
   } else if (user) {
     getData('language');
@@ -34,13 +32,6 @@ export default function Page() {
       dispatch(setActivityStatus(STATUSES.paused));
       return <Redirect href="/(tabs)/activity/" />;
     }
-    console.log('redirect to home');
-    return <Redirect href="/home" />;
+    return <Redirect href="/home/" />;
   }
-
-  return (
-    <View>
-      <Text>Welcome Back!</Text>
-    </View>
-  );
 }
