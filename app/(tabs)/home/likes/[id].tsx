@@ -3,8 +3,9 @@ import UserListItem from '@C/user-list-item/user-list-item';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
-import { View, SafeAreaView, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LikesList() {
   const { id: activityId } = useLocalSearchParams();
@@ -12,7 +13,7 @@ export default function LikesList() {
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
-    <SafeAreaView style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
+    <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
       {likes && (
         <FlatList
           onRefresh={onRefresh}
@@ -20,7 +21,7 @@ export default function LikesList() {
           data={likes}
           renderItem={({ item }) => <UserListItem userId={item.authorId} />}
           ListEmptyComponent={
-            <View>
+            <View style={styles.isInCenter}>
               <Text variant="headlineLarge">There are no users, who liked your activity</Text>
             </View>
           }

@@ -13,6 +13,7 @@ import { runichApi } from './runich-api/runich-api';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
+  whitelist: ['language', 'activity', 'location'],
 };
 
 const rootReducer = persistReducer(

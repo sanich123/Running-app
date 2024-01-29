@@ -30,7 +30,7 @@ export default function ActivityStartBtn() {
   };
   return (
     <Pressable
-      style={styles.startBtn}
+      style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.startBtn]}
       testID={ACTIVITY_START_BTN_TEST_ID}
       onPress={() => {
         dispatch(
@@ -45,7 +45,7 @@ export default function ActivityStartBtn() {
         dispatch(setActivityStatus(RESPONSE_STATUS[activityStatus]));
         if (activityStatus === STATUSES.paused) {
           dispatch(setIsManualAdding(false));
-          push(`/${ROUTES.saveActivity}/`);
+          push(`/(tabs)/${ROUTES.home}/${ROUTES.manualActivity}/`);
         }
       }}>
       <Text style={[styles.textStyle, isRussianText && { fontSize: 18 }]}>{RESPONSE_ICON[activityStatus]}</Text>

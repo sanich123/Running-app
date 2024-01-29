@@ -5,7 +5,7 @@ import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 
 import { FOLLOWING_COUNT } from './const';
 
@@ -32,13 +32,14 @@ export default function FollowingCount() {
         )
       }
       disabled={isError || isLoading}
-      style={(isError || isLoading) && { opacity: 0.5 }}>
+      style={({ pressed }) => ({ opacity: pressed || isError || isLoading ? 0.5 : 1 })}>
       <Text variant="bodySmall">
         {isError ? `${FOLLOWING_COUNT[language].error}:` : FOLLOWING_COUNT[language].followings}
       </Text>
-      {isLoading && <ActivityIndicator size="small" />}
-      {!isLoading && (
+      {!isLoading ? (
         <Text variant="titleLarge">{isError ? `${errorExtracter(error)}` : `${listOfFriends?.length}`}</Text>
+      ) : (
+        <Text variant="titleLarge"> </Text>
       )}
     </Pressable>
   );

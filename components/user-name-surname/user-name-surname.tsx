@@ -2,11 +2,12 @@ import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { LANGUAGES } from '@const/enums';
+import { memo } from 'react';
 import { View } from 'react-native';
 import { MD3TypescaleKey, Text } from 'react-native-paper';
 import { VariantProp } from 'react-native-paper/lib/typescript/components/Typography/types';
 
-export default function UserNameSurname({ userId, size }: { userId: string; size: VariantProp<MD3TypescaleKey> }) {
+export default memo(function UserNameSurname({ userId, size }: { userId: string; size: VariantProp<MD3TypescaleKey> }) {
   const { error, data: profileInfo } = useGetUserProfileByIdQuery(userId);
   const { language } = useAppSelector(({ language }) => language);
   return (
@@ -22,4 +23,4 @@ export default function UserNameSurname({ userId, size }: { userId: string; size
       </View>
     </>
   );
-}
+});

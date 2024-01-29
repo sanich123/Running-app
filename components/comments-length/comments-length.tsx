@@ -17,7 +17,7 @@ export default function CommentsLength({ activityId }: { activityId: string }) {
     <Pressable
       disabled={isError}
       testID={COMMENTS_LENGTH_TEST_ID}
-      style={styles.isInCenter}
+      style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.isInCenter]}
       onPress={() => push(`/${ROUTES.home}/${ROUTES.comment}/${activityId}`)}>
       <Text variant="bodyMedium">
         {isError && `${COMMENTS_ENDING[language].error}: ${errorExtracter(error)}`}

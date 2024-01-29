@@ -4,8 +4,9 @@ import ActivityCard from '@C/card/card';
 import ErrorComponent from '@C/error-component/error-component';
 import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useRef } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
 export default function ViewActivityFullInfo() {
@@ -46,6 +47,7 @@ export default function ViewActivityFullInfo() {
           </>
         )}
       </View>
+      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </ScrollView>
   );
 }

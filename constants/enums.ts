@@ -26,12 +26,15 @@ export enum ROUTES {
   media = 'media',
   mediaGrid = 'media-grid',
   profile = 'profile',
+  manualActivity = 'manual-activity',
+  profileSettings = 'profile-settings',
 }
 
 export const LABELS = {
   [LANGUAGES.english]: {
     feed: 'Feed',
     activity: 'Activity',
+    activities: 'Тренировки',
     statistics: 'Statistics',
     profile: 'Profile',
     settings: 'Settings',
@@ -43,10 +46,12 @@ export const LABELS = {
     map: 'Map',
     photo: 'Photo',
     photos: 'Photos',
+    profileSettings: 'Profile settings',
   },
   [LANGUAGES.russian]: {
     feed: 'Лента',
     activity: 'Активность',
+    activities: 'Тренировки',
     statistics: 'Статистика',
     profile: 'Профиль',
     settings: 'Настройки',
@@ -58,5 +63,6 @@ export const LABELS = {
     map: 'Карта',
     photo: 'Фотография',
     photos: 'Фотографии',
+    profileSettings: 'Настройки профиля',
   },
 };

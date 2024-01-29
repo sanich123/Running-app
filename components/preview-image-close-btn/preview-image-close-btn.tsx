@@ -22,7 +22,7 @@ export default function PreviewImageCloseBtn({
       }}
       disabled={isDisabled || isDisabledWhileSending}
       testID="deleteIcon"
-      style={[{ zIndex: 5 }, (isDisabled || isDisabledWhileSending) && { opacity: 0.5 }]}>
+      style={({ pressed }) => [{ opacity: pressed || isDisabled || isDisabledWhileSending ? 0.5 : 1 }, { zIndex: 5 }]}>
       <MaterialCommunityIcons name="close-circle" color={colors.onPrimaryContainer} size={25} style={styles.closeBtn} />
     </Pressable>
   );
