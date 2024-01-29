@@ -12,7 +12,7 @@ import { UPDATE_BTN_ERROR_MSG, UPDATE_BTN } from './const';
 
 export default function ProfileUpdateBtn() {
   const dispatch = useAppDispatch();
-  const { push } = useRouter();
+  const { back } = useRouter();
   const { colors } = useTheme();
   const { user } = useAuth();
   const { settings } = useAppSelector(({ profile }) => profile);
@@ -26,7 +26,7 @@ export default function ProfileUpdateBtn() {
       }
       dispatch(setIsDisabledWhileSendingProfile(false));
       dispatch(resetSettings());
-      push('/profile/');
+      back();
     }
     if (error) {
       dispatch(setIsDisabledWhileSendingProfile(false));

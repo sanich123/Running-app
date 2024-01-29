@@ -14,6 +14,7 @@ export default function ProfileStack() {
 
   return (
     <Stack
+      initialRouteName="index/index"
       screenOptions={{
         headerStyle: { backgroundColor: colors.primary },
         headerTintColor: colors.primaryContainer,
@@ -21,7 +22,7 @@ export default function ProfileStack() {
         title: LABELS[language].profile,
       }}>
       <Stack.Screen
-        name={ROUTES.index}
+        name={`${ROUTES.index}`}
         options={{
           headerRight: () => user && <ProfileEditBtn />,
         }}

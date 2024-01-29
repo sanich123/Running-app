@@ -34,6 +34,7 @@ export const LABELS = {
   [LANGUAGES.english]: {
     feed: 'Feed',
     activity: 'Activity',
+    activities: 'Тренировки',
     statistics: 'Statistics',
     profile: 'Profile',
     settings: 'Settings',
@@ -50,6 +51,7 @@ export const LABELS = {
   [LANGUAGES.russian]: {
     feed: 'Лента',
     activity: 'Активность',
+    activities: 'Тренировки',
     statistics: 'Статистика',
     profile: 'Профиль',
     settings: 'Настройки',
