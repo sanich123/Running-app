@@ -1,34 +1,29 @@
-import { getMapBoxImage } from '@U/location-utils';
 import { ROUTES } from '@const/enums';
-import { LocationObject } from 'expo-location';
 import { usePathname, useRouter } from 'expo-router';
 import React from 'react';
 import { FlatList, Pressable, Image, useWindowDimensions } from 'react-native';
 
 type CardMapImagesListProps = {
-  locations: LocationObject[];
   photoUrls: string[];
   id: string;
 };
 
-export default function CardMapImagesList({ locations, photoUrls, id }: CardMapImagesListProps) {
+export default function CardMapImagesList({ photoUrls, id }: CardMapImagesListProps) {
   const { width } = useWindowDimensions();
-  const urls = locations?.length ? [getMapBoxImage(locations), ...photoUrls] : [...photoUrls];
   const { push } = useRouter();
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   return (
     <FlatList
-      data={urls}
+      data={photoUrls}
       renderItem={({ item, index }) => {
-        const zeroLocations = locations?.length === 0;
         const isNotFirst = index > 0;
         return (
           <Pressable
             onPress={() => {
               if (item) {
                 push(
-                  zeroLocations || isNotFirst
+                  isNotFirst
                     ? `/${place}/${ROUTES.media}/${encodeURIComponent(item)}`
                     : `/${place}/${ROUTES.map}/${id}`,
                 );

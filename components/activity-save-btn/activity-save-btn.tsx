@@ -11,7 +11,7 @@ import { resetLocationsFromBackground } from '@R/location/location';
 import { useAddActivityByUserIdMutation } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
-import { getSpeedInMinsInKm } from '@U/location-utils';
+import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
@@ -75,7 +75,12 @@ export default function ActivitySaveBtn() {
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
         if (user) {
-          dispatch(setIsDisableWhileSending(true));
+          // dispatch(setIsDisableWhileSending(true));
+          // if (!isManualAdding) {
+          //   const mapImage = getMapBoxImage(finishedActivity.locations);
+          //   dispatch(addPhotoUrl(mapImage));
+          //   console.log(additionalInfo.photoUrls);
+          // }
           const savedActivity = {
             body: isManualAdding
               ? {
@@ -87,10 +92,17 @@ export default function ActivitySaveBtn() {
                     .paceAsNumber,
                   locations: [],
                 }
-              : { ...finishedActivity, ...additionalInfo },
+              : {
+                  ...finishedActivity,
+                  ...{
+                    ...additionalInfo,
+                    photoUrls: [`${getMapBoxImage(finishedActivity.locations)}`, ...additionalInfo.photoUrls],
+                  },
+                },
             id: user.id,
           };
           setActivityToSend(savedActivity);
+          console.log(savedActivity);
           await sendActivity(savedActivity).unwrap();
         }
       }}

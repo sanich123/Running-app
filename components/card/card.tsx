@@ -26,7 +26,6 @@ export default memo(
       sport,
       id,
       userId,
-      locations,
       photoUrls,
       duration,
       distance,
@@ -36,16 +35,16 @@ export default memo(
     } = rest;
     const { push } = useRouter();
     const cardRef = useRef(null);
-    const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
-    const prefetchProfile = runichApi.usePrefetch('getUserProfileById');
-    const prefetchProfilePhotos = runichApi.usePrefetch('getAllActivityPhotosByUserId');
+    // const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
+    // const prefetchProfile = runichApi.usePrefetch('getUserProfileById');
+    // const prefetchProfilePhotos = runichApi.usePrefetch('getAllActivityPhotosByUserId');
     const pathname = usePathname();
     const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
-    useEffect(() => {
-      prefetchProfile(userId);
-      prefetchProfilePhotos(userId);
-      prefetchFullActivity(`${id}`);
-    }, []);
+    // useEffect(() => {
+    //   prefetchProfile(userId);
+    //   prefetchProfilePhotos(userId);
+    //   prefetchFullActivity(`${id}`);
+    // }, []);
 
     return (
       <Card>
@@ -68,9 +67,7 @@ export default memo(
             <CardMetrics distance={distance} duration={duration} />
           </Pressable>
           {isShowDescription && <CardDesription description={description} />}
-          {(locations?.length || photoUrls?.length > 0) && (
-            <CardMapImagesList locations={locations} photoUrls={photoUrls} id={id} />
-          )}
+          {photoUrls?.length > 0 && <CardMapImagesList photoUrls={photoUrls} id={id} />}
           <View style={{ display: 'flex', flexDirection: 'row' }}>
             <CardLikes
               activityId={id}
