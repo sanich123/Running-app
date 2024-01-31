@@ -3,7 +3,7 @@ import { ActivityCardProps } from '@C/card/const ';
 export type ActivitiesType = (ActivityCardProps & { user_id: string })[];
 
 export function renderCardsFunction({ item }: { item: ActivityCardProps & { user_id: string } }) {
-  const { description, title, date, sport, photoUrls, duration, distance, id, user_id } = item;
+  const { description, title, date, sport, photoUrls, duration, distance, id, user_id, likes, comments } = item;
   return (
     <ActivityCard
       isShowDeleteBtn={false}
@@ -19,6 +19,10 @@ export function renderCardsFunction({ item }: { item: ActivityCardProps & { user
       duration={duration}
       distance={distance}
       fullViewRef={{ current: null }}
+      likes={likes}
+      comments={comments}
     />
   );
 }
+
+export const keyExtractor = (_: unknown, index: number) => `activity-${index}`;

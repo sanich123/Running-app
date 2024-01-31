@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 
-export default function CardTitle({ title }: { title: string }) {
+export default memo(function CardTitle({ title }: { title: string }) {
   return (
     <View
       style={{
@@ -14,4 +15,4 @@ export default function CardTitle({ title }: { title: string }) {
       </Text>
     </View>
   );
-}
+});

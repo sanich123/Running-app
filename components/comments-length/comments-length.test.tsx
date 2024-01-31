@@ -1,3 +1,4 @@
+import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
 import { screen } from '@testing-library/react-native';
 
 import CommentsLength from './comments-length';
@@ -16,42 +17,56 @@ jest.mock('expo-router', () => ({
 }));
 describe('Comments length', () => {
   it('should correctly renders received comments length in english, when length ends on 5-9', async () => {
-    renderWithProviders(<CommentsLength activityId="189d2c10-463c-42f5-9f09-5e9fa6aa2720" />, { store: mockStore });
+    renderWithProviders(<CommentsLength activityId="189d2c10-463c-42f5-9f09-5e9fa6aa2720" comments={MOCK_COMMENTS} />, {
+      store: mockStore,
+    });
     expect(await screen.findByTestId(COMMENTS_LENGTH_TEST_ID)).toBeOnTheScreen();
     expect(await screen.findByText(new RegExp(`8 ${COMMENTS_ENDING.english.manyComments}`))).toBeOnTheScreen();
   });
   it('should correctly renders received comments length in russian, when length ends on 5-9', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<CommentsLength activityId="189d2c10-463c-42f5-9f09-5e9fa6aa2720" />, { store: mockStore });
+    renderWithProviders(<CommentsLength activityId="189d2c10-463c-42f5-9f09-5e9fa6aa2720" comments={MOCK_COMMENTS} />, {
+      store: mockStore,
+    });
     expect(await screen.findByTestId(COMMENTS_LENGTH_TEST_ID)).toBeOnTheScreen();
     expect(await screen.findByText(new RegExp(`8 ${COMMENTS_ENDING.russian.fiveZeroComments}`))).toBeOnTheScreen();
   });
   it('should correctly renders received comments length in english, when length ends on 1', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<CommentsLength activityId="activityIdWithOneComment" />, { store: mockStore });
+    renderWithProviders(<CommentsLength activityId="activityIdWithOneComment" comments={MOCK_COMMENTS} />, {
+      store: mockStore,
+    });
     expect(await screen.findByTestId(COMMENTS_LENGTH_TEST_ID)).toBeOnTheScreen();
     expect(await screen.findByText(new RegExp(`1 ${COMMENTS_ENDING.english.oneComment}`))).toBeOnTheScreen();
   });
   it('should correctly renders received comments length in russian, when length ends on 1', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<CommentsLength activityId="activityIdWithOneComment" />, { store: mockStore });
+    renderWithProviders(<CommentsLength activityId="activityIdWithOneComment" comments={MOCK_COMMENTS} />, {
+      store: mockStore,
+    });
     expect(await screen.findByTestId(COMMENTS_LENGTH_TEST_ID)).toBeOnTheScreen();
     expect(await screen.findByText(new RegExp(`1 ${COMMENTS_ENDING.russian.oneComment}`))).toBeOnTheScreen();
   });
   it('should correctly renders received comments length in russian, when length ends on 2-4', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<CommentsLength activityId="activityIdWithTwoComments" />, { store: mockStore });
+    renderWithProviders(<CommentsLength activityId="activityIdWithTwoComments" comments={MOCK_COMMENTS} />, {
+      store: mockStore,
+    });
     expect(await screen.findByTestId(COMMENTS_LENGTH_TEST_ID)).toBeOnTheScreen();
     expect(await screen.findByText(new RegExp(`2 ${COMMENTS_ENDING.russian.twoFourComments}`))).toBeOnTheScreen();
   });
   it('should correctly handle an error in russian, when an error occured', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<CommentsLength activityId="someWrongActivityId" />, { store: mockStore });
+    renderWithProviders(<CommentsLength activityId="someWrongActivityId" comments={MOCK_COMMENTS} />, {
+      store: mockStore,
+    });
     expect(await screen.findByText(new RegExp(`${COMMENTS_ENDING.russian.error}: ${MOCK_BAD_REQUEST.status}`)));
   });
   it('should correctly handle an error in english, when an error occured', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<CommentsLength activityId="someWrongActivityId" />, { store: mockStore });
+    renderWithProviders(<CommentsLength activityId="someWrongActivityId" comments={MOCK_COMMENTS} />, {
+      store: mockStore,
+    });
     expect(await screen.findByText(new RegExp(`${COMMENTS_ENDING.english.error}: ${MOCK_BAD_REQUEST.status}`)));
   });
   it('should correctly get end of the comments length', () => {

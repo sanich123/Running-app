@@ -7,7 +7,7 @@
     "start:dev": "APP_VARIANT=development && npx expo start",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watchAll",
-    "test": "IS_TESTING=true jest",
+    "test": "set IS_TESTING=true&&jest",
     "test:windows": "set IS_TESTING=true&&jest",
     "test:debug": "set IS_TESTING=true&&jest --runInBand --detectOpenHandles --forceExit",
     "build:dev:all:local": "bun run build:dev:android:local && bun run build:dev:ios:emulator:local",
@@ -165,5 +165,5 @@
     "printWidth": 120,
     "bracketSameLine": true
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.1.0"
 }

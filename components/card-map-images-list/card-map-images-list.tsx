@@ -1,6 +1,6 @@
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
-import React from 'react';
+import { memo } from 'react';
 import { FlatList, Pressable, Image, useWindowDimensions } from 'react-native';
 
 type CardMapImagesListProps = {
@@ -8,7 +8,7 @@ type CardMapImagesListProps = {
   id: string;
 };
 
-export default function CardMapImagesList({ photoUrls, id }: CardMapImagesListProps) {
+export default memo(function CardMapImagesList({ photoUrls, id }: CardMapImagesListProps) {
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const pathname = usePathname();
@@ -16,16 +16,15 @@ export default function CardMapImagesList({ photoUrls, id }: CardMapImagesListPr
   return (
     <FlatList
       data={photoUrls}
-      renderItem={({ item, index }) => {
-        const isNotFirst = index > 0;
+      renderItem={({ item }) => {
         return (
           <Pressable
             onPress={() => {
               if (item) {
                 push(
-                  isNotFirst
-                    ? `/${place}/${ROUTES.media}/${encodeURIComponent(item)}`
-                    : `/${place}/${ROUTES.map}/${id}`,
+                  item.includes('api.mapbox.com')
+                    ? `/${place}/${ROUTES.map}/${id}`
+                    : `/${place}/${ROUTES.media}/${encodeURIComponent(item)}`,
                 );
               }
             }}
@@ -38,4 +37,4 @@ export default function CardMapImagesList({ photoUrls, id }: CardMapImagesListPr
       initialNumToRender={2}
     />
   );
-}
+});

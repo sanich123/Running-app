@@ -36,8 +36,8 @@ export default function Comment() {
               <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
             </View>
             <View style={styles.columnsLayout}>
-              <ActivityCardLikeBtn activityId={activity?.id} />
-              <CardLikes activityId={activity?.id} size={CardLikesSize.big} />
+              <ActivityCardLikeBtn activityId={activity?.id} likes={activity.likes} />
+              <CardLikes activityId={activity?.id} size={CardLikesSize.big} likes={activity.likes} />
             </View>
           </Card.Content>
           <Comments id={`${activityId}`} />

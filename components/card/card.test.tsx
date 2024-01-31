@@ -1,3 +1,5 @@
+import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
+import { MOCK_LIKES } from '@T/mocks/mock-likes';
 import { screen } from '@testing-library/react-native';
 
 import ActivityCard from './card';
@@ -36,6 +38,8 @@ describe('Activity card', () => {
         duration={duration}
         distance={distance}
         fullViewRef={{ current: undefined }}
+        likes={MOCK_LIKES}
+        comments={MOCK_COMMENTS}
       />,
       { store: mockStore },
     );

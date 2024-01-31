@@ -1,31 +1,28 @@
-import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
+import { CommentType } from '@C/card/const ';
 import { useAppSelector } from '@R/typed-hooks';
-import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
+import { memo } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 
-import { COMMENTS_LENGTH_TEST_ID, COMMENTS_ENDING, getWordEnding } from './const';
+import { COMMENTS_LENGTH_TEST_ID, getWordEnding } from './const';
 
-export default function CommentsLength({ activityId }: { activityId: string }) {
-  const { error, isError, data: comments } = useGetCommentsByActivityIdQuery(activityId);
+export default memo(function CommentsLength({ activityId, comments }: { activityId: string; comments: CommentType[] }) {
   const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
 
   return (
     <Pressable
-      disabled={isError}
       testID={COMMENTS_LENGTH_TEST_ID}
       style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.isInCenter]}
       onPress={() => push(`/${ROUTES.home}/${ROUTES.comment}/${activityId}`)}>
       <Text variant="bodyMedium">
-        {isError && `${COMMENTS_ENDING[language].error}: ${errorExtracter(error)}`}
-        {!isError && comments?.length > 0 && `${comments?.length} ${getWordEnding(comments?.length, language)}`}
+        {comments?.length > 0 && `${comments?.length} ${getWordEnding(comments?.length, language)}`}
       </Text>
     </Pressable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   isInCenter: {
