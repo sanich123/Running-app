@@ -26,11 +26,7 @@ export default function Comment() {
       {activity && (
         <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
           {(activity?.locations?.length || activity?.photoUrls?.length > 0) && (
-            <CardMapImagesList
-              locations={activity?.locations?.length > 0 ? activity?.locations : []}
-              photoUrls={activity?.photoUrls}
-              id={`${activityId}`}
-            />
+            <CardMapImagesList photoUrls={activity?.photoUrls} id={`${activityId}`} />
           )}
           <Card.Content style={styles.contentLayout}>
             <CardTitle title={activity?.title} />

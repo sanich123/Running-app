@@ -33,7 +33,6 @@ export default function ViewActivityFullInfo() {
               date={activity.date}
               sport={activity.sport}
               id={activity.id}
-              locations={activity.locations}
               photoUrls={activity.photoUrls}
               duration={activity.duration}
               distance={activity.distance}
