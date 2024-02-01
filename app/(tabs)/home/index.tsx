@@ -5,11 +5,10 @@ import FloatingBtn from '@C/floating-btn/floating-btn';
 import NetworkIndicator from '@C/network-indicator/network-indicator';
 import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
 import { setIsManualAdding, resetFinishedActivity, resetManualData } from '@R/activity/activity';
-import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
+import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,12 +25,13 @@ export default function Feed() {
     refetch,
   } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(`${user?.id}`);
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
-  const prefetchUsers = runichApi.usePrefetch('getUsers');
-  useEffect(() => {
-    if (!process.env.IS_TESTING) {
-      prefetchUsers('');
-    }
-  }, []);
+
+  // const prefetchUsers = runichApi.usePrefetch('getUsers');
+  // useEffect(() => {
+  //   if (!process.env.IS_TESTING) {
+  //     prefetchUsers('');
+  //   }
+  // }, []);
 
   return (
     <>

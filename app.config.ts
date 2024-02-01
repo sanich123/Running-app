@@ -64,6 +64,8 @@ export default {
         },
       ],
       'expo-router',
+      'expo-font',
+      'expo-secure-store',
       [
         'expo-image-picker',
         {

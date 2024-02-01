@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { FlatList, Platform } from 'react-native';
 import { Divider } from 'react-native-paper';
 
-import { renderCardsFunction } from './render-item';
+import { keyExtractor, renderCardsFunction } from './render-item';
 
 export default function OptimizedList({
   activities,
@@ -44,10 +44,12 @@ export default function OptimizedList({
           onRefresh={onRefresh}
           data={activities}
           refreshing={refreshing}
+          keyExtractor={keyExtractor}
           renderItem={renderCardsFunction}
           ListEmptyComponent={<EmptyActivitiesList />}
           ItemSeparatorComponent={() => <Divider />}
-          initialNumToRender={3}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
         />
       )}
     </>

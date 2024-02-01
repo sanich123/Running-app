@@ -1,3 +1,5 @@
+import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
+import { MOCK_LIKE } from '@T/mocks/mock-likes';
 import { screen } from '@testing-library/react-native';
 
 import ActivityCard from './card';
@@ -21,7 +23,7 @@ describe('Activity card', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    const { description, title, date, sport, id, locations, photoUrls, duration, distance } = MOCK_ACTIVITY;
+    const { description, title, date, sport, id, photoUrls, duration, distance } = MOCK_ACTIVITY;
     renderWithProviders(
       <ActivityCard
         isShowDeleteBtn
@@ -32,11 +34,12 @@ describe('Activity card', () => {
         sport={sport as SPORTS_BTNS_VALUES}
         id={id}
         userId="someUserId"
-        locations={locations}
         photoUrls={photoUrls}
         duration={duration}
         distance={distance}
         fullViewRef={{ current: undefined }}
+        likes={MOCK_LIKE}
+        comments={MOCK_COMMENTS}
       />,
       { store: mockStore },
     );

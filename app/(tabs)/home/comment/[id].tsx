@@ -26,11 +26,7 @@ export default function Comment() {
       {activity && (
         <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
           {(activity?.locations?.length || activity?.photoUrls?.length > 0) && (
-            <CardMapImagesList
-              locations={activity?.locations?.length > 0 ? activity?.locations : []}
-              photoUrls={activity?.photoUrls}
-              id={`${activityId}`}
-            />
+            <CardMapImagesList photoUrls={activity?.photoUrls} id={`${activityId}`} />
           )}
           <Card.Content style={styles.contentLayout}>
             <CardTitle title={activity?.title} />
@@ -40,8 +36,8 @@ export default function Comment() {
               <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
             </View>
             <View style={styles.columnsLayout}>
-              <ActivityCardLikeBtn activityId={activity?.id} />
-              <CardLikes activityId={activity?.id} size={CardLikesSize.big} />
+              <ActivityCardLikeBtn activityId={activity?.id} likes={activity.likes} />
+              <CardLikes activityId={activity?.id} size={CardLikesSize.big} likes={activity.likes} />
             </View>
           </Card.Content>
           <Comments id={`${activityId}`} />

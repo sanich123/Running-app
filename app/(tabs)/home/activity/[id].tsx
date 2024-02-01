@@ -13,7 +13,6 @@ export default function ViewActivityFullInfo() {
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(`${activityId}`);
   const fullViewRef = useRef(null);
-
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
@@ -33,10 +32,11 @@ export default function ViewActivityFullInfo() {
               date={activity.date}
               sport={activity.sport}
               id={activity.id}
-              locations={activity.locations}
               photoUrls={activity.photoUrls}
               duration={activity.duration}
               distance={activity.distance}
+              likes={activity.likes}
+              comments={activity.comments}
             />
             <ActivityFullViewMetrics />
             <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>
