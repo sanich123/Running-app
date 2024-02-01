@@ -1,5 +1,5 @@
 import * as auth from '@A/context/auth-context';
-import { MOCK_LIKES } from '@T/mocks/mock-likes';
+import { MOCK_LIKE } from '@T/mocks/mock-likes';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -12,11 +12,11 @@ describe('Activity card like btn', () => {
   it('should correctly renders when activity was liked by you', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
       user: {
-        id: 'someUserId',
+        id: MOCK_LIKE[0].authorId,
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" likes={MOCK_LIKES} />, { store: mockStore });
+    renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" likes={MOCK_LIKE} />, { store: mockStore });
     const likesBtn = await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED);
     expect(likesBtn).toBeOnTheScreen();
   });
@@ -27,7 +27,7 @@ describe('Activity card like btn', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" likes={MOCK_LIKES} />, { store: mockStore });
+    renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" likes={MOCK_LIKE} />, { store: mockStore });
     expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();
   });
 });

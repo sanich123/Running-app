@@ -54,3 +54,12 @@ export const MOCK_LIKES = [
     id: '2d6878a1-b4bb-4bfe-a882-a255f5c6e6cc',
   },
 ];
+
+export const MOCK_LIKE = [
+  {
+    activityId: '617dddae-05b3-418a-9a8e-5d408a1b897a',
+    authorId: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
+    date: '2023-10-07T14:38:05.885Z',
+    id: '20715e5a-17b1-46ac-9814-5ffb5fde8ac9',
+  },
+];

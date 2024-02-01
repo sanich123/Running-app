@@ -1,4 +1,5 @@
-import { MOCK_LIKES } from '@T/mocks/mock-likes';
+import { AvatarShowableTestIds } from '@C/avatar-showable/const';
+import { MOCK_LIKE } from '@T/mocks/mock-likes';
 import { screen } from '@testing-library/react-native';
 import * as router from 'expo-router';
 
@@ -16,13 +17,13 @@ describe('Card likes', () => {
   it('should correctly renders', async () => {
     jest.spyOn(router, 'usePathname').mockImplementation(() => 'some path');
     renderWithProviders(
-      <CardLikes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" likes={MOCK_LIKES} size={CardLikesSize.big} />,
+      <CardLikes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" likes={MOCK_LIKE} size={CardLikesSize.big} />,
       {
         store: mockStore,
       },
     );
     expect(screen.getByTestId('pushToActivityLikes')).toBeOnTheScreen();
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
-    expect(await screen.findByTestId('avatarShowableDefaultIcon')).toBeOnTheScreen();
+    expect(await screen.findByTestId(AvatarShowableTestIds.success)).toBeOnTheScreen();
   });
 });

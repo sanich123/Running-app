@@ -28,7 +28,7 @@ export default memo(function CardBtns({
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const isMineActivvity = user?.id === userId;
+  const isMineActivity = user?.id === userId;
 
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>
@@ -36,7 +36,7 @@ export default memo(function CardBtns({
         <ActivityCardLikeBtn activityId={activityId} likes={likes} />
         <ActivityCardCommentBtn activityId={activityId} />
         <ActivityCardShareBtn cardRef={cardRef} fullViewRef={fullViewRef} />
-        {isMineActivvity && isShowDeleteBtn && <ActivityCardDeleteBtn activityId={activityId} />}
+        {isMineActivity && isShowDeleteBtn && <ActivityCardDeleteBtn activityId={activityId} />}
       </View>
     </ActivityCardBtnsContext.Provider>
   );
