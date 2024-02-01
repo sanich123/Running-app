@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npx eslint --fix && bun run tsc && bun run test
+npx eslint --fix && npx tsc && npx test
