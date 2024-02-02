@@ -75,12 +75,7 @@ export default function ActivitySaveBtn() {
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
         if (user) {
-          // dispatch(setIsDisableWhileSending(true));
-          // if (!isManualAdding) {
-          //   const mapImage = getMapBoxImage(finishedActivity.locations);
-          //   dispatch(addPhotoUrl(mapImage));
-          //   console.log(additionalInfo.photoUrls);
-          // }
+          dispatch(setIsDisableWhileSending(true));
           const savedActivity = {
             body: isManualAdding
               ? {

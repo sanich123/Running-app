@@ -70,6 +70,14 @@ export default function ProfileStack() {
         name={`${ROUTES.map}/[id]`}
         options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].map }}
       />
+      <Stack.Screen
+        name={`${ROUTES.comment}/[id]`}
+        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].comment }}
+      />
+      <Stack.Screen
+        name={`${ROUTES.likes}/[id]`}
+        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].likes }}
+      />
     </Stack>
   );
 }

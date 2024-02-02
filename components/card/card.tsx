@@ -1,6 +1,8 @@
+import { runichApi } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
-import { useRef, memo } from 'react';
+import { useRef, memo, useEffect } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 
@@ -34,16 +36,17 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     comments,
   } = rest;
   const { push } = useRouter();
+  const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const cardRef = useRef(null);
-  // const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
-  // const prefetchProfilePhotos = runichApi.usePrefetch('getAllActivityPhotosByUserId');
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
+  const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
 
-  // useEffect(() => {
-  //   prefetchProfilePhotos(userId);
-  //   prefetchFullActivity(`${id}`);
-  // }, []);
+  useEffect(() => {
+    if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
+      prefetchFullActivity(`${id}`);
+    }
+  }, [isNeedToPrefetchActivities]);
 
   return (
     <Card>

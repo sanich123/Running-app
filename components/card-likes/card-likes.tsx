@@ -2,7 +2,7 @@ import AvatarShowable from '@C/avatar-showable/avatar-showable';
 import { LikeType } from '@C/card/const ';
 import NumberOfLikes from '@C/number-of-likes/number-of-likes';
 import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import { Fragment, memo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -29,11 +29,12 @@ export default memo(function CardLikes({
   const lastLikeInTheRow = size === CardLikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === CardLikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
   const moreThanNineLikes = size === CardLikesSize.big && likes?.length > 0 && likes?.length > MAX_IN_ROW;
-
+  const pathname = usePathname();
+  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   return (
     <Pressable
       testID="pushToActivityLikes"
-      onPress={() => push(`/${ROUTES.home}/${ROUTES.likes}/${activityId}`)}
+      onPress={() => push(`/${place}/${ROUTES.likes}/${activityId}`)}
       style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
       <View
         style={[
