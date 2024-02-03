@@ -7,13 +7,12 @@ import { LANGUAGES } from '../../constants/enums';
 import { changeLanguage } from '../../redux/language/language';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
+
 jest.mock('expo-router', () => ({
-  useRouter: () => {
-    return {
-      push: jest.fn(),
-    };
-  },
+  useRouter: () => ({ push: jest.fn() }),
+  usePathname: () => 'somePathname',
 }));
+
 describe('Comments length', () => {
   it('should correctly renders received comments length in english, when length ends on 5-9', async () => {
     renderWithProviders(<CommentsLength activityId="189d2c10-463c-42f5-9f09-5e9fa6aa2720" comments={MOCK_COMMENTS} />, {

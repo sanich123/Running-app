@@ -52,7 +52,11 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     <Card>
       <View ref={cardRef} collapsable={false}>
         <Pressable
-          onPress={() => push(`/${place}/${ROUTES.activity}/${id}`)}
+          onPress={() => {
+            if (!pathname.includes(ROUTES.activity)) {
+              push(`/${place}/${ROUTES.activity}/${id}`);
+            }
+          }}
           style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
           <Card.Content>
             <Pressable
