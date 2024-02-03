@@ -58,9 +58,9 @@ export default {
       [
         '@rnmapbox/maps',
         {
-          RNMapboxMapsImpl: 'mapbox',
           RNMapboxMapsDownloadToken:
             'sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWtvam9oazBrZjcza29kZ2hhMmtlcjEifQ.PkCRRfGrD8iiEOIBB9BLcg',
+          RNMapboxMapsVersion: '11.0.0',
         },
       ],
       'expo-router',

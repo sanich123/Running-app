@@ -8,9 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ActivityMap() {
   const { id: activityId } = useLocalSearchParams();
-
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(`${activityId}`);
-  console.log(activityId, activity);
 
   return (
     <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
