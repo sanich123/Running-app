@@ -8,6 +8,7 @@ import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 //@ts-ignore
 import lineString from 'turf-linestring';
 
@@ -19,10 +20,9 @@ export default function DisplayActivityMap() {
   );
   const line = lineString(modifiedLocationsForTurf);
   const [minLat, minLng, maxLat, maxLng] = bbox(line);
-  console.log([minLat, minLng, maxLat, maxLng]);
 
   return (
-    <>
+    <SafeAreaView style={(isLoading || error) && styles.isInCenter}>
       {isLoading && <ActivityIndicator size="large" />}
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
@@ -39,7 +39,7 @@ export default function DisplayActivityMap() {
           {activity?.kilometresSplit?.length > 0 && <MapKmSplit kilometresSplit={activity.kilometresSplit} />}
         </MapView>
       )}
-    </>
+    </SafeAreaView>
   );
 }
 
