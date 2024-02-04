@@ -1,9 +1,13 @@
 import { getReducedLocations } from '@U/location-utils';
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
 import { LocationObject } from 'expo-location';
+import { useMemo } from 'react';
 
 export default function MapRouteLine({ locations }: { locations: LocationObject[] }) {
-  const coordinates = getReducedLocations(locations).map(({ coords }) => [coords.longitude, coords.latitude]);
+  const coordinates = useMemo(
+    () => getReducedLocations(locations).map(({ coords }) => [coords.longitude, coords.latitude]),
+    [locations],
+  );
   return (
     <ShapeSource
       id={`${locations[0].timestamp}`}

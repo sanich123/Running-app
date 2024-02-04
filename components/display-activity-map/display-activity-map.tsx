@@ -2,7 +2,6 @@ import { LastKmSplit } from '@R/location/types';
 import { MapView, Camera } from '@rnmapbox/maps';
 import bbox from '@turf/bbox';
 import { LocationObject } from 'expo-location';
-import { usePathname } from 'expo-router';
 import { useRef, useEffect } from 'react';
 //@ts-ignore
 import lineString from 'turf-linestring';
@@ -16,7 +15,6 @@ type DisplayActivityMapProps = {
 };
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
-  const pathname = usePathname();
   const modifiedLocationsForTurf = locations.map(({ coords: { longitude, latitude } }) => [latitude, longitude]);
   const line = lineString(modifiedLocationsForTurf);
   const [minLat, minLng, maxLat, maxLng] = bbox(line);
@@ -25,11 +23,11 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
   useEffect(() => {
     setTimeout(() => {
       cameraRef.current?.fitBounds([minLng, minLat], [maxLng, maxLat], [20, 20], 1000);
-    }, 1500);
+    }, 2000);
   }, [locations]);
 
   return (
-    <MapView style={[{ flex: 1 }, pathname.includes('/comment') && { height: 300 }]} scaleBarEnabled={false}>
+    <MapView style={[{ flex: 1 }]}>
       <Camera
         ref={cameraRef}
         animationMode="flyTo"
