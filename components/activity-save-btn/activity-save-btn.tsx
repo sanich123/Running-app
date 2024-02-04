@@ -13,7 +13,6 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
-import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable } from 'react-native';
@@ -25,7 +24,7 @@ export default function ActivitySaveBtn() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { user } = useAuth();
-  const { push } = useRouter();
+  const { replace } = useRouter();
   const {
     additionalInfo,
     isDisabledWhileSending,
@@ -52,7 +51,7 @@ export default function ActivitySaveBtn() {
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
       dispatch(resetLocationsFromBackground());
-      push(`/${ROUTES.home}/`);
+      replace(`/`);
     }
     if (isError && error) {
       dispatch(saveUnsendedActivity(activityToSend));
@@ -64,7 +63,7 @@ export default function ActivitySaveBtn() {
           dispatch(resetActivityInfo());
           dispatch(setIsNeedToResetInputs(true));
           dispatch(resetLocationsFromBackground());
-          push(`/${ROUTES.home}/`);
+          replace(`/`);
         }
       }
     }
@@ -75,12 +74,7 @@ export default function ActivitySaveBtn() {
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
         if (user) {
-          // dispatch(setIsDisableWhileSending(true));
-          // if (!isManualAdding) {
-          //   const mapImage = getMapBoxImage(finishedActivity.locations);
-          //   dispatch(addPhotoUrl(mapImage));
-          //   console.log(additionalInfo.photoUrls);
-          // }
+          dispatch(setIsDisableWhileSending(true));
           const savedActivity = {
             body: isManualAdding
               ? {
@@ -102,7 +96,6 @@ export default function ActivitySaveBtn() {
             id: user.id,
           };
           setActivityToSend(savedActivity);
-          console.log(savedActivity);
           await sendActivity(savedActivity).unwrap();
         }
       }}

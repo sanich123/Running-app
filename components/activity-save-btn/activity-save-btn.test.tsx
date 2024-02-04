@@ -14,7 +14,7 @@ import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import * as auth from '../../auth/context/auth-context';
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ replace: jest.fn() }),
 }));
 
 describe('Activity save btn', () => {

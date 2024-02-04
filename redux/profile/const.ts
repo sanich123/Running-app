@@ -17,4 +17,5 @@ export const PROFILE_INITIAL_STATE: ProfileSlice = {
   },
   isDisabledWhileSendingProfile: false,
   settings: PROFILE_SETTINGS_INITIAL_STATE,
+  isNeedToPrefetchActivities: true,
 };
