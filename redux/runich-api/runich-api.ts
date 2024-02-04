@@ -43,7 +43,7 @@ export const runichApi = createApi({
       providesTags: [Tags.friends],
     }),
     getFollowersByUserId: builder.query({
-      query: (id: string) => `${friend}/${id}/${followers}`,
+      query: (id: string) => `/${friend}/${id}/${followers}`,
       providesTags: [Tags.friends],
     }),
     getCommentsByActivityId: builder.query({

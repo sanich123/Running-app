@@ -12,20 +12,13 @@ import UserListItem from './user-list-item';
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
-jest.mock('../../auth/context/auth-context', () => ({
-  useAuth: () => ({
-    user: {
-      id: 'someUserId',
-      app_metadata: {
-        someProp: 'some value',
-      },
-      user_metadata: {
-        someProp: 'some value',
-      },
-      aud: '',
-      created_at: '',
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
     },
-  }),
+  },
 }));
 describe('User list item', () => {
   it('should correctly renders from server', async () => {

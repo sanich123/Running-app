@@ -6,21 +6,16 @@ import { screen } from '@testing-library/react-native';
 
 import { LOGIN_BTN } from './const';
 import LoginRegisterBtn from './login-register-btn';
-jest.mock('../../auth/context/auth-context', () => ({
-  useAuth: () => ({
-    user: {
-      id: 'someUserId',
-      app_metadata: {
-        someProp: 'some value',
-      },
-      user_metadata: {
-        someProp: 'some value',
-      },
-      aud: '',
-      created_at: '',
+
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
     },
-  }),
+  },
 }));
+
 describe('Login btn', () => {
   it('should correctly renders in english', () => {
     const setIsDisabled = jest.fn();

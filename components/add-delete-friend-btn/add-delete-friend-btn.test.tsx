@@ -8,20 +8,14 @@ import { screen } from '@testing-library/react-native';
 
 import AddDeleteFriendBtn from './add-delete-friend-btn';
 import { ADD_DELETE_FRIEND_BTN } from './const';
-jest.mock('../../auth/context/auth-context', () => ({
-  useAuth: () => ({
-    user: {
-      id: 'someUserId',
-      app_metadata: {
-        someProp: 'some value',
-      },
-      user_metadata: {
-        someProp: 'some value',
-      },
-      aud: '',
-      created_at: '',
+
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
     },
-  }),
+  },
 }));
 describe('Delete friend btn', () => {
   it('should correctly renders as unfollow btn, when passed friendId is in an array of friends of the user', async () => {

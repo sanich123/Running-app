@@ -9,20 +9,13 @@ import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 import { NUMBER_OF_LIKES } from '../number-of-likes/const';
 
-jest.mock('../../auth/context/auth-context', () => ({
-  useAuth: () => ({
-    user: {
-      id: 'someUserId',
-      app_metadata: {
-        someProp: 'some value',
-      },
-      user_metadata: {
-        someProp: 'some value',
-      },
-      aud: '',
-      created_at: '',
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
     },
-  }),
+  },
 }));
 describe('Comment likes length', () => {
   it('should correctly renders in english, when you and others gave likes', async () => {

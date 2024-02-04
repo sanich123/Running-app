@@ -8,7 +8,14 @@ import { screen, userEvent } from '@testing-library/react-native';
 
 import { UPDATE_BTN } from './const';
 import ProfileUpdateBtn from './profile-update-btn';
-
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
+    },
+  },
+}));
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), back: jest.fn() }),
 }));
