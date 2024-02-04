@@ -5,6 +5,22 @@ import * as auth from '../../auth/context/auth-context';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
+
+jest.mock('../../auth/context/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: 'someUserId',
+      app_metadata: {
+        someProp: 'some value',
+      },
+      user_metadata: {
+        someProp: 'some value',
+      },
+      aud: '',
+      created_at: '',
+    },
+  }),
+}));
 describe('Comment like btn', () => {
   it('should correctly renders, when liked by you', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

@@ -18,7 +18,21 @@ jest.mock('react-native-compressor', () => ({
     compress: 'someCompressedString',
   }),
 }));
-
+jest.mock('../../auth/context/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: 'someUserId',
+      app_metadata: {
+        someProp: 'some value',
+      },
+      user_metadata: {
+        someProp: 'some value',
+      },
+      aud: '',
+      created_at: '',
+    },
+  }),
+}));
 describe('Upload photos btn', () => {
   it('should correctly renders in english', () => {
     const setIsDisabled = jest.fn();

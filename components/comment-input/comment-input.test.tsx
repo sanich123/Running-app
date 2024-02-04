@@ -4,7 +4,21 @@ import CommentInput from './comment-input';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT_TEST_ID } from './const';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
-
+jest.mock('../../auth/context/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: 'someUserId',
+      app_metadata: {
+        someProp: 'some value',
+      },
+      user_metadata: {
+        someProp: 'some value',
+      },
+      aud: '',
+      created_at: '',
+    },
+  }),
+}));
 describe('Comment input', () => {
   it('should correctly renders', () => {
     renderWithProviders(<CommentInput activityId="someActivityId" />, { store: mockStore });

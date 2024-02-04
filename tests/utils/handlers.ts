@@ -26,7 +26,7 @@ export const handlers = [
   rest.post(`${process.env.EXPO_PUBLIC_BASE_URL}/friend/someFriendId`, (req, res, ctx) =>
     res(ctx.status(201), ctx.json(MOCK_LOCATION)),
   ),
-  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/someUserId`, (req, res, ctx) =>
+  rest.get(`https://runich-backend-production.up.railway.app/profile/someUserId`, (req, res, ctx) =>
     res(ctx.status(200), ctx.json(MOCK_PROFILE)),
   ),
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/926f4a53-08b5-43c6-99ee-cf31fdfbb49b`, (req, res, ctx) =>
@@ -35,9 +35,10 @@ export const handlers = [
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/7857abb1-b125-4f39-becf-8f30216b46ec`, (req, res, ctx) =>
     res(ctx.status(200), ctx.json(MOCK_PROFILE)),
   ),
-  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/a6135312-595f-4524-b3f3-496a05165d22`, (req, res, ctx) =>
-    res(ctx.status(200), ctx.json(MOCK_PROFILE)),
-  ),
+  rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/a6135312-595f-4524-b3f3-496a05165d22`, (req, res, ctx) => {
+    console.log('request');
+    return res(ctx.status(200), ctx.json(MOCK_PROFILE));
+  }),
   rest.get(`${process.env.EXPO_PUBLIC_BASE_URL}/profile/someUserIdWithAnError`, (req, res, ctx) =>
     res(ctx.status(401), ctx.json({ message: 'bad request' })),
   ),

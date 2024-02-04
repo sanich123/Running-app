@@ -16,7 +16,21 @@ import * as auth from '../../auth/context/auth-context';
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: jest.fn() }),
 }));
-
+jest.mock('../../auth/context/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: 'someUserId',
+      app_metadata: {
+        someProp: 'some value',
+      },
+      user_metadata: {
+        someProp: 'some value',
+      },
+      aud: '',
+      created_at: '',
+    },
+  }),
+}));
 describe('Activity save btn', () => {
   it('should correctly renders in english', () => {
     renderWithProviders(<ActivitySaveBtn />, { store: mockStore });

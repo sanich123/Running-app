@@ -35,7 +35,8 @@
     "prebuild:ios": "npx expo prebuild --clean --platform ios",
     "prebuild:all": "npx expo prebuild --clean",
     "prepare": "husky install",
-    "android": "expo run:android",
+    "android": "expo run:android --variant debug",
+    "android:preview": "expo run:android --variant release",
     "ios": "expo run:ios",
     "migrate:bun": "npx synp --source-file yarn.lock && npm i --lockfile-version 3 --frozen-lockfile && bun pm migrate"
   },

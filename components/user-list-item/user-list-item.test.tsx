@@ -12,7 +12,21 @@ import UserListItem from './user-list-item';
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
-
+jest.mock('../../auth/context/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: 'someUserId',
+      app_metadata: {
+        someProp: 'some value',
+      },
+      user_metadata: {
+        someProp: 'some value',
+      },
+      aud: '',
+      created_at: '',
+    },
+  }),
+}));
 describe('User list item', () => {
   it('should correctly renders from server', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
@@ -38,7 +52,7 @@ describe('User list item', () => {
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
     expect(await screen.findByTestId('avatarShowableImage')).toBeOnTheScreen();
-    expect(screen.getByText(ADD_DELETE_FRIEND_BTN.english.follow)).toBeOnTheScreen();
+    expect(await screen.findByText(ADD_DELETE_FRIEND_BTN.english.follow)).toBeOnTheScreen();
   });
   it('should correctly show unfollow btn, when user is in the list of friends', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

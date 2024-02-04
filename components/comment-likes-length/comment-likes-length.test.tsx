@@ -8,6 +8,22 @@ import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 import { NUMBER_OF_LIKES } from '../number-of-likes/const';
+
+jest.mock('../../auth/context/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: 'someUserId',
+      app_metadata: {
+        someProp: 'some value',
+      },
+      user_metadata: {
+        someProp: 'some value',
+      },
+      aud: '',
+      created_at: '',
+    },
+  }),
+}));
 describe('Comment likes length', () => {
   it('should correctly renders in english, when you and others gave likes', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

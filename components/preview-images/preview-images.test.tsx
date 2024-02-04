@@ -9,7 +9,21 @@ jest.mock('react-native-compressor', () => ({
     compress: jest.fn(),
   }),
 }));
-
+jest.mock('../../auth/context/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: 'someUserId',
+      app_metadata: {
+        someProp: 'some value',
+      },
+      user_metadata: {
+        someProp: 'some value',
+      },
+      aud: '',
+      created_at: '',
+    },
+  }),
+}));
 describe('Preview images', () => {
   it('should correctly renders image', () => {
     const setImages = jest.fn();
