@@ -1,7 +1,8 @@
 import { ROUTES } from '@const/enums';
+import { Image } from 'expo-image';
 import { usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
-import { FlatList, Pressable, Image, useWindowDimensions } from 'react-native';
+import { FlatList, Pressable, useWindowDimensions } from 'react-native';
 
 type CardMapImagesListProps = {
   photoUrls: string[];
@@ -29,7 +30,7 @@ export default memo(function CardMapImagesList({ photoUrls, id }: CardMapImagesL
               }
             }}
             style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
-            <Image testID={item} source={{ uri: item }} resizeMode="cover" height={200} width={width} />
+            <Image testID={item} style={{ width, height: 200 }} source={{ uri: item }} resizeMode="cover" />
           </Pressable>
         );
       }}

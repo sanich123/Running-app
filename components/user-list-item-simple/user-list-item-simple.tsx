@@ -1,8 +1,9 @@
 import { useAuth } from '@A/context/auth-context';
 import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
 import { ROUTES } from '@const/enums';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Platform } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { Text } from 'react-native-paper';
 
@@ -28,11 +29,18 @@ export default function UserListItemSimple({
       <Pressable
         style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.pressableAreaWrapper]}
         onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${user_id}`)}>
-        <FastImage
-          source={{ uri: profilePhoto, priority: FastImage.priority.high }}
-          style={{ width: 35, height: 35, borderRadius: 70 }}
-          resizeMode={FastImage.resizeMode.cover}
-        />
+        <>
+          {Platform.OS === 'web' ? (
+            <Image style={{ width: 35, height: 35, borderRadius: 70 }} source={{ uri: profilePhoto }} />
+          ) : (
+            <FastImage
+              source={{ uri: profilePhoto, priority: FastImage.priority.high }}
+              style={{ width: 35, height: 35, borderRadius: 70 }}
+              resizeMode={FastImage.resizeMode.cover}
+            />
+          )}
+        </>
+
         <View>
           <View style={{ flex: 1, flexDirection: 'row' }}>
             <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>

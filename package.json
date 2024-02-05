@@ -86,6 +86,7 @@
     "expo-dev-client": "~3.3.8",
     "expo-file-system": "~16.0.5",
     "expo-font": "~11.10.2",
+    "expo-image": "~1.10.5",
     "expo-image-picker": "~14.7.1",
     "expo-linking": "~6.2.2",
     "expo-location": "~16.5.2",

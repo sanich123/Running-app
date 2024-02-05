@@ -1,5 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 import 'react-native-url-polyfill/auto';
 
 const ExpoSecureStoreAdapter = {
@@ -7,7 +9,11 @@ const ExpoSecureStoreAdapter = {
     let attempts = 0;
     while (attempts < 5) {
       try {
-        return await SecureStore.getItemAsync(key);
+        if (Platform.OS === 'web') {
+          return await AsyncStorage.getItem(key);
+        } else {
+          return await SecureStore.getItemAsync(key);
+        }
       } catch (error) {
         console.log(error);
         attempts++;
@@ -15,12 +21,19 @@ const ExpoSecureStoreAdapter = {
     }
     return false;
   },
-
-  setItem: (key: string, value: string) => {
-    SecureStore.setItemAsync(key, value);
+  setItem: async (key: string, value: string) => {
+    if (Platform.OS === 'web') {
+      return await AsyncStorage.setItem(key, value);
+    } else {
+      return SecureStore.setItemAsync(key, value);
+    }
   },
-  removeItem: (key: string) => {
-    SecureStore.deleteItemAsync(key);
+  removeItem: async (key: string) => {
+    if (Platform.OS === 'web') {
+      return AsyncStorage.removeItem(key);
+    } else {
+      SecureStore.deleteItemAsync(key);
+    }
   },
 };
 

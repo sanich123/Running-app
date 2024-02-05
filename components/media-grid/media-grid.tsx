@@ -2,8 +2,9 @@ import ErrorComponent from '@C/error-component/error-component';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { getPhotosWithoutMaps } from '@U/get-photos-without-maps';
 import { ROUTES } from '@const/enums';
+import { Image } from 'expo-image';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import { Pressable, ScrollView, useWindowDimensions, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, useWindowDimensions, StyleSheet, View, Platform } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 
@@ -38,14 +39,20 @@ export default function MediaGrid() {
               key={`${url}+${index}`}
               style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
               onPress={() => push(`/${place}/${ROUTES.media}/${encodeURIComponent(url)}`)}>
-              <FastImage
-                key={`${url}+${index}`}
-                source={{
-                  uri: url,
-                  priority: FastImage.priority.high,
-                }}
-                style={{ height: calculatedWidth, width: calculatedWidth }}
-              />
+              <>
+                {Platform.OS === 'web' ? (
+                  <Image style={{ height: calculatedWidth, width: calculatedWidth }} source={{ uri: url }} />
+                ) : (
+                  <FastImage
+                    key={`${url}+${index}`}
+                    source={{
+                      uri: url,
+                      priority: FastImage.priority.high,
+                    }}
+                    style={{ height: calculatedWidth, width: calculatedWidth }}
+                  />
+                )}
+              </>
             </Pressable>
           ))}
       </View>
