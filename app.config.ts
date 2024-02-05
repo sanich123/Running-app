@@ -67,14 +67,6 @@ export default {
       'expo-font',
       'expo-secure-store',
       [
-        'expo-build-properties',
-        {
-          android: {
-            useLegacyPackaging: true,
-          },
-        },
-      ],
-      [
         'expo-image-picker',
         {
           photosPermission: 'The app accesses your photos to let you share them with your friends.',
