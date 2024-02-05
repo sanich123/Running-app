@@ -117,6 +117,7 @@
     "react-native-view-shot": "3.8.0",
     "react-native-web": "~0.19.6",
     "react-redux": "^8.0.7",
+    "sharp-cli": "^2.1.0",
     "turf-linestring": "^1.0.2",
     "turf-point": "^2.0.1"
   },
