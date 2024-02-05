@@ -1,5 +1,5 @@
 import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
-import { Image as ExpoImage } from 'expo-image';
+// import { Image as ExpoImage } from 'expo-image';
 import { memo } from 'react';
 import { Image, Platform, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
@@ -12,20 +12,20 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
     <>
       {!error && profile && profile?.profilePhoto && (
         <>
-          {Platform.OS === 'web' ? (
+          {/* {Platform.OS === 'web' ? (
             <ExpoImage
               style={{ width: size, height: size, borderRadius: 70 }}
               source={{ uri: profile?.profilePhoto }}
             />
-          ) : (
-            <Image
-              width={size}
-              height={size}
-              style={{ borderRadius: 70 }}
-              source={{ uri: profile?.profilePhoto }}
-              testID={AvatarShowableTestIds.success}
-            />
-          )}
+          ) : ( */}
+          <Image
+            width={size}
+            height={size}
+            style={{ borderRadius: 70 }}
+            source={{ uri: profile?.profilePhoto }}
+            testID={AvatarShowableTestIds.success}
+          />
+          {/* )} */}
         </>
       )}
       {error && (

@@ -17,7 +17,6 @@ export default function Page() {
   if (Platform.OS !== 'web') {
     Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null);
   }
-
   useEffect(() => {
     const networkListener = NetInfo.addEventListener((networkState) => {
       dispatch(changeNetworkState(networkState));
