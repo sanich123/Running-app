@@ -33,7 +33,7 @@ export default memo(function CardMapImagesList({ photoUrls, id }: CardMapImagesL
             {Platform.OS === 'web' ? (
               <ExpoImage testID={item} style={{ width, height: 200 }} source={{ uri: item }} contentFit="cover" />
             ) : (
-              <Image width={width} height={200} source={{ uri: item }} />
+              <Image width={width} height={200} source={{ uri: item }} testID={item} />
             )}
           </Pressable>
         );
