@@ -1,8 +1,7 @@
 import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
 import { Image } from 'expo-image';
 import { memo } from 'react';
-import { Platform, StyleSheet } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import { StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
 
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
@@ -12,18 +11,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
   return (
     <>
       {!error && profile && profile?.profilePhoto && (
-        <>
-          {Platform.OS === 'web' ? (
-            <Image style={{ width: size, height: size, borderRadius: 70 }} source={{ uri: profile?.profilePhoto }} />
-          ) : (
-            <FastImage
-              testID={AvatarShowableTestIds.success}
-              source={{ uri: profile?.profilePhoto, priority: FastImage.priority.high }}
-              style={{ width: size, height: size, borderRadius: 70 }}
-              resizeMode={FastImage.resizeMode.cover}
-            />
-          )}
-        </>
+        <Image style={{ width: size, height: size, borderRadius: 70 }} source={{ uri: profile?.profilePhoto }} />
       )}
       {error && (
         <Avatar.Icon

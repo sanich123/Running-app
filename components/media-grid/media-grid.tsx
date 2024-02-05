@@ -4,8 +4,7 @@ import { getPhotosWithoutMaps } from '@U/get-photos-without-maps';
 import { ROUTES } from '@const/enums';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import { Pressable, ScrollView, useWindowDimensions, StyleSheet, View, Platform } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import { Pressable, ScrollView, useWindowDimensions, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 
 export default function MediaGrid() {
@@ -39,24 +38,11 @@ export default function MediaGrid() {
               key={`${url}+${index}`}
               style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
               onPress={() => push(`/${place}/${ROUTES.media}/${encodeURIComponent(url)}`)}>
-              <>
-                {Platform.OS === 'web' ? (
-                  <Image
-                    style={{ height: calculatedWidth, width: calculatedWidth }}
-                    source={{ uri: url }}
-                    contentFit="cover"
-                  />
-                ) : (
-                  <FastImage
-                    key={`${url}+${index}`}
-                    source={{
-                      uri: url,
-                      priority: FastImage.priority.high,
-                    }}
-                    style={{ height: calculatedWidth, width: calculatedWidth }}
-                  />
-                )}
-              </>
+              <Image
+                style={{ height: calculatedWidth, width: calculatedWidth }}
+                source={{ uri: url }}
+                contentFit="cover"
+              />
             </Pressable>
           ))}
       </View>
