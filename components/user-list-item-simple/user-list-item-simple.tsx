@@ -31,7 +31,11 @@ export default function UserListItemSimple({
         onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${user_id}`)}>
         <>
           {Platform.OS === 'web' ? (
-            <Image style={{ width: 35, height: 35, borderRadius: 70 }} source={{ uri: profilePhoto }} />
+            <Image
+              style={{ width: 35, height: 35, borderRadius: 70 }}
+              source={{ uri: profilePhoto }}
+              contentFit="cover"
+            />
           ) : (
             <FastImage
               source={{ uri: profilePhoto, priority: FastImage.priority.high }}

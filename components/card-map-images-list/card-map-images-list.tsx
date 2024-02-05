@@ -30,7 +30,7 @@ export default memo(function CardMapImagesList({ photoUrls, id }: CardMapImagesL
               }
             }}
             style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
-            <Image testID={item} style={{ width, height: 200 }} source={{ uri: item }} />
+            <Image testID={item} style={{ width, height: 200 }} source={{ uri: item }} contentFit="cover" />
           </Pressable>
         );
       }}
