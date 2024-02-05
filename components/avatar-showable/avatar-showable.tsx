@@ -11,7 +11,11 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
   return (
     <>
       {!error && profile && profile?.profilePhoto && (
-        <Image style={{ width: size, height: size, borderRadius: 70 }} source={{ uri: profile?.profilePhoto }} />
+        <Image
+          style={{ width: size, height: size, borderRadius: 70 }}
+          source={{ uri: profile?.profilePhoto }}
+          testID={AvatarShowableTestIds.success}
+        />
       )}
       {error && (
         <Avatar.Icon
