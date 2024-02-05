@@ -41,7 +41,11 @@ export default function MediaGrid() {
               onPress={() => push(`/${place}/${ROUTES.media}/${encodeURIComponent(url)}`)}>
               <>
                 {Platform.OS === 'web' ? (
-                  <Image style={{ height: calculatedWidth, width: calculatedWidth }} source={{ uri: url }} />
+                  <Image
+                    style={{ height: calculatedWidth, width: calculatedWidth }}
+                    source={{ uri: url }}
+                    contentFit="cover"
+                  />
                 ) : (
                   <FastImage
                     key={`${url}+${index}`}
