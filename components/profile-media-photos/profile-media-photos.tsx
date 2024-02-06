@@ -3,9 +3,10 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { getPhotosWithoutMaps } from '@U/get-photos-without-maps';
 import { ROUTES } from '@const/enums';
+import { Image as ExpoImage } from 'expo-image';
 import { usePathname, useRouter } from 'expo-router';
 import { Fragment } from 'react';
-import { Image, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Image, Platform, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
 import { PROFILE_MEDIA } from './const';
@@ -41,7 +42,14 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                   return (
                     <Fragment key={`${url}+${index}`}>
                       <View style={{ position: 'relative', opacity: 0.2, backgroundColor: 'grey' }}>
-                        <Image source={{ uri: url }} height={width / 4} width={width / 4} />
+                        {Platform.OS === 'web' ? (
+                          <ExpoImage
+                            style={{ width: width / 4, height: width / 4, borderRadius: 70 }}
+                            source={{ uri: url }}
+                          />
+                        ) : (
+                          <Image source={{ uri: url }} height={width / 4} width={width / 4} />
+                        )}
                       </View>
                       <Text variant="titleMedium" style={{ position: 'absolute', top: '35%', right: 12, zIndex: 10 }}>
                         {PROFILE_MEDIA[language].label}

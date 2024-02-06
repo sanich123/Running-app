@@ -4,7 +4,7 @@ export default {
   expo: {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
-    version: '1.1.11',
+    version: '2.0.0',
     orientation: 'portrait',
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
     scheme: 'myapp',
@@ -27,11 +27,11 @@ export default {
         UIBackgroundModes: ['location', 'fetch', 'remote-notification'],
       },
       supportsTablet: true,
-      runtimeVersion: '1.1.11(16)',
+      runtimeVersion: '2.0.0(17)',
       bundleIdentifier: IS_DEV ? 'com.myapp.dev' : 'com.myapp',
     },
     android: {
-      versionCode: 16,
+      versionCode: 17,
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#333333',
@@ -43,7 +43,7 @@ export default {
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
       ],
-      runtimeVersion: '1.1.11(16)',
+      runtimeVersion: '2.0.0(17)',
     },
     web: {
       bundler: 'metro',
@@ -66,6 +66,14 @@ export default {
       'expo-router',
       'expo-font',
       'expo-secure-store',
+      [
+        'expo-build-properties',
+        {
+          android: {
+            useLegacyPackaging: true,
+          },
+        },
+      ],
       [
         'expo-image-picker',
         {

@@ -13,9 +13,19 @@ jest.mock('expo-location', () => ({
   requestForegroundPermissionsAsync: () => ({ granted: true }),
   requestBackgroundPermissionsAsync: () => ({ granted: true }),
 }));
+
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
   usePathname: () => 'somePathname',
+}));
+
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
+    },
+  },
 }));
 
 describe('Home index', () => {

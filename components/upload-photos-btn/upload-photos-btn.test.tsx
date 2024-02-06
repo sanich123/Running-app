@@ -18,7 +18,14 @@ jest.mock('react-native-compressor', () => ({
     compress: 'someCompressedString',
   }),
 }));
-
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
+    },
+  },
+}));
 describe('Upload photos btn', () => {
   it('should correctly renders in english', () => {
     const setIsDisabled = jest.fn();
