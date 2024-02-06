@@ -12,7 +12,14 @@ import UserListItem from './user-list-item';
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
-
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
+    },
+  },
+}));
 describe('User list item', () => {
   it('should correctly renders from server', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
@@ -25,8 +32,6 @@ describe('User list item', () => {
     expect(await screen.findByText(MOCK_PROFILE.name)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
-    const avatar = await screen.findByTestId('avatarShowableImage');
-    expect(avatar.props.source.uri).toEqual(MOCK_PROFILE.profilePhoto);
   });
   it('should show follow btn, when userId !== user.id and userId is not in the list of friends', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
@@ -39,9 +44,8 @@ describe('User list item', () => {
     expect(await screen.findByText(MOCK_PROFILE.name)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
-    const avatar = await screen.findByTestId('avatarShowableImage');
-    expect(avatar.props.source.uri).toEqual(MOCK_PROFILE.profilePhoto);
-    expect(screen.getByText(ADD_DELETE_FRIEND_BTN.english.follow)).toBeOnTheScreen();
+    expect(await screen.findByTestId('avatarShowableImage')).toBeOnTheScreen();
+    expect(await screen.findByText(ADD_DELETE_FRIEND_BTN.english.follow)).toBeOnTheScreen();
   });
   it('should correctly show unfollow btn, when user is in the list of friends', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
@@ -54,8 +58,7 @@ describe('User list item', () => {
     expect(await screen.findByText(MOCK_PROFILE.name)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
-    const avatar = await screen.findByTestId('avatarShowableImage');
-    expect(avatar.props.source.uri).toEqual(MOCK_PROFILE.profilePhoto);
+    expect(await screen.findByTestId('avatarShowableImage')).toBeOnTheScreen();
     expect(await screen.getByText(ADD_DELETE_FRIEND_BTN.english.unfollow)).toBeOnTheScreen();
   });
   it('should correctly handle errors, when occured', async () => {

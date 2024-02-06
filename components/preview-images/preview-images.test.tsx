@@ -9,7 +9,14 @@ jest.mock('react-native-compressor', () => ({
     compress: jest.fn(),
   }),
 }));
-
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
+    },
+  },
+}));
 describe('Preview images', () => {
   it('should correctly renders image', () => {
     const setImages = jest.fn();

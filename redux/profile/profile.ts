@@ -36,6 +36,9 @@ export const profile = createSlice({
     resetSettings: (state) => {
       state.settings = PROFILE_SETTINGS_INITIAL_STATE;
     },
+    setisNeedToPrefetchActivities: (state) => {
+      state.isNeedToPrefetchActivities = !state.isNeedToPrefetchActivities;
+    },
   },
 });
 
@@ -50,6 +53,7 @@ export const {
   saveBio,
   saveGender,
   resetSettings,
+  setisNeedToPrefetchActivities,
 } = profile.actions;
 
 export default profile.reducer;

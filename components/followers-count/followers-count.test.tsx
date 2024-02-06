@@ -1,6 +1,4 @@
-import * as auth from '@A/context/auth-context';
 import { MOCK_FOLLOWERS } from '@T/mocks/mock-followers';
-import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
@@ -13,14 +11,16 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
 
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
+    },
+  },
+}));
 describe('Followers count', () => {
   it('should correctly renders', async () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someUserId',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
     renderWithProviders(<FollowersCount />, { store: mockStore });
     expect(await screen.findByText('Followers')).toBeOnTheScreen();
     expect(await screen.findByText(`${MOCK_FOLLOWERS.length}`)).toBeOnTheScreen();

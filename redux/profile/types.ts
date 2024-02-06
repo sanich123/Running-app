@@ -16,5 +16,6 @@ export type ProfileSettings = {
 export type ProfileSlice = {
   privateInfo: ProfilePrivateInfo;
   isDisabledWhileSendingProfile: boolean;
+  isNeedToPrefetchActivities: boolean;
   settings: ProfileSettings;
 };

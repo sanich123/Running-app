@@ -26,12 +26,14 @@ export default function Feed() {
     refetch,
   } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(`${user?.id}`);
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
+  const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const prefetchUsers = runichApi.usePrefetch('getUsers');
+
   useEffect(() => {
-    if (!process.env.IS_TESTING) {
+    if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
       prefetchUsers('');
     }
-  }, []);
+  }, [isNeedToPrefetchActivities]);
 
   return (
     <>

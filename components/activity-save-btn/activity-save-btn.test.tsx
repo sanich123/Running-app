@@ -14,9 +14,24 @@ import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import * as auth from '../../auth/context/auth-context';
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ replace: jest.fn() }),
 }));
 
+jest.mock('../../auth/context/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: 'someUserId',
+      app_metadata: {
+        someProp: 'some value',
+      },
+      user_metadata: {
+        someProp: 'some value',
+      },
+      aud: '',
+      created_at: '',
+    },
+  }),
+}));
 describe('Activity save btn', () => {
   it('should correctly renders in english', () => {
     renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
@@ -65,7 +80,6 @@ describe('Activity save btn', () => {
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
     expect(mockStore.getState().activity.isNeedToResetInputs).toEqual(true);
-    // expect(mockStore.getState().activity.additionalInfo.description).toEqual('');
     expect(mockStore.getState().activity.additionalInfo.title).toEqual('');
     expect(mockStore.getState().activity.additionalInfo.sport).toEqual(SPORTS_BTNS_VALUES.run);
     expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);

@@ -8,14 +8,15 @@ import NetInfo from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
 import { Redirect } from 'expo-router';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 
 export default function Page() {
   const { user } = useAuth();
   const { activityStatus } = useAppSelector(({ location }) => location);
   const dispatch = useAppDispatch();
-
-  Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null);
-
+  if (Platform.OS !== 'web') {
+    Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null);
+  }
   useEffect(() => {
     const networkListener = NetInfo.addEventListener((networkState) => {
       dispatch(changeNetworkState(networkState));

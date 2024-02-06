@@ -22,7 +22,7 @@ export const activity = createSlice({
       state.additionalInfo.isSwitchOn = action.payload;
     },
     addPhotoUrl: (state, action) => {
-      state.additionalInfo.photoUrls = [...state.additionalInfo.photoUrls, action.payload];
+      state.additionalInfo.photoUrls = [action.payload, ...state.additionalInfo.photoUrls];
     },
     deletePhotoUrl: (state, action) => {
       state.additionalInfo.photoUrls = state.additionalInfo.photoUrls.filter((url) => url !== action.payload);

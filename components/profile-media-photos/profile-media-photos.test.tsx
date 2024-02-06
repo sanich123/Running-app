@@ -9,6 +9,11 @@ import { screen } from '@testing-library/react-native';
 import { PROFILE_MEDIA } from './const';
 import ProfileMediaPhotos from './profile-media-photos';
 
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+  usePathname: () => 'somePathname',
+}));
+
 describe('Profile media photos', () => {
   it('should correctly renders data in english', async () => {
     renderWithProviders(<ProfileMediaPhotos userId="someUserId" />, { store: mockStore });

@@ -9,7 +9,9 @@ const { profile, activity, friend, comment, like, activityId, user, all, photos,
 export const runichApi = createApi({
   reducerPath: API_NAME,
   tagTypes: [Tags.activities, Tags.profile, Tags.comments, Tags.likes, Tags.friends, Tags.users],
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_URL }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://runich-backend-production.up.railway.app',
+  }),
   refetchOnReconnect: true,
   endpoints: (builder) => ({
     getUsers: builder.query({
@@ -41,7 +43,7 @@ export const runichApi = createApi({
       providesTags: [Tags.friends],
     }),
     getFollowersByUserId: builder.query({
-      query: (id: string) => `${friend}/${id}/${followers}`,
+      query: (id: string) => `/${friend}/${id}/${followers}`,
       providesTags: [Tags.friends],
     }),
     getCommentsByActivityId: builder.query({
@@ -107,7 +109,7 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.comments],
+      invalidatesTags: [Tags.comments, Tags.activities],
     }),
     sendOrDeleteLike: builder.mutation({
       query: (body: SendLike) => ({
@@ -116,7 +118,7 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.likes],
+      invalidatesTags: [Tags.likes, Tags.activities],
     }),
     sendOrDeleteLikeToComment: builder.mutation({
       query: ({ body, commentId }: SendCommentLike) => ({
