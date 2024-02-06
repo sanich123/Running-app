@@ -1,7 +1,7 @@
 import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
 import { Image as ExpoImage } from 'expo-image';
 import { memo } from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Image } from 'react-native';
 import { Avatar } from 'react-native-paper';
 
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
@@ -11,19 +11,22 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
   return (
     <>
       {!error && profile && profile?.profilePhoto && (
-        <ExpoImage
-          style={{ width: size, height: size, borderRadius: 70 }}
-          source={{ uri: profile?.profilePhoto }}
-          testID={AvatarShowableTestIds.success}
-        />
-
-        /* <Image
-            width={size}
-            height={size}
-            style={{ borderRadius: 70 }}
-            source={{ uri: profile?.profilePhoto }}
-            testID={AvatarShowableTestIds.success}
-          /> */
+        <>
+          {Platform.OS === 'web' ? (
+            <ExpoImage
+              style={{ width: size, height: size, borderRadius: 70 }}
+              source={{ uri: profile?.profilePhoto }}
+            />
+          ) : (
+            <Image
+              width={size}
+              height={size}
+              style={{ borderRadius: 70 }}
+              source={{ uri: profile?.profilePhoto }}
+              testID={AvatarShowableTestIds.success}
+            />
+          )}
+        </>
       )}
       {error && (
         <Avatar.Icon
