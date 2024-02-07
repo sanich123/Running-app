@@ -1,7 +1,7 @@
 import Entypo from '@expo/vector-icons/Entypo';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 // Keep the splash screen visible while we fetch resources
@@ -23,7 +23,7 @@ export default function SplashIcon() {
     prepare();
   }, []);
 
-  const onLayoutRootView = useCallback(async () => {
+  const onLayoutRootView = async () => {
     if (appIsReady) {
       // This tells the splash screen to hide immediately! If we call this after
       // `setAppIsReady`, then we may see a blank screen while the app is
@@ -32,7 +32,7 @@ export default function SplashIcon() {
       // performed layout.
       await SplashScreen.hideAsync();
     }
-  }, [appIsReady]);
+  };
 
   if (!appIsReady) {
     return null;
