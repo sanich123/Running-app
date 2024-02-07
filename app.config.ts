@@ -23,6 +23,9 @@ export default {
       entitlements: {
         'com.apple.developer.networking.wifi-info': true,
       },
+      config: {
+        usesNonExemptEncryption: false,
+      },
       infoPlist: {
         UIBackgroundModes: ['location', 'fetch', 'remote-notification'],
       },
@@ -65,7 +68,12 @@ export default {
       ],
       'expo-router',
       'expo-font',
-      'expo-secure-store',
+      [
+        'expo-secure-store',
+        {
+          faceIDPermission: 'Allow $(PRODUCT_NAME) to access your Face ID biometric data.',
+        },
+      ],
       [
         'expo-build-properties',
         {
