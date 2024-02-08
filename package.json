@@ -32,6 +32,10 @@
     "android": "expo run:android --variant debug",
     "android:preview": "expo run:android --variant release",
     "ios": "expo run:ios",
+    "web:export": "expo export -p web",
+    "web:serve:single": "npx serve dist --single",
+    "web:serve": "npx serve dist",
+    "web:deploy:netlify": "netlify deploy --dir dist",
     "migrate:bun": "npx synp --source-file yarn.lock && npm i --lockfile-version 3 --frozen-lockfile && bun pm migrate"
   },
   "jest": {
