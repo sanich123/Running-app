@@ -25,7 +25,7 @@ describe('Preview images', () => {
     });
     const image = screen.getByTestId('imagePreview-0');
     expect(image).toBeOnTheScreen();
-    expect(image.props.source.uri).toEqual('someUrl');
+    expect(image.props.source[0].uri).toEqual('someUrl');
   });
   it('should correctly delete and image', async () => {
     const setImages = jest.fn();

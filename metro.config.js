@@ -4,11 +4,7 @@ const { getDefaultConfig } = require('@expo/metro-config');
 const defaultConfig = getDefaultConfig(__dirname);
 defaultConfig.resolver.sourceExts.push('cjs');
 defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (
-    (platform === 'web' && moduleName === '@rnmapbox/maps') ||
-    (platform === 'android' && moduleName === 'expo-image') ||
-    (platform === 'ios' && moduleName === 'expo-image')
-  ) {
+  if (platform === 'web' && moduleName === '@rnmapbox/maps') {
     return {
       type: 'empty',
     };
