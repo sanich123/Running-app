@@ -148,7 +148,8 @@
       ".husky",
       "assets",
       "coverage",
-      ".yarn"
+      ".yarn",
+      "dist"
     ]
   },
   "prettier": {
