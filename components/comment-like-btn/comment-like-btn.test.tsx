@@ -6,14 +6,6 @@ import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 
-jest.mock('@A/supabase/supabase-init', () => ({
-  supabase: {
-    auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-    },
-  },
-}));
 describe('Comment like btn', () => {
   it('should correctly renders, when liked by you', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

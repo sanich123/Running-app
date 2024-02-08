@@ -9,14 +9,6 @@ import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 import { NUMBER_OF_LIKES } from '../number-of-likes/const';
 
-jest.mock('@A/supabase/supabase-init', () => ({
-  supabase: {
-    auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-    },
-  },
-}));
 describe('Comment likes length', () => {
   it('should correctly renders in english, when you and others gave likes', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

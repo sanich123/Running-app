@@ -23,7 +23,7 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
   useEffect(() => {
     setTimeout(() => {
       cameraRef.current?.fitBounds([minLng, minLat], [maxLng, maxLat], [20, 20], 1000);
-    }, 2000);
+    }, 1500);
   }, [locations]);
 
   return (

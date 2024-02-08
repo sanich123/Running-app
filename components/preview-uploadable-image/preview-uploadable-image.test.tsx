@@ -12,14 +12,6 @@ jest.mock('react-native-compressor', () => ({
   }),
 }));
 
-jest.mock('@A/supabase/supabase-init', () => ({
-  supabase: {
-    auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-    },
-  },
-}));
 describe('Preview uploadable image', () => {
   it('should correctly renders', () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

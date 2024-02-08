@@ -11,7 +11,7 @@ import { renderWithProviders } from '../../tests/utils/test-utils';
 
 jest.spyOn(Alert, 'alert');
 
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: jest.fn() }) }));
+jest.mock('expo-router', () => ({ useRouter: () => ({ replace: jest.fn() }) }));
 
 describe('Decline btn', () => {
   it('should correctly renders in english', () => {

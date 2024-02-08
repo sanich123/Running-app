@@ -42,10 +42,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                   return (
                     <Fragment key={`${url}+${index}`}>
                       <View style={{ position: 'relative', opacity: 0.2, backgroundColor: 'grey' }}>
-                        <Image
-                          style={{ width: width / 4, height: width / 4, borderRadius: 70 }}
-                          source={{ uri: url }}
-                        />
+                        <Image style={{ width: width / 4, height: width / 4 }} source={{ uri: url }} />
                       </View>
                       <Text variant="titleMedium" style={{ position: 'absolute', top: '35%', right: 12, zIndex: 10 }}>
                         {PROFILE_MEDIA[language].label}
@@ -57,7 +54,8 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                   <Image
                     key={`${url}+${index}`}
                     source={{ uri: url }}
-                    style={{ width: width / 4, height: width / 4, borderRadius: 70 }}
+                    style={{ width: width / 4, height: width / 4 }}
+                    contentFit="cover"
                   />
                 );
               })}

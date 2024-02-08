@@ -19,15 +19,6 @@ jest.mock('expo-router', () => ({
   usePathname: () => 'somePathname',
 }));
 
-jest.mock('@A/supabase/supabase-init', () => ({
-  supabase: {
-    auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-    },
-  },
-}));
-
 describe('Home index', () => {
   it('should correctly renders from server', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

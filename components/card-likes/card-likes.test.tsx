@@ -14,14 +14,7 @@ jest.mock('expo-router', () => ({
     push: jest.fn(),
   }),
 }));
-jest.mock('@A/supabase/supabase-init', () => ({
-  supabase: {
-    auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-    },
-  },
-}));
+
 describe('Card likes', () => {
   it('should correctly renders', async () => {
     jest.spyOn(router, 'usePathname').mockImplementation(() => 'some path');
