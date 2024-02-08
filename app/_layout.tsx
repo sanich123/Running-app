@@ -1,10 +1,10 @@
 import { AuthProvider } from '@A/context/auth-context';
-import SplashIcon from '@C/splash-screen/splash-screen';
+// import SplashIcon from '@C/splash-screen/splash-screen';
 import { persistor, store } from '@R/store';
 import { useGetFontsThemeSettings } from '@U/hooks/use-get-fonts-theme-settings';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Slot } from 'expo-router';
-import { AppRegistry } from 'react-native';
+import { AppRegistry, View } from 'react-native';
 import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { Provider } from 'react-redux';
@@ -20,7 +20,10 @@ export default function RootLayout() {
   return (
     <>
       {!loaded ? (
-        <SplashIcon />
+        //были неполадки со splash-screen на preview ios, временно заменен на просто лоадер
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" />
+        </View>
       ) : (
         <Provider store={store}>
           <PersistGate loading={<ActivityIndicator size="large" />} persistor={persistor}>

@@ -4,7 +4,8 @@ import { savePhotoUrl } from '@R/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendPhoto } from '@U/file-sending';
-import { Pressable, Image, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
+import { Pressable, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
 
 import { AvatarIconEditableProps, AvatarEditableTestIds } from './const';
