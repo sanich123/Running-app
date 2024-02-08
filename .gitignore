@@ -12,7 +12,8 @@ web-build/
 __tests__
 yarn.lock
 .env
-
+eas.json
+app.config.ts
 coverage
 .yarn
 android
