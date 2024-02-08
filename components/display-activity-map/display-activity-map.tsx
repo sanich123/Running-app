@@ -18,9 +18,12 @@ type DisplayActivityMapProps = {
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
   const modifiedLocationsForTurf = locations.map(({ coords: { longitude, latitude } }) => [latitude, longitude]);
+
+  const modifiedLocationsForMapboxGl = locations.map(({ coords: { longitude, latitude } }) => [longitude, latitude]);
   const line = lineString(modifiedLocationsForTurf);
   const [minLat, minLng, maxLat, maxLng] = bbox(line);
   const cameraRef = useRef<Camera>(null);
+
   useEffect(() => {
     setTimeout(() => {
       cameraRef.current?.fitBounds([minLng, minLat], [maxLng, maxLat], [20, 20], 1000);
@@ -30,7 +33,10 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
   return (
     <>
       {Platform.OS === 'web' ? (
-        <MapboxWeb />
+        <MapboxWeb
+          boundBox={[minLng, maxLat, maxLng, minLat]}
+          modifiedLocationsForTurf={modifiedLocationsForMapboxGl}
+        />
       ) : (
         <MapView style={[{ flex: 1 }]}>
           <Camera

@@ -7,6 +7,7 @@ import { STATUSES } from '@const/enums';
 import NetInfo from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
 import { Redirect } from 'expo-router';
+import mapboxgl from 'mapbox-gl';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 
@@ -14,6 +15,7 @@ export default function Page() {
   const { user } = useAuth();
   const { activityStatus } = useAppSelector(({ location }) => location);
   const dispatch = useAppDispatch();
+  mapboxgl.accessToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '';
   if (Platform.OS !== 'web') {
     Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null);
   }

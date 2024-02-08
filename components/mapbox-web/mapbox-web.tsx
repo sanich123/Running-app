@@ -1,25 +1,59 @@
 import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import { useState, useRef, useEffect } from 'react';
-
-export default function MapboxWeb() {
+import 'mapbox-gl/dist/mapbox-gl.css';
+export default function MapboxWeb({
+  boundBox,
+  modifiedLocationsForTurf,
+}: {
+  boundBox: [number, number, number, number];
+  modifiedLocationsForTurf: number[][];
+}) {
   const [, setMap] = useState<mapboxgl.Map>();
   const mapNode = useRef(null);
+
   useEffect(() => {
     const node = mapNode.current;
 
     if (typeof window === 'undefined' || node === null) return;
     const mapboxMap = new mapboxgl.Map({
       container: node,
-      accessToken: process.env.EXPO_PUBLIC_MAPBOX_TOKEN,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [-74.5, 40],
-      zoom: 9,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      bounds: boundBox,
+      boxZoom: true,
+      fitBoundsOptions: { padding: { top: 20, bottom: 20, left: 20, right: 20 } },
     });
     setMap(mapboxMap);
+    mapboxMap.on('load', () => {
+      mapboxMap.addSource('route', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: modifiedLocationsForTurf,
+          },
+        },
+      });
+      mapboxMap.addLayer({
+        id: 'route-line',
+        type: 'line',
+        source: 'route',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round',
+        },
+        paint: {
+          'line-color': 'orange',
+          'line-width': 6,
+        },
+      });
+    });
+
     return () => {
       mapboxMap.remove();
     };
   }, []);
-  return <div ref={mapNode} style={{ width: '100%', height: '100%' }} />;
+
+  return <div ref={mapNode} style={{ flex: 1 }} />;
 }
