@@ -5,7 +5,7 @@
     "start": "expo start",
     "start:clear": "expo start --clear",
     "start:prod": "expo start --no-dev --minify",
-    "test": "cross-env IS_TESTING=true jest",
+    "test": "cross-env IS_TESTING=true EXPO_PUBLIC_BASE_URL=https://runich-backend-production.up.railway.app jest",
     "test:coverage": "jest --coverage",
     "test:debug": "cross-env IS_TESTING=true jest --runInBand --detectOpenHandles --forceExit",
     "build:dev:android:cloud": "eas build --profile development --platform android",
