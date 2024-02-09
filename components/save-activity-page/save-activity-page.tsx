@@ -44,7 +44,7 @@ export default function SaveResult() {
           <EmotionBtns isDisabled={isDisabled} />
           <Checkbox isDisabled={isDisabled} />
           {isManualAdding && Platform.OS !== 'web' && <DateTimePicker isDisabled={isDisabled} />}
-          {isManualAdding && Platform.OS === 'web' && <DatePickerWeb />}
+          {isManualAdding && Platform.OS === 'web' && <DatePickerWeb isDisabled={isDisabled} />}
           {isManualAdding && <InputsDistanceTime isDisabled={isDisabled} />}
           <View style={styles.cameraUploadBtns}>
             {Platform.OS !== 'web' && <ShowCameraBtn isDisabled={isDisabled} />}
