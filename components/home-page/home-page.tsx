@@ -19,6 +19,7 @@ export default function Feed() {
   const { push } = useRouter();
   const dispatch = useAppDispatch();
   useGetPermissions();
+
   const {
     data: activities,
     error,

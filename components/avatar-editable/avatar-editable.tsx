@@ -1,10 +1,10 @@
 import { useAuth } from '@A/context/auth-context';
 import { AvatarShowableIcons } from '@C/avatar-showable/const';
+import { CustomImage } from '@C/custom-image/custom-image';
 import { savePhotoUrl } from '@R/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendPhoto } from '@U/file-sending';
-import { Image } from 'expo-image';
 import { Pressable, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
 
@@ -40,7 +40,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
       disabled={isDisabled || isDisabledWhileSendingProfile}
       style={({ pressed }) => ({ opacity: pressed || isDisabled || isDisabledWhileSendingProfile ? 0.5 : 1 })}>
       {settings?.profilePhoto ? (
-        <Image
+        <CustomImage
           testID={AvatarEditableTestIds.successImg}
           source={{ uri: settings?.profilePhoto }}
           style={styles.imgStyles}

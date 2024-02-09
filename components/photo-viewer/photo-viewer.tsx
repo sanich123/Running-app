@@ -1,4 +1,4 @@
-import { Image } from 'expo-image';
+import { CustomImage } from '@C/custom-image/custom-image';
 import { useLocalSearchParams } from 'expo-router';
 import { View, useWindowDimensions } from 'react-native';
 
@@ -8,7 +8,7 @@ export default function PhotoViewer() {
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Image
+      <CustomImage
         source={{ uri: decodeURIComponent(photoUrl.toString()) }}
         style={{ width, height: height - 50 }}
         contentFit="contain"
