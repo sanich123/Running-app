@@ -1,19 +1,22 @@
+import { LastKmSplit } from '@R/location/types';
 import mapboxgl from 'mapbox-gl';
 import { useState, useRef, useEffect } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
+
 export default function MapboxWeb({
   boundBox,
   modifiedLocationsForTurf,
+  kilometresSplit,
 }: {
   boundBox: [number, number, number, number];
   modifiedLocationsForTurf: number[][];
+  kilometresSplit: LastKmSplit[];
 }) {
   const [, setMap] = useState<mapboxgl.Map>();
   const mapNode = useRef(null);
 
   useEffect(() => {
     const node = mapNode.current;
-
     if (typeof window === 'undefined' || node === null) return;
     const mapboxMap = new mapboxgl.Map({
       container: node,
@@ -46,6 +49,17 @@ export default function MapboxWeb({
         paint: {
           'line-color': 'orange',
           'line-width': 6,
+        },
+      });
+      mapboxMap.addLayer({
+        id: 'route-points',
+        type: 'circle',
+        source: 'route',
+        paint: {
+          'circle-radius': 4,
+          'circle-stroke-width': 2,
+          'circle-color': 'red',
+          'circle-stroke-color': 'white',
         },
       });
     });

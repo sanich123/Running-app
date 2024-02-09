@@ -3,7 +3,7 @@ import { LastKmSplit } from '@R/location/types';
 import { MapView, Camera } from '@rnmapbox/maps';
 import bbox from '@turf/bbox';
 import { LocationObject } from 'expo-location';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { Platform } from 'react-native';
 //@ts-ignore
 import lineString from 'turf-linestring';
@@ -17,9 +17,14 @@ type DisplayActivityMapProps = {
 };
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
-  const modifiedLocationsForTurf = locations.map(({ coords: { longitude, latitude } }) => [latitude, longitude]);
-
-  const modifiedLocationsForMapboxGl = locations.map(({ coords: { longitude, latitude } }) => [longitude, latitude]);
+  const modifiedLocationsForTurf = useMemo(
+    () => locations.map(({ coords: { longitude, latitude } }) => [latitude, longitude]),
+    [locations],
+  );
+  const modifiedLocationsForMapboxGl = useMemo(
+    () => locations.map(({ coords: { longitude, latitude } }) => [longitude, latitude]),
+    [locations],
+  );
   const line = lineString(modifiedLocationsForTurf);
   const [minLat, minLng, maxLat, maxLng] = bbox(line);
   const cameraRef = useRef<Camera>(null);
@@ -34,6 +39,7 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
     <>
       {Platform.OS === 'web' ? (
         <MapboxWeb
+          kilometresSplit={kilometresSplit}
           boundBox={[minLng, maxLat, maxLng, minLat]}
           modifiedLocationsForTurf={modifiedLocationsForMapboxGl}
         />

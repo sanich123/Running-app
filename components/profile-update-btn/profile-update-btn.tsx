@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { Pressable } from 'react-native';
+import { Platform, Pressable } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
 import { UPDATE_BTN_ERROR_MSG, UPDATE_BTN } from './const';
@@ -31,7 +31,9 @@ export default function ProfileUpdateBtn() {
     if (error) {
       dispatch(setIsDisabledWhileSendingProfile(false));
       dispatch(runichApi.util.resetApiState());
-      showCrossPlatformToast(UPDATE_BTN_ERROR_MSG, ToastDuration.short);
+      if (Platform.OS !== 'web') {
+        showCrossPlatformToast(UPDATE_BTN_ERROR_MSG, ToastDuration.short);
+      }
     }
   }, [data, error]);
 

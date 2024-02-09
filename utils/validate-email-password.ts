@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import { ToastDuration, showCrossPlatformToast } from './custom-toast';
 import { emailMatcher, passwordMatcher } from '../constants/regexp';
 
@@ -13,10 +15,14 @@ export function emailPasswordHandler({ email, password, setEmailError, setPasswo
   const emailMatches = emailMatcher.test(email.trim());
   if (!emailMatches || !passwordMatches) {
     if (!emailMatches) {
-      showCrossPlatformToast('Your email does not match the required pattern', ToastDuration.long);
+      if (Platform.OS !== 'web') {
+        showCrossPlatformToast('Your email does not match the required pattern', ToastDuration.long);
+      }
       setEmailError(true);
     } else {
-      showCrossPlatformToast('Your password should match the pattern', ToastDuration.long);
+      if (Platform.OS !== 'web') {
+        showCrossPlatformToast('Your password should match the pattern', ToastDuration.long);
+      }
       setPasswordError(true);
     }
   }
