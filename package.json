@@ -36,6 +36,7 @@
     "web:serve:single": "npx serve dist --single",
     "web:serve": "npx serve dist",
     "web:deploy:netlify": "netlify deploy --dir dist",
+    "web:deploy:prod": "netlify deploy --prod",
     "migrate:bun": "npx synp --source-file yarn.lock && npm i --lockfile-version 3 --frozen-lockfile && bun pm migrate"
   },
   "jest": {
