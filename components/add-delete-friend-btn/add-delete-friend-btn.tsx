@@ -4,6 +4,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorExtracter } from '@U/error-handler';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { ADD_DELETE_FRIEND_BTN } from './const';
@@ -28,13 +29,19 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
   useEffect(() => {
     if (!process.env.IS_TESTING) {
       if (friendDeleted) {
-        showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].successUnfollowing, ToastDuration.short);
+        if (Platform.OS !== 'web') {
+          showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].successUnfollowing, ToastDuration.short);
+        }
       }
       if (friendAdded) {
-        showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].successFollowing, ToastDuration.short);
+        if (Platform.OS !== 'web') {
+          showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].successFollowing, ToastDuration.short);
+        }
       }
       if (friendDeletingError || friendAddingError) {
-        showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].errorMsg, ToastDuration.short);
+        if (Platform.OS !== 'web') {
+          showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].errorMsg, ToastDuration.short);
+        }
       }
     }
   }, [friendDeleted, friendAdded, friendDeletingError, friendAddingError]);

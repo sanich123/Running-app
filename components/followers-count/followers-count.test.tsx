@@ -11,14 +11,6 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
 
-jest.mock('@A/supabase/supabase-init', () => ({
-  supabase: {
-    auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-    },
-  },
-}));
 describe('Followers count', () => {
   it('should correctly renders', async () => {
     renderWithProviders(<FollowersCount />, { store: mockStore });

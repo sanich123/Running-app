@@ -12,14 +12,7 @@ import UserListItem from './user-list-item';
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
-jest.mock('@A/supabase/supabase-init', () => ({
-  supabase: {
-    auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-    },
-  },
-}));
+
 describe('User list item', () => {
   it('should correctly renders from server', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

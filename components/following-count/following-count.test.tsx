@@ -12,25 +12,10 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
 
-jest.mock('../../auth/context/auth-context', () => ({
-  useAuth: () => ({
-    user: {
-      id: 'someUserId',
-      app_metadata: {
-        someProp: 'some value',
-      },
-      user_metadata: {
-        someProp: 'some value',
-      },
-      aud: '',
-      created_at: '',
-    },
-  }),
-}));
 describe('Following count', () => {
   it('should correctly renders data in english', async () => {
     renderWithProviders(<FollowingCount />, { store: mockStore });
     expect(await screen.findByText(FOLLOWING_COUNT.english.followings)).toBeOnTheScreen();
-    // expect(await screen.findByText(`${MOCK_FRIENDS.length}`)).toBeOnTheScreen();
+    expect(await screen.findByText(`${MOCK_FRIENDS.length}`)).toBeOnTheScreen();
   });
 });

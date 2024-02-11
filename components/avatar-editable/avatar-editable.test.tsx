@@ -13,14 +13,6 @@ jest.mock('react-native-compressor', () => ({
   }),
 }));
 
-jest.mock('@A/supabase/supabase-init', () => ({
-  supabase: {
-    auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-    },
-  },
-}));
 describe('Avatar icon editable', () => {
   it('should correctly renders', () => {
     renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, { store: mockStore });

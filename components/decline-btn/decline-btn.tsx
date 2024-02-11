@@ -8,7 +8,7 @@ import { DECLINE_BTN } from './const';
 
 export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();
-  const { push } = useRouter();
+  const { replace } = useRouter();
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);
 
@@ -27,7 +27,7 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
                 dispatch(resetActivityInfo());
                 dispatch(resetFinishedActivity());
                 dispatch(resetManualData());
-                push('/home/');
+                replace('/');
               },
               style: 'cancel',
             },

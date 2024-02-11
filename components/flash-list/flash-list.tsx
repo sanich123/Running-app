@@ -23,7 +23,9 @@ export default function OptimizedList({
 
   useEffect(() => {
     if (isOldVersion) {
-      showCrossPlatformToast('You have an old version of the phone', ToastDuration.long);
+      if (Platform.OS !== 'web') {
+        showCrossPlatformToast('You have an old version of the phone', ToastDuration.long);
+      }
     }
   }, []);
 

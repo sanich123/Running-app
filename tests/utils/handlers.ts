@@ -22,7 +22,7 @@ import { likeToActivitySucces, postLikeSuccess } from './endpoints/like';
 import { getProfileFailure, getProfileSuccess, getProfileWithoutPhoto } from './endpoints/profile';
 import { addUser } from './endpoints/user';
 
-export const BASE_URL = 'https://runich-backend-production.up.railway.app';
+export const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 
 export const handlers = [
   rest.post(`${BASE_URL}/activity/someUserId`, postActivitySuccess),

@@ -1,5 +1,5 @@
+import { CustomImage } from '@C/custom-image/custom-image';
 import { useAppSelector } from '@R/typed-hooks';
-import { Image } from 'expo-image';
 import { useWindowDimensions } from 'react-native';
 
 type PreviewImageProps = {
@@ -12,7 +12,7 @@ export default function PreviewImage({ image, index, isDisabled }: PreviewImageP
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { width } = useWindowDimensions();
   return (
-    <Image
+    <CustomImage
       testID={`imagePreview-${index}`}
       source={{ uri: image }}
       style={[
