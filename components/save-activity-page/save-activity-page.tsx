@@ -1,6 +1,7 @@
 import CameraLauncher from '@C/camera/camera';
 import Checkbox from '@C/checkbox/checkbox';
 import DateTimePicker from '@C/date-picker/date-picker';
+import DatePickerWeb from '@C/date-picker-web/date-picker-web';
 import DeclineBtn from '@C/decline-btn/decline-btn';
 import EmotionBtns from '@C/emotion-btns/emotion-btns';
 import InputsDistanceTime from '@C/inputs-distance-time/inputs-distance-time';
@@ -42,10 +43,11 @@ export default function SaveResult() {
           <SportsBtns isDisabled={isDisabled} />
           <EmotionBtns isDisabled={isDisabled} />
           <Checkbox isDisabled={isDisabled} />
-          {isManualAdding && <DateTimePicker isDisabled={isDisabled} />}
+          {isManualAdding && Platform.OS !== 'web' && <DateTimePicker isDisabled={isDisabled} />}
+          {isManualAdding && Platform.OS === 'web' && <DatePickerWeb isDisabled={isDisabled} />}
           {isManualAdding && <InputsDistanceTime isDisabled={isDisabled} />}
           <View style={styles.cameraUploadBtns}>
-            <ShowCameraBtn isDisabled={isDisabled} />
+            {Platform.OS !== 'web' && <ShowCameraBtn isDisabled={isDisabled} />}
             <UploadPhotosBtn
               isDisabled={isDisabled}
               setIsDisabled={setIsDisabled}
@@ -58,7 +60,7 @@ export default function SaveResult() {
           <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
         </ScrollView>
       ) : (
-        <CameraLauncher />
+        <>{Platform.OS !== 'web' && <CameraLauncher />}</>
       )}
     </>
   );

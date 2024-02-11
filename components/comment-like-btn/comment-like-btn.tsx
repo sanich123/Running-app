@@ -4,6 +4,7 @@ import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import { MD3Colors } from 'react-native-paper';
 
 export default function CommentLikeBtn({ commentId }: { commentId: string }) {
@@ -18,7 +19,9 @@ export default function CommentLikeBtn({ commentId }: { commentId: string }) {
       console.log(data);
     }
     if (error) {
-      showCrossPlatformToast('Не удалось отправить лайк к комментарию', ToastDuration.short);
+      if (Platform.OS !== 'web') {
+        showCrossPlatformToast('Не удалось отправить лайк к комментарию', ToastDuration.short);
+      }
       console.log(error);
     }
   }, [data, error]);

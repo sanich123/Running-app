@@ -79,5 +79,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: 15,
   },
-  dateTimeWrapper: { display: 'flex', flexDirection: 'row' },
+  dateTimeWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
 });

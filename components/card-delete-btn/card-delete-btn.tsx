@@ -4,7 +4,7 @@ import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { errorHandler } from '@U/error-handler';
 import { useRouter } from 'expo-router';
 import { useContext, useEffect } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
 import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from './const';
@@ -12,8 +12,9 @@ import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from '
 export default function ActivityCardDeleteBtn({ activityId }: { activityId: string }) {
   const [deleteActivityById, { data, error }] = useDeleteActivityByIdMutation();
   const { isLoading, isDisabled, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
-  const router = useRouter();
+  const { back } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
+
   useEffect(() => {
     if (data) {
       console.log(data);
@@ -25,6 +26,13 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
     }
   }, [data, error]);
 
+  async function successHandler() {
+    setIsLoading(true);
+    setIsDisabled(true);
+    await deleteActivityById(activityId).unwrap();
+    back();
+  }
+
   return (
     <IconButton
       testID={CARD_DELETE_BTN_TEST_ID}
@@ -33,25 +41,24 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
       size={20}
       onPress={async () => {
         try {
-          Alert.alert(
-            CARD_DELETE_BTN[language].deleteActivity,
-            CARD_DELETE_BTN[language].question,
-            [
-              {
-                text: CARD_DELETE_BTN[language].accept,
-                onPress: async () => {
-                  setIsLoading(true);
-                  setIsDisabled(true);
-                  await deleteActivityById(activityId).unwrap();
-                  router.push('/');
+          if (Platform.OS === 'web') {
+            successHandler();
+          } else {
+            Alert.alert(
+              CARD_DELETE_BTN[language].deleteActivity,
+              CARD_DELETE_BTN[language].question,
+              [
+                {
+                  text: CARD_DELETE_BTN[language].accept,
+                  onPress: successHandler,
+                  style: 'cancel',
                 },
-                style: 'cancel',
+              ],
+              {
+                cancelable: true,
               },
-            ],
-            {
-              cancelable: true,
-            },
-          );
+            );
+          }
         } catch (error) {
           errorHandler(error);
           setIsLoading(false);

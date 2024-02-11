@@ -4,6 +4,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
@@ -17,12 +18,17 @@ export default function CommentInput({ activityId }: { activityId: string }) {
 
   useEffect(() => {
     if (commentResponse) {
-      showCrossPlatformToast('Successfully sent comment!', ToastDuration.short);
+      if (Platform.OS !== 'web') {
+        showCrossPlatformToast('Successfully sent comment!', ToastDuration.short);
+      }
+
       console.log(commentResponse);
       setComment('');
     }
     if (commentSendingError) {
-      showCrossPlatformToast('An error occured!', ToastDuration.short);
+      if (Platform.OS !== 'web') {
+        showCrossPlatformToast('An error occured!', ToastDuration.short);
+      }
       console.log(commentSendingError);
     }
   }, [commentSendingError, commentResponse]);

@@ -1,5 +1,5 @@
+import { CustomImage } from '@C/custom-image/custom-image';
 import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
-import { Image } from 'expo-image';
 import { memo } from 'react';
 import { StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
@@ -11,7 +11,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
   return (
     <>
       {!error && profile && profile?.profilePhoto && (
-        <Image
+        <CustomImage
           style={{ width: size, height: size, borderRadius: 70 }}
           source={{ uri: profile?.profilePhoto }}
           contentFit="cover"

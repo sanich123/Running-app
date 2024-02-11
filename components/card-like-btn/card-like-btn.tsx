@@ -6,6 +6,7 @@ import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { useContext, useEffect, memo } from 'react';
+import { Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
 import {
@@ -33,7 +34,9 @@ export default memo(function ActivityCardLikeBtn({ activityId, likes }: { activi
     }
     if (errorSendingLike) {
       console.log(errorSendingLike);
-      showCrossPlatformToast(CARD_LIKE_BTN[language].errorMsg, ToastDuration.short);
+      if (Platform.OS !== 'web') {
+        showCrossPlatformToast(CARD_LIKE_BTN[language].errorMsg, ToastDuration.short);
+      }
     }
   }, [data, errorSendingLike]);
 

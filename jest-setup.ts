@@ -8,7 +8,14 @@ require('@shopify/flash-list/jestSetup');
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 jest.mock('expo-font');
 jest.mock('expo-asset');
-
+jest.mock('@A/supabase/supabase-init', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
+    },
+  },
+}));
 global.fetch = fetch;
 global.Headers = Headers;
 global.Request = Request;

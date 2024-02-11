@@ -69,11 +69,11 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
               </View>
             </Pressable>
           </Card.Content>
-          {title && <CardTitle title={title} />}
+          {title ? <CardTitle title={title} /> : null}
           <CardMetrics distance={distance} duration={duration} />
         </Pressable>
-        {isShowDescription && <CardDesription description={description} />}
-        {photoUrls?.length > 0 && <CardMapImagesList photoUrls={photoUrls} id={id} />}
+        {isShowDescription ? <CardDesription description={description} /> : null}
+        {photoUrls?.length > 0 ? <CardMapImagesList photoUrls={photoUrls} id={id} /> : null}
         <View style={{ display: 'flex', flexDirection: 'row' }}>
           <CardLikes
             activityId={id}

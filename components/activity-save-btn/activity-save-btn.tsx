@@ -15,7 +15,7 @@ import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable } from 'react-native';
+import { Platform, Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
 
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
@@ -46,7 +46,9 @@ export default function ActivitySaveBtn() {
         console.log('success', data);
       }
       if (data?.message) {
-        showCrossPlatformToast(data?.message, ToastDuration.long);
+        if (Platform.OS !== 'web') {
+          showCrossPlatformToast(data?.message, ToastDuration.long);
+        }
       }
       dispatch(resetActivityInfo());
       dispatch(setIsNeedToResetInputs(true));
@@ -57,7 +59,9 @@ export default function ActivitySaveBtn() {
       dispatch(saveUnsendedActivity(activityToSend));
       dispatch(setIsHaveUnsyncedActivity(true));
       console.log('error', error, activityToSend);
-      showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsg, ToastDuration.long);
+      if (Platform.OS !== 'web') {
+        showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsg, ToastDuration.long);
+      }
       if ('status' in error) {
         if (error.status === 'FETCH_ERROR') {
           dispatch(resetActivityInfo());

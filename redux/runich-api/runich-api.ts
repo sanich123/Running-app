@@ -10,7 +10,7 @@ export const runichApi = createApi({
   reducerPath: API_NAME,
   tagTypes: [Tags.activities, Tags.profile, Tags.comments, Tags.likes, Tags.friends, Tags.users],
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://runich-backend-production.up.railway.app',
+    baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
   }),
   refetchOnReconnect: true,
   endpoints: (builder) => ({
