@@ -5,9 +5,16 @@ import PasswordInput from '@C/password-input/password-input';
 import usePasswordEmail from '@U/hooks/use-password-email';
 import { Stack } from 'expo-router';
 import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
+import { createSessionFromUrl } from '@A/supabase/storage/sign-in';
 
 export default function SignIn() {
+  if (Platform.OS === 'web') {
+    WebBrowser.maybeCompleteAuthSession(); 
+  }
+
   const {
     email,
     password,
@@ -23,6 +30,12 @@ export default function SignIn() {
     setIsDisabled,
   } = usePasswordEmail();
   const [isRegister, setIsRegister] = useState(true);
+  const url = Linking.useURL();
+
+  if (url) {
+    console.log(url)
+    createSessionFromUrl(url);
+  }
 
   return (
     <>
