@@ -36,7 +36,7 @@ export default function ConfirmationEmailPage() {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>{`Спасибо, Ваш Email подтвержден! Теперь можете залогиниться под этой электронной почтой, url: ${url}`}</Text>
+      <Text>Спасибо, Ваш Email подтвержден!</Text>
     </View>
   );
 }

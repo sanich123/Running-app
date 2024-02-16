@@ -9,7 +9,6 @@ import { Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
-import { Text } from 'react-native-paper';
 
 export default function SignIn() {
   if (Platform.OS === 'web') {
@@ -43,7 +42,6 @@ export default function SignIn() {
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
       <View style={signInStyles.container}>
-        <Text>{`${url}`}</Text>
         <EmailInput
           email={email}
           setEmail={setEmail}
