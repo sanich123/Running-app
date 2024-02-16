@@ -1,18 +1,19 @@
+import { createSessionFromUrl } from '@A/supabase/storage/sign-in';
 import EmailInput from '@C/email-input/email-input';
 import LoginRegisterBtn from '@C/login-register-btn/login-register-btn';
 import LoginRegisterNavigation from '@C/login-register-navigation/login-register-navigation';
 import PasswordInput from '@C/password-input/password-input';
 import usePasswordEmail from '@U/hooks/use-password-email';
-import { Stack } from 'expo-router';
-import { useState } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
-import { createSessionFromUrl } from '@A/supabase/storage/sign-in';
+import { Stack } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
+import { useEffect, useState } from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
+import { Text } from 'react-native-paper';
 
 export default function SignIn() {
   if (Platform.OS === 'web') {
-    WebBrowser.maybeCompleteAuthSession(); 
+    WebBrowser.maybeCompleteAuthSession();
   }
 
   const {
@@ -32,15 +33,17 @@ export default function SignIn() {
   const [isRegister, setIsRegister] = useState(true);
   const url = Linking.useURL();
 
-  if (url) {
-    console.log(url)
-    createSessionFromUrl(url);
-  }
+  useEffect(() => {
+    if (url) {
+      createSessionFromUrl(url);
+    }
+  }, [url]);
 
   return (
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
       <View style={signInStyles.container}>
+        <Text>{`${url}`}</Text>
         <EmailInput
           email={email}
           setEmail={setEmail}
