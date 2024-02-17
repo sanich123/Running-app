@@ -3,6 +3,7 @@ import { saveEmailPassword } from '@R/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { emailPasswordHandler } from '@U/validate-email-password';
+import { useRouter } from 'expo-router';
 import { Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 
@@ -21,7 +22,7 @@ export default function LoginRegisterBtn({
 }: LoginBtnProps) {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-
+  const { push } = useRouter();
   return (
     <Button
       icon={isRegister ? 'login' : 'account'}
@@ -37,8 +38,13 @@ export default function LoginRegisterBtn({
           if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
             if (isRegister) {
               const { error } = await supabase.auth.signUp({ email, password });
-              if (error) Alert.alert(error.message);
+              if (!error) {
+                push('/need-to-confirm-email');
+              } else {
+                Alert.alert(error.message);
+              }
             }
+          } else {
             const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
             if (error) Alert.alert(error.message);
           }
