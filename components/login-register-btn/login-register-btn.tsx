@@ -46,7 +46,7 @@ export default function LoginRegisterBtn({
             }
             const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
             if (error) Alert.alert(error.message);
-          } 
+          }
         } catch (e) {
           errorHandler(e);
         } finally {
