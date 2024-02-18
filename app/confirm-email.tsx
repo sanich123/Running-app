@@ -4,14 +4,11 @@ import * as Device from 'expo-device';
 import * as Linking from 'expo-linking';
 import { Stack, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { View, Text, Platform } from 'react-native';
 
 export default function ConfirmationEmailPage() {
   const { push } = useRouter();
-  const [errorCode, setErrorCode] = useState('');
-  const [redirectUrl, setRedirectUrl] = useState('');
-
   if (Platform.OS === 'web') {
     WebBrowser.maybeCompleteAuthSession();
   }
@@ -25,7 +22,6 @@ export default function ConfirmationEmailPage() {
       } else {
         const { params, errorCode } = QueryParams.getQueryParams(url);
         if (errorCode) {
-          setErrorCode(errorCode);
           throw new Error(errorCode);
         }
         const { access_token, refresh_token } = params;
@@ -33,7 +29,6 @@ export default function ConfirmationEmailPage() {
         const redirectUrl = Linking.createURL('com.supabase://sign-in', {
           queryParams: { access_token, refresh_token },
         });
-        setRedirectUrl(redirectUrl);
         Linking.openURL(redirectUrl);
       }
     }
@@ -43,10 +38,11 @@ export default function ConfirmationEmailPage() {
     <>
       <Stack.Screen options={{ title: 'confirm-email', headerShown: false }} />
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Спасибо, Ваш Email подтвержден!</Text>
-        <Text>{`errorCode: ${errorCode}`}</Text>
-        <Text>redirectUrl: </Text>
-        <Text>{redirectUrl}</Text>
+        <Text>Спасибо, Ваш Email подтвержден! Теперь можно залогиниться под вашей электронной почтой</Text>
+        {/* <Text>{redirect.length}</Text>
+        <Pressable onPress={() => Linking.openURL(redirect)}>
+          <Text>Открыть приложение с урл</Text>
+        </Pressable> */}
       </View>
     </>
   );

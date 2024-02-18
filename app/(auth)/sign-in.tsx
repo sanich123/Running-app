@@ -8,7 +8,7 @@ import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useState } from 'react';
-import { View, StyleSheet, Platform, Text } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 
 export default function SignIn() {
   if (Platform.OS === 'web') {
@@ -29,14 +29,11 @@ export default function SignIn() {
     setIsDisabled,
   } = usePasswordEmail();
   const [isRegister, setIsRegister] = useState(true);
+
   const url = Linking.useURL();
-  if (url) {
-    createSessionFromUrl(url);
-  }
 
   useEffect(() => {
     if (url) {
-      console.log(url);
       createSessionFromUrl(url);
     }
   }, [url]);
@@ -45,9 +42,6 @@ export default function SignIn() {
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
       <View style={signInStyles.container}>
-        <View>
-          <Text>{`url: ${url}`}</Text>
-        </View>
         <EmailInput
           email={email}
           setEmail={setEmail}
