@@ -10,8 +10,6 @@ import { View, Text, Platform } from 'react-native';
 export default function ConfirmationEmailPage() {
   const { push } = useRouter();
   const [errorCode, setErrorCode] = useState('');
-  const [accessToken, setAccessToken] = useState('');
-  const [refreshToken, setRefreshToken] = useState('');
   const [redirectUrl, setRedirectUrl] = useState('');
 
   if (Platform.OS === 'web') {
@@ -31,8 +29,6 @@ export default function ConfirmationEmailPage() {
           throw new Error(errorCode);
         }
         const { access_token, refresh_token } = params;
-        setAccessToken(access_token);
-        setRefreshToken(refresh_token);
         if (!access_token) return;
         const redirectUrl = Linking.createURL('com.supabase://sign-in', {
           queryParams: { access_token, refresh_token },
@@ -48,11 +44,9 @@ export default function ConfirmationEmailPage() {
       <Stack.Screen options={{ title: 'confirm-email', headerShown: false }} />
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Спасибо, Ваш Email подтвержден!</Text>
-        <Text>{url}</Text>
         <Text>{`errorCode: ${errorCode}`}</Text>
-        <Text>{`accessToken: ${accessToken}`}</Text>
-        <Text>{`refreshToken: ${refreshToken}`}</Text>
-        <Text>{`redirectUrl: ${redirectUrl}`}</Text>
+        <Text>redirectUrl: </Text>
+        <Text>{redirectUrl}</Text>
       </View>
     </>
   );
