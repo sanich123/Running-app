@@ -27,7 +27,12 @@ export default function TabLayout() {
           height: Platform.OS === 'android' ? 72 : 82,
           backgroundColor: colors.primary,
           borderTopWidth: 0,
-          display: pathname.includes(ROUTES.manualActivity) || pathname.includes(ROUTES.activity) ? 'none' : 'flex',
+          display:
+            pathname.includes(ROUTES.manualActivity) ||
+            pathname.includes(ROUTES.activity) ||
+            pathname.includes('change-password')
+              ? 'none'
+              : 'flex',
         },
       }}>
       <Tabs.Screen

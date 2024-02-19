@@ -5,8 +5,10 @@ import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { SignInPageStates, emailPasswordHandler } from '@U/validate-email-password';
 import { useRouter } from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
+import { Platform } from 'react-native';
 import { Button } from 'react-native-paper';
+//@ts-ignore
+import { useToast } from 'react-native-toast-notifications';
 
 import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN, RESET_BTN, LoginBtnIcons } from './const';
 
@@ -21,6 +23,7 @@ export default function LoginRegisterBtn({
   setEmailError,
   setPasswordError,
 }: LoginBtnProps) {
+  const toast = useToast();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
@@ -46,21 +49,37 @@ export default function LoginRegisterBtn({
               if (!error) {
                 push('/need-to-confirm-email');
               } else {
-                showCrossPlatformToast(error.message, ToastDuration.long);
+                if (Platform.OS === 'web') {
+                  toast.show(error.message);
+                } else {
+                  showCrossPlatformToast(error.message, ToastDuration.long);
+                }
               }
             } else if (isLogining) {
               const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
               if (error) {
-                showCrossPlatformToast(error.message, ToastDuration.long);
+                if (Platform.OS === 'web') {
+                  toast.show(error.message);
+                } else {
+                  showCrossPlatformToast(error.message, ToastDuration.long);
+                }
               }
             } else {
               const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-                redirectTo: 'http://runich-with-api.netlify.app/change-password',
+                redirectTo: 'http://runich-with-api.netlify.app/reset-password',
               });
               if (error) {
-                showCrossPlatformToast(error.message, ToastDuration.long);
+                if (Platform.OS === 'web') {
+                  toast.show(error.message);
+                } else {
+                  showCrossPlatformToast(error.message, ToastDuration.long);
+                }
               } else {
-                showCrossPlatformToast('Пройдите по ссылке в электронной почте', ToastDuration.long);
+                if (Platform.OS === 'web') {
+                  toast.show('Пройдите по ссылке в электронной почте');
+                } else {
+                  showCrossPlatformToast('Пройдите по ссылке в электронной почте', ToastDuration.long);
+                }
               }
             }
           }

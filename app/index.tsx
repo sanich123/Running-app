@@ -25,7 +25,7 @@ export default function Page() {
     });
     return () => networkListener();
   }, []);
-
+  console.log(pathname);
   if (!user) {
     return <Redirect href="/sign-in" />;
   } else if (user) {
@@ -33,7 +33,7 @@ export default function Page() {
       dispatch(setIsAppShuted(true));
       dispatch(setActivityStatus(STATUSES.paused));
       return <Redirect href="/(tabs)/activity/" />;
-    } 
-      return <Redirect href="/home/" />;
+    }
+    return <Redirect href="/home/" />;
   }
 }

@@ -32,6 +32,7 @@ export default function SignIn() {
 
   const [pageState, setPageState] = useState(SignInPageStates.register);
   const url = Linking.useURL();
+
   useEffect(() => {
     if (url) {
       createSessionFromUrl(url);
