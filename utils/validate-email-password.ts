@@ -28,3 +28,15 @@ export function emailPasswordHandler({ email, password, setEmailError, setPasswo
   }
   return emailMatches && passwordMatches;
 }
+
+export const enum SignInPageStates {
+  register = 'register',
+  login = 'login',
+  reset = 'reset',
+}
+
+export const signInMap = {
+  [SignInPageStates.register]: SignInPageStates.login,
+  [SignInPageStates.login]: SignInPageStates.reset,
+  [SignInPageStates.reset]: SignInPageStates.register,
+};

@@ -4,6 +4,7 @@ import LoginRegisterBtn from '@C/login-register-btn/login-register-btn';
 import LoginRegisterNavigation from '@C/login-register-navigation/login-register-navigation';
 import PasswordInput from '@C/password-input/password-input';
 import usePasswordEmail from '@U/hooks/use-password-email';
+import { SignInPageStates } from '@U/validate-email-password';
 import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
@@ -28,10 +29,9 @@ export default function SignIn() {
     setIsLoading,
     setIsDisabled,
   } = usePasswordEmail();
-  const [isRegister, setIsRegister] = useState(true);
 
+  const [pageState, setPageState] = useState(SignInPageStates.register);
   const url = Linking.useURL();
-
   useEffect(() => {
     if (url) {
       createSessionFromUrl(url);
@@ -49,15 +49,17 @@ export default function SignIn() {
           setEmailError={setEmailError}
           isDisabled={isDisabled}
         />
-        <PasswordInput
-          password={password}
-          setPassword={setPassword}
-          setPasswordError={setPasswordError}
-          passwordError={passwordError}
-          isDisabled={isDisabled}
-        />
+        {pageState !== SignInPageStates.reset ? (
+          <PasswordInput
+            password={password}
+            setPassword={setPassword}
+            setPasswordError={setPasswordError}
+            passwordError={passwordError}
+            isDisabled={isDisabled}
+          />
+        ) : null}
         <LoginRegisterBtn
-          isRegister={isRegister}
+          pageState={pageState}
           password={password}
           email={email}
           isDisabled={isDisabled}
@@ -67,7 +69,7 @@ export default function SignIn() {
           setEmailError={setEmailError}
           setPasswordError={setPasswordError}
         />
-        <LoginRegisterNavigation isRegister={isRegister} isDisabled={isDisabled} setIsRegister={setIsRegister} />
+        <LoginRegisterNavigation setPageState={setPageState} pageState={pageState} isDisabled={isDisabled} />
       </View>
     </>
   );

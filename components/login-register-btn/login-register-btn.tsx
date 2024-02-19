@@ -1,20 +1,21 @@
 import { supabase } from '@A/supabase/supabase-init';
 import { saveEmailPassword } from '@R/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
-import { emailPasswordHandler } from '@U/validate-email-password';
+import { SignInPageStates, emailPasswordHandler } from '@U/validate-email-password';
 import { useRouter } from 'expo-router';
-import { Alert } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { Button } from 'react-native-paper';
 
-import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN } from './const';
+import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN, RESET_BTN, LoginBtnIcons } from './const';
 
 export default function LoginRegisterBtn({
   email,
   password,
   isLoading,
   isDisabled,
-  isRegister,
+  pageState,
   setIsDisabled,
   setIsLoading,
   setEmailError,
@@ -23,9 +24,13 @@ export default function LoginRegisterBtn({
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
+  const isRegistering = pageState === SignInPageStates.register;
+  const isLogining = pageState === SignInPageStates.login;
+  const isResetting = pageState === SignInPageStates.reset;
+
   return (
     <Button
-      icon={isRegister ? 'login' : 'account'}
+      icon={LoginBtnIcons[pageState]}
       mode="outlined"
       accessibilityRole="button"
       loading={isLoading}
@@ -36,16 +41,26 @@ export default function LoginRegisterBtn({
         setIsDisabled(true);
         try {
           if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
-            if (isRegister) {
+            if (pageState === SignInPageStates.register) {
               const { error } = await supabase.auth.signUp({ email, password });
               if (!error) {
                 push('/need-to-confirm-email');
               } else {
-                Alert.alert(error.message);
+                showCrossPlatformToast(error.message, ToastDuration.long);
+              }
+            } else if (pageState === SignInPageStates.login) {
+              const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+              if (error) {
+                showCrossPlatformToast(error.message, ToastDuration.long);
+              }
+            } else {
+              const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+                redirectTo: 'http://runich-with-api.netlify.app/change-password',
+              });
+              if (!error) {
+                WebBrowser.openBrowserAsync('http://runich-with-api.netlify.app/change-password');
               }
             }
-            const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-            if (error) Alert.alert(error.message);
           }
         } catch (e) {
           errorHandler(e);
@@ -54,10 +69,12 @@ export default function LoginRegisterBtn({
           setIsDisabled(false);
         }
       }}>
-      {isRegister && !isLoading && REGISTER_BTN[language].register}
-      {isRegister && isLoading && REGISTER_BTN[language].registering}
-      {!isRegister && !isLoading && LOGIN_BTN[language].login}
-      {!isRegister && isLoading && LOGIN_BTN[language].logining}
+      {isRegistering && !isLoading && REGISTER_BTN[language].register}
+      {isRegistering && isLoading && REGISTER_BTN[language].registering}
+      {isLogining && !isLoading && LOGIN_BTN[language].login}
+      {isLogining && isLoading && LOGIN_BTN[language].logining}
+      {isResetting && !isLoading && RESET_BTN[language].login}
+      {isResetting && isLoading && RESET_BTN[language].logining}
     </Button>
   );
 }
