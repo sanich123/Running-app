@@ -2,13 +2,12 @@ import { createSessionFromUrl } from '@A/supabase/storage/sign-in';
 import * as QueryParams from 'expo-auth-session/build/QueryParams';
 import * as Device from 'expo-device';
 import * as Linking from 'expo-linking';
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from 'react';
 import { View, Text, Platform } from 'react-native';
 
 export default function ConfirmationEmailPage() {
-  const { push } = useRouter();
   if (Platform.OS === 'web') {
     WebBrowser.maybeCompleteAuthSession();
   }
@@ -18,7 +17,6 @@ export default function ConfirmationEmailPage() {
     if (url) {
       if (Device.deviceType === Device.DeviceType.DESKTOP) {
         createSessionFromUrl(url);
-        push('/');
       } else {
         const { params, errorCode } = QueryParams.getQueryParams(url);
         if (errorCode) {
@@ -39,10 +37,6 @@ export default function ConfirmationEmailPage() {
       <Stack.Screen options={{ title: 'confirm-email', headerShown: false }} />
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Спасибо, Ваш Email подтвержден! Теперь можно залогиниться под вашей электронной почтой</Text>
-        {/* <Text>{redirect.length}</Text>
-        <Pressable onPress={() => Linking.openURL(redirect)}>
-          <Text>Открыть приложение с урл</Text>
-        </Pressable> */}
       </View>
     </>
   );

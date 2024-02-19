@@ -3,13 +3,14 @@ import { PASSWORD_INPUT, PASSWORD_INPUT_LEFT_ICON, PASSWORD_INPUT_RIGHT_ICON } f
 import { useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { passwordMatcher } from '@const/regexp';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Button, HelperText, TextInput } from 'react-native-paper';
 import * as Linking from 'expo-linking';
 import * as Device from 'expo-device';
 import { useRouter } from 'expo-router';
 import { useToast } from 'react-native-toast-notifications';
+import { createSessionFromUrl } from '@A/supabase/storage/sign-in';
 
 export default function ChangePasswordPage() {
   const toast = useToast();
@@ -19,6 +20,7 @@ export default function ChangePasswordPage() {
   const { language } = useAppSelector(({ language }) => language);
   const [isDisabled, setIsDisabled] = useState(false);
   const { push } = useRouter();
+  const url = Linking.useURL();
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 }}>
@@ -58,24 +60,30 @@ export default function ChangePasswordPage() {
         onPress={async () => {
           try {
             if (!passwordError && password) {
-              setIsDisabled(true);
-              const { data, error } = await supabase.auth.updateUser({ password });
-              if (data.user) {
-                toast.show('Успешно, перенаправляем дальше в приложение');
-                if (Device.deviceType === Device.DeviceType.DESKTOP) {
-                  push('/');
-                  return;
-                } else {
-                  const redirectUrl = Linking.createURL('com.supabase://sign-in');
-                  Linking.openURL(redirectUrl);
-                }
+              if (url) {
+               const session = await createSessionFromUrl(url);
+               if (session) {
+                toast.show('Вроде авторизовались')
+                 setIsDisabled(true);
+                 const { data, error } = await supabase.auth.updateUser({ password });
+                 if (data.user) {
+                   toast.show('Успешно, перенаправляем дальше в приложение');
+                   if (Device.deviceType === Device.DeviceType.DESKTOP) {
+                     push('/');
+                     return;
+                   } else {
+                     const redirectUrl = Linking.createURL('com.supabase://sign-in');
+                     Linking.openURL(redirectUrl);
+                   }
+                 }
+                 if (error) {
+                   toast.show(error.message);
+                 }
+               } else {
+                 setPasswordError(true);
+               }
+               }
               }
-              if (error) {
-                toast.show(error.message);
-              }
-            } else {
-              setPasswordError(true);
-            }
           } catch (error) {
             errorHandler(error);
           } finally {
