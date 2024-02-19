@@ -7,9 +7,10 @@ import { Slot } from 'expo-router';
 import { AppRegistry, View } from 'react-native';
 import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { RootSiblingParent } from 'react-native-root-siblings';
+import { ToastProvider } from 'react-native-toast-notifications';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { ToastProvider } from 'react-native-toast-notifications';
+
 import expo from '../app.config';
 
 export default function RootLayout() {
