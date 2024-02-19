@@ -41,14 +41,14 @@ export default function LoginRegisterBtn({
         setIsDisabled(true);
         try {
           if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
-            if (pageState === SignInPageStates.register) {
+            if (isRegistering) {
               const { error } = await supabase.auth.signUp({ email, password });
               if (!error) {
                 push('/need-to-confirm-email');
               } else {
                 showCrossPlatformToast(error.message, ToastDuration.long);
               }
-            } else if (pageState === SignInPageStates.login) {
+            } else if (isLogining) {
               const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
               if (error) {
                 showCrossPlatformToast(error.message, ToastDuration.long);
@@ -57,8 +57,10 @@ export default function LoginRegisterBtn({
               const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
                 redirectTo: 'http://runich-with-api.netlify.app/change-password',
               });
-              if (!error) {
-                WebBrowser.openBrowserAsync('http://runich-with-api.netlify.app/change-password');
+              if (error) {
+                showCrossPlatformToast(error.message, ToastDuration.long);
+              } else {
+                showCrossPlatformToast('Пройдите по ссылке в электронной почте', ToastDuration.long);
               }
             }
           }

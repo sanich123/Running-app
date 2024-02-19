@@ -9,7 +9,7 @@ import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'r
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-
+import { ToastProvider } from 'react-native-toast-notifications';
 import expo from '../app.config';
 
 export default function RootLayout() {
@@ -30,9 +30,11 @@ export default function RootLayout() {
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
               <PaperProvider theme={paperTheme}>
                 <AuthProvider>
-                  <RootSiblingParent>
-                    <Slot />
-                  </RootSiblingParent>
+                  <ToastProvider>
+                    <RootSiblingParent>
+                      <Slot />
+                    </RootSiblingParent>
+                  </ToastProvider>
                 </AuthProvider>
               </PaperProvider>
             </ThemeProvider>

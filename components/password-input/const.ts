@@ -12,12 +12,12 @@ export const PASSWORD_INPUT = {
   [LANGUAGES.english]: {
     label: 'Password',
     placeholder: 'Type your password',
-    helperText: 'Password must contain one capital, one normal letter, one number, length up to 4',
+    helperText: 'Password must contain one capital, one normal letter, one number, length up to 6',
   },
   [LANGUAGES.russian]: {
     label: 'Пароль',
     placeholder: 'Введите ваш пароль',
-    helperText: 'Пароль должен состоять из одной заглавной, одной строчной буквы, одной цифры, не менее 4 символов',
+    helperText: 'Пароль должен состоять из одной заглавной, одной строчной буквы, одной цифры, не менее 6 символов',
   },
 } as const;
 
