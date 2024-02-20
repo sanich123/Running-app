@@ -9,7 +9,7 @@ import { Platform } from 'react-native';
 import { Button } from 'react-native-paper';
 //@ts-ignore
 import { useToast } from 'react-native-toast-notifications';
-
+import * as Device from 'expo-device';
 import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN, RESET_BTN, LoginBtnIcons } from './const';
 
 export default function LoginRegisterBtn({
@@ -66,7 +66,7 @@ export default function LoginRegisterBtn({
               }
             } else {
               const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-                redirectTo: 'http://runich-with-api.netlify.app/reset-password',
+                redirectTo: 'https://runich-with-api.netlify.app/reset-password',
               });
               if (error) {
                 if (Platform.OS === 'web') {
