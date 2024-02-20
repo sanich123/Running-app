@@ -9,7 +9,7 @@ import { Platform } from 'react-native';
 import { Button } from 'react-native-paper';
 //@ts-ignore
 import { useToast } from 'react-native-toast-notifications';
-import * as Device from 'expo-device';
+
 import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN, RESET_BTN, LoginBtnIcons } from './const';
 
 export default function LoginRegisterBtn({
