@@ -8,25 +8,36 @@ export type emailPasswordHandlerProps = {
   password: string;
   setEmailError: (arg: boolean) => void;
   setPasswordError: (arg: boolean) => void;
+  action: SignInPageStates,
 };
 
-export function emailPasswordHandler({ email, password, setEmailError, setPasswordError }: emailPasswordHandlerProps) {
+export function emailPasswordHandler({ email, password, setEmailError, setPasswordError, action }: emailPasswordHandlerProps) {
   const passwordMatches = passwordMatcher.test(password);
   const emailMatches = emailMatcher.test(email.trim());
-  if (!emailMatches || !passwordMatches) {
+  if (action !== SignInPageStates.reset) {
+    if (!emailMatches || !passwordMatches) {
+      if (!emailMatches) {
+        if (Platform.OS !== 'web') {
+          showCrossPlatformToast('Your email does not match the required pattern', ToastDuration.long);
+        }
+        setEmailError(true);
+      } else {
+        if (Platform.OS !== 'web') {
+          showCrossPlatformToast('Your password should match the pattern', ToastDuration.long);
+        }
+        setPasswordError(true);
+      }
+    }
+    return emailMatches && passwordMatches;
+  } else {
     if (!emailMatches) {
       if (Platform.OS !== 'web') {
         showCrossPlatformToast('Your email does not match the required pattern', ToastDuration.long);
       }
       setEmailError(true);
-    } else {
-      if (Platform.OS !== 'web') {
-        showCrossPlatformToast('Your password should match the pattern', ToastDuration.long);
-      }
-      setPasswordError(true);
     }
+    return emailMatches;
   }
-  return emailMatches && passwordMatches;
 }
 
 export const enum SignInPageStates {

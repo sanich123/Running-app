@@ -43,7 +43,7 @@ export default function LoginRegisterBtn({
         setIsLoading(true);
         setIsDisabled(true);
         try {
-          if (emailPasswordHandler({ email, password, setEmailError, setPasswordError })) {
+          if (emailPasswordHandler({ email, password, setEmailError, setPasswordError, action: pageState })) {
             if (isRegistering) {
               const { error } = await supabase.auth.signUp({ email, password });
               if (!error) {
