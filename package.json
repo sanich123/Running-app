@@ -1,6 +1,6 @@
 {
   "name": "running-app",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "scripts": {
     "start": "expo start",
     "start:clear": "expo start --clear",
