@@ -8,10 +8,16 @@ export type emailPasswordHandlerProps = {
   password: string;
   setEmailError: (arg: boolean) => void;
   setPasswordError: (arg: boolean) => void;
-  action: SignInPageStates,
+  action: SignInPageStates;
 };
 
-export function emailPasswordHandler({ email, password, setEmailError, setPasswordError, action }: emailPasswordHandlerProps) {
+export function emailPasswordHandler({
+  email,
+  password,
+  setEmailError,
+  setPasswordError,
+  action,
+}: emailPasswordHandlerProps) {
   const passwordMatches = passwordMatcher.test(password);
   const emailMatches = emailMatcher.test(email.trim());
   if (action !== SignInPageStates.reset) {
