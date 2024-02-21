@@ -3,8 +3,10 @@ import EmailInput from '@C/email-input/email-input';
 import LoginRegisterBtn from '@C/login-register-btn/login-register-btn';
 import LoginRegisterNavigation from '@C/login-register-navigation/login-register-navigation';
 import PasswordInput from '@C/password-input/password-input';
+import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import usePasswordEmail from '@U/hooks/use-password-email';
 import { SignInPageStates } from '@U/validate-email-password';
+import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
@@ -32,6 +34,16 @@ export default function SignIn() {
 
   const [pageState, setPageState] = useState(SignInPageStates.register);
   const url = Linking.useURL();
+  const configureGoogleSignIn = () => {
+    GoogleSignin.configure({
+      webClientId: '617323850499-oaorec6kohhna9p0dqlek590imnab6jq.apps.googleusercontent.com',
+      iosClientId: '617323850499-i286kru7q6bgi2dfl38c6keljvhaelad.apps.googleusercontent.com',
+    });
+  };
+
+  useEffect(() => {
+    configureGoogleSignIn();
+  }, []);
 
   useEffect(() => {
     if (url) {
@@ -43,6 +55,20 @@ export default function SignIn() {
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
       <View style={signInStyles.container}>
+        <GoogleSigninButton
+          size={GoogleSigninButton.Size.Standard}
+          color={GoogleSigninButton.Color.Dark}
+          onPress={async () => {
+            try {
+              await GoogleSignin.hasPlayServices();
+              const userInfo = await GoogleSignin.signIn();
+              console.log(userInfo);
+            } catch (error) {
+              console.log(error);
+              showCrossPlatformToast(JSON.stringify(error), ToastDuration.long);
+            }
+          }}
+        />
         <EmailInput
           email={email}
           setEmail={setEmail}
