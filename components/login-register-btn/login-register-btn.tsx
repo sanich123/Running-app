@@ -39,13 +39,13 @@ export default function LoginRegisterBtn({
       loading={isLoading}
       disabled={isDisabled}
       onPress={async () => {
-        dispatch(saveEmailPassword({ email, password }));
+        dispatch(saveEmailPassword({ email: email.trim(), password }));
         setIsLoading(true);
         setIsDisabled(true);
         try {
           if (emailPasswordHandler({ email, password, setEmailError, setPasswordError, action: pageState })) {
             if (isRegistering) {
-              const { error } = await supabase.auth.signUp({ email, password });
+              const { error } = await supabase.auth.signUp({ email: email.trim(), password });
               if (!error) {
                 push('/need-to-confirm-email');
               } else {
