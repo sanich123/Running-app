@@ -1,10 +1,13 @@
 import { supabase } from '@A/supabase/supabase-init';
+import { saveGoogleProfileInfo } from '@R/profile/profile';
+import { useAppDispatch } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import { useEffect } from 'react';
 import { Platform, View } from 'react-native';
 
 export default function GoogleSignBtn() {
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (Platform.OS !== 'web') {
       GoogleSignin.configure({
@@ -26,12 +29,17 @@ export default function GoogleSignBtn() {
           try {
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
+            dispatch(saveGoogleProfileInfo(userInfo.user));
             if (userInfo.idToken) {
-              const { data, error } = await supabase.auth.signInWithIdToken({
+              const { error } = await supabase.auth.signInWithIdToken({
                 provider: 'google',
                 token: userInfo.idToken,
               });
-              console.log(error, data);
+              if (error) {
+                showCrossPlatformToast(`error: ${error?.message}`, ToastDuration.long);
+              } else {
+                showCrossPlatformToast('Перенаправляем в приложение', ToastDuration.long);
+              }
             } else {
               showCrossPlatformToast('no ID token present!', ToastDuration.long);
               throw new Error('no ID token present!');
@@ -40,11 +48,11 @@ export default function GoogleSignBtn() {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
               showCrossPlatformToast('user has cacelled auth flow', ToastDuration.long);
             } else if (error.code === statusCodes.IN_PROGRESS) {
-              showCrossPlatformToast('process is executig', ToastDuration.long);
+              showCrossPlatformToast('process is executing', ToastDuration.long);
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-              showCrossPlatformToast('play services ist availale', ToastDuration.long);
+              showCrossPlatformToast('play services is not availale', ToastDuration.long);
             } else {
-              showCrossPlatformToast('uexpected error occured', ToastDuration.long);
+              showCrossPlatformToast('unexpected error occured', ToastDuration.long);
             }
           }
         }}
