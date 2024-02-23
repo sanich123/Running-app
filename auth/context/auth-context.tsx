@@ -1,5 +1,5 @@
 import { Session, User } from '@supabase/supabase-js';
-import { useRouter, useSegments } from 'expo-router';
+import { usePathname, useRouter, useSegments } from 'expo-router';
 import { useState, useEffect, createContext, PropsWithChildren, useContext } from 'react';
 
 import { supabase } from '../supabase/supabase-init';
@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [session, setSession] = useState<Session | null>(null);
   const router = useRouter();
   const segments = useSegments();
+  const pathname = usePathname();
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -46,7 +47,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     if (!user && inTabsGroup) {
       router.replace('/(auth)/sign-in');
     } else if (user && !inTabsGroup) {
-      router.replace('/');
+      if (pathname.includes('reset-password')) {
+        router.replace('/(tabs)/home/change-password');
+      } else {
+        router.replace('/');
+      }
     }
   }, [user, segments]);
 

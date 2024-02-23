@@ -19,8 +19,8 @@ export default function Profile() {
   const { user } = useAuth();
   const isMineActivity = friendId === user?.id;
   const { isLoading, isSuccess, isError, data: profile, error } = useGetUserProfileByIdQuery(`${user?.id}`);
-
   const prefetchUserActivities = runichApi.usePrefetch('getActivitiesByUserId');
+
   useEffect(() => {
     prefetchUserActivities(`${user?.id}`);
   }, []);

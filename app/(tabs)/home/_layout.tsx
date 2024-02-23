@@ -71,6 +71,7 @@ export default function HomeStack() {
         name={`${ROUTES.users}/${ROUTES.index}`}
         options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].users }}
       />
+      {/* <Stack.Screen name="change-password" options={{ title: 'change-password', headerShown: false }} /> */}
     </Stack>
   );
 }

@@ -1,4 +1,5 @@
 import { useAppSelector } from '@R/typed-hooks';
+import { SignInPageStates } from '@U/validate-email-password';
 import { useState } from 'react';
 
 export default function usePasswordEmail() {
@@ -9,6 +10,8 @@ export default function usePasswordEmail() {
   const [password, setPassword] = useState(savedPassword);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [pageState, setPageState] = useState(SignInPageStates.register);
+
   return {
     email,
     emailError,
@@ -16,6 +19,8 @@ export default function usePasswordEmail() {
     password,
     isLoading,
     isDisabled,
+    pageState,
+    setPageState,
     setEmail,
     setEmailError,
     setPasswordError,
