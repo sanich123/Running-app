@@ -1,4 +1,3 @@
-// import { createSessionFromUrl } from '@A/supabase/storage/sign-in';
 import { supabase } from '@A/supabase/supabase-init';
 import { PASSWORD_INPUT, PASSWORD_INPUT_LEFT_ICON, PASSWORD_INPUT_RIGHT_ICON } from '@C/password-input/const';
 import { useAppSelector } from '@R/typed-hooks';
@@ -21,7 +20,6 @@ export default function ChangePasswordPage() {
   const { language } = useAppSelector(({ language }) => language);
   const [isDisabled, setIsDisabled] = useState(false);
   const { push } = useRouter();
-  // const url = Linking.useURL();
 
   return (
     <>
@@ -63,10 +61,6 @@ export default function ChangePasswordPage() {
           onPress={async () => {
             try {
               if (!passwordError && password) {
-                // if (url) {
-                // const session = await createSessionFromUrl(url);
-                // if (session) {
-                //   toast.show('Вроде авторизовались');
                 setIsDisabled(true);
                 const { data, error } = await supabase.auth.updateUser({ password });
                 if (data.user) {
@@ -85,8 +79,6 @@ export default function ChangePasswordPage() {
               } else {
                 setPasswordError(true);
               }
-              // }
-              // }
             } catch (error) {
               errorHandler(error);
             } finally {
