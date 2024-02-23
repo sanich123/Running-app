@@ -35,11 +35,15 @@ export default function SignIn() {
 
   const [pageState, setPageState] = useState(SignInPageStates.register);
   const url = Linking.useURL();
+
   const configureGoogleSignIn = () => {
+    console.log(process.env.EXPO_PUBLIC_APP_VARIANT === 'development');
+    if (Platform.OS !== 'web') {
     GoogleSignin.configure({
       webClientId: '617323850499-oaorec6kohhna9p0dqlek590imnab6jq.apps.googleusercontent.com',
       iosClientId: '617323850499-i286kru7q6bgi2dfl38c6keljvhaelad.apps.googleusercontent.com',
     });
+    }
   };
 
   useEffect(() => {
@@ -56,36 +60,40 @@ export default function SignIn() {
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
       <View style={signInStyles.container}>
-        <GoogleSigninButton
-          size={GoogleSigninButton.Size.Standard}
-          color={GoogleSigninButton.Color.Dark}
-          onPress={async () => {
-            try {
-              await GoogleSignin.hasPlayServices();
-              const userInfo = await GoogleSignin.signIn();
-              if (userInfo.idToken) {
-                const { data, error } = await supabase.auth.signInWithIdToken({
-                  provider: 'google',
-                  token: userInfo.idToken,
-                });
-                console.log(error, data);
-              } else {
-                showCrossPlatformToast('no ID token present!', ToastDuration.long);
-                throw new Error('no ID token present!');
-              }
-            } catch (error: any) {
-              if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                showCrossPlatformToast('user has cacelled auth flow', ToastDuration.long);
-              } else if (error.code === statusCodes.IN_PROGRESS) {
-                showCrossPlatformToast('process is executig', ToastDuration.long);
-              } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                showCrossPlatformToast('play services ist availale', ToastDuration.long);
-              } else {
-                showCrossPlatformToast('uexpected error occured', ToastDuration.long);
-              }
-            }
-          }}
-        />
+        {Platform.OS !== 'web' ? (
+          <View style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <GoogleSigninButton
+              style={{width: '100%'}}
+              color={GoogleSigninButton.Color.Light}
+              onPress={async () => {
+                try {
+                  await GoogleSignin.hasPlayServices();
+                  const userInfo = await GoogleSignin.signIn();
+                  if (userInfo.idToken) {
+                    const { data, error } = await supabase.auth.signInWithIdToken({
+                      provider: 'google',
+                      token: userInfo.idToken,
+                    });
+                    console.log(error, data);
+                  } else {
+                    showCrossPlatformToast('no ID token present!', ToastDuration.long);
+                    throw new Error('no ID token present!');
+                  }
+                } catch (error: any) {
+                  if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                    showCrossPlatformToast('user has cacelled auth flow', ToastDuration.long);
+                  } else if (error.code === statusCodes.IN_PROGRESS) {
+                    showCrossPlatformToast('process is executig', ToastDuration.long);
+                  } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                    showCrossPlatformToast('play services ist availale', ToastDuration.long);
+                  } else {
+                    showCrossPlatformToast('uexpected error occured', ToastDuration.long);
+                  }
+                }
+              }}
+            />
+          </View>
+        ) : null}
         <EmailInput
           email={email}
           setEmail={setEmail}
