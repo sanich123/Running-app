@@ -1,4 +1,5 @@
 import { createSessionFromUrl } from '@A/supabase/storage/sign-in';
+import { supabase } from '@A/supabase/supabase-init';
 import EmailInput from '@C/email-input/email-input';
 import GoogleSignBtn from '@C/google-sign-in/google-sign-in';
 import LoginRegisterBtn from '@C/login-register-btn/login-register-btn';
@@ -11,6 +12,7 @@ import { Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
+import { Button } from 'react-native-paper';
 
 export default function SignIn() {
   if (Platform.OS === 'web') {
@@ -45,7 +47,15 @@ export default function SignIn() {
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
       <View style={signInStyles.container}>
-        {Platform.OS !== 'web' ? <GoogleSignBtn /> : null}
+        {Platform.OS !== 'web' ? <GoogleSignBtn /> : <Button onPress={async () => {
+        await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: 'https://runich-with-api.netlify.app/sign-in',
+          },
+        });
+
+        }}>Sign in with google</Button>}
         <EmailInput
           email={email}
           setEmail={setEmail}
