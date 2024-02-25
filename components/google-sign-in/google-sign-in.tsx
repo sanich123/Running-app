@@ -11,7 +11,6 @@ export default function GoogleSignBtn() {
   useEffect(() => {
     if (Platform.OS !== 'web') {
       GoogleSignin.configure({
-        webClientId: '617323850499-oaorec6kohhna9p0dqlek590imnab6jq.apps.googleusercontent.com',
         iosClientId:
           process.env.EXPO_PUBLIC_APP_VARIANT === 'development'
             ? '617323850499-ib9jp3gj3fbev205jbhcfe0ou9oairm2.apps.googleusercontent.com'
@@ -50,7 +49,7 @@ export default function GoogleSignBtn() {
             } else if (error.code === statusCodes.IN_PROGRESS) {
               showCrossPlatformToast('process is executing', ToastDuration.long);
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-              showCrossPlatformToast('play services is not availale', ToastDuration.long);
+              showCrossPlatformToast('play services is not available', ToastDuration.long);
             } else {
               showCrossPlatformToast('unexpected error occured', ToastDuration.long);
             }
