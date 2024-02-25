@@ -47,15 +47,21 @@ export default function SignIn() {
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
       <View style={signInStyles.container}>
-        {Platform.OS !== 'web' ? <GoogleSignBtn /> : <Button onPress={async () => {
-        await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: 'https://runich-with-api.netlify.app/sign-in',
-          },
-        });
-
-        }}>Sign in with google</Button>}
+        {Platform.OS !== 'web' ? (
+          <GoogleSignBtn />
+        ) : (
+          <Button
+            onPress={async () => {
+              await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                  redirectTo: 'https://runich-with-api.netlify.app/sign-in',
+                },
+              });
+            }}>
+            Sign in with google
+          </Button>
+        )}
         <EmailInput
           email={email}
           setEmail={setEmail}
