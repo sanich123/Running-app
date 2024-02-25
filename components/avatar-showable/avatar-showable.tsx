@@ -7,6 +7,7 @@ import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { memo, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
+
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
 export default memo(function AvatarShowable({ size, id }: { size: number; id: string }) {
@@ -35,7 +36,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
         }
       }
     }
-  }, [profile]);
+  }, [isSuccess]);
 
   async function sendingGooglePhotoToSupabase(body: ProfileSettings, id: string) {
     return await sendProfile({ body, id })

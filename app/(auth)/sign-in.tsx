@@ -1,6 +1,7 @@
 import { createSessionFromUrl } from '@A/supabase/storage/sign-in';
 import EmailInput from '@C/email-input/email-input';
 import GoogleSignBtn from '@C/google-sign-in/google-sign-in';
+import GoogleSignInWeb from '@C/google-sign-in-web/google-sign-in-web';
 import LoginRegisterBtn from '@C/login-register-btn/login-register-btn';
 import LoginRegisterNavigation from '@C/login-register-navigation/login-register-navigation';
 import PasswordInput from '@C/password-input/password-input';
@@ -45,7 +46,7 @@ export default function SignIn() {
     <>
       <Stack.Screen options={{ title: 'sign up', headerShown: false }} />
       <View style={signInStyles.container}>
-        {Platform.OS !== 'web' ? <GoogleSignBtn /> : null}
+        {Platform.OS !== 'web' ? <GoogleSignBtn /> : <GoogleSignInWeb />}
         <EmailInput
           email={email}
           setEmail={setEmail}
