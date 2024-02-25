@@ -11,6 +11,7 @@ export default function GoogleSignBtn() {
   useEffect(() => {
     if (Platform.OS !== 'web') {
       GoogleSignin.configure({
+        webClientId: '617323850499-oaorec6kohhna9p0dqlek590imnab6jq.apps.googleusercontent.com',
         iosClientId:
           process.env.EXPO_PUBLIC_APP_VARIANT === 'development'
             ? '617323850499-ib9jp3gj3fbev205jbhcfe0ou9oairm2.apps.googleusercontent.com'

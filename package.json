@@ -1,6 +1,6 @@
 {
   "name": "running-app",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "scripts": {
     "start": "expo start",
     "start:clear": "expo start --clear",
@@ -19,7 +19,7 @@
     "build:preview:ios:emulator:local": "eas build -p ios --profile preview --local",
     "build:preview:all:local": "bun run build:preview:android:local && bun run build:preview:ios:emulator:local",
     "build:inspect": "eas build:inspect -p android -s archive -o ../build --profile=preview",
-    "lint": "eslint . --fix",
+    "lint": "eslint app",
     "check:ts": "tsc",
     "deps:all": "yarn && yarn run deps:scan && yarn run deps:fix",
     "deps:fix": "npx expo install --fix",

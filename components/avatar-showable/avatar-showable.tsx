@@ -18,7 +18,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
   const [sendProfile] = useSendProfileInfoMutation();
 
   useEffect(() => {
-    if (isSuccess && !profile) {
+    if (isMineAvatar && isSuccess && !profile) {
       if (googleInfo.photo) {
         if (user?.id) {
           sendingGooglePhotoToSupabase(
@@ -36,7 +36,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
         }
       }
     }
-  }, [isSuccess]);
+  }, [isSuccess, isMineAvatar]);
 
   async function sendingGooglePhotoToSupabase(body: ProfileSettings, id: string) {
     return await sendProfile({ body, id })
