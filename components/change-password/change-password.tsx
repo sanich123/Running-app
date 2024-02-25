@@ -12,7 +12,7 @@ import { Button, HelperText, TextInput } from 'react-native-paper';
 //@ts-ignore
 import { useToast } from 'react-native-toast-notifications';
 
-export default function ChangePasswordPage() {
+export default function ChangePassword() {
   const toast = useToast();
   const [password, setPassword] = useState('');
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
