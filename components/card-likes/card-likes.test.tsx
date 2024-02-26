@@ -26,6 +26,7 @@ describe('Card likes', () => {
     }));
     renderWithProviders(
       <CardLikes
+        manualAddLike={undefined}
         activityId="617dddae-05b3-418a-9a8e-5d408a1b897a"
         likes={[
           {

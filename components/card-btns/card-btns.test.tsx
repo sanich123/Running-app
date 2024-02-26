@@ -33,6 +33,7 @@ describe('Card btns', () => {
   it('should correctly renders with deleteBtn', async () => {
     renderWithProviders(
       <CardBtns
+        setManualAddLike={jest.fn()}
         isShowDeleteBtn
         activityId="someActivityId"
         userId={MOCK_LIKE[0].authorId}
@@ -51,6 +52,7 @@ describe('Card btns', () => {
   it('should correctly renders likes icon, when userId === user.id, and without delete btn', async () => {
     renderWithProviders(
       <CardBtns
+        setManualAddLike={jest.fn()}
         isShowDeleteBtn
         activityId="someActivityId"
         userId="someUserId"

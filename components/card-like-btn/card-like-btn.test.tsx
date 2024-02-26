@@ -23,13 +23,17 @@ jest.mock('../../auth/context/auth-context', () => ({
 }));
 describe('Activity card like btn', () => {
   it('should correctly renders when activity was liked by you', async () => {
-    renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" likes={MOCK_LIKE} />, { store: mockStore });
+    renderWithProviders(
+      <ActivityCardLikeBtn setManualAddLike={jest.fn()} activityId="someActivityId" likes={MOCK_LIKE} />,
+      { store: mockStore },
+    );
     const likesBtn = await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED);
     expect(likesBtn).toBeOnTheScreen();
   });
   it('should correctly renders, when you didnt liked activity', async () => {
     renderWithProviders(
       <ActivityCardLikeBtn
+        setManualAddLike={jest.fn()}
         activityId="someActivityId"
         likes={[
           {
