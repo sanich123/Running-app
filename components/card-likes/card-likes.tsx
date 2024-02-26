@@ -38,7 +38,7 @@ export default memo(function CardLikes({
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const mockUserLike = {
     id: 'someId',
-    date: Date.now(),
+    date: new Date().toString(),
     activityId,
     authorId: `${user?.id}`,
   };
@@ -88,7 +88,7 @@ export default memo(function CardLikes({
               ))}
           </View>
         ) : null}
-        {likes?.length && size === CardLikesSize.small ? <NumberOfLikes likes={likes} /> : null}
+        {modifiedLikes?.length && size === CardLikesSize.small ? <NumberOfLikes likes={modifiedLikes} /> : null}
       </View>
     </Pressable>
   );
