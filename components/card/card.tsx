@@ -2,7 +2,7 @@ import { runichApi } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
-import { useRef, memo, useEffect } from 'react';
+import { useRef, memo, useEffect, useState } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 
@@ -41,6 +41,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
+  const [manualAddLike, setManualAddLike] = useState<string>();
 
   useEffect(() => {
     if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
@@ -76,6 +77,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
         {photoUrls?.length > 0 ? <CardMapImagesList photoUrls={photoUrls} id={id} /> : null}
         <View style={{ display: 'flex', flexDirection: 'row' }}>
           <CardLikes
+            manualAddLike={manualAddLike}
             activityId={id}
             likes={likes}
             size={pathname.includes(ROUTES.activity) ? CardLikesSize.big : CardLikesSize.small}
@@ -91,6 +93,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           cardRef={cardRef}
           fullViewRef={fullViewRef}
           isShowDeleteBtn={isShowDeleteBtn}
+          setManualAddLike={setManualAddLike}
         />
       </Card.Actions>
     </Card>

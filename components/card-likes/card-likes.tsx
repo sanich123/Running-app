@@ -1,3 +1,4 @@
+import { useAuth } from '@A/context/auth-context';
 import AvatarShowable from '@C/avatar-showable/avatar-showable';
 import { LikeType } from '@C/card/const ';
 import NumberOfLikes from '@C/number-of-likes/number-of-likes';
@@ -20,17 +21,37 @@ export default memo(function CardLikes({
   activityId,
   size,
   likes,
+  manualAddLike,
 }: {
   activityId: string;
   size: CardLikesSize;
   likes: LikeType[];
+  manualAddLike: string | undefined;
 }) {
+  console.log(manualAddLike);
+  const { user } = useAuth();
   const { push } = useRouter();
   const lastLikeInTheRow = size === CardLikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === CardLikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
   const moreThanNineLikes = size === CardLikesSize.big && likes?.length > 0 && likes?.length > MAX_IN_ROW;
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
+  const mockUserLike = {
+    id: 'someId',
+    date: Date.now(),
+    activityId,
+    authorId: `${user?.id}`,
+  };
+
+  let modifiedLikes;
+  if (!manualAddLike) {
+    modifiedLikes = likes;
+  } else if (manualAddLike === 'not-liked') {
+    modifiedLikes = likes.filter(({ authorId }) => authorId !== user?.id);
+  } else {
+    modifiedLikes = [mockUserLike, ...likes.filter(({ authorId }) => authorId !== user?.id)];
+  }
+
   return (
     <Pressable
       testID="pushToActivityLikes"
@@ -42,9 +63,9 @@ export default memo(function CardLikes({
           lessThanNineLikes && { width: likes?.length * SHIFT_RIGHT + 10 },
           moreThanNineLikes && { width: MAX_IN_ROW * SHIFT_RIGHT + 10 },
         ]}>
-        {likes?.length ? (
+        {modifiedLikes?.length ? (
           <View style={{ position: 'relative' }}>
-            {likes
+            {modifiedLikes
               .slice()
               .sort((a, b) => Number(new Date(b.date)) - Number(new Date(a.date)))
               ?.slice(0, lastLikeInTheRow)

@@ -1,64 +1,73 @@
 import { useAuth } from '@A/context/auth-context';
 import { LikeType } from '@C/card/const ';
 import { useSendOrDeleteLikeMutation } from '@R/runich-api/runich-api';
-import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
-import { errorHandler } from '@U/error-handler';
-import { useContext, useEffect, memo } from 'react';
+import { useContext, useEffect, memo, useState } from 'react';
 import { Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
+import { useToast } from 'react-native-toast-notifications';
 
 import {
-  CARD_LIKE_BTN,
   CARD_LIKE_BTN_TEST_ID_LIKED,
   CARD_LIKE_BTN_TEST_ID_NOT_LIKED,
   CARD_LIKE_BTN_ICON_LIKED,
   CARD_LIKE_BTN_ICON_NOT_LIKED,
 } from './const';
 
-export default memo(function ActivityCardLikeBtn({ activityId, likes }: { activityId: string; likes: LikeType[] }) {
+export default memo(function ActivityCardLikeBtn({
+  activityId,
+  likes,
+  setManualAddLike,
+}: {
+  activityId: string;
+  likes: LikeType[];
+  setManualAddLike: (arg: string) => void;
+}) {
+  const toast = useToast();
   const { user } = useAuth();
-  const [sendLike, { data, error: errorSendingLike }] = useSendOrDeleteLikeMutation();
-  const { language } = useAppSelector(({ language }) => language);
+  const [sendLike, { data, error }] = useSendOrDeleteLikeMutation();
   const isLikedByYou = likes?.length
     ? likes?.some(({ authorId }: { authorId: string }) => authorId === user?.id)
     : null;
-  const { isDisabled, isLoading, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
+  const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
+  const [btnIcon, setBtnIcon] = useState(isLikedByYou ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED);
 
   useEffect(() => {
     if (data) {
-      if (!process.env.IS_TESTING) {
-        console.log(data);
+      if (Platform.OS === 'web') {
+        toast.show('Action completed');
+      } else {
+        showCrossPlatformToast('Action completed', ToastDuration.short);
       }
     }
-    if (errorSendingLike) {
-      console.log(errorSendingLike);
-      if (Platform.OS !== 'web') {
-        showCrossPlatformToast(CARD_LIKE_BTN[language].errorMsg, ToastDuration.short);
+    if (error) {
+      setBtnIcon((btnIcon) =>
+        btnIcon === CARD_LIKE_BTN_ICON_LIKED ? CARD_LIKE_BTN_ICON_NOT_LIKED : CARD_LIKE_BTN_ICON_LIKED,
+      );
+      setManualAddLike(btnIcon === CARD_LIKE_BTN_ICON_LIKED ? 'not-liked' : 'liked');
+      if (Platform.OS === 'web') {
+        toast.show('An error while sending like');
+      } else {
+        showCrossPlatformToast('An error while sending like', ToastDuration.long);
       }
     }
-  }, [data, errorSendingLike]);
+  }, [data, error]);
 
   return (
     <>
       <IconButton
         testID={isLikedByYou ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
-        icon={isLikedByYou ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
+        icon={btnIcon}
         iconColor={MD3Colors.primary50}
         size={25}
         onPress={async () => {
-          setIsLoading(true);
-          setIsDisabled(true);
-          try {
-            if (user) {
-              await sendLike({ activityId, authorId: user?.id }).unwrap();
-            }
-          } catch (error) {
-            errorHandler(error);
-          } finally {
-            setIsLoading(false);
-            setIsDisabled(false);
+          if (user) {
+            setBtnIcon((btnIcon) =>
+              btnIcon === CARD_LIKE_BTN_ICON_LIKED ? CARD_LIKE_BTN_ICON_NOT_LIKED : CARD_LIKE_BTN_ICON_LIKED,
+            );
+            setManualAddLike(btnIcon === CARD_LIKE_BTN_ICON_LIKED ? 'not-liked' : 'liked');
+            await sendLike({ activityId, authorId: user?.id }).unwrap();
           }
         }}
         disabled={isLoading || isDisabled}
