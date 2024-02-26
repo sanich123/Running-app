@@ -7,6 +7,6 @@ import SignIn from './sign-in';
 describe('Sign in component', () => {
   it('should correctly renders', () => {
     renderWithProviders(<SignIn />, { store: mockStore });
-    screen.debug();
+    expect(screen.getByText(/already have an account?/i)).toBeDefined();
   });
 });

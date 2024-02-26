@@ -35,6 +35,7 @@ export default function SignIn() {
   } = usePasswordEmail();
 
   const url = Linking.useURL();
+
   useEffect(() => {
     if (url) {
       createSessionFromUrl(url);

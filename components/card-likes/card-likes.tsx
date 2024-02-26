@@ -28,7 +28,6 @@ export default memo(function CardLikes({
   likes: LikeType[];
   manualAddLike: string | undefined;
 }) {
-  console.log(manualAddLike);
   const { user } = useAuth();
   const { push } = useRouter();
   const lastLikeInTheRow = size === CardLikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;

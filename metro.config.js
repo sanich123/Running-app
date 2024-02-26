@@ -5,9 +5,11 @@ const defaultConfig = getDefaultConfig(__dirname);
 defaultConfig.resolver.sourceExts.push('cjs');
 defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
   if (
-    (platform === 'web' && moduleName === '@rnmapbox/maps') ||
-    (platform !== 'web' && moduleName === 'mapbox-gl') ||
-    (platform === 'web' && moduleName === '@react-native-google-signin/google-signin')
+    (platform === 'web' &&
+      (moduleName === '@rnmapbox/maps' ||
+        moduleName === '@react-native-google-signin/google-signin' ||
+        moduleName === 'react-native-pager-view')) ||
+    (platform !== 'web' && moduleName === 'mapbox-gl')
   ) {
     return {
       type: 'empty',
