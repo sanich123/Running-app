@@ -1,15 +1,20 @@
 import { useAuth } from '@A/context/auth-context';
 import { CustomImage } from '@C/custom-image/custom-image';
-import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
+import VideoViewer from '@C/video-viewer/video-viewer';
+import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { getPhotosWithoutMaps } from '@U/get-photos-without-maps';
 import { useLocalSearchParams } from 'expo-router';
 import { View, StyleSheet, Platform } from 'react-native';
 import PagerView from 'react-native-pager-view';
+import uuid from 'react-native-uuid';
 
 export default function PhotoViewer() {
   const { photoUrl } = useLocalSearchParams();
   const { user } = useAuth();
-  const { data: photos, isSuccess } = useGetAllActivityPhotosByUserIdQuery(`${user?.id}`);
+  const { data: activity } = useGetActivityByActivityIdQuery(`${photoUrl}`);
+  const { data: photos } = useGetAllActivityPhotosByUserIdQuery(`${user?.id}`);
+  const itemsToRender = uuid.validate(`${photoUrl}`) ? activity?.photoUrls : getPhotosWithoutMaps(photos);
+
   return (
     <View style={{ flex: 1 }}>
       {Platform.OS === 'web' ? (
@@ -19,15 +24,24 @@ export default function PhotoViewer() {
           contentFit="contain"
         />
       ) : (
-        <PagerView style={styles.viewPager} initialPage={+photoUrl} orientation="vertical">
-          {isSuccess &&
-            getPhotosWithoutMaps(photos)?.length > 0 &&
-            getPhotosWithoutMaps(photos).map((url, index) => (
-              <View style={styles.page} key={index}>
-                <CustomImage source={{ uri: url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
-              </View>
-            ))}
-        </PagerView>
+        <>
+          {itemsToRender?.length > 0 && (
+            <PagerView
+              style={styles.viewPager}
+              initialPage={uuid.validate(`${photoUrl}`) ? 0 : +photoUrl}
+              orientation="vertical">
+              {itemsToRender.map((url: string, index: number) => (
+                <View key={index}>
+                  {url.includes('mp4') ? (
+                    <VideoViewer url={url} />
+                  ) : (
+                    <CustomImage source={{ uri: url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                  )}
+                </View>
+              ))}
+            </PagerView>
+          )}
+        </>
       )}
     </View>
   );

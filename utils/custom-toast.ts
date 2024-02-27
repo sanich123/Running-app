@@ -6,6 +6,6 @@ export enum ToastDuration {
   short = 'short',
 }
 
-export function showCrossPlatformToast(message: string, duration: ToastDuration) {
+export function showCrossPlatformToast(message: string, duration: ToastDuration = ToastDuration.short) {
   Toast.show(message, { duration: duration === ToastDuration.long ? Toast.durations.LONG : Toast.durations.SHORT });
 }
