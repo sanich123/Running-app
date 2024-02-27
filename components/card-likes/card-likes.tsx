@@ -1,7 +1,7 @@
-import { useAuth } from '@A/context/auth-context';
 import AvatarShowable from '@C/avatar-showable/avatar-showable';
 import { LikeType } from '@C/card/const ';
 import NumberOfLikes from '@C/number-of-likes/number-of-likes';
+import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { Fragment, memo } from 'react';
@@ -17,39 +17,14 @@ export enum CardLikesSize {
   small = 'small',
 }
 
-export default memo(function CardLikes({
-  activityId,
-  size,
-  likes,
-  manualAddLike,
-}: {
-  activityId: string;
-  size: CardLikesSize;
-  likes: LikeType[];
-  manualAddLike: string | undefined;
-}) {
-  const { user } = useAuth();
+export default memo(function CardLikes({ activityId, size }: { activityId: string; size: CardLikesSize }) {
   const { push } = useRouter();
+  const { data: likes } = useGetLikesByActivityIdQuery(activityId);
   const lastLikeInTheRow = size === CardLikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === CardLikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
   const moreThanNineLikes = size === CardLikesSize.big && likes?.length > 0 && likes?.length > MAX_IN_ROW;
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
-  const mockUserLike = {
-    id: 'someId',
-    date: new Date().toString(),
-    activityId,
-    authorId: `${user?.id}`,
-  };
-
-  let modifiedLikes;
-  if (!manualAddLike) {
-    modifiedLikes = likes;
-  } else if (manualAddLike === 'not-liked') {
-    modifiedLikes = likes.filter(({ authorId }) => authorId !== user?.id);
-  } else {
-    modifiedLikes = [mockUserLike, ...likes.filter(({ authorId }) => authorId !== user?.id)];
-  }
 
   return (
     <Pressable
@@ -62,11 +37,11 @@ export default memo(function CardLikes({
           lessThanNineLikes && { width: likes?.length * SHIFT_RIGHT + 10 },
           moreThanNineLikes && { width: MAX_IN_ROW * SHIFT_RIGHT + 10 },
         ]}>
-        {modifiedLikes?.length ? (
+        {likes?.length ? (
           <View style={{ position: 'relative' }}>
-            {modifiedLikes
+            {likes
               .slice()
-              .sort((a, b) => Number(new Date(b.date)) - Number(new Date(a.date)))
+              .sort((a: LikeType, b: LikeType) => Number(new Date(b.date)) - Number(new Date(a.date)))
               ?.slice(0, lastLikeInTheRow)
               .map(({ authorId, id }: { authorId: string; id: string }, index: number) => (
                 <Fragment key={`${id}/${index}/${authorId}`}>
@@ -87,7 +62,7 @@ export default memo(function CardLikes({
               ))}
           </View>
         ) : null}
-        {modifiedLikes?.length && size === CardLikesSize.small ? <NumberOfLikes likes={modifiedLikes} /> : null}
+        {likes?.length && size === CardLikesSize.small ? <NumberOfLikes likes={likes} /> : null}
       </View>
     </Pressable>
   );
