@@ -2,7 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import { resetPhotoUrls, addPhotoUrl } from '@R/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
-import { getAccessToGallery, compressAndSendPhoto } from '@U/file-sending';
+import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -33,9 +33,9 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
         try {
           const result = await getAccessToGallery();
           if (result && !result.canceled) {
-            const imgSrc = result.assets[0].uri;
+            const fileSrc = result.assets[0].uri;
             if (user) {
-              const url = await compressAndSendPhoto(imgSrc, user.id);
+              const url = await compressAndSendFile(fileSrc, user.id);
               if (url) {
                 setImages([...images, url]);
                 dispatch(addPhotoUrl(url));

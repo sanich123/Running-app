@@ -5,9 +5,9 @@ import { Alert } from 'react-native';
 import { errorHandler } from '../../../utils/error-handler';
 import { supabase } from '../supabase-init';
 
-export async function getBase64CodedImage(image: string) {
+export async function getBase64CodedImage(file: string) {
   try {
-    return await FileSystem.readAsStringAsync(image, { encoding: 'base64' });
+    return await FileSystem.readAsStringAsync(file, { encoding: 'base64' });
   } catch (error) {
     errorHandler(error);
   }
@@ -15,7 +15,7 @@ export async function getBase64CodedImage(image: string) {
 
 export async function uploadPhoto(userId: string, base64: string, extension: string) {
   const filePath = `${userId}/${new Date().getTime()}.${extension}`;
-  const contentType = 'image/jpg';
+  const contentType = extension === 'mp4' ? 'video/mp4' : 'image/jpg';
   try {
     const { error, data: uploadedPhoto } = await supabase.storage
       .from('files')

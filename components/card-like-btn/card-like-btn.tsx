@@ -1,9 +1,8 @@
 import { useAuth } from '@A/context/auth-context';
-import { LikeType } from '@C/card/const ';
-import { useSendOrDeleteLikeMutation } from '@R/runich-api/runich-api';
+import { useGetLikesByActivityIdQuery, useSendOrDeleteLikeMutation } from '@R/runich-api/runich-api';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
-import { useContext, useEffect, memo, useState } from 'react';
+import { useContext, useEffect, memo } from 'react';
 import { Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
@@ -15,23 +14,15 @@ import {
   CARD_LIKE_BTN_ICON_NOT_LIKED,
 } from './const';
 
-export default memo(function ActivityCardLikeBtn({
-  activityId,
-  likes,
-  setManualAddLike,
-}: {
-  activityId: string;
-  likes: LikeType[];
-  setManualAddLike: (arg: string) => void;
-}) {
+export default memo(function ActivityCardLikeBtn({ activityId }: { activityId: string }) {
   const toast = useToast();
   const { user } = useAuth();
+  const { data: likes } = useGetLikesByActivityIdQuery(activityId);
   const [sendLike, { data, error }] = useSendOrDeleteLikeMutation();
   const isLikedByYou = likes?.length
     ? likes?.some(({ authorId }: { authorId: string }) => authorId === user?.id)
     : null;
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
-  const [btnIcon, setBtnIcon] = useState(isLikedByYou ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED);
 
   useEffect(() => {
     if (data) {
@@ -42,10 +33,6 @@ export default memo(function ActivityCardLikeBtn({
       }
     }
     if (error) {
-      setBtnIcon((btnIcon) =>
-        btnIcon === CARD_LIKE_BTN_ICON_LIKED ? CARD_LIKE_BTN_ICON_NOT_LIKED : CARD_LIKE_BTN_ICON_LIKED,
-      );
-      setManualAddLike(btnIcon === CARD_LIKE_BTN_ICON_LIKED ? 'not-liked' : 'liked');
       if (Platform.OS === 'web') {
         toast.show('An error while sending like');
       } else {
@@ -58,15 +45,11 @@ export default memo(function ActivityCardLikeBtn({
     <>
       <IconButton
         testID={isLikedByYou ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
-        icon={btnIcon}
+        icon={isLikedByYou ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
         iconColor={MD3Colors.primary50}
         size={25}
         onPress={async () => {
           if (user) {
-            setBtnIcon((btnIcon) =>
-              btnIcon === CARD_LIKE_BTN_ICON_LIKED ? CARD_LIKE_BTN_ICON_NOT_LIKED : CARD_LIKE_BTN_ICON_LIKED,
-            );
-            setManualAddLike(btnIcon === CARD_LIKE_BTN_ICON_LIKED ? 'not-liked' : 'liked');
             await sendLike({ activityId, authorId: user?.id }).unwrap();
           }
         }}

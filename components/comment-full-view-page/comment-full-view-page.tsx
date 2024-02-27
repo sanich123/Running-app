@@ -36,13 +36,8 @@ export default function CommentFullViewPage() {
               <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
             </View>
             <View style={styles.columnsLayout}>
-              <ActivityCardLikeBtn activityId={activity?.id} likes={activity.likes} setManualAddLike={jest.fn()} />
-              <CardLikes
-                activityId={activity?.id}
-                size={CardLikesSize.big}
-                likes={activity.likes}
-                manualAddLike={undefined}
-              />
+              <ActivityCardLikeBtn activityId={activity?.id} />
+              <CardLikes activityId={activity?.id} size={CardLikesSize.big} />
             </View>
           </Card.Content>
           <Comments id={`${activityId}`} />

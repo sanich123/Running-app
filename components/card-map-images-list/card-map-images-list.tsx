@@ -23,9 +23,7 @@ export default memo(function CardMapImagesList({ photoUrls, id }: CardMapImagesL
             onPress={() => {
               if (item) {
                 push(
-                  item.includes('api.mapbox.com')
-                    ? `/${place}/${ROUTES.map}/${id}`
-                    : `/${place}/${ROUTES.media}/${encodeURIComponent(item)}`,
+                  item.includes('api.mapbox.com') ? `/${place}/${ROUTES.map}/${id}` : `/${place}/${ROUTES.media}/${id}`,
                 );
               }
             }}

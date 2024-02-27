@@ -11,6 +11,7 @@ export const runichApi = createApi({
   tagTypes: [Tags.activities, Tags.profile, Tags.comments, Tags.likes, Tags.friends, Tags.users],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
+    timeout: 10000,
   }),
   refetchOnReconnect: true,
   endpoints: (builder) => ({
@@ -118,7 +119,7 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.likes, Tags.activities],
+      invalidatesTags: [Tags.likes],
     }),
     sendOrDeleteLikeToComment: builder.mutation({
       query: ({ body, commentId }: SendCommentLike) => ({

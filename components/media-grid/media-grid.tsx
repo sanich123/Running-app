@@ -4,7 +4,7 @@ import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { getPhotosWithoutMaps } from '@U/get-photos-without-maps';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import { Pressable, ScrollView, useWindowDimensions, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, useWindowDimensions, StyleSheet, View, Platform } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 
 export default function MediaGrid() {
@@ -37,7 +37,9 @@ export default function MediaGrid() {
             <Pressable
               key={`${url}+${index}`}
               style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
-              onPress={() => push(`/${place}/${ROUTES.media}/${encodeURIComponent(url)}`)}>
+              onPress={() =>
+                push(`/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}`)
+              }>
               <CustomImage
                 style={{ height: calculatedWidth, width: calculatedWidth }}
                 source={{ uri: url }}

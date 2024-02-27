@@ -13,6 +13,7 @@ jest.mock('@A/supabase/supabase-init', () => ({
     auth: {
       signUp: jest.fn(),
       signInWithPassword: jest.fn(),
+      setSession: jest.fn(),
     },
   },
 }));
