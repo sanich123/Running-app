@@ -98,6 +98,7 @@
     "expo-system-ui": "~2.9.3",
     "expo-task-manager": "~11.7.2",
     "expo-updates": "~0.24.11",
+    "expo-video-thumbnails": "~7.9.0",
     "expo-web-browser": "~12.8.2",
     "mapbox-gl": "^1.13.2",
     "moment": "^2.29.4",

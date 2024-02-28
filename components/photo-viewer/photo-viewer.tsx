@@ -18,11 +18,17 @@ export default function PhotoViewer() {
   return (
     <View style={{ flex: 1 }}>
       {Platform.OS === 'web' ? (
-        <CustomImage
-          source={{ uri: decodeURIComponent(photoUrl.toString()) }}
-          style={{ width: '100%', height: '100%' }}
-          contentFit="contain"
-        />
+        <>
+          {decodeURIComponent(photoUrl.toString()).includes('mp4') ? (
+            <VideoViewer url={decodeURIComponent(photoUrl.toString())} />
+          ) : (
+            <CustomImage
+              source={{ uri: decodeURIComponent(photoUrl.toString()) }}
+              style={{ width: '100%', height: '100%' }}
+              contentFit="contain"
+            />
+          )}
+        </>
       ) : (
         <>
           {itemsToRender?.length > 0 && (
