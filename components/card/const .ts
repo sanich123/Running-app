@@ -21,7 +21,7 @@ export type ProfileType = {
   bio: string;
   birthday: Date | null;
   city: string;
-  createdAt: Date;
+  createdAt: string;
   email: string | null;
   gender: string;
   id: string;
@@ -30,7 +30,7 @@ export type ProfileType = {
   profilePhoto: string;
   sport: string | null;
   surname: string;
-  updatedAt: Date;
+  updatedAt: string;
   user_id: string;
   weight: string;
 };

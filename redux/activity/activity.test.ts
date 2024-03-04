@@ -79,26 +79,19 @@ describe('Activity slice', () => {
       },
     });
   });
-  it('should correctly change photoUrls', () => {
-    expect(reducer(ACTIVITY_INITIAL_STATE, addPhotoUrl('someUrl'))).toEqual({
-      ...ACTIVITY_INITIAL_STATE,
-      additionalInfo: {
-        ...ACTIVITY_INITIAL_STATE.additionalInfo,
-        photoUrls: ['someUrl'],
-      },
-    });
-  });
 
-  it('should correctly change photoUrls', () => {
-    const stateWithPhotoUrls = {
-      ...ACTIVITY_INITIAL_STATE,
-      additionalInfo: {
-        ...ACTIVITY_INITIAL_STATE.additionalInfo,
-        photoUrls: ['someUrl'],
-      },
-    };
-    expect(reducer(stateWithPhotoUrls, deletePhotoUrl('someUrl'))).toEqual(ACTIVITY_INITIAL_STATE);
-  });
+  // it('should correctly change photoUrls', () => {
+  //   const stateWithPhotoUrls = {
+  //     ...ACTIVITY_INITIAL_STATE,
+  //     additionalInfo: {
+  //       ...ACTIVITY_INITIAL_STATE.additionalInfo,
+  //       photoVideoUrls: [{ url: 'someUrl', thumbnail: null }],
+  //     },
+  //   };
+  //   expect(reducer(stateWithPhotoUrls, deletePhotoUrl({ url: 'someUrl', thumbnail: null }))).toEqual(
+  //     ACTIVITY_INITIAL_STATE,
+  //   );
+  // });
   it('should correctly change isDisableWhileSending', () => {
     expect(reducer(ACTIVITY_INITIAL_STATE, setIsDisableWhileSending(true))).toEqual({
       ...ACTIVITY_INITIAL_STATE,

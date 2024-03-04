@@ -11,7 +11,7 @@ jest.mock('expo-router', () => ({
 
 describe('Activity card map images', () => {
   it('should correctly renders', async () => {
-    renderWithProviders(<CardMapImagesList id="someId" photoUrls={['someUrl']} />, {
+    renderWithProviders(<CardMapImagesList id="someId" photoVideoUrls={[{ url: 'someUrl', thumbnail: null }]} />, {
       store: mockStore,
     });
     expect(await screen.findByTestId('someUrl')).toBeOnTheScreen();

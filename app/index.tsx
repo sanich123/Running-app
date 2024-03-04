@@ -5,9 +5,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { STATUSES } from '@const/enums';
 import NetInfo from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
-
 import { Redirect, usePathname } from 'expo-router';
-
 import mapboxgl from 'mapbox-gl';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';

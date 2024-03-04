@@ -95,7 +95,6 @@ export default function ActivitySaveBtn() {
                   ...{
                     ...additionalInfo,
                     mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
-                    photoVideoUrls: additionalInfo.photoVideoUrls,
                   },
                 },
             id: user.id,

@@ -1,1 +1,11 @@
-export const MOCK_PHOTOS = [{ photoUrls: ['someUrl1', 'someUrl2', 'someUrl3', 'someUrl4', 'someUrl5'] }];
+export const MOCK_PHOTOS = [
+  {
+    photoVideoUrls: [
+      { url: 'someUrl1', thumbnail: null },
+      { url: 'someUrl2', thumbnail: null },
+      { url: 'someUrl3', thumbnail: null },
+      { url: 'someUrl4', thumbnail: null },
+      { url: 'someUrl5', thumbnail: null },
+    ],
+  },
+];

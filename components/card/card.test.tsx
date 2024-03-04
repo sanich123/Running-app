@@ -39,7 +39,7 @@ describe('Activity card', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    const { description, title, date, sport, id, photoUrls, duration, distance } = MOCK_ACTIVITY;
+    const { description, title, date, sport, id, photoVideoUrls, profile, duration, distance } = MOCK_ACTIVITY;
     renderWithProviders(
       <ActivityCard
         isShowDeleteBtn
@@ -50,18 +50,19 @@ describe('Activity card', () => {
         sport={sport as SPORTS_BTNS_VALUES}
         id={id}
         userId="someUserId"
-        photoUrls={photoUrls}
+        photoVideoUrls={photoVideoUrls}
         duration={duration}
         distance={distance}
         fullViewRef={{ current: undefined }}
         likes={MOCK_LIKE}
         comments={MOCK_COMMENTS}
+        profile={profile}
       />,
       { store: mockStore },
     );
+    expect(screen.getByText('Искандер')).toBeOnTheScreen();
+    expect(screen.getByText('Ядгаров')).toBeOnTheScreen();
     expect(await screen.findByText(title)).toBeOnTheScreen();
-    expect(await screen.findByText('Искандер')).toBeOnTheScreen();
-    expect(await screen.findByText('Ядгаров')).toBeOnTheScreen();
     expect(await screen.findByText('Friday, November 3, 2023')).toBeOnTheScreen();
     ['Time', 'Pace', 'Distance'].map(async (word) =>
       expect(await screen.getByText(new RegExp(word))).toBeOnTheScreen(),
