@@ -108,7 +108,7 @@ describe('Activity slice', () => {
     reducer(ACTIVITY_INITIAL_STATE, saveTitle(MOCK_TITLE));
     reducer(ACTIVITY_INITIAL_STATE, setIsNeedToResetInputs(true));
     reducer(ACTIVITY_INITIAL_STATE, setIsDisableWhileSending(true));
-    reducer(ACTIVITY_INITIAL_STATE, addPhotoUrl('Some url'));
+    reducer(ACTIVITY_INITIAL_STATE, addPhotoUrl({ url: 'Some url', thumbnail: null }));
     reducer(ACTIVITY_INITIAL_STATE, saveIsSwitchOn(true));
     reducer(ACTIVITY_INITIAL_STATE, saveEmotion(MOCK_EMOTION));
     reducer(ACTIVITY_INITIAL_STATE, saveSport(MOCK_SPORT));
