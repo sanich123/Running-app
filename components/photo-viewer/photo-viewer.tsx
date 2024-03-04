@@ -2,7 +2,6 @@ import { useAuth } from '@A/context/auth-context';
 import { CustomImage } from '@C/custom-image/custom-image';
 import VideoViewer from '@C/video-viewer/video-viewer';
 import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
-import { getPhotosWithoutMaps } from '@U/get-photos-without-maps';
 import { useLocalSearchParams } from 'expo-router';
 import { View, StyleSheet, Platform } from 'react-native';
 import PagerView from 'react-native-pager-view';
@@ -13,7 +12,11 @@ export default function PhotoViewer() {
   const { user } = useAuth();
   const { data: activity } = useGetActivityByActivityIdQuery(`${photoUrl}`);
   const { data: photos } = useGetAllActivityPhotosByUserIdQuery(`${user?.id}`);
-  const itemsToRender = uuid.validate(`${photoUrl}`) ? activity?.photoUrls : getPhotosWithoutMaps(photos);
+  const itemsToRender = uuid.validate(`${photoUrl}`)
+    ? activity?.photoVideoUrls
+    : photos
+        ?.map(({ photoVideoUrls }: { photoVideoUrls: { url: string; thumbnail: string | null } }) => photoVideoUrls)
+        .flat();
 
   return (
     <View style={{ flex: 1 }}>
@@ -36,10 +39,10 @@ export default function PhotoViewer() {
               style={styles.viewPager}
               initialPage={uuid.validate(`${photoUrl}`) ? 0 : +photoUrl}
               orientation="vertical">
-              {itemsToRender.map((url: string, index: number) => (
+              {itemsToRender.map(({ url, thumbnail }: { url: string; thumbnail: string | null }, index: number) => (
                 <View key={index}>
                   {url.includes('mp4') ? (
-                    <VideoViewer url={url} />
+                    <VideoViewer url={url} thumbnail={thumbnail} />
                   ) : (
                     <CustomImage source={{ uri: url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                   )}

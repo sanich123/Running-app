@@ -30,6 +30,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
               weight: '',
               bio: '',
               profilePhoto: googleInfo?.photo ? googleInfo.photo : '',
+              email: googleInfo?.email ? googleInfo.email : '',
             },
             user?.id,
           );

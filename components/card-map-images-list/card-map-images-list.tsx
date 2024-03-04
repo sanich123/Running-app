@@ -1,52 +1,52 @@
 import { CustomImage } from '@C/custom-image/custom-image';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
-import * as VideoThumbnails from 'expo-video-thumbnails';
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import { FlatList, Platform, Pressable, useWindowDimensions } from 'react-native';
 
 type CardMapImagesListProps = {
-  photoUrls: string[];
+  photoVideoUrls: { url: string; thumbnail: string | null }[];
+  mapPhotoUrl?: string;
   id: string;
 };
 
-export default memo(function CardMapImagesList({ photoUrls, id }: CardMapImagesListProps) {
+export default memo(function CardMapImagesList({ photoVideoUrls, mapPhotoUrl, id }: CardMapImagesListProps) {
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
-  const [photoUrlsWithThumbnails, setPhotoUrlsWithThumbnails] = useState<{ url: string; thumbnail: string | null }[]>(
-    [],
-  );
+  // const [photoUrlsWithThumbnails, setPhotoUrlsWithThumbnails] = useState<{ url: string; thumbnail: string | null }[]>(
+  //   [],
+  // );
 
-  async function addThumbnailsToVideo(
-    photoUrls: string[],
-    setPhotoUrlsWithThumbnails: (arg: { url: string; thumbnail: string | null }[]) => void,
-  ) {
-    let modifiedUrls;
-    if (Platform.OS !== 'web') {
-      modifiedUrls = await Promise.all(
-        photoUrls.map(async (url) => {
-          if (url.includes('mp4')) {
-            const { uri } = await VideoThumbnails.getThumbnailAsync(url);
-            return { url, thumbnail: uri };
-          }
-          return { url, thumbnail: null };
-        }),
-      );
-    } else {
-      modifiedUrls = photoUrls.map((url) => ({ url, thumbnail: null }));
-    }
-    setPhotoUrlsWithThumbnails(modifiedUrls);
-  }
+  // async function addThumbnailsToVideo(
+  //   photoUrls: string[],
+  //   setPhotoUrlsWithThumbnails: (arg: { url: string; thumbnail: string | null }[]) => void,
+  // ) {
+  //   let modifiedUrls;
+  //   if (Platform.OS !== 'web') {
+  //     modifiedUrls = await Promise.all(
+  //       photoUrls.map(async (url) => {
+  //         if (url.includes('mp4')) {
+  //           const { uri } = await VideoThumbnails.getThumbnailAsync(url);
+  //           return { url, thumbnail: uri };
+  //         }
+  //         return { url, thumbnail: null };
+  //       }),
+  //     );
+  //   } else {
+  //     modifiedUrls = photoUrls.map((url) => ({ url, thumbnail: null }));
+  //   }
+  //   setPhotoUrlsWithThumbnails(modifiedUrls);
+  // }
 
-  useEffect(() => {
-    addThumbnailsToVideo(photoUrls, setPhotoUrlsWithThumbnails);
-  }, [photoUrls]);
+  // useEffect(() => {
+  //   addThumbnailsToVideo(photoUrls, setPhotoUrlsWithThumbnails);
+  // }, [photoUrls]);
 
   return (
     <FlatList
-      data={photoUrlsWithThumbnails}
+      data={mapPhotoUrl ? [{ url: mapPhotoUrl, thumbnail: null }, ...photoVideoUrls] : photoVideoUrls}
       renderItem={({ item }) => {
         return (
           <Pressable

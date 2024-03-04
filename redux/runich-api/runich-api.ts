@@ -11,7 +11,7 @@ export const runichApi = createApi({
   tagTypes: [Tags.activities, Tags.profile, Tags.comments, Tags.likes, Tags.friends, Tags.users],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
-    timeout: 15000,
+    timeout: 25000,
   }),
   refetchOnReconnect: true,
   endpoints: (builder) => ({

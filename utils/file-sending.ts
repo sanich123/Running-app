@@ -7,7 +7,10 @@ import { showCrossPlatformToast } from './custom-toast';
 import { errorHandler } from './error-handler';
 import { getBase64CodedImage, getSignedUrl, uploadPhoto } from '../auth/supabase/storage/upload-photo';
 
-export async function compressAndSendFile(fileSrc: string, userId: string) {
+export async function compressAndSendFile(
+  fileSrc: string,
+  userId: string,
+): Promise<{ url: string; thumbnail: string | null } | null | undefined> {
   const splittedImg = fileSrc.split('.');
   const extension = splittedImg[splittedImg.length - 1];
   const isVideoFile = extension === ('mp4' || 'avi' || 'm4v');
@@ -30,7 +33,11 @@ export async function compressAndSendFile(fileSrc: string, userId: string) {
       if (url) {
         if (isVideoFile) {
           const { uri } = await VideoThumbnails.getThumbnailAsync(url);
-          return { url, thumbnail: uri };
+          const uploadedImage = await compressAndSendFile(uri, userId);
+          if (uploadedImage) {
+            const { url: thumbnailUrl } = uploadedImage;
+            return { url, thumbnail: thumbnailUrl };
+          }
         }
         return { url, thumbnail: null };
       }

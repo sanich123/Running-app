@@ -45,11 +45,13 @@ export default function ActivityFullViewPage() {
                 date={activity.date}
                 sport={activity.sport}
                 id={activity.id}
-                photoUrls={activity.photoUrls}
+                photoVideoUrls={activity.photoVideoUrls}
                 duration={activity.duration}
                 distance={activity.distance}
                 likes={activity.likes}
                 comments={activity.comments}
+                mapPhotoUrl={activity?.mapPhotoUrl}
+                profile={activity?.profile}
               />
               <ActivityFullViewMetrics />
               <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>

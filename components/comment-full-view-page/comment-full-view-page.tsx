@@ -25,8 +25,8 @@ export default function CommentFullViewPage() {
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
-          {(activity?.locations?.length || activity?.photoUrls?.length > 0) && (
-            <CardMapImagesList photoUrls={activity?.photoUrls} id={`${activityId}`} />
+          {(activity?.locations?.length || activity?.photoVideoUrls?.length > 0) && (
+            <CardMapImagesList photoVideoUrls={activity?.photoVideoUrls} id={`${activityId}`} />
           )}
           <Card.Content style={styles.contentLayout}>
             <CardTitle title={activity?.title} />

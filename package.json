@@ -1,6 +1,6 @@
 {
   "name": "running-app",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "scripts": {
     "start": "expo start",
     "start:clear": "expo start --clear",
@@ -88,9 +88,9 @@
     "expo-image": "~1.10.6",
     "expo-image-picker": "~14.7.1",
     "expo-linking": "~6.2.2",
-    "expo-location": "~16.5.4",
+    "expo-location": "~16.5.5",
     "expo-media-library": "~15.9.1",
-    "expo-router": "~3.4.7",
+    "expo-router": "~3.4.8",
     "expo-secure-store": "~12.8.1",
     "expo-sharing": "~11.10.0",
     "expo-splash-screen": "~0.26.4",

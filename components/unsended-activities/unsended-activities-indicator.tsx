@@ -1,4 +1,4 @@
-import { refreshUnsendedActivitiesList } from '@R/activity/activity';
+import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '@R/activity/activity';
 import { useAddActivityByUserIdMutation } from '@R/runich-api/runich-api';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
@@ -38,6 +38,9 @@ export default function UnsendedActivitiesIndicator() {
   }, [isSuccess, isError]);
 
   useEffect(() => {
+    if (isHaveUnsyncedActivity && !unsyncedActivities.length) {
+      dispatch(setIsHaveUnsyncedActivity(false));
+    }
     if (isHaveUnsyncedActivity) {
       activitySender();
     }

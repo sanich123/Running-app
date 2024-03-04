@@ -1,7 +1,6 @@
 import { CustomImage } from '@C/custom-image/custom-image';
 import ErrorComponent from '@C/error-component/error-component';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
-import { getPhotosWithoutMaps } from '@U/get-photos-without-maps';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Pressable, ScrollView, useWindowDimensions, StyleSheet, View, Platform } from 'react-native';
@@ -33,20 +32,23 @@ export default function MediaGrid() {
         {isSuccess &&
           !isError &&
           photos?.length > 0 &&
-          getPhotosWithoutMaps(photos).map((url: string, index: number) => (
-            <Pressable
-              key={`${url}+${index}`}
-              style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
-              onPress={() =>
-                push(`/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}`)
-              }>
-              <CustomImage
-                style={{ height: calculatedWidth, width: calculatedWidth }}
-                source={{ uri: url }}
-                contentFit="cover"
-              />
-            </Pressable>
-          ))}
+          photos
+            ?.map(({ photoVideoUrls }: { photoVideoUrls: { url: string; thumbnail: string | null } }) => photoVideoUrls)
+            .flat()
+            .map(({ url, thumbnail }: { url: string; thumbnail: string | null }, index: number) => (
+              <Pressable
+                key={`${url}+${index}`}
+                style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+                onPress={() =>
+                  push(`/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}`)
+                }>
+                <CustomImage
+                  style={{ height: calculatedWidth, width: calculatedWidth }}
+                  source={{ uri: thumbnail || url }}
+                  contentFit="cover"
+                />
+              </Pressable>
+            ))}
       </View>
     </ScrollView>
   );
