@@ -35,10 +35,10 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
           if (result && !result.canceled) {
             const fileSrc = result.assets[0].uri;
             if (user) {
-              const url = await compressAndSendFile(fileSrc, user.id);
-              if (url) {
-                setImages([...images, url]);
-                dispatch(addPhotoUrl(url));
+              const fileWithThumbnail = await compressAndSendFile(fileSrc, user.id);
+              if (fileWithThumbnail) {
+                setImages([...images, fileWithThumbnail]);
+                dispatch(addPhotoUrl(fileWithThumbnail));
               }
             }
           }

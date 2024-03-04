@@ -22,10 +22,12 @@ export const activity = createSlice({
       state.additionalInfo.isSwitchOn = action.payload;
     },
     addPhotoUrl: (state, action) => {
-      state.additionalInfo.photoUrls = [action.payload, ...state.additionalInfo.photoUrls];
+      state.additionalInfo.photoVideoUrls = [action.payload, ...state.additionalInfo.photoVideoUrls];
     },
     deletePhotoUrl: (state, action) => {
-      state.additionalInfo.photoUrls = state.additionalInfo.photoUrls.filter((url) => url !== action.payload);
+      state.additionalInfo.photoVideoUrls = state.additionalInfo.photoVideoUrls.filter(
+        ({ url }) => url !== action.payload,
+      );
     },
     setIsDisableWhileSending: (state, action) => {
       state.isDisabledWhileSending = action.payload;
@@ -73,7 +75,7 @@ export const activity = createSlice({
       state.manualMinutes = 0;
     },
     resetPhotoUrls: (state) => {
-      state.additionalInfo.photoUrls = [];
+      state.additionalInfo.photoVideoUrls = [];
     },
     setCameraIsVisible: (state, action) => {
       state.isCameraVisible = action.payload;

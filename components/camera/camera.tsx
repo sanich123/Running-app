@@ -11,7 +11,7 @@ import { ActivityIndicator, Text } from 'react-native-paper';
 
 export default function CameraLauncher() {
   const cameraRef = useRef<Camera>(null);
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<{ url: string; thumbnail: string | null }[]>([]);
   const [type, setType] = useState(CameraType.back);
   const [flashEnable, setFlashEnable] = useState(FlashMode.off);
   const [permission, requestPermission] = Camera.useCameraPermissions();

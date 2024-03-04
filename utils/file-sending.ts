@@ -1,5 +1,6 @@
 import { EXPIRED_TIME } from '@const/const';
 import * as ImagePicker from 'expo-image-picker';
+import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 
 import { showCrossPlatformToast } from './custom-toast';
@@ -9,8 +10,9 @@ import { getBase64CodedImage, getSignedUrl, uploadPhoto } from '../auth/supabase
 export async function compressAndSendFile(fileSrc: string, userId: string) {
   const splittedImg = fileSrc.split('.');
   const extension = splittedImg[splittedImg.length - 1];
+  const isVideoFile = extension === ('mp4' || 'avi' || 'm4v');
   let compressedFile;
-  if (extension === 'mp4') {
+  if (isVideoFile) {
     compressedFile = await VideoCompressor.compress(fileSrc);
     const metaData = await getVideoMetaData(fileSrc);
     if (metaData.size > 4000) {
@@ -24,7 +26,14 @@ export async function compressAndSendFile(fileSrc: string, userId: string) {
   if (base64) {
     const pathToFile = await uploadPhoto(userId, base64, extension);
     if (pathToFile) {
-      return await getSignedUrl(pathToFile, EXPIRED_TIME);
+      const url = await getSignedUrl(pathToFile, EXPIRED_TIME);
+      if (url) {
+        if (isVideoFile) {
+          const { uri } = await VideoThumbnails.getThumbnailAsync(url);
+          return { url, thumbnail: uri };
+        }
+        return { url, thumbnail: null };
+      }
     }
   } else {
     return null;

@@ -17,7 +17,7 @@ export const ADDITIONAL_INFO_INITIAL_STATE: AdditionalInfoType = {
   sport: SPORTS_BTNS_VALUES.run,
   emotion: EMOTIONS_BTNS_VALUES.normal,
   isSwitchOn: false,
-  photoUrls: [],
+  photoVideoUrls: [],
 };
 
 export const ACTIVITY_INITIAL_STATE: ActivityInitialState = {

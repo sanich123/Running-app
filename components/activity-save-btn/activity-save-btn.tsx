@@ -94,13 +94,15 @@ export default function ActivitySaveBtn() {
                   ...finishedActivity,
                   ...{
                     ...additionalInfo,
-                    photoUrls: [`${getMapBoxImage(finishedActivity.locations)}`, ...additionalInfo.photoUrls],
+                    mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
+                    // photoVideoUrls: additionalInfo.photoVideoUrls,
                   },
                 },
             id: user.id,
           };
-          setActivityToSend(savedActivity);
-          await sendActivity(savedActivity).unwrap();
+          console.log(savedActivity);
+          // setActivityToSend(savedActivity);
+          // await sendActivity(savedActivity).unwrap();
         }
       }}
       disabled={isDisabledWhileSending}

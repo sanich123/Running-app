@@ -23,10 +23,10 @@ export default function SaveResult() {
     isNeedToResetInputs,
     isManualAdding,
     isCameraVisible,
-    additionalInfo: { photoUrls },
+    additionalInfo: { photoVideoUrls },
   } = useAppSelector(({ activity }) => activity);
   const dispatch = useAppDispatch();
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<{ url: string; thumbnail: string | null }[]>([]);
 
   useEffect(() => {
     if (isNeedToResetInputs) {
@@ -55,7 +55,10 @@ export default function SaveResult() {
               images={images}
             />
           </View>
-          <PreviewImages images={photoUrls} setImages={setImages} isDisabled={isDisabled} />
+          {photoVideoUrls?.length > 0 ? (
+            <PreviewImages images={photoVideoUrls} setImages={setImages} isDisabled={isDisabled} />
+          ) : null}
+
           <DeclineBtn isDisabled={isDisabled} />
           <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
         </ScrollView>
