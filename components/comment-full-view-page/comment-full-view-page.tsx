@@ -1,6 +1,6 @@
 import ActivityCardLikeBtn from '@C/card-like-btn/card-like-btn';
 import CardLikes, { CardLikesSize } from '@C/card-likes/card-likes';
-import CardMapImagesList from '@C/card-map-images-list/card-map-images-list';
+import CardMapImagesList from '@C/card-likes/card-map-images-list/card-map-images-list';
 import CardTitle from '@C/card-title/card-title';
 import CommentInput from '@C/comment-input/comment-input';
 import Comments from '@C/comments/comments';

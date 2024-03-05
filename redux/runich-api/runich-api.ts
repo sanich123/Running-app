@@ -66,7 +66,7 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.profile],
+      invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
     addActivityByUserId: builder.mutation({
       query: ({ body, id }: ActivityToSend) => ({

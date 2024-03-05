@@ -11,7 +11,7 @@ import { ActivityCardProps } from './const ';
 import CardBtns from '../card-btns/card-btns';
 import CardDesription from '../card-description/card-description';
 import CardLikes, { CardLikesSize } from '../card-likes/card-likes';
-import CardMapImagesList from '../card-map-images-list/card-map-images-list';
+import CardMapImagesList from '../card-likes/card-map-images-list/card-map-images-list';
 import CardMetrics from '../card-metrics/card-metrics';
 import CardTitle from '../card-title/card-title';
 import CommentsLength from '../comments-length/comments-length';

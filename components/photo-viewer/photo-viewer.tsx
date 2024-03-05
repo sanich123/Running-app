@@ -23,7 +23,7 @@ export default function PhotoViewer() {
     <View style={{ flex: 1 }}>
       {Platform.OS === 'web' ? (
         <>
-          {decodeURIComponent(photoUrl.toString()).includes('mp4') ? (
+          {decodeURIComponent(photoUrl.toString()).includes('mp4' || 'avi' || 'm4v') ? (
             <VideoViewer url={decodeURIComponent(photoUrl.toString())} />
           ) : (
             <CustomImage
@@ -42,7 +42,7 @@ export default function PhotoViewer() {
               orientation="vertical">
               {itemsToRender.map(({ url, thumbnail }: { url: string; thumbnail: string | null }, index: number) => (
                 <View key={index}>
-                  {url.includes('mp4') ? (
+                  {url.includes('mp4' || 'avi' || 'm4v') ? (
                     <VideoViewer url={url} thumbnail={thumbnail} />
                   ) : (
                     <CustomImage source={{ uri: url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />

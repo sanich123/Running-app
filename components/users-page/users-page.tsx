@@ -13,35 +13,34 @@ export default function ListOfUsers() {
   return (
     <SafeAreaView
       edges={['bottom', 'left', 'right']}
-      style={[
-        { flex: 1 },
-        (isLoading || isError || !users.length) && { alignItems: 'center', justifyContent: 'center' },
-      ]}>
-      {users && (
-        <FlatList
-          onRefresh={onRefresh}
-          refreshing={refreshing}
-          data={users}
-          renderItem={({ item: { city, name, surname, profilePhoto, user_id } }) => (
-            <UserListItemSimple
-              city={city}
-              name={name}
-              surname={surname}
-              profilePhoto={profilePhoto}
-              user_id={user_id}
-            />
-          )}
-          ListEmptyComponent={
-            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Text variant="headlineLarge">There are no users</Text>
-            </View>
-          }
-          ItemSeparatorComponent={() => <Divider />}
-          initialNumToRender={15}
-        />
-      )}
-      {isLoading && <ActivityIndicator size="large" />}
-      {isError ? <ErrorComponent error={error} /> : null}
+      style={[{ flex: 1 }, (isLoading || isError || !users.length) && { justifyContent: 'center' }]}>
+      <View>
+        {users && (
+          <FlatList
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+            data={users}
+            renderItem={({ item: { profile } }) => (
+              <UserListItemSimple
+                city={profile?.city}
+                name={profile?.name}
+                surname={profile?.surname}
+                profilePhoto={profile?.profilePhoto}
+                user_id={profile?.user_id}
+              />
+            )}
+            ListEmptyComponent={
+              <View style={{ alignItems: 'center' }}>
+                <Text variant="headlineLarge">There are no users</Text>
+              </View>
+            }
+            ItemSeparatorComponent={() => <Divider />}
+            initialNumToRender={15}
+          />
+        )}
+        {isLoading && <ActivityIndicator size="large" />}
+        {isError ? <ErrorComponent error={error} /> : null}
+      </View>
     </SafeAreaView>
   );
 }

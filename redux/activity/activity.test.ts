@@ -4,7 +4,6 @@ import { MOCK_LOCATIONS } from '@T/mocks/mock-locations';
 
 import reducer, {
   addPhotoUrl,
-  deletePhotoUrl,
   resetActivityInfo,
   saveDescription,
   saveEmotion,

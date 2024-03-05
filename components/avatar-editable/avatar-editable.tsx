@@ -27,8 +27,8 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
             if (user) {
               const fileWithThumbnail = await compressAndSendFile(imgSrc, user.id);
               if (fileWithThumbnail) {
-                const { url, thumbnail } = fileWithThumbnail;
-                dispatch(savePhotoUrl({ url, thumbnail }));
+                const { url } = fileWithThumbnail;
+                dispatch(savePhotoUrl(url));
               }
             }
           }

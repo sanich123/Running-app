@@ -1,5 +1,5 @@
 import ErrorComponent from '@C/error-component/error-component';
-import UserListItem from '@C/user-list-item/user-list-item';
+import UserListItemSimple from '@C/user-list-item-simple/user-list-item-simple';
 import { useGetFriendsByUserIdQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
@@ -11,7 +11,6 @@ export default function ListOfFollowing() {
   const { id: userId } = useLocalSearchParams();
   const { isLoading, error, isError, data: users, refetch } = useGetFriendsByUserIdQuery(`${userId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
-  console.log('followings', users);
 
   return (
     <SafeAreaView
@@ -23,7 +22,15 @@ export default function ListOfFollowing() {
             onRefresh={onRefresh}
             refreshing={refreshing}
             data={users}
-            renderItem={({ item }) => <UserListItem userId={item.friendId} />}
+            renderItem={({ item: { profile } }) => (
+              <UserListItemSimple
+                city={profile?.city}
+                name={profile?.name}
+                surname={profile?.surname}
+                profilePhoto={profile?.profilePhoto}
+                user_id={profile?.user_id}
+              />
+            )}
             ListEmptyComponent={
               <View style={{ alignItems: 'center' }}>
                 <Text variant="headlineLarge">Nobody is following you</Text>
