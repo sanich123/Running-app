@@ -13,7 +13,10 @@ export default function ListOfUsers() {
   return (
     <SafeAreaView
       edges={['bottom', 'left', 'right']}
-      style={[{ flex: 1 }, (isLoading || isError) && { alignItems: 'center', justifyContent: 'center' }]}>
+      style={[
+        { flex: 1 },
+        (isLoading || isError || !users.length) && { alignItems: 'center', justifyContent: 'center' },
+      ]}>
       {users && (
         <FlatList
           onRefresh={onRefresh}

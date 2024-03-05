@@ -45,7 +45,7 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
       }
     }
   }, [friendDeleted, friendAdded, friendDeletingError, friendAddingError]);
-
+  console.log(user?.id, friendId);
   return (
     <Button
       mode="contained"

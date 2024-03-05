@@ -1,5 +1,5 @@
 import ErrorComponent from '@C/error-component/error-component';
-import UserListItem from '@C/user-list-item/user-list-item';
+import UserListItemSimple from '@C/user-list-item-simple/user-list-item-simple';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
@@ -14,12 +14,20 @@ export default function LikesList() {
 
   return (
     <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
-      {likes && (
+      {likes?.length > 0 && (
         <FlatList
           onRefresh={onRefresh}
           refreshing={refreshing}
           data={likes}
-          renderItem={({ item }) => <UserListItem userId={item.authorId} />}
+          renderItem={({ item: { profile } }) => (
+            <UserListItemSimple
+              name={profile?.name}
+              surname={profile?.surname}
+              profilePhoto={profile?.profilePhoto}
+              city={profile?.city}
+              user_id={profile?.user_id}
+            />
+          )}
           ListEmptyComponent={
             <View style={styles.isInCenter}>
               <Text variant="headlineLarge">There are no users, who liked your activity</Text>
