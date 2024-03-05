@@ -111,7 +111,7 @@ describe('Profile slice', () => {
           },
           isDisabledWhileSendingProfile: false,
           settings: MOCK_SETTINGS,
-          isNeedToPrefetchActivities: true,
+          isNeedToPrefetchActivities: false,
         },
         resetSettings(),
       ),

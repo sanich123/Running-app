@@ -1,3 +1,4 @@
+import { AvatarShowableTestIds } from '@C/avatar-showable/const';
 import { LikeType, ProfileType } from '@C/card/const ';
 import { CustomImage } from '@C/custom-image/custom-image';
 import NumberOfLikes from '@C/number-of-likes/number-of-likes';
@@ -60,6 +61,7 @@ export default memo(function CardLikes({ activityId, size }: { activityId: strin
                         style={{ width: 30, height: 30, borderRadius: 70 }}
                         source={{ uri: profile?.profilePhoto }}
                         contentFit="cover"
+                        testID={AvatarShowableTestIds.success}
                       />
                     </View>
                   </Fragment>
