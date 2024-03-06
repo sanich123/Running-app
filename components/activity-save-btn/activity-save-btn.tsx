@@ -99,7 +99,6 @@ export default function ActivitySaveBtn() {
                 },
             id: user.id,
           };
-          console.log(savedActivity);
           setActivityToSend(savedActivity);
           await sendActivity(savedActivity).unwrap();
         }
