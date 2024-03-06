@@ -8,7 +8,7 @@ export const MOCK_ACTIVITIES = [
     duration: 20,
     emotion: 'fucked',
     id: '617dddae-05b3-418a-9a8e-5d408a1b897a',
-    isSwitchOn: false,
+    isPublic: false,
     kilometresSplit: null,
     locations: [
       [Object],
@@ -53,7 +53,7 @@ export const MOCK_ACTIVITIES = [
     duration: 8,
     emotion: '',
     id: '189d2c10-463c-42f5-9f09-5e9fa6aa2720',
-    isSwitchOn: false,
+    isPublic: false,
     kilometresSplit: null,
     locations: [[Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object]],
     photoUrls: [
@@ -73,7 +73,7 @@ export const MOCK_ACTIVITIES = [
     duration: 6,
     emotion: 'good',
     id: '1c80e22f-ae2e-4e6d-91c6-3c5c85ce0762',
-    isSwitchOn: false,
+    isPublic: false,
     kilometresSplit: null,
     locations: [[Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object]],
     photoUrls: [

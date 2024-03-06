@@ -18,8 +18,8 @@ export const activity = createSlice({
     saveEmotion: (state, action) => {
       state.additionalInfo.emotion = action.payload;
     },
-    saveIsSwitchOn: (state, action) => {
-      state.additionalInfo.isSwitchOn = action.payload;
+    saveIsPublic: (state, action) => {
+      state.additionalInfo.isPublic = action.payload;
     },
     addPhotoUrl: (state, action) => {
       state.additionalInfo.photoVideoUrls = [action.payload, ...state.additionalInfo.photoVideoUrls];
@@ -89,7 +89,7 @@ export const {
   saveSport,
   saveEmotion,
   setManualDate,
-  saveIsSwitchOn,
+  saveIsPublic,
   setIsDisableWhileSending,
   resetActivityInfo,
   setIsNeedToResetInputs,

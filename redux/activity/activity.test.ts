@@ -8,7 +8,7 @@ import reducer, {
   saveDescription,
   saveEmotion,
   saveFinishedActivity,
-  saveIsSwitchOn,
+  saveIsPublic,
   saveSport,
   saveTitle,
   saveUnsendedActivity,
@@ -70,11 +70,11 @@ describe('Activity slice', () => {
     });
   });
   it('should correctly change isSwitchOn', () => {
-    expect(reducer(ACTIVITY_INITIAL_STATE, saveIsSwitchOn(true))).toEqual({
+    expect(reducer(ACTIVITY_INITIAL_STATE, saveIsPublic(true))).toEqual({
       ...ACTIVITY_INITIAL_STATE,
       additionalInfo: {
         ...ACTIVITY_INITIAL_STATE.additionalInfo,
-        isSwitchOn: true,
+        isPublic: true,
       },
     });
   });
@@ -108,7 +108,7 @@ describe('Activity slice', () => {
     reducer(ACTIVITY_INITIAL_STATE, setIsNeedToResetInputs(true));
     reducer(ACTIVITY_INITIAL_STATE, setIsDisableWhileSending(true));
     reducer(ACTIVITY_INITIAL_STATE, addPhotoUrl({ url: 'Some url', thumbnail: null }));
-    reducer(ACTIVITY_INITIAL_STATE, saveIsSwitchOn(true));
+    reducer(ACTIVITY_INITIAL_STATE, saveIsPublic(true));
     reducer(ACTIVITY_INITIAL_STATE, saveEmotion(MOCK_EMOTION));
     reducer(ACTIVITY_INITIAL_STATE, saveSport(MOCK_SPORT));
     reducer(ACTIVITY_INITIAL_STATE, saveDescription(MOCK_DESCRIPTION));

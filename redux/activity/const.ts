@@ -16,7 +16,7 @@ export const ADDITIONAL_INFO_INITIAL_STATE: AdditionalInfoType = {
   description: '',
   sport: SPORTS_BTNS_VALUES.run,
   emotion: EMOTIONS_BTNS_VALUES.normal,
-  isSwitchOn: false,
+  isPublic: true,
   photoVideoUrls: [],
 };
 
