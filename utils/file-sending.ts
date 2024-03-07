@@ -1,46 +1,39 @@
-import { EXPIRED_TIME } from '@const/const';
 import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
+import { Platform } from 'react-native';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 
 import { showCrossPlatformToast } from './custom-toast';
 import { errorHandler } from './error-handler';
-import { getBase64CodedImage, getPublicUrl, getSignedUrl, uploadPhoto } from '../auth/supabase/storage/upload-photo';
+import { getBase64CodedImage, getPublicUrl, uploadPhoto } from '../auth/supabase/storage/upload-photo';
 
 export async function compressAndSendFile(
-  fileSrc: string,
+  fileSrc: string | File,
   userId: string,
 ): Promise<{ url: string; thumbnail: string | null } | null | undefined> {
-  const splittedImg = fileSrc.split('.');
+  const splittedImg = fileSrc instanceof File ? fileSrc.name.split('.') : fileSrc.split('.');
   const extension = splittedImg[splittedImg.length - 1];
   const isVideoFile = extension === ('mp4' || 'avi' || 'm4v');
-  let compressedFile;
-  if (isVideoFile) {
-    compressedFile = await VideoCompressor.compress(fileSrc);
-    const metaData = await getVideoMetaData(fileSrc);
-    if (metaData.size > 15000) {
-      showCrossPlatformToast('Файл слишком большой, размер файла не более 15 мб');
-      return;
-    }
-  } else {
-    compressedFile = await ImageCompressor.compress(fileSrc);
-  }
-  const base64 = await getBase64CodedImage(compressedFile);
-  if (base64) {
-    const pathToFile = await uploadPhoto(userId, base64, extension);
-    console.log(pathToFile);
-    if (pathToFile) {
-      const url = await getPublicUrl(pathToFile);
-      if (url) {
-        if (isVideoFile) {
-          const { uri } = await VideoThumbnails.getThumbnailAsync(url);
-          const uploadedImage = await compressAndSendFile(uri, userId);
-          if (uploadedImage) {
-            const { url: thumbnailUrl } = uploadedImage;
-            return { url, thumbnail: thumbnailUrl };
+
+  const compressedFile = await compressImageOrVideo(fileSrc, extension);
+  if (compressedFile) {
+    const encodedFile = await getBase64CodedImage(compressedFile);
+    if (encodedFile) {
+      const pathToFile = await uploadPhoto(userId, encodedFile, extension);
+      if (pathToFile) {
+        const url = await getPublicUrl(pathToFile);
+        if (url) {
+          if (isVideoFile) {
+            const { uri } = await VideoThumbnails.getThumbnailAsync(url);
+            const uploadedImage = await compressAndSendFile(uri, userId);
+            if (uploadedImage) {
+              const { url: thumbnailUrl } = uploadedImage;
+              return { url, thumbnail: thumbnailUrl };
+            }
+          } else {
+            return { url, thumbnail: null };
           }
         }
-        return { url, thumbnail: null };
       }
     }
   } else {
@@ -57,5 +50,37 @@ export async function getAccessToGallery() {
     });
   } catch (error) {
     errorHandler(error);
+  }
+}
+
+export async function compressImageOrVideo(fileSrc: string | File, extension: string) {
+  const MAX_VIDEO_SIZE = 15000;
+  const supportedImagesExtensions = /webp|png|avif|heic|jpeg|gif|svg|ico|jpg/;
+  const isVideoFile = extension === ('mp4' || 'avi' || 'm4v');
+  if (isVideoFile) {
+    try {
+      const metaData = await getVideoMetaData(`${fileSrc}`);
+      if (metaData.size > MAX_VIDEO_SIZE) {
+        showCrossPlatformToast('Файл слишком большой, размер файла не более 15 мб');
+        return null;
+      } else {
+        return await VideoCompressor.compress(`${fileSrc}`);
+      }
+    } catch {
+      showCrossPlatformToast('Ошибка во время сжатия видео');
+    }
+  } else {
+    try {
+      if (Platform.OS === 'web') {
+        return fileSrc;
+      }
+      if (supportedImagesExtensions.test(extension)) {
+        return await ImageCompressor.compress(`${fileSrc}`);
+      } else {
+        showCrossPlatformToast('Такое разрешение нельзя использовать для изображения');
+      }
+    } catch {
+      showCrossPlatformToast('Ошибка во время сжатия изображения');
+    }
   }
 }

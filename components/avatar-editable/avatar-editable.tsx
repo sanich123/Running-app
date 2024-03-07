@@ -1,5 +1,4 @@
 import { useAuth } from '@A/context/auth-context';
-import { supabase } from '@A/supabase/supabase-init';
 import ProfileImage from '@C/profile-image/profile-image';
 import { savePhotoUrl } from '@R/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -26,16 +25,23 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
             type="file"
             onChange={async (e) => {
               if (user && e.target.files) {
-                const file = e.target.files[0];
-                const splittedImg = file.name.split('.');
-                const extension = splittedImg[splittedImg.length - 1];
-                const filePath = `${user.id}/${new Date().getTime()}.${extension}`;
-                const { data: uploadedPhoto, error } = await supabase.storage.from('photos').upload(filePath, file);
-                if (error) {
-                  toast.show(error.message);
+                if (/mp4|avi|m4v/.test(e.target.files[0].name)) {
+                  toast.show('Нельзя использовать видео файлы для аватары');
+                  return;
                 }
-                const { data } = supabase.storage.from('photos').getPublicUrl(`${uploadedPhoto?.path}`);
-                dispatch(savePhotoUrl(data.publicUrl));
+                const imgSrc = e.target.files[0];
+                try {
+                  setIsDisabled(true);
+                  const fileWithThumbnail = await compressAndSendFile(imgSrc, user.id);
+                  if (fileWithThumbnail) {
+                    const { url } = fileWithThumbnail;
+                    dispatch(savePhotoUrl(url));
+                  }
+                } catch (error) {
+                  errorHandler(error);
+                } finally {
+                  setIsDisabled(false);
+                }
               }
             }}
           />
