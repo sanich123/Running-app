@@ -5,7 +5,7 @@ import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } 
 
 import { showCrossPlatformToast } from './custom-toast';
 import { errorHandler } from './error-handler';
-import { getBase64CodedImage, getSignedUrl, uploadPhoto } from '../auth/supabase/storage/upload-photo';
+import { getBase64CodedImage, getPublicUrl, getSignedUrl, uploadPhoto } from '../auth/supabase/storage/upload-photo';
 
 export async function compressAndSendFile(
   fileSrc: string,
@@ -18,8 +18,8 @@ export async function compressAndSendFile(
   if (isVideoFile) {
     compressedFile = await VideoCompressor.compress(fileSrc);
     const metaData = await getVideoMetaData(fileSrc);
-    if (metaData.size > 4000) {
-      showCrossPlatformToast('Файл слишком большой, размер файла не более 3 мб');
+    if (metaData.size > 15000) {
+      showCrossPlatformToast('Файл слишком большой, размер файла не более 15 мб');
       return;
     }
   } else {
@@ -28,8 +28,9 @@ export async function compressAndSendFile(
   const base64 = await getBase64CodedImage(compressedFile);
   if (base64) {
     const pathToFile = await uploadPhoto(userId, base64, extension);
+    console.log(pathToFile);
     if (pathToFile) {
-      const url = await getSignedUrl(pathToFile, EXPIRED_TIME);
+      const url = await getPublicUrl(pathToFile);
       if (url) {
         if (isVideoFile) {
           const { uri } = await VideoThumbnails.getThumbnailAsync(url);

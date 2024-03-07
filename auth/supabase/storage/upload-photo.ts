@@ -18,7 +18,7 @@ export async function uploadPhoto(userId: string, base64: string, extension: str
   const contentType = extension === ('mp4' || 'avi' || 'm4v') ? 'video/mp4' : 'image/jpg';
   try {
     const { error, data: uploadedPhoto } = await supabase.storage
-      .from('files')
+      .from('photos')
       .upload(filePath, decode(base64), { contentType });
     if (error) {
       Alert.alert(error.message);
@@ -33,7 +33,7 @@ export async function uploadPhoto(userId: string, base64: string, extension: str
 
 export async function getPublicUrl(path: string) {
   try {
-    const { data } = supabase.storage.from('files').getPublicUrl(path);
+    const { data } = supabase.storage.from('photos').getPublicUrl(path);
     return data.publicUrl;
   } catch (error) {
     errorHandler(error);
