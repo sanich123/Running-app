@@ -52,7 +52,7 @@ export default function ActivityUpdateBtn() {
           dispatch(setManualMinutes(getHoursMinutesFromMilliseconds(activity?.duration).minutes));
           //@ts-ignore
           push(`/(tabs)/${place}/manual-activity/?activityId=${activityId}`);
-        } 
+        }
       }}>
       <Text variant="titleMedium" style={{ color: theme.colors.primaryContainer, marginRight: 15 }}>
         Edit
