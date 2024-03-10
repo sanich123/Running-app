@@ -59,6 +59,15 @@ export const runichApi = createApi({
       query: (commentId: string) => `/${comment}/${commentId}/${like}`,
       providesTags: [Tags.comments],
     }),
+    updateActivityInfo: builder.mutation({
+      query: ({ body, id }) => ({
+        url: `/${activity}/${id}`,
+        method: 'PATCH',
+        headers,
+        body,
+      }),
+      invalidatesTags: [Tags.activities],
+    }),
     sendProfileInfo: builder.mutation({
       query: ({ body, id }: SendProfile) => ({
         url: `/${user}/${id}/${profile}`,
@@ -136,6 +145,7 @@ export const runichApi = createApi({
 export const {
   useGetUsersQuery,
   useGetUserProfileByIdQuery,
+  useUpdateActivityInfoMutation,
   useGetActivitiesByUserIdQuery,
   useGetAllActivityPhotosByUserIdQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesQuery,

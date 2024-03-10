@@ -3,11 +3,15 @@ import { LANGUAGES } from '../../constants/enums';
 export const ACTIVITY_SAVE_BTN = {
   [LANGUAGES.english]: {
     save: 'Save',
+    update: 'Update',
+    updating: 'Updating',
     saving: 'Saving',
     errorMsg: 'An error occured during sending activity! Try again.',
   },
   [LANGUAGES.russian]: {
     save: 'Сохранить',
+    update: 'Изменить',
+    updating: 'Изменяю',
     saving: 'Сохраняю',
     errorMsg: 'Произошла ошибка во время отправки активности. Попробуйте еще раз!',
   },

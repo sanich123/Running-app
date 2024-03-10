@@ -1,4 +1,5 @@
 import { saveIsPublic } from '@R/activity/activity';
+import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -8,8 +9,10 @@ import { CHECKBOX_TEST_ID, CHECKBOX } from './const';
 
 export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
   const { language } = useAppSelector(({ language }) => language);
-  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
-  const [isPublic, setIsPublic] = useState(true);
+  const { isDisabledWhileSending, isNeedToResetInputs, isEditingActivity } = useAppSelector(({ activity }) => activity);
+  const [isPublic, setIsPublic] = useState(
+    isEditingActivity ? store.getState().activity.additionalInfo.isPublic : true,
+  );
   const dispatch = useAppDispatch();
 
   useEffect(() => {

@@ -22,6 +22,7 @@ export default function SaveResult() {
   const {
     isNeedToResetInputs,
     isManualAdding,
+    isEditingActivity,
     isCameraVisible,
     additionalInfo: { photoVideoUrls },
   } = useAppSelector(({ activity }) => activity);
@@ -43,9 +44,9 @@ export default function SaveResult() {
           <SportsBtns isDisabled={isDisabled} />
           <EmotionBtns isDisabled={isDisabled} />
           <Checkbox isDisabled={isDisabled} />
-          {isManualAdding && Platform.OS !== 'web' && <DateTimePicker isDisabled={isDisabled} />}
-          {isManualAdding && Platform.OS === 'web' && <DatePickerWeb isDisabled={isDisabled} />}
-          {isManualAdding && <InputsDistanceTime isDisabled={isDisabled} />}
+          {(isManualAdding || isEditingActivity) && Platform.OS !== 'web' && <DateTimePicker isDisabled={isDisabled} />}
+          {(isManualAdding || isEditingActivity) && Platform.OS === 'web' && <DatePickerWeb isDisabled={isDisabled} />}
+          {(isManualAdding || isEditingActivity) && <InputsDistanceTime isDisabled={isDisabled} />}
           <View style={styles.cameraUploadBtns}>
             {Platform.OS !== 'web' && <ShowCameraBtn isDisabled={isDisabled} />}
             <UploadPhotosBtn
@@ -58,7 +59,6 @@ export default function SaveResult() {
           {photoVideoUrls?.length > 0 ? (
             <PreviewImages images={photoVideoUrls} setImages={setImages} isDisabled={isDisabled} />
           ) : null}
-
           <DeclineBtn isDisabled={isDisabled} />
           <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
         </ScrollView>

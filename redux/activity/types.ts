@@ -40,6 +40,7 @@ export interface ActivityInitialState {
   isDisabledWhileSending: boolean;
   isHaveUnsyncedActivity: boolean;
   isManualAdding: boolean;
+  isEditingActivity: boolean;
   isCameraVisible: boolean;
   finishedActivity: FinishedActivity;
   additionalInfo: AdditionalInfoType;
@@ -48,4 +49,5 @@ export interface ActivityInitialState {
   manualHours: number;
   manualMinutes: number;
   manualDistance: number;
+  activityId: string;
 }

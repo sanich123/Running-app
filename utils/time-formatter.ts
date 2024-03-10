@@ -38,3 +38,10 @@ export function getMillisecondsFromHoursMinutes(hours: number, minutes: number) 
   const millisecondsInMinute = 60000;
   return hours * millisecondsInHour + minutes * millisecondsInMinute;
 }
+
+export function getHoursMinutesFromMilliseconds(milliseconds: number) {
+  const hours = Math.round(milliseconds / 1000 / 60 / 60);
+  const difference = milliseconds - hours * 60 * 60 * 1000;
+  const minutes = Math.round(difference / 1000 / 60);
+  return { hours, minutes };
+}

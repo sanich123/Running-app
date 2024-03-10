@@ -24,6 +24,9 @@ export const activity = createSlice({
     addPhotoUrl: (state, action) => {
       state.additionalInfo.photoVideoUrls = [action.payload, ...state.additionalInfo.photoVideoUrls];
     },
+    addPhotoUrls: (state, action) => {
+      state.additionalInfo.photoVideoUrls = [...action.payload, ...state.additionalInfo.photoVideoUrls];
+    },
     deletePhotoUrl: (state, action) => {
       state.additionalInfo.photoVideoUrls = state.additionalInfo.photoVideoUrls.filter(
         ({ url }) => url !== action.payload,
@@ -37,6 +40,9 @@ export const activity = createSlice({
     },
     setIsNeedToResetInputs: (state, action) => {
       state.isNeedToResetInputs = action.payload;
+    },
+    setIsEditingActivity: (state, action) => {
+      state.isEditingActivity = action.payload;
     },
     saveUnsendedActivity: (state, action) => {
       state.unsyncedActivities = [...state.unsyncedActivities, action.payload];
@@ -105,8 +111,10 @@ export const {
   resetManualData,
   setCameraIsVisible,
   addPhotoUrl,
+  addPhotoUrls,
   deletePhotoUrl,
   resetPhotoUrls,
+  setIsEditingActivity,
 } = activity.actions;
 
 export default activity.reducer;
