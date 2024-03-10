@@ -9,6 +9,7 @@ export default function HomeStack() {
   const theme = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const { isCameraVisible } = useAppSelector(({ activity }) => activity);
+
   return (
     <Stack
       screenOptions={{
@@ -71,7 +72,6 @@ export default function HomeStack() {
         name={`${ROUTES.users}/${ROUTES.index}`}
         options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].users }}
       />
-      {/* <Stack.Screen name="change-password" options={{ title: 'change-password', headerShown: false }} /> */}
     </Stack>
   );
 }

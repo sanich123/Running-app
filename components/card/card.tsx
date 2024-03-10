@@ -54,7 +54,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
         <Pressable
           onPress={() => {
             if (!pathname.includes(ROUTES.activity)) {
-              push(`/${place}/${ROUTES.activity}/${id}`);
+              push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}`);
             }
           }}
           style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
