@@ -59,6 +59,10 @@ export const runichApi = createApi({
       query: (commentId: string) => `/${comment}/${commentId}/${like}`,
       providesTags: [Tags.comments],
     }),
+    getLocationsByActivityId: builder.query({
+      query: (activityId: string) => `/${activity}/${activityId}/locations`,
+      providesTags: [Tags.activities],
+    }),
     updateActivityInfo: builder.mutation({
       query: ({ body, id }) => ({
         url: `/${activity}/${id}`,
@@ -155,6 +159,7 @@ export const {
   useGetCommentsByActivityIdQuery,
   useGetLikesByActivityIdQuery,
   useGetLikesByCommentIdQuery,
+  useGetLocationsByActivityIdQuery,
   useSendProfileInfoMutation,
   useAddActivityByUserIdMutation,
   useDeleteActivityByIdMutation,
