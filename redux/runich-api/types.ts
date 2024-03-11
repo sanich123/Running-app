@@ -1,3 +1,4 @@
+import { ProfileType } from '@C/card/const ';
 import { ActivityToSend } from '@R/activity/types';
 import { ProfileSettings } from '@R/profile/types';
 
@@ -39,4 +40,4 @@ export type SendCommentLike = {
   commentId: string;
 };
 
-export type CommentResponse = { authorId: string; comment: string; id: string; date: Date };
+export type CommentResponse = { authorId: string; comment: string; id: string; date: Date; profile: ProfileType };

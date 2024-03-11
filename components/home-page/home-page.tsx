@@ -4,7 +4,7 @@ import OptimizedList from '@C/flash-list/flash-list';
 import FloatingBtn from '@C/floating-btn/floating-btn';
 import NetworkIndicator from '@C/network-indicator/network-indicator';
 import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
-import { setIsManualAdding, resetFinishedActivity, resetManualData } from '@R/activity/activity';
+import { setIsManualAdding, resetFinishedActivity, resetManualData, resetActivityInfo } from '@R/activity/activity';
 import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
@@ -51,6 +51,7 @@ export default function Feed() {
             dispatch(setIsManualAdding(true));
             dispatch(resetFinishedActivity());
             dispatch(resetManualData());
+            dispatch(resetActivityInfo());
             push('/(tabs)/home/manual-activity');
           }}
         />

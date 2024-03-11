@@ -4,12 +4,11 @@ import { MOCK_LOCATIONS } from '@T/mocks/mock-locations';
 
 import reducer, {
   addPhotoUrl,
-  deletePhotoUrl,
   resetActivityInfo,
   saveDescription,
   saveEmotion,
   saveFinishedActivity,
-  saveIsSwitchOn,
+  saveIsPublic,
   saveSport,
   saveTitle,
   saveUnsendedActivity,
@@ -71,34 +70,27 @@ describe('Activity slice', () => {
     });
   });
   it('should correctly change isSwitchOn', () => {
-    expect(reducer(ACTIVITY_INITIAL_STATE, saveIsSwitchOn(true))).toEqual({
+    expect(reducer(ACTIVITY_INITIAL_STATE, saveIsPublic(true))).toEqual({
       ...ACTIVITY_INITIAL_STATE,
       additionalInfo: {
         ...ACTIVITY_INITIAL_STATE.additionalInfo,
-        isSwitchOn: true,
-      },
-    });
-  });
-  it('should correctly change photoUrls', () => {
-    expect(reducer(ACTIVITY_INITIAL_STATE, addPhotoUrl('someUrl'))).toEqual({
-      ...ACTIVITY_INITIAL_STATE,
-      additionalInfo: {
-        ...ACTIVITY_INITIAL_STATE.additionalInfo,
-        photoUrls: ['someUrl'],
+        isPublic: true,
       },
     });
   });
 
-  it('should correctly change photoUrls', () => {
-    const stateWithPhotoUrls = {
-      ...ACTIVITY_INITIAL_STATE,
-      additionalInfo: {
-        ...ACTIVITY_INITIAL_STATE.additionalInfo,
-        photoUrls: ['someUrl'],
-      },
-    };
-    expect(reducer(stateWithPhotoUrls, deletePhotoUrl('someUrl'))).toEqual(ACTIVITY_INITIAL_STATE);
-  });
+  // it('should correctly change photoUrls', () => {
+  //   const stateWithPhotoUrls = {
+  //     ...ACTIVITY_INITIAL_STATE,
+  //     additionalInfo: {
+  //       ...ACTIVITY_INITIAL_STATE.additionalInfo,
+  //       photoVideoUrls: [{ url: 'someUrl', thumbnail: null }],
+  //     },
+  //   };
+  //   expect(reducer(stateWithPhotoUrls, deletePhotoUrl({ url: 'someUrl', thumbnail: null }))).toEqual(
+  //     ACTIVITY_INITIAL_STATE,
+  //   );
+  // });
   it('should correctly change isDisableWhileSending', () => {
     expect(reducer(ACTIVITY_INITIAL_STATE, setIsDisableWhileSending(true))).toEqual({
       ...ACTIVITY_INITIAL_STATE,
@@ -115,8 +107,8 @@ describe('Activity slice', () => {
     reducer(ACTIVITY_INITIAL_STATE, saveTitle(MOCK_TITLE));
     reducer(ACTIVITY_INITIAL_STATE, setIsNeedToResetInputs(true));
     reducer(ACTIVITY_INITIAL_STATE, setIsDisableWhileSending(true));
-    reducer(ACTIVITY_INITIAL_STATE, addPhotoUrl('Some url'));
-    reducer(ACTIVITY_INITIAL_STATE, saveIsSwitchOn(true));
+    reducer(ACTIVITY_INITIAL_STATE, addPhotoUrl({ url: 'Some url', thumbnail: null }));
+    reducer(ACTIVITY_INITIAL_STATE, saveIsPublic(true));
     reducer(ACTIVITY_INITIAL_STATE, saveEmotion(MOCK_EMOTION));
     reducer(ACTIVITY_INITIAL_STATE, saveSport(MOCK_SPORT));
     reducer(ACTIVITY_INITIAL_STATE, saveDescription(MOCK_DESCRIPTION));

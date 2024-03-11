@@ -11,6 +11,7 @@ export type ProfileSettings = {
   weight: string;
   bio: string;
   profilePhoto: string;
+  email?: string;
 };
 
 export type ProfileGoogle = {

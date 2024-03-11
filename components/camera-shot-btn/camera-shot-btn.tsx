@@ -7,8 +7,8 @@ import { Icon, useTheme } from 'react-native-paper';
 
 type CameraShotBtnProps = {
   cameraRef: MutableRefObject<Camera | null>;
-  setPhotos: (arg: string[]) => void;
-  photos: string[];
+  setPhotos: (arg: { url: string; thumbnail: string | null }[]) => void;
+  photos: { url: string; thumbnail: string | null }[];
 };
 const CAMERA_SETTINGS = {
   quality: 1,
@@ -24,7 +24,7 @@ export default function CameraShotBtn({ cameraRef, setPhotos, photos }: CameraSh
           if (cameraRef?.current) {
             const newPhoto = await cameraRef?.current.takePictureAsync(CAMERA_SETTINGS);
             if (newPhoto) {
-              setPhotos([...photos, newPhoto.uri]);
+              setPhotos([...photos, { url: newPhoto.uri, thumbnail: null }]);
               MediaLibrary.saveToLibraryAsync(newPhoto.uri);
             }
           }

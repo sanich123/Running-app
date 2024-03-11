@@ -1,4 +1,4 @@
-import { saveIsSwitchOn } from '@R/activity/activity';
+import { saveIsPublic } from '@R/activity/activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
@@ -9,24 +9,26 @@ import { CHECKBOX_TEST_ID, CHECKBOX } from './const';
 
 export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
   const { language } = useAppSelector(({ language }) => language);
-  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
-  const [isSwitchOn, setIsSwitchOn] = useState(store.getState().activity.additionalInfo.isSwitchOn);
+  const { isDisabledWhileSending, isNeedToResetInputs, isEditingActivity } = useAppSelector(({ activity }) => activity);
+  const [isPublic, setIsPublic] = useState(
+    isEditingActivity ? store.getState().activity.additionalInfo.isPublic : true,
+  );
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (isNeedToResetInputs) {
-      setIsSwitchOn(false);
-      dispatch(saveIsSwitchOn(false));
+      setIsPublic(false);
+      dispatch(saveIsPublic(false));
     }
   }, [isNeedToResetInputs]);
 
   return (
     <View style={styles.switcherWrapper}>
       <Switch
-        value={isSwitchOn}
+        value={isPublic}
         onValueChange={() => {
-          dispatch(saveIsSwitchOn(!isSwitchOn));
-          setIsSwitchOn(!isSwitchOn);
+          dispatch(saveIsPublic(!isPublic));
+          setIsPublic(!isPublic);
         }}
         testID={CHECKBOX_TEST_ID}
         disabled={isDisabled || isDisabledWhileSending}

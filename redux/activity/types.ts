@@ -17,8 +17,8 @@ export interface AdditionalInfoType {
   description: string;
   sport: SPORTS_BTNS_VALUES;
   emotion: EMOTIONS_BTNS_VALUES;
-  isSwitchOn: boolean;
-  photoUrls: string[];
+  isPublic: boolean;
+  photoVideoUrls: { url: string; thumbnail: null | string }[];
 }
 
 export interface ManualData {
@@ -40,6 +40,7 @@ export interface ActivityInitialState {
   isDisabledWhileSending: boolean;
   isHaveUnsyncedActivity: boolean;
   isManualAdding: boolean;
+  isEditingActivity: boolean;
   isCameraVisible: boolean;
   finishedActivity: FinishedActivity;
   additionalInfo: AdditionalInfoType;
@@ -48,4 +49,5 @@ export interface ActivityInitialState {
   manualHours: number;
   manualMinutes: number;
   manualDistance: number;
+  activityId: string;
 }

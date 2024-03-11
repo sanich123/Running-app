@@ -8,9 +8,14 @@ import { renderWithProviders } from '../../tests/utils/test-utils';
 describe('Preview image close btn', () => {
   it('should correctly renders and delete image from local and global state', async () => {
     const setImages = jest.fn();
-    mockStore.dispatch(addPhotoUrl('someUrl'));
+    mockStore.dispatch(addPhotoUrl({ url: 'someUrl', thumbnail: null }));
     renderWithProviders(
-      <PreviewImageCloseBtn images={['someUrl']} setImages={setImages} isDisabled={false} image="someUrl" />,
+      <PreviewImageCloseBtn
+        images={[{ url: 'someUrl', thumbnail: null }]}
+        setImages={setImages}
+        isDisabled={false}
+        image="someUrl"
+      />,
       {
         store: mockStore,
       },
@@ -18,12 +23,17 @@ describe('Preview image close btn', () => {
     const deleteIcon = screen.getByTestId('deleteIcon');
     await userEvent.press(deleteIcon);
     expect(setImages).toHaveBeenCalled();
-    expect(mockStore.getState().activity.additionalInfo.photoUrls).toEqual([]);
+    expect(mockStore.getState().activity.additionalInfo.photoVideoUrls).toEqual([]);
   });
   it('should be disabled, when isDisabled', () => {
     const setImages = jest.fn();
     renderWithProviders(
-      <PreviewImageCloseBtn images={['someUrl']} setImages={setImages} isDisabled image="someUrl" />,
+      <PreviewImageCloseBtn
+        images={[{ url: 'someUrl', thumbnail: null }]}
+        setImages={setImages}
+        isDisabled
+        image="someUrl"
+      />,
       {
         store: mockStore,
       },
@@ -34,7 +44,12 @@ describe('Preview image close btn', () => {
     mockStore.dispatch(setIsDisableWhileSending(true));
     const setImages = jest.fn();
     renderWithProviders(
-      <PreviewImageCloseBtn images={['someUrl']} setImages={setImages} isDisabled={false} image="someUrl" />,
+      <PreviewImageCloseBtn
+        images={[{ url: 'someUrl', thumbnail: null }]}
+        setImages={setImages}
+        isDisabled={false}
+        image="someUrl"
+      />,
       {
         store: mockStore,
       },

@@ -11,7 +11,7 @@ export const runichApi = createApi({
   tagTypes: [Tags.activities, Tags.profile, Tags.comments, Tags.likes, Tags.friends, Tags.users],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
-    timeout: 10000,
+    timeout: 25000,
   }),
   refetchOnReconnect: true,
   endpoints: (builder) => ({
@@ -59,6 +59,15 @@ export const runichApi = createApi({
       query: (commentId: string) => `/${comment}/${commentId}/${like}`,
       providesTags: [Tags.comments],
     }),
+    updateActivityInfo: builder.mutation({
+      query: ({ body, id }) => ({
+        url: `/${activity}/${id}`,
+        method: 'PATCH',
+        headers,
+        body,
+      }),
+      invalidatesTags: [Tags.activities],
+    }),
     sendProfileInfo: builder.mutation({
       query: ({ body, id }: SendProfile) => ({
         url: `/${user}/${id}/${profile}`,
@@ -66,7 +75,7 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.profile],
+      invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
     addActivityByUserId: builder.mutation({
       query: ({ body, id }: ActivityToSend) => ({
@@ -136,6 +145,7 @@ export const runichApi = createApi({
 export const {
   useGetUsersQuery,
   useGetUserProfileByIdQuery,
+  useUpdateActivityInfoMutation,
   useGetActivitiesByUserIdQuery,
   useGetAllActivityPhotosByUserIdQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesQuery,

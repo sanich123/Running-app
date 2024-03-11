@@ -30,9 +30,10 @@ export default function PreviewUploadableImage({ image, index, isDisabled }: Pre
         setIsLoading(true);
         try {
           if (user) {
-            const url = await compressAndSendFile(image, user.id);
-            if (url) {
-              dispatch(addPhotoUrl(url));
+            const fileWithThumbnail = await compressAndSendFile(image, user.id);
+            if (fileWithThumbnail) {
+              const { url, thumbnail } = fileWithThumbnail;
+              dispatch(addPhotoUrl({ url, thumbnail }));
               setIsLoading(false);
               setIsSuccess(true);
               setTimeout(() => setIsSuccess(false), 3000);

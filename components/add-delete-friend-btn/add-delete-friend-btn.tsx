@@ -18,6 +18,7 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
     data: listOfFriends,
   } = useGetFriendsByUserIdQuery(user?.id ?? '');
   const { language } = useAppSelector(({ language }) => language);
+
   const friendCell = listOfFriends?.filter(
     ({ friendId: friendIdOnServer }: { friendId: string }) => friendIdOnServer === friendId,
   );

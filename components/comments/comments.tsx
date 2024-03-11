@@ -1,8 +1,7 @@
-import AvatarShowable from '@C/avatar-showable/avatar-showable';
 import CommentLikeBtn from '@C/comment-like-btn/comment-like-btn';
 import CommentLikesLength from '@C/comment-likes-length/comment-likes-length';
+import { CustomImage } from '@C/custom-image/custom-image';
 import ErrorComponent from '@C/error-component/error-component';
-import UserNameSurname from '@C/user-name-surname/user-name-surname';
 import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
 import { CommentResponse } from '@R/runich-api/types';
 import { useAppSelector } from '@R/typed-hooks';
@@ -24,15 +23,26 @@ export default function Comments({ id }: { id: string }) {
       {error ? <ErrorComponent error={error} /> : null}
       {!error &&
         comments?.length > 0 &&
-        comments?.map(({ authorId, comment, id, date }: CommentResponse) => (
+        comments?.map(({ authorId, comment, id, date, profile }: CommentResponse) => (
           <Fragment key={id}>
             <Pressable
               onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${authorId}`)}
               style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
               <View style={styles.commentWrapper}>
-                <AvatarShowable size={28} id={authorId} />
+                <CustomImage
+                  style={{ width: 28, height: 28, borderRadius: 70 }}
+                  source={{ uri: profile?.profilePhoto }}
+                  contentFit="cover"
+                />
                 <View style={{ display: 'flex' }}>
-                  <UserNameSurname userId={authorId} size="bodyMedium" />
+                  <View style={{ flex: 1, flexDirection: 'row' }}>
+                    <Text variant="bodyMedium" style={{ fontWeight: 'bold' }}>
+                      {profile?.name}
+                    </Text>
+                    <Text variant="bodyMedium" style={{ fontWeight: 'bold' }}>
+                      {profile?.surname}
+                    </Text>
+                  </View>
                   <View style={styles.dateTimeWrapper}>
                     <Text variant="bodySmall">{formatDate(date, language)} </Text>
                     <Text variant="bodySmall">{getHoursMinutes(date, language)}</Text>

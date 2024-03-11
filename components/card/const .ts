@@ -17,6 +17,24 @@ export type LikeType = {
   authorId: string;
 };
 
+export type ProfileType = {
+  bio: string;
+  birthday: Date | null;
+  city: string;
+  createdAt: string;
+  email: string | null;
+  gender: string;
+  id: string;
+  language: string | null;
+  name: string;
+  profilePhoto: string;
+  sport: string | null;
+  surname: string;
+  updatedAt: string;
+  user_id: string;
+  weight: string;
+};
+
 export type ActivityCardProps = {
   isShowDeleteBtn: boolean;
   isShowDescription: boolean;
@@ -26,10 +44,12 @@ export type ActivityCardProps = {
   sport: SPORTS_BTNS_VALUES;
   id: string;
   userId: string;
-  photoUrls: string[];
+  photoVideoUrls: { url: string; thumbnail: string | null }[];
+  mapPhotoUrl?: string;
   duration: number;
   distance: number;
   fullViewRef: MutableRefObject<ReactNode | null>;
   comments: CommentType[];
   likes: LikeType[];
+  profile: ProfileType;
 };
