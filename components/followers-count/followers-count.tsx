@@ -21,6 +21,7 @@ export default function FollowersCount() {
     error,
     data: followers,
   } = useGetFollowersByUserIdQuery(friendId ? `${friendId}` : `${user?.id}`);
+
   return (
     <Pressable
       onPress={() =>
