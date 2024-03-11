@@ -16,6 +16,7 @@ import {
 } from '@R/activity/activity';
 import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
@@ -36,23 +37,27 @@ export default function ActivityUpdateBtn() {
       disabled={isError || isLoading}
       style={{ opacity: isLoading || isError ? 0.5 : 1 }}
       onPress={() => {
-        dispatch(setIsEditingActivity(true));
-        dispatch(resetFinishedActivity());
-        dispatch(resetManualData());
-        dispatch(resetActivityInfo());
-        dispatch(saveTitle(activity?.title));
-        dispatch(saveDescription(activity?.description));
-        dispatch(saveSport(activity?.sport));
-        dispatch(saveEmotion(activity?.emotion));
-        dispatch(saveIsPublic(activity?.isPublic));
-        dispatch(addPhotoUrls(activity?.photoVideoUrls));
-        dispatch(saveSport(activity?.sport));
-        dispatch(setManualDate(new Date(activity?.date)));
-        dispatch(setManualDistance(activity?.distance / 1000));
-        dispatch(setManualHours(getHoursMinutesFromMilliseconds(activity?.duration).hours));
-        dispatch(setManualMinutes(getHoursMinutesFromMilliseconds(activity?.duration).minutes));
-        //@ts-ignore
-        push(`/(tabs)/${place}/manual-activity/?activityId=${activityId}`);
+        if (activity) {
+          dispatch(setIsEditingActivity(true));
+          dispatch(resetFinishedActivity());
+          dispatch(resetManualData());
+          dispatch(resetActivityInfo());
+          dispatch(saveTitle(activity?.title));
+          dispatch(saveDescription(activity?.description));
+          dispatch(saveSport(activity?.sport));
+          dispatch(saveEmotion(activity?.emotion));
+          dispatch(saveIsPublic(activity?.isPublic));
+          dispatch(addPhotoUrls(activity?.photoVideoUrls));
+          dispatch(saveSport(activity?.sport));
+          dispatch(setManualDate(new Date(activity?.date)));
+          dispatch(setManualDistance(activity?.distance / 1000));
+          dispatch(setManualHours(getHoursMinutesFromMilliseconds(activity?.duration).hours));
+          dispatch(setManualMinutes(getHoursMinutesFromMilliseconds(activity?.duration).minutes));
+          //@ts-ignore
+          push(`/(tabs)/${place}/manual-activity/?activityId=${activityId}`);
+        } else {
+          showCrossPlatformToast('Не удалось загрузить данные об активности!');
+        }
       }}>
       <Text variant="titleMedium" style={{ color: theme.colors.primaryContainer, marginRight: 15 }}>
         Edit
