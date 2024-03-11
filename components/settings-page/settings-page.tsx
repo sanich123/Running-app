@@ -1,6 +1,6 @@
 import { changeLanguage } from '@R/language/language';
 import { resetSettings, setisNeedToPrefetchActivities } from '@R/profile/profile';
-import { runichApi } from '@R/runich-api/runich-api';
+import { runichApi, useGetUserProfileByIdQuery, useUpdateProfileInfoMutation } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { storeData } from '@U/async-storage';
 import { LANGUAGES } from '@const/enums';
@@ -10,11 +10,13 @@ import { View } from 'react-native';
 import { Button, SegmentedButtons, Switch, Text } from 'react-native-paper';
 
 export default function SettingsPage() {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const { language } = useAppSelector(({ language }) => language);
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const [languageValue, setLanguage] = useState<string>(language);
   const dispatch = useAppDispatch();
+  const { data: profileInfo, isSuccess } = useGetUserProfileByIdQuery(`${user?.id}`);
+  const [updateProfile] = useUpdateProfileInfoMutation();
 
   return (
     <>
@@ -56,15 +58,29 @@ export default function SettingsPage() {
         style={{ marginTop: 15 }}>
         Clear cache manually
       </Button>
-      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
         <Switch
           value={isNeedToPrefetchActivities}
           onValueChange={() => {
             dispatch(setisNeedToPrefetchActivities());
           }}
         />
-        <Text variant="titleSmall">Включить предзагрузку тренировок в ленте</Text>
+        <Text variant="titleSmall">{`${isNeedToPrefetchActivities ? 'Выключить' : 'Включить'} предзагрузку тренировок в ленте`}</Text>
       </View>
+      {isSuccess && (
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
+          <Switch
+            value={profileInfo?.emailNotifications}
+            onValueChange={async () => {
+              await updateProfile({
+                body: { emailNotifications: !profileInfo?.emailNotifications },
+                id: profileInfo.id,
+              });
+            }}
+          />
+          <Text variant="titleSmall">{`${profileInfo?.emailNotifications ? 'Выключить' : 'Включить'} уведомления по email`}</Text>
+        </View>
+      )}
     </>
   );
 }

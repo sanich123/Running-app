@@ -72,6 +72,15 @@ export const runichApi = createApi({
       }),
       invalidatesTags: [Tags.activities],
     }),
+    updateProfileInfo: builder.mutation({
+      query: ({ body, id }) => ({
+        url: `/${profile}/${id}`,
+        method: 'PATCH',
+        headers,
+        body,
+      }),
+      invalidatesTags: [Tags.profile, Tags.activities],
+    }),
     sendProfileInfo: builder.mutation({
       query: ({ body, id }: SendProfile) => ({
         url: `/${user}/${id}/${profile}`,
@@ -150,6 +159,7 @@ export const {
   useGetUsersQuery,
   useGetUserProfileByIdQuery,
   useUpdateActivityInfoMutation,
+  useUpdateProfileInfoMutation,
   useGetActivitiesByUserIdQuery,
   useGetAllActivityPhotosByUserIdQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesQuery,
