@@ -18,7 +18,7 @@ export interface AdditionalInfoType {
   sport: SPORTS_BTNS_VALUES;
   emotion: EMOTIONS_BTNS_VALUES;
   isPublic: boolean;
-  photoVideoUrls: { url: string; thumbnail: null | string }[];
+  photoVideoUrls: { url: string; thumbnail: null | string; blurhash?: string }[];
 }
 
 export interface ManualData {
