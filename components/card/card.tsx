@@ -33,6 +33,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     isShowDeleteBtn,
     comments,
     mapPhotoUrl,
+    mapPhotoUrlBlurhash,
     profile,
   } = rest;
   const { push } = useRouter();
@@ -65,6 +66,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
               <CustomImage
                 style={{ width: 40, height: 40, borderRadius: 70 }}
                 source={{ uri: profile?.profilePhoto }}
+                placeholder={profile?.profilePhotoBlurhash}
                 contentFit="cover"
               />
               <View style={styles.profileWrapper}>
@@ -85,7 +87,12 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
         </Pressable>
         {isShowDescription ? <CardDesription description={description} /> : null}
         {mapPhotoUrl || photoVideoUrls?.length > 0 ? (
-          <CardMapImagesList photoVideoUrls={photoVideoUrls} mapPhotoUrl={mapPhotoUrl} id={id} />
+          <CardMapImagesList
+            photoVideoUrls={photoVideoUrls}
+            mapPhotoUrl={mapPhotoUrl}
+            mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
+            id={id}
+          />
         ) : null}
         <View style={{ display: 'flex', flexDirection: 'row' }}>
           <CardLikes

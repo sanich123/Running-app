@@ -61,6 +61,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
           source={{ uri: profile?.profilePhoto }}
           contentFit="cover"
           testID={AvatarShowableTestIds.success}
+          placeholder={profile?.profilePhotoBlurhash}
         />
       )}
       {error && (

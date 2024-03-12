@@ -33,7 +33,6 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
             id="image-video-uploader"
             type="file"
             onChange={async (e) => {
-              console.log('click');
               if (user && e.target.files) {
                 const fileSrc = e.target.files[0];
                 try {

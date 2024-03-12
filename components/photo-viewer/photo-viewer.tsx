@@ -40,12 +40,17 @@ export default function PhotoViewer() {
               style={styles.viewPager}
               initialPage={uuid.validate(`${photoUrl}`) ? isMapUrlExist : +photoUrl}
               orientation="vertical">
-              {itemsToRender.map(({ url }: { url: string }, index: number) => (
+              {itemsToRender.map(({ url, blurhash }: { url: string; blurhash: string }, index: number) => (
                 <View key={index}>
                   {url.includes('mp4' || 'avi' || 'm4v') ? (
                     <VideoViewer url={url} />
                   ) : (
-                    <CustomImage source={{ uri: url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                    <CustomImage
+                      source={{ uri: url }}
+                      style={{ width: '100%', height: '100%' }}
+                      contentFit="cover"
+                      placeholder={blurhash}
+                    />
                   )}
                 </View>
               ))}

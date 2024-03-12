@@ -36,6 +36,7 @@ export default function ListOfFollowers() {
                 name={item.users.profile?.name}
                 surname={item.users.profile?.surname}
                 profilePhoto={item.users.profile?.profilePhoto}
+                placeholder={item.users.profile?.profilePhotoBlurhash}
                 user_id={item.users.profile?.user_id}
               />
             )}

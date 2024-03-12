@@ -28,6 +28,7 @@ export type ProfileType = {
   language: string | null;
   name: string;
   profilePhoto: string;
+  profilePhotoBlurhash?: string;
   sport: string | null;
   surname: string;
   updatedAt: string;
@@ -44,8 +45,9 @@ export type ActivityCardProps = {
   sport: SPORTS_BTNS_VALUES;
   id: string;
   userId: string;
-  photoVideoUrls: { url: string; thumbnail: string | null }[];
+  photoVideoUrls: { url: string; thumbnail: string | null; blurhash?: string }[];
   mapPhotoUrl?: string;
+  mapPhotoUrlBlurhash?: string;
   duration: number;
   distance: number;
   fullViewRef: MutableRefObject<ReactNode | null>;

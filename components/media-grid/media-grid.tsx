@@ -35,20 +35,26 @@ export default function MediaGrid() {
           photos
             ?.map(({ photoVideoUrls }: { photoVideoUrls: { url: string; thumbnail: string | null } }) => photoVideoUrls)
             .flat()
-            .map(({ url, thumbnail }: { url: string; thumbnail: string | null }, index: number) => (
-              <Pressable
-                key={`${url}+${index}`}
-                style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
-                onPress={() =>
-                  push(`/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}`)
-                }>
-                <CustomImage
-                  style={{ height: calculatedWidth, width: calculatedWidth }}
-                  source={{ uri: thumbnail || url }}
-                  contentFit="cover"
-                />
-              </Pressable>
-            ))}
+            .map(
+              (
+                { url, thumbnail, blurhash }: { url: string; thumbnail: string | null; blurhash: string },
+                index: number,
+              ) => (
+                <Pressable
+                  key={`${url}+${index}`}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+                  onPress={() =>
+                    push(`/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}`)
+                  }>
+                  <CustomImage
+                    style={{ height: calculatedWidth, width: calculatedWidth }}
+                    source={{ uri: thumbnail || url }}
+                    contentFit="cover"
+                    placeholder={blurhash}
+                  />
+                </Pressable>
+              ),
+            )}
       </View>
     </ScrollView>
   );

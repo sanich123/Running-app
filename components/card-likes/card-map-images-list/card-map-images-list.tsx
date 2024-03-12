@@ -7,12 +7,18 @@ import { FlatList, Platform, Pressable, useWindowDimensions } from 'react-native
 type CardMapImagesListProps = {
   photoVideoUrls: PhotoVideoUrls;
   mapPhotoUrl?: string;
+  mapPhotoUrlBlurhash?: string;
   id: string;
 };
 export type PhotoVideoUrls = ImageVideoType[];
-export type ImageVideoType = { url: string; thumbnail: string | null };
+export type ImageVideoType = { url: string; thumbnail: string | null; blurhash?: string };
 
-export default memo(function CardMapImagesList({ photoVideoUrls, mapPhotoUrl, id }: CardMapImagesListProps) {
+export default memo(function CardMapImagesList({
+  photoVideoUrls,
+  mapPhotoUrl,
+  id,
+  mapPhotoUrlBlurhash,
+}: CardMapImagesListProps) {
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const pathname = usePathname();
@@ -20,7 +26,11 @@ export default memo(function CardMapImagesList({ photoVideoUrls, mapPhotoUrl, id
 
   return (
     <FlatList
-      data={mapPhotoUrl ? [{ url: mapPhotoUrl, thumbnail: null }, ...photoVideoUrls] : photoVideoUrls}
+      data={
+        mapPhotoUrl
+          ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...photoVideoUrls]
+          : photoVideoUrls
+      }
       renderItem={({ item, index }) => {
         return (
           <Pressable
@@ -39,6 +49,7 @@ export default memo(function CardMapImagesList({ photoVideoUrls, mapPhotoUrl, id
               source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
               contentFit="cover"
               testID={item.url}
+              placeholder={item.blurhash}
             />
           </Pressable>
         );

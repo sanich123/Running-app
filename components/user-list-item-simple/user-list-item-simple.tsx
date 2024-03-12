@@ -10,11 +10,13 @@ export default function UserListItemSimple({
   name,
   surname,
   profilePhoto,
+  placeholder,
   city,
   user_id,
 }: {
   name: string;
   surname: string;
+  placeholder: string;
   profilePhoto: string;
   city: string;
   user_id: string;
@@ -32,6 +34,7 @@ export default function UserListItemSimple({
           style={{ width: 35, height: 35, borderRadius: 70 }}
           source={{ uri: profilePhoto }}
           contentFit="cover"
+          placeholder={placeholder}
         />
         <View>
           <View style={{ flex: 1, flexDirection: 'row' }}>

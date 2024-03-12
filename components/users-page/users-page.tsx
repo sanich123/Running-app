@@ -26,6 +26,7 @@ export default function ListOfUsers() {
                 name={profile?.name}
                 surname={profile?.surname}
                 profilePhoto={profile?.profilePhoto}
+                placeholder={profile?.profilePhotoBlurhash}
                 user_id={profile?.user_id}
               />
             )}

@@ -27,6 +27,7 @@ export default function LikesList() {
                 name={profile?.name}
                 surname={profile?.surname}
                 profilePhoto={profile?.profilePhoto}
+                placeholder={profile?.profilePhotoBlurhash}
                 city={profile?.city}
                 user_id={profile?.user_id}
               />
