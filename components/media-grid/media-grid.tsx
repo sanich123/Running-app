@@ -44,7 +44,9 @@ export default function MediaGrid() {
                   key={`${url}+${index}`}
                   style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
                   onPress={() =>
-                    push(`/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}`)
+                    push(
+                      `/(tabs)/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}?userId=${userId}`,
+                    )
                   }>
                   <CustomImage
                     style={{ height: calculatedWidth, width: calculatedWidth }}

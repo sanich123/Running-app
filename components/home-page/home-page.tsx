@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -40,21 +40,23 @@ export default function Feed() {
     <>
       <SafeAreaView
         edges={['left', 'right']}
-        style={[{ flex: 1 }, (isLoading || error || activities?.length === 0) && styles.isInCenter]}>
-        {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
-        <NetworkIndicator />
-        {activities && <OptimizedList activities={activities} refetch={refetch} />}
-        {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
-        {error ? <ErrorComponent error={error} /> : null}
-        <FloatingBtn
-          onPressFn={() => {
-            dispatch(setIsManualAdding(true));
-            dispatch(resetFinishedActivity());
-            dispatch(resetManualData());
-            dispatch(resetActivityInfo());
-            push('/(tabs)/home/manual-activity');
-          }}
-        />
+        style={[{ flex: 1 }, (isLoading || error || !activities?.length) && styles.isInCenter]}>
+        <View>
+          {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
+          <NetworkIndicator />
+          {activities && <OptimizedList activities={activities} refetch={refetch} />}
+          {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
+          {error ? <ErrorComponent error={error} /> : null}
+          <FloatingBtn
+            onPressFn={() => {
+              dispatch(setIsManualAdding(true));
+              dispatch(resetFinishedActivity());
+              dispatch(resetManualData());
+              dispatch(resetActivityInfo());
+              push('/(tabs)/home/manual-activity');
+            }}
+          />
+        </View>
       </SafeAreaView>
     </>
   );
@@ -63,6 +65,6 @@ export default function Feed() {
 const styles = StyleSheet.create({
   isInCenter: {
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
 });

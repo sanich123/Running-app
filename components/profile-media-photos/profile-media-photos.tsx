@@ -36,35 +36,46 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
             photos?.length > 0 &&
             photos
               ?.map(
-                ({ photoVideoUrls }: { photoVideoUrls: { url: string; thumbnail: string | null } }) => photoVideoUrls,
+                ({
+                  photoVideoUrls,
+                }: {
+                  photoVideoUrls: { url: string; thumbnail: string | null; blurhash?: string };
+                }) => photoVideoUrls,
               )
               .flat()
               .slice(0, 4)
-              .map(({ url, thumbnail }: { url: string; thumbnail: string | null }, index: number) => {
-                if (index === 3) {
+              .map(
+                (
+                  { url, thumbnail, blurhash }: { url: string; thumbnail: string | null; blurhash: string },
+                  index: number,
+                ) => {
+                  if (index === 3) {
+                    return (
+                      <Fragment key={`${url}+${index}`}>
+                        <View style={{ position: 'relative', opacity: 0.2, backgroundColor: 'grey' }}>
+                          <CustomImage
+                            style={{ width: width / 4, height: width / 4 }}
+                            source={{ uri: thumbnail || url }}
+                            placeholder={blurhash}
+                          />
+                        </View>
+                        <Text variant="titleMedium" style={{ position: 'absolute', top: '35%', right: 12, zIndex: 10 }}>
+                          {PROFILE_MEDIA[language].label}
+                        </Text>
+                      </Fragment>
+                    );
+                  }
                   return (
-                    <Fragment key={`${url}+${index}`}>
-                      <View style={{ position: 'relative', opacity: 0.2, backgroundColor: 'grey' }}>
-                        <CustomImage
-                          style={{ width: width / 4, height: width / 4 }}
-                          source={{ uri: thumbnail || url }}
-                        />
-                      </View>
-                      <Text variant="titleMedium" style={{ position: 'absolute', top: '35%', right: 12, zIndex: 10 }}>
-                        {PROFILE_MEDIA[language].label}
-                      </Text>
-                    </Fragment>
+                    <CustomImage
+                      key={`${url}+${index}`}
+                      source={{ uri: thumbnail || url }}
+                      style={{ width: width / 4, height: width / 4 }}
+                      contentFit="cover"
+                      placeholder={blurhash}
+                    />
                   );
-                }
-                return (
-                  <CustomImage
-                    key={`${url}+${index}`}
-                    source={{ uri: thumbnail || url }}
-                    style={{ width: width / 4, height: width / 4 }}
-                    contentFit="cover"
-                  />
-                );
-              })}
+                },
+              )}
         </View>
       </Pressable>
     </>
