@@ -141,7 +141,7 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.likes],
+      invalidatesTags: [Tags.likes, Tags.activities],
     }),
     sendOrDeleteLikeToComment: builder.mutation({
       query: ({ body, commentId }: SendCommentLike) => ({

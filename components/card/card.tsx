@@ -35,6 +35,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     mapPhotoUrl,
     mapPhotoUrlBlurhash,
     profile,
+    likes,
   } = rest;
   const { push } = useRouter();
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
@@ -95,15 +96,18 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           />
         ) : null}
         <View style={{ display: 'flex', flexDirection: 'row' }}>
-          <CardLikes
-            activityId={id}
-            size={pathname.includes(ROUTES.activity) ? CardLikesSize.big : CardLikesSize.small}
-          />
+          {likes?.length ? (
+            <CardLikes
+              activityId={id}
+              size={pathname.includes(ROUTES.activity) ? CardLikesSize.big : CardLikesSize.small}
+            />
+          ) : null}
           <CommentsLength activityId={id} comments={comments} />
         </View>
       </View>
       <Card.Actions>
         <CardBtns
+          likes={likes}
           activityId={id}
           userId={userId}
           cardRef={cardRef}

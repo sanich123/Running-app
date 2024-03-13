@@ -11,29 +11,20 @@ import ShowCameraBtn from '@C/show-camera-btn/show-camera-btn';
 import SportsBtns from '@C/sports-btns/sports-btns';
 import TextInputs from '@C/text-inputs/text-inputs';
 import UploadPhotosBtn from '@C/upload-photos-btn/upload-photos-btn';
-import { setIsNeedToResetInputs } from '@R/activity/activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function SaveResult() {
   const [isDisabled, setIsDisabled] = useState(false);
   const {
-    isNeedToResetInputs,
     isManualAdding,
     isEditingActivity,
     isCameraVisible,
     additionalInfo: { photoVideoUrls },
   } = useAppSelector(({ activity }) => activity);
-  const dispatch = useAppDispatch();
   const [images, setImages] = useState<{ url: string; thumbnail: string | null }[]>([]);
-
-  useEffect(() => {
-    if (isNeedToResetInputs) {
-      dispatch(setIsNeedToResetInputs(false));
-    }
-  }, [isNeedToResetInputs]);
 
   return (
     <>

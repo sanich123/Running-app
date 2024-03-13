@@ -4,7 +4,13 @@ import OptimizedList from '@C/flash-list/flash-list';
 import FloatingBtn from '@C/floating-btn/floating-btn';
 import NetworkIndicator from '@C/network-indicator/network-indicator';
 import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
-import { setIsManualAdding, resetFinishedActivity, resetManualData, resetActivityInfo } from '@R/activity/activity';
+import {
+  setIsManualAdding,
+  resetFinishedActivity,
+  resetManualData,
+  resetActivityInfo,
+  setIsEditingActivity,
+} from '@R/activity/activity';
 import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
@@ -37,28 +43,27 @@ export default function Feed() {
   }, [isNeedToPrefetchActivities]);
 
   return (
-    <>
-      <SafeAreaView
-        edges={['left', 'right']}
-        style={[{ flex: 1 }, (isLoading || error || !activities?.length) && styles.isInCenter]}>
-        <View>
-          {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
-          <NetworkIndicator />
-          {activities && <OptimizedList activities={activities} refetch={refetch} />}
-          {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
-          {error ? <ErrorComponent error={error} /> : null}
-          <FloatingBtn
-            onPressFn={() => {
-              dispatch(setIsManualAdding(true));
-              dispatch(resetFinishedActivity());
-              dispatch(resetManualData());
-              dispatch(resetActivityInfo());
-              push('/(tabs)/home/manual-activity');
-            }}
-          />
-        </View>
-      </SafeAreaView>
-    </>
+    <SafeAreaView
+      edges={['left', 'right']}
+      style={[{ flex: 1 }, (isLoading || error || !activities?.length) && styles.isInCenter]}>
+      <View style={[{ flex: 1, justifyContent: 'center' }]}>
+        {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
+        <NetworkIndicator />
+        {activities && <OptimizedList activities={activities} refetch={refetch} />}
+        {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
+        {error ? <ErrorComponent error={error} /> : null}
+        <FloatingBtn
+          onPressFn={() => {
+            dispatch(setIsManualAdding(true));
+            dispatch(setIsEditingActivity(false));
+            dispatch(resetFinishedActivity());
+            dispatch(resetManualData());
+            dispatch(resetActivityInfo());
+            push('/(tabs)/home/manual-activity');
+          }}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 

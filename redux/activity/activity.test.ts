@@ -14,7 +14,6 @@ import reducer, {
   saveUnsendedActivity,
   setIsDisableWhileSending,
   setIsHaveUnsyncedActivity,
-  setIsNeedToResetInputs,
 } from './activity';
 import { ACTIVITY_INITIAL_STATE } from './const';
 
@@ -97,15 +96,8 @@ describe('Activity slice', () => {
       isDisabledWhileSending: true,
     });
   });
-  it('should correctly change isNeedToResetInputs', () => {
-    expect(reducer(ACTIVITY_INITIAL_STATE, setIsNeedToResetInputs(true))).toEqual({
-      ...ACTIVITY_INITIAL_STATE,
-      isNeedToResetInputs: true,
-    });
-  });
   it('should correctly reset activity info', () => {
     reducer(ACTIVITY_INITIAL_STATE, saveTitle(MOCK_TITLE));
-    reducer(ACTIVITY_INITIAL_STATE, setIsNeedToResetInputs(true));
     reducer(ACTIVITY_INITIAL_STATE, setIsDisableWhileSending(true));
     reducer(ACTIVITY_INITIAL_STATE, addPhotoUrl({ url: 'Some url', thumbnail: null }));
     reducer(ACTIVITY_INITIAL_STATE, saveIsPublic(true));

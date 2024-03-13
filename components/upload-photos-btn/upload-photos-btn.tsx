@@ -1,10 +1,10 @@
 import { useAuth } from '@A/context/auth-context';
 import { View, Text } from '@C/Themed';
-import { resetPhotoUrls, addPhotoUrl } from '@R/activity/activity';
+import { addPhotoUrl } from '@R/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 
@@ -14,15 +14,8 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const { language } = useAppSelector(({ language }) => language);
-  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
+  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (isNeedToResetInputs) {
-      dispatch(resetPhotoUrls());
-      setImages([]);
-    }
-  }, [isNeedToResetInputs]);
 
   return (
     <>

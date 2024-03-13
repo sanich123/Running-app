@@ -2,7 +2,7 @@ import * as auth from '@A/context/auth-context';
 import { COMMENT_BTN_TEST_ID } from '@C/card-comment-btn/const';
 import { CARD_DELETE_BTN_TEST_ID } from '@C/card-delete-btn/const';
 import { CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '@C/card-like-btn/const';
-import { MOCK_LIKE } from '@T/mocks/mock-likes';
+import { MOCK_LIKE, MOCK_LIKES } from '@T/mocks/mock-likes';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -30,6 +30,7 @@ describe('Card btns', () => {
         userId={MOCK_LIKE[0].authorId}
         cardRef={{ current: '' }}
         fullViewRef={{ current: '' }}
+        likes={MOCK_LIKES}
       />,
       {
         store: mockStore,
@@ -46,6 +47,7 @@ describe('Card btns', () => {
         userId="someUserId"
         cardRef={{ current: '' }}
         fullViewRef={{ current: '' }}
+        likes={MOCK_LIKES}
       />,
       {
         store: mockStore,

@@ -6,6 +6,7 @@ export const ACTIVITY_SAVE_BTN = {
     update: 'Update',
     updating: 'Updating',
     saving: 'Saving',
+    edit: 'Edit',
     errorMsg: 'An error occured during sending activity! Try again.',
   },
   [LANGUAGES.russian]: {
@@ -13,6 +14,7 @@ export const ACTIVITY_SAVE_BTN = {
     update: 'Изменить',
     updating: 'Изменяю',
     saving: 'Сохраняю',
+    edit: 'Редактировать',
     errorMsg: 'Произошла ошибка во время отправки активности. Попробуйте еще раз!',
   },
 } as const;

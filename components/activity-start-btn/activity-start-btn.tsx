@@ -1,4 +1,10 @@
-import { saveFinishedActivity, setIsManualAdding } from '@R/activity/activity';
+import {
+  resetActivityInfo,
+  resetManualData,
+  saveFinishedActivity,
+  setIsEditingActivity,
+  setIsManualAdding,
+} from '@R/activity/activity';
 import { setActivityStatus } from '@R/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location-utils';
@@ -45,6 +51,9 @@ export default function ActivityStartBtn() {
         dispatch(setActivityStatus(RESPONSE_STATUS[activityStatus]));
         if (activityStatus === STATUSES.paused) {
           dispatch(setIsManualAdding(false));
+          dispatch(setIsEditingActivity(false));
+          dispatch(resetManualData());
+          dispatch(resetActivityInfo());
           push(`/(tabs)/${ROUTES.home}/${ROUTES.manualActivity}/`);
         }
       }}>

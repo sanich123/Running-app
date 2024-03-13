@@ -36,7 +36,6 @@ export type ActivityToSend = {
 export type UnsyncedActivities = ActivityToSend[];
 
 export interface ActivityInitialState {
-  isNeedToResetInputs: boolean;
   isDisabledWhileSending: boolean;
   isHaveUnsyncedActivity: boolean;
   isManualAdding: boolean;

@@ -38,9 +38,6 @@ export const activity = createSlice({
     resetActivityInfo: (state) => {
       state.additionalInfo = ADDITIONAL_INFO_INITIAL_STATE;
     },
-    setIsNeedToResetInputs: (state, action) => {
-      state.isNeedToResetInputs = action.payload;
-    },
     setIsEditingActivity: (state, action) => {
       state.isEditingActivity = action.payload;
     },
@@ -98,7 +95,6 @@ export const {
   saveIsPublic,
   setIsDisableWhileSending,
   resetActivityInfo,
-  setIsNeedToResetInputs,
   saveUnsendedActivity,
   setIsHaveUnsyncedActivity,
   refreshUnsendedActivitiesList,

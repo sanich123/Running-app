@@ -1,3 +1,4 @@
+import { ACTIVITY_SAVE_BTN } from '@C/activity-save-btn/const';
 import {
   addPhotoUrls,
   resetActivityInfo,
@@ -9,13 +10,14 @@ import {
   saveSport,
   saveTitle,
   setIsEditingActivity,
+  setIsManualAdding,
   setManualDate,
   setManualDistance,
   setManualHours,
   setManualMinutes,
 } from '@R/activity/activity';
 import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
-import { useAppDispatch } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
@@ -28,6 +30,7 @@ export default function ActivityUpdateBtn() {
   const { push } = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
+  const { language } = useAppSelector(({ language }) => language);
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const { id: activityId } = useLocalSearchParams();
   const { data: activity, isError, isLoading } = useGetActivityByActivityIdQuery(`${activityId}`);
@@ -38,6 +41,7 @@ export default function ActivityUpdateBtn() {
       style={{ opacity: isLoading || isError ? 0.5 : 1 }}
       onPress={() => {
         if (activity) {
+          dispatch(setIsManualAdding(false));
           dispatch(setIsEditingActivity(true));
           dispatch(resetFinishedActivity());
           dispatch(resetManualData());
@@ -60,7 +64,7 @@ export default function ActivityUpdateBtn() {
         }
       }}>
       <Text variant="titleMedium" style={{ color: theme.colors.primaryContainer, marginRight: 15 }}>
-        Edit
+        {ACTIVITY_SAVE_BTN[language].edit}
       </Text>
     </Pressable>
   );

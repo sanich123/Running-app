@@ -2,10 +2,8 @@ import { useAuth } from '@A/context/auth-context';
 import {
   setIsDisableWhileSending,
   resetActivityInfo,
-  setIsNeedToResetInputs,
   saveUnsendedActivity,
   setIsHaveUnsyncedActivity,
-  setIsEditingActivity,
 } from '@R/activity/activity';
 import { ActivityToSend } from '@R/activity/types';
 import { resetLocationsFromBackground } from '@R/location/location';
@@ -62,9 +60,7 @@ export default function ActivitySaveBtn() {
         }
       }
       dispatch(resetActivityInfo());
-      dispatch(setIsNeedToResetInputs(true));
       dispatch(resetLocationsFromBackground());
-      dispatch(setIsEditingActivity(false));
       replace(`/`);
     }
     if ((isError && error) || (isErrorUpdating && errorUpdating)) {
@@ -77,9 +73,7 @@ export default function ActivitySaveBtn() {
       if (error && 'status' in error) {
         if (error.status === 'FETCH_ERROR') {
           dispatch(resetActivityInfo());
-          dispatch(setIsNeedToResetInputs(true));
           dispatch(resetLocationsFromBackground());
-          dispatch(setIsEditingActivity(false));
           replace(`/`);
         }
       }

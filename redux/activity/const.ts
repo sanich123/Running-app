@@ -21,7 +21,6 @@ export const ADDITIONAL_INFO_INITIAL_STATE: AdditionalInfoType = {
 };
 
 export const ACTIVITY_INITIAL_STATE: ActivityInitialState = {
-  isNeedToResetInputs: false,
   isDisabledWhileSending: false,
   isHaveUnsyncedActivity: false,
   isManualAdding: false,
