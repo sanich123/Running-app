@@ -64,22 +64,25 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.cardContent]}
               onPress={() => push(`/${place}/${ROUTES.profile}/${userId}`)}>
-              <CustomImage
-                style={{ width: 40, height: 40, borderRadius: 70 }}
-                source={{ uri: profile?.profilePhoto }}
-                placeholder={profile?.profilePhotoBlurhash}
-                contentFit="cover"
-              />
-              <View style={styles.profileWrapper}>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
-                  <Text variant="titleMedium" style={{ fontWeight: 'bold' }}>
-                    {`${profile?.name} `}
-                  </Text>
-                  <Text variant="titleMedium" style={{ fontWeight: 'bold' }}>
-                    {profile?.surname}
-                  </Text>
+              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                {/* style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }} */}
+                <CustomImage
+                  style={{ width: 40, height: 40, borderRadius: 70 }}
+                  source={{ uri: profile?.profilePhoto }}
+                  placeholder={profile?.profilePhotoBlurhash}
+                  contentFit="cover"
+                />
+                <View style={styles.profileWrapper}>
+                  <View style={{ flex: 1, flexDirection: 'row' }}>
+                    <Text variant="titleMedium" style={{ fontWeight: 'bold' }}>
+                      {`${profile?.name} `}
+                    </Text>
+                    <Text variant="titleMedium" style={{ fontWeight: 'bold' }}>
+                      {profile?.surname}
+                    </Text>
+                  </View>
+                  <UserSportDate sport={sport} date={date} />
                 </View>
-                <UserSportDate sport={sport} date={date} />
               </View>
             </Pressable>
           </Card.Content>

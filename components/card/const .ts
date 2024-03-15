@@ -45,7 +45,7 @@ export type ActivityCardProps = {
   sport: SPORTS_BTNS_VALUES;
   id: string;
   userId: string;
-  photoVideoUrls: { url: string; thumbnail: string | null; blurhash?: string }[];
+  photoVideoUrls: PhotoVideoType[];
   mapPhotoUrl?: string;
   mapPhotoUrlBlurhash?: string;
   duration: number;
@@ -55,3 +55,5 @@ export type ActivityCardProps = {
   likes: LikeType[];
   profile: ProfileType;
 };
+
+export type PhotoVideoType = { url: string; thumbnail: string | null; blurhash?: string };

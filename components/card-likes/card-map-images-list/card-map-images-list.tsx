@@ -1,3 +1,4 @@
+import { PhotoVideoType } from '@C/card/const ';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
@@ -10,8 +11,7 @@ type CardMapImagesListProps = {
   mapPhotoUrlBlurhash?: string;
   id: string;
 };
-export type PhotoVideoUrls = ImageVideoType[];
-export type ImageVideoType = { url: string; thumbnail: string | null; blurhash?: string };
+export type PhotoVideoUrls = PhotoVideoType[];
 
 export default memo(function CardMapImagesList({
   photoVideoUrls,
@@ -49,7 +49,7 @@ export default memo(function CardMapImagesList({
               source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
               contentFit="cover"
               testID={item.url}
-              placeholder={item.blurhash}
+              placeholder={item?.blurhash}
             />
           </Pressable>
         );

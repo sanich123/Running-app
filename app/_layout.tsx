@@ -11,6 +11,7 @@ import { ToastProvider } from 'react-native-toast-notifications';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
+import '../global.css';
 import expo from '../app.config';
 
 export default function RootLayout() {

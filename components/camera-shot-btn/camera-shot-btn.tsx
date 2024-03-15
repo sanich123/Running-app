@@ -1,3 +1,4 @@
+import { PhotoVideoType } from '@C/card/const ';
 import { errorHandler } from '@U/error-handler';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -7,8 +8,8 @@ import { Icon, useTheme } from 'react-native-paper';
 
 type CameraShotBtnProps = {
   cameraRef: MutableRefObject<Camera | null>;
-  setPhotos: (arg: { url: string; thumbnail: string | null }[]) => void;
-  photos: { url: string; thumbnail: string | null }[];
+  setPhotos: (arg: PhotoVideoType[]) => void;
+  photos: PhotoVideoType[];
 };
 const CAMERA_SETTINGS = {
   quality: 1,

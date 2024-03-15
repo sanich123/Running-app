@@ -2,6 +2,7 @@ import CameraChangeView from '@C/camera-change-view/camera-change-view';
 import CameraCloseBtn from '@C/camera-close/camera-close-btn';
 import CameraFlash from '@C/camera-flash/camera-flash';
 import CameraShotBtn from '@C/camera-shot-btn/camera-shot-btn';
+import { PhotoVideoType } from '@C/card/const ';
 import PreviewImages from '@C/preview-images/preview-images';
 import { Camera, CameraType, FlashMode } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -11,7 +12,7 @@ import { ActivityIndicator, Text } from 'react-native-paper';
 
 export default function CameraLauncher() {
   const cameraRef = useRef<Camera>(null);
-  const [photos, setPhotos] = useState<{ url: string; thumbnail: string | null }[]>([]);
+  const [photos, setPhotos] = useState<PhotoVideoType[]>([]);
   const [type, setType] = useState(CameraType.back);
   const [flashEnable, setFlashEnable] = useState(FlashMode.off);
   const [permission, requestPermission] = Camera.useCameraPermissions();
