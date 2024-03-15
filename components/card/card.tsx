@@ -4,7 +4,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { useRef, memo, useEffect } from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 
 import { ActivityCardProps } from './const ';
@@ -59,27 +59,22 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
               push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}`);
             }
           }}
-          style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+          style={({ pressed }) => ({ opacity: !pathname.includes(ROUTES.activity) && pressed ? 0.5 : 1 })}>
           <Card.Content>
             <Pressable
-              style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.cardContent]}
+              style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
               onPress={() => push(`/${place}/${ROUTES.profile}/${userId}`)}>
-              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                {/* style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }} */}
+              <View className="flex flex-row items-center gap-5">
                 <CustomImage
                   style={{ width: 40, height: 40, borderRadius: 70 }}
                   source={{ uri: profile?.profilePhoto }}
                   placeholder={profile?.profilePhotoBlurhash}
                   contentFit="cover"
                 />
-                <View style={styles.profileWrapper}>
-                  <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <Text variant="titleMedium" style={{ fontWeight: 'bold' }}>
-                      {`${profile?.name} `}
-                    </Text>
-                    <Text variant="titleMedium" style={{ fontWeight: 'bold' }}>
-                      {profile?.surname}
-                    </Text>
+                <View className="margin-0 padding-0">
+                  <View className="flex-1 flex-row">
+                    <Text variant="titleMedium">{`${profile?.name} `}</Text>
+                    <Text variant="titleMedium">{profile?.surname}</Text>
                   </View>
                   <UserSportDate sport={sport} date={date} />
                 </View>
@@ -98,7 +93,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             id={id}
           />
         ) : null}
-        <View style={{ display: 'flex', flexDirection: 'row' }}>
+        <View className="flex flex-row">
           {likes?.length ? (
             <CardLikes
               activityId={id}
@@ -120,19 +115,4 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
       </Card.Actions>
     </Card>
   );
-});
-
-const styles = StyleSheet.create({
-  cardContent: {
-    display: 'flex',
-    flexDirection: 'row',
-    columnGap: 5,
-    paddingTop: 10,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  profileWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
 });

@@ -4,6 +4,7 @@ import ProfileEditBtn from '@C/profile-edit-btn/profile-edit-btn';
 import { useAppSelector } from '@R/typed-hooks';
 import { LABELS } from '@const/enums';
 import { Stack } from 'expo-router';
+import { Dimensions } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function ProfileMainLayout() {
@@ -13,9 +14,11 @@ export default function ProfileMainLayout() {
 
   return (
     <MaterialTopTabs
+      initialLayout={{ width: Dimensions.get('window').width }}
       screenOptions={{
         tabBarLabelStyle: { fontSize: 12, color: colors.primaryContainer, fontWeight: 'bold' },
-        tabBarStyle: { backgroundColor: colors.primary },
+        tabBarStyle: { display: 'flex', backgroundColor: colors.primary },
+        tabBarItemStyle: { width: Dimensions.get('window').width / 2 },
       }}>
       <Stack.Screen
         name="profile"
