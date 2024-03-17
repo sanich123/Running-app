@@ -1,5 +1,5 @@
-import { StyleSheet, View } from 'react-native';
-import { useTheme, Text } from 'react-native-paper';
+import { View } from 'react-native';
+import { Text } from 'react-native-paper';
 
 type MetricsItemProps = {
   isMapVisible: boolean;
@@ -9,37 +9,13 @@ type MetricsItemProps = {
 };
 
 export default function MetricsItem({ isMapVisible, title, metric, isCentral }: MetricsItemProps) {
-  const { colors } = useTheme();
   const isCentralAndIsNotMapVisible = isCentral && !isMapVisible;
+  console.log(isCentralAndIsNotMapVisible);
   return (
     <View
-      style={[
-        styles.basicMetricsLayout,
-        {
-          backgroundColor: colors.onSecondary,
-          width: isCentralAndIsNotMapVisible ? '100%' : '50%',
-        },
-        isMapVisible && styles.isMapVisibleLayout,
-      ]}>
-      <Text
-        variant={`${isCentralAndIsNotMapVisible ? 'displayMedium' : 'headlineSmall'}`}
-        style={{ fontWeight: 'bold' }}>
-        {title}
-      </Text>
+      className={`flex items-center justify-center ${isCentralAndIsNotMapVisible ? 'w-full' : 'w-1/2'} ${isMapVisible ? 'w-1/3 h-full' : 'h-1/3'}`}>
+      <Text variant={`${isCentralAndIsNotMapVisible ? 'displayMedium' : 'headlineSmall'}`}>{title}</Text>
       <Text variant={`${isCentralAndIsNotMapVisible ? 'headlineLarge' : 'headlineSmall'}`}>{metric}</Text>
     </View>
   );
 }
-
-export const styles = StyleSheet.create({
-  basicMetricsLayout: {
-    height: '33.33%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  isMapVisibleLayout: {
-    width: '33.33%',
-    height: '100%',
-  },
-});

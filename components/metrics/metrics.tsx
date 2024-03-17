@@ -1,5 +1,5 @@
 import { useAppSelector } from '@R/typed-hooks';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 
 import { MAP_METRICS } from './const';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
@@ -12,13 +12,13 @@ export default function Metrics() {
   const { language } = useAppSelector(({ language }) => language);
   const formattedDuration = formatDuration(duration);
   const formattedDistance = (distance / 1000).toFixed(2);
-  const { metricsLayout, withMapHeight } = styles;
   const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;
 
   return (
     <>
       <ActivityErrorMsg />
-      <View style={[metricsLayout, isMapVisible && withMapHeight]}>
+      <View
+        className={`flex flex-row flex-wrap justify-between relative ${isMapVisible ? 'h-20' : 'h-full'} bg-neutral-500`}>
         <MetricsItem
           isMapVisible={isMapVisible}
           title={`${MAP_METRICS[language].time}:`}
@@ -59,16 +59,3 @@ export default function Metrics() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  metricsLayout: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    height: '100%',
-    position: 'relative',
-  },
-  withMapHeight: {
-    height: '15%',
-  },
-});
