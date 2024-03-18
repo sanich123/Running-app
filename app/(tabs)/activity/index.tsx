@@ -15,8 +15,8 @@ export default function Activity() {
 
   return (
     <>
-      <ActivityLocationIndicator />
       <View className="flex-1 items-center justify-center">
+        <ActivityLocationIndicator />
         <View className="h-4/5 w-full">
           {(activityStatus === STATUSES.initial || isMapVisible) && <Map />}
           {activityStatus !== STATUSES.initial && <Metrics />}

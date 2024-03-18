@@ -18,7 +18,7 @@ export default function Metrics() {
     <>
       <ActivityErrorMsg />
       <View
-        className={`flex flex-row flex-wrap justify-between relative ${isMapVisible ? 'h-20' : 'h-full'} bg-neutral-500`}>
+        className={`flex flex-row flex-wrap justify-between relative text-black dark:text-white ${isMapVisible ? 'h-20' : 'h-full'} bg-gray-300`}>
         <MetricsItem
           isMapVisible={isMapVisible}
           title={`${MAP_METRICS[language].time}:`}
