@@ -23,8 +23,8 @@ export default function EmailInput({ email, setEmail, emailError, setEmailError,
         onEndEditing={() => (!emailMatcher.test(email.trim()) ? setEmailError(true) : setEmailError(false))}
         placeholder={EMAIL_INPUT[language].placeholder}
         left={<TextInput.Icon testID={EMAIL_INPUT_LEFT_ICON} icon="email" disabled={isDisabled} />}
-        style={{ marginTop: 10 }}
         accessibilityRole="text"
+        style={{ marginTop: 10 }}
         mode="outlined"
         disabled={isDisabled}
       />

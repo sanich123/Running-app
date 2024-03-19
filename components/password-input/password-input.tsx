@@ -46,7 +46,6 @@ export default function PasswordInput({
             disabled={isDisabled}
           />
         }
-        style={{ marginTop: 10 }}
         accessibilityRole="text"
         mode="outlined"
         disabled={isDisabled}

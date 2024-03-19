@@ -11,7 +11,7 @@ import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 
 export default function SignIn() {
   if (Platform.OS === 'web') {
@@ -45,7 +45,7 @@ export default function SignIn() {
   return (
     <>
       {!process.env.IS_TESTING ? <Stack.Screen options={{ title: 'sign up', headerShown: false }} /> : null}
-      <View style={signInStyles.container}>
+      <View className="flex-1 justify-center px-12">
         {pageState !== SignInPageStates.reset && !process.env.IS_TESTING ? (
           <>{Platform.OS !== 'web' ? <GoogleSignBtn /> : <GoogleSignInWeb />}</>
         ) : null}
@@ -81,27 +81,3 @@ export default function SignIn() {
     </>
   );
 }
-
-const signInStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  btnWrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    columnGap: 10,
-    marginTop: 10,
-  },
-  navigateBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#518be8',
-    borderRadius: 8,
-    padding: 8,
-  },
-});
