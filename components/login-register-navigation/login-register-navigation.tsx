@@ -13,7 +13,7 @@ export default function RegisterNavigation({ pageState, setPageState, isDisabled
 
   return (
     <View className="flex-row justify-center items-center gap-x-2 my-3">
-      <Text variant="bodyMedium" style={{ opacity: isDisabled ? 0.5 : 1, color: 'black' }}>
+      <Text variant="bodyMedium" style={{ opacity: isDisabled ? 0.5 : 1 }}>
         {isRegistering && LOGIN_NAVIGATION[language].text}
         {isLogining && RESET_NAVIGATION[language].text}
         {isResetting && REGISTER_NAVIGATION[language].text}
@@ -24,7 +24,7 @@ export default function RegisterNavigation({ pageState, setPageState, isDisabled
         onPress={() => setPageState(signInMap[pageState])}
         disabled={isDisabled}>
         <View className="flex rounded-xl py-1.5 px-3 bg-cyan-600">
-          <Text variant="bodyMedium" style={{ opacity: isDisabled ? 0.5 : 1, color: 'white' }}>
+          <Text variant="bodyMedium" style={{ opacity: isDisabled ? 0.5 : 1 }}>
             {isRegistering && LOGIN_NAVIGATION[language].btn}
             {isLogining && RESET_NAVIGATION[language].btn}
             {isResetting && REGISTER_NAVIGATION[language].btn}

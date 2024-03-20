@@ -28,9 +28,11 @@ export default function EmailInput({ email, setEmail, emailError, setEmailError,
         mode="outlined"
         disabled={isDisabled}
       />
-      <HelperText type="error" visible={emailError} padding="none">
-        {EMAIL_INPUT[language].helper}
-      </HelperText>
+      {emailError && (
+        <HelperText type="error" visible={emailError} padding="none">
+          {EMAIL_INPUT[language].helper}
+        </HelperText>
+      )}
     </>
   );
 }

@@ -46,13 +46,16 @@ export default function PasswordInput({
             disabled={isDisabled}
           />
         }
+        style={{ marginTop: 10 }}
         accessibilityRole="text"
         mode="outlined"
         disabled={isDisabled}
       />
-      <HelperText type="error" visible={passwordError} padding="none">
-        {PASSWORD_INPUT[language].helperText}
-      </HelperText>
+      {passwordError && (
+        <HelperText type="error" visible={passwordError} padding="none">
+          {PASSWORD_INPUT[language].helperText}
+        </HelperText>
+      )}
     </>
   );
 }

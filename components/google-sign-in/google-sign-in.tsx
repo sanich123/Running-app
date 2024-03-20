@@ -5,9 +5,11 @@ import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 export default function GoogleSignBtn() {
   const dispatch = useAppDispatch();
+  const { dark } = useTheme();
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
@@ -23,7 +25,8 @@ export default function GoogleSignBtn() {
 
   return (
     <GoogleSigninButton
-      color={GoogleSigninButton.Color.Dark}
+      style={{ width: 366, marginLeft: -5 }}
+      color={dark ? GoogleSigninButton.Color.Dark : GoogleSigninButton.Color.Light}
       size={GoogleSigninButton.Size.Wide}
       onPress={async () => {
         try {

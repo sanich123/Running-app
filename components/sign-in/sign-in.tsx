@@ -12,8 +12,10 @@ import { Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from 'react';
 import { View, Platform } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 export default function SignIn() {
+  const { colors } = useTheme();
   if (Platform.OS === 'web') {
     WebBrowser.maybeCompleteAuthSession();
   }
@@ -45,7 +47,7 @@ export default function SignIn() {
   return (
     <>
       {!process.env.IS_TESTING ? <Stack.Screen options={{ title: 'sign up', headerShown: false }} /> : null}
-      <View className="flex-1 justify-center px-12">
+      <View className="flex-1 justify-center px-5" style={{ backgroundColor: colors.background }}>
         {pageState !== SignInPageStates.reset && !process.env.IS_TESTING ? (
           <>{Platform.OS !== 'web' ? <GoogleSignBtn /> : <GoogleSignInWeb />}</>
         ) : null}
