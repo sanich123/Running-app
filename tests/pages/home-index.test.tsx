@@ -1,3 +1,4 @@
+import { changeLanguage } from '@R/language/language';
 import { screen } from '@testing-library/react-native';
 
 import Feed from '../../app/(tabs)/home';
@@ -27,6 +28,7 @@ describe('Home index', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<Feed />, { store: mockStore });
     expect(screen.getByTestId('homeActivityIndicator')).toBeOnTheScreen();
     expect(await screen.findByText('Moscow')).toBeOnTheScreen();
@@ -42,6 +44,7 @@ describe('Home index', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<Feed />, { store: mockStore });
     expect(screen.getByTestId('homeActivityIndicator')).toBeOnTheScreen();
     expect(await screen.findByText('There will be yours and your friends activities...')).toBeOnTheScreen();
@@ -53,6 +56,7 @@ describe('Home index', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<Feed />, { store: mockStore });
     expect(screen.getByTestId('homeActivityIndicator')).toBeOnTheScreen();
     expect(await screen.findByText(new RegExp('An error occured'))).toBeOnTheScreen();

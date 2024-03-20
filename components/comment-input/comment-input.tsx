@@ -57,8 +57,19 @@ export default function CommentInput({ activityId }: { activityId: string }) {
           }}
         />
       }
+      onSubmitEditing={async () => {
+        if (user) {
+          const body = { comment, authorId: user.id };
+          try {
+            await postComment({ body, id: activityId }).unwrap();
+          } catch (error) {
+            errorHandler(error);
+          }
+        }
+      }}
       label={COMMENT_INPUT[language].label}
       autoFocus
+      returnKeyType="send"
     />
   );
 }

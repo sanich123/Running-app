@@ -9,6 +9,7 @@ import ProfileEditBtn from './profile-edit-btn';
 
 describe('Profile edit btn', () => {
   it('should correctly renders in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ProfileEditBtn />, { store: mockStore });
     expect(screen.getByText(EDIT_BTN.english.edit)).toBeOnTheScreen();
   });

@@ -26,9 +26,9 @@ jest.mock('../../auth/context/auth-context', () => ({
 describe('Number of likes', () => {
   it('should correctly renders, when you liked', () => {
     renderWithProviders(<NumberOfLikes likes={MOCK_LIKES} />, { store: mockStore });
-    expect(screen.getByText(new RegExp(NUMBER_OF_LIKES.english.you))).toBeOnTheScreen();
-    expect(screen.getByText(new RegExp(NUMBER_OF_LIKES.english.and))).toBeOnTheScreen();
-    expect(screen.getByText(new RegExp(`8 ${NUMBER_OF_LIKES.english.manyGaveLikes}`))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(NUMBER_OF_LIKES.russian.you))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(NUMBER_OF_LIKES.russian.and))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(`8 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
   });
   it('should correctly renders, when you didnt like', () => {
     renderWithProviders(
@@ -42,7 +42,7 @@ describe('Number of likes', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByText(new RegExp(`9 ${NUMBER_OF_LIKES.english.manyGaveLikes}`))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(`9 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
   });
   it('should correctly renders, when you liked in russian', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

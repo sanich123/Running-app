@@ -10,12 +10,14 @@ import { SignInPageStates } from '@U/validate-email-password';
 import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { useEffect } from 'react';
-import { View, Platform } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { View, Platform, TextInput } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function SignIn() {
   const { colors } = useTheme();
+  const passwordRef = useRef<TextInput>(null);
+
   if (Platform.OS === 'web') {
     WebBrowser.maybeCompleteAuthSession();
   }
@@ -52,6 +54,7 @@ export default function SignIn() {
           <>{Platform.OS !== 'web' ? <GoogleSignBtn /> : <GoogleSignInWeb />}</>
         ) : null}
         <EmailInput
+          passwordRef={passwordRef}
           email={email}
           setEmail={setEmail}
           emailError={emailError}
@@ -60,6 +63,7 @@ export default function SignIn() {
         />
         {pageState !== SignInPageStates.reset ? (
           <PasswordInput
+            passwordRef={passwordRef}
             password={password}
             setPassword={setPassword}
             setPasswordError={setPasswordError}

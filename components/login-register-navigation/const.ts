@@ -31,7 +31,7 @@ export const RESET_NAVIGATION = {
   },
   [LANGUAGES.russian]: {
     text: 'Забыли ваш пароль?',
-    btn: 'Залогиниться',
+    btn: 'Cбросить',
   },
 } as const;
 

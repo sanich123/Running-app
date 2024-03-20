@@ -35,6 +35,7 @@ jest.mock('../../auth/context/auth-context', () => ({
 }));
 describe('Activity save btn', () => {
   it('should correctly renders in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_SAVE_BTN.english.save)).toBeOnTheScreen();
   });

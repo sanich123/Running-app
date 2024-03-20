@@ -13,9 +13,9 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Following count', () => {
-  it('should correctly renders data in english', async () => {
+  it('should correctly renders data in russian', async () => {
     renderWithProviders(<FollowingCount />, { store: mockStore });
-    expect(await screen.findByText(FOLLOWING_COUNT.english.followings)).toBeOnTheScreen();
+    expect(await screen.findByText(FOLLOWING_COUNT.russian.followings)).toBeOnTheScreen();
     expect(await screen.findByText(`${MOCK_FRIENDS.length}`)).toBeOnTheScreen();
   });
 });

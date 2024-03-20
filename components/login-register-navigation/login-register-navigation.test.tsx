@@ -10,6 +10,7 @@ import RegisterNavigation from './login-register-navigation';
 
 describe('Register navigation', () => {
   it('should correctly renders in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const setPageState = jest.fn();
     renderWithProviders(
       <RegisterNavigation pageState={SignInPageStates.register} isDisabled={false} setPageState={setPageState} />,

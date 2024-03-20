@@ -17,12 +17,14 @@ export default function PasswordInput({
   passwordError,
   setPasswordError,
   isDisabled,
+  passwordRef,
 }: PasswordInputProps) {
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
   const { language } = useAppSelector(({ language }) => language);
   return (
     <>
       <TextInput
+        ref={passwordRef}
         testID={PASSWORD_INPUT_TEST_ID}
         label={PASSWORD_INPUT[language].label}
         value={password}
@@ -46,8 +48,9 @@ export default function PasswordInput({
             disabled={isDisabled}
           />
         }
-        style={{ marginTop: 10 }}
+        style={{ marginTop: 20 }}
         accessibilityRole="text"
+        autoComplete="password"
         mode="outlined"
         disabled={isDisabled}
       />

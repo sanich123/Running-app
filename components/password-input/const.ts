@@ -1,4 +1,6 @@
 import { LANGUAGES } from '@const/enums';
+import { RefObject } from 'react';
+import { TextInput } from 'react-native';
 
 export type PasswordInputProps = {
   password: string;
@@ -6,6 +8,7 @@ export type PasswordInputProps = {
   passwordError: boolean;
   setPasswordError: (arg: boolean) => void;
   isDisabled: boolean;
+  passwordRef: RefObject<TextInput> | null;
 };
 
 export const PASSWORD_INPUT = {

@@ -10,12 +10,12 @@ import ShowCameraBtn from './show-camera-btn';
 describe('Show camera btn', () => {
   it('should correctly renders in english', () => {
     renderWithProviders(<ShowCameraBtn isDisabled={false} />, { store: mockStore });
-    expect(screen.getByText(new RegExp(`${SHOW_CAMERA_BTN.english.text}`)));
+    expect(screen.getByText(new RegExp(`${SHOW_CAMERA_BTN.russian.text}`)));
   });
   it('should correctly renders in russian', () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ShowCameraBtn isDisabled={false} />, { store: mockStore });
-    expect(screen.getByText(new RegExp(`${SHOW_CAMERA_BTN.russian.text}`)));
+    expect(screen.getByText(new RegExp(`${SHOW_CAMERA_BTN.english.text}`)));
   });
   it('should correctly change global store', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

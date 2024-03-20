@@ -14,6 +14,7 @@ describe('Login btn', () => {
     const setIsLoading = jest.fn();
     const setEmailError = jest.fn();
     const setPasswordError = jest.fn();
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(
       <LoginRegisterBtn
         email=""

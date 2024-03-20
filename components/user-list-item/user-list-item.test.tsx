@@ -1,10 +1,12 @@
 import * as auth from '@A/context/auth-context';
 import { ADD_DELETE_FRIEND_BTN } from '@C/add-delete-friend-btn/const';
+import { changeLanguage } from '@R/language/language';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { MOCK_BAD_REQUEST } from '@T/mocks/mock-requests';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import UserListItem from './user-list-item';
@@ -33,6 +35,7 @@ describe('User list item', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<UserListItem userId="someUserId" />, { store: mockStore });
     expect(await screen.findByText(MOCK_PROFILE.name)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();
@@ -48,6 +51,7 @@ describe('User list item', () => {
       },
     }));
     renderWithProviders(<UserListItem userId="a6135312-595f-4524-b3f3-496a05165d22" />, { store: mockStore });
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     expect(await screen.findByText(MOCK_PROFILE.name)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
@@ -62,6 +66,7 @@ describe('User list item', () => {
       },
     }));
     renderWithProviders(<UserListItem userId="someUserIdWithAnError" />, { store: mockStore });
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     expect(await screen.findAllByText(`An error: ${MOCK_BAD_REQUEST.status}`)).toHaveLength(2);
   });
 });

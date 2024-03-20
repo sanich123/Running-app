@@ -17,6 +17,7 @@ describe('Delete friend btn', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<AddDeleteFriendBtn friendId="f38e13df-1ee3-49d8-81df-8327f2b1f728" />, { store: mockStore });
     expect(await screen.findByText(ADD_DELETE_FRIEND_BTN.english.unfollow)).toBeOnTheScreen();
   });
@@ -27,6 +28,7 @@ describe('Delete friend btn', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<AddDeleteFriendBtn friendId="someWrongFriendId" />, { store: mockStore });
     expect(await screen.findByText(ADD_DELETE_FRIEND_BTN.english.follow)).toBeOnTheScreen();
   });

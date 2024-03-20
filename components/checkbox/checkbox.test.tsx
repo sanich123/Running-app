@@ -9,14 +9,14 @@ import Checkbox from './checkbox';
 import { CHECKBOX, CHECKBOX_TEST_ID } from './const';
 
 describe('Checkbox', () => {
-  it('should correctly renders in english', async () => {
-    renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
-    expect(screen.getByText(CHECKBOX.english.public)).toBeOnTheScreen();
-  });
-  it('should correctly renders in english', async () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+  it('should correctly renders in russia', async () => {
     renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(CHECKBOX.russian.public)).toBeOnTheScreen();
+  });
+  it('should correctly renders in english', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
+    expect(screen.getByText(CHECKBOX.english.public)).toBeOnTheScreen();
   });
   it('should correctly handle isDisabled state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

@@ -17,6 +17,7 @@ describe('Comment likes length', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<CommentLikesLength id="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
     expect(
       await screen.findByText(new RegExp(`${NUMBER_OF_LIKES.english.and}3 ${NUMBER_OF_LIKES.english.manyGaveLikes}`)),

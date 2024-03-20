@@ -10,10 +10,12 @@ import UserBio from './user-bio';
 
 describe('User bio', () => {
   it('should correctly renders from server', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     renderWithProviders(<UserBio userId="someUserId" size="bodyLarge" />, { store: mockStore });
     expect(await screen.findByText(MOCK_PROFILE.bio)).toBeOnTheScreen();
   });
   it('should correctly handle an error in english', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<UserBio userId="someUserIdWithAnError" size="bodyLarge" />, { store: mockStore });
     expect(await screen.findByText(`An error: ${MOCK_BAD_REQUEST.status}`)).toBeOnTheScreen();
   });

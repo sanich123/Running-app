@@ -14,6 +14,7 @@ jest.mock('expo-router', () => ({
 }));
 describe('Profile update btn', () => {
   it('should correctly renders in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
     expect(screen.getByText(UPDATE_BTN.english.update)).toBeOnTheScreen();
   });

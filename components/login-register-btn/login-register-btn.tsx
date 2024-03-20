@@ -35,7 +35,7 @@ export default function LoginRegisterBtn({
     <Button
       icon={LoginBtnIcons[pageState]}
       mode="outlined"
-      style={{ marginTop: 15 }}
+      style={{ marginTop: 20 }}
       accessibilityRole="button"
       loading={isLoading}
       disabled={isDisabled}

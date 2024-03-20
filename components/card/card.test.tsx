@@ -1,5 +1,7 @@
+import { changeLanguage } from '@R/language/language';
 import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
 import { MOCK_LIKE } from '@T/mocks/mock-likes';
+import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import ActivityCard from './card';
@@ -39,6 +41,7 @@ describe('Activity card', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const { description, title, date, sport, id, photoVideoUrls, profile, duration, distance } = MOCK_ACTIVITY;
     renderWithProviders(
       <ActivityCard

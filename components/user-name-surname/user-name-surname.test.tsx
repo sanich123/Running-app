@@ -16,6 +16,7 @@ describe('User name surname', () => {
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();
   });
   it('should correctly render with isLoading and an error in english', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<UserNameSurname userId="someUserIdWithAnError" size="bodyLarge" />, { store: mockStore });
     expect(await screen.findByText(`An error: ${errorExtracter(MOCK_BAD_REQUEST)}`)).toBeOnTheScreen();
   });

@@ -23,6 +23,7 @@ describe('Upload photos btn', () => {
   it('should correctly renders in english', () => {
     const setIsDisabled = jest.fn();
     const setImages = jest.fn();
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(
       <UploadPhotosBtn
         isDisabled={false}
