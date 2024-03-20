@@ -28,13 +28,7 @@ export default function EmailInput({
           }
           setEmail(text);
         }}
-        onEndEditing={() => {
-          if (!emailMatcher.test(email.trim())) {
-            setEmailError(true);
-          } else {
-            setEmailError(false);
-          }
-        }}
+        onEndEditing={() => (!emailMatcher.test(email.trim()) ? setEmailError(true) : setEmailError(false))}
         placeholder={EMAIL_INPUT[language].placeholder}
         onSubmitEditing={() => passwordRef?.current?.focus()}
         left={<TextInput.Icon testID={EMAIL_INPUT_LEFT_ICON} icon="email" disabled={isDisabled} />}

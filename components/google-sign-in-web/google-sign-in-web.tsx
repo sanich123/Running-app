@@ -2,7 +2,7 @@ import { supabase } from '@A/supabase/supabase-init';
 import { useEffect } from 'react';
 import { useToast } from 'react-native-toast-notifications';
 
-export default function GoogleSignInWeb() {
+export default function GoogleSignInWeb({ setIsDisabled }: { setIsDisabled: (arg: boolean) => void }) {
   const toast = useToast();
 
   useEffect(() => {
@@ -13,6 +13,7 @@ export default function GoogleSignInWeb() {
     document.body.appendChild(script);
     //@ts-ignore
     window.handleSignInWithGoogle = async function (response: any) {
+      setIsDisabled(true);
       try {
         const { data, error } = await supabase.auth.signInWithIdToken({
           provider: 'google',
@@ -26,6 +27,8 @@ export default function GoogleSignInWeb() {
         }
       } catch (error) {
         toast.show(JSON.stringify(error));
+      } finally {
+        setIsDisabled(false);
       }
     };
     return () => {

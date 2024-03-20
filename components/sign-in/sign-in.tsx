@@ -49,9 +49,15 @@ export default function SignIn() {
   return (
     <>
       {!process.env.IS_TESTING ? <Stack.Screen options={{ title: 'sign up', headerShown: false }} /> : null}
-      <View className="flex-1 justify-center px-5" style={{ backgroundColor: colors.background }}>
+      <View className="flex-1 justify-center px-4" style={{ backgroundColor: colors.background }}>
         {pageState !== SignInPageStates.reset && !process.env.IS_TESTING ? (
-          <>{Platform.OS !== 'web' ? <GoogleSignBtn /> : <GoogleSignInWeb />}</>
+          <>
+            {Platform.OS !== 'web' ? (
+              <GoogleSignBtn setIsDisabled={setIsDisabled} />
+            ) : (
+              <GoogleSignInWeb setIsDisabled={setIsDisabled} />
+            )}
+          </>
         ) : null}
         <EmailInput
           passwordRef={passwordRef}
@@ -61,7 +67,7 @@ export default function SignIn() {
           setEmailError={setEmailError}
           isDisabled={isDisabled}
         />
-        {pageState !== SignInPageStates.reset ? (
+        {pageState !== SignInPageStates.reset && (
           <PasswordInput
             passwordRef={passwordRef}
             password={password}
@@ -70,7 +76,7 @@ export default function SignIn() {
             passwordError={passwordError}
             isDisabled={isDisabled}
           />
-        ) : null}
+        )}
         <LoginRegisterBtn
           pageState={pageState}
           password={password}

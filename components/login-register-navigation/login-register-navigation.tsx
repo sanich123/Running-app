@@ -1,7 +1,7 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { SignInPageStates, signInMap } from '@U/validate-email-password';
-import { View, Pressable } from 'react-native';
-import { Text } from 'react-native-paper';
+import { View } from 'react-native';
+import { Button, Text } from 'react-native-paper';
 
 import { LOGIN_NAVIGATION, REGISTER_NAVIGATION, RESET_NAVIGATION, RegisterNavigationProps } from './const';
 
@@ -18,19 +18,15 @@ export default function RegisterNavigation({ pageState, setPageState, isDisabled
         {isLogining && RESET_NAVIGATION[language].text}
         {isResetting && REGISTER_NAVIGATION[language].text}
       </Text>
-
-      <Pressable
-        style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+      <Button
+        mode="outlined"
         onPress={() => setPageState(signInMap[pageState])}
-        disabled={isDisabled}>
-        <View className="flex rounded-xl py-1.5 px-3 bg-cyan-600">
-          <Text variant="bodyMedium" style={{ opacity: isDisabled ? 0.5 : 1 }}>
-            {isRegistering && LOGIN_NAVIGATION[language].btn}
-            {isLogining && RESET_NAVIGATION[language].btn}
-            {isResetting && REGISTER_NAVIGATION[language].btn}
-          </Text>
-        </View>
-      </Pressable>
+        disabled={isDisabled}
+        accessibilityRole="button">
+        {isRegistering && LOGIN_NAVIGATION[language].btn}
+        {isLogining && RESET_NAVIGATION[language].btn}
+        {isResetting && REGISTER_NAVIGATION[language].btn}
+      </Button>
     </View>
   );
 }

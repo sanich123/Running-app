@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
-export default function GoogleSignBtn() {
+export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: boolean) => void }) {
   const dispatch = useAppDispatch();
   const { dark } = useTheme();
 
@@ -25,10 +25,11 @@ export default function GoogleSignBtn() {
 
   return (
     <GoogleSigninButton
-      style={{ width: 366, marginLeft: -5 }}
+      style={{ width: 372, marginLeft: -5 }}
       color={dark ? GoogleSigninButton.Color.Dark : GoogleSigninButton.Color.Light}
       size={GoogleSigninButton.Size.Wide}
       onPress={async () => {
+        setIsDisabled(true);
         try {
           await GoogleSignin.hasPlayServices();
           const userInfo = await GoogleSignin.signIn();
@@ -57,6 +58,8 @@ export default function GoogleSignBtn() {
           } else {
             showCrossPlatformToast('unexpected error occured', ToastDuration.long);
           }
+        } finally {
+          setIsDisabled(false);
         }
       }}
     />
