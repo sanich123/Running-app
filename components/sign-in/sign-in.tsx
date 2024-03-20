@@ -49,46 +49,54 @@ export default function SignIn() {
   return (
     <>
       {!process.env.IS_TESTING ? <Stack.Screen options={{ title: 'sign up', headerShown: false }} /> : null}
-      <View className="flex-1 justify-center px-4" style={{ backgroundColor: colors.background }}>
-        {pageState !== SignInPageStates.reset && !process.env.IS_TESTING ? (
-          <>
-            {Platform.OS !== 'web' ? (
-              <GoogleSignBtn setIsDisabled={setIsDisabled} />
-            ) : (
-              <GoogleSignInWeb setIsDisabled={setIsDisabled} />
-            )}
-          </>
-        ) : null}
-        <EmailInput
-          passwordRef={passwordRef}
-          email={email}
-          setEmail={setEmail}
-          emailError={emailError}
-          setEmailError={setEmailError}
-          isDisabled={isDisabled}
-        />
-        {pageState !== SignInPageStates.reset && (
-          <PasswordInput
+      <View className="flex-1 justify-center" style={{ backgroundColor: colors.background }}>
+        <View
+          className="flex-1 justify-center px-4"
+          style={{
+            backgroundColor: colors.background,
+            marginLeft: Platform.OS === 'web' ? 'auto' : 0,
+            marginRight: Platform.OS === 'web' ? 'auto' : 0,
+          }}>
+          {pageState !== SignInPageStates.reset && !process.env.IS_TESTING ? (
+            <>
+              {Platform.OS !== 'web' ? (
+                <GoogleSignBtn setIsDisabled={setIsDisabled} />
+              ) : (
+                <GoogleSignInWeb setIsDisabled={setIsDisabled} />
+              )}
+            </>
+          ) : null}
+          <EmailInput
             passwordRef={passwordRef}
-            password={password}
-            setPassword={setPassword}
-            setPasswordError={setPasswordError}
-            passwordError={passwordError}
+            email={email}
+            setEmail={setEmail}
+            emailError={emailError}
+            setEmailError={setEmailError}
             isDisabled={isDisabled}
           />
-        )}
-        <LoginRegisterBtn
-          pageState={pageState}
-          password={password}
-          email={email}
-          isDisabled={isDisabled}
-          isLoading={isLoading}
-          setIsDisabled={setIsDisabled}
-          setIsLoading={setIsLoading}
-          setEmailError={setEmailError}
-          setPasswordError={setPasswordError}
-        />
-        <LoginRegisterNavigation setPageState={setPageState} pageState={pageState} isDisabled={isDisabled} />
+          {pageState !== SignInPageStates.reset && (
+            <PasswordInput
+              passwordRef={passwordRef}
+              password={password}
+              setPassword={setPassword}
+              setPasswordError={setPasswordError}
+              passwordError={passwordError}
+              isDisabled={isDisabled}
+            />
+          )}
+          <LoginRegisterBtn
+            pageState={pageState}
+            password={password}
+            email={email}
+            isDisabled={isDisabled}
+            isLoading={isLoading}
+            setIsDisabled={setIsDisabled}
+            setIsLoading={setIsLoading}
+            setEmailError={setEmailError}
+            setPasswordError={setPasswordError}
+          />
+          <LoginRegisterNavigation setPageState={setPageState} pageState={pageState} isDisabled={isDisabled} />
+        </View>
       </View>
     </>
   );

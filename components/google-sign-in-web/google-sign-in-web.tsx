@@ -55,7 +55,7 @@ export default function GoogleSignInWeb({ setIsDisabled }: { setIsDisabled: (arg
         data-text="signin_with"
         data-size="large"
         data-logo_alignment="left"
-        data-width="350"
+        data-width="372"
       />
     </>
   );
