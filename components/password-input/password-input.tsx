@@ -21,6 +21,7 @@ export default function PasswordInput({
 }: PasswordInputProps) {
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
   const { language } = useAppSelector(({ language }) => language);
+
   return (
     <>
       <TextInput
@@ -39,18 +40,25 @@ export default function PasswordInput({
         onEndEditing={() => (!passwordMatcher.test(password) ? setPasswordError(true) : setPasswordError(false))}
         placeholder={PASSWORD_INPUT[language].placeholder}
         secureTextEntry={passwordIsNotVisible}
-        left={<TextInput.Icon icon="form-textbox-password" testID={PASSWORD_INPUT_LEFT_ICON} disabled={isDisabled} />}
+        left={
+          <TextInput.Icon
+            icon="form-textbox-password"
+            testID={PASSWORD_INPUT_LEFT_ICON}
+            disabled={isDisabled}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          />
+        }
         right={
           <TextInput.Icon
             testID={PASSWORD_INPUT_RIGHT_ICON}
             icon="eye"
             onPress={() => setPasswordIsVisible(!passwordIsNotVisible)}
             disabled={isDisabled}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           />
         }
         style={{ marginTop: 20 }}
         accessibilityRole="text"
-        autoComplete="password"
         mode="outlined"
         disabled={isDisabled}
       />

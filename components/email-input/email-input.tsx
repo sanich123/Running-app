@@ -13,7 +13,7 @@ export default function EmailInput({
   passwordRef,
 }: EmailInputProps) {
   const { language } = useAppSelector(({ language }) => language);
-
+  console.log(email);
   return (
     <>
       <TextInput
@@ -31,14 +31,22 @@ export default function EmailInput({
         onEndEditing={() => (!emailMatcher.test(email.trim()) ? setEmailError(true) : setEmailError(false))}
         placeholder={EMAIL_INPUT[language].placeholder}
         onSubmitEditing={() => passwordRef?.current?.focus()}
-        left={<TextInput.Icon testID={EMAIL_INPUT_LEFT_ICON} icon="email" disabled={isDisabled} />}
+        left={
+          <TextInput.Icon
+            testID={EMAIL_INPUT_LEFT_ICON}
+            icon="email"
+            disabled={isDisabled}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          />
+        }
         accessibilityRole="text"
-        style={{ marginTop: 15 }}
+        style={{ marginTop: 15, width: '100%', minWidth: 372 }}
         mode="outlined"
         keyboardType="email-address"
         autoComplete="email"
         returnKeyType="next"
         disabled={isDisabled}
+        autoFocus
       />
       {emailError && (
         <HelperText type="error" visible={emailError} padding="none">

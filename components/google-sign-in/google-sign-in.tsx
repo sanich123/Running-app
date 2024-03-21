@@ -25,7 +25,7 @@ export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: 
 
   return (
     <GoogleSigninButton
-      style={{ width: 372, marginLeft: -5 }}
+      style={{ width: '100%' }}
       color={dark ? GoogleSigninButton.Color.Dark : GoogleSigninButton.Color.Light}
       size={GoogleSigninButton.Size.Wide}
       onPress={async () => {
