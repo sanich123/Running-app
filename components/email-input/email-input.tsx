@@ -1,6 +1,6 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { emailMatcher } from '@const/regexp';
-import { HelperText, TextInput } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 
 import { EmailInputProps, EMAIL_INPUT_TEST_ID, EMAIL_INPUT, EMAIL_INPUT_LEFT_ICON } from './const';
 
@@ -17,7 +17,7 @@ export default function EmailInput({
     <>
       <TextInput
         testID={EMAIL_INPUT_TEST_ID}
-        label={EMAIL_INPUT[language].placeholder}
+        label={emailError && email ? EMAIL_INPUT[language].helper : EMAIL_INPUT[language].placeholder}
         value={email}
         onChangeText={(text) => {
           if (!emailMatcher.test(text.trim())) {
@@ -38,20 +38,15 @@ export default function EmailInput({
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           />
         }
+        error={emailError}
         accessibilityRole="text"
-        style={{ marginTop: 15, width: '100%', minWidth: 372 }}
+        style={{ marginTop: 15, width: '100%', minWidth: 366 }}
         mode="outlined"
         keyboardType="email-address"
         autoComplete="email"
         returnKeyType="next"
         disabled={isDisabled}
-        autoFocus
       />
-      {emailError && (
-        <HelperText type="error" visible={emailError} padding="none">
-          {EMAIL_INPUT[language].helper}
-        </HelperText>
-      )}
     </>
   );
 }

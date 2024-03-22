@@ -14,13 +14,13 @@ export type PasswordInputProps = {
 export const PASSWORD_INPUT = {
   [LANGUAGES.english]: {
     label: 'Password',
-    placeholder: 'Type your password',
-    helperText: 'Password must contain one capital, one normal letter, one number, length up to 6',
+    placeholder: 'Password',
+    helperText: 'Capital and normal letter, number, 6+ symbols',
   },
   [LANGUAGES.russian]: {
     label: 'Пароль',
-    placeholder: 'Введите ваш пароль',
-    helperText: 'Пароль должен состоять из одной заглавной, одной строчной буквы, одной цифры, не менее 6 символов',
+    placeholder: 'Пароль',
+    helperText: 'Большая и маленькая буква, цифра, 6+',
   },
 } as const;
 
