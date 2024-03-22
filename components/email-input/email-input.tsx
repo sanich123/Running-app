@@ -13,7 +13,6 @@ export default function EmailInput({
   passwordRef,
 }: EmailInputProps) {
   const { language } = useAppSelector(({ language }) => language);
-  console.log(email);
   return (
     <>
       <TextInput
