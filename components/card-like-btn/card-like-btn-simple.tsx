@@ -34,18 +34,17 @@ export default function ActivityCardLikeBtnSimple({ activityId }: { activityId: 
   }, [data, error]);
 
   return (
-    <>
-      <IconButton
-        icon={CARD_LIKE_BTN_ICON_NOT_LIKED}
-        iconColor={MD3Colors.primary50}
-        size={25}
-        onPress={async () => {
-          if (user) {
-            await sendLike({ activityId, authorId: user?.id }).unwrap();
-          }
-        }}
-        disabled={isLoading || isDisabled}
-      />
-    </>
+    <IconButton
+      icon={CARD_LIKE_BTN_ICON_NOT_LIKED}
+      iconColor={MD3Colors.primary50}
+      size={25}
+      onPress={async () => {
+        if (user) {
+          await sendLike({ activityId, authorId: user?.id }).unwrap();
+        }
+      }}
+      disabled={isLoading || isDisabled}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    />
   );
 }

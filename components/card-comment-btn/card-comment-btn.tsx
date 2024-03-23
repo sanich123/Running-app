@@ -19,6 +19,7 @@ export default memo(function ActivityCardCommentBtn({ activityId }: { activityId
       size={25}
       onPress={() => push(`/${place}/${ROUTES.comment}/${activityId}`)}
       disabled={isLoading || isDisabled}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     />
   );
 });

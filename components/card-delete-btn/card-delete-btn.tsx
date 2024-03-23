@@ -66,6 +66,7 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
         }
       }}
       disabled={isLoading || isDisabled}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     />
   );
 }

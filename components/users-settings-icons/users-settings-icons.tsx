@@ -2,6 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import ActivityUpdateBtn from '@C/activity-update-btn/activitiy-update-btn';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
+import { Platform } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 
 import { View } from '../Themed';
@@ -20,6 +21,7 @@ export default function UsersSettingsIcons() {
       style={{
         display: 'flex',
         flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: 'transparent',
       }}>
       {isMineActivity ? (
@@ -30,23 +32,21 @@ export default function UsersSettingsIcons() {
             testID="usersIcon"
             icon="account-multiple"
             iconColor={colors.primary}
-            size={30}
+            size={Platform.OS === 'ios' ? 25 : 30}
             onPress={() => push(`/${place}/users/`)}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 0, padding: 0 }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           />
           <IconButton
             testID="settingsIcon"
             icon="cog-outline"
             iconColor={colors.primary}
-            size={30}
+            size={Platform.OS === 'ios' ? 25 : 30}
             onPress={() => push(`/${place}/settings/`)}
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: 0,
-              padding: 0,
-              marginLeft: -15,
+              marginLeft: -10,
             }}
           />
         </>

@@ -34,6 +34,7 @@ export default memo(function ActivityCardShareBtn({ cardRef, fullViewRef }: Card
       iconColor={MD3Colors.primary50}
       size={25}
       disabled={isLoading || isDisabled}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     />
   );
 });

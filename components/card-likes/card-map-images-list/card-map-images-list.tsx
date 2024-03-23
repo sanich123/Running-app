@@ -54,8 +54,9 @@ export default memo(function CardMapImagesList({
           </Pressable>
         );
       }}
+      style={{ overflow: !photoVideoUrls.length ? 'hidden' : 'scroll' }}
       horizontal
-      initialNumToRender={2}
+      initialNumToRender={1}
     />
   );
 });

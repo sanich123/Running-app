@@ -42,19 +42,18 @@ export default memo(function ActivityCardLikeBtn({ activityId }: { activityId: s
   }, [data, error]);
 
   return (
-    <>
-      <IconButton
-        testID={isLikedByYou ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
-        icon={isLikedByYou ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
-        iconColor={MD3Colors.primary50}
-        size={25}
-        onPress={async () => {
-          if (user) {
-            await sendLike({ activityId, authorId: user?.id }).unwrap();
-          }
-        }}
-        disabled={isLoading || isDisabled}
-      />
-    </>
+    <IconButton
+      testID={isLikedByYou ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
+      icon={isLikedByYou ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
+      iconColor={MD3Colors.primary50}
+      size={25}
+      onPress={async () => {
+        if (user) {
+          await sendLike({ activityId, authorId: user?.id }).unwrap();
+        }
+      }}
+      disabled={isLoading || isDisabled}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    />
   );
 });

@@ -48,11 +48,11 @@ export default function Feed() {
         <OptimizedList activities={activities} refetch={refetch} />
       ) : (
         <SafeAreaView
-          edges={['bottom', 'left', 'right']}
+          edges={['left', 'right']}
           style={[{ flex: 1 }, (isLoading || error || !activities?.length) && { justifyContent: 'center' }]}>
           <View>
             {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
-            <NetworkIndicator />
+            {!isLoading && <NetworkIndicator />}
             {activities && <OptimizedList activities={activities} refetch={refetch} />}
             {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
             {error ? <ErrorComponent error={error} /> : null}
