@@ -16,7 +16,12 @@ export default function UsersSettingsIcons() {
   const isMineActivity = userId === user?.id && pathname.includes(ROUTES.activity);
 
   return (
-    <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: 'transparent' }}>
+    <View
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        backgroundColor: 'transparent',
+      }}>
       {isMineActivity ? (
         <ActivityUpdateBtn />
       ) : (
@@ -27,7 +32,7 @@ export default function UsersSettingsIcons() {
             iconColor={colors.primary}
             size={30}
             onPress={() => push(`/${place}/users/`)}
-            style={{ marginRight: -15 }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 0, padding: 0 }}
           />
           <IconButton
             testID="settingsIcon"
@@ -35,7 +40,14 @@ export default function UsersSettingsIcons() {
             iconColor={colors.primary}
             size={30}
             onPress={() => push(`/${place}/settings/`)}
-            style={{ marginRight: -15 }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: 0,
+              padding: 0,
+              marginLeft: -15,
+            }}
           />
         </>
       )}

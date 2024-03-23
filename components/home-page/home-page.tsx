@@ -16,7 +16,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -43,28 +43,34 @@ export default function Feed() {
   }, [isNeedToPrefetchActivities]);
 
   return (
-    <SafeAreaView
-      edges={['bottom', 'left', 'right']}
-      style={[{ flex: 1 }, (isLoading || error || !activities?.length) && { justifyContent: 'center' }]}>
-      <View>
-        {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
-        <NetworkIndicator />
-        {activities && <OptimizedList activities={activities} refetch={refetch} />}
-        {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
-        {error ? <ErrorComponent error={error} /> : null}
-        {!isLoading && (
-          <FloatingBtn
-            onPressFn={() => {
-              dispatch(setIsManualAdding(true));
-              dispatch(setIsEditingActivity(false));
-              dispatch(resetFinishedActivity());
-              dispatch(resetManualData());
-              dispatch(resetActivityInfo());
-              push('/(tabs)/home/manual-activity');
-            }}
-          />
-        )}
-      </View>
-    </SafeAreaView>
+    <>
+      {Platform.OS === 'web' ? (
+        <OptimizedList activities={activities} refetch={refetch} />
+      ) : (
+        <SafeAreaView
+          edges={['bottom', 'left', 'right']}
+          style={[{ flex: 1 }, (isLoading || error || !activities?.length) && { justifyContent: 'center' }]}>
+          <View>
+            {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
+            <NetworkIndicator />
+            {activities && <OptimizedList activities={activities} refetch={refetch} />}
+            {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
+            {error ? <ErrorComponent error={error} /> : null}
+            {!isLoading && (
+              <FloatingBtn
+                onPressFn={() => {
+                  dispatch(setIsManualAdding(true));
+                  dispatch(setIsEditingActivity(false));
+                  dispatch(resetFinishedActivity());
+                  dispatch(resetManualData());
+                  dispatch(resetActivityInfo());
+                  push('/(tabs)/home/manual-activity');
+                }}
+              />
+            )}
+          </View>
+        </SafeAreaView>
+      )}
+    </>
   );
 }

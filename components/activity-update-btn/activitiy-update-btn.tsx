@@ -26,7 +26,7 @@ import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
 
 export default function ActivityUpdateBtn() {
-  const theme = useTheme();
+  const { colors } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
@@ -63,7 +63,7 @@ export default function ActivityUpdateBtn() {
           showCrossPlatformToast('Не удалось загрузить данные об активности!');
         }
       }}>
-      <Text variant="titleMedium" style={{ color: theme.colors.primaryContainer, marginRight: 15 }}>
+      <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant, marginRight: 15 }}>
         {ACTIVITY_SAVE_BTN[language].edit}
       </Text>
     </Pressable>
