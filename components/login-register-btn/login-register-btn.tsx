@@ -1,7 +1,7 @@
 import { supabase } from '@A/supabase/supabase-init';
 import { saveEmailPassword } from '@R/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { SignInPageStates, emailPasswordHandler } from '@U/validate-email-password';
 import { useRouter } from 'expo-router';
@@ -53,7 +53,7 @@ export default function LoginRegisterBtn({
                 if (Platform.OS === 'web') {
                   toast.show(error.message);
                 } else {
-                  showCrossPlatformToast(error.message, ToastDuration.long);
+                  showCrossPlatformToast(error.message);
                 }
               }
             } else if (isLogining) {
@@ -62,7 +62,7 @@ export default function LoginRegisterBtn({
                 if (Platform.OS === 'web') {
                   toast.show(error.message);
                 } else {
-                  showCrossPlatformToast(error.message, ToastDuration.long);
+                  showCrossPlatformToast(error.message);
                 }
               }
             } else {
@@ -73,13 +73,13 @@ export default function LoginRegisterBtn({
                 if (Platform.OS === 'web') {
                   toast.show(error.message);
                 } else {
-                  showCrossPlatformToast(error.message, ToastDuration.long);
+                  showCrossPlatformToast(error.message);
                 }
               } else {
                 if (Platform.OS === 'web') {
                   toast.show('Пройдите по ссылке в электронной почте');
                 } else {
-                  showCrossPlatformToast('Пройдите по ссылке в электронной почте', ToastDuration.long);
+                  showCrossPlatformToast('Пройдите по ссылке в электронной почте');
                 }
               }
             }

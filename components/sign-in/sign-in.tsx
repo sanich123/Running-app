@@ -1,4 +1,4 @@
-import { createSessionFromUrl } from '@A/supabase/storage/sign-in';
+import { createSessionFromTokens, createSessionFromUrl } from '@A/supabase/storage/sign-in';
 import EmailInput from '@C/email-input/email-input';
 import GoogleSignBtn from '@C/google-sign-in/google-sign-in';
 import GoogleSignInWeb from '@C/google-sign-in-web/google-sign-in-web';
@@ -8,7 +8,7 @@ import PasswordInput from '@C/password-input/password-input';
 import usePasswordEmail from '@U/hooks/use-password-email';
 import { SignInPageStates } from '@U/validate-email-password';
 import * as Linking from 'expo-linking';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useRef } from 'react';
 import { View, Platform, TextInput } from 'react-native';
@@ -17,10 +17,12 @@ import { useTheme } from 'react-native-paper';
 export default function SignIn() {
   const { colors } = useTheme();
   const passwordRef = useRef<TextInput>(null);
+  const { access_token, refresh_token } = useLocalSearchParams();
 
   if (Platform.OS === 'web') {
     WebBrowser.maybeCompleteAuthSession();
   }
+
   const {
     email,
     password,
@@ -39,6 +41,12 @@ export default function SignIn() {
   } = usePasswordEmail();
 
   const url = Linking.useURL();
+
+  useEffect(() => {
+    if (access_token) {
+      createSessionFromTokens(`${access_token}`, `${refresh_token}`);
+    }
+  }, [access_token, refresh_token]);
 
   useEffect(() => {
     if (url) {
