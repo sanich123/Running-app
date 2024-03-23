@@ -45,7 +45,7 @@ export default function ActivityCloseBtn() {
         }
       }}
       style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
-      <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginLeft: 15 }}>
+      <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant, marginLeft: 15 }}>
         {ACTIVITY_CLOSE_BTN[language].btnText}
       </Text>
     </Pressable>

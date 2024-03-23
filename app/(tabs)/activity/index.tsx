@@ -8,8 +8,10 @@ import { useAppSelector } from '@R/typed-hooks';
 import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
 import { STATUSES } from '@const/enums';
 import { View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 export default function Activity() {
+  const { colors } = useTheme();
   useStartStopTracking();
   const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
 
@@ -22,7 +24,9 @@ export default function Activity() {
           {activityStatus !== STATUSES.initial && <Metrics />}
         </View>
         <View className="h-1/5 w-full">
-          <View className="flex flex-row items-center justify-center h-full gap-x-4 bg-gray-300">
+          <View
+            className="flex flex-row items-center justify-center h-full gap-x-4"
+            style={{ backgroundColor: colors.surfaceVariant }}>
             {activityStatus === STATUSES.paused && <ActivityPauseBtn />}
             <ActivityStartBtn />
             {activityStatus !== STATUSES.initial && <ActivityShowMapBtn />}

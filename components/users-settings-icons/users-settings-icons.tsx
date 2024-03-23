@@ -24,7 +24,7 @@ export default function UsersSettingsIcons() {
           <IconButton
             testID="usersIcon"
             icon="account-multiple"
-            iconColor={colors.primaryContainer}
+            iconColor={colors.primary}
             size={30}
             onPress={() => push(`/${place}/users/`)}
             style={{ marginRight: -15 }}
@@ -32,7 +32,7 @@ export default function UsersSettingsIcons() {
           <IconButton
             testID="settingsIcon"
             icon="cog-outline"
-            iconColor={colors.primaryContainer}
+            iconColor={colors.primary}
             size={30}
             onPress={() => push(`/${place}/settings/`)}
             style={{ marginRight: -15 }}

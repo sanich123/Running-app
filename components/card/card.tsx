@@ -4,7 +4,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { useRef, memo, useEffect } from 'react';
-import { View, Pressable } from 'react-native';
+import { View, Pressable, Dimensions } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 
 import { ActivityCardProps } from './const ';
@@ -43,7 +43,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
-
+  const windowWidth = Dimensions.get('window').width;
   useEffect(() => {
     if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
       prefetchFullActivity(`${id}`);
@@ -66,7 +66,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
               onPress={() => push(`/${place}/${ROUTES.profile}/${userId}`)}>
               <View className="flex flex-row items-center gap-5">
                 <CustomImage
-                  style={{ width: 40, height: 40, borderRadius: 70 }}
+                  style={{ width: 50, height: 50, borderRadius: 70 }}
                   source={{ uri: profile?.profilePhoto }}
                   placeholder={profile?.profilePhotoBlurhash}
                   contentFit="cover"
@@ -93,13 +93,24 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             id={id}
           />
         ) : null}
-        <View className="flex flex-row">
-          {likes?.length ? (
-            <CardLikes
-              activityId={id}
-              size={pathname.includes(ROUTES.activity) ? CardLikesSize.big : CardLikesSize.small}
-            />
-          ) : null}
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingRight: 5,
+            paddingLeft: 5,
+            height: 40,
+          }}>
+          <View style={{ width: windowWidth / 2 }}>
+            {likes?.length ? (
+              <CardLikes
+                activityId={id}
+                size={pathname.includes(ROUTES.activity) ? CardLikesSize.big : CardLikesSize.small}
+              />
+            ) : null}
+          </View>
           <CommentsLength activityId={id} comments={comments} />
         </View>
       </View>

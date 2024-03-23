@@ -121,7 +121,7 @@ export default function ActivitySaveBtn() {
       style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
       <Text
         variant="titleMedium"
-        style={{ color: colors.primaryContainer, marginRight: 15, opacity: isDisabledWhileSending ? 0.5 : 1 }}>
+        style={{ color: colors.onSurfaceVariant, marginRight: 15, opacity: isDisabledWhileSending ? 0.5 : 1 }}>
         {isDisabledWhileSending ? textOnBtnWhenIsSending : textOnBtn}
       </Text>
     </Pressable>

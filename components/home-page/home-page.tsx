@@ -16,7 +16,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import useGetPermissions from '@U/hooks/use-get-permission';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -44,32 +44,27 @@ export default function Feed() {
 
   return (
     <SafeAreaView
-      edges={['left', 'right']}
-      style={[{ flex: 1 }, (isLoading || error || !activities?.length) && styles.isInCenter]}>
-      <View style={[{ flex: 1, justifyContent: 'center' }]}>
+      edges={['bottom', 'left', 'right']}
+      style={[{ flex: 1 }, (isLoading || error || !activities?.length) && { justifyContent: 'center' }]}>
+      <View>
         {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
         <NetworkIndicator />
         {activities && <OptimizedList activities={activities} refetch={refetch} />}
         {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
         {error ? <ErrorComponent error={error} /> : null}
-        <FloatingBtn
-          onPressFn={() => {
-            dispatch(setIsManualAdding(true));
-            dispatch(setIsEditingActivity(false));
-            dispatch(resetFinishedActivity());
-            dispatch(resetManualData());
-            dispatch(resetActivityInfo());
-            push('/(tabs)/home/manual-activity');
-          }}
-        />
+        {!isLoading && (
+          <FloatingBtn
+            onPressFn={() => {
+              dispatch(setIsManualAdding(true));
+              dispatch(setIsEditingActivity(false));
+              dispatch(resetFinishedActivity());
+              dispatch(resetManualData());
+              dispatch(resetActivityInfo());
+              push('/(tabs)/home/manual-activity');
+            }}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  isInCenter: {
-    justifyContent: 'center',
-    // alignItems: 'center',
-  },
-});

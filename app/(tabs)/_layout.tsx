@@ -25,7 +25,7 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarStyle: {
           height: Platform.OS === 'android' ? 72 : 82,
-          backgroundColor: colors.primary,
+          backgroundColor: colors.secondaryContainer,
           borderTopWidth: 0,
           display:
             pathname.includes(ROUTES.manualActivity) ||

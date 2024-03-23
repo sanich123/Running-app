@@ -16,8 +16,8 @@ export default function ProfileMainLayout() {
     <MaterialTopTabs
       initialLayout={{ width: Dimensions.get('window').width }}
       screenOptions={{
-        tabBarLabelStyle: { fontSize: 12, color: colors.primaryContainer, fontWeight: 'bold' },
-        tabBarStyle: { display: 'flex', backgroundColor: colors.primary },
+        tabBarLabelStyle: { fontSize: 12, color: colors.onSurfaceVariant, fontWeight: 'bold' },
+        tabBarStyle: { display: 'flex', backgroundColor: colors.secondaryContainer },
         tabBarItemStyle: { width: Dimensions.get('window').width / 2 },
       }}>
       <Stack.Screen

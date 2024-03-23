@@ -14,8 +14,10 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: LastK
             const key = `${index}/${longitude},${latitude}`;
             return (
               <PointAnnotation key={key} coordinate={[longitude, latitude]} id={key}>
-                <View style={styles.customKm}>
-                  <Text variant="bodySmall">{index + 1}</Text>
+                <View style={[styles.customKm]}>
+                  <Text variant="bodySmall" style={{ color: 'black' }}>
+                    {index + 1}
+                  </Text>
                 </View>
                 <Callout title={`${index + 1} kilometer`} />
               </PointAnnotation>
@@ -33,8 +35,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 20,
     width: 20,
-    borderColor: 'orange',
     backgroundColor: 'white',
+    borderColor: 'orange',
     borderWidth: 1,
     borderRadius: 50,
   },

@@ -18,8 +18,8 @@ export default function ProfileStack() {
     <Stack
       initialRouteName="index/profile"
       screenOptions={{
-        headerStyle: { backgroundColor: colors.primary },
-        headerTintColor: colors.primaryContainer,
+        headerStyle: { backgroundColor: colors.secondaryContainer },
+        headerTintColor: colors.onSurfaceVariant,
         headerTitleStyle: { fontWeight: 'bold' },
         title: LABELS[language].profile,
       }}>

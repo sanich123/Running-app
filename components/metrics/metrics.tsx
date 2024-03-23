@@ -1,5 +1,6 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 import { MAP_METRICS } from './const';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
@@ -8,6 +9,7 @@ import ActivityErrorMsg from '../activity-error-msg/activity-error-msg';
 import MetricsItem from '../metrics-item/metrics-item';
 
 export default function Metrics() {
+  const { colors } = useTheme();
   const { kilometresSplit, altitude, duration, distance, isMapVisible } = useAppSelector(({ location }) => location);
   const { language } = useAppSelector(({ language }) => language);
   const formattedDuration = formatDuration(duration);
@@ -18,7 +20,8 @@ export default function Metrics() {
     <>
       <ActivityErrorMsg />
       <View
-        className={`flex flex-row flex-wrap justify-between relative text-black dark:text-white ${isMapVisible ? 'h-20' : 'h-full'} bg-gray-300`}>
+        className={`flex flex-row flex-wrap justify-between relative text-black dark:text-white ${isMapVisible ? 'h-20' : 'h-full'}`}
+        style={{ backgroundColor: colors.surfaceVariant }}>
         <MetricsItem
           isMapVisible={isMapVisible}
           title={`${MAP_METRICS[language].time}:`}

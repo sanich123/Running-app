@@ -15,7 +15,7 @@ export default function ProfileEditBtn() {
     <Pressable
       onPress={() => push(`/${ROUTES.profile}/${ROUTES.profileSettings}/`)}
       style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
-      <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>
+      <Text variant="titleMedium" style={{ color: colors.primary, marginRight: 15 }}>
         {EDIT_BTN[language].edit}
       </Text>
     </Pressable>

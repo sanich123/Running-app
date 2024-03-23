@@ -81,10 +81,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 20,
-    marginLeft: 5,
-    marginBottom: 5,
     backgroundColor: 'transparent',
     height: 40,
+    paddingTop: 5,
   },
   withoutLikesLayout: {
     paddingTop: 0,
@@ -94,7 +93,7 @@ const styles = StyleSheet.create({
   },
   avatarWrapper: {
     position: 'absolute',
-    top: -15,
+    top: -17,
     backgroundColor: 'transparent',
     borderRadius: 50,
     borderColor: 'white',

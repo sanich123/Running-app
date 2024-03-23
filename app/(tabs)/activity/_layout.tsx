@@ -7,7 +7,7 @@ export default function ActivityStack() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: colors.primary },
+        headerStyle: { backgroundColor: colors.secondaryContainer },
         headerTintColor: colors.primaryContainer,
         headerTitleStyle: { fontWeight: 'bold' },
         title: '',
