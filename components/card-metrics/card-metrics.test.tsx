@@ -12,7 +12,18 @@ import { formatDuration } from '../../utils/time-formatter';
 describe('Card metrics', () => {
   it('should correctly renders', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<CardMetrics distance={MOCK_DISTANCE} duration={MOCK_DURATION} />, { store: mockStore });
+    renderWithProviders(
+      <CardMetrics
+        title="some title"
+        distance={MOCK_DISTANCE}
+        duration={MOCK_DURATION}
+        isShowDescription
+        description="some description"
+        userId="someUserId"
+        id="someUUID"
+      />,
+      { store: mockStore },
+    );
     ['pace', 'distance', 'time'].map((metric) => expect(screen.getByText(new RegExp(metric, 'i'))).toBeOnTheScreen());
     [getSpeedInMinsInKm(MOCK_DISTANCE, MOCK_DURATION).paceAsString, formatDuration(MOCK_DURATION)].map((metric) =>
       expect(screen.getByText(new RegExp(`${metric}`, 'i'))).toBeOnTheScreen(),
