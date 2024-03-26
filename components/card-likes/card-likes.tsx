@@ -32,44 +32,58 @@ export default memo(function CardLikes({ activityId, size }: { activityId: strin
       onPress={() => push(`/${place}/${ROUTES.likes}/${activityId}`)}
       style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
       <View
-        style={[
-          styles.likesLayout,
-          lessThanNineLikes && { width: likes?.length * SHIFT_RIGHT + 10 },
-          moreThanNineLikes && { width: MAX_IN_ROW * SHIFT_RIGHT + 10 },
-        ]}>
-        {likes?.length ? (
-          <View style={{ position: 'relative' }}>
-            {likes
-              .slice()
-              .sort((a: LikeType, b: LikeType) => Number(new Date(b.date)) - Number(new Date(a.date)))
-              ?.slice(0, lastLikeInTheRow)
-              .map(
-                ({ authorId, id, profile }: { authorId: string; id: string; profile: ProfileType }, index: number) => (
-                  <Fragment key={`${id}/${index}/${authorId}`}>
-                    {likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 ? (
-                      <View style={[styles.lastAvatarWrapper, { left: index * SHIFT_RIGHT + 13 }]}>
-                        <Text variant="bodySmall">{`+${likes?.length - MAX_IN_ROW}`}</Text>
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingRight: 5,
+          height: 40,
+          marginLeft: 15,
+        }}>
+        <View
+          style={[
+            styles.likesLayout,
+            lessThanNineLikes && { width: likes?.length * SHIFT_RIGHT + 10 },
+            moreThanNineLikes && { width: MAX_IN_ROW * SHIFT_RIGHT + 10 },
+          ]}>
+          {likes?.length ? (
+            <View style={{ position: 'relative' }}>
+              {likes
+                .slice()
+                .sort((a: LikeType, b: LikeType) => Number(new Date(b.date)) - Number(new Date(a.date)))
+                ?.slice(0, lastLikeInTheRow)
+                .map(
+                  (
+                    { authorId, id, profile }: { authorId: string; id: string; profile: ProfileType },
+                    index: number,
+                  ) => (
+                    <Fragment key={`${id}/${index}/${authorId}`}>
+                      {likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 ? (
+                        <View style={[styles.lastAvatarWrapper, { left: index * SHIFT_RIGHT + 13 }]}>
+                          <Text variant="bodySmall">{`+${likes?.length - MAX_IN_ROW}`}</Text>
+                        </View>
+                      ) : null}
+                      <View
+                        style={[
+                          styles.avatarWrapper,
+                          { left: index * SHIFT_RIGHT },
+                          likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 && { opacity: 0.1 },
+                        ]}>
+                        <CustomImage
+                          style={{ width: 30, height: 30, borderRadius: 70 }}
+                          source={{ uri: profile?.profilePhoto }}
+                          contentFit="cover"
+                          testID={AvatarShowableTestIds.success}
+                        />
                       </View>
-                    ) : null}
-                    <View
-                      style={[
-                        styles.avatarWrapper,
-                        { left: index * SHIFT_RIGHT },
-                        likes.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 && { opacity: 0.1 },
-                      ]}>
-                      <CustomImage
-                        style={{ width: 30, height: 30, borderRadius: 70 }}
-                        source={{ uri: profile?.profilePhoto }}
-                        contentFit="cover"
-                        testID={AvatarShowableTestIds.success}
-                      />
-                    </View>
-                  </Fragment>
-                ),
-              )}
-          </View>
-        ) : null}
-        {likes?.length && size === CardLikesSize.small ? <NumberOfLikes likes={likes} /> : null}
+                    </Fragment>
+                  ),
+                )}
+            </View>
+          ) : null}
+          {likes?.length && size === CardLikesSize.small ? <NumberOfLikes likes={likes} /> : null}
+        </View>
       </View>
     </Pressable>
   );

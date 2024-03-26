@@ -3,7 +3,7 @@ import { useSendOrDeleteLikeMutation } from '@R/runich-api/runich-api';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { useContext, useEffect } from 'react';
-import { Platform } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
@@ -44,7 +44,15 @@ export default function ActivityCardLikeBtnSimple({ activityId }: { activityId: 
         }
       }}
       disabled={isLoading || isDisabled}
-      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      style={Platform.OS === 'web' && styles.isInCenter}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  isInCenter: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

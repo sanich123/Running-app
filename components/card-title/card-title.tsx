@@ -6,11 +6,10 @@ export default memo(function CardTitle({ title }: { title: string }) {
   return (
     <View
       style={{
-        marginTop: 5,
-        marginLeft: 15,
         marginBottom: 5,
+        marginTop: 5,
       }}>
-      <Text variant="headlineSmall" style={{ fontWeight: 'bold' }}>
+      <Text variant="titleLarge" style={{ fontWeight: 'bold' }}>
         {title}
       </Text>
     </View>

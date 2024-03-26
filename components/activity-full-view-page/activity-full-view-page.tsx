@@ -37,7 +37,7 @@ export default function ActivityFullViewPage() {
             <>
               <ActivityCard
                 isShowDeleteBtn
-                isShowDescription
+                isShowDescription={!!activity.description}
                 fullViewRef={fullViewRef}
                 userId={activity.user_id}
                 description={activity.description}

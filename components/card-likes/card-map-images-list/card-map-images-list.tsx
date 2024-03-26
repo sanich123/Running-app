@@ -3,7 +3,8 @@ import { CustomImage } from '@C/custom-image/custom-image';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
-import { FlatList, Platform, Pressable, useWindowDimensions } from 'react-native';
+import { FlatList, Platform, useWindowDimensions } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 
 type CardMapImagesListProps = {
   photoVideoUrls: PhotoVideoUrls;
@@ -33,7 +34,8 @@ export default memo(function CardMapImagesList({
       }
       renderItem={({ item, index }) => {
         return (
-          <Pressable
+          <TouchableRipple
+            rippleColor="rgba(0, 0, 0, .08)"
             onPress={() => {
               if (item) {
                 push(
@@ -42,8 +44,7 @@ export default memo(function CardMapImagesList({
                     : `/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
                 );
               }
-            }}
-            style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+            }}>
             <CustomImage
               style={{ width, height: 200 }}
               source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
@@ -51,7 +52,7 @@ export default memo(function CardMapImagesList({
               testID={item.url}
               placeholder={item?.blurhash}
             />
-          </Pressable>
+          </TouchableRipple>
         );
       }}
       style={{ overflow: !photoVideoUrls.length ? 'hidden' : 'scroll' }}

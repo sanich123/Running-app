@@ -59,7 +59,6 @@ export default function HomeStack() {
         name={`${ROUTES.manualActivity}/${ROUTES.index}`}
         options={{
           headerRight: () => <ActivitySaveBtn />,
-          presentation: 'modal',
           title: '',
           headerShown: !isCameraVisible,
         }}

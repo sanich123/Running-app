@@ -34,7 +34,7 @@ export default function UsersSettingsIcons() {
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
             onPress={() => push(`/${place}/users/`)}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={Platform.OS === 'web' && { display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           />
           <IconButton
             testID="settingsIcon"

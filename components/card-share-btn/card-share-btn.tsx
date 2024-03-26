@@ -3,6 +3,7 @@ import { errorHandler } from '@U/error-handler';
 import { usePathname } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import { MutableRefObject, ReactNode, useContext, memo } from 'react';
+import { Platform, StyleSheet } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { captureRef } from 'react-native-view-shot';
 
@@ -34,7 +35,15 @@ export default memo(function ActivityCardShareBtn({ cardRef, fullViewRef }: Card
       iconColor={MD3Colors.primary50}
       size={25}
       disabled={isLoading || isDisabled}
-      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      style={Platform.OS === 'web' && styles.isInCenter}
     />
   );
+});
+
+const styles = StyleSheet.create({
+  isInCenter: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

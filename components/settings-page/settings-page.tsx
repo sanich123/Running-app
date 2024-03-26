@@ -2,12 +2,13 @@ import { changeLanguage } from '@R/language/language';
 import { resetSettings, setisNeedToPrefetchActivities } from '@R/profile/profile';
 import { runichApi, useGetUserProfileByIdQuery, useUpdateProfileInfoMutation } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { storeData } from '@U/async-storage';
 import { LANGUAGES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, SegmentedButtons, Switch, Text } from 'react-native-paper';
+
+import { SETTINGS } from './const';
 
 export default function SettingsPage() {
   const { signOut, user } = useAuth();
@@ -19,25 +20,23 @@ export default function SettingsPage() {
   const [updateProfile] = useUpdateProfileInfoMutation();
 
   return (
-    <>
+    <ScrollView contentContainerStyle={{ padding: 10, display: 'flex', gap: 15 }}>
       <SegmentedButtons
         value={languageValue}
         onValueChange={(value: string) => {
           setLanguage(value);
           dispatch(changeLanguage(value));
-          storeData(value, 'language');
         }}
         buttons={[
           {
             value: LANGUAGES.english,
-            label: 'English',
+            label: SETTINGS[language].eng,
           },
           {
             value: LANGUAGES.russian,
-            label: 'Russian',
+            label: SETTINGS[language].rus,
           },
         ]}
-        style={{ marginTop: 15 }}
       />
       {signOut && (
         <Button
@@ -46,29 +45,25 @@ export default function SettingsPage() {
           onPress={() => {
             dispatch(resetSettings());
             signOut();
-          }}
-          style={{ marginTop: 15 }}>
-          LogOut
+          }}>
+          {SETTINGS[language].logout}
         </Button>
       )}
-      <Button
-        mode="outlined"
-        icon="logout"
-        onPress={() => dispatch(runichApi.util.resetApiState())}
-        style={{ marginTop: 15 }}>
-        Clear cache manually
+      <Button mode="outlined" icon="logout" onPress={() => dispatch(runichApi.util.resetApiState())}>
+        {SETTINGS[language].cache}
       </Button>
-      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
+      <View style={styles.togglers}>
+        <Text variant="titleSmall">{`${isNeedToPrefetchActivities ? SETTINGS[language].switchOn : SETTINGS[language].switchOff} ${SETTINGS[language].prefetch}`}</Text>
         <Switch
           value={isNeedToPrefetchActivities}
           onValueChange={() => {
             dispatch(setisNeedToPrefetchActivities());
           }}
         />
-        <Text variant="titleSmall">{`${isNeedToPrefetchActivities ? 'Выключить' : 'Включить'} предзагрузку тренировок в ленте`}</Text>
       </View>
       {isSuccess && (
-        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
+        <View style={styles.togglers}>
+          <Text variant="titleSmall">{`${profileInfo?.emailNotifications ? SETTINGS[language].switchOn : SETTINGS[language].switchOff} ${SETTINGS[language].emailNotifications}`}</Text>
           <Switch
             value={profileInfo?.emailNotifications}
             onValueChange={async () => {
@@ -78,9 +73,19 @@ export default function SettingsPage() {
               });
             }}
           />
-          <Text variant="titleSmall">{`${profileInfo?.emailNotifications ? 'Выключить' : 'Включить'} уведомления по email`}</Text>
         </View>
       )}
-    </>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  togglers: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginTop: 15,
+    gap: 10,
+  },
+});
