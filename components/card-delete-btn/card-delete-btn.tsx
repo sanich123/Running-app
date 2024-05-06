@@ -15,6 +15,7 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
   const { back } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
 
+
   useEffect(() => {
     if (data) {
       console.log(data);
@@ -41,6 +42,24 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
       size={20}
       onPress={async () => {
         try {
+          if (Platform.OS === 'web') {
+            successHandler();
+          } else {
+            Alert.alert(
+              CARD_DELETE_BTN[language].deleteActivity,
+              CARD_DELETE_BTN[language].question,
+              [
+                {
+                  text: CARD_DELETE_BTN[language].accept,
+                  onPress: successHandler,
+                  style: 'cancel',
+                },
+              ],
+              {
+                cancelable: true,
+              },
+            );
+          }
           if (Platform.OS === 'web') {
             successHandler();
           } else {
