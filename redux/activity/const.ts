@@ -16,16 +16,17 @@ export const ADDITIONAL_INFO_INITIAL_STATE: AdditionalInfoType = {
   description: '',
   sport: SPORTS_BTNS_VALUES.run,
   emotion: EMOTIONS_BTNS_VALUES.normal,
-  isSwitchOn: false,
-  photoUrls: [],
+  isPublic: true,
+  photoVideoUrls: [],
 };
 
 export const ACTIVITY_INITIAL_STATE: ActivityInitialState = {
-  isNeedToResetInputs: false,
   isDisabledWhileSending: false,
   isHaveUnsyncedActivity: false,
   isManualAdding: false,
+  isEditingActivity: false,
   isCameraVisible: false,
+  activityId: '',
   finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
   additionalInfo: ADDITIONAL_INFO_INITIAL_STATE,
   unsyncedActivities: [],

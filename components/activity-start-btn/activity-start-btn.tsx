@@ -1,11 +1,17 @@
-import { saveFinishedActivity, setIsManualAdding } from '@R/activity/activity';
+import {
+  resetActivityInfo,
+  resetManualData,
+  saveFinishedActivity,
+  setIsEditingActivity,
+  setIsManualAdding,
+} from '@R/activity/activity';
 import { setActivityStatus } from '@R/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location-utils';
-import { LANGUAGES, ROUTES, STATUSES } from '@const/enums';
+import { ROUTES, STATUSES } from '@const/enums';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON, ResponseIcon } from './const ';
 
@@ -20,7 +26,6 @@ export default function ActivityStartBtn() {
   } = useAppSelector(({ location }) => location);
   const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
-  const isRussianText = language === LANGUAGES.russian && activityStatus === STATUSES.paused;
 
   const RESPONSE_ICON: ResponseIcon = {
     [STATUSES.initial]: ACTIVITY_START_BTN[language].start,
@@ -28,9 +33,10 @@ export default function ActivityStartBtn() {
     [STATUSES.paused]: ACTIVITY_START_BTN[language].finish,
     [STATUSES.continued]: <FontAwesome testID={STOP_ICON} name="stop" size={25} style={{ marginRight: 15 }} />,
   };
+
   return (
     <Pressable
-      style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.startBtn]}
+      style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
       testID={ACTIVITY_START_BTN_TEST_ID}
       onPress={() => {
         dispatch(
@@ -45,26 +51,17 @@ export default function ActivityStartBtn() {
         dispatch(setActivityStatus(RESPONSE_STATUS[activityStatus]));
         if (activityStatus === STATUSES.paused) {
           dispatch(setIsManualAdding(false));
+          dispatch(setIsEditingActivity(false));
+          dispatch(resetManualData());
+          dispatch(resetActivityInfo());
           push(`/(tabs)/${ROUTES.home}/${ROUTES.manualActivity}/`);
         }
       }}>
-      <Text style={[styles.textStyle, isRussianText && { fontSize: 18 }]}>{RESPONSE_ICON[activityStatus]}</Text>
+      <View className="flex items-center justify-center bg-red-500 w-28 h-28 rounded-full py-5">
+        <Text className={`uppercase text-white ${activityStatus === STATUSES.initial ? 'text-3xl' : 'text-xl'}`}>
+          {RESPONSE_ICON[activityStatus]}
+        </Text>
+      </View>
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  startBtn: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'red',
-    borderRadius: 50,
-    width: 90,
-    height: 90,
-  },
-  textStyle: {
-    fontSize: 28,
-    textTransform: 'uppercase',
-    color: 'white',
-  },
-});

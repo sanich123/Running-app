@@ -10,6 +10,7 @@ import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Emotion btns', () => {
   it('should correctly change global state interract with user', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<EmotionBtns isDisabled={false} />, { store: mockStore });
     const normalInput = screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.normalInput);
     const fuckedInput = screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.fuckedInput);
@@ -25,6 +26,7 @@ describe('Emotion btns', () => {
     expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.good);
   });
   it('should correctly render labels in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<EmotionBtns isDisabled={false} />, { store: mockStore });
     [EMOTION_BTNS.english.normalLabel, EMOTION_BTNS.english.fineLabel, EMOTION_BTNS.english.fuckedLabel].map(
       (emotion) => expect(screen.getByText(new RegExp(emotion))).toBeOnTheScreen(),

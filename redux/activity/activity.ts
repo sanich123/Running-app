@@ -18,14 +18,19 @@ export const activity = createSlice({
     saveEmotion: (state, action) => {
       state.additionalInfo.emotion = action.payload;
     },
-    saveIsSwitchOn: (state, action) => {
-      state.additionalInfo.isSwitchOn = action.payload;
+    saveIsPublic: (state, action) => {
+      state.additionalInfo.isPublic = action.payload;
     },
     addPhotoUrl: (state, action) => {
-      state.additionalInfo.photoUrls = [action.payload, ...state.additionalInfo.photoUrls];
+      state.additionalInfo.photoVideoUrls = [action.payload, ...state.additionalInfo.photoVideoUrls];
+    },
+    addPhotoUrls: (state, action) => {
+      state.additionalInfo.photoVideoUrls = [...action.payload, ...state.additionalInfo.photoVideoUrls];
     },
     deletePhotoUrl: (state, action) => {
-      state.additionalInfo.photoUrls = state.additionalInfo.photoUrls.filter((url) => url !== action.payload);
+      state.additionalInfo.photoVideoUrls = state.additionalInfo.photoVideoUrls.filter(
+        ({ url }) => url !== action.payload,
+      );
     },
     setIsDisableWhileSending: (state, action) => {
       state.isDisabledWhileSending = action.payload;
@@ -33,8 +38,8 @@ export const activity = createSlice({
     resetActivityInfo: (state) => {
       state.additionalInfo = ADDITIONAL_INFO_INITIAL_STATE;
     },
-    setIsNeedToResetInputs: (state, action) => {
-      state.isNeedToResetInputs = action.payload;
+    setIsEditingActivity: (state, action) => {
+      state.isEditingActivity = action.payload;
     },
     saveUnsendedActivity: (state, action) => {
       state.unsyncedActivities = [...state.unsyncedActivities, action.payload];
@@ -73,7 +78,7 @@ export const activity = createSlice({
       state.manualMinutes = 0;
     },
     resetPhotoUrls: (state) => {
-      state.additionalInfo.photoUrls = [];
+      state.additionalInfo.photoVideoUrls = [];
     },
     setCameraIsVisible: (state, action) => {
       state.isCameraVisible = action.payload;
@@ -87,10 +92,9 @@ export const {
   saveSport,
   saveEmotion,
   setManualDate,
-  saveIsSwitchOn,
+  saveIsPublic,
   setIsDisableWhileSending,
   resetActivityInfo,
-  setIsNeedToResetInputs,
   saveUnsendedActivity,
   setIsHaveUnsyncedActivity,
   refreshUnsendedActivitiesList,
@@ -103,8 +107,10 @@ export const {
   resetManualData,
   setCameraIsVisible,
   addPhotoUrl,
+  addPhotoUrls,
   deletePhotoUrl,
   resetPhotoUrls,
+  setIsEditingActivity,
 } = activity.actions;
 
 export default activity.reducer;

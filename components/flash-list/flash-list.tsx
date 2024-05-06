@@ -50,7 +50,7 @@ export default function OptimizedList({
           renderItem={renderCardsFunction}
           ListEmptyComponent={<EmptyActivitiesList />}
           ItemSeparatorComponent={() => <Divider />}
-          initialNumToRender={10}
+          initialNumToRender={5}
           maxToRenderPerBatch={10}
         />
       )}

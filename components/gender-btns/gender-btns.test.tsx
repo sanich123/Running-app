@@ -11,6 +11,7 @@ import { renderWithProviders } from '../../tests/utils/test-utils';
 describe('Gender btns', () => {
   it('should correctly handle user pressing', async () => {
     renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const maleInput = screen.getByText(GENDER_BTNS.english.maleLabel);
     const femaleInput = screen.getByText(GENDER_BTNS.english.femaleLabel);
     await userEvent.press(maleInput);
@@ -20,6 +21,7 @@ describe('Gender btns', () => {
   });
   it('should correctly handle isDisabled state', async () => {
     renderWithProviders(<GenderBtns isDisabled />, { store: mockStore });
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const maleInput = screen.getByText(GENDER_BTNS.english.maleLabel);
     const femaleInput = screen.getByText(GENDER_BTNS.english.femaleLabel);
     expect(maleInput).toBeDisabled();

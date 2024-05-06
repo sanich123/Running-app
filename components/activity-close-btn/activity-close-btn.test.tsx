@@ -20,7 +20,7 @@ jest.mock('expo-router', () => ({
 describe('Activity close btn', () => {
   it('should correctly renders in english', () => {
     renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
-    expect(screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText)).toBeDefined();
+    expect(screen.getByText(ACTIVITY_CLOSE_BTN.russian.btnText)).toBeDefined();
   });
   it('should correctly renders in russian', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

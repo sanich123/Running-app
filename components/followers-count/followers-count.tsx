@@ -25,7 +25,9 @@ export default function FollowersCount() {
   return (
     <Pressable
       onPress={() =>
-        push(`/${pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.profile}/${ROUTES.followers}/${friendId}`)
+        push(
+          `/${pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.profile}/${ROUTES.followers}/${friendId ? `${friendId}` : `${user?.id}`}`,
+        )
       }
       disabled={isError || isLoading}
       style={({ pressed }) => ({ opacity: pressed || isError || isLoading ? 0.5 : 1 })}>

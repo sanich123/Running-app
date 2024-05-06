@@ -6,19 +6,23 @@ import { useRouter } from 'expo-router';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { Text } from 'react-native-paper';
 
+export type UserListSimpleType = {
+  name: string;
+  surname: string;
+  placeholder: string;
+  profilePhoto: string;
+  city: string;
+  user_id: string;
+};
+
 export default function UserListItemSimple({
   name,
   surname,
   profilePhoto,
+  placeholder,
   city,
   user_id,
-}: {
-  name: string;
-  surname: string;
-  profilePhoto: string;
-  city: string;
-  user_id: string;
-}) {
+}: UserListSimpleType) {
   const { user } = useAuth();
   const isMineActivity = user_id === user?.id;
   const { push } = useRouter();
@@ -28,21 +32,24 @@ export default function UserListItemSimple({
       <Pressable
         style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.pressableAreaWrapper]}
         onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${user_id}`)}>
-        <CustomImage
-          style={{ width: 35, height: 35, borderRadius: 70 }}
-          source={{ uri: profilePhoto }}
-          contentFit="cover"
-        />
-        <View>
-          <View style={{ flex: 1, flexDirection: 'row' }}>
-            <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
-              {name}
-            </Text>
-            <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
-              {surname}
-            </Text>
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          <CustomImage
+            style={{ width: 35, height: 35, borderRadius: 70 }}
+            source={{ uri: profilePhoto }}
+            contentFit="cover"
+            placeholder={placeholder}
+          />
+          <View>
+            <View style={{ flex: 1, flexDirection: 'row' }}>
+              <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
+                {name}
+              </Text>
+              <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
+                {surname}
+              </Text>
+            </View>
+            <Text variant="bodyMedium">{city}</Text>
           </View>
-          <Text variant="bodyMedium">{city}</Text>
         </View>
       </Pressable>
       {!isMineActivity && <AddDeleteFriendBtn friendId={user_id} />}

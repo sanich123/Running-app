@@ -10,6 +10,7 @@ import Metrics from './metrics';
 
 describe('Metrics', () => {
   it('should correctly renders in english, when initial store', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<Metrics />, { store: mockStore });
     [MAP_METRICS.english.distance, MAP_METRICS.english.pace, MAP_METRICS.english.time].map((metric) =>
       expect(screen.getByText(new RegExp(metric))).toBeOnTheScreen(),

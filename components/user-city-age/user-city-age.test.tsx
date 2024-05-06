@@ -14,6 +14,7 @@ describe('User city age', () => {
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
   });
   it('should correctly handle an error in english', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<UserCityAge userId="someUserIdWithAnError" size="bodyLarge" />, { store: mockStore });
     expect(await screen.findByText(`An error: ${MOCK_BAD_REQUEST.status}`)).toBeOnTheScreen();
   });

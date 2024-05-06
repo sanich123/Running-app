@@ -2,7 +2,7 @@ import { TIMEOUT_MESSAGE } from '@C/activity-location-indicator/const';
 import { setIsAppShuted } from '@R/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { ACTIVITY_ERROR_MSG } from './const';
@@ -21,24 +21,10 @@ export default function ActivityErrorMsg() {
   return (
     <>
       {isAppShutedByPhone ? (
-        <View style={[styles.indicatorLayout, { backgroundColor: 'orange' }]}>
+        <View className="flex items-center justify-center absolute top-0 w-full h-28 p-x-5 bg-orange-200">
           <Text variant="bodyLarge">{ACTIVITY_ERROR_MSG[language].errorMsg}</Text>
         </View>
       ) : null}
     </>
   );
 }
-
-export const styles = StyleSheet.create({
-  indicatorLayout: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 0,
-    width: '100%',
-    height: 100,
-    paddingLeft: 5,
-    paddingRight: 5,
-  },
-});

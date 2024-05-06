@@ -1,4 +1,6 @@
 import { LANGUAGES } from '@const/enums';
+import { RefObject } from 'react';
+import { TextInput } from 'react-native';
 
 export type PasswordInputProps = {
   password: string;
@@ -6,18 +8,19 @@ export type PasswordInputProps = {
   passwordError: boolean;
   setPasswordError: (arg: boolean) => void;
   isDisabled: boolean;
+  passwordRef: RefObject<TextInput> | null;
 };
 
 export const PASSWORD_INPUT = {
   [LANGUAGES.english]: {
     label: 'Password',
-    placeholder: 'Type your password',
-    helperText: 'Password must contain one capital, one normal letter, one number, length up to 4',
+    placeholder: 'Password',
+    helperText: 'Capital and normal letter, number, 6+ symbols',
   },
   [LANGUAGES.russian]: {
     label: 'Пароль',
-    placeholder: 'Введите ваш пароль',
-    helperText: 'Пароль должен состоять из одной заглавной, одной строчной буквы, одной цифры, не менее 4 символов',
+    placeholder: 'Пароль',
+    helperText: 'Большая и маленькая буква, цифра, 6+',
   },
 } as const;
 

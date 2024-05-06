@@ -13,7 +13,7 @@ import { StyleSheet, View } from 'react-native';
 export default function ProfilePage() {
   const { id: whosProfileViewing } = useLocalSearchParams();
   const { user } = useAuth();
-  const isMineActivity = whosProfileViewing === user?.id;
+  const isMeViewing = whosProfileViewing === user?.id;
 
   return (
     <>
@@ -32,7 +32,7 @@ export default function ProfilePage() {
         <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
           <FollowingCount />
           <FollowersCount />
-          {!isMineActivity && whosProfileViewing && <AddDeleteFriendBtn friendId={`${whosProfileViewing}`} />}
+          {!isMeViewing && whosProfileViewing && <AddDeleteFriendBtn friendId={`${whosProfileViewing}`} />}
         </View>
       </View>
     </>

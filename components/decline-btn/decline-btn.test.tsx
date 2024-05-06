@@ -15,10 +15,12 @@ jest.mock('expo-router', () => ({ useRouter: () => ({ replace: jest.fn() }) }));
 
 describe('Decline btn', () => {
   it('should correctly renders in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<DeclineBtn isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(DECLINE_BTN.english.cancel)).toBeOnTheScreen();
   });
   it('should correctly handle alert and reset activity global state, when user clicked', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<DeclineBtn isDisabled={false} />, { store: mockStore });
     const discardBtn = screen.getByText(DECLINE_BTN.english.cancel);
     await userEvent.press(discardBtn);
@@ -31,6 +33,7 @@ describe('Decline btn', () => {
     expect(mockStore.getState().activity.manualMinutes).toEqual(0);
   });
   it('should correctly handle isDisabled state', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<DeclineBtn isDisabled />, { store: mockStore });
     expect(screen.getByText(DECLINE_BTN.english.cancel)).toBeDisabled();
   });

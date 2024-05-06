@@ -6,14 +6,15 @@ import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 
 export default function HomeStack() {
-  const theme = useTheme();
+  const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const { isCameraVisible } = useAppSelector(({ activity }) => activity);
+
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: theme.colors.primary },
-        headerTintColor: theme.colors.primaryContainer,
+        headerStyle: { backgroundColor: colors.secondaryContainer },
+        headerTintColor: colors.onSurfaceVariant,
         headerTitleStyle: { fontWeight: 'bold' },
         title: LABELS[language].feed,
       }}>
@@ -58,7 +59,6 @@ export default function HomeStack() {
         name={`${ROUTES.manualActivity}/${ROUTES.index}`}
         options={{
           headerRight: () => <ActivitySaveBtn />,
-          presentation: 'modal',
           title: '',
           headerShown: !isCameraVisible,
         }}

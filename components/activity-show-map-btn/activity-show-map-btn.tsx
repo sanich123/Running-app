@@ -1,7 +1,7 @@
 import { setIsMapVisible } from '@R/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { FontAwesome } from '@expo/vector-icons';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { ACTIVITY_SHOW_MAP_TEST_ID } from './const';
 
@@ -11,20 +11,11 @@ export default function ActivityShowMapBtn() {
   return (
     <Pressable
       testID={ACTIVITY_SHOW_MAP_TEST_ID}
-      style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.showMapBtn]}
+      style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
       onPress={() => dispatch(setIsMapVisible(!isMapVisible))}>
-      <FontAwesome name="map-marker" size={25} color="white" />
+      <View className="flex items-center justify-center w-14 height-14 bg-red-500 rounded-full py-3.5">
+        <FontAwesome name="map-marker" size={25} color="white" />
+      </View>
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  showMapBtn: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'red',
-    borderRadius: 50,
-    width: 50,
-    height: 50,
-  },
-});

@@ -11,6 +11,7 @@ import { KM_SPLITS } from './const';
 
 describe('Home activity full view km split', () => {
   it('should correctly renders in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ActivityFullViewKmSplit kilometresSplit={MOCK_ACTIVITY.kilometresSplit} />, {
       store: mockStore,
     });

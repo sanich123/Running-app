@@ -1,3 +1,6 @@
+import { RefObject } from 'react';
+import { TextInput } from 'react-native';
+
 import { LANGUAGES } from '../../constants/enums';
 
 export type EmailInputProps = {
@@ -6,6 +9,7 @@ export type EmailInputProps = {
   emailError: boolean;
   setEmailError: (arg: boolean) => void;
   isDisabled: boolean;
+  passwordRef: RefObject<TextInput> | null;
 };
 
 export const EMAIL_INPUT = {

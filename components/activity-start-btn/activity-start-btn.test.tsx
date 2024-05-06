@@ -16,17 +16,20 @@ jest.mock('expo-router', () => ({
 }));
 describe('Activity start btn', () => {
   it('should correctly renders in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_START_BTN.english.start)).toBeOnTheScreen();
   });
 
   it('should correctly change from initial to started status', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
     const startBtn = screen.getByText(ACTIVITY_START_BTN.english.start);
     await userEvent.press(startBtn);
     expect(mockStore.getState().location.activityStatus).toEqual(STATUSES.started);
   });
   it('should correctly change from started to paused status', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setActivityStatus(STATUSES.started));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
     const startBtn = screen.getByTestId(ACTIVITY_START_BTN_TEST_ID);
@@ -35,6 +38,7 @@ describe('Activity start btn', () => {
   });
 
   it('should correctly change from paused to initial status', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setActivityStatus(STATUSES.paused));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_START_BTN.english.finish)).toBeOnTheScreen();
@@ -43,6 +47,7 @@ describe('Activity start btn', () => {
     expect(mockStore.getState().location.activityStatus).toEqual(STATUSES.initial);
   });
   it('should correctly dispatch saveFinishedActivity', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setDuration(MOCK_DURATION));
     mockStore.dispatch(setDistance(MOCK_DISTANCE));
     mockStore.dispatch(setLocationsFromBackground(MOCK_LOCATION));

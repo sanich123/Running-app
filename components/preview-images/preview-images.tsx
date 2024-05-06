@@ -5,9 +5,9 @@ import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
 
 export type PreviewImagesProps = {
-  images: string[];
+  images: { url: string; thumbnail: string | null }[];
   isDisabled: boolean;
-  setImages: (arg: string[]) => void;
+  setImages: (arg: { url: string; thumbnail: string | null }[]) => void;
 };
 
 export default function PreviewImages({ setImages, images, isDisabled }: PreviewImagesProps) {
@@ -16,13 +16,13 @@ export default function PreviewImages({ setImages, images, isDisabled }: Preview
   return (
     <View style={styles.imagesWrapper}>
       {images.length > 0 &&
-        images.map((image, index) => (
-          <View style={{ position: 'relative', zIndex: 0 }} key={`${image}/${index}`}>
-            <PreviewImageCloseBtn setImages={setImages} images={images} image={image} isDisabled={isDisabled} />
+        images.map(({ url, thumbnail }, index) => (
+          <View style={{ position: 'relative', zIndex: 0 }} key={`${url}/${index}`}>
+            <PreviewImageCloseBtn setImages={setImages} images={images} image={url} isDisabled={isDisabled} />
             {isCameraVisible ? (
-              <PreviewUploadableImage image={image} index={index} isDisabled={isDisabled} />
+              <PreviewUploadableImage image={thumbnail || url} index={index} isDisabled={isDisabled} />
             ) : (
-              <PreviewImage image={image} isDisabled={isDisabled} index={index} />
+              <PreviewImage image={thumbnail || url} isDisabled={isDisabled} index={index} />
             )}
           </View>
         ))}

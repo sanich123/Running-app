@@ -1,6 +1,6 @@
 import ActivityCardLikeBtn from '@C/card-like-btn/card-like-btn';
 import CardLikes, { CardLikesSize } from '@C/card-likes/card-likes';
-import CardMapImagesList from '@C/card-map-images-list/card-map-images-list';
+import CardMapImagesList from '@C/card-likes/card-map-images-list/card-map-images-list';
 import CardTitle from '@C/card-title/card-title';
 import CommentInput from '@C/comment-input/comment-input';
 import Comments from '@C/comments/comments';
@@ -25,8 +25,12 @@ export default function CommentFullViewPage() {
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
-          {(activity?.locations?.length || activity?.photoUrls?.length > 0) && (
-            <CardMapImagesList photoUrls={activity?.photoUrls} id={`${activityId}`} />
+          {(activity?.mapPhotoUrl || activity?.photoVideoUrls?.length > 0) && (
+            <CardMapImagesList
+              photoVideoUrls={activity?.photoVideoUrls}
+              mapPhotoUrl={activity?.mapPhotoUrl}
+              id={`${activityId}`}
+            />
           )}
           <Card.Content style={styles.contentLayout}>
             <CardTitle title={activity?.title} />
@@ -36,8 +40,8 @@ export default function CommentFullViewPage() {
               <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
             </View>
             <View style={styles.columnsLayout}>
-              <ActivityCardLikeBtn activityId={activity?.id} likes={activity.likes} />
-              <CardLikes activityId={activity?.id} size={CardLikesSize.big} likes={activity.likes} />
+              <ActivityCardLikeBtn activityId={activity?.id} />
+              <CardLikes activityId={activity?.id} size={CardLikesSize.big} />
             </View>
           </Card.Content>
           <Comments id={`${activityId}`} />

@@ -12,7 +12,7 @@ describe('Network indicator', () => {
   it('should correctly renders when no network and english language', () => {
     mockStore.dispatch(changeNetworkState({ ...MOCK_NETWORK_STATE, isInternetReachable: false }));
     renderWithProviders(<NetworkIndicator />, { store: mockStore });
-    expect(screen.getByText(NETWORK_INDICATOR.english.offline)).toBeOnTheScreen();
+    expect(screen.getByText(NETWORK_INDICATOR.russian.offline)).toBeOnTheScreen();
   });
   it('should correctly renders when no network and russian language', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

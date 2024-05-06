@@ -1,7 +1,7 @@
 import { saveEmotion } from '@R/activity/activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
 
 import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS } from './const';
@@ -9,15 +9,8 @@ import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_
 export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
   const [emotion, setEmotion] = useState<string>(store.getState().activity.additionalInfo.emotion);
   const dispatch = useAppDispatch();
-  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
+  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);
-
-  useEffect(() => {
-    if (isNeedToResetInputs) {
-      setEmotion(EMOTIONS_BTNS_VALUES.normal);
-      dispatch(saveEmotion(EMOTIONS_BTNS_VALUES.normal));
-    }
-  }, [isNeedToResetInputs]);
 
   return (
     <SegmentedButtons

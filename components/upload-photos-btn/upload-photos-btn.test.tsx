@@ -23,8 +23,14 @@ describe('Upload photos btn', () => {
   it('should correctly renders in english', () => {
     const setIsDisabled = jest.fn();
     const setImages = jest.fn();
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(
-      <UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} setImages={setImages} images={['someUrl']} />,
+      <UploadPhotosBtn
+        isDisabled={false}
+        setIsDisabled={setIsDisabled}
+        setImages={setImages}
+        images={[{ url: 'someUrl', thumbnail: null }]}
+      />,
       { store: mockStore },
     );
     expect(screen.getByText(UPLOAD_PHOTO_BTN.english.isInitial)).toBeOnTheScreen();
@@ -34,7 +40,12 @@ describe('Upload photos btn', () => {
     const setImages = jest.fn();
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     renderWithProviders(
-      <UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} setImages={setImages} images={['someUrl']} />,
+      <UploadPhotosBtn
+        isDisabled={false}
+        setIsDisabled={setIsDisabled}
+        setImages={setImages}
+        images={[{ url: 'someUrl', thumbnail: null }]}
+      />,
       { store: mockStore },
     );
     expect(screen.getByText(UPLOAD_PHOTO_BTN.russian.isInitial)).toBeOnTheScreen();

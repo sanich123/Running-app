@@ -9,6 +9,7 @@ import { RIDE_BTN_TEST_ID, RUN_BTN_TEST_ID, SPORTS_BTNS, SPORTS_BTNS_VALUES, SWI
 import SportsBtns from './sports-btns';
 
 describe('Sports btns', () => {
+  mockStore.dispatch(changeLanguage(LANGUAGES.english));
   it('should correctly handle global state', async () => {
     renderWithProviders(<SportsBtns isDisabled={false} />, {
       store: mockStore,
@@ -24,6 +25,7 @@ describe('Sports btns', () => {
     expect(mockStore.getState().activity.additionalInfo.sport).toEqual(SPORTS_BTNS_VALUES.bike);
   });
   it('should correctly render labels in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<SportsBtns isDisabled={false} />, { store: mockStore });
     [SPORTS_BTNS.english.labelRun, SPORTS_BTNS.english.labelSwim, SPORTS_BTNS.english.labelBike].map((sport) =>
       expect(screen.getByText(new RegExp(sport))).toBeOnTheScreen(),
@@ -53,6 +55,7 @@ describe('Sports btns', () => {
     renderWithProviders(<SportsBtns isDisabled />, {
       store: mockStore,
     });
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const runningInput = screen.getByText(SPORTS_BTNS.english.labelRun);
     const swimmingInput = screen.getByText(SPORTS_BTNS.english.labelSwim);
     const ridingInput = screen.getByText(SPORTS_BTNS.english.labelBike);
@@ -60,6 +63,7 @@ describe('Sports btns', () => {
   });
   it('should correctly handle isDisabledWhileSending state', () => {
     mockStore.dispatch(setIsDisableWhileSending(true));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<SportsBtns isDisabled />, {
       store: mockStore,
     });

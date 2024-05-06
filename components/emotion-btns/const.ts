@@ -21,12 +21,12 @@ export const enum EMOTIONS_BTNS_TEST_IDS {
 export const EMOTION_BTNS = {
   [LANGUAGES.english]: {
     normalLabel: 'Normal',
-    fuckedLabel: 'Fucked',
+    fuckedLabel: 'Hard',
     fineLabel: 'Fine',
   },
   [LANGUAGES.russian]: {
-    normalLabel: 'Нормал',
-    fuckedLabel: 'Трахнут',
-    fineLabel: 'Заебок',
+    normalLabel: 'Нормально',
+    fuckedLabel: 'Тяжко',
+    fineLabel: 'Класс',
   },
 };

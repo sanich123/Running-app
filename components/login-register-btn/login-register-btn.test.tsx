@@ -1,10 +1,11 @@
 import { changeLanguage } from '@R/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { SignInPageStates } from '@U/validate-email-password';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
-import { LOGIN_BTN } from './const';
+import { LOGIN_BTN, REGISTER_BTN, RESET_BTN } from './const';
 import LoginRegisterBtn from './login-register-btn';
 
 describe('Login btn', () => {
@@ -13,13 +14,14 @@ describe('Login btn', () => {
     const setIsLoading = jest.fn();
     const setEmailError = jest.fn();
     const setPasswordError = jest.fn();
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(
       <LoginRegisterBtn
         email=""
         password=""
         isLoading={false}
         isDisabled={false}
-        isRegister={false}
+        pageState={SignInPageStates.register}
         setIsDisabled={setIsDisabled}
         setIsLoading={setIsLoading}
         setEmailError={setEmailError}
@@ -27,7 +29,7 @@ describe('Login btn', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByText(LOGIN_BTN.english.login)).toBeOnTheScreen();
+    expect(screen.getByText(REGISTER_BTN.english.register)).toBeOnTheScreen();
   });
   it('should correctly renders in russian', () => {
     const setIsDisabled = jest.fn();
@@ -41,7 +43,7 @@ describe('Login btn', () => {
         password=""
         isLoading={false}
         isDisabled={false}
-        isRegister={false}
+        pageState={SignInPageStates.login}
         setIsDisabled={setIsDisabled}
         setIsLoading={setIsLoading}
         setEmailError={setEmailError}
@@ -63,7 +65,7 @@ describe('Login btn', () => {
         password=""
         isLoading={false}
         isDisabled
-        isRegister={false}
+        pageState={SignInPageStates.reset}
         setIsDisabled={setIsDisabled}
         setIsLoading={setIsLoading}
         setEmailError={setEmailError}
@@ -71,6 +73,6 @@ describe('Login btn', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByText(LOGIN_BTN.russian.login)).toBeDisabled();
+    expect(screen.getByText(RESET_BTN.russian.login)).toBeDisabled();
   });
 });

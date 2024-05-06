@@ -11,16 +11,14 @@ export default memo(function UserNameSurname({ userId, size }: { userId: string;
   const { error, data: profileInfo } = useGetUserProfileByIdQuery(userId);
   const { language } = useAppSelector(({ language }) => language);
   return (
-    <>
-      <View style={{ flex: 1, flexDirection: 'row' }}>
-        <Text variant={size} style={{ fontWeight: 'bold' }}>
-          {!error && profileInfo && `${profileInfo?.name} `}
-          {error && `${language === LANGUAGES.english ? 'An error' : 'Ошибка'}: ${errorExtracter(error)}`}
-        </Text>
-        <Text variant={size} style={{ fontWeight: 'bold' }}>
-          {!error && profileInfo && profileInfo?.surname}
-        </Text>
-      </View>
-    </>
+    <View style={{ flex: 1, flexDirection: 'row' }}>
+      <Text variant={size} style={{ fontWeight: 'bold' }}>
+        {!error && profileInfo && `${profileInfo?.name} `}
+        {error && `${language === LANGUAGES.english ? 'An error' : 'Ошибка'}: ${errorExtracter(error)}`}
+      </Text>
+      <Text variant={size} style={{ fontWeight: 'bold' }}>
+        {!error && profileInfo && profileInfo?.surname}
+      </Text>
+    </View>
   );
 });

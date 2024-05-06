@@ -15,6 +15,7 @@ describe('Activity location indicator', () => {
       isError: false,
       isSuccess: false,
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_LOCATION_INDICATOR.english.isLoading)).toBeOnTheScreen();
   });
@@ -24,6 +25,7 @@ describe('Activity location indicator', () => {
       isError: false,
       isSuccess: true,
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_LOCATION_INDICATOR.english.isSuccess)).toBeOnTheScreen();
   });
@@ -33,6 +35,7 @@ describe('Activity location indicator', () => {
       isError: true,
       isSuccess: false,
     }));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_LOCATION_INDICATOR.english.isError)).toBeOnTheScreen();
   });

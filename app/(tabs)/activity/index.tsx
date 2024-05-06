@@ -7,56 +7,32 @@ import Metrics from '@C/metrics/metrics';
 import { useAppSelector } from '@R/typed-hooks';
 import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
 import { STATUSES } from '@const/enums';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
-const { initial, paused } = STATUSES;
-
 export default function Activity() {
+  const { colors } = useTheme();
   useStartStopTracking();
   const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
-  const { colors } = useTheme();
-  const { page, mapOrMetricsWrapper, btnsLayout, controlBtnsWrapper } = styles;
 
   return (
     <>
-      <ActivityLocationIndicator />
-      <View style={page}>
-        <View style={mapOrMetricsWrapper}>
-          {(activityStatus === initial || isMapVisible) && <Map />}
-          {activityStatus !== initial && <Metrics />}
+      <View className="flex-1 items-center justify-center">
+        <ActivityLocationIndicator />
+        <View className="h-4/5 w-full">
+          {(activityStatus === STATUSES.initial || isMapVisible) && <Map />}
+          {activityStatus !== STATUSES.initial && <Metrics />}
         </View>
-        <View style={controlBtnsWrapper}>
-          <View style={[btnsLayout, { backgroundColor: colors.onSecondary }]}>
-            {activityStatus === paused && <ActivityPauseBtn />}
+        <View className="h-1/5 w-full">
+          <View
+            className="flex flex-row items-center justify-center h-full gap-x-4"
+            style={{ backgroundColor: colors.surfaceVariant }}>
+            {activityStatus === STATUSES.paused && <ActivityPauseBtn />}
             <ActivityStartBtn />
-            {activityStatus !== initial && <ActivityShowMapBtn />}
+            {activityStatus !== STATUSES.initial && <ActivityShowMapBtn />}
           </View>
         </View>
       </View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  mapOrMetricsWrapper: {
-    height: '80%',
-    width: '100%',
-  },
-  controlBtnsWrapper: {
-    height: '20%',
-    width: '100%',
-  },
-  btnsLayout: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-    gap: 15,
-  },
-});

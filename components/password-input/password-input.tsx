@@ -17,12 +17,15 @@ export default function PasswordInput({
   passwordError,
   setPasswordError,
   isDisabled,
+  passwordRef,
 }: PasswordInputProps) {
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
   const { language } = useAppSelector(({ language }) => language);
+
   return (
     <>
       <TextInput
+        ref={passwordRef}
         testID={PASSWORD_INPUT_TEST_ID}
         label={PASSWORD_INPUT[language].label}
         value={password}
@@ -37,23 +40,34 @@ export default function PasswordInput({
         onEndEditing={() => (!passwordMatcher.test(password) ? setPasswordError(true) : setPasswordError(false))}
         placeholder={PASSWORD_INPUT[language].placeholder}
         secureTextEntry={passwordIsNotVisible}
-        left={<TextInput.Icon icon="form-textbox-password" testID={PASSWORD_INPUT_LEFT_ICON} disabled={isDisabled} />}
+        left={
+          <TextInput.Icon
+            icon="form-textbox-password"
+            testID={PASSWORD_INPUT_LEFT_ICON}
+            disabled={isDisabled}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          />
+        }
         right={
           <TextInput.Icon
             testID={PASSWORD_INPUT_RIGHT_ICON}
             icon="eye"
             onPress={() => setPasswordIsVisible(!passwordIsNotVisible)}
             disabled={isDisabled}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           />
         }
-        style={{ marginTop: 10 }}
+        style={{ marginTop: 20 }}
         accessibilityRole="text"
+        error={passwordError}
         mode="outlined"
         disabled={isDisabled}
       />
-      <HelperText type="error" visible={passwordError} padding="none">
-        {PASSWORD_INPUT[language].helperText}
-      </HelperText>
+      {passwordError && (
+        <HelperText type="error" visible={passwordError} padding="none">
+          {PASSWORD_INPUT[language].helperText}
+        </HelperText>
+      )}
     </>
   );
 }

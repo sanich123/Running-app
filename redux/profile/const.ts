@@ -15,7 +15,15 @@ export const PROFILE_INITIAL_STATE: ProfileSlice = {
     email: '',
     password: '',
   },
+  googleInfo: {
+    id: '',
+    email: '',
+    familyName: '',
+    givenName: '',
+    name: '',
+    photo: '',
+  },
   isDisabledWhileSendingProfile: false,
   settings: PROFILE_SETTINGS_INITIAL_STATE,
-  isNeedToPrefetchActivities: true,
+  isNeedToPrefetchActivities: false,
 };

@@ -47,7 +47,7 @@ export default function ProfileUpdateBtn() {
       }}
       disabled={isLoading}
       style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
-      <Text variant="titleMedium" style={{ color: colors.primaryContainer, marginRight: 15 }}>
+      <Text variant="titleMedium" style={{ color: colors.primary, marginRight: 15 }}>
         {isLoading ? UPDATE_BTN[language].updating : UPDATE_BTN[language].update}
       </Text>
     </Pressable>

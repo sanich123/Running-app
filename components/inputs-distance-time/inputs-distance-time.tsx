@@ -1,7 +1,7 @@
 import { setManualDistance, setManualHours, setManualMinutes } from '@R/activity/activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
@@ -13,15 +13,7 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
   const [minutes, setMinutes] = useState(store.getState().activity.manualMinutes.toString());
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-  const { isDisabledWhileSending, isNeedToResetInputs } = useAppSelector(({ activity }) => activity);
-
-  useEffect(() => {
-    if (isNeedToResetInputs) {
-      setDistance('0');
-      setHours('0');
-      setMinutes('0');
-    }
-  }, [isNeedToResetInputs]);
+  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
 
   return (
     <View style={styles.inputWrapper}>
@@ -33,6 +25,7 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
         placeholder={INPUTS_DISTANCE_TIME[language].distancePlaceholder}
         keyboardType="numeric"
         value={distance}
+        onFocus={() => setDistance('')}
         onChangeText={(distance) => {
           setDistance(distance);
           dispatch(setManualDistance(distance));
@@ -47,6 +40,7 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
         placeholder={INPUTS_DISTANCE_TIME[language].hoursPlaceholder}
         keyboardType="numeric"
         value={hours}
+        onFocus={() => setHours('')}
         onChangeText={(hours) => {
           setHours(hours);
           dispatch(setManualHours(hours));
@@ -61,6 +55,7 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
         placeholder={INPUTS_DISTANCE_TIME[language].minutesPlaceholder}
         keyboardType="numeric"
         value={minutes}
+        onFocus={() => setMinutes('')}
         onChangeText={(minutes) => {
           setMinutes(minutes);
           dispatch(setManualMinutes(minutes));

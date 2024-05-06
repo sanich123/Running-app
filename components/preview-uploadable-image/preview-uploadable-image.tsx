@@ -3,7 +3,7 @@ import PreviewImage from '@C/preview-image/preview-image';
 import { addPhotoUrl } from '@R/activity/activity';
 import { useAppDispatch } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
-import { compressAndSendPhoto } from '@U/file-sending';
+import { compressAndSendFile } from '@U/file-sending';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
@@ -30,9 +30,10 @@ export default function PreviewUploadableImage({ image, index, isDisabled }: Pre
         setIsLoading(true);
         try {
           if (user) {
-            const url = await compressAndSendPhoto(image, user.id);
-            if (url) {
-              dispatch(addPhotoUrl(url));
+            const fileWithThumbnail = await compressAndSendFile(image, user.id);
+            if (fileWithThumbnail) {
+              const { url, thumbnail } = fileWithThumbnail;
+              dispatch(addPhotoUrl({ url, thumbnail }));
               setIsLoading(false);
               setIsSuccess(true);
               setTimeout(() => setIsSuccess(false), 3000);

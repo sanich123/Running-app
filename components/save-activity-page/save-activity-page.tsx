@@ -11,28 +11,20 @@ import ShowCameraBtn from '@C/show-camera-btn/show-camera-btn';
 import SportsBtns from '@C/sports-btns/sports-btns';
 import TextInputs from '@C/text-inputs/text-inputs';
 import UploadPhotosBtn from '@C/upload-photos-btn/upload-photos-btn';
-import { setIsNeedToResetInputs } from '@R/activity/activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function SaveResult() {
   const [isDisabled, setIsDisabled] = useState(false);
   const {
-    isNeedToResetInputs,
     isManualAdding,
+    isEditingActivity,
     isCameraVisible,
-    additionalInfo: { photoUrls },
+    additionalInfo: { photoVideoUrls },
   } = useAppSelector(({ activity }) => activity);
-  const dispatch = useAppDispatch();
-  const [images, setImages] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (isNeedToResetInputs) {
-      dispatch(setIsNeedToResetInputs(false));
-    }
-  }, [isNeedToResetInputs]);
+  const [images, setImages] = useState<{ url: string; thumbnail: string | null }[]>([]);
 
   return (
     <>
@@ -43,9 +35,9 @@ export default function SaveResult() {
           <SportsBtns isDisabled={isDisabled} />
           <EmotionBtns isDisabled={isDisabled} />
           <Checkbox isDisabled={isDisabled} />
-          {isManualAdding && Platform.OS !== 'web' && <DateTimePicker isDisabled={isDisabled} />}
-          {isManualAdding && Platform.OS === 'web' && <DatePickerWeb isDisabled={isDisabled} />}
-          {isManualAdding && <InputsDistanceTime isDisabled={isDisabled} />}
+          {(isManualAdding || isEditingActivity) && Platform.OS !== 'web' && <DateTimePicker isDisabled={isDisabled} />}
+          {(isManualAdding || isEditingActivity) && Platform.OS === 'web' && <DatePickerWeb isDisabled={isDisabled} />}
+          {(isManualAdding || isEditingActivity) && <InputsDistanceTime isDisabled={isDisabled} />}
           <View style={styles.cameraUploadBtns}>
             {Platform.OS !== 'web' && <ShowCameraBtn isDisabled={isDisabled} />}
             <UploadPhotosBtn
@@ -55,7 +47,9 @@ export default function SaveResult() {
               images={images}
             />
           </View>
-          <PreviewImages images={photoUrls} setImages={setImages} isDisabled={isDisabled} />
+          {photoVideoUrls?.length > 0 ? (
+            <PreviewImages images={photoVideoUrls} setImages={setImages} isDisabled={isDisabled} />
+          ) : null}
           <DeclineBtn isDisabled={isDisabled} />
           <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
         </ScrollView>

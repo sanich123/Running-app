@@ -14,7 +14,7 @@ jest.mock('expo-router', () => ({
 describe('Followers count', () => {
   it('should correctly renders', async () => {
     renderWithProviders(<FollowersCount />, { store: mockStore });
-    expect(await screen.findByText('Followers')).toBeOnTheScreen();
+    expect(await screen.findByText('Фолловеры')).toBeOnTheScreen();
     expect(await screen.findByText(`${MOCK_FOLLOWERS.length}`)).toBeOnTheScreen();
   });
 });

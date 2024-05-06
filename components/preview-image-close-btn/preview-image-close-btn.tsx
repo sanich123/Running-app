@@ -17,7 +17,7 @@ export default function PreviewImageCloseBtn({
   return (
     <Pressable
       onPress={() => {
-        setImages(images.filter((photo) => photo !== image));
+        setImages(images.filter(({ url }) => url !== image));
         dispatch(deletePhotoUrl(image));
       }}
       disabled={isDisabled || isDisabledWhileSending}

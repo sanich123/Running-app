@@ -10,6 +10,7 @@ import { renderWithProviders } from '../../tests/utils/test-utils';
 
 describe('Date time picker', () => {
   it('should correctly renders open btn in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(new RegExp(DATE_TIME_PICKER.english.title))).toBeOnTheScreen();
   });

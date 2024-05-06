@@ -1,19 +1,26 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { emailMatcher } from '@const/regexp';
-import { HelperText, TextInput } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 
 import { EmailInputProps, EMAIL_INPUT_TEST_ID, EMAIL_INPUT, EMAIL_INPUT_LEFT_ICON } from './const';
 
-export default function EmailInput({ email, setEmail, emailError, setEmailError, isDisabled }: EmailInputProps) {
+export default function EmailInput({
+  email,
+  setEmail,
+  emailError,
+  setEmailError,
+  isDisabled,
+  passwordRef,
+}: EmailInputProps) {
   const { language } = useAppSelector(({ language }) => language);
   return (
     <>
       <TextInput
         testID={EMAIL_INPUT_TEST_ID}
-        label={EMAIL_INPUT[language].placeholder}
+        label={emailError && email ? EMAIL_INPUT[language].helper : EMAIL_INPUT[language].placeholder}
         value={email}
         onChangeText={(text) => {
-          if (!emailMatcher.test(email.trim())) {
+          if (!emailMatcher.test(text.trim())) {
             setEmailError(true);
           } else {
             setEmailError(false);
@@ -22,15 +29,24 @@ export default function EmailInput({ email, setEmail, emailError, setEmailError,
         }}
         onEndEditing={() => (!emailMatcher.test(email.trim()) ? setEmailError(true) : setEmailError(false))}
         placeholder={EMAIL_INPUT[language].placeholder}
-        left={<TextInput.Icon testID={EMAIL_INPUT_LEFT_ICON} icon="email" disabled={isDisabled} />}
-        style={{ marginTop: 10 }}
+        onSubmitEditing={() => passwordRef?.current?.focus()}
+        left={
+          <TextInput.Icon
+            testID={EMAIL_INPUT_LEFT_ICON}
+            icon="email"
+            disabled={isDisabled}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          />
+        }
+        error={emailError}
         accessibilityRole="text"
+        style={{ marginTop: 15, width: '100%', minWidth: 366 }}
         mode="outlined"
+        keyboardType="email-address"
+        autoComplete="email"
+        returnKeyType="next"
         disabled={isDisabled}
       />
-      <HelperText type="error" visible={emailError} padding="none">
-        {EMAIL_INPUT[language].helper}
-      </HelperText>
     </>
   );
 }

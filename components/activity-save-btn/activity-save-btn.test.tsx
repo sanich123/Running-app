@@ -15,6 +15,7 @@ import * as auth from '../../auth/context/auth-context';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: jest.fn() }),
+  useLocalSearchParams: () => ({ id: 'someId' }),
 }));
 
 jest.mock('../../auth/context/auth-context', () => ({
@@ -34,6 +35,7 @@ jest.mock('../../auth/context/auth-context', () => ({
 }));
 describe('Activity save btn', () => {
   it('should correctly renders in english', () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_SAVE_BTN.english.save)).toBeOnTheScreen();
   });
@@ -53,7 +55,6 @@ describe('Activity save btn', () => {
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
-    expect(mockStore.getState().activity.isNeedToResetInputs).toEqual(true);
   });
   it('should correctly change global state after successfully sending activity', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
@@ -79,7 +80,6 @@ describe('Activity save btn', () => {
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
-    expect(mockStore.getState().activity.isNeedToResetInputs).toEqual(true);
     expect(mockStore.getState().activity.additionalInfo.title).toEqual('');
     expect(mockStore.getState().activity.additionalInfo.sport).toEqual(SPORTS_BTNS_VALUES.run);
     expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);

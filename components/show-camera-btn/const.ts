@@ -5,6 +5,6 @@ export const SHOW_CAMERA_BTN = {
     text: 'Shot a picture',
   },
   [LANGUAGES.russian]: {
-    text: 'Сфоткаццо',
+    text: 'Фоткануть',
   },
 } as const;

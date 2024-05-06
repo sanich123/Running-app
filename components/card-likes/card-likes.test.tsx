@@ -24,23 +24,9 @@ describe('Card likes', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(
-      <CardLikes
-        activityId="617dddae-05b3-418a-9a8e-5d408a1b897a"
-        likes={[
-          {
-            activityId: '617dddae-05b3-418a-9a8e-5d408a1b897a',
-            authorId: 'someUserId',
-            date: '2023-10-07T14:38:05.885Z',
-            id: '20715e5a-17b1-46ac-9814-5ffb5fde8ac9',
-          },
-        ]}
-        size={CardLikesSize.big}
-      />,
-      {
-        store: mockStore,
-      },
-    );
+    renderWithProviders(<CardLikes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={CardLikesSize.big} />, {
+      store: mockStore,
+    });
     expect(screen.getByTestId('pushToActivityLikes')).toBeOnTheScreen();
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
     expect(await screen.findByTestId(AvatarShowableTestIds.success)).toBeOnTheScreen();

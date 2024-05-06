@@ -15,6 +15,7 @@ jest.mock('expo-router', () => ({
 
 describe('Comments length', () => {
   it('should correctly renders received comments length in english, when length ends on 5-9', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<CommentsLength activityId="189d2c10-463c-42f5-9f09-5e9fa6aa2720" comments={MOCK_COMMENTS} />, {
       store: mockStore,
     });

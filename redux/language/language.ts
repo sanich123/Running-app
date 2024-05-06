@@ -2,8 +2,9 @@ import { LANGUAGES } from '@const/enums';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const LANGUAGE_INITIAL_STATE = {
-  language: LANGUAGES.english,
+  language: LANGUAGES.russian,
 };
+
 export const language = createSlice({
   name: 'language',
   initialState: LANGUAGE_INITIAL_STATE,

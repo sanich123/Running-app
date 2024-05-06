@@ -1,4 +1,5 @@
 import { useAuth } from '@A/context/auth-context';
+import ActivitySaveBtn from '@C/activity-save-btn/activity-save-btn';
 import ProfileEditBtn from '@C/profile-edit-btn/profile-edit-btn';
 import ProfileUpdateBtn from '@C/profile-update-btn/profile-update-btn';
 import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
@@ -10,14 +11,15 @@ import { useTheme } from 'react-native-paper';
 export default function ProfileStack() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
+  const { isCameraVisible } = useAppSelector(({ activity }) => activity);
   const { user } = useAuth();
 
   return (
     <Stack
       initialRouteName="index/profile"
       screenOptions={{
-        headerStyle: { backgroundColor: colors.primary },
-        headerTintColor: colors.primaryContainer,
+        headerStyle: { backgroundColor: colors.secondaryContainer },
+        headerTintColor: colors.onSurfaceVariant,
         headerTitleStyle: { fontWeight: 'bold' },
         title: LABELS[language].profile,
       }}>
@@ -77,6 +79,15 @@ export default function ProfileStack() {
       <Stack.Screen
         name={`${ROUTES.likes}/[id]`}
         options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].likes }}
+      />
+      <Stack.Screen
+        name={`${ROUTES.manualActivity}/${ROUTES.index}`}
+        options={{
+          headerRight: () => <ActivitySaveBtn />,
+          presentation: 'modal',
+          title: '',
+          headerShown: !isCameraVisible,
+        }}
       />
     </Stack>
   );
