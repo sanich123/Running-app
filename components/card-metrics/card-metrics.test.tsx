@@ -9,6 +9,13 @@ import { renderWithProviders } from '../../tests/utils/test-utils';
 import { getSpeedInMinsInKm } from '../../utils/location-utils';
 import { formatDuration } from '../../utils/time-formatter';
 
+jest.mock('expo-router', () => ({
+  usePathname: () => 'some string',
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+}));
+
 describe('Card metrics', () => {
   it('should correctly renders', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

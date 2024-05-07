@@ -18,21 +18,6 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ id: 'someId' }),
 }));
 
-jest.mock('../../auth/context/auth-context', () => ({
-  useAuth: () => ({
-    user: {
-      id: 'someUserId',
-      app_metadata: {
-        someProp: 'some value',
-      },
-      user_metadata: {
-        someProp: 'some value',
-      },
-      aud: '',
-      created_at: '',
-    },
-  }),
-}));
 describe('Activity save btn', () => {
   it('should correctly renders in english', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

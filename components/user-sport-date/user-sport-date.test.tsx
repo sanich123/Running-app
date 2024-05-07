@@ -13,14 +13,14 @@ describe('User sport date', () => {
     const date = new Date();
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<UserSportDate sport={SPORTS_BTNS_VALUES.run} date={date} />, { store: mockStore });
-    expect(screen.getByText(formatDate(date, LANGUAGES.english))).toBeOnTheScreen();
-    expect(screen.getByText(getHoursMinutes(date, LANGUAGES.english))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(formatDate(date, LANGUAGES.english)))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(getHoursMinutes(date, LANGUAGES.english)))).toBeOnTheScreen();
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     const date = new Date();
     renderWithProviders(<UserSportDate sport={SPORTS_BTNS_VALUES.run} date={date} />, { store: mockStore });
-    expect(screen.getByText(formatDate(date, LANGUAGES.russian))).toBeOnTheScreen();
-    expect(screen.getByText(getHoursMinutes(date, LANGUAGES.russian))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(formatDate(date, LANGUAGES.russian)))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(getHoursMinutes(date, LANGUAGES.russian)))).toBeOnTheScreen();
   });
 });

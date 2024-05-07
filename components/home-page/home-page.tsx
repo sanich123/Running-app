@@ -50,7 +50,7 @@ export default function Feed() {
         <SafeAreaView
           edges={['left', 'right']}
           style={[{ flex: 1 }, (isLoading || error || !activities?.length) && { justifyContent: 'center' }]}>
-          <View>
+          <View style={{ flex: 1 }}>
             {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
             {!isLoading && <NetworkIndicator />}
             {activities && <OptimizedList activities={activities} refetch={refetch} />}

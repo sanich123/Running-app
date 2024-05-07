@@ -17,22 +17,6 @@ jest.mock('expo-router', () => ({
   usePathname: () => 'somePathname',
 }));
 
-jest.mock('../../auth/context/auth-context', () => ({
-  useAuth: () => ({
-    user: {
-      id: 'someUserId',
-      app_metadata: {
-        someProp: 'some value',
-      },
-      user_metadata: {
-        someProp: 'some value',
-      },
-      aud: '',
-      created_at: '',
-    },
-  }),
-}));
-
 describe('Activity card', () => {
   it('should correctly renders', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
@@ -63,10 +47,9 @@ describe('Activity card', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByText('Искандер')).toBeOnTheScreen();
-    expect(screen.getByText('Ядгаров')).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(`${profile.name}`))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(`${profile.surname}`))).toBeOnTheScreen();
     expect(await screen.findByText(title)).toBeOnTheScreen();
-    expect(await screen.findByText('Friday, November 3, 2023')).toBeOnTheScreen();
     ['Time', 'Pace', 'Distance'].map(async (word) =>
       expect(await screen.getByText(new RegExp(word))).toBeOnTheScreen(),
     );

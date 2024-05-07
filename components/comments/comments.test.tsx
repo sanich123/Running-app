@@ -8,21 +8,7 @@ import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
 import { NUMBER_OF_LIKES } from '../number-of-likes/const';
-jest.mock('../../auth/context/auth-context', () => ({
-  useAuth: () => ({
-    user: {
-      id: 'someUserId',
-      app_metadata: {
-        someProp: 'some value',
-      },
-      user_metadata: {
-        someProp: 'some value',
-      },
-      aud: '',
-      created_at: '',
-    },
-  }),
-}));
+
 describe('Comments', () => {
   it('should correctly renders with isLoading state and data from server in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

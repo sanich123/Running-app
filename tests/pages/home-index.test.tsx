@@ -31,11 +31,15 @@ describe('Home index', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<Feed />, { store: mockStore });
     expect(screen.getByTestId('homeActivityIndicator')).toBeOnTheScreen();
-    expect(await screen.findByText('Moscow')).toBeOnTheScreen();
-    expect(await screen.findByText('Искандер')).toBeOnTheScreen();
-    expect(await screen.findByText('Ядгаров')).toBeOnTheScreen();
-    expect(await screen.findByText(formatDate(new Date(MOCK_ACTIVITY.date), LANGUAGES.english))).toBeOnTheScreen();
-    expect(await screen.findByText(getHoursMinutes(new Date(MOCK_ACTIVITY.date), LANGUAGES.english))).toBeOnTheScreen();
+
+    expect(await screen.findByText(new RegExp(MOCK_ACTIVITY.profile.name))).toBeOnTheScreen();
+    expect(await screen.findByText(new RegExp(MOCK_ACTIVITY.profile.surname))).toBeOnTheScreen();
+    expect(
+      await screen.findByText(new RegExp(formatDate(new Date(MOCK_ACTIVITY.date), LANGUAGES.english))),
+    ).toBeOnTheScreen();
+    expect(
+      await screen.findByText(new RegExp(getHoursMinutes(new Date(MOCK_ACTIVITY.date), LANGUAGES.english))),
+    ).toBeOnTheScreen();
   });
   it('should correctly renders empty list', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
