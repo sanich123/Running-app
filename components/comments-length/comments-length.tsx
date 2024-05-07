@@ -3,7 +3,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { COMMENTS_LENGTH_TEST_ID, getWordEnding } from './const';

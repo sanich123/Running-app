@@ -15,7 +15,6 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
   const { back } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
 
-
   useEffect(() => {
     if (data) {
       console.log(data);
