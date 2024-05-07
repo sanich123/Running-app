@@ -17,17 +17,17 @@ export default function PhotoViewer() {
     : photos
         ?.map(({ photoVideoUrls }: { photoVideoUrls: { url: string; thumbnail: string | null } }) => photoVideoUrls)
         .flat();
-  const isMapUrlExist = activity?.mapPhotoUrl ? +indexOfPhoto - 1 : +indexOfPhoto;
+  const isMapUrlExist = activity?.mapPhotoUrl ? +`${indexOfPhoto}` - 1 : +`${indexOfPhoto}`;
 
   return (
     <View style={{ flex: 1 }}>
       {Platform.OS === 'web' ? (
         <>
-          {decodeURIComponent(photoUrl.toString()).includes('mp4' || 'avi' || 'm4v') ? (
-            <VideoViewer url={decodeURIComponent(photoUrl.toString())} />
+          {decodeURIComponent(`${photoUrl}`).includes('mp4' || 'avi' || 'm4v') ? (
+            <VideoViewer url={decodeURIComponent(`${photoUrl}`)} />
           ) : (
             <CustomImage
-              source={{ uri: decodeURIComponent(photoUrl.toString()) }}
+              source={{ uri: decodeURIComponent(`${photoUrl}`) }}
               style={{ width: '100%', height: '100%' }}
               contentFit="contain"
             />
@@ -38,7 +38,7 @@ export default function PhotoViewer() {
           {itemsToRender?.length > 0 && (
             <PagerView
               style={styles.viewPager}
-              initialPage={uuid.validate(`${photoUrl}`) ? isMapUrlExist : +photoUrl}
+              initialPage={uuid.validate(`${photoUrl}`) ? isMapUrlExist : +`${photoUrl}`}
               orientation="vertical">
               {itemsToRender.map(({ url, blurhash }: { url: string; blurhash: string }, index: number) => (
                 <View key={index}>

@@ -1,13 +1,13 @@
 import { PhotoVideoType } from '@C/card/const ';
 import { errorHandler } from '@U/error-handler';
-import { Camera } from 'expo-camera';
+import { CameraView } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { MutableRefObject } from 'react';
 import { Pressable } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 
 type CameraShotBtnProps = {
-  cameraRef: MutableRefObject<Camera | null>;
+  cameraRef: MutableRefObject<CameraView | null>;
   setPhotos: (arg: PhotoVideoType[]) => void;
   photos: PhotoVideoType[];
 };

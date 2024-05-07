@@ -54,6 +54,8 @@ export function getMapBoxImage(locations: LocationObject[]) {
     }),path-${lineWidth}+${lineColor}-${lineOpacity}(${encodeURIComponent(
       encodedPolyline,
     )})/auto/${width}x${height}${doublePixels}?access_token=${process.env.EXPO_PUBLIC_MAPBOX_TOKEN}`;
+  } else {
+    return '';
   }
 }
 

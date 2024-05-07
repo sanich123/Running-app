@@ -110,6 +110,7 @@ export default function ActivitySaveBtn() {
             id: isEditingActivity ? `${activityId}` : user.id,
           };
           setActivityToSend(savedActivity);
+          console.log(savedActivity);
           if (isEditingActivity) {
             await updateActivity(savedActivity).unwrap();
           } else {

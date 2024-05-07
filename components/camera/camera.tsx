@@ -4,18 +4,18 @@ import CameraFlash from '@C/camera-flash/camera-flash';
 import CameraShotBtn from '@C/camera-shot-btn/camera-shot-btn';
 import { PhotoVideoType } from '@C/card/const ';
 import PreviewImages from '@C/preview-images/preview-images';
-import { Camera, CameraType, FlashMode } from 'expo-camera';
+import { CameraView, CameraType, FlashMode, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 
 export default function CameraLauncher() {
-  const cameraRef = useRef<Camera>(null);
+  const cameraRef = useRef<CameraView>(null);
   const [photos, setPhotos] = useState<PhotoVideoType[]>([]);
-  const [type, setType] = useState(CameraType.back);
-  const [flashEnable, setFlashEnable] = useState(FlashMode.off);
-  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [type, setType] = useState('back' as CameraType);
+  const [flashEnable, setFlashEnable] = useState('off' as FlashMode);
+  const [permission, requestPermission] = useCameraPermissions();
 
   useEffect(() => {
     (async () => {
@@ -33,7 +33,7 @@ export default function CameraLauncher() {
         </View>
       )}
       {permission?.granted && (
-        <Camera ref={cameraRef} type={type} flashMode={flashEnable} style={{ flex: 1 }}>
+        <CameraView ref={cameraRef} facing={type} style={{ flex: 1 }}>
           <CameraCloseBtn />
           <View style={styles.controlsPreviewsLayout}>
             <View style={styles.previews}>
@@ -45,7 +45,7 @@ export default function CameraLauncher() {
               <CameraChangeView setType={setType} type={type} />
             </View>
           </View>
-        </Camera>
+        </CameraView>
       )}
     </>
   );
