@@ -4,7 +4,7 @@ import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import useRefresh from '@U/hooks/use-refresh';
 import { FlashList } from '@shopify/flash-list';
 import { useEffect } from 'react';
-import { FlatList, Platform, View } from 'react-native';
+import { FlatList, Platform } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { keyExtractor, renderCardsFunction } from './render-item';
