@@ -58,7 +58,7 @@ export const MOCK_SPEED = getSpeedInMinsInKm(MOCK_DISTANCE, MOCK_DURATION).paceA
 
 export const MOCK_PROFILE = {
   bio: 'Я кароч любитель, но бегаю как профи. Профи меня не любят, потому что я программист и могу бегать в свое удовольствие, но мне как-то пох',
-  birthday: new Date('1991-03-11T21:00:00.000Z'),
+  birthday: '1991-03-11T21:00:00.000Z',
   city: 'Москва',
   createdAt: '2023-09-27T06:03:22.257Z',
   gender: 'male',

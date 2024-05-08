@@ -19,7 +19,7 @@ export type LikeType = {
 
 export type ProfileType = {
   bio: string;
-  birthday: Date | null;
+  birthday: string | null;
   city: string;
   createdAt: string;
   email: string | null;
