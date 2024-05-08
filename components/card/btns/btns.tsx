@@ -1,6 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
-import { CommentType, LikeType } from '@C/card/const ';
 import ActivityCardCommentBtn from '@C/card/comment-btn/comment-btn';
+import { CommentType, LikeType } from '@C/card/const ';
 import ActivityCardDeleteBtn from '@C/card/delete-btn/delete-btn';
 import ActivityCardLikeBtn from '@C/card/like-btn/like-btn';
 import ActivityCardLikeBtnSimple from '@C/card/like-btn/like-btn-simple';

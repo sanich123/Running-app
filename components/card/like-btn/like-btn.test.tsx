@@ -4,8 +4,8 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 
-import ActivityCardLikeBtn from './like-btn';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from './const';
+import ActivityCardLikeBtn from './like-btn';
 
 describe('Activity card like btn', () => {
   it('should correctly renders when activity was liked by you', async () => {

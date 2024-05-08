@@ -1,5 +1,5 @@
 import ActivityCardLikeBtn from '@C/card/like-btn/like-btn';
-import CardLikes, { CardLikesSize } from '@C/card/likes/likes';
+import CardLikes, { LikesSize } from '@C/card/likes/likes';
 import MediaList from '@C/card/media-list/media-list';
 import CardTitle from '@C/card/title/title';
 import CommentInput from '@C/comment-input/comment-input';
@@ -41,7 +41,7 @@ export default function CommentFullViewPage() {
             </View>
             <View style={styles.columnsLayout}>
               <ActivityCardLikeBtn activityId={activity?.id} />
-              <CardLikes activityId={activity?.id} size={CardLikesSize.big} />
+              <CardLikes activityId={activity?.id} size={LikesSize.big} />
             </View>
           </Card.Content>
           <Comments id={`${activityId}`} />
