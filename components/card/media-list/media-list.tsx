@@ -3,39 +3,32 @@ import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
 import { FlatList, Platform, useWindowDimensions } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
+import { TouchableRipple, useTheme } from 'react-native-paper';
 
-import { CardMapImagesListProps } from './const';
+import { MediaListProps } from './const';
 
-export default memo(function MediaList({
-  photoVideoUrls,
-  mapPhotoUrl,
-  id,
-  mapPhotoUrlBlurhash,
-}: CardMapImagesListProps) {
+export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPhotoUrlBlurhash }: MediaListProps) {
+  const { dark } = useTheme();
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
+  const displayedData = mapPhotoUrl
+    ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...photoVideoUrls]
+    : photoVideoUrls;
 
   return (
     <FlatList
-      data={
-        mapPhotoUrl
-          ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...photoVideoUrls]
-          : photoVideoUrls
-      }
+      data={displayedData}
       renderItem={({ item, index }) => (
         <TouchableRipple
-          rippleColor="rgba(0, 0, 0, .08)"
+          rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           onPress={() => {
-            if (item) {
-              push(
-                item.url.includes('api.mapbox.com')
-                  ? `/${place}/${ROUTES.map}/${id}`
-                  : `/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
-              );
-            }
+            push(
+              item.url.includes('api.mapbox.com')
+                ? `/${place}/${ROUTES.map}/${id}`
+                : `/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
+            );
           }}
           borderless>
           <CustomImage

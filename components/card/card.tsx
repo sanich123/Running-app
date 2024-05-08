@@ -9,7 +9,8 @@ import { Card } from 'react-native-paper';
 
 import Btns from './btns/btns';
 import { ActivityCardProps } from './const ';
-import Likes, { LikesSize } from './likes/likes';
+import { LikesSize } from './likes/const';
+import Likes from './likes/likes';
 import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
 
@@ -36,6 +37,7 @@ export default memo(function ActivityCard({
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const cardRef = useRef(null);
   const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
+  const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
 
   useEffect(() => {
     if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
@@ -67,11 +69,7 @@ export default memo(function ActivityCard({
           id={id}
         />
       )}
-      <View style={{ height: likes?.length ? 40 : 0 }}>
-        {likes?.length ? (
-          <Likes activityId={id} size={pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small} />
-        ) : null}
-      </View>
+      <View style={{ height: 40 }}>{likes?.length ? <Likes activityId={id} size={likesSize} /> : null}</View>
       <Card.Actions>
         <Btns
           comments={comments}

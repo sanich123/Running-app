@@ -1,4 +1,3 @@
-import CardTitle from '@C/card/title/title';
 import ShowMetrics from '@C/show-metrics/show-metrics';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location-utils';
@@ -7,7 +6,7 @@ import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import { CARD_METRICS, MetricsProps } from './const';
 
@@ -20,6 +19,7 @@ export default memo(function Metrics({
   userId,
   id,
 }: MetricsProps) {
+  const { dark } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
@@ -27,7 +27,7 @@ export default memo(function Metrics({
 
   return (
     <TouchableRipple
-      rippleColor="rgba(0, 0, 0, .08)"
+      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => {
         if (!pathname.includes(ROUTES.activity)) {
           push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}`);
@@ -36,7 +36,11 @@ export default memo(function Metrics({
       borderless
       style={{ borderRadius: 10 }}>
       <>
-        {title ? <CardTitle title={title} /> : null}
+        {title ? (
+          <Text variant="titleLarge" style={styles.title}>
+            {title}
+          </Text>
+        ) : null}
         <View style={styles.metricsWrapper}>
           <ShowMetrics title={`${CARD_METRICS[language].time}: `} metrics={`${formatDuration(duration)}`} />
           <ShowMetrics
@@ -65,4 +69,5 @@ const styles = StyleSheet.create({
     columnGap: 15,
     marginBottom: 5,
   },
+  title: { fontWeight: 'bold', marginBottom: 10, marginTop: 10 },
 });

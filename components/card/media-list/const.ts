@@ -2,7 +2,7 @@ import { PhotoVideoType } from '../const ';
 
 export type PhotoVideoUrls = PhotoVideoType[];
 
-export type CardMapImagesListProps = {
+export type MediaListProps = {
   photoVideoUrls: PhotoVideoUrls;
   mapPhotoUrl?: string;
   mapPhotoUrlBlurhash?: string;

@@ -7,12 +7,12 @@ import { Platform, StyleSheet } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { captureRef } from 'react-native-view-shot';
 
-type CardShareBtnProps = {
+type ShareBtnProps = {
   cardRef: MutableRefObject<ReactNode>;
   fullViewRef: MutableRefObject<ReactNode>;
 };
 
-export default memo(function ActivityCardShareBtn({ cardRef, fullViewRef }: CardShareBtnProps) {
+export default memo(function ShareBtn({ cardRef, fullViewRef }: ShareBtnProps) {
   const { isLoading, isDisabled, setIsDisabled } = useContext(ActivityCardBtnsContext);
   const pathname = usePathname();
   const isFullView = pathname.includes('activity');

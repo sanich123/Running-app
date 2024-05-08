@@ -1,7 +1,7 @@
 import ActivityCardLikeBtn from '@C/card/like-btn/like-btn';
-import CardLikes, { LikesSize } from '@C/card/likes/likes';
+import { LikesSize } from '@C/card/likes/const';
+import CardLikes from '@C/card/likes/likes';
 import MediaList from '@C/card/media-list/media-list';
-import CardTitle from '@C/card/title/title';
 import CommentInput from '@C/comment-input/comment-input';
 import Comments from '@C/comments/comments';
 import ErrorComponent from '@C/error-component/error-component';
@@ -33,7 +33,9 @@ export default function CommentFullViewPage() {
             />
           )}
           <Card.Content style={styles.contentLayout}>
-            <CardTitle title={activity?.title} />
+            <Text variant="titleLarge" style={styles.title}>
+              {activity?.title}
+            </Text>
             <UserNameSurname userId={activity?.user_id} size="titleMedium" />
             <View style={styles.columnsLayout}>
               <UserSportDate sport={activity?.sport} date={activity?.date} />
@@ -72,4 +74,5 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
+  title: { fontWeight: 'bold', marginBottom: 10, marginTop: 10 },
 });
