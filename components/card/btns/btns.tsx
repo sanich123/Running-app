@@ -1,10 +1,10 @@
 import { useAuth } from '@A/context/auth-context';
 import { CommentType, LikeType } from '@C/card/const ';
-import ActivityCardCommentBtn from '@C/card-comment-btn/card-comment-btn';
-import ActivityCardDeleteBtn from '@C/card-delete-btn/card-delete-btn';
-import ActivityCardLikeBtn from '@C/card-like-btn/card-like-btn';
-import ActivityCardLikeBtnSimple from '@C/card-like-btn/card-like-btn-simple';
-import ActivityCardShareBtn from '@C/card-share-btn/card-share-btn';
+import ActivityCardCommentBtn from '@C/card/comment-btn/comment-btn';
+import ActivityCardDeleteBtn from '@C/card/delete-btn/delete-btn';
+import ActivityCardLikeBtn from '@C/card/like-btn/like-btn';
+import ActivityCardLikeBtnSimple from '@C/card/like-btn/like-btn-simple';
+import ActivityCardShareBtn from '@C/card/share-btn/share-btn';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { MutableRefObject, ReactNode, useState, memo } from 'react';
 import { StyleSheet, View } from 'react-native';

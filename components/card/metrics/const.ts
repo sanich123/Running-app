@@ -1,4 +1,4 @@
-import { LANGUAGES } from '../../constants/enums';
+import { LANGUAGES } from '../../../constants/enums';
 
 export const CARD_METRICS = {
   [LANGUAGES.english]: {
@@ -14,3 +14,13 @@ export const CARD_METRICS = {
     km: 'км',
   },
 } as const;
+
+export type MetricsProps = {
+  distance: number;
+  duration: number;
+  title: string;
+  isShowDescription: boolean;
+  description: string;
+  userId: string;
+  id: string;
+};

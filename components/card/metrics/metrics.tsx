@@ -1,4 +1,4 @@
-import CardTitle from '@C/card-title/card-title';
+import CardTitle from '@C/card/title/title';
 import ShowMetrics from '@C/show-metrics/show-metrics';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location-utils';
@@ -9,9 +9,9 @@ import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
 
-import { CARD_METRICS } from './const';
+import { CARD_METRICS, MetricsProps } from './const';
 
-export default memo(function CardMetrics({
+export default memo(function Metrics({
   distance,
   duration,
   title,
@@ -19,15 +19,7 @@ export default memo(function CardMetrics({
   description,
   userId,
   id,
-}: {
-  distance: number;
-  duration: number;
-  title: string;
-  isShowDescription: boolean;
-  description: string;
-  userId: string;
-  id: string;
-}) {
+}: MetricsProps) {
   const { push } = useRouter();
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
@@ -40,7 +32,9 @@ export default memo(function CardMetrics({
         if (!pathname.includes(ROUTES.activity)) {
           push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}`);
         }
-      }}>
+      }}
+      borderless
+      style={{ borderRadius: 10 }}>
       <>
         {title ? <CardTitle title={title} /> : null}
         <View style={styles.metricsWrapper}>

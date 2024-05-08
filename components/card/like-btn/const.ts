@@ -1,4 +1,4 @@
-import { LANGUAGES } from '../../constants/enums';
+import { LANGUAGES } from '../../../constants/enums';
 
 export const CARD_LIKE_BTN_TEST_ID_LIKED = 'iconLikeButton-liked';
 export const CARD_LIKE_BTN_TEST_ID_NOT_LIKED = 'iconLikeButton';

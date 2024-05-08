@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react-native';
 
-import CardTitle from './card-title';
+import CardTitle from './title';
 
 describe('Activity card title', () => {
   it('should correctly renders', () => {

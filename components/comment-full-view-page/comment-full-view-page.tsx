@@ -1,7 +1,7 @@
-import ActivityCardLikeBtn from '@C/card-like-btn/card-like-btn';
-import CardLikes, { CardLikesSize } from '@C/card-likes/card-likes';
-import CardMapImagesList from '@C/card-likes/card-map-images-list/card-map-images-list';
-import CardTitle from '@C/card-title/card-title';
+import ActivityCardLikeBtn from '@C/card/like-btn/like-btn';
+import CardLikes, { CardLikesSize } from '@C/card/likes/likes';
+import MediaList from '@C/card/media-list/media-list';
+import CardTitle from '@C/card/title/title';
 import CommentInput from '@C/comment-input/comment-input';
 import Comments from '@C/comments/comments';
 import ErrorComponent from '@C/error-component/error-component';
@@ -26,7 +26,7 @@ export default function CommentFullViewPage() {
       {activity && (
         <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
           {(activity?.mapPhotoUrl || activity?.photoVideoUrls?.length > 0) && (
-            <CardMapImagesList
+            <MediaList
               photoVideoUrls={activity?.photoVideoUrls}
               mapPhotoUrl={activity?.mapPhotoUrl}
               id={`${activityId}`}

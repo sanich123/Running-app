@@ -13,17 +13,17 @@ const MAX_IN_ROW = 9;
 const MAX_NUMBER_IN_ROW_OTHER_PAGE = 3;
 const SHIFT_RIGHT = 23;
 
-export enum CardLikesSize {
+export enum LikesSize {
   big = 'big',
   small = 'small',
 }
 
-export default memo(function CardLikes({ activityId, size }: { activityId: string; size: CardLikesSize }) {
+export default memo(function CardLikes({ activityId, size }: { activityId: string; size: LikesSize }) {
   const { push } = useRouter();
   const { data: likes } = useGetLikesByActivityIdQuery(activityId);
-  const lastLikeInTheRow = size === CardLikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
-  const lessThanNineLikes = size === CardLikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
-  const moreThanNineLikes = size === CardLikesSize.big && likes?.length > 0 && likes?.length > MAX_IN_ROW;
+  const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
+  const lessThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
+  const moreThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length > MAX_IN_ROW;
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   return (
@@ -82,7 +82,7 @@ export default memo(function CardLikes({ activityId, size }: { activityId: strin
                 )}
             </View>
           ) : null}
-          {likes?.length && size === CardLikesSize.small ? <NumberOfLikes likes={likes} /> : null}
+          {likes?.length && size === LikesSize.small ? <NumberOfLikes likes={likes} /> : null}
         </View>
       </View>
     </Pressable>

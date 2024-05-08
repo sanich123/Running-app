@@ -4,7 +4,7 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 
-import ActivityCardLikeBtn from './card-like-btn';
+import ActivityCardLikeBtn from './like-btn';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from './const';
 
 describe('Activity card like btn', () => {

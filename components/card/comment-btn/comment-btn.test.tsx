@@ -1,8 +1,8 @@
 import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
 import { screen } from '@testing-library/react-native';
 
-import ActivityCardCommentBtn from './card-comment-btn';
-import { renderWithProviders } from '../../tests/utils/test-utils';
+import ActivityCardCommentBtn from './comment-btn';
+import { renderWithProviders } from '../../../tests/utils/test-utils';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),

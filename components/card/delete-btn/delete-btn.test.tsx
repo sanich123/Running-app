@@ -1,9 +1,9 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 
-import ActivityCardDeleteBtn from './card-delete-btn';
+import ActivityCardDeleteBtn from './delete-btn';
 import { CARD_DELETE_BTN_TEST_ID } from './const';
-import { renderWithProviders } from '../../tests/utils/test-utils';
+import { renderWithProviders } from '../../../tests/utils/test-utils';
 
 jest.spyOn(Alert, 'alert');
 describe('Activity card delete btn', () => {

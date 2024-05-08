@@ -3,10 +3,10 @@ import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { screen } from '@testing-library/react-native';
 import * as router from 'expo-router';
 
-import CardLikes, { CardLikesSize } from './card-likes';
-import * as auth from '../../auth/context/auth-context';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
+import CardLikes, { CardLikesSize } from './likes';
+import * as auth from '../../../auth/context/auth-context';
+import { mockStore } from '../../../tests/utils/mock-store';
+import { renderWithProviders } from '../../../tests/utils/test-utils';
 
 jest.mock('expo-router', () => ({
   usePathname: () => 'some string',
