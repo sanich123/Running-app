@@ -6,14 +6,14 @@ import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Platform, Pressable } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import { UPDATE_BTN_ERROR_MSG, UPDATE_BTN } from './const';
 
 export default function ProfileUpdateBtn() {
   const dispatch = useAppDispatch();
   const { back } = useRouter();
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const { user } = useAuth();
   const { settings } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
@@ -29,6 +29,7 @@ export default function ProfileUpdateBtn() {
       back();
     }
     if (error) {
+      console.log(error);
       dispatch(setIsDisabledWhileSendingProfile(false));
       dispatch(runichApi.util.resetApiState());
       if (Platform.OS !== 'web') {
@@ -38,18 +39,20 @@ export default function ProfileUpdateBtn() {
   }, [data, error]);
 
   return (
-    <Pressable
+    <TouchableRipple
+      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={async () => {
         dispatch(setIsDisabledWhileSendingProfile(true));
         if (user) {
           await sendProfile({ body: settings, id: user.id }).unwrap();
         }
       }}
+      borderless
       disabled={isLoading}
-      style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+      style={{ padding: 5, borderRadius: 10 }}>
       <Text variant="titleMedium" style={{ color: colors.primary, marginRight: 15 }}>
         {isLoading ? UPDATE_BTN[language].updating : UPDATE_BTN[language].update}
       </Text>
-    </Pressable>
+    </TouchableRipple>
   );
 }
