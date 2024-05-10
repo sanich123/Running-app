@@ -1,8 +1,8 @@
-import ActivityLocationIndicator from '@C/activity-location-indicator/activity-location-indicator';
-import ActivityPauseBtn from '@C/activity-pause-btn/activity-pause-btn';
-import ActivityShowMapBtn from '@C/activity-show-map-btn/activity-show-map-btn';
-import ActivityStartBtn from '@C/activity-start-btn/activity-start-btn';
-import Map from '@C/map/map';
+import LocationIndicator from '@C/activity/location-indicator/location-indicator';
+import Map from '@C/activity/map/map';
+import PauseBtn from '@C/activity/pause-btn/pause-btn';
+import ShowMapBtn from '@C/activity/show-map-btn/show-map-btn';
+import StartBtn from '@C/activity/start-btn/start-btn';
 import Metrics from '@C/metrics/metrics';
 import { useAppSelector } from '@R/typed-hooks';
 import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
@@ -18,7 +18,7 @@ export default function Activity() {
   return (
     <>
       <View className="flex-1 items-center justify-center">
-        <ActivityLocationIndicator />
+        <LocationIndicator />
         <View className="h-4/5 w-full">
           {(activityStatus === STATUSES.initial || isMapVisible) && <Map />}
           {activityStatus !== STATUSES.initial && <Metrics />}
@@ -27,9 +27,9 @@ export default function Activity() {
           <View
             className="flex flex-row items-center justify-center h-full gap-x-4"
             style={{ backgroundColor: colors.surfaceVariant }}>
-            {activityStatus === STATUSES.paused && <ActivityPauseBtn />}
-            <ActivityStartBtn />
-            {activityStatus !== STATUSES.initial && <ActivityShowMapBtn />}
+            {activityStatus === STATUSES.paused && <PauseBtn />}
+            <StartBtn />
+            {activityStatus !== STATUSES.initial && <ShowMapBtn />}
           </View>
         </View>
       </View>

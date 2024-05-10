@@ -1,7 +1,7 @@
-import { AvatarShowableTestIds } from '@C/avatar-showable/const';
+import { AvatarShowableTestIds } from '@C/avatar/showable/const';
 import { LikeType, ProfileType } from '@C/card/const ';
+import NumberOfLikes from '@C/card/number-of-likes/number-of-likes';
 import { CustomImage } from '@C/custom-image/custom-image';
-import NumberOfLikes from '@C/number-of-likes/number-of-likes';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';

@@ -1,5 +1,5 @@
 import { useAuth } from '@A/context/auth-context';
-import ActivityUpdateBtn from '@C/activity-update-btn/activitiy-update-btn';
+import ActivityUpdateBtn from '@C/activity/update-btn/update-btn';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Platform } from 'react-native';

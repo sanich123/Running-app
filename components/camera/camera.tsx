@@ -1,7 +1,7 @@
-import CameraChangeView from '@C/camera-change-view/camera-change-view';
-import CameraCloseBtn from '@C/camera-close/camera-close-btn';
-import CameraFlash from '@C/camera-flash/camera-flash';
-import CameraShotBtn from '@C/camera-shot-btn/camera-shot-btn';
+import ChangeView from '@C/camera/change-view/change-view';
+import CloseBtn from '@C/camera/close-btn/close-btn';
+import FlashBtn from '@C/camera/flash-btn/flash-btn';
+import ShotBtn from '@C/camera/shot-btn/shot-btn';
 import { PhotoVideoType } from '@C/card/const ';
 import PreviewImages from '@C/preview-images/preview-images';
 import { CameraView, CameraType, FlashMode, useCameraPermissions } from 'expo-camera';
@@ -10,11 +10,13 @@ import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 
+import { CameraTypes, FlashModes } from './enums';
+
 export default function CameraLauncher() {
   const cameraRef = useRef<CameraView>(null);
   const [photos, setPhotos] = useState<PhotoVideoType[]>([]);
-  const [type, setType] = useState('back' as CameraType);
-  const [flashEnable, setFlashEnable] = useState('off' as FlashMode);
+  const [type, setType] = useState<CameraType>(CameraTypes.back);
+  const [flashEnable, setFlashEnable] = useState<FlashMode>(FlashModes.off);
   const [permission, requestPermission] = useCameraPermissions();
 
   useEffect(() => {
@@ -34,15 +36,15 @@ export default function CameraLauncher() {
       )}
       {permission?.granted && (
         <CameraView ref={cameraRef} facing={type} style={{ flex: 1 }}>
-          <CameraCloseBtn />
+          <CloseBtn />
           <View style={styles.controlsPreviewsLayout}>
             <View style={styles.previews}>
               <PreviewImages setImages={setPhotos} images={photos} isDisabled={false} />
             </View>
             <View style={styles.controls}>
-              <CameraFlash setFlashEnable={setFlashEnable} flashEnable={flashEnable} />
-              <CameraShotBtn cameraRef={cameraRef} setPhotos={setPhotos} photos={photos} />
-              <CameraChangeView setType={setType} type={type} />
+              <FlashBtn setFlashEnable={setFlashEnable} flashEnable={flashEnable} />
+              <ShotBtn cameraRef={cameraRef} setPhotos={setPhotos} photos={photos} />
+              <ChangeView setType={setType} type={type} />
             </View>
           </View>
         </CameraView>

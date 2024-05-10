@@ -1,4 +1,4 @@
-import { AvatarShowableTestIds } from '@C/avatar-showable/const';
+import { AvatarShowableTestIds } from '@C/avatar/showable/const';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { screen } from '@testing-library/react-native';
 import * as router from 'expo-router';

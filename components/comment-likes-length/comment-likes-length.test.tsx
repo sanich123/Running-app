@@ -7,7 +7,7 @@ import { changeLanguage } from '../../redux/language/language';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
-import { NUMBER_OF_LIKES } from '../number-of-likes/const';
+import { NUMBER_OF_LIKES } from '../card/number-of-likes/const';
 
 describe('Comment likes length', () => {
   it('should correctly renders in english, when you and others gave likes', async () => {

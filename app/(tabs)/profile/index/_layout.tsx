@@ -1,6 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
 import { MaterialTopTabs } from '@C/material-top-tabs-layout/material-top-tabs-layout';
-import ProfileEditBtn from '@C/profile-edit-btn/profile-edit-btn';
+import ProfileEditBtn from '@C/profile/edit-btn/edit-btn';
 import { useAppSelector } from '@R/typed-hooks';
 import { LABELS } from '@const/enums';
 import { Stack } from 'expo-router';
