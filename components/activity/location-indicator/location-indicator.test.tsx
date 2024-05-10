@@ -5,8 +5,8 @@ import * as useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
-import ActivityLocationIndicator from './location-indicator';
 import { ACTIVITY_LOCATION_INDICATOR } from './const';
+import ActivityLocationIndicator from './location-indicator';
 
 describe('Activity location indicator', () => {
   it('should correctly render isLoading state', () => {

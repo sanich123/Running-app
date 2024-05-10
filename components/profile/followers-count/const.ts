@@ -1,4 +1,4 @@
-import { LANGUAGES } from '../../constants/enums';
+import { LANGUAGES } from '../../../constants/enums';
 
 export const FOLLOWERS_COUNT = {
   [LANGUAGES.english]: {

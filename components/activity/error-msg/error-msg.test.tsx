@@ -5,8 +5,8 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
-import ActivityErrorMsg from './error-msg';
 import { ACTIVITY_ERROR_MSG } from './const';
+import ActivityErrorMsg from './error-msg';
 
 describe('Activity-error-msg', () => {
   it('should correctly render error message in russian, when initially', () => {

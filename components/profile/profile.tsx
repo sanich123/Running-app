@@ -1,8 +1,8 @@
 import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
 import AvatarShowable from '@C/avatar/showable/showable';
 import ErrorComponent from '@C/error-component/error-component';
-import FollowersCount from '@C/followers-count/followers-count';
-import FollowingCount from '@C/following-count/following-count';
+import FollowersCount from '@C/profile/followers-count/followers-count';
+import FollowingCount from '@C/profile/following-count/following-count';
 import ProfileMediaPhotos from '@C/profile/media-photos/media-photos';
 import { saveBio, saveCity, saveGender, saveName, savePhotoUrl, saveSurname, saveWeight } from '@R/profile/profile';
 import { runichApi, useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';

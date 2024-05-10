@@ -9,8 +9,8 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
 
-import ActivitySaveBtn from './save-btn';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
+import ActivitySaveBtn from './save-btn';
 import * as auth from '../../../auth/context/auth-context';
 
 jest.mock('expo-router', () => ({

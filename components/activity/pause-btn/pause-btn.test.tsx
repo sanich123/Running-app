@@ -5,8 +5,8 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { STATUSES, LANGUAGES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
 
-import ActivityPauseBtn from './pause-btn';
 import { ACTIVITY_PAUSE_BTN } from './const';
+import ActivityPauseBtn from './pause-btn';
 
 describe('Activity pause btn', () => {
   it('should render resume, when paused', () => {
