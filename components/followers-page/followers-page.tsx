@@ -1,5 +1,5 @@
 import ErrorComponent from '@C/error-component/error-component';
-import UserListItemSimple from '@C/user-list-item/user-list-item';
+import UserListItem from '@C/user-list-item/user-list-item';
 import { useGetFollowersByUserIdQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { useAuth } from 'auth/context/auth-context';
@@ -31,7 +31,7 @@ export default function ListOfFollowers() {
             refreshing={refreshing}
             data={users}
             renderItem={({ item }) => (
-              <UserListItemSimple
+              <UserListItem
                 city={item.users.profile?.city}
                 name={item.users.profile?.name}
                 surname={item.users.profile?.surname}

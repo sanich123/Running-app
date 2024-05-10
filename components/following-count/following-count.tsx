@@ -4,43 +4,38 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import { Pressable } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import { FOLLOWING_COUNT } from './const';
 
 export default function FollowingCount() {
+  const { language } = useAppSelector(({ language }) => language);
   const { user } = useAuth();
   const { push } = useRouter();
+  const { dark } = useTheme();
   const pathname = usePathname();
   const { id: friendId } = useLocalSearchParams();
-  const { language } = useAppSelector(({ language }) => language);
-  const {
-    isLoading,
-    error,
-    isError,
-    data: listOfFriends,
-  } = useGetFriendsByUserIdQuery(friendId ? `${friendId}` : `${user?.id}`);
+  const whosId = friendId ? `${friendId}` : `${user?.id}`;
+  const place = pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.profile;
+  const { isLoading, error, isError, data: listOfFriends } = useGetFriendsByUserIdQuery(whosId);
 
   return (
-    <Pressable
-      onPress={() =>
-        push(
-          `/${pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.profile}/${ROUTES.following}/${
-            friendId ? friendId : user?.id
-          }`,
-        )
-      }
+    <TouchableRipple
+      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+      onPress={() => push(`/${place}/${ROUTES.following}/${whosId}`)}
       disabled={isError || isLoading}
-      style={({ pressed }) => ({ opacity: pressed || isError || isLoading ? 0.5 : 1 })}>
-      <Text variant="bodySmall">
-        {isError ? `${FOLLOWING_COUNT[language].error}:` : FOLLOWING_COUNT[language].followings}
-      </Text>
-      {!isLoading ? (
-        <Text variant="titleLarge">{isError ? `${errorExtracter(error)}` : `${listOfFriends?.length}`}</Text>
-      ) : (
-        <Text variant="titleLarge"> </Text>
-      )}
-    </Pressable>
+      borderless
+      style={{ borderRadius: 10 }}>
+      <>
+        <Text variant="bodySmall">
+          {isError ? `${FOLLOWING_COUNT[language].error}:` : FOLLOWING_COUNT[language].followings}
+        </Text>
+        <Text variant="titleLarge">
+          {isLoading && ' '}
+          {listOfFriends?.length && `${listOfFriends?.length}`}
+          {isError && `${errorExtracter(error)}`}
+        </Text>
+      </>
+    </TouchableRipple>
   );
 }

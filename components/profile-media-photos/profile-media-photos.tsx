@@ -5,80 +5,59 @@ import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { Fragment } from 'react';
-import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
-import { PROFILE_MEDIA } from './const';
+import { PROFILE_MEDIA, getSlicedPhotos } from './const';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { isLoading, isError, data: photos, error } = useGetAllActivityPhotosByUserIdQuery(userId);
   const { width } = useWindowDimensions();
   const { push } = useRouter();
-  const theme = useTheme();
+  const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
 
   return (
-    <>
-      <Pressable
-        onPress={() => push(`/${place}/${ROUTES.mediaGrid}/${userId}`)}
-        disabled={isError || isLoading}
-        style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
-        <View
-          style={[
-            styles.layout,
-            { backgroundColor: theme.colors.onPrimary },
-            (isLoading || isError) && styles.isInCenter,
-          ]}>
-          {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${errorExtracter(error)}`}</Text>}
-          {!isError &&
-            photos?.length > 0 &&
-            photos
-              ?.map(
-                ({
-                  photoVideoUrls,
-                }: {
-                  photoVideoUrls: { url: string; thumbnail: string | null; blurhash?: string };
-                }) => photoVideoUrls,
-              )
-              .flat()
-              .slice(0, 4)
-              .map(
-                (
-                  { url, thumbnail, blurhash }: { url: string; thumbnail: string | null; blurhash: string },
-                  index: number,
-                ) => {
-                  if (index === 3) {
-                    return (
-                      <Fragment key={`${url}+${index}`}>
-                        <View style={{ position: 'relative', opacity: 0.2, backgroundColor: 'grey' }}>
-                          <CustomImage
-                            style={{ width: width / 4, height: width / 4 }}
-                            source={{ uri: thumbnail || url }}
-                            placeholder={blurhash}
-                          />
-                        </View>
-                        <Text variant="titleMedium" style={{ position: 'absolute', top: '35%', right: 12, zIndex: 10 }}>
-                          {PROFILE_MEDIA[language].label}
-                        </Text>
-                      </Fragment>
-                    );
-                  }
-                  return (
+    <TouchableRipple
+      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+      onPress={() => push(`/${place}/${ROUTES.mediaGrid}/${userId}`)}
+      disabled={isError || isLoading}
+      borderless>
+      <View style={[styles.layout, { backgroundColor: colors.onPrimary }, (isLoading || isError) && styles.isInCenter]}>
+        {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${errorExtracter(error)}`}</Text>}
+        {!isError &&
+          photos?.length > 0 &&
+          getSlicedPhotos(photos).map(({ url, thumbnail, blurhash }, index) => {
+            if (index === 3) {
+              return (
+                <Fragment key={`${url}+${index}`}>
+                  <View style={styles.lastImageWrapper}>
                     <CustomImage
-                      key={`${url}+${index}`}
-                      source={{ uri: thumbnail || url }}
                       style={{ width: width / 4, height: width / 4 }}
-                      contentFit="cover"
+                      source={{ uri: thumbnail || url }}
                       placeholder={blurhash}
                     />
-                  );
-                },
-              )}
-        </View>
-      </Pressable>
-    </>
+                  </View>
+                  <Text variant="titleMedium" style={styles.lastImageText}>
+                    {PROFILE_MEDIA[language].label}
+                  </Text>
+                </Fragment>
+              );
+            }
+            return (
+              <CustomImage
+                key={`${url}+${index}`}
+                source={{ uri: thumbnail || url }}
+                style={{ width: width / 4, height: width / 4 }}
+                contentFit="cover"
+                placeholder={blurhash}
+              />
+            );
+          })}
+      </View>
+    </TouchableRipple>
   );
 }
 
@@ -90,5 +69,16 @@ const styles = StyleSheet.create({
   isInCenter: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  lastImageWrapper: {
+    position: 'relative',
+    opacity: 0.2,
+    backgroundColor: 'grey',
+  },
+  lastImageText: {
+    position: 'absolute',
+    top: '35%',
+    right: 12,
+    zIndex: 10,
   },
 });

@@ -29,7 +29,7 @@ export default function ProfilePage() {
         <View style={styles.bio}>
           <UserBio userId={`${whosProfileViewing}`} size="bodyMedium" />
         </View>
-        <View style={{ display: 'flex', flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+        <View style={styles.followersBtnsWrapper}>
           <FollowingCount />
           <FollowersCount />
           {!isMeViewing && whosProfileViewing && <AddDeleteFriendBtn friendId={`${whosProfileViewing}`} />}
@@ -59,5 +59,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     marginTop: 20,
     marginBottom: 20,
+  },
+  followersBtnsWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 20,
+    alignItems: 'center',
   },
 });

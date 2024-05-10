@@ -10,3 +10,14 @@ export const PROFILE_MEDIA = {
     error: 'Ошибка',
   },
 } as const;
+
+export function getSlicedPhotos(
+  photos: {
+    photoVideoUrls: { url: string; thumbnail: string | null; blurhash?: string };
+  }[],
+) {
+  return photos
+    ?.map(({ photoVideoUrls }) => photoVideoUrls)
+    .flat()
+    .slice(0, 4);
+}
