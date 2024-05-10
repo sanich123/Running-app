@@ -1,5 +1,5 @@
 import ErrorComponent from '@C/error-component/error-component';
-import UserListItemSimple from '@C/user-list-item-simple/user-list-item-simple';
+import UserListItemSimple from '@C/user-list-item/user-list-item';
 import { useGetFriendsByUserIdQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';

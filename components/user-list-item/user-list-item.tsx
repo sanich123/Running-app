@@ -1,30 +1,44 @@
 import { useAuth } from '@A/context/auth-context';
 import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
-import AvatarShowable from '@C/avatar-showable/avatar-showable';
-import UserCityAge from '@C/user-city-age/user-city-age';
-import UserNameSurname from '@C/user-name-surname/user-name-surname';
+import { CustomImage } from '@C/custom-image/custom-image';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
-export default function UserListItem({ userId }: { userId: string }) {
+import { UserListItemType } from './const';
+
+export default function UserListItem({ name, surname, profilePhoto, placeholder, city, user_id }: UserListItemType) {
+  const { dark } = useTheme();
   const { user } = useAuth();
-  const isMineActivity = userId === user?.id;
   const { push } = useRouter();
+  const isMineActivity = user_id === user?.id;
 
   return (
-    <View style={styles.userItemWrapper}>
-      <Pressable
-        style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }, styles.pressableAreaWrapper]}
-        onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${userId}`)}>
-        <AvatarShowable size={35} id={userId} />
-        <View>
-          <UserNameSurname userId={userId} size="bodyLarge" />
-          <UserCityAge userId={userId} size="bodyMedium" />
+    <TouchableRipple
+      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+      borderless
+      onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${user_id}`)}>
+      <View style={styles.userItemWrapper}>
+        <View style={styles.contentWrapper}>
+          <CustomImage
+            style={styles.avatarSize}
+            source={{ uri: profilePhoto }}
+            contentFit="cover"
+            placeholder={placeholder}
+          />
+          <View>
+            <View style={styles.nameSurnameWrapper}>
+              <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
+                {name} {surname}
+              </Text>
+            </View>
+            {city && <Text variant="bodyMedium">{city}</Text>}
+          </View>
         </View>
-      </Pressable>
-      {!isMineActivity && <AddDeleteFriendBtn friendId={userId} />}
-    </View>
+        {!isMineActivity && <AddDeleteFriendBtn friendId={user_id} />}
+      </View>
+    </TouchableRipple>
   );
 }
 
@@ -33,15 +47,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    columnGap: 5,
+    paddingLeft: 5,
     paddingTop: 5,
     paddingBottom: 5,
-    paddingLeft: 5,
   },
-  pressableAreaWrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    columnGap: 10,
-  },
+  contentWrapper: { flexDirection: 'row', columnGap: 10 },
+  avatarSize: { width: 35, height: 35, borderRadius: 70 },
+  nameSurnameWrapper: { flex: 1, flexDirection: 'row' },
 });
