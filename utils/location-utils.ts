@@ -2,10 +2,11 @@
 import polyline from '@mapbox/polyline';
 import distance from '@turf/distance';
 import { LocationObject } from 'expo-location';
+import { Location } from 'react-native-background-geolocation';
 //@ts-ignore
 import point from 'turf-point';
 
-export function getDistance(origin: LocationObject, destination: LocationObject) {
+export function getDistanceNew(origin: Location, destination: Location) {
   const from = point([origin.coords.longitude, origin.coords.latitude]);
   const to = point([destination.coords.longitude, destination.coords.latitude]);
   return distance(from, to, { units: 'meters' });
@@ -59,7 +60,7 @@ export function getMapBoxImage(locations: LocationObject[]) {
   }
 }
 
-export function getReducedLocations(locations: LocationObject[]) {
+export function getReducedLocations(locations: Location[]) {
   if (locations.length > 2000) {
     const reducerCoefficient = Math.floor(locations.length / 1000);
     return locations.filter((_, i) => i % reducerCoefficient === 0);

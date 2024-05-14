@@ -1,6 +1,6 @@
 import { useAppSelector } from '@R/typed-hooks';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { ACTIVITY_LOCATION_INDICATOR } from './const';
@@ -12,9 +12,8 @@ export default function LocationIndicator() {
   return (
     <>
       {isNeedToShowIndicator && (
-        <View
-          className={`flex align-center items-center absolute top-0 w-full h-8 z-10 ${!isSuccess ? 'bg-yellow-300' : 'bg-green-500'}`}>
-          <Text variant="bodyLarge">
+        <View style={[styles.layout, { backgroundColor: !isSuccess ? 'yellow' : 'green' }]}>
+          <Text variant="bodyLarge" style={{ color: 'white' }}>
             {isLoading && ACTIVITY_LOCATION_INDICATOR[language].isLoading}
             {isError && ACTIVITY_LOCATION_INDICATOR[language].isError}
             {isSuccess && ACTIVITY_LOCATION_INDICATOR[language].isSuccess}
@@ -24,3 +23,16 @@ export default function LocationIndicator() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 0,
+    zIndex: 10,
+    height: 25,
+    width: '100%',
+  },
+});
