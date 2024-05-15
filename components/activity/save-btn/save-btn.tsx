@@ -10,7 +10,7 @@ import { resetLocationsFromBackground } from '@R/location/location';
 import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
-import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location-utils';
+import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';

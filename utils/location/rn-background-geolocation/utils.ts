@@ -16,7 +16,7 @@ import {
 import { store } from '@R/store';
 import { Location } from 'react-native-background-geolocation';
 
-import { getDistanceNew, getSpeedInMinsInKm } from './location-utils';
+import { getDistance, getSpeedInMinsInKm } from '../location-utils';
 
 export function saveMetricsToStore(
   currentKilometer: number,
@@ -45,37 +45,6 @@ export function saveMetricsToStore(
   store.dispatch(setIsTooMuchSpeed(false));
 }
 
-// export function getMetrics(currentPosition: LocationObject) {
-//   const { lastKilometer, locationsWithPauses } = store.getState().location;
-//   const lastArrayLength = locationsWithPauses[locationsWithPauses.length - 1]?.length;
-//   const firstArrayLength = locationsWithPauses[0]?.length;
-//   const previousPosition =
-//     locationsWithPauses[0]?.length > 0
-//       ? locationsWithPauses[locationsWithPauses.length - 1][lastArrayLength - 1]
-//       : null;
-//   const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
-//   const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
-//   const currentAltitude =
-//     previousPosition?.coords.altitude && currentPosition?.coords.altitude
-//       ? currentPosition.coords.altitude - previousPosition.coords.altitude
-//       : 0;
-//   const isExistingDistanceDuration = currentDistance && currentDuration;
-//   const currentPace = isExistingDistanceDuration
-//     ? getSpeedInMinsInKm(currentDistance, currentDuration).paceAsNumber
-//     : 0;
-//   const currentKilometer = lastKilometer + currentDistance;
-
-//   return {
-//     currentDuration,
-//     currentDistance,
-//     currentAltitude,
-//     currentPace,
-//     currentKilometer,
-//     firstArrayLength,
-//     lastArrayLength,
-//   };
-// }
-
 export function getMetrics(currentPosition: Location) {
   const { lastKilometer, locationsWithPauses } = store.getState().location;
   const lastArrayLength = locationsWithPauses[locationsWithPauses.length - 1]?.length;
@@ -87,7 +56,7 @@ export function getMetrics(currentPosition: Location) {
   const currentDuration = previousPosition
     ? Date.parse(currentPosition.timestamp) - Date.parse(previousPosition.timestamp)
     : 0;
-  const currentDistance = previousPosition ? getDistanceNew(previousPosition, currentPosition) : 0;
+  const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
   const currentAltitude =
     previousPosition?.coords.altitude && currentPosition?.coords.altitude
       ? currentPosition.coords.altitude - previousPosition.coords.altitude

@@ -6,7 +6,7 @@ import { Location } from 'react-native-background-geolocation';
 //@ts-ignore
 import point from 'turf-point';
 
-export function getDistanceNew(origin: Location, destination: Location) {
+export function getDistance(origin: Location | LocationObject, destination: Location | LocationObject) {
   const from = point([origin.coords.longitude, origin.coords.latitude]);
   const to = point([destination.coords.longitude, destination.coords.latitude]);
   return distance(from, to, { units: 'meters' });

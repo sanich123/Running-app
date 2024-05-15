@@ -1,7 +1,7 @@
 import ErrorComponent from '@C/error-component/error-component';
 import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
-import { getSpeedInMinsInKm } from '@U/location-utils';
+import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';

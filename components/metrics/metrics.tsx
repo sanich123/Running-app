@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 import { MAP_METRICS } from './const';
-import { getSpeedInMinsInKm } from '../../utils/location-utils';
+import { getSpeedInMinsInKm } from '../../utils/location/location-utils';
 import { formatDuration, formatDurationMinsSecs } from '../../utils/time-formatter';
 import ActivityErrorMsg from '../activity/error-msg/error-msg';
 import MetricsItem from '../metrics-item/metrics-item';

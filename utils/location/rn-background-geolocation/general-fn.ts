@@ -1,7 +1,8 @@
 import { setIsTooMuchSpeed } from '@R/location/location';
 import { store } from '@R/store';
-import { getMetrics, saveMetricsToStore } from '@U/save-to-store-metrics';
 import { Location } from 'react-native-background-geolocation';
+
+import { getMetrics, saveMetricsToStore } from './utils';
 
 export async function saveMetricsFromBackgroundToRedux(currentPosition: Location) {
   try {

@@ -7,7 +7,7 @@ import {
 } from '@R/activity/activity';
 import { setActivityStatus } from '@R/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { getReducedLocations, getSpeedInMinsInKm } from '@U/location-utils';
+import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { ROUTES, STATUSES } from '@const/enums';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';

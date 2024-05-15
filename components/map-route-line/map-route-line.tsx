@@ -1,4 +1,4 @@
-import { getReducedLocations } from '@U/location-utils';
+import { getReducedLocations } from '@U/location/location-utils';
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
 import { useMemo } from 'react';
 import { Location } from 'react-native-background-geolocation';
