@@ -2,10 +2,8 @@ import { useAuth } from '@A/context/auth-context';
 import ActivityUpdateBtn from '@C/activity/update-btn/update-btn';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
-
-import { View } from '../Themed';
 
 export default function UsersSettingsIcons() {
   const { colors } = useTheme();
@@ -34,7 +32,6 @@ export default function UsersSettingsIcons() {
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
             onPress={() => push(`/${place}/users/`)}
-            style={Platform.OS === 'web' && { display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           />
           <IconButton
             testID="settingsIcon"
@@ -42,12 +39,7 @@ export default function UsersSettingsIcons() {
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
             onPress={() => push(`/${place}/settings/`)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginLeft: -10,
-            }}
+            style={{ marginLeft: -10 }}
           />
         </>
       )}

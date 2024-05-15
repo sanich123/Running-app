@@ -10,7 +10,8 @@ defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
         moduleName === '@react-native-google-signin/google-signin' ||
         moduleName === 'react-native-pager-view' ||
         moduleName === 'expo-video-thumbnails')) ||
-    (platform !== 'web' && moduleName === 'mapbox-gl')
+    (platform !== 'web' && moduleName === 'mapbox-gl') ||
+    (platform === 'android' && moduleName === 'react-native-background-geolocation')
   ) {
     return {
       type: 'empty',

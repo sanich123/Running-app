@@ -1,11 +1,10 @@
 import { useAuth } from '@A/context/auth-context';
-import { View, Text } from '@C/Themed';
 import { addPhotoUrl } from '@R/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
 import { useState } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, View, Text } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { UploadPhotoBtnProps, UPLOAD_PHOTO_BTN } from './ const';
