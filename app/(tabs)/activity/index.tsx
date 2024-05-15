@@ -5,6 +5,7 @@ import ShowMapBtn from '@C/activity/show-map-btn/show-map-btn';
 import StartBtn from '@C/activity/start-btn/start-btn';
 import Metrics from '@C/metrics/metrics';
 import { useAppSelector } from '@R/typed-hooks';
+import useGetPermissions from '@U/hooks/use-get-permission';
 import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
 import { STATUSES } from '@const/enums';
 import { StyleSheet, View } from 'react-native';
@@ -13,6 +14,7 @@ import { useTheme } from 'react-native-paper';
 export default function Activity() {
   const { colors } = useTheme();
   useStartStopTracking();
+  useGetPermissions();
   const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
 
   return (

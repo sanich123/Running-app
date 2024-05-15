@@ -13,7 +13,6 @@ import {
 } from '@R/activity/activity';
 import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import useGetPermissions from '@U/hooks/use-get-permission';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
@@ -24,7 +23,6 @@ export default function Feed() {
   const { user } = useAuth();
   const { push } = useRouter();
   const dispatch = useAppDispatch();
-  useGetPermissions();
 
   const {
     data: activities,
