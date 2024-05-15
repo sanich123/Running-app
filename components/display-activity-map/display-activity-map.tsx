@@ -2,9 +2,9 @@ import MapboxWeb from '@C/mapbox-web/mapbox-web';
 import { LastKmSplit } from '@R/location/types';
 import { MapView, Camera } from '@rnmapbox/maps';
 import bbox from '@turf/bbox';
-import { LocationObject } from 'expo-location';
 import { useMemo } from 'react';
 import { Platform } from 'react-native';
+import { Location } from 'react-native-background-geolocation';
 //@ts-ignore
 import lineString from 'turf-linestring';
 
@@ -12,7 +12,7 @@ import MapKmSplit from '../map-km-split/map-km-split';
 import RouteLine from '../map-route-line/map-route-line';
 
 type DisplayActivityMapProps = {
-  locations: LocationObject[];
+  locations: Location[];
   kilometresSplit: LastKmSplit[];
 };
 

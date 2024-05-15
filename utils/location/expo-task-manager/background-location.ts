@@ -10,16 +10,16 @@ import {
 import { isTaskRegisteredAsync } from 'expo-task-manager';
 import * as TaskManager from 'expo-task-manager';
 
+import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 import {
   BACKGROUND_NOTIFICATION,
   DISTANCE_INTERVAL,
   LOCATION_TRACKING,
   TIME_INTERVAL,
   TaskManagerLocationEvent,
-} from './const';
-import { getMetrics, saveMetricsToStore } from '../save-to-store-metrics';
+} from '../const';
 
-export async function startLocationTracking({ setLocationStarted }: { setLocationStarted: (arg: boolean) => void }) {
+export async function startLocationTracking() {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {
     accuracy: Accuracy.BestForNavigation,
     timeInterval: TIME_INTERVAL,
@@ -32,16 +32,11 @@ export async function startLocationTracking({ setLocationStarted }: { setLocatio
     },
   });
   const hasStarted = await hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
-  setLocationStarted(hasStarted);
   console.log('tracking started?', hasStarted);
   showCrossPlatformToast(`BgTracking started = ${hasStarted}`, ToastDuration.long);
 }
 
-export async function stopLocationTracking({ setLocationStarted }: { setLocationStarted?: (arg: boolean) => void }) {
-  if (setLocationStarted) {
-    setLocationStarted(false);
-  }
-
+export async function stopLocationTracking() {
   isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
     if (tracking) {
       stopLocationUpdatesAsync(LOCATION_TRACKING);
@@ -60,10 +55,10 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
     const currentPosition = locations[0];
     try {
       const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer, lastArrayLength } =
-        getMetrics(currentPosition);
+        getMetricsTaskManager(currentPosition);
 
       if (!lastArrayLength || lastArrayLength < 10) {
-        saveMetricsToStore(
+        saveMetricsToStoreTaskManager(
           currentKilometer,
           currentPosition,
           currentDuration,
@@ -72,7 +67,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
           currentDistance,
         );
       } else if (currentPace > 3 && currentPace < Infinity) {
-        saveMetricsToStore(
+        saveMetricsToStoreTaskManager(
           currentKilometer,
           currentPosition,
           currentDuration,

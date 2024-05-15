@@ -6,7 +6,7 @@ import CardMetrics from './metrics';
 import { MOCK_DISTANCE, MOCK_DURATION } from '../../../tests/mocks/mock-location';
 import { mockStore } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
-import { getSpeedInMinsInKm } from '../../../utils/location-utils';
+import { getSpeedInMinsInKm } from '../../../utils/location/location-utils';
 import { formatDuration } from '../../../utils/time-formatter';
 
 jest.mock('expo-router', () => ({

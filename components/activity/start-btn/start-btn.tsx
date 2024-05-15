@@ -7,18 +7,18 @@ import {
 } from '@R/activity/activity';
 import { setActivityStatus } from '@R/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { getReducedLocations, getSpeedInMinsInKm } from '@U/location-utils';
+import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { ROUTES, STATUSES } from '@const/enums';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 
 import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON, ResponseIcon } from './const ';
 
 export default function StartBtn() {
   const dispatch = useAppDispatch();
-  const { dark } = useTheme();
+  const { colors, dark } = useTheme();
   const {
     activityStatus,
     duration,
@@ -61,11 +61,25 @@ export default function StartBtn() {
           push(`/(tabs)/${ROUTES.home}/${ROUTES.manualActivity}/`);
         }
       }}>
-      <View className="flex items-center justify-center bg-red-500 w-28 h-28 rounded-full py-5">
-        <Text className={`uppercase text-white ${activityStatus === STATUSES.initial ? 'text-3xl' : 'text-xl'}`}>
+      <View style={[styles.startBtn, { backgroundColor: colors.error }]}>
+        <Text style={[styles.startBtnText, { fontSize: activityStatus === STATUSES.initial ? 35 : 15 }]}>
           {RESPONSE_ICON[activityStatus]}
         </Text>
       </View>
     </TouchableRipple>
   );
 }
+
+const styles = StyleSheet.create({
+  startBtn: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 95,
+    width: 95,
+  },
+  startBtnText: {
+    textTransform: 'uppercase',
+    color: 'white',
+  },
+});

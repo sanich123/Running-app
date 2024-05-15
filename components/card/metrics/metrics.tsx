@@ -1,6 +1,6 @@
 import ShowMetrics from '@C/show-metrics/show-metrics';
 import { useAppSelector } from '@R/typed-hooks';
-import { getSpeedInMinsInKm } from '@U/location-utils';
+import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';

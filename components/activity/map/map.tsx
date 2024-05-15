@@ -2,8 +2,8 @@ import MapKmSplit from '@C/map-km-split/map-km-split';
 import MapRouteLine from '@C/map-route-line/map-route-line';
 import { useAppSelector } from '@R/typed-hooks';
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
-import { LocationObject } from 'expo-location';
 import { Platform } from 'react-native';
+import { Location } from 'react-native-background-geolocation';
 
 export default function Map() {
   const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);
@@ -18,7 +18,7 @@ export default function Map() {
       <Camera followUserLocation followZoomLevel={18} animationMode="flyTo" />
       <MapKmSplit kilometresSplit={kilometresSplit} />
       {locationsWithPauses[0]?.length > 1
-        ? locationsWithPauses.map((locations: LocationObject[]) => {
+        ? locationsWithPauses.map((locations: Location[]) => {
             if (locations?.length > 1) {
               const key = `${locations[0].coords.longitude}, ${locations[locations.length - 1].coords.latitude}`;
               return <MapRouteLine key={key} locations={locations} />;

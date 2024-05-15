@@ -14,13 +14,13 @@ import {
   setIsTooMuchSpeed,
 } from '@R/location/location';
 import { store } from '@R/store';
-import { LocationObject } from 'expo-location';
+import { Location } from 'react-native-background-geolocation';
 
-import { getDistance, getSpeedInMinsInKm } from './location-utils';
+import { getDistance, getSpeedInMinsInKm } from '../location-utils';
 
 export function saveMetricsToStore(
   currentKilometer: number,
-  currentPosition: LocationObject,
+  currentPosition: Location,
   currentDuration: number,
   currentPace: number,
   currentAltitude: number,
@@ -45,7 +45,7 @@ export function saveMetricsToStore(
   store.dispatch(setIsTooMuchSpeed(false));
 }
 
-export function getMetrics(currentPosition: LocationObject) {
+export function getMetrics(currentPosition: Location) {
   const { lastKilometer, locationsWithPauses } = store.getState().location;
   const lastArrayLength = locationsWithPauses[locationsWithPauses.length - 1]?.length;
   const firstArrayLength = locationsWithPauses[0]?.length;
@@ -53,7 +53,9 @@ export function getMetrics(currentPosition: LocationObject) {
     locationsWithPauses[0]?.length > 0
       ? locationsWithPauses[locationsWithPauses.length - 1][lastArrayLength - 1]
       : null;
-  const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
+  const currentDuration = previousPosition
+    ? Date.parse(currentPosition.timestamp) - Date.parse(previousPosition.timestamp)
+    : 0;
   const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
   const currentAltitude =
     previousPosition?.coords.altitude && currentPosition?.coords.altitude
