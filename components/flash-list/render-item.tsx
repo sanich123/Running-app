@@ -1,4 +1,4 @@
-import ActivityCard from '@C/card/card';
+import Card from '@C/card/card';
 import { ActivityCardProps } from '@C/card/const ';
 
 export type ActivitiesType = (ActivityCardProps & { user_id: string })[];
@@ -21,7 +21,7 @@ export function renderCardsFunction({ item }: { item: ActivityCardProps & { user
   } = item;
 
   return (
-    <ActivityCard
+    <Card
       isShowDeleteBtn={false}
       isShowDescription={false}
       description={description}

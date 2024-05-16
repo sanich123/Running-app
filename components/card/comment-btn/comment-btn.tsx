@@ -3,7 +3,7 @@ import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
 import { useContext, memo } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View } from 'react-native';
 import { IconButton, MD3Colors, Badge } from 'react-native-paper';
 
 import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
@@ -28,16 +28,7 @@ export default memo(function CommentBtn({ activityId, comments }: { activityId: 
         size={25}
         onPress={() => push(`/${place}/${ROUTES.comment}/${activityId}`)}
         disabled={isLoading || isDisabled}
-        style={Platform.OS === 'web' && styles.isInCenter}
       />
     </View>
   );
-});
-
-const styles = StyleSheet.create({
-  isInCenter: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });

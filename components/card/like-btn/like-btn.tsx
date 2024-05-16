@@ -3,7 +3,7 @@ import { useGetLikesByActivityIdQuery, useSendOrDeleteLikeMutation } from '@R/ru
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { useContext, useEffect, memo } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
@@ -53,15 +53,6 @@ export default memo(function ActivityCardLikeBtn({ activityId }: { activityId: s
         }
       }}
       disabled={isLoading || isDisabled}
-      style={Platform.OS === 'web' && styles.isInCenter}
     />
   );
-});
-
-const styles = StyleSheet.create({
-  isInCenter: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });

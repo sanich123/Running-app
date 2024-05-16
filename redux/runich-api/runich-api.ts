@@ -28,7 +28,18 @@ export const runichApi = createApi({
       providesTags: [Tags.activities],
     }),
     getActivitiesByUserIdWithFriendsActivities: builder.query({
-      query: (id: string) => `/${activity}/${id}/${all}`,
+      query: ({ id, page, take }: { id: string; page: number; take: number }) =>
+        `/${activity}/${id}/${all}?page=${page}&take=${take}`,
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems) => {
+        currentCache.push(...newItems);
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
+      keepUnusedDataFor: 10,
       providesTags: [Tags.activities],
     }),
     getAllActivityPhotosByUserId: builder.query({

@@ -4,12 +4,12 @@ import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { errorHandler } from '@U/error-handler';
 import { useRouter } from 'expo-router';
 import { useContext, useEffect } from 'react';
-import { Alert, Platform, StyleSheet } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
 import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from './const';
 
-export default function ActivityCardDeleteBtn({ activityId }: { activityId: string }) {
+export default function CardDeleteBtn({ activityId }: { activityId: string }) {
   const [deleteActivityById, { data, error }] = useDeleteActivityByIdMutation();
   const { isLoading, isDisabled, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
   const { back } = useRouter();
@@ -59,24 +59,6 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
               },
             );
           }
-          if (Platform.OS === 'web') {
-            successHandler();
-          } else {
-            Alert.alert(
-              CARD_DELETE_BTN[language].deleteActivity,
-              CARD_DELETE_BTN[language].question,
-              [
-                {
-                  text: CARD_DELETE_BTN[language].accept,
-                  onPress: successHandler,
-                  style: 'cancel',
-                },
-              ],
-              {
-                cancelable: true,
-              },
-            );
-          }
         } catch (error) {
           errorHandler(error);
           setIsLoading(false);
@@ -84,15 +66,6 @@ export default function ActivityCardDeleteBtn({ activityId }: { activityId: stri
         }
       }}
       disabled={isLoading || isDisabled}
-      style={Platform.OS === 'web' && styles.isInCenter}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  isInCenter: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

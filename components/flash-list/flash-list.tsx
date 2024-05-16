@@ -1,33 +1,29 @@
-import { ActivityCardProps } from '@C/card/const ';
+import { useAuth } from '@A/context/auth-context';
 import EmptyActivitiesList from '@C/empty-activities-list/empty-activities-list';
-import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
+import ErrorComponent from '@C/error-component/error-component';
+import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
+import useCheckPhoneVersion from '@U/hooks/use-check-phone-version';
+import usePrefetchSmthng from '@U/hooks/use-prefetch-smthng';
 import useRefresh from '@U/hooks/use-refresh';
 import { FlashList } from '@shopify/flash-list';
-import { useEffect } from 'react';
-import { FlatList, Platform } from 'react-native';
-import { Divider } from 'react-native-paper';
+import { useState } from 'react';
+import { FlatList } from 'react-native';
+import { ActivityIndicator, Divider } from 'react-native-paper';
 
 import { keyExtractor, renderCardsFunction } from './render-item';
 
-export default function OptimizedList({
-  activities,
-  refetch,
-}: {
-  activities: (ActivityCardProps & { user_id: string })[];
-  refetch: any;
-}) {
+export default function OptimizedList() {
+  const { isOldVersion } = useCheckPhoneVersion();
+  const { user } = useAuth();
+  const [page, setPage] = useState(0);
+  const {
+    data: activities,
+    error,
+    isLoading,
+    refetch,
+  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery({ id: `${user?.id}`, page, take: 10 });
   const { onRefresh, refreshing } = useRefresh(refetch);
-  const isEarlyAndroid = Platform.OS === 'android' && Platform.Version < 31;
-  const isEarylIos = Platform.OS === 'ios' && parseInt(Platform.Version, 10) <= 13;
-  const isOldVersion = isEarlyAndroid || isEarylIos;
-
-  useEffect(() => {
-    if (isOldVersion) {
-      if (Platform.OS !== 'web') {
-        showCrossPlatformToast('You have an old version of the phone', ToastDuration.long);
-      }
-    }
-  }, []);
+  usePrefetchSmthng('getUsers');
 
   return (
     <>
@@ -42,17 +38,26 @@ export default function OptimizedList({
           ItemSeparatorComponent={() => <Divider />}
         />
       ) : (
-        <FlatList
-          onRefresh={onRefresh}
-          data={activities}
-          refreshing={refreshing}
-          keyExtractor={keyExtractor}
-          renderItem={renderCardsFunction}
-          ListEmptyComponent={<EmptyActivitiesList />}
-          ItemSeparatorComponent={() => <Divider />}
-          initialNumToRender={5}
-          maxToRenderPerBatch={10}
-        />
+        <>
+          {activities && (
+            <FlatList
+              onRefresh={onRefresh}
+              data={activities}
+              refreshing={refreshing}
+              keyExtractor={keyExtractor}
+              renderItem={renderCardsFunction}
+              ListEmptyComponent={<EmptyActivitiesList />}
+              ItemSeparatorComponent={() => <Divider />}
+              initialNumToRender={5}
+              maxToRenderPerBatch={10}
+              onEndReached={() => setPage(page + 1)}
+              onEndReachedThreshold={0.75}
+              ListFooterComponent={() => <ActivityIndicator size="large" />}
+            />
+          )}
+          {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
+          {error ? <ErrorComponent error={error} /> : null}
+        </>
       )}
     </>
   );
