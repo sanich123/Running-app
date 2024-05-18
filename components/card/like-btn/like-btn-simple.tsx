@@ -9,7 +9,7 @@ import { useToast } from 'react-native-toast-notifications';
 
 import { CARD_LIKE_BTN_ICON_NOT_LIKED } from './const';
 
-export default function ActivityCardLikeBtnSimple({ activityId }: { activityId: string }) {
+export default function CardLikeBtnSimple({ activityId }: { activityId: string }) {
   const toast = useToast();
   const { user } = useAuth();
   const [sendLike, { data, error }] = useSendOrDeleteLikeMutation();

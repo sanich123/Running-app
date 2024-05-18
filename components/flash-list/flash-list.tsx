@@ -16,14 +16,21 @@ export default function OptimizedList() {
   const { isOldVersion } = useCheckPhoneVersion();
   const { user } = useAuth();
   const [page, setPage] = useState(0);
+
   const {
     data: activities,
     error,
     isLoading,
     refetch,
-  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery({ id: `${user?.id}`, page, take: 10 });
+  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery({ id: `${user?.id}`, page, take: 2 });
   const { onRefresh, refreshing } = useRefresh(refetch);
   usePrefetchSmthng('getUsers');
+  console.log('page', page, 'activities.length', activities?.length);
+  // useEffect(() => {
+  //   if (isError) {
+  //     setPage(page - 1);
+  //   }
+  // }, [isError, page]);
 
   return (
     <>
@@ -50,8 +57,11 @@ export default function OptimizedList() {
               ItemSeparatorComponent={() => <Divider />}
               initialNumToRender={5}
               maxToRenderPerBatch={10}
-              onEndReached={() => setPage(page + 1)}
-              onEndReachedThreshold={0.75}
+              onEndReached={() => {
+                console.log('end reached');
+                console.log('increment page');
+                setPage(page + 1);
+              }}
               ListFooterComponent={() => <ActivityIndicator size="large" />}
             />
           )}
