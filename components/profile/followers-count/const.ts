@@ -10,3 +10,8 @@ export const FOLLOWERS_COUNT = {
     followers: 'Фолловеры',
   },
 } as const;
+
+export enum FOLLOW_PLACES {
+  whoFollowsUser = 'whoFollowsUser',
+  whoUserFollows = 'whoUserFollows',
+}
