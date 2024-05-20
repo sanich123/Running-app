@@ -9,3 +9,5 @@ export const addFriendSuccess = (req: any, res: any, ctx: any) => res(ctx.status
 export const getFollowersSuccess = (req: any, res: any, ctx: any) => res(ctx.status(200), ctx.json(MOCK_FOLLOWERS));
 
 export const getFollowingsSuccess = (req: any, res: any, ctx: any) => res(ctx.status(200), ctx.json(MOCK_FRIENDS));
+
+export const getFollowersFailure = (req: any, res: any, ctx: any) => res(ctx.status(400), ctx.json('FETCH_ERROR'));

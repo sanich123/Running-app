@@ -17,7 +17,13 @@ import {
   successGetTwoComment,
   successLikeToComment,
 } from './endpoints/comment';
-import { addFriendSuccess, deleteFriendSuccess, getFollowersSuccess, getFollowingsSuccess } from './endpoints/friend';
+import {
+  addFriendSuccess,
+  deleteFriendSuccess,
+  getFollowersFailure,
+  getFollowersSuccess,
+  getFollowingsSuccess,
+} from './endpoints/friend';
 import { likeToActivitySucces, postLikeSuccess } from './endpoints/like';
 import { getProfileFailure, getProfileSuccess, getProfileWithoutPhoto } from './endpoints/profile';
 import { addUser } from './endpoints/user';
@@ -55,5 +61,6 @@ export const handlers = [
   rest.post(`${BASE_URL}/friend/someFriendId`, addFriendSuccess),
   rest.get(`${BASE_URL}/friend/7857abb1-b125-4f39-becf-8f30216b46ec/followers`, getFollowersSuccess),
   rest.get(`${BASE_URL}/friend/926f4a53-08b5-43c6-99ee-cf31fdfbb49b`, getFollowingsSuccess),
+  rest.get(`${BASE_URL}/friend/926f4a53-08b5-43c6-99ee-cf31fdfbb49b/followers`, getFollowersFailure),
   rest.post(`${BASE_URL}/user/someUserId/profile`, addUser),
 ];

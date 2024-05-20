@@ -1,8 +1,6 @@
 import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
 import AvatarShowable from '@C/avatar/showable/showable';
 import ErrorComponent from '@C/error-component/error-component';
-import FollowersCount from '@C/profile/followers-count/followers-count';
-import FollowingCount from '@C/profile/following-count/following-count';
 import ProfileMediaPhotos from '@C/profile/media-photos/media-photos';
 import { saveBio, saveCity, saveGender, saveName, savePhotoUrl, saveSurname, saveWeight } from '@R/profile/profile';
 import { runichApi, useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
@@ -12,6 +10,9 @@ import { useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
+
+import { USERS_VARIANT } from './users-counter/const';
+import UsersCounter from './users-counter/users-counter';
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
@@ -64,8 +65,8 @@ export default function ProfilePage() {
               <Text variant="titleMedium">{profile?.bio}</Text>
             </View>
             <View style={styles.followersBtnsWrapper}>
-              <FollowingCount />
-              <FollowersCount />
+              <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
+              <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
               {!isMeViewing && whosProfileViewing && <AddDeleteFriendBtn friendId={`${whosProfileViewing}`} />}
             </View>
           </>

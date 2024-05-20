@@ -1,4 +1,4 @@
-import ActivityFullViewPage from '@C/activity-full-view-page/activity-full-view';
+import ActivityFullViewPage from '@C/card-full-view/card-full-view';
 
 export default function HomeActivityFullViewPage() {
   return <ActivityFullViewPage />;

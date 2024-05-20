@@ -11,7 +11,7 @@ import { ActivityIndicator } from 'react-native-paper';
 import KmSplit from './km-split/km-split';
 import Metrics from './metrics/metrics';
 
-export default function ActivityFullView() {
+export default function CardFullView() {
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(`${activityId}`);
   const fullViewRef = useRef(null);

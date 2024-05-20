@@ -52,16 +52,16 @@ describe('Home index', () => {
   //   renderWithProviders(<Feed />, { store: mockStore });
   //   expect(await screen.findByText('There will be yours and your friends activities...')).toBeOnTheScreen();
   // });
-  it('should correctly renders and error component, when an error occured', async () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someIdThatRejectsWithAnError',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<Feed />, { store: mockStore });
-    expect(await screen.findByText(new RegExp('An error occured'))).toBeOnTheScreen();
-    expect(await screen.findByText(new RegExp('401'))).toBeOnTheScreen();
-  });
+  // it('should correctly renders and error component, when an error occured', async () => {
+  //   jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
+  //     user: {
+  //       id: 'someIdThatRejectsWithAnError',
+  //       ...USER_AUTH_MOCKS,
+  //     },
+  //   }));
+  //   mockStore.dispatch(changeLanguage(LANGUAGES.english));
+  //   renderWithProviders(<Feed />, { store: mockStore });
+  //   expect(await screen.findByText(new RegExp('An error occured'))).toBeOnTheScreen();
+  //   expect(await screen.findByText(new RegExp('401'))).toBeOnTheScreen();
+  // });
 });

@@ -34,12 +34,18 @@ export const runichApi = createApi({
         return endpointName;
       },
       merge: (currentCache, newItems) => {
-        currentCache.push(...newItems);
+        // const idsInCache = currentCache?.map(({ id }: { id: string }) => id);
+        // const updatedIds = newItems?.map(({ id }: { id: string }) => id);
+        // newItems.forEach((incomingItem) => {
+        //   if (!idsInCache.includes(incomingItem.id)) {
+        //     currentCache.push(incomingItem);
+        //   }
+        // });
+        currentCache.push(newItems);
       },
       forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
+        return currentArg?.page !== previousArg?.page;
       },
-      keepUnusedDataFor: 10,
       providesTags: [Tags.activities],
     }),
     getAllActivityPhotosByUserId: builder.query({

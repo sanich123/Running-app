@@ -23,14 +23,9 @@ export default function OptimizedList() {
     isLoading,
     refetch,
   } = useGetActivitiesByUserIdWithFriendsActivitiesQuery({ id: `${user?.id}`, page, take: 2 });
+
   const { onRefresh, refreshing } = useRefresh(refetch);
   usePrefetchSmthng('getUsers');
-  console.log('page', page, 'activities.length', activities?.length);
-  // useEffect(() => {
-  //   if (isError) {
-  //     setPage(page - 1);
-  //   }
-  // }, [isError, page]);
 
   return (
     <>
@@ -46,7 +41,7 @@ export default function OptimizedList() {
         />
       ) : (
         <>
-          {activities && (
+          {activities?.length ? (
             <FlatList
               onRefresh={onRefresh}
               data={activities}
@@ -58,13 +53,11 @@ export default function OptimizedList() {
               initialNumToRender={5}
               maxToRenderPerBatch={10}
               onEndReached={() => {
-                console.log('end reached');
-                console.log('increment page');
                 setPage(page + 1);
               }}
               ListFooterComponent={() => <ActivityIndicator size="large" />}
             />
-          )}
+          ) : null}
           {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
           {error ? <ErrorComponent error={error} /> : null}
         </>
