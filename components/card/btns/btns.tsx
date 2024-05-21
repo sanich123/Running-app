@@ -3,7 +3,6 @@ import CommentBtn from '@C/card/comment-btn/comment-btn';
 import { CommentType, LikeType } from '@C/card/const ';
 import DeleteBtn from '@C/card/delete-btn/delete-btn';
 import LikeBtn from '@C/card/like-btn/like-btn';
-import LikeBtnSimple from '@C/card/like-btn/like-btn-simple';
 import ShareBtn from '@C/card/share-btn/share-btn';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { MutableRefObject, ReactNode, useState, memo } from 'react';
@@ -36,7 +35,8 @@ export default memo(function CardBtns({
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>
       <View style={styles.layout}>
-        {likes?.length ? <LikeBtn activityId={activityId} /> : <LikeBtnSimple activityId={activityId} />}
+        <LikeBtn activityId={activityId} />
+        {/* {likes?.length ? <LikeBtn activityId={activityId} /> : <LikeBtnSimple activityId={activityId} />} */}
         <CommentBtn activityId={activityId} comments={comments} />
         <ShareBtn cardRef={cardRef} fullViewRef={fullViewRef} />
         {isMineActivity && isShowDeleteBtn && <DeleteBtn activityId={activityId} />}

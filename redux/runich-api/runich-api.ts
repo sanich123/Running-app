@@ -30,23 +30,22 @@ export const runichApi = createApi({
     getActivitiesByUserIdWithFriendsActivities: builder.query({
       query: ({ id, page, take }: { id: string; page: number; take: number }) =>
         `/${activity}/${id}/${all}?page=${page}&take=${take}`,
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }: { id: string }) => ({ type: Tags.activities, id })),
+              { type: Tags.activities, id: 'ActivitiesList' },
+            ]
+          : [{ type: Tags.activities, id: 'ActivitiesList' }],
       serializeQueryArgs: ({ endpointName }) => {
         return endpointName;
       },
       merge: (currentCache, newItems) => {
-        // const idsInCache = currentCache?.map(({ id }: { id: string }) => id);
-        // const updatedIds = newItems?.map(({ id }: { id: string }) => id);
-        // newItems.forEach((incomingItem) => {
-        //   if (!idsInCache.includes(incomingItem.id)) {
-        //     currentCache.push(incomingItem);
-        //   }
-        // });
-        currentCache.push(newItems);
+        currentCache.push(...newItems);
       },
       forceRefetch({ currentArg, previousArg }) {
         return currentArg?.page !== previousArg?.page;
       },
-      providesTags: [Tags.activities],
     }),
     getAllActivityPhotosByUserId: builder.query({
       query: (userId: string) => `/${activity}/${userId}/${photos}`,
@@ -149,7 +148,7 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.comments, Tags.activities],
+      invalidatesTags: [Tags.comments],
     }),
     sendOrDeleteLike: builder.mutation({
       query: (body: SendLike) => ({
@@ -158,7 +157,7 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.likes, Tags.activities],
+      invalidatesTags: [Tags.likes],
     }),
     sendOrDeleteLikeToComment: builder.mutation({
       query: ({ body, commentId }: SendCommentLike) => ({

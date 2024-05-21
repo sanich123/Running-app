@@ -69,7 +69,9 @@ export default memo(function ActivityCard({
           id={id}
         />
       )}
-      <View style={{ height: 40 }}>{likes?.length ? <Likes activityId={id} size={likesSize} /> : null}</View>
+      <View style={{ height: 40 }}>
+        <Likes activityId={id} size={likesSize} />
+      </View>
       <Card.Actions>
         <Btns
           comments={comments}

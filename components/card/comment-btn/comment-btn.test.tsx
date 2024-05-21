@@ -1,4 +1,5 @@
 import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
+import { mockStore } from '@T/utils/mock-store';
 import { screen } from '@testing-library/react-native';
 
 import ActivityCardCommentBtn from './comment-btn';
@@ -11,7 +12,9 @@ jest.mock('expo-router', () => ({
 
 describe('Activity card comment btn', () => {
   it('should correctly renders', () => {
-    renderWithProviders(<ActivityCardCommentBtn activityId="someActivityId" comments={MOCK_COMMENTS} />);
+    renderWithProviders(<ActivityCardCommentBtn activityId="someActivityId" comments={MOCK_COMMENTS} />, {
+      store: mockStore,
+    });
     expect(screen.getByTestId('activityCardCommentBtnIcon')).toBeOnTheScreen();
   });
 });
