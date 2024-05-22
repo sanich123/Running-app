@@ -3,4 +3,5 @@ export type InfiniteScrollListProps = {
   setPage?: (arg: number) => void;
   page: number;
   refetch: () => void;
+  isLastPage: boolean;
 };

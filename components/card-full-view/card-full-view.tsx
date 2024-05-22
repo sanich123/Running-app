@@ -49,8 +49,6 @@ export default function CardFullView() {
                 photoVideoUrls={activity.photoVideoUrls}
                 duration={activity.duration}
                 distance={activity.distance}
-                likes={activity.likes}
-                comments={activity.comments}
                 mapPhotoUrl={activity?.mapPhotoUrl}
                 profile={activity?.profile}
               />

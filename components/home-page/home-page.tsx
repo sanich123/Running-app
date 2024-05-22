@@ -24,21 +24,25 @@ export default function Feed() {
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
   const [page, setPage] = useState(0);
 
-  const {
-    data: activities,
-    error,
-    isLoading,
-    refetch,
-  } = useGetActivitiesByUserIdWithFriendsActivitiesQuery({ id: `${user?.id}`, page, take: 10 }, { skip: !user });
-
+  const { data, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(
+    { id: `${user?.id}`, page, take: 10 },
+    { skip: !user },
+  );
+  console.log(data);
   return (
     <SafeAreaView edges={['left', 'right']} style={[{ flex: 1, justifyContent: 'center' }]}>
       {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
       {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
-      {activities?.length && (
+      {data && data?.activities?.length && (
         <>
-          <InfiniteScrollList dataToRender={activities} page={page} setPage={setPage} refetch={refetch} />
+          <InfiniteScrollList
+            dataToRender={data?.activities}
+            page={page}
+            setPage={setPage}
+            refetch={refetch}
+            isLastPage={data?.isLastPage}
+          />
           <FloatingBtn
             onPressFn={() => {
               dispatch(setIsManualAdding(true));

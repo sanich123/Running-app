@@ -1,4 +1,3 @@
-import { CommentType } from '@C/card/const ';
 import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ROUTES } from '@const/enums';
@@ -9,7 +8,7 @@ import { IconButton, MD3Colors, Badge } from 'react-native-paper';
 
 import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
 
-export default memo(function CommentBtn({ activityId }: { activityId: string; comments: CommentType[] }) {
+export default memo(function CommentBtn({ activityId }: { activityId: string }) {
   const { push } = useRouter();
   const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
   const { data: comments } = useGetCommentsByActivityIdQuery(`${activityId}`);

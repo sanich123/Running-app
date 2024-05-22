@@ -1,6 +1,4 @@
 import { changeLanguage } from '@R/language/language';
-import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
-import { MOCK_LIKE } from '@T/mocks/mock-likes';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
@@ -41,8 +39,6 @@ describe('Activity card', () => {
         duration={duration}
         distance={distance}
         fullViewRef={{ current: undefined }}
-        likes={MOCK_LIKE}
-        comments={MOCK_COMMENTS}
         profile={profile}
       />,
       { store: mockStore },

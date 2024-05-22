@@ -15,7 +15,13 @@ export default function Activities() {
       edges={['left', 'right']}
       style={[{ flex: 1 }, (isLoading || isError || userActivities?.length === 0) && styles.isInCenter]}>
       {userActivities?.length && (
-        <InfiniteScrollList dataToRender={userActivities} refetch={refetch} setPage={undefined} page={0} />
+        <InfiniteScrollList
+          dataToRender={userActivities}
+          refetch={refetch}
+          setPage={undefined}
+          page={0}
+          isLastPage={false}
+        />
       )}
       {isLoading && <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}

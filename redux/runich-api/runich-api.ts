@@ -13,7 +13,7 @@ export const runichApi = createApi({
     baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
     timeout: 25000,
   }),
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => `/${user}`,
@@ -31,9 +31,9 @@ export const runichApi = createApi({
       query: ({ id, page, take }: { id: string; page: number; take: number }) =>
         `/${activity}/${id}/${all}?page=${page}&take=${take}`,
       providesTags: (result) =>
-        result
+        result?.activities
           ? [
-              ...result.map(({ id }: { id: string }) => ({ type: Tags.activities, id })),
+              ...result.activities.map(({ id }: { id: string }) => ({ type: Tags.activities, id })),
               { type: Tags.activities, id: 'ActivitiesList' },
             ]
           : [{ type: Tags.activities, id: 'ActivitiesList' }],
@@ -41,10 +41,11 @@ export const runichApi = createApi({
         return endpointName;
       },
       merge: (currentCache, newItems) => {
-        currentCache.push(...newItems);
+        currentCache.activities.push(...newItems.activities);
+        currentCache.isLastPage = newItems.isLastPage;
       },
       forceRefetch({ currentArg, previousArg }) {
-        return currentArg?.page !== previousArg?.page;
+        return currentArg !== previousArg;
       },
     }),
     getAllActivityPhotosByUserId: builder.query({
