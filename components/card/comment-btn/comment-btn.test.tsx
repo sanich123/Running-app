@@ -1,4 +1,3 @@
-import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
 import { mockStore } from '@T/utils/mock-store';
 import { screen } from '@testing-library/react-native';
 
