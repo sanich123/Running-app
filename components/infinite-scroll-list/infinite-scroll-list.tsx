@@ -6,18 +6,9 @@ import { FlatList } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
 
 import { keyExtractor, renderCardsFunction } from './render-item';
+import { InfiniteScrollListProps } from './type';
 
-export default function OptimizedList({
-  data,
-  setPage,
-  page,
-  refetch,
-}: {
-  data: any;
-  setPage?: (arg: number) => void;
-  page: number;
-  refetch: () => void;
-}) {
+export default function InfiniteScrollList({ dataToRender, setPage, page, refetch }: InfiniteScrollListProps) {
   const { isOldVersion } = useCheckPhoneVersion();
   const { onRefresh, refreshing } = useRefresh(refetch);
 
@@ -26,7 +17,7 @@ export default function OptimizedList({
       {isOldVersion ? (
         <FlashList
           onRefresh={onRefresh}
-          data={data}
+          data={dataToRender}
           refreshing={refreshing}
           renderItem={renderCardsFunction}
           estimatedItemSize={430}
@@ -39,12 +30,12 @@ export default function OptimizedList({
       ) : (
         <FlatList
           onRefresh={onRefresh}
-          data={data}
+          data={dataToRender}
           refreshing={refreshing}
           keyExtractor={keyExtractor}
           renderItem={renderCardsFunction}
           ListEmptyComponent={<EmptyActivitiesList />}
-          ItemSeparatorComponent={() => <Divider />}
+          // ItemSeparatorComponent={() => <Divider />}
           initialNumToRender={5}
           maxToRenderPerBatch={10}
           onEndReachedThreshold={0.5}

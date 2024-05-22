@@ -1,6 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
 import ErrorComponent from '@C/error-component/error-component';
-import OptimizedList from '@C/flash-list/flash-list';
+import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
 import { useGetActivitiesByUserIdQuery } from '@R/runich-api/runich-api';
 import { StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
@@ -14,7 +14,9 @@ export default function Activities() {
     <SafeAreaView
       edges={['left', 'right']}
       style={[{ flex: 1 }, (isLoading || isError || userActivities?.length === 0) && styles.isInCenter]}>
-      {userActivities && <OptimizedList data={userActivities} refetch={refetch} setPage={undefined} page={0} />}
+      {userActivities?.length && (
+        <InfiniteScrollList dataToRender={userActivities} refetch={refetch} setPage={undefined} page={0} />
+      )}
       {isLoading && <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
     </SafeAreaView>
