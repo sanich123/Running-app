@@ -28,7 +28,6 @@ export default function Feed() {
     { id: `${user?.id}`, page, take: 10 },
     { skip: !user },
   );
-  console.log(data);
   return (
     <SafeAreaView edges={['left', 'right']} style={[{ flex: 1, justifyContent: 'center' }]}>
       {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
