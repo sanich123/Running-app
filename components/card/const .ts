@@ -15,6 +15,7 @@ export type LikeType = {
   date: string;
   activityId: string;
   authorId: string;
+  profile: ProfileType;
 };
 
 export type ProfileType = {
@@ -53,6 +54,7 @@ export type ActivityCardProps = {
   fullViewRef: MutableRefObject<ReactNode | null>;
   profile: ProfileType;
   likes: LikeType[];
+  commentsLength: number;
 };
 
 export type PhotoVideoType = { url: string; thumbnail: string | null; blurhash?: string };

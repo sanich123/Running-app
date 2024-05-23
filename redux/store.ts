@@ -6,6 +6,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import activity from './activity/activity';
 import language from './language/language';
 import location from './location/location';
+import mainFeed from './main-feed/main-feed';
 import network from './network/network';
 import profile from './profile/profile';
 import { runichApi } from './runich-api/runich-api';
@@ -24,6 +25,7 @@ const rootReducer = persistReducer(
     location,
     profile,
     activity,
+    mainFeed,
     [runichApi.reducerPath]: runichApi.reducer,
   }),
 );

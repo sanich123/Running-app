@@ -16,6 +16,7 @@ type CardBtnsProps = {
   fullViewRef: MutableRefObject<ReactNode | null>;
   isShowDeleteBtn: boolean;
   likes: LikeType[];
+  commentsLength: number;
 };
 
 export default memo(function CardBtns({
@@ -25,6 +26,7 @@ export default memo(function CardBtns({
   fullViewRef,
   isShowDeleteBtn,
   likes,
+  commentsLength,
 }: CardBtnsProps) {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +37,7 @@ export default memo(function CardBtns({
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>
       <View style={styles.layout}>
         <LikeBtn activityId={activityId} likes={likes} />
-        <CommentBtn activityId={activityId} />
+        <CommentBtn activityId={activityId} commentsLength={commentsLength} />
         <ShareBtn cardRef={cardRef} fullViewRef={fullViewRef} />
         {isMineActivity && isShowDeleteBtn && <DeleteBtn activityId={activityId} />}
       </View>

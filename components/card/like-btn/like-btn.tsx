@@ -1,5 +1,7 @@
 import { useAuth } from '@A/context/auth-context';
+import { setActivityIdWhichLikesToUpdate } from '@R/main-feed/main-feed';
 import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/runich-api/runich-api';
+import { useAppDispatch } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { useContext, useEffect, memo, useState } from 'react';
@@ -15,18 +17,23 @@ import {
 } from './const';
 import { LikeType } from '../const ';
 
-export default memo(function CardLikeBtn({ activityId, likes }: { activityId: string; likes: LikeType[] }) {
-  const [isInitial, setIsInitial] = useState(true);
+export default memo(function LikeBtn({ activityId, likes }: { activityId: string; likes: LikeType[] }) {
+  const dispatch = useAppDispatch();
   const toast = useToast();
   const { user } = useAuth();
-  const { data: updatedLikes } = useGetLikesByActivityIdQuery(activityId, { skip: isInitial });
+  const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
+  const [isNeedToGetUpdatedLikes, setIsNeedToGetUpdatedLikes] = useState(false);
+
+  const { data: updatedLikes } = useGetLikesByActivityIdQuery(activityId, {
+    skip: !isNeedToGetUpdatedLikes,
+  });
   const [sendLike, { data, error }] = useSendLikeMutation();
   const [deleteLike, { data: successDeleting, error: failureDeleting }] = useDeleteLikeMutation();
-  const whatLikesToIterate = isInitial ? likes : updatedLikes;
+  const whatLikesToIterate = !isNeedToGetUpdatedLikes ? likes : updatedLikes;
+
   const isLikedByYou = whatLikesToIterate?.length
     ? whatLikesToIterate?.filter(({ authorId }: { authorId: string }) => authorId === user?.id)
     : null;
-  const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
 
   useEffect(() => {
     if (data || successDeleting) {
@@ -35,7 +42,6 @@ export default memo(function CardLikeBtn({ activityId, likes }: { activityId: st
       } else {
         showCrossPlatformToast('Action completed', ToastDuration.short);
       }
-      setIsInitial(false);
     }
     if (error || failureDeleting) {
       if (Platform.OS === 'web') {
@@ -59,6 +65,8 @@ export default memo(function CardLikeBtn({ activityId, likes }: { activityId: st
           } else {
             await sendLike({ activityId, authorId: user?.id }).unwrap();
           }
+          dispatch(setActivityIdWhichLikesToUpdate(activityId));
+          setIsNeedToGetUpdatedLikes(true);
         }
       }}
       disabled={isLoading || isDisabled}

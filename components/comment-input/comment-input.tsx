@@ -1,6 +1,7 @@
 import { useAuth } from '@A/context/auth-context';
+import { setActivityIdWhichCommentsToUpdate } from '@R/main-feed/main-feed';
 import { usePostCommentWithActivityIdMutation } from '@R/runich-api/runich-api';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { useEffect, useState } from 'react';
@@ -10,6 +11,7 @@ import { TextInput } from 'react-native-paper';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
 
 export default function CommentInput({ activityId }: { activityId: string }) {
+  const dispatch = useAppDispatch();
   const { user } = useAuth();
   const [comment, setComment] = useState('');
   const [postComment, { isLoading: isCommentSending, error: commentSendingError, data: commentResponse }] =
@@ -50,6 +52,7 @@ export default function CommentInput({ activityId }: { activityId: string }) {
               const body = { comment, authorId: user.id };
               try {
                 await postComment({ body, id: activityId }).unwrap();
+                dispatch(setActivityIdWhichCommentsToUpdate(activityId));
               } catch (error) {
                 errorHandler(error);
               }

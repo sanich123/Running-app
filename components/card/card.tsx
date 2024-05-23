@@ -31,6 +31,7 @@ export default memo(function ActivityCard({
   mapPhotoUrlBlurhash,
   profile,
   likes,
+  commentsLength,
 }: ActivityCardProps) {
   const pathname = usePathname();
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
@@ -69,7 +70,7 @@ export default memo(function ActivityCard({
         />
       )}
       <View style={{ height: 40 }}>
-        <Likes activityId={id} size={likesSize} />
+        <Likes activityId={id} size={likesSize} likes={likes} />
       </View>
       <Card.Actions>
         <Btns
@@ -79,6 +80,7 @@ export default memo(function ActivityCard({
           fullViewRef={fullViewRef}
           isShowDeleteBtn={isShowDeleteBtn}
           likes={likes}
+          commentsLength={commentsLength}
         />
       </Card.Actions>
     </Card>

@@ -25,7 +25,7 @@ export default function Feed() {
   const [page, setPage] = useState(0);
 
   const { data, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(
-    { id: `${user?.id}`, page, take: 3 },
+    { id: `${user?.id}`, page, take: 10 },
     { skip: !user },
   );
   return (
