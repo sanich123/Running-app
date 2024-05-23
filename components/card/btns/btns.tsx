@@ -7,15 +7,25 @@ import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { MutableRefObject, ReactNode, useState, memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { LikeType } from '../const ';
+
 type CardBtnsProps = {
   activityId: string;
   userId: string;
   cardRef: MutableRefObject<ReactNode>;
   fullViewRef: MutableRefObject<ReactNode | null>;
   isShowDeleteBtn: boolean;
+  likes: LikeType[];
 };
 
-export default memo(function CardBtns({ activityId, userId, cardRef, fullViewRef, isShowDeleteBtn }: CardBtnsProps) {
+export default memo(function CardBtns({
+  activityId,
+  userId,
+  cardRef,
+  fullViewRef,
+  isShowDeleteBtn,
+  likes,
+}: CardBtnsProps) {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -24,7 +34,7 @@ export default memo(function CardBtns({ activityId, userId, cardRef, fullViewRef
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>
       <View style={styles.layout}>
-        <LikeBtn activityId={activityId} />
+        <LikeBtn activityId={activityId} likes={likes} />
         <CommentBtn activityId={activityId} />
         <ShareBtn cardRef={cardRef} fullViewRef={fullViewRef} />
         {isMineActivity && isShowDeleteBtn && <DeleteBtn activityId={activityId} />}

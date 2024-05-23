@@ -151,12 +151,20 @@ export const runichApi = createApi({
       }),
       invalidatesTags: [Tags.comments],
     }),
-    sendOrDeleteLike: builder.mutation({
+    sendLike: builder.mutation({
       query: (body: SendLike) => ({
         url: `/${like}`,
         method: Methods.post,
         headers,
         body,
+      }),
+      invalidatesTags: [Tags.likes],
+    }),
+    deleteLike: builder.mutation({
+      query: (id: string) => ({
+        url: `/${like}/${id}`,
+        method: Methods.delete,
+        headers,
       }),
       invalidatesTags: [Tags.likes],
     }),
@@ -193,6 +201,7 @@ export const {
   useAddFriendMutation,
   useDeleteFriendMutation,
   usePostCommentWithActivityIdMutation,
-  useSendOrDeleteLikeMutation,
+  useSendLikeMutation,
+  useDeleteLikeMutation,
   useSendOrDeleteLikeToCommentMutation,
 } = runichApi;

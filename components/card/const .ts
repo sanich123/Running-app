@@ -52,6 +52,7 @@ export type ActivityCardProps = {
   distance: number;
   fullViewRef: MutableRefObject<ReactNode | null>;
   profile: ProfileType;
+  likes: LikeType[];
 };
 
 export type PhotoVideoType = { url: string; thumbnail: string | null; blurhash?: string };

@@ -4,8 +4,20 @@ import { ActivityCardProps } from '@C/card/const ';
 export type ActivitiesType = (ActivityCardProps & { user_id: string })[];
 
 export function renderCardsFunction({ item }: { item: ActivityCardProps & { user_id: string } }) {
-  const { description, title, date, sport, photoVideoUrls, mapPhotoUrl, duration, distance, id, user_id, profile } =
-    item;
+  const {
+    description,
+    title,
+    date,
+    sport,
+    photoVideoUrls,
+    mapPhotoUrl,
+    duration,
+    distance,
+    id,
+    user_id,
+    profile,
+    likes,
+  } = item;
 
   return (
     <Card
@@ -24,6 +36,7 @@ export function renderCardsFunction({ item }: { item: ActivityCardProps & { user
       distance={distance}
       fullViewRef={{ current: null }}
       profile={profile}
+      likes={likes}
     />
   );
 }
