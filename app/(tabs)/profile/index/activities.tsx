@@ -2,25 +2,27 @@ import { useAuth } from '@A/context/auth-context';
 import ErrorComponent from '@C/error-component/error-component';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
 import { useGetActivitiesByUserIdQuery } from '@R/runich-api/runich-api';
-import { StyleSheet } from 'react-native';
+import { useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Activities() {
   const { user } = useAuth();
-  const { data: userActivities, isError, isLoading, error, refetch } = useGetActivitiesByUserIdQuery(`${user?.id}`);
+  const [page, setPage] = useState(0);
+  const { data, isLoading, error, refetch } = useGetActivitiesByUserIdQuery(
+    { id: `${user?.id}`, page, take: 10 },
+    { skip: !user },
+  );
 
   return (
-    <SafeAreaView
-      edges={['left', 'right']}
-      style={[{ flex: 1 }, (isLoading || isError || userActivities?.length === 0) && styles.isInCenter]}>
-      {userActivities?.length && (
+    <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
+      {data?.activities?.length && (
         <InfiniteScrollList
-          dataToRender={userActivities}
+          dataToRender={data?.activities}
+          page={page}
+          setPage={setPage}
           refetch={refetch}
-          setPage={undefined}
-          page={0}
-          isLastPage={false}
+          isLastPage={data?.isLastPage}
         />
       )}
       {isLoading && <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />}
@@ -28,10 +30,3 @@ export default function Activities() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  isInCenter: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

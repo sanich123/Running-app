@@ -15,6 +15,7 @@ export const runichApi = createApi({
   }),
 
   endpoints: (builder) => ({
+    //User
     getUsers: builder.query({
       query: () => `/${user}`,
       providesTags: [Tags.users],
@@ -23,8 +24,21 @@ export const runichApi = createApi({
       query: (id: string) => `/${profile}/${id}`,
       providesTags: [Tags.profile],
     }),
+
+    //Activities
     getActivitiesByUserId: builder.query({
-      query: (id: string) => `/${activity}/${id}`,
+      query: ({ id, page, take }: { id: string; page: number; take: number }) =>
+        `/${activity}/${id}?page=${page}&take=${take}`,
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems) => {
+        currentCache.activities.push(...newItems.activities);
+        currentCache.isLastPage = newItems.isLastPage;
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
       providesTags: [Tags.activities],
     }),
     getActivitiesByUserIdWithFriendsActivities: builder.query({
@@ -68,16 +82,34 @@ export const runichApi = createApi({
       query: (id: string) => `/${comment}/${id}`,
       providesTags: [Tags.comments],
     }),
+
+    //Likes
     getLikesByActivityId: builder.query({
       query: (id: string) => `/${like}/${id}`,
-      providesTags: (result, error, arg) =>
-        result ? [...result.map(({ id }: { id: string }) => ({ type: Tags.likes, id })), Tags.likes] : [Tags.likes],
+      providesTags: (result, error, arg) => [{ type: Tags.likes, id: arg }],
     }),
-
+    sendLike: builder.mutation({
+      query: (body: SendLike) => ({
+        url: `/${like}`,
+        method: Methods.post,
+        headers,
+        body,
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: Tags.likes, id: arg.activityId }],
+    }),
+    deleteLike: builder.mutation({
+      query: (id: string) => ({
+        url: `/${like}/${id}`,
+        method: Methods.delete,
+        headers,
+      }),
+      invalidatesTags: [Tags.likes],
+    }),
     getLikesByCommentId: builder.query({
       query: (commentId: string) => `/${comment}/${commentId}/${like}`,
       providesTags: [Tags.commentLikes],
     }),
+
     getLocationsByActivityId: builder.query({
       query: (activityId: string) => `/${activity}/${activityId}/locations`,
       providesTags: [Tags.activities],
@@ -153,23 +185,7 @@ export const runichApi = createApi({
       }),
       invalidatesTags: [Tags.comments],
     }),
-    sendLike: builder.mutation({
-      query: (body: SendLike) => ({
-        url: `/${like}`,
-        method: Methods.post,
-        headers,
-        body,
-      }),
-      invalidatesTags: [Tags.likes],
-    }),
-    deleteLike: builder.mutation({
-      query: (id: string) => ({
-        url: `/${like}/${id}`,
-        method: Methods.delete,
-        headers,
-      }),
-      invalidatesTags: [Tags.likes],
-    }),
+
     sendOrDeleteLikeToComment: builder.mutation({
       query: ({ body, commentId }: SendCommentLike) => ({
         url: `/${comment}/${commentId}/${like}`,

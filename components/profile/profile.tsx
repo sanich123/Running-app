@@ -26,7 +26,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (isMeViewing) {
-      prefetchUserActivities(`${user?.id}`);
+      prefetchUserActivities({ id: `${user?.id}`, page: 0, take: 10 });
     }
   }, []);
 

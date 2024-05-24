@@ -29,7 +29,7 @@ export default function Feed() {
     { skip: !user },
   );
   return (
-    <SafeAreaView edges={['left', 'right']} style={[{ flex: 1, justifyContent: 'center' }]}>
+    <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
       {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
       {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
