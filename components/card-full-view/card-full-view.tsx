@@ -52,7 +52,7 @@ export default function CardFullView() {
                 mapPhotoUrl={activity?.mapPhotoUrl}
                 profile={activity?.profile}
                 likes={activity?.likes}
-                commentsLength={activity?._count.comments}
+                commentsLength={activity?.comments?.length}
               />
               <Metrics />
               <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>

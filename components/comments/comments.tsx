@@ -1,3 +1,4 @@
+import { CommentType } from '@C/card/const ';
 import CommentLikeBtn from '@C/comment-like-btn/comment-like-btn';
 import CommentLikesLength from '@C/comment-likes-length/comment-likes-length';
 import { CustomImage } from '@C/custom-image/custom-image';
@@ -8,22 +9,36 @@ import { useAppSelector } from '@R/typed-hooks';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 
-export default function Comments({ id }: { id: string }) {
-  const { isLoading, error, data: comments } = useGetCommentsByActivityIdQuery(id);
+export default function Comments({ activityId, comments }: { activityId: string; comments: CommentType[] }) {
   const { push } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
+
+  const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(false);
+  const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
+  const {
+    isLoading,
+    error,
+    data: updatedComments,
+  } = useGetCommentsByActivityIdQuery(activityId, { skip: !isNeedToGetUpdatedComments });
+  const whatCommentsToRender = !isNeedToGetUpdatedComments ? comments : updatedComments;
+
+  useEffect(() => {
+    if (activityIdWhichCommentsToUpdate === activityId) {
+      setIsNeedToGetUpdatedComments(true);
+    }
+  }, [activityIdWhichCommentsToUpdate, activityId]);
 
   return (
     <View style={(isLoading || error) && styles.isInCenter}>
       {isLoading && <ActivityIndicator testID="commentsActivityIndicator" />}
       {error ? <ErrorComponent error={error} /> : null}
       {!error &&
-        comments?.length > 0 &&
-        comments?.map(({ authorId, comment, id, date, profile }: CommentResponse) => (
+        whatCommentsToRender?.length > 0 &&
+        whatCommentsToRender?.map(({ authorId, comment, id, date, profile }: CommentResponse) => (
           <Fragment key={id}>
             <Pressable
               onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${authorId}`)}

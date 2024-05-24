@@ -1,7 +1,7 @@
 import { useAuth } from '@A/context/auth-context';
 import { setActivityIdWhichLikesToUpdate } from '@R/main-feed/main-feed';
 import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/runich-api/runich-api';
-import { useAppDispatch } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { useContext, useEffect, memo, useState } from 'react';
@@ -23,7 +23,7 @@ export default memo(function LikeBtn({ activityId, likes }: { activityId: string
   const { user } = useAuth();
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
   const [isNeedToGetUpdatedLikes, setIsNeedToGetUpdatedLikes] = useState(false);
-
+  const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const { data: updatedLikes } = useGetLikesByActivityIdQuery(activityId, {
     skip: !isNeedToGetUpdatedLikes,
   });
@@ -51,6 +51,12 @@ export default memo(function LikeBtn({ activityId, likes }: { activityId: string
       }
     }
   }, [data, error]);
+
+  useEffect(() => {
+    if (activityIdWhichLikesToUpdate === activityId) {
+      setIsNeedToGetUpdatedLikes(true);
+    }
+  }, [activityIdWhichLikesToUpdate, activityId]);
 
   return (
     <IconButton

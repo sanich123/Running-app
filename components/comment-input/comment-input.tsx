@@ -23,7 +23,7 @@ export default function CommentInput({ activityId }: { activityId: string }) {
       if (Platform.OS !== 'web') {
         showCrossPlatformToast('Successfully sent comment!', ToastDuration.short);
       }
-
+      dispatch(setActivityIdWhichCommentsToUpdate(activityId));
       console.log(commentResponse);
       setComment('');
     }
@@ -34,6 +34,7 @@ export default function CommentInput({ activityId }: { activityId: string }) {
       console.log(commentSendingError);
     }
   }, [commentSendingError, commentResponse]);
+
   return (
     <TextInput
       testID={COMMENT_INPUT_TEST_ID}
@@ -52,7 +53,6 @@ export default function CommentInput({ activityId }: { activityId: string }) {
               const body = { comment, authorId: user.id };
               try {
                 await postComment({ body, id: activityId }).unwrap();
-                dispatch(setActivityIdWhichCommentsToUpdate(activityId));
               } catch (error) {
                 errorHandler(error);
               }

@@ -1,6 +1,6 @@
-import ActivityCardLikeBtn from '@C/card/like-btn/like-btn';
+import LikeBtn from '@C/card/like-btn/like-btn';
 import { LikesSize } from '@C/card/likes/const';
-import CardLikes from '@C/card/likes/likes';
+import Likes from '@C/card/likes/likes';
 import MediaList from '@C/card/media-list/media-list';
 import CommentInput from '@C/comment-input/comment-input';
 import Comments from '@C/comments/comments';
@@ -42,11 +42,11 @@ export default function CommentFullViewPage() {
               <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
             </View>
             <View style={styles.columnsLayout}>
-              <ActivityCardLikeBtn activityId={activity?.id} />
-              <CardLikes activityId={activity?.id} size={LikesSize.big} />
+              <LikeBtn activityId={activity?.id} likes={activity?.likes} />
+              <Likes activityId={activity?.id} size={LikesSize.big} likes={activity?.likes} />
             </View>
           </Card.Content>
-          <Comments id={`${activityId}`} />
+          <Comments activityId={`${activityId}`} comments={activity?.comments} />
           {isShowingTextInput && <CommentInput activityId={`${activityId}`} />}
           {!isShowingTextInput && <FloatingBtn onPressFn={() => setIsShowingTextInput(true)} />}
         </View>

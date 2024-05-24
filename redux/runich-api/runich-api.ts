@@ -1,19 +1,19 @@
 import { ActivityToSend } from '@R/activity/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { API_NAME, Methods, Routes, Tags, headers } from './const';
+import { API_NAME, LIMIT_OF_REQUEST, Methods, Routes, Tags, headers } from './const';
 import { SendComment, SendCommentLike, SendFriend, SendLike, SendProfile } from './types';
 
 const { profile, activity, friend, comment, like, activityId, user, all, photos, followers } = Routes;
 
 export const runichApi = createApi({
   reducerPath: API_NAME,
-  tagTypes: [Tags.activities, Tags.profile, Tags.comments, Tags.likes, Tags.friends, Tags.users],
+  tagTypes: [Tags.activities, Tags.profile, Tags.comments, Tags.likes, Tags.friends, Tags.users, Tags.commentLikes],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
-    timeout: 25000,
+    timeout: LIMIT_OF_REQUEST,
   }),
-  // refetchOnReconnect: true,
+
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => `/${user}`,
@@ -70,11 +70,13 @@ export const runichApi = createApi({
     }),
     getLikesByActivityId: builder.query({
       query: (id: string) => `/${like}/${id}`,
-      providesTags: [Tags.likes],
+      providesTags: (result, error, arg) =>
+        result ? [...result.map(({ id }: { id: string }) => ({ type: Tags.likes, id })), Tags.likes] : [Tags.likes],
     }),
+
     getLikesByCommentId: builder.query({
       query: (commentId: string) => `/${comment}/${commentId}/${like}`,
-      providesTags: [Tags.comments],
+      providesTags: [Tags.commentLikes],
     }),
     getLocationsByActivityId: builder.query({
       query: (activityId: string) => `/${activity}/${activityId}/locations`,
@@ -175,7 +177,7 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.comments],
+      invalidatesTags: [Tags.commentLikes],
     }),
   }),
 });

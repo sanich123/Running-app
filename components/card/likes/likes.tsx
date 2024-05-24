@@ -24,7 +24,8 @@ export default memo(function Likes({
   const { dark } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
-  const [isNeedToGetUpdatedLikes, setIsNeedToGetUpdatedLikes] = useState(false);
+  const isInCommentOrFullViewPage = pathname.includes('comment') || pathname.includes('activity');
+  const [isNeedToGetUpdatedLikes, setIsNeedToGetUpdatedLikes] = useState(isInCommentOrFullViewPage);
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const { data: updatedLikes } = useGetLikesByActivityIdQuery(activityId, {
     skip: !isNeedToGetUpdatedLikes,
@@ -61,8 +62,6 @@ export default memo(function Likes({
           {whatLikesToIterate?.length ? (
             <View style={{ position: 'relative' }}>
               {whatLikesToIterate
-                .slice()
-                .sort((a: LikeType, b: LikeType) => Number(new Date(b.date)) - Number(new Date(a.date)))
                 ?.slice(0, lastLikeInTheRow)
                 .map(({ authorId, id, profile }: LikeType & { profile: ProfileType }, index: number) => (
                   <Fragment key={`${id}/${index}/${authorId}`}>

@@ -32,7 +32,7 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           }}
           borderless>
           <CustomImage
-            style={{ width, height: 200 }}
+            style={{ width: width || 350, height: 200 }}
             source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
             contentFit="cover"
             testID={item.url}
