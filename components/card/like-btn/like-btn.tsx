@@ -67,7 +67,7 @@ export default memo(function LikeBtn({ activityId, likes }: { activityId: string
       onPress={async () => {
         if (user) {
           if (isLikedByYou?.length) {
-            await deleteLike(isLikedByYou[0].id).unwrap();
+            await deleteLike({ id: isLikedByYou[0].id, activityId }).unwrap();
           } else {
             await sendLike({ activityId, authorId: user?.id }).unwrap();
           }
