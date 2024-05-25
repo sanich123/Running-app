@@ -24,6 +24,9 @@ export default memo(function LikeBtn({ activityId, likes }: { activityId: string
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
   const [isNeedToGetUpdatedLikes, setIsNeedToGetUpdatedLikes] = useState(false);
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
+  const {
+    profileFromServer: { profilePhoto },
+  } = useAppSelector(({ profile }) => profile);
   const { data: updatedLikes } = useGetLikesByActivityIdQuery(activityId, {
     skip: !isNeedToGetUpdatedLikes,
   });
@@ -69,7 +72,7 @@ export default memo(function LikeBtn({ activityId, likes }: { activityId: string
           if (isLikedByYou?.length) {
             await deleteLike({ id: isLikedByYou[0].id, activityId }).unwrap();
           } else {
-            await sendLike({ activityId, authorId: user?.id }).unwrap();
+            await sendLike({ activityId, authorId: user?.id, profilePhoto }).unwrap();
           }
           dispatch(setActivityIdWhichLikesToUpdate(activityId));
           setIsNeedToGetUpdatedLikes(true);

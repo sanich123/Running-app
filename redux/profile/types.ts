@@ -1,3 +1,5 @@
+import { ProfileType } from '@C/card/const ';
+
 export type ProfilePrivateInfo = {
   email: string;
   password: string;
@@ -29,4 +31,5 @@ export type ProfileSlice = {
   isDisabledWhileSendingProfile: boolean;
   isNeedToPrefetchActivities: boolean;
   settings: ProfileSettings;
+  profileFromServer: ProfileType;
 };

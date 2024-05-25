@@ -1,5 +1,6 @@
 import { ActivityToSend } from '@R/activity/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { uuidv4 } from 'react-native-compressor';
 
 import { API_NAME, LIMIT_OF_REQUEST, Methods, Routes, Tags, headers } from './const';
 import { SendComment, SendCommentLike, SendFriend, SendLike, SendProfile } from './types';
@@ -173,6 +174,25 @@ export const runichApi = createApi({
         body,
       }),
       invalidatesTags: (result, error, arg) => [{ type: Tags.likes, id: arg.activityId }],
+
+      async onQueryStarted({ activityId, authorId, profilePhoto }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          runichApi.util.updateQueryData('getLikesByActivityId', activityId, (draft) => {
+            draft.push({
+              activityId,
+              authorId,
+              date: new Date().toString(),
+              profile: { profilePhoto },
+              id: uuidv4(),
+            });
+          }),
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
     deleteLike: builder.mutation({
       query: ({ id, activityId }: { id: string; activityId: string }) => ({

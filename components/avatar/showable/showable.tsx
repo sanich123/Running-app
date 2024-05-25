@@ -1,8 +1,9 @@
 import { useAuth } from '@A/context/auth-context';
 import { CustomImage } from '@C/custom-image/custom-image';
+import { saveWholeProfile } from '@R/profile/profile';
 import { ProfileSettings } from '@R/profile/types';
 import { useGetUserProfileByIdQuery, useSendProfileInfoMutation } from '@R/runich-api/runich-api';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { memo, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
@@ -11,6 +12,7 @@ import { Avatar } from 'react-native-paper';
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
 export default memo(function AvatarShowable({ size, id }: { size: number; id: string }) {
+  const dispatch = useAppDispatch();
   const { user } = useAuth();
   const { googleInfo } = useAppSelector(({ profile }) => profile);
   const isMineAvatar = id === user?.id;
@@ -38,6 +40,12 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
       }
     }
   }, [isSuccess, isMineAvatar]);
+
+  useEffect(() => {
+    if (profile) {
+      dispatch(saveWholeProfile(profile));
+    }
+  }, [profile]);
 
   async function sendingGooglePhotoToSupabase(body: ProfileSettings, id: string) {
     return await sendProfile({ body, id })

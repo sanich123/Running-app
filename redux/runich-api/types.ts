@@ -30,6 +30,7 @@ export type SendComment = {
 export type SendLike = {
   activityId: string;
   authorId: string;
+  profilePhoto: string;
 };
 
 export type SendCommentLike = {
