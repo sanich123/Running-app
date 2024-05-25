@@ -63,6 +63,7 @@ export default memo(function Likes({
             <View style={{ position: 'relative' }}>
               {whatLikesToIterate
                 ?.slice(0, lastLikeInTheRow)
+                ?.sort((a: LikeType, b: LikeType) => Date.parse(b.date) - Date.parse(a.date))
                 .map(({ authorId, id, profile }: LikeType & { profile: ProfileType }, index: number) => (
                   <Fragment key={`${id}/${index}/${authorId}`}>
                     {whatLikesToIterate.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 ? (

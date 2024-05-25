@@ -174,7 +174,6 @@ export const runichApi = createApi({
         body,
       }),
       invalidatesTags: (result, error, arg) => [{ type: Tags.likes, id: arg.activityId }],
-
       async onQueryStarted({ activityId, authorId, profilePhoto }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           runichApi.util.updateQueryData('getLikesByActivityId', activityId, (draft) => {
@@ -201,6 +200,18 @@ export const runichApi = createApi({
         headers,
       }),
       invalidatesTags: (result, error, arg) => [{ type: Tags.likes, id: arg.activityId }],
+      async onQueryStarted({ activityId, id }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          runichApi.util.updateQueryData('getLikesByActivityId', activityId, (draft) => {
+            draft.filter(({ id: likeId }: { id: string }) => likeId !== id);
+          }),
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
     getLikesByCommentId: builder.query({
       query: (commentId: string) => `/${comment}/${commentId}/${like}`,

@@ -27,7 +27,7 @@ export default memo(function LikeBtn({ activityId, likes }: { activityId: string
   const {
     profileFromServer: { profilePhoto },
   } = useAppSelector(({ profile }) => profile);
-  const { data: updatedLikes } = useGetLikesByActivityIdQuery(activityId, {
+  const { data: updatedLikes, isError } = useGetLikesByActivityIdQuery(activityId, {
     skip: !isNeedToGetUpdatedLikes,
   });
   const [sendLike, { data, error }] = useSendLikeMutation();
@@ -65,7 +65,7 @@ export default memo(function LikeBtn({ activityId, likes }: { activityId: string
     <IconButton
       testID={isLikedByYou?.length ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
       icon={isLikedByYou?.length ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
-      iconColor={MD3Colors.primary50}
+      iconColor={isError ? MD3Colors.error0 : MD3Colors.primary50}
       size={25}
       onPress={async () => {
         if (user) {
