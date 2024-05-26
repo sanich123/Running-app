@@ -1,13 +1,13 @@
 import { screen } from '@testing-library/react-native';
 
 import Comments from './comments';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { MOCK_COMMENTS } from '../../tests/mocks/mock-comments';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
-import { formatDate, getHoursMinutes } from '../../utils/time-formatter';
-import { NUMBER_OF_LIKES } from '../card/number-of-likes/const';
+import { LANGUAGES } from '../../../constants/enums';
+import { changeLanguage } from '../../../redux/language/language';
+import { MOCK_COMMENTS } from '../../../tests/mocks/mock-comments';
+import { mockStore } from '../../../tests/utils/mock-store';
+import { renderWithProviders } from '../../../tests/utils/test-utils';
+import { formatDate, getHoursMinutes } from '../../../utils/time-formatter';
+import { NUMBER_OF_LIKES } from '../../card/number-of-likes/const';
 
 describe('Comments', () => {
   it('should correctly renders with isLoading state and data from server in english', async () => {

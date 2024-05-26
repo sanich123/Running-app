@@ -3,10 +3,10 @@ import { screen } from '@testing-library/react-native';
 
 import CommentsLength from './comments-length';
 import { COMMENTS_ENDING, COMMENTS_LENGTH_TEST_ID, getWordEnding } from './const';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
+import { LANGUAGES } from '../../../constants/enums';
+import { changeLanguage } from '../../../redux/language/language';
+import { mockStore } from '../../../tests/utils/mock-store';
+import { renderWithProviders } from '../../../tests/utils/test-utils';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),

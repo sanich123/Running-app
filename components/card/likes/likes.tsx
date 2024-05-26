@@ -27,7 +27,7 @@ export default memo(function Likes({
   const isInCommentOrFullViewPage = pathname.includes('comment') || pathname.includes('activity');
   const [isNeedToGetUpdatedLikes, setIsNeedToGetUpdatedLikes] = useState(isInCommentOrFullViewPage);
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
-  const { data: updatedLikes } = useGetLikesByActivityIdQuery(activityId, {
+  const { data: updatedLikes, isLoading } = useGetLikesByActivityIdQuery(activityId, {
     skip: !isNeedToGetUpdatedLikes,
   });
 
@@ -51,7 +51,8 @@ export default memo(function Likes({
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => push(`/${place}/${ROUTES.likes}/${activityId}`)}
       borderless
-      style={{ borderRadius: 10 }}>
+      style={{ borderRadius: 10 }}
+      disabled={isLoading}>
       <View style={styles.likesWrapper}>
         <View
           style={[

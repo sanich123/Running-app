@@ -1,6 +1,5 @@
 import { ActivityToSend } from '@R/activity/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { uuidv4 } from 'react-native-compressor';
 
 import { API_NAME, LIMIT_OF_REQUEST, Methods, Routes, Tags, headers } from './const';
 import { SendComment, SendCommentLike, SendFriend, SendLike, SendProfile } from './types';
@@ -160,6 +159,27 @@ export const runichApi = createApi({
       }),
       invalidatesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.id }],
     }),
+    getLikesByCommentId: builder.query({
+      query: (commentId: string) => `/${comment}/${commentId}/${like}`,
+      providesTags: (result, error, arg) => [{ type: Tags.commentLikes, id: arg }],
+    }),
+    sendLikeToComment: builder.mutation({
+      query: ({ body, commentId }: SendCommentLike) => ({
+        url: `/${comment}/${commentId}/${like}`,
+        method: Methods.post,
+        headers,
+        body,
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: Tags.commentLikes, id: arg.commentId }],
+    }),
+    deleteLikeToComment: builder.mutation({
+      query: ({ likeId, commentId }: { likeId: string; commentId: string }) => ({
+        url: `/${comment}/${likeId}/${like}`,
+        method: Methods.delete,
+        headers,
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: Tags.commentLikes, id: arg.commentId }],
+    }),
 
     //Likes
     getLikesByActivityId: builder.query({
@@ -182,7 +202,6 @@ export const runichApi = createApi({
               authorId,
               date: new Date().toString(),
               profile: { profilePhoto },
-              id: uuidv4(),
             });
           }),
         );
@@ -213,19 +232,6 @@ export const runichApi = createApi({
         }
       },
     }),
-    getLikesByCommentId: builder.query({
-      query: (commentId: string) => `/${comment}/${commentId}/${like}`,
-      providesTags: [Tags.commentLikes],
-    }),
-    sendOrDeleteLikeToComment: builder.mutation({
-      query: ({ body, commentId }: SendCommentLike) => ({
-        url: `/${comment}/${commentId}/${like}`,
-        method: Methods.post,
-        headers,
-        body,
-      }),
-      invalidatesTags: [Tags.commentLikes],
-    }),
   }),
 });
 
@@ -252,5 +258,6 @@ export const {
   usePostCommentWithActivityIdMutation,
   useSendLikeMutation,
   useDeleteLikeMutation,
-  useSendOrDeleteLikeToCommentMutation,
+  useSendLikeToCommentMutation,
+  useDeleteLikeToCommentMutation,
 } = runichApi;

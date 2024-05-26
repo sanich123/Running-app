@@ -2,8 +2,8 @@ import LikeBtn from '@C/card/like-btn/like-btn';
 import { LikesSize } from '@C/card/likes/const';
 import Likes from '@C/card/likes/likes';
 import MediaList from '@C/card/media-list/media-list';
-import CommentInput from '@C/comment-input/comment-input';
-import Comments from '@C/comments/comments';
+import CommentInput from '@C/comment-page/comment-input/comment-input';
+import Comments from '@C/comment-page/comments/comments';
 import ErrorComponent from '@C/error-component/error-component';
 import FloatingBtn from '@C/floating-btn/floating-btn';
 import UserNameSurname from '@C/user-name-surname/user-name-surname';
@@ -21,8 +21,8 @@ export default function CommentFullViewPage() {
 
   return (
     <ScrollView contentContainerStyle={[(isLoading || isError) && styles.isInCenter]}>
-      {isLoading && <ActivityIndicator size="large" />}
       {error ? <ErrorComponent error={error} /> : null}
+      {isLoading && <ActivityIndicator size="large" />}
       {activity && (
         <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
           {(activity?.mapPhotoUrl || activity?.photoVideoUrls?.length > 0) && (
@@ -47,8 +47,11 @@ export default function CommentFullViewPage() {
             </View>
           </Card.Content>
           <Comments activityId={`${activityId}`} comments={activity?.comments} />
-          {isShowingTextInput && <CommentInput activityId={`${activityId}`} />}
-          {!isShowingTextInput && <FloatingBtn onPressFn={() => setIsShowingTextInput(true)} />}
+          {isShowingTextInput ? (
+            <CommentInput activityId={`${activityId}`} setIsShowingTextInput={setIsShowingTextInput} />
+          ) : (
+            <FloatingBtn onPressFn={() => setIsShowingTextInput(true)} />
+          )}
         </View>
       )}
     </ScrollView>

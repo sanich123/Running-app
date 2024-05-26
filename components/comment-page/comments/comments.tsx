@@ -1,6 +1,6 @@
 import { CommentType } from '@C/card/const ';
-import CommentLikeBtn from '@C/comment-like-btn/comment-like-btn';
-import CommentLikesLength from '@C/comment-likes-length/comment-likes-length';
+import CommentLikeBtn from '@C/comment-page/comment-like-btn/comment-like-btn';
+import CommentLikesLength from '@C/comment-page/comment-likes-length/comment-likes-length';
 import { CustomImage } from '@C/custom-image/custom-image';
 import ErrorComponent from '@C/error-component/error-component';
 import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
@@ -10,10 +10,11 @@ import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { Fragment, useEffect, useState } from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
-import { ActivityIndicator, Divider, Text } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 export default function Comments({ activityId, comments }: { activityId: string; comments: CommentType[] }) {
+  const { dark } = useTheme();
   const { push } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
 
@@ -40,9 +41,10 @@ export default function Comments({ activityId, comments }: { activityId: string;
         whatCommentsToRender?.length > 0 &&
         whatCommentsToRender?.map(({ authorId, comment, id, date, profile }: CommentResponse) => (
           <Fragment key={id}>
-            <Pressable
-              onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${authorId}`)}
-              style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+            <TouchableRipple
+              rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+              borderless
+              onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${authorId}`)}>
               <View style={styles.commentWrapper}>
                 <CustomImage
                   style={{ width: 28, height: 28, borderRadius: 70 }}
@@ -64,7 +66,7 @@ export default function Comments({ activityId, comments }: { activityId: string;
                   </View>
                 </View>
               </View>
-            </Pressable>
+            </TouchableRipple>
             <View style={styles.textCommentWrapper}>
               <Text variant="bodyLarge">{comment}</Text>
             </View>

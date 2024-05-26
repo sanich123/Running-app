@@ -1,4 +1,4 @@
-import { LANGUAGES } from '../../constants/enums';
+import { LANGUAGES } from '../../../constants/enums';
 
 export const COMMENTS_LENGTH_TEST_ID = 'commentsLengthBtn';
 export const COMMENTS_ENDING = {

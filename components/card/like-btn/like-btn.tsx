@@ -74,11 +74,11 @@ export default memo(function LikeBtn({ activityId, likes }: { activityId: string
           } else {
             await sendLike({ activityId, authorId: user?.id, profilePhoto }).unwrap();
           }
-          dispatch(setActivityIdWhichLikesToUpdate(activityId));
           setIsNeedToGetUpdatedLikes(true);
+          dispatch(setActivityIdWhichLikesToUpdate(activityId));
         }
       }}
-      disabled={isLoading || isDisabled}
+      disabled={isLoading || isDisabled || isError}
     />
   );
 });
