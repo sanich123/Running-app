@@ -10,10 +10,11 @@ import {
   resetActivityInfo,
   setIsEditingActivity,
 } from '@R/activity/activity';
-import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
+import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
+import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -22,12 +23,22 @@ export default function Feed() {
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
+  const { needToRefreshActivities } = useAppSelector(({ mainFeed }) => mainFeed);
   const [page, setPage] = useState(0);
 
   const { data, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(
     { id: `${user?.id}`, page, take: 10 },
     { skip: !user },
   );
+
+  useEffect(() => {
+    if (needToRefreshActivities) {
+      setPage(0);
+      setTimeout(() => dispatch(runichApi.util.resetApiState()), 0);
+      dispatch(setIsNeedToRefreshActivities(false));
+    }
+  }, [needToRefreshActivities]);
+
   return (
     <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
       {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}

@@ -3,7 +3,7 @@ import { setActivityIdWhichLikesToUpdate } from '@R/main-feed/main-feed';
 import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { useContext, useEffect, memo, useState } from 'react';
 import { Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
@@ -16,13 +16,15 @@ import {
   CARD_LIKE_BTN_ICON_NOT_LIKED,
 } from './const';
 import { LikeType } from '../const ';
+import { LIKE_BTN } from '../likes/const';
 
 export default memo(function LikeBtn({ activityId, likes }: { activityId: string; likes: LikeType[] }) {
   const dispatch = useAppDispatch();
   const toast = useToast();
   const { user } = useAuth();
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
-  const [isNeedToGetUpdatedLikes, setIsNeedToGetUpdatedLikes] = useState(false);
+  const [isNeedToGetUpdatedLikes, setIsNeedToGetUpdatedLikes] = useState(true);
+  const { language } = useAppSelector(({ language }) => language);
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const {
     profileFromServer: { profilePhoto },
@@ -30,8 +32,8 @@ export default memo(function LikeBtn({ activityId, likes }: { activityId: string
   const { data: updatedLikes, isError } = useGetLikesByActivityIdQuery(activityId, {
     skip: !isNeedToGetUpdatedLikes,
   });
-  const [sendLike, { data, error }] = useSendLikeMutation();
-  const [deleteLike, { data: successDeleting, error: failureDeleting }] = useDeleteLikeMutation();
+  const [sendLike, { error: errorSending }] = useSendLikeMutation();
+  const [deleteLike, { error: failureDeleting }] = useDeleteLikeMutation();
   const whatLikesToIterate = !isNeedToGetUpdatedLikes ? likes : updatedLikes;
 
   const isLikedByYou = whatLikesToIterate?.length
@@ -39,21 +41,15 @@ export default memo(function LikeBtn({ activityId, likes }: { activityId: string
     : null;
 
   useEffect(() => {
-    if (data || successDeleting) {
+    if (errorSending || failureDeleting) {
+      const event = LIKE_BTN[language].errorAction(failureDeleting ? 'delete' : 'send');
       if (Platform.OS === 'web') {
-        toast.show('Action completed');
+        toast.show(event);
       } else {
-        showCrossPlatformToast('Action completed', ToastDuration.short);
+        showCrossPlatformToast(event);
       }
     }
-    if (error || failureDeleting) {
-      if (Platform.OS === 'web') {
-        toast.show(`An error while ${failureDeleting ? 'deleting' : 'sending'} like`);
-      } else {
-        showCrossPlatformToast('An error while sending like', ToastDuration.long);
-      }
-    }
-  }, [data, error]);
+  }, [errorSending, failureDeleting]);
 
   useEffect(() => {
     if (activityIdWhichLikesToUpdate === activityId) {

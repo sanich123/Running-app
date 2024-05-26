@@ -2,22 +2,18 @@ import LikeBtn from '@C/card/like-btn/like-btn';
 import { LikesSize } from '@C/card/likes/const';
 import Likes from '@C/card/likes/likes';
 import MediaList from '@C/card/media-list/media-list';
-import CommentInput from '@C/comment-page/comment-input/comment-input';
 import Comments from '@C/comment-page/comments/comments';
 import ErrorComponent from '@C/error-component/error-component';
-import FloatingBtn from '@C/floating-btn/floating-btn';
 import UserNameSurname from '@C/user-name-surname/user-name-surname';
 import UserSportDate from '@C/user-sport-date/user-sport-date';
 import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Card, Text } from 'react-native-paper';
 
 export default function CommentFullViewPage() {
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(`${activityId}`);
-  const [isShowingTextInput, setIsShowingTextInput] = useState(false);
 
   return (
     <ScrollView contentContainerStyle={[(isLoading || isError) && styles.isInCenter]}>
@@ -47,11 +43,6 @@ export default function CommentFullViewPage() {
             </View>
           </Card.Content>
           <Comments activityId={`${activityId}`} comments={activity?.comments} />
-          {isShowingTextInput ? (
-            <CommentInput activityId={`${activityId}`} setIsShowingTextInput={setIsShowingTextInput} />
-          ) : (
-            <FloatingBtn onPressFn={() => setIsShowingTextInput(true)} />
-          )}
         </View>
       )}
     </ScrollView>

@@ -92,13 +92,7 @@ export const runichApi = createApi({
     getActivitiesByUserIdWithFriendsActivities: builder.query({
       query: ({ id, page, take }: { id: string; page: number; take: number }) =>
         `/${activity}/${id}/${all}?page=${page}&take=${take}`,
-      providesTags: (result) =>
-        result?.activities
-          ? [
-              ...result.activities.map(({ id }: { id: string }) => ({ type: Tags.activities, id })),
-              { type: Tags.activities, id: 'ActivitiesList' },
-            ]
-          : [{ type: Tags.activities, id: 'ActivitiesList' }],
+      providesTags: [Tags.activities],
       serializeQueryArgs: ({ endpointName }) => {
         return endpointName;
       },
@@ -219,18 +213,6 @@ export const runichApi = createApi({
         headers,
       }),
       invalidatesTags: (result, error, arg) => [{ type: Tags.likes, id: arg.activityId }],
-      async onQueryStarted({ activityId, id }, { dispatch, queryFulfilled }) {
-        const patchResult = dispatch(
-          runichApi.util.updateQueryData('getLikesByActivityId', activityId, (draft) => {
-            draft.filter(({ id: likeId }: { id: string }) => likeId !== id);
-          }),
-        );
-        try {
-          await queryFulfilled;
-        } catch {
-          patchResult.undo();
-        }
-      },
     }),
   }),
 });

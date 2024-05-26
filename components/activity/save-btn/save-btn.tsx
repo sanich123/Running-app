@@ -7,6 +7,7 @@ import {
 } from '@R/activity/activity';
 import { ActivityToSend } from '@R/activity/types';
 import { resetLocationsFromBackground } from '@R/location/location';
+import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
 import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
@@ -61,6 +62,7 @@ export default function SaveBtn() {
       }
       dispatch(resetActivityInfo());
       dispatch(resetLocationsFromBackground());
+      dispatch(setIsNeedToRefreshActivities(true));
       replace(`/`);
     }
     if ((isError && error) || (isErrorUpdating && errorUpdating)) {

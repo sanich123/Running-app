@@ -10,22 +10,13 @@ import { Fragment, memo, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
-import { LikesSize, MAX_IN_ROW, MAX_NUMBER_IN_ROW_OTHER_PAGE, SHIFT_RIGHT } from './const';
+import { LikesProps, LikesSize, MAX_IN_ROW, MAX_NUMBER_IN_ROW_OTHER_PAGE, SHIFT_RIGHT } from './const';
 
-export default memo(function Likes({
-  activityId,
-  size,
-  likes,
-}: {
-  activityId: string;
-  size: LikesSize;
-  likes: LikeType[];
-}) {
+export default memo(function Likes({ activityId, size, likes }: LikesProps) {
   const { dark } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
-  const isInCommentOrFullViewPage = pathname.includes('comment') || pathname.includes('activity');
-  const [isNeedToGetUpdatedLikes, setIsNeedToGetUpdatedLikes] = useState(isInCommentOrFullViewPage);
+  const [isNeedToGetUpdatedLikes, setIsNeedToGetUpdatedLikes] = useState(true);
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const { data: updatedLikes, isLoading } = useGetLikesByActivityIdQuery(activityId, {
     skip: !isNeedToGetUpdatedLikes,

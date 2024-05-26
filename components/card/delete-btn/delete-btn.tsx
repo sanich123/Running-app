@@ -1,5 +1,6 @@
+import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
 import { useDeleteActivityByIdMutation } from '@R/runich-api/runich-api';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { errorHandler } from '@U/error-handler';
 import { useRouter } from 'expo-router';
@@ -10,6 +11,7 @@ import { IconButton, MD3Colors } from 'react-native-paper';
 import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from './const';
 
 export default function CardDeleteBtn({ activityId }: { activityId: string }) {
+  const dispatch = useAppDispatch();
   const [deleteActivityById, { data, error }] = useDeleteActivityByIdMutation();
   const { isLoading, isDisabled, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
   const { back } = useRouter();
@@ -17,12 +19,13 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       setIsLoading(false);
       setIsDisabled(false);
     }
     if (error) {
-      console.log(error);
+      errorHandler(error);
+      setIsLoading(false);
+      setIsDisabled(false);
     }
   }, [data, error]);
 
@@ -30,6 +33,7 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
     setIsLoading(true);
     setIsDisabled(true);
     await deleteActivityById(activityId).unwrap();
+    dispatch(setIsNeedToRefreshActivities(true));
     back();
   }
 
@@ -40,29 +44,21 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
       iconColor={MD3Colors.primary50}
       size={20}
       onPress={async () => {
-        try {
-          if (Platform.OS === 'web') {
-            successHandler();
-          } else {
-            Alert.alert(
-              CARD_DELETE_BTN[language].deleteActivity,
-              CARD_DELETE_BTN[language].question,
-              [
-                {
-                  text: CARD_DELETE_BTN[language].accept,
-                  onPress: successHandler,
-                  style: 'cancel',
-                },
-              ],
+        if (Platform.OS === 'web') {
+          successHandler();
+        } else {
+          Alert.alert(
+            CARD_DELETE_BTN[language].deleteActivity,
+            CARD_DELETE_BTN[language].question,
+            [
               {
-                cancelable: true,
+                text: CARD_DELETE_BTN[language].accept,
+                onPress: successHandler,
+                style: 'cancel',
               },
-            );
-          }
-        } catch (error) {
-          errorHandler(error);
-          setIsLoading(false);
-          setIsDisabled(false);
+            ],
+            { cancelable: true },
+          );
         }
       }}
       disabled={isLoading || isDisabled}
