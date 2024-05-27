@@ -18,6 +18,7 @@ export default function Comments({ activityId, comments }: { activityId: string;
     isLoading,
     error,
     data: updatedComments,
+    refetch,
   } = useGetCommentsByActivityIdQuery(activityId, { skip: !isNeedToGetUpdatedComments });
   const whatCommentsToRender = !isNeedToGetUpdatedComments ? comments : updatedComments;
 
@@ -30,11 +31,19 @@ export default function Comments({ activityId, comments }: { activityId: string;
   return (
     <View style={(isLoading || error) && styles.isInCenter}>
       {isLoading && <ActivityIndicator testID="commentsActivityIndicator" />}
-      {error ? <ErrorComponent error={error} /> : null}
+      {error || updatedComments?.message ? <ErrorComponent error={error || updatedComments} refetch={refetch} /> : null}
       {!error &&
         whatCommentsToRender?.length > 0 &&
         whatCommentsToRender?.map(({ authorId, comment, id, date, profile }: CommentResponse) => (
-          <Comment authorId={authorId} comment={comment} key={id} id={id} date={date} profile={profile} />
+          <Comment
+            authorId={authorId}
+            comment={comment}
+            key={id}
+            id={id}
+            date={date}
+            profile={profile}
+            activityId={activityId}
+          />
         ))}
       {isShowingTextInput ? (
         <CommentInput activityId={`${activityId}`} setIsShowingTextInput={setIsShowingTextInput} />

@@ -58,7 +58,7 @@ export default memo(function LikeBtn({ activityId }: { activityId: string }) {
           }
         }
       }}
-      disabled={isLoading || isDisabled || isError || isLikesLoading}
+      disabled={isLoading || isDisabled || isError || isLikesLoading || !!likes?.message}
     />
   );
 });

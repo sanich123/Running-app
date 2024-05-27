@@ -13,7 +13,7 @@ import Metrics from './metrics/metrics';
 
 export default function CardFullView() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(`${activityId}`);
+  const { isLoading, data: activity, error, isError, refetch } = useGetActivityByActivityIdQuery(`${activityId}`);
   const fullViewRef = useRef(null);
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const prefetchLikes = runichApi.usePrefetch('getLikesByActivityId');
@@ -33,7 +33,7 @@ export default function CardFullView() {
         contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
         <View ref={fullViewRef} collapsable={false}>
           {isLoading && <ActivityIndicator size="large" />}
-          {error ? <ErrorComponent error={error} /> : null}
+          {error ? <ErrorComponent error={error} refetch={refetch} /> : null}
           {activity && (
             <>
               <Card
@@ -51,7 +51,6 @@ export default function CardFullView() {
                 distance={activity.distance}
                 mapPhotoUrl={activity?.mapPhotoUrl}
                 profile={activity?.profile}
-                likes={activity?.likes}
                 commentsLength={activity?.comments?.length}
               />
               <Metrics />

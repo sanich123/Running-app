@@ -26,7 +26,7 @@ export default function Activities() {
         />
       )}
       {isLoading && <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />}
-      {error || data?.message ? <ErrorComponent error={error || data} /> : null}
+      {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}
     </SafeAreaView>
   );
 }

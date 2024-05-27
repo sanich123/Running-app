@@ -6,24 +6,30 @@ import {
 } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
-import { MD3Colors } from 'react-native-paper';
+import { IconButton, MD3Colors } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
 import { COMMENT_LIKE_BTN } from './const';
 
 export default function CommentLikeBtn({ commentId }: { commentId: string }) {
-  const { language } = useAppSelector(({ language }) => language);
-  const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
+  const toast = useToast();
+  const { language } = useAppSelector(({ language }) => language);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [sendLikeToComment, { isSuccess: isSuccessSending, isError: isErrorSending }] = useSendLikeToCommentMutation();
   const [deleteLikeToComment, { isSuccess: isSuccessDeleting, error: isErrorDeleting }] =
     useDeleteLikeToCommentMutation();
-  const { isError: isErrorToGetLikes, data: commentLikes } = useGetLikesByCommentIdQuery(commentId);
-  const youGaveCommentLike = commentLikes?.filter(({ authorId }: { authorId: string }) => authorId === user?.id);
+  const {
+    isError: isErrorToGetLikes,
+    data: commentLikes,
+    isLoading: isLoadingLikes,
+  } = useGetLikesByCommentIdQuery(commentId);
+  const youGaveCommentLike = commentLikes?.length
+    ? commentLikes?.filter(({ authorId }: { authorId: string }) => authorId === user?.id)
+    : [];
 
   useEffect(() => {
     if (isErrorSending || isErrorDeleting) {
@@ -40,12 +46,12 @@ export default function CommentLikeBtn({ commentId }: { commentId: string }) {
   }, [isErrorSending, isErrorDeleting, isSuccessSending, isSuccessDeleting]);
 
   return (
-    <MaterialCommunityIcons
+    <IconButton
       testID={`commentLikeBtn${youGaveCommentLike?.length ? '-active' : ''}`}
-      name={`heart${commentLikes?.length ? '' : '-outline'}`}
+      icon={youGaveCommentLike?.length ? 'cards-heart' : 'cards-heart-outline'}
       size={20}
-      style={[{ marginLeft: 10, marginBottom: 10 }, (isLoading || isErrorToGetLikes) && { opacity: 0.5 }]}
-      color={youGaveCommentLike ? MD3Colors.error50 : MD3Colors.primary50}
+      style={[{ marginLeft: 10 }, (isLoading || isErrorToGetLikes) && { opacity: 0.5 }]}
+      iconColor={youGaveCommentLike?.length ? MD3Colors.error50 : MD3Colors.primary50}
       onPress={async () => {
         setIsLoading(true);
         if (youGaveCommentLike?.length) {
@@ -54,7 +60,7 @@ export default function CommentLikeBtn({ commentId }: { commentId: string }) {
           await sendLikeToComment({ body: { commentId, authorId: `${user?.id}` }, commentId }).unwrap();
         }
       }}
-      disabled={isLoading || isErrorToGetLikes}
+      disabled={isLoading || isErrorToGetLikes || isLoadingLikes}
     />
   );
 }

@@ -153,6 +153,15 @@ export const runichApi = createApi({
       }),
       invalidatesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.id }],
     }),
+    deleteCommentByCommentId: builder.mutation({
+      query: ({ commentId, activityId }: { commentId: string; activityId: string }) => ({
+        url: `/${comment}/${commentId}`,
+        method: Methods.delete,
+        headers,
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.activityId }],
+    }),
+
     getLikesByCommentId: builder.query({
       query: (commentId: string) => `/${comment}/${commentId}/${like}`,
       providesTags: (result, error, arg) => [{ type: Tags.commentLikes, id: arg }],
@@ -238,6 +247,7 @@ export const {
   useAddFriendMutation,
   useDeleteFriendMutation,
   usePostCommentWithActivityIdMutation,
+  useDeleteCommentByCommentIdMutation,
   useSendLikeMutation,
   useDeleteLikeMutation,
   useSendLikeToCommentMutation,

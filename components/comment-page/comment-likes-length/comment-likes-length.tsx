@@ -8,7 +8,9 @@ import { Text } from 'react-native-paper';
 export default function CommentLikesLength({ id }: { id: string }) {
   const { user } = useAuth();
   const { data: commentLikes, error, isError } = useGetLikesByCommentIdQuery(id);
-  const youGaveCommentLike = commentLikes?.some(({ authorId }: { authorId: string }) => authorId === user?.id);
+  const youGaveCommentLike = commentLikes?.length
+    ? commentLikes?.some(({ authorId }: { authorId: string }) => authorId === user?.id)
+    : false;
   const commentLikesLength = youGaveCommentLike ? commentLikes?.length - 1 : commentLikes?.length;
   const { language } = useAppSelector(({ language }) => language);
   return (

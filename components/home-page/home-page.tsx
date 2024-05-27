@@ -41,10 +41,10 @@ export default function Feed() {
 
   return (
     <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
-      {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
-      {isLoading && <ActivityIndicator size="large" testID="homeActivityIndicator" />}
-      {error ? <ErrorComponent error={error} /> : null}
-      {data && data?.activities?.length && (
+      {isHaveUnsyncedActivity ? <UnsendedActivitiesIndicator /> : null}
+      {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
+      {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}
+      {!data?.message && data?.activities?.length ? (
         <>
           <InfiniteScrollList
             dataToRender={data?.activities}
@@ -64,7 +64,7 @@ export default function Feed() {
             }}
           />
         </>
-      )}
+      ) : null}
     </SafeAreaView>
   );
 }
