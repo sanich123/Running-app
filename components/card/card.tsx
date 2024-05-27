@@ -30,7 +30,6 @@ export default memo(function ActivityCard({
   mapPhotoUrl,
   mapPhotoUrlBlurhash,
   profile,
-  likes,
   commentsLength,
 }: ActivityCardProps) {
   const pathname = usePathname();
@@ -70,7 +69,7 @@ export default memo(function ActivityCard({
         />
       )}
       <View style={{ height: 40 }}>
-        <Likes activityId={id} size={likesSize} likes={likes} />
+        <Likes activityId={id} size={likesSize} />
       </View>
       <Card.Actions>
         <Btns
@@ -79,7 +78,6 @@ export default memo(function ActivityCard({
           cardRef={cardRef}
           fullViewRef={fullViewRef}
           isShowDeleteBtn={isShowDeleteBtn}
-          likes={likes}
           commentsLength={commentsLength}
         />
       </Card.Actions>

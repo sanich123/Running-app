@@ -4,20 +4,10 @@ import DeleteBtn from '@C/card/delete-btn/delete-btn';
 import LikeBtn from '@C/card/like-btn/like-btn';
 import ShareBtn from '@C/card/share-btn/share-btn';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { MutableRefObject, ReactNode, useState, memo } from 'react';
+import { useState, memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { LikeType } from '../const ';
-
-type CardBtnsProps = {
-  activityId: string;
-  userId: string;
-  cardRef: MutableRefObject<ReactNode>;
-  fullViewRef: MutableRefObject<ReactNode | null>;
-  isShowDeleteBtn: boolean;
-  likes: LikeType[];
-  commentsLength: number;
-};
+import { CardBtnsProps } from './const';
 
 export default memo(function CardBtns({
   activityId,
@@ -25,7 +15,6 @@ export default memo(function CardBtns({
   cardRef,
   fullViewRef,
   isShowDeleteBtn,
-  likes,
   commentsLength,
 }: CardBtnsProps) {
   const { user } = useAuth();
@@ -36,7 +25,7 @@ export default memo(function CardBtns({
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>
       <View style={styles.layout}>
-        <LikeBtn activityId={activityId} likes={likes} />
+        <LikeBtn activityId={activityId} />
         <CommentBtn activityId={activityId} commentsLength={commentsLength} />
         <ShareBtn cardRef={cardRef} fullViewRef={fullViewRef} />
         {isMineActivity && isShowDeleteBtn && <DeleteBtn activityId={activityId} />}

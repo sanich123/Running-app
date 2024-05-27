@@ -20,7 +20,6 @@ export function renderCardsFunction({
     id,
     user_id,
     profile,
-    likes,
     _count: { comments: commentsLength },
   } = item;
 
@@ -41,7 +40,6 @@ export function renderCardsFunction({
       distance={distance}
       fullViewRef={{ current: null }}
       profile={profile}
-      likes={likes}
       commentsLength={commentsLength}
     />
   );

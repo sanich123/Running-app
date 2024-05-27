@@ -41,7 +41,6 @@ export default function InfiniteScrollList({
           keyExtractor={keyExtractor}
           renderItem={renderCardsFunction}
           ListEmptyComponent={<EmptyActivitiesList />}
-          // ItemSeparatorComponent={() => <Divider />}
           initialNumToRender={5}
           maxToRenderPerBatch={10}
           onEndReachedThreshold={Platform.OS === 'web' ? 0.8 : 0.5}

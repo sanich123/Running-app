@@ -1,7 +1,5 @@
 import { LANGUAGES } from '@const/enums';
 
-import { LikeType } from '../const ';
-
 export const MAX_IN_ROW = 9;
 export const MAX_NUMBER_IN_ROW_OTHER_PAGE = 3;
 export const SHIFT_RIGHT = 23;
@@ -14,7 +12,6 @@ export enum LikesSize {
 export type LikesProps = {
   activityId: string;
   size: LikesSize;
-  likes: LikeType[];
 };
 
 export const LIKE_BTN = {

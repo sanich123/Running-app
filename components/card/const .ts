@@ -53,7 +53,6 @@ export type ActivityCardProps = {
   distance: number;
   fullViewRef: MutableRefObject<ReactNode | null>;
   profile: ProfileType;
-  likes: LikeType[];
   commentsLength: number;
 };
 
