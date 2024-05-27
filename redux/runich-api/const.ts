@@ -13,6 +13,7 @@ export enum Tags {
 export enum Methods {
   post = 'POST',
   delete = 'DELETE',
+  patch = 'PATCH',
 }
 
 export enum Routes {

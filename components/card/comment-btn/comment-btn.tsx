@@ -20,7 +20,11 @@ export default memo(function CommentBtn({
   const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(false);
-  const { data: comments } = useGetCommentsByActivityIdQuery(`${activityId}`, { skip: !isNeedToGetUpdatedComments });
+  const {
+    data: comments,
+    isError: isErrorLoadingComments,
+    isLoading: isLoadingComments,
+  } = useGetCommentsByActivityIdQuery(`${activityId}`, { skip: !isNeedToGetUpdatedComments });
   const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : comments?.length;
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
@@ -45,7 +49,7 @@ export default memo(function CommentBtn({
         iconColor={MD3Colors.primary50}
         size={25}
         onPress={() => push(`/${place}/${ROUTES.comment}/${activityId}`)}
-        disabled={isLoading || isDisabled}
+        disabled={isLoading || isDisabled || !!comments?.message || isErrorLoadingComments || isLoadingComments}
       />
     </View>
   );

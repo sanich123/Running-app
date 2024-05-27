@@ -13,21 +13,21 @@ export default function CommentDeleteBtn({ commentId, activityId }: { commentId:
   const toast = useToast();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-  const [deleteComment, { data: successDeleting, error: errorDeleting, isLoading }] =
+  const [deleteComment, { isSuccess: isSuccessDeleting, isError: isErrorDeleting, isLoading }] =
     useDeleteCommentByCommentIdMutation();
 
   useEffect(() => {
-    if (successDeleting) {
+    if (isSuccessDeleting) {
       dispatch(setActivityIdWhichCommentsToUpdate(activityId));
     }
-    if (errorDeleting) {
+    if (isErrorDeleting) {
       if (Platform.OS === 'web') {
         toast.show(COMMENT_DELETE_BTN[language].errorDeleting);
       } else {
         showCrossPlatformToast(COMMENT_DELETE_BTN[language].errorDeleting);
       }
     }
-  }, [successDeleting, errorDeleting]);
+  }, [isSuccessDeleting, isErrorDeleting]);
 
   return (
     <IconButton

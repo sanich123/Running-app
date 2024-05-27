@@ -12,6 +12,7 @@ import CommentInput from '../comment-input/comment-input';
 
 export default function Comments({ activityId, comments }: { activityId: string; comments: CommentType[] }) {
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
+  const [idOfUpdatingComment, setIdOfUpdatingComment] = useState('');
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(true);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const {
@@ -29,7 +30,7 @@ export default function Comments({ activityId, comments }: { activityId: string;
   }, [activityIdWhichCommentsToUpdate, activityId]);
 
   return (
-    <View style={(isLoading || error) && styles.isInCenter}>
+    <View style={(isLoading || error || !!updatedComments?.message) && styles.isInCenter}>
       {isLoading && <ActivityIndicator testID="commentsActivityIndicator" />}
       {error || updatedComments?.message ? <ErrorComponent error={error || updatedComments} refetch={refetch} /> : null}
       {!error &&
@@ -43,19 +44,28 @@ export default function Comments({ activityId, comments }: { activityId: string;
             date={date}
             profile={profile}
             activityId={activityId}
+            idOfUpdatingComment={idOfUpdatingComment}
+            setIdOfUpdatingComment={setIdOfUpdatingComment}
+            setIsShowingTextInput={setIsShowingTextInput}
           />
         ))}
-      {isShowingTextInput ? (
-        <CommentInput activityId={`${activityId}`} setIsShowingTextInput={setIsShowingTextInput} />
+      {!idOfUpdatingComment ? (
+        <>
+          {isShowingTextInput ? (
+            <CommentInput activityId={`${activityId}`} setIsShowingTextInput={setIsShowingTextInput} commentId="" />
+          ) : (
+            <AnimatedFAB
+              testID="floatingBtn"
+              icon="pencil"
+              style={styles.floatingBtn}
+              onPress={() => setIsShowingTextInput(true)}
+              label="Добавить комментарий"
+              extended={false}
+            />
+          )}
+        </>
       ) : (
-        <AnimatedFAB
-          testID="floatingBtn"
-          icon="pencil"
-          style={styles.floatingBtn}
-          onPress={() => setIsShowingTextInput(true)}
-          label="Добавить комментарий"
-          extended={false}
-        />
+        <></>
       )}
     </View>
   );

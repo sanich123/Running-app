@@ -19,4 +19,6 @@ export const COMMENT_INPUT_TEST_ID = 'commentInput';
 export type CommentInputProps = {
   activityId: string;
   setIsShowingTextInput: (arg: boolean) => void;
+  commentToUpdate?: string;
+  commentId: string;
 };

@@ -15,7 +15,7 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
   const { dark } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
-  const { data: likes, isLoading } = useGetLikesByActivityIdQuery(activityId);
+  const { data: likes, isLoading } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
 
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;

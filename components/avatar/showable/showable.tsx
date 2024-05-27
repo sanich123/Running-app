@@ -16,7 +16,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
   const { user } = useAuth();
   const { googleInfo } = useAppSelector(({ profile }) => profile);
   const isMineAvatar = id === user?.id;
-  const { data: profile, error, isSuccess } = useGetUserProfileByIdQuery(id);
+  const { data: profile, error, isSuccess } = useGetUserProfileByIdQuery(id, { skip: !id });
   const [sendProfile] = useSendProfileInfoMutation();
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
 import { setActivityIdWhichCommentsToUpdate } from '@R/main-feed/main-feed';
-import { usePostCommentWithActivityIdMutation } from '@R/runich-api/runich-api';
+import { usePostCommentWithActivityIdMutation, useUpdateCommentByCommentIdMutation } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect, useState } from 'react';
@@ -10,21 +10,28 @@ import { useToast } from 'react-native-toast-notifications';
 
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID, CommentInputProps } from './const';
 
-export default function CommentInput({ activityId, setIsShowingTextInput }: CommentInputProps) {
+export default function CommentInput({
+  commentToUpdate = '',
+  activityId,
+  setIsShowingTextInput,
+  commentId = '',
+}: CommentInputProps) {
   const dispatch = useAppDispatch();
   const toast = useToast();
   const { language } = useAppSelector(({ language }) => language);
   const { user } = useAuth();
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState(commentToUpdate);
   const [postComment, { isLoading: isCommentSending, isSuccess, isError }] = usePostCommentWithActivityIdMutation();
+  const [updateComment, { isLoading: isUpdatingComment, isSuccess: isSuccessUpdating, isError: isErrorUpdating }] =
+    useUpdateCommentByCommentIdMutation();
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess || isSuccessUpdating) {
       dispatch(setActivityIdWhichCommentsToUpdate(activityId));
       setIsShowingTextInput(false);
       setComment('');
     }
-    if (isError) {
+    if (isError || isErrorUpdating) {
       if (Platform.OS !== 'web') {
         showCrossPlatformToast(COMMENT_INPUT[language].errorSending);
       } else {
@@ -41,24 +48,32 @@ export default function CommentInput({ activityId, setIsShowingTextInput }: Comm
       placeholder={COMMENT_INPUT[language].placeholder}
       value={comment}
       onChangeText={(comment) => setComment(comment)}
-      disabled={isCommentSending}
+      disabled={isCommentSending || isUpdatingComment}
       right={
         <TextInput.Icon
           testID={COMMENT_ICON_TEST_ID}
           icon="pencil"
-          disabled={!comment}
-          onPress={async () =>
-            await postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId }).unwrap()
-          }
+          disabled={!comment || isCommentSending || isUpdatingComment}
+          onPress={async () => {
+            if (!commentToUpdate) {
+              await postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId }).unwrap();
+            } else {
+              await updateComment({ activityId, commentId, body: { comment } }).unwrap();
+            }
+          }}
         />
       }
       onSubmitEditing={async () => {
-        if (comment) {
+        if (comment && !commentToUpdate) {
           await postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId }).unwrap();
+        } else {
+          if (comment) {
+            await updateComment({ activityId, commentId, body: { comment } }).unwrap();
+          }
         }
       }}
       label={COMMENT_INPUT[language].label}
-      autoFocus
+      autoFocus={!commentToUpdate}
       returnKeyType="send"
     />
   );
