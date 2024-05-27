@@ -70,20 +70,21 @@ export default function Comment({
             setIsShowingTextInput={setIsShowingTextInput}
             commentToUpdate={comment}
             commentId={id}
+            setIdOfUpdatingComment={setIdOfUpdatingComment}
           />
         ) : (
           <Text variant="bodyLarge">{comment}</Text>
         )}
       </View>
       <View style={styles.likesWrapper}>
-        <View style={{ display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <CommentLikeBtn commentId={id} />
           <CommentLikesLength id={id} />
         </View>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           {isYouAuthor && (
             <IconButton
-              icon="pencil"
+              icon={idOfUpdatingComment === id ? 'pencil-off' : 'pencil'}
               size={20}
               iconColor={MD3Colors.primary50}
               onPress={() => {
@@ -117,16 +118,13 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   textCommentWrapper: {
-    paddingTop: 5,
-    paddingLeft: 10,
-    paddingBottom: 10,
+    marginLeft: 10,
   },
   likesWrapper: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    columnGap: 15,
   },
   dateTimeWrapper: {
     display: 'flex',

@@ -15,6 +15,7 @@ export default function CommentInput({
   activityId,
   setIsShowingTextInput,
   commentId = '',
+  setIdOfUpdatingComment,
 }: CommentInputProps) {
   const dispatch = useAppDispatch();
   const toast = useToast();
@@ -29,6 +30,7 @@ export default function CommentInput({
     if (isSuccess || isSuccessUpdating) {
       dispatch(setActivityIdWhichCommentsToUpdate(activityId));
       setIsShowingTextInput(false);
+      setIdOfUpdatingComment('');
       setComment('');
     }
     if (isError || isErrorUpdating) {
@@ -38,13 +40,13 @@ export default function CommentInput({
         toast.show(COMMENT_INPUT[language].errorSending);
       }
     }
-  }, [isError, isSuccess]);
+  }, [isError, isErrorUpdating, isSuccess, isSuccessUpdating]);
 
   return (
     <TextInput
       testID={COMMENT_INPUT_TEST_ID}
       mode="outlined"
-      style={{ marginTop: 'auto', marginBottom: 20 }}
+      style={{ marginTop: 'auto', marginRight: 15 }}
       placeholder={COMMENT_INPUT[language].placeholder}
       value={comment}
       onChangeText={(comment) => setComment(comment)}
@@ -58,17 +60,27 @@ export default function CommentInput({
             if (!commentToUpdate) {
               await postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId }).unwrap();
             } else {
-              await updateComment({ activityId, commentId, body: { comment } }).unwrap();
+              if (comment !== commentToUpdate) {
+                await updateComment({ activityId, commentId, body: { comment } }).unwrap();
+              } else {
+                setIsShowingTextInput(false);
+                setIdOfUpdatingComment('');
+              }
             }
           }}
         />
       }
       onSubmitEditing={async () => {
-        if (comment && !commentToUpdate) {
-          await postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId }).unwrap();
-        } else {
-          if (comment) {
-            await updateComment({ activityId, commentId, body: { comment } }).unwrap();
+        if (comment) {
+          if (!commentToUpdate) {
+            await postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId }).unwrap();
+          } else {
+            if (comment !== commentToUpdate) {
+              await updateComment({ activityId, commentId, body: { comment } }).unwrap();
+            } else {
+              setIsShowingTextInput(false);
+              setIdOfUpdatingComment('');
+            }
           }
         }
       }}

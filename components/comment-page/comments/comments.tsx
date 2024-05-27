@@ -52,7 +52,12 @@ export default function Comments({ activityId, comments }: { activityId: string;
       {!idOfUpdatingComment ? (
         <>
           {isShowingTextInput ? (
-            <CommentInput activityId={`${activityId}`} setIsShowingTextInput={setIsShowingTextInput} commentId="" />
+            <CommentInput
+              activityId={`${activityId}`}
+              setIsShowingTextInput={setIsShowingTextInput}
+              commentId=""
+              setIdOfUpdatingComment={setIdOfUpdatingComment}
+            />
           ) : (
             <AnimatedFAB
               testID="floatingBtn"

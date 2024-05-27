@@ -21,4 +21,5 @@ export type CommentInputProps = {
   setIsShowingTextInput: (arg: boolean) => void;
   commentToUpdate?: string;
   commentId: string;
+  setIdOfUpdatingComment: (arg: string) => void;
 };

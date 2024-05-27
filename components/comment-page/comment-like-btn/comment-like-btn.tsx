@@ -50,7 +50,6 @@ export default function CommentLikeBtn({ commentId }: { commentId: string }) {
       testID={`commentLikeBtn${youGaveCommentLike?.length ? '-active' : ''}`}
       icon={youGaveCommentLike?.length ? 'cards-heart' : 'cards-heart-outline'}
       size={20}
-      style={[{ marginLeft: 10 }, (isLoading || isErrorToGetLikes) && { opacity: 0.5 }]}
       iconColor={youGaveCommentLike?.length ? MD3Colors.error50 : MD3Colors.primary50}
       onPress={async () => {
         setIsLoading(true);
