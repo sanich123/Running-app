@@ -17,12 +17,12 @@ export default function CardFullView() {
   const fullViewRef = useRef(null);
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const prefetchLikes = runichApi.usePrefetch('getLikesByActivityId');
-  const prefetchComments = runichApi.usePrefetch('getCommentsByActivityId');
+  // const prefetchComments = runichApi.usePrefetch('getCommentsByActivityId');
 
   useEffect(() => {
     if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
       prefetchLikes(`${activityId}`);
-      prefetchComments(`${activityId}`);
+      // prefetchComments(`${activityId}`);
     }
   }, [activityId]);
 
@@ -51,7 +51,7 @@ export default function CardFullView() {
                 distance={activity.distance}
                 mapPhotoUrl={activity?.mapPhotoUrl}
                 profile={activity?.profile}
-                commentsLength={activity?.comments?.length}
+                commentsLength={activity?._count.comments}
               />
               <Metrics />
               <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>

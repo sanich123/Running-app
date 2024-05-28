@@ -1,27 +1,26 @@
-import { CommentType } from '@C/card/const ';
 import ErrorComponent from '@C/error-component/error-component';
 import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
 import { CommentResponse } from '@R/runich-api/types';
 import { useAppSelector } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, AnimatedFAB } from 'react-native-paper';
+import { ActivityIndicator, AnimatedFAB, Button } from 'react-native-paper';
 
 import Comment from '../comment/comment';
 import CommentInput from '../comment-input/comment-input';
 
-export default function Comments({ activityId, comments }: { activityId: string; comments: CommentType[] }) {
+export default function Comments({ activityId, commentsLength }: { activityId: string; commentsLength: number }) {
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
   const [idOfUpdatingComment, setIdOfUpdatingComment] = useState('');
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(true);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
+  const [take, increaseTakeNumber] = useState(10);
   const {
     isLoading,
     error,
     data: updatedComments,
     refetch,
-  } = useGetCommentsByActivityIdQuery(activityId, { skip: !isNeedToGetUpdatedComments });
-  const whatCommentsToRender = !isNeedToGetUpdatedComments ? comments : updatedComments;
+  } = useGetCommentsByActivityIdQuery({ activityId, page: 0, take }, { skip: !isNeedToGetUpdatedComments });
 
   useEffect(() => {
     if (activityIdWhichCommentsToUpdate === activityId) {
@@ -33,23 +32,34 @@ export default function Comments({ activityId, comments }: { activityId: string;
     <View style={(isLoading || error || !!updatedComments?.message) && styles.isInCenter}>
       {isLoading && <ActivityIndicator testID="commentsActivityIndicator" />}
       {error || updatedComments?.message ? <ErrorComponent error={error || updatedComments} refetch={refetch} /> : null}
-      {!error &&
-        whatCommentsToRender?.length > 0 &&
-        whatCommentsToRender?.map(({ authorId, comment, id, date, profile }: CommentResponse) => (
-          <Comment
-            authorId={authorId}
-            comment={comment}
-            key={id}
-            id={id}
-            date={date}
-            profile={profile}
-            activityId={activityId}
-            idOfUpdatingComment={idOfUpdatingComment}
-            setIdOfUpdatingComment={setIdOfUpdatingComment}
-            setIsShowingTextInput={setIsShowingTextInput}
-          />
-        ))}
-      {!idOfUpdatingComment ? (
+      {updatedComments?.comments.length && (
+        <>
+          {commentsLength > updatedComments?.comments.length && (
+            <Button mode="contained" onPress={() => increaseTakeNumber(take + 10)}>
+              Загрузить еще 10 комментов
+            </Button>
+          )}
+          {updatedComments?.comments.length &&
+            updatedComments.comments
+              ?.slice()
+              ?.sort((a: CommentResponse, b: CommentResponse) => Date.parse(a.date) - Date.parse(b.date))
+              ?.map(({ authorId, comment, id, date, profile }: CommentResponse) => (
+                <Comment
+                  authorId={authorId}
+                  comment={comment}
+                  key={id}
+                  id={id}
+                  date={date}
+                  profile={profile}
+                  activityId={activityId}
+                  idOfUpdatingComment={idOfUpdatingComment}
+                  setIdOfUpdatingComment={setIdOfUpdatingComment}
+                  setIsShowingTextInput={setIsShowingTextInput}
+                />
+              ))}
+        </>
+      )}
+      {!idOfUpdatingComment && (
         <>
           {isShowingTextInput ? (
             <CommentInput
@@ -69,8 +79,6 @@ export default function Comments({ activityId, comments }: { activityId: string;
             />
           )}
         </>
-      ) : (
-        <></>
       )}
     </View>
   );

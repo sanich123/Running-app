@@ -45,7 +45,7 @@ export type CommentResponse = {
   authorId: string;
   comment: string;
   id: string;
-  date: Date;
+  date: string;
   profile: ProfileType;
 };
 

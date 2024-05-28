@@ -1,4 +1,4 @@
-import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useGetCommentsLengthByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ROUTES } from '@const/enums';
@@ -21,11 +21,11 @@ export default memo(function CommentBtn({
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(false);
   const {
-    data: comments,
+    data: commentsCount,
     isError: isErrorLoadingComments,
     isLoading: isLoadingComments,
-  } = useGetCommentsByActivityIdQuery(`${activityId}`, { skip: !isNeedToGetUpdatedComments });
-  const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : comments?.length;
+  } = useGetCommentsLengthByActivityIdQuery(`${activityId}`, { skip: !isNeedToGetUpdatedComments });
+  const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : commentsCount;
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
 
@@ -49,7 +49,7 @@ export default memo(function CommentBtn({
         iconColor={MD3Colors.primary50}
         size={25}
         onPress={() => push(`/${place}/${ROUTES.comment}/${activityId}`)}
-        disabled={isLoading || isDisabled || !!comments?.message || isErrorLoadingComments || isLoadingComments}
+        disabled={isLoading || isDisabled || !!commentsCount?.message || isErrorLoadingComments || isLoadingComments}
       />
     </View>
   );

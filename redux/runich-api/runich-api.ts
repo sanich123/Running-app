@@ -106,7 +106,7 @@ export const runichApi = createApi({
     }),
     getActivityByActivityId: builder.query({
       query: (id: string) => `/${activity}/${activityId}/${id}`,
-      providesTags: [Tags.activities],
+      providesTags: (result, error, arg) => [Tags.activities, { type: Tags.activities, id: arg }],
     }),
     getLocationsByActivityId: builder.query({
       query: (activityId: string) => `/${activity}/${activityId}/locations`,
@@ -141,7 +141,12 @@ export const runichApi = createApi({
 
     //Comments
     getCommentsByActivityId: builder.query({
-      query: (id: string) => `/${comment}/${id}`,
+      query: ({ activityId, page, take }: { activityId: string; page: number; take: number }) =>
+        `/${comment}/${activityId}?page=${page}&take=${take}`,
+      providesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.activityId }],
+    }),
+    getCommentsLengthByActivityId: builder.query({
+      query: (id: string) => `/${comment}/${id}/count`,
       providesTags: (result, error, arg) => [{ type: Tags.comments, id: arg }],
     }),
     postCommentWithActivityId: builder.mutation({
@@ -151,7 +156,10 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.id }],
+      invalidatesTags: (result, error, arg) => [
+        { type: Tags.comments, id: arg.id },
+        { type: Tags.activities, id: arg.id },
+      ],
     }),
     deleteCommentByCommentId: builder.mutation({
       query: ({ commentId, activityId }: { commentId: string; activityId: string }) => ({
@@ -159,7 +167,10 @@ export const runichApi = createApi({
         method: Methods.delete,
         headers,
       }),
-      invalidatesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.activityId }],
+      invalidatesTags: (result, error, arg) => [
+        { type: Tags.comments, id: arg.activityId },
+        { type: Tags.activities, id: arg.activityId },
+      ],
     }),
     updateCommentByCommentId: builder.mutation({
       query: ({
@@ -176,7 +187,10 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.activityId }],
+      invalidatesTags: (result, error, arg) => [
+        { type: Tags.comments, id: arg.activityId },
+        { type: Tags.activities, id: arg.activityId },
+      ],
     }),
     getLikesByCommentId: builder.query({
       query: (commentId: string) => `/${comment}/${commentId}/${like}`,
@@ -254,6 +268,7 @@ export const {
   useGetFriendsByUserIdQuery,
   useGetFollowersByUserIdQuery,
   useGetCommentsByActivityIdQuery,
+  useGetCommentsLengthByActivityIdQuery,
   useGetLikesByActivityIdQuery,
   useGetLikesByCommentIdQuery,
   useGetLocationsByActivityIdQuery,

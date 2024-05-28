@@ -13,11 +13,16 @@ import { ActivityIndicator, Card, Text } from 'react-native-paper';
 
 export default function CommentFullViewPage() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error, isError } = useGetActivityByActivityIdQuery(`${activityId}`);
+  const {
+    isLoading,
+    data: activity,
+    error,
+    isError,
+  } = useGetActivityByActivityIdQuery(`${activityId}`, { skip: !activityId });
 
   return (
     <ScrollView contentContainerStyle={[(isLoading || isError) && styles.isInCenter]}>
-      {error ? <ErrorComponent error={error} /> : null}
+      {error || activity?.message ? <ErrorComponent error={error || activity} /> : null}
       {isLoading && <ActivityIndicator size="large" />}
       {activity && (
         <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
@@ -38,11 +43,11 @@ export default function CommentFullViewPage() {
               <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
             </View>
             <View style={styles.columnsLayout}>
-              <LikeBtn activityId={activity?.id} likes={activity?.likes} />
-              <Likes activityId={activity?.id} size={LikesSize.big} likes={activity?.likes} />
+              <LikeBtn activityId={activity?.id} />
+              <Likes activityId={activity?.id} size={LikesSize.big} />
             </View>
           </Card.Content>
-          <Comments activityId={`${activityId}`} comments={activity?.comments} />
+          <Comments activityId={`${activityId}`} commentsLength={activity?._count.comments} />
         </View>
       )}
     </ScrollView>
