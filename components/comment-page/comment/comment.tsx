@@ -1,14 +1,15 @@
 import { useAuth } from '@A/context/auth-context';
 import { CustomImage } from '@C/custom-image/custom-image';
-import { CommentResponse } from '@R/runich-api/types';
+import { CommentProps, CommentResponse } from '@R/runich-api/types';
 import { useAppSelector } from '@R/typed-hooks';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
-import { TouchableRipple, useTheme, Text, Divider, IconButton, MD3Colors } from 'react-native-paper';
+import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
 
 import CommentDeleteBtn from '../comment-delete-btn/comment-delete-btn';
+import CommentEditBtn from '../comment-edit-btn/comment-edit-btn';
 import CommentInput from '../comment-input/comment-input';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
@@ -23,18 +24,13 @@ export default function Comment({
   idOfUpdatingComment,
   setIdOfUpdatingComment,
   setIsShowingTextInput,
-}: CommentResponse & {
-  activityId: string;
-  idOfUpdatingComment: string;
-  setIdOfUpdatingComment: (arg: string) => void;
-  setIsShowingTextInput: (arg: boolean) => void;
-}) {
+}: CommentResponse & CommentProps) {
   const { user } = useAuth();
   const { dark } = useTheme();
   const { push } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
-
   const isYouAuthor = user?.id === authorId;
+
   return (
     <>
       <TouchableRipple
@@ -83,20 +79,11 @@ export default function Comment({
         </View>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           {isYouAuthor && (
-            <IconButton
-              icon={idOfUpdatingComment === id ? 'pencil-off' : 'pencil'}
-              size={20}
-              iconColor={MD3Colors.primary50}
-              onPress={() => {
-                setIsShowingTextInput(true);
-                if (id !== idOfUpdatingComment) {
-                  setIdOfUpdatingComment(id);
-                } else {
-                  setIdOfUpdatingComment('');
-                  setIsShowingTextInput(false);
-                }
-              }}
-              style={{ marginRight: -10 }}
+            <CommentEditBtn
+              commentId={id}
+              setIdOfUpdatingComment={setIdOfUpdatingComment}
+              setIsShowingTextInput={setIsShowingTextInput}
+              idOfUpdatingComment={idOfUpdatingComment}
             />
           )}
           {isYouAuthor && <CommentDeleteBtn commentId={id} activityId={activityId} />}

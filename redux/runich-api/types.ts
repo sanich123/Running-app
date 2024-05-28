@@ -41,4 +41,17 @@ export type SendCommentLike = {
   commentId: string;
 };
 
-export type CommentResponse = { authorId: string; comment: string; id: string; date: Date; profile: ProfileType };
+export type CommentResponse = {
+  authorId: string;
+  comment: string;
+  id: string;
+  date: Date;
+  profile: ProfileType;
+};
+
+export type CommentProps = {
+  activityId: string;
+  idOfUpdatingComment: string;
+  setIdOfUpdatingComment: (arg: string) => void;
+  setIsShowingTextInput: (arg: boolean) => void;
+};
