@@ -20,8 +20,8 @@ export default function Comments({ activityId, commentsLength }: { activityId: s
     error,
     data: updatedComments,
     refetch,
-  } = useGetCommentsByActivityIdQuery({ activityId, page: 0, take }, { skip: !isNeedToGetUpdatedComments });
-
+  } = useGetCommentsByActivityIdQuery({ activityId, take }, { skip: !isNeedToGetUpdatedComments });
+  console.log(updatedComments);
   useEffect(() => {
     if (activityIdWhichCommentsToUpdate === activityId) {
       setIsNeedToGetUpdatedComments(true);
@@ -37,7 +37,7 @@ export default function Comments({ activityId, commentsLength }: { activityId: s
           data={updatedComments
             ?.slice()
             ?.sort((a: CommentResponse, b: CommentResponse) => Date.parse(a.date) - Date.parse(b.date))}
-          renderItem={({ item: { authorId, comment, id, date, profile } }) => (
+          renderItem={({ item: { authorId, comment, id, date, profile, commentLikes } }) => (
             <Comment
               authorId={authorId}
               comment={comment}
@@ -49,6 +49,7 @@ export default function Comments({ activityId, commentsLength }: { activityId: s
               idOfUpdatingComment={idOfUpdatingComment}
               setIdOfUpdatingComment={setIdOfUpdatingComment}
               setIsShowingTextInput={setIsShowingTextInput}
+              commentLikes={commentLikes}
             />
           )}
           ListEmptyComponent={

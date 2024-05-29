@@ -97,8 +97,10 @@ export const runichApi = createApi({
         return endpointName;
       },
       merge: (currentCache, newItems) => {
-        currentCache.activities.push(...newItems.activities);
-        currentCache.isLastPage = newItems.isLastPage;
+        if (!currentCache?.message || !newItems?.message) {
+          currentCache.activities.push(...newItems.activities);
+          currentCache.isLastPage = newItems.isLastPage;
+        }
       },
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg;
@@ -141,8 +143,7 @@ export const runichApi = createApi({
 
     //Comments
     getCommentsByActivityId: builder.query({
-      query: ({ activityId, page, take }: { activityId: string; page: number; take: number }) =>
-        `/${comment}/${activityId}?page=${page}&take=${take}`,
+      query: ({ activityId, take }: { activityId: string; take: number }) => `/${comment}/${activityId}?&take=${take}`,
       providesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.activityId }],
     }),
     getCommentsLengthByActivityId: builder.query({

@@ -1,6 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
 import { CustomImage } from '@C/custom-image/custom-image';
-import { CommentProps, CommentResponse } from '@R/runich-api/types';
+import { CommentLikeResponse, CommentProps, CommentResponse } from '@R/runich-api/types';
 import { useAppSelector } from '@R/typed-hooks';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
@@ -24,7 +24,8 @@ export default function Comment({
   idOfUpdatingComment,
   setIdOfUpdatingComment,
   setIsShowingTextInput,
-}: CommentResponse & CommentProps) {
+  commentLikes,
+}: CommentResponse & CommentProps & CommentLikeResponse) {
   const { user } = useAuth();
   const { dark } = useTheme();
   const { push } = useRouter();

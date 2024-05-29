@@ -55,3 +55,9 @@ export type CommentProps = {
   setIdOfUpdatingComment: (arg: string) => void;
   setIsShowingTextInput: (arg: boolean) => void;
 };
+
+export type CommentLikeResponse = {
+  commentLikes: {
+    authorId: string;
+  }[];
+};
