@@ -24,7 +24,7 @@ export default function Comment({
   idOfUpdatingComment,
   setIdOfUpdatingComment,
   setIsShowingTextInput,
-  commentLikes,
+  commentLike,
 }: CommentResponse & CommentProps & CommentLikeResponse) {
   const { user } = useAuth();
   const { dark } = useTheme();
@@ -75,8 +75,8 @@ export default function Comment({
       </View>
       <View style={styles.likesWrapper}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <CommentLikeBtn commentId={id} />
-          <CommentLikesLength id={id} />
+          <CommentLikeBtn commentId={id} commentLikesFromComment={commentLike} />
+          <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
         </View>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           {isYouAuthor && (

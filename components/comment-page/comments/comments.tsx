@@ -21,7 +21,7 @@ export default function Comments({ activityId, commentsLength }: { activityId: s
     data: updatedComments,
     refetch,
   } = useGetCommentsByActivityIdQuery({ activityId, take }, { skip: !isNeedToGetUpdatedComments });
-  console.log(updatedComments);
+
   useEffect(() => {
     if (activityIdWhichCommentsToUpdate === activityId) {
       setIsNeedToGetUpdatedComments(true);
@@ -34,10 +34,11 @@ export default function Comments({ activityId, commentsLength }: { activityId: s
       {error || updatedComments?.message ? <ErrorComponent error={error || updatedComments} refetch={refetch} /> : null}
       {updatedComments ? (
         <FlatList
+          scrollEnabled={false}
           data={updatedComments
             ?.slice()
             ?.sort((a: CommentResponse, b: CommentResponse) => Date.parse(a.date) - Date.parse(b.date))}
-          renderItem={({ item: { authorId, comment, id, date, profile, commentLikes } }) => (
+          renderItem={({ item: { authorId, comment, id, date, profile, commentLike } }) => (
             <Comment
               authorId={authorId}
               comment={comment}
@@ -49,7 +50,7 @@ export default function Comments({ activityId, commentsLength }: { activityId: s
               idOfUpdatingComment={idOfUpdatingComment}
               setIdOfUpdatingComment={setIdOfUpdatingComment}
               setIsShowingTextInput={setIsShowingTextInput}
-              commentLikes={commentLikes}
+              commentLike={commentLike}
             />
           )}
           ListEmptyComponent={
@@ -142,6 +143,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     margin: 16,
     right: 0,
-    top: -60,
+    top: -80,
   },
 });

@@ -57,7 +57,8 @@ export type CommentProps = {
 };
 
 export type CommentLikeResponse = {
-  commentLikes: {
+  commentLike: {
     authorId: string;
+    id: string;
   }[];
 };

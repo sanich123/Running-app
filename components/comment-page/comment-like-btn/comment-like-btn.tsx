@@ -1,10 +1,11 @@
 import { useAuth } from '@A/context/auth-context';
+import { setCommentIdWhichLikesToUpdate } from '@R/main-feed/main-feed';
 import {
   useSendLikeToCommentMutation,
   useGetLikesByCommentIdQuery,
   useDeleteLikeToCommentMutation,
 } from '@R/runich-api/runich-api';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
@@ -13,23 +14,38 @@ import { useToast } from 'react-native-toast-notifications';
 
 import { COMMENT_LIKE_BTN } from './const';
 
-export default function CommentLikeBtn({ commentId }: { commentId: string }) {
-  const { user } = useAuth();
+export default function CommentLikeBtn({
+  commentId,
+  commentLikesFromComment,
+}: {
+  commentId: string;
+  commentLikesFromComment: { authorId: string; id: string }[];
+}) {
   const toast = useToast();
+  const dispatch = useAppDispatch();
+  const { user } = useAuth();
   const { language } = useAppSelector(({ language }) => language);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [sendLikeToComment, { isSuccess: isSuccessSending, isError: isErrorSending }] = useSendLikeToCommentMutation();
-  const [deleteLikeToComment, { isSuccess: isSuccessDeleting, error: isErrorDeleting }] =
+  const { commentIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
+  const [isNeedToGetUpdatedCommentLikes, setIsNeedToGetUpdatedCommentLikes] = useState(false);
+  const [sendLikeToComment, { isSuccess: isSuccessSending, isError: isErrorSending, isLoading: isSendingLike }] =
+    useSendLikeToCommentMutation();
+  const [deleteLikeToComment, { isSuccess: isSuccessDeleting, isError: isErrorDeleting, isLoading: isDeletingLike }] =
     useDeleteLikeToCommentMutation();
   const {
     isError: isErrorToGetLikes,
     data: commentLikes,
     isLoading: isLoadingLikes,
   } = useGetLikesByCommentIdQuery(commentId);
-  const youGaveCommentLike = commentLikes?.length
+  const whatCommentLikesToIterate = isNeedToGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
+  const youGaveCommentLike = whatCommentLikesToIterate?.length
     ? commentLikes?.filter(({ authorId }: { authorId: string }) => authorId === user?.id)
     : [];
+
+  useEffect(() => {
+    if (commentIdWhichLikesToUpdate === commentId) {
+      setIsNeedToGetUpdatedCommentLikes(true);
+    }
+  }, [commentIdWhichLikesToUpdate, commentId]);
 
   useEffect(() => {
     if (isErrorSending || isErrorDeleting) {
@@ -38,28 +54,25 @@ export default function CommentLikeBtn({ commentId }: { commentId: string }) {
       } else {
         toast.show(COMMENT_LIKE_BTN[language].errorSending);
       }
-      setIsLoading(false);
     }
     if (isSuccessSending || isSuccessDeleting) {
-      setIsLoading(false);
+      dispatch(setCommentIdWhichLikesToUpdate(commentId));
     }
   }, [isErrorSending, isErrorDeleting, isSuccessSending, isSuccessDeleting]);
 
   return (
     <IconButton
       testID={`commentLikeBtn${youGaveCommentLike?.length ? '-active' : ''}`}
-      icon={commentLikes?.length ? 'cards-heart' : 'cards-heart-outline'}
+      icon={whatCommentLikesToIterate?.length ? 'cards-heart' : 'cards-heart-outline'}
       size={20}
       iconColor={youGaveCommentLike?.length ? MD3Colors.error50 : MD3Colors.primary50}
-      onPress={async () => {
-        setIsLoading(true);
-        if (youGaveCommentLike?.length) {
-          await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap();
-        } else {
-          await sendLikeToComment({ body: { commentId, authorId: `${user?.id}` }, commentId }).unwrap();
-        }
-      }}
-      disabled={isLoading || isErrorToGetLikes || isLoadingLikes}
+      onPress={async () =>
+        youGaveCommentLike?.length
+          ? await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap()
+          : await sendLikeToComment({ body: { commentId, authorId: `${user?.id}` }, commentId }).unwrap()
+      }
+      disabled={isLoadingLikes || isErrorToGetLikes || isLoadingLikes}
+      loading={isLoadingLikes || isSendingLike || isDeletingLike}
     />
   );
 }
