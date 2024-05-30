@@ -42,9 +42,9 @@ export default function EmailInput({
         accessibilityRole="text"
         style={{ marginTop: 15, width: '100%', minWidth: 366 }}
         mode="outlined"
-        keyboardType="email-address"
+        inputMode="email"
         autoComplete="email"
-        returnKeyType="next"
+        enterKeyHint="next"
         disabled={isDisabled}
       />
     </>

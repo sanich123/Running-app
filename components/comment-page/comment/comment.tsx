@@ -1,12 +1,9 @@
 import { useAuth } from '@A/context/auth-context';
-import { CustomImage } from '@C/custom-image/custom-image';
+import { UserInfoSize } from '@C/card/user-info/const';
+import UserInfo from '@C/card/user-info/user-info';
 import { CommentLikeResponse, CommentProps, CommentResponse } from '@R/runich-api/types';
-import { useAppSelector } from '@R/typed-hooks';
-import { formatDate, getHoursMinutes } from '@U/time-formatter';
-import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
-import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
+import { Text, Divider } from 'react-native-paper';
 
 import CommentDeleteBtn from '../comment-delete-btn/comment-delete-btn';
 import CommentEditBtn from '../comment-edit-btn/comment-edit-btn';
@@ -27,39 +24,14 @@ export default function Comment({
   commentLike,
 }: CommentResponse & CommentProps & CommentLikeResponse) {
   const { user } = useAuth();
-  const { dark } = useTheme();
-  const { push } = useRouter();
-  const { language } = useAppSelector(({ language }) => language);
   const isYouAuthor = user?.id === authorId;
 
   return (
     <>
-      <TouchableRipple
-        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-        borderless
-        onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${authorId}`)}>
-        <View style={styles.commentWrapper}>
-          <CustomImage
-            style={{ width: 28, height: 28, borderRadius: 70 }}
-            source={{ uri: profile?.profilePhoto }}
-            contentFit="cover"
-          />
-          <View style={{ display: 'flex' }}>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              <Text variant="bodyMedium" style={{ fontWeight: 'bold' }}>
-                {profile?.name}
-              </Text>
-              <Text variant="bodyMedium" style={{ fontWeight: 'bold' }}>
-                {profile?.surname}
-              </Text>
-            </View>
-            <View style={styles.dateTimeWrapper}>
-              <Text variant="bodySmall">{formatDate(date, language)} </Text>
-              <Text variant="bodySmall">{getHoursMinutes(date, language)}</Text>
-            </View>
-          </View>
-        </View>
-      </TouchableRipple>
+      <View style={{ padding: 10 }}>
+        <UserInfo profile={profile} date={date} userId={authorId} size={UserInfoSize.small} />
+      </View>
+
       <View style={styles.textCommentWrapper}>
         {idOfUpdatingComment === id ? (
           <CommentInput
@@ -97,7 +69,7 @@ export default function Comment({
 
 const styles = StyleSheet.create({
   commentWrapper: {
-    display: 'flex',
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 10,

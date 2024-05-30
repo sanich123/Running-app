@@ -25,7 +25,8 @@ export const runichApi = createApi({
       providesTags: [Tags.profile],
     }),
     getAllActivityPhotosByUserId: builder.query({
-      query: (userId: string) => `/${activity}/${userId}/${photos}`,
+      query: ({ userId, page, take }: { userId: string; page: number; take: number }) =>
+        `/${activity}/${userId}/${photos}?page=${page}&take=${take}`,
       providesTags: [Tags.activities],
     }),
     getFriendsByUserId: builder.query({

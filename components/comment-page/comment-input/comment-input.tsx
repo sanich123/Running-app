@@ -46,7 +46,6 @@ export default function CommentInput({
     <TextInput
       testID={COMMENT_INPUT_TEST_ID}
       mode="outlined"
-      style={{ marginTop: 'auto', marginRight: 15 }}
       placeholder={COMMENT_INPUT[language].placeholder}
       value={comment}
       onChangeText={(comment) => setComment(comment)}
@@ -86,7 +85,7 @@ export default function CommentInput({
       }}
       label={COMMENT_INPUT[language].label}
       autoFocus={!commentToUpdate}
-      returnKeyType="send"
+      enterKeyHint="send"
     />
   );
 }

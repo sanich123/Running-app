@@ -13,6 +13,7 @@ import { LikesSize } from './likes/const';
 import Likes from './likes/likes';
 import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
+import { UserInfoSize } from './user-info/const';
 
 export default memo(function ActivityCard({
   description,
@@ -47,7 +48,7 @@ export default memo(function ActivityCard({
   return (
     <Card>
       <Card.Content>
-        <UserInfo profile={profile} sport={sport} date={date} userId={userId} />
+        <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
         <View ref={cardRef} collapsable={false}>
           <Metrics
             distance={distance}

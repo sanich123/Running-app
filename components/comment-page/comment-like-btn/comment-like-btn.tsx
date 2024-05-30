@@ -69,7 +69,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment }: C
           : await sendLikeToComment({ body: { commentId, authorId: `${user?.id}` }, commentId }).unwrap()
       }
       disabled={isLoadingLikes || isErrorToGetLikes}
-      loading={isLoadingLikes || isSendingLike || isDeletingLike}
+      loading={isSendingLike || isDeletingLike}
     />
   );
 }

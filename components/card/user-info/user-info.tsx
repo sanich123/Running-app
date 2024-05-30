@@ -1,6 +1,4 @@
-import { ProfileType } from '@C/card/const ';
 import { CustomImage } from '@C/custom-image/custom-image';
-import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
 import { useAppSelector } from '@R/typed-hooks';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
@@ -9,14 +7,9 @@ import { usePathname, useRouter } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
-type UserInfoProps = {
-  profile: ProfileType;
-  sport: SPORTS_BTNS_VALUES;
-  date: Date;
-  userId: string;
-};
+import { UserInfoProps } from './const';
 
-export default function UserInfo({ profile, sport, date, userId }: UserInfoProps) {
+export default function UserInfo({ profile, sport, date, userId, size }: UserInfoProps) {
   const { dark } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
@@ -31,19 +24,20 @@ export default function UserInfo({ profile, sport, date, userId }: UserInfoProps
       style={{ borderRadius: 10 }}>
       <View style={styles.userInfoWrapper}>
         <CustomImage
-          style={styles.avatarImage}
+          style={[size === 'small' ? styles.avatarImageSmall : styles.avatarImageBig]}
           source={{ uri: profile?.profilePhoto }}
           placeholder={profile?.profilePhotoBlurhash}
           contentFit="cover"
         />
         <View>
-          <View style={styles.nameSurnameWrapper}>
-            <Text variant="titleLarge">{`${profile?.name} ${profile?.surname}`}</Text>
+          <View>
+            <Text
+              variant={size === 'large' ? 'titleLarge' : 'bodyLarge'}>{`${profile?.name} ${profile?.surname}`}</Text>
           </View>
-          <View style={styles.sportDateWrapper}>
+          <View>
             <Text variant="bodyMedium">
-              {getIconByTypeOfSport(sport)}
-              {` ${formatDate(date, language)} ${getHoursMinutes(date, language)}`}
+              {sport ? getIconByTypeOfSport(sport) : ''}
+              {`${size === 'small' ? '' : ' '}${formatDate(date, language)} ${getHoursMinutes(date, language)}`}
             </Text>
           </View>
         </View>
@@ -59,7 +53,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  avatarImage: { width: 50, height: 50, borderRadius: 70 },
-  nameSurnameWrapper: { flex: 1, flexDirection: 'row' },
-  sportDateWrapper: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  avatarImageBig: {
+    width: 50,
+    height: 50,
+    borderRadius: 70,
+  },
+  avatarImageSmall: {
+    width: 35,
+    height: 35,
+    borderRadius: 70,
+  },
 });

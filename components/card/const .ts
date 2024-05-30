@@ -42,7 +42,7 @@ export type ActivityCardProps = {
   isShowDescription: boolean;
   description: string;
   title: string;
-  date: Date;
+  date: string;
   sport: SPORTS_BTNS_VALUES;
   id: string;
   userId: string;

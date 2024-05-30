@@ -18,7 +18,6 @@ export default function CommentLikesLength({ commentId, commentLikesFromComment 
     data: commentLikes,
     error,
     isError,
-    isSuccess,
   } = useGetLikesByCommentIdQuery(commentId, { skip: !isNeedToGetUpdatedCommentLikes });
 
   const whatCommentLikesToIterate = isNeedToGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
@@ -37,7 +36,7 @@ export default function CommentLikesLength({ commentId, commentLikesFromComment 
 
   return (
     <>
-      {isSuccess && whatCommentLikesToIterate?.length > 0 && (
+      {whatCommentLikesToIterate?.length > 0 && (
         <Text variant="bodySmall" style={{ marginTop: 1 }}>
           {`${youGaveCommentLike ? NUMBER_OF_LIKES[language].you : ''}`}
           {`${youGaveCommentLike && commentLikesLength > 0 ? NUMBER_OF_LIKES[language].and : ''}`}

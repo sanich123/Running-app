@@ -34,7 +34,7 @@ export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }
         style={{ width: '50%' }}
         label={WEIGHT_CITY[language].weightLabel}
         placeholder={WEIGHT_CITY[language].weightPlaceholder}
-        keyboardType="numeric"
+        inputMode="numeric"
         value={weight}
         onChangeText={(weight) => {
           setWeight(weight);

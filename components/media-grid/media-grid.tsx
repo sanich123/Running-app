@@ -13,7 +13,10 @@ export default function MediaGrid() {
   const { width } = useWindowDimensions();
   const pathname = usePathname();
   const { id: userId } = useLocalSearchParams();
-  const { isLoading, data: photos, error, isError, isSuccess } = useGetAllActivityPhotosByUserIdQuery(`${userId}`);
+  const { isLoading, data, error, isError, isSuccess } = useGetAllActivityPhotosByUserIdQuery(
+    { userId: `${userId}`, page: 0, take: 30 },
+    { skip: !userId, refetchOnMountOrArgChange: true },
+  );
 
   const gap = 3;
   const calculatedWidth = (width - gap * 3) / 4;
@@ -35,28 +38,25 @@ export default function MediaGrid() {
         {isError ? <ErrorComponent error={error} /> : null}
         {isSuccess &&
           !isError &&
-          photos?.length > 0 &&
-          photos
-            ?.map(({ photoVideoUrls }: { photoVideoUrls: PhotoVideoType }) => photoVideoUrls)
-            .flat()
-            .map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => (
-              <TouchableRipple
-                rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-                key={url}
-                onPress={() =>
-                  push(
-                    `/(tabs)/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}?userId=${userId}`,
-                  )
-                }
-                borderless>
-                <CustomImage
-                  style={{ height: calculatedWidth, width: calculatedWidth }}
-                  source={{ uri: thumbnail || url }}
-                  contentFit="cover"
-                  placeholder={blurhash}
-                />
-              </TouchableRipple>
-            ))}
+          data?.photos?.length > 0 &&
+          data?.photos.map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => (
+            <TouchableRipple
+              rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+              key={url}
+              onPress={() =>
+                push(
+                  `/(tabs)/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}?userId=${userId}`,
+                )
+              }
+              borderless>
+              <CustomImage
+                style={{ height: calculatedWidth, width: calculatedWidth }}
+                source={{ uri: thumbnail || url }}
+                contentFit="cover"
+                placeholder={blurhash}
+              />
+            </TouchableRipple>
+          ))}
       </View>
     </ScrollView>
   );
