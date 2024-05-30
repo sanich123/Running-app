@@ -15,7 +15,7 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
   const { dark } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
-  const { data: likes, isLoading } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
+  const { data: likes, isLoading, isError } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
 
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
@@ -29,7 +29,7 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
       onPress={() => push(`/${place}/${ROUTES.likes}/${activityId}`)}
       borderless
       style={{ borderRadius: 10 }}
-      disabled={isLoading}>
+      disabled={isLoading || isError}>
       <View style={styles.likesWrapper}>
         <View
           style={[

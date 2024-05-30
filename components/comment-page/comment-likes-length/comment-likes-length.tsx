@@ -6,22 +6,21 @@ import { errorExtracter } from '@U/error-handler';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native-paper';
 
-export default function CommentLikesLength({
-  commentId,
-  commentLikesFromComment,
-}: {
-  commentId: string;
-  commentLikesFromComment: { authorId: string; id: string }[];
-}) {
+import { CommentLikesLengthProps } from './const';
+
+export default function CommentLikesLength({ commentId, commentLikesFromComment }: CommentLikesLengthProps) {
   const { user } = useAuth();
-  const [isNeedToGetUpdatedCommentLikes, setIsNeedToGetUpdatedCommentLikes] = useState(false);
   const { language } = useAppSelector(({ language }) => language);
   const { commentIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
+  const [isNeedToGetUpdatedCommentLikes, setIsNeedToGetUpdatedCommentLikes] = useState(false);
+
   const {
     data: commentLikes,
     error,
     isError,
+    isSuccess,
   } = useGetLikesByCommentIdQuery(commentId, { skip: !isNeedToGetUpdatedCommentLikes });
+
   const whatCommentLikesToIterate = isNeedToGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
   const youGaveCommentLike = whatCommentLikesToIterate?.length
     ? whatCommentLikesToIterate?.some(({ authorId }: { authorId: string }) => authorId === user?.id)
@@ -38,7 +37,7 @@ export default function CommentLikesLength({
 
   return (
     <>
-      {!isError && whatCommentLikesToIterate?.length > 0 && (
+      {isSuccess && whatCommentLikesToIterate?.length > 0 && (
         <Text variant="bodySmall" style={{ marginTop: 1 }}>
           {`${youGaveCommentLike ? NUMBER_OF_LIKES[language].you : ''}`}
           {`${youGaveCommentLike && commentLikesLength > 0 ? NUMBER_OF_LIKES[language].and : ''}`}

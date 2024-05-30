@@ -98,7 +98,7 @@ export const runichApi = createApi({
       },
       merge: (currentCache, newItems) => {
         if (!currentCache?.message || !newItems?.message) {
-          currentCache.activities.push(...newItems.activities);
+          currentCache.activities?.push(...newItems.activities);
           currentCache.isLastPage = newItems.isLastPage;
         }
       },
@@ -205,6 +205,21 @@ export const runichApi = createApi({
         body,
       }),
       invalidatesTags: (result, error, arg) => [{ type: Tags.commentLikes, id: arg.commentId }],
+      async onQueryStarted({ body, commentId }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          runichApi.util.updateQueryData('getLikesByCommentId', commentId, (draft) => {
+            draft.push({
+              commentId,
+              authorId: body.authorId,
+            });
+          }),
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
     deleteLikeToComment: builder.mutation({
       query: ({ likeId, commentId }: { likeId: string; commentId: string }) => ({

@@ -12,21 +12,16 @@ import { Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
-import { COMMENT_LIKE_BTN } from './const';
+import { COMMENT_LIKE_BTN, CommentLikeBtnProps } from './const';
 
-export default function CommentLikeBtn({
-  commentId,
-  commentLikesFromComment,
-}: {
-  commentId: string;
-  commentLikesFromComment: { authorId: string; id: string }[];
-}) {
+export default function CommentLikeBtn({ commentId, commentLikesFromComment }: CommentLikeBtnProps) {
   const toast = useToast();
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const { language } = useAppSelector(({ language }) => language);
   const { commentIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const [isNeedToGetUpdatedCommentLikes, setIsNeedToGetUpdatedCommentLikes] = useState(false);
+
   const [sendLikeToComment, { isSuccess: isSuccessSending, isError: isErrorSending, isLoading: isSendingLike }] =
     useSendLikeToCommentMutation();
   const [deleteLikeToComment, { isSuccess: isSuccessDeleting, isError: isErrorDeleting, isLoading: isDeletingLike }] =
@@ -35,10 +30,12 @@ export default function CommentLikeBtn({
     isError: isErrorToGetLikes,
     data: commentLikes,
     isLoading: isLoadingLikes,
+    isSuccess,
   } = useGetLikesByCommentIdQuery(commentId);
+
   const whatCommentLikesToIterate = isNeedToGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
   const youGaveCommentLike = whatCommentLikesToIterate?.length
-    ? commentLikes?.filter(({ authorId }: { authorId: string }) => authorId === user?.id)
+    ? isSuccess && commentLikes?.filter(({ authorId }: { authorId: string }) => authorId === user?.id)
     : [];
 
   useEffect(() => {
@@ -71,7 +68,7 @@ export default function CommentLikeBtn({
           ? await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap()
           : await sendLikeToComment({ body: { commentId, authorId: `${user?.id}` }, commentId }).unwrap()
       }
-      disabled={isLoadingLikes || isErrorToGetLikes || isLoadingLikes}
+      disabled={isLoadingLikes || isErrorToGetLikes}
       loading={isLoadingLikes || isSendingLike || isDeletingLike}
     />
   );

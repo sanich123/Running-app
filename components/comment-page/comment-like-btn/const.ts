@@ -8,3 +8,8 @@ export const COMMENT_LIKE_BTN = {
     errorSending: 'Во время отправки лайка произошла ошибка',
   },
 } as const;
+
+export type CommentLikeBtnProps = {
+  commentId: string;
+  commentLikesFromComment: { authorId: string; id: string }[];
+};
