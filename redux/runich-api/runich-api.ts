@@ -119,7 +119,7 @@ export const runichApi = createApi({
         }
       },
       forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
+        return currentArg?.page !== previousArg?.page;
       },
     }),
     getActivityByActivityId: builder.query({

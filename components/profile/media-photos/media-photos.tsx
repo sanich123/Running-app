@@ -12,9 +12,10 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { PROFILE_MEDIA } from './const';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
+  console.log('userId', userId);
   const { isLoading, isError, data, error } = useGetAllActivityPhotosByUserIdQuery(
-    { userId, page: 0, take: 4 },
-    { skip: !userId },
+    { userId, page: 0, take: 24 },
+    { skip: !userId || userId === 'undefined' },
   );
   const { width } = useWindowDimensions();
   const { push } = useRouter();
@@ -33,7 +34,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
         {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${errorExtracter(error)}`}</Text>}
         {!isError &&
           data?.photos?.length > 0 &&
-          data?.photos?.map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => {
+          data?.photos?.slice(0, 4).map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => {
             if (index === 3) {
               return (
                 <Fragment key={`${url}+${index}`}>

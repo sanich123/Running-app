@@ -15,7 +15,7 @@ export default function MediaGrid() {
   const [page, setPage] = useState(0);
   const { isLoading, data, error, isError } = useGetAllActivityPhotosByUserIdQuery(
     { userId: `${userId}`, page, take: 24 },
-    { skip: !userId, refetchOnMountOrArgChange: true },
+    { skip: !userId },
   );
 
   return (

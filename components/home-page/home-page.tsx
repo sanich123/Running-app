@@ -25,10 +25,9 @@ export default function Feed() {
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
   const { needToRefreshActivities } = useAppSelector(({ mainFeed }) => mainFeed);
   const [page, setPage] = useState(0);
-
   const { data, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(
     { id: `${user?.id}`, page, take: 10 },
-    { skip: !user },
+    { skip: !user?.id },
   );
 
   useEffect(() => {
