@@ -24,11 +24,7 @@ export const runichApi = createApi({
       query: (id: string) => `/${profile}/${id}`,
       providesTags: [Tags.profile],
     }),
-    getAllActivityPhotosByUserId: builder.query({
-      query: ({ userId, page, take }: { userId: string; page: number; take: number }) =>
-        `/${activity}/${userId}/${photos}?page=${page}&take=${take}`,
-      providesTags: [Tags.activities],
-    }),
+
     getFriendsByUserId: builder.query({
       query: (id: string) => `/${friend}/${id}`,
       providesTags: [Tags.friends],
@@ -82,8 +78,10 @@ export const runichApi = createApi({
         return endpointName;
       },
       merge: (currentCache, newItems) => {
-        currentCache.activities.push(...newItems.activities);
-        currentCache.isLastPage = newItems.isLastPage;
+        if (!currentCache?.message || !newItems?.message) {
+          currentCache?.activities.push(...newItems?.activities);
+          currentCache.isLastPage = newItems.isLastPage;
+        }
       },
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg;
@@ -100,6 +98,23 @@ export const runichApi = createApi({
       merge: (currentCache, newItems) => {
         if (!currentCache?.message || !newItems?.message) {
           currentCache.activities?.push(...newItems.activities);
+          currentCache.isLastPage = newItems.isLastPage;
+        }
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
+    }),
+    getAllActivityPhotosByUserId: builder.query({
+      query: ({ userId, page, take }: { userId: string; page: number; take: number }) =>
+        `/${activity}/${userId}/${photos}?page=${page}&take=${take}`,
+      providesTags: [Tags.activities],
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems) => {
+        if (!currentCache?.message || !newItems?.message) {
+          currentCache?.photos?.push(...newItems?.photos);
           currentCache.isLastPage = newItems.isLastPage;
         }
       },
