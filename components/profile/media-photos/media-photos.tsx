@@ -12,10 +12,9 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { PROFILE_MEDIA } from './const';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
-  console.log('userId', userId);
   const { isLoading, isError, data, error } = useGetAllActivityPhotosByUserIdQuery(
-    { userId, page: 0, take: 24 },
-    { skip: !userId || userId === 'undefined' },
+    { userId, page: 0, take: 28 },
+    { skip: !userId },
   );
   const { width } = useWindowDimensions();
   const { push } = useRouter();

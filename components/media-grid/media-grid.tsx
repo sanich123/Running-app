@@ -14,7 +14,7 @@ export default function MediaGrid() {
   const { id: userId } = useLocalSearchParams();
   const [page, setPage] = useState(0);
   const { isLoading, data, error, isError } = useGetAllActivityPhotosByUserIdQuery(
-    { userId: `${userId}`, page, take: 24 },
+    { userId: `${userId}`, page, take: 28 },
     { skip: !userId },
   );
 
@@ -33,9 +33,8 @@ export default function MediaGrid() {
           renderItem={({ item: { url, thumbnail, blurhash }, index }) => (
             <MediaGridImage url={url} thumbnail={thumbnail} blurhash={blurhash} index={index} />
           )}
-          initialNumToRender={24}
-          maxToRenderPerBatch={24}
-          // onEndReachedThreshold={Platform.OS === 'web' ? 0.8 : 0.5}
+          initialNumToRender={28}
+          maxToRenderPerBatch={28}
           onEndReached={() => {
             if (!data.isLastPage) {
               if (Platform.OS === 'web') {
@@ -58,9 +57,7 @@ export default function MediaGrid() {
 const styles = StyleSheet.create({
   layout: {
     display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 3,
+    columnGap: 2,
   },
   isInCenter: {
     alignItems: 'center',

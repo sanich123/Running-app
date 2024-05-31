@@ -11,12 +11,13 @@ export default function PhotoViewer() {
   const { photoUrl, indexOfPhoto, userId } = useLocalSearchParams();
   const { user } = useAuth();
   const { data: activity } = useGetActivityByActivityIdQuery(`${photoUrl}`);
-  const { data: photos } = useGetAllActivityPhotosByUserIdQuery(userId ? `${userId}` : `${user?.id}`);
-  const itemsToRender = uuid.validate(`${photoUrl}`)
-    ? activity?.photoVideoUrls
-    : photos
-        ?.map(({ photoVideoUrls }: { photoVideoUrls: { url: string; thumbnail: string | null } }) => photoVideoUrls)
-        .flat();
+  const { data } = useGetAllActivityPhotosByUserIdQuery({
+    userId: userId ? `${userId}` : `${user?.id}`,
+    page: 0,
+    take: 28,
+  });
+  const itemsToRender = uuid.validate(`${photoUrl}`) ? activity?.photoVideoUrls : data?.photos;
+
   const isMapUrlExist = activity?.mapPhotoUrl ? +`${indexOfPhoto}` - 1 : +`${indexOfPhoto}`;
 
   return (

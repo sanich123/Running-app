@@ -26,7 +26,7 @@ export default function MediaGridImage({ url, thumbnail, blurhash, index }: Phot
       }
       borderless>
       <CustomImage
-        style={{ height: calculatedWidth, width: calculatedWidth }}
+        style={{ height: calculatedWidth, width: width / 4 }}
         source={{ uri: thumbnail || url }}
         contentFit="cover"
         placeholder={blurhash}
