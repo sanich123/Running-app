@@ -22,7 +22,7 @@ export function CustomImage({
         contentFit={contentFit}
         testID={testID}
         placeholder={placeholder}
-        // transition={500}
+        transition={500}
       />
     );
   }

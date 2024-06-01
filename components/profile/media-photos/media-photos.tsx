@@ -13,7 +13,7 @@ import { PROFILE_MEDIA } from './const';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { isLoading, isError, data, error } = useGetAllActivityPhotosByUserIdQuery(
-    { userId, page: 0, take: 28 },
+    { userId, take: 3 },
     { skip: !userId },
   );
   const { width } = useWindowDimensions();
@@ -31,22 +31,23 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
       borderless>
       <View style={[styles.layout, { backgroundColor: colors.onPrimary }, (isLoading || isError) && styles.isInCenter]}>
         {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${errorExtracter(error)}`}</Text>}
-        {!isError &&
-          data?.photos?.length > 0 &&
-          data?.photos?.slice(0, 4).map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => {
+        {data?.photos?.length > 0 &&
+          data?.photos?.map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => {
             if (index === 3) {
               return (
                 <Fragment key={`${url}+${index}`}>
-                  <View style={styles.lastImageWrapper}>
+                  <View style={[styles.lastImageWrapper, { width: width / 4 }]}>
                     <CustomImage
-                      style={{ width: width / 4, height: width / 4 }}
+                      style={{ width: width / 4, height: width / 4, position: 'absolute' }}
                       source={{ uri: thumbnail || url }}
                       placeholder={blurhash}
                     />
+                    <View>
+                      <Text style={{ color: 'white' }} variant="titleMedium">
+                        {PROFILE_MEDIA[language].label}
+                      </Text>
+                    </View>
                   </View>
-                  <Text variant="titleMedium" style={styles.lastImageText}>
-                    {PROFILE_MEDIA[language].label}
-                  </Text>
                 </Fragment>
               );
             }
@@ -76,13 +77,8 @@ const styles = StyleSheet.create({
   },
   lastImageWrapper: {
     position: 'relative',
-    opacity: 0.2,
-    backgroundColor: 'grey',
-  },
-  lastImageText: {
-    position: 'absolute',
-    top: '35%',
-    right: 12,
-    zIndex: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

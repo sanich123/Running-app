@@ -106,21 +106,8 @@ export const runichApi = createApi({
       },
     }),
     getAllActivityPhotosByUserId: builder.query({
-      query: ({ userId, page, take }: { userId: string; page: number; take: number }) =>
-        `/${activity}/${userId}/${photos}?page=${page}&take=${take}`,
+      query: ({ userId, take }: { userId: string; take: number }) => `/${activity}/${userId}/${photos}?take=${take}`,
       providesTags: [Tags.activities],
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName;
-      },
-      merge: (currentCache, newItems) => {
-        if (!currentCache?.message || !newItems?.message) {
-          currentCache?.photos?.push(...newItems?.photos);
-          currentCache.isLastPage = newItems.isLastPage;
-        }
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
-      },
     }),
     getActivityByActivityId: builder.query({
       query: (id: string) => `/${activity}/${activityId}/${id}`,

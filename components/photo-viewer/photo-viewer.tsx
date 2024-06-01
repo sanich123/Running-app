@@ -8,14 +8,18 @@ import PagerView from 'react-native-pager-view';
 import uuid from 'react-native-uuid';
 
 export default function PhotoViewer() {
-  const { photoUrl, indexOfPhoto, userId } = useLocalSearchParams();
+  const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();
   const { user } = useAuth();
-  const { data: activity } = useGetActivityByActivityIdQuery(`${photoUrl}`);
-  const { data } = useGetAllActivityPhotosByUserIdQuery({
-    userId: userId ? `${userId}` : `${user?.id}`,
-    page: 0,
-    take: 28,
+  const { data: activity } = useGetActivityByActivityIdQuery(`${photoUrl}`, {
+    skip: !photoUrl || !uuid.validate(`${photoUrl}`),
   });
+  const { data } = useGetAllActivityPhotosByUserIdQuery(
+    {
+      userId: userId ? `${userId}` : `${user?.id}`,
+      take: Number(take),
+    },
+    { skip: !take },
+  );
   const itemsToRender = uuid.validate(`${photoUrl}`) ? activity?.photoVideoUrls : data?.photos;
 
   const isMapUrlExist = activity?.mapPhotoUrl ? +`${indexOfPhoto}` - 1 : +`${indexOfPhoto}`;

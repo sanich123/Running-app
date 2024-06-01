@@ -5,7 +5,13 @@ import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Platform, useWindowDimensions } from 'react-native';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 
-export default function MediaGridImage({ url, thumbnail, blurhash, index }: PhotoVideoType & { index: number }) {
+export default function MediaGridImage({
+  url,
+  thumbnail,
+  blurhash,
+  index,
+  take,
+}: PhotoVideoType & { index: number; take: number }) {
   const { push } = useRouter();
   const { dark } = useTheme();
   const { width } = useWindowDimensions();
@@ -21,7 +27,7 @@ export default function MediaGridImage({ url, thumbnail, blurhash, index }: Phot
       key={url}
       onPress={() =>
         push(
-          `/(tabs)/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}?userId=${userId}`,
+          `/(tabs)/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}?userId=${userId}&take=${take}`,
         )
       }
       borderless>

@@ -20,7 +20,13 @@ export default function ProfilePage() {
   const { user } = useAuth();
   const whosProfile = whosProfileViewing ? whosProfileViewing : user?.id;
   const isMeViewing = whosProfileViewing === user?.id;
-  const { isLoading, isSuccess, isError, data: profile, error } = useGetUserProfileByIdQuery(`${whosProfile}`);
+  const {
+    isLoading,
+    isSuccess,
+    isError,
+    data: profile,
+    error,
+  } = useGetUserProfileByIdQuery(`${whosProfile}`, { skip: !whosProfile });
 
   const prefetchUserActivities = runichApi.usePrefetch('getActivitiesByUserId');
 

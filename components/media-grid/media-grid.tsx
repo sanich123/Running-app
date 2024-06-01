@@ -12,9 +12,9 @@ import MediaGridImage from './image/image';
 export default function MediaGrid() {
   const { colors } = useTheme();
   const { id: userId } = useLocalSearchParams();
-  const [page, setPage] = useState(0);
+  const [take, setTake] = useState(28);
   const { isLoading, data, error, isError } = useGetAllActivityPhotosByUserIdQuery(
-    { userId: `${userId}`, page, take: 28 },
+    { userId: `${userId}`, take },
     { skip: !userId },
   );
 
@@ -31,21 +31,21 @@ export default function MediaGrid() {
           ]}
           data={data?.photos}
           renderItem={({ item: { url, thumbnail, blurhash }, index }) => (
-            <MediaGridImage url={url} thumbnail={thumbnail} blurhash={blurhash} index={index} />
+            <MediaGridImage url={url} thumbnail={thumbnail} blurhash={blurhash} index={index} take={take} />
           )}
           initialNumToRender={28}
           maxToRenderPerBatch={28}
           onEndReached={() => {
             if (!data.isLastPage) {
               if (Platform.OS === 'web') {
-                setTimeout(() => setPage?.(page + 1), 2000);
+                setTimeout(() => setTake(take + 28), 2000);
               } else {
-                setPage?.(page + 1);
+                setTake(take + 28);
               }
             }
           }}
           keyExtractor={(arg: PhotoVideoType, index: number) => `image-${index}`}
-          ListFooterComponent={() => !data.isLastPage && <ActivityIndicator size="large" />}
+          ListFooterComponent={<ActivityIndicator size="large" />}
           numColumns={4}
           horizontal={false}
         />
