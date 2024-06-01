@@ -3,8 +3,8 @@ import ErrorComponent from '@C/error-component/error-component';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, Platform, FlatList } from 'react-native';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { StyleSheet, FlatList } from 'react-native';
+import { ActivityIndicator, Button, useTheme, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import MediaGridImage from './image/image';
@@ -12,7 +12,7 @@ import MediaGridImage from './image/image';
 export default function MediaGrid() {
   const { colors } = useTheme();
   const { id: userId } = useLocalSearchParams();
-  const [take, setTake] = useState(28);
+  const [take, setTake] = useState(12);
   const { isLoading, data, error, isError } = useGetAllActivityPhotosByUserIdQuery(
     { userId: `${userId}`, take },
     { skip: !userId },
@@ -35,17 +35,27 @@ export default function MediaGrid() {
           )}
           initialNumToRender={28}
           maxToRenderPerBatch={28}
-          onEndReached={() => {
-            if (!data.isLastPage) {
-              if (Platform.OS === 'web') {
-                setTimeout(() => setTake(take + 28), 2000);
-              } else {
-                setTake(take + 28);
-              }
-            }
-          }}
+          // onEndReached={() => {
+          //   if (!data.isLastPage) {
+          //     if (Platform.OS === 'web') {
+          //       setTimeout(() => setTake(take + 12), 2000);
+          //     } else {
+          //       setTake(take + 28);
+          //     }
+          //   }
+          // }}
           keyExtractor={(arg: PhotoVideoType, index: number) => `image-${index}`}
-          ListFooterComponent={<ActivityIndicator size="large" />}
+          ListFooterComponent={
+            <Button
+              icon="reload"
+              onPress={() => setTake(take + 12)}
+              mode="outlined"
+              style={{ borderRadius: 0, marginLeft: 5, marginRight: 5 }}
+              loading={isLoading}
+              disabled={isLoading || isError}>
+              <Text variant="bodyMedium">Загрузить еще фотки</Text>
+            </Button>
+          }
           numColumns={4}
           horizontal={false}
         />
