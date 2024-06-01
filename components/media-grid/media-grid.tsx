@@ -1,72 +1,73 @@
-import { CustomImage } from '@C/custom-image/custom-image';
+import { PhotoVideoType } from '@C/card/const ';
 import ErrorComponent from '@C/error-component/error-component';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
-import { ROUTES } from '@const/enums';
-import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import { Pressable, ScrollView, useWindowDimensions, StyleSheet, View, Platform } from 'react-native';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
+import { StyleSheet, FlatList } from 'react-native';
+import { ActivityIndicator, Button, useTheme, Text } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import MediaGridImage from './image/image';
 
 export default function MediaGrid() {
+  const { colors } = useTheme();
   const { id: userId } = useLocalSearchParams();
-  const { isLoading, data: photos, error, isError, isSuccess } = useGetAllActivityPhotosByUserIdQuery(`${userId}`);
-  const { width } = useWindowDimensions();
-  const { push } = useRouter();
-  const theme = useTheme();
-  const gap = 3;
-  const calculatedWidth = (width - gap * 3) / 4;
-  const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
+  const [take, setTake] = useState(12);
+  const { isLoading, data, error, isError } = useGetAllActivityPhotosByUserIdQuery(
+    { userId: `${userId}`, take },
+    { skip: !userId },
+  );
+
   return (
-    <ScrollView>
-      <View
-        style={[
-          {
-            backgroundColor: theme.colors.background,
-            gap,
-          },
-          styles.layout,
-          (isLoading || isError) && styles.isInCenter,
-        ]}>
-        {isLoading && <ActivityIndicator size="large" />}
-        {isError ? <ErrorComponent error={error} /> : null}
-        {isSuccess &&
-          !isError &&
-          photos?.length > 0 &&
-          photos
-            ?.map(({ photoVideoUrls }: { photoVideoUrls: { url: string; thumbnail: string | null } }) => photoVideoUrls)
-            .flat()
-            .map(
-              (
-                { url, thumbnail, blurhash }: { url: string; thumbnail: string | null; blurhash: string },
-                index: number,
-              ) => (
-                <Pressable
-                  key={`${url}+${index}`}
-                  style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
-                  onPress={() =>
-                    push(
-                      `/(tabs)/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}?userId=${userId}`,
-                    )
-                  }>
-                  <CustomImage
-                    style={{ height: calculatedWidth, width: calculatedWidth }}
-                    source={{ uri: thumbnail || url }}
-                    contentFit="cover"
-                    placeholder={blurhash}
-                  />
-                </Pressable>
-              ),
-            )}
-      </View>
-    </ScrollView>
+    <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
+      {isLoading && <ActivityIndicator size="large" />}
+      {isError ? <ErrorComponent error={error} /> : null}
+      {data?.photos?.length && (
+        <FlatList
+          contentContainerStyle={[
+            { backgroundColor: colors.background },
+            styles.layout,
+            (isLoading || isError) && styles.isInCenter,
+          ]}
+          data={data?.photos}
+          renderItem={({ item: { url, thumbnail, blurhash }, index }) => (
+            <MediaGridImage url={url} thumbnail={thumbnail} blurhash={blurhash} index={index} take={take} />
+          )}
+          initialNumToRender={28}
+          maxToRenderPerBatch={28}
+          // onEndReached={() => {
+          //   if (!data.isLastPage) {
+          //     if (Platform.OS === 'web') {
+          //       setTimeout(() => setTake(take + 12), 2000);
+          //     } else {
+          //       setTake(take + 28);
+          //     }
+          //   }
+          // }}
+          keyExtractor={(arg: PhotoVideoType, index: number) => `image-${index}`}
+          ListFooterComponent={
+            <Button
+              icon="reload"
+              onPress={() => setTake(take + 12)}
+              mode="outlined"
+              style={{ borderRadius: 0, marginLeft: 5, marginRight: 5 }}
+              loading={isLoading}
+              disabled={isLoading || isError}>
+              <Text variant="bodyMedium">Загрузить еще фотки</Text>
+            </Button>
+          }
+          numColumns={4}
+          horizontal={false}
+        />
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   layout: {
     display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    columnGap: 2,
   },
   isInCenter: {
     alignItems: 'center',

@@ -1,4 +1,4 @@
-import AvatarIconEditable from '@C/avatar-editable/avatar-editable';
+import AvatarIconEditable from '@C/avatar/editable/editable';
 import GenderBtns from '@C/gender-btns/gender-btns';
 import InputBio from '@C/input-bio/input-bio';
 import InputsNameSurname from '@C/inputs-name-surname/inputs-name-surname';

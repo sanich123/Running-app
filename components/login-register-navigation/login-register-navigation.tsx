@@ -1,6 +1,6 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { SignInPageStates, signInMap } from '@U/validate-email-password';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 
 import { LOGIN_NAVIGATION, REGISTER_NAVIGATION, RESET_NAVIGATION, RegisterNavigationProps } from './const';
@@ -12,7 +12,7 @@ export default function RegisterNavigation({ pageState, setPageState, isDisabled
   const isResetting = pageState === SignInPageStates.reset;
 
   return (
-    <View className="flex-row justify-center items-center gap-x-2 my-3">
+    <View style={styles.layout}>
       <Text variant="bodyMedium" style={{ opacity: isDisabled ? 0.5 : 1 }}>
         {isRegistering && LOGIN_NAVIGATION[language].text}
         {isLogining && RESET_NAVIGATION[language].text}
@@ -30,3 +30,13 @@ export default function RegisterNavigation({ pageState, setPageState, isDisabled
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+    gap: 10,
+  },
+});

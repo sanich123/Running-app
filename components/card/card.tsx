@@ -1,4 +1,4 @@
-import CardUserInfo from '@C/card-user-info/card-user-info';
+import UserInfo from '@C/card/user-info/user-info';
 import { runichApi } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
@@ -7,11 +7,13 @@ import { useRef, memo, useEffect } from 'react';
 import { View } from 'react-native';
 import { Card } from 'react-native-paper';
 
+import Btns from './btns/btns';
 import { ActivityCardProps } from './const ';
-import CardBtns from '../card-btns/card-btns';
-import CardLikes, { CardLikesSize } from '../card-likes/card-likes';
-import CardMapImagesList from '../card-likes/card-map-images-list/card-map-images-list';
-import CardMetrics from '../card-metrics/card-metrics';
+import { LikesSize } from './likes/const';
+import Likes from './likes/likes';
+import MediaList from './media-list/media-list';
+import Metrics from './metrics/metrics';
+import { UserInfoSize } from './user-info/const';
 
 export default memo(function ActivityCard({
   description,
@@ -26,16 +28,16 @@ export default memo(function ActivityCard({
   fullViewRef,
   isShowDescription,
   isShowDeleteBtn,
-  comments,
   mapPhotoUrl,
   mapPhotoUrlBlurhash,
   profile,
-  likes,
+  commentsLength,
 }: ActivityCardProps) {
   const pathname = usePathname();
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const cardRef = useRef(null);
   const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
+  const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
 
   useEffect(() => {
     if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
@@ -46,9 +48,9 @@ export default memo(function ActivityCard({
   return (
     <Card>
       <Card.Content>
-        <CardUserInfo profile={profile} sport={sport} date={date} userId={userId} />
+        <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
         <View ref={cardRef} collapsable={false}>
-          <CardMetrics
+          <Metrics
             distance={distance}
             duration={duration}
             title={title}
@@ -60,7 +62,7 @@ export default memo(function ActivityCard({
         </View>
       </Card.Content>
       {(mapPhotoUrl || photoVideoUrls?.length > 0) && (
-        <CardMapImagesList
+        <MediaList
           photoVideoUrls={photoVideoUrls}
           mapPhotoUrl={mapPhotoUrl}
           mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
@@ -68,22 +70,16 @@ export default memo(function ActivityCard({
         />
       )}
       <View style={{ height: 40 }}>
-        {likes?.length ? (
-          <CardLikes
-            activityId={id}
-            size={pathname.includes(ROUTES.activity) ? CardLikesSize.big : CardLikesSize.small}
-          />
-        ) : null}
+        <Likes activityId={id} size={likesSize} />
       </View>
       <Card.Actions>
-        <CardBtns
-          comments={comments}
-          likes={likes}
+        <Btns
           activityId={id}
           userId={userId}
           cardRef={cardRef}
           fullViewRef={fullViewRef}
           isShowDeleteBtn={isShowDeleteBtn}
+          commentsLength={commentsLength}
         />
       </Card.Actions>
     </Card>

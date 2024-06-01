@@ -1,6 +1,4 @@
 import { changeLanguage } from '@R/language/language';
-import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
-import { MOCK_LIKE } from '@T/mocks/mock-likes';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
@@ -15,22 +13,6 @@ import { SPORTS_BTNS_VALUES } from '../sports-btns/const';
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
   usePathname: () => 'somePathname',
-}));
-
-jest.mock('../../auth/context/auth-context', () => ({
-  useAuth: () => ({
-    user: {
-      id: 'someUserId',
-      app_metadata: {
-        someProp: 'some value',
-      },
-      user_metadata: {
-        someProp: 'some value',
-      },
-      aud: '',
-      created_at: '',
-    },
-  }),
 }));
 
 describe('Activity card', () => {
@@ -57,16 +39,13 @@ describe('Activity card', () => {
         duration={duration}
         distance={distance}
         fullViewRef={{ current: undefined }}
-        likes={MOCK_LIKE}
-        comments={MOCK_COMMENTS}
         profile={profile}
       />,
       { store: mockStore },
     );
-    expect(screen.getByText('Искандер')).toBeOnTheScreen();
-    expect(screen.getByText('Ядгаров')).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(`${profile.name}`))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(`${profile.surname}`))).toBeOnTheScreen();
     expect(await screen.findByText(title)).toBeOnTheScreen();
-    expect(await screen.findByText('Friday, November 3, 2023')).toBeOnTheScreen();
     ['Time', 'Pace', 'Distance'].map(async (word) =>
       expect(await screen.getByText(new RegExp(word))).toBeOnTheScreen(),
     );

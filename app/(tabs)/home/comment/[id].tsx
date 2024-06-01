@@ -1,4 +1,4 @@
-import CommentFullViewPage from '@C/comment-full-view-page/comment-full-view-page';
+import CommentFullViewPage from '@C/comment-page/comment-page';
 
 export default function HomeCommentFullViewPage() {
   return <CommentFullViewPage />;

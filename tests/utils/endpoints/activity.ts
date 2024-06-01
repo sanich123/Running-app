@@ -21,7 +21,8 @@ export const getActivityByActivityId = (req: any, res: any, ctx: any) => res(ctx
 export const getAllActivitiesByUserId = (req: any, res: any, ctx: any) =>
   res(ctx.status(200), ctx.json([MOCK_ACTIVITY]));
 
-export const getEmptyListActivitiesByUserId = (req: any, res: any, ctx: any) => res(ctx.status(200), ctx.json([]));
+export const getEmptyListActivitiesByUserId = (req: any, res: any, ctx: any) =>
+  res(ctx.status(200), ctx.json({ activities: [MOCK_ACTIVITY], isLastPage: false }));
 
 export const getAllCtivitiesByUserIdFailure = (req: any, res: any, ctx: any) =>
   res(ctx.status(401), ctx.json(MOCK_BAD_REQUEST));

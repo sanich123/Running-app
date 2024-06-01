@@ -1,4 +1,4 @@
-import ProfilePage from '@C/profile-page/profile-page';
+import ProfilePage from '@C/profile/profile';
 
 export default function ProfileProfilePage() {
   return <ProfilePage />;

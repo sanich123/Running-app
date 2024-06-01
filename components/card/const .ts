@@ -15,11 +15,12 @@ export type LikeType = {
   date: string;
   activityId: string;
   authorId: string;
+  profile: ProfileType;
 };
 
 export type ProfileType = {
   bio: string;
-  birthday: Date | null;
+  birthday: string | null;
   city: string;
   createdAt: string;
   email: string | null;
@@ -41,7 +42,7 @@ export type ActivityCardProps = {
   isShowDescription: boolean;
   description: string;
   title: string;
-  date: Date;
+  date: string;
   sport: SPORTS_BTNS_VALUES;
   id: string;
   userId: string;
@@ -51,9 +52,8 @@ export type ActivityCardProps = {
   duration: number;
   distance: number;
   fullViewRef: MutableRefObject<ReactNode | null>;
-  comments: CommentType[];
-  likes: LikeType[];
   profile: ProfileType;
+  commentsLength: number;
 };
 
 export type PhotoVideoType = { url: string; thumbnail: string | null; blurhash?: string };

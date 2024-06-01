@@ -1,4 +1,4 @@
-import ActivityMap from '@C/activity-map/activity-map';
+import ActivityMap from '@C/full-view-map/full-view-map';
 
 export default function HomeActivityMap() {
   return <ActivityMap />;
