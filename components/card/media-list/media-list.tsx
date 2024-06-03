@@ -14,7 +14,7 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const displayedData = mapPhotoUrl
-    ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...photoVideoUrls]
+    ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...(photoVideoUrls ? photoVideoUrls : [])]
     : photoVideoUrls;
 
   return (
@@ -40,7 +40,7 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           />
         </TouchableRipple>
       )}
-      style={{ overflow: !photoVideoUrls.length ? 'hidden' : 'scroll' }}
+      style={{ overflow: !photoVideoUrls?.length ? 'hidden' : 'scroll' }}
       horizontal
       initialNumToRender={1}
     />
