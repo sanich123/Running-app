@@ -24,6 +24,10 @@ export const runichApi = createApi({
       query: (id: string) => `/${profile}/${id}`,
       providesTags: [Tags.profile],
     }),
+    getFilteredUsersBySearchText: builder.query({
+      query: (search: string) =>
+        `/${profile}/filter?page=${0}&limit=${10}&offset=0&name=${search}&surname=${search}&email=${search}&city=${search}&gender=${search}&sport=${search}`,
+    }),
 
     getFriendsByUserId: builder.query({
       query: (id: string) => `/${friend}/${id}`,
@@ -278,6 +282,7 @@ export const runichApi = createApi({
 export const {
   useGetUsersQuery,
   useGetUserProfileByIdQuery,
+  useGetFilteredUsersBySearchTextQuery,
   useUpdateActivityInfoMutation,
   useUpdateProfileInfoMutation,
   useGetActivitiesByUserIdQuery,
