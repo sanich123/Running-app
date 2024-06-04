@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function ListOfUsers() {
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 1000);
-  console.log(debouncedSearch);
+
   const {
     isLoading,
     isError,
@@ -20,7 +20,7 @@ export default function ListOfUsers() {
     refetch,
   } = useGetFilteredUsersBySearchTextQuery(debouncedSearch, { skip: !debouncedSearch });
   const { refreshing, onRefresh } = useRefresh(refetch);
-  console.log(users?.items);
+
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={[{ flex: 1 }]}>
       <View>
