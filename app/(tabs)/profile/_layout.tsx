@@ -1,7 +1,7 @@
 import { useAuth } from '@A/context/auth-context';
-import ActivitySaveBtn from '@C/activity-save-btn/activity-save-btn';
-import ProfileEditBtn from '@C/profile-edit-btn/profile-edit-btn';
-import ProfileUpdateBtn from '@C/profile-update-btn/profile-update-btn';
+import ActivitySaveBtn from '@C/activity/save-btn/save-btn';
+import ProfileEditBtn from '@C/profile/edit-btn/edit-btn';
+import ProfileUpdateBtn from '@C/profile/update-btn/update-btn';
 import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
 import { useAppSelector } from '@R/typed-hooks';
 import { LABELS, ROUTES } from '@const/enums';

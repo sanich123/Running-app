@@ -1,8 +1,6 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { PointAnnotation } from '@rnmapbox/maps';
-import { StyleSheet } from 'react-native';
-
-import { View } from '../Themed';
+import { StyleSheet, View } from 'react-native';
 
 export default function MapNavIcon() {
   const { lastPosition, initialLocation } = useAppSelector(({ location }) => location);

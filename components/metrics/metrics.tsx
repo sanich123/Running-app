@@ -1,11 +1,11 @@
 import { useAppSelector } from '@R/typed-hooks';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 import { MAP_METRICS } from './const';
-import { getSpeedInMinsInKm } from '../../utils/location-utils';
+import { getSpeedInMinsInKm } from '../../utils/location/location-utils';
 import { formatDuration, formatDurationMinsSecs } from '../../utils/time-formatter';
-import ActivityErrorMsg from '../activity-error-msg/activity-error-msg';
+import ActivityErrorMsg from '../activity/error-msg/error-msg';
 import MetricsItem from '../metrics-item/metrics-item';
 
 export default function Metrics() {
@@ -19,9 +19,7 @@ export default function Metrics() {
   return (
     <>
       <ActivityErrorMsg />
-      <View
-        className={`flex flex-row flex-wrap justify-between relative text-black dark:text-white ${isMapVisible ? 'h-20' : 'h-full'}`}
-        style={{ backgroundColor: colors.surfaceVariant }}>
+      <View style={[styles.layout, { backgroundColor: colors.surfaceVariant, height: isMapVisible ? '20%' : '100%' }]}>
         <MetricsItem
           isMapVisible={isMapVisible}
           title={`${MAP_METRICS[language].time}:`}
@@ -62,3 +60,12 @@ export default function Metrics() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    position: 'relative',
+  },
+});

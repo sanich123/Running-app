@@ -1,3 +1,5 @@
+import { ProfileType } from '@C/card/const ';
+
 import { ProfileSlice } from './types';
 
 export const PROFILE_SETTINGS_INITIAL_STATE = {
@@ -26,4 +28,5 @@ export const PROFILE_INITIAL_STATE: ProfileSlice = {
   isDisabledWhileSendingProfile: false,
   settings: PROFILE_SETTINGS_INITIAL_STATE,
   isNeedToPrefetchActivities: false,
+  profileFromServer: {} as ProfileType,
 };

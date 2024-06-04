@@ -1,4 +1,4 @@
-import ActivitySaveBtn from '@C/activity-save-btn/activity-save-btn';
+import ActivitySaveBtn from '@C/activity/save-btn/save-btn';
 import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
 import { useAppSelector } from '@R/typed-hooks';
 import { LABELS, ROUTES } from '@const/enums';

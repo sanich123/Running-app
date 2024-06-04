@@ -17,7 +17,13 @@ import {
   successGetTwoComment,
   successLikeToComment,
 } from './endpoints/comment';
-import { addFriendSuccess, deleteFriendSuccess, getFollowersSuccess, getFollowingsSuccess } from './endpoints/friend';
+import {
+  addFriendSuccess,
+  deleteFriendSuccess,
+  getFollowersFailure,
+  getFollowersSuccess,
+  getFollowingsSuccess,
+} from './endpoints/friend';
 import { likeToActivitySucces, postLikeSuccess } from './endpoints/like';
 import { getProfileFailure, getProfileSuccess, getProfileWithoutPhoto } from './endpoints/profile';
 import { addUser } from './endpoints/user';
@@ -45,6 +51,7 @@ export const handlers = [
   rest.post(`${BASE_URL}/like`, postLikeSuccess),
   rest.get(`${BASE_URL}/comment/922dca27-f99c-4165-96d6-5a04bbb6e9cb/like`, successLikeToComment),
   rest.get(`${BASE_URL}/comment/2fd0916a-1fb8-44c4-bb6a-021c092f2713/like`, successLikeToComment),
+  rest.get(`${BASE_URL}/comment/f8266ab2-c911-47a5-852f-2fd91b1c31c5/like`, successLikeToComment),
   rest.get(`${BASE_URL}/comment/189d2c10-463c-42f5-9f09-5e9fa6aa2720`, successGetComments),
   rest.get(`${BASE_URL}/comment/activityIdWithOneComment`, successGetOneComment),
   rest.get(`${BASE_URL}/comment/activityIdWithTwoComments`, successGetTwoComment),
@@ -55,5 +62,6 @@ export const handlers = [
   rest.post(`${BASE_URL}/friend/someFriendId`, addFriendSuccess),
   rest.get(`${BASE_URL}/friend/7857abb1-b125-4f39-becf-8f30216b46ec/followers`, getFollowersSuccess),
   rest.get(`${BASE_URL}/friend/926f4a53-08b5-43c6-99ee-cf31fdfbb49b`, getFollowingsSuccess),
+  rest.get(`${BASE_URL}/friend/926f4a53-08b5-43c6-99ee-cf31fdfbb49b/followers`, getFollowersFailure),
   rest.post(`${BASE_URL}/user/someUserId/profile`, addUser),
 ];

@@ -1,4 +1,4 @@
-import ActivityCloseBtn from '@C/activity-close-btn/activity-close-btn';
+import ActivityCloseBtn from '@C/activity/close-btn/close-btn';
 import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 

@@ -1,3 +1,4 @@
+import mainFeed from '@R/main-feed/main-feed';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 
 import activity from '../../redux/activity/activity';
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   location,
   profile,
   activity,
+  mainFeed,
   [runichApi.reducerPath]: runichApi.reducer,
 });
 
@@ -25,4 +27,3 @@ export const mockStore = configureStore({
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = typeof mockStore;
-export type AppDispatch = AppStore['dispatch'];

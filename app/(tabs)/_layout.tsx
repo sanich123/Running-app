@@ -1,4 +1,4 @@
-import AvatarShowable from '@C/avatar-showable/avatar-showable';
+import AvatarShowable from '@C/avatar/showable/showable';
 import { ActivityIcon, HomeIcon } from '@C/icons/icons';
 import { ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';

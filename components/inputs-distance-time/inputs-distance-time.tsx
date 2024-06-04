@@ -23,7 +23,7 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
         style={[{ width: '33%' }, (isDisabledWhileSending || isDisabled) && { opacity: 0.5 }]}
         label={INPUTS_DISTANCE_TIME[language].distanceLabel}
         placeholder={INPUTS_DISTANCE_TIME[language].distancePlaceholder}
-        keyboardType="numeric"
+        inputMode="numeric"
         value={distance}
         onFocus={() => setDistance('')}
         onChangeText={(distance) => {
@@ -38,7 +38,7 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
         style={[{ width: '33%' }, (isDisabledWhileSending || isDisabled) && { opacity: 0.5 }]}
         label={INPUTS_DISTANCE_TIME[language].hoursLabel}
         placeholder={INPUTS_DISTANCE_TIME[language].hoursPlaceholder}
-        keyboardType="numeric"
+        inputMode="numeric"
         value={hours}
         onFocus={() => setHours('')}
         onChangeText={(hours) => {
@@ -53,7 +53,7 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
         style={[{ width: '33%' }, (isDisabledWhileSending || isDisabled) && { opacity: 0.5 }]}
         label={INPUTS_DISTANCE_TIME[language].minutesLabel}
         placeholder={INPUTS_DISTANCE_TIME[language].minutesPlaceholder}
-        keyboardType="numeric"
+        inputMode="numeric"
         value={minutes}
         onFocus={() => setMinutes('')}
         onChangeText={(minutes) => {

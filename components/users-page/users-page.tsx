@@ -1,5 +1,5 @@
 import ErrorComponent from '@C/error-component/error-component';
-import UserListItemSimple from '@C/user-list-item-simple/user-list-item-simple';
+import UserListItem from '@C/user-list-item/user-list-item';
 import { useGetUsersQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { View, FlatList } from 'react-native';
@@ -21,7 +21,7 @@ export default function ListOfUsers() {
             refreshing={refreshing}
             data={users}
             renderItem={({ item: { profile } }) => (
-              <UserListItemSimple
+              <UserListItem
                 city={profile?.city}
                 name={profile?.name}
                 surname={profile?.surname}

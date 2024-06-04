@@ -20,6 +20,7 @@ export async function getLastKnownPosition({ setIsLoading, setIsError, setIsSucc
     setTimeout(() => setIsSuccess(false), 2000);
   } catch (error) {
     setIsError(true);
+    setTimeout(() => setIsError(false));
     errorHandler(error);
   }
 }

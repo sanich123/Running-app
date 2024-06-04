@@ -1,5 +1,5 @@
 import ErrorComponent from '@C/error-component/error-component';
-import UserListItemSimple from '@C/user-list-item-simple/user-list-item-simple';
+import UserListItem from '@C/user-list-item/user-list-item';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
@@ -23,7 +23,7 @@ export default function LikesList() {
             refreshing={refreshing}
             data={likes}
             renderItem={({ item: { profile } }) => (
-              <UserListItemSimple
+              <UserListItem
                 name={profile?.name}
                 surname={profile?.surname}
                 profilePhoto={profile?.profilePhoto}

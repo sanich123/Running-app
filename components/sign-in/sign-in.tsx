@@ -11,7 +11,7 @@ import * as Linking from 'expo-linking';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useRef } from 'react';
-import { View, Platform, TextInput } from 'react-native';
+import { View, Platform, TextInput, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function SignIn() {
@@ -57,14 +57,8 @@ export default function SignIn() {
   return (
     <>
       {!process.env.IS_TESTING ? <Stack.Screen options={{ title: 'sign up', headerShown: false }} /> : null}
-      <View className="flex-1 justify-center" style={{ backgroundColor: colors.background }}>
-        <View
-          className="flex-1 justify-center px-4"
-          style={{
-            backgroundColor: colors.background,
-            marginLeft: Platform.OS === 'web' ? 'auto' : 0,
-            marginRight: Platform.OS === 'web' ? 'auto' : 0,
-          }}>
+      <View style={[styles.layout, { backgroundColor: colors.background }]}>
+        <View style={[styles.inputsWrapper, { backgroundColor: colors.background }]}>
           {pageState !== SignInPageStates.reset && !process.env.IS_TESTING ? (
             <>
               {Platform.OS !== 'web' ? (
@@ -109,3 +103,16 @@ export default function SignIn() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  inputsWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginLeft: Platform.OS === 'web' ? 'auto' : 10,
+    marginRight: Platform.OS === 'web' ? 'auto' : 10,
+  },
+});

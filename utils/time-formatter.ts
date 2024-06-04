@@ -16,7 +16,7 @@ export function calculateAge(dateOfBirth: Date) {
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
-export function formatDate(dateString: Date, language: LANGUAGES) {
+export function formatDate(dateString: string, language: LANGUAGES) {
   return new Date(dateString).toLocaleDateString(`${language === LANGUAGES.english ? 'en-US' : 'ru'}`, {
     weekday: 'long',
     year: 'numeric',
@@ -25,7 +25,7 @@ export function formatDate(dateString: Date, language: LANGUAGES) {
   });
 }
 
-export function getHoursMinutes(dateString: Date, language: LANGUAGES) {
+export function getHoursMinutes(dateString: string, language: LANGUAGES) {
   const hours = new Date(dateString).getHours();
   const minutes = new Date(dateString).getMinutes();
   return `${language === LANGUAGES.english ? 'at' : 'в'} ${hours < 10 ? `0${hours}` : `${hours}`}:${

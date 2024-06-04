@@ -1,4 +1,4 @@
-import { getSpeedInMinsInKm } from '../../utils/location-utils';
+import { getSpeedInMinsInKm } from '../../utils/location/location-utils';
 
 export const MOCK_DURATION = 30851;
 export const MOCK_DISTANCE = 49.781129312191226;
