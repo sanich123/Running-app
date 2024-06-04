@@ -42,7 +42,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
   }, [isSuccess, isMineAvatar]);
 
   useEffect(() => {
-    if (profile) {
+    if (profile && isMineAvatar) {
       dispatch(saveWholeProfile(profile));
     }
   }, [profile]);
