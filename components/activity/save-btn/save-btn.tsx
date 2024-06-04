@@ -17,10 +17,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
+import { useToast } from 'react-native-toast-notifications';
 
-import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
+import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID, ErrorMessages } from './const';
 
 export default function SaveBtn() {
+  const toast = useToast();
   const dispatch = useAppDispatch();
   const { colors, dark } = useTheme();
   const { user } = useAuth();
@@ -65,22 +67,37 @@ export default function SaveBtn() {
       dispatch(setIsNeedToRefreshActivities(true));
       replace(`/`);
     }
+  }, [isSuccess, isSuccessUpdating, data, successUpdating]);
+
+  useEffect(() => {
     if ((isError && error) || (isErrorUpdating && errorUpdating)) {
       dispatch(saveUnsendedActivity(activityToSend));
       dispatch(setIsHaveUnsyncedActivity(true));
       console.log('error', error, activityToSend);
-      if (Platform.OS !== 'web') {
-        showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsg, ToastDuration.long);
+      if (error && 'message' in error && error?.message === ErrorMessages.aborted) {
+        if (Platform.OS !== 'web') {
+          showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsgTimeout, ToastDuration.long);
+        } else {
+          toast.show(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
+        }
       }
       if (error && 'status' in error) {
-        if (error.status === 'FETCH_ERROR') {
+        if (error.status === ErrorMessages.fetchError) {
+          if (Platform.OS !== 'web') {
+            showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].fetchError, ToastDuration.long);
+          } else {
+            toast.show(ACTIVITY_SAVE_BTN[language].fetchError);
+          }
           dispatch(resetActivityInfo());
           dispatch(resetLocationsFromBackground());
           replace(`/`);
         }
       }
+      dispatch(resetActivityInfo());
+      dispatch(resetLocationsFromBackground());
+      replace('/');
     }
-  }, [data, error, successUpdating, isErrorUpdating]);
+  }, [error, isError, isErrorUpdating, errorUpdating]);
 
   return (
     <TouchableRipple

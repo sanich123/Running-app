@@ -52,7 +52,9 @@ export default function UpdateBtn() {
           dispatch(saveSport(activity?.sport));
           dispatch(saveEmotion(activity?.emotion));
           dispatch(saveIsPublic(activity?.isPublic));
-          dispatch(addPhotoUrls(activity?.photoVideoUrls));
+          if (activity?.photoVideoUrls) {
+            dispatch(addPhotoUrls(activity?.photoVideoUrls));
+          }
           dispatch(saveSport(activity?.sport));
           dispatch(setManualDate(new Date(activity?.date)));
           dispatch(setManualDistance(activity?.distance / 1000));

@@ -12,7 +12,7 @@ import MediaGridImage from './image/image';
 export default function MediaGrid() {
   const { colors } = useTheme();
   const { id: userId } = useLocalSearchParams();
-  const [take, setTake] = useState(12);
+  const [take, setTake] = useState(28);
   const { isLoading, data, error, isError } = useGetAllActivityPhotosByUserIdQuery(
     { userId: `${userId}`, take },
     { skip: !userId },
@@ -33,28 +33,21 @@ export default function MediaGrid() {
           renderItem={({ item: { url, thumbnail, blurhash }, index }) => (
             <MediaGridImage url={url} thumbnail={thumbnail} blurhash={blurhash} index={index} take={take} />
           )}
-          initialNumToRender={28}
-          maxToRenderPerBatch={28}
-          // onEndReached={() => {
-          //   if (!data.isLastPage) {
-          //     if (Platform.OS === 'web') {
-          //       setTimeout(() => setTake(take + 12), 2000);
-          //     } else {
-          //       setTake(take + 28);
-          //     }
-          //   }
-          // }}
+          initialNumToRender={20}
+          maxToRenderPerBatch={20}
           keyExtractor={(arg: PhotoVideoType, index: number) => `image-${index}`}
-          ListFooterComponent={
-            <Button
-              icon="reload"
-              onPress={() => setTake(take + 12)}
-              mode="outlined"
-              style={{ borderRadius: 0, marginLeft: 5, marginRight: 5 }}
-              loading={isLoading}
-              disabled={isLoading || isError}>
-              <Text variant="bodyMedium">Загрузить еще фотки</Text>
-            </Button>
+          ListFooterComponent={() =>
+            !data?.isLastPage && (
+              <Button
+                icon="reload"
+                onPress={() => setTake(take + 28)}
+                mode="outlined"
+                style={{ borderRadius: 0, marginLeft: 5, marginRight: 5 }}
+                loading={isLoading}
+                disabled={isLoading || isError}>
+                <Text variant="bodyMedium">Загрузить еще фотки</Text>
+              </Button>
+            )
           }
           numColumns={4}
           horizontal={false}

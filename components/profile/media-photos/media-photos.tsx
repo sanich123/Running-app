@@ -13,7 +13,7 @@ import { PROFILE_MEDIA } from './const';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { isLoading, isError, data, error } = useGetAllActivityPhotosByUserIdQuery(
-    { userId, take: 3 },
+    { userId, take: 4 },
     { skip: !userId },
   );
   const { width } = useWindowDimensions();
