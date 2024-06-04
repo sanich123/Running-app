@@ -30,6 +30,7 @@ describe('Card btns', () => {
         userId={MOCK_LIKE[0].authorId}
         cardRef={{ current: '' }}
         fullViewRef={{ current: '' }}
+        commentsLength={6}
       />,
       {
         store: mockStore,
@@ -46,6 +47,7 @@ describe('Card btns', () => {
         userId="someUserId"
         cardRef={{ current: '' }}
         fullViewRef={{ current: '' }}
+        commentsLength={6}
       />,
       {
         store: mockStore,

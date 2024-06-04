@@ -11,7 +11,7 @@ jest.mock('expo-router', () => ({
 
 describe('Activity card comment btn', () => {
   it('should correctly renders', () => {
-    renderWithProviders(<ActivityCardCommentBtn activityId="someActivityId" />, {
+    renderWithProviders(<ActivityCardCommentBtn activityId="someActivityId" commentsLength={6} />, {
       store: mockStore,
     });
     expect(screen.getByTestId('activityCardCommentBtnIcon')).toBeOnTheScreen();

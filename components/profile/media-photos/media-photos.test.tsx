@@ -18,6 +18,7 @@ describe('Profile media photos', () => {
   it('should correctly renders data in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<ProfileMediaPhotos userId="someUserId" />, { store: mockStore });
+    await screen.debug();
     expect(await screen.findByText(new RegExp(`${PROFILE_MEDIA.english.label}`))).toBeOnTheScreen();
   });
   it('should correctly renders data in russian', async () => {

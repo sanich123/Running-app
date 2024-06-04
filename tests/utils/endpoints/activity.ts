@@ -27,7 +27,8 @@ export const getEmptyListActivitiesByUserId = (req: any, res: any, ctx: any) =>
 export const getAllCtivitiesByUserIdFailure = (req: any, res: any, ctx: any) =>
   res(ctx.status(401), ctx.json(MOCK_BAD_REQUEST));
 
-export const getPhotosFromActivities = (req: any, res: any, ctx: any) => res(ctx.status(200), ctx.json(MOCK_PHOTOS));
+export const getPhotosFromActivities = (req: any, res: any, ctx: any) =>
+  res(ctx.status(200), ctx.json({ photos: MOCK_PHOTOS }));
 
 export const getPhotosFromActivitiesFailure = (req: any, res: any, ctx: any) =>
   res(ctx.status(400), ctx.json(MOCK_BAD_REQUEST));

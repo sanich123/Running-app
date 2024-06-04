@@ -1,3 +1,4 @@
+import { ProfileType } from '@C/card/const ';
 import { MOCK_EMAIL_PASSWORD, MOCK_SETTINGS } from '@T/mocks/mock-profile-settings';
 
 import { PROFILE_INITIAL_STATE } from './const';
@@ -112,6 +113,7 @@ describe('Profile slice', () => {
           isDisabledWhileSendingProfile: false,
           settings: MOCK_SETTINGS,
           isNeedToPrefetchActivities: false,
+          profileFromServer: {} as ProfileType,
         },
         resetSettings(),
       ),

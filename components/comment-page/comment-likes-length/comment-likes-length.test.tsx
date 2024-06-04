@@ -1,3 +1,4 @@
+import { MOCK_COMMENT_LIKES } from '@T/mocks/mock-comment-likes';
 import { screen } from '@testing-library/react-native';
 
 import CommentLikesLength from './comment-likes-length';
@@ -18,7 +19,13 @@ describe('Comment likes length', () => {
       },
     }));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<CommentLikesLength id="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
+    renderWithProviders(
+      <CommentLikesLength
+        commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
+        commentLikesFromComment={MOCK_COMMENT_LIKES}
+      />,
+      { store: mockStore },
+    );
     expect(
       await screen.findByText(new RegExp(`${NUMBER_OF_LIKES.english.and}3 ${NUMBER_OF_LIKES.english.manyGaveLikes}`)),
     ).toBeOnTheScreen();
@@ -31,7 +38,13 @@ describe('Comment likes length', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(<CommentLikesLength id="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
+    renderWithProviders(
+      <CommentLikesLength
+        commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
+        commentLikesFromComment={MOCK_COMMENT_LIKES}
+      />,
+      { store: mockStore },
+    );
     expect(
       await screen.findByText(new RegExp(`${NUMBER_OF_LIKES.russian.and}3 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`)),
     ).toBeOnTheScreen();
@@ -44,7 +57,13 @@ describe('Comment likes length', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(<CommentLikesLength id="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
+    renderWithProviders(
+      <CommentLikesLength
+        commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
+        commentLikesFromComment={MOCK_COMMENT_LIKES}
+      />,
+      { store: mockStore },
+    );
     expect(await screen.findByText(new RegExp(`4 ${NUMBER_OF_LIKES.english.manyGaveLikes}`))).toBeOnTheScreen();
   });
   it('should correctly renders in russian, when you didnt like', async () => {
@@ -55,7 +74,13 @@ describe('Comment likes length', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(<CommentLikesLength id="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
+    renderWithProviders(
+      <CommentLikesLength
+        commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
+        commentLikesFromComment={MOCK_COMMENT_LIKES}
+      />,
+      { store: mockStore },
+    );
     expect(await screen.findByText(new RegExp(`4 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
   });
 });

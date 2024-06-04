@@ -1,3 +1,4 @@
+import { MOCK_LIKES } from '@T/mocks/mock-likes';
 import { screen } from '@testing-library/react-native';
 
 import CommentLikeBtn from './comment-like-btn';
@@ -14,7 +15,10 @@ describe('Comment like btn', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(<CommentLikeBtn commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
+    renderWithProviders(
+      <CommentLikeBtn commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb" commentLikesFromComment={MOCK_LIKES} />,
+      { store: mockStore },
+    );
     expect(await screen.findByTestId('commentLikeBtn-active')).toBeOnTheScreen();
   });
   it('should correctly renders, when not liked by you', async () => {
@@ -24,7 +28,10 @@ describe('Comment like btn', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(<CommentLikeBtn commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb" />, { store: mockStore });
+    renderWithProviders(
+      <CommentLikeBtn commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb" commentLikesFromComment={MOCK_LIKES} />,
+      { store: mockStore },
+    );
     expect(await screen.findByTestId('commentLikeBtn')).toBeOnTheScreen();
   });
 });

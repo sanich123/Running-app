@@ -31,7 +31,7 @@ describe('Activity card', () => {
         isShowDescription
         description={description}
         title={title}
-        date={new Date(date)}
+        date={`${new Date(date)}`}
         sport={sport as SPORTS_BTNS_VALUES}
         id={id}
         userId="someUserId"
@@ -40,6 +40,7 @@ describe('Activity card', () => {
         distance={distance}
         fullViewRef={{ current: undefined }}
         profile={profile}
+        commentsLength={6}
       />,
       { store: mockStore },
     );

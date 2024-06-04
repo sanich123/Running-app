@@ -7,33 +7,38 @@ import { MOCK_COMMENTS } from '../../../tests/mocks/mock-comments';
 import { mockStore } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
 import { formatDate, getHoursMinutes } from '../../../utils/time-formatter';
-import { NUMBER_OF_LIKES } from '../../card/number-of-likes/const';
 
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+  usePathname: () => '/home/activity/someActivityId',
+}));
 describe('Comments', () => {
   it('should correctly renders with isLoading state and data from server in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<Comments id="someActivityId" />, { store: mockStore });
+    renderWithProviders(<Comments activityId="someActivityId" commentsLength={6} />, { store: mockStore });
     expect(screen.getByTestId('commentsActivityIndicator')).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_COMMENTS[0].comment)).toBeOnTheScreen();
-    expect(await screen.findByText(formatDate(new Date(MOCK_COMMENTS[0].date), LANGUAGES.english))).toBeOnTheScreen();
     expect(
-      await screen.findByText(getHoursMinutes(new Date(MOCK_COMMENTS[0].date), LANGUAGES.english)),
+      await screen.findByText(new RegExp(`${formatDate(MOCK_COMMENTS[0].date, LANGUAGES.english)}`, 'i')),
     ).toBeOnTheScreen();
-    expect(await screen.findByText(new RegExp(`4 ${NUMBER_OF_LIKES.english.manyGaveLikes}`))).toBeOnTheScreen();
+    expect(
+      await screen.findByText(new RegExp(`${getHoursMinutes(MOCK_COMMENTS[0].date, LANGUAGES.english)}`)),
+    ).toBeOnTheScreen();
   });
   it('should correctly renders with data from server in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<Comments id="someActivityId" />, { store: mockStore });
+    renderWithProviders(<Comments activityId="someActivityId" commentsLength={6} />, { store: mockStore });
     expect(await screen.findByText(MOCK_COMMENTS[0].comment)).toBeOnTheScreen();
-    expect(await screen.findByText(formatDate(new Date(MOCK_COMMENTS[0].date), LANGUAGES.russian))).toBeOnTheScreen();
     expect(
-      await screen.findByText(getHoursMinutes(new Date(MOCK_COMMENTS[0].date), LANGUAGES.russian)),
+      await screen.findByText(new RegExp(`${formatDate(MOCK_COMMENTS[0].date, LANGUAGES.russian)}`, 'i')),
     ).toBeOnTheScreen();
-    expect(await screen.findByText(new RegExp(`4 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
+    expect(
+      await screen.findByText(new RegExp(`${getHoursMinutes(MOCK_COMMENTS[0].date, LANGUAGES.russian)}`, 'i')),
+    ).toBeOnTheScreen();
   });
   it('should correctly handle when an error occured', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<Comments id="someWrongActivityId" />, { store: mockStore });
+    renderWithProviders(<Comments activityId="someWrongActivityId" commentsLength={6} />, { store: mockStore });
     expect(screen.getByTestId('commentsActivityIndicator')).toBeOnTheScreen();
     expect(await screen.findByText('An error occured')).toBeOnTheScreen();
     expect(await screen.findByText('Bad request, 401 code')).toBeOnTheScreen();
