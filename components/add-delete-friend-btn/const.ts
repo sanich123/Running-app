@@ -15,8 +15,8 @@ export const ADD_DELETE_FRIEND_BTN = {
     unfollow: 'Не отслеживать',
     following: 'Добавляю...',
     unfollowing: 'Удаляю...',
-    successUnfollowing: 'Удалили этого пидора из друзей. Так держать!',
-    successFollowing: 'Добавили этого пидора в друзей. Так держать!',
+    successUnfollowing: 'Больше не будем отслеживать этого пользователя',
+    successFollowing: 'Будем отслеживать этого пользователя',
     errorMsg: 'Ошибка',
   },
 };
