@@ -69,7 +69,7 @@
     "@react-navigation/material-top-tabs": "^6.6.5",
     "@react-navigation/native": "^6.0.2",
     "@reduxjs/toolkit": "^1.9.5",
-    "@rnmapbox/maps": "^10.1.24",
+    "@rnmapbox/maps": "^10.1.22",
     "@shopify/flash-list": "1.6.4",
     "@supabase/supabase-js": "^2.33.2",
     "@turf/bbox": "^6.5.0",
