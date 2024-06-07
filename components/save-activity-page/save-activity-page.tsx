@@ -2,8 +2,6 @@ import CameraLauncher from '@C/camera/camera';
 import Checkbox from '@C/checkbox/checkbox';
 import NetworkIndicator from '@C/network-indicator/network-indicator';
 import DatePickerWeb from '@C/save-activity-page/date-picker-web/date-picker-web';
-import ShowCameraBtn from '@C/show-camera-btn/show-camera-btn';
-import UploadPhotosBtn from '@C/upload-photos-btn/upload-photos-btn';
 import { useAppSelector } from '@R/typed-hooks';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
@@ -14,8 +12,10 @@ import DeclineBtn from './decline-btn/decline-btn';
 import EmotionBtns from './emotion-btns/emotion-btns';
 import InputsDistanceTime from './inputs-distance-time/inputs-distance-time';
 import PreviewImages from './preview-images/preview-images';
+import ShowCameraBtn from './show-camera-btn/show-camera-btn';
 import SportsBtns from './sports-btns/sports-btns';
 import TextInputs from './text-inputs/text-inputs';
+import UploadPhotosBtn from './upload-photos-btn/upload-photos-btn';
 
 export default function SaveResult() {
   const [isDisabled, setIsDisabled] = useState(false);

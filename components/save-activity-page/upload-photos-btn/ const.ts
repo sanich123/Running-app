@@ -1,4 +1,4 @@
-import { LANGUAGES } from '../../constants/enums';
+import { LANGUAGES } from '@const/enums';
 
 export type UploadPhotoBtnProps = {
   isDisabled: boolean;

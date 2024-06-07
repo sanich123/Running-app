@@ -1,9 +1,9 @@
+import { setCameraIsVisible } from '@R/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { SHOW_CAMERA_BTN } from './const';
-import { setCameraIsVisible } from '../../redux/activity/activity';
 
 export default function ShowCameraBtn({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();

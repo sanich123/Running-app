@@ -1,4 +1,4 @@
-import { LANGUAGES } from '../../constants/enums';
+import { LANGUAGES } from '@const/enums';
 
 export const SHOW_CAMERA_BTN = {
   [LANGUAGES.english]: {
