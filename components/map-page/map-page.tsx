@@ -6,7 +6,7 @@ import { StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function FullViewMap() {
+export default function MapPage() {
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error } = useGetLocationsByActivityIdQuery(`${activityId}`);
 
