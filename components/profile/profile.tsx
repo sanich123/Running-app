@@ -1,4 +1,3 @@
-import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
 import AvatarShowable from '@C/avatar/showable/showable';
 import ErrorComponent from '@C/error-component/error-component';
 import ProfileMediaPhotos from '@C/profile/media-photos/media-photos';
@@ -11,6 +10,7 @@ import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 
+import FollowUnfollowBtn from './follow-unfollow-btn/follow-unfollow-btn';
 import { USERS_VARIANT } from './users-counter/const';
 import UsersCounter from './users-counter/users-counter';
 
@@ -73,7 +73,7 @@ export default function ProfilePage() {
             <View style={styles.followersBtnsWrapper}>
               <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
               <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
-              {!isMeViewing && whosProfileViewing && <AddDeleteFriendBtn friendId={`${whosProfileViewing}`} />}
+              {!isMeViewing && whosProfileViewing && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
             </View>
           </>
         )}

@@ -1,6 +1,10 @@
 import { useAuth } from '@A/context/auth-context';
 import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
-import { useGetFriendsByUserIdQuery, useDeleteFriendMutation, useAddFriendMutation } from '@R/runich-api/runich-api';
+import {
+  useGetYouFollowUsersByUserIdQuery,
+  useDeleteFriendMutation,
+  useAddFriendMutation,
+} from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorExtracter } from '@U/error-handler';
@@ -9,9 +13,9 @@ import { Platform } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
-import { ADD_DELETE_FRIEND_BTN } from './const';
+import { FOLLOW_UNFOLLOW_BTN } from './const';
 
-export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
+export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
   const toast = useToast();
   const dispatch = useAppDispatch();
   const { user } = useAuth();
@@ -20,7 +24,7 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
     error: listOfFriendsError,
     isError,
     data: listOfFriends,
-  } = useGetFriendsByUserIdQuery(`${user?.id}`, { skip: !user });
+  } = useGetYouFollowUsersByUserIdQuery(`${user?.id}`, { skip: !user });
   const { language } = useAppSelector(({ language }) => language);
 
   const friendCell = listOfFriends?.filter(
@@ -36,24 +40,24 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
       if (isFriendDeleted) {
         dispatch(setIsNeedToRefreshActivities(true));
         if (Platform.OS !== 'web') {
-          showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].successUnfollowing);
+          showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successUnfollowing);
         } else {
-          toast.show(ADD_DELETE_FRIEND_BTN[language].successUnfollowing);
+          toast.show(FOLLOW_UNFOLLOW_BTN[language].successUnfollowing);
         }
       }
       if (isFriendAdded) {
         dispatch(setIsNeedToRefreshActivities(true));
         if (Platform.OS !== 'web') {
-          showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].successFollowing);
+          showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successFollowing);
         } else {
-          toast.show(ADD_DELETE_FRIEND_BTN[language].successFollowing);
+          toast.show(FOLLOW_UNFOLLOW_BTN[language].successFollowing);
         }
       }
       if (friendDeletingError || friendAddingError) {
         if (Platform.OS !== 'web') {
-          showCrossPlatformToast(ADD_DELETE_FRIEND_BTN[language].errorMsg);
+          showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].errorMsg);
         } else {
-          toast.show(ADD_DELETE_FRIEND_BTN[language].errorMsg);
+          toast.show(FOLLOW_UNFOLLOW_BTN[language].errorMsg);
         }
       }
     }
@@ -75,22 +79,22 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
         !isLoadingDeleteFriend &&
         !isLoadingAddFriend &&
         friendCell?.length > 0 &&
-        ADD_DELETE_FRIEND_BTN[language].unfollow}
+        FOLLOW_UNFOLLOW_BTN[language].unfollow}
       {!isError &&
         !isLoadingListOfFriends &&
         !isLoadingDeleteFriend &&
         !isLoadingAddFriend &&
         !friendCell?.length &&
-        ADD_DELETE_FRIEND_BTN[language].follow}
+        FOLLOW_UNFOLLOW_BTN[language].follow}
       {!isError &&
         (isLoadingAddFriend || isLoadingDeleteFriend) &&
         friendCell?.length > 0 &&
-        ADD_DELETE_FRIEND_BTN[language].unfollowing}
+        FOLLOW_UNFOLLOW_BTN[language].unfollowing}
       {!isError &&
         (isLoadingAddFriend || isLoadingDeleteFriend) &&
         !friendCell?.length &&
-        ADD_DELETE_FRIEND_BTN[language].following}
-      {isError && `${ADD_DELETE_FRIEND_BTN[language].errorMsg}: ${errorExtracter(listOfFriendsError)}`}
+        FOLLOW_UNFOLLOW_BTN[language].following}
+      {isError && `${FOLLOW_UNFOLLOW_BTN[language].errorMsg}: ${errorExtracter(listOfFriendsError)}`}
     </Button>
   );
 }

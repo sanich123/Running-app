@@ -32,8 +32,8 @@ export default function Feed() {
 
   useFocusEffect(() => {
     if (needToRefreshActivities) {
-      setTimeout(() => dispatch(runichApi.util.resetApiState()), 0);
       setPage(0);
+      setTimeout(() => dispatch(runichApi.util.resetApiState()), 0);
       dispatch(setIsNeedToRefreshActivities(false));
     }
   });

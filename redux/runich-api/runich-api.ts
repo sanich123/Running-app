@@ -48,15 +48,15 @@ export const runichApi = createApi({
       invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
 
-    getFriendsByUserId: builder.query({
+    //Followers
+    getYouFollowUsersByUserId: builder.query({
       query: (id: string) => `/${friend}/${id}`,
-      providesTags: [Tags.friends],
+      providesTags: (result, error, arg) => [{ type: Tags.friends, id: arg }],
     }),
     getFollowersByUserId: builder.query({
       query: (id: string) => `/${friend}/${id}/${followers}`,
-      providesTags: [Tags.friends],
+      providesTags: (result, error, arg) => [{ type: Tags.friends, id: arg }],
     }),
-
     addFriend: builder.mutation({
       query: ({ body, id }: SendFriend) => ({
         url: `/${friend}/${id}`,
@@ -64,7 +64,7 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.friends],
+      invalidatesTags: (result, error, arg) => [{ type: Tags.friends, id: arg.body.userId }],
     }),
     deleteFriend: builder.mutation({
       query: (id: string) => ({
@@ -295,7 +295,7 @@ export const {
   useGetAllActivityPhotosByUserIdQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesQuery,
   useGetActivityByActivityIdQuery,
-  useGetFriendsByUserIdQuery,
+  useGetYouFollowUsersByUserIdQuery,
   useGetFollowersByUserIdQuery,
   useGetCommentsByActivityIdQuery,
   useGetCommentsLengthByActivityIdQuery,

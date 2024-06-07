@@ -1,6 +1,6 @@
-import { LANGUAGES } from '../../constants/enums';
+import { LANGUAGES } from '@const/enums';
 
-export const ADD_DELETE_FRIEND_BTN = {
+export const FOLLOW_UNFOLLOW_BTN = {
   [LANGUAGES.english]: {
     follow: 'Follow',
     unfollow: 'Unfollow',
