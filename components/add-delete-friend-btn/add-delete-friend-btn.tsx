@@ -22,7 +22,7 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
     data: listOfFriends,
   } = useGetFriendsByUserIdQuery(`${user?.id}`, { skip: !user });
   const { language } = useAppSelector(({ language }) => language);
-  console.log(listOfFriends);
+
   const friendCell = listOfFriends?.filter(
     ({ friendId: friendIdOnServer }: { friendId: string }) => friendIdOnServer === friendId,
   );
@@ -66,7 +66,7 @@ export default function AddDeleteFriendBtn({ friendId }: { friendId: string }) {
       disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend || isError}
       onPress={async () =>
         friendCell?.length > 0
-          ? await deleteFriend({ body: { userId: `${user?.id}` }, id: friendId }).unwrap()
+          ? await deleteFriend(friendCell[0]?.id).unwrap()
           : await addFriend({ body: { userId: `${user?.id}` }, id: friendId }).unwrap()
       }>
       {!isError && isLoadingListOfFriends && ''}

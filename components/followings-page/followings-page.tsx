@@ -22,14 +22,14 @@ export default function ListOfFollowing() {
             onRefresh={onRefresh}
             refreshing={refreshing}
             data={users}
-            renderItem={({ item: { profile } }) => (
+            renderItem={({ item }) => (
               <UserListItem
-                city={profile?.city}
-                name={profile?.name}
-                surname={profile?.surname}
-                profilePhoto={profile?.profilePhoto}
-                placeholder={profile?.profilePhotoBlurhash}
-                user_id={profile?.user_id}
+                city={item.profile?.city}
+                name={item.profile?.name}
+                surname={item.profile?.surname}
+                profilePhoto={item.profile?.profilePhoto}
+                placeholder={item.profile?.profilePhotoBlurhash}
+                user_id={item?.friendId}
               />
             )}
             ListEmptyComponent={
