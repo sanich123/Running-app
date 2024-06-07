@@ -1,20 +1,21 @@
 import CameraLauncher from '@C/camera/camera';
 import Checkbox from '@C/checkbox/checkbox';
-import DateTimePicker from '@C/date-picker/date-picker';
-import DatePickerWeb from '@C/date-picker-web/date-picker-web';
-import DeclineBtn from '@C/decline-btn/decline-btn';
-import EmotionBtns from '@C/emotion-btns/emotion-btns';
-import InputsDistanceTime from '@C/inputs-distance-time/inputs-distance-time';
 import NetworkIndicator from '@C/network-indicator/network-indicator';
-import PreviewImages from '@C/preview-images/preview-images';
+import DatePickerWeb from '@C/save-activity-page/date-picker-web/date-picker-web';
 import ShowCameraBtn from '@C/show-camera-btn/show-camera-btn';
-import SportsBtns from '@C/sports-btns/sports-btns';
-import TextInputs from '@C/text-inputs/text-inputs';
 import UploadPhotosBtn from '@C/upload-photos-btn/upload-photos-btn';
 import { useAppSelector } from '@R/typed-hooks';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+
+import DateTimePicker from './date-picker/date-picker';
+import DeclineBtn from './decline-btn/decline-btn';
+import EmotionBtns from './emotion-btns/emotion-btns';
+import InputsDistanceTime from './inputs-distance-time/inputs-distance-time';
+import PreviewImages from './preview-images/preview-images';
+import SportsBtns from './sports-btns/sports-btns';
+import TextInputs from './text-inputs/text-inputs';
 
 export default function SaveResult() {
   const [isDisabled, setIsDisabled] = useState(false);

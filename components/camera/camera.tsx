@@ -3,7 +3,7 @@ import CloseBtn from '@C/camera/close-btn/close-btn';
 import FlashBtn from '@C/camera/flash-btn/flash-btn';
 import ShotBtn from '@C/camera/shot-btn/shot-btn';
 import { PhotoVideoType } from '@C/card/const ';
-import PreviewImages from '@C/preview-images/preview-images';
+import PreviewImages from '@C/save-activity-page/preview-images/preview-images';
 import { CameraView, CameraType, FlashMode, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { useEffect, useRef, useState } from 'react';

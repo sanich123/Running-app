@@ -1,6 +1,5 @@
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-import { SPORTS_BTNS_VALUES } from '../components/sports-btns/const';
 
 export function getIconByTypeOfSport(sport: SPORTS_BTNS_VALUES) {
   const size = 15;

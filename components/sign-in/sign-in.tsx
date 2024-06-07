@@ -1,10 +1,7 @@
 import { createSessionFromTokens, createSessionFromUrl } from '@A/supabase/storage/sign-in';
-import EmailInput from '@C/email-input/email-input';
-import GoogleSignBtn from '@C/google-sign-in/google-sign-in';
-import GoogleSignInWeb from '@C/google-sign-in-web/google-sign-in-web';
-import LoginRegisterBtn from '@C/login-register-btn/login-register-btn';
-import LoginRegisterNavigation from '@C/login-register-navigation/login-register-navigation';
-import PasswordInput from '@C/password-input/password-input';
+import GoogleSignBtn from '@C/sign-in/google-sign-in/google-sign-in';
+import GoogleSignInWeb from '@C/sign-in/google-sign-in-web/google-sign-in-web';
+import PasswordInput from '@C/sign-in/password-input/password-input';
 import usePasswordEmail from '@U/hooks/use-password-email';
 import { SignInPageStates } from '@U/validate-email-password';
 import * as Linking from 'expo-linking';
@@ -13,6 +10,10 @@ import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useRef } from 'react';
 import { View, Platform, TextInput, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
+
+import EmailInput from './email-input/email-input';
+import LoginRegisterBtn from './login-register-btn/login-register-btn';
+import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
 
 export default function SignIn() {
   const { colors } = useTheme();

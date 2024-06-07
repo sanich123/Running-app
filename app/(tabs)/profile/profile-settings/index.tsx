@@ -1,8 +1,8 @@
 import AvatarIconEditable from '@C/avatar/editable/editable';
-import GenderBtns from '@C/gender-btns/gender-btns';
-import InputBio from '@C/input-bio/input-bio';
-import InputsNameSurname from '@C/inputs-name-surname/inputs-name-surname';
-import InputsWeightCity from '@C/inputs-weight-city/inputs-weight-city';
+import GenderBtns from '@C/save-activity-page/gender-btns/gender-btns';
+import InputBio from '@C/save-activity-page/input-bio/input-bio';
+import InputsNameSurname from '@C/save-activity-page/inputs-name-surname/inputs-name-surname';
+import InputsWeightCity from '@C/save-activity-page/inputs-weight-city/inputs-weight-city';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 

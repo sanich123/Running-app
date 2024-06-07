@@ -1,4 +1,4 @@
-import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
