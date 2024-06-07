@@ -2,7 +2,11 @@ import { useAuth } from '@A/context/auth-context';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { saveWholeProfile } from '@R/profile/profile';
 import { ProfileSettings } from '@R/profile/types';
-import { useGetUserProfileByIdQuery, useSendProfileInfoMutation } from '@R/runich-api/runich-api';
+import {
+  useGetUserProfileByIdQuery,
+  useSendProfileInfoMutation,
+  useUpdateProfileInfoMutation,
+} from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect } from 'react';
@@ -21,6 +25,7 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
   const isMineAvatar = id === user?.id;
   const { data: profile, error, isSuccess } = useGetUserProfileByIdQuery(id, { skip: !id });
   const [sendProfile] = useSendProfileInfoMutation();
+  const [updateProfile] = useUpdateProfileInfoMutation();
 
   useEffect(() => {
     if (isMineAvatar && isSuccess && !profile) {
@@ -40,6 +45,11 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
             user?.id,
           );
         }
+      }
+    }
+    if (isMineAvatar && isSuccess && !profile?.email) {
+      if (googleInfo?.email) {
+        updateProfile({ body: { email: googleInfo?.email }, id: profile?.id }).unwrap();
       }
     }
   }, [isSuccess, isMineAvatar]);

@@ -51,10 +51,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 25,
-    paddingLeft: 10,
-    paddingRight: 10,
-    marginLeft: 15,
-    marginRight: 15,
+    paddingRight: 5,
+    gap: 5,
+    width: '100%',
   },
 });

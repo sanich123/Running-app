@@ -41,7 +41,7 @@ export default function GenderBtns({ isDisabled }: { isDisabled: boolean }) {
           disabled: isDisabled || isDisabledWhileSendingProfile,
         },
       ]}
-      style={{ marginTop: 15, paddingLeft: 15, paddingRight: 15 }}
+      style={{ width: '100%' }}
     />
   );
 }

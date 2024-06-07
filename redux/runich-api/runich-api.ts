@@ -41,7 +41,7 @@ export const runichApi = createApi({
     updateProfileInfo: builder.mutation({
       query: ({ body, id }) => ({
         url: `/${profile}/${id}`,
-        method: 'PATCH',
+        method: Methods.patch,
         headers,
         body,
       }),

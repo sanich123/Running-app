@@ -24,7 +24,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    gap: 20,
-    paddingTop: 40,
+    gap: 15,
+    marginTop: 40,
+    marginRight: 15,
+    marginLeft: 15,
   },
 });

@@ -15,7 +15,7 @@ export default function InputBio({ isDisabled }: { isDisabled: boolean }) {
     <TextInput
       testID={INPUT_BIO_TEST_ID}
       mode="outlined"
-      style={{ width: '93%' }}
+      style={{ width: '100%' }}
       label={INPUT_BIO[language].label}
       placeholder={INPUT_BIO[language].placeholder}
       multiline

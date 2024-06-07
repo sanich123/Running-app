@@ -16,7 +16,7 @@ export default function SettingsPage() {
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const [languageValue, setLanguage] = useState<string>(language);
   const dispatch = useAppDispatch();
-  const { data: profileInfo, isSuccess } = useGetUserProfileByIdQuery(`${user?.id}`);
+  const { data: profileInfo, isSuccess } = useGetUserProfileByIdQuery(`${user?.id}`, { skip: !user });
   const [updateProfile] = useUpdateProfileInfoMutation();
 
   return (
