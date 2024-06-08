@@ -24,23 +24,10 @@ export const runichApi = createApi({
       query: (id: string) => `/${profile}/${id}`,
       providesTags: [Tags.profile],
     }),
-
-    getFriendsByUserId: builder.query({
-      query: (id: string) => `/${friend}/${id}`,
-      providesTags: [Tags.friends],
-    }),
-    getFollowersByUserId: builder.query({
-      query: (id: string) => `/${friend}/${id}/${followers}`,
-      providesTags: [Tags.friends],
-    }),
-    updateProfileInfo: builder.mutation({
-      query: ({ body, id }) => ({
-        url: `/${profile}/${id}`,
-        method: 'PATCH',
-        headers,
-        body,
-      }),
-      invalidatesTags: [Tags.profile, Tags.activities],
+    getFilteredUsersBySearchText: builder.query({
+      query: (search: string) =>
+        `/${profile}/filter?page=${0}&limit=${10}&offset=0&name=${search}&surname=${search}&email=${search}&city=${search}&gender=${search}&sport=${search}`,
+      providesTags: [Tags.profile],
     }),
     sendProfileInfo: builder.mutation({
       query: ({ body, id }: SendProfile) => ({
@@ -51,6 +38,25 @@ export const runichApi = createApi({
       }),
       invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
+    updateProfileInfo: builder.mutation({
+      query: ({ body, id }) => ({
+        url: `/${profile}/${id}`,
+        method: Methods.patch,
+        headers,
+        body,
+      }),
+      invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
+    }),
+
+    //Followers
+    getYouFollowUsersByUserId: builder.query({
+      query: (id: string) => `/${friend}/${id}`,
+      providesTags: (result, error, arg) => [{ type: Tags.friends, id: arg }],
+    }),
+    getFollowersByUserId: builder.query({
+      query: (id: string) => `/${friend}/${id}/${followers}`,
+      providesTags: (result, error, arg) => [{ type: Tags.friends, id: arg }],
+    }),
     addFriend: builder.mutation({
       query: ({ body, id }: SendFriend) => ({
         url: `/${friend}/${id}`,
@@ -58,16 +64,15 @@ export const runichApi = createApi({
         headers,
         body,
       }),
-      invalidatesTags: [Tags.friends, Tags.activities, Tags.users],
+      invalidatesTags: (result, error, arg) => [{ type: Tags.friends, id: arg.body.userId }],
     }),
     deleteFriend: builder.mutation({
-      query: ({ body, id }: SendFriend) => ({
+      query: (id: string) => ({
         url: `/${friend}/${id}`,
         method: Methods.delete,
         headers,
-        body,
       }),
-      invalidatesTags: [Tags.friends, Tags.activities, Tags.users],
+      invalidatesTags: [Tags.friends],
     }),
 
     //Activities
@@ -95,14 +100,19 @@ export const runichApi = createApi({
       serializeQueryArgs: ({ endpointName }) => {
         return endpointName;
       },
-      merge: (currentCache, newItems) => {
-        if (!currentCache?.message || !newItems?.message) {
-          currentCache.activities?.push(...newItems.activities);
-          currentCache.isLastPage = newItems.isLastPage;
+      merge: (currentCache, newItems, { arg }) => {
+        if (arg.page === 0) {
+          return newItems;
+        } else {
+          if (!currentCache?.message || !newItems?.message) {
+            currentCache.activities?.push(...newItems.activities);
+            currentCache.isLastPage = newItems.isLastPage;
+          }
         }
       },
       forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
+        if (!previousArg) return true;
+        return currentArg?.page !== previousArg?.page;
       },
     }),
     getAllActivityPhotosByUserId: builder.query({
@@ -278,13 +288,14 @@ export const runichApi = createApi({
 export const {
   useGetUsersQuery,
   useGetUserProfileByIdQuery,
+  useGetFilteredUsersBySearchTextQuery,
   useUpdateActivityInfoMutation,
   useUpdateProfileInfoMutation,
   useGetActivitiesByUserIdQuery,
   useGetAllActivityPhotosByUserIdQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesQuery,
   useGetActivityByActivityIdQuery,
-  useGetFriendsByUserIdQuery,
+  useGetYouFollowUsersByUserIdQuery,
   useGetFollowersByUserIdQuery,
   useGetCommentsByActivityIdQuery,
   useGetCommentsLengthByActivityIdQuery,

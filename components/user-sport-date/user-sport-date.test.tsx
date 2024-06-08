@@ -1,4 +1,4 @@
-import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { changeLanguage } from '@R/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';

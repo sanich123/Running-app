@@ -1,5 +1,5 @@
-import ActivityMap from '@C/full-view-map/full-view-map';
+import MapPage from '@C/map-page/map-page';
 
 export default function ProfileActivityMap() {
-  return <ActivityMap />;
+  return <MapPage />;
 }

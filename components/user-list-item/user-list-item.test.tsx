@@ -1,5 +1,5 @@
 import * as auth from '@A/context/auth-context';
-import { ADD_DELETE_FRIEND_BTN } from '@C/add-delete-friend-btn/const';
+import { FOLLOW_UNFOLLOW_BTN } from '@C/profile/follow-unfollow-btn/const';
 import { changeLanguage } from '@R/language/language';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
@@ -59,7 +59,7 @@ describe('User list item', () => {
     expect(await screen.findByText(new RegExp(`${MOCK_PROFILE.name}`))).toBeOnTheScreen();
     expect(await screen.findByText(new RegExp(`${MOCK_PROFILE.surname}`))).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
-    expect(await screen.findByText(ADD_DELETE_FRIEND_BTN.english.follow)).toBeOnTheScreen();
+    expect(await screen.findByText(FOLLOW_UNFOLLOW_BTN.english.follow)).toBeOnTheScreen();
   });
   it('should correctly show unfollow btn, when user is in the list of friends', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
@@ -83,6 +83,6 @@ describe('User list item', () => {
     expect(await screen.findByText(new RegExp(`${MOCK_PROFILE.name}`))).toBeOnTheScreen();
     expect(await screen.findByText(new RegExp(`${MOCK_PROFILE.surname}`))).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
-    expect(await screen.getByText(ADD_DELETE_FRIEND_BTN.english.unfollow)).toBeOnTheScreen();
+    expect(await screen.getByText(FOLLOW_UNFOLLOW_BTN.english.unfollow)).toBeOnTheScreen();
   });
 });

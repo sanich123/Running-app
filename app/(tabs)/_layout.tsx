@@ -47,6 +47,7 @@ export default function TabLayout() {
           tabBarShowLabel: false,
         }}
       />
+
       <Tabs.Screen
         name={ROUTES.activity}
         options={{
@@ -54,6 +55,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
         }}
       />
+
       {user && (
         <Tabs.Screen
           name={ROUTES.profile}

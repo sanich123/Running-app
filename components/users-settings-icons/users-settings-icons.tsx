@@ -2,7 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import ActivityUpdateBtn from '@C/activity/update-btn/update-btn';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import { Platform, View } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 
 export default function UsersSettingsIcons() {
@@ -15,30 +15,25 @@ export default function UsersSettingsIcons() {
   const isMineActivity = userId === user?.id && pathname.includes(ROUTES.activity);
 
   return (
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'transparent',
-      }}>
+    <View style={styles.layout}>
       {isMineActivity ? (
         <ActivityUpdateBtn />
       ) : (
         <>
           <IconButton
             testID="usersIcon"
-            icon="account-multiple"
+            icon="account-search-outline"
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            onPress={() => push(`/${place}/users/`)}
+            onPress={() => !pathname.includes(ROUTES.users) && push(`/${place}/${ROUTES.users}/`)}
           />
           <IconButton
             testID="settingsIcon"
             icon="cog-outline"
+            animated
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            onPress={() => push(`/${place}/settings/`)}
+            onPress={() => !pathname.includes(ROUTES.settings) && push(`/${place}/${ROUTES.settings}/`)}
             style={{ marginLeft: -10 }}
           />
         </>
@@ -46,3 +41,12 @@ export default function UsersSettingsIcons() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+});

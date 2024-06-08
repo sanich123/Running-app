@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function ListOfFollowers() {
   const { user } = useAuth();
   const { id: friendId } = useLocalSearchParams();
+
   const {
     isLoading,
     error,
@@ -37,7 +38,7 @@ export default function ListOfFollowers() {
                 surname={item.users.profile?.surname}
                 profilePhoto={item.users.profile?.profilePhoto}
                 placeholder={item.users.profile?.profilePhotoBlurhash}
-                user_id={item.users.profile?.user_id}
+                user_id={item.user_id}
               />
             )}
             ListEmptyComponent={

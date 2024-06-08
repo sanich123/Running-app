@@ -1,5 +1,5 @@
 import { useAuth } from '@A/context/auth-context';
-import { useGetFollowersByUserIdQuery, useGetFriendsByUserIdQuery } from '@R/runich-api/runich-api';
+import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';
@@ -33,7 +33,7 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
     error: followingsError,
     isError: isFollowingsError,
     data: whoUserFollowsList,
-  } = useGetFriendsByUserIdQuery(whosId, { skip: variant === USERS_VARIANT.whoFollowsUser });
+  } = useGetYouFollowUsersByUserIdQuery(whosId, { skip: variant === USERS_VARIANT.whoFollowsUser });
   const whatErrorToRespond = variant === USERS_VARIANT.whoUserFollows ? followingsError : followersError;
 
   return (

@@ -1,5 +1,5 @@
-import { EMOTIONS_BTNS_VALUES } from '@C/emotion-btns/const';
-import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
+import { EMOTIONS_BTNS_VALUES } from '@C/save-activity-page/emotion-btns/const';
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { saveFinishedActivity, saveTitle, saveDescription, saveSport, saveEmotion } from '@R/activity/activity';
 import { changeLanguage } from '@R/language/language';
 import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';

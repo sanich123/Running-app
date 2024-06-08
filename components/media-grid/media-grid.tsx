@@ -3,8 +3,8 @@ import ErrorComponent from '@C/error-component/error-component';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, FlatList } from 'react-native';
-import { ActivityIndicator, Button, useTheme, Text } from 'react-native-paper';
+import { StyleSheet, FlatList, Platform } from 'react-native';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import MediaGridImage from './image/image';
@@ -36,19 +36,17 @@ export default function MediaGrid() {
           initialNumToRender={20}
           maxToRenderPerBatch={20}
           keyExtractor={(arg: PhotoVideoType, index: number) => `image-${index}`}
-          ListFooterComponent={() =>
-            !data?.isLastPage && (
-              <Button
-                icon="reload"
-                onPress={() => setTake(take + 28)}
-                mode="outlined"
-                style={{ borderRadius: 0, marginLeft: 5, marginRight: 5 }}
-                loading={isLoading}
-                disabled={isLoading || isError}>
-                <Text variant="bodyMedium">Загрузить еще фотки</Text>
-              </Button>
-            )
-          }
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            if (!data?.isLastPage) {
+              if (Platform.OS === 'web') {
+                setTimeout(() => setTake(take + 28), 2000);
+              } else {
+                setTake(take + 28);
+              }
+            }
+          }}
+          ListFooterComponent={() => !data?.isLastPage && <ActivityIndicator size="large" />}
           numColumns={4}
           horizontal={false}
         />

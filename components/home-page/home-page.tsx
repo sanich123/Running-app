@@ -13,8 +13,8 @@ import {
 import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
 import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -30,13 +30,13 @@ export default function Feed() {
     { skip: !user?.id },
   );
 
-  useEffect(() => {
+  useFocusEffect(() => {
     if (needToRefreshActivities) {
       setPage(0);
       setTimeout(() => dispatch(runichApi.util.resetApiState()), 0);
       dispatch(setIsNeedToRefreshActivities(false));
     }
-  }, [needToRefreshActivities]);
+  });
 
   return (
     <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
