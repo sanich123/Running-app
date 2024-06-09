@@ -2,22 +2,30 @@ import { useAuth } from '@A/context/auth-context';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { saveWholeProfile } from '@R/profile/profile';
 import { ProfileSettings } from '@R/profile/types';
-import { useGetUserProfileByIdQuery, useSendProfileInfoMutation } from '@R/runich-api/runich-api';
+import {
+  useGetUserProfileByIdQuery,
+  useSendProfileInfoMutation,
+  useUpdateProfileInfoMutation,
+} from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
-import { memo, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import { useEffect } from 'react';
+import { Platform, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
+import { useToast } from 'react-native-toast-notifications';
 
-import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
+import { AVATAR_SHOWABLE, AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
-export default memo(function AvatarShowable({ size, id }: { size: number; id: string }) {
+export default function AvatarShowable({ size, id }: { size: number; id: string }) {
+  const toast = useToast();
+  const { language } = useAppSelector(({ language }) => language);
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const { googleInfo } = useAppSelector(({ profile }) => profile);
   const isMineAvatar = id === user?.id;
   const { data: profile, error, isSuccess } = useGetUserProfileByIdQuery(id, { skip: !id });
   const [sendProfile] = useSendProfileInfoMutation();
+  const [updateProfile] = useUpdateProfileInfoMutation();
 
   useEffect(() => {
     if (isMineAvatar && isSuccess && !profile) {
@@ -39,6 +47,11 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
         }
       }
     }
+    if (isMineAvatar && isSuccess && !profile?.email) {
+      if (googleInfo?.email) {
+        updateProfile({ body: { email: googleInfo?.email }, id: profile?.id }).unwrap();
+      }
+    }
   }, [isSuccess, isMineAvatar]);
 
   useEffect(() => {
@@ -49,8 +62,20 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
 
   async function sendingGooglePhotoToSupabase(body: ProfileSettings, id: string) {
     return await sendProfile({ body, id })
-      .then(() => showCrossPlatformToast('Обновили фото профиля', ToastDuration.short))
-      .catch(() => showCrossPlatformToast('Не удалось обновить фото профиля', ToastDuration.short));
+      .then(() => {
+        if (Platform.OS === 'web') {
+          toast.show(AVATAR_SHOWABLE[language].successPhotoRenewing);
+        } else {
+          showCrossPlatformToast(AVATAR_SHOWABLE[language].successPhotoRenewing);
+        }
+      })
+      .catch(() => {
+        if (Platform.OS === 'web') {
+          toast.show(AVATAR_SHOWABLE[language].failurePhotoRenewing);
+        } else {
+          showCrossPlatformToast(AVATAR_SHOWABLE[language].failurePhotoRenewing);
+        }
+      });
   }
 
   return (
@@ -72,7 +97,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
           placeholder={profile?.profilePhotoBlurhash}
         />
       )}
-      {error && (
+      {(error || profile?.message) && (
         <Avatar.Icon
           testID={AvatarShowableTestIds.error}
           size={size}
@@ -90,7 +115,7 @@ export default memo(function AvatarShowable({ size, id }: { size: number; id: st
       )}
     </>
   );
-});
+}
 
 const styles = StyleSheet.create({
   placeInCenter: {

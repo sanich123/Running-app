@@ -1,4 +1,4 @@
-import MapboxWeb from '@C/mapbox-web/mapbox-web';
+import MapboxWeb from '@C/map-page/mapbox-web/mapbox-web';
 import { LastKmSplit } from '@R/location/types';
 import { MapView, Camera } from '@rnmapbox/maps';
 import bbox from '@turf/bbox';

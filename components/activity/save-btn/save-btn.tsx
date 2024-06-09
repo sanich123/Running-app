@@ -15,7 +15,7 @@ import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Platform } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
@@ -73,10 +73,9 @@ export default function SaveBtn() {
     if ((isError && error) || (isErrorUpdating && errorUpdating)) {
       dispatch(saveUnsendedActivity(activityToSend));
       dispatch(setIsHaveUnsyncedActivity(true));
-      console.log('error', error, activityToSend);
       if (error && 'message' in error && error?.message === ErrorMessages.aborted) {
         if (Platform.OS !== 'web') {
-          showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsgTimeout, ToastDuration.long);
+          showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
         } else {
           toast.show(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
         }
@@ -84,13 +83,10 @@ export default function SaveBtn() {
       if (error && 'status' in error) {
         if (error.status === ErrorMessages.fetchError) {
           if (Platform.OS !== 'web') {
-            showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].fetchError, ToastDuration.long);
+            showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].fetchError);
           } else {
             toast.show(ACTIVITY_SAVE_BTN[language].fetchError);
           }
-          dispatch(resetActivityInfo());
-          dispatch(resetLocationsFromBackground());
-          replace(`/`);
         }
       }
       dispatch(resetActivityInfo());
@@ -103,7 +99,7 @@ export default function SaveBtn() {
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
-      style={{ padding: 5, borderRadius: 10 }}
+      style={styles.layout}
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
         if (user) {
@@ -140,11 +136,20 @@ export default function SaveBtn() {
         }
       }}
       disabled={isDisabledWhileSending}>
-      <Text
-        variant="titleMedium"
-        style={{ color: colors.onSurfaceVariant, marginRight: 15, opacity: isDisabledWhileSending ? 0.5 : 1 }}>
+      <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
         {isDisabledWhileSending ? textOnBtnWhenIsSending : textOnBtn}
       </Text>
     </TouchableRipple>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+    marginRight: 5,
+    borderRadius: 10,
+  },
+});

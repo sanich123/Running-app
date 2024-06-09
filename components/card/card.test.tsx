@@ -1,3 +1,4 @@
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { changeLanguage } from '@R/language/language';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
@@ -8,7 +9,6 @@ import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
-import { SPORTS_BTNS_VALUES } from '../sports-btns/const';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),

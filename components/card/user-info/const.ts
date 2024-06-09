@@ -1,4 +1,4 @@
-import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 
 import { ProfileType } from '../const ';
 

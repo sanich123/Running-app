@@ -1,5 +1,5 @@
-import ActivityMap from '@C/full-view-map/full-view-map';
+import MapPage from '@C/map-page/map-page';
 
 export default function HomeActivityMap() {
-  return <ActivityMap />;
+  return <MapPage />;
 }

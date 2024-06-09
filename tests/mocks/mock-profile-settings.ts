@@ -1,4 +1,4 @@
-import { GENDER_BTNS_VALUES } from '@C/gender-btns/const';
+import { GENDER_BTNS_VALUES } from '@C/save-activity-page/gender-btns/const';
 
 export const MOCK_EMAIL_PASSWORD = {
   email: 'someEmail@yandex.ru',

@@ -1,5 +1,5 @@
 import { supabase } from '@A/supabase/supabase-init';
-import { PASSWORD_INPUT, PASSWORD_INPUT_LEFT_ICON, PASSWORD_INPUT_RIGHT_ICON } from '@C/password-input/const';
+import { PASSWORD_INPUT, PASSWORD_INPUT_LEFT_ICON, PASSWORD_INPUT_RIGHT_ICON } from '@C/sign-in/password-input/const';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { passwordMatcher } from '@const/regexp';

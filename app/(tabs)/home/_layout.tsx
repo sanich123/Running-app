@@ -3,6 +3,7 @@ import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
 import { useAppSelector } from '@R/typed-hooks';
 import { LABELS, ROUTES } from '@const/enums';
 import { Stack } from 'expo-router';
+import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function HomeStack() {
@@ -16,12 +17,15 @@ export default function HomeStack() {
         headerStyle: { backgroundColor: colors.secondaryContainer },
         headerTintColor: colors.onSurfaceVariant,
         headerTitleStyle: { fontWeight: 'bold' },
-        title: LABELS[language].feed,
+        title: Platform.OS !== 'web' ? LABELS[language].feed : '',
       }}>
       <Stack.Screen name={ROUTES.index} options={{ headerRight: () => <UsersSettingsIcons /> }} />
       <Stack.Screen
         name={`${ROUTES.comment}/[id]`}
-        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].comment }}
+        options={{
+          headerRight: () => <UsersSettingsIcons />,
+          title: LABELS[language].comment,
+        }}
       />
       <Stack.Screen
         name={`${ROUTES.activity}/[id]`}

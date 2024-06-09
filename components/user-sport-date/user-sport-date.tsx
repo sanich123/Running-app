@@ -1,4 +1,4 @@
-import { SPORTS_BTNS_VALUES } from '@C/sports-btns/const';
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { useAppSelector } from '@R/typed-hooks';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';

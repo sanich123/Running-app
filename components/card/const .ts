@@ -1,6 +1,5 @@
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { MutableRefObject, ReactNode } from 'react';
-
-import { SPORTS_BTNS_VALUES } from '../sports-btns/const';
 
 export type CommentType = {
   id: string;

@@ -1,3 +1,4 @@
+import mainFeed from '@R/main-feed/main-feed';
 import { configureStore } from '@reduxjs/toolkit';
 import type { PreloadedState } from '@reduxjs/toolkit';
 import type { RenderOptions } from '@testing-library/react';
@@ -23,7 +24,7 @@ export function renderWithProviders(
   {
     preloadedState = {},
     store = configureStore({
-      reducer: { network, language, location, profile, activity, [runichApi.reducerPath]: runichApi.reducer },
+      reducer: { network, language, location, profile, activity, mainFeed, [runichApi.reducerPath]: runichApi.reducer },
       preloadedState,
     }),
     ...renderOptions

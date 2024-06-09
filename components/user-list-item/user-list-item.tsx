@@ -1,6 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
-import AddDeleteFriendBtn from '@C/add-delete-friend-btn/add-delete-friend-btn';
 import { CustomImage } from '@C/custom-image/custom-image';
+import FollowUnfollowBtn from '@C/profile/follow-unfollow-btn/follow-unfollow-btn';
 import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
@@ -33,10 +33,10 @@ export default function UserListItem({ name, surname, profilePhoto, placeholder,
                 {name} {surname}
               </Text>
             </View>
-            {city && <Text variant="bodyMedium">{city}</Text>}
+            {city ? <Text variant="bodyMedium">{city}</Text> : null}
           </View>
         </View>
-        {!isMineActivity && <AddDeleteFriendBtn friendId={user_id} />}
+        {!isMineActivity && <FollowUnfollowBtn friendId={user_id} />}
       </View>
     </TouchableRipple>
   );
