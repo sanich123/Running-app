@@ -21,4 +21,4 @@ export const BACKGROUND_NOTIFICATION = {
 };
 
 export const TIME_INTERVAL = 3000;
-export const DISTANCE_INTERVAL = 0;
+export const DISTANCE_INTERVAL = 15;
