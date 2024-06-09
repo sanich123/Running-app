@@ -28,6 +28,7 @@ export enum ROUTES {
   profile = 'profile',
   manualActivity = 'manual-activity',
   profileSettings = 'profile-settings',
+  changePassword = 'change-password',
 }
 
 export const LABELS = {
