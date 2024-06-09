@@ -2,6 +2,7 @@ import { ActivityToSend } from '@R/activity/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { API_NAME, LIMIT_OF_REQUEST, Methods, Routes, Tags, headers } from './const';
+import { API_NAME, LIMIT_OF_REQUEST, Methods, Routes, Tags, headers } from './const';
 import { SendComment, SendCommentLike, SendFriend, SendLike, SendProfile } from './types';
 
 const { profile, activity, friend, comment, like, activityId, user, all, photos, followers } = Routes;
@@ -13,6 +14,7 @@ export const runichApi = createApi({
     baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
     timeout: LIMIT_OF_REQUEST,
   }),
+
 
   endpoints: (builder) => ({
     //Profile
@@ -299,6 +301,7 @@ export const {
   useGetFollowersByUserIdQuery,
   useGetCommentsByActivityIdQuery,
   useGetCommentsLengthByActivityIdQuery,
+  useGetCommentsLengthByActivityIdQuery,
   useGetLikesByActivityIdQuery,
   useGetLikesByCommentIdQuery,
   useGetLocationsByActivityIdQuery,
@@ -308,6 +311,12 @@ export const {
   useAddFriendMutation,
   useDeleteFriendMutation,
   usePostCommentWithActivityIdMutation,
+  useDeleteCommentByCommentIdMutation,
+  useSendLikeMutation,
+  useDeleteLikeMutation,
+  useSendLikeToCommentMutation,
+  useDeleteLikeToCommentMutation,
+  useUpdateCommentByCommentIdMutation,
   useDeleteCommentByCommentIdMutation,
   useSendLikeMutation,
   useDeleteLikeMutation,
