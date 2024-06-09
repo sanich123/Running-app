@@ -6,7 +6,6 @@ import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Platform, View, StyleSheet } from 'react-native';
 import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
 
-
 export default function UsersSettingsIcons() {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
@@ -22,14 +21,17 @@ export default function UsersSettingsIcons() {
         <ActivityUpdateBtn />
       ) : (
         <>
-          <IconButton
-            testID="usersIcon"
-            icon="home-outline"
-            iconColor={colors.primary}
-            size={Platform.OS === 'ios' ? 25 : 30}
-            onPress={() => pathname !== '/home' && push('/')}
-            style={{ marginRight: -10 }}
-          />
+          {Platform.OS === 'web' && (
+            <IconButton
+              testID="usersIcon"
+              icon="home-outline"
+              iconColor={colors.primary}
+              size={30}
+              onPress={() => pathname !== '/home' && push('/')}
+              style={{ marginRight: -10 }}
+            />
+          )}
+
           <IconButton
             testID="usersIcon"
             icon="account-search-outline"
@@ -37,7 +39,6 @@ export default function UsersSettingsIcons() {
             size={Platform.OS === 'ios' ? 25 : 30}
             onPress={() => !pathname.includes(ROUTES.users) && push(`/${place}/${ROUTES.users}/`)}
             style={{ marginRight: -10 }}
-
           />
           <IconButton
             testID="settingsIcon"

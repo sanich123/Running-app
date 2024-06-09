@@ -49,7 +49,6 @@ export default function TabLayout() {
       <Tabs.Screen
         name={ROUTES.activity}
         options={{
-          href: null,
           ...commonSettings,
           tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
         }}
