@@ -6,6 +6,7 @@ import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Platform, View, StyleSheet } from 'react-native';
 import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
 
+
 export default function UsersSettingsIcons() {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
@@ -36,6 +37,7 @@ export default function UsersSettingsIcons() {
             size={Platform.OS === 'ios' ? 25 : 30}
             onPress={() => !pathname.includes(ROUTES.users) && push(`/${place}/${ROUTES.users}/`)}
             style={{ marginRight: -10 }}
+
           />
           <IconButton
             testID="settingsIcon"
