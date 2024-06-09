@@ -28,9 +28,7 @@ export default function TabLayout() {
           backgroundColor: colors.secondaryContainer,
           borderTopWidth: 0,
           display:
-            pathname.includes(ROUTES.manualActivity) ||
-            pathname.includes(ROUTES.activity) ||
-            pathname.includes('change-password')
+            pathname.includes(ROUTES.manualActivity) || pathname.includes('change-password') || Platform.OS === 'web'
               ? 'none'
               : 'flex',
         },
@@ -51,6 +49,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name={ROUTES.activity}
         options={{
+          href: null,
           ...commonSettings,
           tabBarIcon: ({ focused }) => <ActivityIcon focused={focused} />,
         }}
