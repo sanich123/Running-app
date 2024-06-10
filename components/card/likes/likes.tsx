@@ -30,7 +30,8 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
           rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           onPress={() => push(`/${place}/${ROUTES.likes}/${activityId}`)}
           borderless
-          disabled={isLoading || isError}>
+          disabled={isLoading || isError}
+          style={{ borderRadius: 10 }}>
           <View style={styles.likesWrapper}>
             <View
               style={[
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     height: 40,
-    marginLeft: 15,
+    padding: 2,
   },
   likesLayout: {
     display: 'flex',

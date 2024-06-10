@@ -3,8 +3,8 @@ import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { usePathname } from 'expo-router';
-import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { View, StyleSheet, Platform } from 'react-native';
+import { TouchableRipple, useTheme } from 'react-native-paper';
 
 export default function CustomTabBar({
   state,
@@ -15,12 +15,12 @@ export default function CustomTabBar({
   descriptors: any;
   navigation: any;
 }) {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const { user } = useAuth();
   const pathname = usePathname();
   const icons = {
     home: (props: { color: string }) => <AntDesign name="home" color={colors.primary} size={45} />,
-    activity: (props: { color: string }) => <AntDesign name="playcircleo" size={60} color="tomato" />,
+    activity: (props: { color: string }) => <AntDesign name="playcircleo" size={45} color="tomato" />,
     profile: (props: { color: string }) => <AvatarShowable size={45} id={`${user?.id}`} {...props} />,
   };
 
@@ -62,7 +62,9 @@ export default function CustomTabBar({
         };
 
         return (
-          <TouchableOpacity
+          <TouchableRipple
+            rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+            borderless
             key={route.name}
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
@@ -70,9 +72,9 @@ export default function CustomTabBar({
             testID={options.tabBarTestID}
             onPress={onPress}
             onLongPress={onLongPress}
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 50 }}>
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 10, paddingVertical: 2 }}>
             {icons[route.name as keyof typeof icons]({ color: isFocused ? colors.primary : colors.secondary })}
-          </TouchableOpacity>
+          </TouchableRipple>
         );
       })}
     </View>
@@ -84,11 +86,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 5,
-    borderCurve: 'continuous',
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 10 },
-    shadowRadius: 10,
-    shadowOpacity: 0.1,
   },
 });

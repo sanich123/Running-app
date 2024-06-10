@@ -4,6 +4,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
+import { View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import { USERS_COUNT, USERS_VARIANT } from './const';
@@ -43,7 +44,7 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
       disabled={isFollowersError || isFollowersLoading || isFollowingsLoading || isFollowingsError}
       borderless
       style={{ borderRadius: 10 }}>
-      <>
+      <View style={{ paddingHorizontal: 5, paddingVertical: 2 }}>
         <Text variant="bodySmall">
           {isFollowersError || isFollowingsError ? `${USERS_COUNT[language].error}:` : whatTitleToRender}
         </Text>
@@ -53,7 +54,7 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
           {whoUserFollowsList?.length && `${whoUserFollowsList?.length}`}
           {whatErrorToRespond && `${errorExtracter(whatErrorToRespond)}`}
         </Text>
-      </>
+      </View>
     </TouchableRipple>
   );
 }
