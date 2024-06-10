@@ -69,7 +69,7 @@ export default function ProfilePage() {
             <View style={styles.followersBtnsWrapper}>
               <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
               <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
-              {whosProfileViewing && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
+              {whosProfile !== user?.id && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
             </View>
           </>
         )}
