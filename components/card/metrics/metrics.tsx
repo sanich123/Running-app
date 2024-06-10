@@ -34,7 +34,7 @@ export default memo(function Metrics({
         }
       }}
       borderless
-      style={{ borderRadius: 10 }}>
+      style={{ paddingLeft: 5, paddingVertical: 2 }}>
       <>
         {title ? (
           <Text variant="titleLarge" style={styles.title}>
@@ -67,7 +67,10 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     columnGap: 15,
-    marginBottom: 5,
+    marginVertical: 3,
   },
-  title: { fontWeight: 'bold', marginBottom: 10, marginTop: 10 },
+  title: {
+    fontWeight: 'bold',
+    marginVertical: 5,
+  },
 });

@@ -28,7 +28,6 @@ describe('Card likes', () => {
     renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />, {
       store: mockStore,
     });
-    expect(screen.getByTestId('pushToActivityLikes')).toBeOnTheScreen();
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
     expect(await screen.findByTestId(AvatarShowableTestIds.success)).toBeOnTheScreen();
   });

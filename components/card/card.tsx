@@ -4,8 +4,8 @@ import { useAppSelector } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
 import { usePathname } from 'expo-router';
 import { useRef, memo, useEffect } from 'react';
-import { View } from 'react-native';
-import { Card } from 'react-native-paper';
+import { Platform, StyleSheet, View } from 'react-native';
+import { Card, useTheme } from 'react-native-paper';
 
 import Btns from './btns/btns';
 import { ActivityCardProps } from './const ';
@@ -34,6 +34,7 @@ export default memo(function ActivityCard({
   commentsLength,
 }: ActivityCardProps) {
   const pathname = usePathname();
+  const { colors } = useTheme();
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const cardRef = useRef(null);
   const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
@@ -46,8 +47,21 @@ export default memo(function ActivityCard({
   }, [isNeedToPrefetchActivities]);
 
   return (
-    <Card>
-      <Card.Content>
+    <View
+      style={[
+        {
+          borderCurve: 'continuous',
+          shadowColor: 'black',
+          shadowOffset: { width: 0, height: 10 },
+          shadowRadius: 10,
+          shadowOpacity: 0.1,
+          marginBottom: 5,
+          borderRadius: 15,
+          backgroundColor: colors.background,
+        },
+        Platform.OS === 'web' && styles.webStyles,
+      ]}>
+      <View>
         <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
         <View ref={cardRef} collapsable={false}>
           <Metrics
@@ -60,7 +74,7 @@ export default memo(function ActivityCard({
             id={id}
           />
         </View>
-      </Card.Content>
+      </View>
       {(mapPhotoUrl || photoVideoUrls?.length > 0) && (
         <MediaList
           photoVideoUrls={photoVideoUrls}
@@ -82,6 +96,14 @@ export default memo(function ActivityCard({
           commentsLength={commentsLength}
         />
       </Card.Actions>
-    </Card>
+    </View>
   );
+});
+
+const styles = StyleSheet.create({
+  webStyles: {
+    maxWidth: 550,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
 });
