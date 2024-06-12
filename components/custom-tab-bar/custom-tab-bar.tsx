@@ -3,7 +3,8 @@ import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { usePathname } from 'expo-router';
-import { View, StyleSheet, Platform } from 'react-native';
+import { Fragment } from 'react';
+import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 
 export default function CustomTabBar({
@@ -29,6 +30,7 @@ export default function CustomTabBar({
       style={[
         styles.tabBar,
         {
+          height: Platform.OS === 'ios' ? 70 : 'auto',
           backgroundColor: colors.secondaryContainer,
           display:
             pathname.includes(ROUTES.manualActivity) ||
@@ -62,19 +64,33 @@ export default function CustomTabBar({
         };
 
         return (
-          <TouchableRipple
-            rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-            borderless
-            key={route.name}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 10, paddingVertical: 2 }}>
-            {icons[route.name as keyof typeof icons]({ color: isFocused ? colors.primary : colors.secondary })}
-          </TouchableRipple>
+          <Fragment key={`${route.name}+${route.key}`}>
+            {Platform.OS === 'ios' ? (
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityState={isFocused ? { selected: true } : {}}
+                accessibilityLabel={options.tabBarAccessibilityLabel}
+                testID={options.tabBarTestID}
+                onPress={onPress}
+                onLongPress={onLongPress}
+                style={styles.tabBarBtn}>
+                {icons[route.name as keyof typeof icons]({ color: isFocused ? colors.primary : colors.secondary })}
+              </TouchableOpacity>
+            ) : (
+              <TouchableRipple
+                rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+                borderless
+                accessibilityRole="button"
+                accessibilityState={isFocused ? { selected: true } : {}}
+                accessibilityLabel={options.tabBarAccessibilityLabel}
+                testID={options.tabBarTestID}
+                onPress={onPress}
+                onLongPress={onLongPress}
+                style={styles.tabBarBtn}>
+                {icons[route.name as keyof typeof icons]({ color: isFocused ? colors.primary : colors.secondary })}
+              </TouchableRipple>
+            )}
+          </Fragment>
         );
       })}
     </View>
@@ -86,5 +102,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  tabBarBtn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    paddingVertical: 2,
   },
 });
