@@ -2,15 +2,12 @@ import { setActivityStatus } from '@R/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { STATUSES } from '@const/enums';
 import { View, StyleSheet } from 'react-native';
-import { TouchableRipple, useTheme, Text } from 'react-native-paper';
-
-import { ACTIVITY_PAUSE_BTN } from './const';
+import { TouchableRipple, useTheme, Icon } from 'react-native-paper';
 
 export default function PauseBtn() {
-  const { dark, colors } = useTheme();
+  const { dark } = useTheme();
   const dispatch = useAppDispatch();
   const { activityStatus } = useAppSelector(({ location }) => location);
-  const { language } = useAppSelector(({ language }) => language);
 
   return (
     <TouchableRipple
@@ -20,10 +17,8 @@ export default function PauseBtn() {
       onPress={() =>
         dispatch(setActivityStatus(activityStatus === STATUSES.paused ? STATUSES.continued : STATUSES.paused))
       }>
-      <View style={[styles.pauseBtn, { backgroundColor: colors.error }]}>
-        <Text variant="bodyLarge" style={styles.pauseBtnText}>
-          {ACTIVITY_PAUSE_BTN[language].resume}
-        </Text>
+      <View style={styles.pauseBtn}>
+        <Icon source="play" size={50} color="white" />
       </View>
     </TouchableRipple>
   );
@@ -34,11 +29,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    height: 95,
-    width: 95,
-  },
-  pauseBtnText: {
-    textTransform: 'uppercase',
-    color: 'white',
+    backgroundColor: 'tomato',
+    height: 90,
+    width: 90,
   },
 });

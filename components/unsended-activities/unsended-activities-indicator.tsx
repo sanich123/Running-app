@@ -27,16 +27,15 @@ export default function UnsendedActivitiesIndicator() {
 
   useEffect(() => {
     if (isSuccess) {
-      if (!process.env.IS_TESTING) {
-        console.log('response', data);
-      }
+      if (__DEV__) console.log('response', data);
+
       dispatch(setIsNeedToRefreshActivities(true));
       setIsSuccessSending(true);
       const reducedUnsyncedList = unsyncedActivities.slice(0, -1);
       dispatch(refreshUnsendedActivitiesList(reducedUnsyncedList));
     }
     if (isError) {
-      console.log('failure', error);
+      if (__DEV__) console.log('failure', error);
       if (error && 'message' in error && error?.message === 'Aborted') {
         if (Platform.OS !== 'web') {
           showCrossPlatformToast('Достигнут лимит времени соединения с сервером', ToastDuration.long);

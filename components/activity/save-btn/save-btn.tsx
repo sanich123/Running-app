@@ -54,7 +54,7 @@ export default function SaveBtn() {
   useEffect(() => {
     dispatch(setIsDisableWhileSending(false));
     if (isSuccess || isSuccessUpdating) {
-      if (!process.env.IS_TESTING) {
+      if (__DEV__) {
         console.log('success', data || successUpdating);
       }
       if (data?.message) {

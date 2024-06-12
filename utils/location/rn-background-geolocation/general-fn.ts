@@ -29,9 +29,9 @@ export async function saveMetricsFromBackgroundToRedux(currentPosition: Location
       );
     } else {
       store.dispatch(setIsTooMuchSpeed(true));
-      console.log('That was wrong position', 'currentPace: ', currentPace);
+      if (__DEV__) console.log('That was wrong position', 'currentPace: ', currentPace);
     }
   } catch (error) {
-    console.log('[tracking]', 'Something went wrong when saving a new location...', error);
+    if (__DEV__) console.log('[tracking]', 'Something went wrong when saving a new location...', error);
   }
 }
