@@ -1,6 +1,8 @@
 {
   "name": "running-app",
   "version": "2.1.2",
+  "private": true,
+  "license": "UNLICENSED",
   "scripts": {
     "start": "expo start",
     "start:clear": "expo start --clear",
@@ -169,7 +171,6 @@
     "ts-jest": "^29.1.1",
     "typescript": "~5.3.3"
   },
-  "private": true,
   "eslintConfig": {
     "extends": "universe/native",
     "ignorePatterns": [
