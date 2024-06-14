@@ -38,7 +38,7 @@ export default function ProfileUpdateBtn() {
         toast.show(UPDATE_BTN_ERROR_MSG);
       }
     }
-  }, [isSuccess, error]);
+  }, [isSuccess, error, isError, dispatch, back, toast]);
 
   return (
     <TouchableRipple

@@ -1,3 +1,5 @@
+/* eslint-disable react-compiler/react-compiler */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '@R/activity/activity';
 import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
 import { useAddActivityByUserIdMutation } from '@R/runich-api/runich-api';
@@ -27,7 +29,7 @@ export default function UnsendedActivitiesIndicator() {
 
   useEffect(() => {
     if (isSuccess) {
-      if (__DEV__) console.log('response', data);
+      if (__DEV__ && !process.env.IS_TESTING) console.log('response', data);
 
       dispatch(setIsNeedToRefreshActivities(true));
       setIsSuccessSending(true);
@@ -35,7 +37,7 @@ export default function UnsendedActivitiesIndicator() {
       dispatch(refreshUnsendedActivitiesList(reducedUnsyncedList));
     }
     if (isError) {
-      if (__DEV__) console.log('failure', error);
+      if (__DEV__ && !process.env.IS_TESTING) console.log('failure', error);
       if (error && 'message' in error && error?.message === 'Aborted') {
         if (Platform.OS !== 'web') {
           showCrossPlatformToast('Достигнут лимит времени соединения с сервером', ToastDuration.long);
@@ -46,7 +48,7 @@ export default function UnsendedActivitiesIndicator() {
       setErrorSending(true);
       setTimeout(() => setErrorSending(false), 2000);
     }
-  }, [isSuccess, isError]);
+  }, [isSuccess, isError, data, unsyncedActivities, error]);
 
   useEffect(() => {
     if (isHaveUnsyncedActivity && !unsyncedActivities.length) {
@@ -55,7 +57,7 @@ export default function UnsendedActivitiesIndicator() {
     if (isHaveUnsyncedActivity) {
       activitySender();
     }
-  }, [isHaveUnsyncedActivity]);
+  }, [isHaveUnsyncedActivity, unsyncedActivities.length]);
 
   return (
     <>
@@ -67,7 +69,7 @@ export default function UnsendedActivitiesIndicator() {
               `${UNSENDED_ACTIVITIES[language].initialBegin} ${unsyncedActivities.length} ${UNSENDED_ACTIVITIES[language].initialEnd}`}
             {isLoading && UNSENDED_ACTIVITIES[language].isLoading}
             {successSending && UNSENDED_ACTIVITIES[language].success}
-            {/* {errorSending && UNSENDED_ACTIVITIES[language].error} */}
+            {errorSending && UNSENDED_ACTIVITIES[language].error}
           </Text>
           <Button loading={isLoading} onPress={async () => activitySender()}>
             Manually

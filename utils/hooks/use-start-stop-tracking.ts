@@ -52,7 +52,7 @@ export default function useStartStopTracking() {
     if (activityStatus === paused) {
       dispatch(setEmptyLastArrayWhenPaused());
     }
-  }, [activityStatus]);
+  }, [activityStatus, dispatch]);
 
   return { activityStatus };
 }

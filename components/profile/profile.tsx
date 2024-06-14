@@ -44,7 +44,7 @@ export default function ProfilePage() {
         dispatch(savePhotoUrl(profile?.profilePhoto));
       }
     }
-  }, [profile]);
+  }, [dispatch, isProfilePage, isSuccess, profile]);
 
   return (
     <>

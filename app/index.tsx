@@ -15,16 +15,17 @@ export default function Page() {
   const { activityStatus } = useAppSelector(({ location }) => location);
   const dispatch = useAppDispatch();
 
-  mapboxgl.accessToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '';
-  if (Platform.OS !== 'web') {
-    Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null);
-  }
   useEffect(() => {
+    mapboxgl.accessToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '';
+    if (Platform.OS !== 'web') {
+      Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null);
+    }
     const networkListener = NetInfo.addEventListener((networkState) => {
       dispatch(changeNetworkState(networkState));
     });
     return () => networkListener();
-  }, []);
+  }, [dispatch]);
+
   if (!user) {
     return <Redirect href="/sign-in" />;
   } else if (user) {

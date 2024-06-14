@@ -61,7 +61,7 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
         }
       }
     }
-  }, [isFriendDeleted, isFriendAdded, friendDeletingError, friendAddingError]);
+  }, [isFriendDeleted, isFriendAdded, friendDeletingError, friendAddingError, dispatch, language, toast]);
 
   return (
     <Button

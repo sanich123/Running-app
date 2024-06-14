@@ -28,6 +28,23 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
   const [updateProfile] = useUpdateProfileInfoMutation();
 
   useEffect(() => {
+    async function sendingGooglePhotoToSupabase(body: ProfileSettings, id: string) {
+      return await sendProfile({ body, id })
+        .then(() => {
+          if (Platform.OS === 'web') {
+            toast.show(AVATAR_SHOWABLE[language].successPhotoRenewing);
+          } else {
+            showCrossPlatformToast(AVATAR_SHOWABLE[language].successPhotoRenewing);
+          }
+        })
+        .catch(() => {
+          if (Platform.OS === 'web') {
+            toast.show(AVATAR_SHOWABLE[language].failurePhotoRenewing);
+          } else {
+            showCrossPlatformToast(AVATAR_SHOWABLE[language].failurePhotoRenewing);
+          }
+        });
+    }
     if (isMineAvatar && isSuccess && !profile) {
       if (googleInfo.photo) {
         if (user?.id) {
@@ -52,31 +69,13 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
         updateProfile({ body: { email: googleInfo?.email }, id: profile?.id }).unwrap();
       }
     }
-  }, [isSuccess, isMineAvatar]);
+  }, [isSuccess, isMineAvatar, profile, googleInfo.photo, googleInfo.name, googleInfo.email, user?.id, updateProfile, sendProfile, toast, language]);
 
   useEffect(() => {
     if (profile && isMineAvatar) {
       dispatch(saveWholeProfile(profile));
     }
-  }, [profile]);
-
-  async function sendingGooglePhotoToSupabase(body: ProfileSettings, id: string) {
-    return await sendProfile({ body, id })
-      .then(() => {
-        if (Platform.OS === 'web') {
-          toast.show(AVATAR_SHOWABLE[language].successPhotoRenewing);
-        } else {
-          showCrossPlatformToast(AVATAR_SHOWABLE[language].successPhotoRenewing);
-        }
-      })
-      .catch(() => {
-        if (Platform.OS === 'web') {
-          toast.show(AVATAR_SHOWABLE[language].failurePhotoRenewing);
-        } else {
-          showCrossPlatformToast(AVATAR_SHOWABLE[language].failurePhotoRenewing);
-        }
-      });
-  }
+  }, [dispatch, isMineAvatar, profile]);
 
   return (
     <>

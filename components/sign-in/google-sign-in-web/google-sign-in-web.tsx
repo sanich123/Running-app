@@ -34,7 +34,7 @@ export default function GoogleSignInWeb({ setIsDisabled }: { setIsDisabled: (arg
     return () => {
       document.body.removeChild(script);
     };
-  }, []);
+  }, [setIsDisabled, toast]);
 
   return (
     <>

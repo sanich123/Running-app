@@ -44,7 +44,7 @@ export default memo(function ActivityCard({
     if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
       prefetchFullActivity(`${id}`);
     }
-  }, [isNeedToPrefetchActivities]);
+  }, [id, isNeedToPrefetchActivities, prefetchFullActivity]);
 
   return (
     <View

@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         router.replace('/');
       }
     }
-  }, [user, segments]);
+  }, [user, segments, pathname, router]);
 
   return (
     <AuthContext.Provider

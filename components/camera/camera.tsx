@@ -24,7 +24,7 @@ export default function CameraLauncher() {
       requestPermission();
       await MediaLibrary.requestPermissionsAsync();
     })();
-  }, []);
+  }, [requestPermission]);
 
   return (
     <>

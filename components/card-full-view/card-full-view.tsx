@@ -24,7 +24,7 @@ export default function CardFullView() {
       prefetchLikes(`${activityId}`);
       // prefetchComments(`${activityId}`);
     }
-  }, [activityId]);
+  }, [activityId, isNeedToPrefetchActivities, prefetchLikes]);
 
   return (
     <>
