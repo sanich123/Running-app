@@ -1,10 +1,9 @@
 import { useAuth } from '@A/context/auth-context';
-import { ProfileType } from '@C/card/const ';
 import ErrorComponent from '@C/error-component/error-component';
 import FloatingBtn from '@C/floating-btn/floating-btn';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
+import ModalLikesList from '@C/modals/likes-list/modal-likes-list';
 import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
-import UserListItem from '@C/user-list-item/user-list-item';
 import {
   setIsManualAdding,
   resetFinishedActivity,
@@ -13,14 +12,10 @@ import {
   setIsEditingActivity,
 } from '@R/activity/activity';
 import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
-import {
-  runichApi,
-  useGetActivitiesByUserIdWithFriendsActivitiesQuery,
-  useGetLikesByActivityIdQuery,
-} from '@R/runich-api/runich-api';
+import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ModalLikesListContext } from '@U/context/activity-card-btns';
-import { BottomSheetFlatList, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
@@ -45,32 +40,13 @@ export default function Feed() {
       dispatch(setIsNeedToRefreshActivities(false));
     }
   });
-  const { activityIdWhichLikesToDownload } = useAppSelector(({ mainFeed }) => mainFeed);
-  const { data: likes } = useGetLikesByActivityIdQuery(`${activityIdWhichLikesToDownload}`);
 
   return (
     <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
       <ModalLikesListContext.Provider value={{ modalRef: bottomSheetModalRef }}>
         <BottomSheetModalProvider>
           <>
-            <BottomSheetModal
-              ref={bottomSheetModalRef}
-              index={likes?.length < 3 ? 0 : 1}
-              snapPoints={['25%', '50%', '75%']}>
-              <BottomSheetFlatList
-                data={likes}
-                renderItem={({ item: { profile } }: { item: { profile: ProfileType } }) => (
-                  <UserListItem
-                    name={profile?.name}
-                    surname={profile?.surname}
-                    profilePhoto={profile?.profilePhoto}
-                    placeholder={profile?.profilePhotoBlurhash}
-                    city={profile?.city}
-                    user_id={profile?.user_id}
-                  />
-                )}
-              />
-            </BottomSheetModal>
+            <ModalLikesList bottomSheetModalRef={bottomSheetModalRef} />
             {isHaveUnsyncedActivity ? <UnsendedActivitiesIndicator /> : null}
             {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
             {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}

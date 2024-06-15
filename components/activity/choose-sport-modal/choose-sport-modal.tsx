@@ -19,7 +19,14 @@ export default function ChooseSportModal({
 
   const dispatch = useAppDispatch();
   return (
-    <BottomSheetModal ref={bottomSheetModalRef} index={0} snapPoints={['25%']} onChange={handleSheetChanges}>
+    <BottomSheetModal
+      ref={bottomSheetModalRef}
+      index={0}
+      snapPoints={['25%']}
+      onChange={handleSheetChanges}
+      handleStyle={{ borderBottomColor: colors.onBackground }}
+      backgroundStyle={{ backgroundColor: colors.background }}
+      handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
       <BottomSheetView style={{ flex: 1, padding: 5, backgroundColor: colors.background }}>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text variant="bodyLarge">Выберите вид спорта</Text>
@@ -34,6 +41,15 @@ export default function ChooseSportModal({
         </View>
 
         <View style={{ flex: 1, flexDirection: 'row' }}>
+          {/* <IconButton
+            icon="walk"
+            size={35}
+            onPress={() => {
+              dispatch(saveSport(SPORTS_BTNS_VALUES.run));
+              bottomSheetModalRef.current?.close();
+              setVisibilityOfSportIcon(true);
+            }}
+          /> */}
           <IconButton
             icon="run"
             size={35}
