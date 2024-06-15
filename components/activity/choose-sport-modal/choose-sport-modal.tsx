@@ -15,15 +15,17 @@ export default function ChooseSportModal({
 }) {
   const { colors } = useTheme();
 
-  const handleSheetChanges = (index: number) => console.log('handleSheetChanges', index);
-
   const dispatch = useAppDispatch();
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
       index={0}
       snapPoints={['25%']}
-      onChange={handleSheetChanges}
+      onChange={(index: number) => {
+        if (index === -1) {
+          setVisibilityOfSportIcon(true);
+        }
+      }}
       handleStyle={{ borderBottomColor: colors.onBackground }}
       backgroundStyle={{ backgroundColor: colors.background }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
