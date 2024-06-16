@@ -1,68 +1,66 @@
 import Card from '@C/card/card';
 import ErrorComponent from '@C/error-component/error-component';
-import { runichApi, useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
-import { useAppSelector } from '@R/typed-hooks';
+import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
+
 import { useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
 import KmSplit from './km-split/km-split';
 import Metrics from './metrics/metrics';
+import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { ModalLikesListContext } from '@U/context/activity-card-btns';
+import ModalLikesList from '@C/modals/likes-list/modal-likes-list';
 
 export default function CardFullView() {
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error, isError, refetch } = useGetActivityByActivityIdQuery(`${activityId}`);
   const fullViewRef = useRef(null);
-  const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
-  const prefetchLikes = runichApi.usePrefetch('getLikesByActivityId');
-  // const prefetchComments = runichApi.usePrefetch('getCommentsByActivityId');
-
-  useEffect(() => {
-    if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
-      prefetchLikes(`${activityId}`);
-      // prefetchComments(`${activityId}`);
-    }
-  }, [activityId, isNeedToPrefetchActivities, prefetchLikes]);
-
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   return (
-    <>
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
-        <View ref={fullViewRef} collapsable={false}>
-          {isLoading && <ActivityIndicator size="large" />}
-          {error ? <ErrorComponent error={error} refetch={refetch} /> : null}
-          {activity && (
-            <>
-              <Card
-                isShowDeleteBtn
-                isShowDescription={!!activity.description}
-                fullViewRef={fullViewRef}
-                userId={activity.user_id}
-                description={activity.description}
-                title={activity.title}
-                date={activity.date}
-                sport={activity.sport}
-                id={activity.id}
-                photoVideoUrls={activity.photoVideoUrls}
-                duration={activity.duration}
-                distance={activity.distance}
-                mapPhotoUrl={activity?.mapPhotoUrl}
-                profile={activity?.profile}
-                commentsLength={activity?._count.comments}
-              />
-              <Metrics />
-              <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>
-                {activity.kilometresSplit?.length > 0 && <KmSplit kilometresSplit={activity.kilometresSplit} />}
-              </View>
-            </>
-          )}
-        </View>
-        <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-      </ScrollView>
-    </>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
+      <ModalLikesListContext.Provider value={{ modalRef: bottomSheetModalRef }}>
+        <BottomSheetModalProvider>
+          <>
+            <ModalLikesList bottomSheetModalRef={bottomSheetModalRef} />
+            <View ref={fullViewRef} collapsable={false}>
+              {isLoading && <ActivityIndicator size="large" />}
+              {error ? <ErrorComponent error={error} refetch={refetch} /> : null}
+              {activity && (
+                <>
+                  <Card
+                    isShowDeleteBtn
+                    isShowDescription={!!activity.description}
+                    fullViewRef={fullViewRef}
+                    userId={activity.user_id}
+                    description={activity.description}
+                    title={activity.title}
+                    date={activity.date}
+                    sport={activity.sport}
+                    id={activity.id}
+                    photoVideoUrls={activity.photoVideoUrls}
+                    duration={activity.duration}
+                    distance={activity.distance}
+                    mapPhotoUrl={activity?.mapPhotoUrl}
+                    profile={activity?.profile}
+                    commentsLength={activity?._count.comments}
+                  />
+                  <Metrics />
+                  <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>
+                    {activity.kilometresSplit?.length > 0 && <KmSplit kilometresSplit={activity.kilometresSplit} />}
+                  </View>
+                </>
+              )}
+            </View>
+            <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+          </>
+        </BottomSheetModalProvider>
+      </ModalLikesListContext.Provider>
+    </ScrollView>
   );
 }
 

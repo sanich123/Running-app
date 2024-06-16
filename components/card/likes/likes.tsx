@@ -33,7 +33,7 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
           testID="pushToActivityLikes"
           rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           onPress={() => {
-            if (Platform.OS !== 'web') {
+            if (Platform.OS !== 'web' && !pathname.includes(ROUTES.activity) && !pathname.includes(ROUTES.comment)) {
               dispatch(setActivityIdWhichLikesToDownload(activityId));
               modalRef.current?.present();
             } else {

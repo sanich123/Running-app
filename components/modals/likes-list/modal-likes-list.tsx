@@ -11,17 +11,19 @@ export default function ModalLikesList({ bottomSheetModalRef }: { bottomSheetMod
   const { colors } = useTheme();
   const { activityIdWhichLikesToDownload } = useAppSelector(({ mainFeed }) => mainFeed);
   const { data: likes } = useGetLikesByActivityIdQuery(`${activityIdWhichLikesToDownload}`);
+
   function getIndexOfSnapPointByLikesLength(length: number) {
     if (length === 1) return 0;
     else if (length === 2) return 1;
     else if (length === 3) return 2;
     else return 3;
   }
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
-      index={getIndexOfSnapPointByLikesLength(likes?.length)}
-      snapPoints={['12%', '20%', '30%', '50%']}
+      index={getIndexOfSnapPointByLikesLength(likes)}
+      snapPoints={['12%', '20%', '30%', '50%', '70%', '80%']}
       backgroundStyle={{ backgroundColor: colors.background }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
       <BottomSheetFlatList
