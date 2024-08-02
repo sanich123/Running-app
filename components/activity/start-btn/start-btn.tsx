@@ -57,7 +57,7 @@ export default function StartBtn() {
           dispatch(setIsEditingActivity(false));
           dispatch(resetManualData());
           dispatch(resetActivityInfo());
-          push(`/(tabs)/${ROUTES.home}/${ROUTES.manualActivity}/`);
+          push(`/${ROUTES.home}/${ROUTES.manualActivity}/`);
         }
       }}>
       <View style={styles.startBtn}>

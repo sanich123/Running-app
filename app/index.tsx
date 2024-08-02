@@ -32,8 +32,8 @@ export default function Page() {
     if (activityStatus !== STATUSES.initial) {
       dispatch(setIsAppShuted(true));
       dispatch(setActivityStatus(STATUSES.paused));
-      return <Redirect href="/(tabs)/activity/" />;
+      return <Redirect href="/activity" />;
     }
-    return <Redirect href="/home/" />;
+    return <Redirect href="/home" />;
   }
 }

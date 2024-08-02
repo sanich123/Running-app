@@ -1,4 +1,3 @@
-/* eslint-disable react-compiler/react-compiler */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useAuth } from '@A/context/auth-context';
 import {

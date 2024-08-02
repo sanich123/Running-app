@@ -1,4 +1,3 @@
-/* eslint-disable react-compiler/react-compiler */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '@R/activity/activity';
 import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
