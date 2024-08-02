@@ -5,18 +5,22 @@ import { CustomImage } from '@C/custom-image/custom-image';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import { ROUTES } from '@const/enums';
 import { usePathname, useRouter } from 'expo-router';
-import { Fragment, memo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Fragment, memo, useContext } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import { LikesProps, LikesSize, MAX_IN_ROW, MAX_NUMBER_IN_ROW_OTHER_PAGE, SHIFT_RIGHT } from './const';
+import { useAppDispatch } from '@R/typed-hooks';
+import { setActivityIdWhichLikesToDownload } from '@R/main-feed/main-feed';
+import { ModalLikesListContext } from '@U/context/activity-card-btns';
 
 export default memo(function Likes({ activityId, size }: LikesProps) {
+  const dispatch = useAppDispatch();
   const { dark } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
   const { data: likes, isLoading, isError } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
-
+  const { modalRef } = useContext(ModalLikesListContext);
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
   const moreThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length > MAX_IN_ROW;
@@ -28,7 +32,14 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
         <TouchableRipple
           testID="pushToActivityLikes"
           rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-          onPress={() => push(`/${place}/${ROUTES.likes}/${activityId}`)}
+          onPress={() => {
+            if (Platform.OS !== 'web' && !pathname.includes(ROUTES.activity) && !pathname.includes(ROUTES.comment)) {
+              dispatch(setActivityIdWhichLikesToDownload(activityId));
+              modalRef.current?.present();
+            } else {
+              push(`/${place}/${ROUTES.likes}/${activityId}`);
+            }
+          }}
           borderless
           disabled={isLoading || isError}
           style={{ borderRadius: 10 }}>

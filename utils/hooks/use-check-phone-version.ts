@@ -13,6 +13,6 @@ export default function useCheckPhoneVersion() {
         showCrossPlatformToast('You have an old version of the phone', ToastDuration.long);
       }
     }
-  }, []);
+  }, [isOldVersion]);
   return { isOldVersion };
 }

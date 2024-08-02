@@ -13,9 +13,7 @@ export async function getLocationPermissions({
     const backgroundPermission = await requestBackgroundPermissionsAsync();
     if (backgroundPermission.granted) {
       setBackgroundPermission(true);
-      if (!process.env.IS_TESTING) {
-        console.log('Permission to access location granted');
-      }
+      if (__DEV__) console.log('Permission to access location granted');
     }
   }
 }

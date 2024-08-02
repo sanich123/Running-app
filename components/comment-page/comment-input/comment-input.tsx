@@ -40,7 +40,7 @@ export default function CommentInput({
         toast.show(COMMENT_INPUT[language].errorSending);
       }
     }
-  }, [isError, isErrorUpdating, isSuccess, isSuccessUpdating]);
+  }, [activityId, dispatch, isError, isErrorUpdating, isSuccess, isSuccessUpdating, language, setIdOfUpdatingComment, setIsShowingTextInput, toast]);
 
   return (
     <TextInput

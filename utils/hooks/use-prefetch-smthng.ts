@@ -10,5 +10,5 @@ export default function usePrefetchSmthng(name: any) {
     if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
       prefetchUsers('');
     }
-  }, [isNeedToPrefetchActivities]);
+  }, [isNeedToPrefetchActivities, prefetchUsers]);
 }

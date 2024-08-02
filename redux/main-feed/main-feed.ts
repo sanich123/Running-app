@@ -6,6 +6,8 @@ export const mainFeed = createSlice({
     activityIdWhichCommentsToUpdate: '',
     commentIdWhichLikesToUpdate: '',
     needToRefreshActivities: false,
+    activityIdWhichLikesToDownload: '',
+
   },
   reducers: {
     setActivityIdWhichCommentsToUpdate: (state, action) => {
@@ -17,10 +19,17 @@ export const mainFeed = createSlice({
     setCommentIdWhichLikesToUpdate: (state, action) => {
       state.commentIdWhichLikesToUpdate = action.payload;
     },
+    setActivityIdWhichLikesToDownload: (state, action) => {
+      state.activityIdWhichLikesToDownload = action.payload;
+    },
   },
 });
 
-export const { setActivityIdWhichCommentsToUpdate, setIsNeedToRefreshActivities, setCommentIdWhichLikesToUpdate } =
-  mainFeed.actions;
+export const {
+  setActivityIdWhichCommentsToUpdate,
+  setIsNeedToRefreshActivities,
+  setCommentIdWhichLikesToUpdate,
+  setActivityIdWhichLikesToDownload,
+} = mainFeed.actions;
 
 export default mainFeed.reducer;

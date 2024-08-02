@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'expo-router';
 import { useContext, memo, useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { IconButton, MD3Colors, Badge } from 'react-native-paper';
-
 import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
 
 export default memo(function CommentBtn({

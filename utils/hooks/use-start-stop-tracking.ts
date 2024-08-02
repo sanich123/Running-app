@@ -24,7 +24,9 @@ export default function useStartStopTracking() {
         distanceFilter: 10,
         stopTimeout: 5,
         stopOnTerminate: true, // <-- Allow the background-service to continue tracking when user closes the app.
-      }).then((state) => console.log('- BackgroundGeolocation is configured and ready: ', state.enabled));
+      }).then((state) => {
+        if (__DEV__) console.log('- BackgroundGeolocation is configured and ready: ', state.enabled);
+      });
 
       return () => onLocation.remove();
     }
@@ -50,7 +52,7 @@ export default function useStartStopTracking() {
     if (activityStatus === paused) {
       dispatch(setEmptyLastArrayWhenPaused());
     }
-  }, [activityStatus]);
+  }, [activityStatus, dispatch]);
 
   return { activityStatus };
 }

@@ -55,7 +55,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment }: C
     if (isSuccessSending || isSuccessDeleting) {
       dispatch(setCommentIdWhichLikesToUpdate(commentId));
     }
-  }, [isErrorSending, isErrorDeleting, isSuccessSending, isSuccessDeleting]);
+  }, [isErrorSending, isErrorDeleting, isSuccessSending, isSuccessDeleting, language, toast, dispatch, commentId]);
 
   return (
     <IconButton

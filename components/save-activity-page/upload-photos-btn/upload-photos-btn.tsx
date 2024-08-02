@@ -62,7 +62,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
                 if (user) {
                   const fileWithThumbnail = await compressAndSendFile(fileSrc, user.id);
                   if (fileWithThumbnail) {
-                    console.log(fileWithThumbnail);
+                    if (__DEV__) console.log(fileWithThumbnail);
                     setImages([...images, fileWithThumbnail]);
                     dispatch(addPhotoUrl(fileWithThumbnail));
                   }

@@ -12,7 +12,7 @@ export default function useGetPermissions() {
         getLocationPermissions({ setIsForegroundPermission, setBackgroundPermission });
       }
     }
-  }, []);
+  }, [isBackgroundPermission, isForegroundPermission]);
 
   return { isForegroundPermission, isBackgroundPermission };
 }

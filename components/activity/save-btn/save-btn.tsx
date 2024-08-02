@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useAuth } from '@A/context/auth-context';
 import {
   setIsDisableWhileSending,
@@ -54,7 +55,7 @@ export default function SaveBtn() {
   useEffect(() => {
     dispatch(setIsDisableWhileSending(false));
     if (isSuccess || isSuccessUpdating) {
-      if (!process.env.IS_TESTING) {
+      if (__DEV__ && !process.env.IS_TESTING) {
         console.log('success', data || successUpdating);
       }
       if (data?.message) {
@@ -93,7 +94,7 @@ export default function SaveBtn() {
       dispatch(resetLocationsFromBackground());
       replace('/');
     }
-  }, [error, isError, isErrorUpdating, errorUpdating]);
+  }, [error, isError, isErrorUpdating, errorUpdating, dispatch, replace, toast, activityToSend, language]);
 
   return (
     <TouchableRipple

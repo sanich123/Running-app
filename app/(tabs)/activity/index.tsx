@@ -1,3 +1,5 @@
+import ChooseSportModal from '@C/activity/choose-sport-modal/choose-sport-modal';
+import IconChooseSport from '@C/activity/icon-choose-sport/icon-choose-sport';
 import LocationIndicator from '@C/activity/location-indicator/location-indicator';
 import Map from '@C/activity/map/map';
 import PauseBtn from '@C/activity/pause-btn/pause-btn';
@@ -7,29 +9,48 @@ import Metrics from '@C/metrics/metrics';
 import { useAppSelector } from '@R/typed-hooks';
 import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
 import { STATUSES } from '@const/enums';
+import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function Activity() {
   const { colors } = useTheme();
+  const [visibilityOfSportIcon, setVisibilityOfSportIcon] = useState(true);
   const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
   useStartStopTracking();
 
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
   return (
-    <View style={styles.layout}>
-      <LocationIndicator />
-      <View style={styles.map}>
-        {(activityStatus === STATUSES.initial || isMapVisible) && <Map />}
-        {activityStatus !== STATUSES.initial && <Metrics />}
-      </View>
-      <View style={styles.metricsLayout}>
-        <View style={[styles.metrics, { backgroundColor: colors.surfaceVariant }]}>
-          {activityStatus === STATUSES.paused && <PauseBtn />}
-          <StartBtn />
-          {activityStatus !== STATUSES.initial && <ShowMapBtn />}
+    <BottomSheetModalProvider>
+      <View style={styles.layout}>
+        <LocationIndicator />
+        <ChooseSportModal
+          bottomSheetModalRef={bottomSheetModalRef}
+          setVisibilityOfSportIcon={setVisibilityOfSportIcon}
+        />
+        <View style={styles.map}>
+          {(activityStatus === STATUSES.initial || isMapVisible) && <Map />}
+          {activityStatus !== STATUSES.initial && <Metrics />}
+        </View>
+        <View style={[styles.metricsLayout, { backgroundColor: colors.secondaryContainer }]}>
+          {activityStatus === STATUSES.initial && (
+            <IconChooseSport
+              bottomSheetModalRef={bottomSheetModalRef}
+              setVisibilityOfSportIcon={setVisibilityOfSportIcon}
+              visibilityOfSportIcon={visibilityOfSportIcon}
+            />
+          )}
+
+          <View style={[styles.metrics, { backgroundColor: colors.secondaryContainer }]}>
+            {activityStatus === STATUSES.paused && <PauseBtn />}
+            <StartBtn />
+            {activityStatus !== STATUSES.initial && <ShowMapBtn />}
+          </View>
         </View>
       </View>
-    </View>
+    </BottomSheetModalProvider>
   );
 }
 
@@ -44,6 +65,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   metricsLayout: {
+    position: 'relative',
     height: '20%',
     width: '100%',
   },
@@ -52,7 +74,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
     gap: 8,
   },
 });
