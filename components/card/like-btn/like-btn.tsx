@@ -41,7 +41,7 @@ export default memo(function LikeBtn({ activityId }: { activityId: string }) {
         showCrossPlatformToast(event);
       }
     }
-  }, [errorSending, failureDeleting]);
+  }, [errorSending, failureDeleting, language, toast]);
 
   return (
     <IconButton

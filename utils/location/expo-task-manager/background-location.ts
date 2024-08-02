@@ -1,3 +1,4 @@
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { setIsTooMuchSpeed } from '@R/location/location';
 import { store } from '@R/store';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
@@ -32,7 +33,7 @@ export async function startLocationTracking() {
     },
   });
   const hasStarted = await hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
-  console.log('tracking started?', hasStarted);
+  if (__DEV__) console.log('tracking started?', hasStarted);
   showCrossPlatformToast(`BgTracking started = ${hasStarted}`, ToastDuration.long);
 }
 
@@ -47,7 +48,7 @@ export async function stopLocationTracking() {
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLocationEvent) => {
   if (error) {
-    console.log('LOCATION_TRACKING task ERROR:', error);
+    if (__DEV__) console.log('LOCATION_TRACKING task ERROR:', error);
     return;
   }
   if (data) {
@@ -66,7 +67,10 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
           currentAltitude,
           currentDistance,
         );
-      } else if (currentPace > 3 && currentPace < Infinity) {
+      } else if (
+        (currentPace > 3 && currentPace < Infinity) ||
+        store.getState().activity.additionalInfo.sport === SPORTS_BTNS_VALUES.bike
+      ) {
         saveMetricsToStoreTaskManager(
           currentKilometer,
           currentPosition,
@@ -77,10 +81,10 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
         );
       } else {
         store.dispatch(setIsTooMuchSpeed(true));
-        console.log('That was wrong position', 'currentPace: ', currentPace);
+        if (__DEV__) console.log('That was wrong position', 'currentPace: ', currentPace);
       }
     } catch (error) {
-      console.log('[tracking]', 'Something went wrong when saving a new location...', error);
+      if (__DEV__) console.log('[tracking]', 'Something went wrong when saving a new location...', error);
     }
   }
 });

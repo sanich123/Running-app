@@ -30,7 +30,7 @@ export default function ProfileUpdateBtn() {
       back();
     }
     if (isError) {
-      console.log(error);
+      if (__DEV__) console.log(error);
       dispatch(setIsDisabledWhileSendingProfile(false));
       if (Platform.OS !== 'web') {
         showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
@@ -38,7 +38,7 @@ export default function ProfileUpdateBtn() {
         toast.show(UPDATE_BTN_ERROR_MSG);
       }
     }
-  }, [isSuccess, error]);
+  }, [isSuccess, error, isError, dispatch, back, toast]);
 
   return (
     <TouchableRipple

@@ -22,7 +22,7 @@ export default function useGetProfileInfo(column: string = '') {
     }
 
     getProfileInfo();
-  }, []);
+  }, [column, user?.id]);
 
   return { isLoading, profileError, profileInfo };
 }

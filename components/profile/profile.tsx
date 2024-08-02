@@ -44,7 +44,7 @@ export default function ProfilePage() {
         dispatch(savePhotoUrl(profile?.profilePhoto));
       }
     }
-  }, [profile]);
+  }, [dispatch, isProfilePage, isSuccess, profile]);
 
   return (
     <>
@@ -69,7 +69,7 @@ export default function ProfilePage() {
             <View style={styles.followersBtnsWrapper}>
               <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
               <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
-              {whosProfileViewing && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
+              {whosProfile !== user?.id && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
             </View>
           </>
         )}

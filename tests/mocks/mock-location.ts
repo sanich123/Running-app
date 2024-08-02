@@ -65,6 +65,7 @@ export const MOCK_PROFILE = {
   id: '4d58948f-571f-44f4-8b00-ec1f494187f5',
   name: 'Искандер',
   profilePhoto: 'https://marathonec.ru/wp-content/uploads/2023/05/iskander-yadgarov.jpg',
+  profilePhotoBlurhash: '',
   sport: 'run',
   surname: 'Ядгаров',
   updatedAt: '2023-09-27T06:03:22.257Z',

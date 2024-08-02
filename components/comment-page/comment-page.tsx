@@ -72,6 +72,11 @@ const styles = StyleSheet.create({
   columnsLayout: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
   },
-  title: { fontWeight: 'bold', marginBottom: 10, marginTop: 10 },
+  title: {
+    fontWeight: 'bold',
+    marginBottom: 10,
+    marginTop: 10,
+  },
 });

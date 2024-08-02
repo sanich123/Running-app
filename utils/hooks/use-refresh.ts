@@ -6,6 +6,6 @@ export default function useRefresh(refetch: any) {
     setRefreshing(true);
     refetch();
     setTimeout(() => setRefreshing(false), 2000);
-  }, []);
+  }, [refetch]);
   return { refreshing, setRefreshing, onRefresh };
 }

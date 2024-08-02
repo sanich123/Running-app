@@ -42,6 +42,7 @@ export const MOCK_ACTIVITY = {
     language: null,
     name: 'Искандер',
     profilePhoto: '',
+    profilePhotoBlurhash: '',
     sport: null,
     surname: 'Ядгаров',
     updatedAt: new Date(Date.now()).toString(),

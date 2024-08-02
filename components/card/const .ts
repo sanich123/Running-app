@@ -28,7 +28,7 @@ export type ProfileType = {
   language: string | null;
   name: string;
   profilePhoto: string;
-  profilePhotoBlurhash?: string;
+  profilePhotoBlurhash: string;
   sport: string | null;
   surname: string;
   updatedAt: string;

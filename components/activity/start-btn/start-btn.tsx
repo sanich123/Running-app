@@ -9,16 +9,15 @@ import { setActivityStatus } from '@R/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { ROUTES, STATUSES } from '@const/enums';
-import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
-import { TouchableRipple, useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 
 import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON, ResponseIcon } from './const ';
 
 export default function StartBtn() {
   const dispatch = useAppDispatch();
-  const { colors, dark } = useTheme();
+  const { dark } = useTheme();
   const {
     activityStatus,
     duration,
@@ -31,9 +30,9 @@ export default function StartBtn() {
 
   const RESPONSE_ICON: ResponseIcon = {
     [STATUSES.initial]: ACTIVITY_START_BTN[language].start,
-    [STATUSES.started]: <FontAwesome testID={STOP_ICON} name="stop" size={25} style={{ marginRight: 15 }} />,
-    [STATUSES.paused]: ACTIVITY_START_BTN[language].finish,
-    [STATUSES.continued]: <FontAwesome testID={STOP_ICON} name="stop" size={25} style={{ marginRight: 15 }} />,
+    [STATUSES.started]: <Icon testID={STOP_ICON} source="pause" size={50} color="white" />,
+    [STATUSES.paused]: <Icon testID={STOP_ICON} source="stop" size={50} color="white" />,
+    [STATUSES.continued]: <Icon testID={STOP_ICON} source="pause" size={50} color="white" />,
   };
 
   return (
@@ -58,13 +57,11 @@ export default function StartBtn() {
           dispatch(setIsEditingActivity(false));
           dispatch(resetManualData());
           dispatch(resetActivityInfo());
-          push(`/(tabs)/${ROUTES.home}/${ROUTES.manualActivity}/`);
+          push(`/${ROUTES.home}/${ROUTES.manualActivity}/`);
         }
       }}>
-      <View style={[styles.startBtn, { backgroundColor: colors.error }]}>
-        <Text style={[styles.startBtnText, { fontSize: activityStatus === STATUSES.initial ? 35 : 15 }]}>
-          {RESPONSE_ICON[activityStatus]}
-        </Text>
+      <View style={styles.startBtn}>
+        <Text style={styles.startBtnText}>{RESPONSE_ICON[activityStatus]}</Text>
       </View>
     </TouchableRipple>
   );
@@ -75,11 +72,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    height: 95,
-    width: 95,
+    height: 90,
+    width: 90,
+    backgroundColor: 'tomato',
   },
   startBtnText: {
     textTransform: 'uppercase',
     color: 'white',
+    fontSize: 25,
   },
 });

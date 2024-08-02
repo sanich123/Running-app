@@ -5,6 +5,7 @@ import { useGetFontsThemeSettings } from '@U/hooks/use-get-fonts-theme-settings'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Slot } from 'expo-router';
 import { AppRegistry, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { ToastProvider } from 'react-native-toast-notifications';
@@ -31,11 +32,13 @@ export default function RootLayout() {
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
               <PaperProvider theme={paperTheme}>
                 <AuthProvider>
-                  <ToastProvider>
-                    <RootSiblingParent>
-                      <Slot />
-                    </RootSiblingParent>
-                  </ToastProvider>
+                  <GestureHandlerRootView style={{ flex: 1 }}>
+                    <ToastProvider>
+                      <RootSiblingParent>
+                        <Slot />
+                      </RootSiblingParent>
+                    </ToastProvider>
+                  </GestureHandlerRootView>
                 </AuthProvider>
               </PaperProvider>
             </ThemeProvider>

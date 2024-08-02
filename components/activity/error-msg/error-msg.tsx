@@ -16,7 +16,7 @@ export default function ErrorMsg() {
     if (isAppShutedByPhone) {
       setTimeout(() => dispatch(setIsAppShuted(false)), TIMEOUT_MESSAGE);
     }
-  }, [isAppShutedByPhone]);
+  }, [isAppShutedByPhone, dispatch]);
 
   return (
     <View style={styles.errorMsg}>

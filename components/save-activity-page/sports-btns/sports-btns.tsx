@@ -1,24 +1,21 @@
 import { saveSport } from '@R/activity/activity';
-import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
 
 import { SPORTS_BTNS_VALUES, SPORTS_BTNS, RUN_BTN_TEST_ID, SWIM_BTN_TEST_ID, RIDE_BTN_TEST_ID } from './const';
 
 export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const {
+    isDisabledWhileSending,
+    additionalInfo: { sport },
+  } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);
-  const [sport, setSport] = useState<string>(store.getState().activity.additionalInfo.sport);
 
   return (
     <SegmentedButtons
       value={sport}
-      onValueChange={(sport: string) => {
-        setSport(sport);
-        dispatch(saveSport(sport));
-      }}
+      onValueChange={(sport: string) => dispatch(saveSport(sport))}
       buttons={[
         {
           value: SPORTS_BTNS_VALUES.run,

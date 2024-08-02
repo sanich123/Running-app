@@ -41,7 +41,6 @@ describe('Activity start btn', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setActivityStatus(STATUSES.paused));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
-    expect(screen.getByText(ACTIVITY_START_BTN.english.finish)).toBeOnTheScreen();
     const startBtn = screen.getByTestId(ACTIVITY_START_BTN_TEST_ID);
     await userEvent.press(startBtn);
     expect(mockStore.getState().location.activityStatus).toEqual(STATUSES.initial);
@@ -63,7 +62,6 @@ describe('Activity start btn', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(setActivityStatus(STATUSES.paused));
     renderWithProviders(<ActivityStartBtn />, { store: mockStore });
-    expect(screen.getByText(ACTIVITY_START_BTN.russian.finish)).toBeOnTheScreen();
   });
   it('should correctly renders start in russian', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

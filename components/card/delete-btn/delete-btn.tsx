@@ -27,7 +27,7 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
       setIsLoading(false);
       setIsDisabled(false);
     }
-  }, [data, error]);
+  }, [data, error, setIsDisabled, setIsLoading]);
 
   async function successHandler() {
     setIsLoading(true);

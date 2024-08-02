@@ -36,7 +36,7 @@ export const activity = createSlice({
       state.isDisabledWhileSending = action.payload;
     },
     resetActivityInfo: (state) => {
-      state.additionalInfo = ADDITIONAL_INFO_INITIAL_STATE;
+      state.additionalInfo = { ...ADDITIONAL_INFO_INITIAL_STATE, sport: state.additionalInfo.sport };
     },
     setIsEditingActivity: (state, action) => {
       state.isEditingActivity = action.payload;

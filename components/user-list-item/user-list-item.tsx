@@ -47,11 +47,21 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 5,
-    paddingTop: 5,
-    paddingBottom: 5,
+    marginVertical: 5,
+    marginLeft: 5,
   },
-  contentWrapper: { flexDirection: 'row', columnGap: 10 },
-  avatarSize: { width: 35, height: 35, borderRadius: 70 },
-  nameSurnameWrapper: { flex: 1, flexDirection: 'row' },
+  contentWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 10,
+  },
+  avatarSize: {
+    width: 35,
+    height: 35,
+    borderRadius: 70,
+  },
+  nameSurnameWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+  },
 });

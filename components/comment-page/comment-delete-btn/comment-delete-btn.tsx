@@ -27,7 +27,7 @@ export default function CommentDeleteBtn({ commentId, activityId }: { commentId:
         showCrossPlatformToast(COMMENT_DELETE_BTN[language].errorDeleting);
       }
     }
-  }, [isSuccessDeleting, isErrorDeleting]);
+  }, [isSuccessDeleting, isErrorDeleting, dispatch, activityId, toast, language]);
 
   return (
     <IconButton

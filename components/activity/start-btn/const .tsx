@@ -6,12 +6,10 @@ export const STOP_ICON = 'stopIcon';
 
 export const ACTIVITY_START_BTN = {
   [LANGUAGES.english]: {
-    start: 'RUN',
-    finish: 'FINISH',
+    start: 'START',
   },
   [LANGUAGES.russian]: {
-    start: 'RUN',
-    finish: 'ЗАКОНЧ.',
+    start: 'СТАРТ',
   },
 } as const;
 

@@ -67,7 +67,7 @@ export default function MapboxWeb({
     return () => {
       mapboxMap.remove();
     };
-  }, []);
+  }, [boundBox, modifiedLocationsForTurf]);
 
   return <div ref={mapNode} style={{ flex: 1 }} />;
 }

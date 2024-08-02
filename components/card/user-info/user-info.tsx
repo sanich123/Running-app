@@ -21,7 +21,7 @@ export default function UserInfo({ profile, sport, date, userId, size }: UserInf
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => push(`/${place}/${ROUTES.profile}/${userId}`)}
       borderless
-      style={{ borderRadius: 10 }}>
+      style={{ paddingVertical: 5, paddingHorizontal: 5 }}>
       <View style={styles.userInfoWrapper}>
         <CustomImage
           style={[size === 'small' ? styles.avatarImageSmall : styles.avatarImageBig]}
