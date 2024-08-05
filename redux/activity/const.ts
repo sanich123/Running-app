@@ -30,7 +30,7 @@ export const ACTIVITY_INITIAL_STATE: ActivityInitialState = {
   finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
   additionalInfo: ADDITIONAL_INFO_INITIAL_STATE,
   unsyncedActivities: [],
-  manualDate: null,
+  manualDate: '',
   manualHours: 0,
   manualMinutes: 0,
   manualDistance: 0,

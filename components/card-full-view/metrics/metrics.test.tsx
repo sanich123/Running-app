@@ -15,8 +15,8 @@ jest.mock('expo-router', () => ({
 
 describe('Home activity full view', () => {
   it('should correctly renders in english', async () => {
-    renderWithProviders(<Metrics />, { store: mockStore });
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    renderWithProviders(<Metrics />, { store: mockStore });
     expect(screen.getByTestId(HOME_ACTIVITY_FULL_VIEW_TEST_ID)).toBeOnTheScreen();
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.english.distance)).toBeOnTheScreen();
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.english.averagePace)).toBeOnTheScreen();

@@ -8,7 +8,8 @@ import { Button } from 'react-native-paper';
 import { DATE_TIME_PICKER_BTN_ID, DATE_TIME_PICKER } from './const';
 
 export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) {
-  const [date, setDate] = useState(store.getState().activity.manualDate || new Date());
+  const savedDate = store.getState().activity.manualDate;
+  const [date, setDate] = useState(savedDate ? new Date(savedDate) : new Date());
   const [open, setOpen] = useState(false);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);

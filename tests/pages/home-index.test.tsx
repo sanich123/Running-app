@@ -32,6 +32,7 @@ describe('Home index', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<Feed />, { store: mockStore });
     expect(screen.getByTestId('homeActivityIndicator')).toBeOnTheScreen();
+    screen.debug();
 
     // expect(await screen.findByText(new RegExp(MOCK_ACTIVITY.profile.name))).toBeOnTheScreen();
     // expect(await screen.findByText(new RegExp(MOCK_ACTIVITY.profile.surname))).toBeOnTheScreen();

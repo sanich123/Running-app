@@ -12,6 +12,12 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
   usePathname: () => '/home/activity/someActivityId',
 }));
+jest.mock('expo-image', () => {
+  const actualExpoImage = jest.requireActual('expo-image');
+  const { Image } = jest.requireActual('react-native');
+
+  return { ...actualExpoImage, Image };
+});
 describe('Comments', () => {
   it('should correctly renders with isLoading state and data from server in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

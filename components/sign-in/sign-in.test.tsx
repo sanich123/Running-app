@@ -8,8 +8,8 @@ import SignIn from './sign-in';
 
 describe('Sign in component', () => {
   it('should correctly renders', () => {
-    renderWithProviders(<SignIn />, { store: mockStore });
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    renderWithProviders(<SignIn />, { store: mockStore });
     expect(screen.getByText(/already have an account?/i)).toBeDefined();
   });
 });

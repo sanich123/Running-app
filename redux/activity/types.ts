@@ -44,7 +44,7 @@ export interface ActivityInitialState {
   finishedActivity: FinishedActivity;
   additionalInfo: AdditionalInfoType;
   unsyncedActivities: UnsyncedActivities;
-  manualDate: Date | null;
+  manualDate: string;
   manualHours: number;
   manualMinutes: number;
   manualDistance: number;

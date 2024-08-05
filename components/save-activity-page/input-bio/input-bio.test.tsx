@@ -10,8 +10,8 @@ import InputBio from './input-bio';
 
 describe('Input bio', () => {
   it('should correctly renders', async () => {
-    renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
     const textInput = screen.getByTestId(INPUT_BIO_TEST_ID);
     expect(textInput).toBeOnTheScreen();
     await userEvent.type(textInput, 'some text');

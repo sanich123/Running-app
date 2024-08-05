@@ -24,8 +24,8 @@ describe('Unsended activities indicator', () => {
       }),
     );
     mockStore.dispatch(setIsHaveUnsyncedActivity(true));
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<UnsendedActivitiesIndicator />, { store: mockStore });
-    expect(screen.getByText(new RegExp(UNSENDED_ACTIVITIES.english.isLoading))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(UNSENDED_ACTIVITIES.russian.isLoading))).toBeOnTheScreen();
+    expect(await screen.findByText(/manually/i)).toBeOnTheScreen();
   });
 });
