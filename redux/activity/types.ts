@@ -4,7 +4,7 @@ import { LastKmSplit } from '@R/location/types';
 import { LocationObject } from 'expo-location';
 
 export interface FinishedActivity {
-  date?: Date;
+  date?: string;
   locations: LocationObject[];
   duration: number;
   speed: number;
@@ -22,7 +22,7 @@ export interface AdditionalInfoType {
 }
 
 export interface ManualData {
-  manualDate: Date;
+  manualDate: string;
   manualHours: number;
   manualMinutes: number;
   manualDistance: number;

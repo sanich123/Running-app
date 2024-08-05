@@ -66,7 +66,8 @@ export default function Feed() {
                     dispatch(resetFinishedActivity());
                     dispatch(resetManualData());
                     dispatch(resetActivityInfo());
-                    push('/(tabs)/home/manual-activity');
+                    //@ts-expect-error не знаю, почему typescript не нравится такой адрес, работает все правильно
+                    push('/home/manual-activity');
                   }}
                 />
               </>

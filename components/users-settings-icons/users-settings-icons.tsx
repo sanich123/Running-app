@@ -37,7 +37,7 @@ export default function UsersSettingsIcons() {
             icon="account-search-outline"
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            onPress={() => !pathname.includes(ROUTES.users) && push(`/${place}/${ROUTES.users}/`)}
+            onPress={() => !pathname.includes(ROUTES.users) && push(`/${place}/${ROUTES.users}`)}
             style={{ marginRight: -10 }}
           />
           <IconButton
@@ -46,13 +46,13 @@ export default function UsersSettingsIcons() {
             animated
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            onPress={() => !pathname.includes(ROUTES.settings) && push(`/${place}/${ROUTES.settings}/`)}
+            onPress={() => !pathname.includes(ROUTES.settings) && push(`/${place}/${ROUTES.settings}`)}
           />
           {Platform.OS === 'web' && (
             <TouchableRipple
               rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
               borderless
-              onPress={() => push(ROUTES.profile)}
+              onPress={() => push(`/${ROUTES.profile}`)}
               style={{ marginRight: 10 }}>
               <AvatarShowable size={30} id={`${user?.id}`} />
             </TouchableRipple>
