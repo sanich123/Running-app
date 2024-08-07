@@ -1,18 +1,16 @@
 import MapKmSplit from '@C/map-km-split/map-km-split';
 import MapRouteLine from '@C/map-route-line/map-route-line';
 import { useAppSelector } from '@R/typed-hooks';
-import useGetPermissions from '@U/hooks/use-get-permission';
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
 import { Platform, View } from 'react-native';
 import { Location } from 'react-native-background-geolocation';
 import { ActivityIndicator } from 'react-native-paper';
 
-export default function Map() {
+export default function Map({ isReadyToShowLocationOnMap }: { isReadyToShowLocationOnMap: boolean }) {
   const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);
-  const { isForegroundPermission, isBackgroundPermission } = useGetPermissions();
   return (
     <>
-      {isForegroundPermission && isBackgroundPermission ? (
+      {isReadyToShowLocationOnMap ? (
         <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
           {Platform.OS === 'ios' ? (
             <UserLocation showsUserHeadingIndicator animated />

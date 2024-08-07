@@ -7,6 +7,7 @@ import ShowMapBtn from '@C/activity/show-map-btn/show-map-btn';
 import StartBtn from '@C/activity/start-btn/start-btn';
 import Metrics from '@C/metrics/metrics';
 import { useAppSelector } from '@R/typed-hooks';
+import useGetPermissions from '@U/hooks/use-get-permission';
 import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
 import { STATUSES } from '@const/enums';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -19,19 +20,21 @@ export default function Activity() {
   const [visibilityOfSportIcon, setVisibilityOfSportIcon] = useState(true);
   const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
   useStartStopTracking();
-
+  const { isForegroundPermission, isBackgroundPermission } = useGetPermissions();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
+  const isReadyToShowLocationOnMap = isForegroundPermission && isBackgroundPermission;
   return (
     <BottomSheetModalProvider>
       <View style={styles.layout}>
-        <LocationIndicator />
+        {isForegroundPermission && isBackgroundPermission && <LocationIndicator />}
         <ChooseSportModal
           bottomSheetModalRef={bottomSheetModalRef}
           setVisibilityOfSportIcon={setVisibilityOfSportIcon}
         />
         <View style={styles.map}>
-          {(activityStatus === STATUSES.initial || isMapVisible) && <Map />}
+          {(activityStatus === STATUSES.initial || isMapVisible) && (
+            <Map isReadyToShowLocationOnMap={isReadyToShowLocationOnMap} />
+          )}
           {activityStatus !== STATUSES.initial && <Metrics />}
         </View>
         <View style={[styles.metricsLayout, { backgroundColor: colors.secondaryContainer }]}>
