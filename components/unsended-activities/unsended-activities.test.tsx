@@ -1,9 +1,7 @@
 import { saveUnsendedActivity, setIsHaveUnsyncedActivity } from '@R/activity/activity';
-import { changeLanguage } from '@R/language/language';
 import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import { UNSENDED_ACTIVITIES } from './const';
