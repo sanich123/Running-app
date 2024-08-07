@@ -30,7 +30,7 @@ describe('Activity slice', () => {
     kilometresSplit: MOCK_ACTIVITY.kilometresSplit,
   };
   it('should handle initial state properly', () => {
-    expect(reducer(undefined, { type: undefined })).toEqual(ACTIVITY_INITIAL_STATE);
+    expect(reducer(undefined, { type: '' })).toEqual(ACTIVITY_INITIAL_STATE);
   });
   it('should correctly change title', () => {
     expect(reducer(ACTIVITY_INITIAL_STATE, saveTitle(MOCK_TITLE))).toEqual({

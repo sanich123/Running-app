@@ -27,7 +27,7 @@ import reducer, {
 
 describe('Location slice', () => {
   it('should handle initial state properly', () => {
-    expect(reducer(undefined, { type: undefined })).toEqual(LOCATION_INITIAL_STATE);
+    expect(reducer(undefined, { type: '' })).toEqual(LOCATION_INITIAL_STATE);
   });
   it('should change initialLocation', () => {
     expect(reducer(LOCATION_INITIAL_STATE, setInitialLocation(MOCK_LOCATION))).toEqual({
