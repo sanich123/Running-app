@@ -10,8 +10,8 @@ npm-debug.*
 *.orig.*
 web-build/
 __tests__
-yarn.lock
 .env
+yarn.lock
 eas.json
 app.config.ts
 coverage

@@ -27,7 +27,7 @@
     "build:preview:ios:emulator:local": "EAS_LOCAL_BUILD_ARTIFACTS_DIR=~/Desktop eas build -p ios --profile preview --local",
     "build:preview:all:local": "EAS_LOCAL_BUILD_ARTIFACTS_DIR=~/Desktop bun run build:preview:android:local && bun run build:preview:ios:emulator:local",
     "build:inspect": "eas build:inspect -p android -s archive -o ../build --profile=preview",
-    "lint": "npx expo lint",
+    "lint": "yarn expo lint",
     "deps:all": "yarn && yarn run deps:scan && yarn run deps:fix",
     "deps:fix": "npx expo install --fix",
     "deps:scan": "npx expo-doctor@latest",
@@ -44,8 +44,7 @@
     "web:serve": "npx serve dist",
     "web:deploy:netlify": "netlify deploy --dir dist",
     "web:deploy:prod": "netlify deploy --prod",
-    "web:deploy:full": "yarn web:export && netlify deploy --prod",
-    "migrate:bun": "npx synp --source-file yarn.lock && npm i --lockfile-version 3 --frozen-lockfile && bun pm migrate"
+    "web:deploy:full": "yarn web:export && netlify deploy --prod"
   },
   "jest": {
     "collectCoverage": true,
