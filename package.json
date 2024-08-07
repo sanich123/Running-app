@@ -1,6 +1,6 @@
 {
   "name": "running-app",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -27,7 +27,7 @@
     "build:preview:ios:emulator:local": "EAS_LOCAL_BUILD_ARTIFACTS_DIR=~/Desktop eas build -p ios --profile preview --local",
     "build:preview:all:local": "EAS_LOCAL_BUILD_ARTIFACTS_DIR=~/Desktop bun run build:preview:android:local && bun run build:preview:ios:emulator:local",
     "build:inspect": "eas build:inspect -p android -s archive -o ../build --profile=preview",
-    "lint": "npx expo lint",
+    "lint": "yarn expo lint",
     "deps:all": "yarn && yarn run deps:scan && yarn run deps:fix",
     "deps:fix": "npx expo install --fix",
     "deps:scan": "npx expo-doctor@latest",
@@ -44,8 +44,7 @@
     "web:serve": "npx serve dist",
     "web:deploy:netlify": "netlify deploy --dir dist",
     "web:deploy:prod": "netlify deploy --prod",
-    "web:deploy:full": "yarn web:export && netlify deploy --prod",
-    "migrate:bun": "npx synp --source-file yarn.lock && npm i --lockfile-version 3 --frozen-lockfile && bun pm migrate"
+    "web:deploy:full": "yarn web:export && netlify deploy --prod"
   },
   "jest": {
     "collectCoverage": true,
@@ -77,7 +76,7 @@
     "@react-native-google-signin/google-signin": "^11.0.0",
     "@react-navigation/material-top-tabs": "^6.6.5",
     "@react-navigation/native": "^6.0.2",
-    "@reduxjs/toolkit": "^1.9.5",
+    "@reduxjs/toolkit": "^2.2.7",
     "@rnmapbox/maps": "^10.1.22",
     "@shopify/flash-list": "1.6.4",
     "@supabase/supabase-js": "^2.33.2",
@@ -135,7 +134,7 @@
     "react-native-vector-icons": "^10.0.0",
     "react-native-view-shot": "3.8.0",
     "react-native-web": "~0.19.6",
-    "react-redux": "^8.0.7",
+    "react-redux": "^8.1.3",
     "turf-linestring": "^1.0.2",
     "turf-point": "^2.0.1"
   },
@@ -148,7 +147,6 @@
     "@types/jest": "^29.5.3",
     "@types/mapbox-gl": "^2.7.20",
     "@types/react": "~18.2.14",
-    "@types/react-redux": "^7.1.33",
     "@types/react-test-renderer": "^18.0.0",
     "abort-controller": "^3.0.0",
     "cross-env": "^7.0.3",

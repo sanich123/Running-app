@@ -5,3 +5,4 @@ CHANGELOG
 2.1.1 Work on bottom sheets, add new dependencies, new native version
 2.1.2 Migrate to react-compiler
 2.1.3 Remove react-compiler, migrate react-native 0.74.3, new architecture
+2.1.4 Update redux-toolkit to 2
