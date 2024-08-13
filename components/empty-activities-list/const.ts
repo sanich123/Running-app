@@ -5,6 +5,6 @@ export const EMPTY_ACTIVITIES_LIST = {
     emptyActivities: 'There will be yours and your friends activities...',
   },
   [LANGUAGES.russian]: {
-    emptyActivities: 'Здесь будут ваши и ваших друзей активности',
+    emptyActivities: 'Здесь будут ваши и ваших друзей активности...',
   },
 } as const;

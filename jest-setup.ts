@@ -3,7 +3,6 @@ import 'dotenv/config';
 import { fetch, Headers, Request, Response } from 'cross-fetch';
 
 import { server } from './tests/utils/server';
-require('@shopify/flash-list/jestSetup');
 
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 jest.mock('expo-font');

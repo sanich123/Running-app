@@ -6,14 +6,17 @@ export type ProfilePrivateInfo = {
 };
 
 export type ProfileSettings = {
-  gender: string;
-  name: string;
-  surname: string;
-  city: string;
-  weight: string;
-  bio: string;
-  profilePhoto: string;
+  gender?: string;
+  name?: string;
+  surname?: string;
+  city?: string;
+  weight?: string;
+  bio?: string;
+  profilePhoto?: string;
   email?: string;
+  birthday?: string;
+  sport?: string;
+  emailNotifications?: boolean;
 };
 
 export type ProfileGoogle = {

@@ -3,7 +3,7 @@ import MapRouteLine from '@C/map-route-line/map-route-line';
 import { useAppSelector } from '@R/typed-hooks';
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
 import { Platform, View } from 'react-native';
-import { Location } from 'react-native-background-geolocation';
+
 import { ActivityIndicator } from 'react-native-paper';
 
 export default function Map({ isReadyToShowLocationOnMap }: { isReadyToShowLocationOnMap: boolean }) {
@@ -20,7 +20,7 @@ export default function Map({ isReadyToShowLocationOnMap }: { isReadyToShowLocat
           <Camera followUserLocation followZoomLevel={18} animationMode="flyTo" />
           <MapKmSplit kilometresSplit={kilometresSplit} />
           {locationsWithPauses[0]?.length > 1
-            ? locationsWithPauses.map((locations: Location[]) => {
+            ? locationsWithPauses.map((locations) => {
                 if (locations?.length > 1) {
                   const key = `${locations[0].coords.longitude}, ${locations[locations.length - 1].coords.latitude}`;
                   return <MapRouteLine key={key} locations={locations} />;
