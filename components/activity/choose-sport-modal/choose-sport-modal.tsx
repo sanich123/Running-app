@@ -43,15 +43,6 @@ export default function ChooseSportModal({
         </View>
 
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          {/* <IconButton
-            icon="walk"
-            size={35}
-            onPress={() => {
-              dispatch(saveSport(SPORTS_BTNS_VALUES.run));
-              bottomSheetModalRef.current?.close();
-              setVisibilityOfSportIcon(true);
-            }}
-          /> */}
           <IconButton
             icon="run"
             size={35}

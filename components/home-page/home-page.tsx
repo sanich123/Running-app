@@ -16,9 +16,10 @@ import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ModalLikesListContext } from '@U/context/activity-card-btns';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Feed() {

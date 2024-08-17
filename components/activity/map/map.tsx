@@ -6,7 +6,7 @@ import { Platform, View } from 'react-native';
 
 import { ActivityIndicator } from 'react-native-paper';
 
-export default function Map({ isReadyToShowLocationOnMap }: { isReadyToShowLocationOnMap: boolean }) {
+export default function Map({ isReadyToShowLocationOnMap }: { isReadyToShowLocationOnMap: boolean | undefined }) {
   const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);
   return (
     <>
