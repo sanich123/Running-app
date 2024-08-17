@@ -34,6 +34,6 @@ export default function Page() {
       dispatch(setActivityStatus(STATUSES.paused));
       return <Redirect href="/activity" />;
     }
-    return <Redirect href="/activity" />;
+    return <Redirect href="/home" />;
   }
 }
