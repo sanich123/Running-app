@@ -18,7 +18,7 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
   const { user } = useAuth();
   const { googleInfo } = useAppSelector(({ profile }) => profile);
   const isMineAvatar = id === user?.id;
-  const { data: profile, error, isSuccess, isLoading } = useGetUserProfileByUserIdQuery(id, { skip: !id });
+  const { data: profile, isSuccess, isError } = useGetUserProfileByUserIdQuery(id, { skip: !id });
   const [createProfile] = useCreateProfileByUserIdMutation();
   const [updateProfile] = useUpdateProfileByProfileIdMutation();
 
@@ -62,7 +62,6 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
         updateProfileWithGoogleInfo();
       }
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -74,28 +73,32 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
 
   return (
     <>
-      {(profile?.profilePhoto?.length > 0 || googleInfo?.photo) && (
-        <CustomImage
-          style={{ width: size, height: size, borderRadius: 70 }}
-          source={{ uri: profile?.profilePhoto || googleInfo?.photo }}
-          contentFit="cover"
-          testID={AvatarShowableTestIds.success}
-          placeholder={profile?.profilePhotoBlurhash}
-        />
-      )}
-      {(error || profile?.message) && (
+      {isSuccess ? (
+        <>
+          {profile?.profilePhoto?.length > 0 || googleInfo?.photo ? (
+            <CustomImage
+              style={{ width: size, height: size, borderRadius: 70 }}
+              source={{ uri: profile?.profilePhoto || googleInfo?.photo }}
+              contentFit="cover"
+              testID={AvatarShowableTestIds.success}
+              placeholder={profile?.profilePhotoBlurhash}
+            />
+          ) : (
+            <Avatar.Icon
+              testID={AvatarShowableTestIds.default}
+              size={size}
+              icon={AvatarShowableIcons.default}
+              style={styles.placeInCenter}
+            />
+          )}
+        </>
+      ) : null}
+
+      {(isError || profile?.message) && (
         <Avatar.Icon
           testID={AvatarShowableTestIds.error}
           size={size}
           icon={AvatarShowableIcons.error}
-          style={styles.placeInCenter}
-        />
-      )}
-      {!isLoading && !profile?.profilePhoto?.length && !googleInfo?.photo && (
-        <Avatar.Icon
-          testID={AvatarShowableTestIds.default}
-          size={size}
-          icon={AvatarShowableIcons.default}
           style={styles.placeInCenter}
         />
       )}

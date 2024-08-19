@@ -7,12 +7,8 @@ import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 
 export default function BatteryOptimizationModal({
   batteryOptimizationEnabledModalRef,
-  setIsAppOptimizedByPhone,
-  setUserGetBackToApp,
 }: {
   batteryOptimizationEnabledModalRef: RefObject<BottomSheetModal>;
-  setIsAppOptimizedByPhone: (arg: boolean) => void;
-  setUserGetBackToApp: (arg: boolean) => void;
 }) {
   const { colors } = useTheme();
   return (
@@ -46,14 +42,12 @@ export default function BatteryOptimizationModal({
                 const request = await startActivityAsync(ActivityAction.IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
                 if (request) {
                   batteryOptimizationEnabledModalRef.current?.close();
-                  setUserGetBackToApp(true);
-                  setIsAppOptimizedByPhone(false);
                 }
               } catch (error) {
                 showCrossPlatformToast(JSON.stringify(error));
               }
             }}>
-            Дать доступ к местоположению в фоне
+            Снять оптимизации батареи
           </Button>
         </View>
       </BottomSheetView>
