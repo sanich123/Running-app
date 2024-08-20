@@ -27,18 +27,12 @@ export default function Activity() {
   return (
     <BottomSheetModalProvider>
       <View style={styles.layout}>
-
         <ChooseSportModal
           bottomSheetModalRef={bottomSheetModalRef}
           setVisibilityOfSportIcon={setVisibilityOfSportIcon}
         />
-        <BackgroundLocationModal
-          backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}
-        />
-        <BatteryOptimizationModal
-          batteryOptimizationEnabledModalRef={batteryOptimizationEnabledModalRef}
-
-        />
+        <BackgroundLocationModal backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef} />
+        <BatteryOptimizationModal batteryOptimizationEnabledModalRef={batteryOptimizationEnabledModalRef} />
 
         <View style={styles.map}>
           {(activityStatus === STATUSES.initial || isMapVisible) && <Map />}
