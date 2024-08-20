@@ -6,11 +6,9 @@ import { Platform, View } from 'react-native';
 
 import LocationSettingsSwitcher from '../location-settings-switcher/location-settings-switcher';
 import ForegroundLocationSwitcher from '../foregroud-location-switcher/foreground-location-switcher';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
 import BackgroundLocationSwitcher from '../background-location-switcher/background-location-switcher';
-//@ts-expect-error просто нет типов в пакете
-import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
 import BatteryOptimizationSwitcher from '../battery-optimization-switcher/battery-optimization-switcher';
 import LocationIndicator from '../location-indicator/location-indicator';
 
@@ -20,12 +18,6 @@ export default function Map() {
   const [foregroundPermissionStatus, requestForegroundPermission] = useForegroundPermissions();
   const [backgroundPermissionStatus, requestBackgroundPermission] = useBackgroundPermissions();
   const [isAppOptimizedByPhone, setIsAppOptimizedByPhone] = useState(true);
-
-  useEffect(() => {
-    if (isAppOptimizedByPhone) {
-      BatteryOptEnabled().then((isEnabled: boolean) => setIsAppOptimizedByPhone(isEnabled));
-    }
-  }, [isAppOptimizedByPhone]);
 
   const isReadyToShowLocationOnMap =
     isLocationEnabled &&

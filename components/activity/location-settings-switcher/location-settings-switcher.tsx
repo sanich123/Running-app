@@ -19,7 +19,7 @@ export default function LocationSettingsSwitcher({
       const isLocationEnabled = await hasServicesEnabledAsync();
       setIsLocationEnabled(isLocationEnabled);
     }
-    if (isNeedToRefreshPermission) {
+    if (!isLocationEnabled || isNeedToRefreshPermission) {
       isLocationServicesEnabled();
       setIsNeedToRefreshPermission(false);
     }
