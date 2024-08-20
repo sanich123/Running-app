@@ -57,14 +57,14 @@ export default function Map() {
           </MapView>
         </>
       ) : (
-        <View style={[{ flex: 1, justifyContent: 'center', alignItems: 'flex-end' }, isMapVisible && { height: '60%' }]}>
+        <View
+          style={[{ flex: 1, justifyContent: 'center', alignItems: 'flex-end' }, isMapVisible && { height: '60%' }]}>
           {!isLocationEnabled && (
             <LocationSettingsSwitcher
               isLocationEnabled={isLocationEnabled}
               setIsLocationEnabled={setIsLocationEnabled}
             />
           )}
-
           {!foregroundPermissionStatus?.granted && (
             <ForegroundLocationSwitcher
               foregroundPermissionStatus={!!foregroundPermissionStatus?.granted}
