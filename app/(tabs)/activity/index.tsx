@@ -12,8 +12,6 @@ import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet
 import { useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import BackgroundLocationModal from '@C/activity/background-location-modal/background-location-modal';
-import BatteryOptimizationModal from '@C/activity/battery-optimization-modal/battery-optimization-modal';
 
 export default function Activity() {
   const { colors } = useTheme();
@@ -21,8 +19,6 @@ export default function Activity() {
   const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
   useStartStopTracking();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const backgroundLocationEnabledModalRef = useRef<BottomSheetModal>(null);
-  const batteryOptimizationEnabledModalRef = useRef<BottomSheetModal>(null);
 
   return (
     <BottomSheetModalProvider>
@@ -31,8 +27,6 @@ export default function Activity() {
           bottomSheetModalRef={bottomSheetModalRef}
           setVisibilityOfSportIcon={setVisibilityOfSportIcon}
         />
-        <BackgroundLocationModal backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef} />
-        <BatteryOptimizationModal batteryOptimizationEnabledModalRef={batteryOptimizationEnabledModalRef} />
 
         <View style={styles.map}>
           {(activityStatus === STATUSES.initial || isMapVisible) && <Map />}

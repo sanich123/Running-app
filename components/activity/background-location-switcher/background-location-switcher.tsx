@@ -1,15 +1,16 @@
 import { View, StyleSheet } from 'react-native';
 
 import { showCrossPlatformToast } from '@U/custom-toast';
-import { LocationPermissionResponse } from 'expo-location';
 import { Switch, Text } from 'react-native-paper';
+import { RefObject } from 'react';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function BackgroundLocationSwitcher({
   backgroundPermissionStatus,
-  requestBackgroundPermission,
+  backgroundLocationEnabledModalRef,
 }: {
   backgroundPermissionStatus: boolean;
-  requestBackgroundPermission: () => Promise<LocationPermissionResponse>;
+  backgroundLocationEnabledModalRef: RefObject<BottomSheetModal>;
 }) {
   return (
     <View style={styles.switcherWrapper}>
@@ -18,7 +19,7 @@ export default function BackgroundLocationSwitcher({
         value={backgroundPermissionStatus}
         onValueChange={async () => {
           try {
-            await requestBackgroundPermission();
+            backgroundLocationEnabledModalRef.current?.present();
           } catch (error) {
             showCrossPlatformToast(JSON.stringify(error));
           }

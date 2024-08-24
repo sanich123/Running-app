@@ -3,11 +3,14 @@ import { RefObject } from 'react';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useTheme, Text, Button } from 'react-native-paper';
+import { LocationPermissionResponse } from 'expo-location';
 
 export default function BackgroundLocationModal({
   backgroundLocationEnabledModalRef,
+  requestBackgroundPermission,
 }: {
   backgroundLocationEnabledModalRef: RefObject<BottomSheetModal>;
+  requestBackgroundPermission: () => Promise<LocationPermissionResponse>;
 }) {
   const { colors } = useTheme();
 
@@ -37,6 +40,7 @@ export default function BackgroundLocationModal({
             style={{ marginTop: 15 }}
             onPress={async () => {
               try {
+                await requestBackgroundPermission();
                 backgroundLocationEnabledModalRef.current?.close();
               } catch (error) {
                 showCrossPlatformToast(JSON.stringify(error));

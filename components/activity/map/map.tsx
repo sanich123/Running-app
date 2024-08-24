@@ -6,11 +6,14 @@ import { Platform, View } from 'react-native';
 
 import LocationSettingsSwitcher from '../location-settings-switcher/location-settings-switcher';
 import ForegroundLocationSwitcher from '../foregroud-location-switcher/foreground-location-switcher';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
 import BackgroundLocationSwitcher from '../background-location-switcher/background-location-switcher';
 import BatteryOptimizationSwitcher from '../battery-optimization-switcher/battery-optimization-switcher';
 import LocationIndicator from '../location-indicator/location-indicator';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import BackgroundLocationModal from '../background-location-modal/background-location-modal';
+import BatteryOptimizationModal from '../battery-optimization-modal/battery-optimization-modal';
 
 export default function Map() {
   const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);
@@ -18,7 +21,9 @@ export default function Map() {
   const [foregroundPermissionStatus, requestForegroundPermission] = useForegroundPermissions();
   const [backgroundPermissionStatus, requestBackgroundPermission] = useBackgroundPermissions();
   const [isAppOptimizedByPhone, setIsAppOptimizedByPhone] = useState(true);
-
+  const backgroundLocationEnabledModalRef = useRef<BottomSheetModal>(null);
+  const batteryOptimizationEnabledModalRef = useRef<BottomSheetModal>(null);
+  const [isNeedToRefreshPermission, setIsNeedToRefreshPermission] = useState(false);
   const isReadyToShowLocationOnMap =
     isLocationEnabled &&
     foregroundPermissionStatus?.granted &&
@@ -57,24 +62,35 @@ export default function Map() {
               setIsLocationEnabled={setIsLocationEnabled}
             />
           )}
-          {!foregroundPermissionStatus?.granted && (
+          {foregroundPermissionStatus && !foregroundPermissionStatus?.granted && (
             <ForegroundLocationSwitcher
-              foregroundPermissionStatus={!!foregroundPermissionStatus?.granted}
+              foregroundPermissionStatus={foregroundPermissionStatus}
               requestForegroundPermission={requestForegroundPermission}
             />
           )}
           {!backgroundPermissionStatus?.granted && (
             <BackgroundLocationSwitcher
               backgroundPermissionStatus={!!backgroundPermissionStatus?.granted}
-              requestBackgroundPermission={requestBackgroundPermission}
+              backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}
             />
           )}
           {isAppOptimizedByPhone && (
             <BatteryOptimizationSwitcher
               isAppOptimizedByPhone={isAppOptimizedByPhone}
               setIsAppOptimizedByPhone={setIsAppOptimizedByPhone}
+              batteryOptimizationEnabledModalRef={batteryOptimizationEnabledModalRef}
+              setIsNeedToRefreshPermission={setIsNeedToRefreshPermission}
+              isNeedToRefreshPermission={isNeedToRefreshPermission}
             />
           )}
+          <BackgroundLocationModal
+            backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}
+            requestBackgroundPermission={requestBackgroundPermission}
+          />
+          <BatteryOptimizationModal
+            batteryOptimizationEnabledModalRef={batteryOptimizationEnabledModalRef}
+            setIsNeedToRefreshPermission={setIsNeedToRefreshPermission}
+          />
         </View>
       )}
     </>

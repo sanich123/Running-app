@@ -2,20 +2,24 @@ import { View, StyleSheet } from 'react-native';
 
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { Switch, Text } from 'react-native-paper';
-import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 //@ts-expect-error просто нет типов в пакете
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
-import { useEffect, useState } from 'react';
+import { RefObject, useEffect } from 'react';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function BatteryOptimizationSwitcher({
   isAppOptimizedByPhone,
   setIsAppOptimizedByPhone,
+  batteryOptimizationEnabledModalRef,
+  setIsNeedToRefreshPermission,
+  isNeedToRefreshPermission,
 }: {
   isAppOptimizedByPhone: boolean;
   setIsAppOptimizedByPhone: (arg: boolean) => void;
+  batteryOptimizationEnabledModalRef: RefObject<BottomSheetModal>;
+  setIsNeedToRefreshPermission: (arg: boolean) => void;
+  isNeedToRefreshPermission: boolean;
 }) {
-  const [isNeedToRefreshPermission, setIsNeedToRefreshPermission] = useState(false);
-
   useEffect(() => {
     if (isAppOptimizedByPhone || isNeedToRefreshPermission) {
       BatteryOptEnabled().then((isEnabled: boolean) => {
@@ -23,7 +27,7 @@ export default function BatteryOptimizationSwitcher({
         setIsNeedToRefreshPermission(false);
       });
     }
-  }, [isAppOptimizedByPhone, setIsAppOptimizedByPhone, isNeedToRefreshPermission]);
+  }, [isAppOptimizedByPhone, setIsAppOptimizedByPhone, isNeedToRefreshPermission, setIsNeedToRefreshPermission]);
 
   return (
     <View style={styles.switcherWrapper}>
@@ -32,10 +36,7 @@ export default function BatteryOptimizationSwitcher({
         value={!isAppOptimizedByPhone}
         onValueChange={async () => {
           try {
-            const request = await startActivityAsync(ActivityAction.IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-            if (request) {
-              setIsNeedToRefreshPermission(true);
-            }
+            batteryOptimizationEnabledModalRef.current?.present();
           } catch (error) {
             showCrossPlatformToast(JSON.stringify(error));
           }
