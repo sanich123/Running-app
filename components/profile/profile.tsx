@@ -2,7 +2,7 @@ import AvatarShowable from '@C/avatar/showable/showable';
 import ErrorComponent from '@C/error-component/error-component';
 import ProfileMediaPhotos from '@C/profile/media-photos/media-photos';
 import { saveBio, saveCity, saveGender, saveName, savePhotoUrl, saveSurname, saveWeight } from '@R/profile/profile';
-import { useGetUserProfileByIdQuery } from '@R/runich-api/runich-api';
+
 import { useAppDispatch } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
@@ -14,6 +14,7 @@ import { ActivityIndicator, Text } from 'react-native-paper';
 import FollowUnfollowBtn from './follow-unfollow-btn/follow-unfollow-btn';
 import { USERS_VARIANT } from './users-counter/const';
 import UsersCounter from './users-counter/users-counter';
+import { useGetUserProfileByUserIdQuery } from '@R/runich-api/runich-api';
 
 export default function ProfilePage() {
   const pathname = usePathname();
@@ -28,7 +29,7 @@ export default function ProfilePage() {
     isError,
     data: profile,
     error,
-  } = useGetUserProfileByIdQuery(`${whosProfile}`, { skip: !whosProfile });
+  } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
 
   const isProfilePage = !pathname.includes(ROUTES.home);
 
@@ -52,7 +53,7 @@ export default function ProfilePage() {
       <View style={[styles.container, (isLoading || isError) && styles.isInCenter]}>
         {isLoading && <ActivityIndicator size="large" />}
         {error ? <ErrorComponent error={error} /> : null}
-        {isSuccess && (
+        {isSuccess ? (
           <>
             <View style={styles.header}>
               <AvatarShowable size={100} id={`${whosProfile}`} />
@@ -72,7 +73,7 @@ export default function ProfilePage() {
               {whosProfile !== user?.id && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
             </View>
           </>
-        )}
+        ) : null}
       </View>
     </>
   );

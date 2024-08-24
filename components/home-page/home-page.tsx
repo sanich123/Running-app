@@ -50,7 +50,7 @@ export default function Feed() {
             {isHaveUnsyncedActivity ? <UnsendedActivitiesIndicator /> : null}
             {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
             {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}
-            {!data?.message && data?.activities?.length ? (
+            {!data?.message && data?.activities ? (
               <>
                 <InfiniteScrollList
                   dataToRender={data?.activities}

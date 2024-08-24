@@ -1,7 +1,11 @@
 import { useAuth } from '@A/context/auth-context';
 import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
 import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/profile/profile';
-import { useSendProfileInfoMutation } from '@R/runich-api/runich-api';
+import {
+  useCreateProfileByUserIdMutation,
+  useGetUserProfileByUserIdQuery,
+  useUpdateProfileByProfileIdMutation,
+} from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useRouter } from 'expo-router';
@@ -20,17 +24,22 @@ export default function ProfileUpdateBtn() {
   const { user } = useAuth();
   const { settings, isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
-  const [sendProfile, { isLoading, isSuccess, isError, error }] = useSendProfileInfoMutation();
+  const { data: profile } = useGetUserProfileByUserIdQuery(`${user?.id}`, { skip: !user?.id });
+  const [createProfile, { isLoading: isCreating, isSuccess, isError, error }] = useCreateProfileByUserIdMutation();
+  const [
+    updateProfile,
+    { isLoading: isUpdating, isSuccess: isUpdated, isError: isUpdatedWithError, error: updateError },
+  ] = useUpdateProfileByProfileIdMutation();
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess || isUpdated) {
       dispatch(setIsNeedToRefreshActivities(true));
       dispatch(setIsDisabledWhileSendingProfile(false));
       dispatch(resetSettings());
       back();
     }
-    if (isError) {
-      if (__DEV__) console.log(error);
+    if (isError || isUpdatedWithError) {
+      if (__DEV__) console.log(error || updateError);
       dispatch(setIsDisabledWhileSendingProfile(false));
       if (Platform.OS !== 'web') {
         showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
@@ -38,20 +47,24 @@ export default function ProfileUpdateBtn() {
         toast.show(UPDATE_BTN_ERROR_MSG);
       }
     }
-  }, [isSuccess, error, isError, dispatch, back, toast]);
+  }, [isSuccess, error, isError, dispatch, back, toast, isUpdated, updateError, isUpdatedWithError]);
 
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={async () => {
         dispatch(setIsDisabledWhileSendingProfile(true));
-        await sendProfile({ body: settings, id: `${user?.id}` }).unwrap();
+        if (!profile?.id) {
+          await createProfile({ body: settings, id: `${user?.id}` }).unwrap();
+        } else {
+          await updateProfile({ body: settings, id: `${profile?.id}` }).unwrap();
+        }
       }}
       borderless
-      disabled={isLoading || isDisabledWhileSendingProfile}
+      disabled={isCreating || isDisabledWhileSendingProfile || isUpdating}
       style={styles.layout}>
       <Text variant="titleMedium" style={{ color: colors.primary }}>
-        {isLoading ? UPDATE_BTN[language].updating : UPDATE_BTN[language].update}
+        {isCreating ? UPDATE_BTN[language].updating : UPDATE_BTN[language].update}
       </Text>
     </TouchableRipple>
   );

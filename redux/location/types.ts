@@ -1,6 +1,6 @@
 import { STATUSES } from '@const/enums';
 import { LocationObject } from 'expo-location';
-import { Location } from 'react-native-background-geolocation';
+
 
 export type LastKmSplit = {
   lastKilometerDuration: number;
@@ -24,6 +24,6 @@ export type LocationInitialState = {
   lastPosition: LocationObject | null;
   currentPace: number;
   kilometresSplit: LastKmSplit[];
-  locationsWithPauses: Location[][];
-  locationsFromBackground: Location[];
+  locationsWithPauses: LocationObject[][];
+  locationsFromBackground: LocationObject[];
 };

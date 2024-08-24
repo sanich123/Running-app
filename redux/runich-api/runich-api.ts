@@ -15,21 +15,17 @@ export const runichApi = createApi({
   }),
 
   endpoints: (builder) => ({
+    // getUsers: builder.query({
+    //   query: () => `/${user}`,
+    //   providesTags: [Tags.users],
+    // }),
+
     //Profile
-    getUsers: builder.query({
-      query: () => `/${user}`,
-      providesTags: [Tags.users],
-    }),
-    getUserProfileById: builder.query({
-      query: (id: string) => `/${profile}/${id}`,
+    getUserProfileByUserId: builder.query({
+      query: (userId: string) => `${user}/${userId}/${profile}`,
       providesTags: [Tags.profile],
     }),
-    getFilteredUsersBySearchText: builder.query({
-      query: (search: string) =>
-        `/${profile}/filter?page=${0}&limit=${10}&offset=0&name=${search}&surname=${search}&email=${search}&city=${search}&gender=${search}&sport=${search}`,
-      providesTags: [Tags.profile],
-    }),
-    sendProfileInfo: builder.mutation({
+    createProfileByUserId: builder.mutation({
       query: ({ body, id }: SendProfile) => ({
         url: `/${user}/${id}/${profile}`,
         method: Methods.post,
@@ -38,14 +34,25 @@ export const runichApi = createApi({
       }),
       invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
-    updateProfileInfo: builder.mutation({
-      query: ({ body, id }) => ({
-        url: `/${profile}/${id}`,
+    updateProfileByProfileId: builder.mutation({
+      query: ({ body, id }: SendProfile) => ({
+        url: `${user}/${id}/${profile}`,
         method: Methods.patch,
         headers,
         body,
       }),
       invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
+    }),
+    deleteUserByUserId: builder.mutation({
+      query: (id: string) => ({
+        url: `${user}/${id}`,
+        method: Methods.delete,
+      }),
+    }),
+    getFilteredUsersBySearchText: builder.query({
+      query: (search: string) =>
+        `/${profile}/filter?page=${0}&limit=${10}&offset=0&name=${search}&surname=${search}&email=${search}&city=${search}&gender=${search}&sport=${search}`,
+      providesTags: [Tags.profile],
     }),
 
     //Followers
@@ -286,11 +293,14 @@ export const runichApi = createApi({
 });
 
 export const {
-  useGetUsersQuery,
-  useGetUserProfileByIdQuery,
+  // useGetUsersQuery,
+  useGetUserProfileByUserIdQuery,
+  useCreateProfileByUserIdMutation,
+  useUpdateProfileByProfileIdMutation,
+  useDeleteUserByUserIdMutation,
+
   useGetFilteredUsersBySearchTextQuery,
   useUpdateActivityInfoMutation,
-  useUpdateProfileInfoMutation,
   useGetActivitiesByUserIdQuery,
   useGetAllActivityPhotosByUserIdQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesQuery,
@@ -302,7 +312,6 @@ export const {
   useGetLikesByActivityIdQuery,
   useGetLikesByCommentIdQuery,
   useGetLocationsByActivityIdQuery,
-  useSendProfileInfoMutation,
   useAddActivityByUserIdMutation,
   useDeleteActivityByIdMutation,
   useAddFriendMutation,
