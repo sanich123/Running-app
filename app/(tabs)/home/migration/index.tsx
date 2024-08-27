@@ -2,11 +2,19 @@ import { Button, Text } from 'react-native-paper';
 import { View } from 'react-native';
 import { Link } from 'expo-router';
 import { getDocumentAsync } from 'expo-document-picker';
-import { cacheDirectory, readAsStringAsync } from 'expo-file-system';
+import {
+  FileSystemUploadType,
+  cacheDirectory,
+  deleteAsync,
+  readAsStringAsync,
+  readDirectoryAsync,
+  uploadAsync,
+} from 'expo-file-system';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { unzip } from 'react-native-zip-archive';
 import { parseGPX, parseGPXWithCustomParser } from '@we-gold/gpxjs';
 import { DOMParser } from 'xmldom-qsa';
+import { useState } from 'react';
 const customParseMethod = (txt: string): Document | null => {
   return new DOMParser().parseFromString(txt, 'text/xml');
 };
@@ -24,6 +32,7 @@ async function readCacheDirectory() {
 //   return result.exists && !result.isDirectory;
 // }
 export default function Migration() {
+  const [fileUrl, setFileUrl] = useState('');
   return (
     <View style={{ flex: 1, padding: 10, alignItems: 'center' }}>
       <Text variant="bodyLarge">Вы можете перенести все свои активности из Strava в наш сервис. </Text>
@@ -42,8 +51,11 @@ export default function Migration() {
               const file = await getDocumentAsync();
               if (!file?.canceled) {
                 const uriToUzip = file?.assets[0].uri;
+                setFileUrl(uriToUzip);
                 const path = await unzip(uriToUzip, `${cacheDirectory}/stravaMigration`, 'UTF-8');
                 console.log(`unzip completed at ${path}`);
+                const directory = await readDirectoryAsync(`${cacheDirectory}/stravaMigration`);
+                console.log(path, directory);
               }
             } catch (error) {
               console.log(error);
@@ -51,6 +63,18 @@ export default function Migration() {
             }
           }}>
           Выбрать архив
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={async () => {
+            try {
+              await deleteAsync(`${cacheDirectory}/stravaMigration`);
+            } catch (error) {
+              console.log(error);
+              showCrossPlatformToast(JSON.stringify(error));
+            }
+          }}>
+          Удалить папку
         </Button>
         <Button
           mode="outlined"
@@ -78,6 +102,23 @@ export default function Migration() {
             }
           }}>
           Получить данные о местоположении из gpx
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={async () => {
+            try {
+              const response = await uploadAsync(`http://192.168.1.7:4000/activity/migration-strava`, fileUrl, {
+                fieldName: 'archive',
+                httpMethod: 'POST',
+                uploadType: FileSystemUploadType.MULTIPART,
+              });
+              console.log(response);
+            } catch (error) {
+              console.log(error)
+              showCrossPlatformToast(JSON.stringify(error));
+            }
+          }}>
+          Загрузить архив
         </Button>
       </View>
     </View>
