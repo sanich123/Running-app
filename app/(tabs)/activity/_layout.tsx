@@ -23,18 +23,6 @@ export default function ActivityStack() {
           headerTitleAlign: 'center',
         }}
       />
-      <Stack.Screen
-        name="background-permission"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="foreground-permission"
-        options={{
-          headerShown: false,
-        }}
-      />
     </Stack>
   );
 }

@@ -6,6 +6,7 @@ import LanguageSwitcher from './language-switcher/language-switcher';
 import DeleteAccountBtn from './delete-account/delete-account';
 import PrefetcActivitiesBtn from './prefetch-activities-btn/prefetch-activities-btn';
 import ClearCacheBtn from './clear-cache-btn/clear-cache-btn';
+import MigrationBtn from './migration-btn/migration-btn';
 
 export default function SettingsPage() {
   return (
@@ -16,6 +17,7 @@ export default function SettingsPage() {
       <EmailNotificationsBtn />
       <LogoutBtn />
       <DeleteAccountBtn />
+      <MigrationBtn />
     </ScrollView>
   );
 }
