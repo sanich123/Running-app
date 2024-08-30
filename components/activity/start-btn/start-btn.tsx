@@ -9,7 +9,7 @@ import { setActivityStatus } from '@R/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { ROUTES, STATUSES } from '@const/enums';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 
@@ -57,8 +57,7 @@ export default function StartBtn() {
           dispatch(setIsEditingActivity(false));
           dispatch(resetManualData());
           dispatch(resetActivityInfo());
-          push(`/${ROUTES.home}/${ROUTES.manualActivity}/`);
-
+          push(`/${ROUTES.home}/${ROUTES.manualActivity}/` as Href<`/${ROUTES.home}/${ROUTES.manualActivity}/`>);
         }
       }}>
       <View style={styles.startBtn}>
