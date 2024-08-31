@@ -27,7 +27,7 @@ export default function MediaGridImage({
       key={url}
       onPress={() =>
         push(
-          //@ts-expect-error не знаю, почему typescript не нравятся динамические ссылки, все работает нормально
+          //@ts-ignore
           `/(tabs)/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}?userId=${userId}&take=${take}`,
         )
       }

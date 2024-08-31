@@ -17,7 +17,7 @@ export default function EditBtn() {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      //@ts-expect-error не знаю, почему typescript не нравятся динамические ссылки, все работает нормально
+      //@ts-ignore
       onPress={() => push(`/${ROUTES.profile}/${ROUTES.profileSettings}/`)}
       borderless
       style={styles.layout}>

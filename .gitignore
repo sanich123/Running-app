@@ -1,6 +1,5 @@
 node_modules/
 .expo/
-expo-env.d.ts
 dist/
 npm-debug.*
 *.jks

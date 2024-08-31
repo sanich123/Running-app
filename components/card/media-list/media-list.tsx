@@ -25,7 +25,7 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           onPress={() => {
             push(
-              //@ts-expect-error не знаю, почему ему не нравятся динамические ссылки, все работает
+              //@ts-ignore
               item.url.includes('api.mapbox.com')
                 ? `/${place}/${ROUTES.map}/${id}`
                 : `/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,

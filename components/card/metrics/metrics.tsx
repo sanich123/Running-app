@@ -30,7 +30,7 @@ export default memo(function Metrics({
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => {
         if (!pathname.includes(ROUTES.activity)) {
-          //@ts-expect-error не знаю, почему typescript не нравятся динамические ссылки, все работает нормально
+          //@ts-ignore
           push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}`);
         }
       }}
