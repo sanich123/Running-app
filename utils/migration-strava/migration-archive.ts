@@ -1,5 +1,4 @@
 import { getDocumentAsync } from 'expo-document-picker';
-import { showCrossPlatformToast } from '../custom-toast';
 import { getInfoAsync } from 'expo-file-system';
 import { unzipFiles, zipFiles } from './zip-tools';
 import { removeCacheFolder, removeMedia } from './remove-tools';
@@ -26,15 +25,21 @@ export async function getMigrationArchiveAndSendToServer({
       if (unzippedFolderPath) {
         await removeMedia({ pathToMedia: unzippedFolderPath, setIsRemovingMedia, setIsError });
       }
-      const pathToArchive = await zipFiles({ setIsZipping, setIsError });
-      const fileInfo = await getInfoAsync(`file://${pathToArchive}`);
-      if (fileInfo.exists) {
-        await sendArchiveToServer({ setIsSendingArchive, setIsError, pathToArchive: `${pathToArchive}`, userId });
-        await removeCacheFolder({ setIsDeletingCacheFolder, setIsError });
-        setIsSuccess(true);
-        setIsDisabled(false);
+      const activitiesFolder = await getInfoAsync(`file://${unzippedFolderPath}/activities`);
+      const activitiesCsv = await getInfoAsync(`file://${unzippedFolderPath}/activities.csv`);
+      if (activitiesFolder.exists && activitiesFolder.isDirectory && activitiesCsv.exists) {
+        const pathToArchive = await zipFiles({ setIsZipping, setIsError });
+        const fileInfo = await getInfoAsync(`file://${pathToArchive}`);
+        if (fileInfo.exists) {
+          await sendArchiveToServer({ setIsSendingArchive, setIsError, pathToArchive: `${pathToArchive}`, userId });
+          await removeCacheFolder({ setIsDeletingCacheFolder, setIsError });
+          setIsSuccess(true);
+          setIsDisabled(false);
+        } else {
+          setIsError('Нет файла для отправки');
+        }
       } else {
-        showCrossPlatformToast('Нет файла для отправки');
+        setIsError('Невозможно обработать этот архив, нет папки с активностями');
       }
     }
   } catch (error) {

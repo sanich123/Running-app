@@ -31,7 +31,7 @@ export default function Migration() {
       <View style={{ flex: 1, justifyContent: 'flex-start' }}>
         <Link href="https://support.strava.com/hc/en-us/articles/216918437-Exporting-your-Data-and-Bulk-Export#h_01GG58HC4F1BGQ9PQZZVANN6WF">
           <Text variant="bodyLarge" style={{ color: 'orange' }}>
-            1. Более подробная информация по ссылке
+            1. Более подробная информация по ссылке (Bulk export)
           </Text>
         </Link>
         <Text variant="bodyLarge">2. На почту придет письмо со ссылкой на архив в формате .zip</Text>
@@ -40,20 +40,20 @@ export default function Migration() {
           Из архива будут вырезаны Ваши фото и видео, так как они могут весить очень много
         </Text>
         <Text variant="bodyLarge">
-          Процедура разархивирования и архивирования может занимать ощутимое время. При размере архива в 60 мегабайт,
+          Процедура разархивирования и архивирования может занимать ощутимое время. При размере архива в около 60 мегабайт,
           это занимает 10-15 секунд.
         </Text>
         <Text variant="bodyLarge">
-          Так как данных довольно много, необходим высокоскоростной доступ в интернет, лучше всего wi-fi
+          Нужно хорошее интернет-соединение, лучше всего быстрый wi-fi
         </Text>
-        <Text variant="bodyLarge">
+        <Text variant="bodyLarge" style={{ marginHorizontal: 10 }}>
           {isUnzipping && 'Распаковываем архив'}
           {isRemovingMedia && 'Удаляем медиа, потому что их может быть очень много'}
           {isZipping && 'Запаковываем архив обратно'}
           {isSendingArchive && 'Отправляем архив на сервер'}
           {isDeletingCacheFolder && 'Подчищаем файлы'}
-          {isSuccess && 'Архив на сервере, теперь в зависимости от объема данных они будут обрабатываться до 20 минут'}
-          {isError && 'Произошла ошибка'}
+          {isSuccess && 'Архив на сервере, теперь в зависимости от объема данных они будут обрабатываться до 10 минут'}
+          {isError}
         </Text>
         <Button
           mode="outlined"
