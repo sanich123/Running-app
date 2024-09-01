@@ -13,7 +13,7 @@ export async function sendArchiveToServer({
 }) {
   try {
     setIsSendingArchive(true);
-    await uploadAsync(`http://192.168.1.3:4000/activity/migration-strava/${userId}`, `file://${pathToArchive}`, {
+    await uploadAsync(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/migration-strava/${userId}`, `file://${pathToArchive}`, {
       fieldName: 'archive',
       httpMethod: 'POST',
       uploadType: FileSystemUploadType.MULTIPART,
