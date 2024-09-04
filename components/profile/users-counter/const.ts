@@ -8,8 +8,8 @@ export const USERS_COUNT = {
   },
   [LANGUAGES.russian]: {
     error: 'Ошибка',
-    followers: 'Фолловеры',
-    followings: 'Отслеж.',
+    followers: 'Подписчики',
+    followings: 'Подписки',
   },
 } as const;
 
