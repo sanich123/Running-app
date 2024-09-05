@@ -2,8 +2,6 @@ import { useAuth } from '@A/context/auth-context';
 import { useGetYearsAndTypesQuery } from '@R/runich-api/runich-api';
 import { Picker } from '@react-native-picker/picker';
 import { YearsAndTypes, YearsAndTypesPickerProps } from './types';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { useEffect } from 'react';
 
 export default function YearTypePicker({
   setSelectedYear,

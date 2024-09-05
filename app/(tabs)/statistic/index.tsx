@@ -1,4 +1,4 @@
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import YearTypePicker from '@C/statistic/year-type-picker/year-type-picker';
 import { useState } from 'react';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
