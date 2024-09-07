@@ -1,10 +1,10 @@
 import { useAuth } from '@A/context/auth-context';
 import { useGetYearsAndTypesQuery } from '@R/runich-api/runich-api';
-import { Picker } from '@react-native-picker/picker';
+
 import { YearsAndTypes, YearsAndTypesPickerProps } from './types';
 import { getTypesByYear } from './util';
-import { Text } from 'react-native-paper';
-import { TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Chip, Text, useTheme } from 'react-native-paper';
+import { FlatList, View } from 'react-native';
 
 export default function YearTypePicker({
   setSelectedYear,
@@ -13,59 +13,62 @@ export default function YearTypePicker({
   selectedType,
 }: YearsAndTypesPickerProps) {
   const { user } = useAuth();
-
+  const { colors } = useTheme();
   const {
     data: availableYearsAndTypes,
     isError,
     isLoading,
     isSuccess,
   } = useGetYearsAndTypesQuery(`${user?.id}`, { skip: !user?.id });
-
   return (
-    <>
+    <View style={{ gap: 5, padding: 10, backgroundColor: colors.background }}>
       {isSuccess && (
-        <View>
-          <Picker
-            prompt="Выберите год"
-            selectedValue={selectedYear}
-            onValueChange={(year) => {
-              const typesInSelectedYear = getTypesByYear({
-                yearsAndTypes: availableYearsAndTypes,
-                selectedYear: year,
-              });
-              if (!typesInSelectedYear?.includes(selectedType)) {
-                setSelectedType(`${typesInSelectedYear?.[0]}`);
-              }
-              setSelectedYear(year);
-            }}>
-            {availableYearsAndTypes
-              ?.slice()
-              .sort((a: YearsAndTypes, b: YearsAndTypes) => +b.year - +a.year)
-              .map(({ year }: YearsAndTypes) => (
-                <Picker.Item label={year} value={year} enabled={!isError || !isLoading} key={year} />
-              ))}
-          </Picker>
-          <View style={{ flex: 1, flexDirection: 'row', overflow: 'hidden', gap: 5 }}>
-            {availableYearsAndTypes
-              ?.find(({ year }: YearsAndTypes) => +year === selectedYear)
-              ?.types?.map((type: string) => (
-                <TouchableOpacity key={type} onPress={() => setSelectedType(type)} style={{ padding: 5 }}>
-                  <Text>{type}</Text>
-                </TouchableOpacity>
-              ))}
-            {/* <Picker
-              selectedValue={selectedType}
-              onValueChange={(type: string) => setSelectedType(type)}
-              prompt="Выберите тип активности">
-              {availableYearsAndTypes
-                ?.find(({ year }: YearsAndTypes) => +year === selectedYear)
-                ?.types?.map((type: string) => (
-                  <Picker.Item label={type} value={type} enabled={!isError || !isLoading} key={type} />
-                ))}
-            </Picker> */}
-          </View>
-        </View>
+        <>
+          <FlatList
+            data={availableYearsAndTypes?.slice().sort((a: YearsAndTypes, b: YearsAndTypes) => +b.year - +a.year)}
+            renderItem={({ item: { year }, index }) => (
+              <Chip
+                style={{ marginLeft: index ? 5 : 0 }}
+                key={year}
+                selected={+year === selectedYear}
+                showSelectedOverlay
+                onPress={() => {
+                  const typesInSelectedYear = getTypesByYear({
+                    yearsAndTypes: availableYearsAndTypes,
+                    selectedYear: +year,
+                  });
+                  if (!typesInSelectedYear?.includes(selectedType)) {
+                    setSelectedType(`${typesInSelectedYear?.[0]}`);
+                  }
+                  setSelectedYear(+year);
+                }}>
+                {year}
+              </Chip>
+            )}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+          <FlatList
+            data={availableYearsAndTypes?.find(({ year }: YearsAndTypes) => +year === selectedYear)?.types}
+            renderItem={({ item: type, index }) => {
+              return (
+                <Chip
+                  key={type}
+                  style={{ marginLeft: index ? 5 : 0 }}
+                  onPress={() => setSelectedType(type)}
+                  selected={type === selectedType}
+                  showSelectedOverlay>
+                  {type}
+                </Chip>
+              );
+            }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        </>
       )}
-    </>
+      {isError && <Text variant="bodyMedium">Произошла ошибка во время получения данных</Text>}
+      {isLoading && <ActivityIndicator size="small" />}
+    </View>
   );
 }

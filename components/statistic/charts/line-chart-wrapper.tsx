@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
-import { Text, useTheme } from 'react-native-paper';
+import { Divider, Text, useTheme } from 'react-native-paper';
 import { getSteps } from './util';
 
 export default function LineChartWrapper({
@@ -24,8 +24,8 @@ export default function LineChartWrapper({
   const { steps, maxValue, noOfSections } = getSteps(maxValueFromData);
 
   return (
-    <View style={{ marginVertical: 15, flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text variant="bodyLarge" style={{ marginVertical: 20 }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text variant="bodyLarge" style={{ marginVertical: 8 }}>
         {title}
       </Text>
       <BarChart

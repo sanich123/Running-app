@@ -1,4 +1,4 @@
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import YearTypePicker from '@C/statistic/year-type-picker/year-type-picker';
 import { useState } from 'react';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
@@ -10,13 +10,15 @@ export default function Statistics() {
   console.log(selectedYear, selectedType);
   return (
     <ScrollView style={{ flex: 1 }}>
-      <YearTypePicker
-        setSelectedYear={setSelectedYear}
-        setSelectedType={setSelectedType}
-        selectedYear={selectedYear}
-        selectedType={selectedType}
-      />
-      <Charts year={selectedYear} type={selectedType} />
+      <View>
+        <YearTypePicker
+          setSelectedYear={setSelectedYear}
+          setSelectedType={setSelectedType}
+          selectedYear={selectedYear}
+          selectedType={selectedType}
+        />
+        <Charts year={selectedYear} type={selectedType} />
+      </View>
     </ScrollView>
   );
 }
