@@ -3,7 +3,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
-import { usePathname, useRouter } from 'expo-router';
+import { Href, usePathname, useRouter } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
@@ -19,7 +19,13 @@ export default function UserInfo({ profile, sport, date, userId, size }: UserInf
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/${place}/${ROUTES.profile}/${userId}`)}
+      onPress={() =>
+        push(
+          `/${place}/${ROUTES.profile}/${userId}` as Href<
+            `/home/${ROUTES.profile}/${string}` | `/profile/${ROUTES.profile}/${string}`
+          >,
+        )
+      }
       borderless
       style={{ paddingVertical: 5, paddingHorizontal: 5 }}>
       <View style={styles.userInfoWrapper}>
