@@ -3,6 +3,8 @@ import { useGetYearsAndTypesQuery } from '@R/runich-api/runich-api';
 import { Picker } from '@react-native-picker/picker';
 import { YearsAndTypes, YearsAndTypesPickerProps } from './types';
 import { getTypesByYear } from './util';
+import { Text } from 'react-native-paper';
+import { TouchableOpacity, View } from 'react-native';
 
 export default function YearTypePicker({
   setSelectedYear,
@@ -22,7 +24,7 @@ export default function YearTypePicker({
   return (
     <>
       {isSuccess && (
-        <>
+        <View>
           <Picker
             prompt="Выберите год"
             selectedValue={selectedYear}
@@ -43,17 +45,26 @@ export default function YearTypePicker({
                 <Picker.Item label={year} value={year} enabled={!isError || !isLoading} key={year} />
               ))}
           </Picker>
-          <Picker
-            selectedValue={selectedType}
-            onValueChange={(type: string) => setSelectedType(type)}
-            prompt="Выберите тип активности">
+          <View style={{ flex: 1, flexDirection: 'row', overflow: 'hidden', gap: 5 }}>
             {availableYearsAndTypes
               ?.find(({ year }: YearsAndTypes) => +year === selectedYear)
               ?.types?.map((type: string) => (
-                <Picker.Item label={type} value={type} enabled={!isError || !isLoading} key={type} />
+                <TouchableOpacity key={type} onPress={() => setSelectedType(type)} style={{ padding: 5 }}>
+                  <Text>{type}</Text>
+                </TouchableOpacity>
               ))}
-          </Picker>
-        </>
+            {/* <Picker
+              selectedValue={selectedType}
+              onValueChange={(type: string) => setSelectedType(type)}
+              prompt="Выберите тип активности">
+              {availableYearsAndTypes
+                ?.find(({ year }: YearsAndTypes) => +year === selectedYear)
+                ?.types?.map((type: string) => (
+                  <Picker.Item label={type} value={type} enabled={!isError || !isLoading} key={type} />
+                ))}
+            </Picker> */}
+          </View>
+        </View>
       )}
     </>
   );
