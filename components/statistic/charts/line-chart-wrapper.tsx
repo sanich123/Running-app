@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
-import { Divider, Text, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { getSteps } from './util';
 
 export default function LineChartWrapper({
