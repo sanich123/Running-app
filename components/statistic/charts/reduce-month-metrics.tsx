@@ -1,38 +1,21 @@
-import { mapNumberToMonth } from './util';
+import { AccumulatorValues, MonthMetrics } from './types';
+import { getMathRoundValueOrZero, mapNumberToMonth } from './util';
 import { Text } from 'react-native-paper';
-
-type MonthMetrics = {
-  [key: string]: { totalDistance: number; totalDuration: number; medianSpeed: number; items: number };
-};
-
-type ChartBarComponent = {
-  value: number;
-  label: string;
-  topLabelComponent: () => void;
-};
-
-type AccumulatorValues = {
-  totalDurationArr: ChartBarComponent[];
-  totalDistanceArr: ChartBarComponent[];
-  totalMedianSpeedArr: ChartBarComponent[];
-  totalActivitiesArr: ChartBarComponent[];
-};
 
 export function reduceMonthMetrics(monthMetrics: MonthMetrics[]) {
   if (monthMetrics?.length > 0) {
     const { totalDurationArr, totalDistanceArr, totalMedianSpeedArr, totalActivitiesArr } = monthMetrics?.reduce(
       (acc: AccumulatorValues, monthStatsObj: MonthMetrics, i: number) => {
-        const durationValue = monthStatsObj[i].totalDuration ? Math.round(monthStatsObj[i].totalDuration) : 0;
-        const distanceValue = monthStatsObj[i].totalDistance ? Math.round(monthStatsObj[i].totalDistance) : 0;
-        const speedValue = monthStatsObj[i].medianSpeed ? Math.round(monthStatsObj[i].medianSpeed) : 0;
-        const itemsValue = monthStatsObj[i].items ? Math.round(monthStatsObj[i].items) : 0;
-
+        const durationValue = getMathRoundValueOrZero(monthStatsObj[i].totalDuration);
+        const distanceValue = getMathRoundValueOrZero(monthStatsObj[i].totalDistance);
+        const speedValue = getMathRoundValueOrZero(monthStatsObj[i].medianSpeed);
+        const itemsValue = getMathRoundValueOrZero(monthStatsObj[i].items);
         acc.totalDurationArr.push({
           value: durationValue,
           label: mapNumberToMonth(i),
           topLabelComponent: () => (
             <Text variant="bodySmall" style={{ fontSize: 10 }}>
-              {durationValue}
+              {durationValue || ''}
             </Text>
           ),
         });
@@ -41,7 +24,7 @@ export function reduceMonthMetrics(monthMetrics: MonthMetrics[]) {
           label: mapNumberToMonth(i),
           topLabelComponent: () => (
             <Text variant="bodySmall" style={{ fontSize: 10 }}>
-              {distanceValue}
+              {distanceValue || ''}
             </Text>
           ),
         });
@@ -50,7 +33,7 @@ export function reduceMonthMetrics(monthMetrics: MonthMetrics[]) {
           label: mapNumberToMonth(i),
           topLabelComponent: () => (
             <Text variant="bodySmall" style={{ fontSize: 10 }}>
-              {speedValue}
+              {speedValue || ''}
             </Text>
           ),
         });
@@ -59,7 +42,7 @@ export function reduceMonthMetrics(monthMetrics: MonthMetrics[]) {
           label: mapNumberToMonth(i),
           topLabelComponent: () => (
             <Text variant="bodySmall" style={{ fontSize: 12 }}>
-              {itemsValue}
+              {itemsValue || ''}
             </Text>
           ),
         });
@@ -69,5 +52,4 @@ export function reduceMonthMetrics(monthMetrics: MonthMetrics[]) {
     );
     return { totalDurationArr, totalDistanceArr, totalMedianSpeedArr, totalActivitiesArr };
   }
-  return {};
 }
