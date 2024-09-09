@@ -32,7 +32,7 @@ export default function Charts({ year, type }: { year: number; type: string }) {
       items: reducedMetricsArr?.totalDistanceArr,
     },
     amount: {
-      title: 'Количество',
+      title: 'Тренировки',
       items: reducedMetricsArr?.totalActivitiesArr,
     },
     duration: {
