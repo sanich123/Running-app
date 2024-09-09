@@ -3,7 +3,7 @@ import { BarChart } from 'react-native-gifted-charts';
 import { Text, useTheme } from 'react-native-paper';
 import { getSteps } from './util';
 
-export default function LineChartWrapper({
+export default function BarChartWrapper({
   metricsArr,
   year,
   type,
@@ -45,10 +45,10 @@ export default function LineChartWrapper({
           },
         }}
         onPress={(items: any, index: any) => console.log(year, type, index)}
-        isAnimated
+        // isAnimated
         frontColor={colors.primary}
         maxValue={maxValue}
-        animationDuration={500}
+        // animationDuration={500}
         areaChart-
         yAxisTextStyle={{ color: colors.onBackground }}
         data={metricsArr}

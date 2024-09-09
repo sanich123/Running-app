@@ -2,12 +2,16 @@ import { View } from 'react-native';
 import { useGetAnnualStatisticsByYearAndCategoryQuery } from '@R/runich-api/runich-api';
 import { useAuth } from '@A/context/auth-context';
 import { reduceMonthMetrics } from './reduce-month-metrics';
-import LineChartWrapper from './line-chart-wrapper';
+import BarChartWrapper from './bar-chart-wrapper';
 import { ActivityIndicator, useTheme, Text } from 'react-native-paper';
+import { useState } from 'react';
+import { ChooseMetricsBtnsValues } from './types';
+import ChooseMetricsBtns from './choose-metrics-btns';
 
 export default function Charts({ year, type }: { year: number; type: string }) {
   const { user } = useAuth();
   const { colors } = useTheme();
+  const [chartValue, setChartValue] = useState<ChooseMetricsBtnsValues>(ChooseMetricsBtnsValues.distance);
   const {
     data: yearStats,
     isLoading,
@@ -22,7 +26,20 @@ export default function Charts({ year, type }: { year: number; type: string }) {
     { skip: !user?.id },
   );
   const reducedMetricsArr = reduceMonthMetrics(yearStats?.months);
-
+  const chartToRender = {
+    distance: {
+      title: 'Километры',
+      items: reducedMetricsArr?.totalDistanceArr,
+    },
+    amount: {
+      title: 'Количество',
+      items: reducedMetricsArr?.totalActivitiesArr,
+    },
+    duration: {
+      title: 'Время',
+      items: reducedMetricsArr?.totalDurationArr,
+    },
+  };
   return (
     <View
       style={[
@@ -30,30 +47,18 @@ export default function Charts({ year, type }: { year: number; type: string }) {
         (isLoading || isError) && { flex: 1, justifyContent: 'center', alignItems: 'center' },
       ]}>
       {isLoading && <ActivityIndicator size="large" />}
-      {isSuccess && (
-        <>
-          <LineChartWrapper
-            metricsArr={reducedMetricsArr?.totalDistanceArr}
-            year={year}
-            type={type}
-            title={'Километры'}
-          />
-          <LineChartWrapper metricsArr={reducedMetricsArr?.totalDurationArr} year={year} type={type} title={'Часы'} />
-          <LineChartWrapper
-            metricsArr={reducedMetricsArr?.totalMedianSpeedArr}
-            year={year}
-            type={type}
-            title={'Скорость'}
-          />
-          <LineChartWrapper
-            metricsArr={reducedMetricsArr?.totalActivitiesArr}
-            year={year}
-            type={type}
-            title={'Количество тренировок'}
-          />
-        </>
+      {isSuccess ? (
+        <BarChartWrapper
+          metricsArr={chartToRender[chartValue]?.items}
+          year={year}
+          type={type}
+          title={chartToRender[chartValue]?.title}
+        />
+      ) : (
+        <View style={{ height: 273 }}></View>
       )}
       {isError && <Text variant="bodyMedium">Произошла ошибка во время получения данных</Text>}
+      <ChooseMetricsBtns chartValue={chartValue} setChartValue={setChartValue} />
     </View>
   );
 }

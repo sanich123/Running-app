@@ -14,3 +14,9 @@ export type AccumulatorValues = {
   totalMedianSpeedArr: ChartBarComponent[];
   totalActivitiesArr: ChartBarComponent[];
 };
+
+export enum ChooseMetricsBtnsValues {
+  duration = 'duration',
+  amount = 'amount',
+  distance = 'distance',
+}
