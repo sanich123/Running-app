@@ -5,6 +5,7 @@ import { ActivityIndicator } from 'react-native-paper';
 
 import { keyExtractor, renderCardsFunction } from './render-item';
 import { InfiniteScrollListProps } from './type';
+import WeekStatistics from '@C/week-statistics/week-statistics';
 
 export default function InfiniteScrollList({
   dataToRender,
@@ -36,6 +37,7 @@ export default function InfiniteScrollList({
         }
       }}
       ListFooterComponent={() => !isLastPage && <ActivityIndicator size="large" />}
+      ListHeaderComponent={() => <WeekStatistics />}
     />
   );
 }

@@ -320,6 +320,14 @@ export const runichApi = createApi({
       }),
       providesTags: [Tags.activities],
     }),
+
+    getCurrentWeekStatistics: builder.query({
+      query: ({ userId, firstDay, lastDay }: { userId: string; firstDay: string; lastDay: string }) => ({
+        url: `/statistics/${userId}/week?firstDay=${firstDay}&lastDay=${lastDay}`,
+        headers,
+      }),
+      providesTags: [Tags.activities],
+    }),
   }),
 });
 
@@ -366,4 +374,5 @@ export const {
   useGetYearsAndTypesQuery,
   useGetAnnualStatisticsByYearAndCategoryQuery,
   useGetMonthStatisticsByYearAndMonthAndCategoryQuery,
+  useGetCurrentWeekStatisticsQuery,
 } = runichApi;
