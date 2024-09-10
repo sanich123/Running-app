@@ -30,6 +30,7 @@ export enum ROUTES {
   profileSettings = 'profile-settings',
   changePassword = 'change-password',
   statistic = 'statistic',
+  monthStatistic = 'month-statistic',
 }
 
 export const LABELS = {

@@ -51,7 +51,6 @@ export default function Charts({ year, type }: { year: number; type: string }) {
         <BarChartWrapper
           metricsArr={chartToRender[chartValue]?.items}
           year={year}
-          type={type}
           title={chartToRender[chartValue]?.title}
         />
       ) : (

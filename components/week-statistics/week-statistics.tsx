@@ -4,11 +4,14 @@ import { getCurrentWeekDates } from './util';
 import { useGetCurrentWeekStatisticsQuery } from '@R/runich-api/runich-api';
 import { useAuth } from '@A/context/auth-context';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
+import { useRouter } from 'expo-router';
+import { ROUTES } from '@const/enums';
 
 export default function WeekStatistics() {
+  const { push } = useRouter();
   const { colors, dark } = useTheme();
   const { user } = useAuth();
-  const week = getCurrentWeekDates();
+  const { week, year, month } = getCurrentWeekDates();
   const {
     data: weekStatistics,
     isSuccess,
@@ -27,7 +30,7 @@ export default function WeekStatistics() {
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
-      onPress={() => console.log(week)}
+      onPress={() => push(`/${ROUTES.home}/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${month}`)}
       style={{
         padding: 10,
         backgroundColor: colors.background,

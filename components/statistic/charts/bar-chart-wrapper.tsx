@@ -2,18 +2,14 @@ import { View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { Text, useTheme } from 'react-native-paper';
 import { getSteps } from './util';
+import { useRouter } from 'expo-router';
+import { ROUTES } from '@const/enums';
+import { useAuth } from '@A/context/auth-context';
+import { BarChartWrapperProps } from './types';
 
-export default function BarChartWrapper({
-  metricsArr,
-  year,
-  type,
-  title,
-}: {
-  metricsArr?: { value: number; label: string }[];
-  year: number;
-  type: string;
-  title: string;
-}) {
+export default function BarChartWrapper({ metricsArr, year, title }: BarChartWrapperProps) {
+  const { push } = useRouter();
+  const { user } = useAuth();
   const valuesArr = metricsArr?.map(({ value }) => value).filter(Boolean);
   const maxValueFromData = valuesArr?.length ? Math.max(...valuesArr) : 0;
   const { colors } = useTheme();
@@ -44,11 +40,11 @@ export default function BarChartWrapper({
             color: 'orange',
           },
         }}
-        onPress={(items: any, index: any) => console.log(year, type, index)}
-        // isAnimated
+        onPress={(_: any, index: any) =>
+          push(`/${ROUTES.statistic}/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${index}`)
+        }
         frontColor={colors.primary}
         maxValue={maxValue}
-        // animationDuration={500}
         areaChart-
         yAxisTextStyle={{ color: colors.onBackground }}
         data={metricsArr}

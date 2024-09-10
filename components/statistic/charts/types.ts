@@ -20,3 +20,9 @@ export enum ChooseMetricsBtnsValues {
   amount = 'amount',
   distance = 'distance',
 }
+
+export type BarChartWrapperProps = {
+  metricsArr?: { value: number; label: string }[];
+  year: number;
+  title: string;
+};

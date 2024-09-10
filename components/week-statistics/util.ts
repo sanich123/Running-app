@@ -1,12 +1,14 @@
 export function getCurrentWeekDates() {
-  let curr = new Date();
+  let currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
   let week = [];
 
   for (let i = 1; i <= 7; i++) {
-    let first = curr.getDate() - curr.getDay() + i;
-    let day = new Date(curr.setDate(first)).toDateString();
+    let first = currentDate.getDate() - currentDate.getDay() + i;
+    let day = new Date(currentDate.setDate(first)).toDateString();
     week.push(day);
   }
 
-  return week;
+  return { week, year, month };
 }

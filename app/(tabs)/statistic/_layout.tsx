@@ -17,6 +17,7 @@ export default function StatisticsStack() {
         title: Platform.OS !== 'web' ? LABELS[language].statistics : '',
       }}>
       <Stack.Screen name={ROUTES.index} />
+      <Stack.Screen name={`${ROUTES.monthStatistic}/${ROUTES.index}`} />
     </Stack>
   );
 }

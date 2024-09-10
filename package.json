@@ -45,7 +45,8 @@
     "web:serve": "npx serve dist",
     "web:deploy:netlify": "netlify deploy --dir dist",
     "web:deploy:prod": "netlify deploy --prod",
-    "web:deploy:full": "yarn web:export && netlify deploy --prod"
+    "web:deploy:full": "yarn web:export && netlify deploy --prod",
+    "eas-build-pre-install": "bash -c \"[ ! -z \\\"$EAS_BUILD_NPM_CACHE_URL\\\" ] && sed -i -e \\\"s#https://registry.yarnpkg.com#$EAS_BUILD_NPM_CACHE_URL#g\\\" yarn.lock\" || true"
   },
   "jest": {
     "collectCoverage": true,
