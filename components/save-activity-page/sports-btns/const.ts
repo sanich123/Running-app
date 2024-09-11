@@ -4,6 +4,8 @@ export const enum SPORTS_BTNS_VALUES {
   run = 'run',
   swim = 'swim',
   bike = 'bike',
+  ride = 'ride',
+  workout = 'workout',
 }
 
 export const SPORTS_BTNS = {

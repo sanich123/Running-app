@@ -1,71 +1,77 @@
-import { DaysOfTheWeek } from './const';
+import { StatisticActivities } from './types';
 
-export function getDaysOfTheMonthWithNames(
-  year: string,
-  month: string,
-  activities: { duration: number; distance: number; id: string; sport: string; date: string }[],
-) {
+export function getDaysOfTheMonthWithNames(year: string, month: string, activities: StatisticActivities) {
   const daysInMonth = new Date(+year, +month + 1, 0).getDate();
 
-  let daysOfTheWeek = [...Array(daysInMonth).keys()].reduce(
+  let daysOfTheWeek = [...Array(daysInMonth).keys()].reduce<{
+    sundays: { dateValue: string; activities: StatisticActivities }[];
+    mondays: { dateValue: string; activities: StatisticActivities }[];
+    tuesdays: { dateValue: string; activities: StatisticActivities }[];
+    wednesdays: { dateValue: string; activities: StatisticActivities }[];
+    thursdays: { dateValue: string; activities: StatisticActivities }[];
+    fridays: { dateValue: string; activities: StatisticActivities }[];
+    saturdays: { dateValue: string; activities: StatisticActivities }[];
+  }>(
     (acc, day) => {
       const dateFromDay = new Date(+year, +month, day + 1);
       const dayFromDate = dateFromDay.getDay();
       const incrementedDay = day + 1;
-      console.log(activities.filter(({ date }) => new Date(date).getDate() === dateFromDay.getDate()));
+      const activitiesInThatDay = activities.filter(({ date }) => new Date(date).getDate() === dateFromDay.getDate());
+      // console.log(activities.filter(({ date }) => new Date(date).getDate() === dateFromDay.getDate()));
       if (dayFromDate === 0) {
-        acc.sundays.push({ dateValue: `${incrementedDay}` });
+        acc.sundays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
       }
       if (dayFromDate === 1) {
-        acc.mondays.push({ dateValue: `${incrementedDay}` });
+        acc.mondays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
       }
       if (dayFromDate === 2) {
-        acc.tuesdays.push({ dateValue: `${incrementedDay}` });
+        acc.tuesdays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
       }
       if (dayFromDate === 3) {
-        acc.wednesdays.push({ dateValue: `${incrementedDay}` });
+        acc.wednesdays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
       }
       if (dayFromDate === 4) {
-        acc.thursdays.push({ dateValue: `${incrementedDay}` });
+        acc.thursdays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
       }
       if (dayFromDate === 5) {
-        acc.fridays.push({ dateValue: `${incrementedDay}` });
+        acc.fridays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
       }
       if (dayFromDate === 6) {
-        acc.saturdays.push({ dateValue: `${incrementedDay}` });
+        acc.saturdays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
       }
       return acc;
     },
     {
-      [DaysOfTheWeek.mondays]: [{ dateValue: 'ПН' }],
-      [DaysOfTheWeek.tuesdays]: [{ dateValue: 'ВТ' }],
-      [DaysOfTheWeek.wednesdays]: [{ dateValue: 'СР' }],
-      [DaysOfTheWeek.thursdays]: [{ dateValue: 'ЧТ' }],
-      [DaysOfTheWeek.fridays]: [{ dateValue: 'ПТ' }],
-      [DaysOfTheWeek.saturdays]: [{ dateValue: 'СБ' }],
-      [DaysOfTheWeek.sundays]: [{ dateValue: 'ВС' }],
+      mondays: [{ dateValue: 'ПН', activities: [] }],
+      tuesdays: [{ dateValue: 'ВТ', activities: [] }],
+      wednesdays: [{ dateValue: 'СР', activities: [] }],
+      thursdays: [{ dateValue: 'ЧТ', activities: [] }],
+      fridays: [{ dateValue: 'ПТ', activities: [] }],
+      saturdays: [{ dateValue: 'СБ', activities: [] }],
+      sundays: [{ dateValue: 'ВС', activities: [] }],
     },
   );
-  if (+daysOfTheWeek.mondays[1] > 1) {
-    daysOfTheWeek.mondays.splice(1, 0, { dateValue: ' ' });
+
+  if (+daysOfTheWeek.mondays[1].dateValue > 1) {
+    daysOfTheWeek.mondays.splice(1, 0, { dateValue: ' ', activities: [] });
   }
-  if (+daysOfTheWeek.tuesdays[1] > 2) {
-    daysOfTheWeek.tuesdays.splice(1, 0, { dateValue: ' ' });
+  if (+daysOfTheWeek.tuesdays[1].dateValue > 2) {
+    daysOfTheWeek.tuesdays.splice(1, 0, { dateValue: ' ', activities: [] });
   }
-  if (+daysOfTheWeek.wednesdays[1] > 3) {
-    daysOfTheWeek.wednesdays.splice(1, 0, { dateValue: ' ' });
+  if (+daysOfTheWeek.wednesdays[1].dateValue > 3) {
+    daysOfTheWeek.wednesdays.splice(1, 0, { dateValue: ' ', activities: [] });
   }
-  if (+daysOfTheWeek.thursdays[1] > 4) {
-    daysOfTheWeek.thursdays.splice(1, 0, { dateValue: ' ' });
+  if (+daysOfTheWeek.thursdays[1].dateValue > 4) {
+    daysOfTheWeek.thursdays.splice(1, 0, { dateValue: ' ', activities: [] });
   }
-  if (+daysOfTheWeek.fridays[1] > 5) {
-    daysOfTheWeek.fridays.splice(1, 0, { dateValue: ' ' });
+  if (+daysOfTheWeek.fridays[1].dateValue > 5) {
+    daysOfTheWeek.fridays.splice(1, 0, { dateValue: ' ', activities: [] });
   }
-  if (+daysOfTheWeek.saturdays[1] > 6) {
-    daysOfTheWeek.saturdays.splice(1, 0, { dateValue: ' ' });
+  if (+daysOfTheWeek.saturdays[1]['dateValue'] > 6) {
+    daysOfTheWeek.saturdays.splice(1, 0, { dateValue: ' ', activities: [] });
   }
   if (+daysOfTheWeek.sundays[1] > 7) {
-    daysOfTheWeek.sundays.splice(1, 0, { dateValue: ' ' });
+    daysOfTheWeek.sundays.splice(1, 0, { dateValue: ' ', activities: [] });
   }
 
   return daysOfTheWeek;

@@ -19,6 +19,10 @@ export default function MonthStatistics() {
 
   return (
     <>
+      <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginVertical: 10 }}>
+        <Text variant="headlineMedium">{`${new Date(+year, +month).toLocaleDateString('ru', { month: 'long', year: 'numeric' })}`}</Text>
+      </View>
+
       <View style={{ display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between' }}>
         <View style={styles.statistics}>
           {isSuccess && <Text variant="bodySmall">Тренировок</Text>}

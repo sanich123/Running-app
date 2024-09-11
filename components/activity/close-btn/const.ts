@@ -32,6 +32,14 @@ export const MAP_SPORT_TO_TITLE = {
     [LANGUAGES.english]: 'CYCLING',
     [LANGUAGES.russian]: 'ВЕЛОСИПЕД',
   },
+  [SPORTS_BTNS_VALUES.ride]: {
+    [LANGUAGES.english]: 'CYCLING',
+    [LANGUAGES.russian]: 'ВЕЛОСИПЕД',
+  },
+  [SPORTS_BTNS_VALUES.workout]: {
+    [LANGUAGES.english]: 'WORKOUT',
+    [LANGUAGES.russian]: 'ЗАЛ',
+  },
   [SPORTS_BTNS_VALUES.swim]: {
     [LANGUAGES.english]: '',
     [LANGUAGES.russian]: '',
