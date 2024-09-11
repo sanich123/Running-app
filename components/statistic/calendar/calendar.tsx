@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { getDaysOfTheMonthWithNames } from './util';
 
@@ -11,47 +11,50 @@ export default function CalendarActivities({
   month: string;
   activities: { duration: number; distance: number; id: string; sport: string; date: string }[];
 }) {
-  const { mondays, tuesdays, wednesdays, thursdays, fridays, saturdays, sundays } = getDaysOfTheMonthWithNames(
-    year,
-    month,
-  );
+  const daysOfTheWeek = getDaysOfTheMonthWithNames(year, month, activities);
+
   return (
-    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', margin: 10, padding: 5 }}>
-      <View style={{ display: 'flex' }}>
-        {mondays.map((day) => (
-          <Text variant="bodyMedium">{day}</Text>
-        ))}
-      </View>
-      <View style={{ display: 'flex' }}>
-        {tuesdays.map((day) => (
-          <Text variant="bodyMedium">{day}</Text>
-        ))}
-      </View>
-      <View style={{ display: 'flex' }}>
-        {wednesdays.map((day) => (
-          <Text variant="bodyMedium">{day}</Text>
-        ))}
-      </View>
-      <View style={{ display: 'flex' }}>
-        {thursdays.map((day) => (
-          <Text variant="bodyMedium">{day}</Text>
-        ))}
-      </View>
-      <View style={{ display: 'flex' }}>
-        {fridays.map((day) => (
-          <Text variant="bodyMedium">{day}</Text>
-        ))}
-      </View>
-      <View style={{ display: 'flex' }}>
-        {saturdays.map((day) => (
-          <Text variant="bodyMedium">{day}</Text>
-        ))}
-      </View>
-      <View style={{ display: 'flex' }}>
-        {sundays.map((day) => (
-          <Text variant="bodyMedium">{day}</Text>
-        ))}
-      </View>
+    <View style={styles.calendarContainer}>
+      {Object.keys(daysOfTheWeek).map((day: string) => (
+        <View style={styles.dayColumn} key={day}>
+          {daysOfTheWeek[day as keyof typeof daysOfTheWeek].map(({ dateValue }, i) => (
+            <View style={styles.dateItem} key={dateValue}>
+              <Text
+                variant="bodyLarge"
+                style={{ color: dateValue === 'СБ' || (dateValue === 'ВС' && i === 0) ? 'red' : '' }}>
+                {dateValue}
+              </Text>
+            </View>
+          ))}
+        </View>
+      ))}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  dayColumn: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderWidth: 1,
+    width: '100%',
+    gap: 5,
+  },
+  calendarContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    margin: 10,
+    padding: 5,
+  },
+  dateItem: {
+    height: 45,
+    width: 45,
+    borderWidth: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+});
