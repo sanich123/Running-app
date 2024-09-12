@@ -29,6 +29,10 @@ export default function StatisticsStack() {
         name={`${ROUTES.activity}/[id]`}
         options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].activity }}
       />
+      <Stack.Screen
+        name={`${ROUTES.activitiesList}/[...ids]`}
+        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].activities }}
+      />
     </Stack>
   );
 }

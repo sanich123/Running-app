@@ -31,6 +31,7 @@ export enum ROUTES {
   changePassword = 'change-password',
   statistic = 'statistic',
   monthStatistic = 'month-statistic',
+  activitiesList = 'activities-list',
 }
 
 export const LABELS = {

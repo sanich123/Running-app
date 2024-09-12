@@ -343,6 +343,14 @@ export const runichApi = createApi({
       }),
       providesTags: [Tags.activities],
     }),
+
+    getSeveralActivitiesByTheirIds: builder.query({
+      query: ({ ids }: { ids: string }) => ({
+        url: `/activity/activityIds?${ids}`,
+        headers,
+      }),
+      providesTags: [Tags.activities],
+    }),
   }),
 });
 
@@ -392,4 +400,5 @@ export const {
   useGetCurrentWeekStatisticsQuery,
   useGetAllTimeStatisticsByUserIdQuery,
   useGetMonthStatisticsQuery,
+  useGetSeveralActivitiesByTheirIdsQuery,
 } = runichApi;

@@ -35,12 +35,16 @@ export default function CalendarActivities({ year, month, activities }: Calendar
                         borderColor: colors.onBackground,
                       },
                     ]}
-                    key={dateValue}
+                    key={`${dateValue}+${day}`}
                     onPress={() => {
                       if (activities.length === 1) {
                         push(`/${root}/activity/${activities[0].id}` as Href);
                       } else {
-                        push(`/${root}/activities-list?${activities.map(({ id }) => `ids=${id}`).join('&').toString()}` as Href);
+                        push(
+                          `/${root}/activities-list/${activities
+                            .map(({ id }) => `ids=${id}`)
+                            .join('&')}` as Href,
+                        );
                       }
                     }}>
                     <Text

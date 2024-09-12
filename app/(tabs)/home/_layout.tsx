@@ -79,6 +79,10 @@ export default function HomeStack() {
         name={`${ROUTES.monthStatistic}/${ROUTES.index}`}
         options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].statistics }}
       />
+      <Stack.Screen
+        name={`${ROUTES.activitiesList}/[...ids]`}
+        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].activities }}
+      />
     </Stack>
   );
 }
