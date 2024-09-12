@@ -1,4 +1,4 @@
-import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
+// import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
