@@ -4,11 +4,13 @@ import { getDaysOfTheMonthWithNames } from './util';
 import { CalendarStatisticsProps } from './types';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { useRouter } from 'expo-router';
+import { Href, usePathname, useRouter } from 'expo-router';
+import { ROUTES } from '@const/enums';
 
 export default function CalendarActivities({ year, month, activities }: CalendarStatisticsProps) {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
+  const pathname = usePathname();
   const daysOfTheWeek = getDaysOfTheMonthWithNames(year, month, activities);
 
   return (
@@ -19,6 +21,7 @@ export default function CalendarActivities({ year, month, activities }: Calendar
             const isWeekend = dateValue === 'СБ' || dateValue === 'ВС';
             const isEmptyCell = dateValue === ' ';
             const isTitle = isNaN(Number(dateValue));
+            const root = pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.statistic;
             return (
               <>
                 {activities.length ? (
@@ -33,7 +36,13 @@ export default function CalendarActivities({ year, month, activities }: Calendar
                       },
                     ]}
                     key={dateValue}
-                    onPress={() => activities.length === 1 && push(`/home/activity/${activities[0].id}`)}>
+                    onPress={() => {
+                      if (activities.length === 1) {
+                        push(`/${root}/activity/${activities[0].id}` as Href);
+                      } else {
+                        push(`/${root}/activities-list?${activities.map(({ id }) => `ids=${id}`).join('&').toString()}` as Href);
+                      }
+                    }}>
                     <Text
                       variant={activities.length ? 'headlineMedium' : 'bodyMedium'}
                       style={{
@@ -47,6 +56,7 @@ export default function CalendarActivities({ year, month, activities }: Calendar
                   </TouchableRipple>
                 ) : (
                   <View
+                    key={dateValue}
                     style={[
                       styles.dateItem,
                       {
