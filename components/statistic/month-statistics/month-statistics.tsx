@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import CalendarActivities from '../calendar/calendar';
 import { useState } from 'react';

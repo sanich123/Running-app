@@ -22,7 +22,11 @@ export default memo(function Metrics({
   const { dark } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
+  const place = pathname.includes(ROUTES.profile)
+    ? ROUTES.profile
+    : pathname.includes(ROUTES.home)
+      ? ROUTES.home
+      : ROUTES.statistic;
   const { language } = useAppSelector(({ language }) => language);
 
   return (
