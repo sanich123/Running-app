@@ -1,18 +1,16 @@
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { getDaysOfTheMonthWithNames } from './util';
 import { CalendarStatisticsProps } from './types';
-import { getIconByTypeOfSport } from '@U/icon-utils';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { Href, usePathname, useRouter } from 'expo-router';
-import { ROUTES } from '@const/enums';
 import { useGetMonthStatisticsQuery } from '@R/runich-api/runich-api';
 import ErrorComponent from '@C/error-component/error-component';
+import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-date-with-activity';
+import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';
+import { useAppSelector } from '@R/typed-hooks';
+import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
 
 export default function CalendarActivities({ year, month, userId }: CalendarStatisticsProps) {
-  const { colors, dark } = useTheme();
-  const { push } = useRouter();
-  const pathname = usePathname();
+  const { language } = useAppSelector(({ language }) => language);
   const {
     data: monthStatistics,
     isLoading,
@@ -23,7 +21,8 @@ export default function CalendarActivities({ year, month, userId }: CalendarStat
     { userId: `${userId}`, year: `${year}`, month: `${month}` },
     { skip: !userId || !year || !month },
   );
-  const daysOfTheWeek = getDaysOfTheMonthWithNames(year, month, monthStatistics?.activities);
+  const daysOfTheWeek = getDaysOfTheMonthWithNames(year, month, monthStatistics?.activities, language);
+
   return (
     <View style={styles.calendarContainer}>
       {isSuccess && (
@@ -31,64 +30,33 @@ export default function CalendarActivities({ year, month, userId }: CalendarStat
           {Object.keys(daysOfTheWeek).map((day: string, i: number) => (
             <View style={styles.dayColumn} key={`${day}${i}`}>
               {daysOfTheWeek[day as keyof typeof daysOfTheWeek].map(({ dateValue, activities }, i) => {
-                const isWeekend = dateValue === 'СБ' || dateValue === 'ВС';
+                const isWeekend =
+                  dateValue === REDUCED_DAY_NAME_RU.saturday ||
+                  dateValue === REDUCED_DAY_NAME_RU.sunday ||
+                  dateValue === REDUCED_DAY_NAME_EN.saturday ||
+                  dateValue === REDUCED_DAY_NAME_EN.sunday;
                 const isEmptyCell = dateValue === ' ';
                 const isTitle = isNaN(Number(dateValue));
-                const root = pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.statistic;
                 return (
                   <>
-                    {activities.length ? (
-                      <TouchableRipple
-                        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-                        borderless
-                        style={[
-                          styles.dateItem,
-                          {
-                            borderWidth: isEmptyCell ? 0 : 1,
-                            borderColor: colors.onBackground,
-                          },
-                        ]}
-                        key={`${dateValue}+${day}${i}`}
-                        onPress={() => {
-                          if (activities.length === 1) {
-                            push(`/${root}/activity/${activities[0].id}` as Href);
-                          } else {
-                            push(
-                              `/${root}/activities-list/${activities.map(({ id }) => `ids=${id}`).join('&')}` as Href,
-                            );
-                          }
-                        }}>
-                        <Text
-                          variant={activities.length ? 'headlineMedium' : 'bodyMedium'}
-                          style={{
-                            color: isWeekend ? colors.error : '',
-                            fontWeight: isTitle || activities.length ? 'bold' : 'normal',
-                          }}>
-                          {activities.length > 1 && activities.length}
-                          {activities.length === 1 &&
-                            getIconByTypeOfSport(activities[0].sport as SPORTS_BTNS_VALUES, 30)}
-                          {!activities.length && dateValue}
-                        </Text>
-                      </TouchableRipple>
+                    {activities?.length || !i ? (
+                      <CalendarDateWithActivity
+                        isWeekend={isWeekend}
+                        isTitle={isTitle}
+                        isEmptyCell={isEmptyCell}
+                        dateValue={dateValue}
+                        day={day}
+                        i={i}
+                        activities={activities}
+                      />
                     ) : (
-                      <View
-                        key={`${dateValue}+${day}${i}`}
-                        style={[
-                          styles.dateItem,
-                          {
-                            borderWidth: isEmptyCell ? 0 : 1,
-                            borderColor: colors.onBackground,
-                          },
-                        ]}>
-                        <Text
-                          variant={activities.length ? 'headlineMedium' : 'bodyMedium'}
-                          style={{
-                            color: isWeekend ? colors.error : '',
-                            fontWeight: isTitle || activities.length ? 'bold' : 'normal',
-                          }}>
-                          {dateValue}
-                        </Text>
-                      </View>
+                      <CalendarDateEmpty
+                        isTitle={isTitle}
+                        isEmptyCell={isEmptyCell}
+                        dateValue={dateValue}
+                        day={day}
+                        i={i}
+                      />
                     )}
                   </>
                 );

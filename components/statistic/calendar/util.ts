@@ -1,54 +1,43 @@
-import { StatisticActivities } from './types';
+import { LANGUAGES } from '@const/enums';
+import { mapIndexToDayOfWeek, ReducedDatesByDayOfTheWeek, StatisticActivities } from './types';
+import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
 
-export function getDaysOfTheMonthWithNames(year: string, month: string, activities: StatisticActivities) {
+export function getDaysOfTheMonthWithNames(
+  year: string,
+  month: string,
+  activities: StatisticActivities,
+  language: LANGUAGES,
+) {
   const daysInMonth = new Date(+year, +month + 1, 0).getDate();
-
-  let daysOfTheWeek = [...Array(daysInMonth).keys()].reduce<{
-    sundays: { dateValue: string; activities: StatisticActivities }[];
-    mondays: { dateValue: string; activities: StatisticActivities }[];
-    tuesdays: { dateValue: string; activities: StatisticActivities }[];
-    wednesdays: { dateValue: string; activities: StatisticActivities }[];
-    thursdays: { dateValue: string; activities: StatisticActivities }[];
-    fridays: { dateValue: string; activities: StatisticActivities }[];
-    saturdays: { dateValue: string; activities: StatisticActivities }[];
-  }>(
+  const isRussian = language === LANGUAGES.russian;
+  let daysOfTheWeek = [...Array(daysInMonth).keys()].reduce<ReducedDatesByDayOfTheWeek>(
     (acc, day) => {
       const dateFromDay = new Date(+year, +month, day + 1);
       const dayFromDate = dateFromDay.getDay();
       const incrementedDay = day + 1;
       const activitiesInThatDay = activities?.filter(({ date }) => new Date(date).getDate() === dateFromDay.getDate());
-
-      if (dayFromDate === 0) {
-        acc.sundays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
-      }
-      if (dayFromDate === 1) {
-        acc.mondays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
-      }
-      if (dayFromDate === 2) {
-        acc.tuesdays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
-      }
-      if (dayFromDate === 3) {
-        acc.wednesdays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
-      }
-      if (dayFromDate === 4) {
-        acc.thursdays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
-      }
-      if (dayFromDate === 5) {
-        acc.fridays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
-      }
-      if (dayFromDate === 6) {
-        acc.saturdays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
-      }
+      acc[
+        mapIndexToDayOfWeek[dayFromDate as keyof typeof mapIndexToDayOfWeek] as keyof ReducedDatesByDayOfTheWeek
+      ].push({
+        dateValue: `${incrementedDay}`,
+        activities: activitiesInThatDay,
+      });
       return acc;
     },
     {
-      mondays: [{ dateValue: 'ПН', activities: [] }],
-      tuesdays: [{ dateValue: 'ВТ', activities: [] }],
-      wednesdays: [{ dateValue: 'СР', activities: [] }],
-      thursdays: [{ dateValue: 'ЧТ', activities: [] }],
-      fridays: [{ dateValue: 'ПТ', activities: [] }],
-      saturdays: [{ dateValue: 'СБ', activities: [] }],
-      sundays: [{ dateValue: 'ВС', activities: [] }],
+      mondays: [{ dateValue: isRussian ? REDUCED_DAY_NAME_RU.monday : REDUCED_DAY_NAME_EN.monday, activities: [] }],
+      tuesdays: [{ dateValue: isRussian ? REDUCED_DAY_NAME_RU.tuesday : REDUCED_DAY_NAME_EN.tuesday, activities: [] }],
+      wednesdays: [
+        { dateValue: isRussian ? REDUCED_DAY_NAME_RU.wednesday : REDUCED_DAY_NAME_EN.wednesday, activities: [] },
+      ],
+      thursdays: [
+        { dateValue: isRussian ? REDUCED_DAY_NAME_RU.thursday : REDUCED_DAY_NAME_EN.thursday, activities: [] },
+      ],
+      fridays: [{ dateValue: isRussian ? REDUCED_DAY_NAME_RU.friday : REDUCED_DAY_NAME_EN.friday, activities: [] }],
+      saturdays: [
+        { dateValue: isRussian ? REDUCED_DAY_NAME_RU.saturday : REDUCED_DAY_NAME_EN.saturday, activities: [] },
+      ],
+      sundays: [{ dateValue: isRussian ? REDUCED_DAY_NAME_RU.sunday : REDUCED_DAY_NAME_EN.sunday, activities: [] }],
     },
   );
 
