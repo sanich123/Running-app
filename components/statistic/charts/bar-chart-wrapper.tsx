@@ -21,7 +21,7 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text variant="bodyLarge" style={{ marginVertical: 8 }}>
+      <Text variant="headlineSmall" style={{ marginVertical: 15 }}>
         {title}
       </Text>
       <BarChart

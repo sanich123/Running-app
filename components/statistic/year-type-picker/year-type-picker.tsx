@@ -5,6 +5,11 @@ import { YearsAndTypes, YearsAndTypesPickerProps } from './types';
 import { getTypesByYear } from './util';
 import { ActivityIndicator, Chip, Text, useTheme } from 'react-native-paper';
 import { FlatList, View } from 'react-native';
+import { useAppSelector } from '@R/typed-hooks';
+import { LANGUAGES } from '@const/enums';
+import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import ErrorComponent from '@C/error-component/error-component';
 
 export default function YearTypePicker({
   setSelectedYear,
@@ -17,11 +22,14 @@ export default function YearTypePicker({
   const {
     data: availableYearsAndTypes,
     isError,
+    error,
     isLoading,
     isSuccess,
   } = useGetYearsAndTypesQuery(`${user?.id}`, { skip: !user?.id });
+  const { language } = useAppSelector(({ language }) => language);
+  const isRussian = language === LANGUAGES.russian;
   return (
-    <View style={{ gap: 5, padding: 10, backgroundColor: colors.background }}>
+    <View style={{ display: 'flex', gap: 15, padding: 10, backgroundColor: colors.background, marginVertical: 15 }}>
       {isSuccess && (
         <>
           <FlatList
@@ -42,7 +50,7 @@ export default function YearTypePicker({
                   }
                   setSelectedYear(+year);
                 }}>
-                {year}
+                <Text variant="titleMedium">{year}</Text>
               </Chip>
             )}
             horizontal
@@ -58,7 +66,11 @@ export default function YearTypePicker({
                   onPress={() => setSelectedType(type)}
                   selected={type === selectedType}
                   showSelectedOverlay>
-                  {type}
+                  <Text variant="titleMedium">
+                    {isRussian && `${type}` in MAP_SPORT_TO_TITLE
+                      ? MAP_SPORT_TO_TITLE[type as SPORTS_BTNS_VALUES][language]
+                      : type}
+                  </Text>
                 </Chip>
               );
             }}
@@ -67,7 +79,7 @@ export default function YearTypePicker({
           />
         </>
       )}
-      {isError && <Text variant="bodyMedium">Произошла ошибка во время получения данных</Text>}
+      {isError && <ErrorComponent error={error} />}
       {isLoading && <ActivityIndicator size="small" />}
     </View>
   );

@@ -3,14 +3,15 @@ import YearTypePicker from '@C/statistic/year-type-picker/year-type-picker';
 import { useState } from 'react';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import Charts from '@C/statistic/charts/charts';
+import { useTheme } from 'react-native-paper';
 
 export default function Statistics() {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedType, setSelectedType] = useState<string>(SPORTS_BTNS_VALUES.run);
-  console.log(selectedYear, selectedType);
+  const { colors } = useTheme();
   return (
     <ScrollView style={{ flex: 1 }}>
-      <View>
+      <View style={{ backgroundColor: colors.background }}>
         <YearTypePicker
           setSelectedYear={setSelectedYear}
           setSelectedType={setSelectedType}
