@@ -27,21 +27,3 @@ export default function MonthStatistics() {
     </>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 40,
-    columnGap: 5,
-  },
-  statistics: {
-    display: 'flex',
-    borderWidth: 1,
-    borderRadius: 55,
-    height: 110,
-    width: 110,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

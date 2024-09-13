@@ -1,5 +1,3 @@
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-
 import { LANGUAGES } from '../../../constants/enums';
 
 export const ACTIVITY_CLOSE_BTN: ActivityCloseBtn = {

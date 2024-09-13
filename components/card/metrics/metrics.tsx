@@ -3,7 +3,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
-import { usePathname, useRouter } from 'expo-router';
+import { Href, usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -30,8 +30,7 @@ export default memo(function Metrics({
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => {
         if (!pathname.includes(ROUTES.activity)) {
-          //@ts-ignore
-          push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}`);
+          push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}` as Href);
         }
       }}
       borderless
