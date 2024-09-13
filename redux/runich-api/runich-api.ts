@@ -15,11 +15,6 @@ export const runichApi = createApi({
   }),
 
   endpoints: (builder) => ({
-    // getUsers: builder.query({
-    //   query: () => `/${user}`,
-    //   providesTags: [Tags.users],
-    // }),
-
     //Profile
     getUserProfileByUserId: builder.query({
       query: (userId: string) => `${user}/${userId}/${profile}`,
@@ -289,38 +284,121 @@ export const runichApi = createApi({
       }),
       invalidatesTags: (result, error, arg) => [{ type: Tags.likes, id: arg.activityId }],
     }),
+
+    //Statistcs
+
+    getYearsAndTypes: builder.query({
+      query: (userId: string) => ({
+        url: `/statistics/${userId}`,
+        headers,
+      }),
+      providesTags: [Tags.activities],
+    }),
+
+    getAnnualStatisticsByYearAndCategory: builder.query({
+      query: ({ userId, year, category }: { userId: string; year: string; category: string }) => ({
+        url: `/statistics/${userId}/year-category/${year}/${category}`,
+        headers,
+      }),
+      providesTags: [Tags.activities],
+    }),
+
+    getMonthStatisticsByYearAndMonthAndCategory: builder.query({
+      query: ({
+        userId,
+        year,
+        month,
+        category,
+      }: {
+        userId: string;
+        year: string;
+        month: string;
+        category: string;
+      }) => ({
+        url: `/statistics/${userId}/year-month-category/${year}/${month}/${category}`,
+        headers,
+      }),
+      providesTags: [Tags.activities],
+    }),
+
+    getCurrentWeekStatistics: builder.query({
+      query: ({ userId, firstDay, lastDay }: { userId: string; firstDay: string; lastDay: string }) => ({
+        url: `/statistics/${userId}/week?firstDay=${firstDay}&lastDay=${lastDay}`,
+        headers,
+      }),
+      providesTags: [Tags.activities],
+    }),
+
+    getAllTimeStatisticsByUserId: builder.query({
+      query: ({ userId }: { userId: string }) => ({
+        url: `/statistics/${userId}/all`,
+        headers,
+      }),
+      providesTags: [Tags.activities],
+    }),
+    getMonthStatistics: builder.query({
+      query: ({ userId, year, month }: { userId: string; year: string; month: string }) => ({
+        url: `/statistics/${userId}/year-month?year=${year}&month=${month}`,
+        headers,
+      }),
+      providesTags: [Tags.activities],
+    }),
+
+    getSeveralActivitiesByTheirIds: builder.query({
+      query: ({ ids }: { ids: string }) => ({
+        url: `/activity/activityIds?${ids}`,
+        headers,
+      }),
+      providesTags: [Tags.activities],
+    }),
   }),
 });
 
 export const {
-  // useGetUsersQuery,
+  //Profile/users
   useGetUserProfileByUserIdQuery,
   useCreateProfileByUserIdMutation,
   useUpdateProfileByProfileIdMutation,
   useDeleteUserByUserIdMutation,
-
   useGetFilteredUsersBySearchTextQuery,
+
+  //Activity
   useUpdateActivityInfoMutation,
   useGetActivitiesByUserIdQuery,
   useGetAllActivityPhotosByUserIdQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesQuery,
   useGetActivityByActivityIdQuery,
-  useGetYouFollowUsersByUserIdQuery,
-  useGetFollowersByUserIdQuery,
-  useGetCommentsByActivityIdQuery,
-  useGetCommentsLengthByActivityIdQuery,
-  useGetLikesByActivityIdQuery,
-  useGetLikesByCommentIdQuery,
   useGetLocationsByActivityIdQuery,
   useAddActivityByUserIdMutation,
   useDeleteActivityByIdMutation,
+
+  //Followers
+  useGetYouFollowUsersByUserIdQuery,
+  useGetFollowersByUserIdQuery,
   useAddFriendMutation,
   useDeleteFriendMutation,
+
+  //Comments
+  useGetCommentsByActivityIdQuery,
+  useGetCommentsLengthByActivityIdQuery,
   usePostCommentWithActivityIdMutation,
   useDeleteCommentByCommentIdMutation,
+  useUpdateCommentByCommentIdMutation,
+
+  //Likes
+  useGetLikesByActivityIdQuery,
+  useGetLikesByCommentIdQuery,
   useSendLikeMutation,
   useDeleteLikeMutation,
   useSendLikeToCommentMutation,
   useDeleteLikeToCommentMutation,
-  useUpdateCommentByCommentIdMutation,
+
+  //Statistics
+  useGetYearsAndTypesQuery,
+  useGetAnnualStatisticsByYearAndCategoryQuery,
+  useGetMonthStatisticsByYearAndMonthAndCategoryQuery,
+  useGetCurrentWeekStatisticsQuery,
+  useGetAllTimeStatisticsByUserIdQuery,
+  useGetMonthStatisticsQuery,
+  useGetSeveralActivitiesByTheirIdsQuery,
 } = runichApi;

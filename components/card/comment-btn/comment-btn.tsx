@@ -2,7 +2,7 @@ import { useGetCommentsLengthByActivityIdQuery } from '@R/runich-api/runich-api'
 import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ROUTES } from '@const/enums';
-import { usePathname, useRouter } from 'expo-router';
+import { Href, usePathname, useRouter } from 'expo-router';
 import { useContext, memo, useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { IconButton, MD3Colors, Badge } from 'react-native-paper';
@@ -47,7 +47,13 @@ export default memo(function CommentBtn({
         icon={COMMENT_BTN_ICON}
         iconColor={MD3Colors.primary50}
         size={25}
-        onPress={() => push(`/${place}/${ROUTES.comment}/${activityId}`)}
+        onPress={() =>
+          push(
+            `/${place}/${ROUTES.comment}/${activityId}` as Href<
+              `/home/comment/${string}` | `/profile/comment/${string}`
+            >,
+          )
+        }
         disabled={isLoading || isDisabled || !!commentsCount?.message || isErrorLoadingComments || isLoadingComments}
       />
     </View>

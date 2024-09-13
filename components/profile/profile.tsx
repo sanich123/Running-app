@@ -9,16 +9,18 @@ import { useAuth } from 'auth/context/auth-context';
 import { useLocalSearchParams, usePathname } from 'expo-router';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 
 import FollowUnfollowBtn from './follow-unfollow-btn/follow-unfollow-btn';
 import { USERS_VARIANT } from './users-counter/const';
 import UsersCounter from './users-counter/users-counter';
 import { useGetUserProfileByUserIdQuery } from '@R/runich-api/runich-api';
+import ProfileStatistics from './statistics/profile-statistics';
 
 export default function ProfilePage() {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
+  const { colors } = useTheme();
   const { id: whosProfileViewing } = useLocalSearchParams();
   const { user } = useAuth();
   const whosProfile = whosProfileViewing ? whosProfileViewing : user?.id;
@@ -50,7 +52,8 @@ export default function ProfilePage() {
   return (
     <>
       <ProfileMediaPhotos userId={`${whosProfile}`} />
-      <View style={[styles.container, (isLoading || isError) && styles.isInCenter]}>
+      <View
+        style={[styles.container, (isLoading || isError) && styles.isInCenter, { backgroundColor: colors.background }]}>
         {isLoading && <ActivityIndicator size="large" />}
         {error ? <ErrorComponent error={error} /> : null}
         {isSuccess ? (
@@ -72,6 +75,7 @@ export default function ProfilePage() {
               <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
               {whosProfile !== user?.id && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
             </View>
+            <ProfileStatistics />
           </>
         ) : null}
       </View>
@@ -108,6 +112,15 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     gap: 20,
+    alignItems: 'center',
+  },
+  statistics: {
+    display: 'flex',
+    borderWidth: 1,
+    borderRadius: 55,
+    height: 110,
+    width: 110,
+    justifyContent: 'center',
     alignItems: 'center',
   },
 });

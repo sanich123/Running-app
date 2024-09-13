@@ -17,6 +17,7 @@ export default function EditBtn() {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+      //@ts-ignore
       onPress={() => push(`/${ROUTES.profile}/${ROUTES.profileSettings}/`)}
       borderless
       style={styles.layout}>

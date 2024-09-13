@@ -3,7 +3,7 @@ import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from 
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';
-import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
+import { Href, useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
@@ -40,7 +40,16 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/${place}/${whereToPush}/${whosId}`)}
+      onPress={() =>
+        push(
+          `/${place}/${whereToPush}/${whosId}` as Href<
+            | `/home/followers/${string}`
+            | `/home/following/${string}`
+            | `/profile/followers/${string}`
+            | `/profile/following/${string}`
+          >,
+        )
+      }
       disabled={isFollowersError || isFollowersLoading || isFollowingsLoading || isFollowingsError}
       borderless
       style={{ borderRadius: 10 }}>

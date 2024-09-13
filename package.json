@@ -1,6 +1,6 @@
 {
   "name": "running-app",
-  "version": "2.1.5",
+  "version": "2.1.7",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -45,7 +45,8 @@
     "web:serve": "npx serve dist",
     "web:deploy:netlify": "netlify deploy --dir dist",
     "web:deploy:prod": "netlify deploy --prod",
-    "web:deploy:full": "yarn web:export && netlify deploy --prod"
+    "web:deploy:full": "yarn web:export && netlify deploy --prod",
+    "eas-build-pre-install": "bash -c \"[ ! -z \\\"$EAS_BUILD_NPM_CACHE_URL\\\" ] && sed -i -e \\\"s#https://registry.yarnpkg.com#$EAS_BUILD_NPM_CACHE_URL#g\\\" yarn.lock\" || true"
   },
   "jest": {
     "collectCoverage": true,
@@ -75,6 +76,7 @@
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/netinfo": "11.3.1",
     "@react-native-google-signin/google-signin": "^11.0.0",
+    "@react-native-picker/picker": "2.7.5",
     "@react-navigation/material-top-tabs": "^6.6.5",
     "@react-navigation/native": "^6.0.2",
     "@reduxjs/toolkit": "^2.2.7",
@@ -88,17 +90,19 @@
     "expo-auth-session": "~5.5.2",
     "expo-av": "~14.0.7",
     "expo-build-properties": "~0.12.5",
-    "expo-camera": "~15.0.15",
-    "expo-dev-client": "~4.0.25",
+    "expo-camera": "~15.0.16",
+    "expo-dev-client": "~4.0.26",
     "expo-device": "~6.0.2",
+    "expo-document-picker": "~12.0.2",
     "expo-file-system": "~17.0.1",
-    "expo-font": "~12.0.9",
+    "expo-font": "~12.0.10",
     "expo-image": "~1.12.15",
     "expo-image-picker": "~15.0.7",
     "expo-intent-launcher": "~11.0.1",
+    "expo-linear-gradient": "~13.0.2",
     "expo-linking": "~6.3.1",
     "expo-location": "~17.0.1",
-    "expo-media-library": "~16.0.4",
+    "expo-media-library": "~16.0.5",
     "expo-router": "~3.5.23",
     "expo-secure-store": "~13.0.2",
     "expo-sharing": "~12.0.1",
@@ -119,6 +123,7 @@
     "react-native-date-picker": "^4.3.3",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-get-random-values": "~1.11.0",
+    "react-native-gifted-charts": "^1.4.30",
     "react-native-loading-spinner-overlay": "^3.0.1",
     "react-native-pager-view": "6.3.0",
     "react-native-paper": "^5.12.5",
@@ -126,6 +131,7 @@
     "react-native-root-toast": "^3.5.1",
     "react-native-safe-area-context": "4.10.5",
     "react-native-screens": "3.31.1",
+    "react-native-svg": "15.2.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-toast-notifications": "^3.4.0",
     "react-native-url-polyfill": "^2.0.0",
@@ -160,6 +166,7 @@
     "jest-expo": "~51.0.4",
     "msw": "^1.1.0",
     "prettier": "^3.3.2",
+    "react-native-zip-archive": "^7.0.1",
     "react-test-renderer": "18.2.0",
     "redux-persist": "^6.0.0",
     "source-map-explorer": "^2.5.3",
@@ -188,5 +195,6 @@
     "tabWidth": 2,
     "printWidth": 120,
     "bracketSameLine": true
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }

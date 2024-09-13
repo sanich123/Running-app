@@ -4,7 +4,7 @@ import NumberOfLikes from '@C/card/number-of-likes/number-of-likes';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import { ROUTES } from '@const/enums';
-import { usePathname, useRouter } from 'expo-router';
+import { Href, usePathname, useRouter } from 'expo-router';
 import { Fragment, memo, useContext } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -37,7 +37,11 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
               dispatch(setActivityIdWhichLikesToDownload(activityId));
               modalRef.current?.present();
             } else {
-              push(`/${place}/${ROUTES.likes}/${activityId}`);
+              push(
+                `/${place}/${ROUTES.likes}/${activityId}` as Href<
+                  `/home/${ROUTES.likes}/${string}` | `/profile/${ROUTES.likes}/${string}`
+                >,
+              );
             }
           }}
           borderless

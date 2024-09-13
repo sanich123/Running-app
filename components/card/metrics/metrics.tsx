@@ -3,7 +3,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
-import { usePathname, useRouter } from 'expo-router';
+import { Href, usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -22,7 +22,11 @@ export default memo(function Metrics({
   const { dark } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
+  const place = pathname.includes(ROUTES.profile)
+    ? ROUTES.profile
+    : pathname.includes(ROUTES.home)
+      ? ROUTES.home
+      : ROUTES.statistic;
   const { language } = useAppSelector(({ language }) => language);
 
   return (
@@ -30,7 +34,7 @@ export default memo(function Metrics({
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => {
         if (!pathname.includes(ROUTES.activity)) {
-          push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}`);
+          push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}` as Href);
         }
       }}
       borderless

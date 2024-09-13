@@ -1,6 +1,7 @@
 import ActivityCloseBtn from '@C/activity/close-btn/close-btn';
-import { MAP_SPORT_TO_TITLE } from '@C/activity/close-btn/const';
+
 import { useAppSelector } from '@R/typed-hooks';
+import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { Stack } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
 
@@ -21,18 +22,6 @@ export default function ActivityStack() {
           headerLeft: () => <ActivityCloseBtn />,
           headerTitle: () => <Text variant="titleLarge">{MAP_SPORT_TO_TITLE[sport][language]}</Text>,
           headerTitleAlign: 'center',
-        }}
-      />
-      <Stack.Screen
-        name="background-permission"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="foreground-permission"
-        options={{
-          headerShown: false,
         }}
       />
     </Stack>

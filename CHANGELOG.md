@@ -9,3 +9,5 @@ CHANGELOG
 2.1.5 Migrate to a new supabase project.
 Add remove account functionality, improve registration and profile create/update functionality.
 When user go to activity tracking functionality, there are 4 checks: location enbaled/disabled, isForegroundLocationPermission enabled/disabled, isBackgroundLocationPermission enabled/disabled, is app optimized battery by the phone with redirect user to these settings in the phone
+2.1.6 Add migration from strava functionality
+2.1.7 Add statistics route and functionality

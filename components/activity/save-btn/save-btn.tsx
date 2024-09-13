@@ -110,7 +110,7 @@ export default function SaveBtn() {
               isManualAdding || isEditingActivity
                 ? {
                     ...additionalInfo,
-                    date: manualDate,
+                    date: new Date(manualDate).toISOString(),
                     distance: manualDistance * 1000,
                     duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
                     speed: getSpeedInMinsInKm(

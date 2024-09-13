@@ -16,7 +16,7 @@ import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ModalLikesListContext } from '@U/context/activity-card-btns';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { Href, useFocusEffect, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -66,7 +66,7 @@ export default function Feed() {
                     dispatch(resetFinishedActivity());
                     dispatch(resetManualData());
                     dispatch(resetActivityInfo());
-                    push('/home/manual-activity');
+                    push('/home/manual-activity' as Href<'/home/manual-activity'>);
                   }}
                 />
               </>
