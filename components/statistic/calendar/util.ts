@@ -16,8 +16,8 @@ export function getDaysOfTheMonthWithNames(year: string, month: string, activiti
       const dateFromDay = new Date(+year, +month, day + 1);
       const dayFromDate = dateFromDay.getDay();
       const incrementedDay = day + 1;
-      const activitiesInThatDay = activities.filter(({ date }) => new Date(date).getDate() === dateFromDay.getDate());
-      // console.log(activities.filter(({ date }) => new Date(date).getDate() === dateFromDay.getDate()));
+      const activitiesInThatDay = activities?.filter(({ date }) => new Date(date).getDate() === dateFromDay.getDate());
+
       if (dayFromDate === 0) {
         acc.sundays.push({ dateValue: `${incrementedDay}`, activities: activitiesInThatDay });
       }

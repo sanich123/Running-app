@@ -19,13 +19,7 @@ export default function UserInfo({ profile, sport, date, userId, size }: UserInf
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() =>
-        push(
-          `/${place}/${ROUTES.profile}/${userId}` as Href<
-            `/home/${ROUTES.profile}/${string}` | `/profile/${ROUTES.profile}/${string}`
-          >,
-        )
-      }
+      onPress={() => push(`/${place}/${ROUTES.profile}/${userId}` as Href)}
       borderless
       style={{ paddingVertical: 5, paddingHorizontal: 5 }}>
       <View style={styles.userInfoWrapper}>
