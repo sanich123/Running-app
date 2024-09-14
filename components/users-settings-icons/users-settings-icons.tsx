@@ -4,7 +4,7 @@ import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
 import { Href, useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Platform, View, StyleSheet } from 'react-native';
-import { Icon, IconButton, TouchableRipple, useTheme } from 'react-native-paper';
+import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
 
 export default function UsersSettingsIcons() {
   const { colors, dark } = useTheme();
