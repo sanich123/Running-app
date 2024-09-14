@@ -1,5 +1,5 @@
 import { Session, User } from '@supabase/supabase-js';
-import { usePathname, useRouter, useSegments } from 'expo-router';
+import { Href, usePathname, useRouter, useSegments } from 'expo-router';
 import { useState, useEffect, createContext, PropsWithChildren, useContext } from 'react';
 
 import { supabase } from '../supabase/supabase-init';
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       router.replace('/(auth)/sign-in');
     } else if (user && !inTabsGroup) {
       if (pathname.includes('reset-password')) {
-        router.replace('/change-password');
+        router.replace('/change-password' as Href<'/change-password'>);
       } else {
         router.replace('/');
       }

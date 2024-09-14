@@ -5,20 +5,24 @@ import { StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import { EDIT_BTN } from './const';
+import { useGetUserProfileByUserIdQuery } from '@R/runich-api/runich-api';
+import { useAuth } from '@A/context/auth-context';
 
 export default function EditBtn() {
   const { push } = useRouter();
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
-
+  const { user } = useAuth();
+  const { data: profile } = useGetUserProfileByUserIdQuery(`${user?.id}`, { skip: !user?.id });
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+      //@ts-ignore
       onPress={() => push(`/${ROUTES.profile}/${ROUTES.profileSettings}/`)}
       borderless
       style={styles.layout}>
       <Text variant="titleMedium" style={{ color: colors.primary }}>
-        {EDIT_BTN[language].edit}
+        {profile ? EDIT_BTN[language].edit : EDIT_BTN[language].create}
       </Text>
     </TouchableRipple>
   );

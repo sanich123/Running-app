@@ -14,6 +14,12 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
 
+jest.mock('expo-image', () => {
+  const actualExpoImage = jest.requireActual('expo-image');
+  const { Image } = jest.requireActual('react-native');
+
+  return { ...actualExpoImage, Image };
+});
 describe('User list item', () => {
   it('should correctly renders from server', async () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

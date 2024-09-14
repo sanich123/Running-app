@@ -1,75 +1,69 @@
 import { useAuth } from '@A/context/auth-context';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { saveWholeProfile } from '@R/profile/profile';
-import { ProfileSettings } from '@R/profile/types';
 import {
-  useGetUserProfileByIdQuery,
-  useSendProfileInfoMutation,
-  useUpdateProfileInfoMutation,
+  useGetUserProfileByUserIdQuery,
+  useCreateProfileByUserIdMutation,
+  useUpdateProfileByProfileIdMutation,
 } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
 
-import { AVATAR_SHOWABLE, AvatarShowableIcons, AvatarShowableTestIds } from './const';
+import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
 export default function AvatarShowable({ size, id }: { size: number; id: string }) {
-  const toast = useToast();
-  const { language } = useAppSelector(({ language }) => language);
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const { googleInfo } = useAppSelector(({ profile }) => profile);
   const isMineAvatar = id === user?.id;
-  const { data: profile, error, isSuccess } = useGetUserProfileByIdQuery(id, { skip: !id });
-  const [sendProfile] = useSendProfileInfoMutation();
-  const [updateProfile] = useUpdateProfileInfoMutation();
+  const { data: profile, isSuccess, isError } = useGetUserProfileByUserIdQuery(id, { skip: !id });
+  const [createProfile] = useCreateProfileByUserIdMutation();
+  const [updateProfile] = useUpdateProfileByProfileIdMutation();
 
   useEffect(() => {
-    async function sendingGooglePhotoToSupabase(body: ProfileSettings, id: string) {
-      return await sendProfile({ body, id })
-        .then(() => {
-          if (Platform.OS === 'web') {
-            toast.show(AVATAR_SHOWABLE[language].successPhotoRenewing);
-          } else {
-            showCrossPlatformToast(AVATAR_SHOWABLE[language].successPhotoRenewing);
-          }
-        })
-        .catch(() => {
-          if (Platform.OS === 'web') {
-            toast.show(AVATAR_SHOWABLE[language].failurePhotoRenewing);
-          } else {
-            showCrossPlatformToast(AVATAR_SHOWABLE[language].failurePhotoRenewing);
-          }
-        });
+    async function createProfileWithGoogleInfo() {
+      return await createProfile({
+        body: {
+          name: `${googleInfo?.givenName}` || '',
+          surname: `${googleInfo.familyName}` || '',
+          profilePhoto: `${googleInfo.photo}` || '',
+          email: googleInfo.email,
+          city: '',
+          bio: '',
+          gender: '',
+          sport: '',
+          weight: '',
+        },
+        id: `${user?.id}`,
+      });
     }
-    if (isMineAvatar && isSuccess && !profile) {
-      if (googleInfo.photo) {
-        if (user?.id) {
-          sendingGooglePhotoToSupabase(
-            {
-              gender: '',
-              name: googleInfo?.name ? googleInfo.name : '',
-              surname: '',
-              city: '',
-              weight: '',
-              bio: '',
-              profilePhoto: googleInfo?.photo ? googleInfo.photo : '',
-              email: googleInfo?.email ? googleInfo.email : '',
-            },
-            user?.id,
-          );
-        }
+    async function updateProfileWithGoogleInfo() {
+      return await updateProfile({
+        body: {
+          name: profile?.name || googleInfo?.givenName,
+          surname: profile?.surname || googleInfo?.familyName,
+          profilePhoto: profile?.profilePhoto || googleInfo?.photo,
+          email: profile?.email || googleInfo?.email,
+        },
+        id: profile?.id,
+      });
+    }
+    if (!profile && isSuccess && isMineAvatar) {
+      createProfileWithGoogleInfo();
+    } else if (profile) {
+      if (
+        (!profile?.profilePhoto && googleInfo?.photo) ||
+        (!profile?.name && googleInfo?.givenName) ||
+        (!profile?.surname && googleInfo?.familyName) ||
+        (!profile?.email && googleInfo?.email)
+      ) {
+        updateProfileWithGoogleInfo();
       }
     }
-    if (isMineAvatar && isSuccess && !profile?.email) {
-      if (googleInfo?.email) {
-        updateProfile({ body: { email: googleInfo?.email }, id: profile?.id }).unwrap();
-      }
-    }
-  }, [isSuccess, isMineAvatar, profile, googleInfo.photo, googleInfo.name, googleInfo.email, user?.id, updateProfile, sendProfile, toast, language]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (profile && isMineAvatar) {
@@ -79,36 +73,32 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
 
   return (
     <>
-      {isMineAvatar && !error && !profile && googleInfo.photo && (
-        <CustomImage
-          style={{ width: size, height: size, borderRadius: 70 }}
-          source={{ uri: googleInfo.photo }}
-          contentFit="cover"
-          testID={AvatarShowableTestIds.success}
-        />
-      )}
-      {!error && profile && profile?.profilePhoto && (
-        <CustomImage
-          style={{ width: size, height: size, borderRadius: 70 }}
-          source={{ uri: profile?.profilePhoto }}
-          contentFit="cover"
-          testID={AvatarShowableTestIds.success}
-          placeholder={profile?.profilePhotoBlurhash}
-        />
-      )}
-      {(error || profile?.message) && (
+      {isSuccess ? (
+        <>
+          {profile?.profilePhoto?.length > 0 || googleInfo?.photo ? (
+            <CustomImage
+              style={{ width: size, height: size, borderRadius: 70 }}
+              source={{ uri: profile?.profilePhoto || googleInfo?.photo }}
+              contentFit="cover"
+              testID={AvatarShowableTestIds.success}
+              placeholder={profile?.profilePhotoBlurhash}
+            />
+          ) : (
+            <Avatar.Icon
+              testID={AvatarShowableTestIds.default}
+              size={size}
+              icon={AvatarShowableIcons.default}
+              style={styles.placeInCenter}
+            />
+          )}
+        </>
+      ) : null}
+
+      {(isError || profile?.message) && (
         <Avatar.Icon
           testID={AvatarShowableTestIds.error}
           size={size}
           icon={AvatarShowableIcons.error}
-          style={styles.placeInCenter}
-        />
-      )}
-      {!error && !profile && !googleInfo.photo && (
-        <Avatar.Icon
-          testID={AvatarShowableTestIds.default}
-          size={size}
-          icon={AvatarShowableIcons.default}
           style={styles.placeInCenter}
         />
       )}

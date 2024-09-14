@@ -27,7 +27,7 @@ describe('Decline btn', () => {
     expect(Alert.alert).toHaveBeenCalled();
     expect(mockStore.getState().activity.additionalInfo).toEqual(ADDITIONAL_INFO_INITIAL_STATE);
     expect(mockStore.getState().activity.finishedActivity).toEqual(FINISHED_ACTIVITY_INITIAL_STATE);
-    expect(mockStore.getState().activity.manualDate).toEqual(null);
+    expect(mockStore.getState().activity.manualDate).toEqual('');
     expect(mockStore.getState().activity.manualHours).toEqual(0);
     expect(mockStore.getState().activity.manualDistance).toEqual(0);
     expect(mockStore.getState().activity.manualMinutes).toEqual(0);

@@ -9,7 +9,12 @@ import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
+jest.mock('expo-image', () => {
+  const actualExpoImage = jest.requireActual('expo-image');
+  const { Image } = jest.requireActual('react-native');
 
+  return { ...actualExpoImage, Image };
+});
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
   usePathname: () => 'somePathname',

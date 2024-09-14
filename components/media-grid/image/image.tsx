@@ -27,6 +27,7 @@ export default function MediaGridImage({
       key={url}
       onPress={() =>
         push(
+          //@ts-ignore
           `/(tabs)/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}?userId=${userId}&take=${take}`,
         )
       }

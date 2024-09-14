@@ -12,7 +12,12 @@ jest.mock('react-native-compressor', () => ({
     compress: jest.fn(),
   }),
 }));
+jest.mock('expo-image', () => {
+  const actualExpoImage = jest.requireActual('expo-image');
+  const { Image } = jest.requireActual('react-native');
 
+  return { ...actualExpoImage, Image, uri: 'someUrl' };
+});
 describe('Avatar icon editable', () => {
   it('should correctly renders', () => {
     renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, { store: mockStore });
@@ -22,7 +27,7 @@ describe('Avatar icon editable', () => {
     mockStore.dispatch(savePhotoUrl(MOCK_PROFILE.profilePhoto));
     renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, { store: mockStore });
     const img = screen.getByTestId(AvatarEditableTestIds.successImg);
-    expect(img.props.source[0].uri).toEqual(MOCK_PROFILE.profilePhoto);
+    expect(img.props.source.uri).toEqual(MOCK_PROFILE.profilePhoto);
   });
   it('should renders a default icon, when there is no image url in profile', () => {
     mockStore.dispatch(savePhotoUrl(''));

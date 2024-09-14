@@ -11,7 +11,12 @@ jest.mock('react-native-compressor', () => ({
     compress: jest.fn(),
   }),
 }));
+jest.mock('expo-image', () => {
+  const actualExpoImage = jest.requireActual('expo-image');
+  const { Image } = jest.requireActual('react-native');
 
+  return { ...actualExpoImage, Image };
+});
 describe('Preview uploadable image', () => {
   it('should correctly renders', () => {
     jest.spyOn(auth, 'useAuth').mockImplementation(() => ({

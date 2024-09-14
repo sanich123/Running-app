@@ -17,7 +17,7 @@ import reducer, {
 
 describe('Profile slice', () => {
   it('should handle initial state properly', () => {
-    expect(reducer(undefined, { type: undefined })).toEqual(PROFILE_INITIAL_STATE);
+    expect(reducer(undefined, { type: '' })).toEqual(PROFILE_INITIAL_STATE);
   });
   it('should change email password', () => {
     expect(reducer(PROFILE_INITIAL_STATE, saveEmailPassword(MOCK_EMAIL_PASSWORD))).toEqual({

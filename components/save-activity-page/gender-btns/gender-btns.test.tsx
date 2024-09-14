@@ -10,8 +10,8 @@ import GenderBtns from './gender-btns';
 
 describe('Gender btns', () => {
   it('should correctly handle user pressing', async () => {
-    renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
     const maleInput = screen.getByText(GENDER_BTNS.english.maleLabel);
     const femaleInput = screen.getByText(GENDER_BTNS.english.femaleLabel);
     await userEvent.press(maleInput);

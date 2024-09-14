@@ -1,6 +1,5 @@
 import ChooseSportModal from '@C/activity/choose-sport-modal/choose-sport-modal';
 import IconChooseSport from '@C/activity/icon-choose-sport/icon-choose-sport';
-import LocationIndicator from '@C/activity/location-indicator/location-indicator';
 import Map from '@C/activity/map/map';
 import PauseBtn from '@C/activity/pause-btn/pause-btn';
 import ShowMapBtn from '@C/activity/show-map-btn/show-map-btn';
@@ -19,17 +18,16 @@ export default function Activity() {
   const [visibilityOfSportIcon, setVisibilityOfSportIcon] = useState(true);
   const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
   useStartStopTracking();
-
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   return (
     <BottomSheetModalProvider>
       <View style={styles.layout}>
-        <LocationIndicator />
         <ChooseSportModal
           bottomSheetModalRef={bottomSheetModalRef}
           setVisibilityOfSportIcon={setVisibilityOfSportIcon}
         />
+
         <View style={styles.map}>
           {(activityStatus === STATUSES.initial || isMapVisible) && <Map />}
           {activityStatus !== STATUSES.initial && <Metrics />}

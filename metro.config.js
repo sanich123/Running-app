@@ -10,9 +10,9 @@ defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
       (moduleName === '@rnmapbox/maps' ||
         moduleName === '@react-native-google-signin/google-signin' ||
         moduleName === 'react-native-pager-view' ||
-        moduleName === 'expo-video-thumbnails')) ||
-    (platform !== 'web' && moduleName === 'mapbox-gl') ||
-    (platform === 'android' && moduleName === 'react-native-background-geolocation')
+        moduleName === 'expo-video-thumbnails' ||
+        moduleName === 'react-native-zip-archive')) ||
+    (platform !== 'web' && moduleName === 'mapbox-gl')
   ) {
     return {
       type: 'empty',

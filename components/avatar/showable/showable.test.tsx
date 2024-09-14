@@ -4,7 +4,12 @@ import { screen } from '@testing-library/react-native';
 
 import { AvatarShowableTestIds } from './const';
 import AvatarShowable from './showable';
+jest.mock('expo-image', () => {
+  const actualExpoImage = jest.requireActual('expo-image');
+  const { Image } = jest.requireActual('react-native');
 
+  return { ...actualExpoImage, Image };
+});
 describe('Avatar showable', () => {
   it('should correctly handle isLoading and success state', async () => {
     renderWithProviders(<AvatarShowable size={25} id="someUserId" />, { store: mockStore });

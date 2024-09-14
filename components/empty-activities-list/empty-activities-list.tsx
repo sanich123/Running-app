@@ -8,7 +8,7 @@ export default function EmptyActivitiesList() {
   const height = Dimensions.get('window').height;
   const { language } = useAppSelector(({ language }) => language);
   return (
-    <View style={{ height: height - 110, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ height: height - 100, alignItems: 'center', justifyContent: 'center' }}>
       <Text variant="titleLarge">{EMPTY_ACTIVITIES_LIST[language].emptyActivities}</Text>
     </View>
   );

@@ -2,7 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import ActivityUpdateBtn from '@C/activity/update-btn/update-btn';
 import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
-import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
+import { Href, useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Platform, View, StyleSheet } from 'react-native';
 import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
 
@@ -37,7 +37,10 @@ export default function UsersSettingsIcons() {
             icon="account-search-outline"
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            onPress={() => !pathname.includes(ROUTES.users) && push(`/${place}/${ROUTES.users}/`)}
+            onPress={() =>
+              !pathname.includes(ROUTES.users) &&
+              push(`/${place}/${ROUTES.users}` as Href)
+            }
             style={{ marginRight: -10 }}
           />
           <IconButton
@@ -46,16 +49,30 @@ export default function UsersSettingsIcons() {
             animated
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            onPress={() => !pathname.includes(ROUTES.settings) && push(`/${place}/${ROUTES.settings}/`)}
+            style={{ marginRight: -10 }}
+            onPress={() =>
+              !pathname.includes(ROUTES.settings) &&
+              push(`/${place}/${ROUTES.settings}` as Href)
+            }
           />
           {Platform.OS === 'web' && (
-            <TouchableRipple
-              rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-              borderless
-              onPress={() => push(ROUTES.profile)}
-              style={{ marginRight: 10 }}>
-              <AvatarShowable size={30} id={`${user?.id}`} />
-            </TouchableRipple>
+            <>
+              <IconButton
+                icon="chart-bar-stacked"
+                animated
+                iconColor={colors.primary}
+                size={30}
+                style={{ marginRight: 10 }}
+                onPress={() => push(`/${ROUTES.statistic}` as Href)}
+              />
+              <TouchableRipple
+                rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+                borderless
+                onPress={() => push(`/${ROUTES.profile}`)}
+                style={{ marginRight: 10 }}>
+                <AvatarShowable size={30} id={`${user?.id}`} />
+              </TouchableRipple>
+            </>
           )}
         </>
       )}

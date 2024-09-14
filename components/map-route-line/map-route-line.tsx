@@ -1,9 +1,9 @@
 import { getReducedLocations } from '@U/location/location-utils';
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
+import { LocationObject } from 'expo-location';
 import { useMemo } from 'react';
-import { Location } from 'react-native-background-geolocation';
 
-export default function MapRouteLine({ locations }: { locations: Location[] }) {
+export default function MapRouteLine({ locations }: { locations: LocationObject[] }) {
   const coordinates = useMemo(
     () => getReducedLocations(locations).map(({ coords }) => [coords.longitude, coords.latitude]),
     [locations],

@@ -23,6 +23,7 @@ export default function CustomTabBar({
     home: (props: { color: string }) => <AntDesign name="home" color={props.color} size={45} />,
     activity: (props: { color: string }) => <AntDesign name="playcircleo" size={45} color="tomato" />,
     profile: (props: { color: string }) => <AvatarShowable size={45} id={`${user?.id}`} {...props} />,
+    statistic: (props: { color: string }) => <AntDesign name="piechart" size={45} color={props.color} />,
   };
 
   return (

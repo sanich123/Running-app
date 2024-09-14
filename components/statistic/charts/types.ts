@@ -1,0 +1,28 @@
+export type MonthMetrics = {
+  [key: string]: { totalDistance: number; totalDuration: number; medianSpeed: number; items: number };
+};
+
+export type ChartBarComponent = {
+  value: number;
+  label: string;
+  topLabelComponent: () => void;
+};
+
+export type AccumulatorValues = {
+  totalDurationArr: ChartBarComponent[];
+  totalDistanceArr: ChartBarComponent[];
+  totalMedianSpeedArr: ChartBarComponent[];
+  totalActivitiesArr: ChartBarComponent[];
+};
+
+export enum ChooseMetricsBtnsValues {
+  duration = 'duration',
+  amount = 'amount',
+  distance = 'distance',
+}
+
+export type BarChartWrapperProps = {
+  metricsArr?: { value: number; label: string }[];
+  year: number;
+  title: string;
+};

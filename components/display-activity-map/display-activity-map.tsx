@@ -4,15 +4,16 @@ import { MapView, Camera } from '@rnmapbox/maps';
 import bbox from '@turf/bbox';
 import { useMemo } from 'react';
 import { Platform } from 'react-native';
-import { Location } from 'react-native-background-geolocation';
+
 //@ts-ignore
 import lineString from 'turf-linestring';
 
 import MapKmSplit from '../map-km-split/map-km-split';
 import RouteLine from '../map-route-line/map-route-line';
+import { LocationObject } from 'expo-location';
 
 type DisplayActivityMapProps = {
-  locations: Location[];
+  locations: LocationObject[];
   kilometresSplit: LastKmSplit[];
 };
 

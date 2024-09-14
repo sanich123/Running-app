@@ -10,6 +10,7 @@ export default function TabLayout() {
     <Tabs tabBar={(props) => <CustomTabBar {...props} />}>
       <Tabs.Screen name={ROUTES.home} options={{ headerShown: false }} />
       <Tabs.Screen name={ROUTES.activity} options={{ headerShown: false }} />
+      <Tabs.Screen name={ROUTES.statistic} options={{ headerShown: false }} />
       {user && <Tabs.Screen name={ROUTES.profile} options={{ headerShown: false }} />}
     </Tabs>
   );

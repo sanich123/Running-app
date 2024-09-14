@@ -1,9 +1,7 @@
 import { saveUnsendedActivity, setIsHaveUnsyncedActivity } from '@R/activity/activity';
-import { changeLanguage } from '@R/language/language';
 import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import { UNSENDED_ACTIVITIES } from './const';
@@ -24,8 +22,8 @@ describe('Unsended activities indicator', () => {
       }),
     );
     mockStore.dispatch(setIsHaveUnsyncedActivity(true));
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<UnsendedActivitiesIndicator />, { store: mockStore });
-    expect(screen.getByText(new RegExp(UNSENDED_ACTIVITIES.english.isLoading))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(UNSENDED_ACTIVITIES.russian.isLoading))).toBeOnTheScreen();
+    expect(await screen.findByText(/manually/i)).toBeOnTheScreen();
   });
 });
