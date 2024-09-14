@@ -8,7 +8,7 @@ import { MD3TypescaleKey, Text } from 'react-native-paper';
 import { VariantProp } from 'react-native-paper/lib/typescript/components/Typography/types';
 
 export default memo(function UserNameSurname({ userId, size }: { userId: string; size: VariantProp<MD3TypescaleKey> }) {
-  const { error, data: profileInfo } = useGetUserProfileByUserIdQuery(userId);
+  const { error, data: profileInfo } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={{ flex: 1, flexDirection: 'row' }}>
