@@ -24,7 +24,11 @@ export default memo(function LikeBtn({ activityId }: { activityId: string }) {
   const {
     profileFromServer: { profilePhoto },
   } = useAppSelector(({ profile }) => profile);
-  const { data: likes, isError, isLoading: isLikesLoading } = useGetLikesByActivityIdQuery(activityId);
+  const {
+    data: likes,
+    isError,
+    isLoading: isLikesLoading,
+  } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
   const [sendLike, { isError: errorSending }] = useSendLikeMutation();
   const [deleteLike, { isError: failureDeleting }] = useDeleteLikeMutation();
 

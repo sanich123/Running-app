@@ -8,7 +8,7 @@ import { useAppSelector } from '@R/typed-hooks';
 export default function EmailNotificationsBtn() {
   const { user } = useAuth();
   const { language } = useAppSelector(({ language }) => language);
-  const { data: profileInfo, isSuccess } = useGetUserProfileByUserIdQuery(`${user?.id}`, { skip: !user });
+  const { data: profileInfo, isSuccess } = useGetUserProfileByUserIdQuery(`${user?.id}`, { skip: !user?.id });
   const [updateProfile] = useUpdateProfileByProfileIdMutation();
 
   return (

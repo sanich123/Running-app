@@ -10,7 +10,9 @@ import { Divider, useTheme } from 'react-native-paper';
 export default function ModalLikesList({ bottomSheetModalRef }: { bottomSheetModalRef: RefObject<BottomSheetModal> }) {
   const { colors } = useTheme();
   const { activityIdWhichLikesToDownload } = useAppSelector(({ mainFeed }) => mainFeed);
-  const { data: likes } = useGetLikesByActivityIdQuery(`${activityIdWhichLikesToDownload}`);
+  const { data: likes } = useGetLikesByActivityIdQuery(`${activityIdWhichLikesToDownload}`, {
+    skip: !activityIdWhichLikesToDownload,
+  });
 
   function getIndexOfSnapPointByLikesLength(length: number) {
     if (length === 1) return 0;

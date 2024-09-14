@@ -9,7 +9,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LikesList() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, error, isError, data: likes, refetch } = useGetLikesByActivityIdQuery(`${activityId}`);
+  const {
+    isLoading,
+    error,
+    isError,
+    data: likes,
+    refetch,
+  } = useGetLikesByActivityIdQuery(`${activityId}`, { skip: !activityId });
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (

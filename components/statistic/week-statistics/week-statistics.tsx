@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { getCurrentWeekDates } from './util';
 import { useGetCurrentWeekStatisticsQuery } from '@R/runich-api/runich-api';
 import { useAuth } from '@A/context/auth-context';

@@ -39,7 +39,7 @@ export default function UsersSettingsIcons() {
             size={Platform.OS === 'ios' ? 25 : 30}
             onPress={() =>
               !pathname.includes(ROUTES.users) &&
-              push(`/${place}/${ROUTES.users}` as Href<'/home/users' | '/profile/users'>)
+              push(`/${place}/${ROUTES.users}` as Href)
             }
             style={{ marginRight: -10 }}
           />
@@ -49,19 +49,30 @@ export default function UsersSettingsIcons() {
             animated
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
+            style={{ marginRight: -10 }}
             onPress={() =>
               !pathname.includes(ROUTES.settings) &&
-              push(`/${place}/${ROUTES.settings}` as Href<'/home/settings' | '/profile/settings'>)
+              push(`/${place}/${ROUTES.settings}` as Href)
             }
           />
           {Platform.OS === 'web' && (
-            <TouchableRipple
-              rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-              borderless
-              onPress={() => push(`/${ROUTES.profile}`)}
-              style={{ marginRight: 10 }}>
-              <AvatarShowable size={30} id={`${user?.id}`} />
-            </TouchableRipple>
+            <>
+              <IconButton
+                icon="chart-bar-stacked"
+                animated
+                iconColor={colors.primary}
+                size={30}
+                style={{ marginRight: 10 }}
+                onPress={() => push(`/${ROUTES.statistic}` as Href)}
+              />
+              <TouchableRipple
+                rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+                borderless
+                onPress={() => push(`/${ROUTES.profile}`)}
+                style={{ marginRight: 10 }}>
+                <AvatarShowable size={30} id={`${user?.id}`} />
+              </TouchableRipple>
+            </>
           )}
         </>
       )}
