@@ -57,7 +57,7 @@ export default function StartBtn() {
           dispatch(setIsEditingActivity(false));
           dispatch(resetManualData());
           dispatch(resetActivityInfo());
-          push(`/${ROUTES.home}/${ROUTES.manualActivity}/` as Href<`/${ROUTES.home}/${ROUTES.manualActivity}/`>);
+          push(`/${ROUTES.home}/${ROUTES.manualActivity}/` as Href);
         }
       }}>
       <View style={styles.startBtn}>

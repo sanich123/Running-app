@@ -47,13 +47,7 @@ export default memo(function CommentBtn({
         icon={COMMENT_BTN_ICON}
         iconColor={MD3Colors.primary50}
         size={25}
-        onPress={() =>
-          push(
-            `/${place}/${ROUTES.comment}/${activityId}` as Href<
-              `/home/comment/${string}` | `/profile/comment/${string}`
-            >,
-          )
-        }
+        onPress={() => push(`/${place}/${ROUTES.comment}/${activityId}` as Href)}
         disabled={isLoading || isDisabled || !!commentsCount?.message || isErrorLoadingComments || isLoadingComments}
       />
     </View>

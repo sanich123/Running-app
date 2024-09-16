@@ -66,7 +66,7 @@ export default function Feed() {
                     dispatch(resetFinishedActivity());
                     dispatch(resetManualData());
                     dispatch(resetActivityInfo());
-                    push('/home/manual-activity' as Href<'/home/manual-activity'>);
+                    push('/home/manual-activity' as Href);
                   }}
                 />
               </>

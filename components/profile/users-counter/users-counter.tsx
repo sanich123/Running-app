@@ -40,16 +40,7 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() =>
-        push(
-          `/${place}/${whereToPush}/${whosId}` as Href<
-            | `/home/followers/${string}`
-            | `/home/following/${string}`
-            | `/profile/followers/${string}`
-            | `/profile/following/${string}`
-          >,
-        )
-      }
+      onPress={() => push(`/${place}/${whereToPush}/${whosId}` as Href)}
       disabled={isFollowersError || isFollowersLoading || isFollowingsLoading || isFollowingsError}
       borderless
       style={{ borderRadius: 10 }}>

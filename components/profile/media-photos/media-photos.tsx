@@ -26,13 +26,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() =>
-        push(
-          `/${place}/${ROUTES.mediaGrid}/${userId}` as Href<
-            `/home/${ROUTES.mediaGrid}/${string}` | `/profile/${ROUTES.mediaGrid}/${string}`
-          >,
-        )
-      }
+      onPress={() => push(`/${place}/${ROUTES.mediaGrid}/${userId}` as Href)}
       disabled={isError || isLoading}
       borderless>
       <View style={[styles.layout, { backgroundColor: colors.onPrimary }, (isLoading || isError) && styles.isInCenter]}>

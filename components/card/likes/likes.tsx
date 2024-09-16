@@ -37,11 +37,7 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
               dispatch(setActivityIdWhichLikesToDownload(activityId));
               modalRef.current?.present();
             } else {
-              push(
-                `/${place}/${ROUTES.likes}/${activityId}` as Href<
-                  `/home/${ROUTES.likes}/${string}` | `/profile/${ROUTES.likes}/${string}`
-                >,
-              );
+              push(`/${place}/${ROUTES.likes}/${activityId}` as Href);
             }
           }}
           borderless
