@@ -1,8 +1,7 @@
 import { View } from 'react-native';
-import { useAuth } from '@A/context/auth-context';
 import { reduceMonthMetrics } from './reduce-month-metrics';
 import BarChartWrapper from './bar-chart-wrapper';
-import { ActivityIndicator, useTheme, Text } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { useState } from 'react';
 import { ChooseMetricsBtnsValues, MonthMetrics } from './types';
 import ChooseMetricsBtns from './choose-metrics-btns';

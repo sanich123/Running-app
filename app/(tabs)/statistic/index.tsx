@@ -3,7 +3,7 @@ import YearTypePicker from '@C/statistic/year-type-picker/year-type-picker';
 import { useState } from 'react';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import Charts from '@C/statistic/charts/charts';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { useGetAnnualStatisticsByYearAndCategoryQuery } from '@R/runich-api/runich-api';
 import { useAuth } from '@A/context/auth-context';
 import ErrorComponent from '@C/error-component/error-component';
