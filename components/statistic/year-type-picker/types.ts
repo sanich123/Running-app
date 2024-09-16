@@ -8,4 +8,5 @@ export type YearsAndTypesPickerProps = {
   setSelectedType: (arg: string) => void;
   selectedYear: number;
   selectedType: string;
+  availableYearsAndTypes: YearsAndTypes[];
 };

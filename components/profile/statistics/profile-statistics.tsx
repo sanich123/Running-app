@@ -19,32 +19,37 @@ export default function ProfileStatistics() {
   } = useGetAllTimeStatisticsByUserIdQuery({ userId: `${user?.id}` }, { skip: !user?.id });
   const { language } = useAppSelector(({ language }) => language);
   const isRussian = language === LANGUAGES.russian;
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <MonthStatisticsMetrics
-        title={MONTH_STATISTICS[language].activities}
-        metric={`${allUserStatistics?.totalItems}`}
-        isSuccess={isSuccess}
-        isLoading={isLoading}
-        isError={isError}
-        postfix={''}
-      />
-      <MonthStatisticsMetrics
-        title={MONTH_STATISTICS[language].distance}
-        metric={`${Math.round(allUserStatistics?.totalDistance / 1000)}`}
-        isSuccess={isSuccess}
-        isLoading={isLoading}
-        isError={isError}
-        postfix={`${isRussian ? 'км' : 'km'}`}
-      />
-      <MonthStatisticsMetrics
-        title={MONTH_STATISTICS[language].duration}
-        metric={`${Math.round(getHoursMinutesFromMilliseconds(allUserStatistics?.totalDuration).hours)}`}
-        isSuccess={isSuccess}
-        isLoading={isLoading}
-        isError={isError}
-        postfix={`${isRussian ? 'ч' : 'h'}`}
-      />
+      {allUserStatistics?.totalItems.length && (
+        <>
+          <MonthStatisticsMetrics
+            title={MONTH_STATISTICS[language].activities}
+            metric={`${allUserStatistics?.totalItems}`}
+            isSuccess={isSuccess}
+            isLoading={isLoading}
+            isError={isError}
+            postfix={''}
+          />
+          <MonthStatisticsMetrics
+            title={MONTH_STATISTICS[language].distance}
+            metric={`${Math.round(allUserStatistics?.totalDistance / 1000)}`}
+            isSuccess={isSuccess}
+            isLoading={isLoading}
+            isError={isError}
+            postfix={`${isRussian ? 'км' : 'km'}`}
+          />
+          <MonthStatisticsMetrics
+            title={MONTH_STATISTICS[language].duration}
+            metric={`${Math.round(getHoursMinutesFromMilliseconds(allUserStatistics?.totalDuration).hours)}`}
+            isSuccess={isSuccess}
+            isLoading={isLoading}
+            isError={isError}
+            postfix={`${isRussian ? 'ч' : 'h'}`}
+          />
+        </>
+      )}
     </View>
   );
 }

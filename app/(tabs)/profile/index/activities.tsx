@@ -16,15 +16,13 @@ export default function Activities() {
 
   return (
     <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
-      {data?.activities?.length ? (
-        <InfiniteScrollList
-          dataToRender={data?.activities}
-          page={page}
-          setPage={setPage}
-          refetch={refetch}
-          isLastPage={data?.isLastPage}
-        />
-      ) : null}
+      <InfiniteScrollList
+        dataToRender={data?.activities}
+        page={page}
+        setPage={setPage}
+        refetch={refetch}
+        isLastPage={data?.isLastPage}
+      />
       {isLoading && <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />}
       {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}
     </SafeAreaView>

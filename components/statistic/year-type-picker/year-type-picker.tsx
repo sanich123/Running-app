@@ -1,36 +1,26 @@
-import { useAuth } from '@A/context/auth-context';
-import { useGetYearsAndTypesQuery } from '@R/runich-api/runich-api';
-
 import { YearsAndTypes, YearsAndTypesPickerProps } from './types';
 import { getTypesByYear } from './util';
-import { ActivityIndicator, Chip, Text, useTheme } from 'react-native-paper';
+import { Chip, Text, useTheme } from 'react-native-paper';
 import { FlatList, View } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import ErrorComponent from '@C/error-component/error-component';
 
 export default function YearTypePicker({
   setSelectedYear,
   setSelectedType,
   selectedYear,
   selectedType,
+  availableYearsAndTypes,
 }: YearsAndTypesPickerProps) {
-  const { user } = useAuth();
   const { colors } = useTheme();
-  const {
-    data: availableYearsAndTypes,
-    isError,
-    error,
-    isLoading,
-    isSuccess,
-  } = useGetYearsAndTypesQuery(`${user?.id}`, { skip: !user?.id });
   const { language } = useAppSelector(({ language }) => language);
   const isRussian = language === LANGUAGES.russian;
+
   return (
     <View style={{ display: 'flex', gap: 15, padding: 10, backgroundColor: colors.background, marginVertical: 15 }}>
-      {isSuccess && availableYearsAndTypes?.length ? (
+      {availableYearsAndTypes?.length ? (
         <>
           <FlatList
             data={availableYearsAndTypes?.slice().sort((a: YearsAndTypes, b: YearsAndTypes) => +b.year - +a.year)}
@@ -79,8 +69,6 @@ export default function YearTypePicker({
           />
         </>
       ) : null}
-      {isError && <ErrorComponent error={error} />}
-      {isLoading && <ActivityIndicator size="small" />}
     </View>
   );
 }
