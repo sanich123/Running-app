@@ -30,7 +30,7 @@ export default function YearTypePicker({
   const isRussian = language === LANGUAGES.russian;
   return (
     <View style={{ display: 'flex', gap: 15, padding: 10, backgroundColor: colors.background, marginVertical: 15 }}>
-      {isSuccess && (
+      {isSuccess && availableYearsAndTypes?.length ? (
         <>
           <FlatList
             data={availableYearsAndTypes?.slice().sort((a: YearsAndTypes, b: YearsAndTypes) => +b.year - +a.year)}
@@ -78,7 +78,7 @@ export default function YearTypePicker({
             showsHorizontalScrollIndicator={false}
           />
         </>
-      )}
+      ) : null}
       {isError && <ErrorComponent error={error} />}
       {isLoading && <ActivityIndicator size="small" />}
     </View>

@@ -25,6 +25,7 @@ export default function Charts({ year, type }: { year: number; type: string }) {
     },
     { skip: !user?.id },
   );
+  console.log(yearStats);
   const reducedMetricsArr = reduceMonthMetrics(yearStats?.months);
   const chartToRender = {
     distance: {
@@ -40,6 +41,7 @@ export default function Charts({ year, type }: { year: number; type: string }) {
       items: reducedMetricsArr?.totalDurationArr,
     },
   };
+  const isHasNoStatistics = !yearStats?.totalDistance || !yearStats?.totalDuration || !yearStats?.totalItems;
   return (
     <View
       style={[
@@ -47,17 +49,19 @@ export default function Charts({ year, type }: { year: number; type: string }) {
         (isLoading || isError) && { flex: 1, justifyContent: 'center', alignItems: 'center' },
       ]}>
       {isLoading && <ActivityIndicator size="large" />}
-      {isSuccess ? (
+      {isSuccess && yearStats?.length ? (
         <BarChartWrapper
           metricsArr={chartToRender[chartValue]?.items}
           year={year}
           title={chartToRender[chartValue]?.title}
         />
       ) : (
-        <View style={{ height: 273 }}></View>
+        <View style={{ height: 273, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Text variant="headlineSmall">Пока еще нет никакой статистики</Text>
+        </View>
       )}
       {isError && <Text variant="bodyMedium">Произошла ошибка во время получения данных</Text>}
-      <ChooseMetricsBtns chartValue={chartValue} setChartValue={setChartValue} />
+      {isHasNoStatistics && <ChooseMetricsBtns chartValue={chartValue} setChartValue={setChartValue} />}
     </View>
   );
 }
