@@ -1,8 +1,12 @@
 import { useAuth } from '@A/context/auth-context';
+import { MONTH_STATISTICS } from '@C/statistic/month-metric/const';
+import MonthStatisticsMetrics from '@C/statistic/month-metric/month-metric';
+import { LANGUAGES } from '@const/enums';
 import { useGetAllTimeStatisticsByUserIdQuery } from '@R/runich-api/runich-api';
+import { useAppSelector } from '@R/typed-hooks';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { View, StyleSheet } from 'react-native';
-import { useTheme, Text, ActivityIndicator } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 
 export default function ProfileStatistics() {
   const { colors } = useTheme();
@@ -13,38 +17,34 @@ export default function ProfileStatistics() {
     isError,
     isSuccess,
   } = useGetAllTimeStatisticsByUserIdQuery({ userId: `${user?.id}` }, { skip: !user?.id });
+  const { language } = useAppSelector(({ language }) => language);
+  const isRussian = language === LANGUAGES.russian;
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.statistics}>
-        {isSuccess && (
-          <>
-            <Text variant="bodySmall">Дистанция</Text>
-            <Text variant="titleLarge">{`${Math.round(allUserStatistics?.totalDistance / 1000)} км`}</Text>
-          </>
-        )}
-        {isLoading && <ActivityIndicator size="small" />}
-        {isError && <Text variant="bodySmall">Ошибка</Text>}
-      </View>
-      <View style={styles.statistics}>
-        {isSuccess && (
-          <>
-            <Text variant="bodySmall">Время</Text>
-            <Text variant="titleLarge">{`${Math.round(getHoursMinutesFromMilliseconds(allUserStatistics?.totalDuration).hours)} ч`}</Text>
-          </>
-        )}
-        {isLoading && <ActivityIndicator size="small" />}
-        {isError && <Text variant="bodySmall">Ошибка</Text>}
-      </View>
-      <View style={styles.statistics}>
-        {isSuccess && (
-          <>
-            <Text variant="bodySmall">Тренировок</Text>
-            <Text variant="titleLarge">{`${allUserStatistics?.totalItems}`}</Text>
-          </>
-        )}
-        {isLoading && <ActivityIndicator size="small" />}
-        {isError && <Text variant="bodySmall">Ошибка</Text>}
-      </View>
+      <MonthStatisticsMetrics
+        title={MONTH_STATISTICS[language].activities}
+        metric={`${allUserStatistics?.totalItems}`}
+        isSuccess={isSuccess}
+        isLoading={isLoading}
+        isError={isError}
+        postfix={''}
+      />
+      <MonthStatisticsMetrics
+        title={MONTH_STATISTICS[language].distance}
+        metric={`${Math.round(allUserStatistics?.totalDistance / 1000)}`}
+        isSuccess={isSuccess}
+        isLoading={isLoading}
+        isError={isError}
+        postfix={`${isRussian ? 'км' : 'km'}`}
+      />
+      <MonthStatisticsMetrics
+        title={MONTH_STATISTICS[language].duration}
+        metric={`${Math.round(getHoursMinutesFromMilliseconds(allUserStatistics?.totalDuration).hours)}`}
+        isSuccess={isSuccess}
+        isLoading={isLoading}
+        isError={isError}
+        postfix={`${isRussian ? 'ч' : 'h'}`}
+      />
     </View>
   );
 }

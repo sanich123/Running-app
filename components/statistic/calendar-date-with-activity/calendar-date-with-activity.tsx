@@ -11,8 +11,7 @@ export default function CalendarDateWithActivity({
   isTitle,
   isEmptyCell,
   dateValue,
-  day,
-  i,
+
   activities,
 }: CalendarDateWithActivityProps & CalendarDateProps) {
   const { colors, dark } = useTheme();
@@ -42,7 +41,7 @@ export default function CalendarDateWithActivity({
             }
           }}>
           <Text
-            key={`${dateValue}+${day}${i}`}
+
             variant={activities.length ? 'headlineMedium' : 'bodyMedium'}
             style={{
               fontWeight: isTitle || !activities.length ? 'bold' : 'normal',
@@ -62,7 +61,7 @@ export default function CalendarDateWithActivity({
           ]}>
           <Text
             style={{
-              color: isWeekend ? colors.error : '',
+              color: isWeekend ? colors.error : colors.onBackground,
               fontWeight: isTitle || !activities.length ? 'bold' : 'normal',
             }}>
             {dateValue}

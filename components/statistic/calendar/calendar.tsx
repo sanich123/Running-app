@@ -8,6 +8,7 @@ import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-da
 import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';
 import { useAppSelector } from '@R/typed-hooks';
 import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
+import { Fragment } from 'react';
 
 export default function CalendarActivities({ year, month, userId }: CalendarStatisticsProps) {
   const { language } = useAppSelector(({ language }) => language);
@@ -38,27 +39,19 @@ export default function CalendarActivities({ year, month, userId }: CalendarStat
                 const isEmptyCell = dateValue === ' ';
                 const isTitle = isNaN(Number(dateValue));
                 return (
-                  <>
+                  <Fragment key={`${dateValue}${i}`}>
                     {activities?.length || !i ? (
                       <CalendarDateWithActivity
                         isWeekend={isWeekend}
                         isTitle={isTitle}
                         isEmptyCell={isEmptyCell}
                         dateValue={dateValue}
-                        day={day}
-                        i={i}
                         activities={activities}
                       />
                     ) : (
-                      <CalendarDateEmpty
-                        isTitle={isTitle}
-                        isEmptyCell={isEmptyCell}
-                        dateValue={dateValue}
-                        day={day}
-                        i={i}
-                      />
+                      <CalendarDateEmpty isTitle={isTitle} isEmptyCell={isEmptyCell} dateValue={dateValue} />
                     )}
-                  </>
+                  </Fragment>
                 );
               })}
             </View>

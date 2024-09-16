@@ -1,18 +1,26 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import { MONTH_STATISTICS } from './const';
 import { MonthMetricsProps } from './types';
 
-export default function MonthStatisticsMetrics({ isSuccess, isLoading, isError, title, metric }: MonthMetricsProps) {
+export default function MonthStatisticsMetrics({
+  isSuccess,
+  isLoading,
+  isError,
+  title,
+  metric,
+  postfix,
+}: MonthMetricsProps) {
   const { language } = useAppSelector(({ language }) => language);
-
+  const { colors } = useTheme();
   return (
-    <View style={styles.statistics}>
+    <View style={[styles.statistics, { borderColor: colors.onBackground }]}>
       {isSuccess && (
         <>
           <Text variant="bodySmall">{title}</Text>
           <Text variant="headlineSmall">{metric}</Text>
+          <Text variant="bodyMedium">{postfix}</Text>
         </>
       )}
       {isLoading && <ActivityIndicator size="small" />}

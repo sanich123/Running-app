@@ -39,20 +39,23 @@ export default function MonthStatistics() {
         <MonthStatisticsMetrics
           title={MONTH_STATISTICS[language].activities}
           metric={monthStatistics?.activitiesReducedBySport[selectedType]?.totalItems}
+          postfix={''}
           isSuccess={isSuccess}
           isLoading={isLoading}
           isError={isError}
         />
         <MonthStatisticsMetrics
           title={MONTH_STATISTICS[language].distance}
-          metric={`${Math.round(monthStatistics?.activitiesReducedBySport[selectedType]?.totalDistance / 1000)} ${isRussian ? 'км' : 'km'}`}
+          metric={`${Math.round(monthStatistics?.activitiesReducedBySport[selectedType]?.totalDistance / 1000)}`}
+          postfix={`${isRussian ? 'км' : 'km'}`}
           isSuccess={isSuccess}
           isLoading={isLoading}
           isError={isError}
         />
         <MonthStatisticsMetrics
           title={MONTH_STATISTICS[language].duration}
-          metric={`${Math.round(getHoursMinutesFromMilliseconds(monthStatistics?.activitiesReducedBySport[selectedType]?.totalDuration).hours)} ${isRussian ? 'ч' : 'h'}`}
+          metric={`${Math.round(getHoursMinutesFromMilliseconds(monthStatistics?.activitiesReducedBySport[selectedType]?.totalDuration).hours)}`}
+          postfix={`${isRussian ? 'ч' : 'h'}`}
           isSuccess={isSuccess}
           isLoading={isLoading}
           isError={isError}

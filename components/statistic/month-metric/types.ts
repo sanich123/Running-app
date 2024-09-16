@@ -4,4 +4,5 @@ export type MonthMetricsProps = {
   isSuccess: boolean;
   isLoading: boolean;
   isError: boolean;
+  postfix: string;
 };

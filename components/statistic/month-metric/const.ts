@@ -2,7 +2,7 @@ import { LANGUAGES } from '@const/enums';
 
 export const MONTH_STATISTICS = {
   [LANGUAGES.russian]: {
-    activities: 'Тренировок',
+    activities: 'Тренировки',
     duration: 'Время',
     distance: 'Дистанция',
     report: 'Ваше недельный отчет',
