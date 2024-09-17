@@ -296,8 +296,8 @@ export const runichApi = createApi({
     }),
 
     getAnnualStatisticsByYearAndCategory: builder.query({
-      query: ({ userId, year, category }: { userId: string; year: string; category: string }) => ({
-        url: `/statistics/${userId}/year-category/${year}/${category}`,
+      query: ({ userId }: { userId: string }) => ({
+        url: `/statistics/${userId}/year-category`,
         headers,
       }),
       providesTags: [Tags.activities],
