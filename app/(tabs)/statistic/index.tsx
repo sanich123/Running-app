@@ -1,4 +1,4 @@
-import { ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import YearTypePicker from '@C/statistic/year-type-picker/year-type-picker';
 import { useState } from 'react';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
@@ -54,15 +54,7 @@ export default function Statistics() {
                 types: Object.keys(yearStats?.[year]),
               }))}
             />
-            <Charts year={selectedYear} months={yearStats?.[selectedYear][selectedType].months} />
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                padding: 10,
-                justifyContent: 'space-between',
-                marginVertical: 15,
-              }}>
+            <View style={styles.metricsContainer}>
               <MonthStatisticsMetrics
                 title={MONTH_STATISTICS[language].activities}
                 metric={yearStats?.[selectedYear][selectedType]?.totalYearItems}
@@ -88,6 +80,7 @@ export default function Statistics() {
                 isError={isError}
               />
             </View>
+            <Charts year={selectedYear} months={yearStats?.[selectedYear][selectedType].months} />
           </>
         )}
         {!isUserHasActivities && !isLoading && (
@@ -97,3 +90,13 @@ export default function Statistics() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  metricsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    padding: 10,
+    justifyContent: 'space-between',
+    marginVertical: 15,
+  },
+});

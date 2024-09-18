@@ -25,6 +25,7 @@ export default function Charts({ year, months }: { year: number; months: MonthMe
       items: reducedMetricsArr?.totalDurationArr,
     },
   };
+
   return (
     <View style={[{ backgroundColor: colors.background }]}>
       <BarChartWrapper
@@ -32,7 +33,6 @@ export default function Charts({ year, months }: { year: number; months: MonthMe
         year={year}
         title={chartToRender[chartValue]?.title}
       />
-
       <ChooseMetricsBtns chartValue={chartValue} setChartValue={setChartValue} />
     </View>
   );
