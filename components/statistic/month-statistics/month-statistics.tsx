@@ -10,10 +10,11 @@ import { useAppSelector } from '@R/typed-hooks';
 import { MONTH_STATISTICS } from '../month-metric/const';
 import { LANGUAGES } from '@const/enums';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
 
 export default function MonthStatistics() {
+  const { colors } = useTheme();
   const { userId, year, month } = useLocalSearchParams();
   const [selectedType, setSelectedType] = useState('all');
   const {
@@ -30,7 +31,7 @@ export default function MonthStatistics() {
   const isRussian = language === LANGUAGES.russian;
 
   return (
-    <View style={(isLoading || isError) && { flex: 1, justifyContent: 'center' }}>
+    <View style={(isLoading || isError) && { flex: 1, justifyContent: 'center', backgroundColor: colors.background }}>
       {isLoading && <ActivityIndicator size="large" />}
       {isError && <ErrorComponent error={error} />}
       {isSuccess && (

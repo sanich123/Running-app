@@ -39,7 +39,7 @@ export default function Statistics() {
           backgroundColor: colors.background,
         },
       ]}>
-      <View>
+      <View style={{ backgroundColor: colors.background }}>
         {isLoading && <ActivityIndicator size="large" />}
         {isError && <ErrorComponent error={error} />}
         {isSuccess && isUserHasActivities && (

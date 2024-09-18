@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    width: '100%',
     gap: 5,
   },
   calendarContainer: {

@@ -11,21 +11,7 @@ export default function Charts({ year, months }: { year: number; months: MonthMe
   const { colors } = useTheme();
   const [chartValue, setChartValue] = useState<ChooseMetricsBtnsValues>(ChooseMetricsBtnsValues.distance);
   const { language } = useAppSelector(({ language }) => language);
-  const reducedMetricsArr = reduceMonthMetrics(months, language);
-  const chartToRender = {
-    distance: {
-      title: 'Километры',
-      items: reducedMetricsArr?.totalDistanceArr,
-    },
-    amount: {
-      title: 'Тренировки',
-      items: reducedMetricsArr?.totalActivitiesArr,
-    },
-    duration: {
-      title: 'Время',
-      items: reducedMetricsArr?.totalDurationArr,
-    },
-  };
+  const chartToRender = reduceMonthMetrics(months, language);
 
   return (
     <View style={[{ backgroundColor: colors.background }]}>

@@ -6,6 +6,7 @@ import { Href, useRouter } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { useAuth } from '@A/context/auth-context';
 import { BarChartWrapperProps } from './types';
+import { useWindowDimensions } from 'react-native';
 
 export default function BarChartWrapper({ metricsArr, year, title }: BarChartWrapperProps) {
   const { push } = useRouter();
@@ -18,14 +19,15 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
     : 0;
 
   const { steps, maxValue, noOfSections } = getSteps(maxValueFromData);
-
+  const { width } = useWindowDimensions();
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text variant="headlineSmall" style={{ marginVertical: 15 }}>
         {title}
       </Text>
       <BarChart
-        barWidth={25}
+        width={width - 60}
+        barWidth={(width - 90) / 12}
         showReferenceLine1
         referenceLine1Position={medianValue}
         isAnimated

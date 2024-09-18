@@ -1,6 +1,7 @@
 import { SegmentedButtons } from 'react-native-paper';
 import { ChooseMetricsBtnsValues } from './types';
-import { METRICS_BTNS_VALUES } from './const';
+import { getMetricsBtnsValues } from './const';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function ChooseMetricsBtns({
   chartValue,
@@ -9,10 +10,11 @@ export default function ChooseMetricsBtns({
   chartValue: ChooseMetricsBtnsValues;
   setChartValue: (arg: ChooseMetricsBtnsValues) => void;
 }) {
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <SegmentedButtons
       style={{ marginTop: 20, marginHorizontal: 10 }}
-      buttons={METRICS_BTNS_VALUES}
+      buttons={getMetricsBtnsValues(language)}
       value={chartValue}
       onValueChange={(value) => setChartValue(value as ChooseMetricsBtnsValues)}
       density="small"
