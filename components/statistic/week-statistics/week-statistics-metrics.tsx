@@ -1,6 +1,6 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { View } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { WEEK_STATISTICS } from './const';
 
 export default function WeekStatisticsMetric({
