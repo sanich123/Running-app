@@ -19,18 +19,12 @@ export default function WeekStatisticsMetric({
   const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={{ display: 'flex', width: '33%', alignItems: 'center' }}>
-      {isError && (
-        <Text variant="bodyLarge" style={{ marginTop: 5 }}>
-          {WEEK_STATISTICS[language].error}
-        </Text>
-      )}
-      {isSuccess && (
-        <>
-          <Text variant="bodySmall">{title}</Text>
-          <Text variant="headlineSmall">{metrics}</Text>
-        </>
-      )}
-      {isLoading && <ActivityIndicator size="small" />}
+      <Text variant="bodySmall">{title}</Text>
+      <Text variant="headlineSmall">
+        {isLoading && ' '}
+        {isSuccess && metrics}
+        {isError && WEEK_STATISTICS[language].error}
+      </Text>
     </View>
   );
 }
