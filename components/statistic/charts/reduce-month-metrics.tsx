@@ -1,8 +1,9 @@
+import { LANGUAGES } from '@const/enums';
 import { AccumulatorValues, MonthMetrics } from './types';
 import { getMathRoundValueOrZero, mapNumberToMonth } from './util';
 import { Text } from 'react-native-paper';
 
-export function reduceMonthMetrics(monthMetrics: MonthMetrics[]) {
+export function reduceMonthMetrics(monthMetrics: MonthMetrics[], language: LANGUAGES) {
   if (monthMetrics?.length > 0) {
     const { totalDurationArr, totalDistanceArr, totalMedianSpeedArr, totalActivitiesArr } = monthMetrics?.reduce(
       (acc: AccumulatorValues, monthStatsObj: MonthMetrics, i: number) => {
@@ -12,7 +13,7 @@ export function reduceMonthMetrics(monthMetrics: MonthMetrics[]) {
         const itemsValue = getMathRoundValueOrZero(monthStatsObj[i].items);
         acc.totalDurationArr.push({
           value: durationValue,
-          label: mapNumberToMonth(i),
+          label: mapNumberToMonth(i, language),
           topLabelComponent: () => (
             <Text variant="bodySmall" style={{ fontSize: 10 }}>
               {durationValue || ''}
@@ -21,7 +22,7 @@ export function reduceMonthMetrics(monthMetrics: MonthMetrics[]) {
         });
         acc.totalDistanceArr.push({
           value: distanceValue,
-          label: mapNumberToMonth(i),
+          label: mapNumberToMonth(i, language),
           topLabelComponent: () => (
             <Text variant="bodySmall" style={{ fontSize: 10 }}>
               {distanceValue || ''}
@@ -30,7 +31,7 @@ export function reduceMonthMetrics(monthMetrics: MonthMetrics[]) {
         });
         acc.totalMedianSpeedArr.push({
           value: speedValue,
-          label: mapNumberToMonth(i),
+          label: mapNumberToMonth(i, language),
           topLabelComponent: () => (
             <Text variant="bodySmall" style={{ fontSize: 10 }}>
               {speedValue || ''}
@@ -39,7 +40,7 @@ export function reduceMonthMetrics(monthMetrics: MonthMetrics[]) {
         });
         acc.totalActivitiesArr.push({
           value: itemsValue,
-          label: mapNumberToMonth(i),
+          label: mapNumberToMonth(i, language),
           topLabelComponent: () => (
             <Text variant="bodySmall" style={{ fontSize: 12 }}>
               {itemsValue || ''}

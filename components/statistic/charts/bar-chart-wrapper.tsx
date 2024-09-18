@@ -28,6 +28,7 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
         barWidth={25}
         showReferenceLine1
         referenceLine1Position={medianValue}
+        isAnimated
         referenceLine1Config={{
           color: 'orange',
           thickness: 2,
@@ -47,6 +48,7 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
         maxValue={maxValue}
         areaChart-
         yAxisTextStyle={{ color: colors.onBackground }}
+        xAxisLabelTextStyle={{ color: colors.onBackground }}
         data={metricsArr}
         spacing={2}
         backgroundColor={colors.background}

@@ -5,12 +5,13 @@ import { useTheme } from 'react-native-paper';
 import { useState } from 'react';
 import { ChooseMetricsBtnsValues, MonthMetrics } from './types';
 import ChooseMetricsBtns from './choose-metrics-btns';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function Charts({ year, months }: { year: number; months: MonthMetrics[] }) {
   const { colors } = useTheme();
   const [chartValue, setChartValue] = useState<ChooseMetricsBtnsValues>(ChooseMetricsBtnsValues.distance);
-
-  const reducedMetricsArr = reduceMonthMetrics(months);
+  const { language } = useAppSelector(({ language }) => language);
+  const reducedMetricsArr = reduceMonthMetrics(months, language);
   const chartToRender = {
     distance: {
       title: 'Километры',
