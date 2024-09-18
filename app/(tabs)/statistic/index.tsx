@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import Charts from '@C/statistic/charts/charts';
 import { ActivityIndicator, useTheme, Text } from 'react-native-paper';
-import { useGetAnnualStatisticsByYearAndCategoryQuery } from '@R/runich-api/runich-api';
+import { useGetAnnualStatisticsByUserIdQuery } from '@R/runich-api/runich-api';
 import { useAuth } from '@A/context/auth-context';
 import ErrorComponent from '@C/error-component/error-component';
 
@@ -25,7 +25,7 @@ export default function Statistics() {
     isError,
     isSuccess,
     error,
-  } = useGetAnnualStatisticsByYearAndCategoryQuery({ userId: `${user?.id}` }, { skip: !user?.id });
+  } = useGetAnnualStatisticsByUserIdQuery({ userId: `${user?.id}` }, { skip: !user?.id });
   const isUserHasActivities = yearStats && selectedYear in yearStats;
   const isRussian = language === LANGUAGES.russian;
 
