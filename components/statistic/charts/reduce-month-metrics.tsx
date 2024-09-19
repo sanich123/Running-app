@@ -4,32 +4,38 @@ import { getMathRoundValueOrZero, mapNumberToMonth } from './util';
 import { Text } from 'react-native-paper';
 import { METRICS_TITLES } from './const';
 
-export function reduceMonthMetrics(monthMetrics: MonthMetrics[], language: LANGUAGES) {
-  const { totalDurationArr, totalDistanceArr, totalActivitiesArr } = monthMetrics?.reduce(
-    (acc: AccumulatorValues, monthStatsObj: MonthMetrics, i: number) => {
-      const durationValue = getMathRoundValueOrZero(monthStatsObj[i].totalDuration);
-      const distanceValue = getMathRoundValueOrZero(monthStatsObj[i].totalDistance);
-
-      const itemsValue = getMathRoundValueOrZero(monthStatsObj[i].items);
-      acc.totalDurationArr.push(prepareValuesToCharts(durationValue, language, i));
-      acc.totalDistanceArr.push(prepareValuesToCharts(distanceValue, language, i));
-      acc.totalActivitiesArr.push(prepareValuesToCharts(itemsValue, language, i));
+export function reduceMonthMetrics(monthMetrics: MonthMetrics, language: LANGUAGES) {
+  const { totalDuration, totalDistance, totalActivities } = [...Array(12).keys()].reduce(
+    (acc: AccumulatorValues, index: number) => {
+      let durationValue, distanceValue, itemsValue;
+      if (monthMetrics[index]) {
+        durationValue = getMathRoundValueOrZero(monthMetrics[index].totalDuration);
+        distanceValue = getMathRoundValueOrZero(monthMetrics[index].totalDistance);
+        itemsValue = getMathRoundValueOrZero(monthMetrics[index].totalItems);
+      } else {
+        durationValue = 0;
+        distanceValue = 0;
+        itemsValue = 0;
+      }
+      acc.totalDuration.push(prepareValuesToCharts(durationValue, language, index));
+      acc.totalDistance.push(prepareValuesToCharts(distanceValue, language, index));
+      acc.totalActivities.push(prepareValuesToCharts(itemsValue, language, index));
       return acc;
     },
-    { totalDurationArr: [], totalDistanceArr: [], totalMedianSpeedArr: [], totalActivitiesArr: [] },
+    { totalDuration: [], totalDistance: [], totalActivities: [] },
   );
   return {
     distance: {
       title: METRICS_TITLES[language].distance,
-      items: totalDistanceArr,
+      items: totalDistance,
     },
     amount: {
       title: METRICS_TITLES[language].activities,
-      items: totalActivitiesArr,
+      items: totalActivities,
     },
     duration: {
       title: METRICS_TITLES[language].duration,
-      items: totalDurationArr,
+      items: totalDuration,
     },
   };
 }

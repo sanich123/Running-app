@@ -7,7 +7,7 @@ import { ChooseMetricsBtnsValues, MonthMetrics } from './types';
 import ChooseMetricsBtns from './choose-metrics-btns';
 import { useAppSelector } from '@R/typed-hooks';
 
-export default function Charts({ year, months }: { year: number; months: MonthMetrics[] }) {
+export default function Charts({ year, months }: { year: number; months: MonthMetrics }) {
   const { colors } = useTheme();
   const [chartValue, setChartValue] = useState<ChooseMetricsBtnsValues>(ChooseMetricsBtnsValues.distance);
   const { language } = useAppSelector(({ language }) => language);

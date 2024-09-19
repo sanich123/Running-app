@@ -17,9 +17,9 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
   const medianValue = valuesArr?.length
     ? Math.round(valuesArr?.reduce((acc, value) => (acc += value), 0) / valuesArr?.length)
     : 0;
-
   const { steps, maxValue, noOfSections } = getSteps(maxValueFromData);
   const { width } = useWindowDimensions();
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text variant="headlineSmall" style={{ marginVertical: 15 }}>

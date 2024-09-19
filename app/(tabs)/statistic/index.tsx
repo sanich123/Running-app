@@ -26,23 +26,19 @@ export default function Statistics() {
     isSuccess,
     error,
   } = useGetAnnualStatisticsByUserIdQuery({ userId: `${user?.id}` }, { skip: !user?.id });
-  const isUserHasActivities = yearStats && selectedYear in yearStats;
   const isRussian = language === LANGUAGES.russian;
-
   return (
     <ScrollView
       contentContainerStyle={[
-        (isLoading || isError || !isUserHasActivities) && {
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
+        (isLoading || isError || !yearStats?.isUserHasActivities) && {
+          ...styles.isInCenter,
           backgroundColor: colors.background,
         },
       ]}>
       <View style={{ backgroundColor: colors.background }}>
         {isLoading && <ActivityIndicator size="large" />}
         {isError && <ErrorComponent error={error} />}
-        {isSuccess && isUserHasActivities && (
+        {isSuccess && yearStats?.isUserHasActivities && (
           <>
             <YearTypePicker
               setSelectedYear={setSelectedYear}
@@ -57,7 +53,7 @@ export default function Statistics() {
             <View style={styles.metricsContainer}>
               <MonthStatisticsMetrics
                 title={MONTH_STATISTICS[language].activities}
-                metric={yearStats?.[selectedYear][selectedType]?.totalYearItems}
+                metric={yearStats?.[selectedYear][selectedType]?.totalItems}
                 postfix={''}
                 isSuccess={isSuccess}
                 isLoading={isLoading}
@@ -65,7 +61,7 @@ export default function Statistics() {
               />
               <MonthStatisticsMetrics
                 title={MONTH_STATISTICS[language].distance}
-                metric={`${Math.round(yearStats?.[selectedYear][selectedType]?.totalYearDistance)}`}
+                metric={`${Math.round(yearStats?.[selectedYear][selectedType]?.totalDistance)}`}
                 postfix={`${isRussian ? 'км' : 'km'}`}
                 isSuccess={isSuccess}
                 isLoading={isLoading}
@@ -73,17 +69,17 @@ export default function Statistics() {
               />
               <MonthStatisticsMetrics
                 title={MONTH_STATISTICS[language].duration}
-                metric={`${Math.round(yearStats?.[selectedYear][selectedType]?.totalYearDuration)}`}
+                metric={`${Math.round(yearStats?.[selectedYear][selectedType]?.totalDuration)}`}
                 postfix={`${isRussian ? 'ч' : 'h'}`}
                 isSuccess={isSuccess}
                 isLoading={isLoading}
                 isError={isError}
               />
             </View>
-            <Charts year={selectedYear} months={yearStats?.[selectedYear][selectedType].months} />
+            <Charts year={selectedYear} months={yearStats?.[selectedYear][selectedType]} />
           </>
         )}
-        {!isUserHasActivities && !isLoading && (
+        {!yearStats?.isUserHasActivities && (
           <Text variant="titleLarge">{`${language === LANGUAGES.english ? 'There are no activities, so there are no statistics' : 'Если нет активностей - то нет и статистики :('}`}</Text>
         )}
       </View>
@@ -99,4 +95,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginVertical: 15,
   },
+  isInCenter: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 });
