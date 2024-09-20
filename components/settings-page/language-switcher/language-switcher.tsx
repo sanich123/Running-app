@@ -1,31 +1,30 @@
-import { useState } from 'react';
-import { SegmentedButtons } from 'react-native-paper';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useRef } from 'react';
+import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
+
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import LanguageSwitcherModal from '../language-switcher-modal/language-switcher-modal';
 import { LANGUAGES } from '@const/enums';
-import { SETTINGS } from '../const';
-import { changeLanguage } from '@R/language/language';
 
 export default function LanguageSwitcher() {
   const { language } = useAppSelector(({ language }) => language);
-  const dispatch = useAppDispatch();
-  const [languageValue, setLanguage] = useState<string>(language);
+  const { dark } = useTheme();
+  const languagesModalRef = useRef<BottomSheetModal>(null);
   return (
-    <SegmentedButtons
-      value={languageValue}
-      onValueChange={(value: string) => {
-        setLanguage(value);
-        dispatch(changeLanguage(value));
-      }}
-      buttons={[
-        {
-          value: LANGUAGES.english,
-          label: SETTINGS[language].eng,
-        },
-        {
-          value: LANGUAGES.russian,
-          label: SETTINGS[language].rus,
-        },
-      ]}
-    />
+    <>
+      <TouchableRipple
+        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+        borderless
+        onPress={() => languagesModalRef.current?.present()}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: 10,
+        }}>
+        <Text variant="titleMedium">{`${language === LANGUAGES.russian ? 'Язык' : 'Language'}`}</Text>
+      </TouchableRipple>
+      <Divider />
+      <LanguageSwitcherModal languagesModalRef={languagesModalRef} />
+    </>
   );
 }

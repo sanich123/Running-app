@@ -1,23 +1,30 @@
 import { ScrollView } from 'react-native';
-
 import LogoutBtn from './logout/logout-btn';
 import EmailNotificationsBtn from './email-notifications/email-notifications';
 import LanguageSwitcher from './language-switcher/language-switcher';
 import DeleteAccountBtn from './delete-account/delete-account';
-import PrefetcActivitiesBtn from './prefetch-activities-btn/prefetch-activities-btn';
+import PrefetchActivitiesBtn from './prefetch-activities-btn/prefetch-activities-btn';
 import ClearCacheBtn from './clear-cache-btn/clear-cache-btn';
 import MigrationBtn from './migration-btn/migration-btn';
+import { useTheme } from 'react-native-paper';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import ChangeTheme from './change-theme/change-theme';
 
 export default function SettingsPage() {
+  const { colors } = useTheme();
+
   return (
-    <ScrollView contentContainerStyle={{ padding: 10, display: 'flex', gap: 15 }}>
-      <LanguageSwitcher />
-      <ClearCacheBtn />
-      <PrefetcActivitiesBtn />
-      <EmailNotificationsBtn />
-      <LogoutBtn />
-      <DeleteAccountBtn />
-      <MigrationBtn />
+    <ScrollView contentContainerStyle={{ flex: 1, backgroundColor: colors.background }}>
+      <BottomSheetModalProvider>
+        <LanguageSwitcher />
+        <ClearCacheBtn />
+        <PrefetchActivitiesBtn />
+        <EmailNotificationsBtn />
+        <LogoutBtn />
+        <DeleteAccountBtn />
+        <MigrationBtn />
+        <ChangeTheme />
+      </BottomSheetModalProvider>
     </ScrollView>
   );
 }
