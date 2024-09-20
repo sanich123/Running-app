@@ -22,7 +22,7 @@ export default function ProfileStatistics() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {allUserStatistics?.totalItems.length && (
+      {allUserStatistics?.totalItems && (
         <>
           <MonthStatisticsMetrics
             title={MONTH_STATISTICS[language].activities}

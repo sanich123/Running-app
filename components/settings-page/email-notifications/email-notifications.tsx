@@ -17,7 +17,7 @@ export default function EmailNotificationsBtn() {
       {isSuccess && (
         <TouchableRipple rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`} borderless>
           <View style={styles.togglers}>
-            <Text variant="titleSmall">{`${profileInfo?.emailNotifications ? SETTINGS[language].switchOn : SETTINGS[language].switchOff} ${SETTINGS[language].emailNotifications}`}</Text>
+            <Text variant="titleSmall">{`${profileInfo?.emailNotifications ? SETTINGS[language].switchOff : SETTINGS[language].switchOn} ${SETTINGS[language].emailNotifications}`}</Text>
             <Switch
               value={profileInfo?.emailNotifications}
               onValueChange={async () => {

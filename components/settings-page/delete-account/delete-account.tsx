@@ -15,6 +15,7 @@ export default function DeleteAccountBtn() {
   const { user, signOut } = useAuth();
   const [deleteAccount, { isSuccess: isSuccessDeleting }] = useDeleteUserByUserIdMutation();
   const { dark, colors } = useTheme();
+
   useEffect(() => {
     if (isSuccessDeleting) {
       signOut?.();

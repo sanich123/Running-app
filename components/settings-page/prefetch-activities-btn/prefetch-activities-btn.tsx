@@ -12,7 +12,7 @@ export default function PrefetchActivitiesBtn() {
   return (
     <>
       <View style={styles.togglers}>
-        <Text variant="titleSmall">{`${isNeedToPrefetchActivities ? SETTINGS[language].switchOn : SETTINGS[language].switchOff} ${SETTINGS[language].prefetch}`}</Text>
+        <Text variant="titleSmall">{`${isNeedToPrefetchActivities ? SETTINGS[language].switchOff : SETTINGS[language].switchOn} ${SETTINGS[language].prefetch}`}</Text>
         <Switch
           value={isNeedToPrefetchActivities}
           onValueChange={() => {

@@ -83,6 +83,10 @@ export default function HomeStack() {
         name={`${ROUTES.activitiesList}/[...ids]`}
         options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].activities }}
       />
+      <Stack.Screen
+        name={`${ROUTES.migration}/${ROUTES.index}`}
+        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].migration }}
+      />
     </Stack>
   );
 }

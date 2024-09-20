@@ -1,4 +1,4 @@
-import { ScrollView } from 'react-native';
+import { Platform, ScrollView } from 'react-native';
 import LogoutBtn from './logout/logout-btn';
 import EmailNotificationsBtn from './email-notifications/email-notifications';
 import LanguageSwitcher from './language-switcher/language-switcher';
@@ -17,13 +17,13 @@ export default function SettingsPage() {
     <ScrollView contentContainerStyle={{ flex: 1, backgroundColor: colors.background }}>
       <BottomSheetModalProvider>
         <LanguageSwitcher />
+        {Platform.OS !== 'web' && <ChangeTheme />}
+        <MigrationBtn />
         <ClearCacheBtn />
         <PrefetchActivitiesBtn />
         <EmailNotificationsBtn />
         <LogoutBtn />
         <DeleteAccountBtn />
-        <MigrationBtn />
-        <ChangeTheme />
       </BottomSheetModalProvider>
     </ScrollView>
   );

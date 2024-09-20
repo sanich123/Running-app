@@ -15,16 +15,15 @@ export default function LanguageSwitcherModal({
   const { colors, dark } = useTheme();
   const [checked, setChecked] = useState(language);
   const dispatch = useAppDispatch();
-
   return (
     <BottomSheetModal
       ref={languagesModalRef}
       index={0}
       snapPoints={['20%']}
-      handleStyle={{ borderBottomColor: colors.backdrop }}
-      backgroundStyle={{ backgroundColor: colors.backdrop }}
+      handleStyle={{ backgroundColor: colors.onPrimary, borderTopStartRadius: 15, borderTopEndRadius: 15 }}
+      backgroundStyle={{ backgroundColor: colors.onPrimary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, backgroundColor: colors.background }}>
+      <BottomSheetView style={{ flex: 1, backgroundColor: colors.onSecondary }}>
         <View>
           {LANGUAGES_ARRAY[language].values.map(({ value, title }) => (
             <Fragment key={title}>
@@ -32,10 +31,7 @@ export default function LanguageSwitcherModal({
               <TouchableRipple
                 rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
                 borderless
-                style={{
-                  ...styles.radioBtn,
-                  backgroundColor: colors.backdrop,
-                }}
+                style={{ ...styles.radioBtn }}
                 onPress={() => {
                   setChecked(value);
                   dispatch(changeLanguage(value));

@@ -27,6 +27,7 @@ export default function Statistics() {
     error,
   } = useGetAnnualStatisticsByUserIdQuery({ userId: `${user?.id}` }, { skip: !user?.id });
   const isRussian = language === LANGUAGES.russian;
+
   return (
     <ScrollView
       contentContainerStyle={[
@@ -79,7 +80,7 @@ export default function Statistics() {
             <Charts year={selectedYear} months={yearStats?.[selectedYear][selectedType]} />
           </>
         )}
-        {!yearStats?.isUserHasActivities && (
+        {isSuccess && !yearStats?.isUserHasActivities && (
           <Text variant="titleLarge">{`${language === LANGUAGES.english ? 'There are no activities, so there are no statistics' : 'Если нет активностей - то нет и статистики :('}`}</Text>
         )}
       </View>

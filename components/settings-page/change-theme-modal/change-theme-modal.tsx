@@ -2,21 +2,25 @@ import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Fragment, RefObject, useState } from 'react';
 import { Appearance, View, ColorSchemeName, StyleSheet } from 'react-native';
 import { useTheme, Text, Divider, RadioButton, TouchableRipple } from 'react-native-paper';
+import { THEMES_ARRAY } from './const';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: RefObject<BottomSheetModal> }) {
+  const { language } = useAppSelector(({ language }) => language);
   const { colors, dark } = useTheme();
-  const [checked, setChecked] = useState('dark');
+  const [checked, setChecked] = useState<string | null>('dark');
+
   return (
     <BottomSheetModal
       ref={themesModalRef}
       index={0}
-      snapPoints={['20%']}
-      handleStyle={{ borderBottomColor: colors.backdrop }}
-      backgroundStyle={{ backgroundColor: colors.backdrop }}
+      snapPoints={['30%']}
+      handleStyle={{ backgroundColor: colors.onPrimary, borderTopStartRadius: 15, borderTopEndRadius: 15 }}
+      backgroundStyle={{ backgroundColor: colors.onPrimary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, backgroundColor: colors.background }}>
+      <BottomSheetView style={{ flex: 1, backgroundColor: colors.onSecondary }}>
         <View>
-          {['dark', 'light'].map((value) => (
+          {THEMES_ARRAY[language].map(({ value, title }) => (
             <Fragment key={value}>
               <Divider />
               <TouchableRipple
@@ -24,15 +28,15 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
                 borderless
                 style={{
                   ...styles.radioBtn,
-                  backgroundColor: colors.backdrop,
+                  // backgroundColor: colors.backdrop,
                 }}
                 onPress={() => {
                   setChecked(value);
                   Appearance.setColorScheme(value as ColorSchemeName);
                 }}>
                 <>
-                  <Text variant="titleMedium">{value}</Text>
-                  <RadioButton value={value} status={checked === value ? 'checked' : 'unchecked'} />
+                  <Text variant="titleMedium">{title}</Text>
+                  <RadioButton value={`${value}`} status={checked === value ? 'checked' : 'unchecked'} />
                 </>
               </TouchableRipple>
             </Fragment>
@@ -50,7 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: '50%',
+    height: '33%',
     padding: 10,
   },
 });
