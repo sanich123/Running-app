@@ -46,10 +46,12 @@ export default function Statistics() {
               setSelectedType={setSelectedType}
               selectedYear={selectedYear}
               selectedType={selectedType}
-              availableYearsAndTypes={Object.keys(yearStats).map((year) => ({
-                year,
-                types: Object.keys(yearStats?.[year]),
-              }))}
+              availableYearsAndTypes={Object.keys(yearStats)
+                .filter((year) => year !== 'isUserHasActivities')
+                .map((year) => ({
+                  year,
+                  types: Object.keys(yearStats?.[year]),
+                }))}
             />
             <View style={styles.metricsContainer}>
               <MonthStatisticsMetrics

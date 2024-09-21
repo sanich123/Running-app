@@ -68,7 +68,7 @@ export default function Map() {
               requestForegroundPermission={requestForegroundPermission}
             />
           )}
-          {!backgroundPermissionStatus?.granted && (
+          {Platform.OS !== 'ios' && !backgroundPermissionStatus?.granted && (
             <BackgroundLocationSwitcher
               backgroundPermissionStatus={!!backgroundPermissionStatus?.granted}
               backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}

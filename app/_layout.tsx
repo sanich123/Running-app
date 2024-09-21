@@ -16,6 +16,7 @@ import expo from '../app.config';
 export default function RootLayout() {
   const { loaded, theme } = useGetFontsThemeSettings();
   const colorScheme = useColorScheme();
+
   const paperTheme =
     colorScheme === 'dark' ? { ...MD3DarkTheme, colors: theme.dark } : { ...MD3LightTheme, colors: theme.light };
 

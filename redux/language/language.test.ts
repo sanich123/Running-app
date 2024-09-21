@@ -6,6 +6,9 @@ describe('Language slice', () => {
     expect(reducer(undefined, { type: '' })).toEqual(LANGUAGE_INITIAL_STATE);
   });
   it('should change language', () => {
-    expect(reducer(LANGUAGE_INITIAL_STATE, changeLanguage(LANGUAGES.russian))).toEqual({ language: LANGUAGES.russian });
+    expect(reducer(LANGUAGE_INITIAL_STATE, changeLanguage(LANGUAGES.russian))).toEqual({
+      language: LANGUAGES.russian,
+      theme: null,
+    });
   });
 });

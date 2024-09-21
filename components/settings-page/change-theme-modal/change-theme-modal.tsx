@@ -3,12 +3,14 @@ import { Fragment, RefObject, useState } from 'react';
 import { Appearance, View, ColorSchemeName, StyleSheet } from 'react-native';
 import { useTheme, Text, Divider, RadioButton, TouchableRipple } from 'react-native-paper';
 import { THEMES_ARRAY } from './const';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { changeTheme } from '@R/language/language';
 
 export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: RefObject<BottomSheetModal> }) {
   const { language } = useAppSelector(({ language }) => language);
   const { colors, dark } = useTheme();
   const [checked, setChecked] = useState<string | null>('dark');
+  const dispatch = useAppDispatch();
 
   return (
     <BottomSheetModal
@@ -26,13 +28,11 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
               <TouchableRipple
                 rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
                 borderless
-                style={{
-                  ...styles.radioBtn,
-                  // backgroundColor: colors.backdrop,
-                }}
+                style={styles.radioBtn}
                 onPress={() => {
                   setChecked(value);
                   Appearance.setColorScheme(value as ColorSchemeName);
+                  dispatch(changeTheme(value));
                 }}>
                 <>
                   <Text variant="titleMedium">{title}</Text>
