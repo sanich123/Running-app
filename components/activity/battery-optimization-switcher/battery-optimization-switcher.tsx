@@ -6,6 +6,8 @@ import { Switch, Text } from 'react-native-paper';
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
 import { RefObject, useEffect } from 'react';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useAppSelector } from '@R/typed-hooks';
+import { LANGUAGES } from '@const/enums';
 
 export default function BatteryOptimizationSwitcher({
   isAppOptimizedByPhone,
@@ -28,10 +30,10 @@ export default function BatteryOptimizationSwitcher({
       });
     }
   }, [isAppOptimizedByPhone, setIsAppOptimizedByPhone, isNeedToRefreshPermission, setIsNeedToRefreshPermission]);
-
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={styles.switcherWrapper}>
-      <Text variant="titleSmall">{`${isAppOptimizedByPhone ? 'Отключить оптимизацию батареи' : 'Телефон не оптимизирует батарею'}`}</Text>
+      <Text variant="titleSmall">{`${language === LANGUAGES.russian ? 'Отключить оптимизацию батареи' : 'Turn off battery optimization'}`}</Text>
       <Switch
         value={!isAppOptimizedByPhone}
         onValueChange={async () => {

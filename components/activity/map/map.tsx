@@ -25,10 +25,12 @@ export default function Map() {
   const batteryOptimizationEnabledModalRef = useRef<BottomSheetModal>(null);
   const [isNeedToRefreshPermission, setIsNeedToRefreshPermission] = useState(false);
   const isReadyToShowLocationOnMap =
-    isLocationEnabled &&
-    foregroundPermissionStatus?.granted &&
-    backgroundPermissionStatus?.granted &&
-    !isAppOptimizedByPhone;
+    Platform.OS === 'android'
+      ? isLocationEnabled &&
+        foregroundPermissionStatus?.granted &&
+        backgroundPermissionStatus?.granted &&
+        !isAppOptimizedByPhone
+      : foregroundPermissionStatus?.granted && backgroundPermissionStatus?.granted;
 
   return (
     <>
@@ -68,7 +70,7 @@ export default function Map() {
               requestForegroundPermission={requestForegroundPermission}
             />
           )}
-          {Platform.OS !== 'ios' && !backgroundPermissionStatus?.granted && (
+          {!backgroundPermissionStatus?.granted && (
             <BackgroundLocationSwitcher
               backgroundPermissionStatus={!!backgroundPermissionStatus?.granted}
               backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}

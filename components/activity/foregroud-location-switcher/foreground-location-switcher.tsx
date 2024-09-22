@@ -1,3 +1,5 @@
+import { LANGUAGES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { LocationPermissionResponse } from 'expo-location';
 import { View, StyleSheet } from 'react-native';
@@ -10,9 +12,10 @@ export default function ForegroundLocationSwitcher({
   foregroundPermissionStatus: LocationPermissionResponse;
   requestForegroundPermission: () => Promise<LocationPermissionResponse>;
 }) {
+  const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={styles.switcherWrapper}>
-      <Text variant="titleSmall">{`${foregroundPermissionStatus ? 'Отслеживание местоположения' : 'Включить отслеживание местоположения'}`}</Text>
+      <Text variant="titleSmall">{`${language === LANGUAGES.russian ? 'Включить отслеживание местоположения' : 'Turn on access to foreground location service'}`}</Text>
       <Switch
         value={foregroundPermissionStatus.granted}
         onValueChange={async () => {

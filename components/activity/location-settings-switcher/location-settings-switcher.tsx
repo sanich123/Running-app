@@ -4,6 +4,8 @@ import { hasServicesEnabledAsync } from 'expo-location';
 import { useEffect, useState } from 'react';
 import { Switch, Text } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
+import { useAppSelector } from '@R/typed-hooks';
+import { LANGUAGES } from '@const/enums';
 
 export default function LocationSettingsSwitcher({
   isLocationEnabled,
@@ -13,7 +15,7 @@ export default function LocationSettingsSwitcher({
   setIsLocationEnabled: (arg: boolean) => void;
 }) {
   const [isNeedToRefreshPermission, setIsNeedToRefreshPermission] = useState(false);
-
+  const { language } = useAppSelector(({ language }) => language);
   useEffect(() => {
     async function isLocationServicesEnabled() {
       const isLocationEnabled = await hasServicesEnabledAsync();
@@ -27,7 +29,7 @@ export default function LocationSettingsSwitcher({
 
   return (
     <View style={styles.switcherWrapper}>
-      <Text variant="titleSmall">{`${isLocationEnabled ? 'Телефон получает местоположение' : 'Включить местоположение в настройках'}`}</Text>
+      <Text variant="titleSmall">{`${language === LANGUAGES.russian ? 'Включить местоположение в настройках' : 'Turn on location services in settings'}`}</Text>
       <Switch
         value={isLocationEnabled}
         onValueChange={async () => {
