@@ -35,6 +35,7 @@ export default function WeekStatistics() {
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       onPress={() =>
+        weekStatistics?.totalItems &&
         push(`/${ROUTES.home}/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${month}` as Href)
       }
       style={[styles.container, { backgroundColor: colors.background }]}>

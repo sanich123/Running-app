@@ -5,14 +5,15 @@ import { CustomImage } from '@C/custom-image/custom-image';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import { ROUTES } from '@const/enums';
 import { Href, usePathname, useRouter } from 'expo-router';
-import { Fragment, memo, useContext } from 'react';
+import { Fragment, memo, useRef } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import { LikesProps, LikesSize, MAX_IN_ROW, MAX_NUMBER_IN_ROW_OTHER_PAGE, SHIFT_RIGHT } from './const';
 import { useAppDispatch } from '@R/typed-hooks';
 import { setActivityIdWhichLikesToDownload } from '@R/main-feed/main-feed';
-import { ModalLikesListContext } from '@U/context/activity-card-btns';
+import ModalLikesList from '@C/modals/likes-list/modal-likes-list';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default memo(function Likes({ activityId, size }: LikesProps) {
   const dispatch = useAppDispatch();
@@ -20,12 +21,11 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
   const { push } = useRouter();
   const pathname = usePathname();
   const { data: likes, isLoading, isError } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
-  const { modalRef } = useContext(ModalLikesListContext);
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
   const moreThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length > MAX_IN_ROW;
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
-
+  const likesListModal = useRef<BottomSheetModal>(null);
   return (
     <>
       {likes?.length > 0 ? (
@@ -35,7 +35,7 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
           onPress={() => {
             if (Platform.OS !== 'web' && !pathname.includes(ROUTES.activity) && !pathname.includes(ROUTES.comment)) {
               dispatch(setActivityIdWhichLikesToDownload(activityId));
-              modalRef.current?.present();
+              likesListModal.current?.present();
             } else {
               push(`/${place}/${ROUTES.likes}/${activityId}` as Href);
             }
@@ -86,6 +86,7 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
       ) : (
         <View />
       )}
+      <ModalLikesList bottomSheetModalRef={likesListModal} likesLength={likes?.length} />
     </>
   );
 });

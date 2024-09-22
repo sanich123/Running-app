@@ -20,10 +20,9 @@ export default function ChooseSportModal({
       ref={bottomSheetModalRef}
       index={0}
       snapPoints={['25%']}
-      handleStyle={{ borderBottomColor: colors.onBackground }}
-      backgroundStyle={{ backgroundColor: colors.background }}
+      backgroundStyle={{ backgroundColor: colors.secondaryContainer }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 5, backgroundColor: colors.background }}>
+      <BottomSheetView style={{ flex: 1, padding: 10, backgroundColor: colors.secondaryContainer }}>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text variant="bodyLarge">
             {language === LANGUAGES.russian ? 'Выберите тип спорта' : 'Choose type of sport'}

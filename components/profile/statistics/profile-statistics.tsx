@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/auth-context';
 import { MONTH_STATISTICS } from '@C/statistic/month-metric/const';
 import MonthStatisticsMetrics from '@C/statistic/month-metric/month-metric';
 import { LANGUAGES } from '@const/enums';
@@ -8,21 +7,20 @@ import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
-export default function ProfileStatistics() {
+export default function ProfileStatistics({ whosProfile }: { whosProfile: string }) {
   const { colors } = useTheme();
-  const { user } = useAuth();
   const {
     data: allUserStatistics,
     isLoading,
     isError,
     isSuccess,
-  } = useGetAllTimeStatisticsByUserIdQuery({ userId: `${user?.id}` }, { skip: !user?.id });
+  } = useGetAllTimeStatisticsByUserIdQuery({ userId: whosProfile }, { skip: !whosProfile });
   const { language } = useAppSelector(({ language }) => language);
   const isRussian = language === LANGUAGES.russian;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {allUserStatistics?.totalItems && (
+      {allUserStatistics?.totalItems ? (
         <>
           <MonthStatisticsMetrics
             title={MONTH_STATISTICS[language].activities}
@@ -49,7 +47,7 @@ export default function ProfileStatistics() {
             postfix={`${isRussian ? 'ч' : 'h'}`}
           />
         </>
-      )}
+      ) : null}
     </View>
   );
 }

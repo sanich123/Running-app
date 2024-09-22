@@ -7,7 +7,13 @@ import { RefObject } from 'react';
 
 import { Divider, useTheme } from 'react-native-paper';
 
-export default function ModalLikesList({ bottomSheetModalRef }: { bottomSheetModalRef: RefObject<BottomSheetModal> }) {
+export default function ModalLikesList({
+  bottomSheetModalRef,
+  likesLength,
+}: {
+  bottomSheetModalRef: RefObject<BottomSheetModal>;
+  likesLength: number;
+}) {
   const { colors } = useTheme();
   const { activityIdWhichLikesToDownload } = useAppSelector(({ mainFeed }) => mainFeed);
   const { data: likes } = useGetLikesByActivityIdQuery(`${activityIdWhichLikesToDownload}`, {
@@ -24,12 +30,12 @@ export default function ModalLikesList({ bottomSheetModalRef }: { bottomSheetMod
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
-      index={getIndexOfSnapPointByLikesLength(likes)}
-      snapPoints={['12%', '20%', '30%', '50%', '70%', '80%']}
-      backgroundStyle={{ backgroundColor: colors.background }}
+      index={getIndexOfSnapPointByLikesLength(likesLength)}
+      snapPoints={['12%', '20%', '30%', '50%']}
+      backgroundStyle={{ backgroundColor: colors.secondaryContainer }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
       <BottomSheetFlatList
-        style={{ backgroundColor: colors.background }}
+        style={{ backgroundColor: colors.secondaryContainer }}
         data={likes}
         renderItem={({ item: { profile } }: { item: { profile: ProfileType } }) => (
           <UserListItem

@@ -1,6 +1,7 @@
 import { useAuth } from '@A/context/auth-context';
 import ErrorComponent from '@C/error-component/error-component';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useGetActivitiesByUserIdQuery } from '@R/runich-api/runich-api';
 import { useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
@@ -16,13 +17,16 @@ export default function Activities() {
 
   return (
     <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
-      <InfiniteScrollList
-        dataToRender={data?.activities}
-        page={page}
-        setPage={setPage}
-        refetch={refetch}
-        isLastPage={data?.isLastPage}
-      />
+      <BottomSheetModalProvider>
+        <InfiniteScrollList
+          dataToRender={data?.activities}
+          page={page}
+          setPage={setPage}
+          refetch={refetch}
+          isLastPage={data?.isLastPage}
+        />
+      </BottomSheetModalProvider>
+
       {isLoading && <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />}
       {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}
     </SafeAreaView>

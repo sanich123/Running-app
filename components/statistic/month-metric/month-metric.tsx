@@ -19,7 +19,7 @@ export default function MonthStatisticsMetrics({
       {isSuccess && (
         <>
           <Text variant="bodySmall">{title}</Text>
-          <Text variant="headlineSmall">{metric}</Text>
+          <Text variant="headlineMedium">{metric}</Text>
           <Text variant="bodyMedium">{postfix}</Text>
         </>
       )}

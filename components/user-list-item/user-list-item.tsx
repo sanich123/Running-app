@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5,
-    marginLeft: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
   },
   contentWrapper: {
     flexDirection: 'row',

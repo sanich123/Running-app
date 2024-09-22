@@ -75,7 +75,7 @@ export default function ProfilePage() {
               <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
               {whosProfile !== user?.id && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
             </View>
-            <ProfileStatistics />
+            <ProfileStatistics whosProfile={`${whosProfile}`} />
           </>
         ) : null}
       </View>

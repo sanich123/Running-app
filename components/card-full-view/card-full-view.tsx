@@ -10,23 +10,20 @@ import { ActivityIndicator } from 'react-native-paper';
 
 import KmSplit from './km-split/km-split';
 import Metrics from './metrics/metrics';
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { ModalLikesListContext } from '@U/context/activity-card-btns';
-import ModalLikesList from '@C/modals/likes-list/modal-likes-list';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+
 
 export default function CardFullView() {
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error, isError, refetch } = useGetActivityByActivityIdQuery(`${activityId}`);
   const fullViewRef = useRef(null);
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
-      <ModalLikesListContext.Provider value={{ modalRef: bottomSheetModalRef }}>
         <BottomSheetModalProvider>
           <>
-            <ModalLikesList bottomSheetModalRef={bottomSheetModalRef} />
             <View ref={fullViewRef} collapsable={false}>
               {isLoading && <ActivityIndicator size="large" />}
               {error ? <ErrorComponent error={error} refetch={refetch} /> : null}
@@ -59,7 +56,6 @@ export default function CardFullView() {
             <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
           </>
         </BottomSheetModalProvider>
-      </ModalLikesListContext.Provider>
     </ScrollView>
   );
 }
