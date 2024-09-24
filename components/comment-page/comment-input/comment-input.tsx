@@ -40,7 +40,18 @@ export default function CommentInput({
         toast.show(COMMENT_INPUT[language].errorSending);
       }
     }
-  }, [activityId, dispatch, isError, isErrorUpdating, isSuccess, isSuccessUpdating, language, setIdOfUpdatingComment, setIsShowingTextInput, toast]);
+  }, [
+    activityId,
+    dispatch,
+    isError,
+    isErrorUpdating,
+    isSuccess,
+    isSuccessUpdating,
+    language,
+    setIdOfUpdatingComment,
+    setIsShowingTextInput,
+    toast,
+  ]);
 
   return (
     <TextInput
@@ -49,6 +60,7 @@ export default function CommentInput({
       placeholder={COMMENT_INPUT[language].placeholder}
       value={comment}
       onChangeText={(comment) => setComment(comment)}
+      onBlur={() => setIsShowingTextInput(false)}
       disabled={isCommentSending || isUpdatingComment}
       right={
         <TextInput.Icon

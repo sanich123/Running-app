@@ -12,6 +12,7 @@ import { ToastProvider } from 'react-native-toast-notifications';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import expo from '../app.config';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 export default function RootLayout() {
   const { loaded, theme } = useGetFontsThemeSettings();
@@ -27,19 +28,21 @@ export default function RootLayout() {
       ) : (
         <Provider store={store}>
           <PersistGate loading={<ActivityIndicator size="large" />} persistor={persistor}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-              <PaperProvider theme={paperTheme}>
-                <AuthProvider>
-                  <GestureHandlerRootView style={{ flex: 1 }}>
-                    <ToastProvider>
-                      <RootSiblingParent>
-                        <Slot />
-                      </RootSiblingParent>
-                    </ToastProvider>
-                  </GestureHandlerRootView>
-                </AuthProvider>
-              </PaperProvider>
-            </ThemeProvider>
+            <BottomSheetModalProvider>
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <PaperProvider theme={paperTheme}>
+                  <AuthProvider>
+                    <GestureHandlerRootView style={{ flex: 1 }}>
+                      <ToastProvider>
+                        <RootSiblingParent>
+                          <Slot />
+                        </RootSiblingParent>
+                      </ToastProvider>
+                    </GestureHandlerRootView>
+                  </AuthProvider>
+                </PaperProvider>
+              </ThemeProvider>
+            </BottomSheetModalProvider>
           </PersistGate>
         </Provider>
       )}

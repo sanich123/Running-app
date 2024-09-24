@@ -6,6 +6,7 @@ import Comments from '@C/comment-page/comments/comments';
 import ErrorComponent from '@C/error-component/error-component';
 import UserNameSurname from '@C/user-name-surname/user-name-surname';
 import UserSportDate from '@C/user-sport-date/user-sport-date';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -22,34 +23,36 @@ export default function CommentFullViewPage() {
 
   return (
     <ScrollView contentContainerStyle={[(isLoading || isError) && styles.isInCenter]}>
-      {error || activity?.message ? <ErrorComponent error={error || activity} /> : null}
-      {isLoading && <ActivityIndicator size="large" />}
-      {activity && (
-        <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
-          {(activity?.mapPhotoUrl || activity?.photoVideoUrls?.length > 0) && (
-            <MediaList
-              photoVideoUrls={activity?.photoVideoUrls}
-              mapPhotoUrl={activity?.mapPhotoUrl}
-              id={`${activityId}`}
-            />
-          )}
-          <Card.Content style={styles.contentLayout}>
-            <Text variant="titleLarge" style={styles.title}>
-              {activity?.title}
-            </Text>
-            <UserNameSurname userId={activity?.user_id} size="titleMedium" />
-            <View style={styles.columnsLayout}>
-              <UserSportDate sport={activity?.sport} date={activity?.date} />
-              <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
-            </View>
-            <View style={styles.columnsLayout}>
-              <LikeBtn activityId={activity?.id} />
-              <Likes activityId={activity?.id} size={LikesSize.big} />
-            </View>
-          </Card.Content>
-          <Comments activityId={`${activityId}`} commentsLength={activity?._count.comments} />
-        </View>
-      )}
+      <BottomSheetModalProvider>
+        {error || activity?.message ? <ErrorComponent error={error || activity} /> : null}
+        {isLoading && <ActivityIndicator size="large" />}
+        {activity && (
+          <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
+            {(activity?.mapPhotoUrl || activity?.photoVideoUrls?.length > 0) && (
+              <MediaList
+                photoVideoUrls={activity?.photoVideoUrls}
+                mapPhotoUrl={activity?.mapPhotoUrl}
+                id={`${activityId}`}
+              />
+            )}
+            <Card.Content style={styles.contentLayout}>
+              <Text variant="titleLarge" style={styles.title}>
+                {activity?.title}
+              </Text>
+              <UserNameSurname userId={activity?.user_id} size="titleMedium" />
+              <View style={styles.columnsLayout}>
+                <UserSportDate sport={activity?.sport} date={activity?.date} />
+                <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
+              </View>
+              <View style={styles.columnsLayout}>
+                <LikeBtn activityId={activity?.id} />
+                <Likes activityId={activity?.id} size={LikesSize.big} />
+              </View>
+            </Card.Content>
+            {/* <Comments activityId={`${activityId}`} /> */}
+          </View>
+        )}
+      </BottomSheetModalProvider>
     </ScrollView>
   );
 }

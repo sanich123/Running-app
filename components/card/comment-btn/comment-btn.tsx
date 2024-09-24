@@ -3,10 +3,12 @@ import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ROUTES } from '@const/enums';
 import { Href, usePathname, useRouter } from 'expo-router';
-import { useContext, memo, useState, useEffect } from 'react';
-import { View } from 'react-native';
+import { useContext, memo, useState, useEffect, useRef } from 'react';
+import { Platform, View } from 'react-native';
 import { IconButton, MD3Colors, Badge } from 'react-native-paper';
 import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import CommentsListModal from '@C/modals/comments-list-modal/comments-list-modal';
 
 export default memo(function CommentBtn({
   activityId,
@@ -27,7 +29,7 @@ export default memo(function CommentBtn({
   const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : commentsCount;
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
-
+  const commentsModalRef = useRef<BottomSheetModal>(null);
   useEffect(() => {
     if (activityIdWhichCommentsToUpdate === activityId) {
       setIsNeedToGetUpdatedComments(true);
@@ -41,15 +43,21 @@ export default memo(function CommentBtn({
           {whatLengthToRender}
         </Badge>
       ) : null}
-
       <IconButton
         testID={COMMENT_BTN_TEST_ID}
         icon={COMMENT_BTN_ICON}
         iconColor={MD3Colors.primary50}
         size={25}
-        onPress={() => push(`/${place}/${ROUTES.comment}/${activityId}` as Href)}
+        onPress={() => {
+          if (Platform.OS === 'web') {
+            push(`/${place}/${ROUTES.comment}/${activityId}` as Href);
+          } else {
+            commentsModalRef.current?.present();
+          }
+        }}
         disabled={isLoading || isDisabled || !!commentsCount?.message || isErrorLoadingComments || isLoadingComments}
       />
+      <CommentsListModal commentsModalRef={commentsModalRef} activityId={activityId} />
     </View>
   );
 });
