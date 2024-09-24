@@ -2,7 +2,6 @@ import LikeBtn from '@C/card/like-btn/like-btn';
 import { LikesSize } from '@C/card/likes/const';
 import Likes from '@C/card/likes/likes';
 import MediaList from '@C/card/media-list/media-list';
-import Comments from '@C/comment-page/comments/comments';
 import ErrorComponent from '@C/error-component/error-component';
 import UserNameSurname from '@C/user-name-surname/user-name-surname';
 import UserSportDate from '@C/user-sport-date/user-sport-date';
@@ -49,7 +48,6 @@ export default function CommentFullViewPage() {
                 <Likes activityId={activity?.id} size={LikesSize.big} />
               </View>
             </Card.Content>
-            {/* <Comments activityId={`${activityId}`} /> */}
           </View>
         )}
       </BottomSheetModalProvider>
