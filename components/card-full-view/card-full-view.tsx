@@ -5,7 +5,7 @@ import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useRef } from 'react';
-import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
 import KmSplit from './km-split/km-split';
@@ -23,17 +23,16 @@ export default function CardFullView() {
     refetch,
   } = useGetActivityByActivityIdQuery(`${activityId}`);
   const fullViewRef = useRef(null);
-  const { height } = useWindowDimensions();
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={((isLoading || isError) && styles.isInCenter, isSuccess && { height })}>
+      contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
       <BottomSheetModalProvider>
         <>
           <View ref={fullViewRef} collapsable={false}>
             {isLoading && <ActivityIndicator size="large" />}
             {error ? <ErrorComponent error={error} refetch={refetch} /> : null}
-            {activity && (
+            {isSuccess && (
               <>
                 <Card
                   isShowDeleteBtn
