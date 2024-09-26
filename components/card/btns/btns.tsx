@@ -6,8 +6,7 @@ import ShareBtn from '@C/card/share-btn/share-btn';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { useState, memo } from 'react';
 import { StyleSheet, View } from 'react-native';
-
-import { CardBtnsProps } from './const';
+import { CardBtnsProps } from '../types';
 
 export default memo(function CardBtns({
   activityId,

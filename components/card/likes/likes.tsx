@@ -12,7 +12,7 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { LikesProps, LikesSize, MAX_IN_ROW, MAX_NUMBER_IN_ROW_OTHER_PAGE, SHIFT_RIGHT } from './const';
 import { useAppDispatch } from '@R/typed-hooks';
 import { setActivityIdWhichLikesToDownload } from '@R/main-feed/main-feed';
-import ModalLikesList from '@C/modals/likes-list/modal-likes-list';
+import ModalLikesList from '@C/card/modal-likes-list/modal-likes-list';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default memo(function Likes({ activityId, size }: LikesProps) {

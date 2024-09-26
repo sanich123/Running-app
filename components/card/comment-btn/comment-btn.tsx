@@ -8,15 +8,10 @@ import { Platform, View } from 'react-native';
 import { IconButton, MD3Colors, Badge } from 'react-native-paper';
 import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import CommentsListModal from '@C/modals/comments-list-modal/comments-list-modal';
+import CommentsListModal from '@C/comment-page/comments-list-modal/comments-list-modal';
+import { CommentBtnProps } from '../types';
 
-export default memo(function CommentBtn({
-  activityId,
-  commentsLength,
-}: {
-  activityId: string;
-  commentsLength: number;
-}) {
+export default memo(function CommentBtn({ activityId, commentsLength }: CommentBtnProps) {
   const { push } = useRouter();
   const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);

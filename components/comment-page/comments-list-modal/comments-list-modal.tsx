@@ -1,5 +1,5 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { RefObject, useCallback, useState } from 'react';
+import { RefObject, useCallback, useMemo, useState } from 'react';
 import { FAB, useTheme } from 'react-native-paper';
 import Comments from '@C/comment-page/comments/comments';
 import { View } from 'react-native';
@@ -16,17 +16,19 @@ export default function CommentsListModal({
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
   const [idOfUpdatingComment, setIdOfUpdatingComment] = useState('');
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop {...props} disappearsOnIndex={0} appearsOnIndex={1} />,
+    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
+  const snapPoints = useMemo(() => ['20%', '25%', '55%', '65%', '90%'], []);
 
   return (
     <BottomSheetModal
       ref={commentsModalRef}
       index={0}
-      snapPoints={['20%', '25%', '55%', '65%', '90%']}
+      snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
-      backgroundStyle={{ backgroundColor: colors.secondaryContainer }}
+      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+      backgroundStyle={{ backgroundColor: colors.onSecondary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
       <View style={{ paddingHorizontal: 10, marginBottom: 5 }}>
         {isShowingTextInput && !idOfUpdatingComment ? (

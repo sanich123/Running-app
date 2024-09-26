@@ -1,5 +1,5 @@
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { Fragment, RefObject, useState } from 'react';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { Fragment, RefObject, useCallback, useState } from 'react';
 import { Appearance, View, ColorSchemeName, StyleSheet } from 'react-native';
 import { useTheme, Text, Divider, RadioButton, TouchableRipple } from 'react-native-paper';
 import { THEMES_ARRAY } from './const';
@@ -11,14 +11,18 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
   const { colors, dark } = useTheme();
   const [checked, setChecked] = useState<string | null>('dark');
   const dispatch = useAppDispatch();
-
+  const renderBackdrop = useCallback(
+    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    [],
+  );
   return (
     <BottomSheetModal
       ref={themesModalRef}
       index={0}
       snapPoints={['30%']}
-      handleStyle={{ backgroundColor: colors.onPrimary, borderTopStartRadius: 15, borderTopEndRadius: 15 }}
-      backgroundStyle={{ backgroundColor: colors.onPrimary }}
+      backdropComponent={renderBackdrop}
+      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+      backgroundStyle={{ backgroundColor: colors.onSecondary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
       <BottomSheetView style={{ flex: 1, backgroundColor: colors.onSecondary }}>
         <View>

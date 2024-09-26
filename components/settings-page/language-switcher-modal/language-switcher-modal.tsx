@@ -1,7 +1,7 @@
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { changeLanguage } from '@R/language/language';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { Fragment, RefObject, useState } from 'react';
+import { Fragment, RefObject, useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Divider, RadioButton, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { LANGUAGES_ARRAY } from './const';
@@ -15,13 +15,18 @@ export default function LanguageSwitcherModal({
   const { colors, dark } = useTheme();
   const [checked, setChecked] = useState(language);
   const dispatch = useAppDispatch();
+  const renderBackdrop = useCallback(
+    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    [],
+  );
   return (
     <BottomSheetModal
       ref={languagesModalRef}
       index={0}
       snapPoints={['20%']}
-      handleStyle={{ backgroundColor: colors.onPrimary, borderTopStartRadius: 15, borderTopEndRadius: 15 }}
-      backgroundStyle={{ backgroundColor: colors.onPrimary }}
+      backdropComponent={renderBackdrop}
+      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+      backgroundStyle={{ backgroundColor: colors.onSecondary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
       <BottomSheetView style={{ flex: 1, backgroundColor: colors.onSecondary }}>
         <View>

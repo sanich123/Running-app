@@ -2,8 +2,8 @@ import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { saveSport } from '@R/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { RefObject } from 'react';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { RefObject, useCallback } from 'react';
 import { View } from 'react-native';
 import { Text, IconButton, useTheme } from 'react-native-paper';
 
@@ -15,14 +15,20 @@ export default function ChooseSportModal({
   const { language } = useAppSelector(({ language }) => language);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  const renderBackdrop = useCallback(
+    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    [],
+  );
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
       index={0}
       snapPoints={['25%']}
-      backgroundStyle={{ backgroundColor: colors.secondaryContainer }}
+      backdropComponent={renderBackdrop}
+      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+      backgroundStyle={{ backgroundColor: colors.onSecondary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 10, backgroundColor: colors.secondaryContainer }}>
+      <BottomSheetView style={{ flex: 1, padding: 10, backgroundColor: colors.onSecondary }}>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text variant="bodyLarge">
             {language === LANGUAGES.russian ? 'Выберите тип спорта' : 'Choose type of sport'}

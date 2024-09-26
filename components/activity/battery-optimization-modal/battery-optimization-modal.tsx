@@ -1,6 +1,6 @@
 import { View } from 'react-native';
-import { RefObject } from 'react';
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { RefObject, useCallback } from 'react';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useTheme, Button, Text } from 'react-native-paper';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
@@ -16,15 +16,20 @@ export default function BatteryOptimizationModal({
 }) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
+  const renderBackdrop = useCallback(
+    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    [],
+  );
   return (
     <BottomSheetModal
       ref={batteryOptimizationEnabledModalRef}
       index={0}
       snapPoints={['75%']}
-      handleStyle={{ borderBottomColor: colors.onBackground }}
-      backgroundStyle={{ backgroundColor: colors.background }}
+      backdropComponent={renderBackdrop}
+      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+      backgroundStyle={{ backgroundColor: colors.onSecondary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 5, backgroundColor: colors.background }}>
+      <BottomSheetView style={{ flex: 1, padding: 5, backgroundColor: colors.onSecondary }}>
         <View style={{ flex: 1, paddingVertical: 10, paddingHorizontal: 5 }}>
           <Text variant="bodyLarge">{BATTERY_OPTIMIZATION[language].optimizationMessage}</Text>
           <Button
