@@ -3,10 +3,9 @@ import MapRouteLine from '@C/activity/map/map-route-line/map-route-line';
 import { useAppSelector } from '@R/typed-hooks';
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
 import { Platform } from 'react-native';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
 import LocationIndicator from '../location-indicator/location-indicator';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import LocationPermissions from './location-permissions/location-permissions';
 
 export default function Map() {
