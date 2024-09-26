@@ -12,17 +12,17 @@ export default function CommentsLoadMoreBtn({
   commentsLength: number;
 }) {
   const { language } = useAppSelector(({ language }) => language);
-  const diffBetweenAllCommentsAndDownloaded = commentsLength - take;
+  const diffBetweenAllCommentsAndDownloaded = commentsLength - take >= 10 ? 10 : commentsLength - take;
   return (
     <Button
       icon="reload"
       onPress={() => increaseTakeNumber(take + 10)}
       mode="outlined"
-      style={{ borderRadius: 0, marginLeft: 5, marginRight: 5 }}>
+      style={{ borderRadius: 10, marginLeft: 10, marginRight: 10, marginBottom: 5 }}>
       <Text variant="bodyMedium">
         {language === LANGUAGES.russian
-          ? `Загрузить еще ${diffBetweenAllCommentsAndDownloaded >= 10 ? 10 : diffBetweenAllCommentsAndDownloaded} комментов`
-          : `Load ${diffBetweenAllCommentsAndDownloaded >= 10 ? 10 : diffBetweenAllCommentsAndDownloaded} more comments`}
+          ? `Загрузить еще ${diffBetweenAllCommentsAndDownloaded} комментов`
+          : `Load ${diffBetweenAllCommentsAndDownloaded} more comments`}
       </Text>
     </Button>
   );

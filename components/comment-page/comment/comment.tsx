@@ -4,7 +4,6 @@ import UserInfo from '@C/card/user-info/user-info';
 import { CommentLikeResponse, CommentProps, CommentResponse } from '@R/runich-api/types';
 import { View, StyleSheet } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
-
 import CommentDeleteBtn from '../comment-delete-btn/comment-delete-btn';
 import CommentEditBtn from '../comment-edit-btn/comment-edit-btn';
 import CommentInput from '../comment-input/comment-input';
@@ -40,6 +39,7 @@ export default function Comment({
             commentToUpdate={comment}
             commentId={id}
             setIdOfUpdatingComment={setIdOfUpdatingComment}
+            idOfUpdatingComment={idOfUpdatingComment}
           />
         ) : (
           <Text variant="bodyLarge">{comment}</Text>

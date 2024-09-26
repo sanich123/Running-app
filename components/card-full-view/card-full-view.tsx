@@ -24,44 +24,42 @@ export default function CardFullView() {
   } = useGetActivityByActivityIdQuery(`${activityId}`);
   const fullViewRef = useRef(null);
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
-      <BottomSheetModalProvider>
-        <>
-          <View ref={fullViewRef} collapsable={false}>
-            {isLoading && <ActivityIndicator size="large" />}
-            {error ? <ErrorComponent error={error} refetch={refetch} /> : null}
-            {isSuccess && (
-              <>
-                <Card
-                  isShowDeleteBtn
-                  isShowDescription={!!activity.description}
-                  fullViewRef={fullViewRef}
-                  userId={activity.user_id}
-                  description={activity.description}
-                  title={activity.title}
-                  date={activity.date}
-                  sport={activity.sport}
-                  id={activity.id}
-                  photoVideoUrls={activity.photoVideoUrls}
-                  duration={activity.duration}
-                  distance={activity.distance}
-                  mapPhotoUrl={activity?.mapPhotoUrl}
-                  profile={activity?.profile}
-                  commentsLength={activity?._count.comments}
-                />
-                <Metrics />
-                <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>
-                  {activity.kilometresSplit?.length > 0 && <KmSplit kilometresSplit={activity.kilometresSplit} />}
-                </View>
-              </>
-            )}
-          </View>
-          <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-        </>
-      </BottomSheetModalProvider>
-    </ScrollView>
+    <BottomSheetModalProvider>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={[(isLoading || isError) && styles.isInCenter]}>
+        <View ref={fullViewRef} collapsable={false}>
+          {isLoading && <ActivityIndicator size="large" />}
+          {error ? <ErrorComponent error={error} refetch={refetch} /> : null}
+          {isSuccess && (
+            <>
+              <Card
+                isShowDeleteBtn
+                isShowDescription={!!activity.description}
+                fullViewRef={fullViewRef}
+                userId={activity.user_id}
+                description={activity.description}
+                title={activity.title}
+                date={activity.date}
+                sport={activity.sport}
+                id={activity.id}
+                photoVideoUrls={activity.photoVideoUrls}
+                duration={activity.duration}
+                distance={activity.distance}
+                mapPhotoUrl={activity?.mapPhotoUrl}
+                profile={activity?.profile}
+                commentsLength={activity?._count.comments}
+              />
+              <Metrics />
+              <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>
+                {activity.kilometresSplit?.length > 0 && <KmSplit kilometresSplit={activity.kilometresSplit} />}
+              </View>
+            </>
+          )}
+        </View>
+        <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+      </ScrollView>
+    </BottomSheetModalProvider>
   );
 }
 

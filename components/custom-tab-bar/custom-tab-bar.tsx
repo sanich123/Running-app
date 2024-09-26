@@ -36,7 +36,7 @@ export default function CustomTabBar({
           display:
             pathname.includes(ROUTES.manualActivity) ||
             pathname.includes(ROUTES.changePassword) ||
-            pathname.includes(ROUTES.activity) ||
+            pathname.slice(1) === ROUTES.activity ||
             Platform.OS === 'web'
               ? 'none'
               : 'flex',

@@ -7,6 +7,7 @@ import { MOCK_COMMENTS } from '../../../tests/mocks/mock-comments';
 import { mockStore } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
 import { formatDate, getHoursMinutes } from '../../../utils/time-formatter';
+import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -25,10 +26,10 @@ describe('Comments', () => {
       <Comments
         activityId="someActivityId"
         setIsShowingTextInput={jest.fn()}
-        setIsNeedToGetUpdatedComments={jest.fn()}
         idOfUpdatingComment={''}
         setIdOfUpdatingComment={jest.fn()}
-        comments={MOCK_COMMENTS}
+        commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }}
+        isShowingTextInput={false}
       />,
       { store: mockStore },
     );
@@ -46,10 +47,10 @@ describe('Comments', () => {
       <Comments
         activityId="someActivityId"
         setIsShowingTextInput={jest.fn()}
-        setIsNeedToGetUpdatedComments={jest.fn()}
         idOfUpdatingComment={''}
+        commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }}
         setIdOfUpdatingComment={jest.fn()}
-        comments={MOCK_COMMENTS}
+        isShowingTextInput={false}
       />,
 
       { store: mockStore },

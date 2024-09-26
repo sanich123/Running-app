@@ -12,20 +12,24 @@ export default function CommentEditBtn({
   commentId: string;
 }) {
   return (
-    <IconButton
-      icon={idOfUpdatingComment === commentId ? 'pencil-off' : 'pencil'}
-      size={20}
-      iconColor={MD3Colors.primary50}
-      onPress={() => {
-        setIsShowingTextInput(true);
-        if (commentId !== idOfUpdatingComment) {
-          setIdOfUpdatingComment(commentId);
-        } else {
-          setIdOfUpdatingComment('');
-          setIsShowingTextInput(false);
-        }
-      }}
-      style={{ marginRight: -10 }}
-    />
+    <>
+      {(!idOfUpdatingComment || commentId !== idOfUpdatingComment) && (
+        <IconButton
+          icon={'pencil'}
+          size={20}
+          iconColor={MD3Colors.primary50}
+          onPress={() => {
+            setIsShowingTextInput(true);
+            if (commentId !== idOfUpdatingComment) {
+              setIdOfUpdatingComment(commentId);
+            } else {
+              setIdOfUpdatingComment('');
+              setIsShowingTextInput(false);
+            }
+          }}
+          style={{ marginRight: -10 }}
+        />
+      )}
+    </>
   );
 }
