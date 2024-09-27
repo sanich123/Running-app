@@ -7,20 +7,21 @@ import { IconButton } from 'react-native-paper';
 import ChooseSportModal from '../choose-sport-modal/choose-sport-modal';
 
 export default function IconChooseSport() {
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const chooseSportModal = useRef<BottomSheetModal>(null);
   const {
     additionalInfo: { sport },
   } = useAppSelector(({ activity }) => activity);
+
   return (
     <View style={{ position: 'relative', zIndex: 1 }}>
       <IconButton
         icon={getIconNameByTypeOfSport(sport)}
         size={35}
         style={{ position: 'absolute', left: 0, top: 48 }}
-        onPress={() => bottomSheetModalRef.current?.present()}
+        onPress={() => chooseSportModal.current?.present()}
         mode="outlined"
       />
-      <ChooseSportModal bottomSheetModalRef={bottomSheetModalRef} />
+      <ChooseSportModal chooseSportModalRef={chooseSportModal} />
     </View>
   );
 }

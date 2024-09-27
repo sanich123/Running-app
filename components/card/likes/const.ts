@@ -9,11 +9,6 @@ export enum LikesSize {
   small = 'small',
 }
 
-export type LikesProps = {
-  activityId: string;
-  size: LikesSize;
-};
-
 export const LIKE_BTN = {
   [LANGUAGES.english]: {
     errorAction: (arg: string) => `An error occured while ${arg === 'delete' ? 'deleting' : 'sending'} like`,

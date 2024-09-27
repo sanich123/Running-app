@@ -1,5 +1,5 @@
 import Card from '@C/card/card';
-import { ActivityCardProps } from '@C/card/const ';
+import { ActivityCardProps } from '@C/card/types';
 
 export type ActivitiesType = (ActivityCardProps & { user_id: string })[];
 

@@ -2,11 +2,10 @@ import { useAppSelector } from '@R/typed-hooks';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
 import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
 import UserListItem from '@C/user-list-item/user-list-item';
-import { ProfileType } from '@C/card/const ';
 import { useCallback } from 'react';
 
 import { Divider, useTheme } from 'react-native-paper';
-import { ModalLikesListProps } from '../types';
+import { ModalLikesListProps, ProfileType } from '../types';
 
 export default function ModalLikesList({ bottomSheetModalRef, likesLength }: ModalLikesListProps) {
   const { colors } = useTheme();

@@ -1,19 +1,17 @@
 import { View } from 'react-native';
-import { RefObject, useCallback } from 'react';
+import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useTheme, Button, Text } from 'react-native-paper';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { BATTERY_OPTIMIZATION } from './const';
 import { useAppSelector } from '@R/typed-hooks';
+import { BatteryOptimizationModalProps } from '../types';
 
 export default function BatteryOptimizationModal({
   batteryOptimizationEnabledModalRef,
   setIsNeedToRefreshPermission,
-}: {
-  batteryOptimizationEnabledModalRef: RefObject<BottomSheetModal>;
-  setIsNeedToRefreshPermission: (arg: boolean) => void;
-}) {
+}: BatteryOptimizationModalProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const renderBackdrop = useCallback(

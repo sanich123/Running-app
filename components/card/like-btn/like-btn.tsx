@@ -5,7 +5,7 @@ import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useContext, useEffect, memo } from 'react';
 import { Platform } from 'react-native';
-import { IconButton, MD3Colors } from 'react-native-paper';
+import { IconButton, useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
 import {
@@ -17,6 +17,7 @@ import {
 import { LIKE_BTN } from '../likes/const';
 
 export default memo(function LikeBtn({ activityId }: { activityId: string }) {
+  const { colors } = useTheme();
   const toast = useToast();
   const { user } = useAuth();
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
@@ -51,7 +52,7 @@ export default memo(function LikeBtn({ activityId }: { activityId: string }) {
     <IconButton
       testID={isLikedByYou?.length > 0 ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
       icon={isLikedByYou?.length > 0 ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
-      iconColor={isError ? MD3Colors.error0 : MD3Colors.primary50}
+      iconColor={isError ? colors.error : colors.primary}
       size={25}
       onPress={async () => {
         if (user) {

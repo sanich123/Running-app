@@ -1,17 +1,12 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { RefObject, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FAB, useTheme } from 'react-native-paper';
 import Comments from '@C/comment-page/comments/comments';
 import { View } from 'react-native';
 import CommentInput from '@C/comment-page/comment-input/comment-input';
+import { CommentsListModalProps } from '../types';
 
-export default function CommentsListModal({
-  commentsModalRef,
-  activityId,
-}: {
-  commentsModalRef: RefObject<BottomSheetModal>;
-  activityId: string;
-}) {
+export default function CommentsListModal({ commentsModalRef, activityId }: CommentsListModalProps) {
   const { colors } = useTheme();
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
   const [idOfUpdatingComment, setIdOfUpdatingComment] = useState('');

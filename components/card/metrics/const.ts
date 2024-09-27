@@ -14,13 +14,3 @@ export const CARD_METRICS = {
     km: 'км',
   },
 } as const;
-
-export type MetricsProps = {
-  distance: number;
-  duration: number;
-  title: string;
-  isShowDescription: boolean;
-  description: string;
-  userId: string;
-  id: string;
-};

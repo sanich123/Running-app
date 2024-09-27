@@ -8,7 +8,8 @@ import { Platform } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
-import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID, CommentInputProps } from './const';
+import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
+import { CommentInputProps } from '../types';
 
 export default function CommentInput({
   commentToUpdate = '',
@@ -17,7 +18,7 @@ export default function CommentInput({
   commentId = '',
   setIdOfUpdatingComment,
   idOfUpdatingComment,
-}: CommentInputProps & { idOfUpdatingComment: string }) {
+}: CommentInputProps) {
   const dispatch = useAppDispatch();
   const toast = useToast();
   const { language } = useAppSelector(({ language }) => language);

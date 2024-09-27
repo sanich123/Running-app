@@ -4,8 +4,7 @@ import { usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
 import { FlatList, Platform, useWindowDimensions } from 'react-native';
 import { TouchableRipple, useTheme } from 'react-native-paper';
-
-import { MediaListProps } from './const';
+import { MediaListProps } from '../types';
 
 export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPhotoUrlBlurhash }: MediaListProps) {
   const { dark } = useTheme();
@@ -25,7 +24,6 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           onPress={() => {
             push(
-              //@ts-ignore
               item.url.includes('api.mapbox.com')
                 ? `/${place}/${ROUTES.map}/${id}`
                 : `/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,

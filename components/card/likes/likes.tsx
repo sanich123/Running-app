@@ -1,5 +1,4 @@
 import { AvatarShowableTestIds } from '@C/avatar/showable/const';
-import { LikeType, ProfileType } from '@C/card/const ';
 import NumberOfLikes from '@C/card/number-of-likes/number-of-likes';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
@@ -8,12 +7,12 @@ import { Href, usePathname, useRouter } from 'expo-router';
 import { Fragment, memo, useRef } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
-import { LikesProps, LikesSize, MAX_IN_ROW, MAX_NUMBER_IN_ROW_OTHER_PAGE, SHIFT_RIGHT } from './const';
+import { LikesSize, MAX_IN_ROW, MAX_NUMBER_IN_ROW_OTHER_PAGE, SHIFT_RIGHT } from './const';
 import { useAppDispatch } from '@R/typed-hooks';
 import { setActivityIdWhichLikesToDownload } from '@R/main-feed/main-feed';
 import ModalLikesList from '@C/card/modal-likes-list/modal-likes-list';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { LikesProps, LikeType, ProfileType } from '../types';
 
 export default memo(function Likes({ activityId, size }: LikesProps) {
   const dispatch = useAppDispatch();
@@ -33,7 +32,7 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
           testID="pushToActivityLikes"
           rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           onPress={() => {
-            if (Platform.OS !== 'web' && !pathname.includes(ROUTES.activity) && !pathname.includes(ROUTES.comment)) {
+            if (Platform.OS !== 'web') {
               dispatch(setActivityIdWhichLikesToDownload(activityId));
               likesListModal.current?.present();
             } else {

@@ -1,16 +1,12 @@
 import { IconButton, MD3Colors } from 'react-native-paper';
+import { CommentEditBtnProps } from '../types';
 
 export default function CommentEditBtn({
   idOfUpdatingComment,
   setIsShowingTextInput,
   setIdOfUpdatingComment,
   commentId,
-}: {
-  idOfUpdatingComment: string;
-  setIsShowingTextInput: (arg: boolean) => void;
-  setIdOfUpdatingComment: (arg: string) => void;
-  commentId: string;
-}) {
+}: CommentEditBtnProps) {
   return (
     <>
       {(!idOfUpdatingComment || commentId !== idOfUpdatingComment) && (

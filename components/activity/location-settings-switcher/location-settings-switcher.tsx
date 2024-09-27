@@ -6,14 +6,12 @@ import { Switch, Text } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
+import { LocationSettingsSwitcherProps } from '../types';
 
 export default function LocationSettingsSwitcher({
   isLocationEnabled,
   setIsLocationEnabled,
-}: {
-  isLocationEnabled: boolean;
-  setIsLocationEnabled: (arg: boolean) => void;
-}) {
+}: LocationSettingsSwitcherProps) {
   const [isNeedToRefreshPermission, setIsNeedToRefreshPermission] = useState(false);
   const { language } = useAppSelector(({ language }) => language);
   useEffect(() => {

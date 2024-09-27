@@ -48,13 +48,6 @@ export type CommentResponse = {
   profile: { surname: string; name: string; profilePhoto: string; profilePhotoBlurhash: string };
 };
 
-export type CommentProps = {
-  activityId: string;
-  idOfUpdatingComment: string;
-  setIdOfUpdatingComment: (arg: string) => void;
-  setIsShowingTextInput: (arg: boolean) => void;
-};
-
 export type CommentLikeResponse = {
   commentLike: {
     authorId: string;

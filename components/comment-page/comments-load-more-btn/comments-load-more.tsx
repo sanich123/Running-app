@@ -1,16 +1,9 @@
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { Button, Text } from 'react-native-paper';
+import { CommentsLoadMorBtnProps } from '../types';
 
-export default function CommentsLoadMoreBtn({
-  take,
-  increaseTakeNumber,
-  commentsLength,
-}: {
-  take: number;
-  increaseTakeNumber: (arg: number) => void;
-  commentsLength: number;
-}) {
+export default function CommentsLoadMoreBtn({ take, increaseTakeNumber, commentsLength }: CommentsLoadMorBtnProps) {
   const { language } = useAppSelector(({ language }) => language);
   const diffBetweenAllCommentsAndDownloaded = commentsLength - take >= 10 ? 10 : commentsLength - take;
   return (

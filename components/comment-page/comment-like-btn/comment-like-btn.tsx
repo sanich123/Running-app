@@ -12,7 +12,8 @@ import { Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
-import { COMMENT_LIKE_BTN, CommentLikeBtnProps } from './const';
+import { COMMENT_LIKE_BTN } from './const';
+import { CommentLikeBtnProps } from '../types';
 
 export default function CommentLikeBtn({ commentId, commentLikesFromComment }: CommentLikeBtnProps) {
   const toast = useToast();

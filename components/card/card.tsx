@@ -8,12 +8,12 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { Card, useTheme } from 'react-native-paper';
 
 import Btns from './btns/btns';
-import { ActivityCardProps } from './const ';
 import { LikesSize } from './likes/const';
 import Likes from './likes/likes';
 import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
 import { UserInfoSize } from './user-info/const';
+import { ActivityCardProps } from './types';
 
 export default memo(function ActivityCard({
   description,

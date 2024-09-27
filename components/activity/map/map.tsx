@@ -3,12 +3,12 @@ import MapRouteLine from '@C/activity/map/map-route-line/map-route-line';
 import { useAppSelector } from '@R/typed-hooks';
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
 import { Platform } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
 import LocationIndicator from '../location-indicator/location-indicator';
 import LocationPermissions from './location-permissions/location-permissions';
 
-export default function Map() {
+export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecordLocation: (arg: boolean) => void }) {
   const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [foregroundPermissionStatus, requestForegroundPermission] = useForegroundPermissions();
@@ -22,6 +22,12 @@ export default function Map() {
         backgroundPermissionStatus?.granted &&
         !isAppOptimizedByPhone
       : foregroundPermissionStatus?.granted && backgroundPermissionStatus?.granted;
+
+  useEffect(() => {
+    if (isReadyToShowLocationOnMap) {
+      setIsReadyToRecordLocation(true);
+    }
+  }, [isReadyToShowLocationOnMap, setIsReadyToRecordLocation]);
 
   return (
     <>

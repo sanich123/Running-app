@@ -17,6 +17,7 @@ export default memo(function CardBtns({
   commentsLength,
 }: CardBtnsProps) {
   const { user } = useAuth();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const isMineActivity = user?.id === userId;

@@ -1,17 +1,14 @@
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
-import { LocationPermissionResponse } from 'expo-location';
 import { View, StyleSheet } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
+import { ForgroundLocationSwitcher } from '../types';
 
 export default function ForegroundLocationSwitcher({
   foregroundPermissionStatus,
   requestForegroundPermission,
-}: {
-  foregroundPermissionStatus: LocationPermissionResponse;
-  requestForegroundPermission: () => Promise<LocationPermissionResponse>;
-}) {
+}: ForgroundLocationSwitcher) {
   const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={styles.switcherWrapper}>

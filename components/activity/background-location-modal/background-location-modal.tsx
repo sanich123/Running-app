@@ -1,19 +1,16 @@
 import { View } from 'react-native';
-import { RefObject, useCallback } from 'react';
+import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useTheme, Text, Button } from 'react-native-paper';
-import { LocationPermissionResponse } from 'expo-location';
 import { useAppSelector } from '@R/typed-hooks';
 import { BACKGROUND_LOCATIONS } from './const';
+import { BackgroundLocationModalProps } from '../types';
 
 export default function BackgroundLocationModal({
   backgroundLocationEnabledModalRef,
   requestBackgroundPermission,
-}: {
-  backgroundLocationEnabledModalRef: RefObject<BottomSheetModal>;
-  requestBackgroundPermission: () => Promise<LocationPermissionResponse>;
-}) {
+}: BackgroundLocationModalProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const renderBackdrop = useCallback(

@@ -2,7 +2,8 @@ import { errorHandler } from '@U/error-handler';
 import * as MediaLibrary from 'expo-media-library';
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
 
-import { CAMERA_SETTINGS, ShotBtnProps } from '../const';
+import { CAMERA_SETTINGS } from '../const';
+import { ShotBtnProps } from '../types';
 
 export default function ShotBtn({ cameraRef, setPhotos, photos }: ShotBtnProps) {
   const { colors, dark } = useTheme();

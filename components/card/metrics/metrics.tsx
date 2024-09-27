@@ -8,7 +8,8 @@ import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
-import { CARD_METRICS, MetricsProps } from './const';
+import { CARD_METRICS } from './const';
+import { MetricsProps } from '../types';
 
 export default memo(function Metrics({
   distance,

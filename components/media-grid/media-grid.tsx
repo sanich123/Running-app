@@ -1,4 +1,3 @@
-import { PhotoVideoType } from '@C/card/const ';
 import ErrorComponent from '@C/error-component/error-component';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
@@ -8,6 +7,7 @@ import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import MediaGridImage from './image/image';
+import { PhotoVideoType } from '@C/card/types';
 
 export default function MediaGrid() {
   const { colors } = useTheme();

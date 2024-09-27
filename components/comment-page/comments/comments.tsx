@@ -1,15 +1,15 @@
 import { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
 import { useAppSelector } from '@R/typed-hooks';
-import { RefObject, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Comment from '../comment/comment';
 import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
 import { ActivityIndicator } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
-import CommentsLoadMoreBtn from './comments-load-more';
-import CommentsEmptyList from './comments-empty';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { View } from 'react-native';
+import CommentsLoadMoreBtn from '../comments-load-more-btn/comments-load-more';
+import CommentsEmptyList from '../comments-empty/comments-empty';
+import { Platform, View } from 'react-native';
+import { CommentsProps } from '../types';
 
 export default function Comments({
   activityId,
@@ -18,14 +18,7 @@ export default function Comments({
   commentsModalRef,
   setIsShowingTextInput,
   isShowingTextInput,
-}: {
-  activityId: string;
-  idOfUpdatingComment: string;
-  setIdOfUpdatingComment: (arg: string) => void;
-  commentsModalRef: RefObject<BottomSheetModal>;
-  setIsShowingTextInput: (arg: boolean) => void;
-  isShowingTextInput: boolean;
-}) {
+}: CommentsProps) {
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(true);
   const [take, increaseTakeNumber] = useState(10);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
@@ -41,20 +34,22 @@ export default function Comments({
   }, [activityIdWhichCommentsToUpdate, activityId]);
 
   useEffect(() => {
-    if (!data?.comments || !data?.comments?.length) {
-      commentsModalRef.current?.snapToIndex(0);
-    }
-    if (data?.comments?.length === 1) {
-      commentsModalRef.current?.snapToIndex(1);
-    }
-    if (data?.comments?.length === 2) {
-      commentsModalRef.current?.snapToIndex(2);
-    }
-    if (data?.comments?.length === 3) {
-      commentsModalRef.current?.snapToIndex(3);
-    }
-    if (data?.comments?.length > 3) {
-      commentsModalRef.current?.snapToIndex(4);
+    if (Platform.OS !== 'web') {
+      if (!data?.comments || !data?.comments?.length) {
+        commentsModalRef.current?.snapToIndex(0);
+      }
+      if (data?.comments?.length === 1) {
+        commentsModalRef.current?.snapToIndex(1);
+      }
+      if (data?.comments?.length === 2) {
+        commentsModalRef.current?.snapToIndex(2);
+      }
+      if (data?.comments?.length === 3) {
+        commentsModalRef.current?.snapToIndex(3);
+      }
+      if (data?.comments?.length > 3) {
+        commentsModalRef.current?.snapToIndex(4);
+      }
     }
   }, [data, commentsModalRef]);
 

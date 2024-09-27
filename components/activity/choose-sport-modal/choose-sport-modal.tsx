@@ -1,17 +1,14 @@
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { saveSport } from '@R/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { RefObject, useCallback } from 'react';
+import { useCallback } from 'react';
 import { View } from 'react-native';
 import { Text, IconButton, useTheme } from 'react-native-paper';
+import { ChooseSportModalProps } from '../types';
+import { SPORTS_NAMES } from './const';
 
-export default function ChooseSportModal({
-  bottomSheetModalRef,
-}: {
-  bottomSheetModalRef: RefObject<BottomSheetModal>;
-}) {
+export default function ChooseSportModal({ chooseSportModalRef }: ChooseSportModalProps) {
   const { language } = useAppSelector(({ language }) => language);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
@@ -21,7 +18,7 @@ export default function ChooseSportModal({
   );
   return (
     <BottomSheetModal
-      ref={bottomSheetModalRef}
+      ref={chooseSportModalRef}
       index={0}
       snapPoints={['25%']}
       backdropComponent={renderBackdrop}
@@ -33,23 +30,18 @@ export default function ChooseSportModal({
           <Text variant="bodyLarge">
             {language === LANGUAGES.russian ? 'Выберите тип спорта' : 'Choose type of sport'}
           </Text>
-          <IconButton icon="close" size={35} onPress={() => bottomSheetModalRef.current?.close()} />
+          <IconButton icon="close" size={35} onPress={() => chooseSportModalRef.current?.close()} />
         </View>
 
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          {[
-            { iconName: 'walk', value: SPORTS_BTNS_VALUES.walk },
-            { iconName: 'run', value: SPORTS_BTNS_VALUES.run },
-            { iconName: 'bike', value: SPORTS_BTNS_VALUES.bike },
-            { iconName: 'hiking', value: SPORTS_BTNS_VALUES.hike },
-          ].map(({ iconName, value }) => (
+          {SPORTS_NAMES.map(({ iconName, value }) => (
             <IconButton
               key={iconName}
               icon={iconName}
               size={35}
               onPress={() => {
                 dispatch(saveSport(value));
-                bottomSheetModalRef.current?.close();
+                chooseSportModalRef.current?.close();
               }}
             />
           ))}

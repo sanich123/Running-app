@@ -4,10 +4,10 @@ import BatteryOptimizationModal from '@C/activity/battery-optimization-modal/bat
 import BatteryOptimizationSwitcher from '@C/activity/battery-optimization-switcher/battery-optimization-switcher';
 import ForegroundLocationSwitcher from '@C/activity/foregroud-location-switcher/foreground-location-switcher';
 import LocationSettingsSwitcher from '@C/activity/location-settings-switcher/location-settings-switcher';
+import { LocationPermissionsProps } from '@C/activity/types';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
 import { View } from 'react-native';
-import { LocationPermissionsProps } from './types';
 
 export default function LocationPermissions({
   setIsAppOptimizedByPhone,
@@ -24,6 +24,7 @@ export default function LocationPermissions({
 }: LocationPermissionsProps) {
   const backgroundLocationEnabledModalRef = useRef<BottomSheetModal>(null);
   const batteryOptimizationEnabledModalRef = useRef<BottomSheetModal>(null);
+
   return (
     <View style={[{ flex: 1, justifyContent: 'center', alignItems: 'flex-end' }, isMapVisible && { height: '60%' }]}>
       {!isLocationEnabled && (

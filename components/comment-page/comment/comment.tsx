@@ -1,7 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
 import { UserInfoSize } from '@C/card/user-info/const';
 import UserInfo from '@C/card/user-info/user-info';
-import { CommentLikeResponse, CommentProps, CommentResponse } from '@R/runich-api/types';
 import { View, StyleSheet } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
 import CommentDeleteBtn from '../comment-delete-btn/comment-delete-btn';
@@ -9,6 +8,7 @@ import CommentEditBtn from '../comment-edit-btn/comment-edit-btn';
 import CommentInput from '../comment-input/comment-input';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
+import { CommentProps } from '../types';
 
 export default function Comment({
   authorId,
@@ -21,7 +21,7 @@ export default function Comment({
   setIdOfUpdatingComment,
   setIsShowingTextInput,
   commentLike,
-}: CommentResponse & CommentProps & CommentLikeResponse) {
+}: CommentProps) {
   const { user } = useAuth();
   const isYouAuthor = user?.id === authorId;
 

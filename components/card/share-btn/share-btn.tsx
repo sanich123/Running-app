@@ -2,16 +2,13 @@ import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { errorHandler } from '@U/error-handler';
 import { usePathname } from 'expo-router';
 import * as Sharing from 'expo-sharing';
-import { MutableRefObject, ReactNode, useContext, memo } from 'react';
-import { IconButton, MD3Colors } from 'react-native-paper';
+import { useContext, memo } from 'react';
+import { IconButton, useTheme } from 'react-native-paper';
 import { captureRef } from 'react-native-view-shot';
-
-type ShareBtnProps = {
-  cardRef: MutableRefObject<ReactNode>;
-  fullViewRef: MutableRefObject<ReactNode>;
-};
+import { ShareBtnProps } from '../types';
 
 export default memo(function ShareBtn({ cardRef, fullViewRef }: ShareBtnProps) {
+  const { colors } = useTheme();
   const { isLoading, isDisabled, setIsDisabled } = useContext(ActivityCardBtnsContext);
   const pathname = usePathname();
   const isFullView = pathname.includes('activity');
@@ -31,7 +28,7 @@ export default memo(function ShareBtn({ cardRef, fullViewRef }: ShareBtnProps) {
       }}
       testID="iconShareBtn"
       icon="share-outline"
-      iconColor={MD3Colors.primary50}
+      iconColor={colors.primary}
       size={25}
       disabled={isLoading || isDisabled}
     />
