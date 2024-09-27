@@ -25,6 +25,7 @@ export default function CommentFullViewPage() {
   } = useGetActivityByActivityIdQuery(`${activityId}`, { skip: !activityId });
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
   const [idOfUpdatingComment, setIdOfUpdatingComment] = useState('');
+
   return (
     <ScrollView contentContainerStyle={[(isLoading || isError) && styles.isInCenter]}>
       <BottomSheetModalProvider>
@@ -75,15 +76,17 @@ export default function CommentFullViewPage() {
                   setIdOfUpdatingComment={setIdOfUpdatingComment}
                 />
               ) : (
-                <FAB
-                  testID="floatingBtn"
-                  icon="pencil"
-                  style={{ position: 'absolute', right: 10, zIndex: 10 }}
-                  onPress={() => {
-                    setIdOfUpdatingComment('');
-                    setIsShowingTextInput(true);
-                  }}
-                />
+                <View style={{ zIndex: 9, position: 'relative' }}>
+                  <FAB
+                    testID="floatingBtn"
+                    icon="pencil"
+                    style={{ position: 'absolute', right: 10, zIndex: 10 }}
+                    onPress={() => {
+                      setIdOfUpdatingComment('');
+                      setIsShowingTextInput(true);
+                    }}
+                  />
+                </View>
               )}
             </View>
           </View>

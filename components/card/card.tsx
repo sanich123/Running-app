@@ -14,25 +14,27 @@ import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
 import { UserInfoSize } from './user-info/const';
 import { ActivityCardProps } from './types';
+import ShareActivityImage from './share-activity-image/share-activity-image';
 
-export default memo(function ActivityCard({
-  description,
-  title,
-  date,
-  sport,
-  id,
-  userId,
-  photoVideoUrls,
-  duration,
-  distance,
-  fullViewRef,
-  isShowDescription,
-  isShowDeleteBtn,
-  mapPhotoUrl,
-  mapPhotoUrlBlurhash,
-  profile,
-  commentsLength,
-}: ActivityCardProps) {
+export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
+  const {
+    description,
+    title,
+    date,
+    sport,
+    id,
+    userId,
+    photoVideoUrls,
+    duration,
+    distance,
+    fullViewRef,
+    isShowDescription,
+    isShowDeleteBtn,
+    mapPhotoUrl,
+    mapPhotoUrlBlurhash,
+    profile,
+    commentsLength,
+  } = rest;
   const pathname = usePathname();
   const { colors } = useTheme();
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
@@ -47,56 +49,60 @@ export default memo(function ActivityCard({
   }, [id, isNeedToPrefetchActivities, prefetchFullActivity]);
 
   return (
-    <View
-      style={[
-        {
-          borderCurve: 'continuous',
-          shadowColor: 'black',
-          shadowOffset: { width: 0, height: 10 },
-          shadowRadius: 10,
-          shadowOpacity: 0.1,
-          marginBottom: 5,
-          borderRadius: 15,
-          backgroundColor: colors.background,
-        },
-        Platform.OS === 'web' && styles.webStyles,
-      ]}>
-      <View>
-        <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
-        <View ref={cardRef} collapsable={false}>
-          <Metrics
-            distance={distance}
-            duration={duration}
-            title={title}
-            isShowDescription={isShowDescription}
-            description={description}
-            userId={userId}
+    <>
+      <ShareActivityImage
+        description={description}
+        title={title}
+        id={id}
+        userId={userId}
+        duration={duration}
+        distance={distance}
+        isShowDescription={isShowDescription}
+        cardRef={cardRef}
+        mapPhotoUrl={mapPhotoUrl}
+      />
+      <View
+        style={[
+          { ...styles.cardStyles, backgroundColor: colors.background, zIndex: 10 },
+          Platform.OS === 'web' && styles.webStyles,
+        ]}>
+        <View>
+          <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
+          <View>
+            <Metrics
+              distance={distance}
+              duration={duration}
+              title={title}
+              isShowDescription={isShowDescription}
+              description={description}
+              userId={userId}
+              id={id}
+            />
+          </View>
+        </View>
+        {(mapPhotoUrl || photoVideoUrls?.length > 0) && (
+          <MediaList
+            photoVideoUrls={photoVideoUrls}
+            mapPhotoUrl={mapPhotoUrl}
+            mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
             id={id}
           />
+        )}
+        <View style={{ height: 40 }}>
+          <Likes activityId={id} size={likesSize} />
         </View>
+        <Card.Actions>
+          <Btns
+            activityId={id}
+            userId={userId}
+            cardRef={cardRef}
+            fullViewRef={fullViewRef}
+            isShowDeleteBtn={isShowDeleteBtn}
+            commentsLength={commentsLength}
+          />
+        </Card.Actions>
       </View>
-      {(mapPhotoUrl || photoVideoUrls?.length > 0) && (
-        <MediaList
-          photoVideoUrls={photoVideoUrls}
-          mapPhotoUrl={mapPhotoUrl}
-          mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
-          id={id}
-        />
-      )}
-      <View style={{ height: 40 }}>
-        <Likes activityId={id} size={likesSize} />
-      </View>
-      <Card.Actions>
-        <Btns
-          activityId={id}
-          userId={userId}
-          cardRef={cardRef}
-          fullViewRef={fullViewRef}
-          isShowDeleteBtn={isShowDeleteBtn}
-          commentsLength={commentsLength}
-        />
-      </Card.Actions>
-    </View>
+    </>
   );
 });
 
@@ -105,5 +111,14 @@ const styles = StyleSheet.create({
     maxWidth: 550,
     marginLeft: 'auto',
     marginRight: 'auto',
+  },
+  cardStyles: {
+    borderCurve: 'continuous',
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 10,
+    shadowOpacity: 0.1,
+    marginBottom: 5,
+    borderRadius: 15,
   },
 });

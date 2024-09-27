@@ -2,7 +2,7 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@g
 import { useCallback, useMemo, useState } from 'react';
 import { FAB, useTheme } from 'react-native-paper';
 import Comments from '@C/comment-page/comments/comments';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import CommentInput from '@C/comment-page/comment-input/comment-input';
 import { CommentsListModalProps } from '../types';
 
@@ -25,7 +25,7 @@ export default function CommentsListModal({ commentsModalRef, activityId }: Comm
       handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
       backgroundStyle={{ backgroundColor: colors.onSecondary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <View style={{ paddingHorizontal: 10, marginBottom: 5 }}>
+      <View style={{ paddingHorizontal: 10, marginBottom: 5, zIndex: 7 }}>
         {isShowingTextInput && !idOfUpdatingComment ? (
           <CommentInput
             idOfUpdatingComment={idOfUpdatingComment}
@@ -35,16 +35,18 @@ export default function CommentsListModal({ commentsModalRef, activityId }: Comm
             setIdOfUpdatingComment={setIdOfUpdatingComment}
           />
         ) : (
-          <FAB
-            testID="floatingBtn"
-            icon="pencil"
-            style={{ position: 'absolute', right: 10, top: 0, zIndex: 10 }}
-            onPress={() => {
-              commentsModalRef.current?.snapToIndex(2);
-              setIdOfUpdatingComment('');
-              setIsShowingTextInput(true);
-            }}
-          />
+          <View>
+            <FAB
+              testID="floatingBtn"
+              icon="pencil"
+              style={{ position: 'absolute', right: 10, top: Platform.OS === 'ios' ? 2 : 0, zIndex: 10 }}
+              onPress={() => {
+                commentsModalRef.current?.snapToIndex(2);
+                setIdOfUpdatingComment('');
+                setIsShowingTextInput(true);
+              }}
+            />
+          </View>
         )}
       </View>
       <BottomSheetScrollView>

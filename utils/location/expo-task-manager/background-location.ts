@@ -22,7 +22,7 @@ import {
 
 export async function startLocationTracking() {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {
-    accuracy: Accuracy.BestForNavigation,
+    accuracy: Accuracy.High,
     timeInterval: TIME_INTERVAL,
     distanceInterval: DISTANCE_INTERVAL,
     showsBackgroundLocationIndicator: true,
@@ -54,6 +54,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
   if (data) {
     const { locations } = data;
     const currentPosition = locations[0];
+    console.log('currentPosition: ', currentPosition);
     try {
       const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer, lastArrayLength } =
         getMetricsTaskManager(currentPosition);
