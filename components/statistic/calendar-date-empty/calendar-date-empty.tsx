@@ -2,11 +2,10 @@ import { View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { CalendarDateProps } from '../calendar/types';
 
-export default function CalendarDateEmpty({ isTitle, isEmptyCell, dateValue, day, i }: CalendarDateProps) {
+export default function CalendarDateEmpty({ isTitle, isEmptyCell }: CalendarDateProps) {
   const { colors } = useTheme();
   return (
     <View
-      key={`${dateValue}+${day}${i}`}
       style={[
         styles.dateItem,
         {

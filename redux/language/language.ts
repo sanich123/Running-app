@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const LANGUAGE_INITIAL_STATE = {
   language: LANGUAGES.russian,
+  theme: null,
 };
 
 export const language = createSlice({
@@ -12,8 +13,11 @@ export const language = createSlice({
     changeLanguage: (state, action) => {
       state.language = action.payload;
     },
+    changeTheme: (state, action) => {
+      state.theme = action.payload;
+    },
   },
 });
 
-export const { changeLanguage } = language.actions;
+export const { changeLanguage, changeTheme } = language.actions;
 export default language.reducer;

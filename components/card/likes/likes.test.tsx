@@ -8,6 +8,7 @@ import Likes from './likes';
 import * as auth from '../../../auth/context/auth-context';
 import { mockStore } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 jest.mock('expo-router', () => ({
   usePathname: () => 'some string',
@@ -30,9 +31,14 @@ describe('Card likes', () => {
         ...USER_AUTH_MOCKS,
       },
     }));
-    renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />, {
-      store: mockStore,
-    });
+    renderWithProviders(
+      <BottomSheetModalProvider>
+        <Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />
+      </BottomSheetModalProvider>,
+      {
+        store: mockStore,
+      },
+    );
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
     expect(await screen.findByTestId(AvatarShowableTestIds.success)).toBeOnTheScreen();
   });

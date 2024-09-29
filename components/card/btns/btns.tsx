@@ -6,18 +6,11 @@ import ShareBtn from '@C/card/share-btn/share-btn';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { useState, memo } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { CardBtnsProps } from '../types';
 
-import { CardBtnsProps } from './const';
-
-export default memo(function CardBtns({
-  activityId,
-  userId,
-  cardRef,
-  fullViewRef,
-  isShowDeleteBtn,
-  commentsLength,
-}: CardBtnsProps) {
+export default memo(function CardBtns({ activityId, userId, cardRef, isShowDeleteBtn, commentsLength }: CardBtnsProps) {
   const { user } = useAuth();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const isMineActivity = user?.id === userId;
@@ -27,7 +20,7 @@ export default memo(function CardBtns({
       <View style={styles.layout}>
         <LikeBtn activityId={activityId} />
         <CommentBtn activityId={activityId} commentsLength={commentsLength} />
-        <ShareBtn cardRef={cardRef} fullViewRef={fullViewRef} />
+        <ShareBtn cardRef={cardRef} />
         {isMineActivity && isShowDeleteBtn && <DeleteBtn activityId={activityId} />}
       </View>
     </ActivityCardBtnsContext.Provider>

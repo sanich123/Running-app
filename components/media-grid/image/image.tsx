@@ -1,4 +1,4 @@
-import { PhotoVideoType } from '@C/card/const ';
+import { PhotoVideoType } from '@C/card/types';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';

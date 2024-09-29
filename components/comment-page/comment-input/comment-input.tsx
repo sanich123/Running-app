@@ -8,7 +8,8 @@ import { Platform } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
-import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID, CommentInputProps } from './const';
+import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
+import { CommentInputProps } from '../types';
 
 export default function CommentInput({
   commentToUpdate = '',
@@ -16,18 +17,20 @@ export default function CommentInput({
   setIsShowingTextInput,
   commentId = '',
   setIdOfUpdatingComment,
+  idOfUpdatingComment,
 }: CommentInputProps) {
   const dispatch = useAppDispatch();
   const toast = useToast();
   const { language } = useAppSelector(({ language }) => language);
   const { user } = useAuth();
   const [comment, setComment] = useState(commentToUpdate);
-  const [postComment, { isLoading: isCommentSending, isSuccess, isError }] = usePostCommentWithActivityIdMutation();
+  const [postComment, { isLoading: isCommentSending, isSuccess: isSuccessSending, isError }] =
+    usePostCommentWithActivityIdMutation();
   const [updateComment, { isLoading: isUpdatingComment, isSuccess: isSuccessUpdating, isError: isErrorUpdating }] =
     useUpdateCommentByCommentIdMutation();
 
   useEffect(() => {
-    if (isSuccess || isSuccessUpdating) {
+    if (isSuccessSending || isSuccessUpdating) {
       dispatch(setActivityIdWhichCommentsToUpdate(activityId));
       setIsShowingTextInput(false);
       setIdOfUpdatingComment('');
@@ -40,7 +43,18 @@ export default function CommentInput({
         toast.show(COMMENT_INPUT[language].errorSending);
       }
     }
-  }, [activityId, dispatch, isError, isErrorUpdating, isSuccess, isSuccessUpdating, language, setIdOfUpdatingComment, setIsShowingTextInput, toast]);
+  }, [
+    activityId,
+    dispatch,
+    isError,
+    isErrorUpdating,
+    isSuccessSending,
+    isSuccessUpdating,
+    language,
+    setIdOfUpdatingComment,
+    setIsShowingTextInput,
+    toast,
+  ]);
 
   return (
     <TextInput
@@ -49,6 +63,10 @@ export default function CommentInput({
       placeholder={COMMENT_INPUT[language].placeholder}
       value={comment}
       onChangeText={(comment) => setComment(comment)}
+      onBlur={() => {
+        setIdOfUpdatingComment('');
+        setIsShowingTextInput(false);
+      }}
       disabled={isCommentSending || isUpdatingComment}
       right={
         <TextInput.Icon
@@ -57,7 +75,14 @@ export default function CommentInput({
           disabled={!comment || isCommentSending || isUpdatingComment}
           onPress={async () => {
             if (!commentToUpdate) {
-              await postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId }).unwrap();
+              postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId })
+                .then(() => {
+                  dispatch(setActivityIdWhichCommentsToUpdate(activityId));
+                  setIsShowingTextInput(false);
+                  setIdOfUpdatingComment('');
+                  setComment('');
+                })
+                .catch(() => toast.show(COMMENT_INPUT[language].errorSending));
             } else {
               if (comment !== commentToUpdate) {
                 await updateComment({ activityId, commentId, body: { comment } }).unwrap();
@@ -72,7 +97,14 @@ export default function CommentInput({
       onSubmitEditing={async () => {
         if (comment) {
           if (!commentToUpdate) {
-            await postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId }).unwrap();
+            postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId })
+              .then(() => {
+                dispatch(setActivityIdWhichCommentsToUpdate(activityId));
+                setIsShowingTextInput(false);
+                setIdOfUpdatingComment('');
+                setComment('');
+              })
+              .catch(() => toast.show(COMMENT_INPUT[language].errorSending));
           } else {
             if (comment !== commentToUpdate) {
               await updateComment({ activityId, commentId, body: { comment } }).unwrap();
@@ -84,7 +116,7 @@ export default function CommentInput({
         }
       }}
       label={COMMENT_INPUT[language].label}
-      autoFocus={!commentToUpdate}
+      autoFocus={!commentToUpdate || !!idOfUpdatingComment}
       enterKeyHint="send"
     />
   );

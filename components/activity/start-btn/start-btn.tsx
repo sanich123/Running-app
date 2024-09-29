@@ -15,7 +15,7 @@ import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 
 import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON, ResponseIcon } from './const ';
 
-export default function StartBtn() {
+export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordLocation: boolean }) {
   const dispatch = useAppDispatch();
   const { dark } = useTheme();
   const {
@@ -39,7 +39,7 @@ export default function StartBtn() {
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
-      style={{ borderRadius: 50 }}
+      style={{ borderRadius: 50, opacity: isReadyToRecordLocation ? 1 : 0.5 }}
       testID={ACTIVITY_START_BTN_TEST_ID}
       onPress={() => {
         dispatch(
@@ -57,9 +57,10 @@ export default function StartBtn() {
           dispatch(setIsEditingActivity(false));
           dispatch(resetManualData());
           dispatch(resetActivityInfo());
-          push(`/${ROUTES.home}/${ROUTES.manualActivity}/` as Href<`/${ROUTES.home}/${ROUTES.manualActivity}/`>);
+          push(`/${ROUTES.home}/${ROUTES.manualActivity}/` as Href);
         }
-      }}>
+      }}
+      disabled={!isReadyToRecordLocation}>
       <View style={styles.startBtn}>
         <Text style={styles.startBtnText}>{RESPONSE_ICON[activityStatus]}</Text>
       </View>

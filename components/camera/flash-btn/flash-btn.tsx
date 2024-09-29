@@ -1,12 +1,6 @@
-import { FlashMode } from 'expo-camera';
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
 
-import { FlashModes } from '../enums';
-
-type FlashBtnProps = {
-  setFlashEnable: (arg: FlashMode) => void;
-  flashEnable: FlashMode;
-};
+import { FlashBtnProps, FlashModes } from '../types';
 
 export default function FlashBtn({ setFlashEnable, flashEnable }: FlashBtnProps) {
   const { colors, dark } = useTheme();

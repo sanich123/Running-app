@@ -1,5 +1,6 @@
 import ErrorComponent from '@C/error-component/error-component';
 import { renderCardsFunction } from '@C/infinite-scroll-list/render-item';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useGetSeveralActivitiesByTheirIdsQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { FlatList } from 'react-native';
@@ -22,11 +23,18 @@ export default function ActivitiesList() {
 
   return (
     <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
-      {isLoading && <ActivityIndicator size="large" />}
-      {isError && <ErrorComponent error={error} />}
-      {isSuccess && (
-        <FlatList data={activities} renderItem={renderCardsFunction} initialNumToRender={5} maxToRenderPerBatch={10} />
-      )}
+      <BottomSheetModalProvider>
+        {isLoading && <ActivityIndicator size="large" />}
+        {isError && <ErrorComponent error={error} />}
+        {isSuccess && (
+          <FlatList
+            data={activities}
+            renderItem={renderCardsFunction}
+            initialNumToRender={5}
+            maxToRenderPerBatch={10}
+          />
+        )}
+      </BottomSheetModalProvider>
     </SafeAreaView>
   );
 }

@@ -24,37 +24,50 @@ export function getIconByTypeOfSport(sport: SPORTS_BTNS_VALUES, size: number = 1
   return <MaterialCommunityIcons name={sport} size={size} />;
 }
 
+export function getIconNameByTypeOfSport(sport: string) {
+  const mapNameToIcon = {
+    run: SPORTS_BTNS_VALUES.run,
+    bike: SPORTS_BTNS_VALUES.bike,
+    hike: 'hiking',
+    walk: SPORTS_BTNS_VALUES.walk,
+  };
+  if (Object.keys(mapNameToIcon).includes(sport)) {
+    return mapNameToIcon[sport as keyof typeof mapNameToIcon];
+  }
+  return '';
+}
+
 export const MAP_SPORT_TO_TITLE = {
   [SPORTS_BTNS_VALUES.run]: {
-    [LANGUAGES.english]: 'RUN',
+    [LANGUAGES.english]: 'run',
     [LANGUAGES.russian]: 'бег',
   },
   [SPORTS_BTNS_VALUES.bike]: {
-    [LANGUAGES.english]: 'CYCLE',
+    [LANGUAGES.english]: 'cycle',
     [LANGUAGES.russian]: 'велосипед',
   },
   [SPORTS_BTNS_VALUES.ride]: {
-    [LANGUAGES.english]: 'CYCLE',
+    [LANGUAGES.english]: 'cycle',
     [LANGUAGES.russian]: 'велосипед',
   },
   [SPORTS_BTNS_VALUES.workout]: {
-    [LANGUAGES.english]: 'WORKOUT',
+    [LANGUAGES.english]: 'workout',
     [LANGUAGES.russian]: 'зал',
   },
   [SPORTS_BTNS_VALUES.swim]: {
-    [LANGUAGES.english]: 'SWIM',
+    [LANGUAGES.english]: 'swim',
     [LANGUAGES.russian]: 'плаванье',
   },
   [SPORTS_BTNS_VALUES.hike]: {
-    [LANGUAGES.english]: 'HIKE',
+    [LANGUAGES.english]: 'hike',
     [LANGUAGES.russian]: 'хайкинг',
   },
   [SPORTS_BTNS_VALUES.checkAll]: {
-    [LANGUAGES.english]: 'ALL',
+    [LANGUAGES.english]: 'all',
     [LANGUAGES.russian]: 'все',
   },
   [SPORTS_BTNS_VALUES.walk]: {
-    [LANGUAGES.english]: 'WALK',
+    [LANGUAGES.english]: 'walk',
     [LANGUAGES.russian]: 'ходьба',
   },
 };

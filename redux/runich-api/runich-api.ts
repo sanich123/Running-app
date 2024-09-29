@@ -156,6 +156,14 @@ export const runichApi = createApi({
       invalidatesTags: [Tags.activities],
     }),
 
+    getSeveralActivitiesByTheirIds: builder.query({
+      query: ({ ids }: { ids: string }) => ({
+        url: `/activity/activityIds?${ids}`,
+        headers,
+      }),
+      providesTags: [Tags.activities],
+    }),
+
     //Comments
     getCommentsByActivityId: builder.query({
       query: ({ activityId, take }: { activityId: string; take: number }) => `/${comment}/${activityId}?&take=${take}`,
@@ -287,35 +295,9 @@ export const runichApi = createApi({
 
     //Statistcs
 
-    getYearsAndTypes: builder.query({
-      query: (userId: string) => ({
-        url: `/statistics/${userId}`,
-        headers,
-      }),
-      providesTags: [Tags.activities],
-    }),
-
-    getAnnualStatisticsByYearAndCategory: builder.query({
-      query: ({ userId, year, category }: { userId: string; year: string; category: string }) => ({
-        url: `/statistics/${userId}/year-category/${year}/${category}`,
-        headers,
-      }),
-      providesTags: [Tags.activities],
-    }),
-
-    getMonthStatisticsByYearAndMonthAndCategory: builder.query({
-      query: ({
-        userId,
-        year,
-        month,
-        category,
-      }: {
-        userId: string;
-        year: string;
-        month: string;
-        category: string;
-      }) => ({
-        url: `/statistics/${userId}/year-month-category/${year}/${month}/${category}`,
+    getAnnualStatisticsByUserId: builder.query({
+      query: ({ userId }: { userId: string }) => ({
+        url: `/statistics/${userId}/year-category`,
         headers,
       }),
       providesTags: [Tags.activities],
@@ -336,17 +318,10 @@ export const runichApi = createApi({
       }),
       providesTags: [Tags.activities],
     }),
+
     getMonthStatistics: builder.query({
       query: ({ userId, year, month }: { userId: string; year: string; month: string }) => ({
         url: `/statistics/${userId}/year-month?year=${year}&month=${month}`,
-        headers,
-      }),
-      providesTags: [Tags.activities],
-    }),
-
-    getSeveralActivitiesByTheirIds: builder.query({
-      query: ({ ids }: { ids: string }) => ({
-        url: `/activity/activityIds?${ids}`,
         headers,
       }),
       providesTags: [Tags.activities],
@@ -355,7 +330,7 @@ export const runichApi = createApi({
 });
 
 export const {
-  //Profile/users
+  //Profile
   useGetUserProfileByUserIdQuery,
   useCreateProfileByUserIdMutation,
   useUpdateProfileByProfileIdMutation,
@@ -394,9 +369,7 @@ export const {
   useDeleteLikeToCommentMutation,
 
   //Statistics
-  useGetYearsAndTypesQuery,
-  useGetAnnualStatisticsByYearAndCategoryQuery,
-  useGetMonthStatisticsByYearAndMonthAndCategoryQuery,
+  useGetAnnualStatisticsByUserIdQuery,
   useGetCurrentWeekStatisticsQuery,
   useGetAllTimeStatisticsByUserIdQuery,
   useGetMonthStatisticsQuery,

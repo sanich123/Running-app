@@ -9,6 +9,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 
 import CardBtns from './btns';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -24,14 +25,16 @@ describe('Card btns', () => {
       },
     }));
     renderWithProviders(
-      <CardBtns
-        isShowDeleteBtn
-        activityId="someActivityId"
-        userId={MOCK_LIKE[0].authorId}
-        cardRef={{ current: '' }}
-        fullViewRef={{ current: '' }}
-        commentsLength={6}
-      />,
+      <BottomSheetModalProvider>
+        <CardBtns
+          isShowDeleteBtn
+          activityId="someActivityId"
+          userId={MOCK_LIKE[0].authorId}
+          cardRef={{ current: '' }}
+          commentsLength={6}
+        />
+      </BottomSheetModalProvider>,
+
       {
         store: mockStore,
       },
@@ -41,14 +44,15 @@ describe('Card btns', () => {
   });
   it('should correctly renders likes icon, when userId === user.id, and without delete btn', async () => {
     renderWithProviders(
-      <CardBtns
-        isShowDeleteBtn
-        activityId="someActivityId"
-        userId="someUserId"
-        cardRef={{ current: '' }}
-        fullViewRef={{ current: '' }}
-        commentsLength={6}
-      />,
+      <BottomSheetModalProvider>
+        <CardBtns
+          isShowDeleteBtn
+          activityId="someActivityId"
+          userId="someUserId"
+          cardRef={{ current: '' }}
+          commentsLength={6}
+        />
+      </BottomSheetModalProvider>,
       {
         store: mockStore,
       },

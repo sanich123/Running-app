@@ -1,4 +1,4 @@
-import { ProfileType } from '@C/card/const ';
+import { ProfileType } from '@C/card/types';
 
 export type ProfilePrivateInfo = {
   email: string;

@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       router.replace('/(auth)/sign-in');
     } else if (user && !inTabsGroup) {
       if (pathname.includes('reset-password')) {
-        router.replace('/change-password' as Href<'/change-password'>);
+        router.replace('/change-password' as Href);
       } else {
         router.replace('/');
       }

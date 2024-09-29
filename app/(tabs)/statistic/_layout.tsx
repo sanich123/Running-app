@@ -19,11 +19,11 @@ export default function StatisticsStack() {
       }}>
       <Stack.Screen
         name={ROUTES.index}
-        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].activity }}
+        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].statistics }}
       />
       <Stack.Screen
         name={`${ROUTES.monthStatistic}/${ROUTES.index}`}
-        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].activity }}
+        options={{ headerRight: () => <UsersSettingsIcons />, title: LABELS[language].statistics }}
       />
       <Stack.Screen
         name={`${ROUTES.activity}/[id]`}

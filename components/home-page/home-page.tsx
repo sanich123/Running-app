@@ -2,7 +2,6 @@ import { useAuth } from '@A/context/auth-context';
 import ErrorComponent from '@C/error-component/error-component';
 import FloatingBtn from '@C/floating-btn/floating-btn';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
-import ModalLikesList from '@C/modals/likes-list/modal-likes-list';
 import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
 import {
   setIsManualAdding,
@@ -14,10 +13,9 @@ import {
 import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
 import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { ModalLikesListContext } from '@U/context/activity-card-btns';
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Href, useFocusEffect, useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -32,7 +30,7 @@ export default function Feed() {
     { id: `${user?.id}`, page, take: 10 },
     { skip: !user?.id },
   );
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
   useFocusEffect(() => {
     if (needToRefreshActivities) {
       setPage(0);
@@ -43,37 +41,34 @@ export default function Feed() {
 
   return (
     <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
-      <ModalLikesListContext.Provider value={{ modalRef: bottomSheetModalRef }}>
-        <BottomSheetModalProvider>
-          <>
-            <ModalLikesList bottomSheetModalRef={bottomSheetModalRef} />
-            {isHaveUnsyncedActivity ? <UnsendedActivitiesIndicator /> : null}
-            {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
-            {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}
-            {!data?.message && data?.activities ? (
-              <>
-                <InfiniteScrollList
-                  dataToRender={data?.activities}
-                  page={page}
-                  setPage={setPage}
-                  refetch={refetch}
-                  isLastPage={data?.isLastPage}
-                />
-                <FloatingBtn
-                  onPressFn={() => {
-                    dispatch(setIsManualAdding(true));
-                    dispatch(setIsEditingActivity(false));
-                    dispatch(resetFinishedActivity());
-                    dispatch(resetManualData());
-                    dispatch(resetActivityInfo());
-                    push('/home/manual-activity' as Href<'/home/manual-activity'>);
-                  }}
-                />
-              </>
-            ) : null}
-          </>
-        </BottomSheetModalProvider>
-      </ModalLikesListContext.Provider>
+      <BottomSheetModalProvider>
+        <>
+          {isHaveUnsyncedActivity ? <UnsendedActivitiesIndicator /> : null}
+          {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
+          {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}
+          {!data?.message && data?.activities ? (
+            <>
+              <InfiniteScrollList
+                dataToRender={data?.activities}
+                page={page}
+                setPage={setPage}
+                refetch={refetch}
+                isLastPage={data?.isLastPage}
+              />
+              <FloatingBtn
+                onPressFn={() => {
+                  dispatch(setIsManualAdding(true));
+                  dispatch(setIsEditingActivity(false));
+                  dispatch(resetFinishedActivity());
+                  dispatch(resetManualData());
+                  dispatch(resetActivityInfo());
+                  push('/home/manual-activity' as Href);
+                }}
+              />
+            </>
+          ) : null}
+        </>
+      </BottomSheetModalProvider>
     </SafeAreaView>
   );
 }

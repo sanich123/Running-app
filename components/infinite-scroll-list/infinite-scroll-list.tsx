@@ -37,7 +37,7 @@ export default function InfiniteScrollList({
         }
       }}
       ListFooterComponent={() => !isLastPage && <ActivityIndicator size="large" />}
-      ListHeaderComponent={() => <WeekStatistics />}
+      ListHeaderComponent={() => (dataToRender?.length ? <WeekStatistics /> : null)}
     />
   );
 }

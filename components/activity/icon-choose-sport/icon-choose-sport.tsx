@@ -1,31 +1,27 @@
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { useAppSelector } from '@R/typed-hooks';
+import { getIconNameByTypeOfSport } from '@U/icon-utils';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { RefObject } from 'react';
+import { useRef } from 'react';
+import { View } from 'react-native';
 import { IconButton } from 'react-native-paper';
+import ChooseSportModal from '../choose-sport-modal/choose-sport-modal';
 
-export default function IconChooseSport({
-  bottomSheetModalRef,
-  setVisibilityOfSportIcon,
-  visibilityOfSportIcon,
-}: {
-  bottomSheetModalRef: RefObject<BottomSheetModal>;
-  setVisibilityOfSportIcon: (arg: boolean) => void;
-  visibilityOfSportIcon: boolean;
-}) {
+export default function IconChooseSport() {
+  const chooseSportModal = useRef<BottomSheetModal>(null);
   const {
     additionalInfo: { sport },
   } = useAppSelector(({ activity }) => activity);
+
   return (
-    <IconButton
-      icon={sport === SPORTS_BTNS_VALUES.bike ? 'bike' : 'shoe-sneaker'}
-      size={35}
-      style={{ position: 'absolute', zIndex: visibilityOfSportIcon ? 10 : 0, left: 0, top: 48 }}
-      onPress={() => {
-        bottomSheetModalRef.current?.present();
-        setVisibilityOfSportIcon(false);
-      }}
-      mode="outlined"
-    />
+    <View style={{ position: 'relative', zIndex: 1 }}>
+      <IconButton
+        icon={getIconNameByTypeOfSport(sport)}
+        size={35}
+        style={{ position: 'absolute', left: 0, top: 48 }}
+        onPress={() => chooseSportModal.current?.present()}
+        mode="outlined"
+      />
+      <ChooseSportModal chooseSportModalRef={chooseSportModal} />
+    </View>
   );
 }

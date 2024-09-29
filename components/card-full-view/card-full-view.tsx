@@ -10,57 +10,56 @@ import { ActivityIndicator } from 'react-native-paper';
 
 import KmSplit from './km-split/km-split';
 import Metrics from './metrics/metrics';
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { ModalLikesListContext } from '@U/context/activity-card-btns';
-import ModalLikesList from '@C/modals/likes-list/modal-likes-list';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 export default function CardFullView() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error, isError, refetch } = useGetActivityByActivityIdQuery(`${activityId}`);
+  const {
+    isLoading,
+    data: activity,
+    isSuccess,
+    error,
+    isError,
+    refetch,
+  } = useGetActivityByActivityIdQuery(`${activityId}`);
   const fullViewRef = useRef(null);
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={(isLoading || isError) && styles.isInCenter}>
-      <ModalLikesListContext.Provider value={{ modalRef: bottomSheetModalRef }}>
-        <BottomSheetModalProvider>
-          <>
-            <ModalLikesList bottomSheetModalRef={bottomSheetModalRef} />
-            <View ref={fullViewRef} collapsable={false}>
-              {isLoading && <ActivityIndicator size="large" />}
-              {error ? <ErrorComponent error={error} refetch={refetch} /> : null}
-              {activity && (
-                <>
-                  <Card
-                    isShowDeleteBtn
-                    isShowDescription={!!activity.description}
-                    fullViewRef={fullViewRef}
-                    userId={activity.user_id}
-                    description={activity.description}
-                    title={activity.title}
-                    date={activity.date}
-                    sport={activity.sport}
-                    id={activity.id}
-                    photoVideoUrls={activity.photoVideoUrls}
-                    duration={activity.duration}
-                    distance={activity.distance}
-                    mapPhotoUrl={activity?.mapPhotoUrl}
-                    profile={activity?.profile}
-                    commentsLength={activity?._count.comments}
-                  />
-                  <Metrics />
-                  <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>
-                    {activity.kilometresSplit?.length > 0 && <KmSplit kilometresSplit={activity.kilometresSplit} />}
-                  </View>
-                </>
-              )}
-            </View>
-            <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-          </>
-        </BottomSheetModalProvider>
-      </ModalLikesListContext.Provider>
-    </ScrollView>
+    <BottomSheetModalProvider>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={[(isLoading || isError) && styles.isInCenter]}>
+        <View ref={fullViewRef} collapsable={false}>
+          {isLoading && <ActivityIndicator size="large" />}
+          {error ? <ErrorComponent error={error} refetch={refetch} /> : null}
+          {isSuccess && (
+            <>
+              <Card
+                isShowDeleteBtn
+                isShowDescription={!!activity.description}
+                fullViewRef={fullViewRef}
+                userId={activity.user_id}
+                description={activity.description}
+                title={activity.title}
+                date={activity.date}
+                sport={activity.sport}
+                id={activity.id}
+                photoVideoUrls={activity.photoVideoUrls}
+                duration={activity.duration}
+                distance={activity.distance}
+                mapPhotoUrl={activity?.mapPhotoUrl}
+                profile={activity?.profile}
+                commentsLength={activity?._count.comments}
+              />
+              <Metrics />
+              <View style={{ paddingTop: 10, paddingRight: 10, paddingLeft: 10 }}>
+                {activity.kilometresSplit?.length > 0 && <KmSplit kilometresSplit={activity.kilometresSplit} />}
+              </View>
+            </>
+          )}
+        </View>
+        <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+      </ScrollView>
+    </BottomSheetModalProvider>
   );
 }
 

@@ -41,9 +41,8 @@ export type CalendarDateProps = {
   isTitle: boolean;
   isEmptyCell: boolean;
   dateValue: string;
-  day: string;
-  i: number;
 };
+
 export type CalendarDateWithActivityProps = {
   isWeekend: boolean;
   activities: { sport: string; id: string }[];

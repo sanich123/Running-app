@@ -1,5 +1,4 @@
 import MapboxWeb from '@C/map-page/mapbox-web/mapbox-web';
-import { LastKmSplit } from '@R/location/types';
 import { MapView, Camera } from '@rnmapbox/maps';
 import bbox from '@turf/bbox';
 import { useMemo } from 'react';
@@ -8,14 +7,9 @@ import { Platform } from 'react-native';
 //@ts-ignore
 import lineString from 'turf-linestring';
 
-import MapKmSplit from '../map-km-split/map-km-split';
-import RouteLine from '../map-route-line/map-route-line';
-import { LocationObject } from 'expo-location';
-
-type DisplayActivityMapProps = {
-  locations: LocationObject[];
-  kilometresSplit: LastKmSplit[];
-};
+import MapKmSplit from '../activity/map/map-km-split/map-km-split';
+import RouteLine from '../activity/map/map-route-line/map-route-line';
+import { DisplayActivityMapProps } from '@C/card/types';
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
   const modifiedLocationsForTurf = useMemo(

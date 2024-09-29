@@ -4,7 +4,7 @@ import { getCurrentWeekDates } from './util';
 import { useGetCurrentWeekStatisticsQuery } from '@R/runich-api/runich-api';
 import { useAuth } from '@A/context/auth-context';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import WeekStatisticsMetric from './week-statistics-metrics';
 import { WEEK_STATISTICS } from './const';
@@ -34,7 +34,10 @@ export default function WeekStatistics() {
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
-      onPress={() => push(`/${ROUTES.home}/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${month}`)}
+      onPress={() =>
+        weekStatistics?.totalItems &&
+        push(`/${ROUTES.home}/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${month}` as Href)
+      }
       style={[styles.container, { backgroundColor: colors.background }]}>
       <>
         <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>

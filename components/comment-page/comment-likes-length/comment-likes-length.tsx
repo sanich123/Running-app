@@ -5,8 +5,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native-paper';
-
-import { CommentLikesLengthProps } from './const';
+import { CommentLikesLengthProps } from '../types';
 
 export default function CommentLikesLength({ commentId, commentLikesFromComment }: CommentLikesLengthProps) {
   const { user } = useAuth();

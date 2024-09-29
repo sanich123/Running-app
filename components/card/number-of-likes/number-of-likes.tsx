@@ -3,7 +3,8 @@ import { useAppSelector } from '@R/typed-hooks';
 import { memo } from 'react';
 import { Text } from 'react-native-paper';
 
-import { NumOfLikesProps, NUMBER_OF_LIKES } from './const';
+import { NUMBER_OF_LIKES } from './const';
+import { NumOfLikesProps } from '../types';
 
 export default memo(function NumberOfLikes({ likes }: NumOfLikesProps) {
   const { user } = useAuth();

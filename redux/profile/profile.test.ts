@@ -1,4 +1,3 @@
-import { ProfileType } from '@C/card/const ';
 import { MOCK_EMAIL_PASSWORD, MOCK_SETTINGS } from '@T/mocks/mock-profile-settings';
 
 import { PROFILE_INITIAL_STATE } from './const';
@@ -14,6 +13,7 @@ import reducer, {
   saveWeight,
   setIsDisabledWhileSendingProfile,
 } from './profile';
+import { ProfileType } from '@C/card/types';
 
 describe('Profile slice', () => {
   it('should handle initial state properly', () => {

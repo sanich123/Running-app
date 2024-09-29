@@ -1,40 +1,34 @@
 import { View } from 'react-native';
-import { RefObject } from 'react';
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { useCallback } from 'react';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useTheme, Text, Button } from 'react-native-paper';
-import { LocationPermissionResponse } from 'expo-location';
+import { useAppSelector } from '@R/typed-hooks';
+import { BACKGROUND_LOCATIONS } from './const';
+import { BackgroundLocationModalProps } from '../types';
 
 export default function BackgroundLocationModal({
   backgroundLocationEnabledModalRef,
   requestBackgroundPermission,
-}: {
-  backgroundLocationEnabledModalRef: RefObject<BottomSheetModal>;
-  requestBackgroundPermission: () => Promise<LocationPermissionResponse>;
-}) {
+}: BackgroundLocationModalProps) {
   const { colors } = useTheme();
-
+  const { language } = useAppSelector(({ language }) => language);
+  const renderBackdrop = useCallback(
+    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    [],
+  );
   return (
     <BottomSheetModal
       ref={backgroundLocationEnabledModalRef}
       index={0}
       snapPoints={['50%']}
-      //   onChange={(index: number) => {
-      //     if (index === -1) {
-      //       setVisibilityOfLocationEnabledModal(false);
-      //     }
-      //   }}
-      handleStyle={{ borderBottomColor: colors.onBackground }}
-      backgroundStyle={{ backgroundColor: colors.background }}
+      backdropComponent={renderBackdrop}
+      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+      backgroundStyle={{ backgroundColor: colors.onSecondary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 5, backgroundColor: colors.background }}>
+      <BottomSheetView style={{ flex: 1, padding: 10, backgroundColor: colors.onSecondary }}>
         <View style={{ flex: 1 }}>
-          <Text variant="bodyLarge">
-            Необходимо дать разрешение на получение данных о местоположении все время. Не волнуйтесь, Ваши данные нам
-            совершенно не нужны. Это делается из-за особенностей опеационной системы Android, когда вы выходите из
-            приложения оно перестает работать, и перестает получать данные о локации, нужные приложению для сохранения
-            данных о маршруте и метрик
-          </Text>
+          <Text variant="bodyLarge">{BACKGROUND_LOCATIONS[language].needToAllow}</Text>
           <Button
             mode="outlined"
             style={{ marginTop: 15 }}
@@ -46,7 +40,7 @@ export default function BackgroundLocationModal({
                 showCrossPlatformToast(JSON.stringify(error));
               }
             }}>
-            Дать доступ к местоположению в фоне
+            {BACKGROUND_LOCATIONS[language].giveAccess}
           </Button>
         </View>
       </BottomSheetView>

@@ -1,4 +1,3 @@
-import { PhotoVideoType } from '@C/card/const ';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
@@ -10,6 +9,7 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import { PROFILE_MEDIA } from './const';
+import { PhotoVideoType } from '@C/card/types';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { isLoading, isError, data, error } = useGetAllActivityPhotosByUserIdQuery(
@@ -26,13 +26,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() =>
-        push(
-          `/${place}/${ROUTES.mediaGrid}/${userId}` as Href<
-            `/home/${ROUTES.mediaGrid}/${string}` | `/profile/${ROUTES.mediaGrid}/${string}`
-          >,
-        )
-      }
+      onPress={() => push(`/${place}/${ROUTES.mediaGrid}/${userId}` as Href)}
       disabled={isError || isLoading}
       borderless>
       <View style={[styles.layout, { backgroundColor: colors.onPrimary }, (isLoading || isError) && styles.isInCenter]}>

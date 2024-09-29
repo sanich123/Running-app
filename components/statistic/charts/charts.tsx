@@ -1,62 +1,25 @@
 import { View } from 'react-native';
-import { useGetAnnualStatisticsByYearAndCategoryQuery } from '@R/runich-api/runich-api';
-import { useAuth } from '@A/context/auth-context';
 import { reduceMonthMetrics } from './reduce-month-metrics';
 import BarChartWrapper from './bar-chart-wrapper';
-import { ActivityIndicator, useTheme, Text } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { useState } from 'react';
-import { ChooseMetricsBtnsValues } from './types';
+import { ChooseMetricsBtnsValues, MonthMetrics } from './types';
 import ChooseMetricsBtns from './choose-metrics-btns';
+import { useAppSelector } from '@R/typed-hooks';
 
-export default function Charts({ year, type }: { year: number; type: string }) {
-  const { user } = useAuth();
+export default function Charts({ year, months }: { year: number; months: MonthMetrics }) {
   const { colors } = useTheme();
   const [chartValue, setChartValue] = useState<ChooseMetricsBtnsValues>(ChooseMetricsBtnsValues.distance);
-  const {
-    data: yearStats,
-    isLoading,
-    isError,
-    isSuccess,
-  } = useGetAnnualStatisticsByYearAndCategoryQuery(
-    {
-      userId: `${user?.id}`,
-      year: `${year}`,
-      category: type,
-    },
-    { skip: !user?.id },
-  );
-  const reducedMetricsArr = reduceMonthMetrics(yearStats?.months);
-  const chartToRender = {
-    distance: {
-      title: 'Километры',
-      items: reducedMetricsArr?.totalDistanceArr,
-    },
-    amount: {
-      title: 'Тренировки',
-      items: reducedMetricsArr?.totalActivitiesArr,
-    },
-    duration: {
-      title: 'Время',
-      items: reducedMetricsArr?.totalDurationArr,
-    },
-  };
+  const { language } = useAppSelector(({ language }) => language);
+  const chartToRender = reduceMonthMetrics(months, language);
+
   return (
-    <View
-      style={[
-        { backgroundColor: colors.background },
-        (isLoading || isError) && { flex: 1, justifyContent: 'center', alignItems: 'center' },
-      ]}>
-      {isLoading && <ActivityIndicator size="large" />}
-      {isSuccess ? (
-        <BarChartWrapper
-          metricsArr={chartToRender[chartValue]?.items}
-          year={year}
-          title={chartToRender[chartValue]?.title}
-        />
-      ) : (
-        <View style={{ height: 273 }}></View>
-      )}
-      {isError && <Text variant="bodyMedium">Произошла ошибка во время получения данных</Text>}
+    <View style={[{ backgroundColor: colors.background }]}>
+      <BarChartWrapper
+        metricsArr={chartToRender[chartValue]?.items}
+        year={year}
+        title={chartToRender[chartValue]?.title}
+      />
       <ChooseMetricsBtns chartValue={chartValue} setChartValue={setChartValue} />
     </View>
   );

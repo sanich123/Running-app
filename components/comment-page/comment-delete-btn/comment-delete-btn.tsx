@@ -8,8 +8,9 @@ import { IconButton, MD3Colors } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 
 import { COMMENT_DELETE_BTN } from './const';
+import { ComentDeleteBtnProps } from '../types';
 
-export default function CommentDeleteBtn({ commentId, activityId }: { commentId: string; activityId: string }) {
+export default function CommentDeleteBtn({ commentId, activityId }: ComentDeleteBtnProps) {
   const toast = useToast();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);

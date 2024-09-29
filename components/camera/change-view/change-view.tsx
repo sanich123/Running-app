@@ -1,9 +1,8 @@
-import { CameraType } from 'expo-camera';
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
 
-import { CameraTypes } from '../enums';
+import { CameraTypes, ChangeViewProps } from '../types';
 
-export default function ChangeView({ type, setType }: { type: CameraType; setType: (arg: CameraType) => void }) {
+export default function ChangeView({ type, setType }: ChangeViewProps) {
   const { colors, dark } = useTheme();
 
   return (

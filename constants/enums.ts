@@ -10,6 +10,12 @@ export enum LANGUAGES {
   english = 'english',
 }
 
+export const THEMES = {
+  light: 'light',
+  dark: 'dark',
+  system: null,
+};
+
 export enum ROUTES {
   index = 'index',
   home = 'home',
@@ -32,6 +38,7 @@ export enum ROUTES {
   statistic = 'statistic',
   monthStatistic = 'month-statistic',
   activitiesList = 'activities-list',
+  migration = 'migration',
 }
 
 export const LABELS = {
@@ -51,6 +58,7 @@ export const LABELS = {
     photo: 'Photo',
     photos: 'Photos',
     profileSettings: 'Profile settings',
+    migration: 'Migration',
   },
   [LANGUAGES.russian]: {
     feed: 'Лента',
@@ -68,5 +76,6 @@ export const LABELS = {
     photo: 'Фотография',
     photos: 'Фотографии',
     profileSettings: 'Настройки профиля',
+    migration: 'Миграция',
   },
 };

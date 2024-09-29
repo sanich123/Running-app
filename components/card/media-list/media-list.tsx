@@ -4,8 +4,7 @@ import { usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
 import { FlatList, Platform, useWindowDimensions } from 'react-native';
 import { TouchableRipple, useTheme } from 'react-native-paper';
-
-import { MediaListProps } from './const';
+import { MediaListProps } from '../types';
 
 export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPhotoUrlBlurhash }: MediaListProps) {
   const { dark } = useTheme();

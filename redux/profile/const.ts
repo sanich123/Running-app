@@ -1,5 +1,4 @@
-import { ProfileType } from '@C/card/const ';
-
+import { ProfileType } from '@C/card/types';
 import { ProfileSlice } from './types';
 
 export const PROFILE_SETTINGS_INITIAL_STATE = {

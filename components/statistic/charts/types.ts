@@ -1,5 +1,5 @@
 export type MonthMetrics = {
-  [key: string]: { totalDistance: number; totalDuration: number; medianSpeed: number; items: number };
+  [key: string]: { totalDistance: number; totalDuration: number; totalItems: number };
 };
 
 export type ChartBarComponent = {
@@ -9,10 +9,9 @@ export type ChartBarComponent = {
 };
 
 export type AccumulatorValues = {
-  totalDurationArr: ChartBarComponent[];
-  totalDistanceArr: ChartBarComponent[];
-  totalMedianSpeedArr: ChartBarComponent[];
-  totalActivitiesArr: ChartBarComponent[];
+  totalDuration: ChartBarComponent[];
+  totalDistance: ChartBarComponent[];
+  totalActivities: ChartBarComponent[];
 };
 
 export enum ChooseMetricsBtnsValues {

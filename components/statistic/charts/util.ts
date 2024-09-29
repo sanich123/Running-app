@@ -1,7 +1,13 @@
-export function mapNumberToMonth(number: number) {
+import { LANGUAGES } from '@const/enums';
+
+export function mapNumberToMonth(number: number, language: LANGUAGES) {
   const mapNumToMonth = new Map();
-  const months = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
-  [...Array(12).keys()].map((_, i) => mapNumToMonth.set(i, months[i]));
+  const monthsInRussian = ['Я', 'Ф', 'М', 'А', 'М', 'И', 'И', 'A', 'C', 'О', 'Н', 'Д'];
+  const monthsInEnglish = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+
+  [...Array(12).keys()].map((_, i) =>
+    mapNumToMonth.set(i, language === LANGUAGES.english ? monthsInEnglish[i] : monthsInRussian[i]),
+  );
   if (mapNumToMonth.has(number)) {
     return mapNumToMonth.get(number);
   }

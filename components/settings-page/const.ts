@@ -5,7 +5,7 @@ export const SETTINGS = {
     eng: 'English',
     rus: 'Russian',
     logout: 'Log out',
-    cache: 'Clean cache',
+    cache: 'Clear cache',
     switchOn: 'Switch on',
     switchOff: 'Switch off',
     prefetch: 'prefetching activities in a feed',

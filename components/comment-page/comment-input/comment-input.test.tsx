@@ -15,6 +15,7 @@ describe('Comment input', () => {
         commentId="someCommentId"
         setIsShowingTextInput={setIsShowingTextInput}
         setIdOfUpdatingComment={setIdOfUpdatingComment}
+        idOfUpdatingComment={''}
       />,
       {
         store: mockStore,
@@ -29,6 +30,7 @@ describe('Comment input', () => {
         commentId="someCommentId"
         setIsShowingTextInput={setIsShowingTextInput}
         setIdOfUpdatingComment={setIdOfUpdatingComment}
+        idOfUpdatingComment={''}
       />,
       { store: mockStore },
     );
@@ -45,6 +47,7 @@ describe('Comment input', () => {
         commentId="someCommentId"
         setIsShowingTextInput={setIsShowingTextInput}
         setIdOfUpdatingComment={setIdOfUpdatingComment}
+        idOfUpdatingComment={''}
       />,
       { store: mockStore },
     );

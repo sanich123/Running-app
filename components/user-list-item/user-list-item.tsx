@@ -18,7 +18,7 @@ export default function UserListItem({ name, surname, profilePhoto, placeholder,
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
-      onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${user_id}` as Href<`/home/profile/${string}`>)}>
+      onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${user_id}` as Href)}>
       <View style={styles.userItemWrapper}>
         <View style={styles.contentWrapper}>
           <CustomImage
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5,
-    marginLeft: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
   },
   contentWrapper: {
     flexDirection: 'row',

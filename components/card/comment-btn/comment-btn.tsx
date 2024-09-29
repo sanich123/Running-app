@@ -3,18 +3,16 @@ import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ROUTES } from '@const/enums';
 import { Href, usePathname, useRouter } from 'expo-router';
-import { useContext, memo, useState, useEffect } from 'react';
-import { View } from 'react-native';
-import { IconButton, MD3Colors, Badge } from 'react-native-paper';
+import { useContext, memo, useState, useEffect, useRef } from 'react';
+import { Platform, StyleSheet } from 'react-native';
+import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
 import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import CommentsListModal from '@C/comment-page/comments-list-modal/comments-list-modal';
+import { CommentBtnProps } from '../types';
 
-export default memo(function CommentBtn({
-  activityId,
-  commentsLength,
-}: {
-  activityId: string;
-  commentsLength: number;
-}) {
+export default memo(function CommentBtn({ activityId, commentsLength }: CommentBtnProps) {
+  const { dark, colors } = useTheme();
   const { push } = useRouter();
   const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
@@ -27,6 +25,7 @@ export default memo(function CommentBtn({
   const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : commentsCount;
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
+  const commentsModalRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     if (activityIdWhichCommentsToUpdate === activityId) {
@@ -35,27 +34,44 @@ export default memo(function CommentBtn({
   }, [activityIdWhichCommentsToUpdate, activityId]);
 
   return (
-    <View style={{ position: 'relative' }}>
-      {whatLengthToRender ? (
-        <Badge style={{ position: 'absolute', top: 5, right: 8, zIndex: 10, backgroundColor: MD3Colors.primary50 }}>
-          {whatLengthToRender}
-        </Badge>
-      ) : null}
-
-      <IconButton
-        testID={COMMENT_BTN_TEST_ID}
-        icon={COMMENT_BTN_ICON}
-        iconColor={MD3Colors.primary50}
-        size={25}
-        onPress={() =>
-          push(
-            `/${place}/${ROUTES.comment}/${activityId}` as Href<
-              `/home/comment/${string}` | `/profile/comment/${string}`
-            >,
-          )
+    <TouchableRipple
+      style={styles.container}
+      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+      borderless
+      onPress={() => {
+        if (Platform.OS === 'web') {
+          push(`/${place}/${ROUTES.comment}/${activityId}` as Href);
+        } else {
+          commentsModalRef.current?.present();
         }
-        disabled={isLoading || isDisabled || !!commentsCount?.message || isErrorLoadingComments || isLoadingComments}
-      />
-    </View>
+      }}>
+      <>
+        {whatLengthToRender ? (
+          <Badge style={{ ...styles.badge, backgroundColor: colors.primary }}>{whatLengthToRender}</Badge>
+        ) : null}
+        <IconButton
+          testID={COMMENT_BTN_TEST_ID}
+          icon={COMMENT_BTN_ICON}
+          iconColor={colors.primary}
+          size={25}
+          disabled={isLoading || isDisabled || !!commentsCount?.message || isErrorLoadingComments || isLoadingComments}
+        />
+        <CommentsListModal commentsModalRef={commentsModalRef} activityId={activityId} />
+      </>
+    </TouchableRipple>
   );
+});
+
+const styles = StyleSheet.create({
+  badge: {
+    position: 'absolute',
+    top: 8,
+    right: 10,
+    zIndex: 10,
+  },
+  container: {
+    position: 'relative',
+    borderRadius: 50,
+    padding: 2,
+  },
 });
