@@ -22,7 +22,9 @@
     "build:dev:ios:emulator:local": "APP_VARIANT=development EAS_LOCAL_BUILD_ARTIFACTS_DIR=~/Desktop eas build --profile ios-simulator --platform ios --local",
     "build:preview:android:cloud": "eas build -p android --profile preview",
     "build:preview:android:local": "EAS_LOCAL_BUILD_ARTIFACTS_DIR=~/Desktop eas build -p android --profile preview --local",
+
     "build:preview:ios:emulator": "eas build -p ios --profile preview",
+
     "build:preview:ios:emulator:local": "EAS_LOCAL_BUILD_ARTIFACTS_DIR=~/Desktop eas build -p ios --profile preview --local",
     "build:preview:all:local": "EAS_LOCAL_BUILD_ARTIFACTS_DIR=~/Desktop bun run build:preview:android:local && bun run build:preview:ios:emulator:local",
     "build:inspect": "eas build:inspect -p android -s archive -o ../build --profile=preview",
@@ -103,6 +105,7 @@
     "expo-sharing": "~12.0.1",
     "expo-splash-screen": "~0.27.6",
     "expo-status-bar": "~1.12.1",
+    "expo-system-ui": "~3.0.7",
     "expo-system-ui": "~3.0.7",
     "expo-task-manager": "~11.8.2",
     "expo-updates": "~0.25.25",
