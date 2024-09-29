@@ -27,7 +27,6 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     photoVideoUrls,
     duration,
     distance,
-    fullViewRef,
     isShowDescription,
     isShowDeleteBtn,
     mapPhotoUrl,
@@ -53,8 +52,6 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
       <ShareActivityImage
         description={description}
         title={title}
-        id={id}
-        userId={userId}
         duration={duration}
         distance={distance}
         isShowDescription={isShowDescription}
@@ -96,7 +93,6 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             activityId={id}
             userId={userId}
             cardRef={cardRef}
-            fullViewRef={fullViewRef}
             isShowDeleteBtn={isShowDeleteBtn}
             commentsLength={commentsLength}
           />

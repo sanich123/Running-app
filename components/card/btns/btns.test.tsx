@@ -31,7 +31,6 @@ describe('Card btns', () => {
           activityId="someActivityId"
           userId={MOCK_LIKE[0].authorId}
           cardRef={{ current: '' }}
-          fullViewRef={{ current: '' }}
           commentsLength={6}
         />
       </BottomSheetModalProvider>,
@@ -51,7 +50,6 @@ describe('Card btns', () => {
           activityId="someActivityId"
           userId="someUserId"
           cardRef={{ current: '' }}
-          fullViewRef={{ current: '' }}
           commentsLength={6}
         />
       </BottomSheetModalProvider>,

@@ -68,7 +68,6 @@ export type CardBtnsProps = {
   activityId: string;
   userId: string;
   cardRef: MutableRefObject<ReactNode>;
-  fullViewRef: MutableRefObject<ReactNode | null>;
   isShowDeleteBtn: boolean;
   commentsLength: number;
 };
@@ -90,7 +89,6 @@ export type DisplayActivityMapProps = {
 
 export type ShareBtnProps = {
   cardRef: MutableRefObject<ReactNode>;
-  fullViewRef: MutableRefObject<ReactNode>;
 };
 
 export type Likes = {
