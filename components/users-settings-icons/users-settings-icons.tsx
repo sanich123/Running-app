@@ -13,7 +13,7 @@ export default function UsersSettingsIcons() {
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const { userId } = useGlobalSearchParams();
   const { user } = useAuth();
-  const isMineActivity = userId === user?.id;
+  const isMineActivity = userId === user?.id && pathname.includes(ROUTES.activity);
 
   return (
     <View style={styles.layout}>

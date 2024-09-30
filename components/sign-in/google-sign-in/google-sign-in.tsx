@@ -4,7 +4,7 @@ import { useAppDispatch } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import { useEffect } from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: boolean) => void }) {
@@ -23,46 +23,45 @@ export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: 
     }
   }, []);
 
-
   return (
-    <GoogleSigninButton
-      style={{ width: '100%' }}
-      color={dark ? GoogleSigninButton.Color.Dark : GoogleSigninButton.Color.Light}
-      size={GoogleSigninButton.Size.Wide}
-      onPress={async () => {
-        setIsDisabled(true);
-        try {
-          await GoogleSignin.hasPlayServices();
-          const userInfo = await GoogleSignin.signIn();
-          dispatch(saveGoogleProfileInfo(userInfo.user));
-          if (userInfo.idToken) {
-            const { error } = await supabase.auth.signInWithIdToken({
-              provider: 'google',
-              token: userInfo.idToken,
-            });
-            if (error) {
-              showCrossPlatformToast(`error: ${error?.message}`, ToastDuration.long);
+    <View>
+      <GoogleSigninButton
+        style={{ width: '100%' }}
+        color={dark ? GoogleSigninButton.Color.Dark : GoogleSigninButton.Color.Light}
+        size={GoogleSigninButton.Size.Wide}
+        onPress={async () => {
+          setIsDisabled(true);
+          try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            dispatch(saveGoogleProfileInfo(userInfo.user));
+            if (userInfo.idToken) {
+              const { error } = await supabase.auth.signInWithIdToken({
+                provider: 'google',
+                token: userInfo.idToken,
+              });
+              if (error) {
+                showCrossPlatformToast(`error: ${error?.message}`, ToastDuration.long);
+              }
             } else {
-              showCrossPlatformToast('Перенаправляем в приложение', ToastDuration.long);
+              showCrossPlatformToast('no ID token present!', ToastDuration.long);
+              throw new Error('no ID token present!');
             }
-          } else {
-            showCrossPlatformToast('no ID token present!', ToastDuration.long);
-            throw new Error('no ID token present!');
+          } catch (error: any) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+              showCrossPlatformToast('user has cacelled auth flow', ToastDuration.long);
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+              showCrossPlatformToast('process is executing', ToastDuration.long);
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+              showCrossPlatformToast('play services is not available', ToastDuration.long);
+            } else {
+              showCrossPlatformToast('unexpected error occured', ToastDuration.long);
+            }
+          } finally {
+            setIsDisabled(false);
           }
-        } catch (error: any) {
-          if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-            showCrossPlatformToast('user has cacelled auth flow', ToastDuration.long);
-          } else if (error.code === statusCodes.IN_PROGRESS) {
-            showCrossPlatformToast('process is executing', ToastDuration.long);
-          } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-            showCrossPlatformToast('play services is not available', ToastDuration.long);
-          } else {
-            showCrossPlatformToast('unexpected error occured', ToastDuration.long);
-          }
-        } finally {
-          setIsDisabled(false);
-        }
-      }}
-    />
+        }}
+      />
+    </View>
   );
 }
