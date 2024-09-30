@@ -15,7 +15,7 @@ import * as auth from '../../../auth/context/auth-context';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: jest.fn() }),
-  useLocalSearchParams: () => ({ id: 'someId' }),
+  useGlobalSearchParams: () => ({ id: 'someId' }),
 }));
 
 describe('Activity save btn', () => {

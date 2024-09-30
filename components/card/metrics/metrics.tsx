@@ -33,11 +33,9 @@ export default memo(function Metrics({
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => {
-        if (!pathname.includes(ROUTES.activity)) {
-          push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}` as Href);
-        }
-      }}
+      onPress={() =>
+        !pathname.includes(ROUTES.activity) && push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}` as Href)
+      }
       borderless
       style={{ paddingLeft: 5, paddingVertical: 2 }}>
       <>
