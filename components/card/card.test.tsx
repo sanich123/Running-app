@@ -46,7 +46,6 @@ describe('Activity card', () => {
           photoVideoUrls={photoVideoUrls}
           duration={duration}
           distance={distance}
-          fullViewRef={{ current: undefined }}
           profile={profile}
           commentsLength={6}
         />
@@ -56,6 +55,8 @@ describe('Activity card', () => {
     expect(screen.getByText(new RegExp(`${profile.name}`))).toBeOnTheScreen();
     expect(screen.getByText(new RegExp(`${profile.surname}`))).toBeOnTheScreen();
     expect(await screen.findAllByText(title)).toHaveLength(2);
-    ['Time', 'Pace', 'Distance'].map(async (word) => expect(await screen.getAllByText(new RegExp(word))).toHaveLength(2));
+    ['Time', 'Pace', 'Distance'].map(async (word) =>
+      expect(await screen.getAllByText(new RegExp(word))).toHaveLength(2),
+    );
   });
 });

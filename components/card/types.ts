@@ -57,7 +57,6 @@ export type ActivityCardProps = {
   mapPhotoUrlBlurhash?: string;
   duration: number;
   distance: number;
-  fullViewRef: MutableRefObject<ReactNode | null>;
   profile: ProfileType;
   commentsLength: number;
 };

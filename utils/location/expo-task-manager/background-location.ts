@@ -8,7 +8,7 @@ import {
   startLocationUpdatesAsync,
   stopLocationUpdatesAsync,
 } from 'expo-location';
-import { isTaskRegisteredAsync } from 'expo-task-manager';
+import { isTaskRegisteredAsync, getRegisteredTasksAsync, isAvailableAsync, isTaskDefined } from 'expo-task-manager';
 import * as TaskManager from 'expo-task-manager';
 
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
@@ -33,7 +33,21 @@ export async function startLocationTracking() {
     },
   });
   const hasStarted = await hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
-  if (__DEV__) console.log('tracking started?', hasStarted);
+  const isTaskAvailale = await isAvailableAsync();
+  const isDefined = await isTaskDefined(LOCATION_TRACKING);
+  const registeredTasks = await getRegisteredTasksAsync();
+
+  if (__DEV__)
+    console.log(
+      'tracking started?',
+      hasStarted,
+      'isTaskAvailale: ',
+      isTaskAvailale,
+      'isTaskDefied :',
+      isDefined,
+      'registeredTasks: ',
+      registeredTasks,
+    );
   showCrossPlatformToast(`BgTracking started = ${hasStarted}`, ToastDuration.long);
 }
 
