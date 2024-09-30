@@ -46,7 +46,6 @@ describe('Activity card', () => {
           photoVideoUrls={photoVideoUrls}
           duration={duration}
           distance={distance}
-          fullViewRef={{ current: undefined }}
           profile={profile}
           commentsLength={6}
         />

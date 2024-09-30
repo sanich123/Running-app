@@ -1,48 +1,44 @@
-import { saveSport } from '@R/activity/activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { SegmentedButtons } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
+import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
 
-import { SPORTS_BTNS_VALUES, SPORTS_BTNS, RUN_BTN_TEST_ID, SWIM_BTN_TEST_ID, RIDE_BTN_TEST_ID } from './const';
+import { SPORTS_BTNS_VALUES } from './const';
+import ChooseSportModal from '@C/activity/choose-sport-modal/choose-sport-modal';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useRef } from 'react';
+import { View } from 'react-native';
+import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 
 export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useAppDispatch();
   const {
     isDisabledWhileSending,
     additionalInfo: { sport },
   } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);
+  const { dark, colors } = useTheme();
+  const chooseSportModal = useRef<BottomSheetModal>(null);
 
   return (
-    <SegmentedButtons
-      value={sport}
-      onValueChange={(sport: string) => dispatch(saveSport(sport))}
-      buttons={[
-        {
-          value: SPORTS_BTNS_VALUES.run,
-          label: SPORTS_BTNS[language].labelRun,
-          icon: SPORTS_BTNS_VALUES.run,
-          showSelectedCheck: true,
-          disabled: isDisabled || isDisabledWhileSending,
-          testID: RUN_BTN_TEST_ID,
-        },
-        {
-          value: SPORTS_BTNS_VALUES.swim,
-          label: SPORTS_BTNS[language].labelSwim,
-          icon: SPORTS_BTNS_VALUES.swim,
-          showSelectedCheck: true,
-          disabled: isDisabled || isDisabledWhileSending,
-          testID: SWIM_BTN_TEST_ID,
-        },
-        {
-          value: SPORTS_BTNS_VALUES.bike,
-          label: SPORTS_BTNS[language].labelBike,
-          icon: SPORTS_BTNS_VALUES.bike,
-          showSelectedCheck: true,
-          disabled: isDisabled || isDisabledWhileSending,
-          testID: RIDE_BTN_TEST_ID,
-        },
-      ]}
-      style={{ marginTop: 15 }}
-    />
+    <>
+      <TouchableRipple
+        disabled={isDisabledWhileSending || isDisabled}
+        style={{
+          display: 'flex',
+          paddingVertical: 10,
+          marginTop: 10,
+          borderRadius: 5,
+          paddingLeft: 10,
+          borderWidth: 0.4,
+          borderColor: colors.onBackground,
+        }}
+        borderless
+        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+        onPress={() => chooseSportModal.current?.present()}>
+        <View style={{ display: 'flex', flexDirection: 'row', columnGap: 10, alignItems: 'center' }}>
+          <Icon source={sport === SPORTS_BTNS_VALUES.hike ? 'hiking' : sport} size={25} />
+          <Text variant="bodyMedium">{MAP_SPORT_TO_TITLE[sport][language]}</Text>
+        </View>
+      </TouchableRipple>
+      <ChooseSportModal chooseSportModalRef={chooseSportModal} />
+    </>
   );
 }

@@ -4,7 +4,6 @@ import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 
 import { useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useRef } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
@@ -22,13 +21,13 @@ export default function CardFullView() {
     isError,
     refetch,
   } = useGetActivityByActivityIdQuery(`${activityId}`);
-  const fullViewRef = useRef(null);
+
   return (
     <BottomSheetModalProvider>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={[(isLoading || isError) && styles.isInCenter]}>
-        <View ref={fullViewRef} collapsable={false}>
+        <View collapsable={false}>
           {isLoading && <ActivityIndicator size="large" />}
           {error ? <ErrorComponent error={error} refetch={refetch} /> : null}
           {isSuccess && (
@@ -36,7 +35,6 @@ export default function CardFullView() {
               <Card
                 isShowDeleteBtn
                 isShowDescription={!!activity.description}
-                fullViewRef={fullViewRef}
                 userId={activity.user_id}
                 description={activity.description}
                 title={activity.title}

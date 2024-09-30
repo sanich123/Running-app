@@ -6,7 +6,7 @@ import { errorHandler } from '@U/error-handler';
 import { useRouter } from 'expo-router';
 import { useContext, useEffect } from 'react';
 import { Alert, Platform } from 'react-native';
-import { IconButton, MD3Colors } from 'react-native-paper';
+import { IconButton, useTheme } from 'react-native-paper';
 
 import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from './const';
 
@@ -16,6 +16,7 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
   const { isLoading, isDisabled, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
   const { back } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
+  const { colors } = useTheme();
 
   useEffect(() => {
     if (data) {
@@ -41,7 +42,7 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
     <IconButton
       testID={CARD_DELETE_BTN_TEST_ID}
       icon={CARD_DELETE_BTN_ICON}
-      iconColor={MD3Colors.primary50}
+      iconColor={colors.primary}
       size={20}
       onPress={async () => {
         if (Platform.OS === 'web') {

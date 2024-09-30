@@ -38,7 +38,6 @@ export function renderCardsFunction({
       photoVideoUrls={photoVideoUrls}
       duration={duration}
       distance={distance}
-      fullViewRef={{ current: null }}
       profile={profile}
       commentsLength={commentsLength}
     />
