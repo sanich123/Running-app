@@ -20,6 +20,7 @@ export default function Page() {
   if (theme) {
     Appearance.setColorScheme(theme);
   }
+
   useEffect(() => {
     mapboxgl.accessToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '';
     if (Platform.OS !== 'web') {

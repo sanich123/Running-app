@@ -1,5 +1,5 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { Fragment, RefObject, useCallback, useState } from 'react';
+import { Fragment, RefObject, useCallback } from 'react';
 import { Appearance, View, ColorSchemeName, StyleSheet } from 'react-native';
 import { useTheme, Text, Divider, RadioButton, TouchableRipple } from 'react-native-paper';
 import { THEMES_ARRAY } from './const';
@@ -7,14 +7,15 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { changeTheme } from '@R/language/language';
 
 export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: RefObject<BottomSheetModal> }) {
-  const { language } = useAppSelector(({ language }) => language);
-  const { colors, dark } = useTheme();
-  const [checked, setChecked] = useState<string | null>('dark');
   const dispatch = useAppDispatch();
+  const { language, theme } = useAppSelector(({ language }) => language);
+  const { colors, dark } = useTheme();
+
   const renderBackdrop = useCallback(
     (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
+
   return (
     <BottomSheetModal
       ref={themesModalRef}
@@ -34,13 +35,12 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
                 borderless
                 style={styles.radioBtn}
                 onPress={() => {
-                  setChecked(value);
                   Appearance.setColorScheme(value as ColorSchemeName);
                   dispatch(changeTheme(value));
                 }}>
                 <>
                   <Text variant="titleMedium">{title}</Text>
-                  <RadioButton value={`${value}`} status={checked === value ? 'checked' : 'unchecked'} />
+                  <RadioButton value={`${value}`} status={theme === value ? 'checked' : 'unchecked'} />
                 </>
               </TouchableRipple>
             </Fragment>
