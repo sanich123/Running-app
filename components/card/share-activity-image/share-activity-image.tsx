@@ -1,4 +1,4 @@
-import { View, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { ActivityCardProps } from '../types';
 import { MutableRefObject } from 'react';
