@@ -74,6 +74,7 @@ export default function CommentInput({
           icon="pencil"
           disabled={!comment || isCommentSending || isUpdatingComment}
           onPress={async () => {
+            console.log('click');
             if (!commentToUpdate) {
               postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId })
                 .then(() => {
