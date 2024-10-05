@@ -8,14 +8,13 @@ import * as Linking from 'expo-linking';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useRef } from 'react';
-import { View, Platform, TextInput, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Platform, TextInput, StyleSheet, useWindowDimensions, ScrollView } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 import EmailInput from './email-input/email-input';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
 import Intro from './intro/intro';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SignIn() {
   const {
@@ -59,7 +58,7 @@ export default function SignIn() {
   return (
     <>
       {!process.env.IS_TESTING ? <Stack.Screen options={{ title: 'sign up', headerShown: false }} /> : null}
-      <SafeAreaView style={{ backgroundColor: colors.background }}>
+      <ScrollView style={{ backgroundColor: colors.background }}>
         <Intro />
         <View style={[styles.inputsWrapper, { backgroundColor: colors.background, height: height * 0.5 }]}>
           {pageState !== SignInPageStates.reset && !process.env.IS_TESTING ? (
@@ -102,7 +101,7 @@ export default function SignIn() {
           />
           <LoginRegisterNavigation setPageState={setPageState} pageState={pageState} isDisabled={isDisabled} />
         </View>
-      </SafeAreaView>
+      </ScrollView>
     </>
   );
 }
