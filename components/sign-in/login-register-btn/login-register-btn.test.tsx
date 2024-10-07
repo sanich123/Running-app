@@ -5,7 +5,7 @@ import { SignInPageStates } from '@U/validate-email-password';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
-import { LOGIN_BTN, REGISTER_BTN, RESET_BTN } from './const';
+import { LOGIN_BTN, REGISTER_BTN } from './const';
 import LoginRegisterBtn from './login-register-btn';
 
 describe('Login btn', () => {
