@@ -3,7 +3,6 @@ import GoogleSignBtn from '@C/sign-in/google-sign-in/google-sign-in';
 import GoogleSignInWeb from '@C/sign-in/google-sign-in-web/google-sign-in-web';
 import PasswordInput from '@C/sign-in/password-input/password-input';
 import usePasswordEmail from '@U/hooks/use-password-email';
-import { SignInPageStates } from '@U/validate-email-password';
 import * as Linking from 'expo-linking';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
@@ -61,7 +60,7 @@ export default function SignIn() {
       <ScrollView style={{ backgroundColor: colors.background }}>
         <Intro />
         <View style={[styles.inputsWrapper, { backgroundColor: colors.background, height: height * 0.5 }]}>
-          {pageState !== SignInPageStates.reset && !process.env.IS_TESTING ? (
+          {!process.env.IS_TESTING ? (
             <>
               {Platform.OS !== 'web' ? (
                 <GoogleSignBtn setIsDisabled={setIsDisabled} />
@@ -78,7 +77,6 @@ export default function SignIn() {
             setEmailError={setEmailError}
             isDisabled={isDisabled}
           />
-          {pageState !== SignInPageStates.reset && (
             <PasswordInput
               passwordRef={passwordRef}
               password={password}
@@ -87,7 +85,6 @@ export default function SignIn() {
               passwordError={passwordError}
               isDisabled={isDisabled}
             />
-          )}
           <LoginRegisterBtn
             pageState={pageState}
             password={password}

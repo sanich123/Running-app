@@ -65,7 +65,7 @@ describe('Login btn', () => {
         password=""
         isLoading={false}
         isDisabled
-        pageState={SignInPageStates.reset}
+        pageState={SignInPageStates.register}
         setIsDisabled={setIsDisabled}
         setIsLoading={setIsLoading}
         setEmailError={setEmailError}
@@ -73,6 +73,6 @@ describe('Login btn', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByText(RESET_BTN.russian.login)).toBeDisabled();
+    expect(screen.getByText(REGISTER_BTN.russian.register)).toBeDisabled();
   });
 });
