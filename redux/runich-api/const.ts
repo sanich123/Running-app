@@ -28,6 +28,8 @@ export enum Routes {
   all = 'all',
   photos = 'photos',
   followers = 'followers',
+  statistics = 'statistics',
+  email = 'email',
 }
 
 export const API_NAME = 'runnichApi';

@@ -4,7 +4,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_NAME, LIMIT_OF_REQUEST, Methods, Routes, Tags, headers } from './const';
 import { SendComment, SendCommentLike, SendFriend, SendLike, SendProfile } from './types';
 
-const { profile, activity, friend, comment, like, activityId, user, all, photos, followers } = Routes;
+const { profile, activity, friend, comment, like, activityId, user, all, photos, followers, statistics, email } =
+  Routes;
 
 export const runichApi = createApi({
   reducerPath: API_NAME,
@@ -297,7 +298,7 @@ export const runichApi = createApi({
 
     getAnnualStatisticsByUserId: builder.query({
       query: ({ userId }: { userId: string }) => ({
-        url: `/statistics/${userId}/year-category`,
+        url: `/${statistics}/${userId}/year-category`,
         headers,
       }),
       providesTags: [Tags.activities],
@@ -305,7 +306,7 @@ export const runichApi = createApi({
 
     getCurrentWeekStatistics: builder.query({
       query: ({ userId, firstDay, lastDay }: { userId: string; firstDay: string; lastDay: string }) => ({
-        url: `/statistics/${userId}/week?firstDay=${firstDay}&lastDay=${lastDay}`,
+        url: `/${statistics}/${userId}/week?firstDay=${firstDay}&lastDay=${lastDay}`,
         headers,
       }),
       providesTags: [Tags.activities],
@@ -313,7 +314,7 @@ export const runichApi = createApi({
 
     getAllTimeStatisticsByUserId: builder.query({
       query: ({ userId }: { userId: string }) => ({
-        url: `/statistics/${userId}/all`,
+        url: `/${statistics}/${userId}/all`,
         headers,
       }),
       providesTags: [Tags.activities],
@@ -321,10 +322,21 @@ export const runichApi = createApi({
 
     getMonthStatistics: builder.query({
       query: ({ userId, year, month }: { userId: string; year: string; month: string }) => ({
-        url: `/statistics/${userId}/year-month?year=${year}&month=${month}`,
+        url: `/${statistics}/${userId}/year-month?year=${year}&month=${month}`,
         headers,
       }),
       providesTags: [Tags.activities],
+    }),
+
+    //Emails
+
+    sendEmailAfterSendingLike: builder.mutation({
+      query: (body: { name: string; surname: string; profilePhoto: string; activityId: string }) => ({
+        url: `/${email}/${like}`,
+        method: Methods.post,
+        headers,
+        body,
+      }),
     }),
   }),
 });
@@ -374,4 +386,7 @@ export const {
   useGetAllTimeStatisticsByUserIdQuery,
   useGetMonthStatisticsQuery,
   useGetSeveralActivitiesByTheirIdsQuery,
+
+  //Emails
+  useSendEmailAfterSendingLikeMutation,
 } = runichApi;

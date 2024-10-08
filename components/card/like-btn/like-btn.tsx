@@ -1,5 +1,10 @@
 import { useAuth } from '@A/context/auth-context';
-import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/runich-api/runich-api';
+import {
+  useDeleteLikeMutation,
+  useGetLikesByActivityIdQuery,
+  useSendEmailAfterSendingLikeMutation,
+  useSendLikeMutation,
+} from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { showCrossPlatformToast } from '@U/custom-toast';
@@ -23,14 +28,16 @@ export default memo(function LikeBtn({ activityId }: { activityId: string }) {
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
   const { language } = useAppSelector(({ language }) => language);
   const {
-    profileFromServer: { profilePhoto },
+    profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
+
   const {
     data: likes,
     isError,
     isLoading: isLikesLoading,
   } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
-  const [sendLike, { isError: errorSending }] = useSendLikeMutation();
+  const [sendEmailNotification] = useSendEmailAfterSendingLikeMutation();
+  const [sendLike, { isError: errorSending, isSuccess: isSuccessSending }] = useSendLikeMutation();
   const [deleteLike, { isError: failureDeleting }] = useDeleteLikeMutation();
 
   const isLikedByYou = likes?.length
@@ -46,7 +53,21 @@ export default memo(function LikeBtn({ activityId }: { activityId: string }) {
         showCrossPlatformToast(event);
       }
     }
-  }, [errorSending, failureDeleting, language, toast]);
+    if (isSuccessSending) {
+      sendEmailNotification({ name, surname, profilePhoto, activityId });
+    }
+  }, [
+    errorSending,
+    failureDeleting,
+    language,
+    toast,
+    isSuccessSending,
+    name,
+    surname,
+    profilePhoto,
+    activityId,
+    sendEmailNotification,
+  ]);
 
   return (
     <IconButton
