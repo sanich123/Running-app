@@ -11,7 +11,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import CommentsListModal from '@C/comment-page/comments-list-modal/comments-list-modal';
 import { CommentBtnProps } from '../types';
 
-export default memo(function CommentBtn({ activityId, commentsLength }: CommentBtnProps) {
+export default memo(function CommentBtn({ activityId, commentsLength, profile, mapPhotoUrl }: CommentBtnProps) {
   const { dark, colors } = useTheme();
   const { push } = useRouter();
   const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
@@ -56,7 +56,12 @@ export default memo(function CommentBtn({ activityId, commentsLength }: CommentB
           size={25}
           disabled={isLoading || isDisabled || !!commentsCount?.message || isErrorLoadingComments || isLoadingComments}
         />
-        <CommentsListModal commentsModalRef={commentsModalRef} activityId={activityId} />
+        <CommentsListModal
+          commentsModalRef={commentsModalRef}
+          activityId={activityId}
+          profile={profile}
+          mapPhotoUrl={mapPhotoUrl}
+        />
       </>
     </TouchableRipple>
   );

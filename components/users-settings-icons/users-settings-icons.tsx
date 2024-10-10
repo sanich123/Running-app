@@ -2,7 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import ActivityUpdateBtn from '@C/activity/update-btn/update-btn';
 import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
-import { Href, useLocalSearchParams, usePathname, useRouter } from 'expo-router';
+import { Href, useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Platform, View, StyleSheet } from 'react-native';
 import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
 
@@ -11,7 +11,7 @@ export default function UsersSettingsIcons() {
   const { push } = useRouter();
   const pathname = usePathname();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
-  const { userId } = useLocalSearchParams();
+  const { userId } = useGlobalSearchParams();
   const { user } = useAuth();
   const isMineActivity = userId === user?.id && pathname.includes(ROUTES.activity);
 
@@ -37,10 +37,7 @@ export default function UsersSettingsIcons() {
             icon="account-search-outline"
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            onPress={() =>
-              !pathname.includes(ROUTES.users) &&
-              push(`/${place}/${ROUTES.users}` as Href)
-            }
+            onPress={() => !pathname.includes(ROUTES.users) && push(`/${place}/${ROUTES.users}` as Href)}
             style={{ marginRight: -10 }}
           />
           <IconButton
@@ -50,10 +47,7 @@ export default function UsersSettingsIcons() {
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
             style={{ marginRight: -10 }}
-            onPress={() =>
-              !pathname.includes(ROUTES.settings) &&
-              push(`/${place}/${ROUTES.settings}` as Href)
-            }
+            onPress={() => !pathname.includes(ROUTES.settings) && push(`/${place}/${ROUTES.settings}` as Href)}
           />
           {Platform.OS === 'web' && (
             <>

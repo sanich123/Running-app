@@ -14,20 +14,19 @@ export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: 
   useEffect(() => {
     if (Platform.OS !== 'web') {
       GoogleSignin.configure({
-        webClientId: '617323850499-oaorec6kohhna9p0dqlek590imnab6jq.apps.googleusercontent.com',
+        webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT,
         iosClientId:
-          process.env.EXPO_PUBLIC_APP_VARIANT === 'development'
-            ? '617323850499-ib9jp3gj3fbev205jbhcfe0ou9oairm2.apps.googleusercontent.com'
-            : '617323850499-i286kru7q6bgi2dfl38c6keljvhaelad.apps.googleusercontent.com',
+          process.env.APP_VARIANT === 'development'
+            ? process.env.EXPO_PUBLIC_GOOGLE_IOS_DEV
+            : process.env.EXPO_PUBLIC_GOOGLE_IOS_PREVIEW,
       });
     }
-  }, []);
-
+  }, [dark]);
 
   return (
     <GoogleSigninButton
       style={{ width: '100%' }}
-      color={dark ? GoogleSigninButton.Color.Dark : GoogleSigninButton.Color.Light}
+      color={GoogleSigninButton.Color.Dark}
       size={GoogleSigninButton.Size.Wide}
       onPress={async () => {
         setIsDisabled(true);
@@ -42,8 +41,6 @@ export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: 
             });
             if (error) {
               showCrossPlatformToast(`error: ${error?.message}`, ToastDuration.long);
-            } else {
-              showCrossPlatformToast('Перенаправляем в приложение', ToastDuration.long);
             }
           } else {
             showCrossPlatformToast('no ID token present!', ToastDuration.long);

@@ -8,7 +8,15 @@ import { useState, memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { CardBtnsProps } from '../types';
 
-export default memo(function CardBtns({ activityId, userId, cardRef, isShowDeleteBtn, commentsLength }: CardBtnsProps) {
+export default memo(function CardBtns({
+  activityId,
+  userId,
+  cardRef,
+  isShowDeleteBtn,
+  commentsLength,
+  profile,
+  mapPhotoUrl,
+}: CardBtnsProps) {
   const { user } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -18,8 +26,13 @@ export default memo(function CardBtns({ activityId, userId, cardRef, isShowDelet
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>
       <View style={styles.layout}>
-        <LikeBtn activityId={activityId} />
-        <CommentBtn activityId={activityId} commentsLength={commentsLength} />
+        <LikeBtn activityId={activityId} profile={profile} mapPhotoUrl={mapPhotoUrl} />
+        <CommentBtn
+          activityId={activityId}
+          commentsLength={commentsLength}
+          profile={profile}
+          mapPhotoUrl={mapPhotoUrl}
+        />
         <ShareBtn cardRef={cardRef} />
         {isMineActivity && isShowDeleteBtn && <DeleteBtn activityId={activityId} />}
       </View>

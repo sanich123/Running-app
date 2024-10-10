@@ -27,7 +27,7 @@ export default function SaveResult() {
     additionalInfo: { photoVideoUrls },
   } = useAppSelector(({ activity }) => activity);
   const [images, setImages] = useState<{ url: string; thumbnail: string | null }[]>([]);
-
+  
   return (
     <BottomSheetModalProvider>
       {!isCameraVisible ? (

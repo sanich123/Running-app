@@ -21,6 +21,7 @@ export default function CardFullView() {
     isError,
     refetch,
   } = useGetActivityByActivityIdQuery(`${activityId}`);
+
   return (
     <BottomSheetModalProvider>
       <ScrollView

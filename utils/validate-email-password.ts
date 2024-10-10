@@ -20,40 +20,38 @@ export function emailPasswordHandler({
 }: emailPasswordHandlerProps) {
   const passwordMatches = passwordMatcher.test(password);
   const emailMatches = emailMatcher.test(email.trim());
-  if (action !== SignInPageStates.reset) {
-    if (!emailMatches || !passwordMatches) {
-      if (!emailMatches) {
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast('Your email does not match the required pattern', ToastDuration.long);
-        }
-        setEmailError(true);
-      } else {
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast('Your password should match the pattern', ToastDuration.long);
-        }
-        setPasswordError(true);
-      }
-    }
-    return emailMatches && passwordMatches;
-  } else {
+
+  if (!emailMatches || !passwordMatches) {
     if (!emailMatches) {
       if (Platform.OS !== 'web') {
         showCrossPlatformToast('Your email does not match the required pattern', ToastDuration.long);
       }
       setEmailError(true);
+    } else {
+      if (Platform.OS !== 'web') {
+        showCrossPlatformToast('Your password should match the pattern', ToastDuration.long);
+      }
+      setPasswordError(true);
     }
-    return emailMatches;
+    return emailMatches && passwordMatches;
   }
+
+  if (!emailMatches) {
+    if (Platform.OS !== 'web') {
+      showCrossPlatformToast('Your email does not match the required pattern', ToastDuration.long);
+    }
+    setEmailError(true);
+  }
+  return emailMatches;
 }
 
 export const enum SignInPageStates {
   register = 'register',
   login = 'login',
-  reset = 'reset',
 }
 
 export const signInMap = {
   [SignInPageStates.register]: SignInPageStates.login,
-  [SignInPageStates.login]: SignInPageStates.reset,
-  [SignInPageStates.reset]: SignInPageStates.register,
+  [SignInPageStates.login]: SignInPageStates.register,
+  // [SignInPageStates.reset]: SignInPageStates.register,
 };

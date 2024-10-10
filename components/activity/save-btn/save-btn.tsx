@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
@@ -50,7 +50,7 @@ export default function SaveBtn() {
   const textOnBtnWhenIsSending = isEditingActivity
     ? ACTIVITY_SAVE_BTN[language].updating
     : ACTIVITY_SAVE_BTN[language].saving;
-  const { activityId } = useLocalSearchParams();
+  const { activityId } = useGlobalSearchParams();
 
   useEffect(() => {
     dispatch(setIsDisableWhileSending(false));

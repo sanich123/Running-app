@@ -1,3 +1,4 @@
+import { ProfileType } from '@C/card/types';
 import { ActivityToSend } from '@R/activity/types';
 import { ProfileSettings } from '@R/profile/types';
 
@@ -26,10 +27,21 @@ export type SendComment = {
   id: string;
 };
 
+export type UpdateComment = {
+  commentId: string;
+  activityId: string;
+  body: { comment: string };
+};
+
 export type SendLike = {
   activityId: string;
   authorId: string;
   profilePhoto: string;
+};
+
+export type DeleteLike = {
+  id: string;
+  activityId: string;
 };
 
 export type SendCommentLike = {
@@ -40,12 +52,17 @@ export type SendCommentLike = {
   commentId: string;
 };
 
+export type DeleteCommentLike = {
+  likeId: string;
+  commentId: string;
+};
+
 export type CommentResponse = {
   authorId: string;
   comment: string;
   id: string;
   date: string;
-  profile: { surname: string; name: string; profilePhoto: string; profilePhotoBlurhash: string };
+  profile: ProfileType;
 };
 
 export type CommentLikeResponse = {
@@ -54,3 +71,33 @@ export type CommentLikeResponse = {
     id: string;
   }[];
 };
+
+export type CurrentWeekStatisticsRequest = {
+  userId: string;
+  firstDay: string;
+  lastDay: string;
+};
+
+export type MonthStatisticsRequest = {
+  userId: string;
+  year: string;
+  month: string;
+};
+
+export interface EmailDTO {
+  name: string;
+  surname: string;
+  profilePhoto: string;
+  recepientName: string;
+  recepientSurname: string;
+  recepientEmail: string;
+}
+
+export interface EmailComment extends EmailDTO {
+  comment: string;
+  mapPhotoUrl: string;
+}
+
+export interface EmailCommentLike extends EmailDTO {
+  comment: string;
+}

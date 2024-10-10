@@ -22,12 +22,15 @@ export enum Routes {
   activity = 'activity',
   friend = 'friend',
   comment = 'comment',
+  commentLike = 'commentLike',
   like = 'like',
   auth = 'auth',
   activityId = 'activityId',
   all = 'all',
   photos = 'photos',
   followers = 'followers',
+  statistics = 'statistics',
+  email = 'email',
 }
 
 export const API_NAME = 'runnichApi';

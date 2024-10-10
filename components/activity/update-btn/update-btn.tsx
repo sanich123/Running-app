@@ -21,7 +21,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
-import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
+import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 
 export default function UpdateBtn() {
@@ -31,9 +31,8 @@ export default function UpdateBtn() {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
-  const { id: activityId } = useLocalSearchParams();
+  const { id: activityId } = useGlobalSearchParams();
   const { data: activity, isError, isLoading } = useGetActivityByActivityIdQuery(`${activityId}`);
-
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}

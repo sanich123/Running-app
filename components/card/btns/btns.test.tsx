@@ -10,6 +10,7 @@ import { screen } from '@testing-library/react-native';
 
 import CardBtns from './btns';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -32,6 +33,7 @@ describe('Card btns', () => {
           userId={MOCK_LIKE[0].authorId}
           cardRef={{ current: '' }}
           commentsLength={6}
+          profile={MOCK_PROFILE}
         />
       </BottomSheetModalProvider>,
 
@@ -51,6 +53,7 @@ describe('Card btns', () => {
           userId="someUserId"
           cardRef={{ current: '' }}
           commentsLength={6}
+          profile={MOCK_PROFILE}
         />
       </BottomSheetModalProvider>,
       {

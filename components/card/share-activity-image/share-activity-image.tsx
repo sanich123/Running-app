@@ -1,4 +1,4 @@
-import { View, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { ActivityCardProps } from '../types';
 import { MutableRefObject } from 'react';
@@ -20,9 +20,8 @@ export default function ShareActivityImage({
   cardRef: MutableRefObject<View | null>;
 }) {
   const { language } = useAppSelector(({ language }) => language);
-  const { height, width } = useWindowDimensions();
   return (
-    <View style={{ zIndex: -9999, position: 'absolute', bottom: -height }} ref={cardRef} collapsable={false}>
+    <View style={{ zIndex: -1, position: 'absolute', opacity: 0 }} ref={cardRef} collapsable={false}>
       <View
         style={{
           position: 'absolute',
@@ -62,9 +61,9 @@ export default function ShareActivityImage({
           </Text>
         ) : null}
       </View>
-      <View style={{ position: 'relative', zIndex: -9998 }}>
+      <View style={{ position: 'relative', zIndex: -1 }}>
         <CustomImage
-          style={{ width, height: 500 }}
+          style={{ width: 350, height: 470 }}
           source={{ uri: `${mapPhotoUrl}` }}
           contentFit="cover"
           testID={mapPhotoUrl}
@@ -80,7 +79,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: 15,
     marginVertical: 3,
-    zIndex: -9997,
   },
   title: {
     fontWeight: 'bold',

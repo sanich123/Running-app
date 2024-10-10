@@ -28,7 +28,7 @@ export default function Activity() {
           {activityStatus !== STATUSES.initial && <Metrics />}
         </View>
         <View style={[styles.metricsLayout, { backgroundColor: colors.secondaryContainer }]}>
-          <IconChooseSport />
+          {activityStatus === STATUSES.initial && <IconChooseSport />}
           <View style={[styles.metrics, { backgroundColor: colors.secondaryContainer }]}>
             {activityStatus === STATUSES.paused && <PauseBtn />}
             <StartBtn isReadyToRecordLocation={isReadyToRecordLocation} />

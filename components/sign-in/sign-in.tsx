@@ -3,27 +3,19 @@ import GoogleSignBtn from '@C/sign-in/google-sign-in/google-sign-in';
 import GoogleSignInWeb from '@C/sign-in/google-sign-in-web/google-sign-in-web';
 import PasswordInput from '@C/sign-in/password-input/password-input';
 import usePasswordEmail from '@U/hooks/use-password-email';
-import { SignInPageStates } from '@U/validate-email-password';
 import * as Linking from 'expo-linking';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useRef } from 'react';
-import { View, Platform, TextInput, StyleSheet } from 'react-native';
+import { View, Platform, TextInput, StyleSheet, useWindowDimensions, ScrollView } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 import EmailInput from './email-input/email-input';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
+import Intro from './intro/intro';
 
 export default function SignIn() {
-  const { colors } = useTheme();
-  const passwordRef = useRef<TextInput>(null);
-  const { access_token, refresh_token } = useLocalSearchParams();
-
-  if (Platform.OS === 'web') {
-    WebBrowser.maybeCompleteAuthSession();
-  }
-
   const {
     email,
     password,
@@ -40,8 +32,15 @@ export default function SignIn() {
     setIsLoading,
     setIsDisabled,
   } = usePasswordEmail();
-
+  const { colors } = useTheme();
+  const passwordRef = useRef<TextInput>(null);
+  const { access_token, refresh_token } = useLocalSearchParams();
   const url = Linking.useURL();
+  const { height } = useWindowDimensions();
+
+  if (Platform.OS === 'web') {
+    WebBrowser.maybeCompleteAuthSession();
+  }
 
   useEffect(() => {
     if (access_token) {
@@ -58,9 +57,10 @@ export default function SignIn() {
   return (
     <>
       {!process.env.IS_TESTING ? <Stack.Screen options={{ title: 'sign up', headerShown: false }} /> : null}
-      <View style={[styles.layout, { backgroundColor: colors.background }]}>
-        <View style={[styles.inputsWrapper, { backgroundColor: colors.background }]}>
-          {pageState !== SignInPageStates.reset && !process.env.IS_TESTING ? (
+      <ScrollView style={{ backgroundColor: colors.background }}>
+        <Intro />
+        <View style={[styles.inputsWrapper, { backgroundColor: colors.background, height: height * 0.5 }]}>
+          {!process.env.IS_TESTING ? (
             <>
               {Platform.OS !== 'web' ? (
                 <GoogleSignBtn setIsDisabled={setIsDisabled} />
@@ -77,7 +77,6 @@ export default function SignIn() {
             setEmailError={setEmailError}
             isDisabled={isDisabled}
           />
-          {pageState !== SignInPageStates.reset && (
             <PasswordInput
               passwordRef={passwordRef}
               password={password}
@@ -86,7 +85,6 @@ export default function SignIn() {
               passwordError={passwordError}
               isDisabled={isDisabled}
             />
-          )}
           <LoginRegisterBtn
             pageState={pageState}
             password={password}
@@ -100,19 +98,13 @@ export default function SignIn() {
           />
           <LoginRegisterNavigation setPageState={setPageState} pageState={pageState} isDisabled={isDisabled} />
         </View>
-      </View>
+      </ScrollView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  layout: {
-    flex: 1,
-    justifyContent: 'center',
-  },
   inputsWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
     marginLeft: Platform.OS === 'web' ? 'auto' : 10,
     marginRight: Platform.OS === 'web' ? 'auto' : 10,
   },

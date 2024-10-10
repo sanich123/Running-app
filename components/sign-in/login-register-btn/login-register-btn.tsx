@@ -10,7 +10,7 @@ import { Button } from 'react-native-paper';
 //@ts-ignore
 import { useToast } from 'react-native-toast-notifications';
 
-import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN, RESET_BTN, LoginBtnIcons } from './const';
+import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons } from './const';
 
 export default function LoginRegisterBtn({
   email,
@@ -29,7 +29,7 @@ export default function LoginRegisterBtn({
   const { push } = useRouter();
   const isRegistering = pageState === SignInPageStates.register;
   const isLogining = pageState === SignInPageStates.login;
-  const isResetting = pageState === SignInPageStates.reset;
+  // const isResetting = pageState === SignInPageStates.reset;
 
   return (
     <Button
@@ -56,7 +56,7 @@ export default function LoginRegisterBtn({
                   showCrossPlatformToast(error.message);
                 }
               }
-            } else if (isLogining) {
+            } else {
               const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
               if (error) {
                 if (Platform.OS === 'web') {
@@ -65,24 +65,25 @@ export default function LoginRegisterBtn({
                   showCrossPlatformToast(error.message);
                 }
               }
-            } else {
-              const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-                redirectTo: 'https://runich-with-api.netlify.app/reset-password',
-              });
-              if (error) {
-                if (Platform.OS === 'web') {
-                  toast.show(error.message);
-                } else {
-                  showCrossPlatformToast(error.message);
-                }
-              } else {
-                if (Platform.OS === 'web') {
-                  toast.show('Пройдите по ссылке в электронной почте');
-                } else {
-                  showCrossPlatformToast('Пройдите по ссылке в электронной почте');
-                }
-              }
             }
+            // else {
+            //   const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+            //     redirectTo: 'https://runich-with-api.netlify.app/reset-password',
+            //   });
+            //   if (error) {
+            //     if (Platform.OS === 'web') {
+            //       toast.show(error.message);
+            //     } else {
+            //       showCrossPlatformToast(error.message);
+            //     }
+            //   } else {
+            //     if (Platform.OS === 'web') {
+            //       toast.show('Пройдите по ссылке в электронной почте');
+            //     } else {
+            //       showCrossPlatformToast('Пройдите по ссылке в электронной почте');
+            //     }
+            //   }
+            // }
           }
         } catch (e) {
           errorHandler(e);
@@ -95,8 +96,8 @@ export default function LoginRegisterBtn({
       {isRegistering && isLoading && REGISTER_BTN[language].registering}
       {isLogining && !isLoading && LOGIN_BTN[language].login}
       {isLogining && isLoading && LOGIN_BTN[language].logining}
-      {isResetting && !isLoading && RESET_BTN[language].login}
-      {isResetting && isLoading && RESET_BTN[language].logining}
+      {/* {isResetting && !isLoading && RESET_BTN[language].login} */}
+      {/* {isResetting && isLoading && RESET_BTN[language].logining} */}
     </Button>
   );
 }

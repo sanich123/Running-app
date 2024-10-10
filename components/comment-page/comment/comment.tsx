@@ -21,6 +21,7 @@ export default function Comment({
   setIdOfUpdatingComment,
   setIsShowingTextInput,
   commentLike,
+  mapPhotoUrl,
 }: CommentProps) {
   const { user } = useAuth();
   const isYouAuthor = user?.id === authorId;
@@ -34,6 +35,8 @@ export default function Comment({
       <View style={styles.textCommentWrapper}>
         {idOfUpdatingComment === id ? (
           <CommentInput
+            mapPhotoUrl={mapPhotoUrl}
+            profile={profile}
             activityId={activityId}
             setIsShowingTextInput={setIsShowingTextInput}
             commentToUpdate={comment}
@@ -47,7 +50,7 @@ export default function Comment({
       </View>
       <View style={styles.likesWrapper}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <CommentLikeBtn commentId={id} commentLikesFromComment={commentLike} />
+          <CommentLikeBtn commentId={id} commentLikesFromComment={commentLike} profile={profile} comment={comment} />
           <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
         </View>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

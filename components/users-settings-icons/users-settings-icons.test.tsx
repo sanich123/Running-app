@@ -8,7 +8,7 @@ import { ACTIVITY_SAVE_BTN } from '@C/activity/save-btn/const';
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
   usePathname: () => '/home/activity/someActivityId',
-  useLocalSearchParams: () => ({ userId: 'someUserId', id: 'someActivityId' }),
+  useGlobalSearchParams: () => ({ userId: 'someUserId', id: 'someActivityId' }),
 }));
 describe('User settings icons', () => {
   it('should correctly renders edit btn, when userId === user?.id', async () => {

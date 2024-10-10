@@ -8,11 +8,8 @@ export default function CommentsEmptyList() {
   return (
     <View
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         paddingLeft: 15,
-        paddingRight: 15,
+        paddingRight: 80,
       }}>
       <Text variant="bodyLarge">
         {language === LANGUAGES.russian

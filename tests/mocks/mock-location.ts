@@ -61,8 +61,11 @@ export const MOCK_PROFILE = {
   birthday: '1991-03-11T21:00:00.000Z',
   city: 'Москва',
   createdAt: '2023-09-27T06:03:22.257Z',
+  email: 'someEmail@yandex.ru',
   gender: 'male',
   id: '4d58948f-571f-44f4-8b00-ec1f494187f5',
+  language: 'russian',
+
   name: 'Искандер',
   profilePhoto: 'https://marathonec.ru/wp-content/uploads/2023/05/iskander-yadgarov.jpg',
   profilePhotoBlurhash: '',
@@ -71,4 +74,6 @@ export const MOCK_PROFILE = {
   updatedAt: '2023-09-27T06:03:22.257Z',
   user_id: '9320e08f-299a-468a-8b03-5a1b5ef28ee1',
   weight: '70',
+  emailNotifications: true,
+  users: { email: 'someEmail@yandex.ru' },
 };

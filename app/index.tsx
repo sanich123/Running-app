@@ -14,12 +14,12 @@ export default function Page() {
   const { user } = useAuth();
   const { activityStatus } = useAppSelector(({ location }) => location);
   const { theme } = useAppSelector(({ language }) => language);
-
   const dispatch = useAppDispatch();
 
-  if (theme) {
-    Appearance.setColorScheme(theme);
-  }
+  useEffect(() => {
+    if (theme) Appearance.setColorScheme(theme);
+  }, [theme]);
+  
   useEffect(() => {
     mapboxgl.accessToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '';
     if (Platform.OS !== 'web') {

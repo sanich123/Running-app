@@ -5,7 +5,7 @@ import { SignInPageStates } from '@U/validate-email-password';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
-import { LOGIN_BTN, REGISTER_BTN, RESET_BTN } from './const';
+import { LOGIN_BTN, REGISTER_BTN } from './const';
 import LoginRegisterBtn from './login-register-btn';
 
 describe('Login btn', () => {
@@ -65,7 +65,7 @@ describe('Login btn', () => {
         password=""
         isLoading={false}
         isDisabled
-        pageState={SignInPageStates.reset}
+        pageState={SignInPageStates.register}
         setIsDisabled={setIsDisabled}
         setIsLoading={setIsLoading}
         setEmailError={setEmailError}
@@ -73,6 +73,6 @@ describe('Login btn', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByText(RESET_BTN.russian.login)).toBeDisabled();
+    expect(screen.getByText(REGISTER_BTN.russian.register)).toBeDisabled();
   });
 });

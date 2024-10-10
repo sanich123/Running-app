@@ -49,5 +49,5 @@ export type LoginBtnProps = {
 export const LoginBtnIcons = {
   [SignInPageStates.login]: 'login',
   [SignInPageStates.register]: 'account',
-  [SignInPageStates.reset]: 'key-change',
+  // [SignInPageStates.reset]: 'key-change',
 };

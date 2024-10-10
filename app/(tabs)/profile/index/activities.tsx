@@ -10,21 +10,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function Activities() {
   const { user } = useAuth();
   const [page, setPage] = useState(0);
-  const { data, isLoading, error, refetch } = useGetActivitiesByUserIdQuery(
+  const { data, isLoading, error, isError, refetch, isSuccess } = useGetActivitiesByUserIdQuery(
     { id: `${user?.id}`, page, take: 10 },
-    { skip: !user },
+    { skip: !user?.id },
   );
 
   return (
-    <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
+    <SafeAreaView
+      edges={['left', 'right']}
+      style={[{ flex: 1, justifyContent: 'center' }, (isLoading || isError) && { justifyContent: 'center' }]}>
       <BottomSheetModalProvider>
-        <InfiniteScrollList
-          dataToRender={data?.activities}
-          page={page}
-          setPage={setPage}
-          refetch={refetch}
-          isLastPage={data?.isLastPage}
-        />
+        {isSuccess && (
+          <InfiniteScrollList
+            dataToRender={data?.activities}
+            page={page}
+            setPage={setPage}
+            refetch={refetch}
+            isLastPage={data?.isLastPage}
+          />
+        )}
       </BottomSheetModalProvider>
 
       {isLoading && <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />}

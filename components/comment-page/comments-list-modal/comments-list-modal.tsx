@@ -1,19 +1,22 @@
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useState } from 'react';
 import { FAB, useTheme } from 'react-native-paper';
 import Comments from '@C/comment-page/comments/comments';
 import { Platform, View } from 'react-native';
 import CommentInput from '@C/comment-page/comment-input/comment-input';
 import { CommentsListModalProps } from '../types';
+import { backdrop } from '@U/backdrop';
 
-export default function CommentsListModal({ commentsModalRef, activityId }: CommentsListModalProps) {
+export default function CommentsListModal({
+  commentsModalRef,
+  activityId,
+  profile,
+  mapPhotoUrl,
+}: CommentsListModalProps) {
   const { colors } = useTheme();
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
   const [idOfUpdatingComment, setIdOfUpdatingComment] = useState('');
-  const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
-    [],
-  );
+  const renderBackdrop = useCallback(backdrop, []);
   const snapPoints = useMemo(() => ['20%', '25%', '55%', '65%', '90%'], []);
 
   return (
@@ -28,10 +31,12 @@ export default function CommentsListModal({ commentsModalRef, activityId }: Comm
       <View style={{ paddingHorizontal: 10, marginBottom: 5, zIndex: 7 }}>
         {isShowingTextInput && !idOfUpdatingComment ? (
           <CommentInput
+            profile={profile}
             idOfUpdatingComment={idOfUpdatingComment}
             activityId={`${activityId}`}
             setIsShowingTextInput={setIsShowingTextInput}
             commentId=""
+            mapPhotoUrl={mapPhotoUrl}
             setIdOfUpdatingComment={setIdOfUpdatingComment}
           />
         ) : (
@@ -54,6 +59,7 @@ export default function CommentsListModal({ commentsModalRef, activityId }: Comm
           isShowingTextInput={isShowingTextInput}
           setIsShowingTextInput={setIsShowingTextInput}
           activityId={activityId}
+          mapPhotoUrl={mapPhotoUrl}
           idOfUpdatingComment={idOfUpdatingComment}
           setIdOfUpdatingComment={setIdOfUpdatingComment}
           commentsModalRef={commentsModalRef}
