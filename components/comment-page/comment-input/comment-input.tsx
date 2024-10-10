@@ -1,9 +1,13 @@
 import { useAuth } from '@A/context/auth-context';
 import { setActivityIdWhichCommentsToUpdate } from '@R/main-feed/main-feed';
-import { usePostCommentWithActivityIdMutation, useUpdateCommentByCommentIdMutation } from '@R/runich-api/runich-api';
+import {
+  usePostCommentWithActivityIdMutation,
+  useSendEmailAfterSendingCommentMutation,
+  useUpdateCommentByCommentIdMutation,
+} from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Platform } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
@@ -14,47 +18,66 @@ import { CommentInputProps } from '../types';
 export default function CommentInput({
   commentToUpdate = '',
   activityId,
+  profile,
   setIsShowingTextInput,
   commentId = '',
   setIdOfUpdatingComment,
   idOfUpdatingComment,
+  mapPhotoUrl,
 }: CommentInputProps) {
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const {
+    profileFromServer: { profilePhoto, name, surname },
+  } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
   const { user } = useAuth();
   const [comment, setComment] = useState(commentToUpdate);
-  const [postComment, { isLoading: isCommentSending, isSuccess: isSuccessSending, isError }] =
-    usePostCommentWithActivityIdMutation();
-  const [updateComment, { isLoading: isUpdatingComment, isSuccess: isSuccessUpdating, isError: isErrorUpdating }] =
-    useUpdateCommentByCommentIdMutation();
+  const [sendEmailAfterSendingComment] = useSendEmailAfterSendingCommentMutation();
+  const [postComment, { isLoading: isCommentSending }] = usePostCommentWithActivityIdMutation();
+  const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
 
-  useEffect(() => {
-    if (isSuccessSending || isSuccessUpdating) {
-      dispatch(setActivityIdWhichCommentsToUpdate(activityId));
-      setIsShowingTextInput(false);
-      setIdOfUpdatingComment('');
-      setComment('');
+  async function sendingComment() {
+    return await postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId })
+      .then(() => sendingUpdatingCommentSuccessHandler())
+      .catch((error) => {
+        console.log(error);
+        sendingUpdatingCommentErrorHandler();
+      });
+  }
+
+  async function updatingComment() {
+    return await updateComment({ activityId, commentId, body: { comment } })
+      .then(sendingUpdatingCommentSuccessHandler)
+      .catch(sendingUpdatingCommentErrorHandler);
+  }
+
+  async function sendingUpdatingCommentSuccessHandler() {
+    dispatch(setActivityIdWhichCommentsToUpdate(activityId));
+    setIsShowingTextInput(false);
+    setIdOfUpdatingComment('');
+    setComment('');
+    if (profile.emailNotifications && !commentToUpdate) {
+      sendEmailAfterSendingComment({
+        name,
+        surname,
+        profilePhoto,
+        comment,
+        recepientName: profile?.name,
+        recepientSurname: profile?.surname,
+        recepientEmail: profile?.users?.email,
+        mapPhotoUrl: mapPhotoUrl ? mapPhotoUrl : '',
+      });
     }
-    if (isError || isErrorUpdating) {
-      if (Platform.OS !== 'web') {
-        showCrossPlatformToast(COMMENT_INPUT[language].errorSending);
-      } else {
-        toast.show(COMMENT_INPUT[language].errorSending);
-      }
+  }
+
+  function sendingUpdatingCommentErrorHandler() {
+    if (Platform.OS !== 'web') {
+      showCrossPlatformToast(COMMENT_INPUT[language].errorSending);
+    } else {
+      toast.show(COMMENT_INPUT[language].errorSending);
     }
-  }, [
-    activityId,
-    dispatch,
-    isError,
-    isErrorUpdating,
-    isSuccessSending,
-    isSuccessUpdating,
-    language,
-    setIdOfUpdatingComment,
-    setIsShowingTextInput,
-    toast,
-  ]);
+  }
 
   return (
     <TextInput
@@ -63,10 +86,6 @@ export default function CommentInput({
       placeholder={COMMENT_INPUT[language].placeholder}
       value={comment}
       onChangeText={(comment) => setComment(comment)}
-      onBlur={() => {
-        setIdOfUpdatingComment('');
-        setIsShowingTextInput(false);
-      }}
       disabled={isCommentSending || isUpdatingComment}
       right={
         <TextInput.Icon
@@ -74,22 +93,13 @@ export default function CommentInput({
           icon="pencil"
           disabled={!comment || isCommentSending || isUpdatingComment}
           onPress={async () => {
-            console.log('click');
-            if (!commentToUpdate) {
-              postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId })
-                .then(() => {
-                  dispatch(setActivityIdWhichCommentsToUpdate(activityId));
-                  setIsShowingTextInput(false);
-                  setIdOfUpdatingComment('');
-                  setComment('');
-                })
-                .catch(() => toast.show(COMMENT_INPUT[language].errorSending));
-            } else {
-              if (comment !== commentToUpdate) {
-                await updateComment({ activityId, commentId, body: { comment } }).unwrap();
+            if (comment) {
+              if (!commentToUpdate) {
+                await sendingComment();
               } else {
-                setIsShowingTextInput(false);
-                setIdOfUpdatingComment('');
+                if (comment !== commentToUpdate) {
+                  await updatingComment();
+                }
               }
             }
           }}
@@ -98,20 +108,10 @@ export default function CommentInput({
       onSubmitEditing={async () => {
         if (comment) {
           if (!commentToUpdate) {
-            postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId })
-              .then(() => {
-                dispatch(setActivityIdWhichCommentsToUpdate(activityId));
-                setIsShowingTextInput(false);
-                setIdOfUpdatingComment('');
-                setComment('');
-              })
-              .catch(() => toast.show(COMMENT_INPUT[language].errorSending));
+            return await sendingComment();
           } else {
             if (comment !== commentToUpdate) {
-              await updateComment({ activityId, commentId, body: { comment } }).unwrap();
-            } else {
-              setIsShowingTextInput(false);
-              setIdOfUpdatingComment('');
+              await updatingComment();
             }
           }
         }

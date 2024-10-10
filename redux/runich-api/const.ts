@@ -22,6 +22,7 @@ export enum Routes {
   activity = 'activity',
   friend = 'friend',
   comment = 'comment',
+  commentLike = 'commentLike',
   like = 'like',
   auth = 'auth',
   activityId = 'activityId',

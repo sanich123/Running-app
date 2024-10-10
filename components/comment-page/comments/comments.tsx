@@ -18,6 +18,7 @@ export default function Comments({
   commentsModalRef,
   setIsShowingTextInput,
   isShowingTextInput,
+  mapPhotoUrl,
 }: CommentsProps) {
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(true);
   const [take, increaseTakeNumber] = useState(10);
@@ -30,7 +31,6 @@ export default function Comments({
     if (activityIdWhichCommentsToUpdate === activityId) {
       setIsNeedToGetUpdatedComments(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activityIdWhichCommentsToUpdate, activityId]);
 
   useEffect(() => {
@@ -59,6 +59,13 @@ export default function Comments({
       {isError || data?.comments?.message ? <ErrorComponent error={error || data?.comments} refetch={refetch} /> : null}
       {isSuccess && (
         <>
+          {data?.comments?.length >= 10 && take < data?.allCommentsLength && (
+            <CommentsLoadMoreBtn
+              take={take}
+              increaseTakeNumber={increaseTakeNumber}
+              commentsLength={data?.allCommentsLength}
+            />
+          )}
           {data?.comments?.length > 0 &&
             data?.comments
               ?.slice()
@@ -76,15 +83,10 @@ export default function Comments({
                   setIdOfUpdatingComment={setIdOfUpdatingComment}
                   setIsShowingTextInput={setIsShowingTextInput}
                   commentLike={commentLike}
+                  mapPhotoUrl={mapPhotoUrl}
                 />
               ))}
-          {data?.comments?.length >= 10 && take < data?.allCommentsLength && (
-            <CommentsLoadMoreBtn
-              take={take}
-              increaseTakeNumber={increaseTakeNumber}
-              commentsLength={data?.allCommentsLength}
-            />
-          )}
+
           {!data?.comments?.length && !isShowingTextInput && <CommentsEmptyList />}
         </>
       )}

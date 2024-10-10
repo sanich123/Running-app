@@ -1,3 +1,4 @@
+import { ProfileType } from '@C/card/types';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
 import { RefObject } from 'react';
@@ -7,6 +8,7 @@ export type CommentProps = {
   idOfUpdatingComment: string;
   setIdOfUpdatingComment: (arg: string) => void;
   setIsShowingTextInput: (arg: boolean) => void;
+  mapPhotoUrl?: string;
 } & CommentResponse &
   CommentLikeResponse;
 
@@ -23,17 +25,21 @@ export type CommentEditBtnProps = {
 };
 
 export type CommentInputProps = {
+  profile: ProfileType;
   activityId: string;
   setIsShowingTextInput: (arg: boolean) => void;
   commentToUpdate?: string;
   commentId: string;
   setIdOfUpdatingComment: (arg: string) => void;
   idOfUpdatingComment: string;
+  mapPhotoUrl?: string;
 };
 
 export type CommentLikeBtnProps = {
   commentId: string;
   commentLikesFromComment: { authorId: string; id: string }[];
+  comment: string;
+  profile: ProfileType;
 };
 
 export type CommentLikesLengthProps = {
@@ -51,11 +57,14 @@ export type CommentsProps = {
   commentsModalRef: RefObject<BottomSheetModal>;
   setIsShowingTextInput: (arg: boolean) => void;
   isShowingTextInput: boolean;
+  mapPhotoUrl?: string;
 };
 
 export type CommentsListModalProps = {
   commentsModalRef: RefObject<BottomSheetModal>;
   activityId: string;
+  profile: ProfileType;
+  mapPhotoUrl?: string;
 };
 
 export type CommentsLoadMorBtnProps = {

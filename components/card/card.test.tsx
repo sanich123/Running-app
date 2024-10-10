@@ -10,6 +10,7 @@ import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
 
 jest.mock('expo-image', () => {
   const actualExpoImage = jest.requireActual('expo-image');
@@ -46,7 +47,7 @@ describe('Activity card', () => {
           photoVideoUrls={photoVideoUrls}
           duration={duration}
           distance={distance}
-          profile={profile}
+          profile={MOCK_PROFILE}
           commentsLength={6}
         />
       </BottomSheetModalProvider>,
@@ -55,6 +56,8 @@ describe('Activity card', () => {
     expect(screen.getByText(new RegExp(`${profile.name}`))).toBeOnTheScreen();
     expect(screen.getByText(new RegExp(`${profile.surname}`))).toBeOnTheScreen();
     expect(await screen.findAllByText(title)).toHaveLength(2);
-    ['Time', 'Pace', 'Distance'].map(async (word) => expect(await screen.getAllByText(new RegExp(word))).toHaveLength(2));
+    ['Time', 'Pace', 'Distance'].map(async (word) =>
+      expect(await screen.getAllByText(new RegExp(word))).toHaveLength(2),
+    );
   });
 });

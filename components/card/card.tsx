@@ -95,6 +95,8 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             cardRef={cardRef}
             isShowDeleteBtn={isShowDeleteBtn}
             commentsLength={commentsLength}
+            profile={profile}
+            mapPhotoUrl={mapPhotoUrl}
           />
         </Card.Actions>
       </View>

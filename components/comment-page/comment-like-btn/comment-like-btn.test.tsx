@@ -6,6 +6,7 @@ import * as auth from '../../../auth/context/auth-context';
 import { USER_AUTH_MOCKS } from '../../../tests/mocks/use-auth';
 import { mockStore } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
 
 describe('Comment like btn', () => {
   it('should correctly renders, when liked by you', async () => {
@@ -16,7 +17,12 @@ describe('Comment like btn', () => {
       },
     }));
     renderWithProviders(
-      <CommentLikeBtn commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb" commentLikesFromComment={MOCK_LIKES} />,
+      <CommentLikeBtn
+        commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
+        commentLikesFromComment={MOCK_LIKES}
+        comment={''}
+        profile={MOCK_PROFILE}
+      />,
       { store: mockStore },
     );
     expect(await screen.findByTestId('commentLikeBtn-active')).toBeOnTheScreen();
@@ -29,7 +35,12 @@ describe('Comment like btn', () => {
       },
     }));
     renderWithProviders(
-      <CommentLikeBtn commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb" commentLikesFromComment={MOCK_LIKES} />,
+      <CommentLikeBtn
+        commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
+        commentLikesFromComment={MOCK_LIKES}
+        profile={MOCK_PROFILE}
+        comment={''}
+      />,
       { store: mockStore },
     );
     expect(await screen.findByTestId('commentLikeBtn')).toBeOnTheScreen();

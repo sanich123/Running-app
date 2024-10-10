@@ -41,6 +41,8 @@ export type ProfileType = {
   updatedAt: string;
   user_id: string;
   weight: string;
+  emailNotifications: boolean;
+  users: { email: string };
 };
 
 export type ActivityCardProps = {
@@ -69,11 +71,15 @@ export type CardBtnsProps = {
   cardRef: MutableRefObject<ReactNode>;
   isShowDeleteBtn: boolean;
   commentsLength: number;
+  profile: ProfileType;
+  mapPhotoUrl?: string;
 };
 
 export type CommentBtnProps = {
   activityId: string;
   commentsLength: number;
+  profile: ProfileType;
+  mapPhotoUrl?: string;
 };
 
 export type ModalLikesListProps = {
@@ -95,6 +101,12 @@ export type Likes = {
   activityId: string;
   date: string;
   id: string;
+};
+
+export type LikeBtnProps = {
+  activityId: string;
+  profile: ProfileType;
+  mapPhotoUrl?: string;
 };
 
 export type NumOfLikesProps = {

@@ -20,8 +20,9 @@ import {
   CARD_LIKE_BTN_ICON_NOT_LIKED,
 } from './const';
 import { LIKE_BTN } from '../likes/const';
+import { LikeBtnProps } from '../types';
 
-export default memo(function LikeBtn({ activityId }: { activityId: string }) {
+export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeBtnProps) {
   const { colors } = useTheme();
   const toast = useToast();
   const { user } = useAuth();
@@ -45,6 +46,20 @@ export default memo(function LikeBtn({ activityId }: { activityId: string }) {
     : null;
 
   useEffect(() => {
+    if (isSuccessSending && profile?.emailNotifications) {
+      sendEmailNotification({
+        name,
+        surname,
+        profilePhoto,
+        recepientName: profile?.name,
+        recepientSurname: profile?.surname,
+        recepientEmail: profile?.users.email,
+        mapPhotoUrl: mapPhotoUrl || '',
+      });
+    }
+  }, [isSuccessSending, mapPhotoUrl, name, profile, profilePhoto, sendEmailNotification, surname]);
+
+  useEffect(() => {
     if (errorSending || failureDeleting) {
       const event = LIKE_BTN[language].errorAction(failureDeleting ? 'delete' : 'send');
       if (Platform.OS === 'web') {
@@ -53,21 +68,7 @@ export default memo(function LikeBtn({ activityId }: { activityId: string }) {
         showCrossPlatformToast(event);
       }
     }
-    if (isSuccessSending) {
-      sendEmailNotification({ name, surname, profilePhoto, activityId });
-    }
-  }, [
-    errorSending,
-    failureDeleting,
-    language,
-    toast,
-    isSuccessSending,
-    name,
-    surname,
-    profilePhoto,
-    activityId,
-    sendEmailNotification,
-  ]);
+  }, [errorSending, failureDeleting, language, toast]);
 
   return (
     <IconButton

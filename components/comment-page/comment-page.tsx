@@ -50,7 +50,7 @@ export default function CommentFullViewPage() {
                 <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
               </View>
               <View style={styles.columnsLayout}>
-                <LikeBtn activityId={activity?.id} />
+                <LikeBtn activityId={activity?.id} profile={activity?.profile} />
                 <Likes activityId={activity?.id} size={LikesSize.big} />
               </View>
             </Card.Content>
@@ -69,6 +69,7 @@ export default function CommentFullViewPage() {
               />
               {isShowingTextInput && !idOfUpdatingComment ? (
                 <CommentInput
+                  profile={activity?.profile}
                   idOfUpdatingComment={idOfUpdatingComment}
                   activityId={`${activityId}`}
                   setIsShowingTextInput={setIsShowingTextInput}

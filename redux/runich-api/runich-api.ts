@@ -2,10 +2,37 @@ import { ActivityToSend } from '@R/activity/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { API_NAME, LIMIT_OF_REQUEST, Methods, Routes, Tags, headers } from './const';
-import { SendComment, SendCommentLike, SendFriend, SendLike, SendProfile } from './types';
+import {
+  CurrentWeekStatisticsRequest,
+  DeleteCommentLike,
+  DeleteLike,
+  EmailComment,
+  EmailCommentLike,
+  EmailDTO,
+  MonthStatisticsRequest,
+  SendComment,
+  SendCommentLike,
+  SendFriend,
+  SendLike,
+  SendProfile,
+  UpdateComment,
+} from './types';
 
-const { profile, activity, friend, comment, like, activityId, user, all, photos, followers, statistics, email } =
-  Routes;
+const {
+  profile,
+  activity,
+  friend,
+  comment,
+  like,
+  activityId,
+  user,
+  all,
+  photos,
+  followers,
+  statistics,
+  email,
+  commentLike,
+} = Routes;
 
 export const runichApi = createApi({
   reducerPath: API_NAME,
@@ -198,15 +225,7 @@ export const runichApi = createApi({
       ],
     }),
     updateCommentByCommentId: builder.mutation({
-      query: ({
-        commentId,
-        activityId,
-        body,
-      }: {
-        commentId: string;
-        activityId: string;
-        body: { comment: string };
-      }) => ({
+      query: ({ commentId, activityId, body }: UpdateComment) => ({
         url: `/${comment}/${commentId}`,
         method: Methods.patch,
         headers,
@@ -246,7 +265,7 @@ export const runichApi = createApi({
       },
     }),
     deleteLikeToComment: builder.mutation({
-      query: ({ likeId, commentId }: { likeId: string; commentId: string }) => ({
+      query: ({ likeId, commentId }: DeleteCommentLike) => ({
         url: `/${comment}/${likeId}/${like}`,
         method: Methods.delete,
         headers,
@@ -286,7 +305,7 @@ export const runichApi = createApi({
       },
     }),
     deleteLike: builder.mutation({
-      query: ({ id, activityId }: { id: string; activityId: string }) => ({
+      query: ({ id, activityId }: DeleteLike) => ({
         url: `/${like}/${id}/${activityId}`,
         method: Methods.delete,
         headers,
@@ -305,7 +324,7 @@ export const runichApi = createApi({
     }),
 
     getCurrentWeekStatistics: builder.query({
-      query: ({ userId, firstDay, lastDay }: { userId: string; firstDay: string; lastDay: string }) => ({
+      query: ({ userId, firstDay, lastDay }: CurrentWeekStatisticsRequest) => ({
         url: `/${statistics}/${userId}/week?firstDay=${firstDay}&lastDay=${lastDay}`,
         headers,
       }),
@@ -321,7 +340,7 @@ export const runichApi = createApi({
     }),
 
     getMonthStatistics: builder.query({
-      query: ({ userId, year, month }: { userId: string; year: string; month: string }) => ({
+      query: ({ userId, year, month }: MonthStatisticsRequest) => ({
         url: `/${statistics}/${userId}/year-month?year=${year}&month=${month}`,
         headers,
       }),
@@ -331,8 +350,26 @@ export const runichApi = createApi({
     //Emails
 
     sendEmailAfterSendingLike: builder.mutation({
-      query: (body: { name: string; surname: string; profilePhoto: string; activityId: string }) => ({
+      query: (body: EmailDTO & { mapPhotoUrl: string }) => ({
         url: `/${email}/${like}`,
+        method: Methods.post,
+        headers,
+        body,
+      }),
+    }),
+
+    sendEmailAfterSendingComment: builder.mutation({
+      query: (body: EmailComment) => ({
+        url: `/${email}/${comment}`,
+        method: Methods.post,
+        headers,
+        body,
+      }),
+    }),
+
+    sendEmailAfterSendingCommentLike: builder.mutation({
+      query: (body: EmailCommentLike) => ({
+        url: `/${email}/${commentLike}`,
         method: Methods.post,
         headers,
         body,
@@ -389,4 +426,6 @@ export const {
 
   //Emails
   useSendEmailAfterSendingLikeMutation,
+  useSendEmailAfterSendingCommentMutation,
+  useSendEmailAfterSendingCommentLikeMutation,
 } = runichApi;
