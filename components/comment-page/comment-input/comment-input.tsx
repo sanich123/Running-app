@@ -58,7 +58,7 @@ export default function CommentInput({
     setIdOfUpdatingComment('');
     setComment('');
     if (profile.emailNotifications && !commentToUpdate) {
-      sendEmailAfterSendingComment({
+      const objectToSend = {
         name,
         surname,
         profilePhoto,
@@ -67,7 +67,8 @@ export default function CommentInput({
         recepientSurname: profile?.surname,
         recepientEmail: profile?.users?.email,
         mapPhotoUrl: mapPhotoUrl ? mapPhotoUrl : '',
-      });
+      };
+      sendEmailAfterSendingComment(objectToSend);
     }
   }
 
