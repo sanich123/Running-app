@@ -70,7 +70,7 @@ export default function MonthStatistics() {
               isError={isError}
             />
           </View>
-          <CalendarActivities year={`${year}`} month={`${month}`} userId={`${userId}`} />
+          <CalendarActivities year={`${year}`} month={`${month}`} userId={`${userId}`} selectedType={selectedType} />
         </>
       )}
     </View>

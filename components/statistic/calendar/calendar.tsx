@@ -10,7 +10,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
 import { Fragment } from 'react';
 
-export default function CalendarActivities({ year, month, userId }: CalendarStatisticsProps) {
+export default function CalendarActivities({ year, month, userId, selectedType }: CalendarStatisticsProps) {
   const { language } = useAppSelector(({ language }) => language);
   const {
     data: monthStatistics,
@@ -31,6 +31,7 @@ export default function CalendarActivities({ year, month, userId }: CalendarStat
           {Object.keys(daysOfTheWeek).map((day: string, i: number) => (
             <View style={styles.dayColumn} key={`${day}${i}`}>
               {daysOfTheWeek[day as keyof typeof daysOfTheWeek].map(({ dateValue, activities }, i) => {
+                console.log(activities, selectedType);
                 const isWeekend =
                   dateValue === REDUCED_DAY_NAME_RU.saturday ||
                   dateValue === REDUCED_DAY_NAME_RU.sunday ||
@@ -38,15 +39,18 @@ export default function CalendarActivities({ year, month, userId }: CalendarStat
                   dateValue === REDUCED_DAY_NAME_EN.sunday;
                 const isEmptyCell = dateValue === ' ';
                 const isTitle = isNaN(Number(dateValue));
+                const filteredActivities = activities.filter(({ sport }) => sport === selectedType);
+                const whatActivitiesToRender = selectedType === 'all' ? activities : filteredActivities;
+
                 return (
                   <Fragment key={`${dateValue}${i}`}>
-                    {activities?.length || !i ? (
+                    {whatActivitiesToRender?.length || !i ? (
                       <CalendarDateWithActivity
                         isWeekend={isWeekend}
                         isTitle={isTitle}
                         isEmptyCell={isEmptyCell}
                         dateValue={dateValue}
-                        activities={activities}
+                        activities={whatActivitiesToRender}
                       />
                     ) : (
                       <CalendarDateEmpty isTitle={isTitle} isEmptyCell={isEmptyCell} dateValue={dateValue} />
