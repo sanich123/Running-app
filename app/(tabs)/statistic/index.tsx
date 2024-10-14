@@ -30,8 +30,7 @@ export default function Statistics() {
 
   useEffect(() => {
     if (!yearStats?.[selectedYear]?.[selectedType]) {
-      const availableType = Object.keys(yearStats?.[selectedYear]).filter((key) => key !== 'all')[0];
-      setSelectedType(availableType);
+      setSelectedType('all');
     }
   }, [selectedType, selectedYear, yearStats]);
 
@@ -46,7 +45,7 @@ export default function Statistics() {
       <View style={{ backgroundColor: colors.background }}>
         {isLoading && <ActivityIndicator size="large" />}
         {isError && <ErrorComponent error={error} />}
-        {isSuccess && yearStats?.isUserHasActivities && yearStats?.[selectedYear]?.[selectedType] && (
+        {isSuccess && yearStats?.isUserHasActivities && (
           <>
             <YearTypePicker
               setSelectedYear={setSelectedYear}
@@ -63,7 +62,9 @@ export default function Statistics() {
             <View style={styles.metricsContainer}>
               <MonthStatisticsMetrics
                 title={MONTH_STATISTICS[language].activities}
-                metric={yearStats?.[selectedYear][selectedType]?.totalItems}
+                metric={
+                  yearStats?.[selectedYear]?.[selectedType]?.totalItems || yearStats?.[selectedYear]['all'].totalItems
+                }
                 postfix={''}
                 isSuccess={isSuccess}
                 isLoading={isLoading}
@@ -71,7 +72,7 @@ export default function Statistics() {
               />
               <MonthStatisticsMetrics
                 title={MONTH_STATISTICS[language].distance}
-                metric={`${Math.round(yearStats?.[selectedYear][selectedType]?.totalDistance)}`}
+                metric={`${Math.round(yearStats?.[selectedYear]?.[selectedType]?.totalDistance || yearStats?.[selectedYear]['all'].totalDistance)}`}
                 postfix={`${isRussian ? 'км' : 'km'}`}
                 isSuccess={isSuccess}
                 isLoading={isLoading}
@@ -79,22 +80,17 @@ export default function Statistics() {
               />
               <MonthStatisticsMetrics
                 title={MONTH_STATISTICS[language].duration}
-                metric={`${Math.round(yearStats?.[selectedYear][selectedType]?.totalDuration)}`}
+                metric={`${Math.round(yearStats?.[selectedYear]?.[selectedType]?.totalDuration || yearStats?.[selectedYear]['all'].totalDuration)}`}
                 postfix={`${isRussian ? 'ч' : 'h'}`}
                 isSuccess={isSuccess}
                 isLoading={isLoading}
                 isError={isError}
               />
             </View>
-            {yearStats?.[selectedYear][selectedType] && (
-              <Charts
-                year={selectedYear}
-                months={
-                  yearStats?.[selectedYear][selectedType] ||
-                  Object.keys(yearStats?.[selectedYear]).filter((key) => key !== 'all')[0]
-                }
-              />
-            )}
+            <Charts
+              year={selectedYear}
+              months={yearStats?.[selectedYear]?.[selectedType] || yearStats?.[selectedYear]['all']}
+            />
           </>
         )}
         {isSuccess && !yearStats?.isUserHasActivities && (
