@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import YearTypePicker from '@C/statistic/year-type-picker/year-type-picker';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import Charts from '@C/statistic/charts/charts';
 import { ActivityIndicator, useTheme, Text } from 'react-native-paper';
@@ -28,6 +28,13 @@ export default function Statistics() {
   } = useGetAnnualStatisticsByUserIdQuery({ userId: `${user?.id}` }, { skip: !user?.id });
   const isRussian = language === LANGUAGES.russian;
 
+  useEffect(() => {
+    if (!yearStats?.[selectedYear]?.[selectedType]) {
+      const availableType = Object.keys(yearStats?.[selectedYear]).filter((key) => key !== 'all')[0];
+      setSelectedType(availableType);
+    }
+  }, [selectedType, selectedYear, yearStats]);
+
   return (
     <ScrollView
       contentContainerStyle={[
@@ -39,7 +46,7 @@ export default function Statistics() {
       <View style={{ backgroundColor: colors.background }}>
         {isLoading && <ActivityIndicator size="large" />}
         {isError && <ErrorComponent error={error} />}
-        {isSuccess && yearStats?.isUserHasActivities && (
+        {isSuccess && yearStats?.isUserHasActivities && yearStats?.[selectedYear]?.[selectedType] && (
           <>
             <YearTypePicker
               setSelectedYear={setSelectedYear}
@@ -79,7 +86,15 @@ export default function Statistics() {
                 isError={isError}
               />
             </View>
-            <Charts year={selectedYear} months={yearStats?.[selectedYear][selectedType]} />
+            {yearStats?.[selectedYear][selectedType] && (
+              <Charts
+                year={selectedYear}
+                months={
+                  yearStats?.[selectedYear][selectedType] ||
+                  Object.keys(yearStats?.[selectedYear]).filter((key) => key !== 'all')[0]
+                }
+              />
+            )}
           </>
         )}
         {isSuccess && !yearStats?.isUserHasActivities && (
