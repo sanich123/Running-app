@@ -4,18 +4,19 @@ import { useGetFilteredUsersBySearchTextQuery } from '@R/runich-api/runich-api';
 import useDebounce from '@U/hooks/use-debounce';
 import useRefresh from '@U/hooks/use-refresh';
 import { useState } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Platform, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import EmptyUsersList from './empty-list/empty-list';
 import SearchInput from './search-input/search-input';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function ListOfUsers() {
   const [isInitial, setIsInitial] = useState(true);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 1000);
-
+  const { width } = useWindowDimensions();
   const {
     isLoading,
     isError,
@@ -42,6 +43,10 @@ export default function ListOfUsers() {
             user_id={item?.user_id}
           />
         )}
+        style={{
+          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+        }}
         ListEmptyComponent={<EmptyUsersList isInitial={isInitial} />}
         ItemSeparatorComponent={() => <Divider />}
         initialNumToRender={15}

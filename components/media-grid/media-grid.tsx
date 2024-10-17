@@ -2,14 +2,16 @@ import ErrorComponent from '@C/error-component/error-component';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, FlatList, Platform } from 'react-native';
+import { StyleSheet, FlatList, Platform, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import MediaGridImage from './image/image';
 import { PhotoVideoType } from '@C/card/types';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function MediaGrid() {
+  const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const { id: userId } = useLocalSearchParams();
   const [take, setTake] = useState(28);
@@ -25,7 +27,11 @@ export default function MediaGrid() {
       {data?.photos?.length && (
         <FlatList
           contentContainerStyle={[
-            { backgroundColor: colors.background },
+            {
+              backgroundColor: colors.background,
+              width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+              marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+            },
             styles.layout,
             (isLoading || isError) && styles.isInCenter,
           ]}

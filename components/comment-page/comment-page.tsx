@@ -9,13 +9,15 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { ActivityIndicator, Card, FAB, Text } from 'react-native-paper';
 import Comments from './comments/comments';
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import CommentInput from './comment-input/comment-input';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function CommentFullViewPage() {
+  const { width } = useWindowDimensions();
   const { id: activityId } = useLocalSearchParams();
   const {
     isLoading,
@@ -27,7 +29,14 @@ export default function CommentFullViewPage() {
   const [idOfUpdatingComment, setIdOfUpdatingComment] = useState('');
 
   return (
-    <ScrollView contentContainerStyle={[(isLoading || isError) && styles.isInCenter]}>
+    <ScrollView
+      contentContainerStyle={[
+        (isLoading || isError) && styles.isInCenter,
+        {
+          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+        },
+      ]}>
       <BottomSheetModalProvider>
         {error || activity?.message ? <ErrorComponent error={error || activity} /> : null}
         {isLoading && <ActivityIndicator size="large" />}

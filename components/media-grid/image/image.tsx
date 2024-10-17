@@ -1,5 +1,6 @@
 import { PhotoVideoType } from '@C/card/types';
 import { CustomImage } from '@C/custom-image/custom-image';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Platform, useWindowDimensions } from 'react-native';
@@ -19,7 +20,8 @@ export default function MediaGridImage({
   const { id: userId } = useLocalSearchParams();
   const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const gap = 3;
-  const calculatedWidth = (width - gap * 3) / 4;
+  const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
+  const calculatedWidth = (widthOfScreen - gap * 3) / 4;
 
   return (
     <TouchableRipple
@@ -33,7 +35,7 @@ export default function MediaGridImage({
       }
       borderless>
       <CustomImage
-        style={{ height: calculatedWidth, width: width / 4 }}
+        style={{ height: calculatedWidth, width: widthOfScreen / 4 }}
         source={{ uri: thumbnail || url }}
         contentFit="cover"
         placeholder={blurhash}

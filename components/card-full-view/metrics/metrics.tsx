@@ -4,12 +4,14 @@ import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { ActivityIndicator, Text, Divider } from 'react-native-paper';
 
 import { HOME_ACTIVITY_FULL_VIEW_TEST_ID, HOME_ACTIVITY_FULL_VIEW } from './const';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function Metrics() {
+  const { width } = useWindowDimensions();
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(`${activityId}`);
   const { language } = useAppSelector(({ language }) => language);
@@ -22,7 +24,15 @@ export default function Metrics() {
   );
 
   return (
-    <View style={[styles.layout, isLoading && styles.isCenter]}>
+    <View
+      style={[
+        styles.layout,
+        isLoading && styles.isCenter,
+        {
+          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+        },
+      ]}>
       {isLoading && <ActivityIndicator testID={HOME_ACTIVITY_FULL_VIEW_TEST_ID} />}
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (

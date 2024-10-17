@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { getCurrentWeekDates } from './util';
 import { useGetCurrentWeekStatisticsQuery } from '@R/runich-api/runich-api';
@@ -12,6 +12,7 @@ import { useAppSelector } from '@R/typed-hooks';
 
 export default function WeekStatistics() {
   const { push } = useRouter();
+  const { width } = useWindowDimensions();
   const { colors, dark } = useTheme();
   const { user } = useAuth();
   const { week, year, month } = getCurrentWeekDates();
@@ -38,7 +39,10 @@ export default function WeekStatistics() {
         weekStatistics?.totalItems &&
         push(`/${ROUTES.home}/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${month}` as Href)
       }
-      style={[styles.container, { backgroundColor: colors.background }]}>
+      style={[
+        styles.container,
+        { backgroundColor: colors.background, minWidth: Platform.OS === 'android' ? width : 550 },
+      ]}>
       <>
         <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
           {WEEK_STATISTICS[language].report}
@@ -79,5 +83,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 15,
     marginBottom: 5,
     padding: 10,
+    marginHorizontal: 'auto',
   },
 });

@@ -7,6 +7,7 @@ import { ROUTES } from '@const/enums';
 import { useAuth } from '@A/context/auth-context';
 import { BarChartWrapperProps } from './types';
 import { useWindowDimensions } from 'react-native';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function BarChartWrapper({ metricsArr, year, title }: BarChartWrapperProps) {
   const { push } = useRouter();
@@ -19,15 +20,15 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
     : 0;
   const { steps, maxValue, noOfSections } = getSteps(maxValueFromData);
   const { width } = useWindowDimensions();
-
+  const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text variant="headlineSmall" style={{ marginVertical: 15 }}>
         {title}
       </Text>
       <BarChart
-        width={width - 60}
-        barWidth={(width - 90) / 12}
+        width={widthOfScreen - 60}
+        barWidth={(widthOfScreen - 90) / 12}
         showReferenceLine1
         referenceLine1Position={medianValue}
         isAnimated

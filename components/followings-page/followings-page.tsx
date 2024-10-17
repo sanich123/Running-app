@@ -1,13 +1,15 @@
 import ErrorComponent from '@C/error-component/error-component';
 import UserListItem from '@C/user-list-item/user-list-item';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetYouFollowUsersByUserIdQuery } from '@R/runich-api/runich-api';
 import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
-import { View, FlatList } from 'react-native';
+import { View, FlatList, useWindowDimensions, Platform } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ListOfFollowing() {
+  const { width } = useWindowDimensions();
   const { id: userId } = useLocalSearchParams();
   const { isLoading, error, isError, data: users, refetch } = useGetYouFollowUsersByUserIdQuery(`${userId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
@@ -15,7 +17,14 @@ export default function ListOfFollowing() {
   return (
     <SafeAreaView
       edges={['bottom', 'left', 'right']}
-      style={[{ flex: 1 }, (isLoading || isError || !users.length) && { justifyContent: 'center' }]}>
+      style={[
+        {
+          flex: 1,
+          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+        },
+        (isLoading || isError || !users.length) && { justifyContent: 'center' },
+      ]}>
       <View>
         {users && (
           <FlatList

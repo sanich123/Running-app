@@ -17,6 +17,7 @@ import SportsBtns from './sports-btns/sports-btns';
 import TextInputs from './text-inputs/text-inputs';
 import UploadPhotosBtn from './upload-photos-btn/upload-photos-btn';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function SaveResult() {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -27,11 +28,11 @@ export default function SaveResult() {
     additionalInfo: { photoVideoUrls },
   } = useAppSelector(({ activity }) => activity);
   const [images, setImages] = useState<{ url: string; thumbnail: string | null }[]>([]);
-  
+
   return (
     <BottomSheetModalProvider>
       {!isCameraVisible ? (
-        <ScrollView style={!isCameraVisible && styles.container}>
+        <ScrollView style={[!isCameraVisible && styles.container, Platform.OS === 'web' && styles.webStyles]}>
           <NetworkIndicator />
           <TextInputs isDisabled={isDisabled} />
           <SportsBtns isDisabled={isDisabled} />
@@ -65,8 +66,11 @@ export default function SaveResult() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingHorizontal: 10,
+  },
+  webStyles: {
+    marginHorizontal: 'auto',
+    maxWidth: MAX_MOBILE_WIDTH,
   },
   cameraUploadBtns: {
     display: 'flex',

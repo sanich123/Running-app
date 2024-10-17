@@ -19,8 +19,8 @@ export const GENDER_BTNS = {
     packmanLabel: 'Packman',
   },
   [LANGUAGES.russian]: {
-    maleLabel: 'Мужык',
-    femaleLabel: 'Баба',
-    packmanLabel: 'ХЗ',
+    maleLabel: 'Мужчина',
+    femaleLabel: 'Женщина',
+    packmanLabel: 'Ультрамарафонец',
   },
 } as const;

@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import YearTypePicker from '@C/statistic/year-type-picker/year-type-picker';
 import { useEffect, useState } from 'react';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
@@ -12,11 +12,13 @@ import { useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
 import MonthStatisticsMetrics from '@C/statistic/month-metric/month-metric';
 import { MONTH_STATISTICS } from '@C/statistic/month-metric/const';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function Statistics() {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedType, setSelectedType] = useState<string>(SPORTS_BTNS_VALUES.run);
   const { user } = useAuth();
+  const { width } = useWindowDimensions();
   const { language } = useAppSelector(({ language }) => language);
   const { colors } = useTheme();
   const {
@@ -40,6 +42,10 @@ export default function Statistics() {
         (isLoading || isError || !yearStats?.isUserHasActivities) && {
           ...styles.isInCenter,
           backgroundColor: colors.background,
+        },
+        {
+          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
         },
       ]}>
       <View style={{ backgroundColor: colors.background }}>

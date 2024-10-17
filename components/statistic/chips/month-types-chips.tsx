@@ -3,12 +3,14 @@ import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { useGetMonthStatisticsQuery } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
-import { FlatList, View } from 'react-native';
+import { FlatList, Platform, useWindowDimensions, View } from 'react-native';
 import { ActivityIndicator, Chip } from 'react-native-paper';
 import { MonthChips } from './types';
 import { LANGUAGES } from '@const/enums';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function MonthTypesChips({ userId, year, month, setSelectedType, selectedType }: MonthChips) {
+  const { width } = useWindowDimensions();
   const {
     data: monthStatistics,
     isSuccess,
@@ -23,7 +25,15 @@ export default function MonthTypesChips({ userId, year, month, setSelectedType, 
   const isRussian = language === LANGUAGES.russian;
   const typesOfSport = monthStatistics ? Object.keys(monthStatistics?.activitiesReducedBySport) : [];
   return (
-    <View style={[{ display: 'flex', margin: 10 }]}>
+    <View
+      style={[
+        {
+          display: 'flex',
+          margin: 10,
+          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+        },
+      ]}>
       {isLoading && <ActivityIndicator size="small" />}
       {isSuccess && (
         <FlatList

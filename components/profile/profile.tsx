@@ -8,7 +8,7 @@ import { ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { useLocalSearchParams, usePathname } from 'expo-router';
 import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 
 import FollowUnfollowBtn from './follow-unfollow-btn/follow-unfollow-btn';
@@ -16,8 +16,10 @@ import { USERS_VARIANT } from './users-counter/const';
 import UsersCounter from './users-counter/users-counter';
 import { useGetUserProfileByUserIdQuery } from '@R/runich-api/runich-api';
 import ProfileStatistics from './statistics/profile-statistics';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function ProfilePage() {
+  const { width } = useWindowDimensions();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
@@ -53,7 +55,15 @@ export default function ProfilePage() {
     <>
       <ProfileMediaPhotos userId={`${whosProfile}`} />
       <View
-        style={[styles.container, (isLoading || isError) && styles.isInCenter, { backgroundColor: colors.background }]}>
+        style={[
+          styles.container,
+          (isLoading || isError) && styles.isInCenter,
+          {
+            backgroundColor: colors.background,
+            width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+            marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          },
+        ]}>
         {isLoading && <ActivityIndicator size="large" />}
         {error ? <ErrorComponent error={error} /> : null}
         {isSuccess ? (

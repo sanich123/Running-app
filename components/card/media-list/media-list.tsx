@@ -5,6 +5,7 @@ import { memo } from 'react';
 import { FlatList, Platform, useWindowDimensions } from 'react-native';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 import { MediaListProps } from '../types';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPhotoUrlBlurhash }: MediaListProps) {
   const { dark } = useTheme();
@@ -32,7 +33,7 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           }}
           borderless>
           <CustomImage
-            style={{ width: width || 350, height: 200 }}
+            style={{ width: width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH, height: 200 }}
             source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
             contentFit="cover"
             testID={item.url}
@@ -40,7 +41,6 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           />
         </TouchableRipple>
       )}
-      style={{ overflow: !photoVideoUrls?.length ? 'hidden' : 'scroll' }}
       horizontal
       initialNumToRender={1}
     />
