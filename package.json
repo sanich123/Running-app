@@ -81,7 +81,7 @@
     "@turf/distance": "^6.5.0",
     "aes-js": "^3.1.2",
     "base64-arraybuffer": "^1.0.2",
-    "expo": "~51.0.37",
+    "expo": "~51.0.38",
     "expo-auth-session": "~5.5.2",
     "expo-av": "~14.0.7",
     "expo-build-properties": "~0.12.5",
