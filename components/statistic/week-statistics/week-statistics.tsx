@@ -9,6 +9,7 @@ import { LANGUAGES, ROUTES } from '@const/enums';
 import WeekStatisticsMetric from './week-statistics-metrics';
 import { WEEK_STATISTICS } from './const';
 import { useAppSelector } from '@R/typed-hooks';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function WeekStatistics() {
   const { push } = useRouter();
@@ -31,6 +32,7 @@ export default function WeekStatistics() {
   );
   const { language } = useAppSelector(({ language }) => language);
   const isRussian = language === LANGUAGES.russian;
+
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
@@ -41,7 +43,11 @@ export default function WeekStatistics() {
       }
       style={[
         styles.container,
-        { backgroundColor: colors.background, minWidth: Platform.OS === 'android' ? width : 550 },
+        {
+          backgroundColor: colors.background,
+          width: width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH,
+          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+        },
       ]}>
       <>
         <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
