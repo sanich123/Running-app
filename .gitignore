@@ -11,11 +11,9 @@ npm-debug.*
 web-build/
 __tests__
 .env
-yarn.lock
 eas.json
 app.config.ts
 coverage
-.yarn*
 android
 ios
 

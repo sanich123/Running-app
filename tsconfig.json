@@ -6,18 +6,14 @@
       "esnext",
       "dom.iterable"
     ],
-    "allowJs": false,
-    "jsx": "react-native",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "moduleResolution": "node",
-    "module": "commonjs",
+    "jsx": "react-jsx",
+
+    "moduleResolution": "bundler",
     "noEmit": true,
-    "noEmitOnError": true,
     "target": "es6",
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "@C/*": [
         "components/*"

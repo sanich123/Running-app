@@ -2,7 +2,6 @@ import { AuthProvider } from '@A/context/auth-context';
 import SplashIcon from '@C/splash-screen/splash-screen';
 import { persistor, store } from '@R/store';
 import { useGetFontsThemeSettings } from '@U/hooks/use-get-fonts-theme-settings';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Slot } from 'expo-router';
 import { AppRegistry, useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -19,7 +18,7 @@ export default function RootLayout() {
 
   const paperTheme =
     colorScheme === 'dark' ? { ...MD3DarkTheme, colors: theme.dark } : { ...MD3LightTheme, colors: theme.light };
-  
+
   return (
     <>
       {!loaded ? (
@@ -27,19 +26,17 @@ export default function RootLayout() {
       ) : (
         <Provider store={store}>
           <PersistGate loading={<ActivityIndicator size="large" />} persistor={persistor}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-              <PaperProvider theme={paperTheme}>
-                <AuthProvider>
-                  <GestureHandlerRootView style={{ flex: 1 }}>
-                    <ToastProvider>
-                      <RootSiblingParent>
-                        <Slot />
-                      </RootSiblingParent>
-                    </ToastProvider>
-                  </GestureHandlerRootView>
-                </AuthProvider>
-              </PaperProvider>
-            </ThemeProvider>
+            <PaperProvider theme={paperTheme}>
+              <AuthProvider>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <ToastProvider>
+                    <RootSiblingParent>
+                      <Slot />
+                    </RootSiblingParent>
+                  </ToastProvider>
+                </GestureHandlerRootView>
+              </AuthProvider>
+            </PaperProvider>
           </PersistGate>
         </Provider>
       )}
