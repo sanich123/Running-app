@@ -1,7 +1,7 @@
 import ErrorComponent from '@C/error-component/error-component';
 import { renderCardsFunction } from '@C/infinite-scroll-list/render-item';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useGetSeveralActivitiesByTheirIdsQuery } from '@R/runich-api/runich-api';
+import { useGetSeveralActivitiesByTheirIdsQuery } from '@R/services/activity/activity';
 import { useLocalSearchParams } from 'expo-router';
 import { FlatList } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';

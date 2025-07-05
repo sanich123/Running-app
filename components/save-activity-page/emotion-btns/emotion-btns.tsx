@@ -1,4 +1,4 @@
-import { saveEmotion } from '@R/activity/activity';
+import { saveEmotion } from '@R/slices/activity/activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';

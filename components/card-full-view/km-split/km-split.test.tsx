@@ -1,4 +1,4 @@
-import { changeLanguage } from '@R/language/language';
+import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';

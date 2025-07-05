@@ -1,5 +1,5 @@
-import { ADDITIONAL_INFO_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from '@R/activity/const';
-import { changeLanguage } from '@R/language/language';
+import { ADDITIONAL_INFO_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from '@R/slices/activity/const';
+import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';

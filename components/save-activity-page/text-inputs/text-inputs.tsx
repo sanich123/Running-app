@@ -1,4 +1,4 @@
-import { saveTitle, saveDescription } from '@R/activity/activity';
+import { saveTitle, saveDescription } from '@R/slices/activity/activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';

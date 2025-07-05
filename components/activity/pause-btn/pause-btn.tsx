@@ -1,4 +1,4 @@
-import { setActivityStatus } from '@R/location/location';
+import { setActivityStatus } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { STATUSES } from '@const/enums';
 import { View, StyleSheet } from 'react-native';

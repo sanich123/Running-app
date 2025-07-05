@@ -1,5 +1,5 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { changeLanguage } from '@R/language/language';
+import { changeLanguage } from '@R/slices/language/language';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { Fragment, RefObject, useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';

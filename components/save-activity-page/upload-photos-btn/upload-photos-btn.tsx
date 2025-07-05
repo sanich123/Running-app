@@ -1,5 +1,5 @@
 import { useAuth } from '@A/context/auth-context';
-import { addPhotoUrl } from '@R/activity/activity';
+import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';

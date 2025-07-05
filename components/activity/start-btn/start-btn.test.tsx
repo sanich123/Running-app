@@ -1,5 +1,5 @@
-import { changeLanguage } from '@R/language/language';
-import { setActivityStatus, setDuration, setDistance, setLocationsFromBackground } from '@R/location/location';
+import { changeLanguage } from '@R/slices/language/language';
+import { setActivityStatus, setDuration, setDistance, setLocationsFromBackground } from '@R/slices/location/location';
 import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION, MOCK_SPEED } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';

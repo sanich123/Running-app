@@ -1,5 +1,5 @@
-import { changeLanguage } from '@R/language/language';
-import { setIsDisabledWhileSendingProfile } from '@R/profile/profile';
+import { changeLanguage } from '@R/slices/language/language';
+import { setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';

@@ -1,4 +1,4 @@
-import { setManualDistance, setManualHours, setManualMinutes } from '@R/activity/activity';
+import { setManualDistance, setManualHours, setManualMinutes } from '@R/slices/activity/activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';

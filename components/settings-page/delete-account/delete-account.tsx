@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
 import { supabase } from '@A/supabase/supabase-init';
 import { useAuth } from '@A/context/auth-context';
-import { useDeleteUserByUserIdMutation } from '@R/runich-api/runich-api';
+import { useDeleteUserByUserIdMutation } from '@R/services/profile/profile';
 import { Alert, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { resetSettings } from '@R/profile/profile';
-import { resetLocationsFromBackground } from '@R/location/location';
+import { resetSettings } from '@R/slices/profile/profile';
+import { resetLocationsFromBackground } from '@R/slices/location/location';
 import { DELETE_ACCOUNT } from './const';
 
 export default function DeleteAccountBtn() {

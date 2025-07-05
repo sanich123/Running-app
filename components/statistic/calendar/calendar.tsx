@@ -2,7 +2,7 @@ import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { getDaysOfTheMonthWithNames } from './util';
 import { CalendarStatisticsProps } from './types';
-import { useGetMonthStatisticsQuery } from '@R/runich-api/runich-api';
+import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import ErrorComponent from '@C/error-component/error-component';
 import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-date-with-activity';
 import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';

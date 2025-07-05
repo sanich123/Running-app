@@ -4,7 +4,7 @@ import { Appearance, View, ColorSchemeName, StyleSheet } from 'react-native';
 import { useTheme, Text, Divider, RadioButton, TouchableRipple } from 'react-native-paper';
 import { THEMES_ARRAY } from './const';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { changeTheme } from '@R/language/language';
+import { changeTheme } from '@R/slices/language/language';
 
 export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: RefObject<BottomSheetModal | null> }) {
   const dispatch = useAppDispatch();

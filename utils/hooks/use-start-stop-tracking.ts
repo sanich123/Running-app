@@ -1,4 +1,4 @@
-import { resetLocationsFromBackground, setEmptyLastArrayWhenPaused } from '@R/location/location';
+import { resetLocationsFromBackground, setEmptyLastArrayWhenPaused } from '@R/slices/location/location';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { STATUSES } from '@const/enums';

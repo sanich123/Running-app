@@ -12,7 +12,7 @@ import {
   setLastPosition,
   setLocationsFromBackground,
   setLocationsWhenContinued,
-} from '@R/location/location';
+} from '@R/slices/location/location';
 import { store } from '@R/store';
 import { LocationObject } from 'expo-location';
 

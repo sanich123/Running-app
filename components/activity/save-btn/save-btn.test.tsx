@@ -1,7 +1,7 @@
 import { EMOTIONS_BTNS_VALUES } from '@C/save-activity-page/emotion-btns/const';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { saveFinishedActivity, saveTitle, saveDescription, saveSport, saveEmotion } from '@R/activity/activity';
-import { changeLanguage } from '@R/language/language';
+import { saveFinishedActivity, saveTitle, saveDescription, saveSport, saveEmotion } from '@R/slices/activity/activity';
+import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';

@@ -1,19 +1,18 @@
 import { useAuth } from '@A/context/auth-context';
-import { setCommentIdWhichLikesToUpdate } from '@R/main-feed/main-feed';
+import { setCommentIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import {
   useSendLikeToCommentMutation,
   useGetLikesByCommentIdQuery,
   useDeleteLikeToCommentMutation,
-  useSendEmailAfterSendingCommentLikeMutation,
-} from '@R/runich-api/runich-api';
+} from '@R/services/comments/comments';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
-
 import { COMMENT_LIKE_BTN } from './const';
 import { CommentLikeBtnProps } from '../types';
+import { useSendEmailAfterSendingCommentLikeMutation } from '@R/services/emails/emails';
 
 export default function CommentLikeBtn({ commentId, commentLikesFromComment, profile, comment }: CommentLikeBtnProps) {
   const dispatch = useAppDispatch();

@@ -1,4 +1,4 @@
-import { saveGender } from '@R/profile/profile';
+import { saveGender } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';

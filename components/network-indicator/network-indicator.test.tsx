@@ -1,5 +1,5 @@
-import { changeLanguage } from '@R/language/language';
-import { changeNetworkState } from '@R/network/network';
+import { changeLanguage } from '@R/slices/language/language';
+import { changeNetworkState } from '@R/slices/network/network';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';

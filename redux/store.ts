@@ -3,12 +3,12 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { persistStore, persistReducer } from 'redux-persist';
 
-import activity from './activity/activity';
-import language from './language/language';
-import location from './location/location';
-import mainFeed from './main-feed/main-feed';
-import network from './network/network';
-import profile from './profile/profile';
+import activity from './slices/activity/activity';
+import language from './slices/language/language';
+import location from './slices/location/location';
+import mainFeed from './slices/main-feed/main-feed';
+import network from './slices/network/network';
+import profile from './slices/profile/profile';
 import { runichApi } from './runich-api/runich-api';
 
 const persistConfig = {

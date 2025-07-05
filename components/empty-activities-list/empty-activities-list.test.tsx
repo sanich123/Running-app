@@ -1,11 +1,10 @@
 import { screen } from '@testing-library/react-native';
-
 import { EMPTY_ACTIVITIES_LIST } from './const';
 import EmptyActivitiesList from './empty-activities-list';
-import { LANGUAGES } from '../../constants/enums';
-import { changeLanguage } from '../../redux/language/language';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { mockStore } from '@T/utils/mock-store';
+import { changeLanguage } from '@R/slices/language/language';
+import { LANGUAGES } from '@const/enums';
 
 describe('Empty activities list', () => {
   it('should contain proper information in english', () => {

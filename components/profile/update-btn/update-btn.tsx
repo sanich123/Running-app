@@ -1,11 +1,11 @@
 import { useAuth } from '@A/context/auth-context';
-import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
-import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/profile/profile';
+import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
+import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import {
   useCreateProfileByUserIdMutation,
   useGetUserProfileByUserIdQuery,
   useUpdateProfileByProfileIdMutation,
-} from '@R/runich-api/runich-api';
+} from '@R/services/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useRouter } from 'expo-router';

@@ -1,5 +1,6 @@
+import { MOCK_NETWORK_STATE } from '@C/network-indicator/const';
 import reducer, { NETWORK_INITIAL_STATE, changeNetworkState } from './network';
-import { MOCK_NETWORK_STATE } from '../../components/network-indicator/const';
+
 
 describe('Network slice', () => {
   it('should handle initial state properly', () => {

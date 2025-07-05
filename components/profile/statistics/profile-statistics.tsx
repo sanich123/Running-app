@@ -1,7 +1,7 @@
 import { MONTH_STATISTICS } from '@C/statistic/month-metric/const';
 import MonthStatisticsMetrics from '@C/statistic/month-metric/month-metric';
 import { LANGUAGES } from '@const/enums';
-import { useGetAllTimeStatisticsByUserIdQuery } from '@R/runich-api/runich-api';
+import { useGetAllTimeStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { View, StyleSheet } from 'react-native';

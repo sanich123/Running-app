@@ -1,7 +1,7 @@
 import { EMOTIONS_BTNS_VALUES } from '@C/save-activity-page/emotion-btns/const';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-
-import { FinishedActivity, ActivityInitialState, AdditionalInfoType } from './types';
+import { ActivityInitialState } from './types';
+import { AdditionalInfoType, FinishedActivity } from '@R/services/activity/types';
 
 export const FINISHED_ACTIVITY_INITIAL_STATE: FinishedActivity = {
   locations: [],

@@ -1,4 +1,4 @@
-import { LastKmSplit } from '@R/location/types';
+import { LastKmSplit } from '@R/slices/location/types';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';

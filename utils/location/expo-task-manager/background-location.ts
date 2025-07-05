@@ -1,5 +1,5 @@
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { setIsTooMuchSpeed } from '@R/location/location';
+import { setIsTooMuchSpeed } from '@R/slices/location/location';
 import { store } from '@R/store';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import {

@@ -6,7 +6,7 @@ import ErrorComponent from '@C/error-component/error-component';
 import UserNameSurname from '@C/user-name-surname/user-name-surname';
 import UserSportDate from '@C/user-sport-date/user-sport-date';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';

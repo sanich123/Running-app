@@ -1,6 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
 import ProfileImage from '@C/profile/avatar/avatar';
-import { savePhotoUrl } from '@R/profile/profile';
+import { savePhotoUrl } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';

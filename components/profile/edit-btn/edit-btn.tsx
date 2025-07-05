@@ -3,9 +3,8 @@ import { ROUTES } from '@const/enums';
 import { useRouter } from 'expo-router';
 import { StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
 import { EDIT_BTN } from './const';
-import { useGetUserProfileByUserIdQuery } from '@R/runich-api/runich-api';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAuth } from '@A/context/auth-context';
 
 export default function EditBtn() {

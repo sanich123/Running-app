@@ -1,4 +1,4 @@
-import { saveUnsendedActivity, setIsHaveUnsyncedActivity } from '@R/activity/activity';
+import { saveUnsendedActivity, setIsHaveUnsyncedActivity } from '@R/slices/activity/activity';
 import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';

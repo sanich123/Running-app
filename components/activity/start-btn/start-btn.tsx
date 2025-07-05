@@ -4,8 +4,8 @@ import {
   saveFinishedActivity,
   setIsEditingActivity,
   setIsManualAdding,
-} from '@R/activity/activity';
-import { setActivityStatus } from '@R/location/location';
+} from '@R/slices/activity/activity';
+import { setActivityStatus } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { ROUTES, STATUSES } from '@const/enums';

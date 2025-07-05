@@ -1,5 +1,5 @@
 import { TIMEOUT_MESSAGE } from '@C/activity/location-indicator/const';
-import { setIsAppShuted } from '@R/location/location';
+import { setIsAppShuted } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';

@@ -1,5 +1,5 @@
-import { setActivityIdWhichCommentsToUpdate } from '@R/main-feed/main-feed';
-import { useDeleteCommentByCommentIdMutation } from '@R/runich-api/runich-api';
+import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
+import { useDeleteCommentByCommentIdMutation } from '@R/services/comments/comments';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect } from 'react';
@@ -26,7 +26,7 @@ export default function CommentDeleteBtn({ commentId, activityId }: ComentDelete
         showCrossPlatformToast(COMMENT_DELETE_BTN[language].errorDeleting);
       }
     }
-  }, [isSuccessDeleting, isErrorDeleting, dispatch, activityId,  language]);
+  }, [isSuccessDeleting, isErrorDeleting, dispatch, activityId, language]);
 
   return (
     <IconButton

@@ -1,6 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
 import PreviewImage from '@C/save-activity-page/preview-image/preview-image';
-import { addPhotoUrl } from '@R/activity/activity';
+import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { compressAndSendFile } from '@U/file-sending';

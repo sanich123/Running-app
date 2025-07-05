@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { SETTINGS } from '../const';
 import { Text, Switch, Divider } from 'react-native-paper';
-import { setisNeedToPrefetchActivities } from '@R/profile/profile';
+import { setisNeedToPrefetchActivities } from '@R/slices/profile/profile';
 
 export default function PrefetchActivitiesBtn() {
   const { language } = useAppSelector(({ language }) => language);

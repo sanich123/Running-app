@@ -1,5 +1,5 @@
 import ErrorComponent from '@C/error-component/error-component';
-import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';

@@ -1,10 +1,10 @@
 import { useAuth } from '@A/context/auth-context';
-import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
+import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
 import {
   useGetYouFollowUsersByUserIdQuery,
   useDeleteFriendMutation,
   useAddFriendMutation,
-} from '@R/runich-api/runich-api';
+} from '@R/services/followers/followers';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorExtracter } from '@U/error-handler';

@@ -1,4 +1,4 @@
-import { LastKmSplit } from '@R/location/types';
+import { LastKmSplit } from '@R/slices/location/types';
 import { useAppSelector } from '@R/typed-hooks';
 import { formatDurationMinsSecs } from '@U/time-formatter';
 import { Fragment } from 'react';

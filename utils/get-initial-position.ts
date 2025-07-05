@@ -1,4 +1,4 @@
-import { setInitialLocation } from '@R/location/location';
+import { setInitialLocation } from '@R/slices/location/location';
 import { store } from '@R/store';
 import { getCurrentPositionAsync, getLastKnownPositionAsync } from 'expo-location';
 

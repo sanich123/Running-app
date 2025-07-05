@@ -1,5 +1,5 @@
 import ErrorComponent from '@C/error-component/error-component';
-import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
+import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, FlatList, Platform, useWindowDimensions } from 'react-native';

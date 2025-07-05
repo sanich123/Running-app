@@ -1,4 +1,4 @@
-import { changeLanguage } from '@R/language/language';
+import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '@R/activity/activity';
-import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
-import { useAddActivityByUserIdMutation } from '@R/runich-api/runich-api';
+import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '@R/slices/activity/activity';
+import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
+import { useAddActivityByUserIdMutation } from '@R/services/activity/activity';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect, useState } from 'react';

@@ -1,4 +1,4 @@
-import { saveName, saveSurname } from '@R/profile/profile';
+import { saveName, saveSurname } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';

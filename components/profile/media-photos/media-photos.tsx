@@ -1,5 +1,5 @@
 import { CustomImage } from '@C/custom-image/custom-image';
-import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
+import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';

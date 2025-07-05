@@ -1,4 +1,4 @@
-import { LastKmSplit } from '@R/location/types';
+import { LastKmSplit } from '@R/slices/location/types';
 import { Callout, PointAnnotation } from '@rnmapbox/maps';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';

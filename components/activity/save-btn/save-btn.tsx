@@ -4,11 +4,11 @@ import {
   resetActivityInfo,
   saveUnsendedActivity,
   setIsHaveUnsyncedActivity,
-} from '@R/activity/activity';
-import { ActivityToSend } from '@R/activity/types';
-import { resetLocationsFromBackground } from '@R/location/location';
-import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
-import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/runich-api/runich-api';
+} from '@R/slices/activity/activity';
+import { ActivityToSend } from '@R/services/activity/types';
+import { resetLocationsFromBackground } from '@R/slices/location/location';
+import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
+import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
@@ -17,7 +17,6 @@ import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
-
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID, ErrorMessages } from './const';
 
 export default function SaveBtn() {

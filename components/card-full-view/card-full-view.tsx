@@ -1,6 +1,6 @@
 import Card from '@C/card/card';
 import ErrorComponent from '@C/error-component/error-component';
-import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 
 import { useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';

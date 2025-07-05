@@ -1,4 +1,4 @@
-import { deletePhotoUrl } from '@R/activity/activity';
+import { deletePhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet } from 'react-native';

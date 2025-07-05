@@ -1,4 +1,4 @@
-import { saveIsPublic } from '@R/activity/activity';
+import { saveIsPublic } from '@R/slices/activity/activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
@@ -25,7 +25,7 @@ export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
         }}
         testID={CHECKBOX_TEST_ID}
         disabled={isDisabled || isDisabledWhileSending}
-        style={{padding: 0, margin: 0}}
+        style={{ padding: 0, margin: 0 }}
       />
       <Text variant="titleSmall" style={(isDisabled || isDisabledWhileSending) && { opacity: 0.5 }}>
         {CHECKBOX[language].public}

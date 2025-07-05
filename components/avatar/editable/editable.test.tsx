@@ -1,4 +1,4 @@
-import { savePhotoUrl, setIsDisabledWhileSendingProfile } from '@R/profile/profile';
+import { savePhotoUrl, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';

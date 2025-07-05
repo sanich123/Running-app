@@ -1,4 +1,4 @@
-import { setManualDate } from '@R/activity/activity';
+import { setManualDate } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 

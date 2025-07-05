@@ -1,6 +1,6 @@
 import ErrorComponent from '@C/error-component/error-component';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { useGetMonthStatisticsQuery } from '@R/runich-api/runich-api';
+import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { FlatList, Platform, useWindowDimensions, View } from 'react-native';

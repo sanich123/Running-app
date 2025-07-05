@@ -1,5 +1,5 @@
 import { supabase } from '@A/supabase/supabase-init';
-import { saveGoogleProfileInfo } from '@R/profile/profile';
+import { saveGoogleProfileInfo } from '@R/slices/profile/profile';
 import { useAppDispatch } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';

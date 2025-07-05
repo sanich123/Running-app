@@ -15,8 +15,8 @@ import {
   setManualDistance,
   setManualHours,
   setManualMinutes,
-} from '@R/activity/activity';
-import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
+} from '@R/slices/activity/activity';
+import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';

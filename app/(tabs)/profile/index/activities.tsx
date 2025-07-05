@@ -2,7 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import ErrorComponent from '@C/error-component/error-component';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useGetActivitiesByUserIdQuery } from '@R/runich-api/runich-api';
+import { useGetActivitiesByUserIdQuery } from '@R/services/activity/activity';
 import { useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';

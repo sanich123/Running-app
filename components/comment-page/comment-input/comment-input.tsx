@@ -1,10 +1,9 @@
 import { useAuth } from '@A/context/auth-context';
-import { setActivityIdWhichCommentsToUpdate } from '@R/main-feed/main-feed';
+import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import {
   usePostCommentWithActivityIdMutation,
-  useSendEmailAfterSendingCommentMutation,
   useUpdateCommentByCommentIdMutation,
-} from '@R/runich-api/runich-api';
+} from '@R/services/comments/comments';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useState } from 'react';
@@ -13,6 +12,7 @@ import { TextInput } from 'react-native-paper';
 
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
 import { CommentInputProps } from '../types';
+import { useSendEmailAfterSendingCommentMutation } from '@R/services/emails/emails';
 
 export default function CommentInput({
   commentToUpdate = '',

@@ -1,4 +1,4 @@
-import { useGetUserProfileByUserIdQuery } from '@R/runich-api/runich-api';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { LANGUAGES } from '@const/enums';

@@ -4,7 +4,7 @@ import CalendarActivities from '../calendar/calendar';
 import { useState } from 'react';
 import MonthTypesChips from '../chips/month-types-chips';
 import YearMonthTitle from '../year-month-title/year-month-title';
-import { useGetMonthStatisticsQuery } from '@R/runich-api/runich-api';
+import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import MonthStatisticsMetrics from '../month-metric/month-metric';
 import { useAppSelector } from '@R/typed-hooks';
 import { MONTH_STATISTICS } from '../month-metric/const';

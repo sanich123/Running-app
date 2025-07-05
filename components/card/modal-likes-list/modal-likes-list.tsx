@@ -1,5 +1,5 @@
 import { useAppSelector } from '@R/typed-hooks';
-import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
 import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
 import UserListItem from '@C/user-list-item/user-list-item';
 import { useCallback } from 'react';

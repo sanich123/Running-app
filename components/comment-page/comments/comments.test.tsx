@@ -1,13 +1,12 @@
 import { screen } from '@testing-library/react-native';
-
 import Comments from './comments';
-import { LANGUAGES } from '../../../constants/enums';
-import { changeLanguage } from '../../../redux/language/language';
-import { MOCK_COMMENTS } from '../../../tests/mocks/mock-comments';
-import { mockStore } from '../../../tests/utils/mock-store';
-import { renderWithProviders } from '../../../tests/utils/test-utils';
-import { formatDate, getHoursMinutes } from '../../../utils/time-formatter';
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { mockStore } from '@T/utils/mock-store';
+import { changeLanguage } from '@R/slices/language/language';
+import { LANGUAGES } from '@const/enums';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
+import { formatDate, getHoursMinutes } from '@U/time-formatter';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),

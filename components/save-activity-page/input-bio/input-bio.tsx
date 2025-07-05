@@ -1,4 +1,4 @@
-import { saveBio } from '@R/profile/profile';
+import { saveBio } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { TextInput } from 'react-native-paper';

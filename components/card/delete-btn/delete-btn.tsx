@@ -1,5 +1,5 @@
-import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
-import { useDeleteActivityByIdMutation } from '@R/runich-api/runich-api';
+import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
+import { useDeleteActivityByIdMutation } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { errorHandler } from '@U/error-handler';

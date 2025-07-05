@@ -1,4 +1,4 @@
-import { setIsDisableWhileSending } from '@R/activity/activity';
+import { setIsDisableWhileSending } from '@R/slices/activity/activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';

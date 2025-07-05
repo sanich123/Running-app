@@ -1,5 +1,4 @@
 import UserInfo from '@C/card/user-info/user-info';
-import { runichApi } from '@R/runich-api/runich-api';
 import { useAppSelector } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
 import { usePathname } from 'expo-router';
@@ -16,6 +15,7 @@ import { UserInfoSize } from './user-info/const';
 import { ActivityCardProps } from './types';
 import ShareActivityImage from './share-activity-image/share-activity-image';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { activityApi } from '@R/services/activity/activity';
 
 export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const {
@@ -40,7 +40,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const { colors } = useTheme();
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const cardRef = useRef(null);
-  const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
+  const prefetchFullActivity = activityApi.usePrefetch('getActivityByActivityId');
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
 
   useEffect(() => {

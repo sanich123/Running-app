@@ -1,4 +1,4 @@
-import { saveCity, saveWeight } from '@R/profile/profile';
+import { saveCity, saveWeight } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';

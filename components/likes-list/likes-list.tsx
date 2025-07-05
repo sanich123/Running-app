@@ -1,7 +1,7 @@
 import ErrorComponent from '@C/error-component/error-component';
 import UserListItem from '@C/user-list-item/user-list-item';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { useGetLikesByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
 import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
 import { View, FlatList, useWindowDimensions, Platform } from 'react-native';

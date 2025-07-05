@@ -1,5 +1,5 @@
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { changeLanguage } from '@R/language/language';
+import { changeLanguage } from '@R/slices/language/language';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 

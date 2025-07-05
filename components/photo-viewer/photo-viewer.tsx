@@ -1,7 +1,7 @@
 import { useAuth } from '@A/context/auth-context';
 import { CustomImage } from '@C/custom-image/custom-image';
 import VideoViewer from '@C/video-viewer/video-viewer';
-import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
+import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useLocalSearchParams } from 'expo-router';
 import { View, StyleSheet, Platform } from 'react-native';
 import PagerView from 'react-native-pager-view';

@@ -1,10 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
-import {
-  useDeleteLikeMutation,
-  useGetLikesByActivityIdQuery,
-  useSendEmailAfterSendingLikeMutation,
-  useSendLikeMutation,
-} from '@R/runich-api/runich-api';
+import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/services/likes/likes';
+import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
 import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { showCrossPlatformToast } from '@U/custom-toast';

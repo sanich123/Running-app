@@ -1,4 +1,4 @@
-import { addPhotoUrl, setIsDisableWhileSending } from '@R/activity/activity';
+import { addPhotoUrl, setIsDisableWhileSending } from '@R/slices/activity/activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { screen, userEvent } from '@testing-library/react-native';

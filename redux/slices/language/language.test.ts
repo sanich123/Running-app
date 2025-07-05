@@ -1,5 +1,5 @@
+import { LANGUAGES } from '@const/enums';
 import reducer, { LANGUAGE_INITIAL_STATE, changeLanguage } from './language';
-import { LANGUAGES } from '../../constants/enums';
 
 describe('Language slice', () => {
   it('should handle initial state properly', () => {

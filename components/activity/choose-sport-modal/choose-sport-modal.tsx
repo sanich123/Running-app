@@ -1,4 +1,4 @@
-import { saveSport } from '@R/activity/activity';
+import { saveSport } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';

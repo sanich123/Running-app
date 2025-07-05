@@ -2,7 +2,7 @@ import { useAuth } from '@A/context/auth-context';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { SETTINGS } from '../const';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { resetSettings } from '@R/profile/profile';
+import { resetSettings } from '@R/slices/profile/profile';
 import { View } from 'react-native';
 
 export default function LogoutBtn() {

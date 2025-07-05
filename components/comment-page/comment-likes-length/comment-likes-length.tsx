@@ -1,6 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
 import { NUMBER_OF_LIKES } from '@C/card/number-of-likes/const';
-import { useGetLikesByCommentIdQuery } from '@R/runich-api/runich-api';
+import { useGetLikesByCommentIdQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { useEffect, useState } from 'react';

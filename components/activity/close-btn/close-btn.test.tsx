@@ -1,5 +1,5 @@
-import { changeLanguage } from '@R/language/language';
-import { setDuration } from '@R/location/location';
+import { changeLanguage } from '@R/slices/language/language';
+import { setDuration } from '@R/slices/location/location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES, STATUSES } from '@const/enums';

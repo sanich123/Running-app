@@ -1,6 +1,6 @@
 import * as auth from '@A/context/auth-context';
 import { FOLLOW_UNFOLLOW_BTN } from '@C/profile/follow-unfollow-btn/const';
-import { changeLanguage } from '@R/language/language';
+import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';

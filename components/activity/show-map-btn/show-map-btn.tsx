@@ -1,4 +1,4 @@
-import { setIsMapVisible } from '@R/location/location';
+import { setIsMapVisible } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { StyleSheet, View } from 'react-native';
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';

@@ -1,4 +1,4 @@
-import { LastKmSplit } from '@R/location/types';
+import { LastKmSplit } from '@R/slices/location/types';
 import mapboxgl from 'mapbox-gl';
 import { useState, useRef, useEffect } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';

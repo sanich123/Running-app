@@ -1,4 +1,4 @@
-import { resetActivityInfo, resetFinishedActivity, resetManualData } from '@R/activity/activity';
+import { resetActivityInfo, resetFinishedActivity, resetManualData } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useRouter } from 'expo-router';
 import { Alert } from 'react-native';

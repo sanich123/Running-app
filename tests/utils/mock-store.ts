@@ -1,11 +1,11 @@
-import mainFeed from '@R/main-feed/main-feed';
+import mainFeed from '@R/slices/main-feed/main-feed';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { runichApi } from '../../redux/runich-api/runich-api';
-import network from '@R/network/network';
-import language from '@R/language/language';
-import profile from '@R/profile/profile';
-import activity from '@R/activity/activity';
-import location from '@R/location/location';
+import profile from '@R/slices/profile/profile';
+import activity from '@R/slices/activity/activity';
+import location from '@R/slices/location/location';
+import network from '@R/slices/network/network';
+import language from '@R/slices/language/language';
 
 const rootReducer = combineReducers({
   network,

@@ -1,4 +1,4 @@
-import { useGetCommentsLengthByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ROUTES } from '@const/enums';

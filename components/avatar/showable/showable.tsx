@@ -1,11 +1,11 @@
 import { useAuth } from '@A/context/auth-context';
 import { CustomImage } from '@C/custom-image/custom-image';
-import { saveWholeProfile } from '@R/profile/profile';
+import { saveWholeProfile } from '@R/slices/profile/profile';
 import {
   useGetUserProfileByUserIdQuery,
   useCreateProfileByUserIdMutation,
   useUpdateProfileByProfileIdMutation,
-} from '@R/runich-api/runich-api';
+} from '@R/services/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';

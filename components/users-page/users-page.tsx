@@ -1,16 +1,16 @@
 import ErrorComponent from '@C/error-component/error-component';
 import UserListItem from '@C/user-list-item/user-list-item';
-import { useGetFilteredUsersBySearchTextQuery } from '@R/runich-api/runich-api';
+
 import useDebounce from '@U/hooks/use-debounce';
 import useRefresh from '@U/hooks/use-refresh';
 import { useState } from 'react';
 import { FlatList, Platform, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import EmptyUsersList from './empty-list/empty-list';
 import SearchInput from './search-input/search-input';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { useGetFilteredUsersBySearchTextQuery } from '@R/services/profile/profile';
 
 export default function ListOfUsers() {
   const [isInitial, setIsInitial] = useState(true);

@@ -1,4 +1,4 @@
-import { setActivityStatus, resetLastKm } from '@R/location/location';
+import { setActivityStatus, resetLastKm } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { STATUSES } from '@const/enums';
 import { useRouter } from 'expo-router';

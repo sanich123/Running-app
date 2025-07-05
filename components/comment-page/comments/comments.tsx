@@ -1,9 +1,8 @@
 import { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
 import { useAppSelector } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
-
 import Comment from '../comment/comment';
-import { useGetCommentsByActivityIdQuery } from '@R/runich-api/runich-api';
+import { useGetCommentsByActivityIdQuery } from '@R/services/comments/comments';
 import { ActivityIndicator } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
 import CommentsLoadMoreBtn from '../comments-load-more-btn/comments-load-more';

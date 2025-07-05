@@ -1,5 +1,5 @@
 import { supabase } from '@A/supabase/supabase-init';
-import { saveEmailPassword } from '@R/profile/profile';
+import { saveEmailPassword } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';

@@ -1,6 +1,6 @@
 import { useAuth } from '@A/context/auth-context';
-import { setIsAppShuted, setActivityStatus } from '@R/location/location';
-import { changeNetworkState } from '@R/network/network';
+import { setIsAppShuted, setActivityStatus } from '@R/slices/location/location';
+import { changeNetworkState } from '@R/slices/network/network';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { STATUSES } from '@const/enums';
 import NetInfo from '@react-native-community/netinfo';
@@ -19,7 +19,7 @@ export default function Page() {
   useEffect(() => {
     if (theme) Appearance.setColorScheme(theme);
   }, [theme]);
-  
+
   useEffect(() => {
     mapboxgl.accessToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '';
     if (Platform.OS !== 'web') {
