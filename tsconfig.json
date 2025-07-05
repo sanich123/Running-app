@@ -7,7 +7,6 @@
       "dom.iterable"
     ],
     "jsx": "react-jsx",
-
     "moduleResolution": "bundler",
     "noEmit": true,
     "target": "es6",
@@ -48,7 +47,9 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "nativewind-env.d.ts"
+    "nativewind-env.d.ts",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
   ],
   "exclude": [
     "node_modules"

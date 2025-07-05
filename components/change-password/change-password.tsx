@@ -1,6 +1,7 @@
 import { supabase } from '@A/supabase/supabase-init';
 import { PASSWORD_INPUT, PASSWORD_INPUT_LEFT_ICON, PASSWORD_INPUT_RIGHT_ICON } from '@C/sign-in/password-input/const';
 import { useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { passwordMatcher } from '@const/regexp';
 import * as Device from 'expo-device';
@@ -9,11 +10,8 @@ import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { Button, HelperText, TextInput } from 'react-native-paper';
-//@ts-ignore
-import { useToast } from 'react-native-toast-notifications';
 
 export default function ChangePassword() {
-  const toast = useToast();
   const [password, setPassword] = useState('');
   const [passwordIsNotVisible, setPasswordIsVisible] = useState(true);
   const [passwordError, setPasswordError] = useState(false);
@@ -64,7 +62,7 @@ export default function ChangePassword() {
                 setIsDisabled(true);
                 const { data, error } = await supabase.auth.updateUser({ password });
                 if (data.user) {
-                  toast.show('Успешно, перенаправляем дальше в приложение');
+                  showCrossPlatformToast('Успешно, перенаправляем дальше в приложение');
                   if (Device.deviceType === Device.DeviceType.DESKTOP) {
                     push('/');
                     return;
@@ -74,7 +72,7 @@ export default function ChangePassword() {
                   }
                 }
                 if (error) {
-                  toast.show(error.message);
+                  showCrossPlatformToast(error.message);
                 }
               } else {
                 setPasswordError(true);

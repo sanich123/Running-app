@@ -10,7 +10,6 @@ import { showCrossPlatformToast } from '@U/custom-toast';
 import { useState } from 'react';
 import { Platform } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
 
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
 import { CommentInputProps } from '../types';
@@ -26,7 +25,6 @@ export default function CommentInput({
   mapPhotoUrl,
 }: CommentInputProps) {
   const dispatch = useAppDispatch();
-  const toast = useToast();
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
@@ -76,7 +74,7 @@ export default function CommentInput({
     if (Platform.OS !== 'web') {
       showCrossPlatformToast(COMMENT_INPUT[language].errorSending);
     } else {
-      toast.show(COMMENT_INPUT[language].errorSending);
+      showCrossPlatformToast(COMMENT_INPUT[language].errorSending);
     }
   }
 

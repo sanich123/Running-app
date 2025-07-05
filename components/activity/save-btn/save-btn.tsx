@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useAuth } from '@A/context/auth-context';
 import {
   setIsDisableWhileSending,
@@ -11,19 +10,17 @@ import { resetLocationsFromBackground } from '@R/location/location';
 import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
 import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
 
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID, ErrorMessages } from './const';
 
 export default function SaveBtn() {
-  const toast = useToast();
   const dispatch = useAppDispatch();
   const { colors, dark } = useTheme();
   const { user } = useAuth();
@@ -60,7 +57,7 @@ export default function SaveBtn() {
       }
       if (data?.message) {
         if (Platform.OS !== 'web') {
-          showCrossPlatformToast(data?.message, ToastDuration.long);
+          showCrossPlatformToast(data?.message);
         }
       }
       dispatch(resetActivityInfo());
@@ -68,7 +65,7 @@ export default function SaveBtn() {
       dispatch(setIsNeedToRefreshActivities(true));
       replace(`/`);
     }
-  }, [isSuccess, isSuccessUpdating, data, successUpdating]);
+  }, [isSuccess, isSuccessUpdating, data, successUpdating, dispatch, replace]);
 
   useEffect(() => {
     if ((isError && error) || (isErrorUpdating && errorUpdating)) {
@@ -78,7 +75,7 @@ export default function SaveBtn() {
         if (Platform.OS !== 'web') {
           showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
         } else {
-          toast.show(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
+          showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
         }
       }
       if (error && 'status' in error) {
@@ -86,7 +83,7 @@ export default function SaveBtn() {
           if (Platform.OS !== 'web') {
             showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].fetchError);
           } else {
-            toast.show(ACTIVITY_SAVE_BTN[language].fetchError);
+            showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].fetchError);
           }
         }
       }
@@ -94,7 +91,7 @@ export default function SaveBtn() {
       dispatch(resetLocationsFromBackground());
       replace('/');
     }
-  }, [error, isError, isErrorUpdating, errorUpdating, dispatch, replace, toast, activityToSend, language]);
+  }, [error, isError, isErrorUpdating, errorUpdating, dispatch, replace, activityToSend, language]);
 
   return (
     <TouchableRipple

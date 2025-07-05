@@ -1,1 +1,1 @@
-npx expo lint
+npx expo lint && npx expo-doctor@latest

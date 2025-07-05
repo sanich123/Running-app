@@ -1,7 +1,7 @@
 import { Session, User } from '@supabase/supabase-js';
 import { Href, usePathname, useRouter, useSegments } from 'expo-router';
 import { useState, useEffect, createContext, PropsWithChildren, useContext } from 'react';
-
+import * as SplashScreen from 'expo-splash-screen';
 import { supabase } from '../supabase/supabase-init';
 
 type AuthProps = {
@@ -53,6 +53,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         router.replace('/');
       }
     }
+    SplashScreen.hide();
   }, [user, segments, pathname, router]);
 
   return (

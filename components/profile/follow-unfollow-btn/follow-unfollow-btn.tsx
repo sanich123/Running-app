@@ -9,14 +9,11 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorExtracter } from '@U/error-handler';
 import { useEffect } from 'react';
-import { Platform } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
 
 import { FOLLOW_UNFOLLOW_BTN } from './const';
 
 export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
-  const toast = useToast();
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const {
@@ -39,29 +36,17 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
     if (!process.env.IS_TESTING) {
       if (isFriendDeleted) {
         dispatch(setIsNeedToRefreshActivities(true));
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successUnfollowing);
-        } else {
-          toast.show(FOLLOW_UNFOLLOW_BTN[language].successUnfollowing);
-        }
+        showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successUnfollowing);
       }
       if (isFriendAdded) {
         dispatch(setIsNeedToRefreshActivities(true));
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successFollowing);
-        } else {
-          toast.show(FOLLOW_UNFOLLOW_BTN[language].successFollowing);
-        }
+        showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successFollowing);
       }
       if (friendDeletingError || friendAddingError) {
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].errorMsg);
-        } else {
-          toast.show(FOLLOW_UNFOLLOW_BTN[language].errorMsg);
-        }
+        showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].errorMsg);
       }
     }
-  }, [isFriendDeleted, isFriendAdded, friendDeletingError, friendAddingError, dispatch, language, toast]);
+  }, [isFriendDeleted, isFriendAdded, friendDeletingError, friendAddingError, dispatch, language]);
 
   return (
     <Button

@@ -12,12 +12,10 @@ import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
 
 import { UPDATE_BTN_ERROR_MSG, UPDATE_BTN } from './const';
 
 export default function ProfileUpdateBtn() {
-  const toast = useToast();
   const dispatch = useAppDispatch();
   const { back } = useRouter();
   const { colors, dark } = useTheme();
@@ -44,10 +42,10 @@ export default function ProfileUpdateBtn() {
       if (Platform.OS !== 'web') {
         showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
       } else {
-        toast.show(UPDATE_BTN_ERROR_MSG);
+        showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
       }
     }
-  }, [isSuccess, error, isError, dispatch, back, toast, isUpdated, updateError, isUpdatedWithError]);
+  }, [isSuccess, error, isError, dispatch, back, isUpdated, updateError, isUpdatedWithError]);
 
   return (
     <TouchableRipple

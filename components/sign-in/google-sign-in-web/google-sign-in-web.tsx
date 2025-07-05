@@ -1,10 +1,8 @@
 import { supabase } from '@A/supabase/supabase-init';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect } from 'react';
-import { useToast } from 'react-native-toast-notifications';
 
 export default function GoogleSignInWeb({ setIsDisabled }: { setIsDisabled: (arg: boolean) => void }) {
-  const toast = useToast();
-
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
@@ -21,12 +19,12 @@ export default function GoogleSignInWeb({ setIsDisabled }: { setIsDisabled: (arg
           nonce: 'NONCE',
         });
         if (data) {
-          toast.show('Successfully! Redirect to the app');
+          showCrossPlatformToast('Successfully! Redirect to the app');
         } else if (error) {
-          toast.show(JSON.stringify(error));
+          showCrossPlatformToast(JSON.stringify(error));
         }
       } catch (error) {
-        toast.show(JSON.stringify(error));
+        showCrossPlatformToast(JSON.stringify(error));
       } finally {
         setIsDisabled(false);
       }
@@ -34,7 +32,7 @@ export default function GoogleSignInWeb({ setIsDisabled }: { setIsDisabled: (arg
     return () => {
       document.body.removeChild(script);
     };
-  }, [setIsDisabled, toast]);
+  }, [setIsDisabled]);
 
   return (
     <>

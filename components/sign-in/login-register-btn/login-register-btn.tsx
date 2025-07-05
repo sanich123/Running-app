@@ -5,10 +5,7 @@ import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { SignInPageStates, emailPasswordHandler } from '@U/validate-email-password';
 import { useRouter } from 'expo-router';
-import { Platform } from 'react-native';
 import { Button } from 'react-native-paper';
-//@ts-ignore
-import { useToast } from 'react-native-toast-notifications';
 
 import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons } from './const';
 
@@ -23,7 +20,6 @@ export default function LoginRegisterBtn({
   setEmailError,
   setPasswordError,
 }: LoginBtnProps) {
-  const toast = useToast();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
@@ -50,20 +46,12 @@ export default function LoginRegisterBtn({
               if (!error) {
                 push('/need-to-confirm-email');
               } else {
-                if (Platform.OS === 'web') {
-                  toast.show(error.message);
-                } else {
-                  showCrossPlatformToast(error.message);
-                }
+                showCrossPlatformToast(error.message);
               }
             } else {
               const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
               if (error) {
-                if (Platform.OS === 'web') {
-                  toast.show(error.message);
-                } else {
-                  showCrossPlatformToast(error.message);
-                }
+                showCrossPlatformToast(error.message);
               }
             }
             // else {

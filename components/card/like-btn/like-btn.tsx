@@ -11,7 +11,6 @@ import { showCrossPlatformToast } from '@U/custom-toast';
 import { useContext, useEffect, memo } from 'react';
 import { Platform } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
 
 import {
   CARD_LIKE_BTN_TEST_ID_LIKED,
@@ -24,7 +23,6 @@ import { LikeBtnProps } from '../types';
 
 export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeBtnProps) {
   const { colors } = useTheme();
-  const toast = useToast();
   const { user } = useAuth();
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
   const { language } = useAppSelector(({ language }) => language);
@@ -63,12 +61,12 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
     if (errorSending || failureDeleting) {
       const event = LIKE_BTN[language].errorAction(failureDeleting ? 'delete' : 'send');
       if (Platform.OS === 'web') {
-        toast.show(event);
+        showCrossPlatformToast(event);
       } else {
         showCrossPlatformToast(event);
       }
     }
-  }, [errorSending, failureDeleting, language, toast]);
+  }, [errorSending, failureDeleting, language]);
 
   return (
     <IconButton

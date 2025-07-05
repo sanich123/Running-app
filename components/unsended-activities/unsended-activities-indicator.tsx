@@ -3,16 +3,14 @@ import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '@R/act
 import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
 import { useAddActivityByUserIdMutation } from '@R/runich-api/runich-api';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
-import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
 
 import { UNSENDED_ACTIVITIES } from './const';
 
 export default function UnsendedActivitiesIndicator() {
-  const toast = useToast();
   const dispatch = useAppDispatch();
   const { unsyncedActivities, isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
   const [sendActivity, { isLoading, isError, isSuccess, data, error }] = useAddActivityByUserIdMutation();
@@ -38,11 +36,7 @@ export default function UnsendedActivitiesIndicator() {
     if (isError) {
       if (__DEV__ && !process.env.IS_TESTING) console.log('failure', error);
       if (error && 'message' in error && error?.message === 'Aborted') {
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast('Достигнут лимит времени соединения с сервером', ToastDuration.long);
-        } else {
-          toast.show('Достигнут лимит времени соединения с сервером');
-        }
+        showCrossPlatformToast('Достигнут лимит времени соединения с сервером');
       }
       setErrorSending(true);
       setTimeout(() => setErrorSending(false), 2000);

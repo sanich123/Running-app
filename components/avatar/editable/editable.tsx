@@ -5,15 +5,14 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
 import { Platform, Pressable } from 'react-native';
-import { useToast } from 'react-native-toast-notifications';
 
 import { AvatarIconEditableProps, AvatarEditableTestIds } from './const';
+import { showCrossPlatformToast } from '@U/custom-toast';
 
 export default function AvatarIconEditable({ isDisabled, setIsDisabled }: AvatarIconEditableProps) {
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
-  const toast = useToast();
 
   return (
     <>
@@ -26,7 +25,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
             onChange={async (e) => {
               if (user && e.target.files) {
                 if (/mp4|avi|m4v/.test(e.target.files[0].name)) {
-                  toast.show('Нельзя использовать видео файлы для аватары');
+                  showCrossPlatformToast('Нельзя использовать видео файлы для аватары');
                   return;
                 }
                 const imgSrc = e.target.files[0];

@@ -66,6 +66,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
     return;
   }
   if (data) {
+    console.log(data);
     const { locations } = data;
     const currentPosition = locations[0];
     console.log('currentPosition: ', currentPosition);

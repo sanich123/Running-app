@@ -1,5 +1,6 @@
 import MapboxWeb from '@C/map-page/mapbox-web/mapbox-web';
 import { MapView, Camera } from '@rnmapbox/maps';
+//@ts-ignore
 import bbox from '@turf/bbox';
 import { useMemo } from 'react';
 import { Platform } from 'react-native';

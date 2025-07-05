@@ -11,13 +11,11 @@ import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { IconButton, MD3Colors } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
 
 import { COMMENT_LIKE_BTN } from './const';
 import { CommentLikeBtnProps } from '../types';
 
 export default function CommentLikeBtn({ commentId, commentLikesFromComment, profile, comment }: CommentLikeBtnProps) {
-  const toast = useToast();
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const { language } = useAppSelector(({ language }) => language);
@@ -55,7 +53,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
       if (Platform.OS !== 'web') {
         showCrossPlatformToast(COMMENT_LIKE_BTN[language].errorSending);
       } else {
-        toast.show(COMMENT_LIKE_BTN[language].errorSending);
+        showCrossPlatformToast(COMMENT_LIKE_BTN[language].errorSending);
       }
     }
     if (isSuccessSending || isSuccessDeleting) {
@@ -72,7 +70,25 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
       }
       dispatch(setCommentIdWhichLikesToUpdate(commentId));
     }
-  }, [isErrorSending, isErrorDeleting, isSuccessSending, isSuccessDeleting, language, toast, dispatch, commentId, profile?.emailNotifications, sendEmailNotificationAfterSendingLike, name, surname, profilePhoto, comment, profile?.name, profile?.surname, profile.email, profile?.users.email]);
+  }, [
+    isErrorSending,
+    isErrorDeleting,
+    isSuccessSending,
+    isSuccessDeleting,
+    language,
+    dispatch,
+    commentId,
+    profile?.emailNotifications,
+    sendEmailNotificationAfterSendingLike,
+    name,
+    surname,
+    profilePhoto,
+    comment,
+    profile?.name,
+    profile?.surname,
+    profile.email,
+    profile?.users.email,
+  ]);
 
   return (
     <IconButton
