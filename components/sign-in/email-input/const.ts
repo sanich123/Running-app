@@ -8,7 +8,7 @@ export type EmailInputProps = {
   emailError: boolean;
   setEmailError: (arg: boolean) => void;
   isDisabled: boolean;
-  passwordRef: RefObject<TextInput> | null;
+  passwordRef: RefObject<TextInput | null>;
 };
 
 export const EMAIL_INPUT = {

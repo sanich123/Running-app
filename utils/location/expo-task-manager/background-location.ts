@@ -1,7 +1,7 @@
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { setIsTooMuchSpeed } from '@R/location/location';
 import { store } from '@R/store';
-import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import {
   Accuracy,
   hasStartedLocationUpdatesAsync,
@@ -48,14 +48,14 @@ export async function startLocationTracking() {
       'registeredTasks: ',
       registeredTasks,
     );
-  showCrossPlatformToast(`BgTracking started = ${hasStarted}`, ToastDuration.long);
+  showCrossPlatformToast(`BgTracking started = ${hasStarted}`);
 }
 
 export async function stopLocationTracking() {
   isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
     if (tracking) {
       stopLocationUpdatesAsync(LOCATION_TRACKING);
-      showCrossPlatformToast(`BgTracking stopped`, ToastDuration.long);
+      showCrossPlatformToast(`BgTracking stopped`);
     }
   });
 }

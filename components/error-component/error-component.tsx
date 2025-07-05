@@ -1,5 +1,5 @@
 import { SerializedError } from '@reduxjs/toolkit';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 

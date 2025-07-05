@@ -1,12 +1,11 @@
 import mainFeed from '@R/main-feed/main-feed';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-
-import activity from '../../redux/activity/activity';
-import language from '../../redux/language/language';
-import location from '../../redux/location/location';
-import network from '../../redux/network/network';
-import profile from '../../redux/profile/profile';
 import { runichApi } from '../../redux/runich-api/runich-api';
+import network from '@R/network/network';
+import language from '@R/language/language';
+import profile from '@R/profile/profile';
+import activity from '@R/activity/activity';
+import location from '@R/location/location';
 
 const rootReducer = combineReducers({
   network,

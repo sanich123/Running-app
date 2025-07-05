@@ -83,7 +83,7 @@ export type CommentBtnProps = {
 };
 
 export type ModalLikesListProps = {
-  bottomSheetModalRef: RefObject<BottomSheetModal>;
+  bottomSheetModalRef: RefObject<BottomSheetModal | null>;
   likesLength: number;
 };
 

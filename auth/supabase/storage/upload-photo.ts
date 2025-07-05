@@ -19,7 +19,7 @@ export async function getBase64CodedImage(file: string | File) {
 
 export async function uploadPhoto(userId: string, base64: string | File, extension: string) {
   const filePath = `${userId}/${new Date().getTime()}.${extension}`;
-  const contentType = extension === ('mp4' || 'avi' || 'm4v') ? 'video/mp4' : 'image/jpg';
+  const contentType = ['mp4', 'avi', 'm4v'].includes(extension) ? 'video/mp4' : 'image/jpg';
   try {
     const { error, data: uploadedPhoto } = await supabase.storage
       .from('photos')

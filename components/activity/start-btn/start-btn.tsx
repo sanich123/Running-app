@@ -13,7 +13,7 @@ import { Href, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 
-import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON, ResponseIcon } from './const ';
+import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON } from './const ';
 
 export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordLocation: boolean }) {
   const dispatch = useAppDispatch();
@@ -28,7 +28,7 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
   const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
 
-  const RESPONSE_ICON: ResponseIcon = {
+  const RESPONSE_ICON = {
     [STATUSES.initial]: ACTIVITY_START_BTN[language].start,
     [STATUSES.started]: <Icon testID={STOP_ICON} source="pause" size={50} color="white" />,
     [STATUSES.paused]: <Icon testID={STOP_ICON} source="stop" size={50} color="white" />,

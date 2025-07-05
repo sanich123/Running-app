@@ -54,14 +54,14 @@ export type CommentsProps = {
   activityId: string;
   idOfUpdatingComment: string;
   setIdOfUpdatingComment: (arg: string) => void;
-  commentsModalRef: RefObject<BottomSheetModal>;
+  commentsModalRef: RefObject<BottomSheetModal | null>;
   setIsShowingTextInput: (arg: boolean) => void;
   isShowingTextInput: boolean;
   mapPhotoUrl?: string;
 };
 
 export type CommentsListModalProps = {
-  commentsModalRef: RefObject<BottomSheetModal>;
+  commentsModalRef: RefObject<BottomSheetModal | null>;
   activityId: string;
   profile: ProfileType;
   mapPhotoUrl?: string;

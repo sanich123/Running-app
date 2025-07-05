@@ -1,5 +1,6 @@
 //@ts-ignore
 import polyline from '@mapbox/polyline';
+//@ts-ignore
 import distance from '@turf/distance';
 import { LocationObject } from 'expo-location';
 

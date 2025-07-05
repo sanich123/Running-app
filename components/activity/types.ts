@@ -3,30 +3,30 @@ import { LocationPermissionResponse, PermissionResponse } from 'expo-location';
 import { RefObject } from 'react';
 
 export type BackgroundLocationModalProps = {
-  backgroundLocationEnabledModalRef: RefObject<BottomSheetModal>;
+  backgroundLocationEnabledModalRef: RefObject<BottomSheetModal | null>;
   requestBackgroundPermission: () => Promise<LocationPermissionResponse>;
 };
 
 export type BackgroundLocationSwitcherProps = {
   backgroundPermissionStatus: boolean;
-  backgroundLocationEnabledModalRef: RefObject<BottomSheetModal>;
+  backgroundLocationEnabledModalRef: RefObject<BottomSheetModal | null>;
 };
 
 export type BatteryOptimizationModalProps = {
-  batteryOptimizationEnabledModalRef: RefObject<BottomSheetModal>;
+  batteryOptimizationEnabledModalRef: RefObject<BottomSheetModal | null>;
   setIsNeedToRefreshPermission: (arg: boolean) => void;
 };
 
 export type BatteryOptimizationSwitcherProps = {
   isAppOptimizedByPhone: boolean;
   setIsAppOptimizedByPhone: (arg: boolean) => void;
-  batteryOptimizationEnabledModalRef: RefObject<BottomSheetModal>;
+  batteryOptimizationEnabledModalRef: RefObject<BottomSheetModal | null>;
   setIsNeedToRefreshPermission: (arg: boolean) => void;
   isNeedToRefreshPermission: boolean;
 };
 
 export type ChooseSportModalProps = {
-  chooseSportModalRef: RefObject<BottomSheetModal>;
+  chooseSportModalRef: RefObject<BottomSheetModal | null>;
 };
 
 export type ForgroundLocationSwitcher = {

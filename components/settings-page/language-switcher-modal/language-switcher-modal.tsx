@@ -9,7 +9,7 @@ import { LANGUAGES_ARRAY } from './const';
 export default function LanguageSwitcherModal({
   languagesModalRef,
 }: {
-  languagesModalRef: RefObject<BottomSheetModal>;
+  languagesModalRef: RefObject<BottomSheetModal | null>;
 }) {
   const { language } = useAppSelector(({ language }) => language);
   const { colors, dark } = useTheme();

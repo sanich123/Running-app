@@ -62,7 +62,7 @@ export default function UsersSettingsIcons() {
               <TouchableRipple
                 rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
                 borderless
-                onPress={() => push(`/${ROUTES.profile}`)}
+                onPress={() => push(`/${ROUTES.profile}` as Href)}
                 style={{ marginRight: 10 }}>
                 <AvatarShowable size={30} id={`${user?.id}`} />
               </TouchableRipple>

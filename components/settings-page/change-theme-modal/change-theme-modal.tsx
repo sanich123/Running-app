@@ -6,7 +6,7 @@ import { THEMES_ARRAY } from './const';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { changeTheme } from '@R/language/language';
 
-export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: RefObject<BottomSheetModal> }) {
+export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: RefObject<BottomSheetModal | null> }) {
   const dispatch = useAppDispatch();
   const { language, theme } = useAppSelector(({ language }) => language);
   const { colors, dark } = useTheme();

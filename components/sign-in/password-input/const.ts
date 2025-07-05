@@ -8,7 +8,7 @@ export type PasswordInputProps = {
   passwordError: boolean;
   setPasswordError: (arg: boolean) => void;
   isDisabled: boolean;
-  passwordRef: RefObject<TextInput> | null;
+  passwordRef: RefObject<TextInput | null>;
 };
 
 export const PASSWORD_INPUT = {
