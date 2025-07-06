@@ -11,7 +11,6 @@ export default function CalendarDateWithActivity({
   isTitle,
   isEmptyCell,
   dateValue,
-
   activities,
 }: CalendarDateWithActivityProps & CalendarDateProps) {
   const { colors, dark } = useTheme();
@@ -41,7 +40,6 @@ export default function CalendarDateWithActivity({
             }
           }}>
           <Text
-
             variant={activities.length ? 'headlineMedium' : 'bodyMedium'}
             style={{
               fontWeight: isTitle || !activities.length ? 'bold' : 'normal',

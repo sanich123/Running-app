@@ -77,14 +77,14 @@ export default function SignIn() {
             setEmailError={setEmailError}
             isDisabled={isDisabled}
           />
-            <PasswordInput
-              passwordRef={passwordRef}
-              password={password}
-              setPassword={setPassword}
-              setPasswordError={setPasswordError}
-              passwordError={passwordError}
-              isDisabled={isDisabled}
-            />
+          <PasswordInput
+            passwordRef={passwordRef}
+            password={password}
+            setPassword={setPassword}
+            setPasswordError={setPasswordError}
+            passwordError={passwordError}
+            isDisabled={isDisabled}
+          />
           <LoginRegisterBtn
             pageState={pageState}
             password={password}

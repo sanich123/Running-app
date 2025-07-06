@@ -1,1 +1,1 @@
-npx tsc && npx expo lint && yarn test && npx expo-doctor@latest
+npx tsc && npx expo lint --fix && yarn test && npx expo-doctor@latest

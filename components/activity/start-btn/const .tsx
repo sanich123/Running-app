@@ -12,7 +12,6 @@ export const ACTIVITY_START_BTN = {
   },
 } as const;
 
-
 export const RESPONSE_STATUS = {
   [STATUSES.initial]: STATUSES.started,
   [STATUSES.started]: STATUSES.paused,

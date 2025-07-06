@@ -8,7 +8,6 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 
-
 jest.mock('expo-router', () => ({
   usePathname: () => 'some string',
   useRouter: () => ({

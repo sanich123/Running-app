@@ -4,7 +4,7 @@ import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';
-import { screen, userEvent} from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
 
 import { UPDATE_BTN } from './const';
 import ProfileUpdateBtn from './update-btn';
