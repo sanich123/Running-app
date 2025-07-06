@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       }
     }
     SplashScreen.hide();
-  }, [user, segments, pathname, router]);
+  }, [pathname, router, segments, user]);
 
   return (
     <AuthContext.Provider
