@@ -1,6 +1,6 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 import { StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { EDIT_BTN } from './const';
@@ -16,8 +16,7 @@ export default function EditBtn() {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      //@ts-ignore
-      onPress={() => push(`/${ROUTES.profile}/${ROUTES.profileSettings}/`)}
+      onPress={() => push(`/${ROUTES.profile}/${ROUTES.profileSettings}/` as Href)}
       borderless
       style={styles.layout}>
       <Text variant="titleMedium" style={{ color: colors.primary }}>

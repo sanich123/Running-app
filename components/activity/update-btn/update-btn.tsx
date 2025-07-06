@@ -21,7 +21,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { ROUTES } from '@const/enums';
-import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
+import { Href, useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 
 export default function UpdateBtn() {
@@ -59,8 +59,7 @@ export default function UpdateBtn() {
           dispatch(setManualDistance(activity?.distance / 1000));
           dispatch(setManualHours(getHoursMinutesFromMilliseconds(activity?.duration).hours));
           dispatch(setManualMinutes(getHoursMinutesFromMilliseconds(activity?.duration).minutes));
-          //@ts-ignore
-          push(`/(tabs)/${place}/manual-activity/?activityId=${activityId}`);
+          push(`/(tabs)/${place}/manual-activity/?activityId=${activityId}` as Href);
         } else {
           showCrossPlatformToast('Не удалось загрузить данные об активности!');
         }

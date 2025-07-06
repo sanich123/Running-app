@@ -1,13 +1,9 @@
 import MapboxWeb from '@C/map-page/mapbox-web/mapbox-web';
 import { MapView, Camera } from '@rnmapbox/maps';
-//@ts-ignore
 import bbox from '@turf/bbox';
 import { useMemo } from 'react';
 import { Platform } from 'react-native';
-
-//@ts-ignore
 import lineString from 'turf-linestring';
-
 import MapKmSplit from '../activity/map/map-km-split/map-km-split';
 import RouteLine from '../activity/map/map-route-line/map-route-line';
 import { DisplayActivityMapProps } from '@C/card/types';

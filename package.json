@@ -7,7 +7,7 @@
     "start": "cross-env APP_VARIANT=development expo start",
     "start:clear": "cross-env APP_VARIANT=development expo start --clear",
     "start:prod": "expo start --no-dev --minify",
-    "test": "cross-env IS_TESTING=true EXPO_PUBLIC_BASE_URL=https://runich-backend-production.up.railway.app jest",
+    "test": "cross-env IS_TESTING=true EXPO_PUBLIC_BASE_URL=https://runich-backend-production.up.railway.app jest --maxWorkers=50%",
     "test:coverage": "jest --coverage",
     "test:debug": "cross-env IS_TESTING=true jest --runInBand --detectOpenHandles --forceExit",
     "export:analyze:web": "npx expo export --source-maps --platform web",
@@ -42,31 +42,6 @@
     "web:deploy:prod": "netlify deploy --prod",
     "web:deploy:full": "yarn web:export && netlify deploy --prod",
     "eas-build-pre-install": "bash -c \"[ ! -z \\\"$EAS_BUILD_NPM_CACHE_URL\\\" ] && sed -i -e \\\"s#https://registry.yarnpkg.com#$EAS_BUILD_NPM_CACHE_URL#g\\\" yarn.lock\" || true"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "coverageReporters": [
-      "json",
-      "html"
-    ],
-    "preset": "jest-expo",
-    "setupFilesAfterEnv": [
-      "./jest-setup.ts"
-    ],
-    "setupFiles": [
-      "./tests/set-up-async-storage/set-up-async-storage.ts"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|firebase|@firebase|@rnmapbox|react-redux)"
-    ],
-    "moduleNameMapper": {
-      "^@C/(.*)$": "<rootDir>/components/$1",
-      "^@const/(.*)$": "<rootDir>/constants/$1",
-      "^@R/(.*)$": "<rootDir>/redux/$1",
-      "^@U/(.*)$": "<rootDir>/utils/$1",
-      "^@A/(.*)$": "<rootDir>/auth/$1",
-      "^@T/(.*)$": "<rootDir>/tests/$1"
-    }
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -162,6 +137,7 @@
     "redux-persist": "^6.0.0",
     "source-map-explorer": "^2.5.3",
     "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
     "typescript": "~5.8.3"
   },
   "main": "expo-router/entry",

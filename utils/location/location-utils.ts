@@ -1,9 +1,6 @@
-//@ts-ignore
 import polyline from '@mapbox/polyline';
 import distance from '@turf/distance';
 import { LocationObject } from 'expo-location';
-
-//@ts-ignore
 import point from 'turf-point';
 
 export function getDistance(origin: LocationObject, destination: LocationObject) {

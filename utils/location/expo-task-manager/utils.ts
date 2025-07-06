@@ -26,8 +26,6 @@ export function getMetricsTaskManager(currentPosition: LocationObject) {
     locationsWithPauses[0]?.length > 0
       ? locationsWithPauses[locationsWithPauses.length - 1][lastArrayLength - 1]
       : null;
-  //@ts-ignore
-  //ts thinks that typed value in redux is string, and it's true with rn-background-geolocation, but in scheme with expo-task-manager the right value is number
   const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
   const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
   const currentAltitude =

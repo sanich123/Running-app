@@ -1,37 +1,40 @@
 import { supabase } from '@A/supabase/supabase-init';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 
 export default function GoogleSignInWeb({ setIsDisabled }: { setIsDisabled: (arg: boolean) => void }) {
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
-    //@ts-ignore
-    window.handleSignInWithGoogle = async function (response: any) {
-      setIsDisabled(true);
-      try {
-        const { data, error } = await supabase.auth.signInWithIdToken({
-          provider: 'google',
-          token: response.credential,
-          nonce: 'NONCE',
-        });
-        if (data) {
-          showCrossPlatformToast('Successfully! Redirect to the app');
-        } else if (error) {
+    if (Platform.OS === 'web') {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+      //@ts-ignore
+      window.handleSignInWithGoogle = async function (response: any) {
+        setIsDisabled(true);
+        try {
+          const { data, error } = await supabase.auth.signInWithIdToken({
+            provider: 'google',
+            token: response.credential,
+            nonce: 'NONCE',
+          });
+          if (data) {
+            showCrossPlatformToast('Successfully! Redirect to the app');
+          } else if (error) {
+            showCrossPlatformToast(JSON.stringify(error));
+          }
+        } catch (error) {
           showCrossPlatformToast(JSON.stringify(error));
+        } finally {
+          setIsDisabled(false);
         }
-      } catch (error) {
-        showCrossPlatformToast(JSON.stringify(error));
-      } finally {
-        setIsDisabled(false);
-      }
-    };
-    return () => {
-      document.body.removeChild(script);
-    };
+      };
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
   }, [setIsDisabled]);
 
   return (
