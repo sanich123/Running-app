@@ -16,7 +16,6 @@ export default function ProfileStack() {
 
   return (
     <Stack
-      initialRouteName="index/profile"
       screenOptions={{
         headerStyle: { backgroundColor: colors.secondaryContainer },
         headerTintColor: colors.onSurfaceVariant,

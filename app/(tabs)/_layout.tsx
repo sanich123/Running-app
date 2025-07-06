@@ -1,17 +1,59 @@
-import CustomTabBar from '@C/custom-tab-bar/custom-tab-bar';
 import { ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
 import { Tabs } from 'expo-router';
-
+import { Platform } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import AvatarShowable from '@C/avatar/showable/showable';
 export default function TabLayout() {
   const { user } = useAuth();
-
+  const {
+    colors: { surfaceVariant, primary, onSurfaceDisabled, onBackground },
+  } = useTheme();
   return (
-    <Tabs tabBar={(props) => <CustomTabBar {...props} />}>
-      <Tabs.Screen name={ROUTES.home} options={{ headerShown: false }} />
-      <Tabs.Screen name={ROUTES.activity} options={{ headerShown: false }} />
-      <Tabs.Screen name={ROUTES.statistic} options={{ headerShown: false }} />
-      {user && <Tabs.Screen name={ROUTES.profile} options={{ headerShown: false }} />}
+    <Tabs
+      initialRouteName={ROUTES.home}
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: primary,
+        tabBarInactiveTintColor: onSurfaceDisabled,
+        tabBarAllowFontScaling: false,
+        tabBarShowLabel: false,
+        tabBarLabelStyle: { fontSize: Platform.OS !== 'web' ? 12 : 10 },
+        tabBarStyle: { backgroundColor: surfaceVariant },
+      }}>
+      <Tabs.Screen
+        name={ROUTES.home}
+        options={{
+          headerShown: false,
+          tabBarIcon: () => <AntDesign name="home" color={onBackground} size={30} />,
+        }}
+      />
+      <Tabs.Screen
+        name={ROUTES.activity}
+        options={{
+          headerShown: false,
+          tabBarIcon: () => <AntDesign name="playcircleo" color={onBackground} size={28} />,
+        }}
+      />
+      <Tabs.Screen
+        name={ROUTES.statistic}
+        options={{
+          headerShown: false,
+          tabBarIcon: () => (
+            <AntDesign name="piechart" color={onBackground} size={28} style={{ margin: 0, padding: 0 }} />
+          ),
+        }}
+      />
+      {user?.id && (
+        <Tabs.Screen
+          name={ROUTES.profile}
+          options={{
+            headerShown: false,
+            tabBarIcon: () => <AvatarShowable size={30} id={`${user?.id}`} />,
+          }}
+        />
+      )}
     </Tabs>
   );
 }
