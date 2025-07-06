@@ -14,8 +14,8 @@ import { showCrossPlatformToast } from '@U/custom-toast';
 import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID, ErrorMessages } from './const';
 
@@ -36,11 +36,8 @@ export default function SaveBtn() {
     finishedActivity,
   } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);
-  const [sendActivity, { error, data, isSuccess, isError }] = useAddActivityByUserIdMutation();
-  const [
-    updateActivity,
-    { error: errorUpdating, data: successUpdating, isSuccess: isSuccessUpdating, isError: isErrorUpdating },
-  ] = useUpdateActivityInfoMutation();
+  const [sendActivity, { data }] = useAddActivityByUserIdMutation();
+  const [updateActivity] = useUpdateActivityInfoMutation();
   const [activityToSend, setActivityToSend] = useState<ActivityToSend>();
   const textOnBtn = isEditingActivity ? ACTIVITY_SAVE_BTN[language].update : ACTIVITY_SAVE_BTN[language].save;
   const textOnBtnWhenIsSending = isEditingActivity
@@ -48,49 +45,32 @@ export default function SaveBtn() {
     : ACTIVITY_SAVE_BTN[language].saving;
   const { activityId } = useGlobalSearchParams();
 
-  useEffect(() => {
+  const onSuccessHandler = () => {
     dispatch(setIsDisableWhileSending(false));
-    if (isSuccess || isSuccessUpdating) {
-      if (__DEV__ && !process.env.IS_TESTING) {
-        console.log('success', data || successUpdating);
-      }
-      if (data?.message) {
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast(data?.message);
-        }
-      }
-      dispatch(resetActivityInfo());
-      dispatch(resetLocationsFromBackground());
-      dispatch(setIsNeedToRefreshActivities(true));
-      replace(`/`);
+    if (data?.message) {
+      showCrossPlatformToast(data?.message);
     }
-  }, [isSuccess, isSuccessUpdating, data, successUpdating, dispatch, replace]);
+    dispatch(resetActivityInfo());
+    dispatch(resetLocationsFromBackground());
+    dispatch(setIsNeedToRefreshActivities(true));
+    replace(`/`);
+  };
 
-  useEffect(() => {
-    if ((isError && error) || (isErrorUpdating && errorUpdating)) {
-      dispatch(saveUnsendedActivity(activityToSend));
-      dispatch(setIsHaveUnsyncedActivity(true));
-      if (error && 'message' in error && error?.message === ErrorMessages.aborted) {
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
-        } else {
-          showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
-        }
-      }
-      if (error && 'status' in error) {
-        if (error.status === ErrorMessages.fetchError) {
-          if (Platform.OS !== 'web') {
-            showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].fetchError);
-          } else {
-            showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].fetchError);
-          }
-        }
-      }
-      dispatch(resetActivityInfo());
-      dispatch(resetLocationsFromBackground());
-      replace('/');
+  const onErrorHandler = (error: any) => {
+    dispatch(saveUnsendedActivity(activityToSend));
+    dispatch(setIsHaveUnsyncedActivity(true));
+    if (error && 'message' in error && error?.message === ErrorMessages.aborted) {
+      showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
     }
-  }, [error, isError, isErrorUpdating, errorUpdating, dispatch, replace, activityToSend, language]);
+    if (error && 'status' in error) {
+      if (error.status === ErrorMessages.fetchError) {
+        showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].fetchError);
+      }
+    }
+    dispatch(resetActivityInfo());
+    dispatch(resetLocationsFromBackground());
+    replace('/');
+  };
 
   return (
     <TouchableRipple
@@ -126,9 +106,9 @@ export default function SaveBtn() {
           };
           setActivityToSend(savedActivity);
           if (isEditingActivity) {
-            await updateActivity(savedActivity).unwrap();
+            await updateActivity(savedActivity).unwrap().then(onSuccessHandler).catch(onErrorHandler);
           } else {
-            await sendActivity(savedActivity).unwrap();
+            await sendActivity(savedActivity).unwrap().then(onSuccessHandler).catch(onErrorHandler);
           }
         }
       }}

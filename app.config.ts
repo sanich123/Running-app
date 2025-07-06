@@ -75,6 +75,11 @@ export default {
     plugins: [
       'react-native-compressor',
       '@react-native-google-signin/google-signin',
+      'expo-router',
+      'expo-font',
+      'expo-web-browser',
+      'expo-video',
+      'expo-secure-store',
       [
         '@rnmapbox/maps',
         {
@@ -82,8 +87,6 @@ export default {
             'sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWtvam9oazBrZjcza29kZ2hhMmtlcjEifQ.PkCRRfGrD8iiEOIBB9BLcg',
         },
       ],
-      'expo-router',
-      'expo-font',
       ['expo-secure-store', { faceIDPermission: 'Разрешите приложению runich доступ к биометрическим данным FaceId ' }],
       [
         'expo-build-properties',
@@ -96,7 +99,7 @@ export default {
         'expo-image-picker',
         {
           photosPermission:
-            'Если Вы хотите добавить фото к тренировке, необходимо дать разрешение на доступ к галерее устройства',
+            'Для добавления фото к тренировке необходимо дать разрешение на доступ к галерее устройства',
         },
       ],
       [
@@ -106,7 +109,6 @@ export default {
             'Разрешите приложению Runich использовать данные о местоположении в фоне все время. Это необходимо для записи тренировок. ',
         },
       ],
-
       [
         'expo-camera',
         {
@@ -121,8 +123,6 @@ export default {
           isAccessMediaLocationEnabled: true,
         },
       ],
-      ['expo-av', { microphonePermission: 'Allow $(PRODUCT_NAME) to access your microphone.' }],
-      'expo-web-browser',
       [
         'react-native-edge-to-edge',
         { android: { parentTheme: 'Material3.Dynamic' }, enforceNavigationBarContrast: false },

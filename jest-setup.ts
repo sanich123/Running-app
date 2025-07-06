@@ -48,6 +48,16 @@ jest.mock('expo-linking', () => {
   return module;
 });
 
+jest.mock('expo-video', () => {
+  const reactNative = jest.requireActual('react-native');
+  const { View } = reactNative;
+
+  return {
+    VideoView: View,
+    useVideoPlayer: () => ({}),
+  };
+});
+
 jest.mock('expo-location', () => ({
   getCurrentPositionAsync: () => Promise.resolve({ coords: { latitude: 0, longitude: 0 } }),
   useForegroundPermissions: () => [jest.fn()],

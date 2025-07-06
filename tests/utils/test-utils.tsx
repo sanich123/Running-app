@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react-native';
-import { PropsWithChildren } from 'react';
+import { JSX, PropsWithChildren } from 'react';
 import { Provider } from 'react-redux';
 import { RenderOptions } from '@testing-library/react-native';
 import { AppStore, mockStore } from './mock-store';

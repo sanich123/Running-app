@@ -33,7 +33,7 @@ export default function Comments({
   }, [activityIdWhichCommentsToUpdate, activityId]);
 
   useEffect(() => {
-    if (Platform.OS !== 'web') {
+    if (Platform.OS !== 'web' && !process.env.IS_TESTING) {
       if (!data?.comments || !data?.comments?.length) {
         commentsModalRef.current?.snapToIndex(0);
       }

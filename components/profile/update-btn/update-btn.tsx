@@ -9,10 +9,8 @@ import {
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
 import { UPDATE_BTN_ERROR_MSG, UPDATE_BTN } from './const';
 
 export default function ProfileUpdateBtn() {
@@ -23,29 +21,8 @@ export default function ProfileUpdateBtn() {
   const { settings, isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
   const { data: profile } = useGetUserProfileByUserIdQuery(`${user?.id}`, { skip: !user?.id });
-  const [createProfile, { isLoading: isCreating, isSuccess, isError, error }] = useCreateProfileByUserIdMutation();
-  const [
-    updateProfile,
-    { isLoading: isUpdating, isSuccess: isUpdated, isError: isUpdatedWithError, error: updateError },
-  ] = useUpdateProfileByProfileIdMutation();
-
-  useEffect(() => {
-    if (isSuccess || isUpdated) {
-      dispatch(setIsNeedToRefreshActivities(true));
-      dispatch(setIsDisabledWhileSendingProfile(false));
-      dispatch(resetSettings());
-      back();
-    }
-    if (isError || isUpdatedWithError) {
-      if (__DEV__) console.log(error || updateError);
-      dispatch(setIsDisabledWhileSendingProfile(false));
-      if (Platform.OS !== 'web') {
-        showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
-      } else {
-        showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
-      }
-    }
-  }, [isSuccess, error, isError, dispatch, back, isUpdated, updateError, isUpdatedWithError]);
+  const [createProfile, { isLoading: isCreating }] = useCreateProfileByUserIdMutation();
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileByProfileIdMutation();
 
   return (
     <TouchableRipple
@@ -53,9 +30,33 @@ export default function ProfileUpdateBtn() {
       onPress={async () => {
         dispatch(setIsDisabledWhileSendingProfile(true));
         if (!profile?.id) {
-          await createProfile({ body: settings, id: `${user?.id}` }).unwrap();
+          await createProfile({ body: settings, id: `${user?.id}` })
+            .unwrap()
+            .then(() => {
+              dispatch(setIsNeedToRefreshActivities(true));
+              dispatch(setIsDisabledWhileSendingProfile(false));
+              dispatch(resetSettings());
+              back();
+            })
+            .catch((error) => {
+              if (__DEV__) console.log(error);
+              dispatch(setIsDisabledWhileSendingProfile(false));
+              showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
+            });
         } else {
-          await updateProfile({ body: settings, id: `${profile?.id}` }).unwrap();
+          await updateProfile({ body: settings, id: `${profile?.id}` })
+            .unwrap()
+            .then(() => {
+              dispatch(setIsNeedToRefreshActivities(true));
+              dispatch(setIsDisabledWhileSendingProfile(false));
+              dispatch(resetSettings());
+              back();
+            })
+            .catch((error) => {
+              if (__DEV__) console.log(error);
+              dispatch(setIsDisabledWhileSendingProfile(false));
+              showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
+            });
         }
       }}
       borderless
