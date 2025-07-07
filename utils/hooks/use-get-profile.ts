@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useAuth } from '../../auth/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { supabase } from '../../auth/supabase/supabase-init';
 
 export default function useGetProfileInfo(column: string = '') {

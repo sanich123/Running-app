@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { CustomImage } from '@C/custom-image/custom-image';
 import FollowUnfollowBtn from '@C/profile/follow-unfollow-btn/follow-unfollow-btn';
 import { ROUTES } from '@const/enums';

@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import ActivitySaveBtn from '@C/activity/save-btn/save-btn';
 import ProfileEditBtn from '@C/profile/edit-btn/edit-btn';
 import ProfileUpdateBtn from '@C/profile/update-btn/update-btn';

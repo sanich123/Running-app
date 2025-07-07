@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { setCommentIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import {
   useSendLikeToCommentMutation,

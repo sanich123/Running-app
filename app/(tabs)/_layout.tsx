@@ -1,5 +1,5 @@
 import { ROUTES } from '@const/enums';
-import { useAuth } from 'auth/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { Tabs, usePathname } from 'expo-router';
 import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';

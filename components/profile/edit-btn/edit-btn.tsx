@@ -5,7 +5,7 @@ import { StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { EDIT_BTN } from './const';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 
 export default function EditBtn() {
   const { push } = useRouter();

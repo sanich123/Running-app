@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';

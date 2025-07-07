@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import {
   usePostCommentWithActivityIdMutation,

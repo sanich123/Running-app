@@ -1,27 +1,15 @@
-import { Session, User } from '@supabase/supabase-js';
 import { Href, usePathname, useRouter, useSegments } from 'expo-router';
-import { useState, useEffect, createContext, PropsWithChildren, useContext } from 'react';
+import { useState, useEffect, PropsWithChildren } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { supabase } from '../supabase/supabase-init';
+import { Session, User } from '@supabase/supabase-js';
+import { AuthContext, signOut } from './utils';
 
-type AuthProps = {
-  user: User | null;
-  session: Session | null;
-  initialized?: boolean;
-  signOut?: () => void;
-};
-
-export const AuthContext = createContext<Partial<AuthProps>>({});
-
-export function useAuth() {
-  return useContext(AuthContext);
-}
-
-export const AuthProvider = ({ children }: PropsWithChildren) => {
+export function AuthProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<User | null>();
   const [initialized, setInitialized] = useState<boolean>(false);
   const [session, setSession] = useState<Session | null>(null);
-  const router = useRouter();
+  const { replace } = useRouter();
   const segments = useSegments();
   const pathname = usePathname();
 
@@ -31,30 +19,22 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       setUser(session ? session.user : null);
       setInitialized(true);
     });
-    return () => {
-      data.subscription.unsubscribe();
-    };
+    return () => data.subscription.unsubscribe();
   }, []);
-
-  // Log out the user
-  const signOut = async () => {
-    await supabase.auth.signOut();
-  };
 
   useEffect(() => {
     const inTabsGroup = segments[0] === '(tabs)';
-
     if (!user && inTabsGroup) {
-      router.replace('/(auth)/sign-in');
+      replace('/(auth)/sign-in');
     } else if (user && !inTabsGroup) {
       if (pathname.includes('reset-password')) {
-        router.replace('/change-password' as Href);
+        replace('/change-password' as Href);
       } else {
-        router.replace('/');
+        replace('/');
       }
     }
     SplashScreen.hide();
-  }, [pathname, router, segments, user]);
+  }, [pathname, replace, segments, user]);
 
   return (
     <AuthContext.Provider
@@ -67,4 +47,4 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}

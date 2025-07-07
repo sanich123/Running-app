@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { useAppSelector } from '@R/typed-hooks';
 import { getMigrationArchiveAndSendToServer } from '@U/migration-strava/migration-archive';
 import { Link } from 'expo-router';

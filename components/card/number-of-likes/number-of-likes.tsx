@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { useAppSelector } from '@R/typed-hooks';
 import { memo } from 'react';
 import { Text } from 'react-native-paper';

@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { NUMBER_OF_LIKES } from '@C/card/number-of-likes/const';
 import { useGetLikesByCommentIdQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';

@@ -1,6 +1,6 @@
 import { Text, Switch, Divider, useTheme, TouchableRipple } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { useGetUserProfileByUserIdQuery, useUpdateProfileByProfileIdMutation } from '@R/services/profile/profile';
 import { SETTINGS } from '../const';
 import { useAppSelector } from '@R/typed-hooks';

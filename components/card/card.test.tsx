@@ -4,7 +4,7 @@ import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import ActivityCard from './card';
-import * as auth from '../../auth/context/auth-context';
+import * as auth from '@A/context/utils';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 import { mockStore } from '../../tests/utils/mock-store';

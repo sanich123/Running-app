@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { UserInfoSize } from '@C/card/user-info/const';
 import UserInfo from '@C/card/user-info/user-info';
 import { View, StyleSheet } from 'react-native';

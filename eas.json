@@ -3,7 +3,7 @@
     "appVersionSource": "remote"
   },
   "build": {
-    "production": { "channel": "production" },
+    "production": { "channel": "production", "autoIncrement": true },
     "preview": {
       "distribution": "internal",
       "extends": "production",

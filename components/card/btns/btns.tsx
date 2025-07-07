@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import CommentBtn from '@C/card/comment-btn/comment-btn';
 import DeleteBtn from '@C/card/delete-btn/delete-btn';
 import LikeBtn from '@C/card/like-btn/like-btn';

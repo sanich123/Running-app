@@ -11,7 +11,7 @@ import { screen, userEvent } from '@testing-library/react-native';
 
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import ActivitySaveBtn from './save-btn';
-import * as auth from '../../../auth/context/auth-context';
+import * as auth from '@A/context/utils';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: jest.fn() }),

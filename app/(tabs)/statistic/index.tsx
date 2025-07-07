@@ -5,7 +5,7 @@ import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import Charts from '@C/statistic/charts/charts';
 import { ActivityIndicator, useTheme, Text } from 'react-native-paper';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import ErrorComponent from '@C/error-component/error-component';
 
 import { useAppSelector } from '@R/typed-hooks';

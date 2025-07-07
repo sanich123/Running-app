@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/services/likes/likes';
 import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
 import { useAppSelector } from '@R/typed-hooks';

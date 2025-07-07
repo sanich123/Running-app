@@ -1,4 +1,4 @@
-import * as auth from '@A/context/auth-context';
+import * as auth from '@A/context/utils';
 import { COMMENT_BTN_TEST_ID } from '@C/card/comment-btn/const';
 import { CARD_DELETE_BTN_TEST_ID } from '@C/card/delete-btn/const';
 import { CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '@C/card/like-btn/const';

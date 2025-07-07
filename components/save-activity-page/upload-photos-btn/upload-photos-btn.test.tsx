@@ -10,7 +10,7 @@ import UploadPhotosBtn from './upload-photos-btn';
 // import * as ImagePicker from 'expo-image-picker';
 // import { Image } from 'react-native-compressor';
 
-// import * as auth from '../../auth/context/auth-context';
+// import * as auth from '@A/context/utils';
 // import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 
 jest.mock('react-native-compressor', () => ({

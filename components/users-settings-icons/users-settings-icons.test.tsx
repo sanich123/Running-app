@@ -1,7 +1,7 @@
 import UsersSettingsIcons from './users-settings-icons';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
-import * as auth from '../../auth/context/auth-context';
+import * as auth from '@A/context/utils';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { screen } from '@testing-library/react-native';
 import { ACTIVITY_SAVE_BTN } from '@C/activity/save-btn/const';

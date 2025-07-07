@@ -1,4 +1,4 @@
-import * as auth from '@A/context/auth-context';
+import * as auth from '@A/context/utils';
 import { FOLLOW_UNFOLLOW_BTN } from '@C/profile/follow-unfollow-btn/const';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';

@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import {
   setIsDisableWhileSending,
   resetActivityInfo,

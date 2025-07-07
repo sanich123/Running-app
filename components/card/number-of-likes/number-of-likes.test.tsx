@@ -8,7 +8,7 @@ import { screen } from '@testing-library/react-native';
 import { NUMBER_OF_LIKES } from './const';
 import NumberOfLikes from './number-of-likes';
 
-jest.mock('../../../auth/context/auth-context', () => ({
+jest.mock('../../../auth/context/utils', () => ({
   useAuth: () => ({
     user: {
       id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',

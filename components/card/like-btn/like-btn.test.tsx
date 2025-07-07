@@ -1,4 +1,4 @@
-import * as auth from '@A/context/auth-context';
+import * as auth from '@A/context/utils';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';

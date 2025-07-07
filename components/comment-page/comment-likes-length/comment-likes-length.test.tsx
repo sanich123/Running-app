@@ -1,7 +1,7 @@
 import { MOCK_COMMENT_LIKES } from '@T/mocks/mock-comment-likes';
 import { screen } from '@testing-library/react-native';
 import CommentLikesLength from './comment-likes-length';
-import * as auth from '@A/context/auth-context';
+import * as auth from '@A/context/utils';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { changeLanguage } from '@R/slices/language/language';

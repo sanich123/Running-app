@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { SETTINGS } from '../const';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';

@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { CustomImage } from '@C/custom-image/custom-image';
 import VideoViewer from '@C/video-viewer/video-viewer';
 import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';

@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { saveWholeProfile } from '@R/slices/profile/profile';
 import {

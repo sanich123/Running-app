@@ -13,7 +13,7 @@ import {
 
 import { useAppDispatch } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
-import { useAuth } from 'auth/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { useLocalSearchParams, usePathname } from 'expo-router';
 import { useEffect } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';

@@ -5,7 +5,7 @@ import * as router from 'expo-router';
 
 import { LikesSize } from './const';
 import Likes from './likes';
-import * as auth from '../../../auth/context/auth-context';
+import * as auth from '@A/context/utils';
 import { mockStore } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';

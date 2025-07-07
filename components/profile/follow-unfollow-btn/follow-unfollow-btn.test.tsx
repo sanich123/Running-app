@@ -1,4 +1,4 @@
-import * as auth from '@A/context/auth-context';
+import * as auth from '@A/context/utils';
 import { changeLanguage } from '@R/slices/language/language';
 import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';

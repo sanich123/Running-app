@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { setIsAppShuted, setActivityStatus } from '@R/slices/location/location';
 import { changeNetworkState } from '@R/slices/network/network';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';

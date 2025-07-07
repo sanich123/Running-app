@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import ErrorComponent from '@C/error-component/error-component';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
 import { supabase } from '@A/supabase/supabase-init';
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { useDeleteUserByUserIdMutation } from '@R/services/profile/profile';
 import { Alert, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';

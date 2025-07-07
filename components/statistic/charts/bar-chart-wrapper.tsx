@@ -4,7 +4,7 @@ import { Text, useTheme } from 'react-native-paper';
 import { getSteps } from './util';
 import { Href, useRouter } from 'expo-router';
 import { ROUTES } from '@const/enums';
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { BarChartWrapperProps } from './types';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 

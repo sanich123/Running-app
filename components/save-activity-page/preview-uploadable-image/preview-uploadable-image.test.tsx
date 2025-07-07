@@ -4,7 +4,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 
 import PreviewUploadableImage from './preview-uploadable-image';
-import * as auth from '../../../auth/context/auth-context';
+import * as auth from '@A/context/utils';
 
 jest.mock('react-native-compressor', () => ({
   Image: () => ({

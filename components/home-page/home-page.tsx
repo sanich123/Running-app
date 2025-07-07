@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import ErrorComponent from '@C/error-component/error-component';
 import FloatingBtn from '@C/floating-btn/floating-btn';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';

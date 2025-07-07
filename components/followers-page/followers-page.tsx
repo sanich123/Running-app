@@ -3,7 +3,7 @@ import UserListItem from '@C/user-list-item/user-list-item';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetFollowersByUserIdQuery } from '@R/services/followers/followers';
 import useRefresh from '@U/hooks/use-refresh';
-import { useAuth } from 'auth/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { useLocalSearchParams } from 'expo-router';
 import { View, FlatList, useWindowDimensions, Platform } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';

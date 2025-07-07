@@ -2,7 +2,7 @@ import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { getCurrentWeekDates } from './util';
 import { useGetCurrentWeekStatisticsQuery } from '@R/services/statistics/statistics';
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { Href, useRouter } from 'expo-router';
 import { LANGUAGES, ROUTES } from '@const/enums';

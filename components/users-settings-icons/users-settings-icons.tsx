@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import ActivityUpdateBtn from '@C/activity/update-btn/update-btn';
 import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';

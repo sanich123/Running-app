@@ -1,4 +1,4 @@
-import { useAuth } from '@A/context/auth-context';
+import { useAuth } from '@A/context/utils';
 import PreviewImage from '@C/save-activity-page/preview-image/preview-image';
 import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch } from '@R/typed-hooks';
