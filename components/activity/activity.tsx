@@ -28,8 +28,8 @@ export default function Activity() {
           {activityStatus !== STATUSES.initial && <Metrics />}
         </View>
         <View style={[styles.metricsLayout, { backgroundColor: colors.secondaryContainer }]}>
-          {activityStatus === STATUSES.initial && <IconChooseSport />}
           <View style={[styles.metrics, { backgroundColor: colors.secondaryContainer }]}>
+            {activityStatus === STATUSES.initial && <IconChooseSport />}
             {activityStatus === STATUSES.paused && <PauseBtn />}
             <StartBtn isReadyToRecordLocation={isReadyToRecordLocation} />
             {activityStatus !== STATUSES.initial && <ShowMapBtn />}
@@ -47,18 +47,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    height: '80%',
+    height: '83%',
     width: '100%',
   },
   metricsLayout: {
-    height: '20%',
+    height: '17%',
     width: '100%',
   },
   metrics: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 8,
   },
 });

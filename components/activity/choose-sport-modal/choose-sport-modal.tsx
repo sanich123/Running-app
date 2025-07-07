@@ -25,15 +25,15 @@ export default function ChooseSportModal({ chooseSportModalRef }: ChooseSportMod
       handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
       backgroundStyle={{ backgroundColor: colors.onSecondary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 10, backgroundColor: colors.onSecondary }}>
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <BottomSheetView style={{ flex: 1, backgroundColor: colors.onSecondary }}>
+        <View
+          style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 5 }}>
           <Text variant="bodyLarge">
             {language === LANGUAGES.russian ? 'Выберите тип спорта' : 'Choose type of sport'}
           </Text>
-          <IconButton icon="close" size={35} onPress={() => chooseSportModalRef.current?.close()} />
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'row' }}>
+        <View style={{ flex: 1, flexDirection: 'row', paddingBottom: 10 }}>
           {SPORTS_NAMES.map(({ iconName, value }) => (
             <IconButton
               key={iconName}

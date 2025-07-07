@@ -31,9 +31,7 @@ export default function Page() {
     return () => networkListener();
   }, [dispatch]);
 
-  if (!user) {
-    return <Redirect href="/sign-in" />;
-  } else if (user) {
+  if (user) {
     if (activityStatus !== STATUSES.initial) {
       dispatch(setIsAppShuted(true));
       dispatch(setActivityStatus(STATUSES.paused));

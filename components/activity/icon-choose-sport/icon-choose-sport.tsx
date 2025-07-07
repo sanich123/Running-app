@@ -13,11 +13,10 @@ export default function IconChooseSport() {
   } = useAppSelector(({ activity }) => activity);
 
   return (
-    <View style={{ position: 'relative', zIndex: 1 }}>
+    <View style={{ position: 'absolute', left: 0 }}>
       <IconButton
         icon={getIconNameByTypeOfSport(sport)}
         size={35}
-        style={{ position: 'absolute', left: 0, top: 48 }}
         onPress={() => chooseSportModal.current?.present()}
         mode="outlined"
       />

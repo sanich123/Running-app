@@ -1,6 +1,6 @@
 import { ROUTES } from '@const/enums';
 import { useAuth } from 'auth/context/auth-context';
-import { Tabs } from 'expo-router';
+import { Tabs, usePathname } from 'expo-router';
 import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -10,6 +10,7 @@ export default function TabLayout() {
   const {
     colors: { surfaceVariant, primary, onSurfaceDisabled, onBackground },
   } = useTheme();
+  const pathname = usePathname();
   return (
     <Tabs
       initialRouteName={ROUTES.home}
@@ -20,7 +21,7 @@ export default function TabLayout() {
         tabBarAllowFontScaling: false,
         tabBarShowLabel: false,
         tabBarLabelStyle: { fontSize: Platform.OS !== 'web' ? 12 : 10 },
-        tabBarStyle: { backgroundColor: surfaceVariant },
+        tabBarStyle: { backgroundColor: surfaceVariant, display: pathname.includes('activity') ? 'none' : 'flex' },
       }}>
       <Tabs.Screen
         name={ROUTES.home}

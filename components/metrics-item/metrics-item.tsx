@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 
 type MetricsItemProps = {
   isMapVisible: boolean;
@@ -10,7 +10,6 @@ type MetricsItemProps = {
 
 export default function MetricsItem({ isMapVisible, title, metric, isCentral }: MetricsItemProps) {
   const isCentralAndIsNotMapVisible = isCentral && !isMapVisible;
-  const { dark } = useTheme();
   return (
     <View
       style={[
@@ -20,11 +19,7 @@ export default function MetricsItem({ isMapVisible, title, metric, isCentral }: 
           height: isMapVisible ? '100%' : '30%',
         },
       ]}>
-      <Text
-        variant={`${isCentralAndIsNotMapVisible ? 'displayMedium' : 'headlineSmall'}`}
-        style={{ color: dark ? 'white' : 'black' }}>
-        {title}
-      </Text>
+      <Text variant={`${isCentralAndIsNotMapVisible ? 'displayMedium' : 'titleMedium'}`}>{title}</Text>
       <Text variant={`${isCentralAndIsNotMapVisible ? 'headlineLarge' : 'headlineSmall'}`}>{metric}</Text>
     </View>
   );

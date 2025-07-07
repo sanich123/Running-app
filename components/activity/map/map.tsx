@@ -35,11 +35,7 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
         <>
           <LocationIndicator />
           <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
-            {Platform.OS === 'ios' ? (
-              <UserLocation showsUserHeadingIndicator animated />
-            ) : (
-              <UserLocation showsUserHeadingIndicator androidRenderMode="compass" animated />
-            )}
+            {Platform.OS === 'ios' ? <UserLocation animated /> : <UserLocation androidRenderMode="compass" animated />}
             <Camera followUserLocation followZoomLevel={18} animationMode="flyTo" />
             <MapKmSplit kilometresSplit={kilometresSplit} />
             {locationsWithPauses[0]?.length > 1
