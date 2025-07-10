@@ -11,6 +11,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Activity() {
   const { colors } = useTheme();
@@ -20,7 +21,7 @@ export default function Activity() {
 
   return (
     <BottomSheetModalProvider>
-      <View style={styles.layout}>
+      <SafeAreaView style={styles.layout} edges={['bottom']}>
         <View style={styles.map}>
           {(activityStatus === STATUSES.initial || isMapVisible) && (
             <Map setIsReadyToRecordLocation={setIsReadyToRecordLocation} />
@@ -35,7 +36,7 @@ export default function Activity() {
             {activityStatus !== STATUSES.initial && <ShowMapBtn />}
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     </BottomSheetModalProvider>
   );
 }

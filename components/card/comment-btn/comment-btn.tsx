@@ -2,7 +2,7 @@ import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comm
 import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { ROUTES } from '@const/enums';
-import { Href, usePathname, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useContext, memo, useState, useEffect, useRef } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
@@ -23,8 +23,6 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
     isLoading: isLoadingComments,
   } = useGetCommentsLengthByActivityIdQuery(`${activityId}`, { skip: !isNeedToGetUpdatedComments });
   const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : commentsCount;
-  const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const commentsModalRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
@@ -40,7 +38,7 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
       borderless
       onPress={() => {
         if (Platform.OS === 'web') {
-          push(`/${place}/${ROUTES.comment}/${activityId}` as Href);
+          push(`/(protected)/${ROUTES.comment}/${activityId}`);
         } else {
           commentsModalRef.current?.present();
         }

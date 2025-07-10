@@ -14,7 +14,7 @@ import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
 import { runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { Href, useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,6 +22,7 @@ import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/services/
 
 export default function Feed() {
   const { push } = useRouter();
+
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
@@ -63,7 +64,7 @@ export default function Feed() {
                   dispatch(resetFinishedActivity());
                   dispatch(resetManualData());
                   dispatch(resetActivityInfo());
-                  push('/home/manual-activity' as Href);
+                  push('/(protected)/manual-activity');
                 }}
               />
             </>

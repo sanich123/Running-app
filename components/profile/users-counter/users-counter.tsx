@@ -3,7 +3,7 @@ import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from 
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';
-import { Href, useLocalSearchParams, usePathname, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
@@ -14,14 +14,11 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
   const { user } = useAuth();
   const { push } = useRouter();
   const { dark } = useTheme();
-  const pathname = usePathname();
   const { id: friendId } = useLocalSearchParams();
   const whosId = friendId ? `${friendId}` : `${user?.id}`;
   const whereToPush = variant === USERS_VARIANT.whoUserFollows ? ROUTES.following : ROUTES.followers;
   const whatTitleToRender =
     variant === USERS_VARIANT.whoUserFollows ? USERS_COUNT[language].followings : USERS_COUNT[language].followers;
-
-  const place = pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.profile;
   const {
     isLoading: isFollowersLoading,
     isError: isFollowersError,
@@ -40,7 +37,7 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/${place}/${whereToPush}/${whosId}` as Href)}
+      onPress={() => push(`/(protected)/${whereToPush}/${whosId}`)}
       disabled={isFollowersError || isFollowersLoading || isFollowingsLoading || isFollowingsError}
       borderless
       style={{ borderRadius: 10 }}>

@@ -20,17 +20,14 @@ import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
-import { ROUTES } from '@const/enums';
-import { Href, useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
+import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 
 export default function UpdateBtn() {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
-  const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const { id: activityId } = useGlobalSearchParams();
   const { data: activity, isError, isLoading } = useGetActivityByActivityIdQuery(`${activityId}`);
   return (
@@ -59,7 +56,7 @@ export default function UpdateBtn() {
           dispatch(setManualDistance(activity?.distance / 1000));
           dispatch(setManualHours(getHoursMinutesFromMilliseconds(activity?.duration).hours));
           dispatch(setManualMinutes(getHoursMinutesFromMilliseconds(activity?.duration).minutes));
-          push(`/(tabs)/${place}/manual-activity/?activityId=${activityId}` as Href);
+          push(`/(protected)/manual-activity`);
         } else {
           showCrossPlatformToast('Не удалось загрузить данные об активности!');
         }

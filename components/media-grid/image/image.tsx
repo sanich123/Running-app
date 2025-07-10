@@ -2,7 +2,7 @@ import { PhotoVideoType } from '@C/card/types';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Platform, useWindowDimensions } from 'react-native';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 
@@ -16,9 +16,7 @@ export default function MediaGridImage({
   const { push } = useRouter();
   const { dark } = useTheme();
   const { width } = useWindowDimensions();
-  const pathname = usePathname();
   const { id: userId } = useLocalSearchParams();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const gap = 3;
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   const calculatedWidth = (widthOfScreen - gap * 3) / 4;
@@ -29,7 +27,7 @@ export default function MediaGridImage({
       key={url}
       onPress={() =>
         push(
-          `/(tabs)/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}?userId=${userId}&take=${take}`,
+          `/(protected)/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}?userId=${userId}&take=${take}`,
         )
       }
       borderless>

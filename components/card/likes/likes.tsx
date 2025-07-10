@@ -3,7 +3,7 @@ import NumberOfLikes from '@C/card/number-of-likes/number-of-likes';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
 import { ROUTES } from '@const/enums';
-import { Href, usePathname, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Fragment, memo, useRef } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -18,12 +18,10 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
   const dispatch = useAppDispatch();
   const { dark } = useTheme();
   const { push } = useRouter();
-  const pathname = usePathname();
   const { data: likes, isLoading, isError } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
   const moreThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length > MAX_IN_ROW;
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const likesListModal = useRef<BottomSheetModal>(null);
   return (
     <>
@@ -36,7 +34,7 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
               dispatch(setActivityIdWhichLikesToDownload(activityId));
               likesListModal.current?.present();
             } else {
-              push(`/${place}/${ROUTES.likes}/${activityId}` as Href);
+              push(`/(protected)/${ROUTES.likes}/${activityId}`);
             }
           }}
           borderless

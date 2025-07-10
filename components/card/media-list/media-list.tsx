@@ -1,6 +1,6 @@
 import { CustomImage } from '@C/custom-image/custom-image';
 import { ROUTES } from '@const/enums';
-import { usePathname, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { memo } from 'react';
 import { FlatList, Platform, useWindowDimensions } from 'react-native';
 import { TouchableRipple, useTheme } from 'react-native-paper';
@@ -11,8 +11,7 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
   const { dark } = useTheme();
   const { width } = useWindowDimensions();
   const { push } = useRouter();
-  const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
+
   const displayedData = mapPhotoUrl
     ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...(photoVideoUrls ? photoVideoUrls : [])]
     : photoVideoUrls;
@@ -26,8 +25,8 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           onPress={() => {
             push(
               item.url.includes('api.mapbox.com')
-                ? `/${place}/${ROUTES.map}/${id}`
-                : `/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
+                ? `/(protected)/map/${id}`
+                : `/(protected)/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
             );
           }}
           borderless>

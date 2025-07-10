@@ -1,10 +1,4 @@
-/** @jest-config-loader ts-node */
-// or
-/** @jest-config-loader esbuild-register */
-
-import type { Config } from 'jest';
-
-const config: Config = {
+const config = {
   collectCoverage: true,
   coverageReporters: ['json', 'html'],
   preset: 'jest-expo',

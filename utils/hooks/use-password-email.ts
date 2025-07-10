@@ -10,7 +10,7 @@ export default function usePasswordEmail() {
   const [passwordError, setPasswordError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [pageState, setPageState] = useState(SignInPageStates.register);
+  const [pageState, setPageState] = useState(SignInPageStates.login);
 
   return {
     email,

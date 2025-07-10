@@ -3,7 +3,7 @@ import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activ
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
 import { ROUTES } from '@const/enums';
-import { Href, usePathname, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Fragment } from 'react';
 import { Platform, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -21,13 +21,11 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { push } = useRouter();
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
-  const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/${place}/${ROUTES.mediaGrid}/${userId}` as Href)}
+      onPress={() => push(`/(protected)/${ROUTES.mediaGrid}/${userId}`)}
       disabled={isError || isLoading}
       borderless>
       <View

@@ -33,6 +33,7 @@ export type CommentInputProps = {
   setIdOfUpdatingComment: (arg: string) => void;
   idOfUpdatingComment: string;
   mapPhotoUrl?: string;
+  commentsModalRef?: RefObject<BottomSheetModal | null>;
 };
 
 export type CommentLikeBtnProps = {

@@ -1,4 +1,4 @@
-import { Href, usePathname, useRouter, useSegments } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useState, useEffect, PropsWithChildren } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { supabase } from '../supabase/supabase-init';
@@ -10,31 +10,28 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [initialized, setInitialized] = useState<boolean>(false);
   const [session, setSession] = useState<Session | null>(null);
   const { replace } = useRouter();
-  const segments = useSegments();
-  const pathname = usePathname();
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session ? session.user : null);
+    });
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
       setUser(session ? session.user : null);
-      setInitialized(true);
     });
+    setInitialized(true);
     return () => data.subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
-    const inTabsGroup = segments[0] === '(tabs)';
-    if (!user && inTabsGroup) {
-      replace('/(auth)/sign-in');
-    } else if (user && !inTabsGroup) {
-      if (pathname.includes('reset-password')) {
-        replace('/change-password' as Href);
-      } else {
-        replace('/');
-      }
-    }
     SplashScreen.hide();
-  }, [pathname, replace, segments, user]);
+    if (session) {
+      replace('/');
+    } else {
+      replace('/sign-in');
+    }
+  }, [replace, session]);
 
   return (
     <AuthContext.Provider

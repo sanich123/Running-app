@@ -2,8 +2,7 @@ import ShowMetrics from '@C/show-metrics/show-metrics';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
-import { ROUTES } from '@const/enums';
-import { Href, usePathname, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -22,20 +21,12 @@ export default memo(function Metrics({
 }: MetricsProps) {
   const { dark } = useTheme();
   const { push } = useRouter();
-  const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile)
-    ? ROUTES.profile
-    : pathname.includes(ROUTES.home)
-      ? ROUTES.home
-      : ROUTES.statistic;
   const { language } = useAppSelector(({ language }) => language);
 
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() =>
-        !pathname.includes(ROUTES.activity) && push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}` as Href)
-      }
+      onPress={() => push(`/(protected)/activity/${id}?userId=${userId}`)}
       borderless
       style={{ paddingLeft: 5, paddingVertical: 2 }}>
       <>

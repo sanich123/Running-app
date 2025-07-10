@@ -10,7 +10,6 @@ import {
   saveSurname,
   saveWeight,
 } from '@R/slices/profile/profile';
-
 import { useAppDispatch } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
 import { useAuth } from '@A/context/utils';

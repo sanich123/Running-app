@@ -5,36 +5,35 @@ import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import AvatarShowable from '@C/avatar/showable/showable';
+
 export default function TabLayout() {
   const { user } = useAuth();
-  const {
-    colors: { surfaceVariant, primary, onSurfaceDisabled, onBackground },
-  } = useTheme();
+  const { colors } = useTheme();
   const pathname = usePathname();
   return (
     <Tabs
-      initialRouteName={ROUTES.home}
       screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: primary,
-        tabBarInactiveTintColor: onSurfaceDisabled,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.onSurfaceDisabled,
         tabBarAllowFontScaling: false,
         tabBarShowLabel: false,
         tabBarLabelStyle: { fontSize: Platform.OS !== 'web' ? 12 : 10 },
-        tabBarStyle: { backgroundColor: surfaceVariant, display: pathname.includes('activity') ? 'none' : 'flex' },
+        tabBarStyle: {
+          backgroundColor: colors.surfaceVariant,
+          display: pathname.includes('activity') ? 'none' : 'flex',
+        },
       }}>
       <Tabs.Screen
-        name={ROUTES.home}
+        name="index"
         options={{
-          headerShown: false,
-          tabBarIcon: () => <AntDesign name="home" color={onBackground} size={30} />,
+          tabBarIcon: () => <AntDesign name="home" color={colors.onBackground} size={30} />,
         }}
       />
       <Tabs.Screen
         name={ROUTES.activity}
         options={{
           headerShown: false,
-          tabBarIcon: () => <AntDesign name="playcircleo" color={onBackground} size={28} />,
+          tabBarIcon: () => <AntDesign name="playcircleo" color={colors.onBackground} size={28} />,
         }}
       />
       <Tabs.Screen
@@ -42,7 +41,7 @@ export default function TabLayout() {
         options={{
           headerShown: false,
           tabBarIcon: () => (
-            <AntDesign name="piechart" color={onBackground} size={28} style={{ margin: 0, padding: 0 }} />
+            <AntDesign name="piechart" color={colors.onBackground} size={28} style={{ margin: 0, padding: 0 }} />
           ),
         }}
       />

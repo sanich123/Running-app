@@ -4,7 +4,7 @@ import { getCurrentWeekDates } from './util';
 import { useGetCurrentWeekStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAuth } from '@A/context/utils';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
-import { Href, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import WeekStatisticsMetric from './week-statistics-metrics';
 import { WEEK_STATISTICS } from './const';
@@ -39,7 +39,7 @@ export default function WeekStatistics() {
       borderless
       onPress={() =>
         weekStatistics?.totalItems &&
-        push(`/${ROUTES.home}/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${month}` as Href)
+        push(`/(protected)/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${month}`)
       }
       style={[
         styles.container,

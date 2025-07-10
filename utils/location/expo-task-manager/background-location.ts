@@ -97,7 +97,8 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
         );
       } else {
         store.dispatch(setIsTooMuchSpeed(true));
-        if (__DEV__) console.log('That was wrong position', 'currentPace: ', currentPace);
+        console.log('this code fired');
+        showCrossPlatformToast('Геолокация отклонена из-за слишком высокой скорости относительно предыдущей точки.');
       }
     } catch (error) {
       if (__DEV__) console.log('[tracking]', 'Something went wrong when saving a new location...', error);

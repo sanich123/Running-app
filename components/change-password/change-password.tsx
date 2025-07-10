@@ -64,7 +64,7 @@ export default function ChangePassword() {
                 if (data.user) {
                   showCrossPlatformToast('Успешно, перенаправляем дальше в приложение');
                   if (Device.deviceType === Device.DeviceType.DESKTOP) {
-                    push('/');
+                    push('/(protected)/(tabs)/activity');
                     return;
                   } else {
                     const redirectUrl = Linking.createURL('com.supabase://sign-in');

@@ -1,6 +1,6 @@
 import { AuthProvider } from '@A/context/auth-context';
 import { persistor, store } from '@R/store';
-import { Slot } from 'expo-router';
+import { Stack } from 'expo-router';
 import { useColorScheme, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
@@ -40,8 +40,35 @@ export default function RootLayout() {
               <KeyboardProvider>
                 <SystemBars style="auto" />
                 <PaperProvider theme={paperTheme}>
-                  <Toast visibilityTime={3000} topOffset={90} config={toastConfig} />
-                  <Slot />
+                  <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
+                    <Stack.Screen name="(protected)" />
+                    <Stack.Screen name="sign-in" />
+                    <Stack.Screen
+                      name="confirm-email"
+                      options={{
+                        presentation: 'modal',
+                        headerTitle: 'Confirm Email',
+                        gestureEnabled: true,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="need-to-confirm-email"
+                      options={{
+                        presentation: 'modal',
+                        headerTitle: 'Need to confirm email',
+                        gestureEnabled: true,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="reset-password"
+                      options={{
+                        presentation: 'modal',
+                        headerTitle: 'Reset password',
+                        gestureEnabled: true,
+                      }}
+                    />
+                  </Stack>
+                  <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
                 </PaperProvider>
               </KeyboardProvider>
             </SafeAreaProvider>

@@ -7,7 +7,6 @@ import { ActivityIndicator, useTheme, Text } from 'react-native-paper';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAuth } from '@A/context/utils';
 import ErrorComponent from '@C/error-component/error-component';
-
 import { useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
 import MonthStatisticsMetrics from '@C/statistic/month-metric/month-metric';

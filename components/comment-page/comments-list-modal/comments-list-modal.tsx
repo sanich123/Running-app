@@ -17,18 +17,18 @@ export default function CommentsListModal({
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
   const [idOfUpdatingComment, setIdOfUpdatingComment] = useState('');
   const renderBackdrop = useCallback(backdrop, []);
-  const snapPoints = useMemo(() => ['20%', '25%', '55%', '65%', '90%'], []);
+  const snapPoints = useMemo(() => ['22%', '35%', '55%', '65%', '90%'], []);
 
   return (
     <BottomSheetModal
       ref={commentsModalRef}
-      index={0}
+      index={1}
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
       backgroundStyle={{ backgroundColor: colors.onSecondary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <View style={{ paddingHorizontal: 10, marginBottom: 5, zIndex: 7 }}>
+      <View style={{ paddingHorizontal: 10, marginBottom: 5 }}>
         {isShowingTextInput && !idOfUpdatingComment ? (
           <CommentInput
             profile={profile}
@@ -38,6 +38,7 @@ export default function CommentsListModal({
             commentId=""
             mapPhotoUrl={mapPhotoUrl}
             setIdOfUpdatingComment={setIdOfUpdatingComment}
+            commentsModalRef={commentsModalRef}
           />
         ) : (
           <View>
@@ -46,7 +47,7 @@ export default function CommentsListModal({
               icon="pencil"
               style={{ position: 'absolute', right: 10, top: Platform.OS === 'ios' ? 2 : 0, zIndex: 10 }}
               onPress={() => {
-                commentsModalRef.current?.snapToIndex(2);
+                commentsModalRef.current?.snapToIndex(3);
                 setIdOfUpdatingComment('');
                 setIsShowingTextInput(true);
               }}

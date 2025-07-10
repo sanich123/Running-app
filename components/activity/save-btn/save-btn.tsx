@@ -53,7 +53,7 @@ export default function SaveBtn() {
     dispatch(resetActivityInfo());
     dispatch(resetLocationsFromBackground());
     dispatch(setIsNeedToRefreshActivities(true));
-    replace(`/`);
+    replace('/(protected)/(tabs)');
   };
 
   const onErrorHandler = (error: any) => {
@@ -69,7 +69,7 @@ export default function SaveBtn() {
     }
     dispatch(resetActivityInfo());
     dispatch(resetLocationsFromBackground());
-    replace('/');
+    replace('/(protected)/(tabs)');
   };
 
   return (

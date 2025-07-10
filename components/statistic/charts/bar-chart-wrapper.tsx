@@ -2,7 +2,7 @@ import { View, useWindowDimensions } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { Text, useTheme } from 'react-native-paper';
 import { getSteps } from './util';
-import { Href, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { useAuth } from '@A/context/utils';
 import { BarChartWrapperProps } from './types';
@@ -44,7 +44,7 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
           },
         }}
         onPress={(_: any, index: any) =>
-          push(`/${ROUTES.statistic}/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${index}` as Href)
+          push(`/(protected)/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${index}`)
         }
         frontColor={colors.primary}
         maxValue={maxValue}

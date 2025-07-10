@@ -23,6 +23,7 @@ export default function CommentInput({
   setIdOfUpdatingComment,
   idOfUpdatingComment,
   mapPhotoUrl,
+  commentsModalRef,
 }: CommentInputProps) {
   const dispatch = useAppDispatch();
   const {
@@ -115,8 +116,8 @@ export default function CommentInput({
           }
         }
       }}
+      onFocus={() => commentsModalRef?.current?.snapToIndex(3)}
       label={COMMENT_INPUT[language].label}
-      autoFocus={!commentToUpdate || !!idOfUpdatingComment}
       enterKeyHint="send"
     />
   );
