@@ -1,1 +1,1 @@
-npx tsc && npx expo lint --fix && yarn test && npx expo-doctor@latest && npx ncu --target=semver
+npx tsc && npx expo lint --fix && yarn test && npx expo-doctor@latest && npx ncu '/^(?!react-native|expo-).*$/' --target=semver -u 

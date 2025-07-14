@@ -73,6 +73,7 @@ export default {
     },
     extra: { eas: { projectId: '413aa829-bbae-467c-9201-4688b894f2f7' } },
     plugins: [
+      './custom.plugin',
       'react-native-compressor',
       '@react-native-google-signin/google-signin',
       'expo-router',
@@ -91,7 +92,6 @@ export default {
       [
         'expo-build-properties',
         {
-          android: { useLegacyPackaging: true },
           ios: { deploymentTarget: '15.5' },
         },
       ],
