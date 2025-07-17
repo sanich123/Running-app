@@ -4,7 +4,7 @@ import GoogleSignInWeb from '@C/sign-in/google-sign-in-web/google-sign-in-web';
 import PasswordInput from '@C/sign-in/password-input/password-input';
 import usePasswordEmail from '@U/hooks/use-password-email';
 import * as Linking from 'expo-linking';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useRef } from 'react';
 import { View, Platform, TextInput, StyleSheet, useWindowDimensions, ScrollView } from 'react-native';
@@ -55,51 +55,48 @@ export default function SignIn() {
   }, [url]);
 
   return (
-    <>
-      {!process.env.IS_TESTING ? <Stack.Screen options={{ title: 'sign up', headerShown: false }} /> : null}
-      <ScrollView style={{ backgroundColor: colors.background }}>
-        <Intro />
-        <View style={[styles.inputsWrapper, { backgroundColor: colors.background, height: height * 0.5 }]}>
-          {!process.env.IS_TESTING ? (
-            <>
-              {Platform.OS !== 'web' ? (
-                <GoogleSignBtn setIsDisabled={setIsDisabled} />
-              ) : (
-                <GoogleSignInWeb setIsDisabled={setIsDisabled} />
-              )}
-            </>
-          ) : null}
-          <EmailInput
-            passwordRef={passwordRef}
-            email={email}
-            setEmail={setEmail}
-            emailError={emailError}
-            setEmailError={setEmailError}
-            isDisabled={isDisabled}
-          />
-          <PasswordInput
-            passwordRef={passwordRef}
-            password={password}
-            setPassword={setPassword}
-            setPasswordError={setPasswordError}
-            passwordError={passwordError}
-            isDisabled={isDisabled}
-          />
-          <LoginRegisterBtn
-            pageState={pageState}
-            password={password}
-            email={email}
-            isDisabled={isDisabled}
-            isLoading={isLoading}
-            setIsDisabled={setIsDisabled}
-            setIsLoading={setIsLoading}
-            setEmailError={setEmailError}
-            setPasswordError={setPasswordError}
-          />
-          <LoginRegisterNavigation setPageState={setPageState} pageState={pageState} isDisabled={isDisabled} />
-        </View>
-      </ScrollView>
-    </>
+    <ScrollView style={{ backgroundColor: colors.background }}>
+      <Intro />
+      <View style={[styles.inputsWrapper, { backgroundColor: colors.background, height: height * 0.5 }]}>
+        {!process.env.IS_TESTING ? (
+          <>
+            {Platform.OS !== 'web' ? (
+              <GoogleSignBtn setIsDisabled={setIsDisabled} />
+            ) : (
+              <GoogleSignInWeb setIsDisabled={setIsDisabled} />
+            )}
+          </>
+        ) : null}
+        <EmailInput
+          passwordRef={passwordRef}
+          email={email}
+          setEmail={setEmail}
+          emailError={emailError}
+          setEmailError={setEmailError}
+          isDisabled={isDisabled}
+        />
+        <PasswordInput
+          passwordRef={passwordRef}
+          password={password}
+          setPassword={setPassword}
+          setPasswordError={setPasswordError}
+          passwordError={passwordError}
+          isDisabled={isDisabled}
+        />
+        <LoginRegisterBtn
+          pageState={pageState}
+          password={password}
+          email={email}
+          isDisabled={isDisabled}
+          isLoading={isLoading}
+          setIsDisabled={setIsDisabled}
+          setIsLoading={setIsLoading}
+          setEmailError={setEmailError}
+          setPasswordError={setPasswordError}
+        />
+        <LoginRegisterNavigation setPageState={setPageState} pageState={pageState} isDisabled={isDisabled} />
+      </View>
+    </ScrollView>
   );
 }
 

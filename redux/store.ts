@@ -9,12 +9,13 @@ import location from './slices/location/location';
 import mainFeed from './slices/main-feed/main-feed';
 import network from './slices/network/network';
 import profile from './slices/profile/profile';
+import auth from './slices/auth/auth';
 import { runichApi } from './runich-api/runich-api';
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['language', 'activity', 'location'],
+  whitelist: ['language', 'activity', 'location', 'auth'],
 };
 
 const rootReducer = persistReducer(
@@ -26,6 +27,7 @@ const rootReducer = persistReducer(
     profile,
     activity,
     mainFeed,
+    auth,
     [runichApi.reducerPath]: runichApi.reducer,
   }),
 );

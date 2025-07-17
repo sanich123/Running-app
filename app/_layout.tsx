@@ -1,4 +1,3 @@
-import { AuthProvider } from '@A/context/auth-context';
 import { persistor, store } from '@R/store';
 import { Stack } from 'expo-router';
 import { useColorScheme, View } from 'react-native';
@@ -34,46 +33,44 @@ export default function RootLayout() {
       }
       persistor={persistor}>
       <Provider store={store}>
-        <AuthProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <SafeAreaProvider>
-              <KeyboardProvider>
-                <SystemBars style="auto" />
-                <PaperProvider theme={paperTheme}>
-                  <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
-                    <Stack.Screen name="(protected)" />
-                    <Stack.Screen name="sign-in" />
-                    <Stack.Screen
-                      name="confirm-email"
-                      options={{
-                        presentation: 'modal',
-                        headerTitle: 'Confirm Email',
-                        gestureEnabled: true,
-                      }}
-                    />
-                    <Stack.Screen
-                      name="need-to-confirm-email"
-                      options={{
-                        presentation: 'modal',
-                        headerTitle: 'Need to confirm email',
-                        gestureEnabled: true,
-                      }}
-                    />
-                    <Stack.Screen
-                      name="reset-password"
-                      options={{
-                        presentation: 'modal',
-                        headerTitle: 'Reset password',
-                        gestureEnabled: true,
-                      }}
-                    />
-                  </Stack>
-                  <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
-                </PaperProvider>
-              </KeyboardProvider>
-            </SafeAreaProvider>
-          </GestureHandlerRootView>
-        </AuthProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <KeyboardProvider>
+              <SystemBars style="auto" />
+              <PaperProvider theme={paperTheme}>
+                <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
+                  <Stack.Screen name="(protected)" />
+                  <Stack.Screen name="sign-in" />
+                  <Stack.Screen
+                    name="confirm-email"
+                    options={{
+                      presentation: 'modal',
+                      headerTitle: 'Confirm Email',
+                      gestureEnabled: true,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="need-to-confirm-email"
+                    options={{
+                      presentation: 'modal',
+                      headerTitle: 'Need to confirm email',
+                      gestureEnabled: true,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="reset-password"
+                    options={{
+                      presentation: 'modal',
+                      headerTitle: 'Reset password',
+                      gestureEnabled: true,
+                    }}
+                  />
+                </Stack>
+                <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
+              </PaperProvider>
+            </KeyboardProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
       </Provider>
     </PersistGate>
   );

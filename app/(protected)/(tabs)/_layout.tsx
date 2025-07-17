@@ -45,15 +45,13 @@ export default function TabLayout() {
           ),
         }}
       />
-      {user?.id && (
-        <Tabs.Screen
-          name={ROUTES.profile}
-          options={{
-            headerShown: false,
-            tabBarIcon: () => <AvatarShowable size={30} id={`${user?.id}`} />,
-          }}
-        />
-      )}
+      <Tabs.Screen
+        name={ROUTES.profile}
+        options={{
+          headerShown: false,
+          tabBarIcon: () => <AvatarShowable size={30} id={`${user?.id}`} />,
+        }}
+      />
     </Tabs>
   );
 }

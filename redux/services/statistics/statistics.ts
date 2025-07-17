@@ -1,6 +1,6 @@
-import {  Routes, Tags } from '@R/runich-api/const';
+import { Routes, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
-import { CurrentWeekStatisticsRequest,  MonthStatisticsRequest} from './types';
+import { CurrentWeekStatisticsRequest, MonthStatisticsRequest } from './types';
 
 const { statistics } = Routes;
 

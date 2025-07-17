@@ -22,7 +22,6 @@ import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/services/
 
 export default function Feed() {
   const { push } = useRouter();
-
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);

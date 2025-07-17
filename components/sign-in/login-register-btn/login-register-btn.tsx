@@ -1,4 +1,3 @@
-import { supabase } from '@A/supabase/supabase-init';
 import { saveEmailPassword } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
@@ -8,6 +7,9 @@ import { useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
 
 import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons } from './const';
+import { useLoginUserMutation, useRegisterUserMutation } from '@R/services/authentication/authentication';
+import { setAccessToken, setUserId } from '@R/slices/auth/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginRegisterBtn({
   email,
@@ -22,9 +24,11 @@ export default function LoginRegisterBtn({
 }: LoginBtnProps) {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-  const { push } = useRouter();
+  const { replace } = useRouter();
   const isRegistering = pageState === SignInPageStates.register;
   const isLogining = pageState === SignInPageStates.login;
+  const [registerUser] = useRegisterUserMutation();
+  const [loginUser] = useLoginUserMutation();
   // const isResetting = pageState === SignInPageStates.reset;
 
   return (
@@ -36,24 +40,44 @@ export default function LoginRegisterBtn({
       loading={isLoading}
       disabled={isDisabled}
       onPress={async () => {
-        dispatch(saveEmailPassword({ email: email.trim(), password }));
+        dispatch(saveEmailPassword({ email: email.trim().toLowerCase(), password }));
         setIsLoading(true);
         setIsDisabled(true);
         try {
           if (emailPasswordHandler({ email, password, setEmailError, setPasswordError, action: pageState })) {
             if (isRegistering) {
-              const { error } = await supabase.auth.signUp({ email: email.trim(), password });
-              if (!error) {
-                push('/need-to-confirm-email');
-              } else {
-                showCrossPlatformToast(error.message);
-              }
-            } else {
-              const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-              if (error) {
-                showCrossPlatformToast(error.message);
-              }
+              await registerUser({ email: email.trim(), password })
+                .unwrap()
+                .then(() => showCrossPlatformToast('Успешно зарегистрировали'))
+                .catch((error) => showCrossPlatformToast(JSON.stringify(error, null, 2)));
             }
+            if (isLogining) {
+              await loginUser({ email: email.trim().toLowerCase(), password })
+                .unwrap()
+                .then(async ({ accessToken, id }) => {
+                  await AsyncStorage.setItem('accessToken', accessToken);
+                  dispatch(setUserId(id));
+                  dispatch(setAccessToken(accessToken));
+                  replace('/');
+                })
+                .catch((error) => {
+                  console.log(error);
+                  showCrossPlatformToast(JSON.stringify(error, null, 2));
+                });
+            }
+            // if (isRegistering) {
+            //   const { error } = await supabase.auth.signUp({ email: email.trim(), password });
+            //   if (!error) {
+            //     push('/need-to-confirm-email');
+            //   } else {
+            //     showCrossPlatformToast(error.message);
+            //   }
+            // } else {
+            //   const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+            //   if (error) {
+            //     showCrossPlatformToast(error.message);
+            //   }
+            // }
             // else {
             //   const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
             //     redirectTo: 'https://runich-with-api.netlify.app/reset-password',
