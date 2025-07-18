@@ -25,7 +25,14 @@ export const authenticationApi = runichApi.injectEndpoints({
         method: 'POST',
       }),
     }),
+    deleteUser: mutation<void, { userId: string }>({
+      query: ({ userId }) => ({
+        url: `auth/${userId}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
-export const { useRegisterUserMutation, useLoginUserMutation, useLazyVerifyConfigQuery } = authenticationApi;
+export const { useRegisterUserMutation, useLoginUserMutation, useLazyVerifyConfigQuery, useDeleteUserMutation } =
+  authenticationApi;

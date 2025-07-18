@@ -16,8 +16,11 @@ export const language = createSlice({
     changeTheme: (state, action) => {
       state.theme = action.payload;
     },
+    resetLanguageSlice: (state) => {
+      return (state = LANGUAGE_INITIAL_STATE);
+    },
   },
 });
 
-export const { changeLanguage, changeTheme } = language.actions;
+export const { changeLanguage, changeTheme, resetLanguageSlice } = language.actions;
 export default language.reducer;

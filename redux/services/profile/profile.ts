@@ -26,12 +26,6 @@ export const profileApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
-    deleteUserByUserId: builder.mutation({
-      query: (id: string) => ({
-        url: `${user}/${id}`,
-        method: Methods.delete,
-      }),
-    }),
     getFilteredUsersBySearchText: builder.query({
       query: (search: string) =>
         `/${profile}/filter?page=${0}&limit=${10}&offset=0&name=${search}&surname=${search}&email=${search}&city=${search}&gender=${search}&sport=${search}`,
@@ -44,6 +38,5 @@ export const {
   useGetUserProfileByUserIdQuery,
   useCreateProfileByUserIdMutation,
   useUpdateProfileByProfileIdMutation,
-  useDeleteUserByUserIdMutation,
   useGetFilteredUsersBySearchTextQuery,
 } = profileApi;

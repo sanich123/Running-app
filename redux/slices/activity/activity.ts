@@ -83,6 +83,9 @@ export const activity = createSlice({
     setCameraIsVisible: (state, action) => {
       state.isCameraVisible = action.payload;
     },
+    resetActivitySlice: (state) => {
+      return (state = ACTIVITY_INITIAL_STATE);
+    },
   },
 });
 
@@ -111,6 +114,7 @@ export const {
   deletePhotoUrl,
   resetPhotoUrls,
   setIsEditingActivity,
+  resetActivitySlice,
 } = activity.actions;
 
 export default activity.reducer;

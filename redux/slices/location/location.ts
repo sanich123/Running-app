@@ -84,6 +84,9 @@ export const location = createSlice({
       state.currentPace = 0;
       state.locationsWithPauses = [];
     },
+    resetLocationSlice: (state) => {
+      return (state = LOCATION_INITIAL_STATE);
+    },
   },
 });
 
@@ -108,6 +111,7 @@ export const {
   setDurationWithPauses,
   setLastPosition,
   setIsTooMuchSpeed,
+  resetLocationSlice,
 } = location.actions;
 
 export default location.reducer;

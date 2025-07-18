@@ -1,26 +1,26 @@
-import { useEffect } from 'react';
 import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
-import { supabase } from '@A/supabase/supabase-init';
-import { useAuth } from '@A/context/utils';
-import { useDeleteUserByUserIdMutation } from '@R/services/profile/profile';
 import { Alert, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { resetSettings } from '@R/slices/profile/profile';
-import { resetLocationsFromBackground } from '@R/slices/location/location';
+import { resetProfileSlice } from '@R/slices/profile/profile';
+import { resetLocationSlice } from '@R/slices/location/location';
 import { DELETE_ACCOUNT } from './const';
+import { useDeleteUserMutation } from '@R/services/authentication/authentication';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import { resetActivitySlice } from '@R/slices/activity/activity';
+import { resetMainFeedSlice } from '@R/slices/main-feed/main-feed';
+import { resetAuthSlice } from '@R/slices/auth/auth';
+import { resetNetworkSlice } from '@R/slices/network/network';
+import { resetLanguageSlice } from '@R/slices/language/language';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
 export default function DeleteAccountBtn() {
   const { language } = useAppSelector(({ language }) => language);
+  const { userId } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
-  const { user, signOut } = useAuth();
-  const [deleteAccount, { isSuccess: isSuccessDeleting }] = useDeleteUserByUserIdMutation();
   const { dark, colors } = useTheme();
-
-  useEffect(() => {
-    if (isSuccessDeleting) {
-      signOut?.();
-    }
-  }, [isSuccessDeleting, signOut]);
+  const [deleteAccount] = useDeleteUserMutation();
+  const { replace } = useRouter();
 
   return (
     <>
@@ -35,14 +35,21 @@ export default function DeleteAccountBtn() {
               {
                 text: DELETE_ACCOUNT[language].sure,
                 onPress: async () => {
-                  const { data } = await supabase.storage.from('photos').list(`${user?.id}`);
-                  if (data) {
-                    const mappedUrlsToRemove = data?.map(({ name }) => `${user?.id}/${name}`);
-                    await supabase.storage.from('photos').remove(mappedUrlsToRemove);
-                    deleteAccount(`${user?.id}`).unwrap();
-                    dispatch(resetSettings());
-                    dispatch(resetLocationsFromBackground());
-                  }
+                  deleteAccount({ userId })
+                    .unwrap()
+                    .then(async () => {
+                      await AsyncStorage.removeItem('accessToken');
+                      dispatch(resetProfileSlice());
+                      dispatch(resetActivitySlice());
+                      dispatch(resetMainFeedSlice());
+                      dispatch(resetAuthSlice());
+                      dispatch(resetNetworkSlice());
+                      dispatch(resetLanguageSlice());
+                      dispatch(resetLocationSlice());
+                      replace('/sign-in');
+                    })
+                    .catch((error) => showCrossPlatformToast(error))
+                    .finally();
                 },
                 style: 'cancel',
               },

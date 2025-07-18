@@ -13,9 +13,12 @@ export const auth = createSlice({
     setRequiredAppVersion: (state, { payload }) => {
       state.appVersion = payload;
     },
+    resetAuthSlice: (state) => {
+      return (state = { accessToken: '', userId: '', appVersion: '' });
+    },
   },
 });
 
-export const { setAccessToken, setUserId, setRequiredAppVersion } = auth.actions;
+export const { setAccessToken, setUserId, setRequiredAppVersion, resetAuthSlice } = auth.actions;
 
 export default auth.reducer;

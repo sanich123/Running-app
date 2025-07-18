@@ -1,8 +1,8 @@
 import { persistor, store } from '@R/store';
 import { Stack } from 'expo-router';
-import { useColorScheme, View } from 'react-native';
+import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { COLORS } from '@const/theme-colors';
@@ -12,6 +12,7 @@ import { SystemBars } from 'react-native-edge-to-edge';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '@const/toast-config';
+import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
 
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({
@@ -25,13 +26,7 @@ export default function RootLayout() {
     colorScheme === 'dark' ? { ...MD3DarkTheme, colors: COLORS.dark } : { ...MD3LightTheme, colors: COLORS.light };
 
   return (
-    <PersistGate
-      loading={
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" />
-        </View>
-      }
-      persistor={persistor}>
+    <PersistGate loading={<FullPageActivityLoader />} persistor={persistor}>
       <Provider store={store}>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>

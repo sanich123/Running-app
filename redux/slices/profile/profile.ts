@@ -45,6 +45,9 @@ export const profile = createSlice({
     saveWholeProfile: (state, action) => {
       state.profileFromServer = action.payload;
     },
+    resetProfileSlice: (state) => {
+      return (state = PROFILE_INITIAL_STATE);
+    },
   },
 });
 
@@ -62,6 +65,7 @@ export const {
   setisNeedToPrefetchActivities,
   saveGoogleProfileInfo,
   saveWholeProfile,
+  resetProfileSlice,
 } = profile.actions;
 
 export default profile.reducer;

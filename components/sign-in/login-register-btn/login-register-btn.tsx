@@ -45,19 +45,19 @@ export default function LoginRegisterBtn({
         setIsDisabled(true);
         try {
           if (emailPasswordHandler({ email, password, setEmailError, setPasswordError, action: pageState })) {
+            const normalizedEmail = email.trim().toLowerCase();
             if (isRegistering) {
-              await registerUser({ email: email.trim(), password })
+              await registerUser({ email: normalizedEmail, password })
                 .unwrap()
                 .then(() => showCrossPlatformToast('Успешно зарегистрировали'))
                 .catch((error) => showCrossPlatformToast(JSON.stringify(error, null, 2)));
             }
             if (isLogining) {
-              await loginUser({ email: email.trim().toLowerCase(), password })
+              await loginUser({ email: normalizedEmail, password })
                 .unwrap()
                 .then(async ({ accessToken, id }) => {
-                  await AsyncStorage.setItem('accessToken', accessToken);
                   dispatch(setUserId(id));
-                  dispatch(setAccessToken(accessToken));
+                  await AsyncStorage.setItem('accessToken', accessToken);
                   replace('/');
                 })
                 .catch((error) => {

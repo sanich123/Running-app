@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import ErrorComponent from '@C/error-component/error-component';
 import FloatingBtn from '@C/floating-btn/floating-btn';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
@@ -23,13 +22,13 @@ import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/services/
 export default function Feed() {
   const { push } = useRouter();
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
   const { needToRefreshActivities } = useAppSelector(({ mainFeed }) => mainFeed);
   const [page, setPage] = useState(0);
   const { data, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(
-    { id: `${user?.id}`, page, take: 10 },
-    { skip: !user?.id },
+    { id: userId, page, take: 10 },
+    { skip: !userId },
   );
 
   useFocusEffect(() => {

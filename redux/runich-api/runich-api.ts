@@ -10,9 +10,9 @@ export const runichApi = createApi({
     baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
     timeout: LIMIT_OF_REQUEST,
     prepareHeaders: async (headers, { endpoint }) => {
-      const access = await AsyncStorage.getItem('accessToken');
-      if (access && !['registerUser', 'loginUser'].includes(endpoint)) {
-        headers.set('authorization', `Bearer ${access}`);
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (accessToken && !['registerUser', 'loginUser'].includes(endpoint)) {
+        headers.set('authorization', `Bearer ${accessToken}`);
       }
       return headers;
     },

@@ -8,7 +8,7 @@ import { useTheme } from 'react-native-paper';
 export default function HomePage() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
-  console.log('мы на главной странице');
+
   return (
     <>
       <Stack.Screen

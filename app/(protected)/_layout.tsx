@@ -1,72 +1,26 @@
-import { changeNetworkState } from '@R/slices/network/network';
-import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
-import Mapbox from '@rnmapbox/maps';
+import { useAppSelector } from '@R/typed-hooks';
 import { Redirect, Stack } from 'expo-router';
-import mapboxgl from 'mapbox-gl';
-import { useEffect } from 'react';
-import { Appearance, Platform, View } from 'react-native';
-import NetInfo from '@react-native-community/netinfo';
 import { LABELS, ROUTES } from '@const/enums';
 import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
 import SaveBtn from '@C/activity/save-btn/save-btn';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
-import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
-import * as SplashScreen from 'expo-splash-screen';
-import { setRequiredAppVersion, setUserId } from '@R/slices/auth/auth';
-import { store } from '@R/store';
+import { useTheme } from 'react-native-paper';
+import useInitialState from '@U/hooks/use-initial-state';
+import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',
 };
 
 export default function ProtectedLayout() {
-  const [verifyToken, { data: configInfo, isLoading, isError, isSuccess, isUninitialized }] =
-    useLazyVerifyConfigQuery();
+  const { isLoading, isError, isUninitialized, isSuccess } = useInitialState();
   const { colors } = useTheme();
-  const { theme } = useAppSelector(({ language }) => language);
-  const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const { isCameraVisible } = useAppSelector(({ activity }) => activity);
-
-  useEffect(() => {
-    (async () => {
-      await verifyToken({ accessToken: store.getState().auth.accessToken }).unwrap();
-    })();
-  }, [dispatch, verifyToken]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      const { id, appVersion } = configInfo;
-      dispatch(setUserId(id));
-      dispatch(setRequiredAppVersion(appVersion));
-    }
-  }, [configInfo, dispatch, isSuccess]);
-
-  useEffect(() => {
-    if (theme) Appearance.setColorScheme(theme);
-  }, [theme]);
-
-  useEffect(() => {
-    mapboxgl.accessToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '';
-    if (Platform.OS !== 'web') {
-      Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null);
-    }
-    const networkListener = NetInfo.addEventListener((networkState) => {
-      dispatch(changeNetworkState(networkState));
-    });
-    return () => networkListener();
-  }, [dispatch]);
   if (isLoading || isUninitialized) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <FullPageActivityLoader />;
   } else if (isError) {
-    SplashScreen.hide();
     return <Redirect href="/sign-in" />;
   } else if (isSuccess) {
-    SplashScreen.hide();
     return (
       <Stack
         screenOptions={{
