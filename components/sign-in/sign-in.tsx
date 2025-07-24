@@ -4,16 +4,19 @@ import GoogleSignInWeb from '@C/sign-in/google-sign-in-web/google-sign-in-web';
 import PasswordInput from '@C/sign-in/password-input/password-input';
 import usePasswordEmail from '@U/hooks/use-password-email';
 import * as Linking from 'expo-linking';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { useEffect, useRef } from 'react';
-import { View, Platform, TextInput, StyleSheet, useWindowDimensions, ScrollView } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { useEffect, useRef, useState } from 'react';
+import { View, Platform, StyleSheet, useWindowDimensions, ScrollView } from 'react-native';
+import { useTheme, TextInput, Button } from 'react-native-paper';
 
 import EmailInput from './email-input/email-input';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
 import Intro from './intro/intro';
+import { useAppSelector } from '@R/typed-hooks';
+import { useConfirmSignUpCodeByEmailMutation } from '@R/services/authentication/authentication';
+import { showCrossPlatformToast } from '@U/custom-toast';
 
 export default function SignIn() {
   const {
@@ -33,11 +36,14 @@ export default function SignIn() {
     setIsDisabled,
   } = usePasswordEmail();
   const { colors } = useTheme();
-  const passwordRef = useRef<TextInput>(null);
+  const [confirmationCode, setConfirmationCode] = useState('');
+  const { isNeedToShowConfirmEmailInput } = useAppSelector(({ auth }) => auth);
+  const [confirmEmailByCode] = useConfirmSignUpCodeByEmailMutation();
+  const passwordRef = useRef(null);
   const { access_token, refresh_token } = useLocalSearchParams();
   const url = Linking.useURL();
   const { height } = useWindowDimensions();
-
+  const { replace } = useRouter();
   if (Platform.OS === 'web') {
     WebBrowser.maybeCompleteAuthSession();
   }
@@ -83,6 +89,27 @@ export default function SignIn() {
           passwordError={passwordError}
           isDisabled={isDisabled}
         />
+        {isNeedToShowConfirmEmailInput && (
+          <>
+            <TextInput
+              mode="outlined"
+              style={{ marginTop: 10 }}
+              placeholder="Введите код подтверждения с почты"
+              onChangeText={(text) => setConfirmationCode(text)}
+            />
+            <Button
+              mode="contained"
+              onPress={async () =>
+                await confirmEmailByCode({ email, confirmationCode })
+                  .unwrap()
+                  .then(() => replace('/'))
+                  .catch((error) => showCrossPlatformToast(error.data.message))
+              }>
+              Подтвердить код
+            </Button>
+          </>
+        )}
+
         <LoginRegisterBtn
           pageState={pageState}
           password={password}
@@ -94,6 +121,7 @@ export default function SignIn() {
           setEmailError={setEmailError}
           setPasswordError={setPasswordError}
         />
+
         <LoginRegisterNavigation setPageState={setPageState} pageState={pageState} isDisabled={isDisabled} />
       </View>
     </ScrollView>

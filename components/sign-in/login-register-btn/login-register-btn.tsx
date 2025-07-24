@@ -46,7 +46,7 @@ export default function LoginRegisterBtn({
             if (isRegistering) {
               await registerUser({ email: normalizedEmail, password })
                 .unwrap()
-                .then(() => showCrossPlatformToast('Успешно зарегистрировали'))
+                .then(() => showCrossPlatformToast('Необходимо ввести код подтверждения'))
                 .catch((error) => showCrossPlatformToast(JSON.stringify(error, null, 2)));
             }
             if (isLogining) {

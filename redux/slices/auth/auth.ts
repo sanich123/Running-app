@@ -1,10 +1,11 @@
 import { authenticationApi } from '@R/services/authentication/authentication';
 import { createSlice } from '@reduxjs/toolkit';
 import { setAccessTokenToStorage } from '@U/async-storage';
+import { AUTH_INITIAL_STATE } from './const';
 
 export const auth = createSlice({
   name: 'auth',
-  initialState: { accessToken: '', userId: '', appVersion: '' },
+  initialState: AUTH_INITIAL_STATE,
   reducers: {
     setUserId: (state, { payload }) => {
       state.userId = payload;
@@ -13,7 +14,7 @@ export const auth = createSlice({
       state.appVersion = payload;
     },
     resetAuthSlice: (state) => {
-      return (state = { accessToken: '', userId: '', appVersion: '' });
+      return (state = AUTH_INITIAL_STATE);
     },
   },
   extraReducers: (builder) => {
@@ -34,6 +35,18 @@ export const auth = createSlice({
         }
         state.userId = id;
         state.appVersion = appVersion;
+      },
+    );
+    builder.addMatcher(authenticationApi.endpoints.registerUser.matchFulfilled, (state) => {
+      state.isNeedToShowConfirmEmailInput = true;
+    });
+    builder.addMatcher(
+      authenticationApi.endpoints.confirmSignUpCodeByEmail.matchFulfilled,
+      (state, { payload: { id, accessToken } }) => {
+        if (accessToken) {
+          setAccessTokenToStorage(accessToken);
+        }
+        state.userId = id;
       },
     );
   },
