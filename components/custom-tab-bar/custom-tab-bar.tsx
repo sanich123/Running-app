@@ -1,7 +1,7 @@
-import { useAuth } from '@A/context/utils';
 import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useAppSelector } from '@R/typed-hooks';
 import { usePathname } from 'expo-router';
 import { Fragment } from 'react';
 import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
@@ -17,12 +17,12 @@ export default function CustomTabBar({
   navigation: any;
 }) {
   const { colors, dark } = useTheme();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const pathname = usePathname();
   const icons = {
     home: (props: { color: string }) => <AntDesign name="home" color={props.color} size={45} />,
     activity: (props: { color: string }) => <AntDesign name="playcircleo" size={45} color="tomato" />,
-    profile: (props: { color: string }) => <AvatarShowable size={45} id={`${user?.id}`} {...props} />,
+    profile: (props: { color: string }) => <AvatarShowable size={45} id={userId} {...props} />,
     statistic: (props: { color: string }) => <AntDesign name="piechart" size={45} color={props.color} />,
   };
 

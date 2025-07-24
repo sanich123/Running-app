@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/services/likes/likes';
 import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
 import { useAppSelector } from '@R/typed-hooks';
@@ -19,7 +18,7 @@ import { LikeBtnProps } from '../types';
 
 export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeBtnProps) {
   const { colors } = useTheme();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
   const { language } = useAppSelector(({ language }) => language);
   const {
@@ -36,7 +35,7 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
   const [deleteLike, { isError: failureDeleting }] = useDeleteLikeMutation();
 
   const isLikedByYou = likes?.length
-    ? likes?.filter(({ authorId }: { authorId: string }) => authorId === user?.id)
+    ? likes?.filter(({ authorId }: { authorId: string }) => authorId === userId)
     : null;
 
   useEffect(() => {
@@ -71,11 +70,11 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
       iconColor={isError ? colors.error : colors.primary}
       size={25}
       onPress={async () => {
-        if (user) {
+        if (userId) {
           if (isLikedByYou?.length > 0) {
             await deleteLike({ id: isLikedByYou[0].id, activityId }).unwrap();
           } else {
-            await sendLike({ activityId, authorId: `${user?.id}`, profilePhoto }).unwrap();
+            await sendLike({ activityId, authorId: userId, profilePhoto }).unwrap();
           }
         }
       }}

@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { UserInfoSize } from '@C/card/user-info/const';
 import UserInfo from '@C/card/user-info/user-info';
 import { View, StyleSheet } from 'react-native';
@@ -9,6 +8,7 @@ import CommentInput from '../comment-input/comment-input';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
 import { CommentProps } from '../types';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function Comment({
   authorId,
@@ -23,8 +23,8 @@ export default function Comment({
   commentLike,
   mapPhotoUrl,
 }: CommentProps) {
-  const { user } = useAuth();
-  const isYouAuthor = user?.id === authorId;
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const isYouAuthor = userId === authorId;
 
   return (
     <>

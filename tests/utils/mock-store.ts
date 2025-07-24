@@ -6,6 +6,7 @@ import activity from '@R/slices/activity/activity';
 import location from '@R/slices/location/location';
 import network from '@R/slices/network/network';
 import language from '@R/slices/language/language';
+import auth from '@R/slices/auth/auth';
 
 const rootReducer = combineReducers({
   network,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   profile,
   activity,
   mainFeed,
+  auth,
   [runichApi.reducerPath]: runichApi.reducer,
 });
 

@@ -3,14 +3,14 @@ import UserListItem from '@C/user-list-item/user-list-item';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetFollowersByUserIdQuery } from '@R/services/followers/followers';
 import useRefresh from '@U/hooks/use-refresh';
-import { useAuth } from '@A/context/utils';
 import { useLocalSearchParams } from 'expo-router';
 import { View, FlatList, useWindowDimensions, Platform } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function ListOfFollowers() {
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { id: friendId } = useLocalSearchParams();
   const { width } = useWindowDimensions();
   const {
@@ -19,7 +19,7 @@ export default function ListOfFollowers() {
     isError,
     data: users,
     refetch,
-  } = useGetFollowersByUserIdQuery(friendId ? `${friendId}` : `${user?.id}`);
+  } = useGetFollowersByUserIdQuery(friendId ? `${friendId}` : userId);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (

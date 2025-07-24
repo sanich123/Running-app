@@ -1,6 +1,4 @@
-import * as auth from '@A/context/utils';
 import { changeLanguage } from '@R/slices/language/language';
-import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';
@@ -8,6 +6,7 @@ import { screen, userEvent } from '@testing-library/react-native';
 
 import { UPDATE_BTN } from './const';
 import ProfileUpdateBtn from './update-btn';
+import { setUserId } from '@R/slices/auth/auth';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), back: jest.fn() }),
@@ -19,12 +18,7 @@ describe('Profile update btn', () => {
     expect(screen.getByText(UPDATE_BTN.english.update)).toBeOnTheScreen();
   });
   it('should correctly interract with the user', async () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someUserId',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('someUserId'));
     renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
     const updateBtn = screen.getByText(UPDATE_BTN.english.update);
     expect(mockStore.getState().profile.isDisabledWhileSendingProfile).toEqual(false);

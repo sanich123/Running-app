@@ -1,7 +1,6 @@
-import { render } from '@testing-library/react-native';
 import { JSX, PropsWithChildren } from 'react';
 import { Provider } from 'react-redux';
-import { RenderOptions } from '@testing-library/react-native';
+import { RenderOptions, render } from '@testing-library/react-native';
 import { AppStore, mockStore } from './mock-store';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {

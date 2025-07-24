@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import ProfileEditBtn from '@C/profile/edit-btn/edit-btn';
 import ProfileUpdateBtn from '@C/profile/update-btn/update-btn';
 import { useAppSelector } from '@R/typed-hooks';
@@ -9,7 +8,7 @@ import { useTheme } from 'react-native-paper';
 export default function ProfileStack() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
 
   return (
     <Stack
@@ -22,14 +21,14 @@ export default function ProfileStack() {
       <Stack.Screen
         name={`${ROUTES.index}`}
         options={{
-          headerRight: () => user && <ProfileEditBtn />,
+          headerRight: () => userId && <ProfileEditBtn />,
         }}
       />
       <Stack.Screen
         name={`${ROUTES.profileSettings}/index`}
         options={{
           title: LABELS[language].profileSettings,
-          headerRight: () => user && <ProfileUpdateBtn />,
+          headerRight: () => userId && <ProfileUpdateBtn />,
         }}
       />
     </Stack>

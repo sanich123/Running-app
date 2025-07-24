@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
@@ -6,16 +5,15 @@ import { ROUTES } from '@const/enums';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
 import { USERS_COUNT, USERS_VARIANT } from './const';
 
 export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
   const { language } = useAppSelector(({ language }) => language);
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { push } = useRouter();
   const { dark } = useTheme();
   const { id: friendId } = useLocalSearchParams();
-  const whosId = friendId ? `${friendId}` : `${user?.id}`;
+  const whosId = friendId ? `${friendId}` : userId;
   const whereToPush = variant === USERS_VARIANT.whoUserFollows ? ROUTES.following : ROUTES.followers;
   const whatTitleToRender =
     variant === USERS_VARIANT.whoUserFollows ? USERS_COUNT[language].followings : USERS_COUNT[language].followers;

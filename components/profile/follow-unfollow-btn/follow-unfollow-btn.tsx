@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
 import {
   useGetYouFollowUsersByUserIdQuery,
@@ -10,18 +9,17 @@ import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorExtracter } from '@U/error-handler';
 import { useEffect } from 'react';
 import { Button } from 'react-native-paper';
-
 import { FOLLOW_UNFOLLOW_BTN } from './const';
 
 export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const {
     isLoading: isLoadingListOfFriends,
     error: listOfFriendsError,
     isError,
     data: listOfFriends,
-  } = useGetYouFollowUsersByUserIdQuery(`${user?.id}`, { skip: !user });
+  } = useGetYouFollowUsersByUserIdQuery(userId, { skip: !userId });
   const { language } = useAppSelector(({ language }) => language);
 
   const friendCell = listOfFriends?.filter(
@@ -56,7 +54,7 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
       onPress={async () =>
         friendCell?.length > 0
           ? await deleteFriend(friendCell[0]?.id).unwrap()
-          : await addFriend({ body: { userId: `${user?.id}` }, id: friendId }).unwrap()
+          : await addFriend({ body: { userId }, id: friendId }).unwrap()
       }>
       {!isError && isLoadingListOfFriends && ''}
       {!isError &&

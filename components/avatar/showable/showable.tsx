@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { saveWholeProfile } from '@R/slices/profile/profile';
 import {
@@ -15,9 +14,9 @@ import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
 export default function AvatarShowable({ size, id }: { size: number; id: string }) {
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { googleInfo } = useAppSelector(({ profile }) => profile);
-  const isMineAvatar = id === user?.id;
+  const isMineAvatar = id === userId;
   const { data: profile, isSuccess, isError } = useGetUserProfileByUserIdQuery(id, { skip: !id });
   const [createProfile] = useCreateProfileByUserIdMutation();
   const [updateProfile] = useUpdateProfileByProfileIdMutation();
@@ -36,7 +35,7 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
           sport: '',
           weight: '',
         },
-        id: `${user?.id}`,
+        id: userId,
       });
     }
     async function updateProfileWithGoogleInfo() {

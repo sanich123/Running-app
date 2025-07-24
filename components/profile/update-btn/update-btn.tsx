@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
 import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import {
@@ -17,10 +16,10 @@ export default function ProfileUpdateBtn() {
   const dispatch = useAppDispatch();
   const { back } = useRouter();
   const { colors, dark } = useTheme();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { settings, isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
-  const { data: profile } = useGetUserProfileByUserIdQuery(`${user?.id}`, { skip: !user?.id });
+  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [createProfile, { isLoading: isCreating }] = useCreateProfileByUserIdMutation();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileByProfileIdMutation();
 
@@ -30,7 +29,7 @@ export default function ProfileUpdateBtn() {
       onPress={async () => {
         dispatch(setIsDisabledWhileSendingProfile(true));
         if (!profile?.id) {
-          await createProfile({ body: settings, id: `${user?.id}` })
+          await createProfile({ body: settings, id: userId })
             .unwrap()
             .then(() => {
               dispatch(setIsNeedToRefreshActivities(true));

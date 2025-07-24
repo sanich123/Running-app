@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { setCommentIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import {
   useSendLikeToCommentMutation,
@@ -16,7 +15,7 @@ import { useSendEmailAfterSendingCommentLikeMutation } from '@R/services/emails/
 
 export default function CommentLikeBtn({ commentId, commentLikesFromComment, profile, comment }: CommentLikeBtnProps) {
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ language }) => language);
   const { commentIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const {
@@ -38,7 +37,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
 
   const whatCommentLikesToIterate = isNeedToGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
   const youGaveCommentLike = whatCommentLikesToIterate?.length
-    ? isSuccess && commentLikes?.filter(({ authorId }: { authorId: string }) => authorId === user?.id)
+    ? isSuccess && commentLikes?.filter(({ authorId }: { authorId: string }) => authorId === userId)
     : [];
 
   useEffect(() => {
@@ -98,7 +97,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
       onPress={async () =>
         youGaveCommentLike?.length
           ? await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap()
-          : await sendLikeToComment({ body: { commentId, authorId: `${user?.id}` }, commentId }).unwrap()
+          : await sendLikeToComment({ body: { commentId, authorId: userId }, commentId }).unwrap()
       }
       disabled={isLoadingLikes || isErrorToGetLikes}
       loading={isSendingLike || isDeletingLike}

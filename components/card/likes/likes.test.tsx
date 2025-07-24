@@ -1,14 +1,12 @@
 import { AvatarShowableTestIds } from '@C/avatar/showable/const';
-import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { screen } from '@testing-library/react-native';
 import * as router from 'expo-router';
-
 import { LikesSize } from './const';
 import Likes from './likes';
-import * as auth from '@A/context/utils';
 import { mockStore } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { setUserId } from '@R/slices/auth/auth';
 
 jest.mock('expo-router', () => ({
   usePathname: () => 'some string',
@@ -25,12 +23,7 @@ jest.mock('expo-image', () => {
 describe('Card likes', () => {
   it('should correctly renders', async () => {
     jest.spyOn(router, 'usePathname').mockImplementation(() => 'some path');
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someUserId',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('someUserId'));
     renderWithProviders(
       <BottomSheetModalProvider>
         <Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />

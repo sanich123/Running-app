@@ -5,14 +5,13 @@ import { StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { EDIT_BTN } from './const';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
-import { useAuth } from '@A/context/utils';
 
 export default function EditBtn() {
   const { push } = useRouter();
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
-  const { user } = useAuth();
-  const { data: profile } = useGetUserProfileByUserIdQuery(`${user?.id}`, { skip: !user?.id });
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}

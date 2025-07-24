@@ -2,7 +2,6 @@ import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { getCurrentWeekDates } from './util';
 import { useGetCurrentWeekStatisticsQuery } from '@R/services/statistics/statistics';
-import { useAuth } from '@A/context/utils';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { useRouter } from 'expo-router';
 import { LANGUAGES, ROUTES } from '@const/enums';
@@ -15,7 +14,7 @@ export default function WeekStatistics() {
   const { push } = useRouter();
   const { width } = useWindowDimensions();
   const { colors, dark } = useTheme();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { week, year, month } = getCurrentWeekDates();
   const {
     data: weekStatistics,
@@ -24,11 +23,11 @@ export default function WeekStatistics() {
     isLoading,
   } = useGetCurrentWeekStatisticsQuery(
     {
-      userId: `${user?.id}`,
+      userId,
       firstDay: week[0],
       lastDay: week[week.length - 1],
     },
-    { skip: !user?.id },
+    { skip: !userId },
   );
   const { language } = useAppSelector(({ language }) => language);
   const isRussian = language === LANGUAGES.russian;
@@ -39,7 +38,7 @@ export default function WeekStatistics() {
       borderless
       onPress={() =>
         weekStatistics?.totalItems &&
-        push(`/(protected)/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${month}`)
+        push(`/(protected)/${ROUTES.monthStatistic}?userId=${userId}&year=${year}&month=${month}`)
       }
       style={[
         styles.container,

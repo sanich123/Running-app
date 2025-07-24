@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { CustomImage } from '@C/custom-image/custom-image';
 import FollowUnfollowBtn from '@C/profile/follow-unfollow-btn/follow-unfollow-btn';
 import { ROUTES } from '@const/enums';
@@ -7,12 +6,13 @@ import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import { UserListItemType } from './const';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function UserListItem({ name, surname, profilePhoto, placeholder, city, user_id }: UserListItemType) {
   const { dark } = useTheme();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { push } = useRouter();
-  const isMineActivity = user_id === user?.id;
+  const isMineActivity = user_id === userId;
 
   return (
     <TouchableRipple

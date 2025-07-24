@@ -10,9 +10,8 @@ import {
   saveSurname,
   saveWeight,
 } from '@R/slices/profile/profile';
-import { useAppDispatch } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ROUTES } from '@const/enums';
-import { useAuth } from '@A/context/utils';
 import { useLocalSearchParams, usePathname } from 'expo-router';
 import { useEffect } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
@@ -30,8 +29,8 @@ export default function ProfilePage() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { id: whosProfileViewing } = useLocalSearchParams();
-  const { user } = useAuth();
-  const whosProfile = whosProfileViewing ? whosProfileViewing : user?.id;
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const whosProfile = whosProfileViewing ? whosProfileViewing : userId;
 
   const {
     isLoading,
@@ -89,7 +88,7 @@ export default function ProfilePage() {
             <View style={styles.followersBtnsWrapper}>
               <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
               <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
-              {whosProfile !== user?.id && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
+              {whosProfile !== userId && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
             </View>
             <ProfileStatistics whosProfile={`${whosProfile}`} />
           </>

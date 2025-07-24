@@ -5,7 +5,6 @@ import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import Charts from '@C/statistic/charts/charts';
 import { ActivityIndicator, useTheme, Text } from 'react-native-paper';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
-import { useAuth } from '@A/context/utils';
 import ErrorComponent from '@C/error-component/error-component';
 import { useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
@@ -16,7 +15,7 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 export default function Statistics() {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedType, setSelectedType] = useState<string>(SPORTS_BTNS_VALUES.run);
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { width } = useWindowDimensions();
   const { language } = useAppSelector(({ language }) => language);
   const { colors } = useTheme();
@@ -26,7 +25,7 @@ export default function Statistics() {
     isError,
     isSuccess,
     error,
-  } = useGetAnnualStatisticsByUserIdQuery({ userId: `${user?.id}` }, { skip: !user?.id });
+  } = useGetAnnualStatisticsByUserIdQuery({ userId }, { skip: !userId });
   const isRussian = language === LANGUAGES.russian;
 
   useEffect(() => {

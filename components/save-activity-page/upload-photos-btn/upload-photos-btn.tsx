@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
@@ -11,7 +10,7 @@ import { UploadPhotoBtnProps, UPLOAD_PHOTO_BTN } from './ const';
 
 export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, images }: UploadPhotoBtnProps) {
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ language }) => language);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,12 +24,12 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
             id="image-video-uploader"
             type="file"
             onChange={async (e) => {
-              if (user && e.target.files) {
+              if (userId && e.target.files) {
                 const fileSrc = e.target.files[0];
                 try {
                   setIsDisabled(true);
                   setIsLoading(true);
-                  const fileWithThumbnail = await compressAndSendFile(fileSrc, user.id);
+                  const fileWithThumbnail = await compressAndSendFile(fileSrc, userId);
                   if (fileWithThumbnail) {
                     setImages([...images, fileWithThumbnail]);
                     dispatch(addPhotoUrl(fileWithThumbnail));
@@ -59,8 +58,8 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
               const result = await getAccessToGallery();
               if (result && !result.canceled) {
                 const fileSrc = result.assets[0].uri;
-                if (user) {
-                  const fileWithThumbnail = await compressAndSendFile(fileSrc, user.id);
+                if (userId) {
+                  const fileWithThumbnail = await compressAndSendFile(fileSrc, userId);
                   if (fileWithThumbnail) {
                     if (__DEV__) console.log(fileWithThumbnail);
                     setImages([...images, fileWithThumbnail]);

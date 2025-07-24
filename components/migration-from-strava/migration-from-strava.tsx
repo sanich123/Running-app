@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { useAppSelector } from '@R/typed-hooks';
 import { getMigrationArchiveAndSendToServer } from '@U/migration-strava/migration-archive';
 import { Link } from 'expo-router';
@@ -8,7 +7,7 @@ import useGetStates from './hooks';
 import { MIGRATION_STATES } from './const';
 
 export default function MigrationFromStrava() {
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const {
     isDisabled,
     setIsDisabled,
@@ -65,7 +64,7 @@ export default function MigrationFromStrava() {
               setIsDeletingCacheFolder,
               setIsSuccess,
               setIsError,
-              userId: `${user?.id}`,
+              userId,
             })
           }
           disabled={isDisabled}>

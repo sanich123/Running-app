@@ -1,7 +1,7 @@
-import { useAuth } from '@A/context/utils';
 import ActivityUpdateBtn from '@C/activity/update-btn/update-btn';
 import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
 import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
 import { Platform, View, StyleSheet } from 'react-native';
 import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
@@ -11,8 +11,8 @@ export default function UsersSettingsIcons() {
   const { push } = useRouter();
   const pathname = usePathname();
   const { userId } = useGlobalSearchParams();
-  const { user } = useAuth();
-  const isMineActivity = userId === user?.id && pathname.includes(ROUTES.activity);
+  const { userId: ownerId } = useAppSelector(({ auth }) => auth);
+  const isMineActivity = userId === ownerId && pathname.includes(ROUTES.activity);
 
   return (
     <View style={styles.layout}>
@@ -60,9 +60,9 @@ export default function UsersSettingsIcons() {
               <TouchableRipple
                 rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
                 borderless
-                onPress={() => push(`/(protected)/${ROUTES.profile}/${user?.id}`)}
+                onPress={() => push(`/(protected)/${ROUTES.profile}/${userId}`)}
                 style={{ marginRight: 10 }}>
-                <AvatarShowable size={30} id={`${user?.id}`} />
+                <AvatarShowable size={30} id={`${userId}`} />
               </TouchableRipple>
             </>
           )}

@@ -3,15 +3,13 @@ import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { saveFinishedActivity, saveTitle, saveDescription, saveSport, saveEmotion } from '@R/slices/activity/activity';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
-import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
-
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import ActivitySaveBtn from './save-btn';
-import * as auth from '@A/context/utils';
+import { setUserId } from '@R/slices/auth/auth';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: jest.fn() }),
@@ -30,24 +28,14 @@ describe('Activity save btn', () => {
     expect(screen.getByText(ACTIVITY_SAVE_BTN.russian.save)).toBeOnTheScreen();
   });
   it('should correctly change global state', async () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someUserId',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('someUserId'));
     renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
   });
   it('should correctly change global state after successfully sending activity', async () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someUserId',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('someUserId'));
     mockStore.dispatch(
       saveFinishedActivity({
         locations: [MOCK_LOCATION],

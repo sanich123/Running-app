@@ -1,7 +1,6 @@
-import { useAuth } from '@A/context/utils';
 import PreviewImage from '@C/save-activity-page/preview-image/preview-image';
 import { addPhotoUrl } from '@R/slices/activity/activity';
-import { useAppDispatch } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { compressAndSendFile } from '@U/file-sending';
 import { useState } from 'react';
@@ -15,7 +14,7 @@ type PreviewUploadableImageProps = {
 };
 
 export default function PreviewUploadableImage({ image, index, isDisabled }: PreviewUploadableImageProps) {
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
@@ -29,8 +28,8 @@ export default function PreviewUploadableImage({ image, index, isDisabled }: Pre
       onPress={async () => {
         setIsLoading(true);
         try {
-          if (user) {
-            const fileWithThumbnail = await compressAndSendFile(image, user.id);
+          if (userId) {
+            const fileWithThumbnail = await compressAndSendFile(image, userId);
             if (fileWithThumbnail) {
               const { url, thumbnail } = fileWithThumbnail;
               dispatch(addPhotoUrl({ url, thumbnail }));

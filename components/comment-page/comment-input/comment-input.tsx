@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import {
   usePostCommentWithActivityIdMutation,
@@ -30,14 +29,14 @@ export default function CommentInput({
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const [comment, setComment] = useState(commentToUpdate);
   const [sendEmailAfterSendingComment] = useSendEmailAfterSendingCommentMutation();
   const [postComment, { isLoading: isCommentSending }] = usePostCommentWithActivityIdMutation();
   const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
 
   async function sendingComment() {
-    return await postComment({ body: { comment, authorId: `${user?.id}` }, id: activityId })
+    return await postComment({ body: { comment, authorId: userId }, id: activityId })
       .then(() => sendingUpdatingCommentSuccessHandler())
       .catch((error) => {
         console.log(error);

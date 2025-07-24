@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import CommentBtn from '@C/card/comment-btn/comment-btn';
 import DeleteBtn from '@C/card/delete-btn/delete-btn';
 import LikeBtn from '@C/card/like-btn/like-btn';
@@ -7,6 +6,7 @@ import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { useState, memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { CardBtnsProps } from '../types';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default memo(function CardBtns({
   activityId,
@@ -17,11 +17,10 @@ export default memo(function CardBtns({
   profile,
   mapPhotoUrl,
 }: CardBtnsProps) {
-  const { user } = useAuth();
-
+  const { userId: ownerId } = useAppSelector(({ auth }) => auth);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const isMineActivity = user?.id === userId;
+  const isMineActivity = ownerId === userId;
 
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>

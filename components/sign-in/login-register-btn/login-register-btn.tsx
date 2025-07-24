@@ -5,11 +5,8 @@ import { errorHandler } from '@U/error-handler';
 import { SignInPageStates, emailPasswordHandler } from '@U/validate-email-password';
 import { useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
-
 import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons } from './const';
 import { useLoginUserMutation, useRegisterUserMutation } from '@R/services/authentication/authentication';
-import { setAccessToken, setUserId } from '@R/slices/auth/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginRegisterBtn({
   email,
@@ -55,11 +52,7 @@ export default function LoginRegisterBtn({
             if (isLogining) {
               await loginUser({ email: normalizedEmail, password })
                 .unwrap()
-                .then(async ({ accessToken, id }) => {
-                  dispatch(setUserId(id));
-                  await AsyncStorage.setItem('accessToken', accessToken);
-                  replace('/');
-                })
+                .then(() => replace('/'))
                 .catch((error) => {
                   console.log(error);
                   showCrossPlatformToast(JSON.stringify(error, null, 2));

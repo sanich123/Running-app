@@ -4,13 +4,13 @@ import { Text, useTheme } from 'react-native-paper';
 import { getSteps } from './util';
 import { useRouter } from 'expo-router';
 import { ROUTES } from '@const/enums';
-import { useAuth } from '@A/context/utils';
 import { BarChartWrapperProps } from './types';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function BarChartWrapper({ metricsArr, year, title }: BarChartWrapperProps) {
   const { push } = useRouter();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const valuesArr = metricsArr?.map(({ value }) => value).filter(Boolean);
   const maxValueFromData = valuesArr?.length ? Math.max(...valuesArr) : 0;
   const { colors } = useTheme();
@@ -44,7 +44,7 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
           },
         }}
         onPress={(_: any, index: any) =>
-          push(`/(protected)/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${index}`)
+          push(`/(protected)/${ROUTES.monthStatistic}?userId=${userId}&year=${year}&month=${index}`)
         }
         frontColor={colors.primary}
         maxValue={maxValue}

@@ -1,13 +1,13 @@
 import { ROUTES } from '@const/enums';
-import { useAuth } from '@A/context/utils';
 import { Tabs, usePathname } from 'expo-router';
 import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import AvatarShowable from '@C/avatar/showable/showable';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function TabLayout() {
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { colors } = useTheme();
   const pathname = usePathname();
   return (
@@ -49,7 +49,7 @@ export default function TabLayout() {
         name={ROUTES.profile}
         options={{
           headerShown: false,
-          tabBarIcon: () => <AvatarShowable size={30} id={`${user?.id}`} />,
+          tabBarIcon: () => <AvatarShowable size={30} id={userId} />,
         }}
       />
     </Tabs>

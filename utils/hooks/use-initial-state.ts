@@ -6,7 +6,6 @@ import NetInfo from '@react-native-community/netinfo';
 import { Appearance, Platform } from 'react-native';
 import mapboxgl from 'mapbox-gl';
 import { changeNetworkState } from '@R/slices/network/network';
-import { setRequiredAppVersion, setUserId } from '@R/slices/auth/auth';
 import * as SplashScreen from 'expo-splash-screen';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -40,10 +39,6 @@ export default function useInitialState() {
   useEffect(() => {
     if (isSuccess) {
       SplashScreen.hide();
-      const { id, appVersion, accessToken } = configInfo;
-      (async () => await AsyncStorage.setItem('accessToken', accessToken))();
-      dispatch(setUserId(id));
-      dispatch(setRequiredAppVersion(appVersion));
     }
   }, [configInfo, dispatch, isSuccess]);
 

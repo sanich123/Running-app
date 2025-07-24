@@ -1,14 +1,13 @@
-import * as auth from '@A/context/utils';
 import { FOLLOW_UNFOLLOW_BTN } from '@C/profile/follow-unfollow-btn/const';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
-import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
 
 import UserListItem from '../user-list-item/user-list-item';
+import { setUserId } from '@R/slices/auth/auth';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -22,12 +21,7 @@ jest.mock('expo-image', () => {
 });
 describe('User list item', () => {
   it('should correctly renders from server', async () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someUserId',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('someUserId'));
     renderWithProviders(
       <UserListItem
         name={MOCK_PROFILE.name}
@@ -44,12 +38,7 @@ describe('User list item', () => {
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
   });
   it('should show follow btn, when userId !== user.id and userId is not in the list of friends', async () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(
       <UserListItem
@@ -68,12 +57,7 @@ describe('User list item', () => {
     expect(await screen.findByText(FOLLOW_UNFOLLOW_BTN.english.follow)).toBeOnTheScreen();
   });
   it('should correctly show unfollow btn, when user is in the list of friends', async () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     renderWithProviders(
       <UserListItem
         name={MOCK_PROFILE.name}

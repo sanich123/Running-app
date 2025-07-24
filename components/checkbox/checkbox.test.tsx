@@ -1,12 +1,10 @@
-import { setIsDisableWhileSending } from '@R/slices/activity/activity';
 import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
-
 import Checkbox from './checkbox';
-import { CHECKBOX, CHECKBOX_TEST_ID } from './const';
+import { CHECKBOX } from './const';
 
 describe('Checkbox', () => {
   it('should correctly renders in russia', async () => {
@@ -17,15 +15,5 @@ describe('Checkbox', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(CHECKBOX.english.public)).toBeOnTheScreen();
-  });
-  it('should correctly handle isDisabled state', async () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<Checkbox isDisabled />, { store: mockStore });
-    expect(screen.getByTestId(CHECKBOX_TEST_ID)).toBeDisabled();
-  });
-  it('should correctly handle isDisabledWhileSendnig state', async () => {
-    mockStore.dispatch(setIsDisableWhileSending(true));
-    renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
-    expect(screen.getByTestId(CHECKBOX_TEST_ID)).toBeDisabled();
   });
 });

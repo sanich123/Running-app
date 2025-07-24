@@ -1,22 +1,16 @@
 import { MOCK_COMMENT_LIKES } from '@T/mocks/mock-comment-likes';
 import { screen } from '@testing-library/react-native';
 import CommentLikesLength from './comment-likes-length';
-import * as auth from '@A/context/utils';
-import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
 import { mockStore } from '@T/utils/mock-store';
 import { changeLanguage } from '@R/slices/language/language';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { NUMBER_OF_LIKES } from '@C/card/number-of-likes/const';
+import { setUserId } from '@R/slices/auth/auth';
 
 describe('Comment likes length', () => {
   it('should correctly renders in english, when you and others gave likes', async () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: '7857abb1-b125-4f39-becf-8f30216b46ec',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('7857abb1-b125-4f39-becf-8f30216b46ec'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(
       <CommentLikesLength
@@ -31,12 +25,7 @@ describe('Comment likes length', () => {
   });
   it('should correctly renders in russian, when you and others gave likes', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: '7857abb1-b125-4f39-becf-8f30216b46ec',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('7857abb1-b125-4f39-becf-8f30216b46ec'));
     renderWithProviders(
       <CommentLikesLength
         commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
@@ -50,12 +39,7 @@ describe('Comment likes length', () => {
   });
   it('should correctly renders in english, when you didnt like', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someWrongId',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('someWrongId'));
     renderWithProviders(
       <CommentLikesLength
         commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
@@ -67,12 +51,7 @@ describe('Comment likes length', () => {
   });
   it('should correctly renders in russian, when you didnt like', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someWrongId',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('someWrongId'));
     renderWithProviders(
       <CommentLikesLength
         commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"

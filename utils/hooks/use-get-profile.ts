@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
-
-import { useAuth } from '@A/context/utils';
 import { supabase } from '../../auth/supabase/supabase-init';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function useGetProfileInfo(column: string = '') {
   const [isLoading, setIsLoading] = useState(true);
   const [profileError, setError] = useState({});
   const [profileInfo, setProfileInfo] = useState({});
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   useEffect(() => {
     async function getProfileInfo() {
-      const { error, data } = await supabase.from('accounts').select(column).eq('user_id', user?.id);
+      const { error, data } = await supabase.from('accounts').select(column).eq('user_id', userId);
 
       if (error) {
         setError(error);
@@ -22,7 +21,7 @@ export default function useGetProfileInfo(column: string = '') {
     }
 
     getProfileInfo();
-  }, [column, user?.id]);
+  }, [column, userId]);
 
   return { isLoading, profileError, profileInfo };
 }

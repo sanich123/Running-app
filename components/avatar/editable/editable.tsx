@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import ProfileImage from '@C/profile/avatar/avatar';
 import { savePhotoUrl } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -11,7 +10,7 @@ import { showCrossPlatformToast } from '@U/custom-toast';
 
 export default function AvatarIconEditable({ isDisabled, setIsDisabled }: AvatarIconEditableProps) {
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
 
   return (
@@ -23,7 +22,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
             id="image-uploader"
             type="file"
             onChange={async (e) => {
-              if (user && e.target.files) {
+              if (userId && e.target.files) {
                 if (/mp4|avi|m4v/.test(e.target.files[0].name)) {
                   showCrossPlatformToast('Нельзя использовать видео файлы для аватары');
                   return;
@@ -31,7 +30,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
                 const imgSrc = e.target.files[0];
                 try {
                   setIsDisabled(true);
-                  const fileWithThumbnail = await compressAndSendFile(imgSrc, user.id);
+                  const fileWithThumbnail = await compressAndSendFile(imgSrc, userId);
                   if (fileWithThumbnail) {
                     const { url } = fileWithThumbnail;
                     dispatch(savePhotoUrl(url));
@@ -55,8 +54,8 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
               const result = await getAccessToGallery();
               if (result && !result.canceled) {
                 const imgSrc = result.assets[0].uri;
-                if (user) {
-                  const fileWithThumbnail = await compressAndSendFile(imgSrc, user.id);
+                if (userId) {
+                  const fileWithThumbnail = await compressAndSendFile(imgSrc, userId);
                   if (fileWithThumbnail) {
                     const { url } = fileWithThumbnail;
                     dispatch(savePhotoUrl(url));

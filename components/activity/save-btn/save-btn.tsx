@@ -1,4 +1,3 @@
-import { useAuth } from '@A/context/utils';
 import {
   setIsDisableWhileSending,
   resetActivityInfo,
@@ -22,7 +21,7 @@ import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID, ErrorMessages } from './c
 export default function SaveBtn() {
   const dispatch = useAppDispatch();
   const { colors, dark } = useTheme();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { replace } = useRouter();
   const {
     additionalInfo,
@@ -79,7 +78,7 @@ export default function SaveBtn() {
       style={styles.layout}
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
-        if (user) {
+        if (userId) {
           dispatch(setIsDisableWhileSending(true));
           const savedActivity = {
             body:
@@ -102,7 +101,7 @@ export default function SaveBtn() {
                       mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
                     },
                   },
-            id: isEditingActivity ? `${activityId}` : user.id,
+            id: isEditingActivity ? `${activityId}` : userId,
           };
           setActivityToSend(savedActivity);
           if (isEditingActivity) {

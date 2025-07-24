@@ -1,18 +1,18 @@
-import { useAuth } from '@A/context/utils';
 import ErrorComponent from '@C/error-component/error-component';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useGetActivitiesByUserIdQuery } from '@R/services/activity/activity';
+import { useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Activities() {
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const [page, setPage] = useState(0);
   const { data, isLoading, error, isError, refetch, isSuccess } = useGetActivitiesByUserIdQuery(
-    { id: `${user?.id}`, page, take: 10 },
-    { skip: !user?.id },
+    { id: userId, page, take: 10 },
+    { skip: !userId },
   );
 
   return (
