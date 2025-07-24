@@ -89,7 +89,7 @@
     "moment": "^2.30.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-hook-form": "^7.61.0",
+    "react-hook-form": "^7.61.1",
     "react-native": "0.79.5",
     "react-native-battery-optimization-check": "^1.0.8",
     "react-native-compressor": "^1.12.0",
