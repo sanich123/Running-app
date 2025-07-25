@@ -9,7 +9,6 @@ import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useRef, useState } from 'react';
 import { View, Platform, StyleSheet, useWindowDimensions, ScrollView } from 'react-native';
 import { useTheme, TextInput, Button } from 'react-native-paper';
-
 import EmailInput from './email-input/email-input';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';

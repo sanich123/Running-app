@@ -1,15 +1,15 @@
-import { supabase } from '@A/supabase/supabase-init';
-import { saveGoogleProfileInfo } from '@R/slices/profile/profile';
-import { useAppDispatch } from '@R/typed-hooks';
+import { useLoginUserWithGoogleMutation } from '@R/services/authentication/authentication';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
+import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: boolean) => void }) {
-  const dispatch = useAppDispatch();
   const { dark } = useTheme();
+  const [loginWithGoogle] = useLoginUserWithGoogleMutation();
+  const { replace } = useRouter();
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
@@ -33,18 +33,14 @@ export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: 
         try {
           await GoogleSignin.hasPlayServices();
           const { data: userInfo } = await GoogleSignin.signIn();
-          dispatch(saveGoogleProfileInfo(userInfo?.user));
-          if (userInfo?.idToken) {
-            const { error } = await supabase.auth.signInWithIdToken({
-              provider: 'google',
-              token: userInfo.idToken,
-            });
-            if (error) {
-              showCrossPlatformToast(`error: ${error?.message}`);
-            }
-          } else {
-            showCrossPlatformToast('no ID token present!');
-            throw new Error('no ID token present!');
+          if (userInfo?.user) {
+            const {
+              user: { name, email, photo },
+            } = userInfo;
+            await loginWithGoogle({ name, email, photo })
+              .unwrap()
+              .then(() => replace('/'))
+              .catch((error) => showCrossPlatformToast(error));
           }
         } catch (error: any) {
           if (error.code === statusCodes.SIGN_IN_CANCELLED) {

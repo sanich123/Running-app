@@ -52,7 +52,7 @@ export default function SaveBtn() {
     dispatch(resetActivityInfo());
     dispatch(resetLocationsFromBackground());
     dispatch(setIsNeedToRefreshActivities(true));
-    replace('/(protected)/(tabs)');
+    replace('/');
   };
 
   const onErrorHandler = (error: any) => {
@@ -68,7 +68,7 @@ export default function SaveBtn() {
     }
     dispatch(resetActivityInfo());
     dispatch(resetLocationsFromBackground());
-    replace('/(protected)/(tabs)');
+    replace('/');
   };
 
   return (
@@ -78,40 +78,46 @@ export default function SaveBtn() {
       style={styles.layout}
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
-        if (userId) {
-          dispatch(setIsDisableWhileSending(true));
-          const savedActivity = {
-            body:
-              isManualAdding || isEditingActivity
-                ? {
-                    ...additionalInfo,
-                    date: new Date(manualDate).toISOString(),
-                    distance: manualDistance * 1000,
-                    duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
-                    speed: getSpeedInMinsInKm(
-                      manualDistance,
-                      getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
-                    ).paceAsNumber,
-                    locations: [],
-                  }
-                : {
-                    ...finishedActivity,
-                    ...{
+        try {
+          if (userId) {
+            dispatch(setIsDisableWhileSending(true));
+            const savedActivity = {
+              body:
+                isManualAdding || isEditingActivity
+                  ? {
                       ...additionalInfo,
-                      mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
+                      date: new Date(manualDate).toISOString(),
+                      distance: manualDistance * 1000,
+                      duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
+                      speed: getSpeedInMinsInKm(
+                        manualDistance,
+                        getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
+                      ).paceAsNumber,
+                      locations: [],
+                    }
+                  : {
+                      ...finishedActivity,
+                      ...{
+                        ...additionalInfo,
+                        mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
+                      },
                     },
-                  },
-            id: isEditingActivity ? `${activityId}` : userId,
-          };
-          setActivityToSend(savedActivity);
-          if (isEditingActivity) {
-            await updateActivity(savedActivity).unwrap().then(onSuccessHandler).catch(onErrorHandler);
-          } else {
-            await sendActivity(savedActivity).unwrap().then(onSuccessHandler).catch(onErrorHandler);
+              id: isEditingActivity ? `${activityId}` : userId,
+            };
+            setActivityToSend(savedActivity);
+            if (isEditingActivity) {
+              await updateActivity(savedActivity).unwrap().then(onSuccessHandler).catch(onErrorHandler);
+            } else {
+              await sendActivity(savedActivity).unwrap().then(onSuccessHandler).catch(onErrorHandler);
+            }
           }
+        } catch (error) {
+          showCrossPlatformToast(JSON.stringify(error));
+        } finally {
+          setIsDisableWhileSending(false);
         }
       }}
-      disabled={isDisabledWhileSending}>
+      disabled={false}>
       <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
         {isDisabledWhileSending ? textOnBtnWhenIsSending : textOnBtn}
       </Text>

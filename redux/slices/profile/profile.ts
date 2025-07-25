@@ -39,9 +39,6 @@ export const profile = createSlice({
     setisNeedToPrefetchActivities: (state) => {
       state.isNeedToPrefetchActivities = !state.isNeedToPrefetchActivities;
     },
-    saveGoogleProfileInfo: (state, action) => {
-      state.googleInfo = action.payload;
-    },
     saveWholeProfile: (state, action) => {
       state.profileFromServer = action.payload;
     },
@@ -63,7 +60,6 @@ export const {
   saveGender,
   resetSettings,
   setisNeedToPrefetchActivities,
-  saveGoogleProfileInfo,
   saveWholeProfile,
   resetProfileSlice,
 } = profile.actions;
