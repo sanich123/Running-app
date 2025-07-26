@@ -1,4 +1,3 @@
-import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
 import {
   useGetYouFollowUsersByUserIdQuery,
   useDeleteFriendMutation,
@@ -33,11 +32,9 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
   useEffect(() => {
     if (!process.env.IS_TESTING) {
       if (isFriendDeleted) {
-        dispatch(setIsNeedToRefreshActivities(true));
         showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successUnfollowing);
       }
       if (isFriendAdded) {
-        dispatch(setIsNeedToRefreshActivities(true));
         showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successFollowing);
       }
       if (friendDeletingError || friendAddingError) {

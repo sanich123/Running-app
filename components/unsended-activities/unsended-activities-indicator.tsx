@@ -1,71 +1,44 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { refreshUnsendedActivitiesList, setIsHaveUnsyncedActivity } from '@R/slices/activity/activity';
-import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
+import { refreshUnsendedActivitiesList, resetActivitySlice } from '@R/slices/activity/activity';
 import { useAddActivityByUserIdMutation } from '@R/services/activity/activity';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
-import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-
 import { UNSENDED_ACTIVITIES } from './const';
 
 export default function UnsendedActivitiesIndicator() {
   const dispatch = useAppDispatch();
-  const { unsyncedActivities, isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
-  const [sendActivity, { isLoading, isError, isSuccess, data, error }] = useAddActivityByUserIdMutation();
+  const { unsyncedActivities } = useAppSelector(({ activity }) => activity);
+  const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
   const { language } = useAppSelector(({ language }) => language);
-  const [errorSending, setErrorSending] = useState(false);
-  const [successSending, setIsSuccessSending] = useState(false);
-  const isInitial = !isLoading && !successSending && !errorSending;
 
   async function activitySender() {
     const lastActivity = unsyncedActivities[unsyncedActivities.length - 1];
-    await sendActivity(lastActivity).unwrap();
+    await sendActivity(lastActivity)
+      .unwrap()
+      .then(() => {
+        const reducedUnsyncedList = unsyncedActivities.slice(0, -1);
+        dispatch(refreshUnsendedActivitiesList(reducedUnsyncedList));
+      })
+      .catch((error) => showCrossPlatformToast('Ошибка во время отправки активности'));
   }
-
-  useEffect(() => {
-    if (isSuccess) {
-      if (__DEV__ && !process.env.IS_TESTING) console.log('response', data);
-
-      dispatch(setIsNeedToRefreshActivities(true));
-      setIsSuccessSending(true);
-      const reducedUnsyncedList = unsyncedActivities.slice(0, -1);
-      dispatch(refreshUnsendedActivitiesList(reducedUnsyncedList));
-    }
-    if (isError) {
-      if (__DEV__ && !process.env.IS_TESTING) console.log('failure', error);
-      if (error && 'message' in error && error?.message === 'Aborted') {
-        showCrossPlatformToast('Достигнут лимит времени соединения с сервером');
-      }
-      setErrorSending(true);
-      setTimeout(() => setErrorSending(false), 2000);
-    }
-  }, [isSuccess, isError, data, unsyncedActivities, error]);
-
-  useEffect(() => {
-    if (isHaveUnsyncedActivity && !unsyncedActivities.length) {
-      dispatch(setIsHaveUnsyncedActivity(false));
-    }
-    if (isHaveUnsyncedActivity) {
-      activitySender();
-    }
-  }, [isHaveUnsyncedActivity, unsyncedActivities.length]);
 
   return (
     <>
       {unsyncedActivities.length > 0 && (
         <View style={[styles.inCenter]}>
           <Text variant="bodyLarge">
-            {isInitial &&
-              unsyncedActivities.length > 0 &&
+            {unsyncedActivities.length > 0 &&
               `${UNSENDED_ACTIVITIES[language].initialBegin} ${unsyncedActivities.length} ${UNSENDED_ACTIVITIES[language].initialEnd}`}
             {isLoading && UNSENDED_ACTIVITIES[language].isLoading}
-            {successSending && UNSENDED_ACTIVITIES[language].success}
-            {errorSending && UNSENDED_ACTIVITIES[language].error}
+            {/* {successSending && UNSENDED_ACTIVITIES[language].success}
+            {errorSending && UNSENDED_ACTIVITIES[language].error} */}
           </Text>
-          <Button loading={isLoading} onPress={async () => activitySender()}>
-            Manually
+          <Button loading={isLoading} onPress={activitySender}>
+            Вручную
+          </Button>
+          <Button loading={isLoading} onPress={() => dispatch(resetActivitySlice())}>
+            Удалить
           </Button>
         </View>
       )}
@@ -78,7 +51,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: 50,
+    height: 100,
     width: '100%',
   },
 });

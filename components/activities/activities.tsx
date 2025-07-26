@@ -1,19 +1,15 @@
 import ErrorComponent from '@C/error-component/error-component';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useGetActivitiesByUserIdQuery } from '@R/services/activity/activity';
+import { useGetActivitiesByUserIdInfiniteQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
-import { useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Activities() {
   const { userId } = useAppSelector(({ auth }) => auth);
-  const [page, setPage] = useState(0);
-  const { data, isLoading, error, isError, refetch, isSuccess } = useGetActivitiesByUserIdQuery(
-    { id: userId, page, take: 10 },
-    { skip: !userId },
-  );
+  const { data, isLoading, error, isError, refetch, isSuccess, fetchNextPage, isFetching } =
+    useGetActivitiesByUserIdInfiniteQuery({ id: userId }, { skip: !userId });
 
   return (
     <SafeAreaView
@@ -22,17 +18,19 @@ export default function Activities() {
       <BottomSheetModalProvider>
         {isSuccess && (
           <InfiniteScrollList
-            dataToRender={data?.activities}
-            page={page}
-            setPage={setPage}
+            dataToRender={data?.pages
+              .flat()
+              .map(({ activities }) => activities)
+              .flat()}
             refetch={refetch}
-            isLastPage={data?.isLastPage}
+            isLastPage={data?.pages[data?.pages.length - 1]?.isLastPage}
+            nextPageCallback={fetchNextPage}
+            isFetching={isFetching}
           />
         )}
       </BottomSheetModalProvider>
-
       {isLoading && <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />}
-      {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}
+      {isError && <ErrorComponent error={error} refetch={refetch} />}
     </SafeAreaView>
   );
 }

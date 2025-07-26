@@ -1,6 +1,5 @@
-import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
 import { useDeleteActivityByIdMutation } from '@R/services/activity/activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { errorHandler } from '@U/error-handler';
 import { useRouter } from 'expo-router';
@@ -11,7 +10,6 @@ import { IconButton, useTheme } from 'react-native-paper';
 import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from './const';
 
 export default function CardDeleteBtn({ activityId }: { activityId: string }) {
-  const dispatch = useAppDispatch();
   const [deleteActivityById, { data, error }] = useDeleteActivityByIdMutation();
   const { isLoading, isDisabled, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
   const { back } = useRouter();
@@ -34,7 +32,6 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
     setIsLoading(true);
     setIsDisabled(true);
     await deleteActivityById(activityId).unwrap();
-    dispatch(setIsNeedToRefreshActivities(true));
     back();
   }
 

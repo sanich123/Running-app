@@ -12,9 +12,6 @@ export const mainFeed = createSlice({
     setActivityIdWhichCommentsToUpdate: (state, action) => {
       state.activityIdWhichCommentsToUpdate = action.payload;
     },
-    setIsNeedToRefreshActivities: (state, action) => {
-      state.needToRefreshActivities = action.payload;
-    },
     setCommentIdWhichLikesToUpdate: (state, action) => {
       state.commentIdWhichLikesToUpdate = action.payload;
     },
@@ -34,7 +31,6 @@ export const mainFeed = createSlice({
 
 export const {
   setActivityIdWhichCommentsToUpdate,
-  setIsNeedToRefreshActivities,
   setCommentIdWhichLikesToUpdate,
   setActivityIdWhichLikesToDownload,
   resetMainFeedSlice,

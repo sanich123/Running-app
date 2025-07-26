@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FileSystemUploadType, uploadAsync } from 'expo-file-system';
 
 export async function sendArchiveToServer({
@@ -12,15 +13,22 @@ export async function sendArchiveToServer({
   userId: string;
 }) {
   try {
+    const accessToken = await AsyncStorage.getItem('accessToken');
     setIsSendingArchive(true);
-    await uploadAsync(`${process.env.EXPO_PUBLIC_BASE_URL}/activity/migration-strava/${userId}`, `file://${pathToArchive}`, {
-      fieldName: 'archive',
-      httpMethod: 'POST',
-      uploadType: FileSystemUploadType.MULTIPART,
-    });
-    setIsSendingArchive(false);
+    await uploadAsync(
+      `${process.env.EXPO_PUBLIC_BASE_URL}/activity/migration-strava/${userId}`,
+      `file://${pathToArchive}`,
+      {
+        fieldName: 'archive',
+        httpMethod: 'POST',
+        uploadType: FileSystemUploadType.MULTIPART,
+        headers: { authorization: `Bearer ${accessToken}` },
+      },
+    );
   } catch (error) {
     setIsError(`Ошибка во время отправки архива. ${JSON.stringify(error)}`);
     console.log(error);
+  } finally {
+    setIsSendingArchive(false);
   }
 }

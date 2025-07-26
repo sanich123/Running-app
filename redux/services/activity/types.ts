@@ -25,3 +25,36 @@ export type ActivityToSend = {
   body: FinishedActivity & AdditionalInfoType;
   id: string;
 };
+
+export type Activity = {
+  description: string;
+  title: string;
+  date: string;
+  sport: string;
+  id: string;
+  user_id: string;
+  photoVideoUrls: string[];
+  mapPhotoUrl: string;
+  duration: number;
+  distance: number;
+  profile: Profile;
+  _count: {
+    comments: number;
+  };
+};
+
+export type Profile = {
+  surname: string;
+  name: string;
+  profilePhoto: string;
+  profilePhotoblurhash: null;
+  emailNotifications: boolean;
+  users: {
+    email: string;
+  };
+};
+
+export type ActivitiesReponse = {
+  activities: Activity[];
+  isLastPage: boolean;
+};

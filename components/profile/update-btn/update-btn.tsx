@@ -1,4 +1,3 @@
-import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
 import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import {
   useCreateProfileByUserIdMutation,
@@ -32,7 +31,6 @@ export default function ProfileUpdateBtn() {
           await createProfile({ body: settings, id: userId })
             .unwrap()
             .then(() => {
-              dispatch(setIsNeedToRefreshActivities(true));
               dispatch(setIsDisabledWhileSendingProfile(false));
               dispatch(resetSettings());
               back();
@@ -46,7 +44,6 @@ export default function ProfileUpdateBtn() {
           await updateProfile({ body: settings, id: `${profile?.id}` })
             .unwrap()
             .then(() => {
-              dispatch(setIsNeedToRefreshActivities(true));
               dispatch(setIsDisabledWhileSendingProfile(false));
               dispatch(resetSettings());
               back();

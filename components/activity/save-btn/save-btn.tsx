@@ -6,7 +6,6 @@ import {
 } from '@R/slices/activity/activity';
 import { ActivityToSend } from '@R/services/activity/types';
 import { resetLocationsFromBackground } from '@R/slices/location/location';
-import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
 import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
@@ -51,7 +50,6 @@ export default function SaveBtn() {
     }
     dispatch(resetActivityInfo());
     dispatch(resetLocationsFromBackground());
-    dispatch(setIsNeedToRefreshActivities(true));
     replace('/');
   };
 

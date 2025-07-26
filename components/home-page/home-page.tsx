@@ -9,51 +9,44 @@ import {
   resetActivityInfo,
   setIsEditingActivity,
 } from '@R/slices/activity/activity';
-import { setIsNeedToRefreshActivities } from '@R/slices/main-feed/main-feed';
-import { runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useFocusEffect, useRouter } from 'expo-router';
-import { useState } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/services/activity/activity';
+import { useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery } from '@R/services/activity/activity';
+import { useRouter } from 'expo-router';
 
 export default function Feed() {
-  const { push } = useRouter();
   const dispatch = useAppDispatch();
+  const { push } = useRouter();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
-  const { needToRefreshActivities } = useAppSelector(({ mainFeed }) => mainFeed);
-  const [page, setPage] = useState(0);
-  const { data, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(
-    { id: userId, page, take: 10 },
-    { skip: !userId },
-  );
-
-  useFocusEffect(() => {
-    if (needToRefreshActivities) {
-      setPage(0);
-      setTimeout(() => dispatch(runichApi.util.resetApiState()), 0);
-      dispatch(setIsNeedToRefreshActivities(false));
-    }
-  });
+  const { data, error, isLoading, refetch, fetchNextPage, isFetching, isSuccess, isError } =
+    useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery(
+      {
+        id: userId,
+      },
+      { skip: !userId },
+    );
 
   return (
-    <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
+    <SafeAreaView edges={[]} style={{ flex: 1, justifyContent: 'center' }}>
       <BottomSheetModalProvider>
         <>
-          {isHaveUnsyncedActivity ? <UnsendedActivitiesIndicator /> : null}
+          {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
           {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
-          {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}
-          {!data?.message && data?.activities ? (
+          {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
+          {isSuccess && (
             <>
               <InfiniteScrollList
-                dataToRender={data?.activities}
-                page={page}
-                setPage={setPage}
+                dataToRender={data?.pages
+                  .flat()
+                  .map(({ activities }) => activities)
+                  .flat()}
                 refetch={refetch}
-                isLastPage={data?.isLastPage}
+                isLastPage={data?.pages[data?.pages.length - 1]?.isLastPage}
+                nextPageCallback={fetchNextPage}
+                isFetching={isFetching}
               />
               <FloatingBtn
                 onPressFn={() => {
@@ -66,7 +59,7 @@ export default function Feed() {
                 }}
               />
             </>
-          ) : null}
+          )}
         </>
       </BottomSheetModalProvider>
     </SafeAreaView>
