@@ -1263,10 +1263,10 @@
     find-up "^5.0.0"
     js-yaml "^4.1.0"
 
-"@gorhom/bottom-sheet@^5.1.6":
-  version "5.1.6"
-  resolved "https://registry.yarnpkg.com/@gorhom/bottom-sheet/-/bottom-sheet-5.1.6.tgz#92365894ae4d4eefdbaa577408cfaf62463a9490"
-  integrity sha512-0b5tQj4fTaZAjST1PnkCp0p7d8iRqMezibTcqc8Kkn3N23Vn6upORNTD1fH0bLfwRt6e0WnZ7DjAmq315lrcKQ==
+"@gorhom/bottom-sheet@^5.1.8":
+  version "5.1.8"
+  resolved "https://registry.yarnpkg.com/@gorhom/bottom-sheet/-/bottom-sheet-5.1.8.tgz#65547917f5b1dae5a1291dabd4ea8bfee09feba4"
+  integrity sha512-QuYIVjn3K9bW20n5bgOSjvxBYoWG4YQXiLGOheEAMgISuoT6sMcA270ViSkkb0fenPxcIOwzCnFNuxmr739T9A==
   dependencies:
     "@gorhom/portal" "1.0.14"
     invariant "^2.2.4"
@@ -1994,10 +1994,10 @@
     redux-thunk "^3.1.0"
     reselect "^5.1.0"
 
-"@rnmapbox/maps@^10.1.39":
-  version "10.1.39"
-  resolved "https://registry.yarnpkg.com/@rnmapbox/maps/-/maps-10.1.39.tgz#20673c90eadc976e7fb3877ee4ad137845610ff5"
-  integrity sha512-h96h/wPwmuJ6Je/qDL8KTh3QSVvlX41SNVAZpEUtPpIos/n/3eDzERvBxNd/8FGZYZVR/3FcZnv4razaNCFksg==
+"@rnmapbox/maps@^10.1.40":
+  version "10.1.40"
+  resolved "https://registry.yarnpkg.com/@rnmapbox/maps/-/maps-10.1.40.tgz#fdbd69f8b9a850a4593b33773014759f3267ccd9"
+  integrity sha512-SFoX8mI9BV365rUaYZYr60iPJa8gSWhhPQQrSMdtlZNoNE3vKvv4kcstniE4z/XqZlzqZle/1r1cjONpvIDyqA==
   dependencies:
     "@turf/along" "6.5.0"
     "@turf/distance" "6.5.0"
