@@ -1,0 +1,41 @@
+import { useCallback } from 'react';
+import { StyleSheet } from 'react-native';
+import { useTheme, Text } from 'react-native-paper';
+import { ModalItemProps } from './types';
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
+
+export default function ModalItem({ setSelectedValue, controlRef, onChange, value, title }: ModalItemProps) {
+  const {
+    colors: { background },
+  } = useTheme();
+
+  const handleClosePress = useCallback(() => {
+    if (!process.env.IS_TESTING) {
+      controlRef.current?.close();
+    }
+  }, [controlRef]);
+  return (
+    <TouchableOpacity
+      activeOpacity={0.2}
+      key={value}
+      onPress={() => {
+        setSelectedValue(title, value);
+        onChange(value);
+        if (!process.env.IS_TESTING) {
+          handleClosePress();
+        }
+      }}
+      style={[styles.listItem, { backgroundColor: background }]}>
+      <Text variant="bodyLarge">{title}</Text>
+    </TouchableOpacity>
+  );
+}
+
+const styles = StyleSheet.create({
+  listItem: {
+    display: 'flex',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+});

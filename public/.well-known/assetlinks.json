@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.sanich123.runningapp",
+      "sha256_cert_fingerprints": [
+        "AB:F4:9B:61:2E:6B:36:BD:AD:43:A5:50:38:DA:60:C8:AA:AD:FE:EF:2E:C5:3F:78:14:92:D3:E9:4C:BA:E9:5C"
+      ]
+    }
+  }
+]

@@ -25,6 +25,7 @@ export const auth = createSlice({
           setAccessTokenToStorage(accessToken);
         }
         state.userId = id;
+        state.isNeedToShowConfirmEmailInput = false;
       },
     );
     builder.addMatcher(
@@ -35,6 +36,7 @@ export const auth = createSlice({
         }
         state.userId = id;
         state.appVersion = appVersion;
+        state.isNeedToShowConfirmEmailInput = false;
       },
     );
     builder.addMatcher(authenticationApi.endpoints.registerUser.matchFulfilled, (state) => {
@@ -46,6 +48,7 @@ export const auth = createSlice({
         if (accessToken) {
           setAccessTokenToStorage(accessToken);
         }
+        state.isNeedToShowConfirmEmailInput = false;
         state.userId = id;
       },
     );

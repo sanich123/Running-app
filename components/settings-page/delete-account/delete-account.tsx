@@ -1,5 +1,5 @@
 import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
-import { Alert, View } from 'react-native';
+import { Alert, Platform, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { resetProfileSlice } from '@R/slices/profile/profile';
 import { resetLocationSlice } from '@R/slices/location/location';
@@ -22,40 +22,46 @@ export default function DeleteAccountBtn() {
   const [deleteAccount] = useDeleteUserMutation();
   const { replace } = useRouter();
 
+  async function deleteUserHandler() {
+    return await deleteAccount({ userId })
+      .unwrap()
+      .then(async () => {
+        await AsyncStorage.removeItem('accessToken');
+        dispatch(resetProfileSlice());
+        dispatch(resetActivitySlice());
+        dispatch(resetMainFeedSlice());
+        dispatch(resetAuthSlice());
+        dispatch(resetNetworkSlice());
+        dispatch(resetLanguageSlice());
+        dispatch(resetLocationSlice());
+        replace('/sign-in');
+      })
+      .catch((error) => showCrossPlatformToast(error))
+      .finally();
+  }
+
   return (
     <>
       <TouchableRipple
         rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
         borderless
         onPress={async () => {
-          Alert.alert(
-            DELETE_ACCOUNT[language].deletingAccount,
-            DELETE_ACCOUNT[language].conscentDeleting,
-            [
-              {
-                text: DELETE_ACCOUNT[language].sure,
-                onPress: async () => {
-                  deleteAccount({ userId })
-                    .unwrap()
-                    .then(async () => {
-                      await AsyncStorage.removeItem('accessToken');
-                      dispatch(resetProfileSlice());
-                      dispatch(resetActivitySlice());
-                      dispatch(resetMainFeedSlice());
-                      dispatch(resetAuthSlice());
-                      dispatch(resetNetworkSlice());
-                      dispatch(resetLanguageSlice());
-                      dispatch(resetLocationSlice());
-                      replace('/sign-in');
-                    })
-                    .catch((error) => showCrossPlatformToast(error))
-                    .finally();
+          if (Platform.OS !== 'web') {
+            Alert.alert(
+              DELETE_ACCOUNT[language].deletingAccount,
+              DELETE_ACCOUNT[language].conscentDeleting,
+              [
+                {
+                  text: DELETE_ACCOUNT[language].sure,
+                  onPress: deleteUserHandler,
+                  style: 'cancel',
                 },
-                style: 'cancel',
-              },
-            ],
-            { cancelable: true },
-          );
+              ],
+              { cancelable: true },
+            );
+          } else {
+            await deleteUserHandler();
+          }
         }}>
         <View style={{ display: 'flex', backgroundColor: colors.background, justifyContent: 'center', padding: 10 }}>
           <Text variant="titleMedium">{DELETE_ACCOUNT[language].action}</Text>

@@ -7,7 +7,6 @@ import { Appearance, Platform } from 'react-native';
 import mapboxgl from 'mapbox-gl';
 import { changeNetworkState } from '@R/slices/network/network';
 import * as SplashScreen from 'expo-splash-screen';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function useInitialState() {
@@ -45,7 +44,6 @@ export default function useInitialState() {
   useEffect(() => {
     if (isError) {
       SplashScreen.hide();
-      showCrossPlatformToast(JSON.stringify(error, null, 2));
     }
   }, [isError, error]);
 

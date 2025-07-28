@@ -34,20 +34,8 @@ export const RESET_BTN = {
   },
 } as const;
 
-export type LoginBtnProps = {
-  email: string;
-  password: string;
-  isLoading: boolean;
-  isDisabled: boolean;
-  pageState: SignInPageStates;
-  setIsDisabled: (arg: boolean) => void;
-  setIsLoading: (arg: boolean) => void;
-  setEmailError: (arg: boolean) => void;
-  setPasswordError: (arg: boolean) => void;
-};
-
 export const LoginBtnIcons = {
   [SignInPageStates.login]: 'login',
   [SignInPageStates.register]: 'account',
-  // [SignInPageStates.reset]: 'key-change',
+  [SignInPageStates.reset]: 'key-change',
 };

@@ -1,134 +1,89 @@
-import { createSessionFromTokens, createSessionFromUrl } from '@A/supabase/storage/sign-in';
 import GoogleSignBtn from '@C/sign-in/google-sign-in/google-sign-in';
 import GoogleSignInWeb from '@C/sign-in/google-sign-in-web/google-sign-in-web';
-import PasswordInput from '@C/sign-in/password-input/password-input';
-import usePasswordEmail from '@U/hooks/use-password-email';
 import * as Linking from 'expo-linking';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
-import { useEffect, useRef, useState } from 'react';
-import { View, Platform, StyleSheet, useWindowDimensions, ScrollView } from 'react-native';
-import { useTheme, TextInput, Button } from 'react-native-paper';
-import EmailInput from './email-input/email-input';
+import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
 import Intro from './intro/intro';
 import { useAppSelector } from '@R/typed-hooks';
-import { useConfirmSignUpCodeByEmailMutation } from '@R/services/authentication/authentication';
+import { useForm } from 'react-hook-form';
+import CustomTextInput from '@C/shared/custom-text-input/custom-text-input';
+import CustomPasswordInput from '@C/shared/custom-password-input/custom-password-input';
+import { emailValidation, passwordValidation } from '@C/shared/custom-text-input/types';
+import ConfirmEmailCode from './confirm-email-code/confirm-email-code';
+import { EmailPasswordData } from '@R/services/authentication/types';
+import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
 import { showCrossPlatformToast } from '@U/custom-toast';
+import { errorToast } from '@C/shared/error-toast/error-toast';
+import { SignInPageStates } from '@U/validate-email-password';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from 'react-native-paper';
 
 export default function SignIn() {
-  const {
-    email,
-    password,
-    emailError,
-    passwordError,
-    isLoading,
-    isDisabled,
-    pageState,
-    setPageState,
-    setEmail,
-    setPassword,
-    setEmailError,
-    setPasswordError,
-    setIsLoading,
-    setIsDisabled,
-  } = usePasswordEmail();
   const { colors } = useTheme();
-  const [confirmationCode, setConfirmationCode] = useState('');
+  const { email, password, pageState } = useAppSelector(({ logining }) => logining);
   const { isNeedToShowConfirmEmailInput } = useAppSelector(({ auth }) => auth);
-  const [confirmEmailByCode] = useConfirmSignUpCodeByEmailMutation();
-  const passwordRef = useRef(null);
-  const { access_token, refresh_token } = useLocalSearchParams();
-  const url = Linking.useURL();
-  const { height } = useWindowDimensions();
+  const { control, handleSubmit, watch } = useForm<EmailPasswordData>({
+    defaultValues: { email, password },
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
+  });
   const { replace } = useRouter();
-  if (Platform.OS === 'web') {
-    WebBrowser.maybeCompleteAuthSession();
-  }
-
-  useEffect(() => {
-    if (access_token) {
-      createSessionFromTokens(`${access_token}`, `${refresh_token}`);
-    }
-  }, [access_token, refresh_token]);
+  const url = Linking.useURL();
+  const [verifyToken] = useLazyVerifyConfigQuery();
 
   useEffect(() => {
     if (url) {
-      createSessionFromUrl(url);
+      const { queryParams } = Linking.parse(url);
+      if (queryParams?.accessToken) {
+        verifyToken({ accessToken: queryParams.accessToken.toString() })
+          .unwrap()
+          .then((success) => {
+            showCrossPlatformToast(success.toString());
+            replace('/');
+          })
+          .catch((error) => errorToast(error));
+      }
     }
-  }, [url]);
+  }, [replace, url, verifyToken]);
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['bottom']}>
       <Intro />
-      <View style={[styles.inputsWrapper, { backgroundColor: colors.background, height: height * 0.5 }]}>
-        {!process.env.IS_TESTING ? (
-          <>
-            {Platform.OS !== 'web' ? (
-              <GoogleSignBtn setIsDisabled={setIsDisabled} />
-            ) : (
-              <GoogleSignInWeb setIsDisabled={setIsDisabled} />
-            )}
-          </>
-        ) : null}
-        <EmailInput
-          passwordRef={passwordRef}
-          email={email}
-          setEmail={setEmail}
-          emailError={emailError}
-          setEmailError={setEmailError}
-          isDisabled={isDisabled}
+      <View style={styles.inputsWrapper}>
+        {Platform.OS !== 'web' ? <GoogleSignBtn /> : <GoogleSignInWeb />}
+        <CustomTextInput<EmailPasswordData>
+          control={control}
+          fieldName="email"
+          label="Электронная почта"
+          validation={emailValidation}
+          inputMode="email"
+          autoComplete="email"
         />
-        <PasswordInput
-          passwordRef={passwordRef}
-          password={password}
-          setPassword={setPassword}
-          setPasswordError={setPasswordError}
-          passwordError={passwordError}
-          isDisabled={isDisabled}
-        />
-        {isNeedToShowConfirmEmailInput && (
-          <>
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 10 }}
-              placeholder="Введите код подтверждения с почты"
-              onChangeText={(text) => setConfirmationCode(text)}
-            />
-            <Button
-              mode="contained"
-              onPress={async () =>
-                await confirmEmailByCode({ email, confirmationCode })
-                  .unwrap()
-                  .then(() => replace('/'))
-                  .catch((error) => showCrossPlatformToast(error.data.message))
-              }>
-              Подтвердить код
-            </Button>
-          </>
+        {pageState !== SignInPageStates.reset && (
+          <CustomPasswordInput<EmailPasswordData>
+            control={control}
+            fieldName="password"
+            label="Пароль"
+            validation={passwordValidation}
+            returnKeyType="send"
+            returnKeyLabel="send"
+          />
         )}
-
-        <LoginRegisterBtn
-          pageState={pageState}
-          password={password}
-          email={email}
-          isDisabled={isDisabled}
-          isLoading={isLoading}
-          setIsDisabled={setIsDisabled}
-          setIsLoading={setIsLoading}
-          setEmailError={setEmailError}
-          setPasswordError={setPasswordError}
-        />
-
-        <LoginRegisterNavigation setPageState={setPageState} pageState={pageState} isDisabled={isDisabled} />
+        {isNeedToShowConfirmEmailInput && <ConfirmEmailCode watch={watch} />}
+        <LoginRegisterBtn handleSubmit={handleSubmit} />
+        <LoginRegisterNavigation />
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   inputsWrapper: {
+    paddingTop: 20,
+    flex: 1,
     marginLeft: Platform.OS === 'web' ? 'auto' : 10,
     marginRight: Platform.OS === 'web' ? 'auto' : 10,
   },

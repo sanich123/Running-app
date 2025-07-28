@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { persistStore, persistReducer } from 'redux-persist';
-
 import activity from './slices/activity/activity';
 import language from './slices/language/language';
 import location from './slices/location/location';
@@ -11,6 +10,7 @@ import network from './slices/network/network';
 import profile from './slices/profile/profile';
 import auth from './slices/auth/auth';
 import { runichApi } from './runich-api/runich-api';
+import logining from './slices/logining/logining';
 
 const persistConfig = {
   key: 'root',
@@ -28,6 +28,7 @@ const rootReducer = persistReducer(
     activity,
     mainFeed,
     auth,
+    logining,
     [runichApi.reducerPath]: runichApi.reducer,
   }),
 );

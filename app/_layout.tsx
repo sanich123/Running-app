@@ -36,30 +36,6 @@ export default function RootLayout() {
                 <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
                   <Stack.Screen name="(protected)" />
                   <Stack.Screen name="sign-in" />
-                  <Stack.Screen
-                    name="confirm-email"
-                    options={{
-                      presentation: 'modal',
-                      headerTitle: 'Confirm Email',
-                      gestureEnabled: true,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="need-to-confirm-email"
-                    options={{
-                      presentation: 'modal',
-                      headerTitle: 'Need to confirm email',
-                      gestureEnabled: true,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="reset-password"
-                    options={{
-                      presentation: 'modal',
-                      headerTitle: 'Reset password',
-                      gestureEnabled: true,
-                    }}
-                  />
                 </Stack>
                 <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
               </PaperProvider>

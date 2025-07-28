@@ -4,7 +4,7 @@ import { AccessData, EmailPasswordData, VerifyTokenRequest, VerifyTokenResponse 
 export const authenticationApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ mutation, query }) => ({
-    registerUser: mutation<void, EmailPasswordData>({
+    registerUser: mutation<{ message: string }, EmailPasswordData>({
       query: ({ email, password }) => ({
         url: '/auth/register',
         body: { email, password },

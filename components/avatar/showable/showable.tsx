@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
-
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
 export default function AvatarShowable({ size, id }: { size: number; id: string }) {
@@ -43,7 +42,7 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
         </>
       ) : null}
 
-      {(isError || profile?.message) && (
+      {isError && (
         <Avatar.Icon
           testID={AvatarShowableTestIds.error}
           size={size}

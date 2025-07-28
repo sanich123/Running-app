@@ -3,7 +3,7 @@ const IS_DEV = process.env.APP_VARIANT === 'development';
 export default {
   expo: {
     owner: 'sanich123',
-    scheme: 'com.supabase',
+    scheme: 'runich',
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
     version: '3.0.0',
@@ -22,6 +22,7 @@ export default {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
+      // associatedDomains: ['applinks:runich.expo.app'],
       entitlements: { 'com.apple.developer.networking.wifi-info': true },
       config: { usesNonExemptEncryption: false },
       infoPlist: {
@@ -29,6 +30,7 @@ export default {
         CFBundleURLTypes: [
           {
             CFBundleURLSchemes: [
+              'runich',
               'com.googleusercontent.apps.617323850499-i286kru7q6bgi2dfl38c6keljvhaelad',
               'com.googleusercontent.apps.617323850499-ib9jp3gj3fbev205jbhcfe0ou9oairm2',
             ],
@@ -52,6 +54,20 @@ export default {
       bundleIdentifier: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
     },
     android: {
+      intentFilters: [
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'https',
+              host: 'runich.expo.app',
+              pathPrefix: '/sign-in',
+            },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+      ],
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#333333',

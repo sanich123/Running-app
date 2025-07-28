@@ -5,7 +5,6 @@ import reducer, {
   resetSettings,
   saveBio,
   saveCity,
-  saveEmailPassword,
   saveGender,
   saveName,
   savePhotoUrl,
@@ -18,12 +17,6 @@ import { ProfileType } from '@C/card/types';
 describe('Profile slice', () => {
   it('should handle initial state properly', () => {
     expect(reducer(undefined, { type: '' })).toEqual(PROFILE_INITIAL_STATE);
-  });
-  it('should change email password', () => {
-    expect(reducer(PROFILE_INITIAL_STATE, saveEmailPassword(MOCK_EMAIL_PASSWORD))).toEqual({
-      ...PROFILE_INITIAL_STATE,
-      privateInfo: MOCK_EMAIL_PASSWORD,
-    });
   });
   it('should change isDisabledWhileSendingProfile', () => {
     expect(reducer(PROFILE_INITIAL_STATE, setIsDisabledWhileSendingProfile(true))).toEqual({

@@ -1,4 +1,6 @@
 import { useLoginUserWithGoogleMutation } from '@R/services/authentication/authentication';
+import { setIsDisabledWhenLogining } from '@R/slices/logining/logining';
+import { useAppDispatch } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import { useRouter } from 'expo-router';
@@ -6,7 +8,8 @@ import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
-export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: boolean) => void }) {
+export default function GoogleSignBtn() {
+  const dispatch = useAppDispatch();
   const { dark } = useTheme();
   const [loginWithGoogle] = useLoginUserWithGoogleMutation();
   const { replace } = useRouter();
@@ -29,8 +32,8 @@ export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: 
       color={GoogleSigninButton.Color.Dark}
       size={GoogleSigninButton.Size.Wide}
       onPress={async () => {
-        setIsDisabled(true);
         try {
+          dispatch(setIsDisabledWhenLogining(true));
           await GoogleSignin.hasPlayServices();
           const { data: userInfo } = await GoogleSignin.signIn();
           if (userInfo?.user) {
@@ -53,7 +56,7 @@ export default function GoogleSignBtn({ setIsDisabled }: { setIsDisabled: (arg: 
             showCrossPlatformToast('unexpected error occured');
           }
         } finally {
-          setIsDisabled(false);
+          dispatch(setIsDisabledWhenLogining(false));
         }
       }}
     />

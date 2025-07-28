@@ -1,5 +1,4 @@
 import { supabase } from '@A/supabase/supabase-init';
-import { PASSWORD_INPUT, PASSWORD_INPUT_LEFT_ICON, PASSWORD_INPUT_RIGHT_ICON } from '@C/sign-in/password-input/const';
 import { useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
@@ -37,12 +36,11 @@ export default function ChangePassword() {
           style={{ opacity: isDisabled ? 0.5 : 1 }}
           value={password}
           onEndEditing={() => (!passwordMatcher.test(password) ? setPasswordError(true) : setPasswordError(false))}
-          placeholder={PASSWORD_INPUT[language].placeholder}
+          placeholder={'Введите новый пароль'}
           secureTextEntry={passwordIsNotVisible}
-          left={<TextInput.Icon icon="form-textbox-password" testID={PASSWORD_INPUT_LEFT_ICON} disabled={isDisabled} />}
+          left={<TextInput.Icon icon="form-textbox-password" disabled={isDisabled} />}
           right={
             <TextInput.Icon
-              testID={PASSWORD_INPUT_RIGHT_ICON}
               icon="eye"
               onPress={() => setPasswordIsVisible(!passwordIsNotVisible)}
               disabled={isDisabled}
@@ -50,40 +48,7 @@ export default function ChangePassword() {
           }
           disabled={isDisabled}
         />
-        <HelperText type="error" visible={passwordError} padding="none">
-          {passwordError ? PASSWORD_INPUT[language].helperText : null}
-        </HelperText>
-        <Button
-          mode="outlined"
-          style={{ opacity: isDisabled ? 0.5 : 1 }}
-          onPress={async () => {
-            try {
-              if (!passwordError && password) {
-                setIsDisabled(true);
-                const { data, error } = await supabase.auth.updateUser({ password });
-                if (data.user) {
-                  showCrossPlatformToast('Успешно, перенаправляем дальше в приложение');
-                  if (Device.deviceType === Device.DeviceType.DESKTOP) {
-                    push('/(protected)/(tabs)/activity');
-                    return;
-                  } else {
-                    const redirectUrl = Linking.createURL('com.supabase://sign-in');
-                    Linking.openURL(redirectUrl);
-                  }
-                }
-                if (error) {
-                  showCrossPlatformToast(error.message);
-                }
-              } else {
-                setPasswordError(true);
-              }
-            } catch (error) {
-              errorHandler(error);
-            } finally {
-              setIsDisabled(false);
-            }
-          }}
-          disabled={isDisabled}>
+        <Button mode="outlined" style={{ opacity: isDisabled ? 0.5 : 1 }} disabled={isDisabled}>
           Поменять пароль
         </Button>
       </View>
