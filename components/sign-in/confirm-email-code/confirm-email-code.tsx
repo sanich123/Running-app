@@ -4,7 +4,6 @@ import { showCrossPlatformToast } from '@U/custom-toast';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { UseFormWatch } from 'react-hook-form';
-import { Platform } from 'react-native';
 import { Button, TextInput, useTheme } from 'react-native-paper';
 
 export default function ConfirmEmailCode({ watch }: { watch: UseFormWatch<EmailPasswordData> }) {
