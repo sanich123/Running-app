@@ -45,6 +45,13 @@ export const authenticationApi = runichApi.injectEndpoints({
         method: 'POST',
       }),
     }),
+    resetPassword: mutation<{ message: string }, { email: string }>({
+      query: ({ email }: { email: string }) => ({
+        url: 'auth/reset-password',
+        body: { email },
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
@@ -55,4 +62,5 @@ export const {
   useDeleteUserMutation,
   useConfirmSignUpCodeByEmailMutation,
   useLoginUserWithGoogleMutation,
+  useResetPasswordMutation,
 } = authenticationApi;

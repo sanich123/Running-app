@@ -4,7 +4,11 @@ import { SignInPageStates } from '@U/validate-email-password';
 import { useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
 import { REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
-import { useLoginUserMutation, useRegisterUserMutation } from '@R/services/authentication/authentication';
+import {
+  useLoginUserMutation,
+  useRegisterUserMutation,
+  useResetPasswordMutation,
+} from '@R/services/authentication/authentication';
 import { saveEmail, savePassword, setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { UseFormHandleSubmit } from 'react-hook-form';
 import { errorToast } from '@C/shared/error-toast/error-toast';
@@ -17,6 +21,7 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
   const { replace } = useRouter();
   const [registerUser, { isLoading }] = useRegisterUserMutation();
   const [loginUser, { isLoading: isLoginingUser }] = useLoginUserMutation();
+  const [resetPassword] = useResetPasswordMutation();
 
   return (
     <Button
@@ -42,6 +47,13 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
             .unwrap()
             .then(() => replace('/'))
             .catch((error) => errorToast('Во время авторизации произошла ошибка: ', error))
+            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
+        }
+        if (pageState === SignInPageStates.reset) {
+          return await resetPassword({ email })
+            .unwrap()
+            .then(({ message }) => showCrossPlatformToast(message))
+            .catch((error) => errorToast('Во время сброса пароля произошла ошибка: ', error))
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }
       })}>
