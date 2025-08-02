@@ -85,7 +85,6 @@ export default function Comments({
                   mapPhotoUrl={mapPhotoUrl}
                 />
               ))}
-
           {!data?.comments?.length && !isShowingTextInput && <CommentsEmptyList />}
         </>
       )}

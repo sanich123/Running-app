@@ -1,37 +1,31 @@
 import ErrorComponent from '@C/error-component/error-component';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
 import { useGetActivitiesByUserIdInfiniteQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator } from 'react-native-paper';
 
 export default function Activities() {
-  const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { data, isLoading, error, isError, refetch, isSuccess, fetchNextPage, isFetching } =
     useGetActivitiesByUserIdInfiniteQuery({ id: userId }, { skip: !userId });
 
   return (
-    <SafeAreaView
-      edges={['bottom']}
-      style={[{ flex: 1, backgroundColor: colors.background }, (isLoading || isError) && { justifyContent: 'center' }]}>
-      <BottomSheetModalProvider>
-        {isSuccess && (
-          <InfiniteScrollList
-            dataToRender={data?.pages
-              .flat()
-              .map(({ activities }) => activities)
-              .flat()}
-            refetch={refetch}
-            isLastPage={data?.pages[data?.pages.length - 1]?.isLastPage}
-            nextPageCallback={fetchNextPage}
-            isFetching={isFetching}
-          />
-        )}
-      </BottomSheetModalProvider>
+    <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
+      {isSuccess && (
+        <InfiniteScrollList
+          dataToRender={data?.pages
+            .flat()
+            .map(({ activities }) => activities)
+            .flat()}
+          refetch={refetch}
+          isLastPage={data?.pages[data?.pages.length - 1]?.isLastPage}
+          nextPageCallback={fetchNextPage}
+          isFetching={isFetching}
+        />
+      )}
       {isLoading && <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />}
       {isError && <ErrorComponent error={error} refetch={refetch} />}
-    </SafeAreaView>
+    </CrossPlatformLayout>
   );
 }

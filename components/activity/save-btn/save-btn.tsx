@@ -15,13 +15,14 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
-import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID, ErrorMessages } from './const';
+import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 
 export default function SaveBtn() {
   const dispatch = useAppDispatch();
   const { colors, dark } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { replace } = useRouter();
+  const { back, replace } = useRouter();
   const {
     additionalInfo,
     activityId,
@@ -35,36 +36,10 @@ export default function SaveBtn() {
     finishedActivity,
   } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);
-  const [sendActivity, { data }] = useAddActivityByUserIdMutation();
+  const [sendActivity] = useAddActivityByUserIdMutation();
   const [updateActivity] = useUpdateActivityInfoMutation();
   const [activityToSend, setActivityToSend] = useState<ActivityToSend>();
   const textOnBtn = isEditingActivity ? ACTIVITY_SAVE_BTN[language].update : ACTIVITY_SAVE_BTN[language].save;
-
-  const onSuccessHandler = () => {
-    dispatch(setIsDisableWhileSending(false));
-    if (data?.message) {
-      showCrossPlatformToast(data?.message);
-    }
-    dispatch(resetActivityInfo());
-    dispatch(resetLocationsFromBackground());
-    replace('/');
-  };
-
-  const onErrorHandler = (error: any) => {
-    dispatch(saveUnsendedActivity(activityToSend));
-    dispatch(setIsHaveUnsyncedActivity(true));
-    if (error && 'message' in error && error?.message === ErrorMessages.aborted) {
-      showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
-    }
-    if (error && 'status' in error) {
-      if (error.status === ErrorMessages.fetchError) {
-        showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].fetchError);
-      }
-    }
-    dispatch(resetActivityInfo());
-    dispatch(resetLocationsFromBackground());
-    replace('/');
-  };
 
   return (
     <TouchableRipple
@@ -99,19 +74,36 @@ export default function SaveBtn() {
                     },
               id: isEditingActivity ? activityId : userId,
             };
-            setActivityToSend(savedActivity);
+            if (!isEditingActivity || isManualAdding) {
+              setActivityToSend(savedActivity);
+            }
+
             if (isEditingActivity) {
               await updateActivity(savedActivity)
                 .unwrap()
-                .then(onSuccessHandler)
-                .catch(onErrorHandler)
-                .finally(() => dispatch(setIsDisableWhileSending(false)));
+                .then(() => back())
+                .catch((error) => errorToast(error))
+                .finally(() => {
+                  dispatch(setIsDisableWhileSending(false));
+                  dispatch(resetActivityInfo());
+                  dispatch(resetLocationsFromBackground());
+                });
             } else {
               await sendActivity(savedActivity)
                 .unwrap()
-                .then(onSuccessHandler)
-                .catch(onErrorHandler)
-                .finally(() => dispatch(setIsDisableWhileSending(false)));
+                .then(() => (isManualAdding ? back() : replace('/')))
+                .catch((error) => {
+                  if (!isManualAdding) {
+                    dispatch(saveUnsendedActivity(activityToSend));
+                    dispatch(setIsHaveUnsyncedActivity(true));
+                  }
+                  errorToast(error);
+                })
+                .finally(() => {
+                  dispatch(setIsDisableWhileSending(false));
+                  dispatch(resetActivityInfo());
+                  dispatch(resetLocationsFromBackground());
+                });
             }
           }
         } catch (error) {

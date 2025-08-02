@@ -25,11 +25,13 @@ export default function BatteryOptimizationModal({
       snapPoints={['75%']}
       backdropComponent={renderBackdrop}
       handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.onSecondary }}
+      backgroundStyle={{ backgroundColor: colors.background }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 5, backgroundColor: colors.onSecondary }}>
+      <BottomSheetView style={{ flex: 1, padding: 15, backgroundColor: colors.background }}>
         <View style={{ flex: 1, paddingVertical: 10, paddingHorizontal: 5 }}>
-          <Text variant="bodyLarge">{BATTERY_OPTIMIZATION[language].optimizationMessage}</Text>
+          <Text variant="bodyLarge" style={{ textAlign: 'justify' }}>
+            {BATTERY_OPTIMIZATION[language].optimizationMessage}
+          </Text>
           <Button
             mode="outlined"
             style={{ marginTop: 15 }}

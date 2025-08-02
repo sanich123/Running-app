@@ -4,12 +4,13 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
-import { IconButton, MD3Colors } from 'react-native-paper';
+import { IconButton, useTheme } from 'react-native-paper';
 
 import { COMMENT_DELETE_BTN } from './const';
 import { ComentDeleteBtnProps } from '../types';
 
 export default function CommentDeleteBtn({ commentId, activityId }: ComentDeleteBtnProps) {
+  const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const [deleteComment, { isSuccess: isSuccessDeleting, isError: isErrorDeleting, isLoading }] =
@@ -31,7 +32,7 @@ export default function CommentDeleteBtn({ commentId, activityId }: ComentDelete
   return (
     <IconButton
       icon="delete"
-      iconColor={MD3Colors.primary50}
+      iconColor={colors.primary}
       size={20}
       onPress={async () => await deleteComment({ commentId, activityId }).unwrap()}
       disabled={isLoading}

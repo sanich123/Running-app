@@ -10,12 +10,12 @@ import { useAppSelector } from '@R/typed-hooks';
 import { MONTH_STATISTICS } from '../month-metric/const';
 import { LANGUAGES } from '@const/enums';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
 
 export default function MonthStatistics() {
-  const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const { userId, year, month } = useLocalSearchParams();
   const [selectedType, setSelectedType] = useState('all');
@@ -32,7 +32,12 @@ export default function MonthStatistics() {
   const { language } = useAppSelector(({ language }) => language);
   const isRussian = language === LANGUAGES.russian;
   return (
-    <View style={[{ backgroundColor: colors.background }, (isLoading || isError) && { justifyContent: 'center' }]}>
+    <CrossPlatformLayout
+      edges={[]}
+      scrollViewEnabled
+      isError={isError}
+      isLoading={isLoading}
+      outerStyles={{ padding: 10 }}>
       {isLoading && <ActivityIndicator size="large" />}
       {isError && <ErrorComponent error={error} />}
       {isSuccess && (
@@ -81,7 +86,7 @@ export default function MonthStatistics() {
           <CalendarActivities year={`${year}`} month={`${month}`} userId={`${userId}`} selectedType={selectedType} />
         </>
       )}
-    </View>
+    </CrossPlatformLayout>
   );
 }
 

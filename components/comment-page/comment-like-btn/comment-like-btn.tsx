@@ -8,12 +8,13 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
-import { IconButton, MD3Colors } from 'react-native-paper';
+import { IconButton, useTheme } from 'react-native-paper';
 import { COMMENT_LIKE_BTN } from './const';
 import { CommentLikeBtnProps } from '../types';
 import { useSendEmailAfterSendingCommentLikeMutation } from '@R/services/emails/emails';
 
 export default function CommentLikeBtn({ commentId, commentLikesFromComment, profile, comment }: CommentLikeBtnProps) {
+  const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ language }) => language);
@@ -93,7 +94,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
       testID={`commentLikeBtn${youGaveCommentLike?.length ? '-active' : ''}`}
       icon={whatCommentLikesToIterate?.length ? 'cards-heart' : 'cards-heart-outline'}
       size={20}
-      iconColor={youGaveCommentLike?.length ? MD3Colors.error50 : MD3Colors.primary50}
+      iconColor={youGaveCommentLike?.length ? 'red' : colors.primary}
       onPress={async () =>
         youGaveCommentLike?.length
           ? await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap()

@@ -5,9 +5,7 @@ import { MOCK_LIKE } from '@T/mocks/mock-likes';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { screen } from '@testing-library/react-native';
-
 import CardBtns from './btns';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { setUserId } from '@R/slices/auth/auth';
 
@@ -20,17 +18,14 @@ describe('Card btns', () => {
   it('should correctly renders with deleteBtn', async () => {
     mockStore.dispatch(setUserId(MOCK_LIKE[0].authorId));
     renderWithProviders(
-      <BottomSheetModalProvider>
-        <CardBtns
-          isShowDeleteBtn
-          activityId="someActivityId"
-          userId={MOCK_LIKE[0].authorId}
-          cardRef={{ current: '' }}
-          commentsLength={6}
-          profile={MOCK_PROFILE}
-        />
-      </BottomSheetModalProvider>,
-
+      <CardBtns
+        isShowDeleteBtn
+        activityId="someActivityId"
+        userId={MOCK_LIKE[0].authorId}
+        cardRef={{ current: '' }}
+        commentsLength={6}
+        profile={MOCK_PROFILE}
+      />,
       {
         store: mockStore,
       },
@@ -40,16 +35,14 @@ describe('Card btns', () => {
   });
   it('should correctly renders likes icon, when userId === user.id, and without delete btn', async () => {
     renderWithProviders(
-      <BottomSheetModalProvider>
-        <CardBtns
-          isShowDeleteBtn
-          activityId="someActivityId"
-          userId="someUserId"
-          cardRef={{ current: '' }}
-          commentsLength={6}
-          profile={MOCK_PROFILE}
-        />
-      </BottomSheetModalProvider>,
+      <CardBtns
+        isShowDeleteBtn
+        activityId="someActivityId"
+        userId="someUserId"
+        cardRef={{ current: '' }}
+        commentsLength={6}
+        profile={MOCK_PROFILE}
+      />,
       {
         store: mockStore,
       },

@@ -1,10 +1,10 @@
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { PropsWithChildren, useState } from 'react';
 import { Platform, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CrossPlatformLayoutProps } from './types';
 import NetworkStateBanner from '../network-state-banner/network-state-banner';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 export default function CrossPlatformLayout({
   children,
@@ -19,12 +19,11 @@ export default function CrossPlatformLayout({
   const [refreshing, setRefreshing] = useState(false);
 
   return (
-    <BottomSheetModalProvider>
+    <SafeAreaView
+      style={[{ flex: 1, backgroundColor: colors.background }, (isError || isLoading) && styles.centered]}
+      edges={edges}>
       {scrollViewEnabled ? (
-        <SafeAreaView
-          style={[{ flex: 1, backgroundColor: 'red' }, (isError || isLoading) && styles.centered]}
-          edges={edges}>
-          {!isLoading && <NetworkStateBanner />}
+        <KeyboardAwareScrollView>
           <ScrollView
             contentContainerStyle={[
               Platform.OS === 'web' && {
@@ -51,28 +50,19 @@ export default function CrossPlatformLayout({
                 />
               )
             }>
-            {children}
+            <>
+              {!isLoading && <NetworkStateBanner />}
+              {children}
+            </>
           </ScrollView>
-        </SafeAreaView>
+        </KeyboardAwareScrollView>
       ) : (
-        <SafeAreaView
-          style={[
-            { flex: 1, ...outerStyles, backgroundColor: colors.background },
-            (isError || isLoading) && styles.centered,
-            Platform.OS === 'web' && {
-              maxWidth: 600,
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              height: '100%',
-              width: '100%',
-            },
-          ]}
-          edges={edges}>
+        <>
           {!isLoading && <NetworkStateBanner />}
           {children}
-        </SafeAreaView>
+        </>
       )}
-    </BottomSheetModalProvider>
+    </SafeAreaView>
   );
 }
 

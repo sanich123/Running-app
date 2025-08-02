@@ -15,7 +15,6 @@ import ShowCameraBtn from './show-camera-btn/show-camera-btn';
 import SportsBtns from './sports-btns/sports-btns';
 import TextInputs from './text-inputs/text-inputs';
 import UploadPhotosBtn from './upload-photos-btn/upload-photos-btn';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useTheme } from 'react-native-paper';
 
@@ -31,7 +30,7 @@ export default function SaveResult() {
   const [images, setImages] = useState<{ url: string; thumbnail: string | null }[]>([]);
 
   return (
-    <BottomSheetModalProvider>
+    <>
       {!isCameraVisible ? (
         <ScrollView
           style={[
@@ -65,7 +64,7 @@ export default function SaveResult() {
       ) : (
         <>{Platform.OS !== 'web' && <CameraLauncher />}</>
       )}
-    </BottomSheetModalProvider>
+    </>
   );
 }
 

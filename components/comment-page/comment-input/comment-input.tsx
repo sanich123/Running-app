@@ -86,6 +86,7 @@ export default function CommentInput({
       value={comment}
       onChangeText={(comment) => setComment(comment)}
       disabled={isCommentSending || isUpdatingComment}
+      autoFocus
       right={
         <TextInput.Icon
           testID={COMMENT_ICON_TEST_ID}

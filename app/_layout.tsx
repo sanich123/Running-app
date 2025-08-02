@@ -13,6 +13,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '@const/toast-config';
 import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({
@@ -33,11 +34,13 @@ export default function RootLayout() {
             <KeyboardProvider>
               <SystemBars style="auto" />
               <PaperProvider theme={paperTheme}>
-                <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
-                  <Stack.Screen name="(protected)" />
-                  <Stack.Screen name="sign-in" />
-                </Stack>
-                <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
+                <BottomSheetModalProvider>
+                  <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
+                    <Stack.Screen name="(protected)" />
+                    <Stack.Screen name="sign-in" />
+                  </Stack>
+                  <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
+                </BottomSheetModalProvider>
               </PaperProvider>
             </KeyboardProvider>
           </SafeAreaProvider>

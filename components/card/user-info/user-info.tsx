@@ -8,7 +8,7 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { UserInfoProps } from './const';
 
 export default function UserInfo({ profile, sport, date, userId, size }: UserInfoProps) {
-  const { dark } = useTheme();
+  const { dark, colors } = useTheme();
   const { push } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
   return (
@@ -27,9 +27,8 @@ export default function UserInfo({ profile, sport, date, userId, size }: UserInf
         <View>
           <View>
             <Text
-              variant={
-                size === 'large' ? 'titleLarge' : 'bodyLarge'
-              }>{`${profile?.name} ${profile?.surname ?? ''}`}</Text>
+              variant={size === 'large' ? 'titleLarge' : 'bodyLarge'}
+              style={{ color: colors.onBackground }}>{`${profile?.name} ${profile?.surname ?? ''}`}</Text>
           </View>
           <View>
             <Text variant="bodyMedium">

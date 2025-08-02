@@ -24,11 +24,13 @@ export default function BackgroundLocationModal({
       snapPoints={['50%']}
       backdropComponent={renderBackdrop}
       handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.onSecondary }}
+      backgroundStyle={{ backgroundColor: colors.background }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 10, backgroundColor: colors.onSecondary }}>
+      <BottomSheetView style={{ flex: 1, padding: 15, backgroundColor: colors.background }}>
         <View style={{ flex: 1 }}>
-          <Text variant="bodyLarge">{BACKGROUND_LOCATIONS[language].needToAllow}</Text>
+          <Text variant="bodyLarge" style={{ textAlign: 'justify' }}>
+            {BACKGROUND_LOCATIONS[language].needToAllow}
+          </Text>
           <Button
             mode="outlined"
             style={{ marginTop: 15 }}

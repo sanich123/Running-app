@@ -6,7 +6,6 @@ import ActivityCard from './card';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { setUserId } from '@R/slices/auth/auth';
 
@@ -27,23 +26,21 @@ describe('Activity card', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const { description, title, date, sport, id, photoVideoUrls, profile, duration, distance } = MOCK_ACTIVITY;
     renderWithProviders(
-      <BottomSheetModalProvider>
-        <ActivityCard
-          isShowDeleteBtn
-          isShowDescription
-          description={description}
-          title={title}
-          date={`${new Date(date)}`}
-          sport={sport as SPORTS_BTNS_VALUES}
-          id={id}
-          userId="someUserId"
-          photoVideoUrls={photoVideoUrls}
-          duration={duration}
-          distance={distance}
-          profile={MOCK_PROFILE}
-          commentsLength={6}
-        />
-      </BottomSheetModalProvider>,
+      <ActivityCard
+        isShowDeleteBtn
+        isShowDescription
+        description={description}
+        title={title}
+        date={`${new Date(date)}`}
+        sport={sport as SPORTS_BTNS_VALUES}
+        id={id}
+        userId="someUserId"
+        photoVideoUrls={photoVideoUrls}
+        duration={duration}
+        distance={distance}
+        profile={MOCK_PROFILE}
+        commentsLength={6}
+      />,
       { store: mockStore },
     );
     expect(screen.getByText(new RegExp(`${profile.name}`))).toBeOnTheScreen();

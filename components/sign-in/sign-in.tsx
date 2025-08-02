@@ -18,11 +18,9 @@ import { useLazyVerifyConfigQuery } from '@R/services/authentication/authenticat
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorToast } from '@C/shared/error-toast/error-toast';
 import { SignInPageStates } from '@U/validate-email-password';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from 'react-native-paper';
+import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
 
 export default function SignIn() {
-  const { colors } = useTheme();
   const { email, password, pageState } = useAppSelector(({ logining }) => logining);
   const { isNeedToShowConfirmEmailInput } = useAppSelector(({ auth }) => auth);
   const { control, handleSubmit, watch } = useForm<EmailPasswordData>({
@@ -50,7 +48,7 @@ export default function SignIn() {
   }, [replace, url, verifyToken]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['bottom']}>
+    <CrossPlatformLayout edges={['bottom']} scrollViewEnabled>
       <Intro />
       <View style={styles.inputsWrapper}>
         {Platform.OS !== 'web' ? <GoogleSignBtn /> : <GoogleSignInWeb />}
@@ -76,7 +74,7 @@ export default function SignIn() {
         <LoginRegisterBtn handleSubmit={handleSubmit} />
         <LoginRegisterNavigation />
       </View>
-    </SafeAreaView>
+    </CrossPlatformLayout>
   );
 }
 

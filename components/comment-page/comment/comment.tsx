@@ -25,13 +25,11 @@ export default function Comment({
 }: CommentProps) {
   const { userId } = useAppSelector(({ auth }) => auth);
   const isYouAuthor = userId === authorId;
-
   return (
     <>
       <View style={{ padding: 10 }}>
         <UserInfo profile={profile} date={date} userId={authorId} size={UserInfoSize.small} />
       </View>
-
       <View style={styles.textCommentWrapper}>
         {idOfUpdatingComment === id ? (
           <CommentInput

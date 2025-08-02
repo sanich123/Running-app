@@ -1,11 +1,10 @@
 import ErrorComponent from '@C/error-component/error-component';
 import { renderCardsFunction } from '@C/infinite-scroll-list/render-item';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
 import { useGetSeveralActivitiesByTheirIdsQuery } from '@R/services/activity/activity';
 import { useLocalSearchParams } from 'expo-router';
 import { FlatList } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ActivitiesList() {
   const {
@@ -22,19 +21,12 @@ export default function ActivitiesList() {
   });
 
   return (
-    <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
-      <BottomSheetModalProvider>
-        {isLoading && <ActivityIndicator size="large" />}
-        {isError && <ErrorComponent error={error} />}
-        {isSuccess && (
-          <FlatList
-            data={activities}
-            renderItem={renderCardsFunction}
-            initialNumToRender={5}
-            maxToRenderPerBatch={10}
-          />
-        )}
-      </BottomSheetModalProvider>
-    </SafeAreaView>
+    <CrossPlatformLayout edges={[]} isError={isError} isLoading={isLoading} outerStyles={{ padding: 10 }}>
+      {isLoading && <ActivityIndicator size="large" />}
+      {isError && <ErrorComponent error={error} />}
+      {isSuccess && (
+        <FlatList data={activities} renderItem={renderCardsFunction} initialNumToRender={5} maxToRenderPerBatch={10} />
+      )}
+    </CrossPlatformLayout>
   );
 }

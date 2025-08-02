@@ -1,57 +1,46 @@
 import ErrorComponent from '@C/error-component/error-component';
+import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
 import UserListItem from '@C/user-list-item/user-list-item';
-import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import useRefresh from '@U/hooks/use-refresh';
 import { useLocalSearchParams } from 'expo-router';
-import { View, FlatList, useWindowDimensions, Platform } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ListOfFollowing() {
-  const { width } = useWindowDimensions();
   const { id: userId } = useLocalSearchParams();
   const { isLoading, error, isError, data: users, refetch } = useGetYouFollowUsersByUserIdQuery(`${userId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
-    <SafeAreaView
-      edges={['bottom', 'left', 'right']}
-      style={[
-        {
-          flex: 1,
-          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
-          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
-        },
-        (isLoading || isError || !users.length) && { justifyContent: 'center' },
-      ]}>
-      <View>
-        {users && (
-          <FlatList
-            onRefresh={onRefresh}
-            refreshing={refreshing}
-            data={users}
-            renderItem={({ item }) => (
-              <UserListItem
-                city={item.profile?.city}
-                name={item.profile?.name}
-                surname={item.profile?.surname}
-                profilePhoto={item.profile?.profilePhoto}
-                placeholder={item.profile?.profilePhotoBlurhash}
-                user_id={item?.friendId}
-              />
-            )}
-            ListEmptyComponent={
-              <View style={{ alignItems: 'center' }}>
-                <Text variant="headlineLarge">Nobody is following you</Text>
-              </View>
-            }
-            ItemSeparatorComponent={() => <Divider />}
-          />
-        )}
-        {isLoading && <ActivityIndicator size="large" />}
-        {error ? <ErrorComponent error={error} /> : null}
-      </View>
-    </SafeAreaView>
+    <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
+      {users && (
+        <FlatList
+          onRefresh={onRefresh}
+          refreshing={refreshing}
+          data={users}
+          renderItem={({ item }) => (
+            <UserListItem
+              city={item.profile?.city}
+              name={item.profile?.name}
+              surname={item.profile?.surname}
+              profilePhoto={item.profile?.profilePhoto}
+              placeholder={item.profile?.profilePhotoBlurhash}
+              user_id={item?.friendId}
+            />
+          )}
+          contentContainerStyle={{ flex: 1 }}
+          ListEmptyComponent={
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text variant="headlineMedium">Nobody is following you</Text>
+            </View>
+          }
+          ItemSeparatorComponent={() => <Divider />}
+        />
+      )}
+
+      {isLoading && <ActivityIndicator size="large" />}
+      {isError ? <ErrorComponent error={error} /> : null}
+    </CrossPlatformLayout>
   );
 }

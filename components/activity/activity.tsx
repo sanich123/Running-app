@@ -7,7 +7,6 @@ import Metrics from '@C/metrics/metrics';
 import { useAppSelector } from '@R/typed-hooks';
 import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
 import { STATUSES } from '@const/enums';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
@@ -20,24 +19,22 @@ export default function Activity() {
   const [isReadyToRecordLocation, setIsReadyToRecordLocation] = useState(false);
 
   return (
-    <BottomSheetModalProvider>
-      <SafeAreaView style={styles.layout} edges={['bottom']}>
-        <View style={styles.map}>
-          {(activityStatus === STATUSES.initial || isMapVisible) && (
-            <Map setIsReadyToRecordLocation={setIsReadyToRecordLocation} />
-          )}
-          {activityStatus !== STATUSES.initial && <Metrics />}
+    <SafeAreaView style={styles.layout} edges={['bottom']}>
+      <View style={styles.map}>
+        {(activityStatus === STATUSES.initial || isMapVisible) && (
+          <Map setIsReadyToRecordLocation={setIsReadyToRecordLocation} />
+        )}
+        {activityStatus !== STATUSES.initial && <Metrics />}
+      </View>
+      <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
+        <View style={styles.metrics}>
+          {activityStatus === STATUSES.initial && <IconChooseSport />}
+          {activityStatus === STATUSES.paused && <PauseBtn />}
+          <StartBtn isReadyToRecordLocation={isReadyToRecordLocation} />
+          {activityStatus !== STATUSES.initial && <ShowMapBtn />}
         </View>
-        <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
-          <View style={styles.metrics}>
-            {activityStatus === STATUSES.initial && <IconChooseSport />}
-            {activityStatus === STATUSES.paused && <PauseBtn />}
-            <StartBtn isReadyToRecordLocation={isReadyToRecordLocation} />
-            {activityStatus !== STATUSES.initial && <ShowMapBtn />}
-          </View>
-        </View>
-      </SafeAreaView>
-    </BottomSheetModalProvider>
+      </View>
+    </SafeAreaView>
   );
 }
 

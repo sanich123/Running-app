@@ -7,7 +7,6 @@ import PrefetchActivitiesBtn from './prefetch-activities-btn/prefetch-activities
 import ClearCacheBtn from './clear-cache-btn/clear-cache-btn';
 import MigrationBtn from './migration-btn/migration-btn';
 import { useTheme } from 'react-native-paper';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import ChangeTheme from './change-theme/change-theme';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 
@@ -22,16 +21,14 @@ export default function SettingsPage() {
         width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
         marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
       }}>
-      <BottomSheetModalProvider>
-        <LanguageSwitcher />
-        {Platform.OS !== 'web' && <ChangeTheme />}
-        <MigrationBtn />
-        <ClearCacheBtn />
-        <PrefetchActivitiesBtn />
-        <EmailNotificationsBtn />
-        <LogoutBtn />
-        <DeleteAccountBtn />
-      </BottomSheetModalProvider>
+      <LanguageSwitcher />
+      {Platform.OS !== 'web' && <ChangeTheme />}
+      <MigrationBtn />
+      <ClearCacheBtn />
+      <PrefetchActivitiesBtn />
+      <EmailNotificationsBtn />
+      <LogoutBtn />
+      <DeleteAccountBtn />
     </ScrollView>
   );
 }

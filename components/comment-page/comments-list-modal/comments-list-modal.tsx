@@ -22,11 +22,11 @@ export default function CommentsListModal({
   return (
     <BottomSheetModal
       ref={commentsModalRef}
-      index={1}
+      index={3}
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.onSecondary }}
+      backgroundStyle={{ backgroundColor: colors.background }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
       <View style={{ paddingHorizontal: 10, marginBottom: 5 }}>
         {isShowingTextInput && !idOfUpdatingComment ? (

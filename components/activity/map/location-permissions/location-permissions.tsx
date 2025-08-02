@@ -11,7 +11,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { Link } from 'expo-router';
 import { useRef } from 'react';
 import { View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 
 export default function LocationPermissions({
   setIsAppOptimizedByPhone,
@@ -26,12 +26,17 @@ export default function LocationPermissions({
   requestForegroundPermission,
   requestBackgroundPermission,
 }: LocationPermissionsProps) {
+  const { colors } = useTheme();
   const backgroundLocationEnabledModalRef = useRef<BottomSheetModal>(null);
   const batteryOptimizationEnabledModalRef = useRef<BottomSheetModal>(null);
   const { userId } = useAppSelector(({ auth }) => auth);
   const { data: profile, isSuccess } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   return (
-    <View style={[{ flex: 1, justifyContent: 'center', alignItems: 'flex-end' }, isMapVisible && { height: '60%' }]}>
+    <View
+      style={[
+        { flex: 1, justifyContent: 'center', alignItems: 'flex-end', backgroundColor: colors.background },
+        isMapVisible && { height: '60%' },
+      ]}>
       {!isLocationEnabled && (
         <LocationSettingsSwitcher isLocationEnabled={isLocationEnabled} setIsLocationEnabled={setIsLocationEnabled} />
       )}
