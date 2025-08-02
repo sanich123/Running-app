@@ -41,7 +41,7 @@ export default function Feed() {
 
   return (
     <SafeAreaView
-      edges={['bottom']}
+      edges={[]}
       style={[
         { flex: 1, backgroundColor: colors.background },
         (isLoading || isError || !activities?.length) && {
