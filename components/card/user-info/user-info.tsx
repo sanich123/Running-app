@@ -27,7 +27,9 @@ export default function UserInfo({ profile, sport, date, userId, size }: UserInf
         <View>
           <View>
             <Text
-              variant={size === 'large' ? 'titleLarge' : 'bodyLarge'}>{`${profile?.name} ${profile?.surname}`}</Text>
+              variant={
+                size === 'large' ? 'titleLarge' : 'bodyLarge'
+              }>{`${profile?.name} ${profile?.surname ?? ''}`}</Text>
           </View>
           <View>
             <Text variant="bodyMedium">
