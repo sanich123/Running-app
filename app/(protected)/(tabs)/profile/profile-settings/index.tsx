@@ -6,13 +6,16 @@ import InputsWeightCity from '@C/save-activity-page/inputs-weight-city/inputs-we
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useState } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 export default function ProfileSettings() {
+  const { colors } = useTheme();
   const [isDisabled, setIsDisabled] = useState(false);
   const { width } = useWindowDimensions();
   return (
     <View
       style={[
+        { backgroundColor: colors.background },
         styles.container,
         {
           width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
@@ -32,9 +35,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    gap: 15,
-    marginTop: 40,
-    marginRight: 15,
-    marginLeft: 15,
+    gap: 10,
+    padding: 10,
   },
 });

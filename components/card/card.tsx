@@ -5,7 +5,6 @@ import { usePathname } from 'expo-router';
 import { useRef, memo, useEffect } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Card, useTheme } from 'react-native-paper';
-
 import Btns from './btns/btns';
 import { LikesSize } from './likes/const';
 import Likes from './likes/likes';
@@ -42,7 +41,6 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const cardRef = useRef(null);
   const prefetchFullActivity = activityApi.usePrefetch('getActivityByActivityId');
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
-
   useEffect(() => {
     if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
       prefetchFullActivity(`${id}`);

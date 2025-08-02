@@ -7,9 +7,12 @@ import { useEffect, useState } from 'react';
 import { useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
 import LocationIndicator from '../location-indicator/location-indicator';
 import LocationPermissions from './location-permissions/location-permissions';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 
 export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecordLocation: (arg: boolean) => void }) {
   const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [foregroundPermissionStatus, requestForegroundPermission] = useForegroundPermissions();
   const [backgroundPermissionStatus, requestBackgroundPermission] = useBackgroundPermissions();
@@ -20,9 +23,9 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
       ? isLocationEnabled &&
         foregroundPermissionStatus?.granted &&
         backgroundPermissionStatus?.granted &&
-        !isAppOptimizedByPhone
-      : foregroundPermissionStatus?.granted && backgroundPermissionStatus?.granted;
-
+        !isAppOptimizedByPhone &&
+        profile
+      : foregroundPermissionStatus?.granted && backgroundPermissionStatus?.granted && profile;
   useEffect(() => {
     if (isReadyToShowLocationOnMap) {
       setIsReadyToRecordLocation(true);

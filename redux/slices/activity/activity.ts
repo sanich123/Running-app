@@ -53,6 +53,9 @@ export const activity = createSlice({
     setIsManualAdding: (state, action) => {
       state.isManualAdding = action.payload;
     },
+    setActivityId: (state, { payload }) => {
+      state.activityId = payload;
+    },
     setManualDate: (state, action) => {
       state.manualDate = action.payload;
     },
@@ -115,6 +118,7 @@ export const {
   resetPhotoUrls,
   setIsEditingActivity,
   resetActivitySlice,
+  setActivityId,
 } = activity.actions;
 
 export default activity.reducer;

@@ -108,7 +108,11 @@ export default {
       [
         'expo-build-properties',
         {
-          ios: { deploymentTarget: '15.5' },
+          android: {
+            enableProguardInReleaseBuilds: true,
+            enableShrinkResourcesInReleaseBuilds: true,
+          },
+          ios: { ccacheEnabled: true, deploymentTarget: '15.5' },
         },
       ],
       [

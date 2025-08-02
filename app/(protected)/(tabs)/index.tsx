@@ -13,7 +13,7 @@ export default function HomePage() {
     <>
       <Stack.Screen
         options={{
-          headerStyle: { backgroundColor: colors.secondaryContainer },
+          headerStyle: { backgroundColor: colors.surfaceVariant },
           headerTintColor: colors.onSurfaceVariant,
           headerTitleStyle: { fontWeight: 'bold' },
           headerRight: () => <UsersSettingsIcons />,

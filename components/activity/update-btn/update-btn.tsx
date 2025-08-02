@@ -9,6 +9,7 @@ import {
   saveIsPublic,
   saveSport,
   saveTitle,
+  setActivityId,
   setIsEditingActivity,
   setIsManualAdding,
   setManualDate,
@@ -39,6 +40,7 @@ export default function UpdateBtn() {
       onPress={() => {
         if (activity) {
           dispatch(setIsManualAdding(false));
+          dispatch(setActivityId(activity.id));
           dispatch(setIsEditingActivity(true));
           dispatch(resetFinishedActivity());
           dispatch(resetManualData());

@@ -32,7 +32,7 @@ export default function MonthStatistics() {
   const { language } = useAppSelector(({ language }) => language);
   const isRussian = language === LANGUAGES.russian;
   return (
-    <View style={(isLoading || isError) && { flex: 1, justifyContent: 'center', backgroundColor: colors.background }}>
+    <View style={[{ backgroundColor: colors.background }, (isLoading || isError) && { justifyContent: 'center' }]}>
       {isLoading && <ActivityIndicator size="large" />}
       {isError && <ErrorComponent error={error} />}
       {isSuccess && (

@@ -24,7 +24,7 @@ export default function ProtectedLayout() {
     return (
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: colors.secondaryContainer },
+          headerStyle: { backgroundColor: colors.surfaceVariant },
           headerTintColor: colors.onSurfaceVariant,
           headerTitleStyle: { fontWeight: 'bold' },
         }}>

@@ -43,9 +43,15 @@ export default function WeekStatistics() {
       style={[
         styles.container,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.surfaceVariant,
           width: width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH,
           marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          borderCurve: 'continuous',
+          shadowColor: 'black',
+          shadowOffset: { width: 0, height: 10 },
+          shadowRadius: 10,
+          shadowOpacity: 0.1,
+          marginBottom: 5,
         },
       ]}>
       <>

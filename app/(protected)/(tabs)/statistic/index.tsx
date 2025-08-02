@@ -37,9 +37,9 @@ export default function Statistics() {
   return (
     <ScrollView
       contentContainerStyle={[
+        { backgroundColor: colors.background },
         (isLoading || isError || !yearStats?.isUserHasActivities) && {
           ...styles.isInCenter,
-          backgroundColor: colors.background,
         },
         {
           width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
@@ -113,5 +113,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginVertical: 15,
   },
-  isInCenter: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  isInCenter: { alignItems: 'center', justifyContent: 'center' },
 });

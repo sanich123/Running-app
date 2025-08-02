@@ -1,6 +1,5 @@
-import EmptyActivitiesList from '@C/empty-activities-list/empty-activities-list';
 import useRefresh from '@U/hooks/use-refresh';
-import { FlatList, Platform } from 'react-native';
+import { FlatList } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { keyExtractor, renderCardsFunction } from './render-item';
 import { InfiniteScrollListProps } from './type';
@@ -11,7 +10,6 @@ export default function InfiniteScrollList({
   refetch,
   isLastPage,
   nextPageCallback,
-  isFetching,
 }: InfiniteScrollListProps) {
   const { onRefresh, refreshing } = useRefresh(refetch);
 
@@ -22,16 +20,15 @@ export default function InfiniteScrollList({
       refreshing={refreshing}
       keyExtractor={keyExtractor}
       renderItem={renderCardsFunction}
-      ListEmptyComponent={<EmptyActivitiesList />}
       initialNumToRender={5}
       maxToRenderPerBatch={10}
-      onEndReachedThreshold={Platform.OS === 'web' ? 0.8 : 0.5}
+      onEndReachedThreshold={0.5}
       onEndReached={() => {
         if (!isLastPage) {
           nextPageCallback();
         }
       }}
-      ListFooterComponent={() => !isLastPage && <ActivityIndicator size="large" />}
+      ListFooterComponent={() => !isLastPage && dataToRender.length > 9 && <ActivityIndicator size="large" />}
       ListHeaderComponent={() => (dataToRender?.length ? <WeekStatistics /> : null)}
     />
   );

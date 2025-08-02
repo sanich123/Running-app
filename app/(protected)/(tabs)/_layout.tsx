@@ -1,6 +1,5 @@
 import { ROUTES } from '@const/enums';
 import { Tabs, usePathname } from 'expo-router';
-import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import AvatarShowable from '@C/avatar/showable/showable';
@@ -16,40 +15,46 @@ export default function TabLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.onSurfaceDisabled,
         tabBarAllowFontScaling: false,
-        tabBarShowLabel: false,
-        tabBarLabelStyle: { fontSize: Platform.OS !== 'web' ? 12 : 10 },
+        tabBarShowLabel: true,
         tabBarStyle: {
           backgroundColor: colors.surfaceVariant,
-          display: pathname.includes('activity') ? 'none' : 'flex',
+          display: pathname === '/activity' ? 'none' : 'flex',
         },
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: () => <AntDesign name="home" color={colors.onBackground} size={30} />,
+          tabBarIcon: ({ focused }) => (
+            <AntDesign name="home" color={focused ? colors.primary : colors.onBackground} size={30} />
+          ),
         }}
       />
       <Tabs.Screen
         name={ROUTES.activity}
         options={{
+          tabBarLabel: 'Активность',
           headerShown: false,
-          tabBarIcon: () => <AntDesign name="playcircleo" color={colors.onBackground} size={28} />,
+          tabBarIcon: ({ focused }) => (
+            <AntDesign name="playcircleo" color={focused ? colors.primary : colors.onBackground} size={28} />
+          ),
         }}
       />
       <Tabs.Screen
         name={ROUTES.statistic}
         options={{
           headerShown: false,
-          tabBarIcon: () => (
-            <AntDesign name="piechart" color={colors.onBackground} size={28} style={{ margin: 0, padding: 0 }} />
+          tabBarLabel: 'Статистика',
+          tabBarIcon: ({ focused }) => (
+            <AntDesign name="piechart" color={focused ? colors.primary : colors.onBackground} size={28} />
           ),
         }}
       />
       <Tabs.Screen
         name={ROUTES.profile}
         options={{
+          tabBarLabel: 'Профиль',
           headerShown: false,
-          tabBarIcon: () => <AvatarShowable size={30} id={userId} />,
+          tabBarIcon: ({ focused }) => <AvatarShowable size={30} id={userId} focused={focused} />,
         }}
       />
     </Tabs>

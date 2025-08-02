@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
-import { useGlobalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
@@ -24,6 +24,7 @@ export default function SaveBtn() {
   const { replace } = useRouter();
   const {
     additionalInfo,
+    activityId,
     isDisabledWhileSending,
     isManualAdding,
     isEditingActivity,
@@ -38,10 +39,6 @@ export default function SaveBtn() {
   const [updateActivity] = useUpdateActivityInfoMutation();
   const [activityToSend, setActivityToSend] = useState<ActivityToSend>();
   const textOnBtn = isEditingActivity ? ACTIVITY_SAVE_BTN[language].update : ACTIVITY_SAVE_BTN[language].save;
-  const textOnBtnWhenIsSending = isEditingActivity
-    ? ACTIVITY_SAVE_BTN[language].updating
-    : ACTIVITY_SAVE_BTN[language].saving;
-  const { activityId } = useGlobalSearchParams();
 
   const onSuccessHandler = () => {
     dispatch(setIsDisableWhileSending(false));
@@ -100,13 +97,21 @@ export default function SaveBtn() {
                         mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
                       },
                     },
-              id: isEditingActivity ? `${activityId}` : userId,
+              id: isEditingActivity ? activityId : userId,
             };
             setActivityToSend(savedActivity);
             if (isEditingActivity) {
-              await updateActivity(savedActivity).unwrap().then(onSuccessHandler).catch(onErrorHandler);
+              await updateActivity(savedActivity)
+                .unwrap()
+                .then(onSuccessHandler)
+                .catch(onErrorHandler)
+                .finally(() => dispatch(setIsDisableWhileSending(false)));
             } else {
-              await sendActivity(savedActivity).unwrap().then(onSuccessHandler).catch(onErrorHandler);
+              await sendActivity(savedActivity)
+                .unwrap()
+                .then(onSuccessHandler)
+                .catch(onErrorHandler)
+                .finally(() => dispatch(setIsDisableWhileSending(false)));
             }
           }
         } catch (error) {
@@ -115,9 +120,9 @@ export default function SaveBtn() {
           setIsDisableWhileSending(false);
         }
       }}
-      disabled={false}>
+      disabled={isDisabledWhileSending}>
       <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
-        {isDisabledWhileSending ? textOnBtnWhenIsSending : textOnBtn}
+        {textOnBtn}
       </Text>
     </TouchableRipple>
   );

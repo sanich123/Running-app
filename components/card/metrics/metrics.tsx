@@ -2,11 +2,10 @@ import ShowMetrics from '@C/show-metrics/show-metrics';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
 import { CARD_METRICS } from './const';
 import { MetricsProps } from '../types';
 
@@ -22,11 +21,15 @@ export default memo(function Metrics({
   const { dark } = useTheme();
   const { push } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
-
+  const pathname = usePathname();
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/(protected)/activity/${id}?userId=${userId}`)}
+      onPress={() => {
+        if (!pathname.includes('activity')) {
+          push(`/(protected)/activity/${id}?userId=${userId}`);
+        }
+      }}
       borderless
       style={{ paddingLeft: 5, paddingVertical: 2 }}>
       <>

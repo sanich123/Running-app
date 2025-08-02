@@ -4,10 +4,11 @@ import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
-import { Avatar } from 'react-native-paper';
+import { Avatar, useTheme } from 'react-native-paper';
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
-export default function AvatarShowable({ size, id }: { size: number; id: string }) {
+export default function AvatarShowable({ size, id, focused }: { size: number; id: string; focused?: boolean }) {
+  const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const isMineAvatar = id === userId;
@@ -25,7 +26,10 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
         <>
           {profile?.profilePhoto ? (
             <CustomImage
-              style={{ width: size, height: size, borderRadius: 70 }}
+              style={[
+                { width: size, height: size, borderRadius: 70 },
+                { borderWidth: 1, borderColor: focused ? colors.primary : 'transparent' },
+              ]}
               source={{ uri: profile?.profilePhoto }}
               contentFit="cover"
               testID={AvatarShowableTestIds.success}

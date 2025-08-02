@@ -11,13 +11,11 @@ const renderScene = SceneMap({
 });
 
 export default function ProfileIndexPage() {
-  const {
-    colors: { surfaceVariant, primary, onSurfaceDisabled },
-  } = useTheme();
+  const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const [index, setIndex] = useState(0);
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <TabView
         lazy
         navigationState={{
@@ -33,13 +31,13 @@ export default function ProfileIndexPage() {
         renderTabBar={(props) => (
           <TabBar
             {...props}
-            indicatorStyle={{ backgroundColor: primary }}
-            style={{ backgroundColor: surfaceVariant }}
+            indicatorStyle={{ backgroundColor: colors.primary }}
+            style={{ backgroundColor: colors.surfaceVariant }}
             contentContainerStyle={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
             tabStyle={{ width: width / 2 }}
             pressColor="white-smoke"
-            activeColor={primary}
-            inactiveColor={onSurfaceDisabled}
+            activeColor={colors.primary}
+            inactiveColor={colors.onSurfaceDisabled}
           />
         )}
       />

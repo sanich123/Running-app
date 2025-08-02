@@ -1,6 +1,5 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { TextInput } from 'react-native-paper';
-
 import { SEARCH_INPUT, SearchInputProps } from './const';
 import { Platform, useWindowDimensions } from 'react-native';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -18,7 +17,7 @@ export default function SearchInput({ setSearch, setIsInitial, search }: SearchI
         marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
       }}
       onChangeText={(search) => {
-        setSearch(search);
+        setSearch(search.toLowerCase());
         setIsInitial(false);
       }}
       value={search}

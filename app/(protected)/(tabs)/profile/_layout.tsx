@@ -13,7 +13,7 @@ export default function ProfileStack() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: colors.secondaryContainer },
+        headerStyle: { backgroundColor: colors.surfaceVariant },
         headerTintColor: colors.onSurfaceVariant,
         headerTitleStyle: { fontWeight: 'bold' },
         title: LABELS[language].profile,

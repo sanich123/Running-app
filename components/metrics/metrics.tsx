@@ -18,8 +18,7 @@ export default function Metrics() {
   return (
     <>
       <ActivityErrorMsg />
-      <View
-        style={[styles.layout, { backgroundColor: colors.secondaryContainer, height: isMapVisible ? '12%' : '100%' }]}>
+      <View style={[styles.layout, { backgroundColor: colors.surfaceVariant, height: isMapVisible ? '12%' : '100%' }]}>
         <MetricsItem
           isMapVisible={isMapVisible}
           title={`${MAP_METRICS[language].time}:`}

@@ -6,7 +6,6 @@ import { useAppSelector } from '@R/typed-hooks';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
-
 import DateTimePicker from './date-picker/date-picker';
 import DeclineBtn from './decline-btn/decline-btn';
 import EmotionBtns from './emotion-btns/emotion-btns';
@@ -18,8 +17,10 @@ import TextInputs from './text-inputs/text-inputs';
 import UploadPhotosBtn from './upload-photos-btn/upload-photos-btn';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { useTheme } from 'react-native-paper';
 
 export default function SaveResult() {
+  const { colors } = useTheme();
   const [isDisabled, setIsDisabled] = useState(false);
   const {
     isManualAdding,
@@ -32,7 +33,12 @@ export default function SaveResult() {
   return (
     <BottomSheetModalProvider>
       {!isCameraVisible ? (
-        <ScrollView style={[!isCameraVisible && styles.container, Platform.OS === 'web' && styles.webStyles]}>
+        <ScrollView
+          style={[
+            !isCameraVisible && styles.container,
+            Platform.OS === 'web' && styles.webStyles,
+            { backgroundColor: colors.background },
+          ]}>
           <NetworkIndicator />
           <TextInputs isDisabled={isDisabled} />
           <SportsBtns isDisabled={isDisabled} />
