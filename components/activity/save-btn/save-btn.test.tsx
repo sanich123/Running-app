@@ -1,6 +1,6 @@
 import { EMOTIONS_BTNS_VALUES } from '@C/save-activity-page/emotion-btns/const';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { saveFinishedActivity, saveTitle, saveDescription, saveSport, saveEmotion } from '@R/slices/activity/activity';
+import { saveFinishedActivity } from '@R/slices/activity/activity';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
@@ -10,6 +10,12 @@ import { screen, userEvent } from '@testing-library/react-native';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import ActivitySaveBtn from './save-btn';
 import { setUserId } from '@R/slices/auth/auth';
+import {
+  saveDescription,
+  saveEmotion,
+  saveSport,
+  saveTitle,
+} from '@R/slices/actitivity-additional-info/activity-additional-info';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: jest.fn() }),
@@ -53,7 +59,7 @@ describe('Activity save btn', () => {
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
-    expect(mockStore.getState().activity.additionalInfo.title).toEqual('');
+    expect(mockStore.getState().additionalInfoActivity.title).toEqual('');
     expect(mockStore.getState().activity.additionalInfo.sport).toEqual(SPORTS_BTNS_VALUES.run);
     expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);
   });

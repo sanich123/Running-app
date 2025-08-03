@@ -1,4 +1,4 @@
-import { setCameraIsVisible } from '@R/slices/activity/activity';
+import { setCameraIsVisible } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch } from '@R/typed-hooks';
 import { View } from 'react-native';
 import { useTheme, Icon, TouchableRipple } from 'react-native-paper';

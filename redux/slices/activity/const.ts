@@ -22,16 +22,6 @@ export const ADDITIONAL_INFO_INITIAL_STATE: AdditionalInfoType = {
 
 export const ACTIVITY_INITIAL_STATE: ActivityInitialState = {
   isDisabledWhileSending: false,
-  isHaveUnsyncedActivity: false,
-  isManualAdding: false,
-  isEditingActivity: false,
-  isCameraVisible: false,
   activityId: '',
   finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
-  additionalInfo: ADDITIONAL_INFO_INITIAL_STATE,
-  unsyncedActivities: [],
-  manualDate: '',
-  manualHours: 0,
-  manualMinutes: 0,
-  manualDistance: 0,
 };

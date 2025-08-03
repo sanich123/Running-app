@@ -15,7 +15,7 @@ export default function ProtectedLayout() {
   const { isLoading, isError, isUninitialized, isSuccess } = useInitialState();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
-  const { isCameraVisible } = useAppSelector(({ activity }) => activity);
+  const { isCameraVisible } = useAppSelector(({ manualActivity }) => manualActivity);
   if (isLoading || isUninitialized) {
     return <FullPageActivityLoader />;
   } else if (isError) {

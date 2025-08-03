@@ -1,13 +1,13 @@
-import { saveEmotion } from '@R/slices/activity/activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
 
 import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS } from './const';
+import { saveEmotion } from '@R/slices/actitivity-additional-info/activity-additional-info';
 
 export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
-  const [emotion, setEmotion] = useState<string>(store.getState().activity.additionalInfo.emotion);
+  const [emotion, setEmotion] = useState<string>(store.getState().additionalInfoActivity.emotion);
   const dispatch = useAppDispatch();
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);

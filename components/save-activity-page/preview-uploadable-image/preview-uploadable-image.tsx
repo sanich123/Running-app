@@ -1,5 +1,5 @@
 import PreviewImage from '@C/save-activity-page/preview-image/preview-image';
-import { addPhotoUrl } from '@R/slices/activity/activity';
+import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { compressAndSendFile } from '@U/file-sending';

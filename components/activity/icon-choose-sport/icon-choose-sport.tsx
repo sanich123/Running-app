@@ -8,9 +8,7 @@ import ChooseSportModal from '../choose-sport-modal/choose-sport-modal';
 
 export default function IconChooseSport() {
   const chooseSportModal = useRef<BottomSheetModal>(null);
-  const {
-    additionalInfo: { sport },
-  } = useAppSelector(({ activity }) => activity);
+  const { sport } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
 
   return (
     <View style={{ position: 'absolute', left: 0 }}>

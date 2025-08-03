@@ -6,25 +6,24 @@ import {
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { useState } from 'react';
-import { Platform } from 'react-native';
-import { TextInput } from 'react-native-paper';
-
-import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
+import { Platform, View } from 'react-native';
+import { IconButton, useTheme } from 'react-native-paper';
+import { COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
 import { CommentInputProps } from '../types';
 import { useSendEmailAfterSendingCommentMutation } from '@R/services/emails/emails';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
 
 export default function CommentInput({
   commentToUpdate = '',
-  activityId,
-  profile,
-  setIsShowingTextInput,
   commentId = '',
-  setIdOfUpdatingComment,
-  idOfUpdatingComment,
-  mapPhotoUrl,
   commentsModalRef,
+  profile,
 }: CommentInputProps) {
+  const [focused, setFocused] = useState(false);
+  const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  const { commentActivityId, mapPhotoUrl } = useAppSelector(({ comment }) => comment);
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
@@ -36,7 +35,8 @@ export default function CommentInput({
   const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
 
   async function sendingComment() {
-    return await postComment({ body: { comment, authorId: userId }, id: activityId })
+    return await postComment({ body: { comment, authorId: userId }, id: commentActivityId })
+      .unwrap()
       .then(() => sendingUpdatingCommentSuccessHandler())
       .catch((error) => {
         console.log(error);
@@ -45,15 +45,16 @@ export default function CommentInput({
   }
 
   async function updatingComment() {
-    return await updateComment({ activityId, commentId, body: { comment } })
+    return await updateComment({ activityId: commentActivityId, commentId, body: { comment } })
+      .unwrap()
       .then(sendingUpdatingCommentSuccessHandler)
       .catch(sendingUpdatingCommentErrorHandler);
   }
 
   async function sendingUpdatingCommentSuccessHandler() {
-    dispatch(setActivityIdWhichCommentsToUpdate(activityId));
-    setIsShowingTextInput(false);
-    setIdOfUpdatingComment('');
+    dispatch(setActivityIdWhichCommentsToUpdate(commentActivityId));
+    dispatch(setIsShowingTextInput(false));
+    dispatch(setIdOfUpdatingComment(''));
     setComment('');
     if (profile.emailNotifications && !commentToUpdate) {
       const objectToSend = {
@@ -79,23 +80,48 @@ export default function CommentInput({
   }
 
   return (
-    <TextInput
-      testID={COMMENT_INPUT_TEST_ID}
-      mode="outlined"
-      placeholder={COMMENT_INPUT[language].placeholder}
-      value={comment}
-      onChangeText={(comment) => setComment(comment)}
-      disabled={isCommentSending || isUpdatingComment}
-      autoFocus
-      right={
-        <TextInput.Icon
-          testID={COMMENT_ICON_TEST_ID}
-          icon="pencil"
-          disabled={!comment || isCommentSending || isUpdatingComment}
+    <View style={{ padding: 10 }}>
+      <BottomSheetTextInput
+        testID={COMMENT_INPUT_TEST_ID}
+        placeholder={COMMENT_INPUT[language].placeholder}
+        value={comment}
+        style={{
+          paddingVertical: 13,
+          paddingHorizontal: 10,
+          borderRadius: 5,
+          borderColor: colors.primary,
+          borderWidth: focused ? 2 : 1,
+          color: colors.onBackground,
+          fontSize: 16,
+        }}
+        onChangeText={(comment) => setComment(comment)}
+        onSubmitEditing={async () => {
+          if (comment) {
+            if (!commentToUpdate) {
+              return await sendingComment();
+            } else {
+              if (comment !== commentToUpdate) {
+                await updatingComment();
+              }
+            }
+          }
+        }}
+        onFocus={() => {
+          setFocused(true);
+          commentsModalRef?.current?.snapToIndex(3);
+        }}
+        onBlur={() => setFocused(false)}
+        enterKeyHint="send"
+      />
+      {comment && (
+        <IconButton
+          icon="send"
+          iconColor={colors.primary}
+          style={{ right: 5, position: 'absolute', top: 7 }}
           onPress={async () => {
             if (comment) {
               if (!commentToUpdate) {
-                await sendingComment();
+                return await sendingComment();
               } else {
                 if (comment !== commentToUpdate) {
                   await updatingComment();
@@ -103,22 +129,9 @@ export default function CommentInput({
               }
             }
           }}
+          disabled={isCommentSending || isUpdatingComment}
         />
-      }
-      onSubmitEditing={async () => {
-        if (comment) {
-          if (!commentToUpdate) {
-            return await sendingComment();
-          } else {
-            if (comment !== commentToUpdate) {
-              await updatingComment();
-            }
-          }
-        }
-      }}
-      onFocus={() => commentsModalRef?.current?.snapToIndex(3)}
-      label={COMMENT_INPUT[language].label}
-      enterKeyHint="send"
-    />
+      )}
+    </View>
   );
 }

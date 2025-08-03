@@ -1,26 +1,24 @@
 import { IconButton, useTheme } from 'react-native-paper';
 import { CommentEditBtnProps } from '../types';
+import { useAppDispatch } from '@R/typed-hooks';
+import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
 
-export default function CommentEditBtn({
-  idOfUpdatingComment,
-  setIsShowingTextInput,
-  setIdOfUpdatingComment,
-  commentId,
-}: CommentEditBtnProps) {
+export default function CommentEditBtn({ idOfUpdatingComment, commentId }: CommentEditBtnProps) {
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
   return (
     <>
       {(!idOfUpdatingComment || commentId !== idOfUpdatingComment) && (
         <IconButton
-          icon={'pencil'}
+          icon="pencil"
           size={20}
           iconColor={colors.primary}
           onPress={() => {
-            setIsShowingTextInput(true);
+            dispatch(setIsShowingTextInput(true));
             if (commentId !== idOfUpdatingComment) {
-              setIdOfUpdatingComment(commentId);
+              dispatch(setIdOfUpdatingComment(commentId));
             } else {
-              setIdOfUpdatingComment('');
+              dispatch(setIdOfUpdatingComment(''));
               setIsShowingTextInput(false);
             }
           }}

@@ -1,28 +1,28 @@
 import { ACTIVITY_SAVE_BTN } from '@C/activity/save-btn/const';
-import {
-  addPhotoUrls,
-  resetActivityInfo,
-  resetFinishedActivity,
-  resetManualData,
-  saveDescription,
-  saveEmotion,
-  saveIsPublic,
-  saveSport,
-  saveTitle,
-  setActivityId,
-  setIsEditingActivity,
-  setIsManualAdding,
-  setManualDate,
-  setManualDistance,
-  setManualHours,
-  setManualMinutes,
-} from '@R/slices/activity/activity';
+import { resetFinishedActivity, setActivityId } from '@R/slices/activity/activity';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
+import {
+  resetManualActivitySlice,
+  setIsEditingActivity,
+  setManualDate,
+  setManualDistance,
+  setManualHours,
+  setManualMinutes,
+} from '@R/slices/manual-activity/manual-activity';
+import {
+  addPhotoUrls,
+  resetAdditionaInfoActivitySlice,
+  saveDescription,
+  saveEmotion,
+  saveIsPublic,
+  saveSport,
+  saveTitle,
+} from '@R/slices/actitivity-additional-info/activity-additional-info';
 
 export default function UpdateBtn() {
   const { colors, dark } = useTheme();
@@ -39,12 +39,12 @@ export default function UpdateBtn() {
       disabled={isError || isLoading}
       onPress={() => {
         if (activity) {
-          dispatch(setIsManualAdding(false));
-          dispatch(setActivityId(activity.id));
-          dispatch(setIsEditingActivity(true));
           dispatch(resetFinishedActivity());
-          dispatch(resetManualData());
-          dispatch(resetActivityInfo());
+          dispatch(resetManualActivitySlice());
+          dispatch(resetAdditionaInfoActivitySlice());
+
+          dispatch(setIsEditingActivity(true));
+          dispatch(setActivityId(activity.id));
           dispatch(saveTitle(activity?.title));
           dispatch(saveDescription(activity?.description));
           dispatch(saveSport(activity?.sport));

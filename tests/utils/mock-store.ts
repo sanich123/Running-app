@@ -8,6 +8,10 @@ import network from '@R/slices/network/network';
 import language from '@R/slices/language/language';
 import auth from '@R/slices/auth/auth';
 import logining from '@R/slices/logining/logining';
+import manualActivity from '@R/slices/manual-activity/manual-activity';
+import { additionalInfoActivity } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import unsendedActivity from '@R/slices/unsended-activity/unsended-activity';
+import comment from '@R/slices/comment/comment';
 
 const rootReducer = combineReducers({
   network,
@@ -18,6 +22,10 @@ const rootReducer = combineReducers({
   mainFeed,
   auth,
   logining,
+  manualActivity,
+  additionalInfoActivity,
+  unsendedActivity,
+  comment,
   [runichApi.reducerPath]: runichApi.reducer,
 });
 

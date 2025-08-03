@@ -1,9 +1,9 @@
-import { addPhotoUrl, setIsDisableWhileSending } from '@R/slices/activity/activity';
+import { setIsDisableWhileSending } from '@R/slices/activity/activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { screen, userEvent } from '@testing-library/react-native';
-
 import PreviewImageCloseBtn from './preview-image-close-btn';
+import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
 
 describe('Preview image close btn', () => {
   it('should correctly renders and delete image from local and global state', async () => {

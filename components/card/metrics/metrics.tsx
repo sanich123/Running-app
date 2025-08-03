@@ -22,11 +22,12 @@ export default memo(function Metrics({
   const { push } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
   const pathname = usePathname();
+
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => {
-        if (!pathname.includes('activity')) {
+        if (pathname !== `/activity/${id}`) {
           push(`/(protected)/activity/${id}?userId=${userId}`);
         }
       }}

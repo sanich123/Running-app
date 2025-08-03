@@ -11,6 +11,10 @@ import profile from './slices/profile/profile';
 import auth from './slices/auth/auth';
 import { runichApi } from './runich-api/runich-api';
 import logining from './slices/logining/logining';
+import manualActivity from './slices/manual-activity/manual-activity';
+import additionalInfoActivity from './slices/actitivity-additional-info/activity-additional-info';
+import unsendedActivity from './slices/unsended-activity/unsended-activity';
+import comment from './slices/comment/comment';
 
 const persistConfig = {
   key: 'root',
@@ -29,6 +33,10 @@ const rootReducer = persistReducer(
     mainFeed,
     auth,
     logining,
+    manualActivity,
+    additionalInfoActivity,
+    unsendedActivity,
+    comment,
     [runichApi.reducerPath]: runichApi.reducer,
   }),
 );

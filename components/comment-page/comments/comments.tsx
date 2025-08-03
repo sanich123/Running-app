@@ -8,34 +8,28 @@ import ErrorComponent from '@C/error-component/error-component';
 import CommentsLoadMoreBtn from '../comments-load-more-btn/comments-load-more';
 import CommentsEmptyList from '../comments-empty/comments-empty';
 import { Platform, View } from 'react-native';
-import { CommentsProps } from '../types';
+import { CommentModalProps } from '../types';
 
-export default function Comments({
-  activityId,
-  idOfUpdatingComment,
-  setIdOfUpdatingComment,
-  commentsModalRef,
-  setIsShowingTextInput,
-  isShowingTextInput,
-  mapPhotoUrl,
-}: CommentsProps) {
+export default function Comments({ commentsModalRef }: CommentModalProps) {
+  const { isShowingTextInput, commentActivityId } = useAppSelector(({ comment }) => comment);
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(true);
   const [take, increaseTakeNumber] = useState(10);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const { isLoading, error, isSuccess, isError, data, refetch } = useGetCommentsByActivityIdQuery(
-    { activityId, take },
+    { activityId: commentActivityId, take },
     { skip: !isNeedToGetUpdatedComments },
   );
+
   useEffect(() => {
-    if (activityIdWhichCommentsToUpdate === activityId) {
+    if (activityIdWhichCommentsToUpdate === commentActivityId) {
       setIsNeedToGetUpdatedComments(true);
     }
-  }, [activityIdWhichCommentsToUpdate, activityId]);
+  }, [activityIdWhichCommentsToUpdate, commentActivityId]);
 
   useEffect(() => {
     if (Platform.OS !== 'web' && !process.env.IS_TESTING) {
       if (!data?.comments || !data?.comments?.length) {
-        commentsModalRef.current?.snapToIndex(0);
+        commentsModalRef.current?.snapToIndex(1);
       }
       if (data?.comments?.length === 1) {
         commentsModalRef.current?.snapToIndex(1);
@@ -55,7 +49,7 @@ export default function Comments({
   return (
     <View>
       {isLoading && <ActivityIndicator testID="commentsActivityIndicator" size="large" />}
-      {isError || data?.comments?.message ? <ErrorComponent error={error || data?.comments} refetch={refetch} /> : null}
+      {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
       {isSuccess && (
         <>
           {data?.comments?.length >= 10 && take < data?.allCommentsLength && (
@@ -77,12 +71,7 @@ export default function Comments({
                   id={id}
                   date={date}
                   profile={profile}
-                  activityId={activityId}
-                  idOfUpdatingComment={idOfUpdatingComment}
-                  setIdOfUpdatingComment={setIdOfUpdatingComment}
-                  setIsShowingTextInput={setIsShowingTextInput}
                   commentLike={commentLike}
-                  mapPhotoUrl={mapPhotoUrl}
                 />
               ))}
           {!data?.comments?.length && !isShowingTextInput && <CommentsEmptyList />}

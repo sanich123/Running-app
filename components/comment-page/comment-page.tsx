@@ -63,11 +63,6 @@ export default function CommentFullViewPage() {
           </Card.Content>
           <View style={{ position: 'relative' }}>
             <Comments
-              isShowingTextInput={isShowingTextInput}
-              setIsShowingTextInput={setIsShowingTextInput}
-              activityId={activityId.toString()}
-              idOfUpdatingComment={idOfUpdatingComment}
-              setIdOfUpdatingComment={setIdOfUpdatingComment}
               commentsModalRef={{
                 current: {
                   present: () => {},
@@ -75,14 +70,7 @@ export default function CommentFullViewPage() {
               }}
             />
             {isShowingTextInput && !idOfUpdatingComment ? (
-              <CommentInput
-                profile={activity?.profile}
-                idOfUpdatingComment={idOfUpdatingComment}
-                activityId={`${activityId}`}
-                setIsShowingTextInput={setIsShowingTextInput}
-                commentId=""
-                setIdOfUpdatingComment={setIdOfUpdatingComment}
-              />
+              <CommentInput profile={activity?.profile} commentId="" />
             ) : (
               <View style={{ zIndex: 9, position: 'relative' }}>
                 <FAB

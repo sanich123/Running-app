@@ -85,7 +85,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
         );
       } else if (
         (currentPace > 3 && currentPace < Infinity) ||
-        store.getState().activity.additionalInfo.sport === SPORTS_BTNS_VALUES.bike
+        store.getState().additionalInfoActivity.sport === SPORTS_BTNS_VALUES.bike
       ) {
         saveMetricsToStoreTaskManager(
           currentKilometer,

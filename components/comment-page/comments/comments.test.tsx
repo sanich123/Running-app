@@ -22,14 +22,7 @@ describe('Comments', () => {
   it('should correctly renders with isLoading state and data from server in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(
-      <Comments
-        activityId="someActivityId"
-        setIsShowingTextInput={jest.fn()}
-        idOfUpdatingComment={''}
-        setIdOfUpdatingComment={jest.fn()}
-        commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }}
-        isShowingTextInput={false}
-      />,
+      <Comments commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }} />,
       { store: mockStore },
     );
     expect(await screen.findByText(MOCK_COMMENTS[0].comment)).toBeOnTheScreen();
@@ -43,14 +36,7 @@ describe('Comments', () => {
   it('should correctly renders with data from server in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     renderWithProviders(
-      <Comments
-        activityId="someActivityId"
-        setIsShowingTextInput={jest.fn()}
-        idOfUpdatingComment={''}
-        commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }}
-        setIdOfUpdatingComment={jest.fn()}
-        isShowingTextInput={false}
-      />,
+      <Comments commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }} />,
 
       { store: mockStore },
     );

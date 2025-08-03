@@ -1,0 +1,11 @@
+import { EMOTIONS_BTNS_VALUES } from '@C/save-activity-page/emotion-btns/const';
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+
+export const ADDITIONAL_INFO_INITIAL_STATE = {
+  title: '',
+  description: '',
+  sport: SPORTS_BTNS_VALUES.run,
+  emotion: EMOTIONS_BTNS_VALUES.normal,
+  isPublic: true,
+  photoVideoUrls: [] as { url: string; thumbnail: string }[],
+};

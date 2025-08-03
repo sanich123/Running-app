@@ -1,14 +1,13 @@
-import { setManualDate } from '@R/slices/activity/activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import DatePicker from 'react-native-date-picker';
 import { Button } from 'react-native-paper';
-
 import { DATE_TIME_PICKER_BTN_ID, DATE_TIME_PICKER } from './const';
+import { setManualDate } from '@R/slices/manual-activity/manual-activity';
 
 export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) {
-  const savedDate = store.getState().activity.manualDate;
+  const savedDate = store.getState().manualActivity.manualDate;
   const [date, setDate] = useState(savedDate ? new Date(savedDate) : new Date());
   const [open, setOpen] = useState(false);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);

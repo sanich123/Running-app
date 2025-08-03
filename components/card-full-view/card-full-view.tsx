@@ -2,7 +2,6 @@ import Card from '@C/card/card';
 import ErrorComponent from '@C/error-component/error-component';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useLocalSearchParams } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { Platform, useWindowDimensions, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import KmSplit from './km-split/km-split';
@@ -23,9 +22,9 @@ export default function CardFullView() {
   } = useGetActivityByActivityIdQuery(`${activityId}`, { skip: !activityId });
 
   return (
-    <CrossPlatformLayout edges={[]} scrollViewEnabled isError={isError} isLoading={isLoading}>
-      <View collapsable={false}>
-        {isLoading && <ActivityIndicator size="large" />}
+    <CrossPlatformLayout edges={[]} isError={isError} isLoading={true} scrollViewEnabled>
+      <View collapsable={false} style={{ flex: 1 }}>
+        {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
         {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
         {isSuccess && (
           <>
@@ -58,7 +57,6 @@ export default function CardFullView() {
           </>
         )}
       </View>
-      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </CrossPlatformLayout>
   );
 }

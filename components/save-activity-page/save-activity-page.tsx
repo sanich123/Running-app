@@ -21,12 +21,8 @@ import { useTheme } from 'react-native-paper';
 export default function SaveResult() {
   const { colors } = useTheme();
   const [isDisabled, setIsDisabled] = useState(false);
-  const {
-    isManualAdding,
-    isEditingActivity,
-    isCameraVisible,
-    additionalInfo: { photoVideoUrls },
-  } = useAppSelector(({ activity }) => activity);
+  const { isManualAdding, isEditingActivity, isCameraVisible } = useAppSelector(({ manualActivity }) => manualActivity);
+  const { photoVideoUrls } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
   const [images, setImages] = useState<{ url: string; thumbnail: string | null }[]>([]);
 
   return (
