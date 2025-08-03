@@ -10,7 +10,13 @@ import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import CommentsListModal from '@C/comment-page/comments-list-modal/comments-list-modal';
 import { CommentBtnProps } from '../types';
-import { setCommentActivityId, setActivityOwnerProfile, setMapPhotoUrl } from '@R/slices/comment/comment';
+import {
+  setCommentActivityId,
+  setActivityOwnerProfile,
+  setMapPhotoUrl,
+  setIsShowingTextInput,
+  setCommentsLength,
+} from '@R/slices/comment/comment';
 
 export default memo(function CommentBtn({ activityId, commentsLength, profile, mapPhotoUrl }: CommentBtnProps) {
   const dispatch = useAppDispatch();
@@ -39,6 +45,8 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       onPress={() => {
+        dispatch(setCommentsLength(commentsLength));
+        dispatch(setIsShowingTextInput(!commentsLength ? true : false));
         dispatch(setCommentActivityId(activityId));
         dispatch(setActivityOwnerProfile(profile));
         dispatch(setMapPhotoUrl(mapPhotoUrl));

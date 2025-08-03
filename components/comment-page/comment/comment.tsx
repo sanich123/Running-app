@@ -9,6 +9,8 @@ import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
 import { useAppSelector } from '@R/typed-hooks';
 import { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
+import { RefObject } from 'react';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function Comment({
   authorId,
@@ -17,14 +19,21 @@ export default function Comment({
   date,
   profile,
   commentLike,
-}: CommentResponse & CommentLikeResponse) {
+  commentsModalRef,
+}: CommentResponse & CommentLikeResponse & { commentsModalRef: RefObject<BottomSheetModal | null> }) {
   const { idOfUpdatingComment, commentActivityId } = useAppSelector(({ comment }) => comment);
   const { userId } = useAppSelector(({ auth }) => auth);
   const isYouAuthor = userId === authorId;
   return (
     <>
       <View style={{ padding: 10 }}>
-        <UserInfo profile={profile} date={date} userId={authorId} size={UserInfoSize.small} />
+        <UserInfo
+          profile={profile}
+          date={date}
+          userId={authorId}
+          size={UserInfoSize.small}
+          commentsModalRef={commentsModalRef}
+        />
       </View>
       <View style={styles.textCommentWrapper}>
         {idOfUpdatingComment === id ? (

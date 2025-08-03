@@ -4,26 +4,21 @@ import {
   useUpdateCommentByCommentIdMutation,
 } from '@R/services/comments/comments';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { useState } from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
 import { CommentInputProps } from '../types';
 import { useSendEmailAfterSendingCommentMutation } from '@R/services/emails/emails';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 
-export default function CommentInput({
-  commentToUpdate = '',
-  commentId = '',
-  commentsModalRef,
-  profile,
-}: CommentInputProps) {
+export default function CommentInput({ commentToUpdate = '', commentId = '', profile }: CommentInputProps) {
   const [focused, setFocused] = useState(false);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
-  const { commentActivityId, mapPhotoUrl } = useAppSelector(({ comment }) => comment);
+  const { commentActivityId, mapPhotoUrl, commentsLength } = useAppSelector(({ comment }) => comment);
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
@@ -38,17 +33,14 @@ export default function CommentInput({
     return await postComment({ body: { comment, authorId: userId }, id: commentActivityId })
       .unwrap()
       .then(() => sendingUpdatingCommentSuccessHandler())
-      .catch((error) => {
-        console.log(error);
-        sendingUpdatingCommentErrorHandler();
-      });
+      .catch((error) => errorToast('', error));
   }
 
   async function updatingComment() {
     return await updateComment({ activityId: commentActivityId, commentId, body: { comment } })
       .unwrap()
       .then(sendingUpdatingCommentSuccessHandler)
-      .catch(sendingUpdatingCommentErrorHandler);
+      .catch((error) => errorToast('', error));
   }
 
   async function sendingUpdatingCommentSuccessHandler() {
@@ -71,14 +63,6 @@ export default function CommentInput({
     }
   }
 
-  function sendingUpdatingCommentErrorHandler() {
-    if (Platform.OS !== 'web') {
-      showCrossPlatformToast(COMMENT_INPUT[language].errorSending);
-    } else {
-      showCrossPlatformToast(COMMENT_INPUT[language].errorSending);
-    }
-  }
-
   return (
     <View style={{ padding: 10 }}>
       <BottomSheetTextInput
@@ -94,6 +78,7 @@ export default function CommentInput({
           color: colors.onBackground,
           fontSize: 16,
         }}
+        autoFocus={!commentsLength}
         onChangeText={(comment) => setComment(comment)}
         onSubmitEditing={async () => {
           if (comment) {
@@ -106,10 +91,7 @@ export default function CommentInput({
             }
           }
         }}
-        onFocus={() => {
-          setFocused(true);
-          commentsModalRef?.current?.snapToIndex(3);
-        }}
+        onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         enterKeyHint="send"
       />

@@ -9,6 +9,7 @@ export const comment = createSlice({
     idOfUpdatingComment: '',
     activityOwnerProfile: {} as ProfileType,
     mapPhotoUrl: '',
+    commentsLength: 0,
   },
   reducers: {
     setCommentActivityId: (state, { payload }) => {
@@ -26,6 +27,9 @@ export const comment = createSlice({
     setMapPhotoUrl: (state, { payload }) => {
       state.mapPhotoUrl = payload;
     },
+    setCommentsLength: (state, { payload }) => {
+      state.commentsLength = payload;
+    },
   },
 });
 
@@ -35,5 +39,6 @@ export const {
   setIsShowingTextInput,
   setIdOfUpdatingComment,
   setMapPhotoUrl,
+  setCommentsLength,
 } = comment.actions;
 export default comment.reducer;

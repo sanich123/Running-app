@@ -7,14 +7,20 @@ import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { UserInfoProps } from './const';
 
-export default function UserInfo({ profile, sport, date, userId, size }: UserInfoProps) {
+export default function UserInfo({ profile, sport, date, userId, size, commentsModalRef }: UserInfoProps) {
   const { dark, colors } = useTheme();
   const { push } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/(protected)/profile/${userId}`)}
+      onPress={() => {
+        if (commentsModalRef?.current) {
+          commentsModalRef?.current?.close();
+        }
+
+        push(`/(protected)/profile/${userId}`);
+      }}
       borderless
       style={{ paddingVertical: 5, paddingHorizontal: 5 }}>
       <View style={styles.userInfoWrapper}>

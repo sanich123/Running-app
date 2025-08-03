@@ -52,13 +52,6 @@ export default function Comments({ commentsModalRef }: CommentModalProps) {
       {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
       {isSuccess && (
         <>
-          {data?.comments?.length >= 10 && take < data?.allCommentsLength && (
-            <CommentsLoadMoreBtn
-              take={take}
-              increaseTakeNumber={increaseTakeNumber}
-              commentsLength={data?.allCommentsLength}
-            />
-          )}
           {data?.comments?.length > 0 &&
             data?.comments
               ?.slice()
@@ -72,8 +65,16 @@ export default function Comments({ commentsModalRef }: CommentModalProps) {
                   date={date}
                   profile={profile}
                   commentLike={commentLike}
+                  commentsModalRef={commentsModalRef}
                 />
               ))}
+          {data?.comments?.length >= 10 && take < data?.allCommentsLength && (
+            <CommentsLoadMoreBtn
+              take={take}
+              increaseTakeNumber={increaseTakeNumber}
+              commentsLength={data?.allCommentsLength}
+            />
+          )}
           {!data?.comments?.length && !isShowingTextInput && <CommentsEmptyList />}
         </>
       )}
