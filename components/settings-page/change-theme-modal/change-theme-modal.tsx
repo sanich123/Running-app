@@ -43,6 +43,7 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
                 <>
                   <Text variant="titleMedium">{title}</Text>
                   <RadioButton value={`${value}`} status={theme === value ? 'checked' : 'unchecked'} />
+                  <RadioButton value={`${value}`} status={theme === value ? 'checked' : 'unchecked'} />
                 </>
               </TouchableRipple>
             </Fragment>

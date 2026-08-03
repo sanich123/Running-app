@@ -11,7 +11,6 @@ import type { ShareBtnProps } from '../types';
 export default memo(function ShareBtn({ cardRef }: ShareBtnProps) {
   const { colors } = useTheme();
   const { isLoading, isDisabled, setIsDisabled } = useContext(ActivityCardBtnsContext);
-
   return (
     <IconButton
       onPress={async () => {

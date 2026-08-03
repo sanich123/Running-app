@@ -31,6 +31,7 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
   } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
   const [sendEmailNotification] = useSendEmailAfterSendingLikeMutation();
   const [sendLike, { isError: errorSending, isSuccess: isSuccessSending }] = useSendLikeMutation();
+
   const [deleteLike, { isError: failureDeleting }] = useDeleteLikeMutation();
 
   const isLikedByYou = likes?.length
