@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FileSystemUploadType, uploadAsync } from 'expo-file-system';
+import { FileSystemUploadType, uploadAsync } from 'expo-file-system/legacy';
 
 export async function sendArchiveToServer({
   setIsSendingArchive,

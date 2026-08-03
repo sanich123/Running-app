@@ -1,4 +1,4 @@
-import { cacheDirectory, deleteAsync, getInfoAsync } from 'expo-file-system';
+import { cacheDirectory, deleteAsync, getInfoAsync } from 'expo-file-system/legacy';
 
 export async function removeMedia({
   pathToMedia,

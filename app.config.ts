@@ -6,7 +6,7 @@ export default {
     scheme: 'runich',
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
-    version: '3.0.0',
+    version: '4.0.0',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
@@ -79,7 +79,6 @@ export default {
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
       ],
-      edgeToEdgeEnabled: true,
       softwareKeyboardLayoutMode: 'pan',
     },
     web: {
@@ -112,7 +111,7 @@ export default {
             enableProguardInReleaseBuilds: true,
             enableShrinkResourcesInReleaseBuilds: true,
           },
-          ios: { ccacheEnabled: true, deploymentTarget: '15.5' },
+          ios: { ccacheEnabled: true },
         },
       ],
       [

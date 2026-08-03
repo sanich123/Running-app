@@ -35,7 +35,7 @@ export default function TabLayout() {
           tabBarLabel: 'Активность',
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <AntDesign name="playcircleo" color={focused ? colors.primary : colors.onBackground} size={28} />
+            <AntDesign name="play-circle" color={focused ? colors.primary : colors.onBackground} size={28} />
           ),
         }}
       />
@@ -45,7 +45,7 @@ export default function TabLayout() {
           headerShown: false,
           tabBarLabel: 'Статистика',
           tabBarIcon: ({ focused }) => (
-            <AntDesign name="piechart" color={focused ? colors.primary : colors.onBackground} size={28} />
+            <AntDesign name="pie-chart" color={focused ? colors.primary : colors.onBackground} size={28} />
           ),
         }}
       />

@@ -1,4 +1,4 @@
-import { cacheDirectory, deleteAsync, getInfoAsync } from 'expo-file-system';
+import { cacheDirectory, deleteAsync, getInfoAsync } from 'expo-file-system/legacy';
 import { unzip, zip } from 'react-native-zip-archive';
 
 export async function unzipFiles({

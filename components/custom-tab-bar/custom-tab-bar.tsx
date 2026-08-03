@@ -21,9 +21,9 @@ export default function CustomTabBar({
   const pathname = usePathname();
   const icons = {
     home: (props: { color: string }) => <AntDesign name="home" color={props.color} size={45} />,
-    activity: (props: { color: string }) => <AntDesign name="playcircleo" size={45} color="tomato" />,
+    activity: (props: { color: string }) => <AntDesign name="play-circle" size={45} color="tomato" />,
     profile: (props: { color: string }) => <AvatarShowable size={45} id={userId} {...props} />,
-    statistic: (props: { color: string }) => <AntDesign name="piechart" size={45} color={props.color} />,
+    statistic: (props: { color: string }) => <AntDesign name="pie-chart" size={45} color={props.color} />,
   };
 
   return (

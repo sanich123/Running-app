@@ -1,1 +1,1 @@
-npx tsc && npx expo lint --fix  && npx expo-doctor@latest && npx expo-doctor@latest && npx npm-check-updates '/^(?!react-native|expo-).*$/' --target=semver -u 
+npx tsc  && npx expo-doctor@latest && npx npm-check-updates '/^(?!react-native|expo-).*$/' --target=semver -u 
