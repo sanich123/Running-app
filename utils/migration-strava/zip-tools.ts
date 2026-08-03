@@ -16,7 +16,6 @@ export async function unzipFiles({
     setIsUnzipping(false);
     return unzippedFolderPath;
   } catch (error) {
-    console.log(error);
     setIsError(`Ошибка при разархивировании, ${JSON.stringify(error)}`);
   }
 }
@@ -38,7 +37,6 @@ export async function zipFiles({
     setIsZipping(false);
     return pathToArchive;
   } catch (error) {
-    console.log(error);
     setIsError(`Ошибка при архивировании, ${JSON.stringify(error)}`);
   }
 }

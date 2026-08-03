@@ -36,7 +36,6 @@ export default function ProfileUpdateBtn() {
               back();
             })
             .catch((error) => {
-              if (__DEV__) console.log(error);
               dispatch(setIsDisabledWhileSendingProfile(false));
               showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
             });
@@ -49,7 +48,6 @@ export default function ProfileUpdateBtn() {
               back();
             })
             .catch((error) => {
-              if (__DEV__) console.log(error);
               dispatch(setIsDisabledWhileSendingProfile(false));
               showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
             });

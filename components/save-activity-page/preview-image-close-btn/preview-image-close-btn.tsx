@@ -3,7 +3,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { deletePhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import type { PreviewImagesProps } from '../preview-images/preview-images';
+import type { PreviewImagesProps } from '../preview-images/types';
 
 export default function PreviewImageCloseBtn({
   setImages,

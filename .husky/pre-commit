@@ -1,3 +1,44 @@
+# 1. Проверка TypeScript
 yarn tsc
+
+# 2. Линтинг и автофикс
 # yarn eslint --fix
-yarn prettier --write './**/*.{ts,tsx}'
+
+# 3. Применяем Prettier к исходному коду проекта
+yarn prettier --write \
+  './app/**/*.{ts,tsx}' \
+  './components/**/*.{ts,tsx}' \
+  './redux/**/*.{ts,tsx}' \
+  './tests/**/*.{ts,tsx}' \
+  './*.{ts,tsx,js,json}'
+
+# 4. Проверка состояния Expo
+yarn expo-doctor || true
+
+# 5. Тесты
+yarn test
+
+# 6. Проверка circular dependencies
+yarn madge \
+  --ts-config ./tsconfig.json \
+  --warning \
+  --circular \
+  --extensions ts,tsx \
+  ./app ./auth ./components ./constants ./redux ./utils
+
+# 7. Проверка неиспользуемых импортов ts-prune
+yarn ts-prune --ignore 'app|jest.config.js|.*\.test\.(ts|tsx)$'
+
+# 8. Проверка orphan файлов (без app, node_modules и прочих)
+# yarn madge \
+#   --ts-config ./tsconfig.json \
+#   --orphans \
+#   --extensions ts,tsx \
+#   --exclude '^(app|node_modules|android|ios|\.expo|dist|coverage)/|\.test\.tsx?$' \
+#   ./auth ./components ./constants ./redux ./utils
+
+# 9. Обновление зависимостей
+yarn npm-check-updates
+
+# 10. Проверка неиспользуемых зависимостей опционально
+yarn depcheck || true

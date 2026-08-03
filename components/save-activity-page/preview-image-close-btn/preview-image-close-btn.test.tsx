@@ -23,7 +23,7 @@ describe('Preview image close btn', () => {
     const deleteIcon = screen.getByTestId('deleteIcon');
     await userEvent.press(deleteIcon);
     expect(setImages).toHaveBeenCalled();
-    expect(mockStore.getState().activity.additionalInfo.photoVideoUrls).toEqual([]);
+    expect(mockStore.getState().additionalInfoActivity.photoVideoUrls).toEqual([]);
   });
   it('should be disabled, when isDisabled', () => {
     const setImages = jest.fn();

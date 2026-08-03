@@ -27,7 +27,6 @@ export async function sendArchiveToServer({
     );
   } catch (error) {
     setIsError(`Ошибка во время отправки архива. ${JSON.stringify(error)}`);
-    console.log(error);
   } finally {
     setIsSendingArchive(false);
   }

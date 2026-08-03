@@ -21,6 +21,6 @@ describe('Show camera btn', () => {
     renderWithProviders(<ShowCameraBtn isDisabled={false} />, { store: mockStore });
     const showCameraBtn = screen.getByText(new RegExp(`${SHOW_CAMERA_BTN.russian.text}`));
     await userEvent.press(showCameraBtn);
-    expect(mockStore.getState().activity.isCameraVisible).toEqual(true);
+    expect(mockStore.getState().manualActivity.isCameraVisible).toEqual(true);
   });
 });

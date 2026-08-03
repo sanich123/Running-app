@@ -26,7 +26,6 @@ export async function getLocationPermissions({
     const backgroundPermission = await requestBackgroundPermissionsAsync();
     if (backgroundPermission.granted) {
       setBackgroundPermission(true);
-      if (__DEV__) console.log('Permission to access location granted');
     } else {
       showCrossPlatformToast(
         'Вы же не будете бегать с включенным дисплеем все время? Поэтому необходимо дать разрешение на отслеживание местоположения в фоновом режиме',

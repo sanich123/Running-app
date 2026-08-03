@@ -1,5 +1,5 @@
 import { renderHook, screen } from '@testing-library/react-native';
-import { useForm } from 'react-hook-form';
+import { useForm, type UseFormHandleSubmit } from 'react-hook-form';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
@@ -9,11 +9,14 @@ import LoginRegisterBtn from './login-register-btn';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 
 describe('Login btn', () => {
-  const {
-    result: {
-      current: { handleSubmit },
-    },
-  } = renderHook(() => useForm<EmailPasswordData>({ defaultValues: { email: '', password: '' } }));
+  let handleSubmit: UseFormHandleSubmit<EmailPasswordData>;
+
+  beforeAll(async () => {
+    const { result } = await renderHook(() =>
+      useForm<EmailPasswordData>({ defaultValues: { email: '', password: '' } }),
+    );
+    handleSubmit = result.current.handleSubmit;
+  });
   it('should correctly renders in english', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     renderWithProviders(<LoginRegisterBtn handleSubmit={handleSubmit} />);

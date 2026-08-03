@@ -9,6 +9,6 @@ describe('Camera close btn', () => {
     const closeBtn = screen.getByTestId('CloseBtn');
     expect(closeBtn).toBeOnTheScreen();
     await userEvent.press(closeBtn);
-    expect(mockStore.getState().activity.isCameraVisible).toEqual(false);
+    expect(mockStore.getState().manualActivity.isCameraVisible).toEqual(false);
   });
 });

@@ -44,7 +44,6 @@ export async function getMigrationArchiveAndSendToServer({
     }
   } catch (error) {
     await removeCacheFolder({});
-    console.log(error);
     setIsError(`Ошибка ${JSON.stringify(error)}`);
   } finally {
     setIsDisabled(false);

@@ -20,10 +20,12 @@ describe('Comment input', () => {
     await userEvent.clear(commentInput);
     expect(commentInput.props.value).toEqual('');
   });
-  it('should correctly renders comment sending icon', () => {
+  it('should correctly renders comment sending icon', async () => {
     renderWithProviders(<CommentInput commentId="someCommentId" profile={MOCK_PROFILE} />, {
       store: mockStore,
     });
+    const commentInput = screen.getByTestId(COMMENT_INPUT_TEST_ID);
+    await userEvent.type(commentInput, 'some comment');
     const commentSendingIcon = screen.getByTestId(COMMENT_ICON_TEST_ID);
     expect(commentSendingIcon).toBeOnTheScreen();
   });

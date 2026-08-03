@@ -60,7 +60,7 @@ describe('Activity save btn', () => {
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
     expect(mockStore.getState().additionalInfoActivity.title).toEqual('');
-    expect(mockStore.getState().activity.additionalInfo.sport).toEqual(SPORTS_BTNS_VALUES.run);
-    expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);
+    expect(mockStore.getState().additionalInfoActivity.sport).toEqual(SPORTS_BTNS_VALUES.run);
+    expect(mockStore.getState().additionalInfoActivity.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);
   });
 });

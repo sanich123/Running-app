@@ -3,12 +3,7 @@ import PreviewImage from '@C/save-activity-page/preview-image/preview-image';
 import { useAppSelector } from '@R/typed-hooks';
 import PreviewImageCloseBtn from '../preview-image-close-btn/preview-image-close-btn';
 import PreviewUploadableImage from '../preview-uploadable-image/preview-uploadable-image';
-
-export interface PreviewImagesProps {
-  images: { url: string; thumbnail: string | null }[];
-  isDisabled: boolean;
-  setImages: (arg: { url: string; thumbnail: string | null }[]) => void;
-}
+import type { PreviewImagesProps } from './types';
 
 export default function PreviewImages({ setImages, images, isDisabled }: PreviewImagesProps) {
   const { isCameraVisible } = useAppSelector(({ manualActivity }) => manualActivity);

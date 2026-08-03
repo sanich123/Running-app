@@ -16,13 +16,13 @@ describe('Emotion btns', () => {
     const fineInput = screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.goodInput);
     await userEvent.press(normalInput);
     expect(normalInput.props.accessibilityState.checked).toEqual(true);
-    expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);
+    expect(mockStore.getState().additionalInfoActivity.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);
     await userEvent.press(fuckedInput);
     expect(fuckedInput.props.accessibilityState.checked).toEqual(true);
-    expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.fucked);
+    expect(mockStore.getState().additionalInfoActivity.emotion).toEqual(EMOTIONS_BTNS_VALUES.fucked);
     await userEvent.press(fineInput);
     expect(fineInput.props.accessibilityState.checked).toEqual(true);
-    expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.good);
+    expect(mockStore.getState().additionalInfoActivity.emotion).toEqual(EMOTIONS_BTNS_VALUES.good);
   });
   it('should correctly render labels in english', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

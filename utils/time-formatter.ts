@@ -1,12 +1,12 @@
-import moment from 'moment';
+import { utc, duration } from 'moment';
 import { LANGUAGES } from '../constants/enums';
 
-export function formatDuration(duration: number) {
-  return moment.utc(moment.duration(duration, 'ms').asMilliseconds()).format('HH:mm:ss');
+export function formatDuration(time: number) {
+  return utc(duration(time, 'ms').asMilliseconds()).format('HH:mm:ss');
 }
 
-export function formatDurationMinsSecs(duration: number) {
-  return moment.utc(moment.duration(duration, 'ms').asMilliseconds()).format('mm:ss');
+export function formatDurationMinsSecs(time: number) {
+  return utc(duration(time, 'ms').asMilliseconds()).format('mm:ss');
 }
 
 export function calculateAge(dateOfBirth: Date) {

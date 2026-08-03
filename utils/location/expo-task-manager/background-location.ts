@@ -4,7 +4,7 @@ import {
   startLocationUpdatesAsync,
   stopLocationUpdatesAsync,
 } from 'expo-location';
-import { isTaskRegisteredAsync, getRegisteredTasksAsync, isAvailableAsync, isTaskDefined } from 'expo-task-manager';
+import { isTaskRegisteredAsync } from 'expo-task-manager';
 import * as TaskManager from 'expo-task-manager';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { setIsTooMuchSpeed } from '@R/slices/location/location';
@@ -27,21 +27,6 @@ export async function startLocationTracking() {
     },
   });
   const hasStarted = await hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
-  const isTaskAvailale = await isAvailableAsync();
-  const isDefined = await isTaskDefined(LOCATION_TRACKING);
-  const registeredTasks = await getRegisteredTasksAsync();
-
-  if (__DEV__)
-    console.log(
-      'tracking started?',
-      hasStarted,
-      'isTaskAvailale: ',
-      isTaskAvailale,
-      'isTaskDefied :',
-      isDefined,
-      'registeredTasks: ',
-      registeredTasks,
-    );
   showCrossPlatformToast(`BgTracking started = ${hasStarted}`);
 }
 
@@ -56,14 +41,11 @@ export async function stopLocationTracking() {
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLocationEvent) => {
   if (error) {
-    if (__DEV__) console.log('LOCATION_TRACKING task ERROR:', error);
     return;
   }
   if (data) {
-    console.log(data);
     const { locations } = data;
     const currentPosition = locations[0];
-    console.log('currentPosition: ', currentPosition);
     try {
       const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer, lastArrayLength } =
         getMetricsTaskManager(currentPosition);

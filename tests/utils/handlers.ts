@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http } from 'msw';
 import {
   getActivityByActivityId,
   getAllActivitiesByUserId,
@@ -26,11 +26,18 @@ import {
 import { likeToActivitySucces, postLikeSuccess } from './endpoints/like';
 import { getProfileFailure, getProfileSuccess, getProfileWithoutPhoto } from './endpoints/profile';
 import { addUser } from './endpoints/user';
+import { legacy } from './msw-compat';
+
+const rest = {
+  get: (url: string, resolver: any) => http.get(url, legacy(resolver)),
+  post: (url: string, resolver: any) => http.post(url, legacy(resolver)),
+  delete: (url: string, resolver: any) => http.delete(url, legacy(resolver)),
+};
 
 export const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 
 export const handlers = [
-  rest.post(`${BASE_URL}/activity/someUserId`, postActivitySuccess),
+  http.post(`${BASE_URL}/activity/someUserId`, legacy(postActivitySuccess)),
   rest.post(`${BASE_URL}/activity/someWrongUserId`, postActivityFailure),
   rest.get(`${BASE_URL}/activity/activityId/someActivityId`, getActivityByActivityId),
   rest.get(`${BASE_URL}/activity/someUserId/all`, getAllActivitiesByUserId),
@@ -63,4 +70,9 @@ export const handlers = [
   rest.get(`${BASE_URL}/friend/926f4a53-08b5-43c6-99ee-cf31fdfbb49b`, getFollowingsSuccess),
   rest.get(`${BASE_URL}/friend/926f4a53-08b5-43c6-99ee-cf31fdfbb49b/followers`, getFollowersFailure),
   rest.post(`${BASE_URL}/user/someUserId/profile`, addUser),
+  http.get(`${BASE_URL}/comment/*/like`, legacy(successLikeToComment)),
+  http.get(`${BASE_URL}/comment/*`, legacy(successGetComments)),
+  http.get(`${BASE_URL}/activity/*/photos`, legacy(getPhotosFromActivities)),
+  http.get(`${BASE_URL}/like/*`, legacy(likeToActivitySucces)),
+  http.get(`${BASE_URL}/friend/*`, legacy(getFollowingsSuccess)),
 ];

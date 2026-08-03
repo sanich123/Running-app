@@ -11,7 +11,7 @@ import { useSendEmailAfterSendingCommentMutation } from '@R/services/emails/emai
 import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
 import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
+import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
 import type { CommentInputProps } from '../types';
 
 export default function CommentInput({ commentToUpdate = '', commentId = '', profile }: CommentInputProps) {
@@ -97,6 +97,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
       />
       {comment && (
         <IconButton
+          testID={COMMENT_ICON_TEST_ID}
           icon="send"
           iconColor={colors.primary}
           style={{ right: 5, position: 'absolute', top: 7 }}

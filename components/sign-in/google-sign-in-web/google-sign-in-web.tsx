@@ -19,32 +19,7 @@ export default function GoogleSignInWeb() {
       //@ts-ignore
       window.onSignIn = function onSignIn(googleUser) {
         const profile = googleUser?.getBasicProfile();
-        console.log('ID: ' + profile.getId());
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail());
       };
-      // window.handleSignInWithGoogle = async function (response: any) {
-      //   dispatch(setIsDisabledWhenLogining(true));
-      //   try {
-      //     console.log(response);
-
-      //     // const { data, error } = await supabase.auth.signInWithIdToken({
-      //     //   provider: 'google',
-      //     //   token: response.credential,
-      //     //   nonce: 'NONCE',
-      //     // });
-      //     // if (data) {
-      //     //   showCrossPlatformToast('Successfully! Redirect to the app');
-      //     // } else if (error) {
-      //     //   showCrossPlatformToast(JSON.stringify(error));
-      //     // }
-      //   } catch (error) {
-      //     showCrossPlatformToast(JSON.stringify(error));
-      //   } finally {
-      //     dispatch(setIsDisabledWhenLogining(false));
-      //   }
-      // };
       return () => {
         document.body.removeChild(script);
       };
