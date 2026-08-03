@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 import { BaseToast, ErrorToast } from 'react-native-toast-message';
-import type { BaseToastProps} from 'react-native-toast-message';
+import type { BaseToastProps } from 'react-native-toast-message';
 
 export const toastConfig = {
   success: (props: JSX.IntrinsicAttributes & BaseToastProps) => (

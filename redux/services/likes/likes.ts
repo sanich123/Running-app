@@ -46,8 +46,4 @@ export const likesApi = runichApi.injectEndpoints({
   }),
 });
 
-export const {
-  useGetLikesByActivityIdQuery,
-  useSendLikeMutation,
-  useDeleteLikeMutation,
-} = likesApi;
+export const { useGetLikesByActivityIdQuery, useSendLikeMutation, useDeleteLikeMutation } = likesApi;

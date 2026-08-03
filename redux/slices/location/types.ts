@@ -1,7 +1,6 @@
 import type { STATUSES } from '@const/enums';
 import type { LocationObject } from 'expo-location';
 
-
 export interface LastKmSplit {
   lastKilometerDuration: number;
   kilometerPoint: LocationObject;

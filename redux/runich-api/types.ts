@@ -6,16 +6,6 @@ export interface SendActivity {
   id: string;
 }
 
-
-
-
-
-
-
-
-
-
-
 export interface CommentResponse {
   authorId: string;
   comment: string;
@@ -30,7 +20,3 @@ export interface CommentLikeResponse {
     id: string;
   }[];
 }
-
-
-
-

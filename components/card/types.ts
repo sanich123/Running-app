@@ -63,7 +63,11 @@ export interface ActivityCardProps {
   commentsLength: number;
 }
 
-export interface PhotoVideoType { url: string; thumbnail: string | null; blurhash?: string }
+export interface PhotoVideoType {
+  url: string;
+  thumbnail: string | null;
+  blurhash?: string;
+}
 
 export interface CardBtnsProps {
   activityId: string;

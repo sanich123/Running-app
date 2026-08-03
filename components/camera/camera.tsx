@@ -10,7 +10,7 @@ import ShotBtn from '@C/camera/shot-btn/shot-btn';
 import PreviewImages from '@C/save-activity-page/preview-images/preview-images';
 import { CameraTypes, FlashModes } from './types';
 import type { PhotoVideoType } from '@C/card/types';
-import type { CameraType, FlashMode} from 'expo-camera';
+import type { CameraType, FlashMode } from 'expo-camera';
 
 export default function CameraLauncher() {
   const cameraRef = useRef<CameraView>(null);

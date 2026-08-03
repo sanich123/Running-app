@@ -3,8 +3,8 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { render } from '@testing-library/react-native';
 import { Provider } from 'react-redux';
 import { mockStore } from './mock-store';
-import type { AppStore} from './mock-store';
-import type { RenderOptions} from '@testing-library/react-native';
+import type { AppStore } from './mock-store';
+import type { RenderOptions } from '@testing-library/react-native';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   store?: AppStore;

@@ -6,7 +6,7 @@ import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
 import { AvatarEditableTestIds } from './const';
-import type { AvatarIconEditableProps} from './const';
+import type { AvatarIconEditableProps } from './const';
 
 export default function AvatarIconEditable({ isDisabled, setIsDisabled }: AvatarIconEditableProps) {
   const dispatch = useAppDispatch();

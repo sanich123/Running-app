@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
 import { UPLOAD_PHOTO_BTN } from './ const';
-import type { UploadPhotoBtnProps} from './ const';
+import type { UploadPhotoBtnProps } from './ const';
 
 export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, images }: UploadPhotoBtnProps) {
   const dispatch = useAppDispatch();

@@ -7,7 +7,10 @@ export interface CalendarStatisticsProps {
 
 export type StatisticActivities = { duration: number; distance: number; id: string; sport: string; date: string }[];
 
-export interface CalendarDate { dateValue: string; activities: StatisticActivities }
+export interface CalendarDate {
+  dateValue: string;
+  activities: StatisticActivities;
+}
 
 export interface ReducedDatesByDayOfTheWeek {
   sundays: CalendarDate[];

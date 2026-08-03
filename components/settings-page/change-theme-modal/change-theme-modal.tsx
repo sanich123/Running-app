@@ -1,7 +1,7 @@
-import type { RefObject} from 'react';
+import type { RefObject } from 'react';
 import { Fragment, useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import type { ColorSchemeName} from 'react-native';
+import type { ColorSchemeName } from 'react-native';
 import { Appearance, View, StyleSheet } from 'react-native';
 import { useTheme, Text, Divider, RadioButton, TouchableRipple } from 'react-native-paper';
 import { changeTheme } from '@R/slices/language/language';

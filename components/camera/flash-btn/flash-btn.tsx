@@ -1,6 +1,6 @@
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
 import { FlashModes } from '../types';
-import type { FlashBtnProps} from '../types';
+import type { FlashBtnProps } from '../types';
 
 export default function FlashBtn({ setFlashEnable, flashEnable }: FlashBtnProps) {
   const { colors, dark } = useTheme();

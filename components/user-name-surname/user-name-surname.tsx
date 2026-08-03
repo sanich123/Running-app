@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { View } from 'react-native';
-import type { MD3TypescaleKey} from 'react-native-paper';
+import type { MD3TypescaleKey } from 'react-native-paper';
 import { Text } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';

@@ -1,7 +1,6 @@
 import { MOCK_NETWORK_STATE } from '@C/network-indicator/const';
 import reducer, { NETWORK_INITIAL_STATE, changeNetworkState } from './network';
 
-
 describe('Network slice', () => {
   it('should handle initial state properly', () => {
     expect(reducer(undefined, { type: '' })).toEqual(NETWORK_INITIAL_STATE);
