@@ -1,19 +1,19 @@
-import { persistor, store } from '@R/store';
-import { Stack } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import * as SplashScreen from 'expo-splash-screen';
+import { SystemBars } from 'react-native-edge-to-edge';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { COLORS } from '@const/theme-colors';
-import * as SplashScreen from 'expo-splash-screen';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { SystemBars } from 'react-native-edge-to-edge';
-import { KeyboardProvider } from 'react-native-keyboard-controller';
-import Toast from 'react-native-toast-message';
-import { toastConfig } from '@const/toast-config';
+import { useColorScheme } from 'react-native';
+import { Stack } from 'expo-router';
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { COLORS } from '@const/theme-colors';
+import { toastConfig } from '@const/toast-config';
+import { persistor, store } from '@R/store';
 
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({

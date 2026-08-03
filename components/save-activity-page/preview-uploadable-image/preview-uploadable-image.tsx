@@ -1,17 +1,17 @@
+import { useState } from 'react';
+import { Pressable } from 'react-native';
+import { useTheme, Text } from 'react-native-paper';
 import PreviewImage from '@C/save-activity-page/preview-image/preview-image';
 import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
 import { compressAndSendFile } from '@U/file-sending';
-import { useState } from 'react';
-import { Pressable } from 'react-native';
-import { useTheme, Text } from 'react-native-paper';
 
-type PreviewUploadableImageProps = {
+interface PreviewUploadableImageProps {
   image: string;
   index: number;
   isDisabled: boolean;
-};
+}
 
 export default function PreviewUploadableImage({ image, index, isDisabled }: PreviewUploadableImageProps) {
   const { userId } = useAppSelector(({ auth }) => auth);

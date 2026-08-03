@@ -1,7 +1,7 @@
-import { Platform, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
 import { useEffect, useState } from 'react';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { Platform, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import { checkAirplaneMode, checkVpn } from './utils';
 
 export default function NetworkStateBanner() {

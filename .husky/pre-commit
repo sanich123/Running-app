@@ -1,1 +1,3 @@
-npx tsc  && npx expo-doctor@latest && npx npm-check-updates '/^(?!react-native|expo-).*$/' --target=semver -u 
+yarn tsc
+# yarn eslint --fix
+yarn prettier --write './**/*.{ts,tsx}'

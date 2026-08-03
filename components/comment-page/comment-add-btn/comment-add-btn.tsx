@@ -1,7 +1,7 @@
-import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
-import { useAppDispatch } from '@R/typed-hooks';
 import { View } from 'react-native';
 import { FAB } from 'react-native-paper';
+import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
+import { useAppDispatch } from '@R/typed-hooks';
 
 export default function CommentAddBtn() {
   const dispatch = useAppDispatch();

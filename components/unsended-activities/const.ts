@@ -1,6 +1,6 @@
 import { LANGUAGES } from '../../constants/enums';
 
-export type ResponseType = {
+export interface ResponseType {
   error: {
     data: {
       error: string;
@@ -9,7 +9,7 @@ export type ResponseType = {
     };
     status: number;
   };
-};
+}
 
 export const UNSENDED_ACTIVITIES = {
   [LANGUAGES.english]: {

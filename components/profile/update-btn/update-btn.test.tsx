@@ -1,12 +1,11 @@
+import { screen, userEvent } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen, userEvent } from '@testing-library/react-native';
-
 import { UPDATE_BTN } from './const';
 import ProfileUpdateBtn from './update-btn';
-import { setUserId } from '@R/slices/auth/auth';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), back: jest.fn() }),

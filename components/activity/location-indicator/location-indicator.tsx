@@ -1,8 +1,7 @@
-import { useAppSelector } from '@R/typed-hooks';
-import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-
+import { useAppSelector } from '@R/typed-hooks';
+import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { ACTIVITY_LOCATION_INDICATOR } from './const';
 
 export default function LocationIndicator() {

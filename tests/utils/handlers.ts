@@ -1,5 +1,4 @@
 import { rest } from 'msw';
-
 import {
   getActivityByActivityId,
   getAllActivitiesByUserId,

@@ -1,15 +1,10 @@
-import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
 import { useContext, memo, useState, useEffect, useRef } from 'react';
 import { Platform, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
-import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import CommentsListModal from '@C/comment-page/comments-list-modal/comments-list-modal';
-import { CommentBtnProps } from '../types';
+import { ROUTES } from '@const/enums';
+import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
 import {
   setCommentActivityId,
   setActivityOwnerProfile,
@@ -17,6 +12,11 @@ import {
   setIsShowingTextInput,
   setCommentsLength,
 } from '@R/slices/comment/comment';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
+import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
+import type { CommentBtnProps } from '../types';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default memo(function CommentBtn({ activityId, commentsLength, profile, mapPhotoUrl }: CommentBtnProps) {
   const dispatch = useAppDispatch();

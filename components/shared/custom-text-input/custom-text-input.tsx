@@ -1,8 +1,9 @@
-import { Controller, FieldValues } from 'react-hook-form';
-import { HelperText, TextInput, useTheme } from 'react-native-paper';
-import { CustomTextInputProps } from './types';
 import { Platform } from 'react-native';
+import { HelperText, TextInput, useTheme } from 'react-native-paper';
+import type { FieldValues } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { useAppSelector } from '@R/typed-hooks';
+import type { CustomTextInputProps } from './types';
 
 export default function CustomTextInput<T extends FieldValues>({
   control,

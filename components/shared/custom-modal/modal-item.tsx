@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { StyleSheet } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-import { ModalItemProps } from './types';
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import type { ModalItemProps } from './types';
 
 export default function ModalItem({ setSelectedValue, controlRef, onChange, value, title }: ModalItemProps) {
   const {

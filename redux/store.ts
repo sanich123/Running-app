@@ -2,19 +2,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { persistStore, persistReducer } from 'redux-persist';
+import { runichApi } from './runich-api/runich-api';
+import additionalInfoActivity from './slices/actitivity-additional-info/activity-additional-info';
 import activity from './slices/activity/activity';
+import auth from './slices/auth/auth';
+import comment from './slices/comment/comment';
 import language from './slices/language/language';
 import location from './slices/location/location';
+import logining from './slices/logining/logining';
 import mainFeed from './slices/main-feed/main-feed';
+import manualActivity from './slices/manual-activity/manual-activity';
 import network from './slices/network/network';
 import profile from './slices/profile/profile';
-import auth from './slices/auth/auth';
-import { runichApi } from './runich-api/runich-api';
-import logining from './slices/logining/logining';
-import manualActivity from './slices/manual-activity/manual-activity';
-import additionalInfoActivity from './slices/actitivity-additional-info/activity-additional-info';
 import unsendedActivity from './slices/unsended-activity/unsended-activity';
-import comment from './slices/comment/comment';
 
 const persistConfig = {
   key: 'root',

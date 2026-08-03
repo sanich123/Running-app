@@ -1,14 +1,14 @@
-import { STATUSES } from '@const/enums';
-import { LocationObject } from 'expo-location';
+import type { STATUSES } from '@const/enums';
+import type { LocationObject } from 'expo-location';
 
 
-export type LastKmSplit = {
+export interface LastKmSplit {
   lastKilometerDuration: number;
   kilometerPoint: LocationObject;
   lastKilometerAltitude: number;
-};
+}
 
-export type LocationInitialState = {
+export interface LocationInitialState {
   activityStatus: STATUSES;
   isTooMuchSpeed: boolean;
   isAppShutedByPhone: boolean;
@@ -26,4 +26,4 @@ export type LocationInitialState = {
   kilometresSplit: LastKmSplit[];
   locationsWithPauses: LocationObject[][];
   locationsFromBackground: LocationObject[];
-};
+}

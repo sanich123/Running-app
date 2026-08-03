@@ -1,12 +1,12 @@
+import { useWindowDimensions } from 'react-native';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { useAppSelector } from '@R/typed-hooks';
-import { useWindowDimensions } from 'react-native';
 
-type PreviewImageProps = {
+interface PreviewImageProps {
   image: string;
   index: number;
   isDisabled: boolean;
-};
+}
 
 export default function PreviewImage({ image, index, isDisabled }: PreviewImageProps) {
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);

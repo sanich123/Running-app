@@ -1,15 +1,15 @@
+import { Fragment } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import { getDaysOfTheMonthWithNames } from './util';
-import { CalendarStatisticsProps } from './types';
-import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import ErrorComponent from '@C/error-component/error-component';
-import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-date-with-activity';
-import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
-import { Fragment } from 'react';
-import { MAX_MOBILE_WIDTH } from '@const/const';
+import { getDaysOfTheMonthWithNames } from './util';
+import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';
+import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-date-with-activity';
+import type { CalendarStatisticsProps } from './types';
 
 export default function CalendarActivities({ year, month, userId, selectedType }: CalendarStatisticsProps) {
   const { language } = useAppSelector(({ language }) => language);

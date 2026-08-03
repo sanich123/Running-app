@@ -1,13 +1,12 @@
+import { screen } from '@testing-library/react-native';
 import { FOLLOW_UNFOLLOW_BTN } from '@C/profile/follow-unfollow-btn/const';
+import { LANGUAGES } from '@const/enums';
+import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import UserListItem from '../user-list-item/user-list-item';
-import { setUserId } from '@R/slices/auth/auth';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),

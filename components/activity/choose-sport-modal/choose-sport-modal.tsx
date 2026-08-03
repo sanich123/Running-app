@@ -1,12 +1,12 @@
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { LANGUAGES } from '@const/enums';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useCallback } from 'react';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { View } from 'react-native';
 import { Text, IconButton, useTheme } from 'react-native-paper';
-import { ChooseSportModalProps } from '../types';
-import { SPORTS_NAMES } from './const';
+import { LANGUAGES } from '@const/enums';
 import { saveSport } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { SPORTS_NAMES } from './const';
+import type { ChooseSportModalProps } from '../types';
 
 export default function ChooseSportModal({ chooseSportModalRef }: ChooseSportModalProps) {
   const { language } = useAppSelector(({ language }) => language);

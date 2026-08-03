@@ -1,5 +1,5 @@
-import { ProfileType } from '@C/card/types';
-import { ProfileSlice } from './types';
+import type { ProfileSlice } from './types';
+import type { ProfileType } from '@C/card/types';
 
 export const PROFILE_SETTINGS_INITIAL_STATE = {
   gender: '',

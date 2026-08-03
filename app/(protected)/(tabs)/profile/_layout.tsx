@@ -1,9 +1,9 @@
-import ProfileEditBtn from '@C/profile/edit-btn/edit-btn';
-import ProfileUpdateBtn from '@C/profile/update-btn/update-btn';
-import { useAppSelector } from '@R/typed-hooks';
-import { LABELS, ROUTES } from '@const/enums';
 import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
+import ProfileEditBtn from '@C/profile/edit-btn/edit-btn';
+import ProfileUpdateBtn from '@C/profile/update-btn/update-btn';
+import { LABELS, ROUTES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function ProfileStack() {
   const { colors } = useTheme();

@@ -1,11 +1,11 @@
-import { useAppSelector } from '@R/typed-hooks';
 import { Redirect, Stack } from 'expo-router';
-import { LABELS, ROUTES } from '@const/enums';
-import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
-import SaveBtn from '@C/activity/save-btn/save-btn';
 import { useTheme } from 'react-native-paper';
-import useInitialState from '@U/hooks/use-initial-state';
+import SaveBtn from '@C/activity/save-btn/save-btn';
 import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
+import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
+import { LABELS, ROUTES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
+import useInitialState from '@U/hooks/use-initial-state';
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',

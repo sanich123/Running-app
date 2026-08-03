@@ -1,9 +1,9 @@
-import useRefresh from '@U/hooks/use-refresh';
 import { FlatList } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import { keyExtractor, renderCardsFunction } from './render-item';
-import { InfiniteScrollListProps } from './type';
 import WeekStatistics from '@C/statistic/week-statistics/week-statistics';
+import useRefresh from '@U/hooks/use-refresh';
+import { keyExtractor, renderCardsFunction } from './render-item';
+import type { InfiniteScrollListProps } from './type';
 
 export default function InfiniteScrollList({
   dataToRender,

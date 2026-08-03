@@ -1,16 +1,15 @@
+import { Fragment } from 'react';
+import { Platform, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { CustomImage } from '@C/custom-image/custom-image';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
-import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
-import { Fragment } from 'react';
-import { Platform, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
 import { PROFILE_MEDIA } from './const';
-import { PhotoVideoType } from '@C/card/types';
-import { MAX_MOBILE_WIDTH } from '@const/const';
+import type { PhotoVideoType } from '@C/card/types';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { isLoading, isError, data, error } = useGetAllActivityPhotosByUserIdQuery(

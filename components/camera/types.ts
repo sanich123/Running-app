@@ -1,6 +1,6 @@
-import { PhotoVideoType } from '@C/card/types';
-import { CameraType, CameraView, FlashMode } from 'expo-camera';
-import { MutableRefObject } from 'react';
+import type { MutableRefObject } from 'react';
+import type { PhotoVideoType } from '@C/card/types';
+import type { CameraType, CameraView, FlashMode } from 'expo-camera';
 
 export enum CameraTypes {
   back = 'back',
@@ -13,18 +13,18 @@ export enum FlashModes {
   auto = 'auto',
 }
 
-export type ChangeViewProps = {
+export interface ChangeViewProps {
   type: CameraType;
   setType: (arg: CameraType) => void;
-};
+}
 
-export type FlashBtnProps = {
+export interface FlashBtnProps {
   setFlashEnable: (arg: FlashMode) => void;
   flashEnable: FlashMode;
-};
+}
 
-export type ShotBtnProps = {
+export interface ShotBtnProps {
   cameraRef: MutableRefObject<CameraView | null>;
   setPhotos: (arg: PhotoVideoType[]) => void;
   photos: PhotoVideoType[];
-};
+}

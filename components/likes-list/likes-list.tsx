@@ -1,12 +1,12 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, FlatList, useWindowDimensions, Platform } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
 import UserListItem from '@C/user-list-item/user-list-item';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
 import useRefresh from '@U/hooks/use-refresh';
-import { useLocalSearchParams } from 'expo-router';
-import { View, FlatList, useWindowDimensions, Platform } from 'react-native';
-import { ActivityIndicator, Divider, Text } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LikesList() {
   const { width } = useWindowDimensions();

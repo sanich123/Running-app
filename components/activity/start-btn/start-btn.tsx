@@ -1,14 +1,14 @@
+import { StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
+import { STATUSES } from '@const/enums';
+import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { saveFinishedActivity } from '@R/slices/activity/activity';
 import { setActivityStatus } from '@R/slices/location/location';
+import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
-import { STATUSES } from '@const/enums';
-import { useRouter } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
-import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON } from './const ';
-import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
-import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 
 export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordLocation: boolean }) {
   const dispatch = useAppDispatch();

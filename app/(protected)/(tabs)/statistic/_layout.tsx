@@ -1,9 +1,9 @@
-import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
-import { useAppSelector } from '@R/typed-hooks';
-import { LABELS, ROUTES } from '@const/enums';
-import { Stack } from 'expo-router';
 import { Platform } from 'react-native';
+import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
+import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
+import { LABELS, ROUTES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function StatisticsStack() {
   const { colors } = useTheme();

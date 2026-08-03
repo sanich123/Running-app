@@ -1,11 +1,11 @@
-export type CurrentWeekStatisticsRequest = {
+export interface CurrentWeekStatisticsRequest {
   userId: string;
   firstDay: string;
   lastDay: string;
-};
+}
 
-export type MonthStatisticsRequest = {
+export interface MonthStatisticsRequest {
   userId: string;
   year: string;
   month: string;
-};
+}

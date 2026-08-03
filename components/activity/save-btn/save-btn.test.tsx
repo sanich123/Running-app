@@ -1,21 +1,21 @@
+import { screen, userEvent } from '@testing-library/react-native';
 import { EMOTIONS_BTNS_VALUES } from '@C/save-activity-page/emotion-btns/const';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { saveFinishedActivity } from '@R/slices/activity/activity';
-import { changeLanguage } from '@R/slices/language/language';
-import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
-import { mockStore } from '@T/utils/mock-store';
-import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES } from '@const/enums';
-import { screen, userEvent } from '@testing-library/react-native';
-import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
-import ActivitySaveBtn from './save-btn';
-import { setUserId } from '@R/slices/auth/auth';
 import {
   saveDescription,
   saveEmotion,
   saveSport,
   saveTitle,
 } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { saveFinishedActivity } from '@R/slices/activity/activity';
+import { setUserId } from '@R/slices/auth/auth';
+import { changeLanguage } from '@R/slices/language/language';
+import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
+import ActivitySaveBtn from './save-btn';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: jest.fn() }),

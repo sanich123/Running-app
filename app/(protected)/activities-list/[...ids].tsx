@@ -1,10 +1,10 @@
+import { FlatList } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
 import { renderCardsFunction } from '@C/infinite-scroll-list/render-item';
 import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
 import { useGetSeveralActivitiesByTheirIdsQuery } from '@R/services/activity/activity';
-import { useLocalSearchParams } from 'expo-router';
-import { FlatList } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
 
 export default function ActivitiesList() {
   const {

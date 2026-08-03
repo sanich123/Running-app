@@ -1,8 +1,8 @@
-import { Text, Switch, Divider, useTheme, TouchableRipple } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
+import { Text, Switch, Divider, useTheme, TouchableRipple } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery, useUpdateProfileByProfileIdMutation } from '@R/services/profile/profile';
-import { SETTINGS } from '../const';
 import { useAppSelector } from '@R/typed-hooks';
+import { SETTINGS } from '../const';
 
 export default function EmailNotificationsBtn() {
   const { dark } = useTheme();

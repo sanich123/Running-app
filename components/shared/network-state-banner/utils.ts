@@ -1,6 +1,6 @@
 import { isAirplaneModeEnabledAsync } from 'expo-network';
-import { errorToast } from '../error-toast/error-toast';
 import ExpoVpnChecker from 'expo-vpn-checker';
+import { errorToast } from '../error-toast/error-toast';
 
 export async function checkVpn(setIsVpnEnabled: (arg: boolean) => void) {
   try {

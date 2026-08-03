@@ -1,11 +1,13 @@
+import { useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import CameraLauncher from '@C/camera/camera';
 import Checkbox from '@C/checkbox/checkbox';
 import NetworkIndicator from '@C/network-indicator/network-indicator';
 import DatePickerWeb from '@C/save-activity-page/date-picker-web/date-picker-web';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useAppSelector } from '@R/typed-hooks';
-import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import DateTimePicker from './date-picker/date-picker';
 import DeclineBtn from './decline-btn/decline-btn';
 import EmotionBtns from './emotion-btns/emotion-btns';
@@ -15,8 +17,6 @@ import ShowCameraBtn from './show-camera-btn/show-camera-btn';
 import SportsBtns from './sports-btns/sports-btns';
 import TextInputs from './text-inputs/text-inputs';
 import UploadPhotosBtn from './upload-photos-btn/upload-photos-btn';
-import { MAX_MOBILE_WIDTH } from '@const/const';
-import { useTheme } from 'react-native-paper';
 
 export default function SaveResult() {
   const { colors } = useTheme();

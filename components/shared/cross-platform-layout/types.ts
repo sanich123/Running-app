@@ -1,4 +1,4 @@
-import { Edges } from 'react-native-safe-area-context';
+import type { Edges } from 'react-native-safe-area-context';
 
 export interface CrossPlatformLayoutProps {
   isError?: boolean;

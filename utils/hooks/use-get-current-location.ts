@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 import { getLastKnownPosition } from '../get-initial-position';
 
 export default function useGetCurrentLocation() {

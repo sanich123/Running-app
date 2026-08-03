@@ -1,8 +1,8 @@
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
 import { RESET_NAVIGATION } from './const';
 import RegisterNavigation from './login-register-navigation';
 

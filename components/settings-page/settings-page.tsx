@@ -1,14 +1,14 @@
 import { Platform, ScrollView, useWindowDimensions } from 'react-native';
-import LogoutBtn from './logout/logout-btn';
+import { useTheme } from 'react-native-paper';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import ChangeTheme from './change-theme/change-theme';
+import ClearCacheBtn from './clear-cache-btn/clear-cache-btn';
+import DeleteAccountBtn from './delete-account/delete-account';
 import EmailNotificationsBtn from './email-notifications/email-notifications';
 import LanguageSwitcher from './language-switcher/language-switcher';
-import DeleteAccountBtn from './delete-account/delete-account';
-import PrefetchActivitiesBtn from './prefetch-activities-btn/prefetch-activities-btn';
-import ClearCacheBtn from './clear-cache-btn/clear-cache-btn';
+import LogoutBtn from './logout/logout-btn';
 import MigrationBtn from './migration-btn/migration-btn';
-import { useTheme } from 'react-native-paper';
-import ChangeTheme from './change-theme/change-theme';
-import { MAX_MOBILE_WIDTH } from '@const/const';
+import PrefetchActivitiesBtn from './prefetch-activities-btn/prefetch-activities-btn';
 
 export default function SettingsPage() {
   const { colors } = useTheme();

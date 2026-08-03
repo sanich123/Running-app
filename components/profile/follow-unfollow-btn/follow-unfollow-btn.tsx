@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { Button } from 'react-native-paper';
 import {
   useGetYouFollowUsersByUserIdQuery,
   useDeleteFriendMutation,
@@ -6,8 +8,6 @@ import {
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorExtracter } from '@U/error-handler';
-import { useEffect } from 'react';
-import { Button } from 'react-native-paper';
 import { FOLLOW_UNFOLLOW_BTN } from './const';
 
 export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {

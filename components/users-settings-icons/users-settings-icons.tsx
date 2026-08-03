@@ -1,10 +1,10 @@
+import { Platform, View, StyleSheet } from 'react-native';
+import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
+import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
 import ActivityUpdateBtn from '@C/activity/update-btn/update-btn';
 import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
-import { Platform, View, StyleSheet } from 'react-native';
-import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
 
 export default function UsersSettingsIcons() {
   const { colors, dark } = useTheme();

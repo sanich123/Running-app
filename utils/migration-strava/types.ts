@@ -1,4 +1,4 @@
-export type GetMigrationArchiveAndSendToServerProps = {
+export interface GetMigrationArchiveAndSendToServerProps {
     setIsDisabled: (arg: boolean) => void;
     setIsUnzipping: (arg: boolean) => void;
     setIsZipping: (arg: boolean) => void;
@@ -8,4 +8,4 @@ export type GetMigrationArchiveAndSendToServerProps = {
     setIsSuccess: (arg: boolean) => void;
     setIsError: (arg: string) => void;
     userId: string;
-};
+}

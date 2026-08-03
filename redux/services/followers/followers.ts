@@ -1,6 +1,6 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
-import { SendFriend } from './types';
+import type { SendFriend } from './types';
 
 const { friend, followers } = Routes;
 

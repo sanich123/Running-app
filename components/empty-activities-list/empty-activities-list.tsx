@@ -1,6 +1,6 @@
-import { useAppSelector } from '@R/typed-hooks';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
 import { EMPTY_ACTIVITIES_LIST } from './const';
 
 export default function EmptyActivitiesList() {

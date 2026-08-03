@@ -1,10 +1,9 @@
-import { TIMEOUT_MESSAGE } from '@C/activity/location-indicator/const';
-import { setIsAppShuted } from '@R/slices/location/location';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-
+import { TIMEOUT_MESSAGE } from '@C/activity/location-indicator/const';
+import { setIsAppShuted } from '@R/slices/location/location';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ACTIVITY_ERROR_MSG } from './const';
 
 export default function ErrorMsg() {

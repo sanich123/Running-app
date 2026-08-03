@@ -1,6 +1,6 @@
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
 import { runichApi } from '@R/runich-api/runich-api';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { SETTINGS } from '../const';
 
 export default function ClearCacheBtn() {

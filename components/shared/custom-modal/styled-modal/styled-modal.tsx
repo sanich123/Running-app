@@ -1,7 +1,8 @@
-import { useCallback, PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
+import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from 'react-native-paper';
-import { ModalControls } from '../types';
+import type { ModalControls } from '../types';
 
 export default function StyledModal({
   controlRef,

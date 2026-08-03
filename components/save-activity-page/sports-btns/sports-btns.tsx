@@ -1,11 +1,11 @@
-import { useAppSelector } from '@R/typed-hooks';
-import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { SPORTS_BTNS_VALUES } from './const';
-import ChooseSportModal from '@C/activity/choose-sport-modal/choose-sport-modal';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
 import { View } from 'react-native';
+import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import ChooseSportModal from '@C/activity/choose-sport-modal/choose-sport-modal';
+import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
+import { SPORTS_BTNS_VALUES } from './const';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);

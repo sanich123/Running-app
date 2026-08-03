@@ -1,10 +1,9 @@
 import { View, StyleSheet } from 'react-native';
-
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { Switch, Text } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
-import { BackgroundLocationSwitcherProps } from '../types';
+import { useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import type { BackgroundLocationSwitcherProps } from '../types';
 
 export default function BackgroundLocationSwitcher({
   backgroundPermissionStatus,

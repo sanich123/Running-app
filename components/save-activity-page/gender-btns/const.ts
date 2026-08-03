@@ -1,10 +1,10 @@
 import { LANGUAGES } from '@const/enums';
 
-export type GenderBtnsProps = {
+export interface GenderBtnsProps {
   gender: string;
   setGender: (arg: string) => void;
   isDisabled: boolean;
-};
+}
 
 export const enum GENDER_BTNS_VALUES {
   male = 'male',

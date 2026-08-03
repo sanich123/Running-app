@@ -1,11 +1,12 @@
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { errorHandler } from '@U/error-handler';
-import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
 import { useState } from 'react';
 import { Platform, StyleSheet, View, Text } from 'react-native';
 import { Button } from 'react-native-paper';
-import { UploadPhotoBtnProps, UPLOAD_PHOTO_BTN } from './ const';
 import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { errorHandler } from '@U/error-handler';
+import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
+import { UPLOAD_PHOTO_BTN } from './ const';
+import type { UploadPhotoBtnProps} from './ const';
 
 export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, images }: UploadPhotoBtnProps) {
   const dispatch = useAppDispatch();

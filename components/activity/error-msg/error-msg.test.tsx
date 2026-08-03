@@ -1,10 +1,9 @@
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { setIsAppShuted } from '@R/slices/location/location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import { ACTIVITY_ERROR_MSG } from './const';
 import ActivityErrorMsg from './error-msg';
 

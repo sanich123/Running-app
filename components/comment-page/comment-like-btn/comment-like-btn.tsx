@@ -1,17 +1,17 @@
-import { setCommentIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
+import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
+import { IconButton, useTheme } from 'react-native-paper';
 import {
   useSendLikeToCommentMutation,
   useGetLikesByCommentIdQuery,
   useDeleteLikeToCommentMutation,
 } from '@R/services/comments/comments';
+import { useSendEmailAfterSendingCommentLikeMutation } from '@R/services/emails/emails';
+import { setCommentIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
-import { useEffect, useState } from 'react';
-import { Platform } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
 import { COMMENT_LIKE_BTN } from './const';
-import { CommentLikeBtnProps } from '../types';
-import { useSendEmailAfterSendingCommentLikeMutation } from '@R/services/emails/emails';
+import type { CommentLikeBtnProps } from '../types';
 
 export default function CommentLikeBtn({ commentId, commentLikesFromComment, profile, comment }: CommentLikeBtnProps) {
   const { colors } = useTheme();

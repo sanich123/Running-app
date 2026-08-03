@@ -1,8 +1,8 @@
-import { LANGUAGES } from '@const/enums';
-import { AccumulatorValues, MonthMetrics } from './types';
-import { getMathRoundValueOrZero, mapNumberToMonth } from './util';
 import { Text } from 'react-native-paper';
 import { METRICS_TITLES } from './const';
+import { getMathRoundValueOrZero, mapNumberToMonth } from './util';
+import type { AccumulatorValues, MonthMetrics } from './types';
+import type { LANGUAGES } from '@const/enums';
 
 export function reduceMonthMetrics(monthMetrics: MonthMetrics, language: LANGUAGES) {
   const { totalDuration, totalDistance, totalActivities } = [...Array(12).keys()].reduce(

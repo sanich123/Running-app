@@ -1,12 +1,12 @@
-export type YearsAndTypes = {
+export interface YearsAndTypes {
   year: string;
   types: string[];
-};
+}
 
-export type YearsAndTypesPickerProps = {
+export interface YearsAndTypesPickerProps {
   setSelectedYear: (arg: number) => void;
   setSelectedType: (arg: string) => void;
   selectedYear: number;
   selectedType: string;
   availableYearsAndTypes: YearsAndTypes[];
-};
+}

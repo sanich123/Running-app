@@ -1,5 +1,4 @@
 import moment from 'moment';
-
 import { LANGUAGES } from '../constants/enums';
 
 export function formatDuration(duration: number) {

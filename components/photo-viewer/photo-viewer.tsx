@@ -1,11 +1,11 @@
+import PagerView from 'react-native-pager-view';
+import uuid from 'react-native-uuid';
+import { View, StyleSheet, Platform } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { CustomImage } from '@C/custom-image/custom-image';
 import VideoViewer from '@C/video-viewer/video-viewer';
 import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
-import { useLocalSearchParams } from 'expo-router';
-import { View, StyleSheet, Platform } from 'react-native';
-import PagerView from 'react-native-pager-view';
-import uuid from 'react-native-uuid';
 
 export default function PhotoViewer() {
   const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();

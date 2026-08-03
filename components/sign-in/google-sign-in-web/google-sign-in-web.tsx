@@ -1,6 +1,6 @@
-import { useAppDispatch } from '@R/typed-hooks';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
+import { useAppDispatch } from '@R/typed-hooks';
 
 export default function GoogleSignInWeb() {
   const dispatch = useAppDispatch();

@@ -1,12 +1,11 @@
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import { FOLLOW_UNFOLLOW_BTN } from './const';
 import FollowUnfollowBtn from './follow-unfollow-btn';
-import { setUserId } from '@R/slices/auth/auth';
 
 describe('Delete friend btn', () => {
   it('should correctly renders as unfollow btn, when passed friendId is in an array of friends of the user', async () => {

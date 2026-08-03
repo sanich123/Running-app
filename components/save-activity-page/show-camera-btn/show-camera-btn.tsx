@@ -1,8 +1,8 @@
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { SHOW_CAMERA_BTN } from './const';
 import { setCameraIsVisible } from '@R/slices/manual-activity/manual-activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { SHOW_CAMERA_BTN } from './const';
 
 export default function ShowCameraBtn({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();

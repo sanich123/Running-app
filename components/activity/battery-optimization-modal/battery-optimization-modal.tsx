@@ -1,12 +1,12 @@
-import { View } from 'react-native';
 import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { showCrossPlatformToast } from '@U/custom-toast';
-import { useTheme, Button, Text } from 'react-native-paper';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
-import { BATTERY_OPTIMIZATION } from './const';
+import { View } from 'react-native';
+import { useTheme, Button, Text } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { BatteryOptimizationModalProps } from '../types';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import { BATTERY_OPTIMIZATION } from './const';
+import type { BatteryOptimizationModalProps } from '../types';
 
 export default function BatteryOptimizationModal({
   batteryOptimizationEnabledModalRef,

@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator, Card, FAB, Text } from 'react-native-paper';
 import LikeBtn from '@C/card/like-btn/like-btn';
 import { LikesSize } from '@C/card/likes/const';
 import Likes from '@C/card/likes/likes';
@@ -5,15 +9,11 @@ import MediaList from '@C/card/media-list/media-list';
 import ErrorComponent from '@C/error-component/error-component';
 import UserNameSurname from '@C/user-name-surname/user-name-surname';
 import UserSportDate from '@C/user-sport-date/user-sport-date';
-import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
-import { useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { ActivityIndicator, Card, FAB, Text } from 'react-native-paper';
-import Comments from './comments/comments';
-import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import CommentInput from './comment-input/comment-input';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
+import CommentInput from './comment-input/comment-input';
+import Comments from './comments/comments';
+import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 export default function CommentFullViewPage() {
   const { width } = useWindowDimensions();

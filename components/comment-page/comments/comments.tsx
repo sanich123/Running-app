@@ -1,14 +1,14 @@
-import { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
-import { useAppSelector } from '@R/typed-hooks';
 import { useEffect, useState } from 'react';
-import Comment from '../comment/comment';
-import { useGetCommentsByActivityIdQuery } from '@R/services/comments/comments';
+import { Platform, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
-import CommentsLoadMoreBtn from '../comments-load-more-btn/comments-load-more';
+import { useGetCommentsByActivityIdQuery } from '@R/services/comments/comments';
+import { useAppSelector } from '@R/typed-hooks';
+import Comment from '../comment/comment';
 import CommentsEmptyList from '../comments-empty/comments-empty';
-import { Platform, View } from 'react-native';
-import { CommentModalProps } from '../types';
+import CommentsLoadMoreBtn from '../comments-load-more-btn/comments-load-more';
+import type { CommentModalProps } from '../types';
+import type { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
 
 export default function Comments({ commentsModalRef }: CommentModalProps) {
   const { isShowingTextInput, commentActivityId } = useAppSelector(({ comment }) => comment);

@@ -1,8 +1,7 @@
 import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
-import { Platform } from 'react-native';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
-
+import { Platform } from 'react-native';
 import { showCrossPlatformToast } from './custom-toast';
 import { errorHandler } from './error-handler';
 import { getBase64CodedImage, getPublicUrl, uploadPhoto } from '../auth/supabase/storage/upload-photo';

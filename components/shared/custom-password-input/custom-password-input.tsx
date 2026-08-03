@@ -1,9 +1,10 @@
-import { Controller, FieldValues } from 'react-hook-form';
-import { HelperText, TextInput, useTheme } from 'react-native-paper';
 import { useState } from 'react';
-import { CustomPasswordInputProps } from './types';
 import { Platform } from 'react-native';
+import { HelperText, TextInput, useTheme } from 'react-native-paper';
+import { Controller } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
 import { useAppSelector } from '@R/typed-hooks';
+import type { CustomPasswordInputProps } from './types';
 
 export default function CustomPasswordInput<T extends FieldValues>({
   control,

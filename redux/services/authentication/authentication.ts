@@ -1,5 +1,5 @@
 import { runichApi } from '@R/runich-api/runich-api';
-import { AccessData, EmailPasswordData, VerifyTokenRequest, VerifyTokenResponse } from './types';
+import type { AccessData, EmailPasswordData, VerifyTokenRequest, VerifyTokenResponse } from './types';
 
 export const authenticationApi = runichApi.injectEndpoints({
   overrideExisting: true,

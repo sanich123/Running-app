@@ -1,7 +1,7 @@
-import { setCameraIsVisible } from '@R/slices/manual-activity/manual-activity';
-import { useAppDispatch } from '@R/typed-hooks';
 import { View } from 'react-native';
 import { useTheme, Icon, TouchableRipple } from 'react-native-paper';
+import { setCameraIsVisible } from '@R/slices/manual-activity/manual-activity';
+import { useAppDispatch } from '@R/typed-hooks';
 
 export default function CloseBtn() {
   const { colors, dark } = useTheme();

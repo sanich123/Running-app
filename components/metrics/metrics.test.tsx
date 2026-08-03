@@ -1,9 +1,9 @@
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { setIsMapVisible } from '@R/slices/location/location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
 import { MAP_METRICS } from './const';
 import Metrics from './metrics';
 

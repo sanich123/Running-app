@@ -1,10 +1,10 @@
+import { View } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
-import { ROUTES } from '@const/enums';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { View } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { USERS_COUNT, USERS_VARIANT } from './const';
 
 export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {

@@ -1,6 +1,6 @@
-import { SerializedError } from '@reduxjs/toolkit';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { showCrossPlatformToast } from './custom-toast';
+import type { SerializedError } from '@reduxjs/toolkit';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export function errorHandler(err: unknown) {
   if (err instanceof Error) {

@@ -1,8 +1,8 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { LANGUAGES } from '@const/enums';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-export function getIconByTypeOfSport(sport: SPORTS_BTNS_VALUES, size: number = 15) {
+export function getIconByTypeOfSport(sport: SPORTS_BTNS_VALUES, size = 15) {
   if (sport === SPORTS_BTNS_VALUES.run) {
     return <MaterialCommunityIcons name={sport} size={size} />;
   }

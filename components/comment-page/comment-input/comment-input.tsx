@@ -1,18 +1,18 @@
-import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
+import { useState } from 'react';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { View } from 'react-native';
+import { IconButton, useTheme } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import {
   usePostCommentWithActivityIdMutation,
   useUpdateCommentByCommentIdMutation,
 } from '@R/services/comments/comments';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { useState } from 'react';
-import { View } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
-import { COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
-import { CommentInputProps } from '../types';
 import { useSendEmailAfterSendingCommentMutation } from '@R/services/emails/emails';
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
-import { errorToast } from '@C/shared/error-toast/error-toast';
+import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
+import type { CommentInputProps } from '../types';
 
 export default function CommentInput({ commentToUpdate = '', commentId = '', profile }: CommentInputProps) {
   const [focused, setFocused] = useState(false);

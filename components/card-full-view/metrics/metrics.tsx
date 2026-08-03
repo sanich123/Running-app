@@ -1,14 +1,13 @@
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator, Text, Divider } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
-import { useLocalSearchParams } from 'expo-router';
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { ActivityIndicator, Text, Divider } from 'react-native-paper';
-
 import { HOME_ACTIVITY_FULL_VIEW_TEST_ID, HOME_ACTIVITY_FULL_VIEW } from './const';
-import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function Metrics() {
   const { width } = useWindowDimensions();

@@ -1,10 +1,10 @@
-import { CustomImage } from '@C/custom-image/custom-image';
-import { saveWholeProfile } from '@R/slices/profile/profile';
-import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { Avatar, useTheme } from 'react-native-paper';
+import { CustomImage } from '@C/custom-image/custom-image';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
+import { saveWholeProfile } from '@R/slices/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
 export default function AvatarShowable({ size, id, focused }: { size: number; id: string; focused?: boolean }) {

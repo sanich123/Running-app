@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-
 import { LOCATION_INITIAL_STATE } from './const';
 
 export const location = createSlice({

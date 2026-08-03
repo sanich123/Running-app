@@ -1,13 +1,13 @@
+import { memo } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { usePathname, useRouter } from 'expo-router';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import ShowMetrics from '@C/show-metrics/show-metrics';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
-import { usePathname, useRouter } from 'expo-router';
-import { memo } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { CARD_METRICS } from './const';
-import { MetricsProps } from '../types';
+import type { MetricsProps } from '../types';
 
 export default memo(function Metrics({
   distance,

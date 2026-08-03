@@ -1,13 +1,13 @@
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { changeLanguage } from '@R/slices/language/language';
-import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { setUserId } from '@R/slices/auth/auth';
+import { changeLanguage } from '@R/slices/language/language';
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import ActivityCard from './card';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
-import { MOCK_PROFILE } from '@T/mocks/mock-location';
-import { setUserId } from '@R/slices/auth/auth';
+import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 
 jest.mock('expo-image', () => {
   const actualExpoImage = jest.requireActual('expo-image');

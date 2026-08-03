@@ -1,12 +1,12 @@
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
-type MetricsItemProps = {
+interface MetricsItemProps {
   isMapVisible: boolean;
   title: string;
   metric: string;
   isCentral: boolean;
-};
+}
 
 export default function MetricsItem({ isMapVisible, title, metric, isCentral }: MetricsItemProps) {
   const isCentralAndIsNotMapVisible = isCentral && !isMapVisible;

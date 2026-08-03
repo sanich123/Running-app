@@ -1,11 +1,11 @@
-import { ProfileType } from '@C/card/types';
+import type { ProfileType } from '@C/card/types';
 
-export type ProfilePrivateInfo = {
+export interface ProfilePrivateInfo {
   email: string;
   password: string;
-};
+}
 
-export type ProfileSettings = {
+export interface ProfileSettings {
   gender?: string;
   name?: string;
   surname?: string;
@@ -17,12 +17,12 @@ export type ProfileSettings = {
   birthday?: string;
   sport?: string;
   emailNotifications?: boolean;
-};
+}
 
-export type ProfileSlice = {
+export interface ProfileSlice {
   privateInfo: ProfilePrivateInfo;
   isDisabledWhileSendingProfile: boolean;
   isNeedToPrefetchActivities: boolean;
   settings: ProfileSettings;
   profileFromServer: ProfileType;
-};
+}

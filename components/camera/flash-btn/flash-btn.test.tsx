@@ -1,7 +1,6 @@
+import { screen, userEvent } from '@testing-library/react-native';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { screen, userEvent } from '@testing-library/react-native';
-
 import FlashBtn from './flash-btn';
 
 describe('Camera flash btn', () => {

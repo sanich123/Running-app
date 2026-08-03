@@ -1,12 +1,12 @@
-import { MOCK_COMMENT_LIKES } from '@T/mocks/mock-comment-likes';
 import { screen } from '@testing-library/react-native';
-import CommentLikesLength from './comment-likes-length';
-import { mockStore } from '@T/utils/mock-store';
-import { changeLanguage } from '@R/slices/language/language';
-import { LANGUAGES } from '@const/enums';
-import { renderWithProviders } from '@T/utils/test-utils';
 import { NUMBER_OF_LIKES } from '@C/card/number-of-likes/const';
+import { LANGUAGES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
+import { changeLanguage } from '@R/slices/language/language';
+import { MOCK_COMMENT_LIKES } from '@T/mocks/mock-comment-likes';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import CommentLikesLength from './comment-likes-length';
 
 describe('Comment likes length', () => {
   it('should correctly renders in english, when you and others gave likes', async () => {

@@ -1,19 +1,19 @@
-export type EmailPasswordData = {
+export interface EmailPasswordData {
   email: string;
   password: string;
-};
+}
 
-export type AccessData = {
+export interface AccessData {
   id: string;
   accessToken: string;
-};
+}
 
-export type VerifyTokenRequest = {
+export interface VerifyTokenRequest {
   accessToken: string;
-};
+}
 
-export type VerifyTokenResponse = {
+export interface VerifyTokenResponse {
   id: string;
   appVersion: string;
   accessToken: string;
-};
+}

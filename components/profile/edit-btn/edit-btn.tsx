@@ -1,10 +1,10 @@
-import { useAppSelector } from '@R/typed-hooks';
-import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
 import { StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { EDIT_BTN } from './const';
+import { ROUTES } from '@const/enums';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
+import { useAppSelector } from '@R/typed-hooks';
+import { EDIT_BTN } from './const';
 
 export default function EditBtn() {
   const { push } = useRouter();

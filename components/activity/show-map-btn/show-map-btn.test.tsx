@@ -1,8 +1,7 @@
+import { screen, userEvent } from '@testing-library/react-native';
 import { setIsMapVisible } from '@R/slices/location/location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { screen, userEvent } from '@testing-library/react-native';
-
 import { ACTIVITY_SHOW_MAP_TEST_ID } from './const';
 import ActivityShowMapBtn from './show-map-btn';
 

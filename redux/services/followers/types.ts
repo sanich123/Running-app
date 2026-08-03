@@ -1,6 +1,6 @@
-export type SendFriend = {
+export interface SendFriend {
   body: {
     userId: string;
   };
   id: string;
-};
+}

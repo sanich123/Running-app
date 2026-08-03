@@ -1,12 +1,12 @@
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_LIKES } from '@T/mocks/mock-likes';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
 import { NUMBER_OF_LIKES } from './const';
 import NumberOfLikes from './number-of-likes';
-import { setUserId } from '@R/slices/auth/auth';
 
 describe('Number of likes', () => {
   it('should correctly renders, when you liked', () => {

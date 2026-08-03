@@ -1,18 +1,16 @@
-export type MonthMetrics = {
-  [key: string]: { totalDistance: number; totalDuration: number; totalItems: number };
-};
+export type MonthMetrics = Record<string, { totalDistance: number; totalDuration: number; totalItems: number }>;
 
-export type ChartBarComponent = {
+export interface ChartBarComponent {
   value: number;
   label: string;
   topLabelComponent: () => void;
-};
+}
 
-export type AccumulatorValues = {
+export interface AccumulatorValues {
   totalDuration: ChartBarComponent[];
   totalDistance: ChartBarComponent[];
   totalActivities: ChartBarComponent[];
-};
+}
 
 export enum ChooseMetricsBtnsValues {
   duration = 'duration',
@@ -20,8 +18,8 @@ export enum ChooseMetricsBtnsValues {
   distance = 'distance',
 }
 
-export type BarChartWrapperProps = {
+export interface BarChartWrapperProps {
   metricsArr?: { value: number; label: string }[];
   year: number;
   title: string;
-};
+}

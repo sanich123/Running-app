@@ -1,4 +1,5 @@
-import { useCallback, PropsWithChildren, RefObject } from 'react';
+import type { PropsWithChildren, RefObject } from 'react';
+import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from 'react-native-paper';
 

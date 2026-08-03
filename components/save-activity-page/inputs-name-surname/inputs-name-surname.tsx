@@ -1,9 +1,8 @@
-import { saveName, saveSurname } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
-
+import { saveName, saveSurname } from '@R/slices/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 
 export default function InputsNameSurname({ isDisabled }: { isDisabled: boolean }) {

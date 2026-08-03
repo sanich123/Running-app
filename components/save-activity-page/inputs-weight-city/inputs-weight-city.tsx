@@ -1,9 +1,8 @@
-import { saveCity, saveWeight } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
-
+import { saveCity, saveWeight } from '@R/slices/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { CITY_TEST_ID, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
 
 export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }) {

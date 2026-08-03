@@ -1,17 +1,17 @@
+import { useRef } from 'react';
+import { View } from 'react-native';
+import { Link } from 'expo-router';
+import { Text, useTheme } from 'react-native-paper';
 import BackgroundLocationModal from '@C/activity/background-location-modal/background-location-modal';
 import BackgroundLocationSwitcher from '@C/activity/background-location-switcher/background-location-switcher';
 import BatteryOptimizationModal from '@C/activity/battery-optimization-modal/battery-optimization-modal';
 import BatteryOptimizationSwitcher from '@C/activity/battery-optimization-switcher/battery-optimization-switcher';
 import ForegroundLocationSwitcher from '@C/activity/foregroud-location-switcher/foreground-location-switcher';
 import LocationSettingsSwitcher from '@C/activity/location-settings-switcher/location-settings-switcher';
-import { LocationPermissionsProps } from '@C/activity/types';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
-import { Link } from 'expo-router';
-import { useRef } from 'react';
-import { View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import type { LocationPermissionsProps } from '@C/activity/types';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function LocationPermissions({
   setIsAppOptimizedByPhone,

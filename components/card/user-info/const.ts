@@ -1,15 +1,15 @@
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { RefObject } from 'react';
+import type { RefObject } from 'react';
+import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-export type UserInfoProps = {
+export interface UserInfoProps {
   profile: { surname: string; name: string; profilePhoto: string; profilePhotoBlurhash: string };
   sport?: SPORTS_BTNS_VALUES;
   date: string;
   userId: string;
   size: UserInfoSize;
   commentsModalRef?: RefObject<BottomSheetModal | null>;
-};
+}
 
 export enum UserInfoSize {
   small = 'small',

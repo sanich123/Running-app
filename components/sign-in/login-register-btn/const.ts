@@ -1,5 +1,5 @@
-import { SignInPageStates } from '@U/validate-email-password';
 import { LANGUAGES } from '@const/enums';
+import { SignInPageStates } from '@U/validate-email-password';
 
 export const LOGIN_BTN = {
   [LANGUAGES.english]: {

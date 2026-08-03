@@ -1,10 +1,9 @@
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { setIsDisableWhileSending } from '@R/slices/activity/activity';
 import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import { DATE_TIME_PICKER } from './const';
 import DateTimePicker from './date-picker';
 

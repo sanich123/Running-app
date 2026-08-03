@@ -1,4 +1,4 @@
-import { ActivityToSend, FinishedActivity } from '@R/services/activity/types';
+import type { ActivityToSend, FinishedActivity } from '@R/services/activity/types';
 
 export interface ManualData {
   manualDate: string;

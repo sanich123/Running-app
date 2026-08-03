@@ -1,18 +1,18 @@
-import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
-import { Alert, Platform, View } from 'react-native';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { resetProfileSlice } from '@R/slices/profile/profile';
-import { resetLocationSlice } from '@R/slices/location/location';
-import { DELETE_ACCOUNT } from './const';
-import { useDeleteUserMutation } from '@R/services/authentication/authentication';
-import { showCrossPlatformToast } from '@U/custom-toast';
-import { resetActivitySlice } from '@R/slices/activity/activity';
-import { resetMainFeedSlice } from '@R/slices/main-feed/main-feed';
-import { resetAuthSlice } from '@R/slices/auth/auth';
-import { resetNetworkSlice } from '@R/slices/network/network';
-import { resetLanguageSlice } from '@R/slices/language/language';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert, Platform, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
+import { useDeleteUserMutation } from '@R/services/authentication/authentication';
+import { resetActivitySlice } from '@R/slices/activity/activity';
+import { resetAuthSlice } from '@R/slices/auth/auth';
+import { resetLanguageSlice } from '@R/slices/language/language';
+import { resetLocationSlice } from '@R/slices/location/location';
+import { resetMainFeedSlice } from '@R/slices/main-feed/main-feed';
+import { resetNetworkSlice } from '@R/slices/network/network';
+import { resetProfileSlice } from '@R/slices/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import { DELETE_ACCOUNT } from './const';
 
 export default function DeleteAccountBtn() {
   const { language } = useAppSelector(({ language }) => language);

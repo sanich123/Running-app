@@ -1,45 +1,45 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { LocationPermissionResponse, PermissionResponse } from 'expo-location';
-import { RefObject } from 'react';
+import type { RefObject } from 'react';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { LocationPermissionResponse, PermissionResponse } from 'expo-location';
 
-export type BackgroundLocationModalProps = {
+export interface BackgroundLocationModalProps {
   backgroundLocationEnabledModalRef: RefObject<BottomSheetModal | null>;
   requestBackgroundPermission: () => Promise<LocationPermissionResponse>;
-};
+}
 
-export type BackgroundLocationSwitcherProps = {
+export interface BackgroundLocationSwitcherProps {
   backgroundPermissionStatus: boolean;
   backgroundLocationEnabledModalRef: RefObject<BottomSheetModal | null>;
-};
+}
 
-export type BatteryOptimizationModalProps = {
+export interface BatteryOptimizationModalProps {
   batteryOptimizationEnabledModalRef: RefObject<BottomSheetModal | null>;
   setIsNeedToRefreshPermission: (arg: boolean) => void;
-};
+}
 
-export type BatteryOptimizationSwitcherProps = {
+export interface BatteryOptimizationSwitcherProps {
   isAppOptimizedByPhone: boolean;
   setIsAppOptimizedByPhone: (arg: boolean) => void;
   batteryOptimizationEnabledModalRef: RefObject<BottomSheetModal | null>;
   setIsNeedToRefreshPermission: (arg: boolean) => void;
   isNeedToRefreshPermission: boolean;
-};
+}
 
-export type ChooseSportModalProps = {
+export interface ChooseSportModalProps {
   chooseSportModalRef: RefObject<BottomSheetModal | null>;
-};
+}
 
-export type ForgroundLocationSwitcher = {
+export interface ForgroundLocationSwitcher {
   foregroundPermissionStatus: LocationPermissionResponse;
   requestForegroundPermission: () => Promise<LocationPermissionResponse>;
-};
+}
 
-export type LocationSettingsSwitcherProps = {
+export interface LocationSettingsSwitcherProps {
   isLocationEnabled: boolean;
   setIsLocationEnabled: (arg: boolean) => void;
-};
+}
 
-export type LocationPermissionsProps = {
+export interface LocationPermissionsProps {
   isMapVisible: boolean;
   isLocationEnabled: boolean;
   isAppOptimizedByPhone: boolean;
@@ -51,4 +51,4 @@ export type LocationPermissionsProps = {
   setIsAppOptimizedByPhone: (arg: boolean) => void;
   setIsNeedToRefreshPermission: (arg: boolean) => void;
   requestBackgroundPermission: () => Promise<LocationPermissionResponse>;
-};
+}

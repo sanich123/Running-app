@@ -1,7 +1,7 @@
-import { LANGUAGES } from '@const/enums';
-import { useAppSelector } from '@R/typed-hooks';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { LANGUAGES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function CommentsEmptyList() {
   const { language } = useAppSelector(({ language }) => language);

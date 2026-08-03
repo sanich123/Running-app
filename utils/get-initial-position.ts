@@ -1,14 +1,13 @@
+import { getCurrentPositionAsync, getLastKnownPositionAsync } from 'expo-location';
 import { setInitialLocation } from '@R/slices/location/location';
 import { store } from '@R/store';
-import { getCurrentPositionAsync, getLastKnownPositionAsync } from 'expo-location';
-
 import { errorHandler } from './error-handler';
 
-type GetPositionProps = {
+interface GetPositionProps {
   setIsLoading: (arg: boolean) => void;
   setIsError: (arg: boolean) => void;
   setIsSuccess: (arg: boolean) => void;
-};
+}
 
 export async function getLastKnownPosition({ setIsLoading, setIsError, setIsSuccess }: GetPositionProps) {
   try {

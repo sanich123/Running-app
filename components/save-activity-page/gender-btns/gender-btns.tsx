@@ -1,8 +1,7 @@
-import { saveGender } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
-
+import { saveGender } from '@R/slices/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { GENDER_BTNS, GENDER_BTNS_VALUES } from './const';
 
 export default function GenderBtns({ isDisabled }: { isDisabled: boolean }) {

@@ -1,12 +1,12 @@
-import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { errorHandler } from '@U/error-handler';
-import * as Sharing from 'expo-sharing';
 import { useContext, memo } from 'react';
-import { IconButton, useTheme } from 'react-native-paper';
+import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
-import { ShareBtnProps } from '../types';
 import { Platform } from 'react-native';
+import { IconButton, useTheme } from 'react-native-paper';
+import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { showCrossPlatformToast } from '@U/custom-toast';
+import { errorHandler } from '@U/error-handler';
+import type { ShareBtnProps } from '../types';
 
 export default memo(function ShareBtn({ cardRef }: ShareBtnProps) {
   const { colors } = useTheme();

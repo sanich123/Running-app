@@ -1,7 +1,7 @@
 import { SegmentedButtons } from 'react-native-paper';
-import { ChooseMetricsBtnsValues } from './types';
-import { getMetricsBtnsValues } from './const';
 import { useAppSelector } from '@R/typed-hooks';
+import { getMetricsBtnsValues } from './const';
+import type { ChooseMetricsBtnsValues } from './types';
 
 export default function ChooseMetricsBtns({
   chartValue,

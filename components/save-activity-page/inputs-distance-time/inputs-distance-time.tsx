@@ -1,10 +1,10 @@
-import { store } from '@R/store';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { INPUT_DISTANCE_ID, INPUTS_DISTANCE_TIME, INPUT_HOURS_ID, INPUT_MINUTES_ID } from './const';
 import { setManualDistance, setManualHours, setManualMinutes } from '@R/slices/manual-activity/manual-activity';
+import { store } from '@R/store';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { INPUT_DISTANCE_ID, INPUTS_DISTANCE_TIME, INPUT_HOURS_ID, INPUT_MINUTES_ID } from './const';
 
 export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean }) {
   const [distance, setDistance] = useState(store.getState().manualActivity.manualDistance.toString());

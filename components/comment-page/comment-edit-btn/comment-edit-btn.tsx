@@ -1,7 +1,7 @@
 import { IconButton, useTheme } from 'react-native-paper';
-import { CommentEditBtnProps } from '../types';
-import { useAppDispatch } from '@R/typed-hooks';
 import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
+import { useAppDispatch } from '@R/typed-hooks';
+import type { CommentEditBtnProps } from '../types';
 
 export default function CommentEditBtn({ idOfUpdatingComment, commentId }: CommentEditBtnProps) {
   const { colors } = useTheme();

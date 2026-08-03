@@ -1,9 +1,10 @@
+import type { RefObject} from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { changeLanguage } from '@R/slices/language/language';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { Fragment, RefObject, useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Divider, RadioButton, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { changeLanguage } from '@R/slices/language/language';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES_ARRAY } from './const';
 
 export default function LanguageSwitcherModal({

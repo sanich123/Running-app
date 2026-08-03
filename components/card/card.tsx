@@ -1,20 +1,20 @@
-import UserInfo from '@C/card/user-info/user-info';
-import { useAppSelector } from '@R/typed-hooks';
-import { ROUTES } from '@const/enums';
-import { usePathname } from 'expo-router';
 import { useRef, memo, useEffect } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
+import UserInfo from '@C/card/user-info/user-info';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
+import { activityApi } from '@R/services/activity/activity';
+import { useAppSelector } from '@R/typed-hooks';
 import Btns from './btns/btns';
 import { LikesSize } from './likes/const';
 import Likes from './likes/likes';
 import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
-import { UserInfoSize } from './user-info/const';
-import { ActivityCardProps } from './types';
 import ShareActivityImage from './share-activity-image/share-activity-image';
-import { MAX_MOBILE_WIDTH } from '@const/const';
-import { activityApi } from '@R/services/activity/activity';
+import { UserInfoSize } from './user-info/const';
+import type { ActivityCardProps } from './types';
 
 export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const {

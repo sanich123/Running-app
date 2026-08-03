@@ -1,18 +1,18 @@
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
-import { SignInPageStates } from '@U/validate-email-password';
 import { useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
-import { REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
+import type { UseFormHandleSubmit } from 'react-hook-form';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import {
   useLoginUserMutation,
   useRegisterUserMutation,
   useResetPasswordMutation,
 } from '@R/services/authentication/authentication';
 import { saveEmail, savePassword, setIsDisabledWhenLogining } from '@R/slices/logining/logining';
-import { UseFormHandleSubmit } from 'react-hook-form';
-import { errorToast } from '@C/shared/error-toast/error-toast';
-import { EmailPasswordData } from '@R/services/authentication/types';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import { SignInPageStates } from '@U/validate-email-password';
+import { REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
+import type { EmailPasswordData } from '@R/services/authentication/types';
 
 export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFormHandleSubmit<EmailPasswordData> }) {
   const dispatch = useAppDispatch();

@@ -1,8 +1,7 @@
+import { screen, userEvent } from '@testing-library/react-native';
 import { setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { screen, userEvent } from '@testing-library/react-native';
-
 import { CITY_TEST_ID, WEIGHT_TEST_ID } from './const';
 import InputsWeightCity from './inputs-weight-city';
 

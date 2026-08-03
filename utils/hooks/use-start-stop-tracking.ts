@@ -1,8 +1,8 @@
+import { useEffect } from 'react';
+import { STATUSES } from '@const/enums';
 import { resetLocationsFromBackground, setEmptyLastArrayWhenPaused } from '@R/slices/location/location';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
-import { STATUSES } from '@const/enums';
-import { useEffect } from 'react';
 
 const { initial, paused, started, continued } = STATUSES;
 

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { UnsyncedActivities } from './const';
+import type { UnsyncedActivities } from './const';
 
 export const unsendedActivity = createSlice({
   name: 'unsendedActivity',

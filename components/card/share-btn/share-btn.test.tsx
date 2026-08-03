@@ -1,6 +1,4 @@
 import { render, screen } from '@testing-library/react-native';
-import React from 'react';
-
 import ShareBtn from './share-btn';
 jest.mock('expo-router', () => ({
   usePathname: () => 'home/activity',

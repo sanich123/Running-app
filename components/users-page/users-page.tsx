@@ -1,15 +1,15 @@
-import ErrorComponent from '@C/error-component/error-component';
-import UserListItem from '@C/user-list-item/user-list-item';
-import useDebounce from '@U/hooks/use-debounce';
-import useRefresh from '@U/hooks/use-refresh';
 import { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList, Platform, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Divider, useTheme } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import EmptyUsersList from './empty-list/empty-list';
-import SearchInput from './search-input/search-input';
+import ErrorComponent from '@C/error-component/error-component';
+import UserListItem from '@C/user-list-item/user-list-item';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetFilteredUsersBySearchTextQuery } from '@R/services/profile/profile';
+import useDebounce from '@U/hooks/use-debounce';
+import useRefresh from '@U/hooks/use-refresh';
+import EmptyUsersList from './empty-list/empty-list';
+import SearchInput from './search-input/search-input';
 
 export default function ListOfUsers() {
   const { colors } = useTheme();

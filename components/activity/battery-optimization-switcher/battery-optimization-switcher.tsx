@@ -1,13 +1,12 @@
-import { View, StyleSheet } from 'react-native';
-
-import { showCrossPlatformToast } from '@U/custom-toast';
-import { Switch, Text } from 'react-native-paper';
+import { useEffect } from 'react';
 //@ts-expect-error просто нет типов в пакете
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
-import { useEffect } from 'react';
-import { useAppSelector } from '@R/typed-hooks';
+import { View, StyleSheet } from 'react-native';
+import { Switch, Text } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
-import { BatteryOptimizationSwitcherProps } from '../types';
+import { useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import type { BatteryOptimizationSwitcherProps } from '../types';
 
 export default function BatteryOptimizationSwitcher({
   isAppOptimizedByPhone,

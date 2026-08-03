@@ -1,8 +1,8 @@
-import { mockStore } from '@T/utils/mock-store';
 import { screen } from '@testing-library/react-native';
-import ActivityCardCommentBtn from './comment-btn';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
+import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import ActivityCardCommentBtn from './comment-btn';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),

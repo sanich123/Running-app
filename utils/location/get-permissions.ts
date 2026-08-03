@@ -1,9 +1,9 @@
-import { showCrossPlatformToast } from '@U/custom-toast';
 import {
   requestBackgroundPermissionsAsync,
   requestForegroundPermissionsAsync,
   hasServicesEnabledAsync,
 } from 'expo-location';
+import { showCrossPlatformToast } from '@U/custom-toast';
 
 export async function getLocationPermissions({
   setIsForegroundPermission,

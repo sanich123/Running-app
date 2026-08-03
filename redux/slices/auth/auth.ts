@@ -1,5 +1,5 @@
-import { authenticationApi } from '@R/services/authentication/authentication';
 import { createSlice } from '@reduxjs/toolkit';
+import { authenticationApi } from '@R/services/authentication/authentication';
 import { setAccessTokenToStorage } from '@U/async-storage';
 import { AUTH_INITIAL_STATE } from './const';
 

@@ -1,11 +1,11 @@
-import { resetActivitySlice } from '@R/slices/activity/activity';
-import { useAddActivityByUserIdMutation } from '@R/services/activity/activity';
-import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { UNSENDED_ACTIVITIES } from './const';
+import { useAddActivityByUserIdMutation } from '@R/services/activity/activity';
+import { resetActivitySlice } from '@R/slices/activity/activity';
 import { refreshUnsendedActivitiesList } from '@R/slices/unsended-activity/unsended-activity';
+import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import { UNSENDED_ACTIVITIES } from './const';
 
 export default function UnsendedActivitiesIndicator() {
   const dispatch = useAppDispatch();

@@ -11,10 +11,10 @@ export const INPUT_BIO = {
   },
 };
 
-export type InputBioProps = {
+export interface InputBioProps {
   bio: string;
   setBio: (arg: string) => void;
   isDisabled: boolean;
-};
+}
 
 export const INPUT_BIO_TEST_ID = 'inputBio';

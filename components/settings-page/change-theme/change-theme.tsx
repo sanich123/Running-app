@@ -1,9 +1,9 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
 import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
-import ChangeThemeModal from '../change-theme-modal/change-theme-modal';
-import { useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
+import ChangeThemeModal from '../change-theme-modal/change-theme-modal';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function ChangeTheme() {
   const { dark } = useTheme();

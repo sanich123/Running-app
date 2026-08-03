@@ -1,7 +1,7 @@
-import { EMOTIONS_BTNS_VALUES } from '@C/save-activity-page/emotion-btns/const';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { LastKmSplit } from '@R/slices/location/types';
-import { LocationObject } from 'expo-location';
+import type { EMOTIONS_BTNS_VALUES } from '@C/save-activity-page/emotion-btns/const';
+import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import type { LastKmSplit } from '@R/slices/location/types';
+import type { LocationObject } from 'expo-location';
 
 export interface FinishedActivity {
   date?: string;
@@ -21,12 +21,12 @@ export interface AdditionalInfoType {
   photoVideoUrls: { url: string; thumbnail: null | string; blurhash?: string }[];
 }
 
-export type ActivityToSend = {
+export interface ActivityToSend {
   body: FinishedActivity & AdditionalInfoType;
   id: string;
-};
+}
 
-export type Activity = {
+export interface Activity {
   description: string;
   title: string;
   date: string;
@@ -41,9 +41,9 @@ export type Activity = {
   _count: {
     comments: number;
   };
-};
+}
 
-export type Profile = {
+export interface Profile {
   surname: string;
   name: string;
   profilePhoto: string;
@@ -52,9 +52,9 @@ export type Profile = {
   users: {
     email: string;
   };
-};
+}
 
-export type ActivitiesReponse = {
+export interface ActivitiesReponse {
   activities: Activity[];
   isLastPage: boolean;
-};
+}

@@ -1,11 +1,10 @@
+import { screen, userEvent } from '@testing-library/react-native';
+import { Alert } from 'react-native';
+import { LANGUAGES } from '@const/enums';
 import { ADDITIONAL_INFO_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from '@R/slices/activity/const';
 import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen, userEvent } from '@testing-library/react-native';
-import { Alert } from 'react-native';
-
 import { DECLINE_BTN } from './const';
 import DeclineBtn from './decline-btn';
 

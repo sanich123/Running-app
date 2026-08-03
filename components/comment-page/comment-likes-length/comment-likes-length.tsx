@@ -1,10 +1,10 @@
+import { useEffect, useState } from 'react';
+import { Text } from 'react-native-paper';
 import { NUMBER_OF_LIKES } from '@C/card/number-of-likes/const';
 import { useGetLikesByCommentIdQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
-import { useEffect, useState } from 'react';
-import { Text } from 'react-native-paper';
-import { CommentLikesLengthProps } from '../types';
+import type { CommentLikesLengthProps } from '../types';
 
 export default function CommentLikesLength({ commentId, commentLikesFromComment }: CommentLikesLengthProps) {
   const { userId } = useAppSelector(({ auth }) => auth);

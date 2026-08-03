@@ -1,11 +1,11 @@
+import { Fragment } from 'react';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
+import { usePathname } from 'expo-router';
+import { TouchableRipple, useTheme } from 'react-native-paper';
 import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { useAppSelector } from '@R/typed-hooks';
-import { usePathname } from 'expo-router';
-import { Fragment } from 'react';
-import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
-import { TouchableRipple, useTheme } from 'react-native-paper';
 
 export default function CustomTabBar({
   state,

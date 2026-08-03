@@ -1,10 +1,10 @@
-import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { SETTINGS } from '../const';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { resetAuthSlice } from '@R/slices/auth/auth';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { SETTINGS } from '../const';
 
 export default function LogoutBtn() {
   const { dark, colors } = useTheme();

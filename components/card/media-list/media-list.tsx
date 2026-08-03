@@ -1,11 +1,11 @@
-import { CustomImage } from '@C/custom-image/custom-image';
-import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
 import { memo } from 'react';
 import { FlatList, Platform, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
-import { MediaListProps } from '../types';
+import { CustomImage } from '@C/custom-image/custom-image';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
+import type { MediaListProps } from '../types';
 
 export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPhotoUrlBlurhash }: MediaListProps) {
   const { dark } = useTheme();

@@ -1,7 +1,7 @@
 import polyline from '@mapbox/polyline';
 import distance from '@turf/distance';
-import { LocationObject } from 'expo-location';
 import point from 'turf-point';
+import type { LocationObject } from 'expo-location';
 
 export function getDistance(origin: LocationObject, destination: LocationObject) {
   const from = point([origin.coords.longitude, origin.coords.latitude]);

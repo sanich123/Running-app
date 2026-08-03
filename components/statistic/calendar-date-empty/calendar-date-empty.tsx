@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { CalendarDateProps } from '../calendar/types';
+import type { CalendarDateProps } from '../calendar/types';
 
 export default function CalendarDateEmpty({ isTitle, isEmptyCell }: CalendarDateProps) {
   const { colors } = useTheme();

@@ -1,9 +1,9 @@
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { SignInPageStates, signInMap } from '@U/validate-email-password';
 import { View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { LOGIN_NAVIGATION, REGISTER_NAVIGATION, RESET_NAVIGATION } from './const';
 import { setSignInPageState } from '@R/slices/logining/logining';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { SignInPageStates, signInMap } from '@U/validate-email-password';
+import { LOGIN_NAVIGATION, REGISTER_NAVIGATION, RESET_NAVIGATION } from './const';
 
 export default function RegisterNavigation() {
   const dispatch = useAppDispatch();

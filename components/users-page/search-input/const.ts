@@ -9,8 +9,8 @@ export const SEARCH_INPUT = {
   },
 } as const;
 
-export type SearchInputProps = {
+export interface SearchInputProps {
   setSearch: (arg: string) => void;
   setIsInitial: (arg: boolean) => void;
   search: string;
-};
+}

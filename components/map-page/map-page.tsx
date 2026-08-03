@@ -1,10 +1,10 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator } from 'react-native-paper';
 import DisplayActivityMap from '@C/display-activity-map/display-activity-map';
 import ErrorComponent from '@C/error-component/error-component';
 import { useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
-import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MapPage() {
   const { id: activityId } = useLocalSearchParams();

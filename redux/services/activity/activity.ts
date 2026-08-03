@@ -1,6 +1,6 @@
 import { Methods, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
-import { ActivitiesReponse, ActivityToSend } from './types';
+import type { ActivitiesReponse, ActivityToSend } from './types';
 
 export const activityApi = runichApi.injectEndpoints({
   overrideExisting: true,

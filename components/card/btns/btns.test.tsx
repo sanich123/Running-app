@@ -1,13 +1,13 @@
+import { screen } from '@testing-library/react-native';
 import { COMMENT_BTN_TEST_ID } from '@C/card/comment-btn/const';
 import { CARD_DELETE_BTN_TEST_ID } from '@C/card/delete-btn/const';
 import { CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '@C/card/like-btn/const';
+import { setUserId } from '@R/slices/auth/auth';
 import { MOCK_LIKE } from '@T/mocks/mock-likes';
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { screen } from '@testing-library/react-native';
 import CardBtns from './btns';
-import { MOCK_PROFILE } from '@T/mocks/mock-location';
-import { setUserId } from '@R/slices/auth/auth';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),

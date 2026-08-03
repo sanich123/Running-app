@@ -1,16 +1,16 @@
+import { useRouter } from 'expo-router';
+import { ActivityIndicator } from 'react-native-paper';
+import EmptyActivitiesList from '@C/empty-activities-list/empty-activities-list';
 import ErrorComponent from '@C/error-component/error-component';
 import FloatingBtn from '@C/floating-btn/floating-btn';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
-import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
-import { resetFinishedActivity } from '@R/slices/activity/activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { ActivityIndicator } from 'react-native-paper';
-import { useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery } from '@R/services/activity/activity';
-import { useRouter } from 'expo-router';
-import EmptyActivitiesList from '@C/empty-activities-list/empty-activities-list';
-import { resetManualActivitySlice, setIsManualAdding } from '@R/slices/manual-activity/manual-activity';
-import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
+import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
+import { useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery } from '@R/services/activity/activity';
+import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { resetFinishedActivity } from '@R/slices/activity/activity';
+import { resetManualActivitySlice, setIsManualAdding } from '@R/slices/manual-activity/manual-activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 
 export default function Feed() {
   const dispatch = useAppDispatch();

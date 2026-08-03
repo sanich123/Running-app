@@ -1,10 +1,10 @@
-import { PhotoVideoType } from '@C/card/types';
+import { Platform, useWindowDimensions } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { TouchableRipple, useTheme } from 'react-native-paper';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Platform, useWindowDimensions } from 'react-native';
-import { TouchableRipple, useTheme } from 'react-native-paper';
+import type { PhotoVideoType } from '@C/card/types';
 
 export default function MediaGridImage({
   url,

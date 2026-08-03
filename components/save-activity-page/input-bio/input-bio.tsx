@@ -1,8 +1,7 @@
-import { saveBio } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { TextInput } from 'react-native-paper';
-
+import { saveBio } from '@R/slices/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { INPUT_BIO, INPUT_BIO_TEST_ID } from './const';
 
 export default function InputBio({ isDisabled }: { isDisabled: boolean }) {

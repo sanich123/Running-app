@@ -1,10 +1,10 @@
-import { MOCK_LIKES } from '@T/mocks/mock-likes';
 import { screen } from '@testing-library/react-native';
-import CommentLikeBtn from './comment-like-btn';
-import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { setUserId } from '@R/slices/auth/auth';
+import { MOCK_LIKES } from '@T/mocks/mock-likes';
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import CommentLikeBtn from './comment-like-btn';
 
 describe('Comment like btn', () => {
   it('should correctly renders, when liked by you', async () => {

@@ -1,12 +1,12 @@
+import { Platform, Pressable } from 'react-native';
 import ProfileImage from '@C/profile/avatar/avatar';
 import { savePhotoUrl } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
-import { Platform, Pressable } from 'react-native';
-
-import { AvatarIconEditableProps, AvatarEditableTestIds } from './const';
-import { showCrossPlatformToast } from '@U/custom-toast';
+import { AvatarEditableTestIds } from './const';
+import type { AvatarIconEditableProps} from './const';
 
 export default function AvatarIconEditable({ isDisabled, setIsDisabled }: AvatarIconEditableProps) {
   const dispatch = useAppDispatch();

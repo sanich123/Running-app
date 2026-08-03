@@ -1,7 +1,6 @@
-import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-
+import { useAppSelector } from '@R/typed-hooks';
 import { NETWORK_INDICATOR } from './const';
 
 export default function NetworkIndicator() {

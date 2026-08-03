@@ -1,13 +1,12 @@
-import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
-import { useDeleteCommentByCommentIdMutation } from '@R/services/comments/comments';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
-
+import { useDeleteCommentByCommentIdMutation } from '@R/services/comments/comments';
+import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { COMMENT_DELETE_BTN } from './const';
-import { ComentDeleteBtnProps } from '../types';
+import type { ComentDeleteBtnProps } from '../types';
 
 export default function CommentDeleteBtn({ commentId, activityId }: ComentDeleteBtnProps) {
   const { colors } = useTheme();

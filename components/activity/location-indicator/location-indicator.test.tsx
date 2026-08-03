@@ -1,10 +1,9 @@
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as useGetCurrentLocation from '@U/hooks/use-get-current-location';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import { ACTIVITY_LOCATION_INDICATOR } from './const';
 import ActivityLocationIndicator from './location-indicator';
 

@@ -1,7 +1,6 @@
+import { screen } from '@testing-library/react-native';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { screen } from '@testing-library/react-native';
-
 import MetricsItem from './metrics-item';
 
 describe('Metrics item', () => {

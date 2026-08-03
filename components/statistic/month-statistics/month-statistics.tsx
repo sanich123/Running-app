@@ -1,19 +1,19 @@
-import { useLocalSearchParams } from 'expo-router';
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
-import CalendarActivities from '../calendar/calendar';
 import { useState } from 'react';
-import MonthTypesChips from '../chips/month-types-chips';
-import YearMonthTitle from '../year-month-title/year-month-title';
-import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
-import MonthStatisticsMetrics from '../month-metric/month-metric';
-import { useAppSelector } from '@R/typed-hooks';
-import { MONTH_STATISTICS } from '../month-metric/const';
-import { LANGUAGES } from '@const/enums';
-import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
-import { MAX_MOBILE_WIDTH } from '@const/const';
 import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { LANGUAGES } from '@const/enums';
+import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
+import { useAppSelector } from '@R/typed-hooks';
+import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
+import CalendarActivities from '../calendar/calendar';
+import MonthTypesChips from '../chips/month-types-chips';
+import { MONTH_STATISTICS } from '../month-metric/const';
+import MonthStatisticsMetrics from '../month-metric/month-metric';
+import YearMonthTitle from '../year-month-title/year-month-title';
 
 export default function MonthStatistics() {
   const { width } = useWindowDimensions();

@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import LanguageSwitcherModal from '../language-switcher-modal/language-switcher-modal';
 import { LANGUAGES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
+import LanguageSwitcherModal from '../language-switcher-modal/language-switcher-modal';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function LanguageSwitcher() {
   const { language } = useAppSelector(({ language }) => language);

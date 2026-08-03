@@ -1,6 +1,6 @@
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
+import { showCrossPlatformToast } from '@U/custom-toast';
 
 export default function useCheckPhoneVersion() {
   const isEarlyAndroid = Platform.OS === 'android' && Platform.Version < 31;

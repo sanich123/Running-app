@@ -1,10 +1,9 @@
+import { screen, userEvent } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen, userEvent } from '@testing-library/react-native';
-
 import { INPUT_BIO_TEST_ID } from './const';
 import InputBio from './input-bio';
 

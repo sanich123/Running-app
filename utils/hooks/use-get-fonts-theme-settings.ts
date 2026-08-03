@@ -1,6 +1,6 @@
+import { useEffect } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
-import { useEffect } from 'react';
 
 export { ErrorBoundary } from 'expo-router';
 

@@ -1,19 +1,7 @@
-import { ACTIVITY_SAVE_BTN } from '@C/activity/save-btn/const';
-import { resetFinishedActivity, setActivityId } from '@R/slices/activity/activity';
-import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
-import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
-import {
-  resetManualActivitySlice,
-  setIsEditingActivity,
-  setManualDate,
-  setManualDistance,
-  setManualHours,
-  setManualMinutes,
-} from '@R/slices/manual-activity/manual-activity';
+import { ACTIVITY_SAVE_BTN } from '@C/activity/save-btn/const';
+import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import {
   addPhotoUrls,
   resetAdditionaInfoActivitySlice,
@@ -23,6 +11,18 @@ import {
   saveSport,
   saveTitle,
 } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { resetFinishedActivity, setActivityId } from '@R/slices/activity/activity';
+import {
+  resetManualActivitySlice,
+  setIsEditingActivity,
+  setManualDate,
+  setManualDistance,
+  setManualHours,
+  setManualMinutes,
+} from '@R/slices/manual-activity/manual-activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 
 export default function UpdateBtn() {
   const { colors, dark } = useTheme();

@@ -1,6 +1,7 @@
 import { LANGUAGES } from '@const/enums';
-import { mapIndexToDayOfWeek, ReducedDatesByDayOfTheWeek, StatisticActivities } from './types';
 import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
+import { mapIndexToDayOfWeek } from './types';
+import type { ReducedDatesByDayOfTheWeek, StatisticActivities } from './types';
 
 export function getDaysOfTheMonthWithNames(
   year: string,
@@ -10,7 +11,7 @@ export function getDaysOfTheMonthWithNames(
 ) {
   const daysInMonth = new Date(+year, +month + 1, 0).getDate();
   const isRussian = language === LANGUAGES.russian;
-  let daysOfTheWeek = [...Array(daysInMonth).keys()].reduce<ReducedDatesByDayOfTheWeek>(
+  const daysOfTheWeek = [...Array(daysInMonth).keys()].reduce<ReducedDatesByDayOfTheWeek>(
     (acc, day) => {
       const dateFromDay = new Date(+year, +month, day + 1);
       const dayFromDate = dateFromDay.getDay();

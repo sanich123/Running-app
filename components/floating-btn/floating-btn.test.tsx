@@ -1,5 +1,4 @@
 import { render, screen, userEvent } from '@testing-library/react-native';
-
 import FloatingBtn from './floating-btn';
 
 describe('Floating btn', () => {

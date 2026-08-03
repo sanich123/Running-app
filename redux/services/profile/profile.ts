@@ -1,6 +1,6 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
-import { SendProfile } from './types';
+import type { SendProfile } from './types';
 const { profile, user } = Routes;
 
 export const profileApi = runichApi.injectEndpoints({

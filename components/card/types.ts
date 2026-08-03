@@ -1,31 +1,30 @@
-import { LastKmSplit } from '@R/slices/location/types';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { SerializedError } from '@reduxjs/toolkit';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { LocationObject } from 'expo-location';
-import { MutableRefObject, RefObject } from 'react';
-import { View } from 'react-native';
+import type { MutableRefObject, RefObject } from 'react';
+import type { View } from 'react-native';
+import type { LikesSize } from './likes/const';
+import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { LastKmSplit } from '@R/slices/location/types';
+import type { SerializedError } from '@reduxjs/toolkit';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import type { LocationObject } from 'expo-location';
 
-import { LikesSize } from './likes/const';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-
-export type CommentType = {
+export interface CommentType {
   id: string;
   date: string;
   activityId: string;
   comment: string;
   authorId: string;
-};
+}
 
-export type LikeType = {
+export interface LikeType {
   id: string;
   date: string;
   activityId: string;
   authorId: string;
   profile: ProfileType;
-};
+}
 
-export type ProfileType = {
+export interface ProfileType {
   bio: string;
   birthday: string | null;
   city: string;
@@ -44,9 +43,9 @@ export type ProfileType = {
   weight: string;
   emailNotifications: boolean;
   users: { email: string };
-};
+}
 
-export type ActivityCardProps = {
+export interface ActivityCardProps {
   isShowDeleteBtn: boolean;
   isShowDescription: boolean;
   description: string;
@@ -62,11 +61,11 @@ export type ActivityCardProps = {
   distance: number;
   profile: ProfileType;
   commentsLength: number;
-};
+}
 
-export type PhotoVideoType = { url: string; thumbnail: string | null; blurhash?: string };
+export interface PhotoVideoType { url: string; thumbnail: string | null; blurhash?: string }
 
-export type CardBtnsProps = {
+export interface CardBtnsProps {
   activityId: string;
   userId: string;
   cardRef: MutableRefObject<View | null>;
@@ -74,48 +73,48 @@ export type CardBtnsProps = {
   commentsLength: number;
   profile: ProfileType;
   mapPhotoUrl?: string;
-};
+}
 
-export type CommentBtnProps = {
+export interface CommentBtnProps {
   activityId: string;
   commentsLength: number;
   profile: ProfileType;
   mapPhotoUrl?: string;
-};
+}
 
-export type ModalLikesListProps = {
+export interface ModalLikesListProps {
   bottomSheetModalRef: RefObject<BottomSheetModal | null>;
   likesLength: number;
-};
+}
 
-export type DisplayActivityMapProps = {
+export interface DisplayActivityMapProps {
   locations: LocationObject[];
   kilometresSplit: LastKmSplit[];
-};
+}
 
-export type ShareBtnProps = {
+export interface ShareBtnProps {
   cardRef: MutableRefObject<View | null>;
-};
+}
 
-export type Likes = {
+export interface Likes {
   authorId: string;
   activityId: string;
   date: string;
   id: string;
-};
+}
 
-export type LikeBtnProps = {
+export interface LikeBtnProps {
   activityId: string;
   profile: ProfileType;
   mapPhotoUrl?: string;
-};
+}
 
-export type NumOfLikesProps = {
+export interface NumOfLikesProps {
   likes: Likes[];
   error?: FetchBaseQueryError | SerializedError;
-};
+}
 
-export type MetricsProps = {
+export interface MetricsProps {
   distance: number;
   duration: number;
   title: string;
@@ -123,18 +122,18 @@ export type MetricsProps = {
   description: string;
   userId: string;
   id: string;
-};
+}
 
-export type LikesProps = {
+export interface LikesProps {
   activityId: string;
   size: LikesSize;
-};
+}
 
 export type PhotoVideoUrls = PhotoVideoType[];
 
-export type MediaListProps = {
+export interface MediaListProps {
   photoVideoUrls: PhotoVideoUrls;
   mapPhotoUrl?: string;
   mapPhotoUrlBlurhash?: string;
   id: string;
-};
+}

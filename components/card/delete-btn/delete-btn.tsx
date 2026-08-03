@@ -1,11 +1,11 @@
+import { useContext } from 'react';
+import { Alert, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
+import { IconButton, useTheme } from 'react-native-paper';
 import { useDeleteActivityByIdMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { errorHandler } from '@U/error-handler';
-import { useRouter } from 'expo-router';
-import { useContext } from 'react';
-import { Alert, Platform } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
 import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from './const';
 
 export default function CardDeleteBtn({ activityId }: { activityId: string }) {

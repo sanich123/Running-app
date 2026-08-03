@@ -1,7 +1,6 @@
+import { STATUSES } from '@const/enums';
 import { MOCK_LOCATION, MOCK_DISTANCE, MOCK_DURATION, MOCK_ALTITUDE, MOCK_SPEED } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
-import { STATUSES } from '@const/enums';
-
 import { LOCATION_INITIAL_STATE } from './const';
 import reducer, {
   addDurationAndLocationToKmSplits,

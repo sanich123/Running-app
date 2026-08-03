@@ -1,12 +1,12 @@
+import type { MutableRefObject } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { CustomImage } from '@C/custom-image/custom-image';
-import { ActivityCardProps } from '../types';
-import { MutableRefObject } from 'react';
 import { Text } from 'react-native-paper';
-import { formatDuration } from '@U/time-formatter';
-import { CARD_METRICS } from '../metrics/const';
+import { CustomImage } from '@C/custom-image/custom-image';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
+import { formatDuration } from '@U/time-formatter';
+import { CARD_METRICS } from '../metrics/const';
+import type { ActivityCardProps } from '../types';
 
 export default function ShareActivityImage({
   distance,

@@ -1,26 +1,26 @@
-export type SendComment = {
+export interface SendComment {
   body: {
     comment: string;
     authorId: string;
   };
   id: string;
-};
+}
 
-export type UpdateComment = {
+export interface UpdateComment {
   commentId: string;
   activityId: string;
   body: { comment: string };
-};
+}
 
-export type SendCommentLike = {
+export interface SendCommentLike {
   body: {
     commentId: string;
     authorId: string;
   };
   commentId: string;
-};
+}
 
-export type DeleteCommentLike = {
+export interface DeleteCommentLike {
   likeId: string;
   commentId: string;
-};
+}

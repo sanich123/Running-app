@@ -1,10 +1,9 @@
-import { store } from '@R/store';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { TextInput } from 'react-native-paper';
-
-import { TEXT_INPUTS, TEXT_INPUTS_TITLE_LEFT_ICON, TEXT_INPUTS_DESCRIPTION_LEFT_ICON } from './const';
 import { saveDescription, saveTitle } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { store } from '@R/store';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { TEXT_INPUTS, TEXT_INPUTS_TITLE_LEFT_ICON, TEXT_INPUTS_DESCRIPTION_LEFT_ICON } from './const';
 
 export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();

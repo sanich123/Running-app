@@ -1,10 +1,9 @@
+import { Alert, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTheme, Text, TouchableRipple } from 'react-native-paper';
+import { STATUSES } from '@const/enums';
 import { setActivityStatus, resetLastKm } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { STATUSES } from '@const/enums';
-import { useRouter } from 'expo-router';
-import { Alert, StyleSheet } from 'react-native';
-import { useTheme, Text, TouchableRipple } from 'react-native-paper';
-
 import { ACTIVITY_CLOSE_BTN } from './const';
 
 export default function CloseBtn() {

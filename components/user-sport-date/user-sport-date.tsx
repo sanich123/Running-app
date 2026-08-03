@@ -1,9 +1,9 @@
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import { View } from 'react-native';
+import { Text } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
-import { View } from 'react-native';
-import { Text } from 'react-native-paper';
+import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 
 export default function UserSportDate({ sport, date }: { sport: SPORTS_BTNS_VALUES; date: string }) {
   const { language } = useAppSelector(({ language }) => language);

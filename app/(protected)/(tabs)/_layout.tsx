@@ -1,8 +1,8 @@
-import { ROUTES } from '@const/enums';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { Tabs, usePathname } from 'expo-router';
 import { useTheme } from 'react-native-paper';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import AvatarShowable from '@C/avatar/showable/showable';
+import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 
 export default function TabLayout() {

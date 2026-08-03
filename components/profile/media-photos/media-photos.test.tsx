@@ -1,11 +1,10 @@
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { BAD_REQUEST } from '@T/mocks/mock-requests';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { errorExtracter } from '@U/error-handler';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import { PROFILE_MEDIA } from './const';
 import ProfileMediaPhotos from './media-photos';
 

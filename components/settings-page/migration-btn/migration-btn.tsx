@@ -1,7 +1,7 @@
-import { LANGUAGES } from '@const/enums';
-import { useAppSelector } from '@R/typed-hooks';
 import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
+import { LANGUAGES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function MigrationBtn() {
   const { push } = useRouter();

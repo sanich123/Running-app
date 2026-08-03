@@ -1,6 +1,6 @@
-import { ProfileSettings } from '@R/slices/profile/types';
+import type { ProfileSettings } from '@R/slices/profile/types';
 
-export type SendProfile = {
+export interface SendProfile {
   body: ProfileSettings;
   id: string;
-};
+}

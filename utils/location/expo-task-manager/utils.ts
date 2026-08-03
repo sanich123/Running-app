@@ -14,9 +14,8 @@ import {
   setLocationsWhenContinued,
 } from '@R/slices/location/location';
 import { store } from '@R/store';
-import { LocationObject } from 'expo-location';
-
 import { getDistance, getSpeedInMinsInKm } from '../location-utils';
+import type { LocationObject } from 'expo-location';
 
 export function getMetricsTaskManager(currentPosition: LocationObject) {
   const { lastKilometer, locationsWithPauses } = store.getState().location;

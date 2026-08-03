@@ -1,12 +1,12 @@
+import { useState, memo } from 'react';
+import { StyleSheet, View } from 'react-native';
 import CommentBtn from '@C/card/comment-btn/comment-btn';
 import DeleteBtn from '@C/card/delete-btn/delete-btn';
 import LikeBtn from '@C/card/like-btn/like-btn';
 import ShareBtn from '@C/card/share-btn/share-btn';
-import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { useState, memo } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { CardBtnsProps } from '../types';
 import { useAppSelector } from '@R/typed-hooks';
+import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
+import type { CardBtnsProps } from '../types';
 
 export default memo(function CardBtns({
   activityId,

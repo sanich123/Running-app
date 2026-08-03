@@ -1,6 +1,6 @@
-import { Control, FieldValues, Path, ValidateResult } from 'react-hook-form';
-import { InputModeOptions, ReturnKeyTypeOptions } from 'react-native';
 import isEmail from 'validator/lib/isEmail';
+import type { InputModeOptions, ReturnKeyTypeOptions } from 'react-native';
+import type { Control, FieldValues, Path, ValidateResult } from 'react-hook-form';
 export interface CustomTextInputProps<T extends FieldValues> {
   label: string;
   control?: Control<T>;

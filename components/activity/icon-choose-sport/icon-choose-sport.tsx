@@ -1,10 +1,10 @@
-import { useAppSelector } from '@R/typed-hooks';
-import { getIconNameByTypeOfSport } from '@U/icon-utils';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
 import { View } from 'react-native';
 import { IconButton } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
+import { getIconNameByTypeOfSport } from '@U/icon-utils';
 import ChooseSportModal from '../choose-sport-modal/choose-sport-modal';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function IconChooseSport() {
   const chooseSportModal = useRef<BottomSheetModal>(null);

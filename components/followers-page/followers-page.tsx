@@ -1,12 +1,12 @@
+import { View, FlatList } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
+import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
 import UserListItem from '@C/user-list-item/user-list-item';
 import { useGetFollowersByUserIdQuery } from '@R/services/followers/followers';
-import useRefresh from '@U/hooks/use-refresh';
-import { useLocalSearchParams } from 'expo-router';
-import { View, FlatList } from 'react-native';
-import { ActivityIndicator, Divider, Text } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
+import useRefresh from '@U/hooks/use-refresh';
 
 export default function ListOfFollowers() {
   const { userId } = useAppSelector(({ auth }) => auth);

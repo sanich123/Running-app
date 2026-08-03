@@ -1,7 +1,6 @@
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system';
 import { Alert, Platform } from 'react-native';
-
 import { errorHandler } from '../../../utils/error-handler';
 import { supabase } from '../supabase-init';
 

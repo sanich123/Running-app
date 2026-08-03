@@ -1,6 +1,6 @@
 import { headers, Methods, Routes } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
-import { EmailComment, EmailCommentLike, EmailDTO } from './types';
+import type { EmailComment, EmailCommentLike, EmailDTO } from './types';
 
 const { email, comment, commentLike, like } = Routes;
 

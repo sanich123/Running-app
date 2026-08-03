@@ -1,10 +1,10 @@
-import { useConfirmSignUpCodeByEmailMutation } from '@R/services/authentication/authentication';
-import { EmailPasswordData } from '@R/services/authentication/types';
-import { showCrossPlatformToast } from '@U/custom-toast';
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { UseFormWatch } from 'react-hook-form';
+import { useRouter } from 'expo-router';
 import { Button, TextInput, useTheme } from 'react-native-paper';
+import type { UseFormWatch } from 'react-hook-form';
+import { useConfirmSignUpCodeByEmailMutation } from '@R/services/authentication/authentication';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import type { EmailPasswordData } from '@R/services/authentication/types';
 
 export default function ConfirmEmailCode({ watch }: { watch: UseFormWatch<EmailPasswordData> }) {
   const [confirmationCode, setConfirmationCode] = useState('');

@@ -1,12 +1,12 @@
+import { useEffect } from 'react';
+import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
+import { Platform } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTheme } from 'react-native-paper';
 import { useLoginUserWithGoogleMutation } from '@R/services/authentication/authentication';
 import { setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { useAppDispatch } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
-import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
-import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
-import { Platform } from 'react-native';
-import { useTheme } from 'react-native-paper';
 
 export default function GoogleSignBtn() {
   const dispatch = useAppDispatch();

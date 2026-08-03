@@ -1,13 +1,13 @@
+import { FlatList, Platform, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Chip } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { LANGUAGES } from '@const/enums';
 import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
-import { FlatList, Platform, useWindowDimensions, View } from 'react-native';
-import { ActivityIndicator, Chip } from 'react-native-paper';
-import { MonthChips } from './types';
-import { LANGUAGES } from '@const/enums';
-import { MAX_MOBILE_WIDTH } from '@const/const';
+import type { MonthChips } from './types';
+import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 
 export default function MonthTypesChips({ userId, year, month, setSelectedType, selectedType }: MonthChips) {
   const { width } = useWindowDimensions();

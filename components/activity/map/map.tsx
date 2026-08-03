@@ -1,13 +1,13 @@
+import { useEffect, useState } from 'react';
+import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
+import { useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
+import { Platform } from 'react-native';
 import MapKmSplit from '@C/activity/map/map-km-split/map-km-split';
 import MapRouteLine from '@C/activity/map/map-route-line/map-route-line';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
-import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
-import { Platform } from 'react-native';
-import { useEffect, useState } from 'react';
-import { useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
 import LocationIndicator from '../location-indicator/location-indicator';
 import LocationPermissions from './location-permissions/location-permissions';
-import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 
 export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecordLocation: (arg: boolean) => void }) {
   const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);

@@ -1,9 +1,9 @@
-import UsersSettingsIcons from './users-settings-icons';
-import { mockStore } from '../../tests/utils/mock-store';
-import { renderWithProviders } from '../../tests/utils/test-utils';
 import { screen } from '@testing-library/react-native';
 import { ACTIVITY_SAVE_BTN } from '@C/activity/save-btn/const';
 import { setUserId } from '@R/slices/auth/auth';
+import UsersSettingsIcons from './users-settings-icons';
+import { mockStore } from '../../tests/utils/mock-store';
+import { renderWithProviders } from '../../tests/utils/test-utils';
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
   usePathname: () => '/home/activity/someActivityId',

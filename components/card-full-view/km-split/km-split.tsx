@@ -1,11 +1,10 @@
-import { LastKmSplit } from '@R/slices/location/types';
-import { useAppSelector } from '@R/typed-hooks';
-import { formatDurationMinsSecs } from '@U/time-formatter';
 import { Fragment } from 'react';
 import { View } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
-
+import { useAppSelector } from '@R/typed-hooks';
+import { formatDurationMinsSecs } from '@U/time-formatter';
 import { KM_SPLITS } from './const';
+import type { LastKmSplit } from '@R/slices/location/types';
 
 export default function KmSplit({ kilometresSplit }: { kilometresSplit: LastKmSplit[] }) {
   const fastestKm = Math.min(...kilometresSplit.map(({ lastKilometerDuration }) => lastKilometerDuration));

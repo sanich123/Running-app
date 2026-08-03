@@ -1,13 +1,13 @@
+import { Platform, useWindowDimensions, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator } from 'react-native-paper';
 import Card from '@C/card/card';
 import ErrorComponent from '@C/error-component/error-component';
+import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
-import { useLocalSearchParams } from 'expo-router';
-import { Platform, useWindowDimensions, View } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
 import KmSplit from './km-split/km-split';
 import Metrics from './metrics/metrics';
-import { MAX_MOBILE_WIDTH } from '@const/const';
-import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
 
 export default function CardFullView() {
   const { width } = useWindowDimensions();

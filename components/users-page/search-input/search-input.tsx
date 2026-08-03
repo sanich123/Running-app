@@ -1,8 +1,9 @@
-import { useAppSelector } from '@R/typed-hooks';
-import { TextInput } from 'react-native-paper';
-import { SEARCH_INPUT, SearchInputProps } from './const';
 import { Platform, useWindowDimensions } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { useAppSelector } from '@R/typed-hooks';
+import { SEARCH_INPUT } from './const';
+import type { SearchInputProps } from './const';
 
 export default function SearchInput({ setSearch, setIsInitial, search }: SearchInputProps) {
   const { language } = useAppSelector(({ language }) => language);

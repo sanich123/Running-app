@@ -1,11 +1,11 @@
-import { View } from 'react-native';
 import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { showCrossPlatformToast } from '@U/custom-toast';
+import { View } from 'react-native';
 import { useTheme, Text, Button } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { BACKGROUND_LOCATIONS } from './const';
-import { BackgroundLocationModalProps } from '../types';
+import type { BackgroundLocationModalProps } from '../types';
 
 export default function BackgroundLocationModal({
   backgroundLocationEnabledModalRef,

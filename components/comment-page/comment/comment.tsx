@@ -1,16 +1,16 @@
-import { UserInfoSize } from '@C/card/user-info/const';
-import UserInfo from '@C/card/user-info/user-info';
+import type { RefObject } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
+import { UserInfoSize } from '@C/card/user-info/const';
+import UserInfo from '@C/card/user-info/user-info';
+import { useAppSelector } from '@R/typed-hooks';
 import CommentDeleteBtn from '../comment-delete-btn/comment-delete-btn';
 import CommentEditBtn from '../comment-edit-btn/comment-edit-btn';
 import CommentInput from '../comment-input/comment-input';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
-import { useAppSelector } from '@R/typed-hooks';
-import { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
-import { RefObject } from 'react';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
 
 export default function Comment({
   authorId,

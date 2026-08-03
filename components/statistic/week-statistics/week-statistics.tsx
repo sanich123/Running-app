@@ -1,14 +1,14 @@
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { getCurrentWeekDates } from './util';
-import { useGetCurrentWeekStatisticsQuery } from '@R/services/statistics/statistics';
-import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { useRouter } from 'expo-router';
-import { LANGUAGES, ROUTES } from '@const/enums';
-import WeekStatisticsMetric from './week-statistics-metrics';
-import { WEEK_STATISTICS } from './const';
-import { useAppSelector } from '@R/typed-hooks';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { LANGUAGES, ROUTES } from '@const/enums';
+import { useGetCurrentWeekStatisticsQuery } from '@R/services/statistics/statistics';
+import { useAppSelector } from '@R/typed-hooks';
+import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
+import { WEEK_STATISTICS } from './const';
+import { getCurrentWeekDates } from './util';
+import WeekStatisticsMetric from './week-statistics-metrics';
 
 export default function WeekStatistics() {
   const { push } = useRouter();

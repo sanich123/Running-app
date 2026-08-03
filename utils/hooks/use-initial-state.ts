@@ -1,13 +1,13 @@
-import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
-import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { useEffect } from 'react';
-import Mapbox from '@rnmapbox/maps';
-import NetInfo from '@react-native-community/netinfo';
-import { Appearance, Platform } from 'react-native';
-import mapboxgl from 'mapbox-gl';
-import { changeNetworkState } from '@R/slices/network/network';
-import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+import Mapbox from '@rnmapbox/maps';
+import * as SplashScreen from 'expo-splash-screen';
+import mapboxgl from 'mapbox-gl';
+import { Appearance, Platform } from 'react-native';
+import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
+import { changeNetworkState } from '@R/slices/network/network';
+import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 
 export default function useInitialState() {
   const [verifyToken, { data: configInfo, isLoading, isError, isSuccess, isUninitialized, error }] =

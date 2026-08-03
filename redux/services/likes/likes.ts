@@ -1,6 +1,6 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
-import { DeleteLike, SendLike } from './types';
+import type { DeleteLike, SendLike } from './types';
 
 const { like } = Routes;
 

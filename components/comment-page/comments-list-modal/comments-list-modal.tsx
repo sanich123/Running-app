@@ -1,13 +1,13 @@
-import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useCallback } from 'react';
-import { useTheme } from 'react-native-paper';
-import Comments from '@C/comment-page/comments/comments';
+import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import CommentInput from '@C/comment-page/comment-input/comment-input';
-import { backdrop } from '@U/backdrop';
+import Comments from '@C/comment-page/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
-import { CommentModalProps } from '../types';
+import { backdrop } from '@U/backdrop';
 import CommentAddBtn from '../comment-add-btn/comment-add-btn';
+import type { CommentModalProps } from '../types';
 
 export default function CommentsListModal({ commentsModalRef }: CommentModalProps) {
   const { colors } = useTheme();

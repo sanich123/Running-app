@@ -1,7 +1,3 @@
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { setIsTooMuchSpeed } from '@R/slices/location/location';
-import { store } from '@R/store';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import {
   Accuracy,
   hasStartedLocationUpdatesAsync,
@@ -10,15 +6,19 @@ import {
 } from 'expo-location';
 import { isTaskRegisteredAsync, getRegisteredTasksAsync, isAvailableAsync, isTaskDefined } from 'expo-task-manager';
 import * as TaskManager from 'expo-task-manager';
-
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import { setIsTooMuchSpeed } from '@R/slices/location/location';
+import { store } from '@R/store';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 import {
   BACKGROUND_NOTIFICATION,
   DISTANCE_INTERVAL,
   LOCATION_TRACKING,
-  TIME_INTERVAL,
-  TaskManagerLocationEvent,
+  TIME_INTERVAL
 } from '../const';
+import type {
+  TaskManagerLocationEvent} from '../const';
 
 export async function startLocationTracking() {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {

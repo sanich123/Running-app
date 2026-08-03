@@ -1,6 +1,13 @@
+import { useEffect } from 'react';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useLocalSearchParams, usePathname } from 'expo-router';
+import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import AvatarShowable from '@C/avatar/showable/showable';
 import ErrorComponent from '@C/error-component/error-component';
 import ProfileMediaPhotos from '@C/profile/media-photos/media-photos';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import {
   saveBio,
   saveCity,
@@ -11,17 +18,10 @@ import {
   saveWeight,
 } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { ROUTES } from '@const/enums';
-import { useLocalSearchParams, usePathname } from 'expo-router';
-import { useEffect } from 'react';
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import FollowUnfollowBtn from './follow-unfollow-btn/follow-unfollow-btn';
+import ProfileStatistics from './statistics/profile-statistics';
 import { USERS_VARIANT } from './users-counter/const';
 import UsersCounter from './users-counter/users-counter';
-import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
-import ProfileStatistics from './statistics/profile-statistics';
-import { MAX_MOBILE_WIDTH } from '@const/const';
 
 export default function ProfilePage() {
   const { width } = useWindowDimensions();

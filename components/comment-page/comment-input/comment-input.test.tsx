@@ -1,10 +1,9 @@
 import { screen, userEvent } from '@testing-library/react-native';
-
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import CommentInput from './comment-input';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT_TEST_ID } from './const';
 import { mockStore } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
-import { MOCK_PROFILE } from '@T/mocks/mock-location';
 
 describe('Comment input', () => {
   it('should correctly renders', () => {

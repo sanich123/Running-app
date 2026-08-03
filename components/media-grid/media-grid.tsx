@@ -1,14 +1,13 @@
-import ErrorComponent from '@C/error-component/error-component';
-import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
-import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, FlatList, Platform, useWindowDimensions } from 'react-native';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import MediaGridImage from './image/image';
-import { PhotoVideoType } from '@C/card/types';
+import { StyleSheet, FlatList, Platform, useWindowDimensions } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
+import ErrorComponent from '@C/error-component/error-component';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
+import MediaGridImage from './image/image';
+import type { PhotoVideoType } from '@C/card/types';
 
 export default function MediaGrid() {
   const { width } = useWindowDimensions();

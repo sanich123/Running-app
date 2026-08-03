@@ -1,10 +1,11 @@
-import { PropsWithChildren, useState } from 'react';
+import type { PropsWithChildren} from 'react';
+import { useState } from 'react';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Platform, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { CrossPlatformLayoutProps } from './types';
 import NetworkStateBanner from '../network-state-banner/network-state-banner';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import type { CrossPlatformLayoutProps } from './types';
 
 export default function CrossPlatformLayout({
   children,

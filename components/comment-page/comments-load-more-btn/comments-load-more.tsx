@@ -1,7 +1,7 @@
+import { Button, Text } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import { Button, Text } from 'react-native-paper';
-import { CommentsLoadMorBtnProps } from '../types';
+import type { CommentsLoadMorBtnProps } from '../types';
 
 export default function CommentsLoadMoreBtn({ take, increaseTakeNumber, commentsLength }: CommentsLoadMorBtnProps) {
   const { language } = useAppSelector(({ language }) => language);

@@ -1,16 +1,16 @@
-import { RefObject } from 'react';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { RefObject } from 'react';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export interface Modal {
   controlRef: RefObject<BottomSheetModal | null>;
   onChange: (arg: string) => void;
   setSelectedValue: (title: string, value: string) => void;
 }
-export type ModalControls = {
+export interface ModalControls {
   controlRef: RefObject<BottomSheetModal | null>;
   snapPointIndex: number;
   snapPoints: string[];
-};
+}
 
 export interface CategoryModalProps extends Modal {
   valuesToRender: { value: string; title: string }[];

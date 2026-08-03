@@ -1,12 +1,11 @@
+import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { CustomImage } from '@C/custom-image/custom-image';
 import FollowUnfollowBtn from '@C/profile/follow-unfollow-btn/follow-unfollow-btn';
 import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
-import { View, StyleSheet } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
-import { UserListItemType } from './const';
 import { useAppSelector } from '@R/typed-hooks';
+import type { UserListItemType } from './const';
 
 export default function UserListItem({ name, surname, profilePhoto, placeholder, city, user_id }: UserListItemType) {
   const { dark } = useTheme();

@@ -1,10 +1,10 @@
+import { View } from 'react-native';
+import { Link } from 'expo-router';
+import { Text, Button, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { getMigrationArchiveAndSendToServer } from '@U/migration-strava/migration-archive';
-import { Link } from 'expo-router';
-import { View } from 'react-native';
-import { Text, Button, useTheme } from 'react-native-paper';
-import useGetStates from './hooks';
 import { MIGRATION_STATES } from './const';
+import useGetStates from './hooks';
 
 export default function MigrationFromStrava() {
   const { userId } = useAppSelector(({ auth }) => auth);

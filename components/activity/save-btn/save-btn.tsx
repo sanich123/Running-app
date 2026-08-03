@@ -1,18 +1,18 @@
-import { setIsDisableWhileSending } from '@R/slices/activity/activity';
-import { ActivityToSend } from '@R/services/activity/types';
-import { resetLocationsFromBackground } from '@R/slices/location/location';
+import { useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTheme, Text, TouchableRipple } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/services/activity/activity';
+import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { setIsDisableWhileSending } from '@R/slices/activity/activity';
+import { resetLocationsFromBackground } from '@R/slices/location/location';
+import { saveUnsendedActivity, setIsHaveUnsyncedActivity } from '@R/slices/unsended-activity/unsended-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
-import { errorToast } from '@C/shared/error-toast/error-toast';
-import { saveUnsendedActivity, setIsHaveUnsyncedActivity } from '@R/slices/unsended-activity/unsended-activity';
-import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import type { ActivityToSend } from '@R/services/activity/types';
 
 export default function SaveBtn() {
   const dispatch = useAppDispatch();

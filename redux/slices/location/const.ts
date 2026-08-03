@@ -1,6 +1,5 @@
 import { STATUSES } from '@const/enums';
-
-import { LocationInitialState } from './types';
+import type { LocationInitialState } from './types';
 
 export const LOCATION_INITIAL_STATE: LocationInitialState = {
   activityStatus: STATUSES.initial,

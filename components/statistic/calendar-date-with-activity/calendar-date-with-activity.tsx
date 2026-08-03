@@ -1,9 +1,9 @@
-import { TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { getIconByTypeOfSport } from '@U/icon-utils';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { CalendarDateProps, CalendarDateWithActivityProps } from '../calendar/types';
+import type { CalendarDateProps, CalendarDateWithActivityProps } from '../calendar/types';
+import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 
 export default function CalendarDateWithActivity({
   isWeekend,

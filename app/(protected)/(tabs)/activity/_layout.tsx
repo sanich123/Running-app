@@ -1,8 +1,8 @@
+import { Stack } from 'expo-router';
+import { Text, useTheme } from 'react-native-paper';
 import ActivityCloseBtn from '@C/activity/close-btn/close-btn';
 import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
-import { Stack } from 'expo-router';
-import { Text, useTheme } from 'react-native-paper';
 
 export default function ActivityStack() {
   const { sport } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);

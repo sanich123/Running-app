@@ -1,11 +1,11 @@
-import { AvatarShowableTestIds } from '@C/avatar/showable/const';
 import { screen } from '@testing-library/react-native';
 import * as router from 'expo-router';
-import { LikesSize } from './const';
-import Likes from './likes';
+import { AvatarShowableTestIds } from '@C/avatar/showable/const';
 import { setUserId } from '@R/slices/auth/auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { LikesSize } from './const';
+import Likes from './likes';
 
 jest.mock('expo-router', () => ({
   usePathname: () => 'some string',

@@ -1,16 +1,16 @@
-import { StyleSheet, View } from 'react-native';
-import YearTypePicker from '@C/statistic/year-type-picker/year-type-picker';
 import { useEffect, useState } from 'react';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import Charts from '@C/statistic/charts/charts';
+import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import ErrorComponent from '@C/error-component/error-component';
-import { useAppSelector } from '@R/typed-hooks';
-import { LANGUAGES } from '@const/enums';
-import MonthStatisticsMetrics from '@C/statistic/month-metric/month-metric';
-import { MONTH_STATISTICS } from '@C/statistic/month-metric/const';
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
+import Charts from '@C/statistic/charts/charts';
+import { MONTH_STATISTICS } from '@C/statistic/month-metric/const';
+import MonthStatisticsMetrics from '@C/statistic/month-metric/month-metric';
+import YearTypePicker from '@C/statistic/year-type-picker/year-type-picker';
+import { LANGUAGES } from '@const/enums';
+import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function Statistics() {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());

@@ -1,14 +1,14 @@
-import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
+import { StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import {
   useCreateProfileByUserIdMutation,
   useGetUserProfileByUserIdQuery,
   useUpdateProfileByProfileIdMutation,
 } from '@R/services/profile/profile';
+import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
-import { useRouter } from 'expo-router';
-import { StyleSheet } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { UPDATE_BTN_ERROR_MSG, UPDATE_BTN } from './const';
 
 export default function ProfileUpdateBtn() {

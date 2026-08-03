@@ -1,12 +1,12 @@
-import { View, useWindowDimensions } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
-import { Text, useTheme } from 'react-native-paper';
-import { getSteps } from './util';
+import { View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ROUTES } from '@const/enums';
-import { BarChartWrapperProps } from './types';
+import { Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
+import { getSteps } from './util';
+import type { BarChartWrapperProps } from './types';
 
 export default function BarChartWrapper({ metricsArr, year, title }: BarChartWrapperProps) {
   const { push } = useRouter();
