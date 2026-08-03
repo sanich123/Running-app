@@ -96,13 +96,7 @@ export default {
       'expo-web-browser',
       'expo-video',
       'expo-secure-store',
-      [
-        '@rnmapbox/maps',
-        {
-          RNMapboxMapsDownloadToken:
-            'sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWtvam9oazBrZjcza29kZ2hhMmtlcjEifQ.PkCRRfGrD8iiEOIBB9BLcg',
-        },
-      ],
+      '@rnmapbox/maps',
       ['expo-secure-store', { faceIDPermission: 'Разрешите приложению runich доступ к биометрическим данным FaceId ' }],
       [
         'expo-build-properties',

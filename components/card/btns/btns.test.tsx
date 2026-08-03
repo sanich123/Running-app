@@ -22,7 +22,7 @@ describe('Card btns', () => {
         isShowDeleteBtn
         activityId="someActivityId"
         userId={MOCK_LIKE[0].authorId}
-        cardRef={{ current: '' }}
+        cardRef={{ current: null }}
         commentsLength={6}
         profile={MOCK_PROFILE}
       />,
@@ -39,7 +39,7 @@ describe('Card btns', () => {
         isShowDeleteBtn
         activityId="someActivityId"
         userId="someUserId"
-        cardRef={{ current: '' }}
+        cardRef={{ current: null }}
         commentsLength={6}
         profile={MOCK_PROFILE}
       />,

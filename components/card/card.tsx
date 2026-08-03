@@ -38,7 +38,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
-  const cardRef = useRef(null);
+  const cardRef = useRef<View>(null);
   const prefetchFullActivity = activityApi.usePrefetch('getActivityByActivityId');
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
   useEffect(() => {

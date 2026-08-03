@@ -3,7 +3,8 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { LocationObject } from 'expo-location';
-import { MutableRefObject, ReactNode, RefObject } from 'react';
+import { MutableRefObject, RefObject } from 'react';
+import { View } from 'react-native';
 
 import { LikesSize } from './likes/const';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
@@ -68,7 +69,7 @@ export type PhotoVideoType = { url: string; thumbnail: string | null; blurhash?:
 export type CardBtnsProps = {
   activityId: string;
   userId: string;
-  cardRef: MutableRefObject<ReactNode>;
+  cardRef: MutableRefObject<View | null>;
   isShowDeleteBtn: boolean;
   commentsLength: number;
   profile: ProfileType;
@@ -93,7 +94,7 @@ export type DisplayActivityMapProps = {
 };
 
 export type ShareBtnProps = {
-  cardRef: MutableRefObject<ReactNode>;
+  cardRef: MutableRefObject<View | null>;
 };
 
 export type Likes = {

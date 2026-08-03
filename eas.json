@@ -3,7 +3,11 @@
     "appVersionSource": "remote"
   },
   "build": {
-    "production": { "channel": "production", "autoIncrement": true },
+    "production": {
+      "channel": "production",
+      "autoIncrement": true,
+      "environment": "production"
+    },
     "preview": {
       "distribution": "internal",
       "extends": "production",
@@ -11,6 +15,7 @@
         "buildType": "apk"
       },
       "ios": { "simulator": true },
+      "environment": "preview",
       "env": {
         "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g",
         "EXPO_PUBLIC_BASE_URL": "https://runich-backend-production.up.railway.app",
@@ -27,6 +32,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "android": { "buildType": "apk" },
+      "environment": "development",
       "env": { "APP_VARIANT": "development" },
       "channel": "development"
     },
@@ -36,6 +42,7 @@
       "ios": {
         "simulator": true
       },
+      "environment": "development",
       "channel": "ios-simulator"
     }
   }
