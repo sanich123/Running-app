@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/react-native';
-
 import ErrorComponent from './error-component';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';

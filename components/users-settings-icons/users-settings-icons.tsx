@@ -1,19 +1,18 @@
-import { useAuth } from '@A/context/auth-context';
+import { Platform, View, StyleSheet } from 'react-native';
+import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
+import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
 import ActivityUpdateBtn from '@C/activity/update-btn/update-btn';
 import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
-import { Href, useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
-import { Platform, View, StyleSheet } from 'react-native';
-import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function UsersSettingsIcons() {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
   const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const { userId } = useGlobalSearchParams();
-  const { user } = useAuth();
-  const isMineActivity = userId === user?.id && pathname.includes(ROUTES.activity);
+  const { userId: ownerId } = useAppSelector(({ auth }) => auth);
+  const isMineActivity = userId === ownerId && pathname.includes(ROUTES.activity);
 
   return (
     <View style={styles.layout}>
@@ -27,17 +26,16 @@ export default function UsersSettingsIcons() {
               icon="home-outline"
               iconColor={colors.primary}
               size={30}
-              onPress={() => pathname !== '/home' && push('/')}
+              onPress={() => push('/')}
               style={{ marginRight: -10 }}
             />
           )}
-
           <IconButton
             testID="usersIcon"
             icon="account-search-outline"
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            onPress={() => !pathname.includes(ROUTES.users) && push(`/${place}/${ROUTES.users}` as Href)}
+            onPress={() => push('/(protected)/users')}
             style={{ marginRight: -10 }}
           />
           <IconButton
@@ -47,7 +45,7 @@ export default function UsersSettingsIcons() {
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
             style={{ marginRight: -10 }}
-            onPress={() => !pathname.includes(ROUTES.settings) && push(`/${place}/${ROUTES.settings}` as Href)}
+            onPress={() => push('/(protected)/settings')}
           />
           {Platform.OS === 'web' && (
             <>
@@ -57,14 +55,14 @@ export default function UsersSettingsIcons() {
                 iconColor={colors.primary}
                 size={30}
                 style={{ marginRight: 10 }}
-                onPress={() => push(`/${ROUTES.statistic}` as Href)}
+                onPress={() => push('/(protected)/month-statistic')}
               />
               <TouchableRipple
                 rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
                 borderless
-                onPress={() => push(`/${ROUTES.profile}`)}
+                onPress={() => push(`/(protected)/${ROUTES.profile}/${ownerId}`)}
                 style={{ marginRight: 10 }}>
-                <AvatarShowable size={30} id={`${user?.id}`} />
+                <AvatarShowable size={30} id={`${ownerId}`} />
               </TouchableRipple>
             </>
           )}

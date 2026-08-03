@@ -1,8 +1,7 @@
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-
 import { LANGUAGES } from '../../../constants/enums';
 
-export const ACTIVITY_CLOSE_BTN: ActivityCloseBtn = {
+export const ACTIVITY_CLOSE_BTN = {
   [LANGUAGES.russian]: {
     btnText: 'Закрыть',
     alertName: 'Удаление активности',
@@ -16,12 +15,6 @@ export const ACTIVITY_CLOSE_BTN: ActivityCloseBtn = {
     alertAccept: 'Yes, I am sure',
   },
 } as const;
-
-export type ActivityCloseBtn = {
-  [key in LANGUAGES]: {
-    [key: string]: string;
-  };
-};
 
 export const MAP_SPORT_TO_TITLE = {
   [SPORTS_BTNS_VALUES.run]: {

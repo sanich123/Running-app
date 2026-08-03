@@ -1,29 +1,36 @@
+import { useEffect } from 'react';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useLocalSearchParams, usePathname } from 'expo-router';
+import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import AvatarShowable from '@C/avatar/showable/showable';
 import ErrorComponent from '@C/error-component/error-component';
 import ProfileMediaPhotos from '@C/profile/media-photos/media-photos';
-import { saveBio, saveCity, saveGender, saveName, savePhotoUrl, saveSurname, saveWeight } from '@R/profile/profile';
-
-import { useAppDispatch } from '@R/typed-hooks';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { useAuth } from 'auth/context/auth-context';
-import { useLocalSearchParams, usePathname } from 'expo-router';
-import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
-
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
+import {
+  saveBio,
+  saveCity,
+  saveGender,
+  saveName,
+  savePhotoUrl,
+  saveSurname,
+  saveWeight,
+} from '@R/slices/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import FollowUnfollowBtn from './follow-unfollow-btn/follow-unfollow-btn';
+import ProfileStatistics from './statistics/profile-statistics';
 import { USERS_VARIANT } from './users-counter/const';
 import UsersCounter from './users-counter/users-counter';
-import { useGetUserProfileByUserIdQuery } from '@R/runich-api/runich-api';
-import ProfileStatistics from './statistics/profile-statistics';
 
 export default function ProfilePage() {
+  const { width } = useWindowDimensions();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { id: whosProfileViewing } = useLocalSearchParams();
-  const { user } = useAuth();
-  const whosProfile = whosProfileViewing ? whosProfileViewing : user?.id;
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const whosProfile = whosProfileViewing ? whosProfileViewing : userId;
 
   const {
     isLoading,
@@ -53,7 +60,15 @@ export default function ProfilePage() {
     <>
       <ProfileMediaPhotos userId={`${whosProfile}`} />
       <View
-        style={[styles.container, (isLoading || isError) && styles.isInCenter, { backgroundColor: colors.background }]}>
+        style={[
+          styles.container,
+          (isLoading || isError) && styles.isInCenter,
+          {
+            backgroundColor: colors.background,
+            width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+            marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          },
+        ]}>
         {isLoading && <ActivityIndicator size="large" />}
         {error ? <ErrorComponent error={error} /> : null}
         {isSuccess ? (
@@ -73,7 +88,7 @@ export default function ProfilePage() {
             <View style={styles.followersBtnsWrapper}>
               <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
               <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
-              {whosProfile !== user?.id && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
+              {whosProfile !== userId && <FollowUnfollowBtn friendId={`${whosProfileViewing}`} />}
             </View>
             <ProfileStatistics whosProfile={`${whosProfile}`} />
           </>

@@ -1,11 +1,11 @@
+import { View, StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { MONTH_STATISTICS } from '@C/statistic/month-metric/const';
 import MonthStatisticsMetrics from '@C/statistic/month-metric/month-metric';
 import { LANGUAGES } from '@const/enums';
-import { useGetAllTimeStatisticsByUserIdQuery } from '@R/runich-api/runich-api';
+import { useGetAllTimeStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
-import { View, StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
 
 export default function ProfileStatistics({ whosProfile }: { whosProfile: string }) {
   const { colors } = useTheme();

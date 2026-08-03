@@ -1,15 +1,15 @@
+import { Fragment } from 'react';
+import { Platform, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { CustomImage } from '@C/custom-image/custom-image';
-import { useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
+import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
-import { ROUTES } from '@const/enums';
-import { Href, usePathname, useRouter } from 'expo-router';
-import { Fragment } from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
 import { PROFILE_MEDIA } from './const';
-import { PhotoVideoType } from '@C/card/types';
+import type { PhotoVideoType } from '@C/card/types';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { isLoading, isError, data, error } = useGetAllActivityPhotosByUserIdQuery(
@@ -20,25 +20,32 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { push } = useRouter();
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
-  const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
-
+  const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/${place}/${ROUTES.mediaGrid}/${userId}` as Href)}
+      onPress={() => push(`/(protected)/${ROUTES.mediaGrid}/${userId}`)}
       disabled={isError || isLoading}
       borderless>
-      <View style={[styles.layout, { backgroundColor: colors.onPrimary }, (isLoading || isError) && styles.isInCenter]}>
+      <View
+        style={[
+          styles.layout,
+          {
+            backgroundColor: colors.onPrimary,
+            width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+            marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          },
+          (isLoading || isError) && styles.isInCenter,
+        ]}>
         {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${errorExtracter(error)}`}</Text>}
         {data?.photos?.length > 0 &&
           data?.photos?.map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => {
             if (index === 3) {
               return (
                 <Fragment key={`${url}+${index}`}>
-                  <View style={[styles.lastImageWrapper, { width: width / 4 }]}>
+                  <View style={[styles.lastImageWrapper, { width: widthOfScreen / 4 }]}>
                     <CustomImage
-                      style={{ width: width / 4, height: width / 4, position: 'absolute' }}
+                      style={{ width: widthOfScreen / 4, height: widthOfScreen / 4, position: 'absolute' }}
                       source={{ uri: thumbnail || url }}
                       placeholder={blurhash}
                     />
@@ -55,7 +62,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
               <CustomImage
                 key={`${url}+${index}`}
                 source={{ uri: thumbnail || url }}
-                style={{ width: width / 4, height: width / 4 }}
+                style={{ width: widthOfScreen / 4, height: widthOfScreen / 4 }}
                 contentFit="cover"
                 placeholder={blurhash}
               />

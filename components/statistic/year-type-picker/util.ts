@@ -1,4 +1,4 @@
-import { YearsAndTypes } from './types';
+import type { YearsAndTypes } from './types';
 
 export function getTypesByYear({
   yearsAndTypes,

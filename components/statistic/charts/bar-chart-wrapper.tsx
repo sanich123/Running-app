@@ -1,16 +1,16 @@
-import { View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
+import { View, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
-import { getSteps } from './util';
-import { Href, useRouter } from 'expo-router';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { useAuth } from '@A/context/auth-context';
-import { BarChartWrapperProps } from './types';
-import { useWindowDimensions } from 'react-native';
+import { useAppSelector } from '@R/typed-hooks';
+import { getSteps } from './util';
+import type { BarChartWrapperProps } from './types';
 
 export default function BarChartWrapper({ metricsArr, year, title }: BarChartWrapperProps) {
   const { push } = useRouter();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const valuesArr = metricsArr?.map(({ value }) => value).filter(Boolean);
   const maxValueFromData = valuesArr?.length ? Math.max(...valuesArr) : 0;
   const { colors } = useTheme();
@@ -19,15 +19,15 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
     : 0;
   const { steps, maxValue, noOfSections } = getSteps(maxValueFromData);
   const { width } = useWindowDimensions();
-
+  const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text variant="headlineSmall" style={{ marginVertical: 15 }}>
         {title}
       </Text>
       <BarChart
-        width={width - 60}
-        barWidth={(width - 90) / 12}
+        width={widthOfScreen - 60}
+        barWidth={(widthOfScreen - 90) / 12}
         showReferenceLine1
         referenceLine1Position={medianValue}
         isAnimated
@@ -44,7 +44,7 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
           },
         }}
         onPress={(_: any, index: any) =>
-          push(`/${ROUTES.statistic}/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${index}` as Href)
+          push(`/(protected)/${ROUTES.monthStatistic}?userId=${userId}&year=${year}&month=${index}`)
         }
         frontColor={colors.primary}
         maxValue={maxValue}

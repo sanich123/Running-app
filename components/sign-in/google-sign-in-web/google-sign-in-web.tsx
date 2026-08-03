@@ -1,44 +1,39 @@
-import { supabase } from '@A/supabase/supabase-init';
 import { useEffect } from 'react';
-import { useToast } from 'react-native-toast-notifications';
+import { Platform } from 'react-native';
+import { useAppDispatch } from '@R/typed-hooks';
 
-export default function GoogleSignInWeb({ setIsDisabled }: { setIsDisabled: (arg: boolean) => void }) {
-  const toast = useToast();
+export default function GoogleSignInWeb() {
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
-    //@ts-ignore
-    window.handleSignInWithGoogle = async function (response: any) {
-      setIsDisabled(true);
-      try {
-        const { data, error } = await supabase.auth.signInWithIdToken({
-          provider: 'google',
-          token: response.credential,
-          nonce: 'NONCE',
-        });
-        if (data) {
-          toast.show('Successfully! Redirect to the app');
-        } else if (error) {
-          toast.show(JSON.stringify(error));
-        }
-      } catch (error) {
-        toast.show(JSON.stringify(error));
-      } finally {
-        setIsDisabled(false);
-      }
-    };
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, [setIsDisabled, toast]);
+    if (Platform.OS === 'web') {
+      const metaTag = document.createElement('meta');
+      metaTag.setAttribute('name', 'google-signin-client_id');
+      metaTag.setAttribute('content', '617323850499-oaorec6kohhna9p0dqlek590imnab6jq.apps.googleusercontent.com');
+      document.getElementsByTagName('head')[0].appendChild(metaTag);
+      const script = document.createElement('script');
+      script.src = 'https://apis.google.com/js/platform.js';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+      //@ts-ignore
+      window.onSignIn = function onSignIn(googleUser) {
+        const profile = googleUser?.getBasicProfile();
+      };
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, [dispatch]);
 
   return (
     <>
-      <div
+      {/* <meta
+        name="google-signin-client_id"
+        content="617323850499-oaorec6kohhna9p0dqlek590imnab6jq.apps.googleusercontent.com"
+      /> */}
+      <div className="g-signin2" data-onsuccess="onSignIn"></div>
+      {/* <div
         id="g_id_onload"
         data-client_id="617323850499-oaorec6kohhna9p0dqlek590imnab6jq.apps.googleusercontent.com"
         data-context="signin"
@@ -56,7 +51,7 @@ export default function GoogleSignInWeb({ setIsDisabled }: { setIsDisabled: (arg
         data-size="large"
         data-logo_alignment="left"
         data-width="372"
-      />
+      /> */}
     </>
   );
 }

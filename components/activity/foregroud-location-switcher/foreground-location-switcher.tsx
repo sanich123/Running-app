@@ -1,9 +1,9 @@
+import { View, StyleSheet } from 'react-native';
+import { Switch, Text } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
-import { View, StyleSheet } from 'react-native';
-import { Switch, Text } from 'react-native-paper';
-import { ForgroundLocationSwitcher } from '../types';
+import type { ForgroundLocationSwitcher } from '../types';
 
 export default function ForegroundLocationSwitcher({
   foregroundPermissionStatus,

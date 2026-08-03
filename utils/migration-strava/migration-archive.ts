@@ -1,9 +1,9 @@
 import { getDocumentAsync } from 'expo-document-picker';
 import { getInfoAsync } from 'expo-file-system';
-import { unzipFiles, zipFiles } from './zip-tools';
 import { removeCacheFolder, removeMedia } from './remove-tools';
 import { sendArchiveToServer } from './send-tools';
-import { GetMigrationArchiveAndSendToServerProps } from './types';
+import { unzipFiles, zipFiles } from './zip-tools';
+import type { GetMigrationArchiveAndSendToServerProps } from './types';
 
 export async function getMigrationArchiveAndSendToServer({
   setIsDisabled,
@@ -44,7 +44,6 @@ export async function getMigrationArchiveAndSendToServer({
     }
   } catch (error) {
     await removeCacheFolder({});
-    console.log(error);
     setIsError(`Ошибка ${JSON.stringify(error)}`);
   } finally {
     setIsDisabled(false);

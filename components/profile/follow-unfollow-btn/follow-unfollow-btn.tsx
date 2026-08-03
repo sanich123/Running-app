@@ -1,30 +1,24 @@
-import { useAuth } from '@A/context/auth-context';
-import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
+import { useEffect } from 'react';
+import { Button } from 'react-native-paper';
 import {
   useGetYouFollowUsersByUserIdQuery,
   useDeleteFriendMutation,
   useAddFriendMutation,
-} from '@R/runich-api/runich-api';
+} from '@R/services/followers/followers';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorExtracter } from '@U/error-handler';
-import { useEffect } from 'react';
-import { Platform } from 'react-native';
-import { Button } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
-
 import { FOLLOW_UNFOLLOW_BTN } from './const';
 
 export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
-  const toast = useToast();
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const {
     isLoading: isLoadingListOfFriends,
     error: listOfFriendsError,
     isError,
     data: listOfFriends,
-  } = useGetYouFollowUsersByUserIdQuery(`${user?.id}`, { skip: !user });
+  } = useGetYouFollowUsersByUserIdQuery(userId, { skip: !userId });
   const { language } = useAppSelector(({ language }) => language);
 
   const friendCell = listOfFriends?.filter(
@@ -38,30 +32,16 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
   useEffect(() => {
     if (!process.env.IS_TESTING) {
       if (isFriendDeleted) {
-        dispatch(setIsNeedToRefreshActivities(true));
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successUnfollowing);
-        } else {
-          toast.show(FOLLOW_UNFOLLOW_BTN[language].successUnfollowing);
-        }
+        showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successUnfollowing);
       }
       if (isFriendAdded) {
-        dispatch(setIsNeedToRefreshActivities(true));
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successFollowing);
-        } else {
-          toast.show(FOLLOW_UNFOLLOW_BTN[language].successFollowing);
-        }
+        showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].successFollowing);
       }
       if (friendDeletingError || friendAddingError) {
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].errorMsg);
-        } else {
-          toast.show(FOLLOW_UNFOLLOW_BTN[language].errorMsg);
-        }
+        showCrossPlatformToast(FOLLOW_UNFOLLOW_BTN[language].errorMsg);
       }
     }
-  }, [isFriendDeleted, isFriendAdded, friendDeletingError, friendAddingError, dispatch, language, toast]);
+  }, [isFriendDeleted, isFriendAdded, friendDeletingError, friendAddingError, dispatch, language]);
 
   return (
     <Button
@@ -71,7 +51,7 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
       onPress={async () =>
         friendCell?.length > 0
           ? await deleteFriend(friendCell[0]?.id).unwrap()
-          : await addFriend({ body: { userId: `${user?.id}` }, id: friendId }).unwrap()
+          : await addFriend({ body: { userId }, id: friendId }).unwrap()
       }>
       {!isError && isLoadingListOfFriends && ''}
       {!isError &&

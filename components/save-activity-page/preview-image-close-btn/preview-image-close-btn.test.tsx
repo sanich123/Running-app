@@ -1,8 +1,8 @@
-import { addPhotoUrl, setIsDisableWhileSending } from '@R/activity/activity';
+import { screen, userEvent } from '@testing-library/react-native';
+import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { setIsDisableWhileSending } from '@R/slices/activity/activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { screen, userEvent } from '@testing-library/react-native';
-
 import PreviewImageCloseBtn from './preview-image-close-btn';
 
 describe('Preview image close btn', () => {
@@ -23,7 +23,7 @@ describe('Preview image close btn', () => {
     const deleteIcon = screen.getByTestId('deleteIcon');
     await userEvent.press(deleteIcon);
     expect(setImages).toHaveBeenCalled();
-    expect(mockStore.getState().activity.additionalInfo.photoVideoUrls).toEqual([]);
+    expect(mockStore.getState().additionalInfoActivity.photoVideoUrls).toEqual([]);
   });
   it('should be disabled, when isDisabled', () => {
     const setImages = jest.fn();

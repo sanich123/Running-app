@@ -1,100 +1,34 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useAuth } from '@A/context/auth-context';
-import {
-  setIsDisableWhileSending,
-  resetActivityInfo,
-  saveUnsendedActivity,
-  setIsHaveUnsyncedActivity,
-} from '@R/activity/activity';
-import { ActivityToSend } from '@R/activity/types';
-import { resetLocationsFromBackground } from '@R/location/location';
-import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
-import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/runich-api/runich-api';
+import { useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTheme, Text, TouchableRipple } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
+import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/services/activity/activity';
+import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { setIsDisableWhileSending } from '@R/slices/activity/activity';
+import { resetLocationsFromBackground } from '@R/slices/location/location';
+import { saveUnsendedActivity, setIsHaveUnsyncedActivity } from '@R/slices/unsended-activity/unsended-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
-import { useGlobalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Platform, StyleSheet } from 'react-native';
-import { useTheme, Text, TouchableRipple } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
-
-import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID, ErrorMessages } from './const';
+import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
+import type { ActivityToSend } from '@R/services/activity/types';
 
 export default function SaveBtn() {
-  const toast = useToast();
   const dispatch = useAppDispatch();
   const { colors, dark } = useTheme();
-  const { user } = useAuth();
-  const { replace } = useRouter();
-  const {
-    additionalInfo,
-    isDisabledWhileSending,
-    isManualAdding,
-    isEditingActivity,
-    manualDate,
-    manualHours,
-    manualMinutes,
-    manualDistance,
-    finishedActivity,
-  } = useAppSelector(({ activity }) => activity);
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const { back, replace } = useRouter();
+  const { activityId, isDisabledWhileSending, finishedActivity } = useAppSelector(({ activity }) => activity);
+  const { manualDate, manualHours, manualMinutes, manualDistance, isManualAdding, isEditingActivity } = useAppSelector(
+    ({ manualActivity }) => manualActivity,
+  );
+  const additionalInfoActivity = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
   const { language } = useAppSelector(({ language }) => language);
-  const [sendActivity, { error, data, isSuccess, isError }] = useAddActivityByUserIdMutation();
-  const [
-    updateActivity,
-    { error: errorUpdating, data: successUpdating, isSuccess: isSuccessUpdating, isError: isErrorUpdating },
-  ] = useUpdateActivityInfoMutation();
+  const [sendActivity] = useAddActivityByUserIdMutation();
+  const [updateActivity] = useUpdateActivityInfoMutation();
   const [activityToSend, setActivityToSend] = useState<ActivityToSend>();
   const textOnBtn = isEditingActivity ? ACTIVITY_SAVE_BTN[language].update : ACTIVITY_SAVE_BTN[language].save;
-  const textOnBtnWhenIsSending = isEditingActivity
-    ? ACTIVITY_SAVE_BTN[language].updating
-    : ACTIVITY_SAVE_BTN[language].saving;
-  const { activityId } = useGlobalSearchParams();
-
-  useEffect(() => {
-    dispatch(setIsDisableWhileSending(false));
-    if (isSuccess || isSuccessUpdating) {
-      if (__DEV__ && !process.env.IS_TESTING) {
-        console.log('success', data || successUpdating);
-      }
-      if (data?.message) {
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast(data?.message, ToastDuration.long);
-        }
-      }
-      dispatch(resetActivityInfo());
-      dispatch(resetLocationsFromBackground());
-      dispatch(setIsNeedToRefreshActivities(true));
-      replace(`/`);
-    }
-  }, [isSuccess, isSuccessUpdating, data, successUpdating]);
-
-  useEffect(() => {
-    if ((isError && error) || (isErrorUpdating && errorUpdating)) {
-      dispatch(saveUnsendedActivity(activityToSend));
-      dispatch(setIsHaveUnsyncedActivity(true));
-      if (error && 'message' in error && error?.message === ErrorMessages.aborted) {
-        if (Platform.OS !== 'web') {
-          showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
-        } else {
-          toast.show(ACTIVITY_SAVE_BTN[language].errorMsgTimeout);
-        }
-      }
-      if (error && 'status' in error) {
-        if (error.status === ErrorMessages.fetchError) {
-          if (Platform.OS !== 'web') {
-            showCrossPlatformToast(ACTIVITY_SAVE_BTN[language].fetchError);
-          } else {
-            toast.show(ACTIVITY_SAVE_BTN[language].fetchError);
-          }
-        }
-      }
-      dispatch(resetActivityInfo());
-      dispatch(resetLocationsFromBackground());
-      replace('/');
-    }
-  }, [error, isError, isErrorUpdating, errorUpdating, dispatch, replace, toast, activityToSend, language]);
 
   return (
     <TouchableRipple
@@ -103,42 +37,69 @@ export default function SaveBtn() {
       style={styles.layout}
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
       onPress={async () => {
-        if (user) {
-          dispatch(setIsDisableWhileSending(true));
-          const savedActivity = {
-            body:
-              isManualAdding || isEditingActivity
-                ? {
-                    ...additionalInfo,
-                    date: new Date(manualDate).toISOString(),
-                    distance: manualDistance * 1000,
-                    duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
-                    speed: getSpeedInMinsInKm(
-                      manualDistance,
-                      getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
-                    ).paceAsNumber,
-                    locations: [],
-                  }
-                : {
-                    ...finishedActivity,
-                    ...{
-                      ...additionalInfo,
+        try {
+          if (userId) {
+            dispatch(setIsDisableWhileSending(true));
+            const savedActivity = {
+              body:
+                isManualAdding || isEditingActivity
+                  ? {
+                      ...additionalInfoActivity,
+                      date: new Date(manualDate).toISOString(),
+                      distance: manualDistance * 1000,
+                      duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
+                      speed: getSpeedInMinsInKm(
+                        manualDistance,
+                        getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
+                      ).paceAsNumber,
+                      locations: [],
+                    }
+                  : {
+                      ...finishedActivity,
+                      ...additionalInfoActivity,
                       mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
                     },
-                  },
-            id: isEditingActivity ? `${activityId}` : user.id,
-          };
-          setActivityToSend(savedActivity);
-          if (isEditingActivity) {
-            await updateActivity(savedActivity).unwrap();
-          } else {
-            await sendActivity(savedActivity).unwrap();
+              id: isEditingActivity ? activityId : userId,
+            };
+            if (!isEditingActivity || !isManualAdding) {
+              setActivityToSend(savedActivity);
+            }
+
+            if (isEditingActivity) {
+              await updateActivity(savedActivity)
+                .unwrap()
+                .then(() => back())
+                .catch((error) => errorToast(error))
+                .finally(() => {
+                  dispatch(setIsDisableWhileSending(false));
+                  dispatch(resetAdditionaInfoActivitySlice());
+                  dispatch(resetLocationsFromBackground());
+                });
+            } else {
+              await sendActivity(savedActivity)
+                .unwrap()
+                .then(() => (isManualAdding ? back() : replace('/')))
+                .catch((error) => {
+                  if (!isManualAdding) {
+                    dispatch(saveUnsendedActivity(activityToSend));
+                    dispatch(setIsHaveUnsyncedActivity(true));
+                  }
+                  errorToast(error);
+                })
+                .finally(() => {
+                  dispatch(setIsDisableWhileSending(false));
+                  dispatch(resetAdditionaInfoActivitySlice());
+                  dispatch(resetLocationsFromBackground());
+                });
+            }
           }
+        } catch (error) {
+          errorToast('', error);
         }
       }}
       disabled={isDisabledWhileSending}>
       <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
-        {isDisabledWhileSending ? textOnBtnWhenIsSending : textOnBtn}
+        {textOnBtn}
       </Text>
     </TouchableRipple>
   );

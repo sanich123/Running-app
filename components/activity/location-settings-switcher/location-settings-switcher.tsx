@@ -1,12 +1,12 @@
-import { showCrossPlatformToast } from '@U/custom-toast';
+import { useEffect, useState } from 'react';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { hasServicesEnabledAsync } from 'expo-location';
-import { useEffect, useState } from 'react';
-import { Switch, Text } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
-import { useAppSelector } from '@R/typed-hooks';
+import { Switch, Text } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
-import { LocationSettingsSwitcherProps } from '../types';
+import { useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import type { LocationSettingsSwitcherProps } from '../types';
 
 export default function LocationSettingsSwitcher({
   isLocationEnabled,

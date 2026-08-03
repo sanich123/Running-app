@@ -1,12 +1,12 @@
 import { LANGUAGES } from '@const/enums';
 
-export type InputsWeightCityProps = {
+export interface InputsWeightCityProps {
   city: string;
   weight: string;
   isDisabled: boolean;
   setCity: (arg: string) => void;
   setWeight: (arg: string) => void;
-};
+}
 
 export const WEIGHT_CITY = {
   [LANGUAGES.english]: {

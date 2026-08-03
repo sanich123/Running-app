@@ -1,8 +1,1 @@
-import { Accuracy } from 'expo-location';
-
-export const POSITION_OPTIONS = {
-  accuracy: Accuracy.Highest,
-  timeInterval: 2000,
-};
-
-export const EXPIRED_TIME = 1000000000;
+export const MAX_MOBILE_WIDTH = 550;

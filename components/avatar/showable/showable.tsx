@@ -1,69 +1,18 @@
-import { useAuth } from '@A/context/auth-context';
-import { CustomImage } from '@C/custom-image/custom-image';
-import { saveWholeProfile } from '@R/profile/profile';
-import {
-  useGetUserProfileByUserIdQuery,
-  useCreateProfileByUserIdMutation,
-  useUpdateProfileByProfileIdMutation,
-} from '@R/runich-api/runich-api';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
-import { Avatar } from 'react-native-paper';
-
+import { Avatar, useTheme } from 'react-native-paper';
+import { CustomImage } from '@C/custom-image/custom-image';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
+import { saveWholeProfile } from '@R/slices/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
-export default function AvatarShowable({ size, id }: { size: number; id: string }) {
+export default function AvatarShowable({ size, id, focused }: { size: number; id: string; focused?: boolean }) {
+  const { colors } = useTheme();
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
-  const { googleInfo } = useAppSelector(({ profile }) => profile);
-  const isMineAvatar = id === user?.id;
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const isMineAvatar = id === userId;
   const { data: profile, isSuccess, isError } = useGetUserProfileByUserIdQuery(id, { skip: !id });
-  const [createProfile] = useCreateProfileByUserIdMutation();
-  const [updateProfile] = useUpdateProfileByProfileIdMutation();
-
-  useEffect(() => {
-    async function createProfileWithGoogleInfo() {
-      return await createProfile({
-        body: {
-          name: `${googleInfo?.givenName}` || '',
-          surname: `${googleInfo.familyName}` || '',
-          profilePhoto: `${googleInfo.photo}` || '',
-          email: googleInfo.email,
-          city: '',
-          bio: '',
-          gender: '',
-          sport: '',
-          weight: '',
-        },
-        id: `${user?.id}`,
-      });
-    }
-    async function updateProfileWithGoogleInfo() {
-      return await updateProfile({
-        body: {
-          name: profile?.name || googleInfo?.givenName,
-          surname: profile?.surname || googleInfo?.familyName,
-          profilePhoto: profile?.profilePhoto || googleInfo?.photo,
-          email: profile?.email || googleInfo?.email,
-        },
-        id: profile?.id,
-      });
-    }
-    if (!profile && isSuccess && isMineAvatar) {
-      createProfileWithGoogleInfo();
-    } else if (profile) {
-      if (
-        (!profile?.profilePhoto && googleInfo?.photo) ||
-        (!profile?.name && googleInfo?.givenName) ||
-        (!profile?.surname && googleInfo?.familyName) ||
-        (!profile?.email && googleInfo?.email)
-      ) {
-        updateProfileWithGoogleInfo();
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (profile && isMineAvatar) {
@@ -75,10 +24,13 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
     <>
       {isSuccess ? (
         <>
-          {profile?.profilePhoto?.length > 0 || googleInfo?.photo ? (
+          {profile?.profilePhoto ? (
             <CustomImage
-              style={{ width: size, height: size, borderRadius: 70 }}
-              source={{ uri: profile?.profilePhoto || googleInfo?.photo }}
+              style={[
+                { width: size, height: size, borderRadius: 70 },
+                { borderWidth: 1, borderColor: focused ? colors.primary : 'transparent' },
+              ]}
+              source={{ uri: profile?.profilePhoto }}
               contentFit="cover"
               testID={AvatarShowableTestIds.success}
               placeholder={profile?.profilePhotoBlurhash}
@@ -94,7 +46,7 @@ export default function AvatarShowable({ size, id }: { size: number; id: string 
         </>
       ) : null}
 
-      {(isError || profile?.message) && (
+      {isError && (
         <Avatar.Icon
           testID={AvatarShowableTestIds.error}
           size={size}

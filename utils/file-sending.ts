@@ -1,8 +1,7 @@
 import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
-import { Platform } from 'react-native';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
-
+import { Platform } from 'react-native';
 import { showCrossPlatformToast } from './custom-toast';
 import { errorHandler } from './error-handler';
 import { getBase64CodedImage, getPublicUrl, uploadPhoto } from '../auth/supabase/storage/upload-photo';
@@ -13,7 +12,7 @@ export async function compressAndSendFile(
 ): Promise<{ url: string; thumbnail: string | null } | null | undefined> {
   const splittedImg = fileSrc instanceof File ? fileSrc.name.split('.') : fileSrc.split('.');
   const extension = splittedImg[splittedImg.length - 1];
-  const isVideoFile = extension === ('mp4' || 'avi' || 'm4v');
+  const isVideoFile = ['mp4', 'avi', 'm4v'].includes(extension);
 
   const compressedFile = await compressImageOrVideo(fileSrc, extension);
   if (compressedFile) {
@@ -44,7 +43,7 @@ export async function compressAndSendFile(
 export async function getAccessToGallery() {
   try {
     return await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ['images'],
       aspect: [4, 3],
       quality: 1,
     });
@@ -56,7 +55,7 @@ export async function getAccessToGallery() {
 export async function compressImageOrVideo(fileSrc: string | File, extension: string) {
   const MAX_VIDEO_SIZE = 15000;
   const supportedImagesExtensions = /webp|png|avif|heic|jpeg|gif|svg|ico|jpg/;
-  const isVideoFile = extension === ('mp4' || 'avi' || 'm4v');
+  const isVideoFile = ['mp4', 'avi', 'm4v'].includes(extension);
   if (isVideoFile) {
     try {
       const metaData = await getVideoMetaData(`${fileSrc}`);

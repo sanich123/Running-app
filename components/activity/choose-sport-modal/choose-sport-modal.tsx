@@ -1,12 +1,12 @@
-import { saveSport } from '@R/activity/activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { LANGUAGES } from '@const/enums';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useCallback } from 'react';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { View } from 'react-native';
 import { Text, IconButton, useTheme } from 'react-native-paper';
-import { ChooseSportModalProps } from '../types';
+import { LANGUAGES } from '@const/enums';
+import { saveSport } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { SPORTS_NAMES } from './const';
+import type { ChooseSportModalProps } from '../types';
 
 export default function ChooseSportModal({ chooseSportModalRef }: ChooseSportModalProps) {
   const { language } = useAppSelector(({ language }) => language);
@@ -25,15 +25,15 @@ export default function ChooseSportModal({ chooseSportModalRef }: ChooseSportMod
       handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
       backgroundStyle={{ backgroundColor: colors.onSecondary }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 10, backgroundColor: colors.onSecondary }}>
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <BottomSheetView style={{ flex: 1, backgroundColor: colors.onSecondary }}>
+        <View
+          style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 5 }}>
           <Text variant="bodyLarge">
             {language === LANGUAGES.russian ? 'Выберите тип спорта' : 'Choose type of sport'}
           </Text>
-          <IconButton icon="close" size={35} onPress={() => chooseSportModalRef.current?.close()} />
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'row' }}>
+        <View style={{ flex: 1, flexDirection: 'row', paddingBottom: 10 }}>
           {SPORTS_NAMES.map(({ iconName, value }) => (
             <IconButton
               key={iconName}

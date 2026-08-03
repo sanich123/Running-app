@@ -1,22 +1,18 @@
-import { TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
-import { Href, usePathname, useRouter } from 'expo-router';
-import { ROUTES } from '@const/enums';
+import { useRouter } from 'expo-router';
+import { TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { getIconByTypeOfSport } from '@U/icon-utils';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { CalendarDateProps, CalendarDateWithActivityProps } from '../calendar/types';
+import type { CalendarDateProps, CalendarDateWithActivityProps } from '../calendar/types';
+import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 
 export default function CalendarDateWithActivity({
   isWeekend,
   isTitle,
   isEmptyCell,
   dateValue,
-
   activities,
 }: CalendarDateWithActivityProps & CalendarDateProps) {
   const { colors, dark } = useTheme();
-  const pathname = usePathname();
-  const root = pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.statistic;
   const { push } = useRouter();
   return (
     <>
@@ -34,14 +30,13 @@ export default function CalendarDateWithActivity({
           onPress={() => {
             if (!isTitle) {
               if (activities.length === 1) {
-                push(`/${root}/activity/${activities[0].id}` as Href);
+                push(`/(protected)/activity/${activities[0].id}`);
               } else {
-                push(`/${root}/activities-list/${activities.map(({ id }) => `ids=${id}`).join('&')}` as Href);
+                push(`/(protected)/activities-list/${activities.map(({ id }) => `ids=${id}`).join('&')}`);
               }
             }
           }}>
           <Text
-
             variant={activities.length ? 'headlineMedium' : 'bodyMedium'}
             style={{
               fontWeight: isTitle || !activities.length ? 'bold' : 'normal',

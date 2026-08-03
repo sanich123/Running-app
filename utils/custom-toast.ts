@@ -1,11 +1,10 @@
-//@ts-ignore
-import Toast from 'react-native-root-toast';
+import Toast from 'react-native-toast-message';
 
 export enum ToastDuration {
   long = 'long',
   short = 'short',
 }
 
-export function showCrossPlatformToast(message: string, duration: ToastDuration = ToastDuration.short) {
-  Toast.show(message, { duration: duration === ToastDuration.long ? Toast.durations.LONG : Toast.durations.SHORT });
+export function showCrossPlatformToast(message: string) {
+  return Toast.show({ type: 'info', text2: message });
 }

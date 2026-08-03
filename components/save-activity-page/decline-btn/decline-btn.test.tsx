@@ -1,15 +1,17 @@
-import { ADDITIONAL_INFO_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from '@R/activity/const';
-import { changeLanguage } from '@R/language/language';
-import { mockStore } from '@T/utils/mock-store';
-import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
 import { Alert } from 'react-native';
-
+import { LANGUAGES } from '@const/enums';
+import { ADDITIONAL_INFO_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from '@R/slices/activity/const';
+import { changeLanguage } from '@R/slices/language/language';
+import { MANUAL_ACTIVITY_INITIAL_STATE } from '@R/slices/manual-activity/const';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import { DECLINE_BTN } from './const';
 import DeclineBtn from './decline-btn';
 
-jest.spyOn(Alert, 'alert');
+jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+  buttons?.[0]?.onPress?.();
+});
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ replace: jest.fn() }) }));
 
@@ -25,12 +27,9 @@ describe('Decline btn', () => {
     const discardBtn = screen.getByText(DECLINE_BTN.english.cancel);
     await userEvent.press(discardBtn);
     expect(Alert.alert).toHaveBeenCalled();
-    expect(mockStore.getState().activity.additionalInfo).toEqual(ADDITIONAL_INFO_INITIAL_STATE);
+    expect(mockStore.getState().additionalInfoActivity).toEqual(ADDITIONAL_INFO_INITIAL_STATE);
     expect(mockStore.getState().activity.finishedActivity).toEqual(FINISHED_ACTIVITY_INITIAL_STATE);
-    expect(mockStore.getState().activity.manualDate).toEqual('');
-    expect(mockStore.getState().activity.manualHours).toEqual(0);
-    expect(mockStore.getState().activity.manualDistance).toEqual(0);
-    expect(mockStore.getState().activity.manualMinutes).toEqual(0);
+    expect(mockStore.getState().manualActivity).toEqual(MANUAL_ACTIVITY_INITIAL_STATE);
   });
   it('should correctly handle isDisabled state', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

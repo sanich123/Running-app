@@ -1,6 +1,6 @@
-import { setManualDate } from '@R/activity/activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
+import { setManualDate } from '@R/slices/manual-activity/manual-activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 
 export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
   const [date, setDate] = useState('');

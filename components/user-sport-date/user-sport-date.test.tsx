@@ -1,11 +1,10 @@
+import { screen } from '@testing-library/react-native';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { changeLanguage } from '@R/language/language';
+import { LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import UserSportDate from './user-sport-date';
 
 describe('User sport date', () => {

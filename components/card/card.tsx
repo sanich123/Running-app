@@ -1,20 +1,20 @@
-import UserInfo from '@C/card/user-info/user-info';
-import { runichApi } from '@R/runich-api/runich-api';
-import { useAppSelector } from '@R/typed-hooks';
-import { ROUTES } from '@const/enums';
-import { usePathname } from 'expo-router';
 import { useRef, memo, useEffect } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
-
+import UserInfo from '@C/card/user-info/user-info';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
+import { activityApi } from '@R/services/activity/activity';
+import { useAppSelector } from '@R/typed-hooks';
 import Btns from './btns/btns';
 import { LikesSize } from './likes/const';
 import Likes from './likes/likes';
 import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
-import { UserInfoSize } from './user-info/const';
-import { ActivityCardProps } from './types';
 import ShareActivityImage from './share-activity-image/share-activity-image';
+import { UserInfoSize } from './user-info/const';
+import type { ActivityCardProps } from './types';
 
 export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const {
@@ -35,12 +35,12 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     commentsLength,
   } = rest;
   const pathname = usePathname();
+  const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
-  const cardRef = useRef(null);
-  const prefetchFullActivity = runichApi.usePrefetch('getActivityByActivityId');
+  const cardRef = useRef<View>(null);
+  const prefetchFullActivity = activityApi.usePrefetch('getActivityByActivityId');
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
-
   useEffect(() => {
     if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
       prefetchFullActivity(`${id}`);
@@ -60,7 +60,12 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
       />
       <View
         style={[
-          { ...styles.cardStyles, backgroundColor: colors.background, zIndex: 10 },
+          {
+            ...styles.cardStyles,
+            backgroundColor: colors.background,
+            zIndex: 10,
+            width: width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH,
+          },
           Platform.OS === 'web' && styles.webStyles,
         ]}>
         <View>
@@ -107,8 +112,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
 const styles = StyleSheet.create({
   webStyles: {
     maxWidth: 550,
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    marginHorizontal: 'auto',
   },
   cardStyles: {
     borderCurve: 'continuous',

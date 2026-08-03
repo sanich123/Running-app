@@ -1,6 +1,6 @@
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
-
-import { CameraTypes, ChangeViewProps } from '../types';
+import { CameraTypes } from '../types';
+import type { ChangeViewProps } from '../types';
 
 export default function ChangeView({ type, setType }: ChangeViewProps) {
   const { colors, dark } = useTheme();

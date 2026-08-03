@@ -15,5 +15,3 @@ export const COMMENT_INPUT = {
 
 export const COMMENT_ICON_TEST_ID = 'commentInputIcon';
 export const COMMENT_INPUT_TEST_ID = 'commentInput';
-
-

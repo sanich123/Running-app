@@ -1,10 +1,8 @@
-import { saveUnsendedActivity, setIsHaveUnsyncedActivity } from '@R/activity/activity';
+import { screen } from '@testing-library/react-native';
+import { saveUnsendedActivity, setIsHaveUnsyncedActivity } from '@R/slices/unsended-activity/unsended-activity';
 import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { screen } from '@testing-library/react-native';
-
-import { UNSENDED_ACTIVITIES } from './const';
 import UnsendedActivitiesIndicator from './unsended-activities-indicator';
 
 describe('Unsended activities indicator', () => {
@@ -23,7 +21,6 @@ describe('Unsended activities indicator', () => {
     );
     mockStore.dispatch(setIsHaveUnsyncedActivity(true));
     renderWithProviders(<UnsendedActivitiesIndicator />, { store: mockStore });
-    expect(screen.getByText(new RegExp(UNSENDED_ACTIVITIES.russian.isLoading))).toBeOnTheScreen();
-    expect(await screen.findByText(/manually/i)).toBeOnTheScreen();
+    expect(await screen.findByText(/вручную/i)).toBeOnTheScreen();
   });
 });

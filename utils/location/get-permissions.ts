@@ -1,9 +1,9 @@
-import { showCrossPlatformToast, ToastDuration } from '@U/custom-toast';
 import {
   requestBackgroundPermissionsAsync,
   requestForegroundPermissionsAsync,
   hasServicesEnabledAsync,
 } from 'expo-location';
+import { showCrossPlatformToast } from '@U/custom-toast';
 
 export async function getLocationPermissions({
   setIsForegroundPermission,
@@ -16,7 +16,7 @@ export async function getLocationPermissions({
 }) {
   const isLocationServicesEnabled = await hasServicesEnabledAsync();
   if (!isLocationServicesEnabled) {
-    showCrossPlatformToast('Для работы сервиса необходимо включить геолокацию.', ToastDuration.long);
+    showCrossPlatformToast('Для работы сервиса необходимо включить геолокацию.');
   }
 
   setLocationEnabledByUser(isLocationServicesEnabled);
@@ -26,11 +26,9 @@ export async function getLocationPermissions({
     const backgroundPermission = await requestBackgroundPermissionsAsync();
     if (backgroundPermission.granted) {
       setBackgroundPermission(true);
-      if (__DEV__) console.log('Permission to access location granted');
     } else {
       showCrossPlatformToast(
         'Вы же не будете бегать с включенным дисплеем все время? Поэтому необходимо дать разрешение на отслеживание местоположения в фоновом режиме',
-        ToastDuration.long,
       );
     }
   }

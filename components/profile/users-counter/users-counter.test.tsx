@@ -1,10 +1,9 @@
-import { changeLanguage } from '@R/language/language';
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_FRIENDS } from '@T/mocks/mock-friends';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import { USERS_COUNT, USERS_VARIANT } from './const';
 import UsersCounter from './users-counter';
 

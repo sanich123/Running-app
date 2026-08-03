@@ -1,9 +1,10 @@
-import { resetActivityInfo, resetFinishedActivity, resetManualData } from '@R/activity/activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { useRouter } from 'expo-router';
 import { Alert } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
-
+import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { resetFinishedActivity } from '@R/slices/activity/activity';
+import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { DECLINE_BTN } from './const';
 
 export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
@@ -24,9 +25,9 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
             {
               text: DECLINE_BTN[language].accept,
               onPress: () => {
-                dispatch(resetActivityInfo());
+                dispatch(resetAdditionaInfoActivitySlice());
                 dispatch(resetFinishedActivity());
-                dispatch(resetManualData());
+                dispatch(resetManualActivitySlice());
                 replace('/');
               },
               style: 'cancel',

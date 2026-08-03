@@ -1,17 +1,25 @@
-import { useGetCommentsLengthByActivityIdQuery } from '@R/runich-api/runich-api';
-import { useAppSelector } from '@R/typed-hooks';
-import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { ROUTES } from '@const/enums';
-import { Href, usePathname, useRouter } from 'expo-router';
 import { useContext, memo, useState, useEffect, useRef } from 'react';
 import { Platform, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
-import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import CommentsListModal from '@C/comment-page/comments-list-modal/comments-list-modal';
-import { CommentBtnProps } from '../types';
+import { ROUTES } from '@const/enums';
+import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
+import {
+  setCommentActivityId,
+  setActivityOwnerProfile,
+  setMapPhotoUrl,
+  setIsShowingTextInput,
+  setCommentsLength,
+} from '@R/slices/comment/comment';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
+import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
+import type { CommentBtnProps } from '../types';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default memo(function CommentBtn({ activityId, commentsLength, profile, mapPhotoUrl }: CommentBtnProps) {
+  const dispatch = useAppDispatch();
   const { dark, colors } = useTheme();
   const { push } = useRouter();
   const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
@@ -23,8 +31,6 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
     isLoading: isLoadingComments,
   } = useGetCommentsLengthByActivityIdQuery(`${activityId}`, { skip: !isNeedToGetUpdatedComments });
   const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : commentsCount;
-  const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const commentsModalRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
@@ -39,8 +45,13 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       onPress={() => {
+        dispatch(setCommentsLength(commentsLength));
+        dispatch(setIsShowingTextInput(!commentsLength ? true : false));
+        dispatch(setCommentActivityId(activityId));
+        dispatch(setActivityOwnerProfile(profile));
+        dispatch(setMapPhotoUrl(mapPhotoUrl));
         if (Platform.OS === 'web') {
-          push(`/${place}/${ROUTES.comment}/${activityId}` as Href);
+          push(`/(protected)/${ROUTES.comment}/${activityId}`);
         } else {
           commentsModalRef.current?.present();
         }
@@ -56,12 +67,7 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
           size={25}
           disabled={isLoading || isDisabled || !!commentsCount?.message || isErrorLoadingComments || isLoadingComments}
         />
-        <CommentsListModal
-          commentsModalRef={commentsModalRef}
-          activityId={activityId}
-          profile={profile}
-          mapPhotoUrl={mapPhotoUrl}
-        />
+        <CommentsListModal commentsModalRef={commentsModalRef} />
       </>
     </TouchableRipple>
   );

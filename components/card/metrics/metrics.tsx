@@ -1,15 +1,13 @@
+import { memo } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { usePathname, useRouter } from 'expo-router';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import ShowMetrics from '@C/show-metrics/show-metrics';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
-import { ROUTES } from '@const/enums';
-import { Href, usePathname, useRouter } from 'expo-router';
-import { memo } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
 import { CARD_METRICS } from './const';
-import { MetricsProps } from '../types';
+import type { MetricsProps } from '../types';
 
 export default memo(function Metrics({
   distance,
@@ -22,20 +20,17 @@ export default memo(function Metrics({
 }: MetricsProps) {
   const { dark } = useTheme();
   const { push } = useRouter();
-  const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile)
-    ? ROUTES.profile
-    : pathname.includes(ROUTES.home)
-      ? ROUTES.home
-      : ROUTES.statistic;
   const { language } = useAppSelector(({ language }) => language);
+  const pathname = usePathname();
 
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() =>
-        !pathname.includes(ROUTES.activity) && push(`/${place}/${ROUTES.activity}/${id}?userId=${userId}` as Href)
-      }
+      onPress={() => {
+        if (pathname !== `/activity/${id}`) {
+          push(`/(protected)/activity/${id}?userId=${userId}`);
+        }
+      }}
       borderless
       style={{ paddingLeft: 5, paddingVertical: 2 }}>
       <>

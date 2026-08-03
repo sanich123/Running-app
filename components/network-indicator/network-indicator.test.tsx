@@ -1,10 +1,9 @@
-import { changeLanguage } from '@R/language/language';
-import { changeNetworkState } from '@R/network/network';
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/language/language';
+import { changeNetworkState } from '@R/slices/network/network';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import { MOCK_NETWORK_STATE, NETWORK_INDICATOR } from './const';
 import NetworkIndicator from './network-indicator';
 

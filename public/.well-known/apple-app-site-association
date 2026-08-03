@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appID": "{APP ID prefix from developer account}.com.sanich123.runningapp",
+        "paths": [
+          "/sign-in"
+        ]
+      }
+    ]
+  }
+}

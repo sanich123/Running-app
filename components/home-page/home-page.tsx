@@ -1,74 +1,64 @@
-import { useAuth } from '@A/context/auth-context';
+import { useRouter } from 'expo-router';
+import { ActivityIndicator } from 'react-native-paper';
+import EmptyActivitiesList from '@C/empty-activities-list/empty-activities-list';
 import ErrorComponent from '@C/error-component/error-component';
 import FloatingBtn from '@C/floating-btn/floating-btn';
 import InfiniteScrollList from '@C/infinite-scroll-list/infinite-scroll-list';
+import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
 import UnsendedActivitiesIndicator from '@C/unsended-activities/unsended-activities-indicator';
-import {
-  setIsManualAdding,
-  resetFinishedActivity,
-  resetManualData,
-  resetActivityInfo,
-  setIsEditingActivity,
-} from '@R/activity/activity';
-import { setIsNeedToRefreshActivities } from '@R/main-feed/main-feed';
-import { runichApi, useGetActivitiesByUserIdWithFriendsActivitiesQuery } from '@R/runich-api/runich-api';
+import { useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery } from '@R/services/activity/activity';
+import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { resetFinishedActivity } from '@R/slices/activity/activity';
+import { resetManualActivitySlice, setIsManualAdding } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { Href, useFocusEffect, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ActivityIndicator } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Feed() {
-  const { push } = useRouter();
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
-  const { isHaveUnsyncedActivity } = useAppSelector(({ activity }) => activity);
-  const { needToRefreshActivities } = useAppSelector(({ mainFeed }) => mainFeed);
-  const [page, setPage] = useState(0);
-  const { data, error, isLoading, refetch } = useGetActivitiesByUserIdWithFriendsActivitiesQuery(
-    { id: `${user?.id}`, page, take: 10 },
-    { skip: !user?.id },
-  );
-
-  useFocusEffect(() => {
-    if (needToRefreshActivities) {
-      setPage(0);
-      setTimeout(() => dispatch(runichApi.util.resetApiState()), 0);
-      dispatch(setIsNeedToRefreshActivities(false));
-    }
-  });
+  const { push } = useRouter();
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const { isHaveUnsyncedActivity } = useAppSelector(({ unsendedActivity }) => unsendedActivity);
+  const { data, error, isLoading, refetch, fetchNextPage, isFetching, isError } =
+    useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery(
+      {
+        id: userId,
+      },
+      { skip: !userId },
+    );
+  const activities = data?.pages
+    .flat()
+    .map(({ activities }) => activities)
+    .flat();
+  const lastPage = data?.pages
+    .flat()
+    .map(({ isLastPage }) => isLastPage)
+    .flat();
 
   return (
-    <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
-      <BottomSheetModalProvider>
+    <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
+      {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
+      {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
+      {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
+      {activities && activities?.length > 0 && (
         <>
-          {isHaveUnsyncedActivity ? <UnsendedActivitiesIndicator /> : null}
-          {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
-          {error || data?.message ? <ErrorComponent error={error || data} refetch={refetch} /> : null}
-          {!data?.message && data?.activities ? (
-            <>
-              <InfiniteScrollList
-                dataToRender={data?.activities}
-                page={page}
-                setPage={setPage}
-                refetch={refetch}
-                isLastPage={data?.isLastPage}
-              />
-              <FloatingBtn
-                onPressFn={() => {
-                  dispatch(setIsManualAdding(true));
-                  dispatch(setIsEditingActivity(false));
-                  dispatch(resetFinishedActivity());
-                  dispatch(resetManualData());
-                  dispatch(resetActivityInfo());
-                  push('/home/manual-activity' as Href);
-                }}
-              />
-            </>
-          ) : null}
+          <InfiniteScrollList
+            dataToRender={activities}
+            refetch={refetch}
+            isLastPage={!!lastPage?.[lastPage.length - 1]}
+            nextPageCallback={fetchNextPage}
+            isFetching={isFetching}
+          />
+          <FloatingBtn
+            onPressFn={() => {
+              dispatch(resetManualActivitySlice());
+              dispatch(resetAdditionaInfoActivitySlice());
+              dispatch(resetFinishedActivity());
+              dispatch(setIsManualAdding(true));
+              push('/(protected)/manual-activity');
+            }}
+          />
         </>
-      </BottomSheetModalProvider>
-    </SafeAreaView>
+      )}
+      {!activities?.length && <EmptyActivitiesList />}
+    </CrossPlatformLayout>
   );
 }

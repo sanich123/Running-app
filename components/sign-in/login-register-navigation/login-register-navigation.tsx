@@ -1,31 +1,30 @@
-import { useAppSelector } from '@R/typed-hooks';
-import { SignInPageStates, signInMap } from '@U/validate-email-password';
 import { View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
+import { setSignInPageState } from '@R/slices/logining/logining';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { SignInPageStates, signInMap } from '@U/validate-email-password';
+import { LOGIN_NAVIGATION, REGISTER_NAVIGATION, RESET_NAVIGATION } from './const';
 
-import { LOGIN_NAVIGATION, REGISTER_NAVIGATION, RegisterNavigationProps } from './const';
-
-export default function RegisterNavigation({ pageState, setPageState, isDisabled }: RegisterNavigationProps) {
+export default function RegisterNavigation() {
+  const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-  const isRegistering = pageState === SignInPageStates.register;
-  const isLogining = pageState === SignInPageStates.login;
-  // const isResetting = pageState === SignInPageStates.reset;
+  const { pageState, isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
 
   return (
     <View style={styles.layout}>
-      <Text variant="bodyMedium" style={{ opacity: isDisabled ? 0.5 : 1 }}>
-        {isRegistering && LOGIN_NAVIGATION[language].text}
-        {isLogining && REGISTER_NAVIGATION[language].text}
-        {/* {isResetting && REGISTER_NAVIGATION[language].text} */}
+      <Text variant="bodyMedium" style={{ opacity: isDisabledWhenLogining ? 0.7 : 1 }}>
+        {pageState === SignInPageStates.register && LOGIN_NAVIGATION[language].text}
+        {pageState === SignInPageStates.login && RESET_NAVIGATION[language].text}
+        {pageState === SignInPageStates.reset && REGISTER_NAVIGATION[language].text}
       </Text>
       <Button
         mode="outlined"
-        onPress={() => setPageState(signInMap[pageState])}
-        disabled={isDisabled}
+        onPress={() => dispatch(setSignInPageState(signInMap[pageState]))}
+        disabled={isDisabledWhenLogining}
         accessibilityRole="button">
-        {isRegistering && LOGIN_NAVIGATION[language].btn}
-        {isLogining && REGISTER_NAVIGATION[language].btn}
-        {/* {isResetting && REGISTER_NAVIGATION[language].btn} */}
+        {pageState === SignInPageStates.register && LOGIN_NAVIGATION[language].btn}
+        {pageState === SignInPageStates.login && RESET_NAVIGATION[language].btn}
+        {pageState === SignInPageStates.reset && REGISTER_NAVIGATION[language].btn}
       </Button>
     </View>
   );

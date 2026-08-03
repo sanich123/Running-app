@@ -1,9 +1,8 @@
-import { changeLanguage } from '@R/language/language';
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import { EDIT_BTN } from './const';
 import ProfileEditBtn from './edit-btn';
 

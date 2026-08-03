@@ -1,69 +1,40 @@
+import { useCallback } from 'react';
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { useCallback, useMemo, useState } from 'react';
-import { FAB, useTheme } from 'react-native-paper';
-import Comments from '@C/comment-page/comments/comments';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import CommentInput from '@C/comment-page/comment-input/comment-input';
-import { CommentsListModalProps } from '../types';
+import Comments from '@C/comment-page/comments/comments';
+import { useAppSelector } from '@R/typed-hooks';
 import { backdrop } from '@U/backdrop';
+import CommentAddBtn from '../comment-add-btn/comment-add-btn';
+import type { CommentModalProps } from '../types';
 
-export default function CommentsListModal({
-  commentsModalRef,
-  activityId,
-  profile,
-  mapPhotoUrl,
-}: CommentsListModalProps) {
+export default function CommentsListModal({ commentsModalRef }: CommentModalProps) {
   const { colors } = useTheme();
-  const [isShowingTextInput, setIsShowingTextInput] = useState(false);
-  const [idOfUpdatingComment, setIdOfUpdatingComment] = useState('');
+  const { activityOwnerProfile, isShowingTextInput, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
   const renderBackdrop = useCallback(backdrop, []);
-  const snapPoints = useMemo(() => ['20%', '25%', '55%', '65%', '90%'], []);
+  const snapPoints = ['20%', '50%', '55%', '60%'];
 
   return (
     <BottomSheetModal
       ref={commentsModalRef}
-      index={0}
+      index={2}
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.onSecondary }}
-      handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <View style={{ paddingHorizontal: 10, marginBottom: 5, zIndex: 7 }}>
-        {isShowingTextInput && !idOfUpdatingComment ? (
-          <CommentInput
-            profile={profile}
-            idOfUpdatingComment={idOfUpdatingComment}
-            activityId={`${activityId}`}
-            setIsShowingTextInput={setIsShowingTextInput}
-            commentId=""
-            mapPhotoUrl={mapPhotoUrl}
-            setIdOfUpdatingComment={setIdOfUpdatingComment}
-          />
-        ) : (
-          <View>
-            <FAB
-              testID="floatingBtn"
-              icon="pencil"
-              style={{ position: 'absolute', right: 10, top: Platform.OS === 'ios' ? 2 : 0, zIndex: 10 }}
-              onPress={() => {
-                commentsModalRef.current?.snapToIndex(2);
-                setIdOfUpdatingComment('');
-                setIsShowingTextInput(true);
-              }}
-            />
-          </View>
-        )}
-      </View>
+      backgroundStyle={{ backgroundColor: colors.background }}
+      handleIndicatorStyle={{ backgroundColor: colors.onBackground }}
+      keyboardBlurBehavior="restore"
+      keyboardBehavior="extend">
       <BottomSheetScrollView>
-        <Comments
-          isShowingTextInput={isShowingTextInput}
-          setIsShowingTextInput={setIsShowingTextInput}
-          activityId={activityId}
-          mapPhotoUrl={mapPhotoUrl}
-          idOfUpdatingComment={idOfUpdatingComment}
-          setIdOfUpdatingComment={setIdOfUpdatingComment}
-          commentsModalRef={commentsModalRef}
-        />
+        <Comments commentsModalRef={commentsModalRef} />
+        <View style={{ paddingHorizontal: 10, marginBottom: 5, paddingBottom: 150 }}>
+          {isShowingTextInput && !idOfUpdatingComment ? (
+            <CommentInput profile={activityOwnerProfile} commentsModalRef={commentsModalRef} commentId="" />
+          ) : (
+            <CommentAddBtn />
+          )}
+        </View>
       </BottomSheetScrollView>
     </BottomSheetModal>
   );

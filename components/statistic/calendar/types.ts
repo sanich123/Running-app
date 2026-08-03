@@ -1,14 +1,18 @@
-export type CalendarStatisticsProps = {
+export interface CalendarStatisticsProps {
   year: string;
   month: string;
   userId: string;
-};
+  selectedType: string;
+}
 
 export type StatisticActivities = { duration: number; distance: number; id: string; sport: string; date: string }[];
 
-export type CalendarDate = { dateValue: string; activities: StatisticActivities };
+export interface CalendarDate {
+  dateValue: string;
+  activities: StatisticActivities;
+}
 
-export type ReducedDatesByDayOfTheWeek = {
+export interface ReducedDatesByDayOfTheWeek {
   sundays: CalendarDate[];
   mondays: CalendarDate[];
   tuesdays: CalendarDate[];
@@ -16,9 +20,9 @@ export type ReducedDatesByDayOfTheWeek = {
   thursdays: CalendarDate[];
   fridays: CalendarDate[];
   saturdays: CalendarDate[];
-};
+}
 
-export let REDUCED_DATES_INITIAL_STATE = {
+export const REDUCED_DATES_INITIAL_STATE = {
   mondays: [{ dateValue: 'ПН', activities: [] }],
   tuesdays: [{ dateValue: 'ВТ', activities: [] }],
   wednesdays: [{ dateValue: 'СР', activities: [] }],
@@ -37,21 +41,21 @@ export const mapIndexToDayOfWeek = {
   5: 'fridays',
   6: 'saturdays',
 };
-export type CalendarDateProps = {
+export interface CalendarDateProps {
   isTitle: boolean;
   isEmptyCell: boolean;
   dateValue: string;
-};
+}
 
-export type CalendarDateWithActivityProps = {
+export interface CalendarDateWithActivityProps {
   isWeekend: boolean;
   activities: { sport: string; id: string }[];
-};
+}
 
-export type CalendarDateEmptyProps = {
+export interface CalendarDateEmptyProps {
   isTitle: boolean;
   isEmptyCell: boolean;
   dateValue: string;
   day: string;
   i: number;
-};
+}

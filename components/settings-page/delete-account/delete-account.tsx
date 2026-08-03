@@ -1,26 +1,44 @@
-import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert, Platform, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
-import { supabase } from '@A/supabase/supabase-init';
-import { useAuth } from '@A/context/auth-context';
-import { useDeleteUserByUserIdMutation } from '@R/runich-api/runich-api';
-import { Alert, View } from 'react-native';
+import { useDeleteUserMutation } from '@R/services/authentication/authentication';
+import { resetActivitySlice } from '@R/slices/activity/activity';
+import { resetAuthSlice } from '@R/slices/auth/auth';
+import { resetLanguageSlice } from '@R/slices/language/language';
+import { resetLocationSlice } from '@R/slices/location/location';
+import { resetMainFeedSlice } from '@R/slices/main-feed/main-feed';
+import { resetNetworkSlice } from '@R/slices/network/network';
+import { resetProfileSlice } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { resetSettings } from '@R/profile/profile';
-import { resetLocationsFromBackground } from '@R/location/location';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { DELETE_ACCOUNT } from './const';
 
 export default function DeleteAccountBtn() {
   const { language } = useAppSelector(({ language }) => language);
+  const { userId } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
-  const { user, signOut } = useAuth();
-  const [deleteAccount, { isSuccess: isSuccessDeleting }] = useDeleteUserByUserIdMutation();
   const { dark, colors } = useTheme();
+  const [deleteAccount] = useDeleteUserMutation();
+  const { replace } = useRouter();
 
-  useEffect(() => {
-    if (isSuccessDeleting) {
-      signOut?.();
-    }
-  }, [isSuccessDeleting, signOut]);
+  async function deleteUserHandler() {
+    return await deleteAccount({ userId })
+      .unwrap()
+      .then(async () => {
+        await AsyncStorage.removeItem('accessToken');
+        dispatch(resetProfileSlice());
+        dispatch(resetActivitySlice());
+        dispatch(resetMainFeedSlice());
+        dispatch(resetAuthSlice());
+        dispatch(resetNetworkSlice());
+        dispatch(resetLanguageSlice());
+        dispatch(resetLocationSlice());
+        replace('/sign-in');
+      })
+      .catch((error) => showCrossPlatformToast(error))
+      .finally();
+  }
 
   return (
     <>
@@ -28,27 +46,22 @@ export default function DeleteAccountBtn() {
         rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
         borderless
         onPress={async () => {
-          Alert.alert(
-            DELETE_ACCOUNT[language].deletingAccount,
-            DELETE_ACCOUNT[language].conscentDeleting,
-            [
-              {
-                text: DELETE_ACCOUNT[language].sure,
-                onPress: async () => {
-                  const { data } = await supabase.storage.from('photos').list(`${user?.id}`);
-                  if (data) {
-                    const mappedUrlsToRemove = data?.map(({ name }) => `${user?.id}/${name}`);
-                    await supabase.storage.from('photos').remove(mappedUrlsToRemove);
-                    deleteAccount(`${user?.id}`).unwrap();
-                    dispatch(resetSettings());
-                    dispatch(resetLocationsFromBackground());
-                  }
+          if (Platform.OS !== 'web') {
+            Alert.alert(
+              DELETE_ACCOUNT[language].deletingAccount,
+              DELETE_ACCOUNT[language].conscentDeleting,
+              [
+                {
+                  text: DELETE_ACCOUNT[language].sure,
+                  onPress: deleteUserHandler,
+                  style: 'cancel',
                 },
-                style: 'cancel',
-              },
-            ],
-            { cancelable: true },
-          );
+              ],
+              { cancelable: true },
+            );
+          } else {
+            await deleteUserHandler();
+          }
         }}>
         <View style={{ display: 'flex', backgroundColor: colors.background, justifyContent: 'center', padding: 10 }}>
           <Text variant="titleMedium">{DELETE_ACCOUNT[language].action}</Text>

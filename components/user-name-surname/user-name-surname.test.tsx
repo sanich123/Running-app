@@ -1,12 +1,11 @@
-import { changeLanguage } from '@R/language/language';
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { MOCK_BAD_REQUEST } from '@T/mocks/mock-requests';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { errorExtracter } from '@U/error-handler';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import UserNameSurname from './user-name-surname';
 
 describe('User name surname', () => {

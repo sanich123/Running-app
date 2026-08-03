@@ -1,24 +1,18 @@
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { setIsTooMuchSpeed } from '@R/location/location';
-import { store } from '@R/store';
-import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import {
   Accuracy,
   hasStartedLocationUpdatesAsync,
   startLocationUpdatesAsync,
   stopLocationUpdatesAsync,
 } from 'expo-location';
-import { isTaskRegisteredAsync, getRegisteredTasksAsync, isAvailableAsync, isTaskDefined } from 'expo-task-manager';
+import { isTaskRegisteredAsync } from 'expo-task-manager';
 import * as TaskManager from 'expo-task-manager';
-
+import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import { setIsTooMuchSpeed } from '@R/slices/location/location';
+import { store } from '@R/store';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
-import {
-  BACKGROUND_NOTIFICATION,
-  DISTANCE_INTERVAL,
-  LOCATION_TRACKING,
-  TIME_INTERVAL,
-  TaskManagerLocationEvent,
-} from '../const';
+import { BACKGROUND_NOTIFICATION, DISTANCE_INTERVAL, LOCATION_TRACKING, TIME_INTERVAL } from '../const';
+import type { TaskManagerLocationEvent } from '../const';
 
 export async function startLocationTracking() {
   await startLocationUpdatesAsync(LOCATION_TRACKING, {
@@ -33,42 +27,25 @@ export async function startLocationTracking() {
     },
   });
   const hasStarted = await hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
-  const isTaskAvailale = await isAvailableAsync();
-  const isDefined = await isTaskDefined(LOCATION_TRACKING);
-  const registeredTasks = await getRegisteredTasksAsync();
-
-  if (__DEV__)
-    console.log(
-      'tracking started?',
-      hasStarted,
-      'isTaskAvailale: ',
-      isTaskAvailale,
-      'isTaskDefied :',
-      isDefined,
-      'registeredTasks: ',
-      registeredTasks,
-    );
-  showCrossPlatformToast(`BgTracking started = ${hasStarted}`, ToastDuration.long);
+  showCrossPlatformToast(`BgTracking started = ${hasStarted}`);
 }
 
 export async function stopLocationTracking() {
   isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
     if (tracking) {
       stopLocationUpdatesAsync(LOCATION_TRACKING);
-      showCrossPlatformToast(`BgTracking stopped`, ToastDuration.long);
+      showCrossPlatformToast(`BgTracking stopped`);
     }
   });
 }
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLocationEvent) => {
   if (error) {
-    if (__DEV__) console.log('LOCATION_TRACKING task ERROR:', error);
     return;
   }
   if (data) {
     const { locations } = data;
     const currentPosition = locations[0];
-    console.log('currentPosition: ', currentPosition);
     try {
       const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer, lastArrayLength } =
         getMetricsTaskManager(currentPosition);
@@ -84,7 +61,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
         );
       } else if (
         (currentPace > 3 && currentPace < Infinity) ||
-        store.getState().activity.additionalInfo.sport === SPORTS_BTNS_VALUES.bike
+        store.getState().additionalInfoActivity.sport === SPORTS_BTNS_VALUES.bike
       ) {
         saveMetricsToStoreTaskManager(
           currentKilometer,
@@ -96,7 +73,8 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
         );
       } else {
         store.dispatch(setIsTooMuchSpeed(true));
-        if (__DEV__) console.log('That was wrong position', 'currentPace: ', currentPace);
+        console.log('this code fired');
+        showCrossPlatformToast('Геолокация отклонена из-за слишком высокой скорости относительно предыдущей точки.');
       }
     } catch (error) {
       if (__DEV__) console.log('[tracking]', 'Something went wrong when saving a new location...', error);

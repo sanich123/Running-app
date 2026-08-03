@@ -1,9 +1,8 @@
-import { changeLanguage } from '@R/language/language';
+import { screen, userEvent } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen, userEvent } from '@testing-library/react-native';
-
 import { SHOW_CAMERA_BTN } from './const';
 import ShowCameraBtn from './show-camera-btn';
 
@@ -22,6 +21,6 @@ describe('Show camera btn', () => {
     renderWithProviders(<ShowCameraBtn isDisabled={false} />, { store: mockStore });
     const showCameraBtn = screen.getByText(new RegExp(`${SHOW_CAMERA_BTN.russian.text}`));
     await userEvent.press(showCameraBtn);
-    expect(mockStore.getState().activity.isCameraVisible).toEqual(true);
+    expect(mockStore.getState().manualActivity.isCameraVisible).toEqual(true);
   });
 });

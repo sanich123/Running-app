@@ -1,8 +1,7 @@
-import { useAppSelector } from '@R/typed-hooks';
-import { Stack } from 'expo-router';
 import { View } from 'react-native';
+import { Stack } from 'expo-router';
 import { useTheme, Text } from 'react-native-paper';
-
+import { useAppSelector } from '@R/typed-hooks';
 import { CHECK_EMAIL } from './const';
 
 export default function SignInNeedToConfirmEmail() {

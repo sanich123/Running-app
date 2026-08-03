@@ -1,14 +1,16 @@
-import { useAuth } from '@A/context/auth-context';
-import { UserInfoSize } from '@C/card/user-info/const';
-import UserInfo from '@C/card/user-info/user-info';
+import type { RefObject } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
+import { UserInfoSize } from '@C/card/user-info/const';
+import UserInfo from '@C/card/user-info/user-info';
+import { useAppSelector } from '@R/typed-hooks';
 import CommentDeleteBtn from '../comment-delete-btn/comment-delete-btn';
 import CommentEditBtn from '../comment-edit-btn/comment-edit-btn';
 import CommentInput from '../comment-input/comment-input';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
-import { CommentProps } from '../types';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
 
 export default function Comment({
   authorId,
@@ -16,34 +18,26 @@ export default function Comment({
   id,
   date,
   profile,
-  activityId,
-  idOfUpdatingComment,
-  setIdOfUpdatingComment,
-  setIsShowingTextInput,
   commentLike,
-  mapPhotoUrl,
-}: CommentProps) {
-  const { user } = useAuth();
-  const isYouAuthor = user?.id === authorId;
-
+  commentsModalRef,
+}: CommentResponse & CommentLikeResponse & { commentsModalRef: RefObject<BottomSheetModal | null> }) {
+  const { idOfUpdatingComment, commentActivityId } = useAppSelector(({ comment }) => comment);
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const isYouAuthor = userId === authorId;
   return (
     <>
       <View style={{ padding: 10 }}>
-        <UserInfo profile={profile} date={date} userId={authorId} size={UserInfoSize.small} />
+        <UserInfo
+          profile={profile}
+          date={date}
+          userId={authorId}
+          size={UserInfoSize.small}
+          commentsModalRef={commentsModalRef}
+        />
       </View>
-
       <View style={styles.textCommentWrapper}>
         {idOfUpdatingComment === id ? (
-          <CommentInput
-            mapPhotoUrl={mapPhotoUrl}
-            profile={profile}
-            activityId={activityId}
-            setIsShowingTextInput={setIsShowingTextInput}
-            commentToUpdate={comment}
-            commentId={id}
-            setIdOfUpdatingComment={setIdOfUpdatingComment}
-            idOfUpdatingComment={idOfUpdatingComment}
-          />
+          <CommentInput profile={profile} commentToUpdate={comment} commentId={id} />
         ) : (
           <Text variant="bodyLarge">{comment}</Text>
         )}
@@ -51,18 +45,12 @@ export default function Comment({
       <View style={styles.likesWrapper}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <CommentLikeBtn commentId={id} commentLikesFromComment={commentLike} profile={profile} comment={comment} />
+          <CommentLikeBtn commentId={id} commentLikesFromComment={commentLike} profile={profile} comment={comment} />
           <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
         </View>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          {isYouAuthor && (
-            <CommentEditBtn
-              commentId={id}
-              setIdOfUpdatingComment={setIdOfUpdatingComment}
-              setIsShowingTextInput={setIsShowingTextInput}
-              idOfUpdatingComment={idOfUpdatingComment}
-            />
-          )}
-          {isYouAuthor && <CommentDeleteBtn commentId={id} activityId={activityId} />}
+          {isYouAuthor && <CommentEditBtn commentId={id} idOfUpdatingComment={idOfUpdatingComment} />}
+          {isYouAuthor && <CommentDeleteBtn commentId={id} activityId={commentActivityId} />}
         </View>
       </View>
       <Divider />

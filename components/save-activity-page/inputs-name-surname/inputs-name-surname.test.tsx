@@ -1,8 +1,7 @@
-import { setIsDisabledWhileSendingProfile } from '@R/profile/profile';
+import { screen, userEvent } from '@testing-library/react-native';
+import { setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { screen, userEvent } from '@testing-library/react-native';
-
 import { NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 import InputsNameSurname from './inputs-name-surname';
 

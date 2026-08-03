@@ -13,3 +13,5 @@ When user go to activity tracking functionality, there are 4 checks: location en
 2.1.7 Add statistics route and functionality
 2.1.8 Testing all functionality, fixes, refactoring
 2.1.9 Add email notifications
+
+3.0.0 Migrate to 53 sdk expo

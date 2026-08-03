@@ -1,17 +1,19 @@
-import { StyleSheet, View } from 'react-native';
+import { Fragment } from 'react';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import { getDaysOfTheMonthWithNames } from './util';
-import { CalendarStatisticsProps } from './types';
-import { useGetMonthStatisticsQuery } from '@R/runich-api/runich-api';
 import ErrorComponent from '@C/error-component/error-component';
-import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-date-with-activity';
-import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
-import { Fragment } from 'react';
+import { getDaysOfTheMonthWithNames } from './util';
+import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';
+import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-date-with-activity';
+import type { CalendarStatisticsProps } from './types';
 
-export default function CalendarActivities({ year, month, userId }: CalendarStatisticsProps) {
+export default function CalendarActivities({ year, month, userId, selectedType }: CalendarStatisticsProps) {
   const { language } = useAppSelector(({ language }) => language);
+  const { width } = useWindowDimensions();
   const {
     data: monthStatistics,
     isLoading,
@@ -25,7 +27,14 @@ export default function CalendarActivities({ year, month, userId }: CalendarStat
   const daysOfTheWeek = getDaysOfTheMonthWithNames(year, month, monthStatistics?.activities, language);
 
   return (
-    <View style={styles.calendarContainer}>
+    <View
+      style={[
+        styles.calendarContainer,
+        {
+          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+        },
+      ]}>
       {isSuccess && (
         <>
           {Object.keys(daysOfTheWeek).map((day: string, i: number) => (
@@ -38,15 +47,18 @@ export default function CalendarActivities({ year, month, userId }: CalendarStat
                   dateValue === REDUCED_DAY_NAME_EN.sunday;
                 const isEmptyCell = dateValue === ' ';
                 const isTitle = isNaN(Number(dateValue));
+                const filteredActivities = activities.filter(({ sport }) => sport === selectedType);
+                const whatActivitiesToRender = selectedType === 'all' ? activities : filteredActivities;
+
                 return (
                   <Fragment key={`${dateValue}${i}`}>
-                    {activities?.length || !i ? (
+                    {whatActivitiesToRender?.length || !i ? (
                       <CalendarDateWithActivity
                         isWeekend={isWeekend}
                         isTitle={isTitle}
                         isEmptyCell={isEmptyCell}
                         dateValue={dateValue}
-                        activities={activities}
+                        activities={whatActivitiesToRender}
                       />
                     ) : (
                       <CalendarDateEmpty isTitle={isTitle} isEmptyCell={isEmptyCell} dateValue={dateValue} />

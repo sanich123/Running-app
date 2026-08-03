@@ -1,11 +1,10 @@
-import { changeLanguage } from '@R/language/language';
-import { setDuration } from '@R/location/location';
-import { mockStore } from '@T/utils/mock-store';
-import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES, STATUSES } from '@const/enums';
 import { screen, userEvent } from '@testing-library/react-native';
 import { Alert } from 'react-native';
-
+import { LANGUAGES, STATUSES } from '@const/enums';
+import { changeLanguage } from '@R/slices/language/language';
+import { setDuration } from '@R/slices/location/location';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityCloseBtn from './close-btn';
 import { ACTIVITY_CLOSE_BTN } from './const';
 

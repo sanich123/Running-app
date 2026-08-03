@@ -1,50 +1,51 @@
-import { AuthProvider } from '@A/context/auth-context';
-import SplashIcon from '@C/splash-screen/splash-screen';
-import { persistor, store } from '@R/store';
-import { useGetFontsThemeSettings } from '@U/hooks/use-get-fonts-theme-settings';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Slot } from 'expo-router';
-import { AppRegistry, useColorScheme } from 'react-native';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import * as SplashScreen from 'expo-splash-screen';
+import { SystemBars } from 'react-native-edge-to-edge';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
-import { RootSiblingParent } from 'react-native-root-siblings';
-import { ToastProvider } from 'react-native-toast-notifications';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import expo from '../app.config';
+import { useColorScheme } from 'react-native';
+import { Stack } from 'expo-router';
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
+import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
+import { COLORS } from '@const/theme-colors';
+import { toastConfig } from '@const/toast-config';
+import { persistor, store } from '@R/store';
+
+SplashScreen.preventAutoHideAsync();
+SplashScreen.setOptions({
+  duration: 1500,
+  fade: true,
+});
 
 export default function RootLayout() {
-  const { loaded, theme } = useGetFontsThemeSettings();
   const colorScheme = useColorScheme();
-
   const paperTheme =
-    colorScheme === 'dark' ? { ...MD3DarkTheme, colors: theme.dark } : { ...MD3LightTheme, colors: theme.light };
-  
+    colorScheme === 'dark' ? { ...MD3DarkTheme, colors: COLORS.dark } : { ...MD3LightTheme, colors: COLORS.light };
+
   return (
-    <>
-      {!loaded ? (
-        <SplashIcon />
-      ) : (
-        <Provider store={store}>
-          <PersistGate loading={<ActivityIndicator size="large" />} persistor={persistor}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <PersistGate loading={<FullPageActivityLoader />} persistor={persistor}>
+      <Provider store={store}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <KeyboardProvider>
+              <SystemBars style="auto" />
               <PaperProvider theme={paperTheme}>
-                <AuthProvider>
-                  <GestureHandlerRootView style={{ flex: 1 }}>
-                    <ToastProvider>
-                      <RootSiblingParent>
-                        <Slot />
-                      </RootSiblingParent>
-                    </ToastProvider>
-                  </GestureHandlerRootView>
-                </AuthProvider>
+                <BottomSheetModalProvider>
+                  <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
+                    <Stack.Screen name="(protected)" />
+                    <Stack.Screen name="sign-in" />
+                  </Stack>
+                  <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
+                </BottomSheetModalProvider>
               </PaperProvider>
-            </ThemeProvider>
-          </PersistGate>
-        </Provider>
-      )}
-    </>
+            </KeyboardProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </Provider>
+    </PersistGate>
   );
 }
-
-AppRegistry.registerComponent(expo.expo.name, () => RootLayout);

@@ -1,12 +1,12 @@
-import { View } from 'react-native';
 import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { showCrossPlatformToast } from '@U/custom-toast';
-import { useTheme, Button, Text } from 'react-native-paper';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
-import { BATTERY_OPTIMIZATION } from './const';
+import { View } from 'react-native';
+import { useTheme, Button, Text } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { BatteryOptimizationModalProps } from '../types';
+import { showCrossPlatformToast } from '@U/custom-toast';
+import { BATTERY_OPTIMIZATION } from './const';
+import type { BatteryOptimizationModalProps } from '../types';
 
 export default function BatteryOptimizationModal({
   batteryOptimizationEnabledModalRef,
@@ -25,11 +25,13 @@ export default function BatteryOptimizationModal({
       snapPoints={['75%']}
       backdropComponent={renderBackdrop}
       handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.onSecondary }}
+      backgroundStyle={{ backgroundColor: colors.background }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 5, backgroundColor: colors.onSecondary }}>
+      <BottomSheetView style={{ flex: 1, padding: 15, backgroundColor: colors.background }}>
         <View style={{ flex: 1, paddingVertical: 10, paddingHorizontal: 5 }}>
-          <Text variant="bodyLarge">{BATTERY_OPTIMIZATION[language].optimizationMessage}</Text>
+          <Text variant="bodyLarge" style={{ textAlign: 'justify' }}>
+            {BATTERY_OPTIMIZATION[language].optimizationMessage}
+          </Text>
           <Button
             mode="outlined"
             style={{ marginTop: 15 }}

@@ -1,10 +1,8 @@
-import { USER_AUTH_MOCKS } from '@T/mocks/use-auth';
+import { screen } from '@testing-library/react-native';
+import { setUserId } from '@R/slices/auth/auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { screen } from '@testing-library/react-native';
-
 import PreviewUploadableImage from './preview-uploadable-image';
-import * as auth from '../../../auth/context/auth-context';
 
 jest.mock('react-native-compressor', () => ({
   Image: () => ({
@@ -19,22 +17,12 @@ jest.mock('expo-image', () => {
 });
 describe('Preview uploadable image', () => {
   it('should correctly renders', () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someUserId',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('someUserId'));
     renderWithProviders(<PreviewUploadableImage image="someUrl" index={1} isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(new RegExp(/Add to activity/i))).toBeOnTheScreen();
   });
   it('should correctly handle isDisabled state', () => {
-    jest.spyOn(auth, 'useAuth').mockImplementation(() => ({
-      user: {
-        id: 'someUserId',
-        ...USER_AUTH_MOCKS,
-      },
-    }));
+    mockStore.dispatch(setUserId('someUserId'));
     renderWithProviders(<PreviewUploadableImage image="someUrl" index={1} isDisabled />, {
       store: mockStore,
     });

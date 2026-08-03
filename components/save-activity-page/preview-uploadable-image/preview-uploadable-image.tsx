@@ -1,21 +1,20 @@
-import { useAuth } from '@A/context/auth-context';
-import PreviewImage from '@C/save-activity-page/preview-image/preview-image';
-import { addPhotoUrl } from '@R/activity/activity';
-import { useAppDispatch } from '@R/typed-hooks';
-import { errorHandler } from '@U/error-handler';
-import { compressAndSendFile } from '@U/file-sending';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
+import PreviewImage from '@C/save-activity-page/preview-image/preview-image';
+import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { errorHandler } from '@U/error-handler';
+import { compressAndSendFile } from '@U/file-sending';
 
-type PreviewUploadableImageProps = {
+interface PreviewUploadableImageProps {
   image: string;
   index: number;
   isDisabled: boolean;
-};
+}
 
 export default function PreviewUploadableImage({ image, index, isDisabled }: PreviewUploadableImageProps) {
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
@@ -29,8 +28,8 @@ export default function PreviewUploadableImage({ image, index, isDisabled }: Pre
       onPress={async () => {
         setIsLoading(true);
         try {
-          if (user) {
-            const fileWithThumbnail = await compressAndSendFile(image, user.id);
+          if (userId) {
+            const fileWithThumbnail = await compressAndSendFile(image, userId);
             if (fileWithThumbnail) {
               const { url, thumbnail } = fileWithThumbnail;
               dispatch(addPhotoUrl({ url, thumbnail }));

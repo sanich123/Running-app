@@ -1,16 +1,16 @@
+import { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import IconChooseSport from '@C/activity/icon-choose-sport/icon-choose-sport';
 import Map from '@C/activity/map/map';
 import PauseBtn from '@C/activity/pause-btn/pause-btn';
 import ShowMapBtn from '@C/activity/show-map-btn/show-map-btn';
 import StartBtn from '@C/activity/start-btn/start-btn';
 import Metrics from '@C/metrics/metrics';
+import { STATUSES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
-import { STATUSES } from '@const/enums';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
 
 export default function Activity() {
   const { colors } = useTheme();
@@ -19,24 +19,22 @@ export default function Activity() {
   const [isReadyToRecordLocation, setIsReadyToRecordLocation] = useState(false);
 
   return (
-    <BottomSheetModalProvider>
-      <View style={styles.layout}>
-        <View style={styles.map}>
-          {(activityStatus === STATUSES.initial || isMapVisible) && (
-            <Map setIsReadyToRecordLocation={setIsReadyToRecordLocation} />
-          )}
-          {activityStatus !== STATUSES.initial && <Metrics />}
-        </View>
-        <View style={[styles.metricsLayout, { backgroundColor: colors.secondaryContainer }]}>
+    <SafeAreaView style={styles.layout} edges={['bottom']}>
+      <View style={styles.map}>
+        {(activityStatus === STATUSES.initial || isMapVisible) && (
+          <Map setIsReadyToRecordLocation={setIsReadyToRecordLocation} />
+        )}
+        {activityStatus !== STATUSES.initial && <Metrics />}
+      </View>
+      <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
+        <View style={styles.metrics}>
           {activityStatus === STATUSES.initial && <IconChooseSport />}
-          <View style={[styles.metrics, { backgroundColor: colors.secondaryContainer }]}>
-            {activityStatus === STATUSES.paused && <PauseBtn />}
-            <StartBtn isReadyToRecordLocation={isReadyToRecordLocation} />
-            {activityStatus !== STATUSES.initial && <ShowMapBtn />}
-          </View>
+          {activityStatus === STATUSES.paused && <PauseBtn />}
+          <StartBtn isReadyToRecordLocation={isReadyToRecordLocation} />
+          {activityStatus !== STATUSES.initial && <ShowMapBtn />}
         </View>
       </View>
-    </BottomSheetModalProvider>
+    </SafeAreaView>
   );
 }
 
@@ -47,18 +45,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    height: '80%',
+    height: '83%',
     width: '100%',
   },
   metricsLayout: {
-    height: '20%',
+    height: '17%',
     width: '100%',
   },
   metrics: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 8,
   },
 });

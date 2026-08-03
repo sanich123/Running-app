@@ -1,25 +1,26 @@
+import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { CustomImage } from '@C/custom-image/custom-image';
 import { useAppSelector } from '@R/typed-hooks';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
-import { ROUTES } from '@const/enums';
-import { Href, usePathname, useRouter } from 'expo-router';
-import { View, StyleSheet } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import type { UserInfoProps } from './const';
 
-import { UserInfoProps } from './const';
-
-export default function UserInfo({ profile, sport, date, userId, size }: UserInfoProps) {
-  const { dark } = useTheme();
+export default function UserInfo({ profile, sport, date, userId, size, commentsModalRef }: UserInfoProps) {
+  const { dark, colors } = useTheme();
   const { push } = useRouter();
-  const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const { language } = useAppSelector(({ language }) => language);
-
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/${place}/${ROUTES.profile}/${userId}` as Href)}
+      onPress={() => {
+        if (commentsModalRef?.current) {
+          commentsModalRef?.current?.close();
+        }
+
+        push(`/(protected)/profile/${userId}`);
+      }}
       borderless
       style={{ paddingVertical: 5, paddingHorizontal: 5 }}>
       <View style={styles.userInfoWrapper}>
@@ -32,7 +33,8 @@ export default function UserInfo({ profile, sport, date, userId, size }: UserInf
         <View>
           <View>
             <Text
-              variant={size === 'large' ? 'titleLarge' : 'bodyLarge'}>{`${profile?.name} ${profile?.surname}`}</Text>
+              variant={size === 'large' ? 'titleLarge' : 'bodyLarge'}
+              style={{ color: colors.onBackground }}>{`${profile?.name} ${profile?.surname ?? ''}`}</Text>
           </View>
           <View>
             <Text variant="bodyMedium">

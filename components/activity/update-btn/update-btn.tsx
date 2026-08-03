@@ -1,36 +1,34 @@
+import { useGlobalSearchParams, useRouter } from 'expo-router';
+import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN } from '@C/activity/save-btn/const';
+import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import {
   addPhotoUrls,
-  resetActivityInfo,
-  resetFinishedActivity,
-  resetManualData,
+  resetAdditionaInfoActivitySlice,
   saveDescription,
   saveEmotion,
   saveIsPublic,
   saveSport,
   saveTitle,
+} from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { resetFinishedActivity, setActivityId } from '@R/slices/activity/activity';
+import {
+  resetManualActivitySlice,
   setIsEditingActivity,
-  setIsManualAdding,
   setManualDate,
   setManualDistance,
   setManualHours,
   setManualMinutes,
-} from '@R/activity/activity';
-import { useGetActivityByActivityIdQuery } from '@R/runich-api/runich-api';
+} from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
-import { ROUTES } from '@const/enums';
-import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
-import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 
 export default function UpdateBtn() {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
-  const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
   const { id: activityId } = useGlobalSearchParams();
   const { data: activity, isError, isLoading } = useGetActivityByActivityIdQuery(`${activityId}`);
   return (
@@ -41,11 +39,12 @@ export default function UpdateBtn() {
       disabled={isError || isLoading}
       onPress={() => {
         if (activity) {
-          dispatch(setIsManualAdding(false));
-          dispatch(setIsEditingActivity(true));
           dispatch(resetFinishedActivity());
-          dispatch(resetManualData());
-          dispatch(resetActivityInfo());
+          dispatch(resetManualActivitySlice());
+          dispatch(resetAdditionaInfoActivitySlice());
+
+          dispatch(setIsEditingActivity(true));
+          dispatch(setActivityId(activity.id));
           dispatch(saveTitle(activity?.title));
           dispatch(saveDescription(activity?.description));
           dispatch(saveSport(activity?.sport));
@@ -59,8 +58,7 @@ export default function UpdateBtn() {
           dispatch(setManualDistance(activity?.distance / 1000));
           dispatch(setManualHours(getHoursMinutesFromMilliseconds(activity?.duration).hours));
           dispatch(setManualMinutes(getHoursMinutesFromMilliseconds(activity?.duration).minutes));
-          //@ts-ignore
-          push(`/(tabs)/${place}/manual-activity/?activityId=${activityId}`);
+          push(`/(protected)/manual-activity`);
         } else {
           showCrossPlatformToast('Не удалось загрузить данные об активности!');
         }

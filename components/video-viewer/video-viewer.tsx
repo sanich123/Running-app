@@ -1,9 +1,16 @@
-import { Video, ResizeMode } from 'expo-av';
-import { useRef } from 'react';
+import { useVideoPlayer, VideoView } from 'expo-video';
+import { useWindowDimensions } from 'react-native';
 
 export default function VideoViewer({ url }: { url: string }) {
-  const video = useRef<Video>(null);
+  const player = useVideoPlayer(url, (player) => player.play());
+  const { width, height } = useWindowDimensions();
   return (
-    <Video ref={video} style={{ flex: 1 }} source={{ uri: url }} useNativeControls resizeMode={ResizeMode.CONTAIN} />
+    <VideoView
+      style={{ width, height }}
+      player={player}
+      fullscreenOptions={{ enable: true }}
+      allowsPictureInPicture
+      nativeControls
+    />
   );
 }

@@ -1,20 +1,22 @@
-import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
-import CalendarActivities from '../calendar/calendar';
 import { useState } from 'react';
-import MonthTypesChips from '../chips/month-types-chips';
-import YearMonthTitle from '../year-month-title/year-month-title';
-import { useGetMonthStatisticsQuery } from '@R/runich-api/runich-api';
-import MonthStatisticsMetrics from '../month-metric/month-metric';
-import { useAppSelector } from '@R/typed-hooks';
-import { MONTH_STATISTICS } from '../month-metric/const';
-import { LANGUAGES } from '@const/enums';
-import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
+import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { LANGUAGES } from '@const/enums';
+import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
+import { useAppSelector } from '@R/typed-hooks';
+import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
+import CalendarActivities from '../calendar/calendar';
+import MonthTypesChips from '../chips/month-types-chips';
+import { MONTH_STATISTICS } from '../month-metric/const';
+import MonthStatisticsMetrics from '../month-metric/month-metric';
+import YearMonthTitle from '../year-month-title/year-month-title';
 
 export default function MonthStatistics() {
-  const { colors } = useTheme();
+  const { width } = useWindowDimensions();
   const { userId, year, month } = useLocalSearchParams();
   const [selectedType, setSelectedType] = useState('all');
   const {
@@ -29,9 +31,13 @@ export default function MonthStatistics() {
   );
   const { language } = useAppSelector(({ language }) => language);
   const isRussian = language === LANGUAGES.russian;
-
   return (
-    <View style={(isLoading || isError) && { flex: 1, justifyContent: 'center', backgroundColor: colors.background }}>
+    <CrossPlatformLayout
+      edges={[]}
+      scrollViewEnabled
+      isError={isError}
+      isLoading={isLoading}
+      outerStyles={{ padding: 10 }}>
       {isLoading && <ActivityIndicator size="large" />}
       {isError && <ErrorComponent error={error} />}
       {isSuccess && (
@@ -44,7 +50,14 @@ export default function MonthStatistics() {
             year={`${year}`}
             month={`${month}`}
           />
-          <View style={styles.container}>
+          <View
+            style={[
+              styles.container,
+              {
+                width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+                marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+              },
+            ]}>
             <MonthStatisticsMetrics
               title={MONTH_STATISTICS[language].activities}
               metric={monthStatistics?.activitiesReducedBySport[selectedType]?.totalItems}
@@ -70,10 +83,10 @@ export default function MonthStatistics() {
               isError={isError}
             />
           </View>
-          <CalendarActivities year={`${year}`} month={`${month}`} userId={`${userId}`} />
+          <CalendarActivities year={`${year}`} month={`${month}`} userId={`${userId}`} selectedType={selectedType} />
         </>
       )}
-    </View>
+    </CrossPlatformLayout>
   );
 }
 

@@ -1,11 +1,11 @@
-import { YearsAndTypes, YearsAndTypesPickerProps } from './types';
-import { getTypesByYear } from './util';
-import { Chip, Text, useTheme } from 'react-native-paper';
 import { FlatList, View } from 'react-native';
-import { useAppSelector } from '@R/typed-hooks';
+import { Chip, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import { getTypesByYear } from './util';
+import type { YearsAndTypes, YearsAndTypesPickerProps } from './types';
+import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 
 export default function YearTypePicker({
   setSelectedYear,

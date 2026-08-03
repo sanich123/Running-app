@@ -1,16 +1,15 @@
-import { changeLanguage } from '@R/language/language';
+import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen } from '@testing-library/react-native';
-
 import { UPLOAD_PHOTO_BTN } from './ const';
 import UploadPhotosBtn from './upload-photos-btn';
 
 // import * as ImagePicker from 'expo-image-picker';
 // import { Image } from 'react-native-compressor';
 
-// import * as auth from '../../auth/context/auth-context';
+// import * as auth from '@A/context/utils';
 // import { USER_AUTH_MOCKS } from '../../tests/mocks/use-auth';
 
 jest.mock('react-native-compressor', () => ({

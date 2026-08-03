@@ -1,15 +1,14 @@
-import { Text, Switch, Divider, useTheme, TouchableRipple } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
-import { useAuth } from '@A/context/auth-context';
-import { useGetUserProfileByUserIdQuery, useUpdateProfileByProfileIdMutation } from '@R/runich-api/runich-api';
-import { SETTINGS } from '../const';
+import { Text, Switch, Divider, useTheme, TouchableRipple } from 'react-native-paper';
+import { useGetUserProfileByUserIdQuery, useUpdateProfileByProfileIdMutation } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
+import { SETTINGS } from '../const';
 
 export default function EmailNotificationsBtn() {
   const { dark } = useTheme();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ language }) => language);
-  const { data: profileInfo, isSuccess } = useGetUserProfileByUserIdQuery(`${user?.id}`, { skip: !user?.id });
+  const { data: profileInfo, isSuccess } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [updateProfile] = useUpdateProfileByProfileIdMutation();
 
   return (

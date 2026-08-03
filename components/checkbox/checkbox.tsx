@@ -1,19 +1,17 @@
-import { saveIsPublic } from '@R/activity/activity';
-import { store } from '@R/store';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
-
+import { saveIsPublic } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { store } from '@R/store';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { CHECKBOX_TEST_ID, CHECKBOX } from './const';
 
 export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-  const { isDisabledWhileSending, isEditingActivity } = useAppSelector(({ activity }) => activity);
-  const [isPublic, setIsPublic] = useState(
-    isEditingActivity ? store.getState().activity.additionalInfo.isPublic : true,
-  );
+  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { isEditingActivity } = useAppSelector(({ manualActivity }) => manualActivity);
+  const [isPublic, setIsPublic] = useState(isEditingActivity ? store.getState().additionalInfoActivity.isPublic : true);
 
   return (
     <View style={styles.switcherWrapper}>
@@ -25,7 +23,7 @@ export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
         }}
         testID={CHECKBOX_TEST_ID}
         disabled={isDisabled || isDisabledWhileSending}
-        style={{padding: 0, margin: 0}}
+        style={{ padding: 0, margin: 0 }}
       />
       <Text variant="titleSmall" style={(isDisabled || isDisabledWhileSending) && { opacity: 0.5 }}>
         {CHECKBOX[language].public}

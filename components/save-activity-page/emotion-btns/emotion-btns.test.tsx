@@ -1,10 +1,9 @@
-import { setIsDisableWhileSending } from '@R/activity/activity';
-import { changeLanguage } from '@R/language/language';
+import { screen, userEvent } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
+import { setIsDisableWhileSending } from '@R/slices/activity/activity';
+import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LANGUAGES } from '@const/enums';
-import { screen, userEvent } from '@testing-library/react-native';
-
 import { EMOTIONS_BTNS_TEST_IDS, EMOTIONS_BTNS_VALUES, EMOTION_BTNS } from './const';
 import EmotionBtns from './emotion-btns';
 
@@ -17,13 +16,13 @@ describe('Emotion btns', () => {
     const fineInput = screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.goodInput);
     await userEvent.press(normalInput);
     expect(normalInput.props.accessibilityState.checked).toEqual(true);
-    expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);
+    expect(mockStore.getState().additionalInfoActivity.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);
     await userEvent.press(fuckedInput);
     expect(fuckedInput.props.accessibilityState.checked).toEqual(true);
-    expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.fucked);
+    expect(mockStore.getState().additionalInfoActivity.emotion).toEqual(EMOTIONS_BTNS_VALUES.fucked);
     await userEvent.press(fineInput);
     expect(fineInput.props.accessibilityState.checked).toEqual(true);
-    expect(mockStore.getState().activity.additionalInfo.emotion).toEqual(EMOTIONS_BTNS_VALUES.good);
+    expect(mockStore.getState().additionalInfoActivity.emotion).toEqual(EMOTIONS_BTNS_VALUES.good);
   });
   it('should correctly render labels in english', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

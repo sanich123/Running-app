@@ -1,27 +1,22 @@
-import { useAuth } from '@A/context/auth-context';
-import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/runich-api/runich-api';
+import { View } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
+import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
-import { ROUTES } from '@const/enums';
-import { Href, useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import { View } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
 import { USERS_COUNT, USERS_VARIANT } from './const';
 
 export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
   const { language } = useAppSelector(({ language }) => language);
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { push } = useRouter();
   const { dark } = useTheme();
-  const pathname = usePathname();
   const { id: friendId } = useLocalSearchParams();
-  const whosId = friendId ? `${friendId}` : `${user?.id}`;
+  const whosId = friendId ? `${friendId}` : userId;
   const whereToPush = variant === USERS_VARIANT.whoUserFollows ? ROUTES.following : ROUTES.followers;
   const whatTitleToRender =
     variant === USERS_VARIANT.whoUserFollows ? USERS_COUNT[language].followings : USERS_COUNT[language].followers;
-
-  const place = pathname.includes(ROUTES.home) ? ROUTES.home : ROUTES.profile;
   const {
     isLoading: isFollowersLoading,
     isError: isFollowersError,
@@ -40,7 +35,7 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/${place}/${whereToPush}/${whosId}` as Href)}
+      onPress={() => push(`/(protected)/${whereToPush}/${whosId}`)}
       disabled={isFollowersError || isFollowersLoading || isFollowingsLoading || isFollowingsError}
       borderless
       style={{ borderRadius: 10 }}>

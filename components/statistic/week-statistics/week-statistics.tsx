@@ -1,19 +1,20 @@
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { getCurrentWeekDates } from './util';
-import { useGetCurrentWeekStatisticsQuery } from '@R/runich-api/runich-api';
-import { useAuth } from '@A/context/auth-context';
-import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
-import { Href, useRouter } from 'expo-router';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import WeekStatisticsMetric from './week-statistics-metrics';
-import { WEEK_STATISTICS } from './const';
+import { useGetCurrentWeekStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
+import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
+import { WEEK_STATISTICS } from './const';
+import { getCurrentWeekDates } from './util';
+import WeekStatisticsMetric from './week-statistics-metrics';
 
 export default function WeekStatistics() {
   const { push } = useRouter();
+  const { width } = useWindowDimensions();
   const { colors, dark } = useTheme();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { week, year, month } = getCurrentWeekDates();
   const {
     data: weekStatistics,
@@ -22,23 +23,37 @@ export default function WeekStatistics() {
     isLoading,
   } = useGetCurrentWeekStatisticsQuery(
     {
-      userId: `${user?.id}`,
+      userId,
       firstDay: week[0],
       lastDay: week[week.length - 1],
     },
-    { skip: !user?.id },
+    { skip: !userId },
   );
   const { language } = useAppSelector(({ language }) => language);
   const isRussian = language === LANGUAGES.russian;
+
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       onPress={() =>
         weekStatistics?.totalItems &&
-        push(`/${ROUTES.home}/${ROUTES.monthStatistic}?userId=${user?.id}&year=${year}&month=${month}` as Href)
+        push(`/(protected)/${ROUTES.monthStatistic}?userId=${userId}&year=${year}&month=${month}`)
       }
-      style={[styles.container, { backgroundColor: colors.background }]}>
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.surfaceVariant,
+          width: width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH,
+          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          borderCurve: 'continuous',
+          shadowColor: 'black',
+          shadowOffset: { width: 0, height: 10 },
+          shadowRadius: 10,
+          shadowOpacity: 0.1,
+          marginBottom: 5,
+        },
+      ]}>
       <>
         <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
           {WEEK_STATISTICS[language].report}
@@ -79,5 +94,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 15,
     marginBottom: 5,
     padding: 10,
+    marginHorizontal: 'auto',
   },
 });

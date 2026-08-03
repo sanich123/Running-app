@@ -1,13 +1,12 @@
-import { changeLanguage } from '@R/language/language';
-import { LANGUAGES } from '@const/enums';
 import { screen } from '@testing-library/react-native';
-
+import { LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/language/language';
+import { MOCK_DISTANCE, MOCK_DURATION } from '@T/mocks/mock-location';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import { getSpeedInMinsInKm } from '@U/location/location-utils';
+import { formatDuration } from '@U/time-formatter';
 import CardMetrics from './metrics';
-import { MOCK_DISTANCE, MOCK_DURATION } from '../../../tests/mocks/mock-location';
-import { mockStore } from '../../../tests/utils/mock-store';
-import { renderWithProviders } from '../../../tests/utils/test-utils';
-import { getSpeedInMinsInKm } from '../../../utils/location/location-utils';
-import { formatDuration } from '../../../utils/time-formatter';
 
 jest.mock('expo-router', () => ({
   usePathname: () => 'some string',

@@ -1,11 +1,11 @@
-import { View } from 'react-native';
 import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { showCrossPlatformToast } from '@U/custom-toast';
+import { View } from 'react-native';
 import { useTheme, Text, Button } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import { BACKGROUND_LOCATIONS } from './const';
-import { BackgroundLocationModalProps } from '../types';
+import type { BackgroundLocationModalProps } from '../types';
 
 export default function BackgroundLocationModal({
   backgroundLocationEnabledModalRef,
@@ -24,11 +24,13 @@ export default function BackgroundLocationModal({
       snapPoints={['50%']}
       backdropComponent={renderBackdrop}
       handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.onSecondary }}
+      backgroundStyle={{ backgroundColor: colors.background }}
       handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 10, backgroundColor: colors.onSecondary }}>
+      <BottomSheetView style={{ flex: 1, padding: 15, backgroundColor: colors.background }}>
         <View style={{ flex: 1 }}>
-          <Text variant="bodyLarge">{BACKGROUND_LOCATIONS[language].needToAllow}</Text>
+          <Text variant="bodyLarge" style={{ textAlign: 'justify' }}>
+            {BACKGROUND_LOCATIONS[language].needToAllow}
+          </Text>
           <Button
             mode="outlined"
             style={{ marginTop: 15 }}

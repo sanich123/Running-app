@@ -1,19 +1,14 @@
-import {
-  resetActivityInfo,
-  resetManualData,
-  saveFinishedActivity,
-  setIsEditingActivity,
-  setIsManualAdding,
-} from '@R/activity/activity';
-import { setActivityStatus } from '@R/location/location';
+import { StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
+import { STATUSES } from '@const/enums';
+import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { saveFinishedActivity } from '@R/slices/activity/activity';
+import { setActivityStatus } from '@R/slices/location/location';
+import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
-import { ROUTES, STATUSES } from '@const/enums';
-import { Href, useRouter } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
-import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
-
-import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON, ResponseIcon } from './const ';
+import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON } from './const ';
 
 export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordLocation: boolean }) {
   const dispatch = useAppDispatch();
@@ -28,7 +23,7 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
   const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
 
-  const RESPONSE_ICON: ResponseIcon = {
+  const RESPONSE_ICON = {
     [STATUSES.initial]: ACTIVITY_START_BTN[language].start,
     [STATUSES.started]: <Icon testID={STOP_ICON} source="pause" size={50} color="white" />,
     [STATUSES.paused]: <Icon testID={STOP_ICON} source="stop" size={50} color="white" />,
@@ -53,11 +48,9 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
         );
         dispatch(setActivityStatus(RESPONSE_STATUS[activityStatus]));
         if (activityStatus === STATUSES.paused) {
-          dispatch(setIsManualAdding(false));
-          dispatch(setIsEditingActivity(false));
-          dispatch(resetManualData());
-          dispatch(resetActivityInfo());
-          push(`/${ROUTES.home}/${ROUTES.manualActivity}/` as Href);
+          dispatch(resetManualActivitySlice());
+          dispatch(resetAdditionaInfoActivitySlice());
+          push('/(protected)/manual-activity');
         }
       }}
       disabled={!isReadyToRecordLocation}>

@@ -1,24 +1,23 @@
-import { useAuth } from '@A/context/auth-context';
+import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { CustomImage } from '@C/custom-image/custom-image';
 import FollowUnfollowBtn from '@C/profile/follow-unfollow-btn/follow-unfollow-btn';
 import { ROUTES } from '@const/enums';
-import { Href, useRouter } from 'expo-router';
-import { View, StyleSheet } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
-import { UserListItemType } from './const';
+import { useAppSelector } from '@R/typed-hooks';
+import type { UserListItemType } from './const';
 
 export default function UserListItem({ name, surname, profilePhoto, placeholder, city, user_id }: UserListItemType) {
   const { dark } = useTheme();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { push } = useRouter();
-  const isMineActivity = user_id === user?.id;
+  const isMineActivity = user_id === userId;
 
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
-      onPress={() => push(`/${ROUTES.home}/${ROUTES.profile}/${user_id}` as Href)}>
+      onPress={() => push(`/(protected)/${ROUTES.profile}/${user_id}`)}>
       <View style={styles.userItemWrapper}>
         <View style={styles.contentWrapper}>
           <CustomImage

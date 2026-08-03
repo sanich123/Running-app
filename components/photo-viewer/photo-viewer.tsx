@@ -1,21 +1,21 @@
-import { useAuth } from '@A/context/auth-context';
-import { CustomImage } from '@C/custom-image/custom-image';
-import VideoViewer from '@C/video-viewer/video-viewer';
-import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/runich-api/runich-api';
-import { useLocalSearchParams } from 'expo-router';
-import { View, StyleSheet, Platform } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import uuid from 'react-native-uuid';
+import { View, StyleSheet, Platform } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { CustomImage } from '@C/custom-image/custom-image';
+import VideoViewer from '@C/video-viewer/video-viewer';
+import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function PhotoViewer() {
   const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();
-  const { user } = useAuth();
+  const { userId: ownerId } = useAppSelector(({ auth }) => auth);
   const { data: activity } = useGetActivityByActivityIdQuery(`${photoUrl}`, {
     skip: !photoUrl || !uuid.validate(`${photoUrl}`),
   });
   const { data } = useGetAllActivityPhotosByUserIdQuery(
     {
-      userId: userId ? `${userId}` : `${user?.id}`,
+      userId: userId ? `${userId}` : ownerId,
       take: Number(take),
     },
     { skip: !take },
@@ -28,7 +28,7 @@ export default function PhotoViewer() {
     <View style={{ flex: 1 }}>
       {Platform.OS === 'web' ? (
         <>
-          {decodeURIComponent(`${photoUrl}`).includes('mp4' || 'avi' || 'm4v') ? (
+          {['mp4', 'avi', 'm4v'].includes(decodeURIComponent(`${photoUrl}`)) ? (
             <VideoViewer url={decodeURIComponent(`${photoUrl}`)} />
           ) : (
             <CustomImage
@@ -47,7 +47,7 @@ export default function PhotoViewer() {
               orientation="vertical">
               {itemsToRender.map(({ url, blurhash }: { url: string; blurhash: string }, index: number) => (
                 <View key={index}>
-                  {url.includes('mp4' || 'avi' || 'm4v') ? (
+                  {['mp4', 'avi', 'm4v'].includes(url) ? (
                     <VideoViewer url={url} />
                   ) : (
                     <CustomImage

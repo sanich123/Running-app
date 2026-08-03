@@ -1,7 +1,6 @@
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system';
 import { Alert, Platform } from 'react-native';
-
 import { errorHandler } from '../../../utils/error-handler';
 import { supabase } from '../supabase-init';
 
@@ -19,7 +18,7 @@ export async function getBase64CodedImage(file: string | File) {
 
 export async function uploadPhoto(userId: string, base64: string | File, extension: string) {
   const filePath = `${userId}/${new Date().getTime()}.${extension}`;
-  const contentType = extension === ('mp4' || 'avi' || 'm4v') ? 'video/mp4' : 'image/jpg';
+  const contentType = ['mp4', 'avi', 'm4v'].includes(extension) ? 'video/mp4' : 'image/jpg';
   try {
     const { error, data: uploadedPhoto } = await supabase.storage
       .from('photos')

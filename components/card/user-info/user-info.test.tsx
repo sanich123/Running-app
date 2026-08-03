@@ -1,9 +1,8 @@
+import { screen } from '@testing-library/react-native';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { screen } from '@testing-library/react-native';
-
 import { UserInfoSize } from './const';
 import UserInfo from './user-info';
 

@@ -1,12 +1,13 @@
+import { useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import CameraLauncher from '@C/camera/camera';
 import Checkbox from '@C/checkbox/checkbox';
 import NetworkIndicator from '@C/network-indicator/network-indicator';
 import DatePickerWeb from '@C/save-activity-page/date-picker-web/date-picker-web';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useAppSelector } from '@R/typed-hooks';
-import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
-
 import DateTimePicker from './date-picker/date-picker';
 import DeclineBtn from './decline-btn/decline-btn';
 import EmotionBtns from './emotion-btns/emotion-btns';
@@ -16,22 +17,23 @@ import ShowCameraBtn from './show-camera-btn/show-camera-btn';
 import SportsBtns from './sports-btns/sports-btns';
 import TextInputs from './text-inputs/text-inputs';
 import UploadPhotosBtn from './upload-photos-btn/upload-photos-btn';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 export default function SaveResult() {
+  const { colors } = useTheme();
   const [isDisabled, setIsDisabled] = useState(false);
-  const {
-    isManualAdding,
-    isEditingActivity,
-    isCameraVisible,
-    additionalInfo: { photoVideoUrls },
-  } = useAppSelector(({ activity }) => activity);
+  const { isManualAdding, isEditingActivity, isCameraVisible } = useAppSelector(({ manualActivity }) => manualActivity);
+  const { photoVideoUrls } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
   const [images, setImages] = useState<{ url: string; thumbnail: string | null }[]>([]);
-  
+
   return (
-    <BottomSheetModalProvider>
+    <>
       {!isCameraVisible ? (
-        <ScrollView style={!isCameraVisible && styles.container}>
+        <ScrollView
+          style={[
+            !isCameraVisible && styles.container,
+            Platform.OS === 'web' && styles.webStyles,
+            { backgroundColor: colors.background },
+          ]}>
           <NetworkIndicator />
           <TextInputs isDisabled={isDisabled} />
           <SportsBtns isDisabled={isDisabled} />
@@ -58,15 +60,18 @@ export default function SaveResult() {
       ) : (
         <>{Platform.OS !== 'web' && <CameraLauncher />}</>
       )}
-    </BottomSheetModalProvider>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingHorizontal: 10,
+  },
+  webStyles: {
+    marginHorizontal: 'auto',
+    maxWidth: MAX_MOBILE_WIDTH,
   },
   cameraUploadBtns: {
     display: 'flex',

@@ -1,8 +1,8 @@
-import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
 import { MONTH_STATISTICS } from './const';
-import { MonthMetricsProps } from './types';
+import type { MonthMetricsProps } from './types';
 
 export default function MonthStatisticsMetrics({
   isSuccess,

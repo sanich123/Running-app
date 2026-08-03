@@ -1,8 +1,7 @@
-import { setIsMapVisible } from '@R/location/location';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { StyleSheet, View } from 'react-native';
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
-
+import { setIsMapVisible } from '@R/slices/location/location';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ACTIVITY_SHOW_MAP_TEST_ID } from './const';
 
 export default function ShowMapBtn() {

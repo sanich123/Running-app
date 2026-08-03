@@ -1,4 +1,4 @@
-import { cacheDirectory, deleteAsync, getInfoAsync } from 'expo-file-system';
+import { cacheDirectory, deleteAsync, getInfoAsync } from 'expo-file-system/legacy';
 
 export async function removeMedia({
   pathToMedia,
@@ -17,7 +17,6 @@ export async function removeMedia({
       setIsRemovingMedia(false);
     }
   } catch (error) {
-    console.log(error);
     setIsError(`Ошибка при удалении медиа, ${JSON.stringify(error)}`);
   }
 }
@@ -37,7 +36,6 @@ export async function removeCacheFolder({
       setIsDeletingCacheFolder?.(false);
     }
   } catch (error) {
-    console.log(error);
     setIsError?.(`Ошибка при удалении папки кэша, ${JSON.stringify(error)}`);
   }
 }

@@ -1,11 +1,10 @@
-import { changeLanguage } from '@R/language/language';
-import { setActivityStatus, setDuration, setDistance, setLocationsFromBackground } from '@R/location/location';
+import { screen, userEvent } from '@testing-library/react-native';
+import { STATUSES, LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/language/language';
+import { setActivityStatus, setDuration, setDistance, setLocationsFromBackground } from '@R/slices/location/location';
 import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION, MOCK_SPEED } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { STATUSES, LANGUAGES } from '@const/enums';
-import { screen, userEvent } from '@testing-library/react-native';
-
 import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID } from './const ';
 import ActivityStartBtn from './start-btn';
 

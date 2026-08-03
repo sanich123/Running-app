@@ -1,7 +1,7 @@
-import { LastKmSplit } from '@R/location/types';
 import { Callout, PointAnnotation } from '@rnmapbox/maps';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
+import type { LastKmSplit } from '@R/slices/location/types';
 
 export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: LastKmSplit[] }) {
   return (

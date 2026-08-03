@@ -1,13 +1,13 @@
 import { LANGUAGES } from '@const/enums';
-import { LocationObject } from 'expo-location';
-import * as TaskManager from 'expo-task-manager';
+import type { LocationObject } from 'expo-location';
+import type * as TaskManager from 'expo-task-manager';
 
 export const LOCATION_TRACKING = 'location-tracking';
 
-export type TaskManagerLocationEvent = {
+export interface TaskManagerLocationEvent {
   data: { locations: LocationObject[] };
   error: TaskManager.TaskManagerError | null;
-};
+}
 
 export const BACKGROUND_NOTIFICATION = {
   [LANGUAGES.english]: {

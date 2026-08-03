@@ -1,13 +1,9 @@
 import Card from '@C/card/card';
-import { ActivityCardProps } from '@C/card/types';
+import type { ActivityCardProps } from '@C/card/types';
 
-export type ActivitiesType = (ActivityCardProps & { user_id: string })[];
+export type ActivitiesType = ActivityCardProps & { user_id: string; _count: { comments: number } };
 
-export function renderCardsFunction({
-  item,
-}: {
-  item: ActivityCardProps & { user_id: string; _count: { comments: number } };
-}) {
+export function renderCardsFunction({ item }: { item: ActivitiesType }) {
   const {
     description,
     title,

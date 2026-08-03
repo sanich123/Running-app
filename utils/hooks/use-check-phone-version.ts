@@ -1,6 +1,6 @@
-import { ToastDuration, showCrossPlatformToast } from '@U/custom-toast';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
+import { showCrossPlatformToast } from '@U/custom-toast';
 
 export default function useCheckPhoneVersion() {
   const isEarlyAndroid = Platform.OS === 'android' && Platform.Version < 31;
@@ -10,7 +10,7 @@ export default function useCheckPhoneVersion() {
   useEffect(() => {
     if (isOldVersion) {
       if (Platform.OS !== 'web') {
-        showCrossPlatformToast('You have an old version of the phone', ToastDuration.long);
+        showCrossPlatformToast('You have an old version of the phone');
       }
     }
   }, [isOldVersion]);

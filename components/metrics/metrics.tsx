@@ -1,7 +1,6 @@
-import { useAppSelector } from '@R/typed-hooks';
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-
+import { useAppSelector } from '@R/typed-hooks';
 import { MAP_METRICS } from './const';
 import { getSpeedInMinsInKm } from '../../utils/location/location-utils';
 import { formatDuration, formatDurationMinsSecs } from '../../utils/time-formatter';
@@ -19,8 +18,7 @@ export default function Metrics() {
   return (
     <>
       <ActivityErrorMsg />
-      <View
-        style={[styles.layout, { backgroundColor: colors.secondaryContainer, height: isMapVisible ? '20%' : '100%' }]}>
+      <View style={[styles.layout, { backgroundColor: colors.surfaceVariant, height: isMapVisible ? '12%' : '100%' }]}>
         <MetricsItem
           isMapVisible={isMapVisible}
           title={`${MAP_METRICS[language].time}:`}

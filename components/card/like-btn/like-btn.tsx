@@ -1,18 +1,11 @@
-import { useAuth } from '@A/context/auth-context';
-import {
-  useDeleteLikeMutation,
-  useGetLikesByActivityIdQuery,
-  useSendEmailAfterSendingLikeMutation,
-  useSendLikeMutation,
-} from '@R/runich-api/runich-api';
-import { useAppSelector } from '@R/typed-hooks';
-import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { useContext, useEffect, memo } from 'react';
 import { Platform } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
-import { useToast } from 'react-native-toast-notifications';
-
+import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
+import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/services/likes/likes';
+import { useAppSelector } from '@R/typed-hooks';
+import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
+import { showCrossPlatformToast } from '@U/custom-toast';
 import {
   CARD_LIKE_BTN_TEST_ID_LIKED,
   CARD_LIKE_BTN_TEST_ID_NOT_LIKED,
@@ -20,12 +13,11 @@ import {
   CARD_LIKE_BTN_ICON_NOT_LIKED,
 } from './const';
 import { LIKE_BTN } from '../likes/const';
-import { LikeBtnProps } from '../types';
+import type { LikeBtnProps } from '../types';
 
 export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeBtnProps) {
   const { colors } = useTheme();
-  const toast = useToast();
-  const { user } = useAuth();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
   const { language } = useAppSelector(({ language }) => language);
   const {
@@ -39,10 +31,11 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
   } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
   const [sendEmailNotification] = useSendEmailAfterSendingLikeMutation();
   const [sendLike, { isError: errorSending, isSuccess: isSuccessSending }] = useSendLikeMutation();
+
   const [deleteLike, { isError: failureDeleting }] = useDeleteLikeMutation();
 
   const isLikedByYou = likes?.length
-    ? likes?.filter(({ authorId }: { authorId: string }) => authorId === user?.id)
+    ? likes?.filter(({ authorId }: { authorId: string }) => authorId === userId)
     : null;
 
   useEffect(() => {
@@ -63,12 +56,12 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
     if (errorSending || failureDeleting) {
       const event = LIKE_BTN[language].errorAction(failureDeleting ? 'delete' : 'send');
       if (Platform.OS === 'web') {
-        toast.show(event);
+        showCrossPlatformToast(event);
       } else {
         showCrossPlatformToast(event);
       }
     }
-  }, [errorSending, failureDeleting, language, toast]);
+  }, [errorSending, failureDeleting, language]);
 
   return (
     <IconButton
@@ -77,11 +70,11 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
       iconColor={isError ? colors.error : colors.primary}
       size={25}
       onPress={async () => {
-        if (user) {
+        if (userId) {
           if (isLikedByYou?.length > 0) {
             await deleteLike({ id: isLikedByYou[0].id, activityId }).unwrap();
           } else {
-            await sendLike({ activityId, authorId: `${user?.id}`, profilePhoto }).unwrap();
+            await sendLike({ activityId, authorId: userId, profilePhoto }).unwrap();
           }
         }
       }}

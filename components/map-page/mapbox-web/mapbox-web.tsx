@@ -1,6 +1,6 @@
-import { LastKmSplit } from '@R/location/types';
-import mapboxgl from 'mapbox-gl';
 import { useState, useRef, useEffect } from 'react';
+import mapboxgl from 'mapbox-gl';
+import type { LastKmSplit } from '@R/slices/location/types';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 export default function MapboxWeb({

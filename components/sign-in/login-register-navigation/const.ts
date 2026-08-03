@@ -1,4 +1,3 @@
-import { SignInPageStates } from '@U/validate-email-password';
 import { LANGUAGES } from '@const/enums';
 
 export const REGISTER_NAVIGATION = {
@@ -33,9 +32,3 @@ export const RESET_NAVIGATION = {
     btn: 'Cбросить',
   },
 } as const;
-
-export type RegisterNavigationProps = {
-  setPageState: (arg: SignInPageStates) => void;
-  isDisabled: boolean;
-  pageState: SignInPageStates;
-};

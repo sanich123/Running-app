@@ -1,103 +1,65 @@
-import { supabase } from '@A/supabase/supabase-init';
-import { saveEmailPassword } from '@R/profile/profile';
+import { useRouter } from 'expo-router';
+import { Button } from 'react-native-paper';
+import type { UseFormHandleSubmit } from 'react-hook-form';
+import { errorToast } from '@C/shared/error-toast/error-toast';
+import {
+  useLoginUserMutation,
+  useRegisterUserMutation,
+  useResetPasswordMutation,
+} from '@R/services/authentication/authentication';
+import { saveEmail, savePassword, setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
-import { errorHandler } from '@U/error-handler';
-import { SignInPageStates, emailPasswordHandler } from '@U/validate-email-password';
-import { useRouter } from 'expo-router';
-import { Platform } from 'react-native';
-import { Button } from 'react-native-paper';
-//@ts-ignore
-import { useToast } from 'react-native-toast-notifications';
+import { SignInPageStates } from '@U/validate-email-password';
+import { REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
+import type { EmailPasswordData } from '@R/services/authentication/types';
 
-import { LoginBtnProps, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons } from './const';
-
-export default function LoginRegisterBtn({
-  email,
-  password,
-  isLoading,
-  isDisabled,
-  pageState,
-  setIsDisabled,
-  setIsLoading,
-  setEmailError,
-  setPasswordError,
-}: LoginBtnProps) {
-  const toast = useToast();
+export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFormHandleSubmit<EmailPasswordData> }) {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-  const { push } = useRouter();
-  const isRegistering = pageState === SignInPageStates.register;
-  const isLogining = pageState === SignInPageStates.login;
-  // const isResetting = pageState === SignInPageStates.reset;
+  const { pageState, isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
+  const { replace } = useRouter();
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
+  const [loginUser, { isLoading: isLoginingUser }] = useLoginUserMutation();
+  const [resetPassword] = useResetPasswordMutation();
 
   return (
     <Button
       icon={LoginBtnIcons[pageState]}
       mode="outlined"
-      style={{ marginTop: 20 }}
+      style={{ marginTop: 10 }}
       accessibilityRole="button"
-      loading={isLoading}
-      disabled={isDisabled}
-      onPress={async () => {
-        dispatch(saveEmailPassword({ email: email.trim(), password }));
-        setIsLoading(true);
-        setIsDisabled(true);
-        try {
-          if (emailPasswordHandler({ email, password, setEmailError, setPasswordError, action: pageState })) {
-            if (isRegistering) {
-              const { error } = await supabase.auth.signUp({ email: email.trim(), password });
-              if (!error) {
-                push('/need-to-confirm-email');
-              } else {
-                if (Platform.OS === 'web') {
-                  toast.show(error.message);
-                } else {
-                  showCrossPlatformToast(error.message);
-                }
-              }
-            } else {
-              const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-              if (error) {
-                if (Platform.OS === 'web') {
-                  toast.show(error.message);
-                } else {
-                  showCrossPlatformToast(error.message);
-                }
-              }
-            }
-            // else {
-            //   const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-            //     redirectTo: 'https://runich-with-api.netlify.app/reset-password',
-            //   });
-            //   if (error) {
-            //     if (Platform.OS === 'web') {
-            //       toast.show(error.message);
-            //     } else {
-            //       showCrossPlatformToast(error.message);
-            //     }
-            //   } else {
-            //     if (Platform.OS === 'web') {
-            //       toast.show('Пройдите по ссылке в электронной почте');
-            //     } else {
-            //       showCrossPlatformToast('Пройдите по ссылке в электронной почте');
-            //     }
-            //   }
-            // }
-          }
-        } catch (e) {
-          errorHandler(e);
-        } finally {
-          setIsLoading(false);
-          setIsDisabled(false);
+      loading={isLoginingUser || isLoading}
+      disabled={isDisabledWhenLogining}
+      onPress={handleSubmit(async ({ email, password }: EmailPasswordData) => {
+        dispatch(setIsDisabledWhenLogining(true));
+        dispatch(saveEmail(email));
+        dispatch(savePassword(password));
+        if (pageState === SignInPageStates.register) {
+          return await registerUser({ email, password })
+            .unwrap()
+            .then(({ message }) => showCrossPlatformToast(message))
+            .catch((error) => errorToast('Во время регистрации произошла ошибка: ', error))
+            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }
-      }}>
-      {isRegistering && !isLoading && REGISTER_BTN[language].register}
-      {isRegistering && isLoading && REGISTER_BTN[language].registering}
-      {isLogining && !isLoading && LOGIN_BTN[language].login}
-      {isLogining && isLoading && LOGIN_BTN[language].logining}
-      {/* {isResetting && !isLoading && RESET_BTN[language].login} */}
-      {/* {isResetting && isLoading && RESET_BTN[language].logining} */}
+        if (pageState === SignInPageStates.login) {
+          return await loginUser({ email, password })
+            .unwrap()
+            .then(() => replace('/'))
+            .catch((error) => errorToast('Во время авторизации произошла ошибка: ', error))
+            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
+        }
+        if (pageState === SignInPageStates.reset) {
+          return await resetPassword({ email })
+            .unwrap()
+            .then(({ message }) => showCrossPlatformToast(message))
+            .catch((error) => errorToast('Во время сброса пароля произошла ошибка: ', error))
+            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
+        }
+      })}>
+      {pageState === SignInPageStates.register && REGISTER_BTN[language].register}
+      {pageState === SignInPageStates.login && LOGIN_BTN[language].login}
+      {pageState === SignInPageStates.reset && RESET_BTN[language].login}
     </Button>
   );
 }

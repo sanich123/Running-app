@@ -1,23 +1,20 @@
-import { useAppSelector } from '@R/typed-hooks';
-import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
 import { StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
+import { ROUTES } from '@const/enums';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
+import { useAppSelector } from '@R/typed-hooks';
 import { EDIT_BTN } from './const';
-import { useGetUserProfileByUserIdQuery } from '@R/runich-api/runich-api';
-import { useAuth } from '@A/context/auth-context';
 
 export default function EditBtn() {
   const { push } = useRouter();
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
-  const { user } = useAuth();
-  const { data: profile } = useGetUserProfileByUserIdQuery(`${user?.id}`, { skip: !user?.id });
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      //@ts-ignore
       onPress={() => push(`/${ROUTES.profile}/${ROUTES.profileSettings}/`)}
       borderless
       style={styles.layout}>

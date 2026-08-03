@@ -1,17 +1,17 @@
-import { CustomImage } from '@C/custom-image/custom-image';
-import { ROUTES } from '@const/enums';
-import { usePathname, useRouter } from 'expo-router';
 import { memo } from 'react';
 import { FlatList, Platform, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
-import { MediaListProps } from '../types';
+import { CustomImage } from '@C/custom-image/custom-image';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
+import type { MediaListProps } from '../types';
 
 export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPhotoUrlBlurhash }: MediaListProps) {
   const { dark } = useTheme();
   const { width } = useWindowDimensions();
   const { push } = useRouter();
-  const pathname = usePathname();
-  const place = pathname.includes(ROUTES.profile) ? ROUTES.profile : ROUTES.home;
+
   const displayedData = mapPhotoUrl
     ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...(photoVideoUrls ? photoVideoUrls : [])]
     : photoVideoUrls;
@@ -24,15 +24,14 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           onPress={() => {
             push(
-              //@ts-ignore
               item.url.includes('api.mapbox.com')
-                ? `/${place}/${ROUTES.map}/${id}`
-                : `/${place}/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
+                ? `/(protected)/map/${id}`
+                : `/(protected)/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
             );
           }}
           borderless>
           <CustomImage
-            style={{ width: width || 350, height: 200 }}
+            style={{ width: width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH, height: 200 }}
             source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
             contentFit="cover"
             testID={item.url}
@@ -40,7 +39,6 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           />
         </TouchableRipple>
       )}
-      style={{ overflow: !photoVideoUrls?.length ? 'hidden' : 'scroll' }}
       horizontal
       initialNumToRender={1}
     />
