@@ -17,14 +17,14 @@ describe('Login btn', () => {
     );
     handleSubmit = result.current.handleSubmit;
   });
-  it('should correctly renders in english', () => {
+  it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<LoginRegisterBtn handleSubmit={handleSubmit} />);
+    await renderWithProviders(<LoginRegisterBtn handleSubmit={handleSubmit} />);
     expect(screen.getByText(LOGIN_BTN.english.login)).toBeOnTheScreen();
   });
-  it('should correctly renders in russian', () => {
+  it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<LoginRegisterBtn handleSubmit={handleSubmit} />);
+    await renderWithProviders(<LoginRegisterBtn handleSubmit={handleSubmit} />);
     expect(screen.getByText(LOGIN_BTN.russian.login)).toBeOnTheScreen();
   });
 });

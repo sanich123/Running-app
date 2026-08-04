@@ -1,6 +1,7 @@
+/* eslint-disable import-x/no-named-as-default-member */
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetInfo from '@react-native-community/netinfo';
+import { addEventListener } from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
 import * as SplashScreen from 'expo-splash-screen';
 import mapboxgl from 'mapbox-gl';
@@ -24,7 +25,7 @@ export default function useInitialState() {
   }, []);
 
   useEffect(() => {
-    const networkListener = NetInfo.addEventListener((networkState) => dispatch(changeNetworkState(networkState)));
+    const networkListener = addEventListener((networkState) => dispatch(changeNetworkState(networkState)));
     return () => networkListener();
   }, [dispatch]);
 

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Button } from 'react-native-paper';
+import { FONT_FAMILIES } from '@const/fonts';
 import {
   useGetYouFollowUsersByUserIdQuery,
   useDeleteFriendMutation,
@@ -46,7 +47,9 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
   return (
     <Button
       mode="contained"
-      style={{ marginLeft: 'auto', borderRadius: 5, marginRight: 5 }}
+      contentStyle={{ height: 48 }}
+      labelStyle={{ fontFamily: FONT_FAMILIES.semiBold }}
+      style={{ marginLeft: 'auto', borderRadius: 8 }}
       disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend || isError}
       onPress={async () =>
         friendCell?.length > 0

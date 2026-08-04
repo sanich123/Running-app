@@ -1,6 +1,5 @@
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { Tabs, usePathname } from 'expo-router';
-import { useTheme } from 'react-native-paper';
+import { Icon, useTheme } from 'react-native-paper';
 import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
@@ -17,15 +16,26 @@ export default function TabLayout() {
         tabBarAllowFontScaling: false,
         tabBarShowLabel: true,
         tabBarStyle: {
-          backgroundColor: colors.surfaceVariant,
+          backgroundColor: colors.surface,
+          borderTopColor: colors.outlineVariant,
+          borderTopWidth: 1,
+          elevation: 3,
+          height: 72,
+          paddingBottom: 8,
+          paddingTop: 6,
           display: pathname === '/activity' ? 'none' : 'flex',
         },
+        tabBarLabelStyle: { fontSize: 12, fontWeight: '600' },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           tabBarIcon: ({ focused }) => (
-            <AntDesign name="home" color={focused ? colors.primary : colors.onBackground} size={30} />
+            <Icon
+              source={focused ? 'home' : 'home-outline'}
+              color={focused ? colors.primary : colors.onSurfaceVariant}
+              size={25}
+            />
           ),
         }}
       />
@@ -35,7 +45,11 @@ export default function TabLayout() {
           tabBarLabel: 'Активность',
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <AntDesign name="play-circle" color={focused ? colors.primary : colors.onBackground} size={28} />
+            <Icon
+              source={focused ? 'run' : 'run-fast'}
+              color={focused ? colors.primary : colors.onSurfaceVariant}
+              size={25}
+            />
           ),
         }}
       />
@@ -45,7 +59,7 @@ export default function TabLayout() {
           headerShown: false,
           tabBarLabel: 'Статистика',
           tabBarIcon: ({ focused }) => (
-            <AntDesign name="pie-chart" color={focused ? colors.primary : colors.onBackground} size={28} />
+            <Icon source="chart-donut" color={focused ? colors.primary : colors.onSurfaceVariant} size={25} />
           ),
         }}
       />

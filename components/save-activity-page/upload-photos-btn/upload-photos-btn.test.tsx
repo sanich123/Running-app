@@ -19,11 +19,11 @@ jest.mock('react-native-compressor', () => ({
 }));
 
 describe('Upload photos btn', () => {
-  it('should correctly renders in english', () => {
+  it('should correctly renders in english', async () => {
     const setIsDisabled = jest.fn();
     const setImages = jest.fn();
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(
+    await renderWithProviders(
       <UploadPhotosBtn
         isDisabled={false}
         setIsDisabled={setIsDisabled}
@@ -34,11 +34,11 @@ describe('Upload photos btn', () => {
     );
     expect(screen.getByText(UPLOAD_PHOTO_BTN.english.isInitial)).toBeOnTheScreen();
   });
-  it('should correctly renders in russian', () => {
+  it('should correctly renders in russian', async () => {
     const setIsDisabled = jest.fn();
     const setImages = jest.fn();
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(
+    await renderWithProviders(
       <UploadPhotosBtn
         isDisabled={false}
         setIsDisabled={setIsDisabled}

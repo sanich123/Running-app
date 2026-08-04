@@ -1,5 +1,5 @@
-import { decode } from 'base64-arraybuffer';
-import * as FileSystem from 'expo-file-system';
+import { decode, encode } from 'base64-arraybuffer';
+import { File as ExpoFile } from 'expo-file-system';
 import { Alert, Platform } from 'react-native';
 import { errorHandler } from '../../../utils/error-handler';
 import { supabase } from '../supabase-init';
@@ -9,7 +9,8 @@ export async function getBase64CodedImage(file: string | File) {
     if (Platform.OS === 'web' && file instanceof File) {
       return file;
     } else {
-      return await FileSystem.readAsStringAsync(`${file}`, { encoding: 'base64' });
+      const bytes = await new ExpoFile(`${file}`).bytes();
+      return encode(bytes.buffer as ArrayBuffer);
     }
   } catch (error) {
     errorHandler(error);

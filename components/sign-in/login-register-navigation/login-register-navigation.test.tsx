@@ -7,15 +7,15 @@ import { RESET_NAVIGATION } from './const';
 import RegisterNavigation from './login-register-navigation';
 
 describe('Register navigation', () => {
-  it('should correctly renders in english', () => {
+  it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<RegisterNavigation />);
+    await renderWithProviders(<RegisterNavigation />);
     expect(screen.getByText(RESET_NAVIGATION.english.text)).toBeOnTheScreen();
     expect(screen.getByText(RESET_NAVIGATION.english.btn)).toBeOnTheScreen();
   });
-  it('should correctly renders in russian', () => {
+  it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<RegisterNavigation />);
+    await renderWithProviders(<RegisterNavigation />);
     expect(screen.getByText(RESET_NAVIGATION.russian.text)).toBeOnTheScreen();
     expect(screen.getByText(RESET_NAVIGATION.russian.btn)).toBeOnTheScreen();
   });

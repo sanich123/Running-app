@@ -5,7 +5,7 @@ import CloseBtn from './close-btn';
 
 describe('Camera close btn', () => {
   it('should correctly renders and change global store', async () => {
-    renderWithProviders(<CloseBtn />, { store: mockStore });
+    await renderWithProviders(<CloseBtn />, { store: mockStore });
     const closeBtn = screen.getByTestId('CloseBtn');
     expect(closeBtn).toBeOnTheScreen();
     await userEvent.press(closeBtn);

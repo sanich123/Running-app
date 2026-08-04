@@ -7,13 +7,13 @@ import { EMPTY_ACTIVITIES_LIST } from './const';
 import EmptyActivitiesList from './empty-activities-list';
 
 describe('Empty activities list', () => {
-  it('should contain proper information in english', () => {
-    renderWithProviders(<EmptyActivitiesList />, { store: mockStore });
+  it('should contain proper information in english', async () => {
+    await renderWithProviders(<EmptyActivitiesList />, { store: mockStore });
     expect(screen.getByText(EMPTY_ACTIVITIES_LIST.russian.emptyActivities)).toBeOnTheScreen();
   });
-  it('should contain proper information in russian', () => {
+  it('should contain proper information in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<EmptyActivitiesList />, { store: mockStore });
+    await renderWithProviders(<EmptyActivitiesList />, { store: mockStore });
     expect(screen.getByText(EMPTY_ACTIVITIES_LIST.english.emptyActivities)).toBeOnTheScreen();
   });
 });

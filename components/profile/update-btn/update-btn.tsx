@@ -47,7 +47,7 @@ export default function ProfileUpdateBtn() {
               dispatch(resetSettings());
               back();
             })
-            .catch((error) => {
+            .catch(() => {
               dispatch(setIsDisabledWhileSendingProfile(false));
               showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
             });

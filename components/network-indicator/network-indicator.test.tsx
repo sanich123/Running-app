@@ -8,15 +8,15 @@ import { MOCK_NETWORK_STATE, NETWORK_INDICATOR } from './const';
 import NetworkIndicator from './network-indicator';
 
 describe('Network indicator', () => {
-  it('should correctly renders when no network and english language', () => {
+  it('should correctly renders when no network and english language', async () => {
     mockStore.dispatch(changeNetworkState({ ...MOCK_NETWORK_STATE, isInternetReachable: false }));
-    renderWithProviders(<NetworkIndicator />, { store: mockStore });
+    await renderWithProviders(<NetworkIndicator />, { store: mockStore });
     expect(screen.getByText(NETWORK_INDICATOR.russian.offline)).toBeOnTheScreen();
   });
-  it('should correctly renders when no network and russian language', () => {
+  it('should correctly renders when no network and russian language', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(changeNetworkState({ ...MOCK_NETWORK_STATE, isInternetReachable: false }));
-    renderWithProviders(<NetworkIndicator />, { store: mockStore });
+    await renderWithProviders(<NetworkIndicator />, { store: mockStore });
     expect(screen.getByText(NETWORK_INDICATOR.russian.offline)).toBeOnTheScreen();
   });
 });

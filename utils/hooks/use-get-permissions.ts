@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { hasServicesEnabledAsync, useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
-
 //@ts-expect-error просто нет типов в пакете
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';

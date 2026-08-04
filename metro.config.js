@@ -7,7 +7,6 @@ defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
     (platform === 'web' &&
       [
         '@rnmapbox/maps',
-        '@react-native-google-signin/google-signin',
         'react-native-pager-view',
         'expo-video-thumbnails',
         'react-native-zip-archive',

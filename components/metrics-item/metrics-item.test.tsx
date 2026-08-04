@@ -4,8 +4,10 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import MetricsItem from './metrics-item';
 
 describe('Metrics item', () => {
-  it('should correctly renders', () => {
-    renderWithProviders(<MetricsItem isMapVisible title="some title" metric="123" isCentral />, { store: mockStore });
+  it('should correctly renders', async () => {
+    await renderWithProviders(<MetricsItem isMapVisible title="some title" metric="123" isCentral />, {
+      store: mockStore,
+    });
     expect(screen.getByText('some title')).toBeOnTheScreen();
     expect(screen.getByText('123')).toBeOnTheScreen();
   });

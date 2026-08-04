@@ -23,7 +23,8 @@ export const network = createSlice({
       state.networkState = action.payload;
     },
     resetNetworkSlice: (state) => {
-      return (state = NETWORK_INITIAL_STATE);
+      state = NETWORK_INITIAL_STATE;
+      return state;
     },
   },
 });

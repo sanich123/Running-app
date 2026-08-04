@@ -8,17 +8,17 @@ import { MAP_METRICS } from './const';
 import Metrics from './metrics';
 
 describe('Metrics', () => {
-  it('should correctly renders in english, when initial store', () => {
+  it('should correctly renders in english, when initial store', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<Metrics />, { store: mockStore });
+    await renderWithProviders(<Metrics />, { store: mockStore });
     [MAP_METRICS.english.distance, MAP_METRICS.english.pace, MAP_METRICS.english.time].map((metric) =>
       expect(screen.getByText(new RegExp(metric))).toBeOnTheScreen(),
     );
     ['0 /km', '0.00 km', '00:00:00'].map((metric) => expect(screen.getByText(new RegExp(metric))).toBeOnTheScreen());
   });
-  it('should correctly renders in english extended view with altitude and last km', () => {
+  it('should correctly renders in english extended view with altitude and last km', async () => {
     mockStore.dispatch(setIsMapVisible(false));
-    renderWithProviders(<Metrics />, { store: mockStore });
+    await renderWithProviders(<Metrics />, { store: mockStore });
     [
       MAP_METRICS.english.distance,
       MAP_METRICS.english.pace,
@@ -27,9 +27,9 @@ describe('Metrics', () => {
     ].map((metric) => expect(screen.getByText(new RegExp(metric))).toBeOnTheScreen());
     ['0 /km', '0.00 km', '00:00:00'].map((metric) => expect(screen.getByText(new RegExp(metric))).toBeOnTheScreen());
   });
-  it('should correctly renders in russian, when initial store', () => {
+  it('should correctly renders in russian, when initial store', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<Metrics />, { store: mockStore });
+    await renderWithProviders(<Metrics />, { store: mockStore });
     [MAP_METRICS.russian.distance, MAP_METRICS.russian.pace, MAP_METRICS.russian.time].map((metric) =>
       expect(screen.getByText(new RegExp(metric))).toBeOnTheScreen(),
     );
@@ -38,10 +38,10 @@ describe('Metrics', () => {
     );
   });
 
-  it('should correctly renders in russian extended view with altitude and last km, when initial store', () => {
+  it('should correctly renders in russian extended view with altitude and last km, when initial store', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(setIsMapVisible(false));
-    renderWithProviders(<Metrics />, { store: mockStore });
+    await renderWithProviders(<Metrics />, { store: mockStore });
     [
       MAP_METRICS.russian.distance,
       MAP_METRICS.russian.pace,

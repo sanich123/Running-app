@@ -20,7 +20,7 @@ describe('Unsended activities indicator', () => {
       }),
     );
     mockStore.dispatch(setIsHaveUnsyncedActivity(true));
-    renderWithProviders(<UnsendedActivitiesIndicator />, { store: mockStore });
+    await renderWithProviders(<UnsendedActivitiesIndicator />, { store: mockStore });
     expect(await screen.findByText(/вручную/i)).toBeOnTheScreen();
   });
 });

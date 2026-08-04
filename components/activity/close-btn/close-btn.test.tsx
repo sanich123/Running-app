@@ -17,19 +17,19 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Activity close btn', () => {
-  it('should correctly renders in english', () => {
-    renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
+  it('should correctly renders in english', async () => {
+    await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_CLOSE_BTN.russian.btnText)).toBeDefined();
   });
-  it('should correctly renders in russian', () => {
+  it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
+    await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_CLOSE_BTN.russian.btnText)).toBeDefined();
   });
   it('should correctly show alert message, when duration is greater than 0', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setDuration(10000));
-    renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
+    await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
     const closeBtn = screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText);
     await userEvent.press(closeBtn);
     expect(mockStore.getState().location.activityStatus).toEqual(STATUSES.paused);

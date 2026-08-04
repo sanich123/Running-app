@@ -1,5 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
+import { FONT_FAMILIES } from '@const/fonts';
 import { setSignInPageState } from '@R/slices/logining/logining';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { SignInPageStates, signInMap } from '@U/validate-email-password';
@@ -18,7 +19,9 @@ export default function RegisterNavigation() {
         {pageState === SignInPageStates.reset && REGISTER_NAVIGATION[language].text}
       </Text>
       <Button
-        mode="outlined"
+        mode="text"
+        compact
+        labelStyle={{ fontFamily: FONT_FAMILIES.semiBold }}
         onPress={() => dispatch(setSignInPageState(signInMap[pageState]))}
         disabled={isDisabledWhenLogining}
         accessibilityRole="button">
@@ -35,7 +38,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 15,
-    gap: 10,
+    marginTop: 8,
+    gap: 2,
   },
 });

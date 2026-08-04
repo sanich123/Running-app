@@ -13,17 +13,11 @@ jest.mock('expo-router', () => ({
     push: jest.fn(),
   }),
 }));
-jest.mock('expo-image', () => {
-  const actualExpoImage = jest.requireActual('expo-image');
-  const { Image } = jest.requireActual('react-native');
-
-  return { ...actualExpoImage, Image };
-});
 describe('Card likes', () => {
   it('should correctly renders', async () => {
     jest.spyOn(router, 'usePathname').mockImplementation(() => 'some path');
     mockStore.dispatch(setUserId('someUserId'));
-    renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />, {
+    await renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />, {
       store: mockStore,
     });
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();

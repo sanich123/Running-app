@@ -12,33 +12,27 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
   usePathname: () => 'somePathname',
 }));
-jest.mock('expo-image', () => {
-  const actualExpoImage = jest.requireActual('expo-image');
-  const { Image } = jest.requireActual('react-native');
-
-  return { ...actualExpoImage, Image };
-});
 describe('Profile media photos', () => {
   it('should correctly renders data in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<ProfileMediaPhotos userId="someUserId" />, { store: mockStore });
+    await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />, { store: mockStore });
     expect(await screen.findByText(new RegExp(`${PROFILE_MEDIA.english.label}`))).toBeOnTheScreen();
   });
   it('should correctly renders data in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<ProfileMediaPhotos userId="someUserId" />, { store: mockStore });
+    await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />, { store: mockStore });
     expect(await screen.findByText(new RegExp(`${PROFILE_MEDIA.russian.label}`))).toBeOnTheScreen();
   });
   it('should correctly handle an error in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<ProfileMediaPhotos userId="someWrongUserId" />, { store: mockStore });
+    await renderWithProviders(<ProfileMediaPhotos userId="someWrongUserId" />, { store: mockStore });
     expect(
       await screen.findByText(new RegExp(`${PROFILE_MEDIA.russian.error}: ${errorExtracter(BAD_REQUEST)}`)),
     ).toBeOnTheScreen();
   });
   it('should correctly handle an error in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<ProfileMediaPhotos userId="someWrongUserId" />, { store: mockStore });
+    await renderWithProviders(<ProfileMediaPhotos userId="someWrongUserId" />, { store: mockStore });
     expect(
       await screen.findByText(new RegExp(`${PROFILE_MEDIA.english.error}: ${errorExtracter(BAD_REQUEST)}`)),
     ).toBeOnTheScreen();

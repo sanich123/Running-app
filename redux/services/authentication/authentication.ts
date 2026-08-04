@@ -18,13 +18,6 @@ export const authenticationApi = runichApi.injectEndpoints({
         method: 'POST',
       }),
     }),
-    loginUserWithGoogle: mutation<AccessData, { email: string; name: string | null; photo: string | null }>({
-      query: ({ email, name, photo }) => ({
-        url: '/auth/login-with-google',
-        body: { email, name, photo },
-        method: 'POST',
-      }),
-    }),
     verifyConfig: query<VerifyTokenResponse, VerifyTokenRequest>({
       query: ({ accessToken }) => ({
         url: 'auth/verify',
@@ -61,6 +54,5 @@ export const {
   useLazyVerifyConfigQuery,
   useDeleteUserMutation,
   useConfirmSignUpCodeByEmailMutation,
-  useLoginUserWithGoogleMutation,
   useResetPasswordMutation,
 } = authenticationApi;

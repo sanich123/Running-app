@@ -21,7 +21,7 @@ export default function UnsendedActivitiesIndicator() {
         const reducedUnsyncedList = unsyncedActivities.slice(0, -1);
         dispatch(refreshUnsendedActivitiesList(reducedUnsyncedList));
       })
-      .catch((error) => showCrossPlatformToast('Ошибка во время отправки активности'));
+      .catch(() => showCrossPlatformToast('Ошибка во время отправки активности'));
   }
 
   return (

@@ -9,7 +9,7 @@ describe('Preview image close btn', () => {
   it('should correctly renders and delete image from local and global state', async () => {
     const setImages = jest.fn();
     mockStore.dispatch(addPhotoUrl({ url: 'someUrl', thumbnail: null }));
-    renderWithProviders(
+    await renderWithProviders(
       <PreviewImageCloseBtn
         images={[{ url: 'someUrl', thumbnail: null }]}
         setImages={setImages}
@@ -25,9 +25,9 @@ describe('Preview image close btn', () => {
     expect(setImages).toHaveBeenCalled();
     expect(mockStore.getState().additionalInfoActivity.photoVideoUrls).toEqual([]);
   });
-  it('should be disabled, when isDisabled', () => {
+  it('should be disabled, when isDisabled', async () => {
     const setImages = jest.fn();
-    renderWithProviders(
+    await renderWithProviders(
       <PreviewImageCloseBtn
         images={[{ url: 'someUrl', thumbnail: null }]}
         setImages={setImages}
@@ -40,10 +40,10 @@ describe('Preview image close btn', () => {
     );
     expect(screen.getByTestId('deleteIcon')).toBeDisabled();
   });
-  it('should be disabled, when isDisabledWhileSending', () => {
+  it('should be disabled, when isDisabledWhileSending', async () => {
     mockStore.dispatch(setIsDisableWhileSending(true));
     const setImages = jest.fn();
-    renderWithProviders(
+    await renderWithProviders(
       <PreviewImageCloseBtn
         images={[{ url: 'someUrl', thumbnail: null }]}
         setImages={setImages}

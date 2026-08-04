@@ -1,3 +1,10 @@
+import {
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_800ExtraBold,
+  useFonts,
+} from '@expo-google-fonts/plus-jakarta-sans';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as SplashScreen from 'expo-splash-screen';
 import { SystemBars } from 'react-native-edge-to-edge';
@@ -9,8 +16,9 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { useColorScheme } from 'react-native';
 import { Stack } from 'expo-router';
-import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
+import { configureFonts, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
+import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { toastConfig } from '@const/toast-config';
 import { persistor, store } from '@R/store';
@@ -23,8 +31,21 @@ SplashScreen.setOptions({
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const [fontsLoaded] = useFonts({
+    PlusJakartaSans_400Regular,
+    PlusJakartaSans_500Medium,
+    PlusJakartaSans_600SemiBold,
+    PlusJakartaSans_800ExtraBold,
+  });
+  const fonts = configureFonts({ config: { fontFamily: FONT_FAMILIES.regular } });
   const paperTheme =
-    colorScheme === 'dark' ? { ...MD3DarkTheme, colors: COLORS.dark } : { ...MD3LightTheme, colors: COLORS.light };
+    colorScheme === 'dark'
+      ? { ...MD3DarkTheme, roundness: 2, fonts, colors: COLORS.dark }
+      : { ...MD3LightTheme, roundness: 2, fonts, colors: COLORS.light };
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <PersistGate loading={<FullPageActivityLoader />} persistor={persistor}>

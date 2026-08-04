@@ -52,15 +52,6 @@ export const auth = createSlice({
         state.userId = id;
       },
     );
-    builder.addMatcher(
-      authenticationApi.endpoints.loginUserWithGoogle.matchFulfilled,
-      (state, { payload: { id, accessToken } }) => {
-        if (accessToken) {
-          setAccessTokenToStorage(accessToken);
-        }
-        state.userId = id;
-      },
-    );
   },
 });
 

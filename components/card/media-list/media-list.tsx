@@ -11,6 +11,7 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
   const { dark } = useTheme();
   const { width } = useWindowDimensions();
   const { push } = useRouter();
+  const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
 
   const displayedData = mapPhotoUrl
     ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...(photoVideoUrls ? photoVideoUrls : [])]
@@ -31,7 +32,7 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           }}
           borderless>
           <CustomImage
-            style={{ width: width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH, height: 200 }}
+            style={{ width: mediaWidth, height: 202 }}
             source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
             contentFit="cover"
             testID={item.url}

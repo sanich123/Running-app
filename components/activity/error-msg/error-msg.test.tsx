@@ -8,14 +8,14 @@ import { ACTIVITY_ERROR_MSG } from './const';
 import ActivityErrorMsg from './error-msg';
 
 describe('Activity-error-msg', () => {
-  it('should correctly render error message in russian, when initially', () => {
+  it('should correctly render error message in russian, when initially', async () => {
     mockStore.dispatch(setIsAppShuted(true));
-    renderWithProviders(<ActivityErrorMsg />, { store: mockStore });
+    await renderWithProviders(<ActivityErrorMsg />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_ERROR_MSG.russian.errorMsg)).toBeOnTheScreen();
   });
-  it('should renders in russian, when the user switched to another language', () => {
+  it('should renders in russian, when the user switched to another language', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<ActivityErrorMsg />, { store: mockStore });
+    await renderWithProviders(<ActivityErrorMsg />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_ERROR_MSG.english.errorMsg)).toBeOnTheScreen();
   });
 });

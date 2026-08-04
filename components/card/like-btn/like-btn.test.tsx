@@ -9,7 +9,7 @@ import ActivityCardLikeBtn from './like-btn';
 describe('Activity card like btn', () => {
   it('should correctly renders when activity was liked by you', async () => {
     mockStore.dispatch(setUserId('someUserId'));
-    renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" profile={MOCK_PROFILE} />, {
+    await renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" profile={MOCK_PROFILE} />, {
       store: mockStore,
     });
     const likesBtn = await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED);
@@ -17,7 +17,7 @@ describe('Activity card like btn', () => {
   });
   it('should correctly renders, when you didnt liked activity', async () => {
     mockStore.dispatch(setUserId('wrongUserId'));
-    renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" profile={MOCK_PROFILE} />, {
+    await renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" profile={MOCK_PROFILE} />, {
       store: mockStore,
     });
     expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();

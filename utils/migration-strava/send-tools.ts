@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FileSystemUploadType, uploadAsync } from 'expo-file-system/legacy';
+import { API_URL } from '@const/api-url';
 import { toFileUri } from './uri-tools';
 
 export async function sendArchiveToServer({
@@ -16,16 +17,12 @@ export async function sendArchiveToServer({
   try {
     const accessToken = await AsyncStorage.getItem('accessToken');
     setIsSendingArchive(true);
-    const response = await uploadAsync(
-      `${process.env.EXPO_PUBLIC_BASE_URL}/activity/migration-strava/${userId}`,
-      toFileUri(pathToArchive),
-      {
-        fieldName: 'archive',
-        httpMethod: 'POST',
-        uploadType: FileSystemUploadType.MULTIPART,
-        headers: { authorization: `Bearer ${accessToken}` },
-      },
-    );
+    const response = await uploadAsync(`${API_URL}/activity/migration-strava/${userId}`, toFileUri(pathToArchive), {
+      fieldName: 'archive',
+      httpMethod: 'POST',
+      uploadType: FileSystemUploadType.MULTIPART,
+      headers: { authorization: `Bearer ${accessToken}` },
+    });
     if (response.status < 200 || response.status >= 300) {
       throw new Error(`Сервер вернул статус ${response.status}`);
     }

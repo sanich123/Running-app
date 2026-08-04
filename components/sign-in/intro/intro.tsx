@@ -1,24 +1,61 @@
-import { View } from 'react-native';
-import { IconButton, Text } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { IconButton, Text, useTheme } from 'react-native-paper';
+import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import { INTRO } from './const';
 
 export default function Intro() {
   const { language } = useAppSelector(({ language }) => language);
+  const { colors } = useTheme();
+
   return (
-    <View style={{ flex: 1, padding: 15, justifyContent: 'center' }}>
-      <IconButton icon="run" size={100} style={{ marginTop: 70, marginHorizontal: 'auto' }} />
-      <Text variant="titleLarge" style={{ marginTop: 20, marginHorizontal: 'auto', textAlign: 'center' }}>
+    <View style={styles.container}>
+      <View style={[styles.iconContainer, { backgroundColor: colors.primaryContainer }]}>
+        <IconButton icon="run-fast" iconColor={colors.primary} size={42} style={styles.icon} />
+      </View>
+      <Text variant="headlineMedium" style={styles.title}>
         {INTRO[language].welcome}
       </Text>
-      <Text variant="titleMedium" style={{ marginTop: 20, marginHorizontal: 'auto', textAlign: 'center' }}>
+      <Text variant="bodyLarge" style={[styles.description, { color: colors.onSurfaceVariant }]}>
         {INTRO[language].features}
       </Text>
-      <Text
-        variant="titleLarge"
-        style={{ marginTop: 30, marginHorizontal: 'auto', fontStyle: 'italic', textAlign: 'center' }}>
+      <Text variant="titleMedium" style={[styles.slogan, { color: colors.primary }]}>
         {INTRO[language].coolSlogan}
       </Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 56,
+    paddingBottom: 24,
+  },
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 72,
+    height: 72,
+    borderRadius: 20,
+    marginBottom: 24,
+  },
+  icon: { margin: 0 },
+  title: {
+    fontFamily: FONT_FAMILIES.extraBold,
+    textAlign: 'center',
+  },
+  description: {
+    fontFamily: FONT_FAMILIES.regular,
+    lineHeight: 24,
+    marginTop: 12,
+    maxWidth: 420,
+    textAlign: 'center',
+  },
+  slogan: {
+    fontFamily: FONT_FAMILIES.semiBold,
+    marginTop: 16,
+    textAlign: 'center',
+  },
+});

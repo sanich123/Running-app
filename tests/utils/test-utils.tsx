@@ -10,7 +10,7 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   store?: AppStore;
 }
 
-export function renderWithProviders(
+export async function renderWithProviders(
   ui: React.ReactElement,
   { store = mockStore, ...renderOptions }: ExtendedRenderOptions = {},
 ) {
@@ -21,5 +21,5 @@ export function renderWithProviders(
       </Provider>
     );
   }
-  return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
+  return { store, ...(await render(ui, { wrapper: Wrapper, ...renderOptions })) };
 }

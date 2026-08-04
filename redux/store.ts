@@ -1,3 +1,4 @@
+/* eslint-disable import-x/no-named-as-default */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';

@@ -4,6 +4,7 @@ import SaveBtn from '@C/activity/save-btn/save-btn';
 import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
 import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
 import { LABELS, ROUTES } from '@const/enums';
+import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import useInitialState from '@U/hooks/use-initial-state';
 
@@ -24,9 +25,9 @@ export default function ProtectedLayout() {
     return (
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: colors.surfaceVariant },
-          headerTintColor: colors.onSurfaceVariant,
-          headerTitleStyle: { fontWeight: 'bold' },
+          headerStyle: { backgroundColor: colors.surface },
+          headerTintColor: colors.onSurface,
+          headerTitleStyle: { fontFamily: FONT_FAMILIES.extraBold, fontSize: 15 },
         }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false, headerTitle: 'Главная' }} />
         <Stack.Screen

@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
 import { LABELS, ROUTES } from '@const/enums';
+import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 
 export default function StatisticsStack() {
@@ -12,9 +13,9 @@ export default function StatisticsStack() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: colors.surfaceVariant },
-        headerTintColor: colors.onSurfaceVariant,
-        headerTitleStyle: { fontWeight: 'bold' },
+        headerStyle: { backgroundColor: colors.surface },
+        headerTintColor: colors.onSurface,
+        headerTitleStyle: { fontFamily: FONT_FAMILIES.extraBold, fontSize: 15 },
         title: Platform.OS !== 'web' ? LABELS[language].statistics : '',
       }}>
       <Stack.Screen

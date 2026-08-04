@@ -9,21 +9,17 @@ jest.mock('react-native-compressor', () => ({
     compress: jest.fn(),
   }),
 }));
-jest.mock('expo-image', () => {
-  const actualExpoImage = jest.requireActual('expo-image');
-  const { Image } = jest.requireActual('react-native');
-
-  return { ...actualExpoImage, Image };
-});
 describe('Preview uploadable image', () => {
-  it('should correctly renders', () => {
+  it('should correctly renders', async () => {
     mockStore.dispatch(setUserId('someUserId'));
-    renderWithProviders(<PreviewUploadableImage image="someUrl" index={1} isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<PreviewUploadableImage image="someUrl" index={1} isDisabled={false} />, {
+      store: mockStore,
+    });
     expect(screen.getByText(new RegExp(/Add to activity/i))).toBeOnTheScreen();
   });
-  it('should correctly handle isDisabled state', () => {
+  it('should correctly handle isDisabled state', async () => {
     mockStore.dispatch(setUserId('someUserId'));
-    renderWithProviders(<PreviewUploadableImage image="someUrl" index={1} isDisabled />, {
+    await renderWithProviders(<PreviewUploadableImage image="someUrl" index={1} isDisabled />, {
       store: mockStore,
     });
     expect(screen.getByTestId('previewUploadable')).toBeDisabled();

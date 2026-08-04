@@ -6,7 +6,11 @@
     "production": {
       "channel": "production",
       "autoIncrement": true,
-      "environment": "production"
+      "environment": "production",
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "production",
+        "EXPO_PUBLIC_BASE_URL": "https://runich-backend-production.up.railway.app"
+      }
     },
     "preview": {
       "distribution": "internal",
@@ -17,13 +21,11 @@
       "ios": { "simulator": true },
       "environment": "preview",
       "env": {
+        "EXPO_PUBLIC_APP_ENV": "preview",
         "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g",
         "EXPO_PUBLIC_BASE_URL": "https://runich-backend-production.up.railway.app",
         "EXPO_PUBLIC_SUPABASE_URL": "https://ixvxeiqzuhzrfixglylt.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4dnhlaXF6dWh6cmZpeGdseWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM0NTA0ODEsImV4cCI6MjAzOTAyNjQ4MX0.yHbaFeYD1lxcuEKrQ7Y-CtwtlCgYct8xkyDSTxvLtcE",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT": "617323850499-oaorec6kohhna9p0dqlek590imnab6jq.apps.googleusercontent.com",
-        "EXPO_PUBLIC_GOOGLE_IOS_DEV": "617323850499-ib9jp3gj3fbev205jbhcfe0ou9oairm2.apps.googleusercontent.com",
-        "EXPO_PUBLIC_GOOGLE_IOS_PREVIEW": "617323850499-i286kru7q6bgi2dfl38c6keljvhaelad.apps.googleusercontent.com"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4dnhlaXF6dWh6cmZpeGdseWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM0NTA0ODEsImV4cCI6MjAzOTAyNjQ4MX0.yHbaFeYD1lxcuEKrQ7Y-CtwtlCgYct8xkyDSTxvLtcE"
       },
       "channel": "preview"
     },
@@ -33,7 +35,12 @@
       "distribution": "internal",
       "android": { "buildType": "apk" },
       "environment": "development",
-      "env": { "APP_VARIANT": "development" },
+      "env": {
+        "APP_VARIANT": "development",
+        "EXPO_PUBLIC_APP_ENV": "development",
+        "EXPO_PUBLIC_DEV_WEB_API_URL": "http://localhost:3000",
+        "EXPO_PUBLIC_DEV_NATIVE_API_URL": "http://192.168.0.16:3000"
+      },
       "channel": "development"
     },
     "ios-simulator": {
@@ -43,6 +50,12 @@
         "simulator": true
       },
       "environment": "development",
+      "env": {
+        "APP_VARIANT": "development",
+        "EXPO_PUBLIC_APP_ENV": "development",
+        "EXPO_PUBLIC_DEV_WEB_API_URL": "http://localhost:3000",
+        "EXPO_PUBLIC_DEV_NATIVE_API_URL": "http://192.168.0.16:3000"
+      },
       "channel": "ios-simulator"
     }
   }

@@ -6,7 +6,7 @@ import FlashBtn from './flash-btn';
 describe('Camera flash btn', () => {
   it('should correctly handle local state', async () => {
     const setFlashEnable = jest.fn();
-    renderWithProviders(<FlashBtn setFlashEnable={setFlashEnable} flashEnable="off" />, {
+    await renderWithProviders(<FlashBtn setFlashEnable={setFlashEnable} flashEnable="off" />, {
       store: mockStore,
     });
     const flashBtn = screen.getByTestId('FlashBtnTestId');

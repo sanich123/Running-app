@@ -11,16 +11,9 @@ jest.mock('expo-router', () => ({
   usePathname: () => 'somePathname',
 }));
 
-jest.mock('expo-image', () => {
-  const actualExpoImage = jest.requireActual('expo-image');
-  const { Image } = jest.requireActual('react-native');
-
-  return { ...actualExpoImage, Image };
-});
-
 describe('UserInfo', () => {
   it('should correctly renders', async () => {
-    renderWithProviders(
+    await renderWithProviders(
       <UserInfo
         profile={{ ...MOCK_PROFILE, ...{ email: 'someEmail', language: 'english' } }}
         sport={SPORTS_BTNS_VALUES.run}

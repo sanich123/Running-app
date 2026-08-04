@@ -3,6 +3,7 @@ import { useTheme } from 'react-native-paper';
 import ProfileEditBtn from '@C/profile/edit-btn/edit-btn';
 import ProfileUpdateBtn from '@C/profile/update-btn/update-btn';
 import { LABELS, ROUTES } from '@const/enums';
+import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 
 export default function ProfileStack() {
@@ -13,9 +14,9 @@ export default function ProfileStack() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: colors.surfaceVariant },
-        headerTintColor: colors.onSurfaceVariant,
-        headerTitleStyle: { fontWeight: 'bold' },
+        headerStyle: { backgroundColor: colors.surface },
+        headerTintColor: colors.onSurface,
+        headerTitleStyle: { fontFamily: FONT_FAMILIES.extraBold, fontSize: 15 },
         title: LABELS[language].profile,
       }}>
       <Stack.Screen

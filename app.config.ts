@@ -1,4 +1,4 @@
-const IS_DEV = process.env.APP_VARIANT === 'development';
+const IS_DEV = process.env.APP_VARIANT === 'development' || process.env.EXPO_PUBLIC_APP_ENV === 'development';
 
 export default {
   expo: {
@@ -29,11 +29,7 @@ export default {
         UIBackgroundModes: ['location', 'fetch', 'remote-notification'],
         CFBundleURLTypes: [
           {
-            CFBundleURLSchemes: [
-              'runich',
-              'com.googleusercontent.apps.617323850499-i286kru7q6bgi2dfl38c6keljvhaelad',
-              'com.googleusercontent.apps.617323850499-ib9jp3gj3fbev205jbhcfe0ou9oairm2',
-            ],
+            CFBundleURLSchemes: ['runich'],
           },
         ],
         privacyManifests: {
@@ -80,6 +76,7 @@ export default {
         'ACCESS_FINE_LOCATION',
       ],
       softwareKeyboardLayoutMode: 'pan',
+      usesCleartextTraffic: IS_DEV,
     },
     web: {
       bundler: 'metro',
@@ -90,10 +87,9 @@ export default {
     plugins: [
       './custom.plugin',
       'react-native-compressor',
-      '@react-native-google-signin/google-signin',
+      'expo-image',
       'expo-router',
       'expo-font',
-      'expo-web-browser',
       'expo-video',
       'expo-secure-store',
       '@rnmapbox/maps',

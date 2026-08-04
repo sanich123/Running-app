@@ -10,8 +10,8 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Activity card comment btn', () => {
-  it('should correctly renders', () => {
-    renderWithProviders(
+  it('should correctly renders', async () => {
+    await renderWithProviders(
       <ActivityCardCommentBtn activityId="someActivityId" commentsLength={6} profile={MOCK_PROFILE} />,
       {
         store: mockStore,

@@ -12,7 +12,7 @@ jest.mock('expo-router', () => ({
 describe('User settings icons', () => {
   it('should correctly renders edit btn, when userId === user?.id', async () => {
     mockStore.dispatch(setUserId('someUserId'));
-    renderWithProviders(<UsersSettingsIcons />, { store: mockStore });
+    await renderWithProviders(<UsersSettingsIcons />, { store: mockStore });
     expect(await screen.findByText(ACTIVITY_SAVE_BTN.russian.edit)).toBeOnTheScreen();
   });
 });

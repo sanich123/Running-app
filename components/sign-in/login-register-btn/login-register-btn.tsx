@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
 import type { UseFormHandleSubmit } from 'react-hook-form';
 import { errorToast } from '@C/shared/error-toast/error-toast';
+import { FONT_FAMILIES } from '@const/fonts';
 import {
   useLoginUserMutation,
   useRegisterUserMutation,
@@ -26,8 +27,10 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
   return (
     <Button
       icon={LoginBtnIcons[pageState]}
-      mode="outlined"
-      style={{ marginTop: 10 }}
+      mode="contained"
+      contentStyle={{ minHeight: 48 }}
+      labelStyle={{ fontFamily: FONT_FAMILIES.semiBold }}
+      style={{ borderRadius: 8, marginTop: 8 }}
       accessibilityRole="button"
       loading={isLoginingUser || isLoading}
       disabled={isDisabledWhenLogining}

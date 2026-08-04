@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { useEffect } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';

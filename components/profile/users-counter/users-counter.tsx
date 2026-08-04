@@ -2,6 +2,7 @@ import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
+import { FONT_FAMILIES } from '@const/fonts';
 import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorExtracter } from '@U/error-handler';
@@ -38,12 +39,12 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
       onPress={() => push(`/(protected)/${whereToPush}/${whosId}`)}
       disabled={isFollowersError || isFollowersLoading || isFollowingsLoading || isFollowingsError}
       borderless
-      style={{ borderRadius: 10 }}>
-      <View style={{ paddingHorizontal: 5, paddingVertical: 2 }}>
-        <Text variant="bodySmall">
+      style={{ borderRadius: 8 }}>
+      <View style={{ paddingHorizontal: 10, paddingVertical: 8 }}>
+        <Text variant="labelSmall">
           {isFollowersError || isFollowingsError ? `${USERS_COUNT[language].error}:` : whatTitleToRender}
         </Text>
-        <Text variant="titleLarge">
+        <Text variant="titleMedium" style={{ fontFamily: FONT_FAMILIES.extraBold }}>
           {(isFollowersLoading || isFollowingsLoading) && ' '}
           {whoFollowsUserList?.length && `${whoFollowsUserList?.length}`}
           {whoUserFollowsList?.length && `${whoUserFollowsList?.length}`}

@@ -7,14 +7,14 @@ import { EDIT_BTN } from './const';
 import ProfileEditBtn from './edit-btn';
 
 describe('Profile edit btn', () => {
-  it('should correctly renders in english', () => {
+  it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<ProfileEditBtn />, { store: mockStore });
+    await renderWithProviders(<ProfileEditBtn />, { store: mockStore });
     expect(screen.getByText(EDIT_BTN.english.create)).toBeOnTheScreen();
   });
-  it('should correctly renders in russian', () => {
+  it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<ProfileEditBtn />, { store: mockStore });
+    await renderWithProviders(<ProfileEditBtn />, { store: mockStore });
     expect(screen.getByText(EDIT_BTN.russian.create)).toBeOnTheScreen();
   });
 });

@@ -23,19 +23,19 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Activity save btn', () => {
-  it('should correctly renders in english', () => {
+  it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_SAVE_BTN.english.save)).toBeOnTheScreen();
   });
-  it('should correctly renders in russian', () => {
+  it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_SAVE_BTN.russian.save)).toBeOnTheScreen();
   });
   it('should correctly change global state', async () => {
     mockStore.dispatch(setUserId('someUserId'));
-    renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
@@ -55,7 +55,7 @@ describe('Activity save btn', () => {
     mockStore.dispatch(saveDescription('Some description'));
     mockStore.dispatch(saveSport(SPORTS_BTNS_VALUES.run));
     mockStore.dispatch(saveEmotion(EMOTIONS_BTNS_VALUES.fucked));
-    renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
     await userEvent.press(saveBtn);
