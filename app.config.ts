@@ -3,7 +3,6 @@ const IS_DEV = process.env.APP_VARIANT === 'development';
 export default {
   expo: {
     owner: 'sanich123',
-    scheme: 'runich',
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
     version: '4.0.0',
