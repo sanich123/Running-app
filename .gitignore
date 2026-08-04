@@ -23,6 +23,7 @@ ios
 
 # Local Netlify folder
 .netlify
+install-state.gz
 
 
 
