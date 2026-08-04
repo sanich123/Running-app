@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Runich" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Runich Moscow test route</name>
+    <trkseg>
+      <trkpt lat="55.75580" lon="37.61730" />
+      <trkpt lat="55.75650" lon="37.61770" />
+      <trkpt lat="55.75720" lon="37.61810" />
+      <trkpt lat="55.75790" lon="37.61850" />
+      <trkpt lat="55.75860" lon="37.61890" />
+      <trkpt lat="55.75930" lon="37.61840" />
+      <trkpt lat="55.76000" lon="37.61790" />
+      <trkpt lat="55.76070" lon="37.61740" />
+      <trkpt lat="55.76000" lon="37.61680" />
+      <trkpt lat="55.75930" lon="37.61620" />
+      <trkpt lat="55.75860" lon="37.61660" />
+      <trkpt lat="55.75790" lon="37.61700" />
+      <trkpt lat="55.75720" lon="37.61740" />
+      <trkpt lat="55.75650" lon="37.61780" />
+      <trkpt lat="55.75580" lon="37.61730" />
+    </trkseg>
+  </trk>
+</gpx>

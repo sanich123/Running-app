@@ -91,7 +91,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
         <View style={{ height: 40, paddingHorizontal: 8 }}>
           <Likes activityId={id} size={likesSize} />
         </View>
-        <Card.Actions>
+        <Card.Actions style={styles.actions}>
           <Btns
             activityId={id}
             userId={userId}
@@ -123,5 +123,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
+  },
+  actions: {
+    marginTop: -6,
+    paddingTop: 0,
   },
 });

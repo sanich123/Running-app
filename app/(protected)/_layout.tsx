@@ -1,4 +1,5 @@
-import { Redirect, Stack } from 'expo-router';
+import { useEffect } from 'react';
+import { Stack, useRootNavigationState, useRouter } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import SaveBtn from '@C/activity/save-btn/save-btn';
 import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
@@ -13,21 +14,34 @@ export const unstable_settings = {
 };
 
 export default function ProtectedLayout() {
-  const { isLoading, isError, isUninitialized, isSuccess } = useInitialState();
+  const { isLoading, isError, isUninitialized, isSuccess, hasAccessToken } = useInitialState();
+  const router = useRouter();
+  const rootNavigationState = useRootNavigationState();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const { isCameraVisible } = useAppSelector(({ manualActivity }) => manualActivity);
-  if (isLoading || isUninitialized) {
+
+  useEffect(() => {
+    if (rootNavigationState?.key && (hasAccessToken === false || isError)) {
+      router.replace('/sign-in');
+    }
+  }, [hasAccessToken, isError, rootNavigationState?.key, router]);
+
+  if (!rootNavigationState?.key || hasAccessToken === null || isLoading || isUninitialized) {
     return <FullPageActivityLoader />;
-  } else if (isError) {
-    return <Redirect href="/sign-in" />;
+  } else if (hasAccessToken === false || isError) {
+    return <FullPageActivityLoader />;
   } else if (isSuccess) {
     return (
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: colors.surface },
           headerTintColor: colors.onSurface,
-          headerTitleStyle: { fontFamily: FONT_FAMILIES.extraBold, fontSize: 15 },
+          headerTitleStyle: {
+            color: colors.primary,
+            fontFamily: FONT_FAMILIES.semiBold,
+            fontSize: 16,
+          },
         }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false, headerTitle: 'Главная' }} />
         <Stack.Screen

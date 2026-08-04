@@ -1,5 +1,5 @@
 /* eslint-disable import-x/no-named-as-default-member */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { addEventListener } from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
@@ -11,6 +11,7 @@ import { changeNetworkState } from '@R/slices/network/network';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 
 export default function useInitialState() {
+  const [hasAccessToken, setHasAccessToken] = useState<boolean | null>(null);
   const [verifyToken, { data: configInfo, isLoading, isError, isSuccess, isUninitialized, error }] =
     useLazyVerifyConfigQuery();
   const { theme } = useAppSelector(({ language }) => language);
@@ -32,15 +33,21 @@ export default function useInitialState() {
   useEffect(() => {
     (async () => {
       const accessToken = await AsyncStorage.getItem('accessToken');
-      await verifyToken({ accessToken: accessToken ?? '' }).unwrap();
+      if (!accessToken) {
+        setHasAccessToken(false);
+        return;
+      }
+
+      setHasAccessToken(true);
+      await verifyToken({ accessToken }).unwrap();
     })();
   }, [dispatch, verifyToken]);
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess || hasAccessToken === false) {
       SplashScreen.hide();
     }
-  }, [configInfo, dispatch, isSuccess]);
+  }, [configInfo, dispatch, hasAccessToken, isSuccess]);
 
   useEffect(() => {
     if (isError) {
@@ -59,5 +66,6 @@ export default function useInitialState() {
     isError,
     isUninitialized,
     isSuccess,
+    hasAccessToken,
   };
 }

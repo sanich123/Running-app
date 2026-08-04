@@ -12,9 +12,13 @@ export default function useStartStopTracking() {
 
   useEffect(() => {
     if (activityStatus === started || activityStatus === continued) {
-      startLocationTracking();
+      startLocationTracking().catch((error) => {
+        if (__DEV__) console.error('[tracking] Failed to start location tracking', error);
+      });
     } else {
-      stopLocationTracking();
+      stopLocationTracking().catch((error) => {
+        if (__DEV__) console.error('[tracking] Failed to stop location tracking', error);
+      });
     }
     if (activityStatus === initial) {
       dispatch(resetLocationsFromBackground());

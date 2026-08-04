@@ -71,6 +71,7 @@ export default {
       package: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
       permissions: [
         'android.permission.RECORD_AUDIO',
+        'android.permission.RECEIVE_BOOT_COMPLETED',
         'ACCESS_BACKGROUND_LOCATION',
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
@@ -114,6 +115,9 @@ export default {
       [
         'expo-location',
         {
+          isAndroidBackgroundLocationEnabled: true,
+          isAndroidForegroundServiceEnabled: true,
+          isIosBackgroundLocationEnabled: true,
           locationAlwaysAndWhenInUsePermission:
             'Разрешите приложению Runich использовать данные о местоположении в фоне все время. Это необходимо для записи тренировок. ',
         },

@@ -27,7 +27,7 @@ export default function UsersSettingsIcons() {
               iconColor={colors.primary}
               size={30}
               onPress={() => push('/')}
-              style={{ marginRight: -10 }}
+              style={styles.iconButton}
             />
           )}
           <IconButton
@@ -36,7 +36,7 @@ export default function UsersSettingsIcons() {
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
             onPress={() => push('/(protected)/users')}
-            style={{ marginRight: -10 }}
+            style={styles.iconButton}
           />
           <IconButton
             testID="settingsIcon"
@@ -44,7 +44,7 @@ export default function UsersSettingsIcons() {
             animated
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            style={{ marginRight: -10 }}
+            style={styles.iconButton}
             onPress={() => push('/(protected)/settings')}
           />
           {Platform.OS === 'web' && (
@@ -78,5 +78,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'transparent',
+    paddingRight: 8,
+  },
+  iconButton: {
+    margin: 0,
   },
 });

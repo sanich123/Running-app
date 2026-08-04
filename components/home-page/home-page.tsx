@@ -11,7 +11,6 @@ import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional
 import { resetFinishedActivity } from '@R/slices/activity/activity';
 import { resetManualActivitySlice, setIsManualAdding } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import HomeWelcome from './home-welcome';
 
 export default function Feed() {
   const dispatch = useAppDispatch();
@@ -36,7 +35,6 @@ export default function Feed() {
 
   return (
     <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
-      <HomeWelcome />
       {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
       {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
       {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}

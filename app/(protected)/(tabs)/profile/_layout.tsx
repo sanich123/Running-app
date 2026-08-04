@@ -16,7 +16,11 @@ export default function ProfileStack() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.surface },
         headerTintColor: colors.onSurface,
-        headerTitleStyle: { fontFamily: FONT_FAMILIES.extraBold, fontSize: 15 },
+        headerTitleStyle: {
+          color: colors.primary,
+          fontFamily: FONT_FAMILIES.semiBold,
+          fontSize: 16,
+        },
         title: LABELS[language].profile,
       }}>
       <Stack.Screen

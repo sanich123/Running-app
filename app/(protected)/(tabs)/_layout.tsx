@@ -1,3 +1,4 @@
+import { Platform, View } from 'react-native';
 import { Tabs, usePathname } from 'expo-router';
 import { Icon, useTheme } from 'react-native-paper';
 import AvatarShowable from '@C/avatar/showable/showable';
@@ -8,67 +9,82 @@ export default function TabLayout() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const { colors } = useTheme();
   const pathname = usePathname();
+
+  const renderTabIcon = (source: string, focusedSource: string, focused: boolean, color?: string) => (
+    <View
+      style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 52,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: focused ? colors.primaryContainer : 'transparent',
+      }}>
+      <Icon source={focused ? focusedSource : source} color={color ?? colors.primary} size={30} />
+    </View>
+  );
+
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.onSurfaceDisabled,
         tabBarAllowFontScaling: false,
-        tabBarShowLabel: true,
+        tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.outlineVariant,
           borderTopWidth: 1,
           elevation: 3,
-          height: 72,
-          paddingBottom: 8,
+          height: 64,
+          paddingBottom: 6,
           paddingTop: 6,
           display: pathname === '/activity' ? 'none' : 'flex',
         },
-        tabBarLabelStyle: { fontSize: 12, fontWeight: '600' },
+        tabBarItemStyle: { paddingVertical: 4 },
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <Icon
-              source={focused ? 'home' : 'home-outline'}
-              color={focused ? colors.primary : colors.onSurfaceVariant}
-              size={25}
-            />
-          ),
+          tabBarAccessibilityLabel: 'Лента',
+          tabBarIcon: ({ focused }) => renderTabIcon('home-outline', 'home-variant', focused),
         }}
       />
       <Tabs.Screen
         name={ROUTES.activity}
         options={{
-          tabBarLabel: 'Активность',
+          href: Platform.OS === 'web' ? null : undefined,
+          tabBarAccessibilityLabel: 'Активность',
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <Icon
-              source={focused ? 'run' : 'run-fast'}
-              color={focused ? colors.primary : colors.onSurfaceVariant}
-              size={25}
-            />
-          ),
+          tabBarIcon: ({ focused }) => renderTabIcon('run-fast', 'run-fast', focused, focused ? colors.tertiary : colors.primary),
         }}
       />
       <Tabs.Screen
         name={ROUTES.statistic}
         options={{
           headerShown: false,
-          tabBarLabel: 'Статистика',
-          tabBarIcon: ({ focused }) => (
-            <Icon source="chart-donut" color={focused ? colors.primary : colors.onSurfaceVariant} size={25} />
-          ),
+          tabBarAccessibilityLabel: 'Статистика',
+          tabBarIcon: ({ focused }) => renderTabIcon('chart-line', 'chart-line', focused),
         }}
       />
       <Tabs.Screen
         name={ROUTES.profile}
         options={{
-          tabBarLabel: 'Профиль',
+          tabBarAccessibilityLabel: 'Профиль',
           headerShown: false,
-          tabBarIcon: ({ focused }) => <AvatarShowable size={30} id={userId} focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 52,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: focused ? colors.primaryContainer : 'transparent',
+              }}>
+              <AvatarShowable size={34} id={userId} focused={focused} />
+            </View>
+          ),
         }}
       />
     </Tabs>

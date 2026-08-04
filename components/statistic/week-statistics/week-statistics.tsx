@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -46,7 +46,7 @@ export default function WeekStatistics() {
         {
           backgroundColor: colors.surface,
           width: width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH,
-          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          alignSelf: 'center',
           borderCurve: 'continuous',
           shadowColor: 'black',
           shadowOffset: { width: 0, height: 10 },
@@ -95,6 +95,5 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 8,
     padding: 16,
-    marginHorizontal: 'auto',
   },
 });

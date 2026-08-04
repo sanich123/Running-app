@@ -20,9 +20,21 @@ export default function WeekStatisticsMetric({
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   return (
-    <View style={{ display: 'flex', width: '33%', alignItems: 'center' }}>
-      <Text variant="bodySmall">{title}</Text>
-      <Text variant="headlineSmall" style={{ color: colors.primary, fontFamily: FONT_FAMILIES.extraBold }}>
+    <View style={{ display: 'flex', width: '33%', alignItems: 'center', minWidth: 0 }}>
+      <Text
+        variant="bodySmall"
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.75}
+        style={{ fontSize: 11 }}>
+        {title}
+      </Text>
+      <Text
+        variant="titleLarge"
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+        style={{ color: colors.primary, fontFamily: FONT_FAMILIES.extraBold, fontSize: 18 }}>
         {isLoading && ' '}
         {isSuccess && metrics}
         {isError && WEEK_STATISTICS[language].error}

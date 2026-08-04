@@ -3,8 +3,8 @@ import {
   hasStartedLocationUpdatesAsync,
   startLocationUpdatesAsync,
   stopLocationUpdatesAsync,
+  watchPositionAsync,
 } from 'expo-location';
-import { isTaskRegisteredAsync } from 'expo-task-manager';
 import * as TaskManager from 'expo-task-manager';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { setIsTooMuchSpeed } from '@R/slices/location/location';
@@ -13,70 +13,107 @@ import { showCrossPlatformToast } from '@U/custom-toast';
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 import { BACKGROUND_NOTIFICATION, DISTANCE_INTERVAL, LOCATION_TRACKING, TIME_INTERVAL } from '../const';
 import type { TaskManagerLocationEvent } from '../const';
+import type { LocationObject } from 'expo-location';
+
+let foregroundLocationSubscription: { remove: () => void } | null = null;
+
+function isMissingLocationTaskError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes('TaskNotFoundException') || message.includes(`Task '${LOCATION_TRACKING}' not found`);
+}
+
+async function processLocation(currentPosition: LocationObject) {
+  const lastPosition = store.getState().location.lastPosition;
+  if (lastPosition && currentPosition.timestamp <= lastPosition.timestamp) {
+    return;
+  }
+
+  try {
+    const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer, lastArrayLength } =
+      getMetricsTaskManager(currentPosition);
+
+    if (
+      !lastArrayLength ||
+      lastArrayLength < 10 ||
+      (currentPace > 3 && currentPace < Infinity) ||
+      store.getState().additionalInfoActivity.sport === SPORTS_BTNS_VALUES.bike
+    ) {
+      saveMetricsToStoreTaskManager(
+        currentKilometer,
+        currentPosition,
+        currentDuration,
+        currentPace,
+        currentAltitude,
+        currentDistance,
+      );
+    } else {
+      store.dispatch(setIsTooMuchSpeed(true));
+      showCrossPlatformToast('Геолокация отклонена из-за слишком высокой скорости относительно предыдущей точки.');
+    }
+  } catch (error) {
+    if (__DEV__) console.error('[tracking]', 'Something went wrong when saving a new location...', error);
+  }
+}
+
+async function startForegroundLocationTracking() {
+  if (foregroundLocationSubscription) {
+    return;
+  }
+
+  foregroundLocationSubscription = await watchPositionAsync(
+    {
+      accuracy: Accuracy.High,
+      timeInterval: TIME_INTERVAL,
+      distanceInterval: 0,
+    },
+    processLocation,
+  );
+}
 
 export async function startLocationTracking() {
-  await startLocationUpdatesAsync(LOCATION_TRACKING, {
-    accuracy: Accuracy.High,
-    timeInterval: TIME_INTERVAL,
-    distanceInterval: DISTANCE_INTERVAL,
-    showsBackgroundLocationIndicator: true,
-    foregroundService: {
-      notificationTitle: BACKGROUND_NOTIFICATION[store.getState().language.language].isActive,
-      notificationBody: BACKGROUND_NOTIFICATION[store.getState().language.language].turnOff,
-      notificationColor: '#333333',
-    },
-  });
-  const hasStarted = await hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
-  showCrossPlatformToast(`BgTracking started = ${hasStarted}`);
+  if (!(await hasStartedLocationUpdatesAsync(LOCATION_TRACKING))) {
+    await startLocationUpdatesAsync(LOCATION_TRACKING, {
+      accuracy: Accuracy.High,
+      timeInterval: TIME_INTERVAL,
+      distanceInterval: DISTANCE_INTERVAL,
+      showsBackgroundLocationIndicator: true,
+      foregroundService: {
+        notificationTitle: BACKGROUND_NOTIFICATION[store.getState().language.language].isActive,
+        notificationBody: BACKGROUND_NOTIFICATION[store.getState().language.language].turnOff,
+        notificationColor: '#333333',
+      },
+    });
+  }
+
+  await startForegroundLocationTracking();
+  showCrossPlatformToast('BgTracking started');
 }
 
 export async function stopLocationTracking() {
-  isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
-    if (tracking) {
-      stopLocationUpdatesAsync(LOCATION_TRACKING);
-      showCrossPlatformToast(`BgTracking stopped`);
+  try {
+    if (await hasStartedLocationUpdatesAsync(LOCATION_TRACKING)) {
+      await stopLocationUpdatesAsync(LOCATION_TRACKING);
     }
-  });
+  } catch (error) {
+    // The task can disappear after an app restart or while Android is
+    // delivering a background event. Stopping it is still considered done.
+    if (!isMissingLocationTaskError(error)) {
+      throw error;
+    }
+  }
+
+  foregroundLocationSubscription?.remove();
+  foregroundLocationSubscription = null;
+
+  showCrossPlatformToast('BgTracking stopped');
 }
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLocationEvent) => {
-  if (error) {
+  if (error || !data?.locations?.length) {
     return;
   }
-  if (data) {
-    const { locations } = data;
-    const currentPosition = locations[0];
-    try {
-      const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer, lastArrayLength } =
-        getMetricsTaskManager(currentPosition);
 
-      if (!lastArrayLength || lastArrayLength < 10) {
-        saveMetricsToStoreTaskManager(
-          currentKilometer,
-          currentPosition,
-          currentDuration,
-          currentPace,
-          currentAltitude,
-          currentDistance,
-        );
-      } else if (
-        (currentPace > 3 && currentPace < Infinity) ||
-        store.getState().additionalInfoActivity.sport === SPORTS_BTNS_VALUES.bike
-      ) {
-        saveMetricsToStoreTaskManager(
-          currentKilometer,
-          currentPosition,
-          currentDuration,
-          currentPace,
-          currentAltitude,
-          currentDistance,
-        );
-      } else {
-        store.dispatch(setIsTooMuchSpeed(true));
-        showCrossPlatformToast('Геолокация отклонена из-за слишком высокой скорости относительно предыдущей точки.');
-      }
-    } catch (error) {
-      if (__DEV__) console.error('[tracking]', 'Something went wrong when saving a new location...', error);
-    }
+  for (const currentPosition of data.locations) {
+    await processLocation(currentPosition);
   }
 });
