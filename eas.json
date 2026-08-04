@@ -8,8 +8,11 @@
       "autoIncrement": true,
       "environment": "production",
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "production",
-        "EXPO_PUBLIC_BASE_URL": "https://runich-backend-production.up.railway.app"
+        "EXPO_PUBLIC_BASE_URL": "https://runich-backend-production.up.railway.app",
+        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://ixvxeiqzuhzrfixglylt.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4dnhlaXF6dWh6cmZpeGdseWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM0NTA0ODEsImV4cCI6MjAzOTAyNjQ4MX0.yHbaFeYD1lxcuEKrQ7Y-CtwtlCgYct8xkyDSTxvLtcE",
+        "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWtvam9oazBrZjcza29kZ2hhMmtlcjEifQ.PkCRRfGrD8iiEOIBB9BLcg"
       }
     },
     "preview": {
@@ -21,11 +24,11 @@
       "ios": { "simulator": true },
       "environment": "preview",
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "preview",
-        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g",
         "EXPO_PUBLIC_BASE_URL": "https://runich-backend-production.up.railway.app",
+        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g",
         "EXPO_PUBLIC_SUPABASE_URL": "https://ixvxeiqzuhzrfixglylt.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4dnhlaXF6dWh6cmZpeGdseWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM0NTA0ODEsImV4cCI6MjAzOTAyNjQ4MX0.yHbaFeYD1lxcuEKrQ7Y-CtwtlCgYct8xkyDSTxvLtcE"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4dnhlaXF6dWh6cmZpeGdseWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM0NTA0ODEsImV4cCI6MjAzOTAyNjQ4MX0.yHbaFeYD1lxcuEKrQ7Y-CtwtlCgYct8xkyDSTxvLtcE",
+        "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWtvam9oazBrZjcza29kZ2hhMmtlcjEifQ.PkCRRfGrD8iiEOIBB9BLcg"
       },
       "channel": "preview"
     },
@@ -36,27 +39,9 @@
       "android": { "buildType": "apk" },
       "environment": "development",
       "env": {
-        "APP_VARIANT": "development",
-        "EXPO_PUBLIC_APP_ENV": "development",
-        "EXPO_PUBLIC_DEV_WEB_API_URL": "http://localhost:3000",
-        "EXPO_PUBLIC_DEV_NATIVE_API_URL": "http://192.168.0.16:3000"
+        "APP_VARIANT": "development"
       },
       "channel": "development"
-    },
-    "ios-simulator": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "ios": {
-        "simulator": true
-      },
-      "environment": "development",
-      "env": {
-        "APP_VARIANT": "development",
-        "EXPO_PUBLIC_APP_ENV": "development",
-        "EXPO_PUBLIC_DEV_WEB_API_URL": "http://localhost:3000",
-        "EXPO_PUBLIC_DEV_NATIVE_API_URL": "http://192.168.0.16:3000"
-      },
-      "channel": "ios-simulator"
     }
   }
 }

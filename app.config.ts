@@ -1,4 +1,4 @@
-const IS_DEV = process.env.APP_VARIANT === 'development' || process.env.EXPO_PUBLIC_APP_ENV === 'development';
+const IS_DEV = process.env.APP_VARIANT === 'development';
 
 export default {
   expo: {
