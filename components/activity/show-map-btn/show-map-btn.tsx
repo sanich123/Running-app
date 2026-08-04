@@ -16,11 +16,7 @@ export default function ShowMapBtn() {
       testID={ACTIVITY_SHOW_MAP_TEST_ID}
       onPress={() => dispatch(setIsMapVisible(!isMapVisible))}>
       <View style={[styles.showMapBtn, { backgroundColor: colors.surface, borderColor: colors.outline }]}>
-        <Icon
-          source={isMapVisible ? 'map-marker-off' : 'map-marker'}
-          size={25}
-          color={colors.primary}
-        />
+        <Icon source={isMapVisible ? 'map-marker-off' : 'map-marker'} size={25} color={colors.primary} />
       </View>
     </TouchableRipple>
   );

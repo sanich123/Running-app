@@ -56,7 +56,8 @@ export default function TabLayout() {
           href: Platform.OS === 'web' ? null : undefined,
           tabBarAccessibilityLabel: 'Активность',
           headerShown: false,
-          tabBarIcon: ({ focused }) => renderTabIcon('run-fast', 'run-fast', focused, focused ? colors.tertiary : colors.primary),
+          tabBarIcon: ({ focused }) =>
+            renderTabIcon('run-fast', 'run-fast', focused, focused ? colors.tertiary : colors.primary),
         }}
       />
       <Tabs.Screen
