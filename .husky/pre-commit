@@ -13,7 +13,7 @@ yarn prettier --write \
   './*.{ts,tsx,js,json}'
 
 # 4. Проверка состояния Expo
-yarn expo-doctor || true
+npx expo-doctor@latest || true
 
 # 5. Тесты
 yarn test
