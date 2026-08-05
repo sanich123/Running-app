@@ -16,6 +16,7 @@ export async function getMigrationArchiveAndSendToServer({
   setIsSuccess,
   setIsError,
   userId,
+  accessToken,
 }: GetMigrationArchiveAndSendToServerProps) {
   try {
     const file = await getDocumentAsync();
@@ -41,7 +42,7 @@ export async function getMigrationArchiveAndSendToServer({
           throw new Error('Не удалось создать архив');
         }
         if (new File(toFileUri(pathToArchive)).exists) {
-          await sendArchiveToServer({ setIsSendingArchive, setIsError, pathToArchive, userId });
+          await sendArchiveToServer({ setIsSendingArchive, setIsError, pathToArchive, userId, accessToken });
           await removeCacheFolder({ setIsDeletingCacheFolder, setIsError });
           setIsSuccess(true);
           setIsDisabled(false);

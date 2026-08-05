@@ -1,25 +1,12 @@
-import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { COLORS } from '@const/theme-colors';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function FullPageActivityLoader() {
   const systemColorScheme = useColorScheme();
-  const [storedTheme, setStoredTheme] = useState<string | null>(null);
-
-  useEffect(() => {
-    AsyncStorage.getItem('persist:root')
-      .then((persistedState) => {
-        if (!persistedState) return;
-        const languageState = JSON.parse(persistedState).language;
-        const theme = languageState ? JSON.parse(languageState).theme : null;
-        setStoredTheme(theme);
-      })
-      .catch(() => undefined);
-  }, []);
-
-  const isDark = storedTheme ? storedTheme === 'dark' : systemColorScheme === 'dark';
+  const { theme } = useAppSelector(({ language }) => language);
+  const isDark = theme ? theme === 'dark' : systemColorScheme === 'dark';
   const themeColors = isDark ? COLORS.dark : COLORS.light;
 
   return (

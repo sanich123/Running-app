@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FileSystemUploadType, uploadAsync } from 'expo-file-system/legacy';
 import { toFileUri } from './uri-tools';
 
@@ -7,14 +6,15 @@ export async function sendArchiveToServer({
   setIsError,
   pathToArchive,
   userId,
+  accessToken,
 }: {
   setIsSendingArchive: (arg: boolean) => void;
   setIsError: (arg: string) => void;
   pathToArchive: string;
   userId: string;
+  accessToken: string;
 }) {
   try {
-    const accessToken = await AsyncStorage.getItem('accessToken');
     setIsSendingArchive(true);
     const response = await uploadAsync(
       `${process.env.EXPO_PUBLIC_BASE_URL}/activity/migration-strava/${userId}`,

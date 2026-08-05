@@ -4,11 +4,13 @@ import type * as ExpoLinking from 'expo-linking';
 
 let consoleErrorSpy: jest.SpiedFunction<typeof console.error>;
 
-jest.mock('@react-native-async-storage/async-storage', () =>
-  // Jest mock factories require CommonJS here.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
-);
+jest.mock('react-native-mmkv', () => ({
+  createMMKV: () => ({
+    getString: jest.fn(),
+    set: jest.fn(),
+    remove: jest.fn(),
+  }),
+}));
 
 jest.mock('redux-persist', () => {
   const actualReduxPersist = jest.requireActual('redux-persist');

@@ -48,8 +48,8 @@ export default function RootLayout() {
   }
 
   return (
-    <PersistGate loading={<FullPageActivityLoader />} persistor={persistor}>
-      <Provider store={store}>
+    <Provider store={store}>
+      <PersistGate loading={<FullPageActivityLoader />} persistor={persistor}>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
             <KeyboardProvider>
@@ -66,7 +66,7 @@ export default function RootLayout() {
             </KeyboardProvider>
           </SafeAreaProvider>
         </GestureHandlerRootView>
-      </Provider>
-    </PersistGate>
+      </PersistGate>
+    </Provider>
   );
 }

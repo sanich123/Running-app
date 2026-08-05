@@ -14,7 +14,7 @@ const STRAVA_EXPORT_URL =
 const removeStepNumber = (text: string) => text.replace(/^\d+\.\s*/, '');
 
 export default function MigrationFromStrava() {
-  const { userId } = useAppSelector(({ auth }) => auth);
+  const { userId, accessToken } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ language }) => language);
   const { colors } = useTheme();
   const {
@@ -165,6 +165,7 @@ export default function MigrationFromStrava() {
               setIsSuccess,
               setIsError,
               userId,
+              accessToken,
             })
           }
           disabled={isDisabled && !isError}

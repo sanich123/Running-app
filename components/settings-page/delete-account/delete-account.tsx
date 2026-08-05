@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useDeleteUserMutation } from '@R/services/authentication/authentication';
@@ -25,7 +24,6 @@ export default function DeleteAccountBtn() {
     return await deleteAccount({ userId })
       .unwrap()
       .then(async () => {
-        await AsyncStorage.removeItem('accessToken');
         dispatch(resetProfileSlice());
         dispatch(resetActivitySlice());
         dispatch(resetMainFeedSlice());

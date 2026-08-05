@@ -8,4 +8,5 @@ export interface GetMigrationArchiveAndSendToServerProps {
   setIsSuccess: (arg: boolean) => void;
   setIsError: (arg: string) => void;
   userId: string;
+  accessToken: string;
 }

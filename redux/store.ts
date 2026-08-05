@@ -1,8 +1,8 @@
 /* eslint-disable import-x/no-named-as-default */
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { persistStore, persistReducer } from 'redux-persist';
+import { appStorage } from '@U/storage/storage';
 import { runichApi } from './runich-api/runich-api';
 import additionalInfoActivity from './slices/actitivity-additional-info/activity-additional-info';
 import activity from './slices/activity/activity';
@@ -20,7 +20,7 @@ import type { Action, Reducer } from '@reduxjs/toolkit';
 
 const persistConfig = {
   key: 'root',
-  storage: AsyncStorage,
+  storage: appStorage,
   whitelist: ['language', 'activity', 'location', 'auth'],
 };
 

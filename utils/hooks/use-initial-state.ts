@@ -1,6 +1,5 @@
 /* eslint-disable import-x/no-named-as-default-member */
 import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { addEventListener } from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
 import * as SplashScreen from 'expo-splash-screen';
@@ -15,6 +14,7 @@ export default function useInitialState() {
   const [verifyToken, { data: configInfo, isLoading, isError, isSuccess, isUninitialized, error }] =
     useLazyVerifyConfigQuery();
   const { theme } = useAppSelector(({ language }) => language);
+  const { accessToken } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -32,7 +32,6 @@ export default function useInitialState() {
 
   useEffect(() => {
     (async () => {
-      const accessToken = await AsyncStorage.getItem('accessToken');
       if (!accessToken) {
         setHasAccessToken(false);
         return;
@@ -41,7 +40,7 @@ export default function useInitialState() {
       setHasAccessToken(true);
       await verifyToken({ accessToken }).unwrap();
     })();
-  }, [dispatch, verifyToken]);
+  }, [accessToken, dispatch, verifyToken]);
 
   useEffect(() => {
     if (isSuccess || hasAccessToken === false) {

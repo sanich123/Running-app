@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { persistor, resetStore } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -15,7 +14,6 @@ export default function LogoutBtn() {
       title={SETTINGS[language].logout}
       destructive
       onPress={async () => {
-        await AsyncStorage.removeItem('accessToken');
         await persistor.purge();
         dispatch(resetStore());
         replace('/sign-in');

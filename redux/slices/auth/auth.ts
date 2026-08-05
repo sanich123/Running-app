@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { authenticationApi } from '@R/services/authentication/authentication';
-import { setAccessTokenToStorage } from '@U/async-storage';
 import { AUTH_INITIAL_STATE } from './const';
 
 export const auth = createSlice({
@@ -21,9 +20,7 @@ export const auth = createSlice({
     builder.addMatcher(
       authenticationApi.endpoints.loginUser.matchFulfilled,
       (state, { payload: { id, accessToken } }) => {
-        if (accessToken) {
-          setAccessTokenToStorage(accessToken);
-        }
+        state.accessToken = accessToken;
         state.userId = id;
         state.isNeedToShowConfirmEmailInput = false;
       },
@@ -31,9 +28,7 @@ export const auth = createSlice({
     builder.addMatcher(
       authenticationApi.endpoints.verifyConfig.matchFulfilled,
       (state, { payload: { id, accessToken, appVersion } }) => {
-        if (accessToken) {
-          setAccessTokenToStorage(accessToken);
-        }
+        state.accessToken = accessToken;
         state.userId = id;
         state.appVersion = appVersion;
         state.isNeedToShowConfirmEmailInput = false;
@@ -45,9 +40,7 @@ export const auth = createSlice({
     builder.addMatcher(
       authenticationApi.endpoints.confirmSignUpCodeByEmail.matchFulfilled,
       (state, { payload: { id, accessToken } }) => {
-        if (accessToken) {
-          setAccessTokenToStorage(accessToken);
-        }
+        state.accessToken = accessToken;
         state.isNeedToShowConfirmEmailInput = false;
         state.userId = id;
       },
