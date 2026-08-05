@@ -52,6 +52,17 @@ export default function LocationPermissions({
           </Link>
         </View>
       )}
+      {isSuccess && !profile && (
+        <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+          <Text variant="bodyMedium" style={{ textAlign: 'justify' }}>
+            Вы зарегистрированы, но у вас нет профиля пользователя. Для того, чтобы записывать и сохранять активности,
+            надо добавить имя и фотографию
+          </Text>
+          <Link href="/(protected)/(tabs)/profile/profile-settings" style={{ marginTop: 10 }}>
+            Перейти и создать профиль пользователя
+          </Link>
+        </View>
+      )}
       <BackgroundLocationModal
         backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}
         requestBackgroundPermission={requestBackgroundPermission}
