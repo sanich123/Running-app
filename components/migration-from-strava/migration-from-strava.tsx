@@ -1,13 +1,22 @@
-import { View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Link } from 'expo-router';
-import { Text, Button, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, Text, useTheme } from 'react-native-paper';
+import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { getMigrationArchiveAndSendToServer } from '@U/migration-strava/migration-archive';
 import { MIGRATION_STATES } from './const';
 import useGetStates from './hooks';
 
+const STRAVA_EXPORT_URL =
+  'https://support.strava.com/hc/en-us/articles/216918437-Exporting-your-Data-and-Bulk-Export#h_01GG58HC4F1BGQ9PQZZVANN6WF';
+
+const removeStepNumber = (text: string) => text.replace(/^\d+\.\s*/, '');
+
 export default function MigrationFromStrava() {
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { language } = useAppSelector(({ language }) => language);
+  const { colors } = useTheme();
   const {
     isDisabled,
     setIsDisabled,
@@ -27,33 +36,116 @@ export default function MigrationFromStrava() {
     setIsError,
     isInitial,
   } = useGetStates();
-  const { language } = useAppSelector(({ language }) => language);
-  const { colors } = useTheme();
+  const copy = MIGRATION_STATES[language];
+  const isRussian = language === LANGUAGES.russian;
+  const isProcessing = isDisabled && !isSuccess && !isError;
+  const statusText = isUnzipping
+    ? copy.unzipping
+    : isRemovingMedia
+      ? copy.remove
+      : isZipping
+        ? copy.zipping
+        : isSendingArchive
+          ? copy.transfer
+          : isDeletingCacheFolder
+            ? copy.cleaning
+            : isSuccess
+              ? copy.successSending
+              : isError
+                ? copy.error
+                : '';
+  const buttonText = isInitial
+    ? copy.chooseArchive
+    : isUnzipping
+      ? copy.unzip
+      : isRemovingMedia
+        ? copy.removing
+        : isZipping
+          ? copy.zip
+          : isSendingArchive
+            ? copy.sending
+            : isDeletingCacheFolder
+              ? copy.clean
+              : isSuccess
+                ? copy.success
+                : copy.error;
+  const steps = [copy.archiveToEmail, copy.whereToUpload];
+
   return (
-    <View style={{ flex: 1, alignItems: 'center', marginVertical: 15 }}>
-      <Text variant="titleMedium">{MIGRATION_STATES[language].ableToTransfer}</Text>
-      <View style={{ flex: 1, marginVertical: 15, justifyContent: 'flex-start', padding: 10, gap: 5 }}>
-        <Link href="https://support.strava.com/hc/en-us/articles/216918437-Exporting-your-Data-and-Bulk-Export#h_01GG58HC4F1BGQ9PQZZVANN6WF">
-          <Text variant="bodyLarge" style={{ color: colors.primary }}>
-            {MIGRATION_STATES[language].moreInfo}
+    <ScrollView
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}>
+      <View style={styles.container}>
+        <View style={styles.hero}>
+          <View style={[styles.heroIcon, { backgroundColor: colors.primaryContainer }]}>
+            <MaterialCommunityIcons name="database-import-outline" size={28} color={colors.primary} />
+          </View>
+          <Text variant="headlineSmall" style={styles.title}>
+            {isRussian ? 'Миграция из Strava' : 'Migration from Strava'}
           </Text>
-        </Link>
-        <Text variant="bodyLarge"> {MIGRATION_STATES[language].archiveToEmail}</Text>
-        <Text variant="bodyLarge"> {MIGRATION_STATES[language].whereToUpload}</Text>
-        <Text variant="bodyLarge">{MIGRATION_STATES[language].removeMedia}</Text>
-        <Text variant="bodyLarge">{MIGRATION_STATES[language].processUnZipping}</Text>
-        <Text variant="bodyLarge">{MIGRATION_STATES[language].wifiConnection}</Text>
-        <Text variant="bodyLarge" style={{ marginHorizontal: 10 }}>
-          {isUnzipping && MIGRATION_STATES[language].unzipping}
-          {isRemovingMedia && MIGRATION_STATES[language].remove}
-          {isZipping && MIGRATION_STATES[language].zipping}
-          {isSendingArchive && MIGRATION_STATES[language].transfer}
-          {isDeletingCacheFolder && MIGRATION_STATES[language].cleaning}
-          {isSuccess && MIGRATION_STATES[language].successSending}
-          {isError && MIGRATION_STATES[language].error}
-        </Text>
+          <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant, textAlign: 'center' }}>
+            {copy.ableToTransfer}
+          </Text>
+        </View>
+
+        <Card style={[styles.card, { backgroundColor: colors.surface }]} mode="contained">
+          <Card.Content>
+            <Text variant="titleMedium" style={styles.sectionTitle}>
+              {isRussian ? 'Как это работает' : 'How it works'}
+            </Text>
+            <View style={styles.step}>
+              <View style={[styles.stepNumber, { backgroundColor: colors.primaryContainer }]}>
+                <Text variant="labelLarge" style={{ color: colors.primary }}>
+                  1
+                </Text>
+              </View>
+              <Link href={STRAVA_EXPORT_URL} style={[styles.stepText, { color: colors.primary }]}>
+                {removeStepNumber(copy.moreInfo)}
+              </Link>
+            </View>
+            {steps.map((step, index) => (
+              <View key={step} style={styles.step}>
+                <View style={[styles.stepNumber, { backgroundColor: colors.primaryContainer }]}>
+                  <Text variant="labelLarge" style={{ color: colors.primary }}>
+                    {index + 2}
+                  </Text>
+                </View>
+                <Text variant="bodyMedium" style={styles.stepText}>
+                  {removeStepNumber(step)}
+                </Text>
+              </View>
+            ))}
+          </Card.Content>
+        </Card>
+
+        <View style={[styles.notice, { backgroundColor: colors.tertiaryContainer }]}>
+          <MaterialCommunityIcons name="information-outline" size={22} color={colors.tertiary} />
+          <Text variant="bodyMedium" style={{ color: colors.onTertiaryContainer, flex: 1 }}>
+            {copy.removeMedia} {copy.processUnZipping} {copy.wifiConnection}
+          </Text>
+        </View>
+
+        {(isProcessing || isSuccess || Boolean(isError)) && (
+          <View
+            style={[
+              styles.status,
+              { backgroundColor: isError ? colors.errorContainer : isSuccess ? colors.tertiaryContainer : colors.surface },
+            ]}>
+            {isProcessing && <ActivityIndicator size="small" color={colors.primary} />}
+            {isSuccess && <MaterialCommunityIcons name="check-circle-outline" size={24} color={colors.tertiary} />}
+            {Boolean(isError) && <MaterialCommunityIcons name="alert-circle-outline" size={24} color={colors.error} />}
+            <Text
+              variant="bodyMedium"
+              style={{ color: isError ? colors.onErrorContainer : isSuccess ? colors.onTertiaryContainer : colors.onSurface }}>
+              {statusText}
+            </Text>
+          </View>
+        )}
+
         <Button
-          mode="outlined"
+          mode="contained"
+          icon={isInitial ? 'file-upload-outline' : isSuccess ? 'check' : isError ? 'refresh' : 'progress-clock'}
           onPress={async () =>
             getMigrationArchiveAndSendToServer({
               setIsDisabled,
@@ -67,17 +159,88 @@ export default function MigrationFromStrava() {
               userId,
             })
           }
-          disabled={isDisabled}>
-          {isInitial && MIGRATION_STATES[language].chooseArchive}
-          {isUnzipping && MIGRATION_STATES[language].unzip}
-          {isRemovingMedia && MIGRATION_STATES[language].removing}
-          {isZipping && MIGRATION_STATES[language].zip}
-          {isSendingArchive && MIGRATION_STATES[language].sending}
-          {isDeletingCacheFolder && MIGRATION_STATES[language].clean}
-          {isSuccess && MIGRATION_STATES[language].success}
-          {isError && MIGRATION_STATES[language].error}
+          disabled={isDisabled && !isError}
+          style={styles.action}
+          contentStyle={styles.actionContent}>
+          {buttonText}
         </Button>
       </View>
-    </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 32,
+  },
+  container: {
+    alignSelf: 'center',
+    gap: 14,
+    maxWidth: 620,
+    width: '100%',
+  },
+  hero: {
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  heroIcon: {
+    alignItems: 'center',
+    borderRadius: 20,
+    height: 64,
+    justifyContent: 'center',
+    marginBottom: 12,
+    width: 64,
+  },
+  title: {
+    fontWeight: '700',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  card: {
+    borderRadius: 18,
+  },
+  sectionTitle: {
+    marginBottom: 14,
+  },
+  step: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 12,
+  },
+  stepNumber: {
+    alignItems: 'center',
+    borderRadius: 10,
+    height: 28,
+    justifyContent: 'center',
+    width: 28,
+  },
+  stepText: {
+    flex: 1,
+    lineHeight: 20,
+  },
+  notice: {
+    alignItems: 'flex-start',
+    borderRadius: 16,
+    flexDirection: 'row',
+    gap: 10,
+    padding: 14,
+  },
+  status: {
+    alignItems: 'center',
+    borderRadius: 16,
+    flexDirection: 'row',
+    gap: 10,
+    minHeight: 56,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  action: {
+    borderRadius: 14,
+  },
+  actionContent: {
+    minHeight: 52,
+  },
+});

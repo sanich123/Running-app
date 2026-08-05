@@ -32,8 +32,8 @@ export const additionalInfoActivity = createSlice({
     resetPhotoUrls: (state) => {
       state.photoVideoUrls = [];
     },
-    resetAdditionaInfoActivitySlice: (state) => {
-      return (state = ADDITIONAL_INFO_INITIAL_STATE);
+    resetAdditionaInfoActivitySlice: () => {
+      return ADDITIONAL_INFO_INITIAL_STATE;
     },
   },
 });

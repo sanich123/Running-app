@@ -1,5 +1,5 @@
 import polyline from '@mapbox/polyline';
-import distance from '@turf/distance';
+import getDistanceInMeters from '@turf/distance';
 import point from 'turf-point';
 import { POWERHOURS_COLORS } from '@const/theme-colors';
 import type { LocationObject } from 'expo-location';
@@ -50,7 +50,7 @@ function createHaloMarker(
 export function getDistance(origin: LocationObject, destination: LocationObject) {
   const from = point([origin.coords.longitude, origin.coords.latitude]);
   const to = point([destination.coords.longitude, destination.coords.latitude]);
-  return distance(from, to, { units: 'meters' });
+  return getDistanceInMeters(from, to, { units: 'meters' });
 }
 
 export function getSpeedInMinsInKm(distance: number, time: number) {

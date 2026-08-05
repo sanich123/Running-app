@@ -21,6 +21,11 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
+
+  if (!isLoading && !isError && !data?.photos?.length) {
+    return null;
+  }
+
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import {
@@ -22,7 +22,6 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
-  const [isNeedToGetUpdatedCommentLikes, setIsNeedToGetUpdatedCommentLikes] = useState(false);
 
   const [sendLikeToComment, { isSuccess: isSuccessSending, isError: isErrorSending, isLoading: isSendingLike }] =
     useSendLikeToCommentMutation();
@@ -36,16 +35,11 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
   } = useGetLikesByCommentIdQuery(commentId);
   const [sendEmailNotificationAfterSendingLike] = useSendEmailAfterSendingCommentLikeMutation();
 
-  const whatCommentLikesToIterate = isNeedToGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
+  const shouldGetUpdatedCommentLikes = commentIdWhichLikesToUpdate === commentId;
+  const whatCommentLikesToIterate = shouldGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
   const youGaveCommentLike = whatCommentLikesToIterate?.length
     ? isSuccess && commentLikes?.filter(({ authorId }: { authorId: string }) => authorId === userId)
     : [];
-
-  useEffect(() => {
-    if (commentIdWhichLikesToUpdate === commentId) {
-      setIsNeedToGetUpdatedCommentLikes(true);
-    }
-  }, [commentIdWhichLikesToUpdate, commentId]);
 
   useEffect(() => {
     if (isErrorSending || isErrorDeleting) {

@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert, Platform, View } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
 import { useDeleteUserMutation } from '@R/services/authentication/authentication';
 import { resetActivitySlice } from '@R/slices/activity/activity';
 import { resetAuthSlice } from '@R/slices/auth/auth';
@@ -13,12 +12,12 @@ import { resetProfileSlice } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { DELETE_ACCOUNT } from './const';
+import SettingsRow from '../settings-row/settings-row';
 
 export default function DeleteAccountBtn() {
   const { language } = useAppSelector(({ language }) => language);
   const { userId } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
-  const { dark, colors } = useTheme();
   const [deleteAccount] = useDeleteUserMutation();
   const { replace } = useRouter();
 
@@ -41,11 +40,11 @@ export default function DeleteAccountBtn() {
   }
 
   return (
-    <>
-      <TouchableRipple
-        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-        borderless
-        onPress={async () => {
+    <SettingsRow
+      icon="delete-outline"
+      title={DELETE_ACCOUNT[language].action}
+      destructive
+      onPress={async () => {
           if (Platform.OS !== 'web') {
             Alert.alert(
               DELETE_ACCOUNT[language].deletingAccount,
@@ -62,12 +61,7 @@ export default function DeleteAccountBtn() {
           } else {
             await deleteUserHandler();
           }
-        }}>
-        <View style={{ display: 'flex', backgroundColor: colors.background, justifyContent: 'center', padding: 10 }}>
-          <Text variant="titleMedium">{DELETE_ACCOUNT[language].action}</Text>
-        </View>
-      </TouchableRipple>
-      <Divider />
-    </>
+        }}
+    />
   );
 }

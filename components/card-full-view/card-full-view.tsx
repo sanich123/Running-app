@@ -1,4 +1,4 @@
-import { Platform, useWindowDimensions, View } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator } from 'react-native-paper';
 import Card from '@C/card/card';
@@ -22,8 +22,14 @@ export default function CardFullView() {
   } = useGetActivityByActivityIdQuery(`${activityId}`, { skip: !activityId });
 
   return (
-    <CrossPlatformLayout edges={[]} isError={isError} isLoading={true} scrollViewEnabled>
-      <View collapsable={false} style={{ flex: 1 }}>
+    <CrossPlatformLayout
+      edges={[]}
+      isError={isError}
+      isLoading={isLoading}
+      scrollViewEnabled={!isLoading && !isError}>
+      <View
+        collapsable={false}
+        style={[styles.content, (isLoading || isError) && styles.state]}> 
         {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
         {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
         {isSuccess && (
@@ -60,3 +66,11 @@ export default function CardFullView() {
     </CrossPlatformLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  content: { flex: 1 },
+  state: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

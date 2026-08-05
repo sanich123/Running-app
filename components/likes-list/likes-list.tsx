@@ -26,6 +26,7 @@ export default function LikesList() {
       style={[
         {
           flex: 1,
+          alignItems: 'center',
           width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
           marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
         },

@@ -30,6 +30,7 @@ export default function CommentFullViewPage() {
   return (
     <ScrollView
       contentContainerStyle={[
+        { flexGrow: 1 },
         (isLoading || isError) && styles.isInCenter,
         {
           width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,

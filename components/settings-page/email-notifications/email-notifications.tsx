@@ -1,11 +1,10 @@
-import { View, StyleSheet } from 'react-native';
-import { Text, Switch, Divider, useTheme, TouchableRipple } from 'react-native-paper';
+import { Switch } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery, useUpdateProfileByProfileIdMutation } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import { SETTINGS } from '../const';
+import SettingsRow from '../settings-row/settings-row';
 
 export default function EmailNotificationsBtn() {
-  const { dark } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ language }) => language);
   const { data: profileInfo, isSuccess } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
@@ -13,34 +12,24 @@ export default function EmailNotificationsBtn() {
 
   return (
     <>
-      {isSuccess && (
-        <TouchableRipple rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`} borderless>
-          <View style={styles.togglers}>
-            <Text variant="titleSmall">{`${profileInfo?.emailNotifications ? SETTINGS[language].switchOff : SETTINGS[language].switchOn} ${SETTINGS[language].emailNotifications}`}</Text>
+      {isSuccess && profileInfo && (
+        <SettingsRow
+          icon="email-outline"
+          title={language === 'russian' ? 'Уведомления по почте' : 'Email notifications'}
+          description={`${profileInfo.emailNotifications ? SETTINGS[language].switchOn : SETTINGS[language].switchOff} ${SETTINGS[language].emailNotifications}`}
+          leading={
             <Switch
-              value={profileInfo?.emailNotifications}
+              value={profileInfo.emailNotifications}
               onValueChange={async () => {
                 await updateProfile({
-                  body: { emailNotifications: !profileInfo?.emailNotifications },
+                  body: { emailNotifications: !profileInfo.emailNotifications },
                   id: profileInfo.id,
                 });
               }}
             />
-          </View>
-        </TouchableRipple>
+          }
+        />
       )}
-      <Divider />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  togglers: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 5,
-    padding: 10,
-  },
-});

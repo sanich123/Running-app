@@ -20,7 +20,9 @@ export default function MediaGrid() {
   );
 
   return (
-    <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
+    <SafeAreaView
+      edges={['left', 'right']}
+      style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
       {isLoading && <ActivityIndicator size="large" />}
       {isError ? <ErrorComponent error={error} /> : null}
       {data?.photos?.length && (

@@ -16,6 +16,7 @@ import manualActivity from './slices/manual-activity/manual-activity';
 import network from './slices/network/network';
 import profile from './slices/profile/profile';
 import unsendedActivity from './slices/unsended-activity/unsended-activity';
+import type { Action, Reducer } from '@reduxjs/toolkit';
 
 const persistConfig = {
   key: 'root',
@@ -23,24 +24,32 @@ const persistConfig = {
   whitelist: ['language', 'activity', 'location', 'auth'],
 };
 
-const rootReducer = persistReducer(
-  persistConfig,
-  combineReducers({
-    network,
-    language,
-    location,
-    profile,
-    activity,
-    mainFeed,
-    auth,
-    logining,
-    manualActivity,
-    additionalInfoActivity,
-    unsendedActivity,
-    comment,
-    [runichApi.reducerPath]: runichApi.reducer,
-  }),
-);
+const appReducer = combineReducers({
+  network,
+  language,
+  location,
+  profile,
+  activity,
+  mainFeed,
+  auth,
+  logining,
+  manualActivity,
+  additionalInfoActivity,
+  unsendedActivity,
+  comment,
+  [runichApi.reducerPath]: runichApi.reducer,
+});
+
+export const RESET_STORE = 'app/resetStore';
+export const resetStore = () => ({ type: RESET_STORE });
+
+type AppState = ReturnType<typeof appReducer>;
+const persistedReducer = persistReducer(persistConfig, appReducer);
+const rootReducer: Reducer<AppState, Action> = (state, action) =>
+  (persistedReducer as unknown as Reducer<AppState, Action>)(
+    action.type === RESET_STORE ? undefined : state,
+    action,
+  );
 
 export const store = configureStore({
   reducer: rootReducer,
@@ -52,6 +61,6 @@ export const store = configureStore({
 setupListeners(store.dispatch);
 export const persistor = persistStore(store);
 
-export type RootState = ReturnType<typeof rootReducer>;
+export type RootState = AppState;
 export type AppStore = typeof store;
 export type AppDispatch = typeof store.dispatch;

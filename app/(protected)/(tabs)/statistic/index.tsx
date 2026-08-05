@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
@@ -25,21 +25,14 @@ export default function Statistics() {
     error,
   } = useGetAnnualStatisticsByUserIdQuery({ userId }, { skip: !userId });
   const isRussian = language === LANGUAGES.russian;
-  const availableYears = yearStats ? Object.keys(yearStats).filter((year) => year !== 'isUserHasActivities') : [];
-  const selectedYearStats = yearStats?.[selectedYear] ?? yearStats?.[availableYears[0]];
-  const selectedStats = selectedYearStats?.[selectedType] ?? selectedYearStats?.all;
-
-  useEffect(() => {
-    if (yearStats && !yearStats[selectedYear] && availableYears[0]) {
-      setSelectedYear(Number(availableYears[0]));
-    }
-  }, [availableYears, selectedYear, yearStats]);
-
-  useEffect(() => {
-    if (!selectedYearStats?.[selectedType]) {
-      setSelectedType('all');
-    }
-  }, [selectedType, selectedYearStats]);
+  const availableYears = useMemo(
+    () => (yearStats ? Object.keys(yearStats).filter((year) => year !== 'isUserHasActivities') : []),
+    [yearStats],
+  );
+  const displayedYear = yearStats?.[selectedYear] ? selectedYear : Number(availableYears[0]);
+  const selectedYearStats = yearStats?.[displayedYear] ?? yearStats?.[availableYears[0]];
+  const displayedType = selectedYearStats?.[selectedType] ? selectedType : 'all';
+  const selectedStats = selectedYearStats?.[displayedType];
 
   return (
     <CrossPlatformLayout edges={[]} scrollViewEnabled isError={isError} isLoading={isLoading}>
@@ -50,8 +43,8 @@ export default function Statistics() {
           <YearTypePicker
             setSelectedYear={setSelectedYear}
             setSelectedType={setSelectedType}
-            selectedYear={selectedYear}
-            selectedType={selectedType}
+            selectedYear={displayedYear}
+            selectedType={displayedType}
             availableYearsAndTypes={availableYears.map((year) => ({
               year,
               types: Object.keys(yearStats[year]),
@@ -85,7 +78,7 @@ export default function Statistics() {
                   isError={isError}
                 />
               </View>
-              <Charts year={selectedYear} months={selectedStats} />
+              <Charts year={displayedYear} months={selectedStats} />
             </>
           )}
         </>

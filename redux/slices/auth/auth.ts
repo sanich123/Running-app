@@ -13,8 +13,8 @@ export const auth = createSlice({
     setRequiredAppVersion: (state, { payload }) => {
       state.appVersion = payload;
     },
-    resetAuthSlice: (state) => {
-      return (state = AUTH_INITIAL_STATE);
+    resetAuthSlice: () => {
+      return AUTH_INITIAL_STATE;
     },
   },
   extraReducers: (builder) => {

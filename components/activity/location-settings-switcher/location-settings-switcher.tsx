@@ -21,7 +21,6 @@ export default function LocationSettingsSwitcher({
     }
     if (!isLocationEnabled || isNeedToRefreshPermission) {
       isLocationServicesEnabled();
-      setIsNeedToRefreshPermission(false);
     }
   }, [setIsLocationEnabled, isLocationEnabled, isNeedToRefreshPermission]);
 

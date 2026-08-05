@@ -2,7 +2,6 @@ import { Platform, ScrollView, useWindowDimensions } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import ChangeTheme from './change-theme/change-theme';
-import ClearCacheBtn from './clear-cache-btn/clear-cache-btn';
 import DeleteAccountBtn from './delete-account/delete-account';
 import EmailNotificationsBtn from './email-notifications/email-notifications';
 import LanguageSwitcher from './language-switcher/language-switcher';
@@ -15,8 +14,10 @@ export default function SettingsPage() {
   const { width } = useWindowDimensions();
   return (
     <ScrollView
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={{
-        flex: 1,
+        padding: 12,
+        gap: 8,
         backgroundColor: colors.background,
         width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
         marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
@@ -24,7 +25,6 @@ export default function SettingsPage() {
       <LanguageSwitcher />
       {Platform.OS !== 'web' && <ChangeTheme />}
       <MigrationBtn />
-      <ClearCacheBtn />
       <PrefetchActivitiesBtn />
       <EmailNotificationsBtn />
       <LogoutBtn />

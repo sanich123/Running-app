@@ -5,6 +5,7 @@ export default {
     owner: 'sanich123',
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
+    scheme: 'runich',
     version: '4.0.0',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },

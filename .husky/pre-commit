@@ -2,7 +2,7 @@
 yarn tsc
 
 # 2. Линтинг и автофикс
-# yarn eslint --fix
+yarn eslint --fix
 
 # 3. Применяем Prettier к исходному коду проекта
 yarn prettier --write \

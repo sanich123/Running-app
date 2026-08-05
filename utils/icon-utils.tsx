@@ -2,39 +2,43 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { LANGUAGES } from '@const/enums';
 
+type MaterialCommunityIconName = keyof typeof MaterialCommunityIcons.glyphMap;
+
+function getSportIconName(sport: string): MaterialCommunityIconName {
+  switch (sport.toLowerCase()) {
+    case 'run':
+    case 'running':
+      return 'run';
+    case 'swim':
+    case 'swimming':
+      return 'swim';
+    case 'bike':
+    case 'cycling':
+    case 'cycle':
+    case 'ride':
+      return 'bike';
+    case 'workout':
+    case 'gym':
+      return 'dumbbell';
+    case 'hike':
+    case 'hiking':
+      return 'hiking';
+    case 'walk':
+    case 'walking':
+      return 'walk';
+    case 'all':
+      return 'check-all';
+    default:
+      return 'help-circle-outline';
+  }
+}
+
 export function getIconByTypeOfSport(sport: SPORTS_BTNS_VALUES, size = 15) {
-  if (sport === SPORTS_BTNS_VALUES.run) {
-    return <MaterialCommunityIcons name={sport} size={size} />;
-  }
-  if (sport === SPORTS_BTNS_VALUES.swim) {
-    return <MaterialCommunityIcons name={sport} size={size} />;
-  }
-  if (sport === SPORTS_BTNS_VALUES.ride) {
-    return <MaterialCommunityIcons name={SPORTS_BTNS_VALUES.bike} size={size} />;
-  }
-  if (sport === SPORTS_BTNS_VALUES.workout) {
-    return <MaterialCommunityIcons name="dumbbell" size={size} />;
-  }
-  if (sport === SPORTS_BTNS_VALUES.hike) {
-    return <MaterialCommunityIcons name="hiking" size={size} />;
-  }
-  if (sport === SPORTS_BTNS_VALUES.checkAll) {
-    return <MaterialCommunityIcons name="check-all" size={size} />;
-  }
-  return <MaterialCommunityIcons name={sport} size={size} />;
+  return <MaterialCommunityIcons name={getSportIconName(`${sport}`)} size={size} />;
 }
 
 export function getIconNameByTypeOfSport(sport: string) {
-  const mapNameToIcon = {
-    run: SPORTS_BTNS_VALUES.run,
-    bike: SPORTS_BTNS_VALUES.bike,
-    hike: 'hiking',
-    walk: SPORTS_BTNS_VALUES.walk,
-  };
-  if (Object.keys(mapNameToIcon).includes(sport)) {
-    return mapNameToIcon[sport as keyof typeof mapNameToIcon];
-  }
-  return '';
+  return getSportIconName(sport);
 }
 
 export const MAP_SPORT_TO_TITLE = {

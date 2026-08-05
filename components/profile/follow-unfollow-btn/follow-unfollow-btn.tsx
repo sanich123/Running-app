@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import {
@@ -46,10 +47,11 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
 
   return (
     <Button
-      mode="contained"
-      contentStyle={{ height: 48 }}
-      labelStyle={{ fontFamily: FONT_FAMILIES.semiBold }}
-      style={{ marginLeft: 'auto', borderRadius: 8 }}
+      mode="outlined"
+      compact
+      contentStyle={styles.content}
+      labelStyle={styles.label}
+      style={styles.button}
       disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend || isError}
       onPress={async () =>
         friendCell?.length > 0
@@ -81,3 +83,21 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
     </Button>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    borderRadius: 12,
+    flexShrink: 0,
+    marginLeft: 'auto',
+    width: 132,
+  },
+  content: {
+    height: 34,
+    paddingHorizontal: 9,
+  },
+  label: {
+    fontFamily: FONT_FAMILIES.semiBold,
+    fontSize: 12,
+    lineHeight: 16,
+  },
+});

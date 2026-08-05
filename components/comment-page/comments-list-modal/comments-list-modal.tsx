@@ -12,7 +12,7 @@ import type { CommentModalProps } from '../types';
 export default function CommentsListModal({ commentsModalRef }: CommentModalProps) {
   const { colors } = useTheme();
   const { activityOwnerProfile, isShowingTextInput, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
-  const renderBackdrop = useCallback(backdrop, []);
+  const renderBackdrop = useCallback((props: any) => backdrop(props), []);
   const snapPoints = ['20%', '50%', '55%', '60%'];
 
   return (

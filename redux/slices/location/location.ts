@@ -83,8 +83,8 @@ export const location = createSlice({
       state.currentPace = 0;
       state.locationsWithPauses = [];
     },
-    resetLocationSlice: (state) => {
-      return (state = LOCATION_INITIAL_STATE);
+    resetLocationSlice: () => {
+      return LOCATION_INITIAL_STATE;
     },
   },
 });

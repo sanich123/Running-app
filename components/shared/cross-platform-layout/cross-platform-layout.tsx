@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 import { useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Platform, RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { Platform, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import NetworkStateBanner from '../network-state-banner/network-state-banner';
 import type { CrossPlatformLayoutProps } from './types';
@@ -18,15 +18,24 @@ export default function CrossPlatformLayout({
 }: PropsWithChildren<CrossPlatformLayoutProps>) {
   const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
+  const isStatusState = Boolean(isError || isLoading);
+  const content = (
+    <>
+      {!isLoading && !isStatusState && <NetworkStateBanner />}
+      {children}
+    </>
+  );
 
   return (
     <SafeAreaView
       style={[{ flex: 1, backgroundColor: colors.background }, (isError || isLoading) && styles.centered]}
       edges={edges}>
-      {scrollViewEnabled ? (
-        <KeyboardAwareScrollView>
-          <ScrollView
-            contentContainerStyle={[
+      {scrollViewEnabled && !isStatusState ? (
+        <KeyboardAwareScrollView style={styles.flex}>
+        <ScrollView
+          style={styles.flex}
+          contentContainerStyle={[
+            styles.grow,
               Platform.OS === 'web' && {
                 maxWidth: 600,
                 marginLeft: 'auto',
@@ -51,17 +60,11 @@ export default function CrossPlatformLayout({
                 />
               )
             }>
-            <>
-              {!isLoading && <NetworkStateBanner />}
-              {children}
-            </>
+            {content}
           </ScrollView>
         </KeyboardAwareScrollView>
       ) : (
-        <>
-          {!isLoading && <NetworkStateBanner />}
-          {children}
-        </>
+        <View style={[styles.flex, isStatusState && styles.centered, outerStyles]}>{content}</View>
       )}
     </SafeAreaView>
   );
@@ -69,8 +72,10 @@ export default function CrossPlatformLayout({
 
 const styles = StyleSheet.create({
   centered: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  flex: { flex: 1 },
+  grow: { flexGrow: 1 },
 });

@@ -59,7 +59,6 @@ export default function ProfilePage() {
 
   return (
     <>
-      <ProfileMediaPhotos userId={`${whosProfile}`} />
       <View
         style={[
           styles.container,
@@ -74,7 +73,10 @@ export default function ProfilePage() {
         {error ? <ErrorComponent error={error} /> : null}
         {isSuccess ? (
           <>
-            <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
+            <View style={styles.mediaPhotosWrapper}>
+              <ProfileMediaPhotos userId={`${whosProfile}`} />
+            </View>
+            <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}> 
               <View style={[styles.avatarRing, { borderColor: colors.primary }]}>
                 <AvatarShowable size={92} id={`${whosProfile}`} />
               </View>
@@ -111,6 +113,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 12,
     paddingTop: 16,
+  },
+  mediaPhotosWrapper: {
+    alignSelf: 'stretch',
+    marginHorizontal: -12,
+    marginBottom: 10,
+    marginTop: -16,
   },
   isInCenter: {
     justifyContent: 'center',

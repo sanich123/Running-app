@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { MapView, Camera } from '@rnmapbox/maps';
-import bbox from '@turf/bbox';
+import getBbox from '@turf/bbox';
 import lineString from 'turf-linestring';
 import { Platform } from 'react-native';
 import MapboxWeb from '@C/map-page/mapbox-web/mapbox-web';
@@ -18,7 +18,7 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
     [locations],
   );
   const line = lineString(modifiedLocationsForTurf);
-  const [minLat, minLng, maxLat, maxLng] = bbox(line);
+  const [minLat, minLng, maxLat, maxLng] = getBbox(line);
 
   return (
     <>

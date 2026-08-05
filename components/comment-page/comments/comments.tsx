@@ -12,19 +12,14 @@ import type { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
 
 export default function Comments({ commentsModalRef }: CommentModalProps) {
   const { isShowingTextInput, commentActivityId } = useAppSelector(({ comment }) => comment);
-  const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(true);
+  const isNeedToGetUpdatedComments = true;
   const [take, increaseTakeNumber] = useState(10);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
+  const shouldGetUpdatedComments = isNeedToGetUpdatedComments || activityIdWhichCommentsToUpdate === commentActivityId;
   const { isLoading, error, isSuccess, isError, data, refetch } = useGetCommentsByActivityIdQuery(
     { activityId: commentActivityId, take },
-    { skip: !isNeedToGetUpdatedComments },
+    { skip: !shouldGetUpdatedComments },
   );
-
-  useEffect(() => {
-    if (activityIdWhichCommentsToUpdate === commentActivityId) {
-      setIsNeedToGetUpdatedComments(true);
-    }
-  }, [activityIdWhichCommentsToUpdate, commentActivityId]);
 
   useEffect(() => {
     if (Platform.OS !== 'web' && !process.env.IS_TESTING) {

@@ -19,7 +19,7 @@ export default function Activity() {
   const [isReadyToRecordLocation, setIsReadyToRecordLocation] = useState(false);
 
   return (
-    <SafeAreaView style={styles.layout} edges={['bottom']}>
+    <SafeAreaView style={[styles.layout, { backgroundColor: colors.surfaceVariant }]} edges={['bottom']}>
       <View style={styles.map}>
         {(activityStatus === STATUSES.initial || isMapVisible) && (
           <Map setIsReadyToRecordLocation={setIsReadyToRecordLocation} />

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Text } from 'react-native-paper';
 import { NUMBER_OF_LIKES } from '@C/card/number-of-likes/const';
 import { useGetLikesByCommentIdQuery } from '@R/services/comments/comments';
@@ -10,27 +9,19 @@ export default function CommentLikesLength({ commentId, commentLikesFromComment 
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ language }) => language);
   const { commentIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
-  const [isNeedToGetUpdatedCommentLikes, setIsNeedToGetUpdatedCommentLikes] = useState(false);
 
-  const {
-    data: commentLikes,
-    error,
-    isError,
-  } = useGetLikesByCommentIdQuery(commentId, { skip: !isNeedToGetUpdatedCommentLikes });
+  const shouldGetUpdatedCommentLikes = commentIdWhichLikesToUpdate === commentId;
+  const { data: commentLikes, error, isError } = useGetLikesByCommentIdQuery(commentId, {
+    skip: !shouldGetUpdatedCommentLikes,
+  });
 
-  const whatCommentLikesToIterate = isNeedToGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
+  const whatCommentLikesToIterate = shouldGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
   const youGaveCommentLike = whatCommentLikesToIterate?.length
     ? whatCommentLikesToIterate?.some(({ authorId }: { authorId: string }) => authorId === userId)
     : false;
   const commentLikesLength = youGaveCommentLike
     ? whatCommentLikesToIterate?.length - 1
     : whatCommentLikesToIterate?.length;
-
-  useEffect(() => {
-    if (commentIdWhichLikesToUpdate === commentId) {
-      setIsNeedToGetUpdatedCommentLikes(true);
-    }
-  }, [commentIdWhichLikesToUpdate, commentId]);
 
   return (
     <>

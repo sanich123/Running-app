@@ -1,9 +1,12 @@
 import 'react-native-gesture-handler/jestSetup';
 import { server } from './tests/utils/server';
+import type * as ExpoLinking from 'expo-linking';
 
 let consoleErrorSpy: jest.SpiedFunction<typeof console.error>;
 
 jest.mock('@react-native-async-storage/async-storage', () =>
+  // Jest mock factories require CommonJS here.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
 
@@ -62,7 +65,7 @@ jest.mock('@gorhom/bottom-sheet', () => {
   };
 });
 jest.mock('expo-linking', () => {
-  const module: typeof import('expo-linking') = {
+  const module: typeof ExpoLinking = {
     ...jest.requireActual('expo-linking'),
     createURL: jest.fn(),
   };

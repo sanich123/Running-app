@@ -26,9 +26,9 @@ export default function UserListItem({ name, surname, profilePhoto, placeholder,
             contentFit="cover"
             placeholder={placeholder}
           />
-          <View>
+          <View style={styles.userInfo}>
             <View style={styles.nameSurnameWrapper}>
-              <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
+              <Text variant="bodyLarge" numberOfLines={1} ellipsizeMode="tail" style={{ fontWeight: 'bold' }}>
                 {name} {surname}
               </Text>
             </View>
@@ -50,10 +50,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   contentWrapper: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 10,
+    minWidth: 0,
   },
+  userInfo: { flex: 1, minWidth: 0 },
   avatarSize: {
     width: 35,
     height: 35,
@@ -61,6 +64,7 @@ const styles = StyleSheet.create({
   },
   nameSurnameWrapper: {
     flex: 1,
+    minWidth: 0,
     flexDirection: 'row',
   },
 });

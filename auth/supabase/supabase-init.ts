@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
-
 import 'react-native-url-polyfill/auto';
 import { AsyncStorageAdapter } from './async-storage/async-storage';
 import LargeSecureStore from './secure-store/large-secure-store';
