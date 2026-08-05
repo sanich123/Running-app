@@ -41,7 +41,7 @@ export default function SignIn() {
             showCrossPlatformToast(success.toString());
             replace('/');
           })
-          .catch((error) => errorToast(error));
+          .catch((error) => errorToast('', error));
       }
     }
   }, [replace, url, verifyToken]);

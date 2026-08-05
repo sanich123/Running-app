@@ -25,6 +25,7 @@ export default function MonthStatistics() {
     isError,
     error,
     isLoading,
+    refetch,
   } = useGetMonthStatisticsQuery(
     { userId: `${userId}`, year: `${year}`, month: `${month}` },
     { skip: !userId || !year || !month },
@@ -38,9 +39,9 @@ export default function MonthStatistics() {
       isError={isError}
       isLoading={isLoading}
       outerStyles={{ padding: 10 }}>
-      {isLoading && <ActivityIndicator size="large" />}
-      {isError && <ErrorComponent error={error} />}
-      {isSuccess && (
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+      ) : isSuccess ? (
         <>
           <YearMonthTitle year={`${year}`} month={`${month}`} />
           <MonthTypesChips
@@ -85,7 +86,9 @@ export default function MonthStatistics() {
           </View>
           <CalendarActivities year={`${year}`} month={`${month}`} userId={`${userId}`} selectedType={selectedType} />
         </>
-      )}
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
+      ) : null}
     </CrossPlatformLayout>
   );
 }

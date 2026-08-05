@@ -1,11 +1,10 @@
 import { useContext, useEffect, memo } from 'react';
-import { Platform } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
 import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/services/likes/likes';
 import { useAppSelector } from '@R/typed-hooks';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import {
   CARD_LIKE_BTN_TEST_ID_LIKED,
   CARD_LIKE_BTN_TEST_ID_NOT_LIKED,
@@ -30,9 +29,9 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
     isLoading: isLikesLoading,
   } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
   const [sendEmailNotification] = useSendEmailAfterSendingLikeMutation();
-  const [sendLike, { isError: errorSending, isSuccess: isSuccessSending }] = useSendLikeMutation();
+  const [sendLike, { isSuccess: isSuccessSending }] = useSendLikeMutation();
 
-  const [deleteLike, { isError: failureDeleting }] = useDeleteLikeMutation();
+  const [deleteLike] = useDeleteLikeMutation();
 
   const isLikedByYou = likes?.length
     ? likes?.filter(({ authorId }: { authorId: string }) => authorId === userId)
@@ -52,17 +51,6 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
     }
   }, [isSuccessSending, mapPhotoUrl, name, profile, profilePhoto, sendEmailNotification, surname]);
 
-  useEffect(() => {
-    if (errorSending || failureDeleting) {
-      const event = LIKE_BTN[language].errorAction(failureDeleting ? 'delete' : 'send');
-      if (Platform.OS === 'web') {
-        showCrossPlatformToast(event);
-      } else {
-        showCrossPlatformToast(event);
-      }
-    }
-  }, [errorSending, failureDeleting, language]);
-
   return (
     <IconButton
       testID={isLikedByYou?.length > 0 ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
@@ -71,10 +59,14 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
       size={25}
       onPress={async () => {
         if (userId) {
-          if (isLikedByYou?.length > 0) {
-            await deleteLike({ id: isLikedByYou[0].id, activityId }).unwrap();
-          } else {
-            await sendLike({ activityId, authorId: userId, profilePhoto }).unwrap();
+          try {
+            if (isLikedByYou?.length > 0) {
+              await deleteLike({ id: isLikedByYou[0].id, activityId }).unwrap();
+            } else {
+              await sendLike({ activityId, authorId: userId, profilePhoto }).unwrap();
+            }
+          } catch (error) {
+            errorToast(LIKE_BTN[language].errorAction(isLikedByYou?.length ? 'delete' : 'send'), error);
           }
         }
       }}

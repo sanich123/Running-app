@@ -43,9 +43,9 @@ export default function Comments({ commentsModalRef }: CommentModalProps) {
 
   return (
     <View>
-      {isLoading && <ActivityIndicator testID="commentsActivityIndicator" size="large" />}
-      {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
-      {isSuccess && (
+      {isLoading ? (
+        <ActivityIndicator testID="commentsActivityIndicator" size="large" />
+      ) : isSuccess ? (
         <>
           {data?.comments?.length >= 10 && take < data?.allCommentsLength && (
             <CommentsLoadMoreBtn
@@ -73,7 +73,9 @@ export default function Comments({ commentsModalRef }: CommentModalProps) {
 
           {!data?.comments?.length && !isShowingTextInput && <CommentsEmptyList />}
         </>
-      )}
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
+      ) : null}
     </View>
   );
 }

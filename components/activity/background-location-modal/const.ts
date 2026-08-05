@@ -3,12 +3,12 @@ import { LANGUAGES } from '@const/enums';
 export const BACKGROUND_LOCATIONS = {
   [LANGUAGES.russian]: {
     needToAllow:
-      'Необходимо дать разрешение на получение данных о местоположении в фоновом режиме все время. Это необходимо из-за того, что когда вы выходите из приложения - оно перестает работать и получать данные о локации, нужные приложению для сохранения данных о маршруте',
+      'Разрешение нужно, чтобы приложение продолжало получать геопозицию при заблокированном экране или свернутом приложении.\n\nБез этого часть маршрута может потеряться, и тренировка сохранится некорректно.',
     giveAccess: 'Дать доступ к местоположению в фоне',
   },
   [LANGUAGES.english]: {
     needToAllow:
-      'You must give permission to receive location data in the background at all times. This is necessary because when you exit the application, it stops working and receiving location data that the application needs to save route data and metrics',
+      'This permission lets the app keep receiving your location when the screen is locked or the app is minimized.\n\nWithout it, part of the route may be lost and the workout may not be saved correctly.',
     giveAccess: 'Give access to location in background',
   },
 };

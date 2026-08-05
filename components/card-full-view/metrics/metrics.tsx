@@ -1,6 +1,6 @@
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Text, Divider } from 'react-native-paper';
+import { ActivityIndicator, Text, Divider, useTheme } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
@@ -14,6 +14,7 @@ export default function Metrics() {
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(`${activityId}`);
   const { language } = useAppSelector(({ language }) => language);
+  const { colors } = useTheme();
   const gainedElevation = Math.round(
     activity?.kilometresSplit?.reduce(
       (total: number, { lastKilometerAltitude }: { lastKilometerAltitude: number }) =>
@@ -26,6 +27,7 @@ export default function Metrics() {
     <View
       style={[
         styles.layout,
+        { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
         isLoading && styles.isCenter,
         {
           width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
@@ -36,18 +38,17 @@ export default function Metrics() {
       {error ? <ErrorComponent error={error} /> : null}
       {activity && (
         <>
-          <Divider />
           <View style={styles.columnLayout}>
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].distance}</Text>
-              <Text variant="headlineLarge">
+              <Text variant="titleLarge">
                 {(activity.distance / 1000).toFixed(2)} {`${HOME_ACTIVITY_FULL_VIEW[language].km}`}
               </Text>
             </View>
 
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].averagePace}</Text>
-              <Text variant="headlineLarge">
+              <Text variant="titleLarge">
                 {getSpeedInMinsInKm(activity.distance, activity.duration).paceAsString}
                 {` /${HOME_ACTIVITY_FULL_VIEW[language].km}`}
               </Text>
@@ -57,17 +58,15 @@ export default function Metrics() {
           <View style={styles.columnLayout}>
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].movingTime}</Text>
-              <Text variant="headlineLarge">{formatDuration(activity.duration)}</Text>
+              <Text variant="titleLarge">{formatDuration(activity.duration)}</Text>
             </View>
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].elevationGain}</Text>
-              <Text variant="headlineLarge">
+              <Text variant="titleLarge">
                 {activity?.kilometresSplit?.length > 0 && `${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}
               </Text>
             </View>
           </View>
-          <View />
-          <Divider />
         </>
       )}
     </View>
@@ -76,11 +75,12 @@ export default function Metrics() {
 
 const styles = StyleSheet.create({
   layout: {
+    borderRadius: 18,
+    borderWidth: 1,
     display: 'flex',
-    paddingTop: 40,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 40,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    paddingTop: 8,
   },
   isCenter: {
     alignItems: 'center',

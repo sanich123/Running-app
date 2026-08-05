@@ -23,6 +23,7 @@ export default function Statistics() {
     isError,
     isSuccess,
     error,
+    refetch,
   } = useGetAnnualStatisticsByUserIdQuery({ userId }, { skip: !userId });
   const isRussian = language === LANGUAGES.russian;
   const availableYears = useMemo(
@@ -36,56 +37,59 @@ export default function Statistics() {
 
   return (
     <CrossPlatformLayout edges={[]} scrollViewEnabled isError={isError} isLoading={isLoading}>
-      {isLoading && <ActivityIndicator size="large" />}
-      {isError && <ErrorComponent error={error} />}
-      {isSuccess && yearStats?.isUserHasActivities && (
-        <>
-          <YearTypePicker
-            setSelectedYear={setSelectedYear}
-            setSelectedType={setSelectedType}
-            selectedYear={displayedYear}
-            selectedType={displayedType}
-            availableYearsAndTypes={availableYears.map((year) => ({
-              year,
-              types: Object.keys(yearStats[year]),
-            }))}
-          />
-          {selectedStats && (
-            <>
-              <View style={styles.metricsContainer}>
-                <MonthStatisticsMetrics
-                  title={MONTH_STATISTICS[language].activities}
-                  metric={selectedStats.totalItems ?? 0}
-                  postfix={''}
-                  isSuccess={isSuccess}
-                  isLoading={isLoading}
-                  isError={isError}
-                />
-                <MonthStatisticsMetrics
-                  title={MONTH_STATISTICS[language].distance}
-                  metric={`${Math.round(selectedStats.totalDistance ?? 0)}`}
-                  postfix={`${isRussian ? 'км' : 'km'}`}
-                  isSuccess={isSuccess}
-                  isLoading={isLoading}
-                  isError={isError}
-                />
-                <MonthStatisticsMetrics
-                  title={MONTH_STATISTICS[language].duration}
-                  metric={`${Math.round(selectedStats.totalDuration ?? 0)}`}
-                  postfix={`${isRussian ? 'ч' : 'h'}`}
-                  isSuccess={isSuccess}
-                  isLoading={isLoading}
-                  isError={isError}
-                />
-              </View>
-              <Charts year={displayedYear} months={selectedStats} />
-            </>
-          )}
-        </>
-      )}
-      {isSuccess && !yearStats?.isUserHasActivities && (
-        <Text variant="titleLarge">{`${language === LANGUAGES.english ? 'There are no activities, so there are no statistics' : 'Если нет активностей - то нет и статистики :('}`}</Text>
-      )}
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+      ) : isSuccess ? (
+        yearStats?.isUserHasActivities ? (
+          <>
+            <YearTypePicker
+              setSelectedYear={setSelectedYear}
+              setSelectedType={setSelectedType}
+              selectedYear={displayedYear}
+              selectedType={displayedType}
+              availableYearsAndTypes={availableYears.map((year) => ({
+                year,
+                types: Object.keys(yearStats[year]),
+              }))}
+            />
+            {selectedStats && (
+              <>
+                <View style={styles.metricsContainer}>
+                  <MonthStatisticsMetrics
+                    title={MONTH_STATISTICS[language].activities}
+                    metric={selectedStats.totalItems ?? 0}
+                    postfix={''}
+                    isSuccess={isSuccess}
+                    isLoading={isLoading}
+                    isError={isError}
+                  />
+                  <MonthStatisticsMetrics
+                    title={MONTH_STATISTICS[language].distance}
+                    metric={`${Math.round(selectedStats.totalDistance ?? 0)}`}
+                    postfix={`${isRussian ? 'км' : 'km'}`}
+                    isSuccess={isSuccess}
+                    isLoading={isLoading}
+                    isError={isError}
+                  />
+                  <MonthStatisticsMetrics
+                    title={MONTH_STATISTICS[language].duration}
+                    metric={`${Math.round(selectedStats.totalDuration ?? 0)}`}
+                    postfix={`${isRussian ? 'ч' : 'h'}`}
+                    isSuccess={isSuccess}
+                    isLoading={isLoading}
+                    isError={isError}
+                  />
+                </View>
+                <Charts year={displayedYear} months={selectedStats} />
+              </>
+            )}
+          </>
+        ) : (
+          <Text variant="titleLarge">{`${language === LANGUAGES.english ? 'There are no activities, so there are no statistics' : 'Если нет активностей - то нет и статистики :('}`}</Text>
+        )
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
+      ) : null}
     </CrossPlatformLayout>
   );
 }

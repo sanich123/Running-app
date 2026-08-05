@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { formatDurationMinsSecs } from '@U/time-formatter';
@@ -7,32 +7,37 @@ import { KM_SPLITS } from './const';
 import type { LastKmSplit } from '@R/slices/location/types';
 
 export default function KmSplit({ kilometresSplit }: { kilometresSplit: LastKmSplit[] }) {
-  const fastestKm = Math.min(...kilometresSplit.map(({ lastKilometerDuration }) => lastKilometerDuration));
+  const validSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
+    (split) => Number.isFinite(split?.lastKilometerDuration) && split.lastKilometerDuration > 0,
+  );
+  const fastestKm = validSplits.length
+    ? Math.min(...validSplits.map(({ lastKilometerDuration }) => lastKilometerDuration))
+    : 0;
   const { language } = useAppSelector(({ language }) => language);
 
   return (
     <>
-      <Text variant="displaySmall" style={{ paddingBottom: 20, paddingTop: 20 }}>
+      <Text variant="titleLarge" style={styles.title}>
         {KM_SPLITS[language].splits}
       </Text>
-      <View style={{ flex: 1, flexDirection: 'row', width: '100%', paddingBottom: 20 }}>
+      <View style={styles.headerRow}>
         <View style={{ flex: 2 }}>
-          <Text variant="labelLarge" style={{ fontWeight: 'bold' }}>
+          <Text variant="labelMedium" style={styles.headerText}>
             {KM_SPLITS[language].km}
           </Text>
         </View>
         <View style={{ flex: 16 }}>
-          <Text variant="labelLarge" style={{ fontWeight: 'bold' }}>
+          <Text variant="labelMedium" style={styles.headerText}>
             {KM_SPLITS[language].pace}
           </Text>
         </View>
         <View style={{ display: 'flex' }}>
-          <Text variant="labelLarge" style={{ fontWeight: 'bold' }}>
+          <Text variant="labelMedium" style={styles.headerText}>
             {KM_SPLITS[language].elev}
           </Text>
         </View>
       </View>
-      {kilometresSplit.map(({ lastKilometerAltitude, lastKilometerDuration }, index) => (
+      {validSplits.map(({ lastKilometerAltitude, lastKilometerDuration }, index) => (
         <Fragment key={`${lastKilometerAltitude}/${lastKilometerDuration}/${index}`}>
           <View
             style={{ flex: 1, flexDirection: 'row', width: '100%', paddingTop: 5 }}
@@ -55,7 +60,7 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: LastKmSp
             </View>
             <View style={{ flex: 3 }}>
               <Text style={{ flex: 1, marginLeft: 'auto' }} variant="bodyLarge">
-                {lastKilometerAltitude.toFixed(1)}
+                {Number.isFinite(lastKilometerAltitude) ? lastKilometerAltitude.toFixed(1) : '—'}
               </Text>
             </View>
           </View>
@@ -65,3 +70,9 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: LastKmSp
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  title: { fontWeight: '800', paddingBottom: 16, paddingTop: 12 },
+  headerRow: { flex: 1, flexDirection: 'row', width: '100%', paddingBottom: 12 },
+  headerText: { fontWeight: '800' },
+});

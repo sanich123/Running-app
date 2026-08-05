@@ -39,6 +39,7 @@ export default function ProfilePage() {
     isError,
     data: profile,
     error,
+    refetch,
   } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
 
   const isProfilePage = !pathname.includes(ROUTES.home);
@@ -69,9 +70,9 @@ export default function ProfilePage() {
             marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
           },
         ]}>
-        {isLoading && <ActivityIndicator size="large" />}
-        {error ? <ErrorComponent error={error} /> : null}
-        {isSuccess ? (
+        {isLoading ? (
+          <ActivityIndicator size="large" />
+        ) : isSuccess ? (
           <>
             <View style={styles.mediaPhotosWrapper}>
               <ProfileMediaPhotos userId={`${whosProfile}`} />
@@ -102,6 +103,8 @@ export default function ProfilePage() {
             </View>
             <ProfileStatistics whosProfile={`${whosProfile}`} />
           </>
+        ) : isError ? (
+          <ErrorComponent error={error} refetch={refetch} />
         ) : null}
       </View>
     </>

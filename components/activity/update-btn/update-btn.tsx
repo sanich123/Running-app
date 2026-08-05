@@ -1,6 +1,7 @@
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN } from '@C/activity/save-btn/const';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import {
   addPhotoUrls,
@@ -21,7 +22,6 @@ import {
   setManualMinutes,
 } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 
 export default function UpdateBtn() {
@@ -30,7 +30,7 @@ export default function UpdateBtn() {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const { id: activityId } = useGlobalSearchParams();
-  const { data: activity, isError, isLoading } = useGetActivityByActivityIdQuery(`${activityId}`);
+  const { data: activity, error, isError, isLoading } = useGetActivityByActivityIdQuery(`${activityId}`);
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
@@ -60,7 +60,7 @@ export default function UpdateBtn() {
           dispatch(setManualMinutes(getHoursMinutesFromMilliseconds(activity?.duration).minutes));
           push(`/(protected)/manual-activity`);
         } else {
-          showCrossPlatformToast('Не удалось загрузить данные об активности!');
+          errorToast('Не удалось загрузить данные об активности', error);
         }
       }}>
       <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant, marginRight: 15 }}>

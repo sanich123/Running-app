@@ -15,6 +15,7 @@ export default function ListOfFollowers() {
     isLoading,
     error,
     isError,
+    isSuccess,
     data: users,
     refetch,
   } = useGetFollowersByUserIdQuery(friendId ? `${friendId}` : userId);
@@ -22,7 +23,9 @@ export default function ListOfFollowers() {
 
   return (
     <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
-      {users && (
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+      ) : isSuccess ? (
         <FlatList
           onRefresh={onRefresh}
           refreshing={refreshing}
@@ -45,9 +48,9 @@ export default function ListOfFollowers() {
           }
           ItemSeparatorComponent={() => <Divider />}
         />
-      )}
-      {isLoading && <ActivityIndicator size="large" />}
-      {isError ? <ErrorComponent error={error} /> : null}
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
+      ) : null}
     </CrossPlatformLayout>
   );
 }

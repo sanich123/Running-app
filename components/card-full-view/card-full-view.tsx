@@ -1,6 +1,6 @@
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 import Card from '@C/card/card';
 import ErrorComponent from '@C/error-component/error-component';
 import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
@@ -11,6 +11,7 @@ import Metrics from './metrics/metrics';
 
 export default function CardFullView() {
   const { width } = useWindowDimensions();
+  const { colors } = useTheme();
   const { id: activityId } = useLocalSearchParams();
   const {
     isLoading,
@@ -22,11 +23,16 @@ export default function CardFullView() {
   } = useGetActivityByActivityIdQuery(`${activityId}`, { skip: !activityId });
 
   return (
-    <CrossPlatformLayout edges={[]} isError={isError} isLoading={isLoading} scrollViewEnabled={!isLoading && !isError}>
+    <CrossPlatformLayout
+      edges={[]}
+      isError={isError}
+      isLoading={isLoading}
+      scrollViewEnabled={!isLoading && !isError}
+      outerStyles={styles.page}>
       <View collapsable={false} style={[styles.content, (isLoading || isError) && styles.state]}>
-        {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
-        {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
-        {isSuccess && (
+        {isLoading ? (
+          <ActivityIndicator size="large" testID="homeActivityIndicator" />
+        ) : isSuccess ? (
           <>
             <Card
               isShowDeleteBtn
@@ -45,26 +51,40 @@ export default function CardFullView() {
               commentsLength={activity?._count.comments}
             />
             <Metrics />
-            <View
-              style={{
-                paddingVertical: 10,
-                paddingHorizontal: 10,
-                width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
-                marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
-              }}>
-              {activity?.kilometresSplit?.length > 0 && <KmSplit kilometresSplit={activity.kilometresSplit} />}
-            </View>
+            {activity?.kilometresSplit?.length > 0 && (
+              <View
+                style={[
+                  styles.splitsCard,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.outlineVariant,
+                    width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+                    marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+                  },
+                ]}>
+                <KmSplit kilometresSplit={activity.kilometresSplit} />
+              </View>
+            )}
           </>
-        )}
+        ) : isError ? (
+          <ErrorComponent error={error} refetch={refetch} />
+        ) : null}
       </View>
     </CrossPlatformLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { flex: 1 },
+  page: { paddingHorizontal: 12, paddingVertical: 12 },
+  content: { flex: 1, gap: 6 },
   state: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  splitsCard: {
+    borderRadius: 18,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
   },
 });

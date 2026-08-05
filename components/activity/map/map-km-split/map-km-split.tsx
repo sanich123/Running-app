@@ -7,22 +7,27 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: LastK
   return (
     <>
       {kilometresSplit?.length > 0
-        ? kilometresSplit?.map(({ kilometerPoint }, index) => {
-            const {
-              coords: { longitude, latitude },
-            } = kilometerPoint;
-            const key = `${index}/${longitude},${latitude}`;
-            return (
-              <PointAnnotation key={key} coordinate={[longitude, latitude]} id={key}>
-                <View style={[styles.customKm]}>
-                  <Text variant="bodySmall" style={{ color: 'black' }}>
-                    {index + 1}
-                  </Text>
-                </View>
-                <Callout title={`${index + 1} kilometer`} />
-              </PointAnnotation>
-            );
-          })
+        ? kilometresSplit
+            .filter((split) => Boolean(split?.kilometerPoint?.coords))
+            .map(({ kilometerPoint }, index) => {
+              if (!kilometerPoint?.coords) {
+                return null;
+              }
+              const {
+                coords: { longitude, latitude },
+              } = kilometerPoint;
+              const key = `${index}/${longitude},${latitude}`;
+              return (
+                <PointAnnotation key={key} coordinate={[longitude, latitude]} id={key}>
+                  <View style={[styles.customKm]}>
+                    <Text variant="bodySmall" style={{ color: 'black' }}>
+                      {index + 1}
+                    </Text>
+                  </View>
+                  <Callout title={`${index + 1} kilometer`} />
+                </PointAnnotation>
+              );
+            })
         : null}
     </>
   );

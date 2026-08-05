@@ -15,6 +15,7 @@ export default function LikesList() {
     isLoading,
     error,
     isError,
+    isSuccess,
     data: likes,
     refetch,
   } = useGetLikesByActivityIdQuery(`${activityId}`, { skip: !activityId });
@@ -33,31 +34,39 @@ export default function LikesList() {
         (isLoading || isError || !likes.length) && { justifyContent: 'center' },
       ]}>
       <View>
-        {likes?.length > 0 && (
-          <FlatList
-            onRefresh={onRefresh}
-            refreshing={refreshing}
-            data={likes}
-            renderItem={({ item: { profile } }) => (
-              <UserListItem
-                name={profile?.name}
-                surname={profile?.surname}
-                profilePhoto={profile?.profilePhoto}
-                placeholder={profile?.profilePhotoBlurhash}
-                city={profile?.city}
-                user_id={profile?.user_id}
-              />
-            )}
-            ListEmptyComponent={
-              <View style={{ alignItems: 'center' }}>
-                <Text variant="headlineLarge">There are no users, who liked your activity</Text>
-              </View>
-            }
-            ItemSeparatorComponent={() => <Divider />}
-          />
-        )}
-        {isLoading && <ActivityIndicator size="large" />}
-        {error ? <ErrorComponent error={error} /> : null}
+        {isLoading ? (
+          <ActivityIndicator size="large" />
+        ) : isSuccess ? (
+          likes?.length > 0 ? (
+            <FlatList
+              onRefresh={onRefresh}
+              refreshing={refreshing}
+              data={likes}
+              renderItem={({ item: { profile } }) => (
+                <UserListItem
+                  name={profile?.name}
+                  surname={profile?.surname}
+                  profilePhoto={profile?.profilePhoto}
+                  placeholder={profile?.profilePhotoBlurhash}
+                  city={profile?.city}
+                  user_id={profile?.user_id}
+                />
+              )}
+              ListEmptyComponent={
+                <View style={{ alignItems: 'center' }}>
+                  <Text variant="headlineLarge">There are no users, who liked your activity</Text>
+                </View>
+              }
+              ItemSeparatorComponent={() => <Divider />}
+            />
+          ) : (
+            <View style={{ alignItems: 'center' }}>
+              <Text variant="headlineLarge">There are no users, who liked your activity</Text>
+            </View>
+          )
+        ) : isError ? (
+          <ErrorComponent error={error} refetch={refetch} />
+        ) : null}
       </View>
     </SafeAreaView>
   );

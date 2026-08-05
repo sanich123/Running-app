@@ -1,5 +1,6 @@
 import { Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useDeleteUserMutation } from '@R/services/authentication/authentication';
 import { resetActivitySlice } from '@R/slices/activity/activity';
 import { resetAuthSlice } from '@R/slices/auth/auth';
@@ -9,7 +10,6 @@ import { resetMainFeedSlice } from '@R/slices/main-feed/main-feed';
 import { resetNetworkSlice } from '@R/slices/network/network';
 import { resetProfileSlice } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { DELETE_ACCOUNT } from './const';
 import SettingsRow from '../settings-row/settings-row';
 
@@ -33,7 +33,7 @@ export default function DeleteAccountBtn() {
         dispatch(resetLocationSlice());
         replace('/sign-in');
       })
-      .catch((error) => showCrossPlatformToast(error))
+      .catch((error) => errorToast('Не удалось удалить аккаунт', error))
       .finally();
   }
 

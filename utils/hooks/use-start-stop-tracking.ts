@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { STATUSES } from '@const/enums';
 import { resetLocationsFromBackground, setEmptyLastArrayWhenPaused } from '@R/slices/location/location';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
@@ -13,11 +14,11 @@ export default function useStartStopTracking() {
   useEffect(() => {
     if (activityStatus === started || activityStatus === continued) {
       startLocationTracking().catch((error) => {
-        if (__DEV__) console.error('[tracking] Failed to start location tracking', error);
+        errorToast('Не удалось запустить отслеживание геопозиции', error);
       });
     } else {
       stopLocationTracking().catch((error) => {
-        if (__DEV__) console.error('[tracking] Failed to stop location tracking', error);
+        errorToast('Не удалось остановить отслеживание геопозиции', error);
       });
     }
     if (activityStatus === initial) {

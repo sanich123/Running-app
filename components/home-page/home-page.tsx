@@ -17,7 +17,7 @@ export default function Feed() {
   const { push } = useRouter();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isHaveUnsyncedActivity } = useAppSelector(({ unsendedActivity }) => unsendedActivity);
-  const { data, error, isLoading, refetch, fetchNextPage, isFetching, isError } =
+  const { data, error, isLoading, isSuccess, refetch, fetchNextPage, isFetching, isError } =
     useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery(
       {
         id: userId,
@@ -35,30 +35,36 @@ export default function Feed() {
 
   return (
     <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
-      {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
-      {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
-      {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
-      {activities && activities?.length > 0 && (
+      {isLoading ? (
+        <ActivityIndicator size="large" testID="homeActivityIndicator" />
+      ) : isSuccess ? (
         <>
-          <InfiniteScrollList
-            dataToRender={activities}
-            refetch={refetch}
-            isLastPage={!!lastPage?.[lastPage.length - 1]}
-            nextPageCallback={fetchNextPage}
-            isFetching={isFetching}
-          />
-          <FloatingBtn
-            onPressFn={() => {
-              dispatch(resetManualActivitySlice());
-              dispatch(resetAdditionaInfoActivitySlice());
-              dispatch(resetFinishedActivity());
-              dispatch(setIsManualAdding(true));
-              push('/(protected)/manual-activity');
-            }}
-          />
+          {isHaveUnsyncedActivity && <UnsendedActivitiesIndicator />}
+          {activities && activities?.length > 0 && (
+            <>
+              <InfiniteScrollList
+                dataToRender={activities}
+                refetch={refetch}
+                isLastPage={!!lastPage?.[lastPage.length - 1]}
+                nextPageCallback={fetchNextPage}
+                isFetching={isFetching}
+              />
+              <FloatingBtn
+                onPressFn={() => {
+                  dispatch(resetManualActivitySlice());
+                  dispatch(resetAdditionaInfoActivitySlice());
+                  dispatch(resetFinishedActivity());
+                  dispatch(setIsManualAdding(true));
+                  push('/(protected)/manual-activity');
+                }}
+              />
+            </>
+          )}
+          {!activities?.length && <EmptyActivitiesList />}
         </>
-      )}
-      {!activities?.length && <EmptyActivitiesList />}
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
+      ) : null}
     </CrossPlatformLayout>
   );
 }

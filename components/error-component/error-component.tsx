@@ -1,5 +1,6 @@
 import { View } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
+import { getErrorMessageFromError } from '@C/shared/error-toast/error-toast';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
@@ -10,21 +11,20 @@ export default function ErrorComponent({
   error: FetchBaseQueryError | SerializedError;
   refetch?: () => object;
 }) {
-  const { dark } = useTheme();
   return (
-    <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      borderless
-      testID="errorComponentId"
-      onPress={() => refetch?.()}>
-      <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Text variant="bodyMedium">An error occured</Text>
-        <Text variant="bodyMedium">
-          {'data' in error ? `${(error.data as { message: string }).message}, ${error.status} code` : null}
-          {'message' in error ? error.message : null}
-          {'error' in error ? error.error : null}
-        </Text>
-      </View>
-    </TouchableRipple>
+    <View testID="errorComponentId" style={{ alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <Text variant="titleMedium">Не удалось загрузить данные</Text>
+      <Text variant="bodySmall" style={{ marginTop: 4, opacity: 0.65 }}>
+        An error occured
+      </Text>
+      <Text variant="bodyMedium" style={{ marginTop: 8, textAlign: 'center' }}>
+        {getErrorMessageFromError(error)}
+      </Text>
+      {refetch && (
+        <Button mode="contained" style={{ marginTop: 16 }} onPress={() => refetch()}>
+          Повторить
+        </Button>
+      )}
+    </View>
   );
 }

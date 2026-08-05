@@ -1,7 +1,7 @@
 import { getCurrentPositionAsync, getLastKnownPositionAsync } from 'expo-location';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { setInitialLocation } from '@R/slices/location/location';
 import { store } from '@R/store';
-import { errorHandler } from './error-handler';
 
 interface GetPositionProps {
   setIsLoading: (arg: boolean) => void;
@@ -20,7 +20,7 @@ export async function getLastKnownPosition({ setIsLoading, setIsError, setIsSucc
   } catch (error) {
     setIsError(true);
     setTimeout(() => setIsError(false));
-    errorHandler(error);
+    errorToast('Не удалось получить последнюю геопозицию', error);
   }
 }
 
@@ -34,6 +34,6 @@ export async function getExactPosition({ setIsLoading, setIsError, setIsSuccess 
     setTimeout(() => setIsSuccess(false), 2000);
   } catch (error) {
     setIsError(true);
-    errorHandler(error);
+    errorToast('Не удалось определить геопозицию', error);
   }
 }

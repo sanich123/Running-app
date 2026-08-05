@@ -21,6 +21,9 @@ export function getMathRoundValueOrZero(value: number) {
   return 0;
 }
 export function getSteps(maxValue: number) {
+  if (maxValue <= 0) {
+    return { steps: ['0', '1'], maxValue: 1, noOfSections: 1 };
+  }
   const lengthOfMaxValue = maxValue.toString().length;
   if (lengthOfMaxValue === 1) {
     return { steps: ['0', '5'], maxValue: 10, noOfSections: 2 };

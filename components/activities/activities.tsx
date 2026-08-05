@@ -12,7 +12,9 @@ export default function Activities() {
 
   return (
     <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
-      {isSuccess && (
+      {isLoading ? (
+        <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />
+      ) : isSuccess ? (
         <InfiniteScrollList
           dataToRender={data?.pages
             .flat()
@@ -23,9 +25,9 @@ export default function Activities() {
           nextPageCallback={fetchNextPage}
           isFetching={isFetching}
         />
-      )}
-      {isLoading && <ActivityIndicator size="large" testID="userProfilePageActivityIndicator" />}
-      {isError && <ErrorComponent error={error} refetch={refetch} />}
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
+      ) : null}
     </CrossPlatformLayout>
   );
 }

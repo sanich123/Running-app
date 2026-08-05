@@ -52,12 +52,13 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
     [STATUSES.paused]: <Icon testID={STOP_ICON} source="stop" size={42} color={colors.onError} />,
     [STATUSES.continued]: <Icon testID={STOP_ICON} source="pause" size={42} color={colors.onPrimary} />,
   };
+  const isDisabled = !isReadyToRecordLocation && activityStatus === STATUSES.initial;
 
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
-      style={[styles.touchable, { opacity: isReadyToRecordLocation ? 1 : 0.5 }]}
+      style={styles.touchable}
       testID={ACTIVITY_START_BTN_TEST_ID}
       onPressIn={() =>
         Animated.spring(pressScale, { toValue: 0.94, useNativeDriver: true, speed: 30, bounciness: 4 }).start()
@@ -82,7 +83,7 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
           push('/(protected)/manual-activity');
         }
       }}
-      disabled={!isReadyToRecordLocation}>
+      disabled={isDisabled}>
       <Animated.View style={[styles.buttonScale, { transform: [{ scale: pressScale }] }]}>
         {isRecording && (
           <Animated.View
@@ -97,11 +98,26 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
             ]}
           />
         )}
-        <View style={[styles.startBtn, { backgroundColor: isFinishing ? colors.error : colors.primary }]}>
+        <View
+          style={[
+            styles.startBtn,
+            {
+              backgroundColor: isDisabled ? colors.surfaceVariant : isFinishing ? colors.error : colors.primary,
+              borderColor: isDisabled ? colors.outline : 'transparent',
+              borderWidth: isDisabled ? 1 : 0,
+              elevation: isDisabled ? 0 : 5,
+            },
+          ]}>
           {activityStatus === STATUSES.initial ? (
             <>
-              <Icon source="play" size={34} color={colors.onPrimary} />
-              <Text style={[styles.startBtnText, { color: colors.onPrimary }]}>{responseIcon[activityStatus]}</Text>
+              <Icon
+                source={isDisabled ? 'lock-outline' : 'play'}
+                size={34}
+                color={isDisabled ? colors.onSurfaceDisabled : colors.onPrimary}
+              />
+              <Text style={[styles.startBtnText, { color: isDisabled ? colors.onSurfaceDisabled : colors.onPrimary }]}>
+                {responseIcon[activityStatus]}
+              </Text>
             </>
           ) : (
             responseIcon[activityStatus]

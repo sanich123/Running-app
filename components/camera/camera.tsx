@@ -8,6 +8,7 @@ import CloseBtn from '@C/camera/close-btn/close-btn';
 import FlashBtn from '@C/camera/flash-btn/flash-btn';
 import ShotBtn from '@C/camera/shot-btn/shot-btn';
 import PreviewImages from '@C/save-activity-page/preview-images/preview-images';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { CameraTypes, FlashModes } from './types';
 import type { PhotoVideoType } from '@C/card/types';
 import type { CameraType, FlashMode } from 'expo-camera';
@@ -21,8 +22,12 @@ export default function CameraLauncher() {
 
   useEffect(() => {
     (async () => {
-      requestPermission();
-      await MediaLibrary.requestPermissionsAsync();
+      try {
+        await requestPermission();
+        await MediaLibrary.requestPermissionsAsync();
+      } catch (error) {
+        errorToast('Не удалось получить доступ к камере и медиатеке', error);
+      }
     })();
   }, [requestPermission]);
 

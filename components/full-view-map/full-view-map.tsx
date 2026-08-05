@@ -8,13 +8,24 @@ import { useGetLocationsByActivityIdQuery } from '@R/services/activity/activity'
 
 export default function FullViewMap() {
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error } = useGetLocationsByActivityIdQuery(`${activityId}`);
+  const {
+    isLoading,
+    isSuccess,
+    isError,
+    data: activity,
+    error,
+    refetch,
+  } = useGetLocationsByActivityIdQuery(`${activityId}`);
 
   return (
     <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
-      {isLoading && <ActivityIndicator size="large" />}
-      {error ? <ErrorComponent error={error} /> : null}
-      {activity && <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />}
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+      ) : isSuccess ? (
+        <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
+      ) : null}
     </SafeAreaView>
   );
 }

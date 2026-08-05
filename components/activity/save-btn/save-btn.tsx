@@ -69,7 +69,7 @@ export default function SaveBtn() {
               await updateActivity(savedActivity)
                 .unwrap()
                 .then(() => back())
-                .catch((error) => errorToast(error))
+                .catch((error) => errorToast('', error))
                 .finally(() => {
                   dispatch(setIsDisableWhileSending(false));
                   dispatch(resetAdditionaInfoActivitySlice());
@@ -84,7 +84,7 @@ export default function SaveBtn() {
                     dispatch(saveUnsendedActivity(activityToSend));
                     dispatch(setIsHaveUnsyncedActivity(true));
                   }
-                  errorToast(error);
+                  errorToast('', error);
                 })
                 .finally(() => {
                   dispatch(setIsDisableWhileSending(false));

@@ -60,7 +60,7 @@ export function getDaysOfTheMonthWithNames(
   if (+daysOfTheWeek.saturdays[1]['dateValue'] > 6) {
     daysOfTheWeek.saturdays.splice(1, 0, { dateValue: ' ', activities: [] });
   }
-  if (+daysOfTheWeek.sundays[1] > 7) {
+  if (+daysOfTheWeek.sundays[1].dateValue > 7) {
     daysOfTheWeek.sundays.splice(1, 0, { dateValue: ' ', activities: [] });
   }
 

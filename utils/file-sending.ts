@@ -2,8 +2,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 import { Platform } from 'react-native';
-import { showCrossPlatformToast } from './custom-toast';
-import { errorHandler } from './error-handler';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { getBase64CodedImage, getPublicUrl, uploadPhoto } from '../auth/supabase/storage/upload-photo';
 
 export async function compressAndSendFile(
@@ -48,7 +47,7 @@ export async function getAccessToGallery() {
       quality: 1,
     });
   } catch (error) {
-    errorHandler(error);
+    errorToast('Не удалось открыть галерею', error);
   }
 }
 
@@ -60,13 +59,13 @@ export async function compressImageOrVideo(fileSrc: string | File, extension: st
     try {
       const metaData = await getVideoMetaData(`${fileSrc}`);
       if (metaData.size > MAX_VIDEO_SIZE) {
-        showCrossPlatformToast('Файл слишком большой, размер файла не более 15 мб');
+        errorToast('Файл слишком большой, размер файла не более 15 МБ');
         return null;
       } else {
         return await VideoCompressor.compress(`${fileSrc}`);
       }
-    } catch {
-      showCrossPlatformToast('Ошибка во время сжатия видео');
+    } catch (error) {
+      errorToast('Ошибка во время сжатия видео', error);
     }
   } else {
     try {
@@ -76,10 +75,10 @@ export async function compressImageOrVideo(fileSrc: string | File, extension: st
       if (supportedImagesExtensions.test(extension)) {
         return await ImageCompressor.compress(`${fileSrc}`);
       } else {
-        showCrossPlatformToast('Такое разрешение нельзя использовать для изображения');
+        errorToast('Такое разрешение нельзя использовать для изображения');
       }
-    } catch {
-      showCrossPlatformToast('Ошибка во время сжатия изображения');
+    } catch (error) {
+      errorToast('Ошибка во время сжатия изображения', error);
     }
   }
 }

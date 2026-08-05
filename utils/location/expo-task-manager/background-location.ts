@@ -7,6 +7,7 @@ import {
 } from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { setIsTooMuchSpeed } from '@R/slices/location/location';
 import { store } from '@R/store';
 import { showCrossPlatformToast } from '@U/custom-toast';
@@ -48,7 +49,7 @@ async function processLocation(currentPosition: LocationObject) {
       );
     } else {
       store.dispatch(setIsTooMuchSpeed(true));
-      showCrossPlatformToast('Геолокация отклонена из-за слишком высокой скорости относительно предыдущей точки.');
+      errorToast('Геолокация отклонена из-за слишком высокой скорости относительно предыдущей точки.');
     }
   } catch (error) {
     if (__DEV__) console.error('[tracking]', 'Something went wrong when saving a new location...', error);

@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useTheme, Text, Button } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { BACKGROUND_LOCATIONS } from './const';
 import type { BackgroundLocationModalProps } from '../types';
 
@@ -23,29 +23,42 @@ export default function BackgroundLocationModal({
       index={0}
       snapPoints={['50%']}
       backdropComponent={renderBackdrop}
-      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.background }}
-      handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 15, backgroundColor: colors.background }}>
-        <View style={{ flex: 1 }}>
-          <Text variant="bodyLarge" style={{ textAlign: 'justify' }}>
-            {BACKGROUND_LOCATIONS[language].needToAllow}
-          </Text>
-          <Button
-            mode="outlined"
-            style={{ marginTop: 15 }}
-            onPress={async () => {
-              try {
-                await requestBackgroundPermission();
-                backgroundLocationEnabledModalRef.current?.close();
-              } catch (error) {
-                showCrossPlatformToast(JSON.stringify(error));
-              }
-            }}>
-            {BACKGROUND_LOCATIONS[language].giveAccess}
-          </Button>
+      handleStyle={[styles.handle, { backgroundColor: colors.surface }]}
+      backgroundStyle={{ backgroundColor: colors.surface }}
+      handleIndicatorStyle={{ backgroundColor: colors.outline }}>
+      <BottomSheetView style={[styles.sheet, { backgroundColor: colors.surface }]}>
+        <Text variant="titleMedium" style={styles.title}>
+          {language === 'russian' ? 'Фоновая геолокация' : 'Background location'}
+        </Text>
+        <View style={styles.paragraphs}>
+          {BACKGROUND_LOCATIONS[language].needToAllow.split('\n\n').map((paragraph) => (
+            <Text key={paragraph} variant="bodyLarge" style={{ color: colors.onSurface }}>
+              {paragraph}
+            </Text>
+          ))}
         </View>
+        <Button
+          mode="contained"
+          style={styles.button}
+          onPress={async () => {
+            try {
+              await requestBackgroundPermission();
+              backgroundLocationEnabledModalRef.current?.close();
+            } catch (error) {
+              errorToast('Не удалось получить доступ к фоновой геолокации', error);
+            }
+          }}>
+          {BACKGROUND_LOCATIONS[language].giveAccess}
+        </Button>
       </BottomSheetView>
     </BottomSheetModal>
   );
 }
+
+const styles = StyleSheet.create({
+  handle: { borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+  sheet: { flex: 1, paddingHorizontal: 20, paddingTop: 20, paddingBottom: 28 },
+  title: { fontWeight: '800' },
+  paragraphs: { gap: 14, marginTop: 16 },
+  button: { marginTop: 28 },
+});

@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useTheme, Button, Text } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { BATTERY_OPTIMIZATION } from './const';
 import type { BatteryOptimizationModalProps } from '../types';
 
@@ -22,34 +22,47 @@ export default function BatteryOptimizationModal({
     <BottomSheetModal
       ref={batteryOptimizationEnabledModalRef}
       index={0}
-      snapPoints={['75%']}
+      snapPoints={['60%']}
       backdropComponent={renderBackdrop}
-      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.background }}
-      handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, padding: 15, backgroundColor: colors.background }}>
-        <View style={{ flex: 1, paddingVertical: 10, paddingHorizontal: 5 }}>
-          <Text variant="bodyLarge" style={{ textAlign: 'justify' }}>
-            {BATTERY_OPTIMIZATION[language].optimizationMessage}
-          </Text>
-          <Button
-            mode="outlined"
-            style={{ marginTop: 15 }}
-            onPress={async () => {
-              try {
-                const request = await startActivityAsync(ActivityAction.IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                if (request) {
-                  setIsNeedToRefreshPermission(true);
-                  batteryOptimizationEnabledModalRef.current?.close();
-                }
-              } catch (error) {
-                showCrossPlatformToast(JSON.stringify(error));
-              }
-            }}>
-            {BATTERY_OPTIMIZATION[language].unoptimizeApp}
-          </Button>
+      handleStyle={[styles.handle, { backgroundColor: colors.surface }]}
+      backgroundStyle={{ backgroundColor: colors.surface }}
+      handleIndicatorStyle={{ backgroundColor: colors.outline }}>
+      <BottomSheetView style={[styles.sheet, { backgroundColor: colors.surface }]}>
+        <Text variant="titleMedium" style={styles.title}>
+          {language === 'russian' ? 'Оптимизация батареи' : 'Battery optimization'}
+        </Text>
+        <View style={styles.paragraphs}>
+          {BATTERY_OPTIMIZATION[language].optimizationMessage.split('\n\n').map((paragraph) => (
+            <Text key={paragraph} variant="bodyLarge" style={{ color: colors.onSurface }}>
+              {paragraph}
+            </Text>
+          ))}
         </View>
+        <Button
+          mode="contained"
+          style={styles.button}
+          onPress={async () => {
+            try {
+              const request = await startActivityAsync(ActivityAction.IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+              if (request) {
+                setIsNeedToRefreshPermission(true);
+                batteryOptimizationEnabledModalRef.current?.close();
+              }
+            } catch (error) {
+              errorToast('Не удалось изменить оптимизацию батареи', error);
+            }
+          }}>
+          {BATTERY_OPTIMIZATION[language].unoptimizeApp}
+        </Button>
       </BottomSheetView>
     </BottomSheetModal>
   );
 }
+
+const styles = StyleSheet.create({
+  handle: { borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+  sheet: { flex: 1, paddingHorizontal: 20, paddingTop: 20, paddingBottom: 28 },
+  title: { fontWeight: '800' },
+  paragraphs: { gap: 14, marginTop: 16 },
+  button: { marginTop: 28 },
+});

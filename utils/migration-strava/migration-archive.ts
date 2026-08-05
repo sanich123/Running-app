@@ -1,5 +1,6 @@
 import { getDocumentAsync } from 'expo-document-picker';
 import { Directory, File } from 'expo-file-system';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { removeCacheFolder, removeMedia } from './remove-tools';
 import { sendArchiveToServer } from './send-tools';
 import { toFileUri } from './uri-tools';
@@ -60,6 +61,7 @@ export async function getMigrationArchiveAndSendToServer({
       // Preserve the original error; cleanup is best effort after a failure.
     }
     setIsError(`Ошибка ${error instanceof Error ? error.message : JSON.stringify(error)}`);
+    errorToast('Ошибка миграции из Strava', error);
   } finally {
     setIsDisabled(false);
     setIsUnzipping(false);

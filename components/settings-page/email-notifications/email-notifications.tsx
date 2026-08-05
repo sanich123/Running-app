@@ -1,4 +1,5 @@
 import { Switch } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useGetUserProfileByUserIdQuery, useUpdateProfileByProfileIdMutation } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import { SETTINGS } from '../const';
@@ -21,10 +22,14 @@ export default function EmailNotificationsBtn() {
             <Switch
               value={profileInfo.emailNotifications}
               onValueChange={async () => {
-                await updateProfile({
-                  body: { emailNotifications: !profileInfo.emailNotifications },
-                  id: profileInfo.id,
-                });
+                try {
+                  await updateProfile({
+                    body: { emailNotifications: !profileInfo.emailNotifications },
+                    id: profileInfo.id,
+                  }).unwrap();
+                } catch (error) {
+                  errorToast('Не удалось изменить настройки уведомлений', error);
+                }
               }}
             />
           }
