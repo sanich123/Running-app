@@ -4,7 +4,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Platform, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import NetworkStateBanner from '../network-state-banner/network-state-banner';
 import type { CrossPlatformLayoutProps } from './types';
 
 export default function CrossPlatformLayout({
@@ -19,12 +18,7 @@ export default function CrossPlatformLayout({
   const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
   const isStatusState = Boolean(isError || isLoading);
-  const content = (
-    <>
-      {!isLoading && !isStatusState && <NetworkStateBanner />}
-      {children}
-    </>
-  );
+  const content = children;
 
   return (
     <SafeAreaView

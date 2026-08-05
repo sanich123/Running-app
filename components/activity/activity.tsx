@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import IconChooseSport from '@C/activity/icon-choose-sport/icon-choose-sport';
 import Map from '@C/activity/map/map';
@@ -45,11 +45,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    height: '75%',
+    height: Platform.OS === 'ios' ? '80%' : '75%',
     width: '100%',
   },
   metricsLayout: {
-    height: '25%',
+    height: Platform.OS === 'ios' ? '20%' : '25%',
     width: '100%',
     paddingHorizontal: 18,
     paddingTop: 16,
@@ -64,5 +64,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 20,
+    transform: Platform.OS === 'ios' ? [{ translateY: -10 }] : undefined,
   },
 });

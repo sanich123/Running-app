@@ -14,6 +14,7 @@ export default function SettingsPage() {
   const { width } = useWindowDimensions();
   return (
     <ScrollView
+      style={{ backgroundColor: colors.background }}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{
         padding: 12,

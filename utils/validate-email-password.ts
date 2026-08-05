@@ -6,6 +6,6 @@ export const enum SignInPageStates {
 
 export const signInMap = {
   [SignInPageStates.register]: SignInPageStates.login,
-  [SignInPageStates.login]: SignInPageStates.register,
+  [SignInPageStates.login]: SignInPageStates.reset,
   [SignInPageStates.reset]: SignInPageStates.register,
 };

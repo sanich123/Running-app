@@ -5,7 +5,6 @@ import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import CameraLauncher from '@C/camera/camera';
 import Checkbox from '@C/checkbox/checkbox';
-import NetworkIndicator from '@C/network-indicator/network-indicator';
 import DatePickerWeb from '@C/save-activity-page/date-picker-web/date-picker-web';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useAppSelector } from '@R/typed-hooks';
@@ -37,7 +36,6 @@ export default function SaveResult() {
             { backgroundColor: colors.background },
           ]}>
           <View style={{ paddingBottom: insets.bottom + 24 }}>
-            <NetworkIndicator />
             <TextInputs isDisabled={isDisabled} />
             <SportsBtns isDisabled={isDisabled} />
             <EmotionBtns isDisabled={isDisabled} />

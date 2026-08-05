@@ -11,7 +11,6 @@ export default function PrefetchActivitiesBtn() {
 
   return (
     <SettingsRow
-      icon="download-multiple"
       title={language === 'russian' ? 'Предзагрузка тренировок' : 'Preload workouts'}
       description={`${isNeedToPrefetchActivities ? SETTINGS[language].switchOn : SETTINGS[language].switchOff} ${SETTINGS[language].prefetch}`}
       leading={

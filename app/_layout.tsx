@@ -22,6 +22,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { toastConfig } from '@const/toast-config';
 import { persistor, store } from '@R/store';
+import { useAppSelector } from '@R/typed-hooks';
 
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({
@@ -30,19 +31,12 @@ SplashScreen.setOptions({
 });
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [fontsLoaded] = useFonts({
     PlusJakartaSans_400Regular,
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_800ExtraBold,
   });
-  const fonts = configureFonts({ config: { fontFamily: FONT_FAMILIES.regular } });
-  const paperTheme =
-    colorScheme === 'dark'
-      ? { ...MD3DarkTheme, roundness: 2, fonts, colors: COLORS.dark }
-      : { ...MD3LightTheme, roundness: 2, fonts, colors: COLORS.light };
-
   if (!fontsLoaded) {
     return null;
   }
@@ -50,23 +44,38 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={<FullPageActivityLoader />} persistor={persistor}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <SafeAreaProvider>
-            <KeyboardProvider>
-              <SystemBars style="auto" />
-              <PaperProvider theme={paperTheme}>
-                <BottomSheetModalProvider>
-                  <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
-                    <Stack.Screen name="(protected)" />
-                    <Stack.Screen name="sign-in" />
-                  </Stack>
-                  <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
-                </BottomSheetModalProvider>
-              </PaperProvider>
-            </KeyboardProvider>
-          </SafeAreaProvider>
-        </GestureHandlerRootView>
+        <AppShell />
       </PersistGate>
     </Provider>
+  );
+}
+
+function AppShell() {
+  const systemColorScheme = useColorScheme();
+  const { theme } = useAppSelector(({ language }) => language);
+  const colorScheme = theme ?? systemColorScheme;
+  const fonts = configureFonts({ config: { fontFamily: FONT_FAMILIES.regular } });
+  const paperTheme =
+    colorScheme === 'dark'
+      ? { ...MD3DarkTheme, roundness: 2, fonts, colors: COLORS.dark }
+      : { ...MD3LightTheme, roundness: 2, fonts, colors: COLORS.light };
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <KeyboardProvider>
+          <SystemBars style="auto" />
+          <PaperProvider theme={paperTheme}>
+            <BottomSheetModalProvider>
+              <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
+                <Stack.Screen name="(protected)" />
+                <Stack.Screen name="sign-in" />
+              </Stack>
+              <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
+            </BottomSheetModalProvider>
+          </PaperProvider>
+        </KeyboardProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

@@ -24,10 +24,10 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
       index={0}
       snapPoints={['30%']}
       backdropComponent={renderBackdrop}
-      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.onSecondary }}
-      handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, backgroundColor: colors.onSecondary }}>
+      handleStyle={{ backgroundColor: colors.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
+      backgroundStyle={{ backgroundColor: colors.surface }}
+      handleIndicatorStyle={{ backgroundColor: colors.primary }}>
+      <BottomSheetView style={{ flex: 1, backgroundColor: colors.surface }}>
         <View>
           {THEMES_ARRAY[language].map(({ value, title }) => (
             <Fragment key={value}>
@@ -37,7 +37,7 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
                 borderless
                 style={styles.radioBtn}
                 onPress={() => {
-                  Appearance.setColorScheme(value as ColorSchemeName);
+                  Appearance.setColorScheme((value ?? 'unspecified') as ColorSchemeName);
                   dispatch(changeTheme(value));
                 }}>
                 <>

@@ -38,7 +38,7 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
     : null;
 
   useEffect(() => {
-    if (isSuccessSending && profile?.emailNotifications) {
+    if (isSuccessSending && profile?.emailNotifications && profile?.users?.email) {
       sendEmailNotification({
         name,
         surname,

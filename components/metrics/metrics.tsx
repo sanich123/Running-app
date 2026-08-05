@@ -1,4 +1,4 @@
-import { View, StyleSheet } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { MAP_METRICS } from './const';
@@ -66,5 +66,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     position: 'relative',
+    paddingTop: 10,
+    paddingBottom: 6,
+    transform: Platform.OS === 'ios' ? [{ translateY: 4 }] : undefined,
   },
 });

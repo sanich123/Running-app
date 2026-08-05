@@ -26,10 +26,10 @@ export default function LanguageSwitcherModal({
       index={0}
       snapPoints={['20%']}
       backdropComponent={renderBackdrop}
-      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.onSecondary }}
-      handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
-      <BottomSheetView style={{ flex: 1, backgroundColor: colors.onSecondary }}>
+      handleStyle={{ backgroundColor: colors.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
+      backgroundStyle={{ backgroundColor: colors.surface }}
+      handleIndicatorStyle={{ backgroundColor: colors.primary }}>
+      <BottomSheetView style={{ flex: 1, backgroundColor: colors.surface }}>
         <View>
           {LANGUAGES_ARRAY[language].values.map(({ value, title }) => (
             <Fragment key={title}>

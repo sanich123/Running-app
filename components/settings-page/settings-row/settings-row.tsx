@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 interface SettingsRowProps {
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  icon?: keyof typeof MaterialCommunityIcons.glyphMap;
   title: string;
   description?: string;
   onPress?: () => void;
@@ -25,10 +25,12 @@ export default function SettingsRow({
   const { colors } = useTheme();
   const content = (
     <View style={styles.content}>
-      <View style={[styles.icon, { backgroundColor: destructive ? colors.errorContainer : colors.primaryContainer }]}>
-        <MaterialCommunityIcons name={icon} size={21} color={destructive ? colors.error : colors.primary} />
-      </View>
-      {leading}
+      {icon && (
+        <View style={[styles.icon, { backgroundColor: destructive ? colors.errorContainer : colors.primaryContainer }]}>
+          <MaterialCommunityIcons name={icon} size={21} color={destructive ? colors.error : colors.primary} />
+        </View>
+      )}
+      {leading && <View style={styles.leading}>{leading}</View>}
       <View style={styles.copy}>
         <Text variant="titleMedium" style={{ color: destructive ? colors.error : colors.onSurface }}>
           {title}
@@ -78,5 +80,10 @@ const styles = StyleSheet.create({
   copy: {
     flex: 1,
     minWidth: 0,
+  },
+  leading: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    marginTop: Platform.OS === 'ios' ? 8 : 0,
   },
 });

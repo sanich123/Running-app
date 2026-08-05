@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Divider, useTheme } from 'react-native-paper';
 import UserListItem from '@C/user-list-item/user-list-item';
 import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
@@ -8,6 +9,7 @@ import type { ModalLikesListProps, ProfileType } from '../types';
 
 export default function ModalLikesList({ bottomSheetModalRef, likesLength }: ModalLikesListProps) {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const { activityIdWhichLikesToDownload } = useAppSelector(({ mainFeed }) => mainFeed);
   const { data: likes } = useGetLikesByActivityIdQuery(`${activityIdWhichLikesToDownload}`, {
     skip: !activityIdWhichLikesToDownload,
@@ -29,11 +31,12 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength }: Mod
       index={getIndexOfSnapPointByLikesLength(likesLength)}
       snapPoints={['12%', '20%', '30%', '50%']}
       backdropComponent={renderBackdrop}
-      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.onSecondary }}
-      handleIndicatorStyle={{ backgroundColor: colors.onBackground }}>
+      handleStyle={{ backgroundColor: colors.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
+      backgroundStyle={{ backgroundColor: colors.surface }}
+      handleIndicatorStyle={{ backgroundColor: colors.primary }}>
       <BottomSheetFlatList
-        style={{ backgroundColor: colors.onSecondary }}
+        style={{ backgroundColor: colors.surface }}
+        contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) }}
         data={likes}
         renderItem={({ item: { profile } }: { item: { profile: ProfileType } }) => (
           <UserListItem

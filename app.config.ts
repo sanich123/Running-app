@@ -146,7 +146,7 @@ export default {
           backgroundColor: '#292929',
           image: './assets/images/splash.png',
           resizeMode: 'contain',
-          imageWidth: 180,
+          imageWidth: 280,
         },
       ],
     ],

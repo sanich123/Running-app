@@ -22,7 +22,7 @@ export default function ChangeTheme() {
       <SegmentedButtons
         value={selectedTheme}
         onValueChange={(value) => {
-          Appearance.setColorScheme(value === 'system' ? (null as never) : (value as 'light' | 'dark'));
+          Appearance.setColorScheme(value === 'system' ? 'unspecified' : (value as 'light' | 'dark'));
           dispatch(changeTheme(value === 'system' ? null : value));
         }}
         buttons={THEMES_ARRAY[language].map(({ value, title }) => ({ value: value ?? 'system', label: title }))}

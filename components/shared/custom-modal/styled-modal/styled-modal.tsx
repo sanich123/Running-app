@@ -23,8 +23,8 @@ export default function StyledModal({
       style={{ maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
-      handleStyle={{ backgroundColor: colors.background, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.background }}
+      handleStyle={{ backgroundColor: colors.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
+      backgroundStyle={{ backgroundColor: colors.surface }}
       handleIndicatorStyle={{ backgroundColor: colors.primary }}>
       {children}
     </BottomSheetModal>

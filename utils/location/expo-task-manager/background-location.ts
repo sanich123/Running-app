@@ -6,9 +6,6 @@ import {
   watchPositionAsync,
 } from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { errorToast } from '@C/shared/error-toast/error-toast';
-import { setIsTooMuchSpeed } from '@R/slices/location/location';
 import { store } from '@R/store';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
@@ -33,12 +30,7 @@ async function processLocation(currentPosition: LocationObject) {
     const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer, lastArrayLength } =
       getMetricsTaskManager(currentPosition);
 
-    if (
-      !lastArrayLength ||
-      lastArrayLength < 10 ||
-      (currentPace > 3 && currentPace < Infinity) ||
-      store.getState().additionalInfoActivity.sport === SPORTS_BTNS_VALUES.bike
-    ) {
+    if (!lastArrayLength || lastArrayLength < 10) {
       saveMetricsToStoreTaskManager(
         currentKilometer,
         currentPosition,
@@ -47,9 +39,6 @@ async function processLocation(currentPosition: LocationObject) {
         currentAltitude,
         currentDistance,
       );
-    } else {
-      store.dispatch(setIsTooMuchSpeed(true));
-      errorToast('Геолокация отклонена из-за слишком высокой скорости относительно предыдущей точки.');
     }
   } catch (error) {
     if (__DEV__) console.error('[tracking]', 'Something went wrong when saving a new location...', error);

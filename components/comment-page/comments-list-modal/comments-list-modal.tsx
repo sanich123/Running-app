@@ -21,9 +21,9 @@ export default function CommentsListModal({ commentsModalRef }: CommentModalProp
       index={2}
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
-      handleStyle={{ backgroundColor: colors.onSecondary, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-      backgroundStyle={{ backgroundColor: colors.background }}
-      handleIndicatorStyle={{ backgroundColor: colors.onBackground }}
+      handleStyle={{ backgroundColor: colors.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
+      backgroundStyle={{ backgroundColor: colors.surface }}
+      handleIndicatorStyle={{ backgroundColor: colors.primary }}
       keyboardBlurBehavior="restore"
       keyboardBehavior="extend">
       <BottomSheetScrollView>

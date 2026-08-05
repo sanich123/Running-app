@@ -1,3 +1,5 @@
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import Feed from '@C/home-page/home-page';
@@ -25,6 +27,11 @@ export default function HomePage() {
           title: LABELS[language].feed,
         }}
       />
+      {Platform.OS === 'ios' && (
+        <NativeTabs.Trigger>
+          <NativeTabs.Trigger.Label hidden />
+        </NativeTabs.Trigger>
+      )}
       <Feed />
     </>
   );

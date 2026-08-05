@@ -28,8 +28,13 @@ export default function WeekStatisticsMetric({
         variant="titleLarge"
         numberOfLines={1}
         adjustsFontSizeToFit
-        minimumFontScale={0.7}
-        style={{ color: colors.primary, fontFamily: FONT_FAMILIES.extraBold, fontSize: 18 }}>
+        minimumFontScale={0.75}
+        style={{
+          color: colors.primary,
+          fontFamily: FONT_FAMILIES.extraBold,
+          fontSize: 24,
+          lineHeight: 30,
+        }}>
         {isLoading && ' '}
         {isSuccess && metrics}
         {isError && WEEK_STATISTICS[language].error}
