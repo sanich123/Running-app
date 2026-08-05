@@ -19,8 +19,21 @@ export default function MetricsItem({ isMapVisible, title, metric, isCentral }: 
           height: isMapVisible ? '100%' : '30%',
         },
       ]}>
-      <Text variant={`${isCentralAndIsNotMapVisible ? 'displayMedium' : 'titleMedium'}`}>{title}</Text>
-      <Text variant={`${isCentralAndIsNotMapVisible ? 'headlineLarge' : 'headlineSmall'}`}>{metric}</Text>
+      <Text
+        variant={`${isCentralAndIsNotMapVisible ? 'titleMedium' : 'bodySmall'}`}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}>
+        {title}
+      </Text>
+      <Text
+        variant={`${isCentralAndIsNotMapVisible ? 'headlineMedium' : 'titleLarge'}`}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.65}
+        style={styles.metricValue}>
+        {metric}
+      </Text>
     </View>
   );
 }
@@ -30,5 +43,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  metricValue: {
+    lineHeight: 30,
   },
 });

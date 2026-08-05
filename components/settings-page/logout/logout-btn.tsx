@@ -1,38 +1,28 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { resetAuthSlice } from '@R/slices/auth/auth';
+import { errorToast } from '@C/shared/error-toast/error-toast';
+import { persistor, resetStore } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { SETTINGS } from '../const';
+import SettingsRow from '../settings-row/settings-row';
 
 export default function LogoutBtn() {
-  const { dark, colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const { replace } = useRouter();
   const dispatch = useAppDispatch();
   return (
-    <>
-      <TouchableRipple
-        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-        borderless
-        onPress={async () => {
-          await AsyncStorage.removeItem('accessToken');
-          dispatch(resetAuthSlice());
+    <SettingsRow
+      icon="logout"
+      title={SETTINGS[language].logout}
+      destructive
+      onPress={async () => {
+        try {
+          await persistor.purge();
+          dispatch(resetStore());
           replace('/sign-in');
-        }}>
-        <View
-          style={{
-            display: 'flex',
-            backgroundColor: colors.background,
-            justifyContent: 'center',
-            padding: 10,
-          }}>
-          <Text variant="titleMedium">{SETTINGS[language].logout}</Text>
-        </View>
-      </TouchableRipple>
-
-      <Divider />
-    </>
+        } catch (error) {
+          errorToast('Не удалось выйти из аккаунта', error);
+        }
+      }}
+    />
   );
 }

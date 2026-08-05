@@ -32,8 +32,8 @@ export const manualActivity = createSlice({
       state.manualHours = 0;
       state.manualMinutes = 0;
     },
-    resetManualActivitySlice: (state) => {
-      return (state = MANUAL_ACTIVITY_INITIAL_STATE);
+    resetManualActivitySlice: () => {
+      return MANUAL_ACTIVITY_INITIAL_STATE;
     },
   },
 });

@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
-import { Platform } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useDeleteCommentByCommentIdMutation } from '@R/services/comments/comments';
 import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { COMMENT_DELETE_BTN } from './const';
 import type { ComentDeleteBtnProps } from '../types';
 
@@ -12,28 +11,26 @@ export default function CommentDeleteBtn({ commentId, activityId }: ComentDelete
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-  const [deleteComment, { isSuccess: isSuccessDeleting, isError: isErrorDeleting, isLoading }] =
-    useDeleteCommentByCommentIdMutation();
+  const [deleteComment, { isSuccess: isSuccessDeleting, isLoading }] = useDeleteCommentByCommentIdMutation();
 
   useEffect(() => {
     if (isSuccessDeleting) {
       dispatch(setActivityIdWhichCommentsToUpdate(activityId));
     }
-    if (isErrorDeleting) {
-      if (Platform.OS === 'web') {
-        showCrossPlatformToast(COMMENT_DELETE_BTN[language].errorDeleting);
-      } else {
-        showCrossPlatformToast(COMMENT_DELETE_BTN[language].errorDeleting);
-      }
-    }
-  }, [isSuccessDeleting, isErrorDeleting, dispatch, activityId, language]);
+  }, [isSuccessDeleting, dispatch, activityId]);
 
   return (
     <IconButton
       icon="delete"
       iconColor={colors.primary}
       size={20}
-      onPress={async () => await deleteComment({ commentId, activityId }).unwrap()}
+      onPress={async () => {
+        try {
+          await deleteComment({ commentId, activityId }).unwrap();
+        } catch (error) {
+          errorToast(COMMENT_DELETE_BTN[language].errorDeleting, error);
+        }
+      }}
       disabled={isLoading}
     />
   );

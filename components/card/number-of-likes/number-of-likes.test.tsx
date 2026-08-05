@@ -9,16 +9,16 @@ import { NUMBER_OF_LIKES } from './const';
 import NumberOfLikes from './number-of-likes';
 
 describe('Number of likes', () => {
-  it('should correctly renders, when you liked', () => {
+  it('should correctly renders, when you liked', async () => {
     mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
-    renderWithProviders(<NumberOfLikes likes={MOCK_LIKES} />, { store: mockStore });
+    await renderWithProviders(<NumberOfLikes likes={MOCK_LIKES} />, { store: mockStore });
     expect(screen.getByText(new RegExp(NUMBER_OF_LIKES.russian.you))).toBeOnTheScreen();
     expect(screen.getByText(new RegExp(NUMBER_OF_LIKES.russian.and))).toBeOnTheScreen();
     expect(screen.getByText(new RegExp(`8 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
   });
-  it('should correctly renders, when you didnt like', () => {
+  it('should correctly renders, when you didnt like', async () => {
     mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
-    renderWithProviders(
+    await renderWithProviders(
       <NumberOfLikes
         likes={Array(9).fill({
           activityId: '617dddae-05b3-418a-9a8e-5d408a1b897a',
@@ -31,18 +31,18 @@ describe('Number of likes', () => {
     );
     expect(screen.getByText(new RegExp(`9 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
   });
-  it('should correctly renders, when you liked in russian', () => {
+  it('should correctly renders, when you liked in russian', async () => {
     mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<NumberOfLikes likes={MOCK_LIKES} />, { store: mockStore });
+    await renderWithProviders(<NumberOfLikes likes={MOCK_LIKES} />, { store: mockStore });
     expect(screen.getByText(new RegExp(NUMBER_OF_LIKES.russian.you))).toBeOnTheScreen();
     expect(screen.getByText(new RegExp(NUMBER_OF_LIKES.russian.and))).toBeOnTheScreen();
     expect(screen.getByText(new RegExp(`8 ${NUMBER_OF_LIKES.russian.manyGaveLikes}`))).toBeOnTheScreen();
   });
-  it('should correctly renders, when you did not like in russian', () => {
+  it('should correctly renders, when you did not like in russian', async () => {
     mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(
+    await renderWithProviders(
       <NumberOfLikes
         likes={Array(9).fill({
           activityId: '617dddae-05b3-418a-9a8e-5d408a1b897a',

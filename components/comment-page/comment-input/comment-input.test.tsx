@@ -6,14 +6,14 @@ import { mockStore } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
 
 describe('Comment input', () => {
-  it('should correctly renders', () => {
-    renderWithProviders(<CommentInput commentId="someCommentId" profile={MOCK_PROFILE} />, {
+  it('should correctly renders', async () => {
+    await renderWithProviders(<CommentInput commentId="someCommentId" profile={MOCK_PROFILE} />, {
       store: mockStore,
     });
     expect(screen.getByTestId(COMMENT_INPUT_TEST_ID)).toBeOnTheScreen();
   });
   it('should correctly change local state', async () => {
-    renderWithProviders(<CommentInput commentId="someCommentId" profile={MOCK_PROFILE} />, { store: mockStore });
+    await renderWithProviders(<CommentInput commentId="someCommentId" profile={MOCK_PROFILE} />, { store: mockStore });
     const commentInput = screen.getByTestId(COMMENT_INPUT_TEST_ID);
     await userEvent.type(commentInput, 'some text');
     expect(commentInput.props.value).toEqual('some text');
@@ -21,7 +21,7 @@ describe('Comment input', () => {
     expect(commentInput.props.value).toEqual('');
   });
   it('should correctly renders comment sending icon', async () => {
-    renderWithProviders(<CommentInput commentId="someCommentId" profile={MOCK_PROFILE} />, {
+    await renderWithProviders(<CommentInput commentId="someCommentId" profile={MOCK_PROFILE} />, {
       store: mockStore,
     });
     const commentInput = screen.getByTestId(COMMENT_INPUT_TEST_ID);

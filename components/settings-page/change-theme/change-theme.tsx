@@ -1,26 +1,38 @@
-import { useRef } from 'react';
-import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
+import { Appearance, StyleSheet, View } from 'react-native';
+import { SegmentedButtons, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
-import { useAppSelector } from '@R/typed-hooks';
-import ChangeThemeModal from '../change-theme-modal/change-theme-modal';
-import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { changeTheme } from '@R/slices/language/language';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { THEMES_ARRAY } from '../change-theme-modal/const';
+import SettingsRow from '../settings-row/settings-row';
 
 export default function ChangeTheme() {
-  const { dark } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
-  const themesModalRef = useRef<BottomSheetModal>(null);
+  const { colors } = useTheme();
+  const { language, theme } = useAppSelector(({ language }) => language);
+  const dispatch = useAppDispatch();
   const isRussian = language === LANGUAGES.russian;
+  const selectedTheme = theme ?? 'system';
   return (
-    <>
-      <TouchableRipple
-        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-        borderless
-        onPress={() => themesModalRef.current?.present()}
-        style={{ padding: 10 }}>
-        <Text variant="titleMedium">{isRussian ? 'Тема' : 'Theme'}</Text>
-      </TouchableRipple>
-      <Divider />
-      <ChangeThemeModal themesModalRef={themesModalRef} />
-    </>
+    <View style={[styles.container, { backgroundColor: colors.surface }]}>
+      <SettingsRow
+        icon="theme-light-dark"
+        title={isRussian ? 'Тема' : 'Theme'}
+        description={isRussian ? 'Настройте внешний вид приложения' : 'Choose how the app looks'}
+      />
+      <SegmentedButtons
+        value={selectedTheme}
+        onValueChange={(value) => {
+          Appearance.setColorScheme(value === 'system' ? (null as never) : (value as 'light' | 'dark'));
+          dispatch(changeTheme(value === 'system' ? null : value));
+        }}
+        buttons={THEMES_ARRAY[language].map(({ value, title }) => ({ value: value ?? 'system', label: title }))}
+        style={styles.segmented}
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { borderRadius: 18, paddingBottom: 12 },
+  segmented: { marginHorizontal: 12 },
+});

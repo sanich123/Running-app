@@ -1,10 +1,10 @@
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useAddActivityByUserIdMutation } from '@R/services/activity/activity';
 import { resetActivitySlice } from '@R/slices/activity/activity';
 import { refreshUnsendedActivitiesList } from '@R/slices/unsended-activity/unsended-activity';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { UNSENDED_ACTIVITIES } from './const';
 
 export default function UnsendedActivitiesIndicator() {
@@ -21,7 +21,7 @@ export default function UnsendedActivitiesIndicator() {
         const reducedUnsyncedList = unsyncedActivities.slice(0, -1);
         dispatch(refreshUnsendedActivitiesList(reducedUnsyncedList));
       })
-      .catch((error) => showCrossPlatformToast('Ошибка во время отправки активности'));
+      .catch((error) => errorToast('Ошибка во время отправки активности', error));
   }
 
   return (

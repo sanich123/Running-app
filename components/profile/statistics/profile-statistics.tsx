@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 40,
-    columnGap: 5,
+    marginVertical: 24,
+    columnGap: 8,
   },
   statistics: {
     display: 'flex',

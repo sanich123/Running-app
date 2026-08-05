@@ -8,7 +8,7 @@ const config = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node', 'mjs'],
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?react-native|@react-native|expo|@expo|@expo-google-fonts|standard-navigation|react-navigation|@react-navigation|@unimodules|unimodules|sentry-expo|native-base|react-native-svg|firebase|@firebase|@rnmapbox|react-redux|immer|msw|@mswjs|@open-draft|until-async|rettime|strict-event-emitter|headers-polyfill)',
+    'node_modules/(?!(jest-)?react-native|@react-native|expo|@expo|@expo-google-fonts|standard-navigation|react-navigation|@react-navigation|@unimodules|unimodules|sentry-expo|native-base|react-native-svg|@rnmapbox|react-redux|immer|msw|@mswjs|@open-draft|until-async|rettime|strict-event-emitter|headers-polyfill)',
   ],
   moduleNameMapper: {
     '^@C/(.*)$': '<rootDir>/components/$1',

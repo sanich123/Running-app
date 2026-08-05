@@ -8,16 +8,10 @@ jest.mock('react-native-compressor', () => ({
     compress: jest.fn(),
   }),
 }));
-jest.mock('expo-image', () => {
-  const actualExpoImage = jest.requireActual('expo-image');
-  const { Image } = jest.requireActual('react-native');
-
-  return { ...actualExpoImage, Image };
-});
 describe('Preview images', () => {
-  it('should correctly renders image', () => {
+  it('should correctly renders image', async () => {
     const setImages = jest.fn();
-    renderWithProviders(
+    await renderWithProviders(
       <PreviewImages images={[{ url: 'someUrl', thumbnail: null }]} setImages={setImages} isDisabled={false} />,
       {
         store: mockStore,
@@ -29,7 +23,7 @@ describe('Preview images', () => {
   });
   it('should correctly delete and image', async () => {
     const setImages = jest.fn();
-    renderWithProviders(
+    await renderWithProviders(
       <PreviewImages images={[{ url: 'someUrl', thumbnail: null }]} setImages={setImages} isDisabled={false} />,
       {
         store: mockStore,

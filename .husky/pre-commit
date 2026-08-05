@@ -2,7 +2,7 @@
 yarn tsc
 
 # 2. Линтинг и автофикс
-# yarn eslint --fix
+yarn eslint --fix
 
 # 3. Применяем Prettier к исходному коду проекта
 yarn prettier --write \
@@ -13,7 +13,7 @@ yarn prettier --write \
   './*.{ts,tsx,js,json}'
 
 # 4. Проверка состояния Expo
-yarn expo-doctor || true
+npx expo-doctor@latest || true
 
 # 5. Тесты
 yarn test

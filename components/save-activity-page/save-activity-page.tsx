@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import CameraLauncher from '@C/camera/camera';
@@ -20,6 +21,7 @@ import UploadPhotosBtn from './upload-photos-btn/upload-photos-btn';
 
 export default function SaveResult() {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const [isDisabled, setIsDisabled] = useState(false);
   const { isManualAdding, isEditingActivity, isCameraVisible } = useAppSelector(({ manualActivity }) => manualActivity);
   const { photoVideoUrls } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
@@ -34,28 +36,34 @@ export default function SaveResult() {
             Platform.OS === 'web' && styles.webStyles,
             { backgroundColor: colors.background },
           ]}>
-          <NetworkIndicator />
-          <TextInputs isDisabled={isDisabled} />
-          <SportsBtns isDisabled={isDisabled} />
-          <EmotionBtns isDisabled={isDisabled} />
-          <Checkbox isDisabled={isDisabled} />
-          {(isManualAdding || isEditingActivity) && Platform.OS !== 'web' && <DateTimePicker isDisabled={isDisabled} />}
-          {(isManualAdding || isEditingActivity) && Platform.OS === 'web' && <DatePickerWeb isDisabled={isDisabled} />}
-          {(isManualAdding || isEditingActivity) && <InputsDistanceTime isDisabled={isDisabled} />}
-          <View style={styles.cameraUploadBtns}>
-            {Platform.OS !== 'web' && <ShowCameraBtn isDisabled={isDisabled} />}
-            <UploadPhotosBtn
-              isDisabled={isDisabled}
-              setIsDisabled={setIsDisabled}
-              setImages={setImages}
-              images={images}
-            />
+          <View style={{ paddingBottom: insets.bottom + 24 }}>
+            <NetworkIndicator />
+            <TextInputs isDisabled={isDisabled} />
+            <SportsBtns isDisabled={isDisabled} />
+            <EmotionBtns isDisabled={isDisabled} />
+            <Checkbox isDisabled={isDisabled} />
+            {(isManualAdding || isEditingActivity) && Platform.OS !== 'web' && (
+              <DateTimePicker isDisabled={isDisabled} />
+            )}
+            {(isManualAdding || isEditingActivity) && Platform.OS === 'web' && (
+              <DatePickerWeb isDisabled={isDisabled} />
+            )}
+            {(isManualAdding || isEditingActivity) && <InputsDistanceTime isDisabled={isDisabled} />}
+            <View style={styles.cameraUploadBtns}>
+              {Platform.OS !== 'web' && <ShowCameraBtn isDisabled={isDisabled} />}
+              <UploadPhotosBtn
+                isDisabled={isDisabled}
+                setIsDisabled={setIsDisabled}
+                setImages={setImages}
+                images={images}
+              />
+            </View>
+            {photoVideoUrls?.length > 0 ? (
+              <PreviewImages images={photoVideoUrls} setImages={setImages} isDisabled={isDisabled} />
+            ) : null}
+            <DeclineBtn isDisabled={isDisabled} />
+            <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
           </View>
-          {photoVideoUrls?.length > 0 ? (
-            <PreviewImages images={photoVideoUrls} setImages={setImages} isDisabled={isDisabled} />
-          ) : null}
-          <DeclineBtn isDisabled={isDisabled} />
-          <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
         </ScrollView>
       ) : (
         <>{Platform.OS !== 'web' && <CameraLauncher />}</>

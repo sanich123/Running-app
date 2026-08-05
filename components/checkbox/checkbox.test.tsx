@@ -8,12 +8,12 @@ import { CHECKBOX } from './const';
 
 describe('Checkbox', () => {
   it('should correctly renders in russia', async () => {
-    renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(CHECKBOX.russian.public)).toBeOnTheScreen();
   });
   it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(CHECKBOX.english.public)).toBeOnTheScreen();
   });
 });

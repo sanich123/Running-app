@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { hasServicesEnabledAsync, useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
-
 //@ts-expect-error просто нет типов в пакете
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function useGetPermissions() {
@@ -34,7 +34,7 @@ export default function useGetPermissions() {
         locationEnabledModalRef.current?.present();
       }
     }
-    isLocationServicesEnabled();
+    isLocationServicesEnabled().catch((error) => errorToast('Не удалось проверить службы геолокации', error));
   }, []);
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function useGetPermissions() {
           batteryOptimizationEnabledModalRef.current?.present();
         }
         setUserGetBackToApp(false);
-      });
+      }).catch((error: unknown) => errorToast('Не удалось проверить оптимизацию батареи', error));
     }
   }, [
     foregroudPermissionStatus,

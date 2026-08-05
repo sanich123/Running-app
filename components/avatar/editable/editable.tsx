@@ -1,8 +1,8 @@
 import { Platform, Pressable } from 'react-native';
 import ProfileImage from '@C/profile/avatar/avatar';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { savePhotoUrl } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
 import { AvatarEditableTestIds } from './const';
@@ -24,7 +24,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
             onChange={async (e) => {
               if (userId && e.target.files) {
                 if (/mp4|avi|m4v/.test(e.target.files[0].name)) {
-                  showCrossPlatformToast('Нельзя использовать видео файлы для аватары');
+                  errorToast('Нельзя использовать видео файлы для аватары');
                   return;
                 }
                 const imgSrc = e.target.files[0];

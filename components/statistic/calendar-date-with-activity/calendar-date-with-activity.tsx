@@ -23,8 +23,9 @@ export default function CalendarDateWithActivity({
           style={[
             styles.dateItem,
             {
+              backgroundColor: colors.primaryContainer,
+              borderColor: colors.primary,
               borderWidth: isEmptyCell ? 0 : 1,
-              borderColor: colors.onBackground,
             },
           ]}
           onPress={() => {
@@ -39,6 +40,7 @@ export default function CalendarDateWithActivity({
           <Text
             variant={activities.length ? 'headlineMedium' : 'bodyMedium'}
             style={{
+              color: colors.onPrimaryContainer,
               fontWeight: isTitle || !activities.length ? 'bold' : 'normal',
             }}>
             {activities.length > 1 && activities.length}
@@ -51,7 +53,7 @@ export default function CalendarDateWithActivity({
             styles.dateItem,
             {
               borderWidth: isEmptyCell ? 0 : 1,
-              borderColor: colors.onBackground,
+              borderColor: colors.outlineVariant,
             },
           ]}>
           <Text
@@ -83,12 +85,11 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   dateItem: {
-    height: 45,
-    width: 45,
-    borderWidth: 1,
+    height: 40,
+    width: '100%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 12,
   },
 });

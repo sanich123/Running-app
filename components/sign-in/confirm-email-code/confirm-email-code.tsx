@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Button, TextInput, useTheme } from 'react-native-paper';
 import type { UseFormWatch } from 'react-hook-form';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useConfirmSignUpCodeByEmailMutation } from '@R/services/authentication/authentication';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 
 export default function ConfirmEmailCode({ watch }: { watch: UseFormWatch<EmailPasswordData> }) {
@@ -32,7 +32,7 @@ export default function ConfirmEmailCode({ watch }: { watch: UseFormWatch<EmailP
           await confirmEmailByCode({ email: watch('email'), confirmationCode })
             .unwrap()
             .then(() => replace('/'))
-            .catch((error) => showCrossPlatformToast(error.data.message))
+            .catch((error) => errorToast('Ошибка подтверждения кода', error))
         }
         loading={isLoading}
         disabled={isLoading}

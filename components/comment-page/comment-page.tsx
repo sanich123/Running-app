@@ -23,6 +23,8 @@ export default function CommentFullViewPage() {
     data: activity,
     error,
     isError,
+    isSuccess,
+    refetch,
   } = useGetActivityByActivityIdQuery(`${activityId}`, { skip: !activityId });
   const [isShowingTextInput, setIsShowingTextInput] = useState(false);
   const [idOfUpdatingComment, setIdOfUpdatingComment] = useState('');
@@ -30,15 +32,16 @@ export default function CommentFullViewPage() {
   return (
     <ScrollView
       contentContainerStyle={[
+        { flexGrow: 1 },
         (isLoading || isError) && styles.isInCenter,
         {
           width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
           marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
         },
       ]}>
-      {error || activity?.message ? <ErrorComponent error={error || activity} /> : null}
-      {isLoading && <ActivityIndicator size="large" />}
-      {activity && (
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+      ) : isSuccess && !activity?.message ? (
         <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
           {(activity?.mapPhotoUrl || activity?.photoVideoUrls?.length > 0) && (
             <MediaList
@@ -86,7 +89,9 @@ export default function CommentFullViewPage() {
             )}
           </View>
         </View>
-      )}
+      ) : isError || activity?.message ? (
+        <ErrorComponent error={error || activity} refetch={refetch} />
+      ) : null}
     </ScrollView>
   );
 }

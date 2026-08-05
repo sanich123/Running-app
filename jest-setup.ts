@@ -1,9 +1,34 @@
 import 'react-native-gesture-handler/jestSetup';
 import { server } from './tests/utils/server';
+import type * as ExpoLinking from 'expo-linking';
 
-jest.mock('@react-native-async-storage/async-storage', () =>
-  require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
-);
+let consoleErrorSpy: jest.SpiedFunction<typeof console.error>;
+
+jest.mock('react-native-mmkv', () => ({
+  createMMKV: () => ({
+    getString: jest.fn(),
+    set: jest.fn(),
+    remove: jest.fn(),
+  }),
+}));
+
+jest.mock('redux-persist', () => {
+  const actualReduxPersist = jest.requireActual('redux-persist');
+  const resolvedPromise = () => Promise.resolve();
+
+  return {
+    ...actualReduxPersist,
+    persistStore: jest.fn(() => ({
+      dispatch: jest.fn(),
+      flush: resolvedPromise,
+      getState: jest.fn(() => ({ bootstrapped: true, registry: [] })),
+      pause: jest.fn(),
+      persist: jest.fn(),
+      purge: resolvedPromise,
+      subscribe: jest.fn(() => jest.fn()),
+    })),
+  };
+});
 
 jest.mock('expo-font');
 jest.mock('expo-asset');
@@ -18,9 +43,8 @@ jest.mock('@A/supabase/supabase-init', () => ({
   },
 }));
 jest.mock('expo-image', () => {
-  const actualExpoImage = jest.requireActual('expo-image');
   const { Image } = jest.requireActual('react-native');
-  return { ...actualExpoImage, Image, uri: 'someUrl' };
+  return { __esModule: true, default: Image, Image };
 });
 jest.mock('@gorhom/bottom-sheet', () => {
   const reactNative = jest.requireActual('react-native');
@@ -43,7 +67,7 @@ jest.mock('@gorhom/bottom-sheet', () => {
   };
 });
 jest.mock('expo-linking', () => {
-  const module: typeof import('expo-linking') = {
+  const module: typeof ExpoLinking = {
     ...jest.requireActual('expo-linking'),
     createURL: jest.fn(),
   };
@@ -81,8 +105,14 @@ beforeAll(() => {
   jest.useFakeTimers();
   server.listen({ onUnhandledRequest: 'error' });
 });
+beforeEach(() => {
+  consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation((...args) => {
+    throw new Error(`Unexpected console.error: ${args.map(String).join(' ')}`);
+  });
+});
 afterAll(() => server.close());
 afterEach(() => {
+  consoleErrorSpy.mockRestore();
   jest.clearAllMocks();
   server.resetHandlers();
 });

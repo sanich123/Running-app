@@ -16,5 +16,13 @@ export function HomeIcon({ focused }: { focused: boolean }) {
 }
 
 export function ActivityIcon({ focused }: { focused: boolean }) {
-  return <IconButton icon="play" iconColor="red" size={100} style={{ marginTop: Platform.OS === 'ios' ? 25 : 0 }} />;
+  const { colors } = useTheme();
+  return (
+    <IconButton
+      icon="run"
+      iconColor={focused ? colors.primary : colors.secondary}
+      size={56}
+      style={{ marginTop: Platform.OS === 'ios' ? 25 : 0 }}
+    />
+  );
 }

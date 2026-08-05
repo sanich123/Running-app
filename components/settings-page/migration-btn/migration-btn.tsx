@@ -1,23 +1,19 @@
 import { useRouter } from 'expo-router';
-import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
+import SettingsRow from '../settings-row/settings-row';
 
 export default function MigrationBtn() {
   const { push } = useRouter();
-  const { dark } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
+  const { profileFromServer } = useAppSelector(({ profile }) => profile);
   const isRussian = language === LANGUAGES.russian;
-  return (
-    <>
-      <TouchableRipple
-        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-        borderless
-        style={{ padding: 10 }}
-        onPress={() => push('/(protected)/migration')}>
-        <Text variant="titleMedium">{`${isRussian ? 'Перенести активности из Strava' : 'Migrate from Strava service'}`}</Text>
-      </TouchableRipple>
-      <Divider />
-    </>
-  );
+  return profileFromServer?.id ? (
+    <SettingsRow
+      icon="run"
+      title={isRussian ? 'Перенести активности из Strava' : 'Migrate from Strava'}
+      description={isRussian ? 'Импортируйте историю тренировок' : 'Import your workout history'}
+      onPress={() => push('/(protected)/migration')}
+    />
+  ) : null;
 }

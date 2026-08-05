@@ -13,9 +13,18 @@ export default function UsersSettingsIcons() {
   const { userId } = useGlobalSearchParams();
   const { userId: ownerId } = useAppSelector(({ auth }) => auth);
   const isMineActivity = userId === ownerId && pathname.includes(ROUTES.activity);
+  const isHomePage = pathname === '/' || pathname === '/index';
+  const isSettingsPage = pathname === `/${ROUTES.settings}`;
+  const isUsersPage = pathname === `/${ROUTES.users}`;
+
+  const openRoute = (route: '/(protected)/users' | '/(protected)/settings', alreadyThere: boolean) => {
+    if (!alreadyThere) {
+      push(route);
+    }
+  };
 
   return (
-    <View style={styles.layout}>
+    <View style={[styles.layout, isHomePage && styles.homeLayout]}>
       {isMineActivity ? (
         <ActivityUpdateBtn />
       ) : (
@@ -27,7 +36,7 @@ export default function UsersSettingsIcons() {
               iconColor={colors.primary}
               size={30}
               onPress={() => push('/')}
-              style={{ marginRight: -10 }}
+              style={styles.iconButton}
             />
           )}
           <IconButton
@@ -35,8 +44,8 @@ export default function UsersSettingsIcons() {
             icon="account-search-outline"
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            onPress={() => push('/(protected)/users')}
-            style={{ marginRight: -10 }}
+            onPress={() => openRoute('/(protected)/users', isUsersPage)}
+            style={styles.iconButton}
           />
           <IconButton
             testID="settingsIcon"
@@ -44,8 +53,8 @@ export default function UsersSettingsIcons() {
             animated
             iconColor={colors.primary}
             size={Platform.OS === 'ios' ? 25 : 30}
-            style={{ marginRight: -10 }}
-            onPress={() => push('/(protected)/settings')}
+            style={styles.iconButton}
+            onPress={() => openRoute('/(protected)/settings', isSettingsPage)}
           />
           {Platform.OS === 'web' && (
             <>
@@ -78,5 +87,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'transparent',
+    paddingRight: 8,
+  },
+  homeLayout: {
+    paddingRight: 16,
+  },
+  iconButton: {
+    margin: 0,
   },
 });

@@ -15,19 +15,19 @@ jest.mock('expo-router', () => ({
 
 describe('Users counter', () => {
   it('should correctly render label and number of users, that you follow in russian', async () => {
-    renderWithProviders(<UsersCounter variant={USERS_VARIANT.whoUserFollows} />, { store: mockStore });
+    await renderWithProviders(<UsersCounter variant={USERS_VARIANT.whoUserFollows} />, { store: mockStore });
     expect(await screen.findByText(USERS_COUNT.russian.followings)).toBeOnTheScreen();
     expect(await screen.findByText(`${MOCK_FRIENDS.length}`)).toBeOnTheScreen();
   });
   it('should correctly render label and number of users, that you follow in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<UsersCounter variant={USERS_VARIANT.whoUserFollows} />, { store: mockStore });
+    await renderWithProviders(<UsersCounter variant={USERS_VARIANT.whoUserFollows} />, { store: mockStore });
     expect(await screen.findByText(USERS_COUNT.english.followings)).toBeOnTheScreen();
     expect(await screen.findByText(`${MOCK_FRIENDS.length}`)).toBeOnTheScreen();
   });
   it('should correctly render an error in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<UsersCounter variant={USERS_VARIANT.whoFollowsUser} />, { store: mockStore });
+    await renderWithProviders(<UsersCounter variant={USERS_VARIANT.whoFollowsUser} />, { store: mockStore });
     expect(await screen.findByText(new RegExp(`${USERS_COUNT.english.error}`))).toBeOnTheScreen();
     expect(await screen.findByText(/400/i)).toBeOnTheScreen();
   });

@@ -1,5 +1,5 @@
 import { BarChart } from 'react-native-gifted-charts';
-import { View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -8,10 +8,10 @@ import { useAppSelector } from '@R/typed-hooks';
 import { getSteps } from './util';
 import type { BarChartWrapperProps } from './types';
 
-export default function BarChartWrapper({ metricsArr, year, title }: BarChartWrapperProps) {
+export default function BarChartWrapper({ metricsArr, year }: BarChartWrapperProps) {
   const { push } = useRouter();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const valuesArr = metricsArr?.map(({ value }) => value).filter(Boolean);
+  const valuesArr = metricsArr?.map(({ value }) => value).filter((value) => value > 0);
   const maxValueFromData = valuesArr?.length ? Math.max(...valuesArr) : 0;
   const { colors } = useTheme();
   const medianValue = valuesArr?.length
@@ -20,46 +20,61 @@ export default function BarChartWrapper({ metricsArr, year, title }: BarChartWra
   const { steps, maxValue, noOfSections } = getSteps(maxValueFromData);
   const { width } = useWindowDimensions();
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
+  const hasValues = Boolean(valuesArr?.length);
+
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text variant="headlineSmall" style={{ marginVertical: 15 }}>
-        {title}
-      </Text>
+    <View style={styles.wrapper}>
+      {!hasValues && (
+        <Text variant="bodySmall" style={[styles.emptyLabel, { color: colors.onSurfaceVariant }]}>
+          Нет данных за этот период
+        </Text>
+      )}
       <BarChart
-        width={widthOfScreen - 60}
-        barWidth={(widthOfScreen - 90) / 12}
+        width={widthOfScreen - 68}
+        barWidth={Math.max((widthOfScreen - 124) / 12, 10)}
         showReferenceLine1
-        referenceLine1Position={medianValue}
+        referenceLine1Position={hasValues ? medianValue : undefined}
         isAnimated
         referenceLine1Config={{
-          color: 'orange',
+          color: colors.tertiary,
           thickness: 2,
           labelText: medianValue.toString(),
-          dashWidth: 2,
-          dashGap: 1,
+          dashWidth: 4,
+          dashGap: 4,
           labelTextStyle: {
             position: 'absolute',
-            right: -20,
-            color: 'orange',
+            right: -24,
+            color: colors.tertiary,
+            fontSize: 10,
           },
         }}
         onPress={(_: any, index: any) =>
           push(`/(protected)/${ROUTES.monthStatistic}?userId=${userId}&year=${year}&month=${index}`)
         }
         frontColor={colors.primary}
+        gradientColor={colors.primaryContainer}
+        showGradient
+        barBorderRadius={6}
+        roundedTop
         maxValue={maxValue}
-        areaChart-
-        yAxisTextStyle={{ color: colors.onBackground }}
-        xAxisLabelTextStyle={{ color: colors.onBackground }}
+        yAxisTextStyle={{ color: colors.onSurfaceVariant, fontSize: 10 }}
+        xAxisLabelTextStyle={{ color: colors.onSurfaceVariant, fontSize: 11 }}
         data={metricsArr}
-        spacing={2}
-        backgroundColor={colors.background}
-        rulesColor={colors.onBackground}
-        yAxisColor={colors.onBackground}
-        xAxisColor={colors.onBackground}
+        spacing={6}
+        initialSpacing={8}
+        endSpacing={8}
+        backgroundColor={colors.surface}
+        rulesColor={colors.outlineVariant}
+        yAxisColor={colors.outlineVariant}
+        xAxisColor={colors.outlineVariant}
         yAxisLabelTexts={steps}
         noOfSections={noOfSections}
       />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrapper: { alignItems: 'center', justifyContent: 'center', minHeight: 250, paddingTop: 12 },
+  emptyLabel: { marginBottom: 6 },
+});

@@ -1,4 +1,6 @@
-import { cacheDirectory, deleteAsync, getInfoAsync } from 'expo-file-system/legacy';
+import { Directory, Paths } from 'expo-file-system';
+import { deleteAsync } from 'expo-file-system/legacy';
+import { toFileUri } from './uri-tools';
 
 export async function removeMedia({
   pathToMedia,
@@ -10,14 +12,15 @@ export async function removeMedia({
   setIsError: (arg: string) => void;
 }) {
   try {
-    const mediaFolder = await getInfoAsync(`file://${pathToMedia}/media`);
-    if (mediaFolder.exists) {
+    const mediaUri = `${toFileUri(pathToMedia)}/media`;
+    if (new Directory(mediaUri).exists) {
       setIsRemovingMedia(true);
-      await deleteAsync(`file://${pathToMedia}/media`);
+      await deleteAsync(mediaUri);
       setIsRemovingMedia(false);
     }
   } catch (error) {
     setIsError(`Ошибка при удалении медиа, ${JSON.stringify(error)}`);
+    throw error;
   }
 }
 
@@ -29,13 +32,14 @@ export async function removeCacheFolder({
   setIsError?: (arg: string) => void;
 }) {
   try {
-    const migrationDirectoryInfo = await getInfoAsync(`${cacheDirectory}/stravaMigration`);
-    if (migrationDirectoryInfo.exists) {
+    const migrationDirectoryUri = `${Paths.cache.uri}stravaMigration`;
+    if (new Directory(migrationDirectoryUri).exists) {
       setIsDeletingCacheFolder?.(true);
-      await deleteAsync(`${cacheDirectory}/stravaMigration`);
+      await deleteAsync(migrationDirectoryUri);
       setIsDeletingCacheFolder?.(false);
     }
   } catch (error) {
     setIsError?.(`Ошибка при удалении папки кэша, ${JSON.stringify(error)}`);
+    throw error;
   }
 }

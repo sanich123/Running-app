@@ -7,7 +7,7 @@ import InputsWeightCity from './inputs-weight-city';
 
 describe('Inputs weight-city', () => {
   it('should correctly handle user typings', async () => {
-    renderWithProviders(<InputsWeightCity isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<InputsWeightCity isDisabled={false} />, { store: mockStore });
     const inputWeight = screen.getByTestId(WEIGHT_TEST_ID);
     const inputCity = screen.getByTestId(CITY_TEST_ID);
     await userEvent.type(inputWeight, '90');
@@ -16,13 +16,13 @@ describe('Inputs weight-city', () => {
     expect(mockStore.getState().profile.settings.city).toEqual('Otso-city');
   });
   it('should correctly handle isDisabled state', async () => {
-    renderWithProviders(<InputsWeightCity isDisabled />, { store: mockStore });
+    await renderWithProviders(<InputsWeightCity isDisabled />, { store: mockStore });
     expect(screen.getByTestId(WEIGHT_TEST_ID)).toBeDisabled();
     expect(screen.getByTestId(CITY_TEST_ID)).toBeDisabled();
   });
   it('should correctly handle isDisabledWhileSending state', async () => {
     mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
-    renderWithProviders(<InputsWeightCity isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<InputsWeightCity isDisabled={false} />, { store: mockStore });
     expect(screen.getByTestId(WEIGHT_TEST_ID)).toBeDisabled();
     expect(screen.getByTestId(CITY_TEST_ID)).toBeDisabled();
   });

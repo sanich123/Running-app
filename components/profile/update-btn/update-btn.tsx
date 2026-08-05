@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import {
   useCreateProfileByUserIdMutation,
   useGetUserProfileByUserIdQuery,
@@ -8,7 +9,6 @@ import {
 } from '@R/services/profile/profile';
 import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { UPDATE_BTN_ERROR_MSG, UPDATE_BTN } from './const';
 
 export default function ProfileUpdateBtn() {
@@ -37,7 +37,7 @@ export default function ProfileUpdateBtn() {
             })
             .catch((error) => {
               dispatch(setIsDisabledWhileSendingProfile(false));
-              showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
+              errorToast(UPDATE_BTN_ERROR_MSG, error);
             });
         } else {
           await updateProfile({ body: settings, id: `${profile?.id}` })
@@ -49,7 +49,7 @@ export default function ProfileUpdateBtn() {
             })
             .catch((error) => {
               dispatch(setIsDisabledWhileSendingProfile(false));
-              showCrossPlatformToast(UPDATE_BTN_ERROR_MSG);
+              errorToast(UPDATE_BTN_ERROR_MSG, error);
             });
         }
       }}

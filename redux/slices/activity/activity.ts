@@ -17,8 +17,8 @@ export const activity = createSlice({
     resetFinishedActivity: (state) => {
       state.finishedActivity = FINISHED_ACTIVITY_INITIAL_STATE;
     },
-    resetActivitySlice: (state) => {
-      return (state = ACTIVITY_INITIAL_STATE);
+    resetActivitySlice: () => {
+      return ACTIVITY_INITIAL_STATE;
     },
   },
 });

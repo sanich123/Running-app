@@ -1,8 +1,9 @@
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
+import { FONT_FAMILIES } from '@const/fonts';
 import { useGetCurrentWeekStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
@@ -43,19 +44,21 @@ export default function WeekStatistics() {
       style={[
         styles.container,
         {
-          backgroundColor: colors.surfaceVariant,
-          width: width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH,
-          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          backgroundColor: colors.surface,
+          width: width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH,
+          alignSelf: 'center',
           borderCurve: 'continuous',
           shadowColor: 'black',
           shadowOffset: { width: 0, height: 10 },
           shadowRadius: 10,
           shadowOpacity: 0.1,
-          marginBottom: 5,
+          borderColor: colors.outlineVariant,
+          borderWidth: 1,
+          marginBottom: 10,
         },
       ]}>
       <>
-        <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
+        <Text variant="titleMedium" style={{ fontFamily: FONT_FAMILIES.extraBold }}>
           {WEEK_STATISTICS[language].report}
         </Text>
         <View style={{ marginVertical: 10 }}>
@@ -90,10 +93,7 @@ export default function WeekStatistics() {
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
-    marginBottom: 5,
-    padding: 10,
-    marginHorizontal: 'auto',
+    borderRadius: 8,
+    padding: 16,
   },
 });

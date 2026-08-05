@@ -16,17 +16,20 @@ export default function ActivitiesList() {
     isError,
     isLoading,
     error,
+    refetch,
   } = useGetSeveralActivitiesByTheirIdsQuery({
     ids: stringFromIdsArray,
   });
 
   return (
     <CrossPlatformLayout edges={[]} isError={isError} isLoading={isLoading} outerStyles={{ padding: 10 }}>
-      {isLoading && <ActivityIndicator size="large" />}
-      {isError && <ErrorComponent error={error} />}
-      {isSuccess && (
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+      ) : isSuccess ? (
         <FlatList data={activities} renderItem={renderCardsFunction} initialNumToRender={5} maxToRenderPerBatch={10} />
-      )}
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
+      ) : null}
     </CrossPlatformLayout>
   );
 }

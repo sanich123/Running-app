@@ -6,7 +6,7 @@ import ChangeView from './change-view';
 describe('Camera change view', () => {
   it('should correctly handle local state', async () => {
     const setType = jest.fn();
-    renderWithProviders(<ChangeView setType={setType} type="front" />, {
+    await renderWithProviders(<ChangeView setType={setType} type="front" />, {
       store: mockStore,
     });
     const changeViewBtn = screen.getByTestId('changeViewBtnTestId');

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FlatList, Platform, useWindowDimensions } from 'react-native';
+import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { ActivityIndicator, Divider, useTheme } from 'react-native-paper';
 import ErrorComponent from '@C/error-component/error-component';
 import UserListItem from '@C/user-list-item/user-list-item';
@@ -20,6 +20,7 @@ export default function ListOfUsers() {
   const {
     isLoading,
     isError,
+    isSuccess,
     error,
     data: users,
     refetch,
@@ -27,32 +28,56 @@ export default function ListOfUsers() {
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
-    <SafeAreaView edges={['bottom']} style={{ flex: 1, backgroundColor: colors.background, padding: 10 }}>
+    <SafeAreaView edges={['bottom']} style={[styles.container, { backgroundColor: colors.background }]}>
       <SearchInput setIsInitial={setIsInitial} setSearch={setSearch} search={search} />
-      <FlatList
-        onRefresh={onRefresh}
-        refreshing={refreshing}
-        data={users?.items}
-        renderItem={({ item }) => (
-          <UserListItem
-            city={item?.city}
-            name={item?.name}
-            surname={item?.surname}
-            profilePhoto={item?.profilePhoto}
-            placeholder={item?.profilePhotoBlurhash}
-            user_id={item?.user_id}
-          />
-        )}
-        style={{
-          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
-          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
-        }}
-        ListEmptyComponent={<EmptyUsersList isInitial={isInitial} />}
-        ItemSeparatorComponent={() => <Divider />}
-        initialNumToRender={15}
-      />
-      {isLoading && <ActivityIndicator size="large" />}
-      {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
+      {isLoading ? (
+        <View pointerEvents="none" style={styles.stateOverlay}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : isInitial || isSuccess ? (
+        <FlatList
+          testID="usersList"
+          keyboardShouldPersistTaps="handled"
+          onRefresh={onRefresh}
+          refreshing={refreshing}
+          data={users?.items}
+          renderItem={({ item }) => (
+            <UserListItem
+              city={item?.city}
+              name={item?.name}
+              surname={item?.surname}
+              profilePhoto={item?.profilePhoto}
+              placeholder={item?.profilePhotoBlurhash}
+              user_id={item?.user_id}
+            />
+          )}
+          style={{
+            flex: 1,
+            width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+            marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          }}
+          ListEmptyComponent={<EmptyUsersList isInitial={isInitial} />}
+          ItemSeparatorComponent={() => <Divider />}
+          initialNumToRender={15}
+        />
+      ) : isError ? (
+        <View style={styles.stateOverlay}>
+          <ErrorComponent error={error} refetch={refetch} />
+        </View>
+      ) : null}
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 10, position: 'relative' },
+  stateOverlay: {
+    alignItems: 'center',
+    bottom: 0,
+    justifyContent: 'center',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+});

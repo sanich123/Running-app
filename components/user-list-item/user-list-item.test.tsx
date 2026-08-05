@@ -12,16 +12,10 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
 
-jest.mock('expo-image', () => {
-  const actualExpoImage = jest.requireActual('expo-image');
-  const { Image } = jest.requireActual('react-native');
-
-  return { ...actualExpoImage, Image };
-});
 describe('User list item', () => {
   it('should correctly renders from server', async () => {
     mockStore.dispatch(setUserId('someUserId'));
-    renderWithProviders(
+    await renderWithProviders(
       <UserListItem
         name={MOCK_PROFILE.name}
         surname={MOCK_PROFILE.surname}
@@ -39,7 +33,7 @@ describe('User list item', () => {
   it('should show follow btn, when userId !== user.id and userId is not in the list of friends', async () => {
     mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(
+    await renderWithProviders(
       <UserListItem
         name={MOCK_PROFILE.name}
         surname={MOCK_PROFILE.surname}
@@ -57,7 +51,7 @@ describe('User list item', () => {
   });
   it('should correctly show unfollow btn, when user is in the list of friends', async () => {
     mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
-    renderWithProviders(
+    await renderWithProviders(
       <UserListItem
         name={MOCK_PROFILE.name}
         surname={MOCK_PROFILE.surname}

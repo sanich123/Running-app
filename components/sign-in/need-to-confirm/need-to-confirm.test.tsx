@@ -7,14 +7,14 @@ import { CHECK_EMAIL } from './const';
 import SignInNeedToConfirmEmail from './need-to-confirm';
 
 describe('Sign-in-need-to-confirm page', () => {
-  it('should correctly renders in russian', () => {
-    renderWithProviders(<SignInNeedToConfirmEmail />);
+  it('should correctly renders in russian', async () => {
+    await renderWithProviders(<SignInNeedToConfirmEmail />);
     expect(screen.getByText(CHECK_EMAIL.russian.mailHasBeenSent)).toBeOnTheScreen();
     expect(screen.getByText(CHECK_EMAIL.russian.needToCheckEmail)).toBeOnTheScreen();
   });
-  it('should correctly renders in english', () => {
+  it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<SignInNeedToConfirmEmail />, { store: mockStore });
+    await renderWithProviders(<SignInNeedToConfirmEmail />, { store: mockStore });
     expect(screen.getByText(CHECK_EMAIL.english.mailHasBeenSent)).toBeOnTheScreen();
     expect(screen.getByText(CHECK_EMAIL.english.needToCheckEmail)).toBeOnTheScreen();
   });

@@ -11,22 +11,22 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), back: jest.fn() }),
 }));
 describe('Profile update btn', () => {
-  it('should correctly renders in english', () => {
+  it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
+    await renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
     expect(screen.getByText(UPDATE_BTN.english.update)).toBeOnTheScreen();
   });
   it('should correctly interract with the user', async () => {
     mockStore.dispatch(setUserId('someUserId'));
-    renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
+    await renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
     const updateBtn = screen.getByText(UPDATE_BTN.english.update);
     expect(mockStore.getState().profile.isDisabledWhileSendingProfile).toEqual(false);
     await userEvent.press(updateBtn);
     expect(mockStore.getState().profile.isDisabledWhileSendingProfile).toEqual(false);
   });
-  it('should correctly renders in russian', () => {
+  it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
+    await renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
     expect(screen.getByText(UPDATE_BTN.russian.update)).toBeOnTheScreen();
   });
 });

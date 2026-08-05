@@ -1,8 +1,8 @@
-import { View, StyleSheet } from 'react-native';
-import { Text, Switch, Divider } from 'react-native-paper';
+import { Switch } from 'react-native-paper';
 import { setisNeedToPrefetchActivities } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { SETTINGS } from '../const';
+import SettingsRow from '../settings-row/settings-row';
 
 export default function PrefetchActivitiesBtn() {
   const { language } = useAppSelector(({ language }) => language);
@@ -10,28 +10,18 @@ export default function PrefetchActivitiesBtn() {
   const dispatch = useAppDispatch();
 
   return (
-    <>
-      <View style={styles.togglers}>
-        <Text variant="titleSmall">{`${isNeedToPrefetchActivities ? SETTINGS[language].switchOff : SETTINGS[language].switchOn} ${SETTINGS[language].prefetch}`}</Text>
+    <SettingsRow
+      icon="download-multiple"
+      title={language === 'russian' ? 'Предзагрузка тренировок' : 'Preload workouts'}
+      description={`${isNeedToPrefetchActivities ? SETTINGS[language].switchOn : SETTINGS[language].switchOff} ${SETTINGS[language].prefetch}`}
+      leading={
         <Switch
           value={isNeedToPrefetchActivities}
           onValueChange={() => {
             dispatch(setisNeedToPrefetchActivities());
           }}
         />
-      </View>
-      <Divider />
-    </>
+      }
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  togglers: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 10,
-    padding: 10,
-  },
-});

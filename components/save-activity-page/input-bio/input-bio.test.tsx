@@ -10,7 +10,7 @@ import InputBio from './input-bio';
 describe('Input bio', () => {
   it('should correctly renders', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
     const textInput = screen.getByTestId(INPUT_BIO_TEST_ID);
     expect(textInput).toBeOnTheScreen();
     await userEvent.type(textInput, 'some text');
@@ -19,14 +19,14 @@ describe('Input bio', () => {
   it('should correctly handle isDisabledWhenSendingProfile state', async () => {
     mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
     const bioInput = screen.getByTestId(INPUT_BIO_TEST_ID);
     expect(bioInput).toBeDisabled();
     expect(await screen.findAllByText(/bio/i)).toHaveLength(2);
   });
   it('should correctly handle isDisabled state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<InputBio isDisabled />, { store: mockStore });
+    await renderWithProviders(<InputBio isDisabled />, { store: mockStore });
     const bioInput = screen.getByTestId(INPUT_BIO_TEST_ID);
     expect(bioInput).toBeDisabled();
     expect(await screen.findAllByText(/bio/i)).toHaveLength(2);

@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
+import type { RootState } from '@R/store';
 
 export const runichApi = createApi({
   reducerPath: API_NAME,
@@ -8,8 +8,8 @@ export const runichApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
     timeout: LIMIT_OF_REQUEST,
-    prepareHeaders: async (headers, { endpoint }) => {
-      const accessToken = await AsyncStorage.getItem('accessToken');
+    prepareHeaders: (headers, { endpoint, getState }) => {
+      const accessToken = (getState() as RootState).auth.accessToken;
       if (accessToken && !['registerUser', 'loginUser'].includes(endpoint)) {
         headers.set('authorization', `Bearer ${accessToken}`);
       }

@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 __tests__
 .env
+.env.local
 coverage
 android
 ios
@@ -23,6 +24,7 @@ ios
 
 # Local Netlify folder
 .netlify
+install-state.gz
 
 
 

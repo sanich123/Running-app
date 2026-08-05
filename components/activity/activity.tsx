@@ -19,7 +19,7 @@ export default function Activity() {
   const [isReadyToRecordLocation, setIsReadyToRecordLocation] = useState(false);
 
   return (
-    <SafeAreaView style={styles.layout} edges={['bottom']}>
+    <SafeAreaView style={[styles.layout, { backgroundColor: colors.surfaceVariant }]} edges={['bottom']}>
       <View style={styles.map}>
         {(activityStatus === STATUSES.initial || isMapVisible) && (
           <Map setIsReadyToRecordLocation={setIsReadyToRecordLocation} />
@@ -45,18 +45,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    height: '83%',
+    height: '75%',
     width: '100%',
   },
   metricsLayout: {
-    height: '17%',
+    height: '25%',
     width: '100%',
+    paddingHorizontal: 18,
+    paddingTop: 16,
+    paddingBottom: 8,
+    marginTop: 8,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
   },
   metrics: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: 20,
   },
 });

@@ -10,7 +10,7 @@ import GenderBtns from './gender-btns';
 describe('Gender btns', () => {
   it('should correctly handle user pressing', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
     const maleInput = screen.getByText(GENDER_BTNS.english.maleLabel);
     const femaleInput = screen.getByText(GENDER_BTNS.english.femaleLabel);
     await userEvent.press(maleInput);
@@ -19,7 +19,7 @@ describe('Gender btns', () => {
     expect(mockStore.getState().profile.settings.gender).toEqual(GENDER_BTNS_VALUES.female);
   });
   it('should correctly handle isDisabled state', async () => {
-    renderWithProviders(<GenderBtns isDisabled />, { store: mockStore });
+    await renderWithProviders(<GenderBtns isDisabled />, { store: mockStore });
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const maleInput = screen.getByText(GENDER_BTNS.english.maleLabel);
     const femaleInput = screen.getByText(GENDER_BTNS.english.femaleLabel);
@@ -28,7 +28,7 @@ describe('Gender btns', () => {
   });
   it('should correctly handle isDisabledWhileSending state', async () => {
     mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
-    renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
     const maleInput = screen.getByText(GENDER_BTNS.english.maleLabel);
     const femaleInput = screen.getByText(GENDER_BTNS.english.femaleLabel);
     expect(maleInput).toBeDisabled();
@@ -36,7 +36,7 @@ describe('Gender btns', () => {
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
     const maleInput = screen.getByText(GENDER_BTNS.russian.maleLabel);
     const femaleInput = screen.getByText(GENDER_BTNS.russian.femaleLabel);
     expect(maleInput).toBeOnTheScreen();

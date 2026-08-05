@@ -65,7 +65,7 @@ export const MOCK_COMMENTS = [
     profile: {
       surname: '',
       name: 'Настя Лимонова',
-      profilePhoto: 'https://lh3.googleusercontent.com/a/ACg8ocLDp8HcM8WIRke3NO8YurZqB0XZeGmSQmoJ-TqcVfEffTw=s96-c',
+      profilePhoto: 'https://example.com/avatar.jpg',
       profilePhotoBlurhash: 'UPHw.8TLS#Vs.TtSxWV??^tSV@Ri_3-;slRP',
       users: { email: 'someEmail@yandex.ru' },
     },

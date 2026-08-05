@@ -18,13 +18,13 @@ export const mainFeed = createSlice({
     setActivityIdWhichLikesToDownload: (state, action) => {
       state.activityIdWhichLikesToDownload = action.payload;
     },
-    resetMainFeedSlice: (state) => {
-      return (state = {
+    resetMainFeedSlice: () => {
+      return {
         activityIdWhichCommentsToUpdate: '',
         commentIdWhichLikesToUpdate: '',
         needToRefreshActivities: false,
         activityIdWhichLikesToDownload: '',
-      });
+      };
     },
   },
 });

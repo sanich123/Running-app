@@ -14,48 +14,54 @@ export default function MediaGrid() {
   const { colors } = useTheme();
   const { id: userId } = useLocalSearchParams();
   const [take, setTake] = useState(28);
-  const { isLoading, data, error, isError } = useGetAllActivityPhotosByUserIdQuery(
+  const { isLoading, isSuccess, data, error, isError, refetch } = useGetAllActivityPhotosByUserIdQuery(
     { userId: `${userId}`, take },
     { skip: !userId },
   );
 
   return (
-    <SafeAreaView edges={['left', 'right']} style={{ flex: 1, justifyContent: 'center' }}>
-      {isLoading && <ActivityIndicator size="large" />}
-      {isError ? <ErrorComponent error={error} /> : null}
-      {data?.photos?.length && (
-        <FlatList
-          contentContainerStyle={[
-            {
-              backgroundColor: colors.background,
-              width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
-              marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
-            },
-            styles.layout,
-            (isLoading || isError) && styles.isInCenter,
-          ]}
-          data={data?.photos}
-          renderItem={({ item: { url, thumbnail, blurhash }, index }) => (
-            <MediaGridImage url={url} thumbnail={thumbnail} blurhash={blurhash} index={index} take={take} />
-          )}
-          initialNumToRender={20}
-          maxToRenderPerBatch={20}
-          keyExtractor={(arg: PhotoVideoType, index: number) => `image-${index}`}
-          onEndReachedThreshold={0.5}
-          onEndReached={() => {
-            if (!data?.isLastPage) {
-              if (Platform.OS === 'web') {
-                setTimeout(() => setTake(take + 28), 2000);
-              } else {
-                setTake(take + 28);
+    <SafeAreaView
+      edges={['left', 'right']}
+      style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+      ) : isSuccess ? (
+        data?.photos?.length ? (
+          <FlatList
+            contentContainerStyle={[
+              {
+                backgroundColor: colors.background,
+                width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+                marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+              },
+              styles.layout,
+              (isLoading || isError) && styles.isInCenter,
+            ]}
+            data={data?.photos}
+            renderItem={({ item: { url, thumbnail, blurhash }, index }) => (
+              <MediaGridImage url={url} thumbnail={thumbnail} blurhash={blurhash} index={index} take={take} />
+            )}
+            initialNumToRender={20}
+            maxToRenderPerBatch={20}
+            keyExtractor={(arg: PhotoVideoType, index: number) => `image-${index}`}
+            onEndReachedThreshold={0.5}
+            onEndReached={() => {
+              if (!data?.isLastPage) {
+                if (Platform.OS === 'web') {
+                  setTimeout(() => setTake(take + 28), 2000);
+                } else {
+                  setTake(take + 28);
+                }
               }
-            }
-          }}
-          ListFooterComponent={() => !data?.isLastPage && <ActivityIndicator size="large" />}
-          numColumns={4}
-          horizontal={false}
-        />
-      )}
+            }}
+            ListFooterComponent={() => !data?.isLastPage && <ActivityIndicator size="large" />}
+            numColumns={4}
+            horizontal={false}
+          />
+        ) : null
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
+      ) : null}
     </SafeAreaView>
   );
 }

@@ -15,7 +15,7 @@ jest.mock('expo-router', () => ({
 describe('Home activity full view', () => {
   it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<Metrics />, { store: mockStore });
+    await renderWithProviders(<Metrics />, { store: mockStore });
     expect(screen.getByTestId(HOME_ACTIVITY_FULL_VIEW_TEST_ID)).toBeOnTheScreen();
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.english.distance)).toBeOnTheScreen();
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.english.averagePace)).toBeOnTheScreen();
@@ -26,7 +26,7 @@ describe('Home activity full view', () => {
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<Metrics />, { store: mockStore });
+    await renderWithProviders(<Metrics />, { store: mockStore });
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.russian.distance)).toBeOnTheScreen();
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.russian.averagePace)).toBeOnTheScreen();
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.russian.movingTime)).toBeOnTheScreen();

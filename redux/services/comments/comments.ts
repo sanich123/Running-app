@@ -27,24 +27,24 @@ export const commentsApi = runichApi.injectEndpoints({
       ],
     }),
     deleteCommentByCommentId: builder.mutation({
-      query: ({ commentId, activityId }: { commentId: string; activityId: string }) => ({
+      query: ({ commentId }: { commentId: string; activityId: string }) => ({
         url: `/${comment}/${commentId}`,
         method: Methods.delete,
       }),
-      invalidatesTags: (result, error, arg) => [
-        { type: Tags.comments, id: arg.activityId },
-        { type: Tags.activities, id: arg.activityId },
+      invalidatesTags: (result, error, { activityId }) => [
+        { type: Tags.comments, id: activityId },
+        { type: Tags.activities, id: activityId },
       ],
     }),
     updateCommentByCommentId: builder.mutation({
-      query: ({ commentId, activityId, body }: UpdateComment) => ({
+      query: ({ commentId, body }: UpdateComment) => ({
         url: `/${comment}/${commentId}`,
         method: Methods.patch,
         body,
       }),
-      invalidatesTags: (result, error, arg) => [
-        { type: Tags.comments, id: arg.activityId },
-        { type: Tags.activities, id: arg.activityId },
+      invalidatesTags: (result, error, { activityId }) => [
+        { type: Tags.comments, id: activityId },
+        { type: Tags.activities, id: activityId },
       ],
     }),
     getLikesByCommentId: builder.query({
@@ -75,11 +75,11 @@ export const commentsApi = runichApi.injectEndpoints({
       },
     }),
     deleteLikeToComment: builder.mutation({
-      query: ({ likeId, commentId }: DeleteCommentLike) => ({
+      query: ({ likeId }: DeleteCommentLike) => ({
         url: `/${comment}/${likeId}/${like}`,
         method: Methods.delete,
       }),
-      invalidatesTags: (result, error, arg) => [{ type: Tags.commentLikes, id: arg.commentId }],
+      invalidatesTags: (result, error, { commentId }) => [{ type: Tags.commentLikes, id: commentId }],
     }),
   }),
 });

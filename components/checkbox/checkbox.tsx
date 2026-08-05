@@ -23,9 +23,9 @@ export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
         }}
         testID={CHECKBOX_TEST_ID}
         disabled={isDisabled || isDisabledWhileSending}
-        style={{ padding: 0, margin: 0 }}
+        style={styles.switch}
       />
-      <Text variant="titleSmall" style={(isDisabled || isDisabledWhileSending) && { opacity: 0.5 }}>
+      <Text variant="titleSmall" style={[styles.label, (isDisabled || isDisabledWhileSending) && styles.disabledLabel]}>
         {CHECKBOX[language].public}
       </Text>
     </View>
@@ -34,10 +34,14 @@ export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
 
 const styles = StyleSheet.create({
   switcherWrapper: {
-    display: 'flex',
+    alignItems: 'flex-start',
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
     marginTop: 10,
-    columnGap: 5,
+    width: '100%',
+    gap: 10,
   },
+  switch: { flexShrink: 0, margin: 0, padding: 0 },
+  label: { flex: 1, flexShrink: 1, lineHeight: 20 },
+  disabledLabel: { opacity: 0.5 },
 });

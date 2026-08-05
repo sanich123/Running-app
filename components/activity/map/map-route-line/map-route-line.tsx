@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
+import { POWERHOURS_COLORS } from '@const/theme-colors';
 import { getReducedLocations } from '@U/location/location-utils';
 import type { LocationObject } from 'expo-location';
 
@@ -24,7 +25,10 @@ export default function MapRouteLine({ locations }: { locations: LocationObject[
           },
         ],
       }}>
-      <LineLayer id={`${locations[0].timestamp}+${locations.length}`} style={{ lineColor: 'orange', lineWidth: 5 }} />
+      <LineLayer
+        id={`${locations[0].timestamp}+${locations.length}`}
+        style={{ lineColor: POWERHOURS_COLORS.success, lineWidth: 2 }}
+      />
     </ShapeSource>
   );
 }

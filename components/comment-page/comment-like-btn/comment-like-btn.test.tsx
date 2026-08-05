@@ -9,7 +9,7 @@ import CommentLikeBtn from './comment-like-btn';
 describe('Comment like btn', () => {
   it('should correctly renders, when liked by you', async () => {
     mockStore.dispatch(setUserId('7857abb1-b125-4f39-becf-8f30216b46ec'));
-    renderWithProviders(
+    await renderWithProviders(
       <CommentLikeBtn
         commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
         commentLikesFromComment={MOCK_LIKES}
@@ -22,7 +22,7 @@ describe('Comment like btn', () => {
   });
   it('should correctly renders, when not liked by you', async () => {
     mockStore.dispatch(setUserId('someWrongId'));
-    renderWithProviders(
+    await renderWithProviders(
       <CommentLikeBtn
         commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
         commentLikesFromComment={MOCK_LIKES}

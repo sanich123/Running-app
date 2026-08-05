@@ -12,16 +12,11 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
   usePathname: () => '/home/activity/someActivityId',
 }));
-jest.mock('expo-image', () => {
-  const actualExpoImage = jest.requireActual('expo-image');
-  const { Image } = jest.requireActual('react-native');
-  return { ...actualExpoImage, Image };
-});
 
 describe('Comments', () => {
   it('should correctly renders with isLoading state and data from server in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(
+    await renderWithProviders(
       <Comments commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }} />,
       { store: mockStore },
     );
@@ -35,7 +30,7 @@ describe('Comments', () => {
   });
   it('should correctly renders with data from server in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(
+    await renderWithProviders(
       <Comments commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }} />,
 
       { store: mockStore },

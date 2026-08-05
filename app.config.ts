@@ -3,9 +3,9 @@ const IS_DEV = process.env.APP_VARIANT === 'development';
 export default {
   expo: {
     owner: 'sanich123',
-    scheme: 'runich',
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
+    scheme: 'runich',
     version: '4.0.0',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
@@ -14,7 +14,7 @@ export default {
     splash: {
       image: './assets/images/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#333333',
+      backgroundColor: '#292929',
     },
     experiments: {
       typedRoutes: true,
@@ -29,11 +29,7 @@ export default {
         UIBackgroundModes: ['location', 'fetch', 'remote-notification'],
         CFBundleURLTypes: [
           {
-            CFBundleURLSchemes: [
-              'runich',
-              'com.googleusercontent.apps.617323850499-i286kru7q6bgi2dfl38c6keljvhaelad',
-              'com.googleusercontent.apps.617323850499-ib9jp3gj3fbev205jbhcfe0ou9oairm2',
-            ],
+            CFBundleURLSchemes: ['runich'],
           },
         ],
         privacyManifests: {
@@ -75,11 +71,13 @@ export default {
       package: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
       permissions: [
         'android.permission.RECORD_AUDIO',
+        'android.permission.RECEIVE_BOOT_COMPLETED',
         'ACCESS_BACKGROUND_LOCATION',
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
       ],
       softwareKeyboardLayoutMode: 'pan',
+      usesCleartextTraffic: IS_DEV,
     },
     web: {
       bundler: 'metro',
@@ -90,10 +88,9 @@ export default {
     plugins: [
       './custom.plugin',
       'react-native-compressor',
-      '@react-native-google-signin/google-signin',
+      'expo-image',
       'expo-router',
       'expo-font',
-      'expo-web-browser',
       'expo-video',
       'expo-secure-store',
       '@rnmapbox/maps',
@@ -118,6 +115,9 @@ export default {
       [
         'expo-location',
         {
+          isAndroidBackgroundLocationEnabled: true,
+          isAndroidForegroundServiceEnabled: true,
+          isIosBackgroundLocationEnabled: true,
           locationAlwaysAndWhenInUsePermission:
             'Разрешите приложению Runich использовать данные о местоположении в фоне все время. Это необходимо для записи тренировок. ',
         },
@@ -143,10 +143,10 @@ export default {
       [
         'expo-splash-screen',
         {
-          backgroundColor: '#333333',
-          image: './assets/images/icon.png',
-          resizeMode: 'cover',
-          imageWidth: 190,
+          backgroundColor: '#292929',
+          image: './assets/images/splash.png',
+          resizeMode: 'contain',
+          imageWidth: 180,
         },
       ],
     ],

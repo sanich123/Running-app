@@ -11,35 +11,37 @@ jest.mock('react-native-compressor', () => ({
     compress: jest.fn(),
   }),
 }));
-jest.mock('expo-image', () => {
-  const actualExpoImage = jest.requireActual('expo-image');
-  const { Image } = jest.requireActual('react-native');
-
-  return { ...actualExpoImage, Image, uri: 'someUrl' };
-});
 describe('Avatar icon editable', () => {
-  it('should correctly renders', () => {
-    renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, { store: mockStore });
+  it('should correctly renders', async () => {
+    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+      store: mockStore,
+    });
     expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeOnTheScreen();
   });
-  it('should renders an image, when profile has an image url', () => {
+  it('should renders an image, when profile has an image url', async () => {
     mockStore.dispatch(savePhotoUrl(MOCK_PROFILE.profilePhoto));
-    renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+      store: mockStore,
+    });
     const img = screen.getByTestId(AvatarEditableTestIds.successImg);
     expect(img.props.source.uri).toEqual(MOCK_PROFILE.profilePhoto);
   });
-  it('should renders a default icon, when there is no image url in profile', () => {
+  it('should renders a default icon, when there is no image url in profile', async () => {
     mockStore.dispatch(savePhotoUrl(''));
-    renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+      store: mockStore,
+    });
     expect(screen.getByTestId(AvatarEditableTestIds.default)).toBeOnTheScreen();
   });
-  it('should be disabled, when isDisabled', () => {
-    renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled />, { store: mockStore });
+  it('should be disabled, when isDisabled', async () => {
+    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled />, { store: mockStore });
     expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeDisabled();
   });
-  it('should be disabled, when isDisabledWhileSendingProfile', () => {
+  it('should be disabled, when isDisabledWhileSendingProfile', async () => {
     mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
-    renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+      store: mockStore,
+    });
     expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeDisabled();
   });
 });

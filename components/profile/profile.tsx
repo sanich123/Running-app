@@ -7,6 +7,7 @@ import ErrorComponent from '@C/error-component/error-component';
 import ProfileMediaPhotos from '@C/profile/media-photos/media-photos';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
+import { FONT_FAMILIES } from '@const/fonts';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import {
   saveBio,
@@ -38,6 +39,7 @@ export default function ProfilePage() {
     isError,
     data: profile,
     error,
+    refetch,
   } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
 
   const isProfilePage = !pathname.includes(ROUTES.home);
@@ -58,7 +60,6 @@ export default function ProfilePage() {
 
   return (
     <>
-      <ProfileMediaPhotos userId={`${whosProfile}`} />
       <View
         style={[
           styles.container,
@@ -69,21 +70,31 @@ export default function ProfilePage() {
             marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
           },
         ]}>
-        {isLoading && <ActivityIndicator size="large" />}
-        {error ? <ErrorComponent error={error} /> : null}
-        {isSuccess ? (
+        {isLoading ? (
+          <ActivityIndicator size="large" />
+        ) : isSuccess ? (
           <>
-            <View style={styles.header}>
-              <AvatarShowable size={100} id={`${whosProfile}`} />
+            <View style={styles.mediaPhotosWrapper}>
+              <ProfileMediaPhotos userId={`${whosProfile}`} />
+            </View>
+            <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
+              <View style={[styles.avatarRing, { borderColor: colors.primary }]}>
+                <AvatarShowable size={92} id={`${whosProfile}`} />
+              </View>
               <View style={styles.nicknameWrapper}>
-                <Text variant="headlineMedium">
+                <Text variant="titleLarge" style={styles.profileName}>
                   {profile?.name} {profile?.surname}
                 </Text>
-                <Text variant="titleLarge">{profile?.city} </Text>
+                <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                  {profile?.city}
+                </Text>
               </View>
             </View>
-            <View style={styles.bio}>
-              <Text variant="titleMedium">{profile?.bio}</Text>
+            <View style={[styles.bio, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
+              <Text variant="labelMedium" style={{ color: colors.primary, fontFamily: FONT_FAMILIES.semiBold }}>
+                ABOUT
+              </Text>
+              <Text variant="bodyMedium">{profile?.bio}</Text>
             </View>
             <View style={styles.followersBtnsWrapper}>
               <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
@@ -92,6 +103,8 @@ export default function ProfilePage() {
             </View>
             <ProfileStatistics whosProfile={`${whosProfile}`} />
           </>
+        ) : isError ? (
+          <ErrorComponent error={error} refetch={refetch} />
         ) : null}
       </View>
     </>
@@ -101,34 +114,52 @@ export default function ProfilePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 20,
+    paddingHorizontal: 12,
+    paddingTop: 16,
+  },
+  mediaPhotosWrapper: {
+    alignSelf: 'stretch',
+    marginHorizontal: -12,
+    marginBottom: 10,
+    marginTop: -16,
   },
   isInCenter: {
     justifyContent: 'center',
     alignItems: 'center',
   },
   header: {
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
     display: 'flex',
     flexDirection: 'row',
-    columnGap: 10,
+    columnGap: 16,
+    padding: 16,
+  },
+  avatarRing: {
+    borderRadius: 52,
+    borderWidth: 2,
+    padding: 3,
   },
   nicknameWrapper: {
     flex: 1,
     justifyContent: 'center',
   },
   bio: {
+    borderRadius: 8,
+    borderWidth: 1,
     display: 'flex',
-    marginTop: 20,
-    marginBottom: 20,
+    gap: 8,
+    marginVertical: 12,
+    padding: 16,
   },
   followersBtnsWrapper: {
     display: 'flex',
     flexDirection: 'row',
-    gap: 20,
+    gap: 8,
     alignItems: 'center',
   },
+  profileName: { fontFamily: FONT_FAMILIES.extraBold },
   statistics: {
     display: 'flex',
     borderWidth: 1,

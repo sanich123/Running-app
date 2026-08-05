@@ -1,15 +1,14 @@
 import { useEffect } from 'react';
 import * as Linking from 'expo-linking';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Surface } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
 import CustomPasswordInput from '@C/shared/custom-password-input/custom-password-input';
 import CustomTextInput from '@C/shared/custom-text-input/custom-text-input';
 import { emailValidation, passwordValidation } from '@C/shared/custom-text-input/types';
 import { errorToast } from '@C/shared/error-toast/error-toast';
-import GoogleSignBtn from '@C/sign-in/google-sign-in/google-sign-in';
-import GoogleSignInWeb from '@C/sign-in/google-sign-in-web/google-sign-in-web';
 import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
 import { useAppSelector } from '@R/typed-hooks';
 import { showCrossPlatformToast } from '@U/custom-toast';
@@ -42,7 +41,7 @@ export default function SignIn() {
             showCrossPlatformToast(success.toString());
             replace('/');
           })
-          .catch((error) => errorToast(error));
+          .catch((error) => errorToast('', error));
       }
     }
   }, [replace, url, verifyToken]);
@@ -50,8 +49,7 @@ export default function SignIn() {
   return (
     <CrossPlatformLayout edges={['bottom']} scrollViewEnabled>
       <Intro />
-      <View style={styles.inputsWrapper}>
-        {Platform.OS !== 'web' ? <GoogleSignBtn /> : <GoogleSignInWeb />}
+      <Surface mode="flat" style={styles.inputsWrapper}>
         <CustomTextInput<EmailPasswordData>
           control={control}
           fieldName="email"
@@ -73,16 +71,20 @@ export default function SignIn() {
         {isNeedToShowConfirmEmailInput && <ConfirmEmailCode watch={watch} />}
         <LoginRegisterBtn handleSubmit={handleSubmit} />
         <LoginRegisterNavigation />
-      </View>
+      </Surface>
     </CrossPlatformLayout>
   );
 }
 
 const styles = StyleSheet.create({
   inputsWrapper: {
-    paddingTop: 20,
-    flex: 1,
-    marginLeft: Platform.OS === 'web' ? 'auto' : 10,
-    marginRight: Platform.OS === 'web' ? 'auto' : 10,
+    alignSelf: 'center',
+    borderRadius: 8,
+    gap: 4,
+    marginBottom: 32,
+    padding: 12,
+    width: '94%',
+    maxWidth: 351,
+    marginHorizontal: 'auto',
   },
 });

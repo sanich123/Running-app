@@ -16,9 +16,9 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Card metrics', () => {
-  it('should correctly renders', () => {
+  it('should correctly renders', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(
+    await renderWithProviders(
       <CardMetrics
         title="some title"
         distance={MOCK_DISTANCE}

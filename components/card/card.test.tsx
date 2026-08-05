@@ -9,12 +9,6 @@ import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 
-jest.mock('expo-image', () => {
-  const actualExpoImage = jest.requireActual('expo-image');
-  const { Image } = jest.requireActual('react-native');
-  return { ...actualExpoImage, Image };
-});
-
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
   usePathname: () => 'somePathname',
@@ -25,7 +19,7 @@ describe('Activity card', () => {
     mockStore.dispatch(setUserId('someUserId'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const { description, title, date, sport, id, photoVideoUrls, profile, duration, distance } = MOCK_ACTIVITY;
-    renderWithProviders(
+    await renderWithProviders(
       <ActivityCard
         isShowDeleteBtn
         isShowDescription

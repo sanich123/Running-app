@@ -17,7 +17,7 @@ export default function ShotBtn({ cameraRef, setPhotos, photos }: ShotBtnProps) 
             const newPhoto = await cameraRef?.current.takePictureAsync(CAMERA_SETTINGS);
             if (newPhoto) {
               setPhotos([...photos, { url: newPhoto.uri, thumbnail: null }]);
-              MediaLibrary.saveToLibraryAsync(newPhoto.uri);
+              await MediaLibrary.Asset.create(newPhoto.uri);
             }
           }
         } catch (error) {

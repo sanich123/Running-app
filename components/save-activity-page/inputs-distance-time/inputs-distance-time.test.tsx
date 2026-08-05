@@ -6,21 +6,21 @@ import { INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID } from './const';
 import InputsDistanceTime from './inputs-distance-time';
 
 describe('Inputs manual distance duration', () => {
-  it('shoudl correctly renders', () => {
-    renderWithProviders(<InputsDistanceTime isDisabled={false} />, { store: mockStore });
+  it('shoudl correctly renders', async () => {
+    await renderWithProviders(<InputsDistanceTime isDisabled={false} />, { store: mockStore });
     [INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID].map((testId) =>
       expect(screen.getByTestId(testId)).toBeOnTheScreen(),
     );
   });
-  it('shoudl correctly handle isDisabled state', () => {
-    renderWithProviders(<InputsDistanceTime isDisabled />, { store: mockStore });
+  it('shoudl correctly handle isDisabled state', async () => {
+    await renderWithProviders(<InputsDistanceTime isDisabled />, { store: mockStore });
     [INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID].map((testId) =>
       expect(screen.getByTestId(testId)).toBeDisabled(),
     );
   });
-  it('shoudl correctly handle isDisabledWhileSending state', () => {
+  it('shoudl correctly handle isDisabledWhileSending state', async () => {
     mockStore.dispatch(setIsDisableWhileSending(true));
-    renderWithProviders(<InputsDistanceTime isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<InputsDistanceTime isDisabled={false} />, { store: mockStore });
     [INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID].map((testId) =>
       expect(screen.getByTestId(testId)).toBeDisabled(),
     );

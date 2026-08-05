@@ -21,6 +21,11 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
+
+  if (!isLoading && !isError && !data?.photos?.length) {
+    return null;
+  }
+
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
@@ -49,8 +54,8 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                       source={{ uri: thumbnail || url }}
                       placeholder={blurhash}
                     />
-                    <View>
-                      <Text style={{ color: 'white' }} variant="titleMedium">
+                    <View style={styles.labelBackdrop}>
+                      <Text style={styles.label} variant="labelLarge">
                         {PROFILE_MEDIA[language].label}
                       </Text>
                     </View>
@@ -87,5 +92,20 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  labelBackdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.64)',
+    borderColor: 'rgba(255, 255, 255, 0.72)',
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: 9,
+    paddingVertical: 6,
+  },
+  label: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    textShadowColor: 'rgba(0, 0, 0, 0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 });

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Platform } from 'react-native';
+import { useEffect } from 'react';
 import { IconButton, useTheme } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import {
   useSendLikeToCommentMutation,
   useGetLikesByCommentIdQuery,
@@ -9,7 +9,6 @@ import {
 import { useSendEmailAfterSendingCommentLikeMutation } from '@R/services/emails/emails';
 import { setCommentIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { COMMENT_LIKE_BTN } from './const';
 import type { CommentLikeBtnProps } from '../types';
 
@@ -22,11 +21,9 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
-  const [isNeedToGetUpdatedCommentLikes, setIsNeedToGetUpdatedCommentLikes] = useState(false);
 
-  const [sendLikeToComment, { isSuccess: isSuccessSending, isError: isErrorSending, isLoading: isSendingLike }] =
-    useSendLikeToCommentMutation();
-  const [deleteLikeToComment, { isSuccess: isSuccessDeleting, isError: isErrorDeleting, isLoading: isDeletingLike }] =
+  const [sendLikeToComment, { isSuccess: isSuccessSending, isLoading: isSendingLike }] = useSendLikeToCommentMutation();
+  const [deleteLikeToComment, { isSuccess: isSuccessDeleting, isLoading: isDeletingLike }] =
     useDeleteLikeToCommentMutation();
   const {
     isError: isErrorToGetLikes,
@@ -36,25 +33,13 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
   } = useGetLikesByCommentIdQuery(commentId);
   const [sendEmailNotificationAfterSendingLike] = useSendEmailAfterSendingCommentLikeMutation();
 
-  const whatCommentLikesToIterate = isNeedToGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
+  const shouldGetUpdatedCommentLikes = commentIdWhichLikesToUpdate === commentId;
+  const whatCommentLikesToIterate = shouldGetUpdatedCommentLikes ? commentLikes : commentLikesFromComment;
   const youGaveCommentLike = whatCommentLikesToIterate?.length
     ? isSuccess && commentLikes?.filter(({ authorId }: { authorId: string }) => authorId === userId)
     : [];
 
   useEffect(() => {
-    if (commentIdWhichLikesToUpdate === commentId) {
-      setIsNeedToGetUpdatedCommentLikes(true);
-    }
-  }, [commentIdWhichLikesToUpdate, commentId]);
-
-  useEffect(() => {
-    if (isErrorSending || isErrorDeleting) {
-      if (Platform.OS !== 'web') {
-        showCrossPlatformToast(COMMENT_LIKE_BTN[language].errorSending);
-      } else {
-        showCrossPlatformToast(COMMENT_LIKE_BTN[language].errorSending);
-      }
-    }
     if (isSuccessSending || isSuccessDeleting) {
       if (profile?.emailNotifications) {
         sendEmailNotificationAfterSendingLike({
@@ -70,8 +55,6 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
       dispatch(setCommentIdWhichLikesToUpdate(commentId));
     }
   }, [
-    isErrorSending,
-    isErrorDeleting,
     isSuccessSending,
     isSuccessDeleting,
     language,
@@ -95,11 +78,17 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
       icon={whatCommentLikesToIterate?.length ? 'cards-heart' : 'cards-heart-outline'}
       size={20}
       iconColor={youGaveCommentLike?.length ? 'red' : colors.primary}
-      onPress={async () =>
-        youGaveCommentLike?.length
-          ? await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap()
-          : await sendLikeToComment({ body: { commentId, authorId: userId }, commentId }).unwrap()
-      }
+      onPress={async () => {
+        try {
+          if (youGaveCommentLike?.length) {
+            await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap();
+          } else {
+            await sendLikeToComment({ body: { commentId, authorId: userId }, commentId }).unwrap();
+          }
+        } catch (error) {
+          errorToast(COMMENT_LIKE_BTN[language].errorSending, error);
+        }
+      }}
       disabled={isLoadingLikes || isErrorToGetLikes}
       loading={isSendingLike || isDeletingLike}
     />

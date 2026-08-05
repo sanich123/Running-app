@@ -17,7 +17,7 @@ jest.mock('expo-router', () => ({
 describe('Card btns', () => {
   it('should correctly renders with deleteBtn', async () => {
     mockStore.dispatch(setUserId(MOCK_LIKE[0].authorId));
-    renderWithProviders(
+    await renderWithProviders(
       <CardBtns
         isShowDeleteBtn
         activityId="someActivityId"
@@ -34,7 +34,7 @@ describe('Card btns', () => {
     expect(await screen.findByTestId(CARD_DELETE_BTN_TEST_ID)).toBeOnTheScreen();
   });
   it('should correctly renders likes icon, when userId === user.id, and without delete btn', async () => {
-    renderWithProviders(
+    await renderWithProviders(
       <CardBtns
         isShowDeleteBtn
         activityId="someActivityId"

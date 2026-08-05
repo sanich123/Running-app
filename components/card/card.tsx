@@ -62,26 +62,15 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
         style={[
           {
             ...styles.cardStyles,
-            backgroundColor: colors.background,
+            backgroundColor: colors.surface,
+            borderColor: colors.outlineVariant,
+            borderWidth: 1,
             zIndex: 10,
-            width: width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH,
+            width: width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH,
           },
           Platform.OS === 'web' && styles.webStyles,
         ]}>
-        <View>
-          <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
-          <View>
-            <Metrics
-              distance={distance}
-              duration={duration}
-              title={title}
-              isShowDescription={isShowDescription}
-              description={description}
-              userId={userId}
-              id={id}
-            />
-          </View>
-        </View>
+        <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
         {(mapPhotoUrl || photoVideoUrls?.length > 0) && (
           <MediaList
             photoVideoUrls={photoVideoUrls}
@@ -90,10 +79,19 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             id={id}
           />
         )}
-        <View style={{ height: 40 }}>
+        <Metrics
+          distance={distance}
+          duration={duration}
+          title={title}
+          isShowDescription={isShowDescription}
+          description={description}
+          userId={userId}
+          id={id}
+        />
+        <View style={{ height: 40, paddingHorizontal: 8 }}>
           <Likes activityId={id} size={likesSize} />
         </View>
-        <Card.Actions>
+        <Card.Actions style={styles.actions}>
           <Btns
             activityId={id}
             userId={userId}
@@ -116,11 +114,18 @@ const styles = StyleSheet.create({
   },
   cardStyles: {
     borderCurve: 'continuous',
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 10 },
-    shadowRadius: 10,
-    shadowOpacity: 0.1,
-    marginBottom: 5,
-    borderRadius: 15,
+    borderRadius: 8,
+    elevation: 2,
+    marginBottom: 16,
+    marginHorizontal: 'auto',
+    overflow: 'hidden',
+    shadowColor: '#262626',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+  },
+  actions: {
+    marginTop: -6,
+    paddingTop: 0,
   },
 });

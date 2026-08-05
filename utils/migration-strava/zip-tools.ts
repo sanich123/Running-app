@@ -1,4 +1,5 @@
-import { cacheDirectory, deleteAsync, getInfoAsync } from 'expo-file-system/legacy';
+import { File, Paths } from 'expo-file-system';
+import { deleteAsync } from 'expo-file-system/legacy';
 import { unzip, zip } from 'react-native-zip-archive';
 
 export async function unzipFiles({
@@ -12,11 +13,12 @@ export async function unzipFiles({
 }) {
   try {
     setIsUnzipping(true);
-    const unzippedFolderPath = await unzip(uriToUnzip, `${cacheDirectory}stravaMigration`, 'UTF-8');
+    const unzippedFolderPath = await unzip(uriToUnzip, `${Paths.cache.uri}stravaMigration`, 'UTF-8');
     setIsUnzipping(false);
     return unzippedFolderPath;
   } catch (error) {
     setIsError(`Ошибка при разархивировании, ${JSON.stringify(error)}`);
+    throw error;
   }
 }
 
@@ -29,14 +31,15 @@ export async function zipFiles({
 }) {
   try {
     setIsZipping(true);
-    const existingArchive = await getInfoAsync(`${cacheDirectory}archiveToSend.zip`);
-    if (existingArchive.exists) {
-      await deleteAsync(`${cacheDirectory}archiveToSend.zip`);
+    const archiveUri = `${Paths.cache.uri}archiveToSend.zip`;
+    if (new File(archiveUri).exists) {
+      await deleteAsync(archiveUri);
     }
-    const pathToArchive = await zip(`${cacheDirectory}stravaMigration`, `${cacheDirectory}archiveToSend.zip`);
+    const pathToArchive = await zip(`${Paths.cache.uri}stravaMigration`, archiveUri);
     setIsZipping(false);
     return pathToArchive;
   } catch (error) {
     setIsError(`Ошибка при архивировании, ${JSON.stringify(error)}`);
+    throw error;
   }
 }

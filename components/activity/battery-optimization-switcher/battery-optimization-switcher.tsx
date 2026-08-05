@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 //@ts-expect-error просто нет типов в пакете
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
 import { View, StyleSheet } from 'react-native';
-import { Switch, Text } from 'react-native-paper';
+import { Button, Text, useTheme } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import type { BatteryOptimizationSwitcherProps } from '../types';
 
 export default function BatteryOptimizationSwitcher({
@@ -17,36 +17,51 @@ export default function BatteryOptimizationSwitcher({
 }: BatteryOptimizationSwitcherProps) {
   useEffect(() => {
     if (isAppOptimizedByPhone || isNeedToRefreshPermission) {
-      BatteryOptEnabled().then((isEnabled: boolean) => {
-        setIsAppOptimizedByPhone(isEnabled);
-        setIsNeedToRefreshPermission(false);
-      });
+      BatteryOptEnabled()
+        .then((isEnabled: boolean) => {
+          setIsAppOptimizedByPhone(isEnabled);
+          setIsNeedToRefreshPermission(false);
+        })
+        .catch((error: unknown) => errorToast('Не удалось проверить оптимизацию батареи', error));
     }
   }, [isAppOptimizedByPhone, setIsAppOptimizedByPhone, isNeedToRefreshPermission, setIsNeedToRefreshPermission]);
   const { language } = useAppSelector(({ language }) => language);
+  const { colors } = useTheme();
 
   return (
-    <View style={styles.switcherWrapper}>
-      <Text variant="titleSmall">{`${language === LANGUAGES.russian ? 'Отключить оптимизацию батареи' : 'Turn off battery optimization'}`}</Text>
-      <Switch
-        value={!isAppOptimizedByPhone}
-        onValueChange={async () => {
+    <View style={[styles.switcherWrapper, { borderColor: colors.outlineVariant, backgroundColor: colors.surface }]}>
+      <Text
+        variant="titleSmall"
+        style={
+          styles.text
+        }>{`${language === LANGUAGES.russian ? 'Оптимизация батареи' : 'Battery optimization'}`}</Text>
+      <Button
+        mode="outlined"
+        compact
+        icon="battery-alert-variant-outline"
+        onPress={async () => {
           try {
             batteryOptimizationEnabledModalRef.current?.present();
           } catch (error) {
-            showCrossPlatformToast(JSON.stringify(error));
+            errorToast('Не удалось открыть настройки батареи', error);
           }
-        }}
-      />
+        }}>
+        {language === LANGUAGES.russian ? 'Подробнее' : 'Details'}
+      </Button>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   switcherWrapper: {
+    alignItems: 'center',
+    borderRadius: 16,
+    borderWidth: 1,
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
     marginTop: 15,
   },
+  text: { flex: 1, marginRight: 12 },
 });

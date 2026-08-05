@@ -8,14 +8,14 @@ import { ACTIVITY_LOCATION_INDICATOR } from './const';
 import ActivityLocationIndicator from './location-indicator';
 
 describe('Activity location indicator', () => {
-  it('should correctly render isLoading state', () => {
+  it('should correctly render isLoading state', async () => {
     jest.spyOn(useGetCurrentLocation, 'default').mockImplementation(() => ({
       isLoading: true,
       isError: false,
       isSuccess: false,
     }));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
+    await renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_LOCATION_INDICATOR.english.isLoading)).toBeOnTheScreen();
   });
   it('should correctly render isSuccess state', async () => {
@@ -25,47 +25,47 @@ describe('Activity location indicator', () => {
       isSuccess: true,
     }));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
+    await renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_LOCATION_INDICATOR.english.isSuccess)).toBeOnTheScreen();
   });
-  it('should correctly render isError state', () => {
+  it('should correctly render isError state', async () => {
     jest.spyOn(useGetCurrentLocation, 'default').mockImplementation(() => ({
       isLoading: false,
       isError: true,
       isSuccess: false,
     }));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
+    await renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_LOCATION_INDICATOR.english.isError)).toBeOnTheScreen();
   });
-  it('should correctly render isLoading state in russian', () => {
+  it('should correctly render isLoading state in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     jest.spyOn(useGetCurrentLocation, 'default').mockImplementation(() => ({
       isLoading: true,
       isError: false,
       isSuccess: false,
     }));
-    renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
+    await renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_LOCATION_INDICATOR.russian.isLoading)).toBeOnTheScreen();
   });
-  it('should correctly render isSuccess state in russian', () => {
+  it('should correctly render isSuccess state in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     jest.spyOn(useGetCurrentLocation, 'default').mockImplementation(() => ({
       isLoading: false,
       isError: false,
       isSuccess: true,
     }));
-    renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
+    await renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_LOCATION_INDICATOR.russian.isSuccess)).toBeOnTheScreen();
   });
-  it('should correctly render isError state in russian', () => {
+  it('should correctly render isError state in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     jest.spyOn(useGetCurrentLocation, 'default').mockImplementation(() => ({
       isLoading: false,
       isError: true,
       isSuccess: false,
     }));
-    renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
+    await renderWithProviders(<ActivityLocationIndicator />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_LOCATION_INDICATOR.russian.isError)).toBeOnTheScreen();
   });
 });

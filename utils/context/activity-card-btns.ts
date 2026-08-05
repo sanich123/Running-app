@@ -4,9 +4,13 @@ import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export const ActivityCardBtnsContext = createContext({
   isLoading: false,
-  setIsLoading: (arg: boolean) => {},
+  setIsLoading: (arg: boolean): void => {
+    if (arg) return;
+  },
   isDisabled: false,
-  setIsDisabled: (arg: boolean) => {},
+  setIsDisabled: (arg: boolean): void => {
+    if (arg) return;
+  },
 });
 
 export const ModalLikesListContext = createContext({

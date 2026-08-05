@@ -8,25 +8,25 @@ import { DATE_TIME_PICKER } from './const';
 import DateTimePicker from './date-picker';
 
 describe('Date time picker', () => {
-  it('should correctly renders open btn in english', () => {
+  it('should correctly renders open btn in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(new RegExp(DATE_TIME_PICKER.english.title))).toBeOnTheScreen();
   });
-  it('should correctly renders open btn in russian', () => {
+  it('should correctly renders open btn in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(new RegExp(DATE_TIME_PICKER.russian.title))).toBeOnTheScreen();
   });
-  it('should correctly handle isDisabled state', () => {
+  it('should correctly handle isDisabled state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<DateTimePicker isDisabled />, { store: mockStore });
+    await renderWithProviders(<DateTimePicker isDisabled />, { store: mockStore });
     expect(screen.getByText(new RegExp(DATE_TIME_PICKER.russian.title))).toBeOnTheScreen();
   });
-  it('should correctly handle isDisabled WhileSending state', () => {
+  it('should correctly handle isDisabled WhileSending state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(setIsDisableWhileSending(true));
-    renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(new RegExp(DATE_TIME_PICKER.russian.title))).toBeOnTheScreen();
   });
 });

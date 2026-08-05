@@ -39,7 +39,8 @@ export const profile = createSlice({
       state.profileFromServer = action.payload;
     },
     resetProfileSlice: (state) => {
-      return (state = PROFILE_INITIAL_STATE);
+      state = PROFILE_INITIAL_STATE;
+      return state;
     },
   },
 });

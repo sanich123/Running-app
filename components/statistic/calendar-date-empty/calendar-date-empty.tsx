@@ -1,8 +1,8 @@
 import { View, StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import type { CalendarDateProps } from '../calendar/types';
 
-export default function CalendarDateEmpty({ isTitle, isEmptyCell }: CalendarDateProps) {
+export default function CalendarDateEmpty({ isTitle, isEmptyCell, dateValue }: CalendarDateProps) {
   const { colors } = useTheme();
   return (
     <View
@@ -13,19 +13,24 @@ export default function CalendarDateEmpty({ isTitle, isEmptyCell }: CalendarDate
           borderColor: colors.onBackground,
         },
       ]}>
-      {!isEmptyCell && <View style={{ width: 6, height: 6, backgroundColor: colors.primary, borderRadius: 3 }}></View>}
+      {!isEmptyCell && (
+        <Text
+          variant={isTitle ? 'labelSmall' : 'bodySmall'}
+          style={{ color: isTitle ? colors.onSurfaceVariant : colors.onSurface }}>
+          {dateValue}
+        </Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   dateItem: {
-    height: 45,
-    width: 45,
-    borderWidth: 1,
+    height: 40,
+    width: '100%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 12,
   },
 });

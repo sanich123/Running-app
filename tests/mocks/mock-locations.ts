@@ -40,7 +40,7 @@ export const MOCK_LOCATIONS = [
       accuracy: 16.770000457763672,
       altitude: 234.59999084472656,
       altitudeAccuracy: 24.90293312072754,
-      heading: 204.18228149414062,
+      heading: 204.1822814941406,
       latitude: 55.6243528,
       longitude: 37.3047505,
       speed: 11.01974868774414,
@@ -316,7 +316,7 @@ export const MOCK_LOCATIONS = [
       accuracy: 18.0049991607666,
       altitude: 204.1999969482422,
       altitudeAccuracy: 19.2374267578125,
-      heading: 181.48062133789062,
+      heading: 181.48062133789,
       latitude: 55.6249342,
       longitude: 37.3051984,
       speed: 0.18598894774913788,
@@ -541,7 +541,7 @@ export const MOCK_LOCATIONS = [
   },
   {
     coords: {
-      accuracy: 24.847000122070312,
+      accuracy: 24.84700012207031,
       altitude: 204.1999969482422,
       altitudeAccuracy: 48.20323181152344,
       heading: 203.26597595214844,
@@ -553,7 +553,7 @@ export const MOCK_LOCATIONS = [
   },
   {
     coords: {
-      accuracy: 24.847000122070312,
+      accuracy: 24.8470001220703,
       altitude: 204.1999969482422,
       altitudeAccuracy: 48.20323181152344,
       heading: 203.24444580078125,

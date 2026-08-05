@@ -16,14 +16,14 @@ jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
 jest.mock('expo-router', () => ({ useRouter: () => ({ replace: jest.fn() }) }));
 
 describe('Decline btn', () => {
-  it('should correctly renders in english', () => {
+  it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<DeclineBtn isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<DeclineBtn isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(DECLINE_BTN.english.cancel)).toBeOnTheScreen();
   });
   it('should correctly handle alert and reset activity global state, when user clicked', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<DeclineBtn isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<DeclineBtn isDisabled={false} />, { store: mockStore });
     const discardBtn = screen.getByText(DECLINE_BTN.english.cancel);
     await userEvent.press(discardBtn);
     expect(Alert.alert).toHaveBeenCalled();
@@ -31,14 +31,14 @@ describe('Decline btn', () => {
     expect(mockStore.getState().activity.finishedActivity).toEqual(FINISHED_ACTIVITY_INITIAL_STATE);
     expect(mockStore.getState().manualActivity).toEqual(MANUAL_ACTIVITY_INITIAL_STATE);
   });
-  it('should correctly handle isDisabled state', () => {
+  it('should correctly handle isDisabled state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<DeclineBtn isDisabled />, { store: mockStore });
+    await renderWithProviders(<DeclineBtn isDisabled />, { store: mockStore });
     expect(screen.getByText(DECLINE_BTN.english.cancel)).toBeDisabled();
   });
-  it('should correctly renders in russian', () => {
+  it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<DeclineBtn isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<DeclineBtn isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(DECLINE_BTN.russian.cancel)).toBeOnTheScreen();
   });
 });

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import mapboxgl from 'mapbox-gl';
+import { Map as MapboxMap } from 'mapbox-gl';
 import type { LastKmSplit } from '@R/slices/location/types';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -12,13 +12,14 @@ export default function MapboxWeb({
   modifiedLocationsForTurf: number[][];
   kilometresSplit: LastKmSplit[];
 }) {
-  const [, setMap] = useState<mapboxgl.Map>();
+  const [, setMap] = useState<MapboxMap>();
+  void kilometresSplit;
   const mapNode = useRef(null);
 
   useEffect(() => {
     const node = mapNode.current;
     if (typeof window === 'undefined' || node === null) return;
-    const mapboxMap = new mapboxgl.Map({
+    const mapboxMap = new MapboxMap({
       container: node,
       style: 'mapbox://styles/mapbox/streets-v12',
       bounds: boundBox,

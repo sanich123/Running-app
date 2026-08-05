@@ -1,28 +1,37 @@
 import { View, StyleSheet } from 'react-native';
-import { Switch, Text } from 'react-native-paper';
+import { Button, Text, useTheme } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import type { ForgroundLocationSwitcher } from '../types';
 
-export default function ForegroundLocationSwitcher({
-  foregroundPermissionStatus,
-  requestForegroundPermission,
-}: ForgroundLocationSwitcher) {
+export default function ForegroundLocationSwitcher({ requestForegroundPermission }: ForgroundLocationSwitcher) {
   const { language } = useAppSelector(({ language }) => language);
+  const { colors } = useTheme();
   return (
-    <View style={styles.switcherWrapper}>
-      <Text variant="titleSmall">{`${language === LANGUAGES.russian ? 'Включить отслеживание местоположения' : 'Turn on access to foreground location service'}`}</Text>
-      <Switch
-        value={foregroundPermissionStatus.granted}
-        onValueChange={async () => {
+    <View style={[styles.switcherWrapper, { borderColor: colors.outlineVariant, backgroundColor: colors.surface }]}>
+      <View style={styles.textWrapper}>
+        <Text variant="titleSmall" style={styles.title}>
+          {language === LANGUAGES.russian ? 'Геолокация во время использования' : 'Location while using the app'}
+        </Text>
+        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+          {language === LANGUAGES.russian ? 'Нужно для записи маршрута' : 'Required to record your route'}
+        </Text>
+      </View>
+      <Button
+        mode="outlined"
+        compact
+        icon="map-marker-outline"
+        onPress={async () => {
           try {
             await requestForegroundPermission();
           } catch (error) {
-            showCrossPlatformToast(JSON.stringify(error));
+            errorToast('Не удалось запросить доступ к геолокации', error);
           }
-        }}
-      />
+        }}>
+        {' '}
+        {language === LANGUAGES.russian ? 'Разрешить' : 'Allow'}{' '}
+      </Button>
     </View>
   );
 }
@@ -30,8 +39,14 @@ export default function ForegroundLocationSwitcher({
 const styles = StyleSheet.create({
   switcherWrapper: {
     display: 'flex',
-    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 15,
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+    padding: 12,
   },
+  textWrapper: { flex: 1, gap: 4 },
+  title: { fontWeight: '700' },
 });

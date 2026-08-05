@@ -8,7 +8,7 @@ export const activityApi = runichApi.injectEndpoints({
     getActivitiesByUserId: infiniteQuery({
       infiniteQueryOptions: {
         initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams, queryArg) => lastPageParam + 1,
+        getNextPageParam: (lastPage, allPages, lastPageParam) => lastPageParam + 1,
       },
       query: ({ queryArg: { id }, pageParam }) => `/activity/${id}?page=${pageParam}&take=10`,
       providesTags: [Tags.activities],
@@ -16,7 +16,7 @@ export const activityApi = runichApi.injectEndpoints({
     getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesReponse, { id: string }, number>({
       infiniteQueryOptions: {
         initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams, queryArg) => lastPageParam + 1,
+        getNextPageParam: (lastPage, allPages, lastPageParam) => lastPageParam + 1,
       },
       query: ({ queryArg: { id }, pageParam }) => `/activity/${id}/all?page=${pageParam}&take=10`,
       providesTags: [Tags.activities],

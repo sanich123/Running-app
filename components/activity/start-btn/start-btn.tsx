@@ -1,4 +1,5 @@
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Animated, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { STATUSES } from '@const/enums';
@@ -12,7 +13,7 @@ import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_I
 
 export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordLocation: boolean }) {
   const dispatch = useAppDispatch();
-  const { dark } = useTheme();
+  const { dark, colors } = useTheme();
   const {
     activityStatus,
     duration,
@@ -22,20 +23,49 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
   } = useAppSelector(({ location }) => location);
   const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
+  const [pressScale] = useState(() => new Animated.Value(1));
+  const [pulse] = useState(() => new Animated.Value(0));
+  const isRecording = activityStatus === STATUSES.started || activityStatus === STATUSES.continued;
+  const isFinishing = activityStatus === STATUSES.paused;
 
-  const RESPONSE_ICON = {
+  useEffect(() => {
+    if (!isRecording) {
+      pulse.stopAnimation();
+      pulse.setValue(0);
+      return;
+    }
+
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1, duration: 1400, useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 0, duration: 0, useNativeDriver: true }),
+      ]),
+    );
+    animation.start();
+
+    return () => animation.stop();
+  }, [isRecording, pulse]);
+
+  const responseIcon = {
     [STATUSES.initial]: ACTIVITY_START_BTN[language].start,
-    [STATUSES.started]: <Icon testID={STOP_ICON} source="pause" size={50} color="white" />,
-    [STATUSES.paused]: <Icon testID={STOP_ICON} source="stop" size={50} color="white" />,
-    [STATUSES.continued]: <Icon testID={STOP_ICON} source="pause" size={50} color="white" />,
+    [STATUSES.started]: <Icon testID={STOP_ICON} source="pause" size={42} color={colors.onPrimary} />,
+    [STATUSES.paused]: <Icon testID={STOP_ICON} source="stop" size={42} color={colors.onError} />,
+    [STATUSES.continued]: <Icon testID={STOP_ICON} source="pause" size={42} color={colors.onPrimary} />,
   };
+  const isDisabled = !isReadyToRecordLocation && activityStatus === STATUSES.initial;
 
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
-      style={{ borderRadius: 50, opacity: isReadyToRecordLocation ? 1 : 0.5 }}
+      style={styles.touchable}
       testID={ACTIVITY_START_BTN_TEST_ID}
+      onPressIn={() =>
+        Animated.spring(pressScale, { toValue: 0.94, useNativeDriver: true, speed: 30, bounciness: 4 }).start()
+      }
+      onPressOut={() =>
+        Animated.spring(pressScale, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 8 }).start()
+      }
       onPress={() => {
         dispatch(
           saveFinishedActivity({
@@ -53,26 +83,86 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
           push('/(protected)/manual-activity');
         }
       }}
-      disabled={!isReadyToRecordLocation}>
-      <View style={styles.startBtn}>
-        <Text style={styles.startBtnText}>{RESPONSE_ICON[activityStatus]}</Text>
-      </View>
+      disabled={isDisabled}>
+      <Animated.View style={[styles.buttonScale, { transform: [{ scale: pressScale }] }]}>
+        {isRecording && (
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.pulseRing,
+              {
+                borderColor: colors.primary,
+                opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.55, 0] }),
+                transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.28] }) }],
+              },
+            ]}
+          />
+        )}
+        <View
+          style={[
+            styles.startBtn,
+            {
+              backgroundColor: isDisabled ? colors.surfaceVariant : isFinishing ? colors.error : colors.primary,
+              borderColor: isDisabled ? colors.outline : 'transparent',
+              borderWidth: isDisabled ? 1 : 0,
+              elevation: isDisabled ? 0 : 5,
+            },
+          ]}>
+          {activityStatus === STATUSES.initial ? (
+            <>
+              <Icon
+                source={isDisabled ? 'lock-outline' : 'play'}
+                size={34}
+                color={isDisabled ? colors.onSurfaceDisabled : colors.onPrimary}
+              />
+              <Text style={[styles.startBtnText, { color: isDisabled ? colors.onSurfaceDisabled : colors.onPrimary }]}>
+                {responseIcon[activityStatus]}
+              </Text>
+            </>
+          ) : (
+            responseIcon[activityStatus]
+          )}
+        </View>
+      </Animated.View>
     </TouchableRipple>
   );
 }
 
 const styles = StyleSheet.create({
+  touchable: {
+    borderRadius: 72,
+  },
+  buttonScale: {
+    height: 116,
+    width: 116,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pulseRing: {
+    position: 'absolute',
+    height: 116,
+    width: 116,
+    borderRadius: 58,
+    borderWidth: 3,
+  },
   startBtn: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: 90,
-    width: 90,
-    backgroundColor: 'tomato',
+    height: 104,
+    width: 104,
+    borderRadius: 52,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
   },
   startBtnText: {
     textTransform: 'uppercase',
-    color: 'white',
-    fontSize: 25,
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: 1.5,
+    marginTop: -2,
   },
 });

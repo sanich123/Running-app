@@ -1,18 +1,21 @@
-import { useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetInfo from '@react-native-community/netinfo';
+/* eslint-disable import-x/no-named-as-default-member */
+import { useEffect, useState } from 'react';
+import { addEventListener } from '@react-native-community/netinfo';
 import Mapbox from '@rnmapbox/maps';
 import * as SplashScreen from 'expo-splash-screen';
 import mapboxgl from 'mapbox-gl';
 import { Appearance, Platform } from 'react-native';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
 import { changeNetworkState } from '@R/slices/network/network';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 
 export default function useInitialState() {
+  const [hasAccessToken, setHasAccessToken] = useState<boolean | null>(null);
   const [verifyToken, { data: configInfo, isLoading, isError, isSuccess, isUninitialized, error }] =
     useLazyVerifyConfigQuery();
   const { theme } = useAppSelector(({ language }) => language);
+  const { accessToken } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -24,22 +27,31 @@ export default function useInitialState() {
   }, []);
 
   useEffect(() => {
-    const networkListener = NetInfo.addEventListener((networkState) => dispatch(changeNetworkState(networkState)));
+    const networkListener = addEventListener((networkState) => dispatch(changeNetworkState(networkState)));
     return () => networkListener();
   }, [dispatch]);
 
   useEffect(() => {
     (async () => {
-      const accessToken = await AsyncStorage.getItem('accessToken');
-      await verifyToken({ accessToken: accessToken ?? '' }).unwrap();
+      if (!accessToken) {
+        setHasAccessToken(false);
+        return;
+      }
+
+      setHasAccessToken(true);
+      try {
+        await verifyToken({ accessToken }).unwrap();
+      } catch (error) {
+        errorToast('Не удалось проверить авторизацию', error);
+      }
     })();
-  }, [dispatch, verifyToken]);
+  }, [accessToken, dispatch, verifyToken]);
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess || hasAccessToken === false) {
       SplashScreen.hide();
     }
-  }, [configInfo, dispatch, isSuccess]);
+  }, [configInfo, dispatch, hasAccessToken, isSuccess]);
 
   useEffect(() => {
     if (isError) {
@@ -58,5 +70,6 @@ export default function useInitialState() {
     isError,
     isUninitialized,
     isSuccess,
+    hasAccessToken,
   };
 }

@@ -9,12 +9,14 @@ import useRefresh from '@U/hooks/use-refresh';
 
 export default function ListOfFollowing() {
   const { id: userId } = useLocalSearchParams();
-  const { isLoading, error, isError, data: users, refetch } = useGetYouFollowUsersByUserIdQuery(`${userId}`);
+  const { isLoading, isSuccess, error, isError, data: users, refetch } = useGetYouFollowUsersByUserIdQuery(`${userId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
     <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
-      {users && (
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+      ) : isSuccess ? (
         <FlatList
           onRefresh={onRefresh}
           refreshing={refreshing}
@@ -37,10 +39,9 @@ export default function ListOfFollowing() {
           }
           ItemSeparatorComponent={() => <Divider />}
         />
-      )}
-
-      {isLoading && <ActivityIndicator size="large" />}
-      {isError ? <ErrorComponent error={error} /> : null}
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
+      ) : null}
     </CrossPlatformLayout>
   );
 }

@@ -16,8 +16,8 @@ export const language = createSlice({
     changeTheme: (state, action) => {
       state.theme = action.payload;
     },
-    resetLanguageSlice: (state) => {
-      return (state = LANGUAGE_INITIAL_STATE);
+    resetLanguageSlice: () => {
+      return LANGUAGE_INITIAL_STATE;
     },
   },
 });

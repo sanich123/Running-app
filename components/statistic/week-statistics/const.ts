@@ -5,7 +5,7 @@ export const WEEK_STATISTICS = {
     activities: 'Тренировки',
     duration: 'Время',
     distance: 'Расстояние',
-    report: 'Ваше недельный отчет',
+    report: 'Ваш недельный отчет',
     error: 'Ошибка',
   },
   [LANGUAGES.english]: {

@@ -7,10 +7,14 @@ defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
     (platform === 'web' &&
       [
         '@rnmapbox/maps',
-        '@react-native-google-signin/google-signin',
         'react-native-pager-view',
         'expo-video-thumbnails',
         'react-native-zip-archive',
+        'react-native-compressor',
+        'react-native-battery-optimization-check',
+        'react-native-date-picker',
+        'react-native-nitro-modules',
+        'expo-media-library',
         'expo-vpn-checker',
       ].includes(moduleName)) ||
     (platform !== 'web' && moduleName === 'mapbox-gl')

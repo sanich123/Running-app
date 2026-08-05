@@ -1,7 +1,7 @@
-import { decode } from 'base64-arraybuffer';
-import * as FileSystem from 'expo-file-system';
-import { Alert, Platform } from 'react-native';
-import { errorHandler } from '../../../utils/error-handler';
+import { decode, encode } from 'base64-arraybuffer';
+import { File as ExpoFile } from 'expo-file-system';
+import { Platform } from 'react-native';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { supabase } from '../supabase-init';
 
 export async function getBase64CodedImage(file: string | File) {
@@ -9,10 +9,11 @@ export async function getBase64CodedImage(file: string | File) {
     if (Platform.OS === 'web' && file instanceof File) {
       return file;
     } else {
-      return await FileSystem.readAsStringAsync(`${file}`, { encoding: 'base64' });
+      const bytes = await new ExpoFile(`${file}`).bytes();
+      return encode(bytes.buffer as ArrayBuffer);
     }
   } catch (error) {
-    errorHandler(error);
+    errorToast('Не удалось обработать файл', error);
   }
 }
 
@@ -24,13 +25,13 @@ export async function uploadPhoto(userId: string, base64: string | File, extensi
       .from('photos')
       .upload(filePath, base64 instanceof File ? base64 : decode(base64), { contentType });
     if (error) {
-      Alert.alert(error.message);
+      errorToast('Не удалось загрузить файл', error);
     }
     if (uploadedPhoto) {
       return uploadedPhoto.path;
     }
   } catch (error) {
-    errorHandler(error);
+    errorToast('Не удалось загрузить файл', error);
   }
 }
 
@@ -39,7 +40,7 @@ export async function getPublicUrl(path: string) {
     const { data } = supabase.storage.from('photos').getPublicUrl(path);
     return data?.publicUrl;
   } catch (error) {
-    errorHandler(error);
+    errorToast('Не удалось получить ссылку на файл', error);
   }
 }
 
@@ -47,10 +48,10 @@ export async function getSignedUrl(path: string, expiredTime: number) {
   try {
     const { data, error } = await supabase.storage.from('files').createSignedUrl(path, expiredTime);
     if (error) {
-      Alert.alert(error.message);
+      errorToast('Не удалось получить ссылку на файл', error);
     }
     return data?.signedUrl;
   } catch (error) {
-    errorHandler(error);
+    errorToast('Не удалось получить ссылку на файл', error);
   }
 }

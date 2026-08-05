@@ -1,7 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert, Platform, View } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { TouchableRipple, useTheme, Text, Divider } from 'react-native-paper';
+import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useDeleteUserMutation } from '@R/services/authentication/authentication';
 import { resetActivitySlice } from '@R/slices/activity/activity';
 import { resetAuthSlice } from '@R/slices/auth/auth';
@@ -11,14 +10,13 @@ import { resetMainFeedSlice } from '@R/slices/main-feed/main-feed';
 import { resetNetworkSlice } from '@R/slices/network/network';
 import { resetProfileSlice } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { DELETE_ACCOUNT } from './const';
+import SettingsRow from '../settings-row/settings-row';
 
 export default function DeleteAccountBtn() {
   const { language } = useAppSelector(({ language }) => language);
   const { userId } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
-  const { dark, colors } = useTheme();
   const [deleteAccount] = useDeleteUserMutation();
   const { replace } = useRouter();
 
@@ -26,7 +24,6 @@ export default function DeleteAccountBtn() {
     return await deleteAccount({ userId })
       .unwrap()
       .then(async () => {
-        await AsyncStorage.removeItem('accessToken');
         dispatch(resetProfileSlice());
         dispatch(resetActivitySlice());
         dispatch(resetMainFeedSlice());
@@ -36,38 +33,33 @@ export default function DeleteAccountBtn() {
         dispatch(resetLocationSlice());
         replace('/sign-in');
       })
-      .catch((error) => showCrossPlatformToast(error))
+      .catch((error) => errorToast('Не удалось удалить аккаунт', error))
       .finally();
   }
 
   return (
-    <>
-      <TouchableRipple
-        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-        borderless
-        onPress={async () => {
-          if (Platform.OS !== 'web') {
-            Alert.alert(
-              DELETE_ACCOUNT[language].deletingAccount,
-              DELETE_ACCOUNT[language].conscentDeleting,
-              [
-                {
-                  text: DELETE_ACCOUNT[language].sure,
-                  onPress: deleteUserHandler,
-                  style: 'cancel',
-                },
-              ],
-              { cancelable: true },
-            );
-          } else {
-            await deleteUserHandler();
-          }
-        }}>
-        <View style={{ display: 'flex', backgroundColor: colors.background, justifyContent: 'center', padding: 10 }}>
-          <Text variant="titleMedium">{DELETE_ACCOUNT[language].action}</Text>
-        </View>
-      </TouchableRipple>
-      <Divider />
-    </>
+    <SettingsRow
+      icon="delete-outline"
+      title={DELETE_ACCOUNT[language].action}
+      destructive
+      onPress={async () => {
+        if (Platform.OS !== 'web') {
+          Alert.alert(
+            DELETE_ACCOUNT[language].deletingAccount,
+            DELETE_ACCOUNT[language].conscentDeleting,
+            [
+              {
+                text: DELETE_ACCOUNT[language].sure,
+                onPress: deleteUserHandler,
+                style: 'cancel',
+              },
+            ],
+            { cancelable: true },
+          );
+        } else {
+          await deleteUserHandler();
+        }
+      }}
+    />
   );
 }

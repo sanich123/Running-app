@@ -10,18 +10,22 @@ import UserNameSurname from './user-name-surname';
 
 describe('User name surname', () => {
   it('should correctly renders with data', async () => {
-    renderWithProviders(<UserNameSurname userId="someUserId" size="bodyLarge" />, { store: mockStore });
+    await renderWithProviders(<UserNameSurname userId="someUserId" size="bodyLarge" />, { store: mockStore });
     expect(await screen.findByText(MOCK_PROFILE.name)).toBeOnTheScreen();
     expect(await screen.findByText(MOCK_PROFILE.surname)).toBeOnTheScreen();
   });
   it('should correctly render with isLoading and an error in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    renderWithProviders(<UserNameSurname userId="someUserIdWithAnError" size="bodyLarge" />, { store: mockStore });
+    await renderWithProviders(<UserNameSurname userId="someUserIdWithAnError" size="bodyLarge" />, {
+      store: mockStore,
+    });
     expect(await screen.findByText(`An error: ${errorExtracter(MOCK_BAD_REQUEST)}`)).toBeOnTheScreen();
   });
   it('should correctly render with isLoading and an error in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    renderWithProviders(<UserNameSurname userId="someUserIdWithAnError" size="bodyLarge" />, { store: mockStore });
+    await renderWithProviders(<UserNameSurname userId="someUserIdWithAnError" size="bodyLarge" />, {
+      store: mockStore,
+    });
     expect(await screen.findByText(`Ошибка: ${errorExtracter(MOCK_BAD_REQUEST)}`)).toBeOnTheScreen();
   });
 });

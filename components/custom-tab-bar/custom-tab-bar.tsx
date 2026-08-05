@@ -1,8 +1,7 @@
 import { Fragment } from 'react';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
 import { usePathname } from 'expo-router';
-import { TouchableRipple, useTheme } from 'react-native-paper';
+import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
 import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
@@ -20,10 +19,10 @@ export default function CustomTabBar({
   const { userId } = useAppSelector(({ auth }) => auth);
   const pathname = usePathname();
   const icons = {
-    home: (props: { color: string }) => <AntDesign name="home" color={props.color} size={45} />,
-    activity: (props: { color: string }) => <AntDesign name="play-circle" size={45} color="tomato" />,
+    home: (props: { color: string }) => <Icon source="home-outline" color={props.color} size={30} />,
+    activity: (props: { color: string }) => <Icon source="run" size={30} color={props.color} />,
     profile: (props: { color: string }) => <AvatarShowable size={45} id={userId} {...props} />,
-    statistic: (props: { color: string }) => <AntDesign name="pie-chart" size={45} color={props.color} />,
+    statistic: (props: { color: string }) => <Icon source="chart-donut" size={30} color={props.color} />,
   };
 
   return (
@@ -32,7 +31,10 @@ export default function CustomTabBar({
         styles.tabBar,
         {
           height: Platform.OS === 'ios' ? 70 : 'auto',
-          backgroundColor: colors.secondaryContainer,
+          backgroundColor: colors.surface,
+          borderTopColor: colors.outlineVariant,
+          borderTopWidth: 1,
+          elevation: 3,
           display:
             pathname.includes(ROUTES.manualActivity) ||
             pathname.includes(ROUTES.changePassword) ||
@@ -108,7 +110,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
-    paddingVertical: 2,
+    borderRadius: 8,
+    paddingVertical: 8,
   },
 });
