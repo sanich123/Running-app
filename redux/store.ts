@@ -46,10 +46,7 @@ export const resetStore = () => ({ type: RESET_STORE });
 type AppState = ReturnType<typeof appReducer>;
 const persistedReducer = persistReducer(persistConfig, appReducer);
 const rootReducer: Reducer<AppState, Action> = (state, action) =>
-  (persistedReducer as unknown as Reducer<AppState, Action>)(
-    action.type === RESET_STORE ? undefined : state,
-    action,
-  );
+  (persistedReducer as unknown as Reducer<AppState, Action>)(action.type === RESET_STORE ? undefined : state, action);
 
 export const store = configureStore({
   reducer: rootReducer,

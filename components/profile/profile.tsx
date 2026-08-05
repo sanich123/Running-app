@@ -76,7 +76,7 @@ export default function ProfilePage() {
             <View style={styles.mediaPhotosWrapper}>
               <ProfileMediaPhotos userId={`${whosProfile}`} />
             </View>
-            <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}> 
+            <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
               <View style={[styles.avatarRing, { borderColor: colors.primary }]}>
                 <AvatarShowable size={92} id={`${whosProfile}`} />
               </View>

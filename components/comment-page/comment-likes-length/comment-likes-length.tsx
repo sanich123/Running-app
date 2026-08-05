@@ -11,7 +11,11 @@ export default function CommentLikesLength({ commentId, commentLikesFromComment 
   const { commentIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
 
   const shouldGetUpdatedCommentLikes = commentIdWhichLikesToUpdate === commentId;
-  const { data: commentLikes, error, isError } = useGetLikesByCommentIdQuery(commentId, {
+  const {
+    data: commentLikes,
+    error,
+    isError,
+  } = useGetLikesByCommentIdQuery(commentId, {
     skip: !shouldGetUpdatedCommentLikes,
   });
 

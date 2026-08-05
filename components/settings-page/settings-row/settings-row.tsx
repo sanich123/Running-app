@@ -13,16 +13,20 @@ interface SettingsRowProps {
   destructive?: boolean;
 }
 
-export default function SettingsRow({ icon, title, description, onPress, leading, right, destructive }: SettingsRowProps) {
+export default function SettingsRow({
+  icon,
+  title,
+  description,
+  onPress,
+  leading,
+  right,
+  destructive,
+}: SettingsRowProps) {
   const { colors } = useTheme();
   const content = (
     <View style={styles.content}>
       <View style={[styles.icon, { backgroundColor: destructive ? colors.errorContainer : colors.primaryContainer }]}>
-        <MaterialCommunityIcons
-          name={icon}
-          size={21}
-          color={destructive ? colors.error : colors.primary}
-        />
+        <MaterialCommunityIcons name={icon} size={21} color={destructive ? colors.error : colors.primary} />
       </View>
       {leading}
       <View style={styles.copy}>
@@ -44,7 +48,7 @@ export default function SettingsRow({ icon, title, description, onPress, leading
       borderless
       onPress={onPress}
       rippleColor={colors.primaryContainer}
-      style={[styles.container, { backgroundColor: colors.surface }]}> 
+      style={[styles.container, { backgroundColor: colors.surface }]}>
       {content}
     </TouchableRipple>
   );

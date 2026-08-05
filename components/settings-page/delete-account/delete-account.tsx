@@ -45,23 +45,23 @@ export default function DeleteAccountBtn() {
       title={DELETE_ACCOUNT[language].action}
       destructive
       onPress={async () => {
-          if (Platform.OS !== 'web') {
-            Alert.alert(
-              DELETE_ACCOUNT[language].deletingAccount,
-              DELETE_ACCOUNT[language].conscentDeleting,
-              [
-                {
-                  text: DELETE_ACCOUNT[language].sure,
-                  onPress: deleteUserHandler,
-                  style: 'cancel',
-                },
-              ],
-              { cancelable: true },
-            );
-          } else {
-            await deleteUserHandler();
-          }
-        }}
+        if (Platform.OS !== 'web') {
+          Alert.alert(
+            DELETE_ACCOUNT[language].deletingAccount,
+            DELETE_ACCOUNT[language].conscentDeleting,
+            [
+              {
+                text: DELETE_ACCOUNT[language].sure,
+                onPress: deleteUserHandler,
+                style: 'cancel',
+              },
+            ],
+            { cancelable: true },
+          );
+        } else {
+          await deleteUserHandler();
+        }
+      }}
     />
   );
 }

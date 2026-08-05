@@ -22,14 +22,8 @@ export default function CardFullView() {
   } = useGetActivityByActivityIdQuery(`${activityId}`, { skip: !activityId });
 
   return (
-    <CrossPlatformLayout
-      edges={[]}
-      isError={isError}
-      isLoading={isLoading}
-      scrollViewEnabled={!isLoading && !isError}>
-      <View
-        collapsable={false}
-        style={[styles.content, (isLoading || isError) && styles.state]}> 
+    <CrossPlatformLayout edges={[]} isError={isError} isLoading={isLoading} scrollViewEnabled={!isLoading && !isError}>
+      <View collapsable={false} style={[styles.content, (isLoading || isError) && styles.state]}>
         {isLoading ? <ActivityIndicator size="large" testID="homeActivityIndicator" /> : null}
         {isError ? <ErrorComponent error={error} refetch={refetch} /> : null}
         {isSuccess && (

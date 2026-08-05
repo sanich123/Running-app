@@ -32,10 +32,10 @@ export default function CrossPlatformLayout({
       edges={edges}>
       {scrollViewEnabled && !isStatusState ? (
         <KeyboardAwareScrollView style={styles.flex}>
-        <ScrollView
-          style={styles.flex}
-          contentContainerStyle={[
-            styles.grow,
+          <ScrollView
+            style={styles.flex}
+            contentContainerStyle={[
+              styles.grow,
               Platform.OS === 'web' && {
                 maxWidth: 600,
                 marginLeft: 'auto',

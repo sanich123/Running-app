@@ -130,14 +130,22 @@ export default function MigrationFromStrava() {
           <View
             style={[
               styles.status,
-              { backgroundColor: isError ? colors.errorContainer : isSuccess ? colors.tertiaryContainer : colors.surface },
+              {
+                backgroundColor: isError
+                  ? colors.errorContainer
+                  : isSuccess
+                    ? colors.tertiaryContainer
+                    : colors.surface,
+              },
             ]}>
             {isProcessing && <ActivityIndicator size="small" color={colors.primary} />}
             {isSuccess && <MaterialCommunityIcons name="check-circle-outline" size={24} color={colors.tertiary} />}
             {Boolean(isError) && <MaterialCommunityIcons name="alert-circle-outline" size={24} color={colors.error} />}
             <Text
               variant="bodyMedium"
-              style={{ color: isError ? colors.onErrorContainer : isSuccess ? colors.onTertiaryContainer : colors.onSurface }}>
+              style={{
+                color: isError ? colors.onErrorContainer : isSuccess ? colors.onTertiaryContainer : colors.onSurface,
+              }}>
               {statusText}
             </Text>
           </View>

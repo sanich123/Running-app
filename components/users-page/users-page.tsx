@@ -27,10 +27,7 @@ export default function ListOfUsers() {
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
-    <SafeAreaView
-      edges={['bottom']}
-      style={[styles.container, { backgroundColor: colors.background }]}
-    >
+    <SafeAreaView edges={['bottom']} style={[styles.container, { backgroundColor: colors.background }]}>
       <SearchInput setIsInitial={setIsInitial} setSearch={setSearch} search={search} />
       <FlatList
         onRefresh={onRefresh}

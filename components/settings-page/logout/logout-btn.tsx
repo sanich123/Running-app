@@ -15,11 +15,11 @@ export default function LogoutBtn() {
       title={SETTINGS[language].logout}
       destructive
       onPress={async () => {
-          await AsyncStorage.removeItem('accessToken');
-          await persistor.purge();
-          dispatch(resetStore());
-          replace('/sign-in');
-        }}
+        await AsyncStorage.removeItem('accessToken');
+        await persistor.purge();
+        dispatch(resetStore());
+        replace('/sign-in');
+      }}
     />
   );
 }
