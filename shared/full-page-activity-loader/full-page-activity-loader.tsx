@@ -11,7 +11,7 @@ export default function FullPageActivityLoader() {
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: themeColors.background }}>
-      <ActivityIndicator size="large" color={themeColors.primary} />
+      <ActivityIndicator testID="full-page-activity-loader" size="large" color={themeColors.primary} />
     </View>
   );
 }

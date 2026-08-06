@@ -3,6 +3,7 @@ import { IconButton, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import AvatarShowable from '@Routes/avatar/showable/showable';
+import { HOME_WELCOME_TEXT } from './const';
 
 export default function HomeWelcome() {
   const { colors } = useTheme();
@@ -15,10 +16,10 @@ export default function HomeWelcome() {
       <AvatarShowable size={44} id={userId} />
       <View style={styles.copy}>
         <Text variant="titleMedium" style={styles.title}>
-          {`Good morning${name ? `, ${name}` : ''}!`}
+          {HOME_WELCOME_TEXT.greeting(name)}
         </Text>
         <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-          Ready to move?
+          {HOME_WELCOME_TEXT.subtitle}
         </Text>
       </View>
       <IconButton icon="bell-outline" iconColor={colors.primary} size={24} style={styles.action} />

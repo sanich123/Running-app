@@ -20,7 +20,7 @@ export default function FullViewMap() {
   return (
     <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
       {isLoading ? (
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" testID="full-view-map-loading" />
       ) : isSuccess ? (
         <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
       ) : isError ? (

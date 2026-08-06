@@ -32,7 +32,7 @@ export default function ListOfUsers() {
       <SearchInput setIsInitial={setIsInitial} setSearch={setSearch} search={search} />
       {isLoading ? (
         <View pointerEvents="none" style={styles.stateOverlay}>
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" testID="users-page-loading" />
         </View>
       ) : isInitial || isSuccess ? (
         <FlatList

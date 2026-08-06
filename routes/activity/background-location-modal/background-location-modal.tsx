@@ -38,6 +38,7 @@ export default function BackgroundLocationModal({
           ))}
         </View>
         <Button
+          testID="background-location-allow"
           mode="contained"
           style={styles.button}
           onPress={async () => {

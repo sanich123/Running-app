@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
 import { setIsDisableWhileSending } from '@R/slices/activity/activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -23,6 +23,21 @@ describe('Inputs manual distance duration', () => {
     await renderWithProviders(<InputsDistanceTime isDisabled={false} />, { store: mockStore });
     [INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID].map((testId) =>
       expect(screen.getByTestId(testId)).toBeDisabled(),
+    );
+  });
+
+  it('stores distance, hours and minutes entered by the user', async () => {
+    const user = userEvent.setup();
+    mockStore.dispatch(setIsDisableWhileSending(false));
+    await renderWithProviders(<InputsDistanceTime isDisabled={false} />);
+    await user.clear(screen.getByTestId(INPUT_DISTANCE_ID));
+    await user.type(screen.getByTestId(INPUT_DISTANCE_ID), '12.5');
+    await user.clear(screen.getByTestId(INPUT_HOURS_ID));
+    await user.type(screen.getByTestId(INPUT_HOURS_ID), '1');
+    await user.clear(screen.getByTestId(INPUT_MINUTES_ID));
+    await user.type(screen.getByTestId(INPUT_MINUTES_ID), '35');
+    expect(mockStore.getState().manualActivity).toEqual(
+      expect.objectContaining({ manualDistance: 12.5, manualHours: 1, manualMinutes: 35 }),
     );
   });
 });

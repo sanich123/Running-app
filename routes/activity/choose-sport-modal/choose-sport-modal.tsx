@@ -50,6 +50,7 @@ export default function ChooseSportModal({ chooseSportModalRef }: ChooseSportMod
             const isSelected = sport === value;
             return (
               <TouchableRipple
+                testID={`activity-sport-${value}`}
                 key={iconName}
                 borderless
                 style={[

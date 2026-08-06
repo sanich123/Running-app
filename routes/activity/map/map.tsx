@@ -94,6 +94,7 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
           </MapView>
           <View style={styles.mapActions}>
             <IconButton
+              testID="move-to-current-location"
               mode="contained-tonal"
               icon="crosshairs-gps"
               iconColor={colors.primary}
@@ -104,6 +105,7 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
             />
             {isBatteryOptimizationEnabled && (
               <IconButton
+                testID="battery-optimization-info"
                 mode="contained-tonal"
                 icon="battery-alert-variant-outline"
                 iconColor={colors.primary}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { Platform, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
+import { NETWORK_WARNING_TEXT } from './const';
 import { checkAirplaneMode, checkVpn } from './utils';
 
 export default function NetworkStateBanner() {
@@ -37,15 +38,17 @@ export default function NetworkStateBanner() {
             rowGap: 5,
             backgroundColor: colors.surfaceVariant,
           }}>
-          {isVpnEnabled && <Text variant="bodyMedium">Обратите внимание, у Вас включен VPN</Text>}
+          {isVpnEnabled && <Text variant="bodyMedium">{NETWORK_WARNING_TEXT.vpn}</Text>}
           {!isInternetReachable && (
-            <Text variant="bodyMedium">{`${isConnected ? 'Возможно, ' : ''}${!isConnected ? 'У' : 'у'} Вас нет соединения с Интернет`}</Text>
+            <Text variant="bodyMedium">
+              {isConnected ? NETWORK_WARNING_TEXT.maybeNoInternet : NETWORK_WARNING_TEXT.noInternet}
+            </Text>
           )}
           {isCellularWarning && (
-            <Text variant="bodyMedium">{`Тип Вашего подключения ${details?.cellularGeneration}`}</Text>
+            <Text variant="bodyMedium">{NETWORK_WARNING_TEXT.cellular(`${details?.cellularGeneration}`)}</Text>
           )}
           {Platform.OS === 'android' && isAirplaneMode && (
-            <Text variant="bodyMedium">Обратите внимание, включен режим самолета</Text>
+            <Text variant="bodyMedium">{NETWORK_WARNING_TEXT.airplane}</Text>
           )}
         </View>
       )}

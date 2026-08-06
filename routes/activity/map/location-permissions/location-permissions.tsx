@@ -47,7 +47,10 @@ export default function LocationPermissions({
             Вы зарегистрированы, но у вас нет профиля пользователя. Для того, чтобы записывать и сохранять активности,
             надо добавить имя и фотографию
           </Text>
-          <Link href="/(protected)/(tabs)/profile/profile-settings" style={{ marginTop: 10 }}>
+          <Link
+            testID="create-profile-link"
+            href="/(protected)/(tabs)/profile/profile-settings"
+            style={{ marginTop: 10 }}>
             Перейти и создать профиль пользователя
           </Link>
         </View>
@@ -58,7 +61,10 @@ export default function LocationPermissions({
             Вы зарегистрированы, но у вас нет профиля пользователя. Для того, чтобы записывать и сохранять активности,
             надо добавить имя и фотографию
           </Text>
-          <Link href="/(protected)/(tabs)/profile/profile-settings" style={{ marginTop: 10 }}>
+          <Link
+            testID="create-profile-link"
+            href="/(protected)/(tabs)/profile/profile-settings"
+            style={{ marginTop: 10 }}>
             Перейти и создать профиль пользователя
           </Link>
         </View>

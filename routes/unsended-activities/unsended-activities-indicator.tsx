@@ -37,10 +37,13 @@ export default function UnsendedActivitiesIndicator() {
             {/* {successSending && UNSENDED_ACTIVITIES[language].success}
             {errorSending && UNSENDED_ACTIVITIES[language].error} */}
           </Text>
-          <Button loading={isLoading} onPress={activitySender} disabled={isLoading}>
+          <Button testID="send-unsynced-activities" loading={isLoading} onPress={activitySender} disabled={isLoading}>
             {UNSENDED_ACTIVITIES[language].send}
           </Button>
-          <Button loading={isLoading} onPress={() => dispatch(clearUnsendedActivities())}>
+          <Button
+            testID="delete-unsynced-activities"
+            loading={isLoading}
+            onPress={() => dispatch(clearUnsendedActivities())}>
             Удалить
           </Button>
         </View>

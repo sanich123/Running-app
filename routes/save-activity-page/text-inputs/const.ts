@@ -13,3 +13,5 @@ export const TEXT_INPUTS = {
 
 export const TEXT_INPUTS_TITLE_LEFT_ICON = 'titleLeftIcon';
 export const TEXT_INPUTS_DESCRIPTION_LEFT_ICON = 'descriptionLeftIcon';
+export const TEXT_INPUTS_TITLE_TEST_ID = 'activity-title-input';
+export const TEXT_INPUTS_DESCRIPTION_TEST_ID = 'activity-description-input';

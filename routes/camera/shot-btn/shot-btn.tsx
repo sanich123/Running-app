@@ -9,6 +9,7 @@ export default function ShotBtn({ cameraRef, setPhotos, photos }: ShotBtnProps) 
 
   return (
     <TouchableRipple
+      testID="camera-shot-button"
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       onPress={async () => {

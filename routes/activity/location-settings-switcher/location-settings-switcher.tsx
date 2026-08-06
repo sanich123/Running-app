@@ -42,6 +42,7 @@ export default function LocationSettingsSwitcher({
         </Text>
       </View>
       <Button
+        testID="location-settings-open"
         mode="outlined"
         compact
         icon="cog-outline"

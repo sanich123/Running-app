@@ -33,7 +33,7 @@ const rootReducer = combineReducers({
 export const mockStore = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(runichApi.middleware);
+    return getDefaultMiddleware({ serializableCheck: false }).concat(runichApi.middleware);
   },
 });
 

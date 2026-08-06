@@ -39,6 +39,7 @@ export default function BatteryOptimizationModal({
           ))}
         </View>
         <Button
+          testID="battery-optimization-open-settings"
           mode="contained"
           style={styles.button}
           onPress={async () => {

@@ -23,6 +23,7 @@ export default function BackgroundLocationSwitcher({
         </Text>
       </View>
       <Button
+        testID="background-location-details"
         mode="outlined"
         compact
         icon="map-marker-radius-outline"

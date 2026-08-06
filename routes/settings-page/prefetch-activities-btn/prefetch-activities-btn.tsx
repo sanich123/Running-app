@@ -15,6 +15,7 @@ export default function PrefetchActivitiesBtn() {
       description={`${isNeedToPrefetchActivities ? SETTINGS[language].switchOn : SETTINGS[language].switchOff} ${SETTINGS[language].prefetch}`}
       leading={
         <Switch
+          testID="prefetch-activities-switch"
           value={isNeedToPrefetchActivities}
           onValueChange={() => {
             dispatch(setisNeedToPrefetchActivities());

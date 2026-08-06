@@ -17,6 +17,7 @@ export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
   return (
     <>
       <TouchableRipple
+        testID="manual-activity-sport-picker"
         disabled={isDisabledWhileSending || isDisabled}
         style={{
           display: 'flex',

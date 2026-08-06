@@ -15,9 +15,10 @@ export default function ListOfFollowing() {
   return (
     <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
       {isLoading ? (
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" testID="followings-loading" />
       ) : isSuccess ? (
         <FlatList
+          testID="followings-list"
           onRefresh={onRefresh}
           refreshing={refreshing}
           data={users}

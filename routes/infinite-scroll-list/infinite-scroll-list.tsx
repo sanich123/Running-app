@@ -15,6 +15,7 @@ export default function InfiniteScrollList({
 
   return (
     <FlatList
+      testID="infinite-scroll-list"
       onRefresh={onRefresh}
       data={dataToRender}
       refreshing={refreshing}

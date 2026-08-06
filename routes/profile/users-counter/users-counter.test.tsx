@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_FRIENDS } from '@T/mocks/mock-friends';
@@ -7,10 +7,11 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { USERS_COUNT, USERS_VARIANT } from './const';
 import UsersCounter from './users-counter';
 
+const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b' }),
   usePathname: () => 'somePathname',
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: mockPush }),
 }));
 
 describe('Users counter', () => {
@@ -30,5 +31,14 @@ describe('Users counter', () => {
     await renderWithProviders(<UsersCounter variant={USERS_VARIANT.whoFollowsUser} />, { store: mockStore });
     expect(await screen.findByText(new RegExp(`${USERS_COUNT.english.error}`))).toBeOnTheScreen();
     expect(await screen.findByText(/400/i)).toBeOnTheScreen();
+  });
+
+  it('opens the followings list for the displayed profile', async () => {
+    const user = userEvent.setup();
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await renderWithProviders(<UsersCounter variant={USERS_VARIANT.whoUserFollows} />);
+    await screen.findByText(`${MOCK_FRIENDS.length}`);
+    await user.press(screen.getByText(USERS_COUNT.english.followings));
+    expect(mockPush).toHaveBeenCalledWith('/(protected)/following/926f4a53-08b5-43c6-99ee-cf31fdfbb49b');
   });
 });

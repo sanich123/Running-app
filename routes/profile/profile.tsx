@@ -56,7 +56,7 @@ export default function ProfilePage() {
         dispatch(savePhotoUrl(profile?.profilePhoto));
       }
     }
-  }, [dispatch, isProfilePage, isSuccess, profile]);
+  }, [dispatch, isProfilePage, isSuccess, profile, userId]);
 
   return (
     <>
@@ -71,7 +71,7 @@ export default function ProfilePage() {
           },
         ]}>
         {isLoading ? (
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" testID="profile-page-loading" />
         ) : isSuccess ? (
           <>
             <View style={styles.mediaPhotosWrapper}>

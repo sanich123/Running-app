@@ -14,6 +14,7 @@ import { errorToast } from '@S/error-toast/error-toast';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { SignInPageStates } from '@U/validate-email-password';
 import ConfirmEmailCode from './confirm-email-code/confirm-email-code';
+import { SIGN_IN_FIELDS } from './const';
 import Intro from './intro/intro';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
@@ -53,7 +54,7 @@ export default function SignIn() {
         <CustomTextInput<EmailPasswordData>
           control={control}
           fieldName="email"
-          label="Электронная почта"
+          label={SIGN_IN_FIELDS.email}
           validation={emailValidation}
           inputMode="email"
           autoComplete="email"
@@ -62,7 +63,7 @@ export default function SignIn() {
           <CustomPasswordInput<EmailPasswordData>
             control={control}
             fieldName="password"
-            label="Пароль"
+            label={SIGN_IN_FIELDS.password}
             validation={passwordValidation}
             returnKeyType="send"
             returnKeyLabel="send"

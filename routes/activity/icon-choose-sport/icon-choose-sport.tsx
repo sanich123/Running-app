@@ -13,6 +13,7 @@ export default function IconChooseSport() {
   return (
     <View style={{ position: 'absolute', left: 0 }}>
       <IconButton
+        testID="choose-activity-sport"
         icon={getIconNameByTypeOfSport(sport)}
         size={35}
         onPress={() => chooseSportModal.current?.present()}

@@ -20,7 +20,7 @@ export default function ProfileStatistics({ whosProfile }: { whosProfile: string
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {allUserStatistics?.totalItems ? (
+      {isLoading || isError || allUserStatistics?.totalItems ? (
         <>
           <MonthStatisticsMetrics
             title={MONTH_STATISTICS[language].activities}

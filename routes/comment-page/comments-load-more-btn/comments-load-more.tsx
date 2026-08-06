@@ -8,6 +8,7 @@ export default function CommentsLoadMoreBtn({ take, increaseTakeNumber, comments
   const diffBetweenAllCommentsAndDownloaded = commentsLength - take >= 10 ? 10 : commentsLength - take;
   return (
     <Button
+      testID="comments-load-more"
       icon="reload"
       onPress={() => increaseTakeNumber(take + 10)}
       mode="outlined"

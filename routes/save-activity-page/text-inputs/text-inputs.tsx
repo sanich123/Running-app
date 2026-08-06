@@ -3,7 +3,13 @@ import { TextInput } from 'react-native-paper';
 import { saveDescription, saveTitle } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { TEXT_INPUTS, TEXT_INPUTS_TITLE_LEFT_ICON, TEXT_INPUTS_DESCRIPTION_LEFT_ICON } from './const';
+import {
+  TEXT_INPUTS,
+  TEXT_INPUTS_TITLE_LEFT_ICON,
+  TEXT_INPUTS_DESCRIPTION_LEFT_ICON,
+  TEXT_INPUTS_TITLE_TEST_ID,
+  TEXT_INPUTS_DESCRIPTION_TEST_ID,
+} from './const';
 
 export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();
@@ -15,6 +21,7 @@ export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
   return (
     <>
       <TextInput
+        testID={TEXT_INPUTS_TITLE_TEST_ID}
         mode="outlined"
         value={title}
         onBlur={() => dispatch(saveTitle(title))}
@@ -28,6 +35,7 @@ export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
         disabled={isDisabled || isDisabledWhileSending}
       />
       <TextInput
+        testID={TEXT_INPUTS_DESCRIPTION_TEST_ID}
         mode="outlined"
         value={description}
         onBlur={() => dispatch(saveDescription(description))}

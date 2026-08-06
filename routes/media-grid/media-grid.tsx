@@ -24,10 +24,11 @@ export default function MediaGrid() {
       edges={['left', 'right']}
       style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
       {isLoading ? (
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" testID="media-grid-loading" />
       ) : isSuccess ? (
         data?.photos?.length ? (
           <FlatList
+            testID="media-grid-list"
             contentContainerStyle={[
               {
                 backgroundColor: colors.background,

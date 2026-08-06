@@ -1,14 +1,11 @@
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
+import { EMPTY_USERS_LIST } from './const';
 
 export default function EmptyUsersList({ isInitial }: { isInitial: boolean }) {
   const { language } = useAppSelector(({ language }) => language);
-  const message =
-    language === LANGUAGES.english
-      ? 'There are no users with this name or email'
-      : 'Пользователи с такими данными не найдены';
+  const message = EMPTY_USERS_LIST[language];
 
   return (
     <>

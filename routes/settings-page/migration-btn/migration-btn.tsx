@@ -10,6 +10,7 @@ export default function MigrationBtn() {
   const isRussian = language === LANGUAGES.russian;
   return profileFromServer?.id ? (
     <SettingsRow
+      testID="migration-settings-row"
       icon="run"
       title={isRussian ? 'Перенести активности из Strava' : 'Migrate from Strava'}
       description={isRussian ? 'Импортируйте историю тренировок' : 'Import your workout history'}

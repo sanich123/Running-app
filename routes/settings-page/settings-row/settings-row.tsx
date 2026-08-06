@@ -4,6 +4,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 interface SettingsRowProps {
+  testID?: string;
   icon?: keyof typeof MaterialCommunityIcons.glyphMap;
   title: string;
   description?: string;
@@ -14,6 +15,7 @@ interface SettingsRowProps {
 }
 
 export default function SettingsRow({
+  testID,
   icon,
   title,
   description,
@@ -47,6 +49,7 @@ export default function SettingsRow({
 
   return (
     <TouchableRipple
+      testID={testID}
       borderless
       onPress={onPress}
       rippleColor={colors.primaryContainer}

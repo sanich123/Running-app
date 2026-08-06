@@ -9,7 +9,7 @@ import { setActivityStatus } from '@R/slices/location/location';
 import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
-import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON } from './const ';
+import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON } from './const';
 
 export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordLocation: boolean }) {
   const dispatch = useAppDispatch();

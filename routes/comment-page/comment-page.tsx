@@ -40,7 +40,7 @@ export default function CommentFullViewPage() {
         },
       ]}>
       {isLoading ? (
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" testID="comment-page-loading" />
       ) : isSuccess && !activity?.message ? (
         <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
           {(activity?.mapPhotoUrl || activity?.photoVideoUrls?.length > 0) && (

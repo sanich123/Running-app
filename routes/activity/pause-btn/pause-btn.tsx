@@ -13,6 +13,7 @@ export default function PauseBtn() {
 
   return (
     <TouchableRipple
+      testID="activity-pause-toggle"
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       style={styles.touchable}

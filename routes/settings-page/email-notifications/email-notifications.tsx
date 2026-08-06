@@ -19,6 +19,7 @@ export default function EmailNotificationsBtn() {
           description={`${profileInfo.emailNotifications ? SETTINGS[language].switchOn : SETTINGS[language].switchOff} ${SETTINGS[language].emailNotifications}`}
           leading={
             <Switch
+              testID="email-notifications-switch"
               value={profileInfo.emailNotifications}
               onValueChange={async () => {
                 try {

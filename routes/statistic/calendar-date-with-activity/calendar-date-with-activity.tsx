@@ -18,6 +18,7 @@ export default function CalendarDateWithActivity({
     <>
       {!isTitle ? (
         <TouchableRipple
+          testID={`calendar-activities-${activities.map(({ id }) => id).join('-')}`}
           rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           borderless
           style={[

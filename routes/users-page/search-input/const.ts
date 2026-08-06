@@ -14,3 +14,6 @@ export interface SearchInputProps {
   setIsInitial: (arg: boolean) => void;
   search: string;
 }
+
+export const SEARCH_INPUT_TEST_ID = 'users-search-input';
+export const SEARCH_ICON_TEST_ID = 'users-search-icon';

@@ -54,7 +54,7 @@ export default function CalendarActivities({ year, month, userId, selectedType }
         </View>
         <View style={styles.calendarContainer}>
           {isLoading ? (
-            <ActivityIndicator size="large" />
+            <ActivityIndicator size="large" testID="calendar-loading" />
           ) : isSuccess ? (
             <>
               {Object.keys(daysOfTheWeek).map((day: string, i: number) => (

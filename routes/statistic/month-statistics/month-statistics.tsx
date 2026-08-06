@@ -40,7 +40,7 @@ export default function MonthStatistics() {
       isLoading={isLoading}
       outerStyles={{ padding: 10 }}>
       {isLoading ? (
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" testID="month-statistics-loading" />
       ) : isSuccess ? (
         <>
           <YearMonthTitle year={`${year}`} month={`${month}`} />

@@ -33,6 +33,7 @@ export default function UpdateBtn() {
   const { data: activity, error, isError, isLoading } = useGetActivityByActivityIdQuery(`${activityId}`);
   return (
     <TouchableRipple
+      testID="activity-update-button"
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       style={{ padding: 5, borderRadius: 10, opacity: isLoading || isError ? 0.5 : 1 }}

@@ -27,6 +27,7 @@ export default function CrossPlatformLayout({
       {scrollViewEnabled && !isStatusState ? (
         <KeyboardAwareScrollView style={styles.flex}>
           <ScrollView
+            testID="cross-platform-scroll-view"
             style={styles.flex}
             contentContainerStyle={[
               styles.grow,
@@ -43,6 +44,7 @@ export default function CrossPlatformLayout({
             refreshControl={
               refetch && (
                 <RefreshControl
+                  testID="cross-platform-refresh-control"
                   refreshing={refreshing}
                   onRefresh={() => {
                     setRefreshing(true);

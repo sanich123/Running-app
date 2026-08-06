@@ -24,9 +24,10 @@ export default function ListOfFollowers() {
   return (
     <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
       {isLoading ? (
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" testID="followers-loading" />
       ) : isSuccess ? (
         <FlatList
+          testID="followers-list"
           onRefresh={onRefresh}
           refreshing={refreshing}
           data={users}

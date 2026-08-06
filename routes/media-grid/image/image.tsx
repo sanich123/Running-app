@@ -32,6 +32,7 @@ export default function MediaGridImage({
       }
       borderless>
       <CustomImage
+        testID={url}
         style={{ height: calculatedWidth, width: widthOfScreen / 4 }}
         source={{ uri: thumbnail || url }}
         contentFit="cover"

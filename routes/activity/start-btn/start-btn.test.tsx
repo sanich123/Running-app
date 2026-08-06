@@ -5,7 +5,7 @@ import { setActivityStatus, setDuration, setDistance, setLocationsFromBackground
 import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION, MOCK_SPEED } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID } from './const ';
+import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID } from './const';
 import ActivityStartBtn from './start-btn';
 
 jest.mock('expo-router', () => ({

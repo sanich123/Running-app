@@ -40,7 +40,7 @@ export default function MonthTypesChips({ userId, year, month, setSelectedType, 
       ]}>
       <Card.Content style={styles.content}>
         {isLoading ? (
-          <ActivityIndicator size="small" color={colors.primary} />
+          <ActivityIndicator testID="month-types-loading" size="small" color={colors.primary} />
         ) : isSuccess ? (
           <>
             <Text variant="labelLarge" style={[styles.label, { color: colors.onSurfaceVariant }]}>

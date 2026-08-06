@@ -36,6 +36,7 @@ export default function BatteryOptimizationSwitcher({
           styles.text
         }>{`${language === LANGUAGES.russian ? 'Оптимизация батареи' : 'Battery optimization'}`}</Text>
       <Button
+        testID="battery-optimization-details"
         mode="outlined"
         compact
         icon="battery-alert-variant-outline"

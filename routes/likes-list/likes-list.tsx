@@ -31,14 +31,15 @@ export default function LikesList() {
           width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
           marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
         },
-        (isLoading || isError || !likes.length) && { justifyContent: 'center' },
+        (isLoading || isError || !likes?.length) && { justifyContent: 'center' },
       ]}>
       <View>
         {isLoading ? (
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" testID="likes-list-loading" />
         ) : isSuccess ? (
           likes?.length > 0 ? (
             <FlatList
+              testID="likes-list"
               onRefresh={onRefresh}
               refreshing={refreshing}
               data={likes}

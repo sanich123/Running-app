@@ -19,6 +19,7 @@ export default function ForegroundLocationSwitcher({ requestForegroundPermission
         </Text>
       </View>
       <Button
+        testID="foreground-location-allow"
         mode="outlined"
         compact
         icon="map-marker-outline"

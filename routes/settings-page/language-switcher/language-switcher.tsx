@@ -11,6 +11,7 @@ export default function LanguageSwitcher() {
   return (
     <>
       <SettingsRow
+        testID="language-switcher-row"
         icon="translate"
         title={language === LANGUAGES.russian ? 'Язык' : 'Language'}
         description={language === LANGUAGES.russian ? 'Выберите язык приложения' : 'Choose app language'}

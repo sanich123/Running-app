@@ -9,6 +9,7 @@ export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
 
   return (
     <input
+      {...({ testID: 'manual-date-picker' } as Record<string, string>)}
       disabled={isDisabledWhileSending || isDisabled}
       style={{ opacity: isDisabledWhileSending ? 0.5 : 1, marginTop: 15, marginBottom: 15 }}
       type="datetime-local"

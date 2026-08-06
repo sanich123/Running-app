@@ -1,4 +1,5 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
+import { setUserId } from '@R/slices/auth/auth';
 import { savePhotoUrl, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
@@ -10,6 +11,12 @@ jest.mock('react-native-compressor', () => ({
   Image: () => ({
     compress: jest.fn(),
   }),
+}));
+jest.mock('@U/file-sending', () => ({
+  getAccessToGallery: jest.fn(() => Promise.resolve({ canceled: false, assets: [{ uri: 'file://avatar.jpg' }] })),
+  compressAndSendFile: jest.fn(() =>
+    Promise.resolve({ url: 'https://images.example.test/avatar.jpg', thumbnail: null }),
+  ),
 }));
 describe('Avatar icon editable', () => {
   it('should correctly renders', async () => {
@@ -43,5 +50,17 @@ describe('Avatar icon editable', () => {
       store: mockStore,
     });
     expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeDisabled();
+  });
+
+  it('selects, uploads and stores a new avatar', async () => {
+    const user = userEvent.setup();
+    const setIsDisabled = jest.fn();
+    mockStore.dispatch(setIsDisabledWhileSendingProfile(false));
+    mockStore.dispatch(setUserId('avatar-user'));
+    await renderWithProviders(<AvatarIconEditable setIsDisabled={setIsDisabled} isDisabled={false} />);
+    await user.press(screen.getByTestId(AvatarEditableTestIds.editBtn));
+    expect(mockStore.getState().profile.settings.profilePhoto).toBe('https://images.example.test/avatar.jpg');
+    expect(setIsDisabled).toHaveBeenNthCalledWith(1, true);
+    expect(setIsDisabled).toHaveBeenLastCalledWith(false);
   });
 });

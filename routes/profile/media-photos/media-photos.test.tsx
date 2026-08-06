@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { BAD_REQUEST } from '@T/mocks/mock-requests';
@@ -8,8 +8,9 @@ import { errorExtracter } from '@U/error-handler';
 import { PROFILE_MEDIA } from './const';
 import ProfileMediaPhotos from './media-photos';
 
+const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: mockPush }),
   usePathname: () => 'somePathname',
 }));
 describe('Profile media photos', () => {
@@ -36,5 +37,13 @@ describe('Profile media photos', () => {
     expect(
       await screen.findByText(new RegExp(`${PROFILE_MEDIA.english.error}: ${errorExtracter(BAD_REQUEST)}`)),
     ).toBeOnTheScreen();
+  });
+
+  it('opens the complete media grid', async () => {
+    const user = userEvent.setup();
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />);
+    await user.press(await screen.findByText(new RegExp(PROFILE_MEDIA.english.label)));
+    expect(mockPush).toHaveBeenCalledWith('/(protected)/media-grid/someUserId');
   });
 });

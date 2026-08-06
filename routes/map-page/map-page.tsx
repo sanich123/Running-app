@@ -20,7 +20,7 @@ export default function MapPage() {
   return (
     <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>
       {isLoading ? (
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" testID="map-page-loading" />
       ) : isSuccess ? (
         <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
       ) : isError ? (
