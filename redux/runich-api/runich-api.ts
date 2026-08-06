@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
-import type { RootState } from '@R/store';
+
+interface ApiState {
+  auth: {
+    accessToken?: string;
+  };
+}
 
 export const runichApi = createApi({
   reducerPath: API_NAME,
@@ -9,7 +14,7 @@ export const runichApi = createApi({
     baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
     timeout: LIMIT_OF_REQUEST,
     prepareHeaders: (headers, { endpoint, getState }) => {
-      const accessToken = (getState() as RootState).auth.accessToken;
+      const accessToken = (getState() as ApiState).auth.accessToken;
       if (accessToken && !['registerUser', 'loginUser'].includes(endpoint)) {
         headers.set('authorization', `Bearer ${accessToken}`);
       }
