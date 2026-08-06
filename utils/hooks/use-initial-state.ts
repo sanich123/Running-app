@@ -5,10 +5,10 @@ import Mapbox from '@rnmapbox/maps';
 import * as SplashScreen from 'expo-splash-screen';
 import mapboxgl from 'mapbox-gl';
 import { Appearance, Platform } from 'react-native';
-import { errorToast } from '@C/shared/error-toast/error-toast';
 import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
 import { changeNetworkState } from '@R/slices/network/network';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
+import { errorToast } from '@S/error-toast/error-toast';
 
 export default function useInitialState() {
   const [hasAccessToken, setHasAccessToken] = useState<boolean | null>(null);

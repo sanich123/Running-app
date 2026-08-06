@@ -1,4 +1,4 @@
-import { MOCK_NETWORK_STATE } from '@C/network-indicator/const';
+import { MOCK_NETWORK_STATE } from '@Routes/network-indicator/const';
 import reducer, { NETWORK_INITIAL_STATE, changeNetworkState } from './network';
 
 describe('Network slice', () => {

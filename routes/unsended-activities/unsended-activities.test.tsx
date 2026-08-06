@@ -1,0 +1,26 @@
+import { screen } from '@testing-library/react-native';
+import { saveUnsendedActivity, setIsHaveUnsyncedActivity } from '@R/slices/unsended-activity/unsended-activity';
+import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
+import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import UnsendedActivitiesIndicator from './unsended-activities-indicator';
+
+describe('Unsended activities indicator', () => {
+  it('should correctly renders when a success in english, when isHaveUnsyncedActivity and unsyncedActivities.length > 0', async () => {
+    mockStore.dispatch(
+      saveUnsendedActivity({
+        body: { MOCK_ACTIVITY },
+        id: 'someUserId',
+      }),
+    );
+    mockStore.dispatch(
+      saveUnsendedActivity({
+        body: { MOCK_ACTIVITY },
+        id: 'someUserId',
+      }),
+    );
+    mockStore.dispatch(setIsHaveUnsyncedActivity(true));
+    await renderWithProviders(<UnsendedActivitiesIndicator />, { store: mockStore });
+    expect(await screen.findByText(/отправить/i)).toBeOnTheScreen();
+  });
+});

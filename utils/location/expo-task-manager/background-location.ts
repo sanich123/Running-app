@@ -27,19 +27,17 @@ async function processLocation(currentPosition: LocationObject) {
   }
 
   try {
-    const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer, lastArrayLength } =
+    const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer } =
       getMetricsTaskManager(currentPosition);
 
-    if (!lastArrayLength || lastArrayLength < 10) {
-      saveMetricsToStoreTaskManager(
-        currentKilometer,
-        currentPosition,
-        currentDuration,
-        currentPace,
-        currentAltitude,
-        currentDistance,
-      );
-    }
+    saveMetricsToStoreTaskManager(
+      currentKilometer,
+      currentPosition,
+      currentDuration,
+      currentPace,
+      currentAltitude,
+      currentDistance,
+    );
   } catch (error) {
     if (__DEV__) console.error('[tracking]', 'Something went wrong when saving a new location...', error);
   }

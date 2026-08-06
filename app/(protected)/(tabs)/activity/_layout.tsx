@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
-import ActivityCloseBtn from '@C/activity/close-btn/close-btn';
 import { useAppSelector } from '@R/typed-hooks';
+import ActivityCloseBtn from '@Routes/activity/close-btn/close-btn';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 
 export default function ActivityStack() {

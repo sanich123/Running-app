@@ -1,4 +1,4 @@
-import ListOfFollowers from '@C/followers-page/followers-page';
+import ListOfFollowers from '@Routes/followers-page/followers-page';
 
 export default function HomeFollowers() {
   return <ListOfFollowers />;

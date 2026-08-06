@@ -7,7 +7,8 @@ yarn eslint --fix
 # 3. Применяем Prettier к исходному коду проекта
 yarn prettier --write \
   './app/**/*.{ts,tsx}' \
-  './components/**/*.{ts,tsx}' \
+  './routes/**/*.{ts,tsx}' \
+  './shared/**/*.{ts,tsx}' \
   './redux/**/*.{ts,tsx}' \
   './tests/**/*.{ts,tsx}' \
   './*.{ts,tsx,js,json}'
@@ -24,7 +25,7 @@ yarn madge \
   --warning \
   --circular \
   --extensions ts,tsx \
-  ./app ./auth ./components ./constants ./redux ./utils
+  ./app ./auth ./routes ./shared ./constants ./redux ./utils
 
 # 7. Проверка неиспользуемых импортов ts-prune
 yarn ts-prune --ignore 'app|jest.config.js|.*\.test\.(ts|tsx)$'
@@ -35,7 +36,7 @@ yarn ts-prune --ignore 'app|jest.config.js|.*\.test\.(ts|tsx)$'
 #   --orphans \
 #   --extensions ts,tsx \
 #   --exclude '^(app|node_modules|android|ios|\.expo|dist|coverage)/|\.test\.tsx?$' \
-#   ./auth ./components ./constants ./redux ./utils
+#   ./auth ./routes ./shared ./constants ./redux ./utils
 
 # 9. Обновление зависимостей
 yarn npm-check-updates

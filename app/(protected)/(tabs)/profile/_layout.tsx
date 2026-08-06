@@ -1,10 +1,10 @@
 import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
-import ProfileEditBtn from '@C/profile/edit-btn/edit-btn';
-import ProfileUpdateBtn from '@C/profile/update-btn/update-btn';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
+import ProfileEditBtn from '@Routes/profile/edit-btn/edit-btn';
+import ProfileUpdateBtn from '@Routes/profile/update-btn/update-btn';
 
 export default function ProfileStack() {
   const { colors } = useTheme();

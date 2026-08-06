@@ -2,7 +2,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 import { Platform } from 'react-native';
-import { errorToast } from '@C/shared/error-toast/error-toast';
+import { errorToast } from '@S/error-toast/error-toast';
 import { getBase64CodedImage, getPublicUrl, uploadPhoto } from '../auth/supabase/storage/upload-photo';
 
 export async function compressAndSendFile(

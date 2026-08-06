@@ -1,4 +1,4 @@
-import { errorToast } from '@C/shared/error-toast/error-toast';
+import { errorToast } from '@S/error-toast/error-toast';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 

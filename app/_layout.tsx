@@ -17,12 +17,12 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { useColorScheme } from 'react-native';
 import { Stack } from 'expo-router';
 import { configureFonts, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
-import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
 import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { toastConfig } from '@const/toast-config';
 import { persistor, store } from '@R/store';
 import { useAppSelector } from '@R/typed-hooks';
+import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({

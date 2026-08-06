@@ -1,4 +1,4 @@
-import LikesList from '@C/likes-list/likes-list';
+import LikesList from '@Routes/likes-list/likes-list';
 
 export default function HomeLikes() {
   return <LikesList />;

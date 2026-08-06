@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@C/*": ["./components/*"],
+      "@Routes/*": ["./routes/*"],
+      "@S/*": ["./shared/*"],
       "@const/*": ["./constants/*"],
       "@R/*": ["./redux/*"],
       "@U/*": ["./utils/*"],

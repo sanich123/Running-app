@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { errorToast } from '@C/shared/error-toast/error-toast';
 import { STATUSES } from '@const/enums';
 import { resetLocationsFromBackground, setEmptyLastArrayWhenPaused } from '@R/slices/location/location';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
+import { errorToast } from '@S/error-toast/error-toast';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 
 const { initial, paused, started, continued } = STATUSES;

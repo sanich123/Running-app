@@ -1,7 +1,7 @@
 import { decode, encode } from 'base64-arraybuffer';
 import { File as ExpoFile } from 'expo-file-system';
 import { Platform } from 'react-native';
-import { errorToast } from '@C/shared/error-toast/error-toast';
+import { errorToast } from '@S/error-toast/error-toast';
 import { supabase } from '../supabase-init';
 
 export async function getBase64CodedImage(file: string | File) {

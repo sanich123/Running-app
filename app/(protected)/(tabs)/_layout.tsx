@@ -2,9 +2,9 @@ import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { Platform, View } from 'react-native';
 import { Tabs, usePathname } from 'expo-router';
 import { Icon, useTheme } from 'react-native-paper';
-import AvatarShowable from '@C/avatar/showable/showable';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
+import AvatarShowable from '@Routes/avatar/showable/showable';
 
 export default function TabLayout() {
   const { userId } = useAppSelector(({ auth }) => auth);

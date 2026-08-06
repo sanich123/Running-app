@@ -21,7 +21,7 @@ import type { Action, Reducer } from '@reduxjs/toolkit';
 const persistConfig = {
   key: 'root',
   storage: appStorage,
-  whitelist: ['language', 'activity', 'location', 'auth'],
+  whitelist: ['language', 'activity', 'location', 'auth', 'unsendedActivity'],
 };
 
 const appReducer = combineReducers({

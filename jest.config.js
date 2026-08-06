@@ -11,7 +11,8 @@ const config = {
     'node_modules/(?!(jest-)?react-native|@react-native|expo|@expo|@expo-google-fonts|standard-navigation|react-navigation|@react-navigation|@unimodules|unimodules|sentry-expo|native-base|react-native-svg|@rnmapbox|react-redux|immer|msw|@mswjs|@open-draft|until-async|rettime|strict-event-emitter|headers-polyfill)',
   ],
   moduleNameMapper: {
-    '^@C/(.*)$': '<rootDir>/components/$1',
+    '^@Routes/(.*)$': '<rootDir>/routes/$1',
+    '^@S/(.*)$': '<rootDir>/shared/$1',
     '^@const/(.*)$': '<rootDir>/constants/$1',
     '^@R/(.*)$': '<rootDir>/redux/$1',
     '^@U/(.*)$': '<rootDir>/utils/$1',

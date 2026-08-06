@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import AvatarIconEditable from '@C/avatar/editable/editable';
-import GenderBtns from '@C/save-activity-page/gender-btns/gender-btns';
-import InputBio from '@C/save-activity-page/input-bio/input-bio';
-import InputsNameSurname from '@C/save-activity-page/inputs-name-surname/inputs-name-surname';
-import InputsWeightCity from '@C/save-activity-page/inputs-weight-city/inputs-weight-city';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import AvatarIconEditable from '@Routes/avatar/editable/editable';
+import GenderBtns from '@Routes/save-activity-page/gender-btns/gender-btns';
+import InputBio from '@Routes/save-activity-page/input-bio/input-bio';
+import InputsNameSurname from '@Routes/save-activity-page/inputs-name-surname/inputs-name-surname';
+import InputsWeightCity from '@Routes/save-activity-page/inputs-weight-city/inputs-weight-city';
 
 export default function ProfileSettings() {
   const { colors } = useTheme();

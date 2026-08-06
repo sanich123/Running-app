@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { useWindowDimensions, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import Activities from '@C/activities/activities';
-import ProfilePage from '@C/profile/profile';
+import Activities from '@Routes/activities/activities';
+import ProfilePage from '@Routes/profile/profile';
 
 const renderScene = SceneMap({
   openTasks: ProfilePage,

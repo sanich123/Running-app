@@ -2,6 +2,7 @@ import type { JSX, PropsWithChildren } from 'react';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { render } from '@testing-library/react-native';
 import { Provider } from 'react-redux';
+import { PaperProvider } from 'react-native-paper';
 import { mockStore } from './mock-store';
 import type { AppStore } from './mock-store';
 import type { RenderOptions } from '@testing-library/react-native';
@@ -17,7 +18,9 @@ export async function renderWithProviders(
   function Wrapper({ children }: PropsWithChildren<object>): JSX.Element {
     return (
       <Provider store={store}>
-        <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+        <PaperProvider>
+          <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+        </PaperProvider>
       </Provider>
     );
   }

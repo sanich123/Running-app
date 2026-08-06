@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { Stack, useRootNavigationState, useRouter } from 'expo-router';
 import { useTheme } from 'react-native-paper';
-import SaveBtn from '@C/activity/save-btn/save-btn';
-import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
-import UsersSettingsIcons from '@C/users-settings-icons/users-settings-icons';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
+import SaveBtn from '@Routes/activity/save-btn/save-btn';
+import UsersSettingsIcons from '@Routes/users-settings-icons/users-settings-icons';
+import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import useInitialState from '@U/hooks/use-initial-state';
 
 export const unstable_settings = {

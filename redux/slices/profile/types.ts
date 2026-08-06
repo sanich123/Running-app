@@ -1,4 +1,4 @@
-import type { ProfileType } from '@C/card/types';
+import type { ProfileType } from '@Routes/card/types';
 
 export interface ProfilePrivateInfo {
   email: string;

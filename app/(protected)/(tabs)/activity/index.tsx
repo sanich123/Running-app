@@ -1,4 +1,4 @@
-import Activity from '@C/activity/activity';
+import Activity from '@Routes/activity/activity';
 
 export default function ActivityPage() {
   return <Activity />;

@@ -1,5 +1,5 @@
-import { EMOTIONS_BTNS_VALUES } from '@C/save-activity-page/emotion-btns/const';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
+import { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
 
 export const ADDITIONAL_INFO_INITIAL_STATE = {
   title: '',

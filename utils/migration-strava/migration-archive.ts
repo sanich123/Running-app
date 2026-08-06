@@ -1,6 +1,6 @@
 import { getDocumentAsync } from 'expo-document-picker';
 import { Directory, File } from 'expo-file-system';
-import { errorToast } from '@C/shared/error-toast/error-toast';
+import { errorToast } from '@S/error-toast/error-toast';
 import { removeCacheFolder, removeMedia } from './remove-tools';
 import { sendArchiveToServer } from './send-tools';
 import { toFileUri } from './uri-tools';

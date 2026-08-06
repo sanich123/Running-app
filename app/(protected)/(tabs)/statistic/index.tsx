@@ -1,16 +1,16 @@
 import { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import ErrorComponent from '@C/error-component/error-component';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import CrossPlatformLayout from '@C/shared/cross-platform-layout/cross-platform-layout';
-import Charts from '@C/statistic/charts/charts';
-import { MONTH_STATISTICS } from '@C/statistic/month-metric/const';
-import MonthStatisticsMetrics from '@C/statistic/month-metric/month-metric';
-import YearTypePicker from '@C/statistic/year-type-picker/year-type-picker';
 import { LANGUAGES } from '@const/enums';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
+import ErrorComponent from '@Routes/error-component/error-component';
+import { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
+import Charts from '@Routes/statistic/charts/charts';
+import { MONTH_STATISTICS } from '@Routes/statistic/month-metric/const';
+import MonthStatisticsMetrics from '@Routes/statistic/month-metric/month-metric';
+import YearTypePicker from '@Routes/statistic/year-type-picker/year-type-picker';
+import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 
 export default function Statistics() {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
