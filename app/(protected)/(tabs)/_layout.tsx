@@ -1,15 +1,20 @@
+import { useEffect } from 'react';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { Platform, View } from 'react-native';
-import { Tabs, usePathname } from 'expo-router';
+import { Tabs, usePathname, useRouter } from 'expo-router';
 import { Icon, useTheme } from 'react-native-paper';
-import { ROUTES } from '@const/enums';
-import { useAppSelector } from '@R/typed-hooks';
+import { ROUTES, STATUSES } from '@const/enums';
+import { setActivityStatus } from '@R/slices/location/location';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import AvatarShowable from '@Routes/avatar/showable/showable';
 
 export default function TabLayout() {
+  const { replace } = useRouter();
+  const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { colors } = useTheme();
   const pathname = usePathname();
+  const { activityStatus } = useAppSelector(({ location }) => location);
   const hideTabBar =
     pathname.includes(ROUTES.manualActivity) || pathname.includes(ROUTES.changePassword) || pathname === '/activity';
 
@@ -26,12 +31,18 @@ export default function TabLayout() {
       <Icon source={focused ? focusedSource : source} color={color ?? colors.primary} size={30} />
     </View>
   );
+  useEffect(() => {
+    if (activityStatus === STATUSES.started || activityStatus === STATUSES.continued) {
+      dispatch(setActivityStatus(STATUSES.paused));
+      replace('/activity');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (Platform.OS === 'ios') {
     return (
       <NativeTabs
         hidden={hideTabBar}
-
         backgroundColor={colors.surface}
         iconColor={{ default: colors.secondary, selected: colors.primary }}
         labelStyle={{

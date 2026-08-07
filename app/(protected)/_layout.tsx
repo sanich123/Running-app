@@ -9,16 +9,13 @@ import UsersSettingsIcons from '@Routes/users-settings-icons/users-settings-icon
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import useInitialState from '@U/hooks/use-initial-state';
 
-export const unstable_settings = {
-  initialRouteName: '(tabs)',
-};
-
 export default function ProtectedLayout() {
   const { isLoading, isError, isUninitialized, isSuccess, hasAccessToken } = useInitialState();
   const router = useRouter();
   const rootNavigationState = useRootNavigationState();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
+
   const { isCameraVisible } = useAppSelector(({ manualActivity }) => manualActivity);
 
   useEffect(() => {
