@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTheme, Text, TouchableRipple } from 'react-native-paper';
+import { useTheme, Text, Button } from 'react-native-paper';
 import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/services/activity/activity';
 import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { setIsDisableWhileSending } from '@R/slices/activity/activity';
@@ -14,7 +14,7 @@ import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 
 export default function SaveBtn() {
   const dispatch = useAppDispatch();
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { back, replace } = useRouter();
   const { activityId, isDisabledWhileSending, finishedActivity } = useAppSelector(({ activity }) => activity);
@@ -23,20 +23,18 @@ export default function SaveBtn() {
   );
   const additionalInfoActivity = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
   const { language } = useAppSelector(({ language }) => language);
-  const [sendActivity] = useAddActivityByUserIdMutation();
-  const [updateActivity] = useUpdateActivityInfoMutation();
+  const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
+  const [updateActivity, { isLoading: isUpdating }] = useUpdateActivityInfoMutation();
   const textOnBtn = isEditingActivity ? ACTIVITY_SAVE_BTN[language].update : ACTIVITY_SAVE_BTN[language].save;
 
   return (
-    <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      borderless
+    <Button
       style={styles.layout}
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
+      loading={isLoading || isUpdating}
       onPress={async () => {
         try {
           if (userId) {
-            dispatch(setIsDisableWhileSending(true));
             const savedActivity = {
               body:
                 isManualAdding || isEditingActivity
@@ -58,17 +56,20 @@ export default function SaveBtn() {
                     },
               id: isEditingActivity ? activityId : userId,
             };
+            dispatch(setIsDisableWhileSending(true));
             if (isEditingActivity) {
               await updateActivity(savedActivity)
                 .unwrap()
                 .then(() => back())
                 .catch((error) => errorToast('', error))
                 .finally(() => {
-                  dispatch(setIsDisableWhileSending(false));
                   dispatch(resetAdditionaInfoActivitySlice());
                   dispatch(resetLocationsFromBackground());
                 });
             } else {
+              if (!savedActivity?.body?.speed || !savedActivity?.body?.duration) {
+                return errorToast('Активность не имеет скорости или продолжительности');
+              }
               await sendActivity(savedActivity)
                 .unwrap()
                 .then(() => (isManualAdding ? back() : replace('/')))
@@ -80,7 +81,6 @@ export default function SaveBtn() {
                   errorToast('', error);
                 })
                 .finally(() => {
-                  dispatch(setIsDisableWhileSending(false));
                   dispatch(resetAdditionaInfoActivitySlice());
                   dispatch(resetLocationsFromBackground());
                 });
@@ -88,13 +88,15 @@ export default function SaveBtn() {
           }
         } catch (error) {
           errorToast('', error);
+        } finally {
+          dispatch(setIsDisableWhileSending(false));
         }
       }}
       disabled={isDisabledWhileSending}>
       <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
         {textOnBtn}
       </Text>
-    </TouchableRipple>
+    </Button>
   );
 }
 

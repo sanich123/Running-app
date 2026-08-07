@@ -9,14 +9,12 @@ import EmptyActivitiesList from '@Routes/empty-activities-list/empty-activities-
 import ErrorComponent from '@Routes/error-component/error-component';
 import FloatingBtn from '@Routes/floating-btn/floating-btn';
 import InfiniteScrollList from '@Routes/infinite-scroll-list/infinite-scroll-list';
-import UnsendedActivitiesIndicator from '@Routes/unsended-activities/unsended-activities-indicator';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 
 export default function Feed() {
   const dispatch = useAppDispatch();
   const { push } = useRouter();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { unsyncedActivities } = useAppSelector(({ unsendedActivity }) => unsendedActivity);
   const { data, error, isLoading, isSuccess, refetch, fetchNextPage, isFetching, isError } =
     useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery(
       {
@@ -35,7 +33,6 @@ export default function Feed() {
 
   return (
     <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
-      {unsyncedActivities.length > 0 && <UnsendedActivitiesIndicator />}
       {isLoading ? (
         <ActivityIndicator size="large" testID="homeActivityIndicator" />
       ) : isSuccess ? (

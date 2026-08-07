@@ -10,7 +10,6 @@ describe('Error component', () => {
       store: mockStore,
     });
     expect(screen.getByText('some message, 400 code')).toBeOnTheScreen();
-    expect(screen.getByText(ERROR_COMPONENT_TEXT.subtitle)).toBeOnTheScreen();
   });
 
   it('retries the failed request', async () => {

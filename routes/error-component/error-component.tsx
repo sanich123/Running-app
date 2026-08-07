@@ -14,10 +14,6 @@ export default function ErrorComponent({
 }) {
   return (
     <View testID={ERROR_COMPONENT_TEST_ID} style={{ alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <Text variant="titleMedium">{ERROR_COMPONENT_TEXT.title}</Text>
-      <Text variant="bodySmall" style={{ marginTop: 4, opacity: 0.65 }}>
-        {ERROR_COMPONENT_TEXT.subtitle}
-      </Text>
       <Text variant="bodyMedium" style={{ marginTop: 8, textAlign: 'center' }}>
         {getErrorMessageFromError(error)}
       </Text>

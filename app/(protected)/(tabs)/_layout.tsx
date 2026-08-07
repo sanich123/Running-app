@@ -31,6 +31,7 @@ export default function TabLayout() {
     return (
       <NativeTabs
         hidden={hideTabBar}
+
         backgroundColor={colors.surface}
         iconColor={{ default: colors.secondary, selected: colors.primary }}
         labelStyle={{

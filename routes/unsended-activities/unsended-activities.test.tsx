@@ -21,6 +21,7 @@ describe('Unsended activities indicator', () => {
     );
     mockStore.dispatch(setIsHaveUnsyncedActivity(true));
     await renderWithProviders(<UnsendedActivitiesIndicator />, { store: mockStore });
-    expect(await screen.findByText(/отправить/i)).toBeOnTheScreen();
+    expect(await screen.findByTestId('send-unsynced-activities')).toBeOnTheScreen();
+    expect(await screen.findByTestId('delete-unsynced-activities')).toBeOnTheScreen();
   });
 });

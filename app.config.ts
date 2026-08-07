@@ -89,6 +89,7 @@ export default {
       './custom.plugin',
       'react-native-compressor',
       'expo-image',
+      'expo-sharing',
       'expo-router',
       'expo-font',
       'expo-video',

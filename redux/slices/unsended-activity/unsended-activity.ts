@@ -16,6 +16,9 @@ export const unsendedActivity = createSlice({
     setIsHaveUnsyncedActivity: (state, { payload }) => {
       state.isHaveUnsyncedActivity = payload;
     },
+    removeUnsendedActivityFromList: (state) => {
+      state.unsyncedActivities = state.unsyncedActivities.slice(1);
+    },
     clearUnsendedActivities: (state) => {
       state.unsyncedActivities = [];
       state.isHaveUnsyncedActivity = false;
@@ -27,6 +30,7 @@ export const {
   saveUnsendedActivity,
   setIsHaveUnsyncedActivity,
   refreshUnsendedActivitiesList,
+  removeUnsendedActivityFromList,
   clearUnsendedActivities,
 } = unsendedActivity.actions;
 

@@ -1,63 +1,48 @@
-import { StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { View } from 'react-native';
+import { IconButton, Text } from 'react-native-paper';
 import { useAddActivityByUserIdMutation } from '@R/services/activity/activity';
-import { clearUnsendedActivities, refreshUnsendedActivitiesList } from '@R/slices/unsended-activity/unsended-activity';
+import { clearUnsendedActivities, removeUnsendedActivityFromList } from '@R/slices/unsended-activity/unsended-activity';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
-import { errorToast } from '@S/error-toast/error-toast';
-import { UNSENDED_ACTIVITIES } from './const';
+import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
+import { successToast } from '@S/success-toast/success-toast';
 
 export default function UnsendedActivitiesIndicator() {
   const dispatch = useAppDispatch();
   const { unsyncedActivities } = useAppSelector(({ unsendedActivity }) => unsendedActivity);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
-  const { language } = useAppSelector(({ language }) => language);
-
-  async function activitySender() {
-    let pendingActivities = [...unsyncedActivities];
-    while (pendingActivities.length > 0) {
-      try {
-        await sendActivity(pendingActivities[0]).unwrap();
-        pendingActivities = pendingActivities.slice(1);
-        dispatch(refreshUnsendedActivitiesList(pendingActivities));
-      } catch (error) {
-        errorToast('Ошибка во время отправки активности', error);
-        break;
-      }
-    }
-  }
 
   return (
-    <>
-      {unsyncedActivities.length > 0 && (
-        <View style={[styles.inCenter]}>
-          <Text variant="bodyLarge">
-            {unsyncedActivities.length > 0 &&
-              `${UNSENDED_ACTIVITIES[language].initialBegin} ${unsyncedActivities.length} ${UNSENDED_ACTIVITIES[language].initialEnd}`}
-            {isLoading && UNSENDED_ACTIVITIES[language].isLoading}
-            {/* {successSending && UNSENDED_ACTIVITIES[language].success}
-            {errorSending && UNSENDED_ACTIVITIES[language].error} */}
-          </Text>
-          <Button testID="send-unsynced-activities" loading={isLoading} onPress={activitySender} disabled={isLoading}>
-            {UNSENDED_ACTIVITIES[language].send}
-          </Button>
-          <Button
-            testID="delete-unsynced-activities"
-            loading={isLoading}
-            onPress={() => dispatch(clearUnsendedActivities())}>
-            Удалить
-          </Button>
-        </View>
-      )}
-    </>
+    <View style={{ padding: 10, margin: 10 }}>
+      <Text variant="bodyLarge" style={{ textAlign: 'center' }}>
+        Есть {unsyncedActivities.length} сохраненные активности
+      </Text>
+      <View style={{ flexDirection: 'row' }}>
+        <IconButton
+          icon="sync"
+          testID="send-unsynced-activities"
+          loading={isLoading}
+          onPress={async () => {
+            if (unsyncedActivities?.[0]) {
+              await sendActivity(unsyncedActivities?.[0])
+                .unwrap()
+                .then(() => {
+                  dispatch(removeUnsendedActivityFromList());
+                  successToast('Успешно обновили');
+                })
+                .catch((error) => errorToast('', getErrorMessageFromError(error)));
+            }
+          }}
+          disabled={isLoading}
+        />
+
+        <IconButton
+          icon="delete"
+          testID="delete-unsynced-activities"
+          loading={isLoading}
+          disabled={isLoading}
+          onPress={() => dispatch(clearUnsendedActivities())}
+        />
+      </View>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  inCenter: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 100,
-    width: '100%',
-  },
-});

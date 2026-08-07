@@ -1,6 +1,8 @@
 import { FlatList } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
 import WeekStatistics from '@Routes/statistic/week-statistics/week-statistics';
+import UnsendedActivitiesIndicator from '@Routes/unsended-activities/unsended-activities-indicator';
 import useRefresh from '@U/hooks/use-refresh';
 import { keyExtractor, renderCardsFunction } from './render-item';
 import type { InfiniteScrollListProps } from './type';
@@ -12,7 +14,7 @@ export default function InfiniteScrollList({
   nextPageCallback,
 }: InfiniteScrollListProps) {
   const { onRefresh, refreshing } = useRefresh(refetch);
-
+  const { unsyncedActivities } = useAppSelector(({ unsendedActivity }) => unsendedActivity);
   return (
     <FlatList
       testID="infinite-scroll-list"
@@ -30,7 +32,9 @@ export default function InfiniteScrollList({
         }
       }}
       ListFooterComponent={() => !isLastPage && dataToRender.length > 9 && <ActivityIndicator size="large" />}
-      ListHeaderComponent={() => (dataToRender?.length ? <WeekStatistics /> : null)}
+      ListHeaderComponent={() =>
+        unsyncedActivities?.length ? <UnsendedActivitiesIndicator /> : dataToRender?.length ? <WeekStatistics /> : null
+      }
     />
   );
 }
