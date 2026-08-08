@@ -57,6 +57,7 @@ export interface ActivityCardProps {
   photoVideoUrls: PhotoVideoType[];
   mapPhotoUrl?: string;
   mapPhotoUrlBlurhash?: string;
+  locations?: LocationObject[];
   duration: number;
   distance: number;
   profile: ProfileType;

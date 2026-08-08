@@ -5,11 +5,11 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 export default function MapboxWeb({
   boundBox,
-  modifiedLocationsForTurf,
+  routeCoordinates,
   kilometresSplit,
 }: {
   boundBox: [number, number, number, number];
-  modifiedLocationsForTurf: number[][];
+  routeCoordinates: number[][];
   kilometresSplit: LastKmSplit[];
 }) {
   const [, setMap] = useState<MapboxMap>();
@@ -35,7 +35,7 @@ export default function MapboxWeb({
           properties: {},
           geometry: {
             type: 'LineString',
-            coordinates: modifiedLocationsForTurf,
+            coordinates: routeCoordinates,
           },
         },
       });
@@ -68,7 +68,7 @@ export default function MapboxWeb({
     return () => {
       mapboxMap.remove();
     };
-  }, [boundBox, modifiedLocationsForTurf]);
+  }, [boundBox, routeCoordinates]);
 
   return <div ref={mapNode} style={{ flex: 1 }} />;
 }

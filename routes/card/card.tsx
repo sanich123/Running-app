@@ -1,12 +1,13 @@
-import { useRef, memo, useEffect } from 'react';
+import { useRef, memo, useEffect, useMemo } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { activityApi } from '@R/services/activity/activity';
+import { activityApi, useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import UserInfo from '@Routes/card/user-info/user-info';
+import { getMapBoxImage } from '@U/location/location-utils';
 import Btns from './btns/btns';
 import { LikesSize } from './likes/const';
 import Likes from './likes/likes';
@@ -31,6 +32,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     isShowDeleteBtn,
     mapPhotoUrl,
     mapPhotoUrlBlurhash,
+    locations,
     profile,
     commentsLength,
   } = rest;
@@ -40,6 +42,15 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const cardRef = useRef<View>(null);
   const prefetchFullActivity = activityApi.usePrefetch('getActivityByActivityId');
+  const shouldLoadRouteLocations = !locations?.length && Boolean(mapPhotoUrl);
+  const { data: routeData } = useGetLocationsByActivityIdQuery(id, { skip: !shouldLoadRouteLocations });
+  const resolvedMapPhotoUrl = useMemo(() => {
+    const routeLocations = locations?.length ? locations : routeData?.locations;
+    if (routeLocations?.length) {
+      return getMapBoxImage(routeLocations) || mapPhotoUrl;
+    }
+    return mapPhotoUrl;
+  }, [locations, mapPhotoUrl, routeData?.locations]);
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
   useEffect(() => {
     if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
@@ -56,7 +67,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
         distance={distance}
         isShowDescription={isShowDescription}
         cardRef={cardRef}
-        mapPhotoUrl={mapPhotoUrl}
+        mapPhotoUrl={resolvedMapPhotoUrl}
       />
       <View
         style={[
@@ -71,10 +82,10 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           Platform.OS === 'web' && styles.webStyles,
         ]}>
         <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
-        {(mapPhotoUrl || photoVideoUrls?.length > 0) && (
+        {(resolvedMapPhotoUrl || photoVideoUrls?.length > 0) && (
           <MediaList
             photoVideoUrls={photoVideoUrls}
-            mapPhotoUrl={mapPhotoUrl}
+            mapPhotoUrl={resolvedMapPhotoUrl}
             mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
             id={id}
           />
@@ -99,7 +110,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             isShowDeleteBtn={isShowDeleteBtn}
             commentsLength={commentsLength}
             profile={profile}
-            mapPhotoUrl={mapPhotoUrl}
+            mapPhotoUrl={resolvedMapPhotoUrl}
           />
         </Card.Actions>
       </View>

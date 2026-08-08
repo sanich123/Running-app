@@ -8,6 +8,21 @@ import MapboxWeb from '@Routes/map-page/mapbox-web/mapbox-web';
 import MapKmSplit from '../activity/map/map-km-split/map-km-split';
 import RouteLine from '../activity/map/map-route-line/map-route-line';
 import type { DisplayActivityMapProps } from '@Routes/card/types';
+import type { LocationObject } from 'expo-location';
+
+export function getActivityMapBounds(locations: LocationObject[]) {
+  const routeCoordinates = locations.map(({ coords: { longitude, latitude } }) => [longitude, latitude]);
+  const [minLng, minLat, maxLng, maxLat] = getBbox(lineString(routeCoordinates));
+
+  return {
+    boundBox: [minLng, minLat, maxLng, maxLat] as [number, number, number, number],
+    bounds: {
+      ne: [maxLng, maxLat] as [number, number],
+      sw: [minLng, minLat] as [number, number],
+    },
+    routeCoordinates,
+  };
+}
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
   const validLocations = useMemo(
@@ -19,16 +34,12 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
     [locations],
   );
 
-  const modifiedLocationsForTurf = useMemo(
-    () => validLocations.map(({ coords: { longitude, latitude } }) => [latitude, longitude]),
-    [validLocations],
-  );
-  const modifiedLocationsForMapboxGl = useMemo(
-    () => validLocations.map(({ coords: { longitude, latitude } }) => [longitude, latitude]),
+  const mapData = useMemo(
+    () => (validLocations.length >= 2 ? getActivityMapBounds(validLocations) : null),
     [validLocations],
   );
 
-  if (validLocations.length < 2) {
+  if (!mapData) {
     return (
       <View style={styles.emptyState}>
         <Text variant="bodyLarge">Недостаточно данных для отображения маршрута</Text>
@@ -36,23 +47,18 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
     );
   }
 
-  const line = lineString(modifiedLocationsForTurf);
-  const [minLat, minLng, maxLat, maxLng] = getBbox(line);
+  const { boundBox, bounds, routeCoordinates } = mapData;
 
   return (
     <>
       {Platform.OS === 'web' ? (
-        <MapboxWeb
-          kilometresSplit={kilometresSplit}
-          boundBox={[minLng, maxLat, maxLng, minLat]}
-          modifiedLocationsForTurf={modifiedLocationsForMapboxGl}
-        />
+        <MapboxWeb kilometresSplit={kilometresSplit} boundBox={boundBox} routeCoordinates={routeCoordinates} />
       ) : (
         <MapView style={[{ flex: 1 }]}>
           <Camera
             animationMode="flyTo"
             animationDuration={1000}
-            bounds={{ ne: [minLng, minLat], sw: [maxLng, maxLat] }}
+            bounds={bounds}
             padding={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20, paddingTop: 20 }}
           />
           <RouteLine locations={validLocations} />

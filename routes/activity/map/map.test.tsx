@@ -28,6 +28,8 @@ jest.mock('../location-indicator/location-indicator', () => () => null);
 jest.mock('./location-permissions/location-permissions', () => () => null);
 
 describe('activity recording map', () => {
+  beforeEach(() => mockSetCamera.mockClear());
+
   it('marks recording ready and recenters the camera on the current location', async () => {
     const user = userEvent.setup();
     const setIsReadyToRecordLocation = jest.fn();
@@ -41,5 +43,18 @@ describe('activity recording map', () => {
     expect(mockSetCamera).toHaveBeenCalledWith(
       expect.objectContaining({ centerCoordinate: [37.6, 55.7], zoomLevel: 18 }),
     );
+  });
+
+  it('changes the map zoom with the plus and minus controls', async () => {
+    const user = userEvent.setup();
+    const setIsReadyToRecordLocation = jest.fn();
+    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    await renderWithProviders(<Map setIsReadyToRecordLocation={setIsReadyToRecordLocation} />);
+
+    await user.press(await screen.findByTestId('increase-map-zoom'));
+    expect(mockSetCamera).toHaveBeenCalledWith(expect.objectContaining({ zoomLevel: 19 }));
+
+    await user.press(screen.getByTestId('decrease-map-zoom'));
+    expect(mockSetCamera).toHaveBeenCalledWith(expect.objectContaining({ zoomLevel: 18 }));
   });
 });

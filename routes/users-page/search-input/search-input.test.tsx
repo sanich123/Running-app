@@ -12,7 +12,7 @@ describe('SearchInput', () => {
     const setSearch = jest.fn();
     const setIsInitial = jest.fn();
     await renderWithProviders(<SearchInput search="" setSearch={setSearch} setIsInitial={setIsInitial} />);
-    expect(screen.getAllByText(SEARCH_INPUT.english.label)).not.toHaveLength(0);
+    expect(screen.getByPlaceholderText(SEARCH_INPUT.english.label)).toBeOnTheScreen();
     fireEvent.changeText(screen.getByTestId(SEARCH_INPUT_TEST_ID), 'Eliud');
     expect(setSearch).toHaveBeenCalledWith('eliud');
     expect(setIsInitial).toHaveBeenCalledWith(false);

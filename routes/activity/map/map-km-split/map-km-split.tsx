@@ -1,48 +1,53 @@
-import { Callout, PointAnnotation } from '@rnmapbox/maps';
-import { View, StyleSheet } from 'react-native';
-import { Text } from 'react-native-paper';
+import { CircleLayer, ShapeSource, SymbolLayer } from '@rnmapbox/maps';
+import { useTheme } from 'react-native-paper';
 import type { LastKmSplit } from '@R/slices/location/types';
 
 export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: LastKmSplit[] }) {
+  const { colors } = useTheme();
+  const features = (Array.isArray(kilometresSplit) ? kilometresSplit : [])
+    .filter(({ kilometerPoint }) => {
+      const { longitude, latitude } = kilometerPoint?.coords ?? {};
+      return Number.isFinite(longitude) && Number.isFinite(latitude);
+    })
+    .map(({ kilometerPoint }, index) => ({
+      type: 'Feature' as const,
+      properties: { label: `${index + 1}` },
+      geometry: {
+        type: 'Point' as const,
+        coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
+      },
+    }));
+
+  if (!features.length) {
+    return null;
+  }
+
   return (
-    <>
-      {kilometresSplit?.length > 0
-        ? kilometresSplit
-            .filter((split) => Boolean(split?.kilometerPoint?.coords))
-            .map(({ kilometerPoint }, index) => {
-              if (!kilometerPoint?.coords) {
-                return null;
-              }
-              const {
-                coords: { longitude, latitude },
-              } = kilometerPoint;
-              const key = `${index}/${longitude},${latitude}`;
-              return (
-                <PointAnnotation key={key} coordinate={[longitude, latitude]} id={key}>
-                  <View style={[styles.customKm]}>
-                    <Text variant="bodySmall" style={{ color: 'black' }}>
-                      {index + 1}
-                    </Text>
-                  </View>
-                  <Callout title={`${index + 1} kilometer`} />
-                </PointAnnotation>
-              );
-            })
-        : null}
-    </>
+    <ShapeSource
+      id="kilometre-splits"
+      shape={{
+        type: 'FeatureCollection',
+        features,
+      }}>
+      <CircleLayer
+        id="kilometre-split-background"
+        style={{
+          circleColor: colors.surface,
+          circleRadius: 15,
+          circleStrokeColor: colors.primary,
+          circleStrokeWidth: 2,
+        }}
+      />
+      <SymbolLayer
+        id="kilometre-split-label"
+        style={{
+          textAllowOverlap: true,
+          textColor: colors.primary,
+          textField: ['get', 'label'],
+          textIgnorePlacement: true,
+          textSize: 12,
+        }}
+      />
+    </ShapeSource>
   );
 }
-
-const styles = StyleSheet.create({
-  customKm: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 20,
-    width: 20,
-    backgroundColor: 'white',
-    borderColor: 'orange',
-    borderWidth: 1,
-    borderRadius: 50,
-  },
-});

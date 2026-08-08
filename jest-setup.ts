@@ -50,7 +50,10 @@ jest.mock('@rnmapbox/maps', () => {
     UserLocation: View,
     ShapeSource: View,
     LineLayer: View,
+    CircleLayer: View,
+    SymbolLayer: View,
     PointAnnotation: View,
+    MarkerView: View,
     Callout: View,
   };
 });

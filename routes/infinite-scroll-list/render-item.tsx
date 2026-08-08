@@ -11,6 +11,7 @@ export function renderCardsFunction({ item }: { item: ActivitiesType }) {
     sport,
     photoVideoUrls,
     mapPhotoUrl,
+    locations,
     duration,
     distance,
     id,
@@ -31,6 +32,7 @@ export function renderCardsFunction({ item }: { item: ActivitiesType }) {
       id={id}
       key={id}
       mapPhotoUrl={mapPhotoUrl}
+      locations={locations}
       photoVideoUrls={photoVideoUrls}
       duration={duration}
       distance={distance}

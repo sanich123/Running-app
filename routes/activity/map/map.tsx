@@ -6,16 +6,19 @@ import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
 import { Platform, StyleSheet, View } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
-import { useAppSelector } from '@R/typed-hooks';
+import { setLastPosition } from '@R/slices/location/location';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import BatteryOptimizationModal from '@Routes/activity/battery-optimization-modal/battery-optimization-modal';
 import MapKmSplit from '@Routes/activity/map/map-km-split/map-km-split';
 import MapRouteLine from '@Routes/activity/map/map-route-line/map-route-line';
 import { errorToast } from '@S/error-toast/error-toast';
 import LocationIndicator from '../location-indicator/location-indicator';
 import LocationPermissions from './location-permissions/location-permissions';
+import MapNavIcon from './map-nav-icon/map-nav-icon';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecordLocation: (arg: boolean) => void }) {
+  const dispatch = useAppDispatch();
   const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);
   const { userId } = useAppSelector(({ auth }) => auth);
   const { colors } = useTheme();
@@ -26,6 +29,7 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
   const [isNeedToRefreshPermission, setIsNeedToRefreshPermission] = useState(false);
   const [isBatteryOptimizationEnabled, setIsBatteryOptimizationEnabled] = useState(false);
   const [isFollowingUserLocation, setIsFollowingUserLocation] = useState(true);
+  const [zoomLevel, setZoomLevel] = useState(18);
   const cameraRef = useRef<Camera>(null);
   const batteryOptimizationModalRef = useRef<BottomSheetModal>(null);
   const hasLocationPermissions = Boolean(
@@ -55,6 +59,7 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
     try {
       const position = await getCurrentPositionAsync({ accuracy: 6 });
       setIsFollowingUserLocation(false);
+      setZoomLevel(18);
       setTimeout(() => {
         cameraRef.current?.setCamera({
           centerCoordinate: [position.coords.longitude, position.coords.latitude],
@@ -75,14 +80,19 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
         <View style={styles.mapWrapper}>
           <LocationIndicator />
           <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
-            {Platform.OS === 'ios' ? <UserLocation animated /> : <UserLocation androidRenderMode="compass" animated />}
+            <UserLocation
+              visible={false}
+              animated
+              onUpdate={(location) => dispatch(setLastPosition(location))}
+              {...(Platform.OS === 'android' ? { androidRenderMode: 'compass' as const } : {})}
+            />
+            <MapNavIcon profilePhoto={profile?.profilePhoto} />
             <Camera
               ref={cameraRef}
               followUserLocation={isFollowingUserLocation}
-              followZoomLevel={18}
+              followZoomLevel={zoomLevel}
               animationMode="flyTo"
             />
-            <MapKmSplit kilometresSplit={kilometresSplit} />
             {locationsWithPauses[0]?.length > 1
               ? locationsWithPauses.map((locations) => {
                   if (locations?.length > 1) {
@@ -91,8 +101,49 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
                   }
                 })
               : null}
+            <MapKmSplit kilometresSplit={kilometresSplit} />
           </MapView>
           <View style={styles.mapActions}>
+            <IconButton
+              testID="increase-map-zoom"
+              mode="contained-tonal"
+              icon="plus"
+              iconColor={colors.primary}
+              containerColor={colors.surface}
+              size={24}
+              disabled={zoomLevel >= 20}
+              onPress={() => {
+                const nextZoomLevel = Math.min(20, zoomLevel + 1);
+                setZoomLevel(nextZoomLevel);
+                setIsFollowingUserLocation(false);
+                cameraRef.current?.setCamera({
+                  zoomLevel: nextZoomLevel,
+                  animationMode: 'easeTo',
+                  animationDuration: 250,
+                });
+              }}
+              accessibilityLabel="Увеличить масштаб карты"
+            />
+            <IconButton
+              testID="decrease-map-zoom"
+              mode="contained-tonal"
+              icon="minus"
+              iconColor={colors.primary}
+              containerColor={colors.surface}
+              size={24}
+              disabled={zoomLevel <= 3}
+              onPress={() => {
+                const nextZoomLevel = Math.max(3, zoomLevel - 1);
+                setZoomLevel(nextZoomLevel);
+                setIsFollowingUserLocation(false);
+                cameraRef.current?.setCamera({
+                  zoomLevel: nextZoomLevel,
+                  animationMode: 'easeTo',
+                  animationDuration: 250,
+                });
+              }}
+              accessibilityLabel="Уменьшить масштаб карты"
+            />
             <IconButton
               testID="move-to-current-location"
               mode="contained-tonal"

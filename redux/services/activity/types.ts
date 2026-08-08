@@ -35,6 +35,8 @@ export interface Activity {
   user_id: string;
   photoVideoUrls: string[];
   mapPhotoUrl: string;
+  locations?: LocationObject[];
+  kilometresSplit?: LastKmSplit[];
   duration: number;
   distance: number;
   profile: Profile;
