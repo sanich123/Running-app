@@ -32,7 +32,7 @@ export default function ListOfFollowing() {
               user_id={item?.friendId}
             />
           )}
-          contentContainerStyle={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
           ListEmptyComponent={
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text variant="headlineMedium">Nobody is following you</Text>

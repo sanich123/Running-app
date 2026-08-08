@@ -44,6 +44,13 @@ describe('ListOfFollowing', () => {
     expect(requests).toBeGreaterThanOrEqual(2);
   });
 
+  it('keeps the list content scrollable when it exceeds the viewport', async () => {
+    await renderWithProviders(<ListOfFollowing />);
+    const list = await screen.findByTestId('followings-list');
+
+    expect(list.props.contentContainerStyle).toEqual({ flexGrow: 1 });
+  });
+
   it('renders error state', async () => {
     server.use(http.get(`${BASE_URL}/friend/${MOCK_SERVER_IDS.userId}`, errorResponse));
     await renderWithProviders(<ListOfFollowing />);

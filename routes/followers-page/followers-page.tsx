@@ -41,7 +41,7 @@ export default function ListOfFollowers() {
               user_id={item.user_id}
             />
           )}
-          contentContainerStyle={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
           ListEmptyComponent={
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text variant="headlineLarge">There are no followers</Text>
