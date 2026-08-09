@@ -44,7 +44,7 @@ export async function getPublicUrl(path: string) {
   }
 }
 
-export function getPhotoStorageLocation(publicUrl: string) {
+function getPhotoStorageLocation(publicUrl: string) {
   const marker = '/storage/v1/object/';
   const markerIndex = publicUrl.indexOf(marker);
 
@@ -61,10 +61,6 @@ export function getPhotoStorageLocation(publicUrl: string) {
 
     return { bucket, path: pathParts.join('/') };
   }
-}
-
-export function getPhotoStoragePath(publicUrl: string) {
-  return getPhotoStorageLocation(publicUrl)?.path ?? null;
 }
 
 export async function removePhotos(publicUrls: string[]) {
@@ -92,17 +88,5 @@ export async function removePhotos(publicUrls: string[]) {
   } catch (error) {
     errorToast('Не удалось удалить фото', error);
     return false;
-  }
-}
-
-export async function getSignedUrl(path: string, expiredTime: number) {
-  try {
-    const { data, error } = await supabase.storage.from('files').createSignedUrl(path, expiredTime);
-    if (error) {
-      errorToast('Не удалось получить ссылку на файл', error);
-    }
-    return data?.signedUrl;
-  } catch (error) {
-    errorToast('Не удалось получить ссылку на файл', error);
   }
 }

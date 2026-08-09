@@ -1,7 +1,7 @@
 import Card from '@S/card/card';
 import type { ActivityCardProps } from '@S/card/types';
 
-export type ActivitiesType = ActivityCardProps & { user_id: string; _count: { comments: number } };
+type ActivitiesType = ActivityCardProps & { user_id: string; _count: { comments: number } };
 
 export function renderCardsFunction({ item }: { item: ActivitiesType }) {
   const {

@@ -1,12 +1,4 @@
-import type { ActivityToSend, FinishedActivity } from '@R/services/activity/types';
-
-export interface ManualData {
-  manualDate: string;
-  manualHours: number;
-  manualMinutes: number;
-  manualDistance: number;
-}
-export type UnsyncedActivities = ActivityToSend[];
+import type { FinishedActivity } from '@R/services/activity/types';
 
 export interface ActivityInitialState {
   isDisabledWhileSending: boolean;

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const mainFeed = createSlice({
+const mainFeed = createSlice({
   name: 'mainFeed',
   initialState: {
     activityIdWhichCommentsToUpdate: '',

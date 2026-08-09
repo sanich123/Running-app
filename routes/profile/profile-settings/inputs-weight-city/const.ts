@@ -1,13 +1,5 @@
 import { LANGUAGES } from '@const/enums';
 
-export interface InputsWeightCityProps {
-  city: string;
-  weight: string;
-  isDisabled: boolean;
-  setCity: (arg: string) => void;
-  setWeight: (arg: string) => void;
-}
-
 export const WEIGHT_CITY = {
   [LANGUAGES.english]: {
     cityPlaceholder: 'Where are you from',

@@ -9,7 +9,7 @@ import type { LocationObject } from 'expo-location';
  * They intentionally leave room for a realistic sprint/descent, while
  * filtering the most common GPS jumps.
  */
-export const MAX_TRACKING_SPEED_KMH = {
+const MAX_TRACKING_SPEED_KMH = {
   walk: 15,
   run: 30,
   bike: 60,
@@ -19,7 +19,7 @@ export const MAX_TRACKING_SPEED_KMH = {
 const DEFAULT_MAX_TRACKING_SPEED_KMH = MAX_TRACKING_SPEED_KMH.run;
 
 /** Mapbox Static Images rejects URLs above roughly 8 KB. Leave headroom for tokens and encoding. */
-export const MAX_STATIC_MAP_URL_LENGTH = 7600;
+const MAX_STATIC_MAP_URL_LENGTH = 7600;
 const MAX_STATIC_MAP_LOCATIONS = 500;
 
 export function getDistance(origin: LocationObject, destination: LocationObject) {

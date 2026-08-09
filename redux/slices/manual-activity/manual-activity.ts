@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { MANUAL_ACTIVITY_INITIAL_STATE } from './const';
 
-export const manualActivity = createSlice({
+const manualActivity = createSlice({
   name: 'manualActivity',
   initialState: MANUAL_ACTIVITY_INITIAL_STATE,
   reducers: {
@@ -45,7 +45,6 @@ export const {
   setManualHours,
   setManualMinutes,
   setManualDistance,
-  resetManualData,
   resetManualActivitySlice,
   setCameraIsVisible,
 } = manualActivity.actions;

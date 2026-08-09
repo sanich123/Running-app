@@ -4,7 +4,7 @@ import type { SendFriend } from './types';
 
 const { friend, followers } = Routes;
 
-export const followersApi = runichApi.injectEndpoints({
+const followersApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getYouFollowUsersByUserId: builder.query({

@@ -15,7 +15,7 @@ export const NETWORK_INITIAL_STATE = {
   },
 };
 
-export const network = createSlice({
+const network = createSlice({
   name: 'network',
   initialState: NETWORK_INITIAL_STATE,
   reducers: {

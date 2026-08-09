@@ -64,9 +64,7 @@ export const authenticationApi = runichApi.injectEndpoints({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
-  useRefreshTokenMutation,
   useLazyVerifyConfigQuery,
   useDeleteUserMutation,
   useConfirmSignUpCodeByEmailMutation,
-  useResetPasswordMutation,
 } = authenticationApi;

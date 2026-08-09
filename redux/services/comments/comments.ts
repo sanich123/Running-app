@@ -4,7 +4,7 @@ import type { DeleteCommentLike, SendComment, SendCommentLike, UpdateComment } f
 
 const { comment, like } = Routes;
 
-export const commentsApi = runichApi.injectEndpoints({
+const commentsApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getCommentsByActivityId: builder.query({

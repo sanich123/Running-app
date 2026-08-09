@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { SignInPageStates } from '@U/validate-email-password';
 
-export const logining = createSlice({
+const logining = createSlice({
   name: 'logining',
   initialState: { email: '', password: '', isDisabledWhenLogining: false, pageState: SignInPageStates.login },
   reducers: {

@@ -16,7 +16,7 @@ export default function NetworkIndicator() {
   );
 }
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   indicatorLayout: {
     display: 'flex',
     justifyContent: 'center',

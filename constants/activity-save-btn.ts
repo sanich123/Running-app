@@ -25,8 +25,3 @@ export const ACTIVITY_SAVE_BTN = {
 } as const;
 
 export const ACTIVITY_SAVE_BTN_TEST_ID = 'activitySaveBtn';
-
-export enum ErrorMessages {
-  aborted = 'Aborted',
-  fetchError = 'FETCH_ERROR',
-}

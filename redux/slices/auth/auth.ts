@@ -3,7 +3,7 @@ import { authenticationApi } from '@R/services/authentication/authentication';
 import { resetAuthSlice, setAccessToken, setRefreshToken } from './actions';
 import { AUTH_INITIAL_STATE } from './const';
 
-export const auth = createSlice({
+const auth = createSlice({
   name: 'auth',
   initialState: AUTH_INITIAL_STATE,
   reducers: {
@@ -46,7 +46,7 @@ export const auth = createSlice({
   },
 });
 
-export const { setUserId, setRequiredAppVersion } = auth.actions;
-export { resetAuthSlice, setAccessToken, setRefreshToken } from './actions';
+export const { setUserId } = auth.actions;
+export { resetAuthSlice } from './actions';
 
 export default auth.reducer;

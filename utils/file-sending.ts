@@ -51,7 +51,7 @@ export async function getAccessToGallery() {
   }
 }
 
-export async function compressImageOrVideo(fileSrc: string | File, extension: string) {
+async function compressImageOrVideo(fileSrc: string | File, extension: string) {
   const MAX_VIDEO_SIZE = 15000;
   const supportedImagesExtensions = /webp|png|avif|heic|jpeg|gif|svg|ico|jpg/;
   const isVideoFile = ['mp4', 'avi', 'm4v'].includes(extension);

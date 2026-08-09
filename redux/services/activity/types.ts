@@ -26,7 +26,7 @@ export interface ActivityToSend {
   id: string;
 }
 
-export interface Activity {
+interface Activity {
   description: string;
   title: string;
   date: string;
@@ -45,7 +45,7 @@ export interface Activity {
   };
 }
 
-export interface Profile {
+interface Profile {
   surname: string;
   name: string;
   profilePhoto: string;

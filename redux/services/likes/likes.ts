@@ -4,7 +4,7 @@ import type { DeleteLike, SendLike } from './types';
 
 const { like } = Routes;
 
-export const likesApi = runichApi.injectEndpoints({
+const likesApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getLikesByActivityId: builder.query({

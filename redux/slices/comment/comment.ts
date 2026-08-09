@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { ProfileType } from '@S/card/types';
 
-export const comment = createSlice({
+const comment = createSlice({
   name: 'comment',
   initialState: {
     commentActivityId: '',

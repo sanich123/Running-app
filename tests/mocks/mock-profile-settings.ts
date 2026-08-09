@@ -1,10 +1,5 @@
 import { GENDER_BTNS_VALUES } from '@Routes/profile/profile-settings/gender-btns/const';
 
-export const MOCK_EMAIL_PASSWORD = {
-  email: 'someEmail@yandex.ru',
-  password: 'some password',
-};
-
 export const MOCK_SETTINGS = {
   gender: GENDER_BTNS_VALUES.male,
   name: 'Alexander',

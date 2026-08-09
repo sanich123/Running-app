@@ -4,7 +4,6 @@ import {
   MOCK_SERVER_ACTIVITY,
   MOCK_SERVER_COMMENTS,
   MOCK_SERVER_COMMENT_LIKES,
-  MOCK_SERVER_ERROR,
   MOCK_SERVER_FOLLOWERS,
   MOCK_SERVER_FOLLOWINGS,
   MOCK_SERVER_LIKES,
@@ -30,4 +29,3 @@ export const getServerAllStatistics = () => HttpResponse.json(MOCK_SERVER_STATIS
 export const getServerWeekStatistics = () => HttpResponse.json(MOCK_SERVER_STATISTICS.week);
 export const getServerMonthStatistics = () => HttpResponse.json(MOCK_SERVER_STATISTICS.month);
 export const getServerYearStatistics = () => HttpResponse.json(MOCK_SERVER_STATISTICS.year);
-export const getServerError = () => HttpResponse.json(MOCK_SERVER_ERROR, { status: 500 });

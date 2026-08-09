@@ -8,14 +8,6 @@ import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import type { LocationObject } from 'expo-location';
 
-export interface CommentType {
-  id: string;
-  date: string;
-  activityId: string;
-  comment: string;
-  authorId: string;
-}
-
 export interface LikeType {
   id: string;
   date: string;
@@ -102,7 +94,7 @@ export interface ShareBtnProps {
   cardRef: MutableRefObject<View | null>;
 }
 
-export interface Likes {
+interface Likes {
   authorId: string;
   activityId: string;
   date: string;
@@ -135,7 +127,7 @@ export interface LikesProps {
   size: LikesSize;
 }
 
-export type PhotoVideoUrls = PhotoVideoType[];
+type PhotoVideoUrls = PhotoVideoType[];
 
 export interface MediaListProps {
   photoVideoUrls: PhotoVideoUrls;
