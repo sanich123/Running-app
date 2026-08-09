@@ -3,7 +3,7 @@ import { Button } from 'react-native-paper';
 import type { UseFormHandleSubmit } from 'react-hook-form';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
-import { useLoginUserMutation } from '@R/services/authentication/authentication';
+import { useLoginUserMutation, useRegisterUserMutation } from '@R/services/authentication/authentication';
 import { saveEmail, savePassword, setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -17,7 +17,8 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
   const { pageState, isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
   const { push, replace } = useRouter();
   const [loginUser, { isLoading: isLoginingUser }] = useLoginUserMutation();
-  const isSubmitting = isLoginingUser;
+  const [registerUser, { isLoading: isRegisteringUser }] = useRegisterUserMutation();
+  const isSubmitting = isLoginingUser || isRegisteringUser;
 
   return (
     <Button
@@ -34,9 +35,11 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
         dispatch(saveEmail(email));
         dispatch(savePassword(password));
         if (pageState === SignInPageStates.register || pageState === SignInPageStates.reset) {
-          dispatch(setIsDisabledWhenLogining(false));
-          push(`/${ROUTES.confirmEmailCode}`);
-          return;
+          return registerUser({ email, password })
+            .unwrap()
+            .then(() => push(`/${ROUTES.confirmEmailCode}`))
+            .catch((error) => errorToast('Во время регистрации произошла ошибка: ', error))
+            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }
         if (pageState === SignInPageStates.login) {
           return await loginUser({ email, password })
