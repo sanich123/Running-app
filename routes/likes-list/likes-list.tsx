@@ -1,7 +1,7 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, FlatList, useWindowDimensions, Platform } from 'react-native';
+import { View, FlatList, StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Divider, Text } from 'react-native-paper';
+import { ActivityIndicator, Divider, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
 import ErrorComponent from '@Routes/error-component/error-component';
@@ -10,6 +10,7 @@ import useRefresh from '@U/hooks/use-refresh';
 
 export default function LikesList() {
   const { width } = useWindowDimensions();
+  const { colors } = useTheme();
   const { id: activityId } = useLocalSearchParams();
   const {
     isLoading,
@@ -22,18 +23,17 @@ export default function LikesList() {
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
-    <SafeAreaView
-      edges={['bottom', 'left', 'right']}
-      style={[
-        {
-          flex: 1,
-          alignItems: 'center',
-          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
-          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
-        },
-        (isLoading || isError || !likes?.length) && { justifyContent: 'center' },
-      ]}>
-      <View>
+    <SafeAreaView edges={['bottom', 'left', 'right']} style={[styles.page, { backgroundColor: colors.background }]}>
+      <View
+        style={[
+          styles.content,
+          {
+            backgroundColor: colors.background,
+            width: width < MAX_MOBILE_WIDTH ? '100%' : MAX_MOBILE_WIDTH,
+            marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          },
+          (isLoading || isError || !likes?.length) && styles.centered,
+        ]}>
         {isLoading ? (
           <ActivityIndicator size="large" testID="likes-list-loading" />
         ) : isSuccess ? (
@@ -72,3 +72,17 @@ export default function LikesList() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+  },
+  content: {
+    alignSelf: 'stretch',
+    flex: 1,
+  },
+  centered: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

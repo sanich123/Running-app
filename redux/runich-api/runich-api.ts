@@ -1,25 +1,98 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { Mutex } from 'async-mutex';
+import { router } from 'expo-router';
+import { ROUTES } from '@const/enums';
+import { resetAuthSlice, setAccessToken, setRefreshToken } from '@R/slices/auth/actions';
 import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
+import type { RefreshTokenResponse } from '@R/services/authentication/types';
+import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';
 
 interface ApiState {
   auth: {
     accessToken?: string;
+    refreshToken?: string;
   };
+}
+
+const baseQuery = fetchBaseQuery({
+  baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
+  timeout: LIMIT_OF_REQUEST,
+  prepareHeaders: (headers, { endpoint, getState }) => {
+    const accessToken = (getState() as ApiState).auth.accessToken;
+    if (accessToken && !['registerUser', 'loginUser', 'refreshToken'].includes(endpoint)) {
+      headers.set('authorization', `Bearer ${accessToken}`);
+    }
+    return headers;
+  },
+});
+
+const mutex = new Mutex();
+
+async function showErrorToast(message: string, error?: unknown) {
+  try {
+    const { errorToast } = await import('@S/error-toast/error-toast');
+    errorToast(message, error);
+  } catch {
+    // Error reporting must not turn the original API error into an unhandled exception.
+  }
+}
+
+async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, extraOptions: object) {
+  await mutex.waitForUnlock();
+  let result = await baseQuery(args, api, extraOptions);
+  const { accessToken, refreshToken } = (api.getState() as ApiState).auth;
+
+  if (result.error?.status === 401) {
+    if (!mutex.isLocked()) {
+      const release = await mutex.acquire();
+      try {
+        const refreshResult = await baseQuery(
+          {
+            url: 'auth/refresh',
+            method: 'POST',
+            body: { refreshToken: refreshToken || accessToken },
+          },
+          api,
+          extraOptions,
+        );
+        const refreshData = refreshResult.data as RefreshTokenResponse | undefined;
+        const newAccessToken = refreshData?.accessToken ?? refreshData?.access_token ?? refreshData?.access;
+        const newRefreshToken = refreshData?.refreshToken ?? refreshData?.refresh_token ?? refreshData?.refresh;
+
+        if (newAccessToken) {
+          api.dispatch(setAccessToken(newAccessToken));
+          if (newRefreshToken) api.dispatch(setRefreshToken(newRefreshToken));
+          result = await baseQuery(args, api, extraOptions);
+        } else {
+          router.dismissAll();
+          router.replace(`/${ROUTES.signIn}`);
+          api.dispatch(resetAuthSlice());
+          await showErrorToast('Не удалось обновить авторизационные данные. Пожалуйста, авторизуйтесь повторно');
+        }
+      } catch (error) {
+        await showErrorToast('', error);
+      } finally {
+        release();
+      }
+    } else {
+      await mutex.waitForUnlock();
+      result = await baseQuery(args, api, extraOptions);
+    }
+  }
+
+  if (
+    result.error?.status === 'PARSING_ERROR' &&
+    (result.error.originalStatus === 502 || result.error.originalStatus === 503)
+  ) {
+    router.replace(`/${ROUTES.maintenance}`);
+  }
+
+  return result;
 }
 
 export const runichApi = createApi({
   reducerPath: API_NAME,
   tagTypes: [Tags.activities, Tags.profile, Tags.comments, Tags.likes, Tags.friends, Tags.users, Tags.commentLikes],
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
-    timeout: LIMIT_OF_REQUEST,
-    prepareHeaders: (headers, { endpoint, getState }) => {
-      const accessToken = (getState() as ApiState).auth.accessToken;
-      if (accessToken && !['registerUser', 'loginUser'].includes(endpoint)) {
-        headers.set('authorization', `Bearer ${accessToken}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   endpoints: () => ({}),
 });

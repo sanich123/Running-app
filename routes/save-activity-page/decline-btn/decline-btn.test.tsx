@@ -1,5 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { ADDITIONAL_INFO_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from '@R/slices/activity/const';
 import { changeLanguage } from '@R/slices/language/language';
 import { MANUAL_ACTIVITY_INITIAL_STATE } from '@R/slices/manual-activity/const';
@@ -8,7 +8,8 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { DECLINE_BTN } from './const';
 import DeclineBtn from './decline-btn';
 
-jest.mock('expo-router', () => ({ useRouter: () => ({ replace: jest.fn() }) }));
+const mockReplace = jest.fn();
+jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) }));
 
 describe('Decline btn', () => {
   it('should correctly renders in english', async () => {
@@ -26,6 +27,7 @@ describe('Decline btn', () => {
     expect(mockStore.getState().additionalInfoActivity).toEqual(ADDITIONAL_INFO_INITIAL_STATE);
     expect(mockStore.getState().activity.finishedActivity).toEqual(FINISHED_ACTIVITY_INITIAL_STATE);
     expect(mockStore.getState().manualActivity).toEqual(MANUAL_ACTIVITY_INITIAL_STATE);
+    expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
   });
   it('should correctly handle isDisabled state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { usePathname, useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import ShowMetrics from '@Routes/show-metrics/show-metrics';
@@ -29,7 +30,7 @@ export default memo(function Metrics({
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => {
         if (pathname !== `/activity/${id}`) {
-          push(`/(protected)/activity/${id}?userId=${userId}`);
+          push(`/${ROUTES.activity}/${id}?userId=${userId}`);
         }
       }}
       borderless

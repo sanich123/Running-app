@@ -1,5 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { Platform } from 'react-native';
+import { ROUTES } from '@const/enums';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -30,7 +31,7 @@ describe('Activity card comment btn', () => {
       <ActivityCardCommentBtn activityId="someActivityId" commentsLength={6} profile={MOCK_PROFILE} />,
     );
     await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/comment/someActivityId');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.comment}/someActivityId`);
     expect(mockStore.getState().comment).toEqual(
       expect.objectContaining({ commentActivityId: 'someActivityId', commentsLength: 6, isShowingTextInput: false }),
     );

@@ -9,7 +9,7 @@ import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { SPORTS_NAMES } from './const';
 import type { ChooseSportModalProps } from '../types';
 
-export default function ChooseSportModal({ chooseSportModalRef }: ChooseSportModalProps) {
+export default function ChooseSportModal({ chooseSportModalRef, isDisabled = false }: ChooseSportModalProps) {
   const { language } = useAppSelector(({ language }) => language);
   const { sport } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
   const { colors } = useTheme();
@@ -36,10 +36,12 @@ export default function ChooseSportModal({ chooseSportModalRef }: ChooseSportMod
       <BottomSheetView style={[styles.sheet, { backgroundColor: colors.surface }]}>
         <View style={styles.header}>
           <View>
-            <Text variant="titleLarge" style={styles.title}>
+            <Text variant="titleLarge" style={[styles.title, isDisabled && { color: colors.onSurfaceDisabled }]}>
               {language === LANGUAGES.russian ? 'Выберите спорт' : 'Choose a sport'}
             </Text>
-            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+            <Text
+              variant="bodySmall"
+              style={{ color: isDisabled ? colors.onSurfaceDisabled : colors.onSurfaceVariant }}>
               {language === LANGUAGES.russian ? 'Выберите вариант для активности' : 'Choose an activity type'}
             </Text>
           </View>
@@ -53,11 +55,16 @@ export default function ChooseSportModal({ chooseSportModalRef }: ChooseSportMod
                 testID={`activity-sport-${value}`}
                 key={iconName}
                 borderless
+                disabled={isDisabled}
                 style={[
                   styles.option,
                   {
-                    backgroundColor: isSelected ? colors.primaryContainer : colors.surfaceVariant,
-                    borderColor: isSelected ? colors.primary : colors.outlineVariant,
+                    backgroundColor: isDisabled
+                      ? colors.surfaceDisabled
+                      : isSelected
+                        ? colors.primaryContainer
+                        : colors.surfaceVariant,
+                    borderColor: isDisabled ? colors.outline : isSelected ? colors.primary : colors.outlineVariant,
                   },
                 ]}
                 onPress={() => {
@@ -65,10 +72,25 @@ export default function ChooseSportModal({ chooseSportModalRef }: ChooseSportMod
                   chooseSportModalRef.current?.close();
                 }}>
                 <View style={styles.optionContent}>
-                  <Icon source={iconName} size={26} color={isSelected ? colors.primary : colors.onSurfaceVariant} />
+                  <Icon
+                    source={iconName}
+                    size={26}
+                    color={
+                      isDisabled ? colors.onSurfaceDisabled : isSelected ? colors.primary : colors.onSurfaceVariant
+                    }
+                  />
                   <Text
                     variant="labelMedium"
-                    style={[styles.optionLabel, { color: isSelected ? colors.onPrimaryContainer : colors.onSurface }]}>
+                    style={[
+                      styles.optionLabel,
+                      {
+                        color: isDisabled
+                          ? colors.onSurfaceDisabled
+                          : isSelected
+                            ? colors.onPrimaryContainer
+                            : colors.onSurface,
+                      },
+                    ]}>
                     {sportLabels[value as keyof typeof sportLabels] ?? MAP_SPORT_TO_TITLE[value][language]}
                   </Text>
                 </View>

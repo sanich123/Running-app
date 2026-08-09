@@ -1,7 +1,7 @@
 import { renderHook, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { useForm, type UseFormHandleSubmit } from 'react-hook-form';
-import { LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { setSignInPageState } from '@R/slices/logining/logining';
 import { BASE_URL } from '@T/utils/handlers';
@@ -54,7 +54,7 @@ describe('Login btn', () => {
     await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} />);
     await user.press(screen.getByText(LOGIN_BTN.russian.login));
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', password: 'secure-password' }));
-    expect(mockReplace).toHaveBeenCalledWith('/');
+    expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
     expect(mockStore.getState().auth.userId).toBe('logged-user');
   });
 });

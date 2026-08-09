@@ -1,6 +1,7 @@
-import { View, FlatList } from 'react-native';
+import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import ErrorComponent from '@Routes/error-component/error-component';
 import UserListItem from '@Routes/user-list-item/user-list-item';
@@ -8,6 +9,7 @@ import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout'
 import useRefresh from '@U/hooks/use-refresh';
 
 export default function ListOfFollowing() {
+  const { width } = useWindowDimensions();
   const { id: userId } = useLocalSearchParams();
   const { isLoading, isSuccess, error, isError, data: users, refetch } = useGetYouFollowUsersByUserIdQuery(`${userId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
@@ -22,6 +24,13 @@ export default function ListOfFollowing() {
           onRefresh={onRefresh}
           refreshing={refreshing}
           data={users}
+          style={[
+            styles.list,
+            {
+              width: width < MAX_MOBILE_WIDTH ? '100%' : MAX_MOBILE_WIDTH,
+              marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+            },
+          ]}
           renderItem={({ item }) => (
             <UserListItem
               city={item.profile?.city}
@@ -46,3 +55,9 @@ export default function ListOfFollowing() {
     </CrossPlatformLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  list: {
+    alignSelf: 'stretch',
+  },
+});

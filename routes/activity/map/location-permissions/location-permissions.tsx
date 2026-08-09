@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Link } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import BackgroundLocationModal from '@Routes/activity/background-location-modal/background-location-modal';
@@ -49,7 +50,7 @@ export default function LocationPermissions({
           </Text>
           <Link
             testID="create-profile-link"
-            href="/(protected)/(tabs)/profile/profile-settings"
+            href={`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`}
             style={{ marginTop: 10 }}>
             Перейти и создать профиль пользователя
           </Link>
@@ -63,7 +64,7 @@ export default function LocationPermissions({
           </Text>
           <Link
             testID="create-profile-link"
-            href="/(protected)/(tabs)/profile/profile-settings"
+            href={`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`}
             style={{ marginTop: 10 }}>
             Перейти и создать профиль пользователя
           </Link>

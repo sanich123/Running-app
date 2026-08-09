@@ -51,7 +51,7 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
         dispatch(setActivityOwnerProfile(profile));
         dispatch(setMapPhotoUrl(mapPhotoUrl));
         if (Platform.OS === 'web') {
-          push(`/(protected)/${ROUTES.comment}/${activityId}`);
+          push(`/${ROUTES.comment}/${activityId}`);
         } else {
           commentsModalRef.current?.present();
         }

@@ -13,20 +13,22 @@ export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
   const { language } = useAppSelector(({ language }) => language);
   const { dark, colors } = useTheme();
   const chooseSportModal = useRef<BottomSheetModal>(null);
+  const isSportPickerDisabled = isDisabledWhileSending || isDisabled;
 
   return (
     <>
       <TouchableRipple
         testID="manual-activity-sport-picker"
-        disabled={isDisabledWhileSending || isDisabled}
+        disabled={isSportPickerDisabled}
         style={{
           display: 'flex',
           paddingVertical: 10,
-          marginTop: 10,
+          marginTop: 12,
           borderRadius: 5,
           paddingLeft: 10,
           borderWidth: 0.4,
           borderColor: colors.onBackground,
+          opacity: isSportPickerDisabled ? 0.5 : 1,
         }}
         borderless
         rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
@@ -36,7 +38,7 @@ export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
           <Text variant="bodyMedium">{MAP_SPORT_TO_TITLE[sport][language]}</Text>
         </View>
       </TouchableRipple>
-      <ChooseSportModal chooseSportModalRef={chooseSportModal} />
+      <ChooseSportModal chooseSportModalRef={chooseSportModal} isDisabled={isSportPickerDisabled} />
     </>
   );
 }

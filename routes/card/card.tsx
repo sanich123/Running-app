@@ -35,6 +35,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     locations,
     profile,
     commentsLength,
+    isFullView,
   } = rest;
   const pathname = usePathname();
   const { width } = useWindowDimensions();
@@ -78,6 +79,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             borderWidth: 1,
             zIndex: 10,
             width: width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH,
+            marginBottom: isFullView ? 0 : 16,
           },
           Platform.OS === 'web' && styles.webStyles,
         ]}>
@@ -127,7 +129,6 @@ const styles = StyleSheet.create({
     borderCurve: 'continuous',
     borderRadius: 8,
     elevation: 2,
-    marginBottom: 16,
     marginHorizontal: 'auto',
     overflow: 'hidden',
     shadowColor: '#262626',

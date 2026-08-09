@@ -34,7 +34,7 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
               dispatch(setActivityIdWhichLikesToDownload(activityId));
               likesListModal.current?.present();
             } else {
-              push(`/(protected)/${ROUTES.likes}/${activityId}`);
+              push(`/${ROUTES.likes}/${activityId}`);
             }
           }}
           borderless

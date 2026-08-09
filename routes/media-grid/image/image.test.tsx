@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { ROUTES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import MediaGridImage from './image';
 
@@ -14,6 +15,6 @@ describe('image', () => {
     const url = 'https://images.example.test/grid.jpg';
     await renderWithProviders(<MediaGridImage url={url} thumbnail={null} index={3} take={28} />);
     await user.press(screen.getByTestId(url));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/media/3?userId=profile-id&take=28');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/3?userId=profile-id&take=28`);
   });
 });

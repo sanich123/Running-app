@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import { useTheme, Text } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { CHECK_EMAIL } from './const';
 
@@ -11,7 +12,7 @@ export default function SignInNeedToConfirmEmail() {
   return (
     <>
       {!process.env.IS_TESTING && (
-        <Stack.Screen options={{ title: 'confirm-email-notification', headerShown: false }} />
+        <Stack.Screen options={{ title: ROUTES.confirmEmailNotification, headerShown: false }} />
       )}
       <View
         style={{

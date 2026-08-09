@@ -51,7 +51,7 @@ export default function BarChartWrapper({ metricsArr, year }: BarChartWrapperPro
           },
         }}
         onPress={(_: any, index: any) =>
-          push(`/(protected)/${ROUTES.monthStatistic}?userId=${userId}&year=${year}&month=${index}`)
+          push(`/${ROUTES.monthStatistics}?userId=${userId}&year=${year}&month=${index}`)
         }
         frontColor={colors.primary}
         gradientColor={colors.primaryContainer}

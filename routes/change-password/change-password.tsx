@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import { Button, TextInput } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { CHANGE_PASSWORD_TEST_ID, CHANGE_PASSWORD_TEXT } from './const';
 
 export default function ChangePassword() {
@@ -9,7 +10,7 @@ export default function ChangePassword() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'change-password', headerShown: false }} />
+      <Stack.Screen options={{ title: ROUTES.changePassword, headerShown: false }} />
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 }}>
         <TextInput
           testID={CHANGE_PASSWORD_TEST_ID.input}

@@ -1,5 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { STATUSES, LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES, STATUSES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { setActivityStatus, setDuration, setDistance, setLocationsFromBackground } from '@R/slices/location/location';
 import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION, MOCK_SPEED } from '@T/mocks/mock-location';
@@ -8,9 +8,10 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID } from './const';
 import ActivityStartBtn from './start-btn';
 
+const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({
-    push: jest.fn(),
+    push: mockPush,
   }),
 }));
 describe('Activity start btn', () => {
@@ -43,6 +44,15 @@ describe('Activity start btn', () => {
     const startBtn = screen.getByTestId(ACTIVITY_START_BTN_TEST_ID);
     await userEvent.press(startBtn);
     expect(mockStore.getState().location.activityStatus).toEqual(STATUSES.initial);
+  });
+
+  it('opens manual activity after finishing the recording', async () => {
+    mockPush.mockClear();
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    mockStore.dispatch(setActivityStatus(STATUSES.paused));
+    await renderWithProviders(<ActivityStartBtn isReadyToRecordLocation />, { store: mockStore });
+    await userEvent.press(screen.getByTestId(ACTIVITY_START_BTN_TEST_ID));
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.manualActivity}`);
   });
   it('should correctly dispatch saveFinishedActivity', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

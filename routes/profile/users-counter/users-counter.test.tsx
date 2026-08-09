@@ -1,5 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_FRIENDS } from '@T/mocks/mock-friends';
 import { mockStore } from '@T/utils/mock-store';
@@ -39,6 +39,6 @@ describe('Users counter', () => {
     await renderWithProviders(<UsersCounter variant={USERS_VARIANT.whoUserFollows} />);
     await screen.findByText(`${MOCK_FRIENDS.length}`);
     await user.press(screen.getByText(USERS_COUNT.english.followings));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/following/926f4a53-08b5-43c6-99ee-cf31fdfbb49b');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.following}/926f4a53-08b5-43c6-99ee-cf31fdfbb49b`);
   });
 });

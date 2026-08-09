@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { View } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
+import { Platform, StyleSheet, View } from 'react-native';
+import { Icon, IconButton, TextInput as PaperTextInput, useTheme } from 'react-native-paper';
 import {
   usePostCommentWithActivityIdMutation,
   useUpdateCommentByCommentIdMutation,
@@ -28,6 +28,16 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   const [sendEmailAfterSendingComment] = useSendEmailAfterSendingCommentMutation();
   const [postComment, { isLoading: isCommentSending }] = usePostCommentWithActivityIdMutation();
   const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
+
+  async function submitComment() {
+    if (!comment) return;
+
+    if (!commentToUpdate) {
+      await sendingComment();
+    } else if (comment !== commentToUpdate) {
+      await updatingComment();
+    }
+  }
 
   async function sendingComment() {
     return await postComment({ body: { comment, authorId: userId }, id: commentActivityId })
@@ -64,57 +74,100 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   }
 
   return (
-    <View style={{ padding: 10 }}>
-      <BottomSheetTextInput
-        testID={COMMENT_INPUT_TEST_ID}
-        placeholder={COMMENT_INPUT[language].placeholder}
-        value={comment}
-        style={{
-          paddingVertical: 13,
-          paddingHorizontal: 10,
-          borderRadius: 5,
-          borderColor: colors.primary,
-          borderWidth: focused ? 2 : 1,
-          color: colors.onBackground,
-          fontSize: 16,
-        }}
-        autoFocus={!commentsLength}
-        onChangeText={(comment) => setComment(comment)}
-        onSubmitEditing={async () => {
-          if (comment) {
-            if (!commentToUpdate) {
-              return await sendingComment();
-            } else {
-              if (comment !== commentToUpdate) {
-                await updatingComment();
-              }
-            }
-          }
-        }}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        enterKeyHint="send"
-      />
-      {comment && (
+    <View style={styles.wrapper}>
+      {Platform.OS === 'web' ? (
+        <PaperTextInput
+          testID={COMMENT_INPUT_TEST_ID}
+          mode="outlined"
+          placeholder={COMMENT_INPUT[language].placeholder}
+          value={comment}
+          style={[styles.paperInput, { backgroundColor: colors.surface }]}
+          contentStyle={styles.content}
+          outlineStyle={styles.outline}
+          outlineColor={colors.outlineVariant}
+          activeOutlineColor={colors.primary}
+          textColor={colors.onSurface}
+          left={<PaperTextInput.Icon icon="comment-outline" color={colors.primary} />}
+          autoFocus={!commentsLength}
+          onChangeText={setComment}
+          onSubmitEditing={submitComment}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          enterKeyHint="send"
+        />
+      ) : (
+        <>
+          <BottomSheetTextInput
+            testID={COMMENT_INPUT_TEST_ID}
+            placeholder={COMMENT_INPUT[language].placeholder}
+            value={comment}
+            style={[
+              styles.nativeInput,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.primary,
+                borderWidth: focused ? 2 : 1,
+                color: colors.onSurface,
+              },
+            ]}
+            autoFocus={!commentsLength}
+            onChangeText={setComment}
+            onSubmitEditing={submitComment}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            enterKeyHint="send"
+          />
+          <View style={styles.inputIcon}>
+            <Icon source="comment-outline" size={20} color={colors.primary} />
+          </View>
+        </>
+      )}
+      {comment.length > 0 ? (
         <IconButton
           testID={COMMENT_ICON_TEST_ID}
           icon="send"
           iconColor={colors.primary}
-          style={{ right: 5, position: 'absolute', top: 7 }}
-          onPress={async () => {
-            if (comment) {
-              if (!commentToUpdate) {
-                return await sendingComment();
-              } else {
-                if (comment !== commentToUpdate) {
-                  await updatingComment();
-                }
-              }
-            }
-          }}
+          mode="contained-tonal"
+          containerColor={colors.primaryContainer}
+          style={styles.sendButton}
+          onPress={submitComment}
           disabled={isCommentSending || isUpdatingComment}
         />
-      )}
+      ) : null}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    padding: 10,
+    position: 'relative',
+  },
+  paperInput: {
+    fontSize: 15,
+    minHeight: 52,
+  },
+  nativeInput: {
+    borderRadius: 8,
+    fontSize: 16,
+    paddingLeft: 44,
+    paddingRight: 50,
+    paddingVertical: 13,
+  },
+  content: {
+    paddingRight: 42,
+  },
+  outline: {
+    borderRadius: 8,
+  },
+  inputIcon: {
+    left: 22,
+    position: 'absolute',
+    top: 26,
+  },
+  sendButton: {
+    position: 'absolute',
+    right: 14,
+    top: 16,
+  },
+});

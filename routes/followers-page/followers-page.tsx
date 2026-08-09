@@ -1,6 +1,7 @@
-import { View, FlatList } from 'react-native';
+import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Divider, Text } from 'react-native-paper';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetFollowersByUserIdQuery } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@Routes/error-component/error-component';
@@ -9,6 +10,7 @@ import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout'
 import useRefresh from '@U/hooks/use-refresh';
 
 export default function ListOfFollowers() {
+  const { width } = useWindowDimensions();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { id: friendId } = useLocalSearchParams();
   const {
@@ -31,6 +33,13 @@ export default function ListOfFollowers() {
           onRefresh={onRefresh}
           refreshing={refreshing}
           data={users}
+          style={[
+            styles.list,
+            {
+              width: width < MAX_MOBILE_WIDTH ? '100%' : MAX_MOBILE_WIDTH,
+              marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+            },
+          ]}
           renderItem={({ item }) => (
             <UserListItem
               city={item.users.profile?.city}
@@ -55,3 +64,9 @@ export default function ListOfFollowers() {
     </CrossPlatformLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  list: {
+    alignSelf: 'stretch',
+  },
+});

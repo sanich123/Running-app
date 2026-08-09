@@ -1,11 +1,13 @@
 import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
 import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
+import { ROUTES } from '@const/enums';
 import ShareBtn from './share-btn';
+const mockPathname = `/${ROUTES.home}/${ROUTES.activity}`;
 jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(), shareAsync: jest.fn() }));
 jest.mock('react-native-view-shot', () => ({ captureRef: jest.fn() }));
 jest.mock('expo-router', () => ({
-  usePathname: () => 'home/activity',
+  usePathname: () => mockPathname,
 }));
 describe('Activity card share btn', () => {
   it('should correctly renders', async () => {

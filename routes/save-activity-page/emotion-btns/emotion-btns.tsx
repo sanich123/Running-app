@@ -44,7 +44,7 @@ export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
           testID: EMOTIONS_BTNS_TEST_IDS.fuckedInput,
         },
       ]}
-      style={{ marginTop: 15 }}
+      style={{ marginTop: 12 }}
     />
   );
 }

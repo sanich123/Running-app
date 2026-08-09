@@ -27,6 +27,7 @@ export interface BatteryOptimizationSwitcherProps {
 
 export interface ChooseSportModalProps {
   chooseSportModalRef: RefObject<BottomSheetModal | null>;
+  isDisabled?: boolean;
 }
 
 export interface ForgroundLocationSwitcher {

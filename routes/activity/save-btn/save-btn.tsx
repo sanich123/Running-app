@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme, Text, Button } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/services/activity/activity';
 import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { setIsDisableWhileSending } from '@R/slices/activity/activity';
@@ -25,13 +26,14 @@ export default function SaveBtn() {
   const { language } = useAppSelector(({ language }) => language);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
   const [updateActivity, { isLoading: isUpdating }] = useUpdateActivityInfoMutation();
+  const isSaving = isLoading || isUpdating;
   const textOnBtn = isEditingActivity ? ACTIVITY_SAVE_BTN[language].update : ACTIVITY_SAVE_BTN[language].save;
 
   return (
     <Button
       style={styles.layout}
       testID={ACTIVITY_SAVE_BTN_TEST_ID}
-      loading={isLoading || isUpdating}
+      loading={isSaving}
       onPress={async () => {
         try {
           if (userId) {
@@ -72,11 +74,11 @@ export default function SaveBtn() {
               }
               await sendActivity(savedActivity)
                 .unwrap()
-                .then(() => (isManualAdding ? back() : replace('/')))
+                .then(() => (isManualAdding ? back() : replace(ROUTES.root)))
                 .catch((error) => {
                   if (!isEditingActivity) {
                     dispatch(saveUnsendedActivity(savedActivity));
-                    replace('/');
+                    replace(ROUTES.root);
                   }
                   errorToast('', error);
                 })
@@ -93,9 +95,11 @@ export default function SaveBtn() {
         }
       }}
       disabled={isDisabledWhileSending}>
-      <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
-        {textOnBtn}
-      </Text>
+      {!isSaving && (
+        <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
+          {textOnBtn}
+        </Text>
+      )}
     </Button>
   );
 }

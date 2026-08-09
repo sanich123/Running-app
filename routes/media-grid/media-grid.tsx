@@ -14,6 +14,7 @@ export default function MediaGrid() {
   const { colors } = useTheme();
   const { id: userId } = useLocalSearchParams();
   const [take, setTake] = useState(28);
+  const gridWidth = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   const { isLoading, isSuccess, data, error, isError, refetch } = useGetAllActivityPhotosByUserIdQuery(
     { userId: `${userId}`, take },
     { skip: !userId },
@@ -29,11 +30,11 @@ export default function MediaGrid() {
         data?.photos?.length ? (
           <FlatList
             testID="media-grid-list"
+            style={[styles.list, { width: gridWidth }]}
             contentContainerStyle={[
               {
                 backgroundColor: colors.background,
-                width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
-                marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+                width: '100%',
               },
               styles.layout,
               (isLoading || isError) && styles.isInCenter,
@@ -68,9 +69,14 @@ export default function MediaGrid() {
 }
 
 const styles = StyleSheet.create({
+  list: {
+    alignSelf: 'center',
+  },
   layout: {
+    alignItems: 'flex-start',
     display: 'flex',
     columnGap: 2,
+    justifyContent: 'flex-start',
   },
   isInCenter: {
     alignItems: 'center',

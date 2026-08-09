@@ -31,7 +31,15 @@ describe('MediaGrid', () => {
     );
     await renderWithProviders(<MediaGrid />);
     expect(await screen.findByTestId('media-grid-image')).toBeOnTheScreen();
-    await act(async () => screen.getByTestId('media-grid-list').props.onEndReached());
+    const list = screen.getByTestId('media-grid-list');
+    expect(list.props.style).toEqual(expect.arrayContaining([expect.objectContaining({ width: expect.any(Number) })]));
+    expect(list.props.contentContainerStyle).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ width: '100%' }),
+        expect.objectContaining({ alignItems: 'flex-start', justifyContent: 'flex-start' }),
+      ]),
+    );
+    await act(async () => list.props.onEndReached());
     await waitFor(() => expect(takes).toEqual(['28', '56']));
   });
 

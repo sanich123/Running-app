@@ -2,13 +2,44 @@ import PagerView from 'react-native-pager-view';
 import uuid from 'react-native-uuid';
 import { View, StyleSheet, Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { useTheme } from 'react-native-paper';
 import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { CustomImage } from '@Routes/custom-image/custom-image';
 import VideoViewer from '@Routes/video-viewer/video-viewer';
 
+const VIDEO_EXTENSIONS = ['mp4', 'avi', 'm4v'];
+
+function getPhotoUrl(value: string | string[] | undefined) {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+
+  if (!rawValue) {
+    return '';
+  }
+
+  // Expo Router can return a dynamic path segment either already decoded or
+  // still percent-encoded on web. Decode only the latter case so encoded
+  // characters inside a signed storage URL are not decoded twice.
+  if (/^(?:https?|data|blob):\/\//i.test(rawValue) || /^data:/i.test(rawValue)) {
+    return rawValue;
+  }
+
+  try {
+    return decodeURIComponent(rawValue);
+  } catch {
+    return rawValue;
+  }
+}
+
+function isVideoUrl(url: string) {
+  const pathname = url.split('?')[0].toLowerCase();
+  return VIDEO_EXTENSIONS.some((extension) => pathname.endsWith(`.${extension}`));
+}
+
 export default function PhotoViewer() {
   const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();
+  const webPhotoUrl = getPhotoUrl(photoUrl);
+  const { colors } = useTheme();
   const { userId: ownerId } = useAppSelector(({ auth }) => auth);
   const { data: activity } = useGetActivityByActivityIdQuery(`${photoUrl}`, {
     skip: !photoUrl || !uuid.validate(`${photoUrl}`),
@@ -25,15 +56,15 @@ export default function PhotoViewer() {
   const isMapUrlExist = activity?.mapPhotoUrl ? +`${indexOfPhoto}` - 1 : +`${indexOfPhoto}`;
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {Platform.OS === 'web' ? (
         <>
-          {['mp4', 'avi', 'm4v'].includes(decodeURIComponent(`${photoUrl}`)) ? (
-            <VideoViewer url={decodeURIComponent(`${photoUrl}`)} />
+          {isVideoUrl(webPhotoUrl) ? (
+            <VideoViewer url={webPhotoUrl} />
           ) : (
             <CustomImage
-              source={{ uri: decodeURIComponent(`${photoUrl}`) }}
-              style={{ width: '100%', height: '100%' }}
+              source={{ uri: webPhotoUrl }}
+              style={[styles.webImage, { backgroundColor: colors.background }]}
               contentFit="contain"
             />
           )}
@@ -68,6 +99,15 @@ export default function PhotoViewer() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: '100%',
+  },
+  webImage: {
+    alignSelf: 'stretch',
+    flex: 1,
+    width: '100%',
+  },
   viewPager: {
     flex: 1,
   },

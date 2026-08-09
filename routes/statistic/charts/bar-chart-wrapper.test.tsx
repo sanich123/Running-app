@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react-native';
+import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -18,6 +19,6 @@ describe('bar chart wrapper', () => {
       <BarChartWrapper metricsArr={[{ value: 10, label: 'Jan' }]} year={2026} title="Distance" />,
     );
     await act(async () => screen.getByTestId('interactive-bar-chart').props.onPress({}, 4));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/month-statistic?userId=statistics-user&year=2026&month=4');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.monthStatistics}?userId=statistics-user&year=2026&month=4`);
   });
 });

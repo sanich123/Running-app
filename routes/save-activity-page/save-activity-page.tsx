@@ -30,11 +30,8 @@ export default function SaveResult() {
     <>
       {!isCameraVisible ? (
         <ScrollView
-          style={[
-            !isCameraVisible && styles.container,
-            Platform.OS === 'web' && styles.webStyles,
-            { backgroundColor: colors.background },
-          ]}>
+          style={[styles.container, { backgroundColor: colors.background }]}
+          contentContainerStyle={[styles.content, Platform.OS === 'web' && styles.webContent]}>
           <View style={{ paddingBottom: insets.bottom + 24 }}>
             <TextInputs isDisabled={isDisabled} />
             <SportsBtns isDisabled={isDisabled} />
@@ -73,15 +70,19 @@ export default function SaveResult() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
+    flexGrow: 1,
     paddingHorizontal: 10,
   },
-  webStyles: {
+  webContent: {
     marginHorizontal: 'auto',
     maxWidth: MAX_MOBILE_WIDTH,
+    width: '100%',
   },
   cameraUploadBtns: {
-    display: 'flex',
+    alignItems: 'stretch',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: 8,
   },
 });

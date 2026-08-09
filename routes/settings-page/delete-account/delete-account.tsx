@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Platform, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { ROUTES } from '@const/enums';
 import { useDeleteUserMutation } from '@R/services/authentication/authentication';
 import { resetActivitySlice } from '@R/slices/activity/activity';
 import { resetAuthSlice } from '@R/slices/auth/auth';
@@ -34,7 +35,7 @@ export default function DeleteAccountBtn() {
         dispatch(resetNetworkSlice());
         dispatch(resetLanguageSlice());
         dispatch(resetLocationSlice());
-        replace('/sign-in');
+        replace(`/${ROUTES.signIn}`);
       })
       .catch((error) => errorToast('Не удалось удалить аккаунт', error))
       .finally();

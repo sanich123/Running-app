@@ -1,21 +1,26 @@
-import { View } from 'react-native';
-import { useTheme, Icon, TouchableRipple } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { IconButton } from 'react-native-paper';
 import { setCameraIsVisible } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch } from '@R/typed-hooks';
 
 export default function CloseBtn() {
-  const { colors, dark } = useTheme();
   const dispatch = useAppDispatch();
 
   return (
-    <View style={{ marginLeft: 'auto', marginTop: 50, marginRight: 10 }}>
-      <TouchableRipple
-        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-        borderless
-        onPress={() => dispatch(setCameraIsVisible(false))}
-        testID="CloseBtn">
-        <Icon source="close" size={50} color={colors.primaryContainer} />
-      </TouchableRipple>
-    </View>
+    <IconButton
+      icon="close"
+      mode="contained-tonal"
+      size={24}
+      iconColor="#fff"
+      containerColor="rgba(0, 0, 0, 0.45)"
+      style={styles.button}
+      onPress={() => dispatch(setCameraIsVisible(false))}
+      testID="CloseBtn"
+      accessibilityLabel="Закрыть камеру"
+    />
   );
 }
+
+const styles = StyleSheet.create({
+  button: { margin: 0 },
+});

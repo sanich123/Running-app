@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams, usePathname } from 'expo-router';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -60,15 +60,17 @@ export default function ProfilePage() {
 
   return (
     <>
-      <View
-        style={[
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={[styles.scroll, { backgroundColor: colors.background }]}
+        contentContainerStyle={[
           styles.container,
-          (isLoading || isError) && styles.isInCenter,
           {
             backgroundColor: colors.background,
-            width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+            width: width < MAX_MOBILE_WIDTH ? '100%' : MAX_MOBILE_WIDTH,
             marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
           },
+          (isLoading || isError) && styles.isInCenter,
         ]}>
         {isLoading ? (
           <ActivityIndicator size="large" testID="profile-page-loading" />
@@ -106,14 +108,17 @@ export default function ProfilePage() {
         ) : isError ? (
           <ErrorComponent error={error} refetch={refetch} />
         ) : null}
-      </View>
+      </ScrollView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scroll: {
     flex: 1,
+  },
+  container: {
+    flexGrow: 1,
     paddingHorizontal: 12,
     paddingTop: 16,
   },

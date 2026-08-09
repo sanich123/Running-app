@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { ROUTES } from '@const/enums';
 import { saveWholeProfile } from '@R/slices/profile/profile';
 import { MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { mockStore } from '@T/utils/mock-store';
@@ -14,6 +15,6 @@ describe('migration btn', () => {
     mockStore.dispatch(saveWholeProfile(MOCK_SERVER_PROFILE));
     await renderWithProviders(<MigrationBtn />);
     await user.press(screen.getByTestId('migration-settings-row'));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/migration');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.migration}`);
   });
 });

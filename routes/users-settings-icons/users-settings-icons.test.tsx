@@ -1,11 +1,12 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { ACTIVITY_SAVE_BTN } from '@Routes/activity/save-btn/const';
 import UsersSettingsIcons from './users-settings-icons';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 const mockPush = jest.fn();
-let mockPathname = '/home/activity/someActivityId';
+let mockPathname = `/${ROUTES.home}/${ROUTES.activity}/someActivityId`;
 let mockParams = { userId: 'someUserId', id: 'someActivityId' };
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
@@ -14,7 +15,7 @@ jest.mock('expo-router', () => ({
 }));
 describe('User settings icons', () => {
   it('should correctly renders edit btn, when userId === user?.id', async () => {
-    mockPathname = '/home/activity/someActivityId';
+    mockPathname = `/${ROUTES.home}/${ROUTES.activity}/someActivityId`;
     mockParams = { userId: 'someUserId', id: 'someActivityId' };
     mockStore.dispatch(setUserId('someUserId'));
     await renderWithProviders(<UsersSettingsIcons />, { store: mockStore });
@@ -23,13 +24,13 @@ describe('User settings icons', () => {
 
   it('opens users and settings from the header icons', async () => {
     const user = userEvent.setup();
-    mockPathname = '/home';
+    mockPathname = `/${ROUTES.home}`;
     mockParams = { userId: 'anotherUserId', id: '' };
     mockStore.dispatch(setUserId('someUserId'));
     await renderWithProviders(<UsersSettingsIcons />);
     await user.press(screen.getByTestId('usersIcon'));
     await user.press(screen.getByTestId('settingsIcon'));
-    expect(mockPush).toHaveBeenNthCalledWith(1, '/(protected)/users');
-    expect(mockPush).toHaveBeenNthCalledWith(2, '/(protected)/settings');
+    expect(mockPush).toHaveBeenNthCalledWith(1, `/${ROUTES.users}`);
+    expect(mockPush).toHaveBeenNthCalledWith(2, `/${ROUTES.settings}`);
   });
 });

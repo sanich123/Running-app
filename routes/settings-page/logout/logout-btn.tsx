@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { ROUTES } from '@const/enums';
 import { persistor, resetStore } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -18,7 +19,7 @@ export default function LogoutBtn() {
         try {
           await persistor.purge();
           dispatch(resetStore());
-          replace('/sign-in');
+          replace(`/${ROUTES.signIn}`);
         } catch (error) {
           errorToast('Не удалось выйти из аккаунта', error);
         }

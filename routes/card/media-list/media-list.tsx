@@ -26,8 +26,8 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
           onPress={() => {
             push(
               item.url.includes('api.mapbox.com')
-                ? `/(protected)/map/${id}`
-                : `/(protected)/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
+                ? `/${ROUTES.map}/${id}`
+                : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
             );
           }}
           borderless>

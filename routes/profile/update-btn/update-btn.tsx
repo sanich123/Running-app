@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Button, Text, useTheme } from 'react-native-paper';
 import {
   useCreateProfileByUserIdMutation,
   useGetUserProfileByUserIdQuery,
@@ -14,17 +14,19 @@ import { UPDATE_BTN_ERROR_MSG, UPDATE_BTN } from './const';
 export default function ProfileUpdateBtn() {
   const dispatch = useAppDispatch();
   const { back } = useRouter();
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { settings, isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
   const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [createProfile, { isLoading: isCreating }] = useCreateProfileByUserIdMutation();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileByProfileIdMutation();
+  const isSaving = isCreating || isUpdating;
 
   return (
-    <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+    <Button
+      compact
+      loading={isSaving}
       onPress={async () => {
         dispatch(setIsDisabledWhileSendingProfile(true));
         if (!profile?.id) {
@@ -53,23 +55,22 @@ export default function ProfileUpdateBtn() {
             });
         }
       }}
-      borderless
-      disabled={isCreating || isDisabledWhileSendingProfile || isUpdating}
+      disabled={isSaving || isDisabledWhileSendingProfile}
       style={styles.layout}>
-      <Text variant="titleMedium" style={{ color: colors.primary }}>
-        {isCreating ? UPDATE_BTN[language].updating : UPDATE_BTN[language].update}
-      </Text>
-    </TouchableRipple>
+      {!isSaving && (
+        <Text variant="titleMedium" style={{ color: colors.primary }}>
+          {UPDATE_BTN[language].update}
+        </Text>
+      )}
+    </Button>
   );
 }
 
 const styles = StyleSheet.create({
   layout: {
-    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 5,
-    borderRadius: 10,
+    borderRadius: 8,
     marginRight: 5,
   },
 });

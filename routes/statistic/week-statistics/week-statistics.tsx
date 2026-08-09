@@ -38,8 +38,7 @@ export default function WeekStatistics() {
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       onPress={() =>
-        weekStatistics?.totalItems &&
-        push(`/(protected)/${ROUTES.monthStatistic}?userId=${userId}&year=${year}&month=${month}`)
+        weekStatistics?.totalItems && push(`/${ROUTES.monthStatistics}?userId=${userId}&year=${year}&month=${month}`)
       }
       style={[
         styles.container,

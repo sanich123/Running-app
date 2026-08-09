@@ -46,6 +46,7 @@ export interface ProfileType {
 }
 
 export interface ActivityCardProps {
+  isFullView?: boolean;
   isShowDeleteBtn: boolean;
   isShowDescription: boolean;
   description: string;

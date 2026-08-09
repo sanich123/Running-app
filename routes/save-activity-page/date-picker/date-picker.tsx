@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import DatePicker from 'react-native-date-picker';
-import { Button } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { Button, useTheme } from 'react-native-paper';
 import { setManualDate } from '@R/slices/manual-activity/manual-activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -12,17 +13,22 @@ export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) 
   const [open, setOpen] = useState(false);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);
+  const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
 
   return (
     <>
       <Button
         testID={DATE_TIME_PICKER_BTN_ID}
-        icon="calendar"
+        icon="calendar-clock"
+        compact
         onPress={() => setOpen(true)}
         mode="outlined"
-        style={[{ marginTop: 10 }, (isDisabledWhileSending || isDisabled) && { opacity: 0.5 }]}
-        disabled={isDisabledWhileSending || isDisabled}>
+        style={[styles.button, { borderColor: colors.outlineVariant }, shouldBeDisabled && styles.disabledButton]}
+        contentStyle={styles.content}
+        textColor={colors.onSurface}
+        disabled={shouldBeDisabled}>
         {DATE_TIME_PICKER[language].title}
       </Button>
       <DatePicker
@@ -42,3 +48,9 @@ export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) 
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  button: { borderRadius: 8, marginTop: 12 },
+  content: { minHeight: 42 },
+  disabledButton: { opacity: 0.7 },
+});

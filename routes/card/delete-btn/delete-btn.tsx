@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { Platform, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconButton, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { useDeleteActivityByIdMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
@@ -28,7 +29,7 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
         setIsLoading(false);
         setIsDisabled(false);
       });
-    replace('/');
+    replace(ROUTES.root);
   }
 
   return (

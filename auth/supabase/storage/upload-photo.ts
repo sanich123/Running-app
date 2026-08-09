@@ -44,6 +44,57 @@ export async function getPublicUrl(path: string) {
   }
 }
 
+export function getPhotoStorageLocation(publicUrl: string) {
+  const marker = '/storage/v1/object/';
+  const markerIndex = publicUrl.indexOf(marker);
+
+  if (markerIndex === -1) return null;
+
+  try {
+    const [visibility, bucket, ...pathParts] = publicUrl.slice(markerIndex + marker.length).split('/');
+    if (!visibility || !bucket || !pathParts.length) return null;
+
+    return { bucket, path: decodeURIComponent(pathParts.join('/')) };
+  } catch {
+    const [visibility, bucket, ...pathParts] = publicUrl.slice(markerIndex + marker.length).split('/');
+    if (!visibility || !bucket || !pathParts.length) return null;
+
+    return { bucket, path: pathParts.join('/') };
+  }
+}
+
+export function getPhotoStoragePath(publicUrl: string) {
+  return getPhotoStorageLocation(publicUrl)?.path ?? null;
+}
+
+export async function removePhotos(publicUrls: string[]) {
+  const locations = publicUrls.map(getPhotoStorageLocation).filter(
+    (location): location is { bucket: string; path: string } => Boolean(location),
+  );
+
+  if (!locations.length) return true;
+
+  try {
+    const locationsByBucket = locations.reduce<Record<string, string[]>>((result, { bucket, path }) => {
+      result[bucket] = [...(result[bucket] ?? []), path];
+      return result;
+    }, {});
+
+    for (const [bucket, paths] of Object.entries(locationsByBucket)) {
+      const { error } = await supabase.storage.from(bucket).remove(paths);
+      if (error) {
+        errorToast('Не удалось удалить фото', error);
+        return false;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    errorToast('Не удалось удалить фото', error);
+    return false;
+  }
+}
+
 export async function getSignedUrl(path: string, expiredTime: number) {
   try {
     const { data, error } = await supabase.storage.from('files').createSignedUrl(path, expiredTime);

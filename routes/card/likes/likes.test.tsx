@@ -1,6 +1,7 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import * as router from 'expo-router';
+import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { AvatarShowableTestIds } from '@Routes/avatar/showable/const';
 import { mockStore } from '@T/utils/mock-store';
@@ -32,7 +33,7 @@ describe('Card likes', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     await renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />);
     await user.press(await screen.findByTestId('pushToActivityLikes'));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/likes/617dddae-05b3-418a-9a8e-5d408a1b897a');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.likes}/617dddae-05b3-418a-9a8e-5d408a1b897a`);
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 });

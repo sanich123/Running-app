@@ -1,5 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
+import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
@@ -51,6 +52,6 @@ describe('location permissions', () => {
     );
     const links = await screen.findAllByTestId('create-profile-link');
     await user.press(links[0]);
-    expect(mockNavigate).toHaveBeenCalledWith('/(protected)/(tabs)/profile/profile-settings');
+    expect(mockNavigate).toHaveBeenCalledWith(`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`);
   });
 });

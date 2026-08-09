@@ -9,11 +9,11 @@ export interface UploadPhotoBtnProps {
 
 export const UPLOAD_PHOTO_BTN = {
   [LANGUAGES.english]: {
-    isLoading: 'Uploading..',
-    isInitial: 'Upload',
+    isLoading: 'Uploading…',
+    isInitial: 'Upload photo',
   },
   [LANGUAGES.russian]: {
-    isLoading: 'Загружаю..',
-    isInitial: 'Загрузить',
+    isLoading: 'Загружаю…',
+    isInitial: 'Загрузить фото',
   },
 } as const;

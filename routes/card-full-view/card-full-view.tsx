@@ -35,6 +35,7 @@ export default function CardFullView() {
         ) : isSuccess ? (
           <>
             <Card
+              isFullView
               isShowDeleteBtn
               isShowDescription={!!activity?.description}
               userId={activity?.user_id}
@@ -76,7 +77,7 @@ export default function CardFullView() {
 
 const styles = StyleSheet.create({
   page: { paddingHorizontal: 12, paddingVertical: 12 },
-  content: { flex: 1, gap: 6 },
+  content: { flex: 1, gap: 12 },
   state: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -84,7 +85,9 @@ const styles = StyleSheet.create({
   splitsCard: {
     borderRadius: 18,
     borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 4,
+    overflow: 'hidden',
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    paddingTop: 8,
   },
 });

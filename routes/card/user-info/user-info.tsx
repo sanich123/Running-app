@@ -1,6 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import { CustomImage } from '@Routes/custom-image/custom-image';
@@ -20,7 +21,7 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
           commentsModalRef?.current?.close();
         }
 
-        push(`/(protected)/profile/${userId}`);
+        push(`/${ROUTES.profile}/${userId}`);
       }}
       borderless
       style={{ paddingVertical: 10, paddingHorizontal: 12 }}>

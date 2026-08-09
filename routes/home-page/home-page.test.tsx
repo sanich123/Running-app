@@ -1,5 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 import { http } from 'msw';
+import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { ERROR_COMPONENT_TEST_ID } from '@Routes/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
@@ -34,7 +35,7 @@ describe('Feed', () => {
     await renderWithProviders(<Feed />);
     expect(await screen.findByText(MOCK_SERVER_ACTIVITY.title)).toBeOnTheScreen();
     fireEvent.press(screen.getByTestId('feed-add-activity'));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/manual-activity');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.manualActivity}`);
   });
 
   it('renders error state', async () => {

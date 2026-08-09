@@ -1,5 +1,6 @@
 import { StyleSheet, View, Text } from 'react-native';
 import { Link, Stack } from 'expo-router';
+import { ROUTES } from '@const/enums';
 
 export default function NotFoundScreen() {
   const { container, title, link, linkText } = styles;
@@ -8,7 +9,7 @@ export default function NotFoundScreen() {
       <Stack.Screen options={{ title: 'Oops!' }} />
       <View style={container}>
         <Text style={title}>This screen does not exist.</Text>
-        <Link href="/sign-in" style={link}>
+        <Link href={`/${ROUTES.signIn}`} style={link}>
           <Text style={linkText}>Go to home screen!</Text>
         </Link>
       </View>

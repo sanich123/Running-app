@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Card, FAB, Text } from 'react-native-paper';
+import { ActivityIndicator, Card, FAB, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import LikeBtn from '@Routes/card/like-btn/like-btn';
@@ -17,6 +17,7 @@ import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescrip
 
 export default function CommentFullViewPage() {
   const { width } = useWindowDimensions();
+  const { colors } = useTheme();
   const { id: activityId } = useLocalSearchParams();
   const {
     isLoading,
@@ -31,8 +32,9 @@ export default function CommentFullViewPage() {
 
   return (
     <ScrollView
+      style={[styles.scroll, { backgroundColor: colors.background }]}
       contentContainerStyle={[
-        { flexGrow: 1 },
+        { flexGrow: 1, backgroundColor: colors.background },
         (isLoading || isError) && styles.isInCenter,
         {
           width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
@@ -42,7 +44,7 @@ export default function CommentFullViewPage() {
       {isLoading ? (
         <ActivityIndicator size="large" testID="comment-page-loading" />
       ) : isSuccess && !activity?.message ? (
-        <View style={[{ flex: 1 }, isLoading && styles.inCenter]}>
+        <View style={[Platform.OS === 'web' ? styles.webContent : styles.nativeContent, isLoading && styles.inCenter]}>
           {(activity?.mapPhotoUrl || activity?.photoVideoUrls?.length > 0) && (
             <MediaList
               photoVideoUrls={activity?.photoVideoUrls}
@@ -78,8 +80,8 @@ export default function CommentFullViewPage() {
               <View style={{ zIndex: 9, position: 'relative' }}>
                 <FAB
                   testID="floatingBtn"
-                  icon="pencil"
-                  style={{ position: 'absolute', right: 10, zIndex: 10 }}
+                  icon="plus"
+                  style={styles.commentAddButton}
                   onPress={() => {
                     setIdOfUpdatingComment('');
                     setIsShowingTextInput(true);
@@ -97,6 +99,9 @@ export default function CommentFullViewPage() {
 }
 
 const styles = StyleSheet.create({
+  scroll: {
+    flex: 1,
+  },
   isInCenter: {
     flex: 1,
     alignItems: 'center',
@@ -105,6 +110,16 @@ const styles = StyleSheet.create({
   inCenter: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  nativeContent: {
+    flex: 1,
+  },
+  webContent: {
+    width: '100%',
+  },
+  commentAddButton: {
+    alignSelf: 'flex-end',
+    margin: 10,
   },
   contentLayout: {
     display: 'flex',

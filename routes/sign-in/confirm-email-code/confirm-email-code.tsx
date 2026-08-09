@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Button, TextInput, useTheme } from 'react-native-paper';
 import type { UseFormWatch } from 'react-hook-form';
+import { ROUTES } from '@const/enums';
 import { useConfirmSignUpCodeByEmailMutation } from '@R/services/authentication/authentication';
 import { errorToast } from '@S/error-toast/error-toast';
 import { CONFIRM_EMAIL_CODE_TEST_ID, CONFIRM_EMAIL_CODE_TEXT } from './const';
@@ -34,13 +35,13 @@ export default function ConfirmEmailCode({ watch }: { watch: UseFormWatch<EmailP
         onPress={async () =>
           await confirmEmailByCode({ email: watch('email'), confirmationCode })
             .unwrap()
-            .then(() => replace('/'))
+            .then(() => replace(ROUTES.root))
             .catch((error) => errorToast(CONFIRM_EMAIL_CODE_TEXT.error, error))
         }
         loading={isLoading}
         disabled={isLoading}
         style={{ marginTop: 10 }}>
-        {CONFIRM_EMAIL_CODE_TEXT.submit}
+        {!isLoading && CONFIRM_EMAIL_CODE_TEXT.submit}
       </Button>
     </>
   );

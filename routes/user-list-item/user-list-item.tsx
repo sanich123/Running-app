@@ -27,7 +27,7 @@ export default function UserListItem({
       borderless
       onPress={() => {
         commentsModalRef?.current?.dismiss();
-        push(`/(protected)/${ROUTES.profile}/${user_id}`);
+        push(`/${ROUTES.profile}/${user_id}`);
       }}>
       <View style={styles.userItemWrapper}>
         <View style={styles.contentWrapper}>

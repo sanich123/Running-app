@@ -1,5 +1,5 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
-import { LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/language/language';
 import { RESET_STORE } from '@R/store';
@@ -20,6 +20,6 @@ describe('logout btn', () => {
     await renderWithProviders(<LogoutBtn />);
     await user.press(screen.getByText(SETTINGS.english.logout));
     await waitFor(() => expect(dispatch).toHaveBeenCalledWith({ type: RESET_STORE }));
-    expect(mockReplace).toHaveBeenCalledWith('/sign-in');
+    expect(mockReplace).toHaveBeenCalledWith(`/${ROUTES.signIn}`);
   });
 });

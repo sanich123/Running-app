@@ -1,5 +1,6 @@
 import { act, waitFor } from '@testing-library/react-native';
 import { http } from 'msw';
+import { ROUTES } from '@const/enums';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
@@ -37,7 +38,7 @@ describe('ConfirmEmailCode', () => {
     await renderWithProviders(<ConfirmEmailCode watch={mockWatch} />);
     await act(async () => mockConfirmationInputProps.onChangeText('123456'));
     await act(async () => mockConfirmationSubmitProps.onPress());
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/'));
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
     expect(mockWatch).toHaveBeenCalledWith('email');
     expect(mockStoreUserId()).toBe(MOCK_SERVER_IDS.userId);
   });

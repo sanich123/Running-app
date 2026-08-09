@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { ActivityIndicator } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery } from '@R/services/activity/activity';
 import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { resetFinishedActivity } from '@R/slices/activity/activity';
@@ -52,7 +53,7 @@ export default function Feed() {
                   dispatch(resetAdditionaInfoActivitySlice());
                   dispatch(resetFinishedActivity());
                   dispatch(setIsManualAdding(true));
-                  push('/(protected)/manual-activity');
+                  push(`/${ROUTES.manualActivity}`);
                 }}
               />
             </>

@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { ROUTES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CalendarDateWithActivity from './calendar-date-with-activity';
 
@@ -18,7 +19,7 @@ describe('calendar date with activity', () => {
       />,
     );
     await user.press(screen.getByTestId('calendar-activities-activity-one'));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/activity/activity-one');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activity}/activity-one`);
   });
 
   it('opens the activity list when the day contains multiple workouts', async () => {
@@ -36,6 +37,6 @@ describe('calendar date with activity', () => {
       />,
     );
     await user.press(screen.getByTestId('calendar-activities-first-second'));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/activities-list/ids=first&ids=second');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activitiesList}/ids=first&ids=second`);
   });
 });

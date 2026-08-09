@@ -3,7 +3,7 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import YearTypePicker from './year-type-picker';
+import YearTypePicker, { scrollYearsByWheel } from './year-type-picker';
 
 const availableYearsAndTypes = [
   { year: '2026', types: ['run', 'walk'] },
@@ -43,5 +43,13 @@ describe('year type picker', () => {
     );
     fireEvent.press(screen.getByText('walk'));
     expect(setSelectedType).toHaveBeenCalledWith('walk');
+  });
+
+  it('moves the years list horizontally when the mouse wheel is used', () => {
+    const currentTarget = { clientWidth: 120, scrollLeft: 0, scrollWidth: 360 };
+
+    scrollYearsByWheel({ currentTarget, deltaY: 80 });
+
+    expect(currentTarget.scrollLeft).toBe(80);
   });
 });

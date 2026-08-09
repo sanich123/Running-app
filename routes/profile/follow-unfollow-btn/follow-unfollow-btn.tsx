@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
@@ -7,14 +6,12 @@ import {
   useDeleteFriendMutation,
   useAddFriendMutation,
 } from '@R/services/followers/followers';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { successToast } from '@S/success-toast/success-toast';
 import { errorExtracter } from '@U/error-handler';
 import { FOLLOW_UNFOLLOW_BTN } from './const';
 
 export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
-  const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const {
     isLoading: isLoadingListOfFriends,
@@ -27,28 +24,19 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
   const friendCell = listOfFriends?.filter(
     ({ friendId: friendIdOnServer }: { friendId: string }) => friendIdOnServer === friendId,
   );
-  const [deleteFriend, { isLoading: isLoadingDeleteFriend, isSuccess: isFriendDeleted }] = useDeleteFriendMutation();
-  const [addFriend, { isLoading: isLoadingAddFriend, isSuccess: isFriendAdded }] = useAddFriendMutation();
-
-  useEffect(() => {
-    if (!process.env.IS_TESTING) {
-      if (isFriendDeleted) {
-        successToast(FOLLOW_UNFOLLOW_BTN[language].successUnfollowing);
-      }
-      if (isFriendAdded) {
-        successToast(FOLLOW_UNFOLLOW_BTN[language].successFollowing);
-      }
-    }
-  }, [isFriendDeleted, isFriendAdded, dispatch, language]);
+  const [deleteFriend, { isLoading: isLoadingDeleteFriend }] = useDeleteFriendMutation();
+  const [addFriend, { isLoading: isLoadingAddFriend }] = useAddFriendMutation();
+  const isLoading = isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend;
 
   return (
     <Button
       mode="outlined"
       compact
+      loading={isLoading}
       contentStyle={styles.content}
       labelStyle={styles.label}
       style={styles.button}
-      disabled={isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend || isError}
+      disabled={isLoading || isError}
       onPress={async () => {
         try {
           if (friendCell?.length > 0) await deleteFriend(friendCell[0]?.id).unwrap();
@@ -57,27 +45,8 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
           errorToast(FOLLOW_UNFOLLOW_BTN[language].errorMsg, error);
         }
       }}>
-      {!isError && isLoadingListOfFriends && ''}
-      {!isError &&
-        !isLoadingListOfFriends &&
-        !isLoadingDeleteFriend &&
-        !isLoadingAddFriend &&
-        friendCell?.length > 0 &&
-        FOLLOW_UNFOLLOW_BTN[language].unfollow}
-      {!isError &&
-        !isLoadingListOfFriends &&
-        !isLoadingDeleteFriend &&
-        !isLoadingAddFriend &&
-        !friendCell?.length &&
-        FOLLOW_UNFOLLOW_BTN[language].follow}
-      {!isError &&
-        (isLoadingAddFriend || isLoadingDeleteFriend) &&
-        friendCell?.length > 0 &&
-        FOLLOW_UNFOLLOW_BTN[language].unfollowing}
-      {!isError &&
-        (isLoadingAddFriend || isLoadingDeleteFriend) &&
-        !friendCell?.length &&
-        FOLLOW_UNFOLLOW_BTN[language].following}
+      {!isError && !isLoading && friendCell?.length > 0 && FOLLOW_UNFOLLOW_BTN[language].unfollow}
+      {!isError && !isLoading && !friendCell?.length && FOLLOW_UNFOLLOW_BTN[language].follow}
       {isError && `${FOLLOW_UNFOLLOW_BTN[language].errorMsg}: ${errorExtracter(listOfFriendsError)}`}
     </Button>
   );

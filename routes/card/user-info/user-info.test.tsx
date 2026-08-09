@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { ROUTES } from '@const/enums';
 import { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
@@ -42,6 +43,6 @@ describe('UserInfo', () => {
     );
     await user.press(screen.getByText(new RegExp(MOCK_PROFILE.name)));
     expect(close).toHaveBeenCalledTimes(1);
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/profile/someUserId');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.profile}/someUserId`);
   });
 });

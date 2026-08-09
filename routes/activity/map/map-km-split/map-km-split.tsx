@@ -1,5 +1,6 @@
 import { CircleLayer, ShapeSource, SymbolLayer } from '@rnmapbox/maps';
 import { useTheme } from 'react-native-paper';
+import { COLORS } from '@const/theme-colors';
 import type { LastKmSplit } from '@R/slices/location/types';
 
 export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: LastKmSplit[] }) {
@@ -32,7 +33,7 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: LastK
       <CircleLayer
         id="kilometre-split-background"
         style={{
-          circleColor: colors.surface,
+          circleColor: COLORS.light.surface,
           circleRadius: 15,
           circleStrokeColor: colors.primary,
           circleStrokeWidth: 2,

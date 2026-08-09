@@ -1,5 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_DISTANCE, MOCK_DURATION } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
@@ -51,6 +51,6 @@ describe('Card metrics', () => {
       />,
     );
     await user.press(screen.getByText('some title'));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/activity/someUUID?userId=someUserId');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activity}/someUUID?userId=someUserId`);
   });
 });

@@ -1,8 +1,10 @@
 import { fireEvent, screen, userEvent } from '@testing-library/react-native';
+import { ROUTES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CustomTabBar from './custom-tab-bar';
 
-jest.mock('expo-router', () => ({ usePathname: () => '/home' }));
+const mockPathname = `/${ROUTES.home}`;
+jest.mock('expo-router', () => ({ usePathname: () => mockPathname }));
 jest.mock('@Routes/avatar/showable/showable', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="tab-avatar" />;
@@ -11,8 +13,8 @@ jest.mock('@Routes/avatar/showable/showable', () => {
 const state = {
   index: 0,
   routes: [
-    { key: 'home-key', name: 'home' },
-    { key: 'activity-key', name: 'activity', params: { source: 'tab' } },
+    { key: 'home-key', name: ROUTES.home },
+    { key: 'activity-key', name: ROUTES.activity, params: { source: 'tab' } },
   ],
 };
 const descriptors = {
@@ -30,7 +32,7 @@ describe('custom tab bar', () => {
     await renderWithProviders(<CustomTabBar state={state} descriptors={descriptors} navigation={navigation} />);
     await user.press(screen.getByTestId('activity-tab'));
     expect(navigation.emit).toHaveBeenCalledWith({ type: 'tabPress', target: 'activity-key', canPreventDefault: true });
-    expect(navigation.navigate).toHaveBeenCalledWith('activity', { source: 'tab' });
+    expect(navigation.navigate).toHaveBeenCalledWith(ROUTES.activity, { source: 'tab' });
   });
 
   it('emits the tab long-press action', async () => {

@@ -18,4 +18,10 @@ describe('sports btns', () => {
     await user.press(screen.getByTestId('manual-activity-sport-picker'));
     expect(mockPresent).toHaveBeenCalledTimes(1);
   });
+
+  it('uses the disabled appearance when the save page is disabled', async () => {
+    await renderWithProviders(<SportsBtns isDisabled />);
+
+    expect(screen.getByTestId('manual-activity-sport-picker')).toHaveStyle({ opacity: 0.5 });
+  });
 });

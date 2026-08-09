@@ -9,6 +9,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import CommentFullViewPage from './comment-page';
 
 let mockFabOnPress: () => void;
+let mockFabIcon = '';
 
 jest.mock('expo-router', () => ({ useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }) }));
 jest.mock('react-native-paper', () => {
@@ -16,8 +17,9 @@ jest.mock('react-native-paper', () => {
   const { View } = jest.requireActual('react-native');
   return {
     ...actual,
-    FAB: ({ onPress }: { onPress: () => void }) => {
+    FAB: ({ icon, onPress }: { icon: string; onPress: () => void }) => {
       mockFabOnPress = onPress;
+      mockFabIcon = icon;
       return <View testID="floatingBtn" />;
     },
   };
@@ -62,6 +64,7 @@ describe('CommentFullViewPage', () => {
     await renderWithProviders(<CommentFullViewPage />);
     expect(await screen.findByText(MOCK_SERVER_ACTIVITY.title)).toBeOnTheScreen();
     expect(screen.getByTestId('floatingBtn')).toBeOnTheScreen();
+    expect(mockFabIcon).toBe('plus');
     await act(async () => mockFabOnPress());
     expect(await screen.findByTestId('comment-input')).toBeOnTheScreen();
   });

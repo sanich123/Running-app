@@ -36,7 +36,7 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/(protected)/${whereToPush}/${whosId}`)}
+      onPress={() => push(`/${whereToPush}/${whosId}`)}
       disabled={isFollowersError || isFollowersLoading || isFollowingsLoading || isFollowingsError}
       borderless
       style={{ borderRadius: 8 }}>

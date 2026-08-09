@@ -9,7 +9,7 @@ export default function CommentAddBtn() {
     <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 100 }}>
       <FAB
         testID="floatingBtn"
-        icon="pencil"
+        icon="plus"
         onPress={() => {
           dispatch(setIdOfUpdatingComment(''));
           dispatch(setIsShowingTextInput(true));

@@ -1,5 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { BAD_REQUEST } from '@T/mocks/mock-requests';
 import { mockStore } from '@T/utils/mock-store';
@@ -44,6 +44,6 @@ describe('Profile media photos', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />);
     await user.press(await screen.findByText(new RegExp(PROFILE_MEDIA.english.label)));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/media-grid/someUserId');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.mediaGrid}/someUserId`);
   });
 });

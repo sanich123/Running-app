@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { TextInput, useTheme } from 'react-native-paper';
+import { FONT_FAMILIES } from '@const/fonts';
 import { setManualDistance, setManualHours, setManualMinutes } from '@R/slices/manual-activity/manual-activity';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -13,13 +14,20 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { colors } = useTheme();
+  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
 
   return (
     <View style={styles.inputWrapper}>
       <TextInput
         testID={INPUT_DISTANCE_ID}
         mode="outlined"
-        style={[{ width: '33%' }, (isDisabledWhileSending || isDisabled) && { opacity: 0.5 }]}
+        style={[styles.input, { backgroundColor: colors.surface }, shouldBeDisabled && styles.disabledInput]}
+        contentStyle={styles.content}
+        outlineStyle={styles.outline}
+        outlineColor={colors.outlineVariant}
+        activeOutlineColor={colors.primary}
+        textColor={colors.onSurface}
         label={INPUTS_DISTANCE_TIME[language].distanceLabel}
         placeholder={INPUTS_DISTANCE_TIME[language].distancePlaceholder}
         inputMode="numeric"
@@ -29,12 +37,17 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
           setDistance(distance);
           dispatch(setManualDistance(distance));
         }}
-        disabled={isDisabledWhileSending || isDisabled}
+        disabled={shouldBeDisabled}
       />
       <TextInput
         mode="outlined"
         testID={INPUT_HOURS_ID}
-        style={[{ width: '33%' }, (isDisabledWhileSending || isDisabled) && { opacity: 0.5 }]}
+        style={[styles.input, { backgroundColor: colors.surface }, shouldBeDisabled && styles.disabledInput]}
+        contentStyle={styles.content}
+        outlineStyle={styles.outline}
+        outlineColor={colors.outlineVariant}
+        activeOutlineColor={colors.primary}
+        textColor={colors.onSurface}
         label={INPUTS_DISTANCE_TIME[language].hoursLabel}
         placeholder={INPUTS_DISTANCE_TIME[language].hoursPlaceholder}
         inputMode="numeric"
@@ -44,12 +57,17 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
           setHours(hours);
           dispatch(setManualHours(hours));
         }}
-        disabled={isDisabledWhileSending || isDisabled}
+        disabled={shouldBeDisabled}
       />
       <TextInput
         mode="outlined"
         testID={INPUT_MINUTES_ID}
-        style={[{ width: '33%' }, (isDisabledWhileSending || isDisabled) && { opacity: 0.5 }]}
+        style={[styles.input, { backgroundColor: colors.surface }, shouldBeDisabled && styles.disabledInput]}
+        contentStyle={styles.content}
+        outlineStyle={styles.outline}
+        outlineColor={colors.outlineVariant}
+        activeOutlineColor={colors.primary}
+        textColor={colors.onSurface}
         label={INPUTS_DISTANCE_TIME[language].minutesLabel}
         placeholder={INPUTS_DISTANCE_TIME[language].minutesPlaceholder}
         inputMode="numeric"
@@ -59,7 +77,7 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
           setMinutes(minutes);
           dispatch(setManualMinutes(minutes));
         }}
-        disabled={isDisabledWhileSending || isDisabled}
+        disabled={shouldBeDisabled}
       />
     </View>
   );
@@ -70,9 +88,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 13,
-    paddingRight: 10,
-    marginRight: 15,
-    marginTop: 10,
+    gap: 8,
+    marginTop: 12,
   },
+  input: { flex: 1, minWidth: 0, minHeight: 52, fontSize: 15 },
+  content: { fontFamily: FONT_FAMILIES.regular },
+  outline: { borderRadius: 8 },
+  disabledInput: { opacity: 0.7 },
 });

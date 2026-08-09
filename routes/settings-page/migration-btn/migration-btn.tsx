@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import SettingsRow from '../settings-row/settings-row';
 
@@ -14,7 +14,7 @@ export default function MigrationBtn() {
       icon="run"
       title={isRussian ? 'Перенести активности из Strava' : 'Migrate from Strava'}
       description={isRussian ? 'Импортируйте историю тренировок' : 'Import your workout history'}
-      onPress={() => push('/(protected)/migration')}
+      onPress={() => push(`/${ROUTES.migration}`)}
     />
   ) : null;
 }

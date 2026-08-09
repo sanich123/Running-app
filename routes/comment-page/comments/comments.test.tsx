@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react-native';
-import { LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
 import { mockStore } from '@T/utils/mock-store';
@@ -8,9 +8,10 @@ import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import Comments from './comments';
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
+const mockPathname = `/${ROUTES.home}/${ROUTES.activity}/someActivityId`;
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
-  usePathname: () => '/home/activity/someActivityId',
+  usePathname: () => mockPathname,
 }));
 
 describe('Comments', () => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
-import { STATUSES } from '@const/enums';
+import { ROUTES, STATUSES } from '@const/enums';
 import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { saveFinishedActivity } from '@R/slices/activity/activity';
 import { setActivityStatus } from '@R/slices/location/location';
@@ -80,7 +80,7 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
         if (activityStatus === STATUSES.paused) {
           dispatch(resetManualActivitySlice());
           dispatch(resetAdditionaInfoActivitySlice());
-          push('/(protected)/manual-activity');
+          push(`/${ROUTES.manualActivity}`);
         }
       }}
       disabled={isDisabled}>

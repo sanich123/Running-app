@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, Platform, ScrollView, StyleSheet } from 'react-native';
 import { Chip, Card, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
@@ -6,6 +6,17 @@ import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { getTypesByYear } from './util';
 import type { YearsAndTypes, YearsAndTypesPickerProps } from './types';
 import type { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
+
+export function scrollYearsByWheel(event: {
+  currentTarget: { clientWidth: number; scrollLeft: number; scrollWidth: number };
+  deltaY: number;
+}) {
+  const { currentTarget, deltaY } = event;
+
+  if (currentTarget.scrollWidth > currentTarget.clientWidth && deltaY) {
+    currentTarget.scrollLeft += deltaY;
+  }
+}
 
 export default function YearTypePicker({
   setSelectedYear,
@@ -28,34 +39,38 @@ export default function YearTypePicker({
             <Text variant="labelLarge" style={[styles.sectionLabel, { color: colors.onSurfaceVariant }]}>
               {isRussian ? 'Год' : 'Year'}
             </Text>
-            <FlatList
-              data={availableYearsAndTypes?.slice().sort((a: YearsAndTypes, b: YearsAndTypes) => +b.year - +a.year)}
-              renderItem={({ item: { year }, index }) => (
-                <Chip
-                  compact
-                  mode="outlined"
-                  style={[styles.chip, { marginLeft: index ? 8 : 0, borderColor: colors.outlineVariant }]}
-                  key={year}
-                  selected={+year === selectedYear}
-                  showSelectedOverlay
-                  selectedColor={colors.onPrimaryContainer}
-                  textStyle={styles.chipText}
-                  onPress={() => {
-                    const typesInSelectedYear = getTypesByYear({
-                      yearsAndTypes: availableYearsAndTypes,
-                      selectedYear: +year,
-                    });
-                    if (!typesInSelectedYear?.includes(selectedType)) {
-                      setSelectedType(`${typesInSelectedYear?.[0]}`);
-                    }
-                    setSelectedYear(+year);
-                  }}>
-                  <Text variant="titleMedium">{year}</Text>
-                </Chip>
-              )}
+            <ScrollView
               horizontal
+              contentContainerStyle={styles.yearList}
               showsHorizontalScrollIndicator={false}
-            />
+              {...(Platform.OS === 'web' ? { onWheel: scrollYearsByWheel } : {})}>
+              {availableYearsAndTypes
+                ?.slice()
+                .sort((a: YearsAndTypes, b: YearsAndTypes) => +b.year - +a.year)
+                .map(({ year }, index) => (
+                  <Chip
+                    compact
+                    mode="outlined"
+                    style={[styles.chip, { marginLeft: index ? 8 : 0, borderColor: colors.outlineVariant }]}
+                    key={year}
+                    selected={+year === selectedYear}
+                    showSelectedOverlay
+                    selectedColor={colors.onPrimaryContainer}
+                    textStyle={styles.chipText}
+                    onPress={() => {
+                      const typesInSelectedYear = getTypesByYear({
+                        yearsAndTypes: availableYearsAndTypes,
+                        selectedYear: +year,
+                      });
+                      if (!typesInSelectedYear?.includes(selectedType)) {
+                        setSelectedType(`${typesInSelectedYear?.[0]}`);
+                      }
+                      setSelectedYear(+year);
+                    }}>
+                    <Text variant="titleMedium">{year}</Text>
+                  </Chip>
+                ))}
+            </ScrollView>
             <Text
               variant="labelLarge"
               style={[styles.sectionLabel, styles.sportLabel, { color: colors.onSurfaceVariant }]}>
@@ -98,6 +113,7 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 14, paddingVertical: 14 },
   sectionLabel: { fontWeight: '700', marginBottom: 8 },
   sportLabel: { marginTop: 16 },
+  yearList: { alignItems: 'center' },
   chip: { borderRadius: 10 },
   chipText: { fontSize: 13, fontWeight: '700' },
 });

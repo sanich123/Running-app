@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
 import type { UseFormHandleSubmit } from 'react-hook-form';
+import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import {
   useLoginUserMutation,
@@ -23,6 +24,7 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
   const [registerUser, { isLoading }] = useRegisterUserMutation();
   const [loginUser, { isLoading: isLoginingUser }] = useLoginUserMutation();
   const [resetPassword] = useResetPasswordMutation();
+  const isSubmitting = isLoginingUser || isLoading;
 
   return (
     <Button
@@ -32,7 +34,7 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
       labelStyle={{ fontFamily: FONT_FAMILIES.semiBold }}
       style={{ borderRadius: 8, marginTop: 8 }}
       accessibilityRole="button"
-      loading={isLoginingUser || isLoading}
+      loading={isSubmitting}
       disabled={isDisabledWhenLogining}
       onPress={handleSubmit(async ({ email, password }: EmailPasswordData) => {
         dispatch(setIsDisabledWhenLogining(true));
@@ -48,7 +50,7 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
         if (pageState === SignInPageStates.login) {
           return await loginUser({ email, password })
             .unwrap()
-            .then(() => replace('/'))
+            .then(() => replace(ROUTES.root))
             .catch((error) => errorToast('Во время авторизации произошла ошибка: ', error))
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }
@@ -60,9 +62,9 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }
       })}>
-      {pageState === SignInPageStates.register && REGISTER_BTN[language].register}
-      {pageState === SignInPageStates.login && LOGIN_BTN[language].login}
-      {pageState === SignInPageStates.reset && RESET_BTN[language].login}
+      {!isSubmitting && pageState === SignInPageStates.register && REGISTER_BTN[language].register}
+      {!isSubmitting && pageState === SignInPageStates.login && LOGIN_BTN[language].login}
+      {!isSubmitting && pageState === SignInPageStates.reset && RESET_BTN[language].login}
     </Button>
   );
 }

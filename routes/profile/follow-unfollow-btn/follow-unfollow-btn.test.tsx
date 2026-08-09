@@ -71,4 +71,30 @@ describe('Delete friend btn', () => {
     await user.press(await screen.findByText(FOLLOW_UNFOLLOW_BTN.english.unfollow));
     await waitFor(() => expect(deletedUrl).toContain('/friend/d228dbe1-c95a-406a-847e-1de9fdfe0145'));
   });
+
+  it('shows only the loader while following a user', async () => {
+    const user = userEvent.setup();
+    let resolveRequest!: () => void;
+    const requestPending = new Promise<void>((resolve) => {
+      resolveRequest = resolve;
+    });
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
+    server.use(
+      http.post(`${BASE_URL}/friend/someWrongFriendId`, async () => {
+        await requestPending;
+        return HttpResponse.json({ id: 'friend-row-id' }, { status: 201 });
+      }),
+    );
+
+    await renderWithProviders(<FollowUnfollowBtn friendId="someWrongFriendId" />);
+    const button = await screen.findByText(FOLLOW_UNFOLLOW_BTN.english.follow);
+    await user.press(button);
+
+    await waitFor(() => expect(screen.getByRole('button')).toBeDisabled());
+    expect(screen.queryByText(FOLLOW_UNFOLLOW_BTN.english.follow)).toBeNull();
+
+    resolveRequest();
+    await waitFor(() => expect(screen.getByText(FOLLOW_UNFOLLOW_BTN.english.follow)).toBeOnTheScreen());
+  });
 });

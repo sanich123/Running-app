@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Platform, StyleSheet, View, Text } from 'react-native';
-import { Button } from 'react-native-paper';
+import { ActivityIndicator, Button, useTheme } from 'react-native-paper';
 import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorHandler } from '@U/error-handler';
@@ -14,15 +14,18 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
   const { language } = useAppSelector(({ language }) => language);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const [isLoading, setIsLoading] = useState(false);
+  const { colors } = useTheme();
+  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
 
   return (
     <>
       {Platform.OS === 'web' ? (
-        <label htmlFor="image-video-uploader">
+        <label htmlFor="image-video-uploader" style={styles.webUploadLabel}>
           <input
             style={{ display: 'none' }}
             id="image-video-uploader"
             type="file"
+            disabled={shouldBeDisabled}
             onChange={async (e) => {
               if (userId && e.target.files) {
                 const fileSrc = e.target.files[0];
@@ -43,14 +46,24 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
               }
             }}
           />
-          <View>
-            <Text>{isLoading ? UPLOAD_PHOTO_BTN[language].isLoading : UPLOAD_PHOTO_BTN[language].isInitial}</Text>
+          <View
+            style={[
+              styles.webUploadButton,
+              { borderColor: colors.outlineVariant },
+              shouldBeDisabled && styles.disabledButton,
+            ]}>
+            {isLoading ? (
+              <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+              <Text style={{ color: colors.onSurface }}>{UPLOAD_PHOTO_BTN[language].isInitial}</Text>
+            )}
           </View>
         </label>
       ) : (
         <Button
           mode="outlined"
           icon="upload-outline"
+          compact
           onPress={async () => {
             setIsDisabled(true);
             setIsLoading(true);
@@ -73,10 +86,12 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
               setIsLoading(false);
             }
           }}
-          style={styles.uploadBtn}
+          style={[styles.uploadBtn, { borderColor: colors.outlineVariant }, shouldBeDisabled && styles.disabledButton]}
+          contentStyle={styles.content}
+          textColor={colors.onSurface}
           loading={isLoading}
-          disabled={isDisabled || isDisabledWhileSending}>
-          {isLoading ? UPLOAD_PHOTO_BTN[language].isLoading : UPLOAD_PHOTO_BTN[language].isInitial}
+          disabled={shouldBeDisabled}>
+          {!isLoading && UPLOAD_PHOTO_BTN[language].isInitial}
         </Button>
       )}
     </>
@@ -85,10 +100,23 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
 
 const styles = StyleSheet.create({
   uploadBtn: {
-    display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 15,
-    width: '45%',
+    borderRadius: 8,
+    flex: 1,
+    marginTop: 12,
   },
+  content: { minHeight: 42 },
+  disabledButton: { opacity: 0.7 },
+  webUploadButton: {
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
+    justifyContent: 'center',
+    marginTop: 12,
+    minHeight: 42,
+    paddingHorizontal: 12,
+    width: '100%',
+  },
+  webUploadLabel: { display: 'flex', flex: 1 },
 });

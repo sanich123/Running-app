@@ -29,15 +29,15 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/(protected)/${ROUTES.mediaGrid}/${userId}`)}
+      onPress={() => push(`/${ROUTES.mediaGrid}/${userId}`)}
       disabled={isError || isLoading}
       borderless>
       <View
         style={[
           styles.layout,
           {
-            backgroundColor: colors.onPrimary,
-            width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+            backgroundColor: colors.background,
+            width: width < MAX_MOBILE_WIDTH ? '100%' : MAX_MOBILE_WIDTH,
             marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
           },
           (isLoading || isError) && styles.isInCenter,

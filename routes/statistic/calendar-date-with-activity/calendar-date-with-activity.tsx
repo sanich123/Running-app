@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme, Text } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import type { CalendarDateProps, CalendarDateWithActivityProps } from '../calendar/types';
 import type { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
@@ -32,9 +33,9 @@ export default function CalendarDateWithActivity({
           onPress={() => {
             if (!isTitle) {
               if (activities.length === 1) {
-                push(`/(protected)/activity/${activities[0].id}`);
+                push(`/${ROUTES.activity}/${activities[0].id}`);
               } else {
-                push(`/(protected)/activities-list/${activities.map(({ id }) => `ids=${id}`).join('&')}`);
+                push(`/${ROUTES.activitiesList}/${activities.map(({ id }) => `ids=${id}`).join('&')}`);
               }
             }
           }}>

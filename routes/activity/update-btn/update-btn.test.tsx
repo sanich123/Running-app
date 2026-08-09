@@ -1,4 +1,5 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { ROUTES } from '@const/enums';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -20,6 +21,6 @@ describe('update btn', () => {
     expect(mockStore.getState().activity.activityId).toBe(MOCK_SERVER_ACTIVITY.id);
     expect(mockStore.getState().manualActivity.isEditingActivity).toBe(true);
     expect(mockStore.getState().additionalInfoActivity.title).toBe(MOCK_SERVER_ACTIVITY.title);
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/manual-activity');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.manualActivity}`);
   });
 });

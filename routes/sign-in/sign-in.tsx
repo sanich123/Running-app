@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
+import Constants from 'expo-constants';
 import * as Linking from 'expo-linking';
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Surface } from 'react-native-paper';
+import { Surface, Text, useTheme } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
+import { ROUTES } from '@const/enums';
 import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
 import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
@@ -23,12 +25,13 @@ import type { EmailPasswordData } from '@R/services/authentication/types';
 export default function SignIn() {
   const { email, password, pageState } = useAppSelector(({ logining }) => logining);
   const { isNeedToShowConfirmEmailInput } = useAppSelector(({ auth }) => auth);
+  const { colors } = useTheme();
   const { control, handleSubmit, watch } = useForm<EmailPasswordData>({
     defaultValues: { email, password },
     mode: 'onSubmit',
     reValidateMode: 'onChange',
   });
-  const { replace } = useRouter();
+  const { push, replace } = useRouter();
   const url = Linking.useURL();
   const [verifyToken] = useLazyVerifyConfigQuery();
 
@@ -40,7 +43,7 @@ export default function SignIn() {
           .unwrap()
           .then((success) => {
             showCrossPlatformToast(success.toString());
-            replace('/');
+            replace(ROUTES.root);
           })
           .catch((error) => errorToast('', error));
       }
@@ -73,6 +76,23 @@ export default function SignIn() {
         <LoginRegisterBtn handleSubmit={handleSubmit} />
         <LoginRegisterNavigation />
       </Surface>
+      <View style={styles.footer}>
+        <Text variant="bodySmall" style={styles.version}>
+          Версия приложения {Constants.expoConfig?.version ?? '—'}
+        </Text>
+        <View style={styles.links}>
+          <Pressable onPress={() => push(`/${ROUTES.privacyPolicy}`)} accessibilityRole="link">
+            <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>
+              Политика конфиденциальности
+            </Text>
+          </Pressable>
+          <Pressable onPress={() => push(`/${ROUTES.legalInformation}`)} accessibilityRole="link">
+            <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>
+              Юридическая информация
+            </Text>
+          </Pressable>
+        </View>
+      </View>
     </CrossPlatformLayout>
   );
 }
@@ -87,5 +107,23 @@ const styles = StyleSheet.create({
     width: '94%',
     maxWidth: 351,
     marginHorizontal: 'auto',
+  },
+  footer: {
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 24,
+    paddingHorizontal: 20,
+  },
+  version: {
+    opacity: 0.65,
+  },
+  links: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  link: {
+    color: '#3A9561',
+    fontSize: 13,
+    textAlign: 'center',
   },
 });

@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button } from 'react-native-paper';
+import { Button, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { resetFinishedActivity } from '@R/slices/activity/activity';
 import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
@@ -13,13 +15,15 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
   const { replace } = useRouter();
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ language }) => language);
+  const { colors } = useTheme();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
+  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
 
   function declineActivity() {
     dispatch(resetAdditionaInfoActivitySlice());
     dispatch(resetFinishedActivity());
     dispatch(resetManualActivitySlice());
-    replace('/');
+    replace(ROUTES.root);
   }
 
   return (
@@ -27,9 +31,12 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
       <Button
         icon="delete-outline"
         mode="outlined"
+        compact
         onPress={() => setIsConfirmDialogVisible(true)}
-        style={{ marginTop: 15 }}
-        disabled={isDisabled || isDisabledWhileSending}>
+        style={[styles.button, { borderColor: colors.error }, shouldBeDisabled && styles.disabledButton]}
+        contentStyle={styles.content}
+        textColor={colors.error}
+        disabled={shouldBeDisabled}>
         {DECLINE_BTN[language].cancel}
       </Button>
       <ConfirmDialog
@@ -46,3 +53,9 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  button: { alignSelf: 'flex-start', borderRadius: 8, marginTop: 12 },
+  content: { minHeight: 40 },
+  disabledButton: { opacity: 0.7 },
+});

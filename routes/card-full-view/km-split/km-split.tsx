@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text, Divider } from 'react-native-paper';
+import { Divider, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { formatDurationMinsSecs } from '@U/time-formatter';
 import { KM_SPLITS } from './const';
@@ -14,57 +14,61 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: LastKmSp
     ? Math.min(...validSplits.map(({ lastKilometerDuration }) => lastKilometerDuration))
     : 0;
   const { language } = useAppSelector(({ language }) => language);
+  const { colors } = useTheme();
 
   return (
     <>
-      <Text variant="titleLarge" style={styles.title}>
+      <Text variant="titleLarge" style={[styles.title, { color: colors.onSurface }]}>
         {KM_SPLITS[language].splits}
       </Text>
       <View style={styles.headerRow}>
-        <View style={{ flex: 2 }}>
-          <Text variant="labelMedium" style={styles.headerText}>
+        <View style={styles.kmColumn}>
+          <Text variant="labelMedium" style={[styles.headerText, { color: colors.onSurfaceVariant }]}>
             {KM_SPLITS[language].km}
           </Text>
         </View>
-        <View style={{ flex: 16 }}>
-          <Text variant="labelMedium" style={styles.headerText}>
+        <View style={styles.paceColumn}>
+          <Text variant="labelMedium" style={[styles.headerText, { color: colors.onSurfaceVariant }]}>
             {KM_SPLITS[language].pace}
           </Text>
         </View>
-        <View style={{ display: 'flex' }}>
-          <Text variant="labelMedium" style={styles.headerText}>
+        <View style={styles.elevationColumn}>
+          <Text variant="labelMedium" style={[styles.headerText, { color: colors.onSurfaceVariant }]}>
             {KM_SPLITS[language].elev}
           </Text>
         </View>
       </View>
       {validSplits.map(({ lastKilometerAltitude, lastKilometerDuration }, index) => (
         <Fragment key={`${lastKilometerAltitude}/${lastKilometerDuration}/${index}`}>
-          <View
-            style={{ flex: 1, flexDirection: 'row', width: '100%', paddingTop: 5 }}
-            key={`${index}/${lastKilometerAltitude * lastKilometerDuration}`}>
-            <View style={{ flex: 2 }}>
-              <Text style={{ width: '100%' }} variant="bodyLarge">
+          <View style={styles.splitRow} key={`${index}/${lastKilometerAltitude * lastKilometerDuration}`}>
+            <View style={styles.kmColumn}>
+              <Text style={{ color: colors.onSurface }} variant="bodyLarge">
                 {index + 1}
               </Text>
             </View>
-            <View style={{ flex: 3, justifyContent: 'center' }}>
-              <Text style={{ flex: 1, width: '100%' }} variant="bodyLarge">
+            <View style={styles.durationColumn}>
+              <Text style={{ color: colors.onSurface }} variant="bodyLarge">
                 {formatDurationMinsSecs(lastKilometerDuration)}
               </Text>
             </View>
 
-            <View style={{ flex: 12 }}>
-              <View
-                style={{ flex: 1, backgroundColor: 'red', width: `${(fastestKm / lastKilometerDuration) * 100}%` }}
-              />
+            <View style={styles.barColumn}>
+              <View style={[styles.barTrack, { backgroundColor: colors.surfaceVariant }]}>
+                <View
+                  style={[
+                    styles.bar,
+                    { backgroundColor: colors.primary, width: `${(fastestKm / lastKilometerDuration) * 100}%` },
+                  ]}
+                />
+              </View>
             </View>
-            <View style={{ flex: 3 }}>
-              <Text style={{ flex: 1, marginLeft: 'auto' }} variant="bodyLarge">
+            <View style={styles.elevationColumn}>
+              <Text style={{ color: colors.onSurface }} variant="bodyLarge">
                 {Number.isFinite(lastKilometerAltitude) ? lastKilometerAltitude.toFixed(1) : '—'}
               </Text>
             </View>
           </View>
-          <Divider />
+          <Divider style={{ backgroundColor: colors.outlineVariant }} />
         </Fragment>
       ))}
     </>
@@ -72,7 +76,15 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: LastKmSp
 }
 
 const styles = StyleSheet.create({
-  title: { fontWeight: '800', paddingBottom: 16, paddingTop: 12 },
-  headerRow: { flex: 1, flexDirection: 'row', width: '100%', paddingBottom: 12 },
+  title: { fontWeight: '800', paddingBottom: 16 },
+  headerRow: { flexDirection: 'row', width: '100%', paddingBottom: 4 },
   headerText: { fontWeight: '800' },
+  splitRow: { alignItems: 'center', flexDirection: 'row', minHeight: 38, width: '100%' },
+  kmColumn: { flex: 2 },
+  paceColumn: { flex: 15 },
+  durationColumn: { flex: 3 },
+  barColumn: { flex: 12, justifyContent: 'center', paddingHorizontal: 8 },
+  elevationColumn: { alignItems: 'flex-end', flex: 3 },
+  barTrack: { borderRadius: 4, height: 8, overflow: 'hidden', width: '100%' },
+  bar: { borderRadius: 4, height: '100%' },
 });

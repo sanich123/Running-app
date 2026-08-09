@@ -1,5 +1,6 @@
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import {
   addPhotoUrls,
@@ -59,7 +60,7 @@ export default function UpdateBtn() {
           dispatch(setManualDistance(activity?.distance / 1000));
           dispatch(setManualHours(getHoursMinutesFromMilliseconds(activity?.duration).hours));
           dispatch(setManualMinutes(getHoursMinutesFromMilliseconds(activity?.duration).minutes));
-          push(`/(protected)/manual-activity`);
+          push(`/${ROUTES.manualActivity}`);
         } else {
           errorToast('Не удалось загрузить данные об активности', error);
         }

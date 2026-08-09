@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react-native';
 import { http } from 'msw';
+import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { ERROR_COMPONENT_TEST_ID } from '@Routes/error-component/const';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
@@ -10,9 +11,10 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ProfilePage from './profile';
 
+const mockPathname = `/${ROUTES.profile}`;
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.userId }),
-  usePathname: () => '/profile',
+  usePathname: () => mockPathname,
 }));
 jest.mock('@Routes/avatar/showable/showable', () => {
   const { View } = jest.requireActual('react-native');

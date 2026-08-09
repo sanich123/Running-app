@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react-native';
+import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { COMMENT_BTN_TEST_ID } from '@Routes/card/comment-btn/const';
 import { CARD_DELETE_BTN_TEST_ID } from '@Routes/card/delete-btn/const';
@@ -9,9 +10,10 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CardBtns from './btns';
 
+const mockPathname = `/${ROUTES.home}/${ROUTES.activity}/someActivityId`;
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
-  usePathname: () => '/home/activity/someActivityId',
+  usePathname: () => mockPathname,
 }));
 
 describe('Card btns', () => {

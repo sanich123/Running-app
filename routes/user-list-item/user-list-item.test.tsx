@@ -1,5 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/language/language';
 import { FOLLOW_UNFOLLOW_BTN } from '@Routes/profile/follow-unfollow-btn/const';
@@ -84,6 +84,6 @@ describe('User list item', () => {
       />,
     );
     await user.press(await screen.findByText(new RegExp(MOCK_PROFILE.name)));
-    expect(mockPush).toHaveBeenCalledWith('/(protected)/profile/selected-user');
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.profile}/selected-user`);
   });
 });
