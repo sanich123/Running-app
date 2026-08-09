@@ -4052,17 +4052,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/geojson@npm:*, @types/geojson@npm:^7946.0.10, @types/geojson@npm:^7946.0.7":
-  version: 7946.0.16
-  resolution: "@types/geojson@npm:7946.0.16"
-  checksum: 10c0/1ff24a288bd5860b766b073ead337d31d73bdc715e5b50a2cee5cb0af57a1ed02cc04ef295f5fa68dc40fe3e4f104dd31282b2b818a5ba3231bc1001ba084e3c
-  languageName: node
-  linkType: hard
-
 "@types/geojson@npm:7946.0.8":
   version: 7946.0.8
   resolution: "@types/geojson@npm:7946.0.8"
   checksum: 10c0/add7dc52bf551260e8cad132f70ed868fb28722a1f633bd05846fc79e5e8652f1d2cecd0a309498b1d4bd6850ac45f4535924b43aeee1aced56b014408022ad6
+  languageName: node
+  linkType: hard
+
+"@types/geojson@npm:^7946.0.10, @types/geojson@npm:^7946.0.7":
+  version: 7946.0.16
+  resolution: "@types/geojson@npm:7946.0.16"
+  checksum: 10c0/1ff24a288bd5860b766b073ead337d31d73bdc715e5b50a2cee5cb0af57a1ed02cc04ef295f5fa68dc40fe3e4f104dd31282b2b818a5ba3231bc1001ba084e3c
   languageName: node
   linkType: hard
 
@@ -4135,12 +4135,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mapbox-gl@npm:^2.7.21":
-  version: 2.7.21
-  resolution: "@types/mapbox-gl@npm:2.7.21"
+"@types/mapbox-gl@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "@types/mapbox-gl@npm:3.5.0"
   dependencies:
-    "@types/geojson": "npm:*"
-  checksum: 10c0/51bcf2a0481a53a8f8148af9b7f0f9e4d1be2ebdd9390194e4e4a0f8c8375446004c8624e67b4a255384cf0a0ae0c5b9eb99fa865acadca0ac0b0f5853f3f957
+    mapbox-gl: "npm:*"
+  checksum: 10c0/9817e3fd72ac2f97ea7ca497df2bb05e418bfa72a94a36273f2cd317485f547c218e6590084ce88286c1cae8b15be922c20c9919b0e35d2727415a254c25fda9
   languageName: node
   linkType: hard
 
@@ -10805,7 +10805,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mapbox-gl@npm:^3.28.1":
+"mapbox-gl@npm:*, mapbox-gl@npm:^3.28.1":
   version: 3.28.1
   resolution: "mapbox-gl@npm:3.28.1"
   checksum: 10c0/bdf1d92eed6e7322d75b2e0eb2d874f68e967d69c56ecfd1916177f6d9acb3fb94fdc51965846563e83ad655592b761b0ccacfbd2e9699a63aca6dd833c174c4
@@ -13343,7 +13343,7 @@ __metadata:
     "@turf/distance": "npm:^7.4.0"
     "@types/aes-js": "npm:^3.1.4"
     "@types/jest": "npm:^30.0.0"
-    "@types/mapbox-gl": "npm:^2.7.21"
+    "@types/mapbox-gl": "npm:^3.5.0"
     "@types/react": "npm:~19.2.18"
     "@types/validator": "npm:^13.15.10"
     aes-js: "npm:^3.1.2"
