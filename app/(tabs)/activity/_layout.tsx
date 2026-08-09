@@ -21,6 +21,7 @@ export default function ActivityStack() {
       <Stack.Screen
         name={ROUTES.index}
         options={{
+          headerShown: true,
           headerLeft: () => (
             <Suspense fallback={null}>
               <LazyActivityCloseBtn />
