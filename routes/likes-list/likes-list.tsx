@@ -1,16 +1,20 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, FlatList, StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Divider, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Divider, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
-import ErrorComponent from '@Routes/error-component/error-component';
-import UserListItem from '@Routes/user-list-item/user-list-item';
+import { useAppSelector } from '@R/typed-hooks';
+import { EMPTY_STATE_COPY } from '@S/empty-state/const';
+import EmptyState from '@S/empty-state/empty-state';
+import ErrorComponent from '@S/error-component/error-component';
+import UserListItem from '@S/user-list-item/user-list-item';
 import useRefresh from '@U/hooks/use-refresh';
 
 export default function LikesList() {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
+  const { language } = useAppSelector(({ language }) => language);
   const { id: activityId } = useLocalSearchParams();
   const {
     isLoading,
@@ -53,17 +57,14 @@ export default function LikesList() {
                   user_id={profile?.user_id}
                 />
               )}
-              ListEmptyComponent={
-                <View style={{ alignItems: 'center' }}>
-                  <Text variant="headlineLarge">There are no users, who liked your activity</Text>
-                </View>
-              }
               ItemSeparatorComponent={() => <Divider />}
             />
           ) : (
-            <View style={{ alignItems: 'center' }}>
-              <Text variant="headlineLarge">There are no users, who liked your activity</Text>
-            </View>
+            <EmptyState
+              icon="heart-outline"
+              title={EMPTY_STATE_COPY[language].likes.title}
+              message={EMPTY_STATE_COPY[language].likes.message}
+            />
           )
         ) : isError ? (
           <ErrorComponent error={error} refetch={refetch} />

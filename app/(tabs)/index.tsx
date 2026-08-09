@@ -4,9 +4,9 @@ import { useTheme } from 'react-native-paper';
 import { LABELS } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import FeedHeaderTitle from '@Routes/feed-header-title/feed-header-title';
 import Feed from '@Routes/home-page/home-page';
-import UsersSettingsIcons from '@Routes/users-settings-icons/users-settings-icons';
+import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
+import UsersSettingsIcons from '@S/users-settings-icons/users-settings-icons';
 
 export default function HomePage() {
   const { colors } = useTheme();

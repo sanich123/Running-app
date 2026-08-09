@@ -31,24 +31,14 @@ export const auth = createSlice({
         state.isNeedToShowConfirmEmailInput = false;
       },
     );
-    builder.addMatcher(
-      authenticationApi.endpoints.verifyConfig.matchFulfilled,
-      (state, { payload: { id, accessToken, access, appVersion, refreshToken, refresh } }) => {
-        state.accessToken = accessToken ?? access ?? '';
-        if (refreshToken ?? refresh) state.refreshToken = refreshToken ?? refresh ?? '';
-        state.userId = id;
-        state.appVersion = appVersion;
-        state.isNeedToShowConfirmEmailInput = false;
-      },
-    );
+
     builder.addMatcher(authenticationApi.endpoints.registerUser.matchFulfilled, (state) => {
       state.isNeedToShowConfirmEmailInput = true;
     });
     builder.addMatcher(
       authenticationApi.endpoints.confirmSignUpCodeByEmail.matchFulfilled,
-      (state, { payload: { id, accessToken, access, refreshToken, refresh } }) => {
-        state.accessToken = accessToken ?? access ?? '';
-        state.refreshToken = refreshToken ?? refresh ?? '';
+      (state, { payload: { id, accessToken } }) => {
+        state.accessToken = accessToken ?? '';
         state.isNeedToShowConfirmEmailInput = false;
         state.userId = id;
       },

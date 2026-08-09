@@ -4,15 +4,14 @@ import { getCurrentPositionAsync, useBackgroundPermissions, useForegroundPermiss
 // @ts-expect-error package has no types
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
 import { Platform, StyleSheet, View } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
+import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { setLastPosition } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import BatteryOptimizationModal from '@Routes/activity/battery-optimization-modal/battery-optimization-modal';
-import MapKmSplit from '@Routes/activity/map/map-km-split/map-km-split';
-import MapRouteLine from '@Routes/activity/map/map-route-line/map-route-line';
+import MapKmSplit from '@S/display-activity-map/map-km-split/map-km-split';
+import MapRouteLine from '@S/display-activity-map/map-route-line/map-route-line';
 import { errorToast } from '@S/error-toast/error-toast';
-import LocationIndicator from '../location-indicator/location-indicator';
 import LocationPermissions from './location-permissions/location-permissions';
 import MapNavIcon from './map-nav-icon/map-nav-icon';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -22,7 +21,7 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
   const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);
   const { userId } = useAppSelector(({ auth }) => auth);
   const { colors } = useTheme();
-  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const { data: profile, isLoading: isProfileLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [foregroundPermissionStatus, requestForegroundPermission] = useForegroundPermissions();
   const [backgroundPermissionStatus, requestBackgroundPermission] = useBackgroundPermissions();
@@ -38,6 +37,8 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
   const isReadyToShowLocationOnMap = Boolean(
     hasLocationPermissions && (Platform.OS !== 'android' || isLocationEnabled),
   );
+  const isPermissionDataLoading =
+    isProfileLoading || foregroundPermissionStatus === null || backgroundPermissionStatus === null;
   useEffect(() => {
     setIsReadyToRecordLocation(hasLocationPermissions);
   }, [hasLocationPermissions, setIsReadyToRecordLocation]);
@@ -76,9 +77,12 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
 
   return (
     <>
-      {isReadyToShowLocationOnMap ? (
+      {isPermissionDataLoading ? (
+        <View style={[styles.permissionLoading, { backgroundColor: colors.background }]}>
+          <ActivityIndicator size="large" testID="activity-permissions-loading" />
+        </View>
+      ) : isReadyToShowLocationOnMap ? (
         <View style={styles.mapWrapper}>
-          <LocationIndicator />
           <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
             <UserLocation
               visible={false}
@@ -93,14 +97,7 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
               followZoomLevel={zoomLevel}
               animationMode="flyTo"
             />
-            {locationsWithPauses[0]?.length > 1
-              ? locationsWithPauses.map((locations) => {
-                  if (locations?.length > 1) {
-                    const key = `${locations[0].coords.longitude}, ${locations[locations.length - 1].coords.latitude}`;
-                    return <MapRouteLine key={key} locations={locations} />;
-                  }
-                })
-              : null}
+            <MapRouteLine locations={locationsWithPauses} />
             <MapKmSplit kilometresSplit={kilometresSplit} />
           </MapView>
           <View style={styles.mapActions}>
@@ -189,5 +186,6 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
 
 const styles = StyleSheet.create({
   mapWrapper: { flex: 1, position: 'relative' },
+  permissionLoading: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   mapActions: { bottom: 24, gap: 6, position: 'absolute', right: 12 },
 });

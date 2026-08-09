@@ -4,11 +4,15 @@ import { useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
-const LazyAvatarIconEditable = lazy(() => import('@Routes/avatar/editable/editable'));
-const LazyGenderBtns = lazy(() => import('@Routes/save-activity-page/gender-btns/gender-btns'));
-const LazyInputBio = lazy(() => import('@Routes/save-activity-page/input-bio/input-bio'));
-const LazyInputsNameSurname = lazy(() => import('@Routes/save-activity-page/inputs-name-surname/inputs-name-surname'));
-const LazyInputsWeightCity = lazy(() => import('@Routes/save-activity-page/inputs-weight-city/inputs-weight-city'));
+const LazyAvatarIconEditable = lazy(() => import('@Routes/profile/profile-settings/avatar-editable/editable'));
+const LazyGenderBtns = lazy(() => import('@Routes/profile/profile-settings/gender-btns/gender-btns'));
+const LazyInputBio = lazy(() => import('@Routes/profile/profile-settings/input-bio/input-bio'));
+const LazyInputsNameSurname = lazy(
+  () => import('@Routes/profile/profile-settings/inputs-name-surname/inputs-name-surname'),
+);
+const LazyInputsWeightCity = lazy(
+  () => import('@Routes/profile/profile-settings/inputs-weight-city/inputs-weight-city'),
+);
 
 export default function ProfileSettings() {
   const { colors } = useTheme();

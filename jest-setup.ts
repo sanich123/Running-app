@@ -139,7 +139,13 @@ jest.mock('expo-video', () => {
 });
 
 jest.mock('expo-location', () => ({
+  Accuracy: { High: 6 },
   getCurrentPositionAsync: () => Promise.resolve({ coords: { latitude: 0, longitude: 0 } }),
+  getLastKnownPositionAsync: () => Promise.resolve({ coords: { latitude: 0, longitude: 0 }, timestamp: Date.now() }),
+  hasStartedLocationUpdatesAsync: () => Promise.resolve(false),
+  startLocationUpdatesAsync: () => Promise.resolve(),
+  stopLocationUpdatesAsync: () => Promise.resolve(),
+  watchPositionAsync: () => Promise.resolve({ remove: jest.fn() }),
   useForegroundPermissions: () => [jest.fn()],
   useBackgroundPermissions: () => [jest.fn()],
   PermissionStatus: { UNDETERMINED: 'UNDETERMINED', DENIED: 'DENIED' },

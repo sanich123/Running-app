@@ -6,6 +6,7 @@ import {
   setDistance,
   setDuration,
   setIsTooMuchSpeed,
+  setTooMuchSpeed,
   setLastKm,
   setLastKmAltitude,
   setLastKmDuration,
@@ -14,7 +15,7 @@ import {
   setLocationsWhenContinued,
 } from '@R/slices/location/location';
 import { store } from '@R/store';
-import { getDistance, getSpeedInMinsInKm } from '../location-utils';
+import { getDistance, getMaxTrackingSpeedForSport, getSpeedInKmPerHour, getSpeedInMinsInKm } from '../location-utils';
 import type { LocationObject } from 'expo-location';
 
 export function getMetricsTaskManager(currentPosition: LocationObject) {
@@ -56,6 +57,16 @@ export function saveMetricsToStoreTaskManager(
   currentAltitude: number,
   currentDistance: number,
 ) {
+  const { sport } = store.getState().additionalInfoActivity;
+  const speedInKmPerHour = getSpeedInKmPerHour(currentDistance, currentDuration);
+  const maxSpeedInKmPerHour = getMaxTrackingSpeedForSport(sport);
+
+  if (speedInKmPerHour > maxSpeedInKmPerHour) {
+    store.dispatch(setIsTooMuchSpeed(true));
+    store.dispatch(setTooMuchSpeed(speedInKmPerHour));
+    return false;
+  }
+
   if (currentKilometer >= 1000) {
     store.dispatch(addDurationAndLocationToKmSplits(currentPosition));
     store.dispatch(resetLastKm());
@@ -73,4 +84,6 @@ export function saveMetricsToStoreTaskManager(
   store.dispatch(setLastPosition(currentPosition));
   store.dispatch(setLocationsFromBackground(currentPosition));
   store.dispatch(setIsTooMuchSpeed(false));
+  store.dispatch(setTooMuchSpeed(0));
+  return true;
 }

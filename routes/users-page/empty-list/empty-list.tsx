@@ -1,6 +1,6 @@
-import { View } from 'react-native';
-import { Text } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
+import { EMPTY_STATE_COPY } from '@S/empty-state/const';
+import EmptyState from '@S/empty-state/empty-state';
 import { EMPTY_USERS_LIST } from './const';
 
 export default function EmptyUsersList({ isInitial }: { isInitial: boolean }) {
@@ -10,15 +10,7 @@ export default function EmptyUsersList({ isInitial }: { isInitial: boolean }) {
   return (
     <>
       {!isInitial && (
-        <View
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            margin: 10,
-          }}>
-          <Text variant="titleMedium">{message}</Text>
-        </View>
+        <EmptyState icon="account-search-outline" title={message} message={EMPTY_STATE_COPY[language].users.message} />
       )}
     </>
   );

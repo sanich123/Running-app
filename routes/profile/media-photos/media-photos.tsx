@@ -6,10 +6,10 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
-import { CustomImage } from '@Routes/custom-image/custom-image';
+import { CustomImage } from '@S/custom-image/custom-image';
 import { errorExtracter } from '@U/error-handler';
 import { PROFILE_MEDIA } from './const';
-import type { PhotoVideoType } from '@Routes/card/types';
+import type { PhotoVideoType } from '@S/card/types';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { isLoading, isError, data, error } = useGetAllActivityPhotosByUserIdQuery(

@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { AvatarEditableTestIds } from '@Routes/avatar/editable/const';
-import { AvatarShowableIcons } from '@Routes/avatar/showable/const';
-import { CustomImage } from '@Routes/custom-image/custom-image';
+import { AvatarEditableTestIds } from '@Routes/profile/profile-settings/avatar-editable/const';
+import { AvatarShowableIcons } from '@S/avatar/showable/const';
+import { CustomImage } from '@S/custom-image/custom-image';
 
 export default function ProfileAvatar() {
   const { settings } = useAppSelector(({ profile }) => profile);

@@ -3,8 +3,8 @@ import { StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
-import DisplayActivityMap from '@Routes/display-activity-map/display-activity-map';
-import ErrorComponent from '@Routes/error-component/error-component';
+import DisplayActivityMap from '@S/display-activity-map/display-activity-map';
+import ErrorComponent from '@S/error-component/error-component';
 
 export default function MapPage() {
   const { colors } = useTheme();

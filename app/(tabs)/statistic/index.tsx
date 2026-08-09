@@ -1,16 +1,18 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
+import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
-import { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
-import { MONTH_STATISTICS } from '@Routes/statistic/month-metric/const';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
+import { EMPTY_STATE_COPY } from '@S/empty-state/const';
+import EmptyState from '@S/empty-state/empty-state';
+import { MONTH_STATISTICS } from '@S/month-metric/const';
 
 const LazyCharts = lazy(() => import('@Routes/statistic/charts/charts'));
-const LazyErrorComponent = lazy(() => import('@Routes/error-component/error-component'));
-const LazyMonthStatisticsMetrics = lazy(() => import('@Routes/statistic/month-metric/month-metric'));
+const LazyErrorComponent = lazy(() => import('@S/error-component/error-component'));
+const LazyMonthStatisticsMetrics = lazy(() => import('@S/month-metric/month-metric'));
 const LazyYearTypePicker = lazy(() => import('@Routes/statistic/year-type-picker/year-type-picker'));
 
 export default function Statistics() {
@@ -88,7 +90,15 @@ export default function Statistics() {
             </Suspense>
           </>
         ) : (
-          <Text variant="titleLarge">{`${language === LANGUAGES.english ? 'There are no activities, so there are no statistics' : 'Если нет активностей - то нет и статистики :('}`}</Text>
+          <EmptyState
+            icon="chart-line-variant"
+            title={EMPTY_STATE_COPY[language].activities.title}
+            message={
+              isRussian
+                ? 'Добавьте первую активность, и здесь появятся ваши показатели.'
+                : 'Add your first activity to see your progress here.'
+            }
+          />
         )
       ) : isError ? (
         <Suspense fallback={<ActivityIndicator size="large" />}>

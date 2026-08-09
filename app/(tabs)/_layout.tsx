@@ -4,13 +4,11 @@ import { Platform, View } from 'react-native';
 import { Tabs, usePathname, useRouter } from 'expo-router';
 import { Icon, useTheme } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
-import { setActivityStatus } from '@R/slices/location/location';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-const LazyAvatarShowable = lazy(() => import('@Routes/avatar/showable/showable'));
+import { useAppSelector } from '@R/typed-hooks';
+const LazyAvatarShowable = lazy(() => import('@S/avatar/showable/showable'));
 
 export default function TabLayout() {
   const { replace } = useRouter();
-  const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { colors } = useTheme();
   const pathname = usePathname();
@@ -38,10 +36,9 @@ export default function TabLayout() {
     const isTracking = activityStatus === STATUSES.started || activityStatus === STATUSES.continued;
 
     if (isTracking && !isActivityRoute) {
-      dispatch(setActivityStatus(STATUSES.paused));
       replace(`/${ROUTES.activity}`);
     }
-  }, [activityStatus, dispatch, isActivityRoute, replace]);
+  }, [activityStatus, isActivityRoute, replace]);
 
   if (Platform.OS === 'ios') {
     return (

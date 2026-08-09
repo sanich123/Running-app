@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Link } from 'expo-router';
-import { Text, useTheme } from 'react-native-paper';
+import { Button, Icon, Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
@@ -43,31 +43,30 @@ export default function LocationPermissions({
         />
       )}
       {isSuccess && !profile && (
-        <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 10 }}>
-          <Text variant="bodyMedium" style={{ textAlign: 'justify' }}>
-            Вы зарегистрированы, но у вас нет профиля пользователя. Для того, чтобы записывать и сохранять активности,
-            надо добавить имя и фотографию
-          </Text>
-          <Link
-            testID="create-profile-link"
-            href={`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`}
-            style={{ marginTop: 10 }}>
-            Перейти и создать профиль пользователя
-          </Link>
-        </View>
-      )}
-      {isSuccess && !profile && (
-        <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 10 }}>
-          <Text variant="bodyMedium" style={{ textAlign: 'justify' }}>
-            Вы зарегистрированы, но у вас нет профиля пользователя. Для того, чтобы записывать и сохранять активности,
-            надо добавить имя и фотографию
-          </Text>
-          <Link
-            testID="create-profile-link"
-            href={`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`}
-            style={{ marginTop: 10 }}>
-            Перейти и создать профиль пользователя
-          </Link>
+        <View
+          style={[
+            styles.profileNotice,
+            { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant },
+          ]}>
+          <View style={[styles.profileNoticeIcon, { backgroundColor: colors.primary }]}>
+            <Icon source="account-alert-outline" size={24} color={colors.onPrimary} />
+          </View>
+          <View style={styles.profileNoticeContent}>
+            <Text variant="titleSmall" style={{ color: colors.onPrimaryContainer }}>
+              Профиль пользователя не создан
+            </Text>
+            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+              Добавьте имя и фотографию, чтобы записывать и сохранять активности.
+            </Text>
+            <Link
+              testID="create-profile-link"
+              href={`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`}
+              asChild>
+              <Button mode="contained-tonal" compact icon="account-plus-outline" style={styles.profileNoticeButton}>
+                Создать профиль
+              </Button>
+            </Link>
+          </View>
         </View>
       )}
       <BackgroundLocationModal
@@ -80,4 +79,22 @@ export default function LocationPermissions({
 
 const styles = StyleSheet.create({
   container: { alignItems: 'stretch', flex: 1, justifyContent: 'center', padding: 16 },
+  profileNotice: {
+    alignItems: 'center',
+    borderRadius: 18,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+    padding: 14,
+  },
+  profileNoticeIcon: {
+    alignItems: 'center',
+    borderRadius: 14,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  profileNoticeContent: { flex: 1, gap: 4 },
+  profileNoticeButton: { alignSelf: 'flex-start', marginTop: 8 },
 });

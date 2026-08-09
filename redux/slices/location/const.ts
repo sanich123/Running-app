@@ -4,6 +4,7 @@ import type { LocationInitialState } from './types';
 export const LOCATION_INITIAL_STATE: LocationInitialState = {
   activityStatus: STATUSES.initial,
   isTooMuchSpeed: false,
+  tooMuchSpeed: 0,
   isAppShutedByPhone: false,
   isMapVisible: true,
   initialLocation: null,

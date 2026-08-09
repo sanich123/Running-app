@@ -3,8 +3,8 @@ import { useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useGetAllTimeStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
-import { MONTH_STATISTICS } from '@Routes/statistic/month-metric/const';
-import MonthStatisticsMetrics from '@Routes/statistic/month-metric/month-metric';
+import { MONTH_STATISTICS } from '@S/month-metric/const';
+import MonthStatisticsMetrics from '@S/month-metric/month-metric';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 
 export default function ProfileStatistics({ whosProfile }: { whosProfile: string }) {

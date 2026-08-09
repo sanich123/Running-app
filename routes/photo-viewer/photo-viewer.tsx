@@ -5,8 +5,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
-import { CustomImage } from '@Routes/custom-image/custom-image';
-import VideoViewer from '@Routes/video-viewer/video-viewer';
+import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
+import { CustomImage } from '@S/custom-image/custom-image';
 
 const VIDEO_EXTENSIONS = ['mp4', 'avi', 'm4v'];
 

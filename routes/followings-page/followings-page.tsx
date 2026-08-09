@@ -1,15 +1,19 @@
-import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { FlatList, Platform, StyleSheet, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Divider, Text } from 'react-native-paper';
+import { ActivityIndicator, Divider } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
-import ErrorComponent from '@Routes/error-component/error-component';
-import UserListItem from '@Routes/user-list-item/user-list-item';
+import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
+import { EMPTY_STATE_COPY } from '@S/empty-state/const';
+import EmptyState from '@S/empty-state/empty-state';
+import ErrorComponent from '@S/error-component/error-component';
+import UserListItem from '@S/user-list-item/user-list-item';
 import useRefresh from '@U/hooks/use-refresh';
 
 export default function ListOfFollowing() {
   const { width } = useWindowDimensions();
+  const { language } = useAppSelector(({ language }) => language);
   const { id: userId } = useLocalSearchParams();
   const { isLoading, isSuccess, error, isError, data: users, refetch } = useGetYouFollowUsersByUserIdQuery(`${userId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);
@@ -43,9 +47,11 @@ export default function ListOfFollowing() {
           )}
           contentContainerStyle={{ flexGrow: 1 }}
           ListEmptyComponent={
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text variant="headlineMedium">Nobody is following you</Text>
-            </View>
+            <EmptyState
+              icon="account-arrow-right-outline"
+              title={EMPTY_STATE_COPY[language].followings.title}
+              message={EMPTY_STATE_COPY[language].followings.message}
+            />
           }
           ItemSeparatorComponent={() => <Divider />}
         />

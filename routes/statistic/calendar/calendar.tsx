@@ -4,7 +4,7 @@ import { ActivityIndicator, Card, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
-import ErrorComponent from '@Routes/error-component/error-component';
+import ErrorComponent from '@S/error-component/error-component';
 import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
 import { getDaysOfTheMonthWithNames } from './util';
 import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';

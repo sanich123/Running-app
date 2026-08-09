@@ -3,8 +3,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { CustomImage } from '@Routes/custom-image/custom-image';
-import type { PhotoVideoType } from '@Routes/card/types';
+import { CustomImage } from '@S/custom-image/custom-image';
+import type { PhotoVideoType } from '@S/card/types';
 
 export default function MediaGridImage({
   url,

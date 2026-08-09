@@ -5,7 +5,7 @@ import { useTheme } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import FeedHeaderTitle from '@Routes/feed-header-title/feed-header-title';
+import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 const LazyProfileEditBtn = lazy(() => import('@Routes/profile/edit-btn/edit-btn'));
 const LazyProfileUpdateBtn = lazy(() => import('@Routes/profile/update-btn/update-btn'));
 

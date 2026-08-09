@@ -4,15 +4,15 @@ import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Card, FAB, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
-import LikeBtn from '@Routes/card/like-btn/like-btn';
-import { LikesSize } from '@Routes/card/likes/const';
-import Likes from '@Routes/card/likes/likes';
-import MediaList from '@Routes/card/media-list/media-list';
-import ErrorComponent from '@Routes/error-component/error-component';
-import UserNameSurname from '@Routes/user-name-surname/user-name-surname';
-import UserSportDate from '@Routes/user-sport-date/user-sport-date';
-import CommentInput from './comment-input/comment-input';
-import Comments from './comments/comments';
+import UserNameSurname from '@Routes/comment-page/user-name-surname/user-name-surname';
+import UserSportDate from '@Routes/comment-page/user-sport-date/user-sport-date';
+import LikeBtn from '@S/card/like-btn/like-btn';
+import { LikesSize } from '@S/card/likes/const';
+import Likes from '@S/card/likes/likes';
+import MediaList from '@S/card/media-list/media-list';
+import CommentInput from '@S/comments/comment-input/comment-input';
+import Comments from '@S/comments/comments/comments';
+import ErrorComponent from '@S/error-component/error-component';
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 export default function CommentFullViewPage() {

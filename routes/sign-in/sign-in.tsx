@@ -15,7 +15,6 @@ import { emailValidation, passwordValidation } from '@S/custom-text-input/types'
 import { errorToast } from '@S/error-toast/error-toast';
 import { showCrossPlatformToast } from '@U/custom-toast';
 import { SignInPageStates } from '@U/validate-email-password';
-import ConfirmEmailCode from './confirm-email-code/confirm-email-code';
 import { SIGN_IN_FIELDS } from './const';
 import Intro from './intro/intro';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
@@ -24,9 +23,8 @@ import type { EmailPasswordData } from '@R/services/authentication/types';
 
 export default function SignIn() {
   const { email, password, pageState } = useAppSelector(({ logining }) => logining);
-  const { isNeedToShowConfirmEmailInput } = useAppSelector(({ auth }) => auth);
   const { colors } = useTheme();
-  const { control, handleSubmit, watch } = useForm<EmailPasswordData>({
+  const { control, handleSubmit } = useForm<EmailPasswordData>({
     defaultValues: { email, password },
     mode: 'onSubmit',
     reValidateMode: 'onChange',
@@ -72,7 +70,6 @@ export default function SignIn() {
             returnKeyLabel="send"
           />
         )}
-        {isNeedToShowConfirmEmailInput && <ConfirmEmailCode watch={watch} />}
         <LoginRegisterBtn handleSubmit={handleSubmit} />
         <LoginRegisterNavigation />
       </Surface>

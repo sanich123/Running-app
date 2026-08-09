@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { useDeleteUserMutation } from '@R/services/authentication/authentication';
@@ -20,25 +20,28 @@ export default function DeleteAccountBtn() {
   const { language } = useAppSelector(({ language }) => language);
   const { userId } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
-  const [deleteAccount] = useDeleteUserMutation();
+  const [deleteAccount, { isLoading: isDeleting }] = useDeleteUserMutation();
   const { replace } = useRouter();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
 
   async function deleteUserHandler() {
-    return await deleteAccount({ userId })
-      .unwrap()
-      .then(async () => {
-        dispatch(resetProfileSlice());
-        dispatch(resetActivitySlice());
-        dispatch(resetMainFeedSlice());
-        dispatch(resetAuthSlice());
-        dispatch(resetNetworkSlice());
-        dispatch(resetLanguageSlice());
-        dispatch(resetLocationSlice());
-        replace(`/${ROUTES.signIn}`);
-      })
-      .catch((error) => errorToast('Не удалось удалить аккаунт', error))
-      .finally();
+    if (isDeleting) return;
+
+    try {
+      await deleteAccount({ userId }).unwrap();
+      dispatch(resetProfileSlice());
+      dispatch(resetActivitySlice());
+      dispatch(resetMainFeedSlice());
+      dispatch(resetAuthSlice());
+      dispatch(resetNetworkSlice());
+      dispatch(resetLanguageSlice());
+      dispatch(resetLocationSlice());
+      replace(`/${ROUTES.signIn}`);
+    } catch (error) {
+      errorToast('Не удалось удалить аккаунт', error);
+    } finally {
+      setIsConfirmDialogVisible(false);
+    }
   }
 
   return (
@@ -47,21 +50,18 @@ export default function DeleteAccountBtn() {
         icon="delete-outline"
         title={DELETE_ACCOUNT[language].action}
         destructive
-        onPress={async () => {
-          if (Platform.OS !== 'web') setIsConfirmDialogVisible(true);
-          else await deleteUserHandler();
-        }}
+        onPress={() => setIsConfirmDialogVisible(true)}
       />
       <ConfirmDialog
         visible={isConfirmDialogVisible}
         title={DELETE_ACCOUNT[language].deletingAccount}
         message={DELETE_ACCOUNT[language].conscentDeleting}
         confirmText={DELETE_ACCOUNT[language].sure}
-        onDismiss={() => setIsConfirmDialogVisible(false)}
-        onConfirm={async () => {
-          setIsConfirmDialogVisible(false);
-          await deleteUserHandler();
+        loading={isDeleting}
+        onDismiss={() => {
+          if (!isDeleting) setIsConfirmDialogVisible(false);
         }}
+        onConfirm={deleteUserHandler}
       />
     </View>
   );

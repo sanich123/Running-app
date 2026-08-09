@@ -26,9 +26,9 @@ export interface VerifyTokenRequest {
 
 export interface VerifyTokenResponse {
   id: string;
-  appVersion: string;
-  accessToken: string;
+  appVersion?: string;
+  accessToken?: string;
+  access?: string;
   refreshToken?: string;
   refresh?: string;
-  access?: string;
 }

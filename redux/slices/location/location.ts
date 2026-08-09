@@ -74,6 +74,9 @@ export const location = createSlice({
     setIsTooMuchSpeed: (state, action) => {
       state.isTooMuchSpeed = action.payload;
     },
+    setTooMuchSpeed: (state, action) => {
+      state.tooMuchSpeed = action.payload;
+    },
     resetLocationsFromBackground: (state) => {
       state.locationsFromBackground = [];
       state.duration = 0;
@@ -82,6 +85,8 @@ export const location = createSlice({
       state.kilometresSplit = [];
       state.currentPace = 0;
       state.locationsWithPauses = [];
+      state.isTooMuchSpeed = false;
+      state.tooMuchSpeed = 0;
     },
     resetLocationSlice: () => {
       return LOCATION_INITIAL_STATE;
@@ -110,6 +115,7 @@ export const {
   setDurationWithPauses,
   setLastPosition,
   setIsTooMuchSpeed,
+  setTooMuchSpeed,
   resetLocationSlice,
 } = location.actions;
 

@@ -4,7 +4,7 @@ import { TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import type { CalendarDateProps, CalendarDateWithActivityProps } from '../calendar/types';
-import type { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
+import type { SPORTS_BTNS_VALUES } from '@const/sports';
 
 export default function CalendarDateWithActivity({
   isWeekend,

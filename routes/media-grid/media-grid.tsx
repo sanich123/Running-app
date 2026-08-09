@@ -5,13 +5,17 @@ import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
-import ErrorComponent from '@Routes/error-component/error-component';
+import { useAppSelector } from '@R/typed-hooks';
+import { EMPTY_STATE_COPY } from '@S/empty-state/const';
+import EmptyState from '@S/empty-state/empty-state';
+import ErrorComponent from '@S/error-component/error-component';
 import MediaGridImage from './image/image';
-import type { PhotoVideoType } from '@Routes/card/types';
+import type { PhotoVideoType } from '@S/card/types';
 
 export default function MediaGrid() {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
+  const { language } = useAppSelector(({ language }) => language);
   const { id: userId } = useLocalSearchParams();
   const [take, setTake] = useState(28);
   const gridWidth = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
@@ -60,7 +64,13 @@ export default function MediaGrid() {
             numColumns={4}
             horizontal={false}
           />
-        ) : null
+        ) : (
+          <EmptyState
+            icon="image-multiple-outline"
+            title={EMPTY_STATE_COPY[language].photos.title}
+            message={EMPTY_STATE_COPY[language].photos.message}
+          />
+        )
       ) : isError ? (
         <ErrorComponent error={error} refetch={refetch} />
       ) : null}

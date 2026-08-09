@@ -5,7 +5,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { getTypesByYear } from './util';
 import type { YearsAndTypes, YearsAndTypesPickerProps } from './types';
-import type { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
+import type { SPORTS_BTNS_VALUES } from '@const/sports';
 
 export function scrollYearsByWheel(event: {
   currentTarget: { clientWidth: number; scrollLeft: number; scrollWidth: number };

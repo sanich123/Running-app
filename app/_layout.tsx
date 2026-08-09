@@ -25,15 +25,16 @@ import { COLORS } from '@const/theme-colors';
 import { toastConfig } from '@const/toast-config';
 import { persistor, store } from '@R/store';
 import { useAppSelector } from '@R/typed-hooks';
-import FeedHeaderTitle from '@Routes/feed-header-title/feed-header-title';
+import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import useAppInitialization from '@U/hooks/use-app-initialization';
 
 const LazySaveBtn = lazy(() => import('@Routes/activity/save-btn/save-btn'));
-const LazyUsersSettingsIcons = lazy(() => import('@Routes/users-settings-icons/users-settings-icons'));
+const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-settings-icons'));
 
 const PUBLIC_ROUTES = new Set([
   `/${ROUTES.signIn}`,
+  `/${ROUTES.confirmEmailCode}`,
   `/${ROUTES.privacyPolicy}`,
   `/${ROUTES.legalInformation}`,
   `/${ROUTES.maintenance}`,

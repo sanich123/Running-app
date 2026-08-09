@@ -3,9 +3,9 @@ import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
-import Card from '@Routes/card/card';
-import ErrorComponent from '@Routes/error-component/error-component';
+import Card from '@S/card/card';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
+import ErrorComponent from '@S/error-component/error-component';
 import KmSplit from './km-split/km-split';
 import Metrics from './metrics/metrics';
 

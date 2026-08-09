@@ -16,10 +16,10 @@ import {
   saveWeight,
 } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import AvatarShowable from '@Routes/avatar/showable/showable';
-import ErrorComponent from '@Routes/error-component/error-component';
 import ProfileMediaPhotos from '@Routes/profile/media-photos/media-photos';
-import FollowUnfollowBtn from './follow-unfollow-btn/follow-unfollow-btn';
+import AvatarShowable from '@S/avatar/showable/showable';
+import ErrorComponent from '@S/error-component/error-component';
+import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
 import ProfileStatistics from './statistics/profile-statistics';
 import { USERS_VARIANT } from './users-counter/const';
 import UsersCounter from './users-counter/users-counter';

@@ -6,13 +6,13 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES } from '@const/enums';
 import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
-import ErrorComponent from '@Routes/error-component/error-component';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
+import ErrorComponent from '@S/error-component/error-component';
+import { MONTH_STATISTICS } from '@S/month-metric/const';
+import MonthStatisticsMetrics from '@S/month-metric/month-metric';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import CalendarActivities from '../calendar/calendar';
 import MonthTypesChips from '../chips/month-types-chips';
-import { MONTH_STATISTICS } from '../month-metric/const';
-import MonthStatisticsMetrics from '../month-metric/month-metric';
 import YearMonthTitle from '../year-month-title/year-month-title';
 
 export default function MonthStatistics() {

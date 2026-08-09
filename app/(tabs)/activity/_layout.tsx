@@ -4,7 +4,7 @@ import { Stack } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import FeedHeaderTitle from '@Routes/feed-header-title/feed-header-title';
+import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 
 const LazyActivityCloseBtn = lazy(() => import('@Routes/activity/close-btn/close-btn'));

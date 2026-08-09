@@ -2,7 +2,7 @@ import { MarkerView } from '@rnmapbox/maps';
 import { StyleSheet, View } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { CustomImage } from '@Routes/custom-image/custom-image';
+import { CustomImage } from '@S/custom-image/custom-image';
 
 export default function MapNavIcon({ profilePhoto }: { profilePhoto?: string }) {
   const { colors } = useTheme();

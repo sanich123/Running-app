@@ -1,15 +1,22 @@
 import { useEffect, useState } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Animated, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
 import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { saveFinishedActivity } from '@R/slices/activity/activity';
-import { setActivityStatus } from '@R/slices/location/location';
+import {
+  resetLocationsFromBackground,
+  setActivityStatus,
+  setEmptyLastArrayWhenPaused,
+} from '@R/slices/location/location';
 import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { errorToast } from '@S/error-toast/error-toast';
+import useGetCurrentLocation from '@U/hooks/use-get-current-location';
+import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
-import { ACTIVITY_START_BTN_TEST_ID, RESPONSE_STATUS, ACTIVITY_START_BTN, STOP_ICON } from './const';
+import { ACTIVITY_START_BTN_TEST_ID, ACTIVITY_START_BTN, STOP_ICON } from './const';
 
 export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordLocation: boolean }) {
   const dispatch = useAppDispatch();
@@ -25,6 +32,8 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
   const { push } = useRouter();
   const [pressScale] = useState(() => new Animated.Value(1));
   const [pulse] = useState(() => new Animated.Value(0));
+  const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
+  const { isLoading: isGettingLocation } = useGetCurrentLocation(isReadyToRecordLocation);
   const isRecording = activityStatus === STATUSES.started || activityStatus === STATUSES.continued;
   const isFinishing = activityStatus === STATUSES.paused;
 
@@ -47,12 +56,66 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
   }, [isRecording, pulse]);
 
   const responseIcon = {
-    [STATUSES.initial]: ACTIVITY_START_BTN[language].start,
     [STATUSES.started]: <Icon testID={STOP_ICON} source="pause" size={42} color={colors.onPrimary} />,
     [STATUSES.paused]: <Icon testID={STOP_ICON} source="stop" size={42} color={colors.onError} />,
     [STATUSES.continued]: <Icon testID={STOP_ICON} source="pause" size={42} color={colors.onPrimary} />,
   };
-  const isDisabled = !isReadyToRecordLocation && activityStatus === STATUSES.initial;
+  const isInitialLocationLoading =
+    activityStatus === STATUSES.initial && (isGettingLocation || isTrackingActionInProgress);
+  const isDisabled = isTrackingActionInProgress || (activityStatus === STATUSES.initial && !isReadyToRecordLocation);
+
+  const saveCurrentActivity = () => {
+    dispatch(
+      saveFinishedActivity({
+        duration,
+        distance,
+        locations: getReducedLocations(locations),
+        kilometresSplit,
+        speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
+      }),
+    );
+  };
+
+  const handlePress = async () => {
+    if (isDisabled) {
+      return;
+    }
+
+    setIsTrackingActionInProgress(true);
+    try {
+      if (activityStatus === STATUSES.initial) {
+        await startLocationTracking();
+        saveCurrentActivity();
+        dispatch(resetLocationsFromBackground());
+        dispatch(setActivityStatus(STATUSES.started));
+        return;
+      }
+
+      await stopLocationTracking();
+      saveCurrentActivity();
+
+      if (isRecording) {
+        dispatch(setActivityStatus(STATUSES.paused));
+        dispatch(setEmptyLastArrayWhenPaused());
+        return;
+      }
+
+      dispatch(setActivityStatus(STATUSES.initial));
+      dispatch(resetLocationsFromBackground());
+      dispatch(resetManualActivitySlice());
+      dispatch(resetAdditionaInfoActivitySlice());
+      push(`/${ROUTES.manualActivity}`);
+    } catch (error) {
+      errorToast(
+        activityStatus === STATUSES.initial
+          ? 'Не удалось запустить отслеживание геопозиции'
+          : 'Не удалось остановить отслеживание геопозиции',
+        error,
+      );
+    } finally {
+      setIsTrackingActionInProgress(false);
+    }
+  };
 
   return (
     <TouchableRipple
@@ -66,23 +129,7 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
       onPressOut={() =>
         Animated.spring(pressScale, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 8 }).start()
       }
-      onPress={() => {
-        dispatch(
-          saveFinishedActivity({
-            duration,
-            distance,
-            locations: getReducedLocations(locations),
-            kilometresSplit,
-            speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
-          }),
-        );
-        dispatch(setActivityStatus(RESPONSE_STATUS[activityStatus]));
-        if (activityStatus === STATUSES.paused) {
-          dispatch(resetManualActivitySlice());
-          dispatch(resetAdditionaInfoActivitySlice());
-          push(`/${ROUTES.manualActivity}`);
-        }
-      }}
+      onPress={handlePress}
       disabled={isDisabled}>
       <Animated.View style={[styles.buttonScale, { transform: [{ scale: pressScale }] }]}>
         {isRecording && (
@@ -110,15 +157,27 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
           ]}>
           {activityStatus === STATUSES.initial ? (
             <>
-              <Icon
-                source={isDisabled ? 'lock-outline' : 'play'}
-                size={34}
-                color={isDisabled ? colors.onSurfaceDisabled : colors.onPrimary}
-              />
+              {isInitialLocationLoading ? (
+                <View style={styles.locationLoadingIcon}>
+                  <ActivityIndicator
+                    testID="location-loading"
+                    color={isDisabled ? colors.onSurfaceDisabled : colors.onPrimary}
+                    size="small"
+                  />
+                </View>
+              ) : (
+                <Icon
+                  source={isDisabled ? 'lock-outline' : 'play'}
+                  size={34}
+                  color={isDisabled ? colors.onSurfaceDisabled : colors.onPrimary}
+                />
+              )}
               <Text style={[styles.startBtnText, { color: isDisabled ? colors.onSurfaceDisabled : colors.onPrimary }]}>
-                {responseIcon[activityStatus]}
+                {ACTIVITY_START_BTN[language].start}
               </Text>
             </>
+          ) : isTrackingActionInProgress ? (
+            <ActivityIndicator testID="tracking-action-loading" color={colors.onPrimary} size="large" />
           ) : (
             responseIcon[activityStatus]
           )}
@@ -164,5 +223,11 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: 1.5,
     marginTop: -2,
+  },
+  locationLoadingIcon: {
+    alignItems: 'center',
+    height: 38,
+    justifyContent: 'center',
+    width: 38,
   },
 });

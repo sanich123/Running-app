@@ -1,4 +1,4 @@
-import { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
+import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { LANGUAGES } from '../../../constants/enums';
 
 export const ACTIVITY_CLOSE_BTN = {

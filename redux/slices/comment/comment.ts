@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { ProfileType } from '@Routes/card/types';
+import type { ProfileType } from '@S/card/types';
 
 export const comment = createSlice({
   name: 'comment',

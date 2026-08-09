@@ -4,6 +4,20 @@ import point from 'turf-point';
 import { POWERHOURS_COLORS } from '@const/theme-colors';
 import type { LocationObject } from 'expo-location';
 
+/**
+ * Upper bounds for the four sports available on the tracking screen.
+ * They intentionally leave room for a realistic sprint/descent, while
+ * filtering the most common GPS jumps.
+ */
+export const MAX_TRACKING_SPEED_KMH = {
+  walk: 15,
+  run: 30,
+  bike: 60,
+  hike: 20,
+} as const;
+
+const DEFAULT_MAX_TRACKING_SPEED_KMH = MAX_TRACKING_SPEED_KMH.run;
+
 /** Mapbox Static Images rejects URLs above roughly 8 KB. Leave headroom for tokens and encoding. */
 export const MAX_STATIC_MAP_URL_LENGTH = 7600;
 const MAX_STATIC_MAP_LOCATIONS = 500;
@@ -32,6 +46,18 @@ export function getSpeedInMinsInKm(distance: number, time: number) {
     paceAsNumber = 0;
   }
   return { paceAsNumber, paceAsString };
+}
+
+export function getSpeedInKmPerHour(distance: number, time: number) {
+  if (!distance || !time || time <= 0) {
+    return 0;
+  }
+
+  return (distance / 1000) / (time / 3_600_000);
+}
+
+export function getMaxTrackingSpeedForSport(sport: string) {
+  return MAX_TRACKING_SPEED_KMH[sport as keyof typeof MAX_TRACKING_SPEED_KMH] ?? DEFAULT_MAX_TRACKING_SPEED_KMH;
 }
 
 export function getMapBoxImage(locations: LocationObject[]) {

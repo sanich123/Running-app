@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import AvatarShowable from '@Routes/avatar/showable/showable';
+import AvatarShowable from '@S/avatar/showable/showable';
 import { HOME_WELCOME_TEXT } from './const';
 
 export default function HomeWelcome() {

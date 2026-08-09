@@ -1,6 +1,9 @@
-import { expectComponentModule } from '@T/utils/component-contract';
-import * as componentModule from './label';
+import { render } from '@testing-library/react-native';
+import ChartValueLabel from './label';
 
-describe('label', () => {
-  it('exports a component', () => expectComponentModule(componentModule));
+describe('chart value label', () => {
+  it('renders the supplied chart value', async () => {
+    const { getByText } = await render(ChartValueLabel('42'));
+    expect(getByText('42')).toBeOnTheScreen();
+  });
 });

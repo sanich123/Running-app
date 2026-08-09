@@ -1,6 +1,6 @@
 import { useWindowDimensions } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
-import { CustomImage } from '@Routes/custom-image/custom-image';
+import { CustomImage } from '@S/custom-image/custom-image';
 
 interface PreviewImageProps {
   image: string;

@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 import { http } from 'msw';
 import { setUserId } from '@R/slices/auth/auth';
-import { ERROR_COMPONENT_TEST_ID } from '@Routes/error-component/const';
+import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
@@ -12,7 +12,7 @@ import Activities from './activities';
 
 const mockNextPage = jest.fn();
 
-jest.mock('@Routes/infinite-scroll-list/infinite-scroll-list', () => {
+jest.mock('@S/infinite-scroll-list/infinite-scroll-list', () => {
   const { Pressable, Text } = jest.requireActual('react-native');
   return function MockInfiniteScrollList({ dataToRender, nextPageCallback }: any) {
     mockNextPage.mockImplementation(nextPageCallback);

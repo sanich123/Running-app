@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react-native';
 import { http } from 'msw';
-import { ERROR_COMPONENT_TEST_ID } from '@Routes/error-component/const';
+import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
@@ -9,7 +9,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import CardFullView from './card-full-view';
 
 jest.mock('expo-router', () => ({ useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }) }));
-jest.mock('@Routes/card/card', () => {
+jest.mock('@S/card/card', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="full-view-card" />;
 });

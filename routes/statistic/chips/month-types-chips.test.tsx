@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react-native';
 import { http } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
-import { ERROR_COMPONENT_TEST_ID } from '@Routes/error-component/const';
+import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';

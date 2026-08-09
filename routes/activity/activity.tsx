@@ -1,22 +1,43 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Platform, StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { STATUSES } from '@const/enums';
-import { useAppSelector } from '@R/typed-hooks';
+import { setActivityStatus, setEmptyLastArrayWhenPaused, setIsAppShuted } from '@R/slices/location/location';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import IconChooseSport from '@Routes/activity/icon-choose-sport/icon-choose-sport';
 import Map from '@Routes/activity/map/map';
+import Metrics from '@Routes/activity/metrics/metrics';
 import PauseBtn from '@Routes/activity/pause-btn/pause-btn';
 import ShowMapBtn from '@Routes/activity/show-map-btn/show-map-btn';
 import StartBtn from '@Routes/activity/start-btn/start-btn';
-import Metrics from '@Routes/metrics/metrics';
-import useStartStopTracking from '@U/hooks/use-start-stop-tracking';
+import { errorToast } from '@S/error-toast/error-toast';
+import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 
 export default function Activity() {
+  const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
-  useStartStopTracking();
+  const shouldPauseRecoveredTracking = useRef(
+    activityStatus === STATUSES.started || activityStatus === STATUSES.continued,
+  );
+  const didPauseRecoveredTracking = useRef(false);
   const [isReadyToRecordLocation, setIsReadyToRecordLocation] = useState(false);
+
+  useEffect(() => {
+    if (!shouldPauseRecoveredTracking.current || didPauseRecoveredTracking.current) {
+      return;
+    }
+
+    didPauseRecoveredTracking.current = true;
+    stopLocationTracking()
+      .then(() => {
+        dispatch(setActivityStatus(STATUSES.paused));
+        dispatch(setEmptyLastArrayWhenPaused());
+        dispatch(setIsAppShuted(true));
+      })
+      .catch((error) => errorToast('Не удалось поставить отслеживание на паузу', error));
+  }, [dispatch]);
 
   return (
     <SafeAreaView style={[styles.layout, { backgroundColor: colors.surfaceVariant }]} edges={['bottom']}>

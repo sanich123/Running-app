@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react-native';
 import { http } from 'msw';
 import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
-import { ERROR_COMPONENT_TEST_ID } from '@Routes/error-component/const';
+import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
@@ -13,11 +13,11 @@ import Feed from './home-page';
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
-jest.mock('@Routes/infinite-scroll-list/infinite-scroll-list', () => {
+jest.mock('@S/infinite-scroll-list/infinite-scroll-list', () => {
   const { Text } = jest.requireActual('react-native');
   return ({ dataToRender }: any) => <Text>{dataToRender[0].title}</Text>;
 });
-jest.mock('@Routes/floating-btn/floating-btn', () => {
+jest.mock('@Routes/home-page/floating-btn/floating-btn', () => {
   const { Pressable } = jest.requireActual('react-native');
   return ({ onPressFn }: any) => <Pressable testID="feed-add-activity" onPress={onPressFn} />;
 });

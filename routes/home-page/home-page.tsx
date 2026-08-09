@@ -6,11 +6,11 @@ import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional
 import { resetFinishedActivity } from '@R/slices/activity/activity';
 import { resetManualActivitySlice, setIsManualAdding } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import EmptyActivitiesList from '@Routes/empty-activities-list/empty-activities-list';
-import ErrorComponent from '@Routes/error-component/error-component';
-import FloatingBtn from '@Routes/floating-btn/floating-btn';
-import InfiniteScrollList from '@Routes/infinite-scroll-list/infinite-scroll-list';
+import EmptyActivitiesList from '@Routes/home-page/empty-activities-list/empty-activities-list';
+import FloatingBtn from '@Routes/home-page/floating-btn/floating-btn';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
+import ErrorComponent from '@S/error-component/error-component';
+import InfiniteScrollList from '@S/infinite-scroll-list/infinite-scroll-list';
 
 export default function Feed() {
   const dispatch = useAppDispatch();

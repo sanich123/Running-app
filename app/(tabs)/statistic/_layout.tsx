@@ -5,8 +5,8 @@ import { useTheme } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import FeedHeaderTitle from '@Routes/feed-header-title/feed-header-title';
-const LazyUsersSettingsIcons = lazy(() => import('@Routes/users-settings-icons/users-settings-icons'));
+import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
+const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-settings-icons'));
 
 export default function StatisticsStack() {
   const { colors } = useTheme();

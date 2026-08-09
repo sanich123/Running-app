@@ -49,6 +49,7 @@ export enum ROUTES {
   routeIds = '[...ids]',
   photoUrl = '[photoUrl]',
   confirmEmailNotification = 'confirm-email-notification',
+  confirmEmailCode = 'confirm-email-code',
 }
 
 export const LABELS = {

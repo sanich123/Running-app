@@ -9,12 +9,13 @@ import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { SignInPageStates } from '@U/validate-email-password';
-import { LOGIN_BTN } from './const';
+import { LOGIN_BTN, REGISTER_BTN } from './const';
 import LoginRegisterBtn from './login-register-btn';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 
 const mockReplace = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) }));
+const mockPush = jest.fn();
+jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: mockReplace }) }));
 
 describe('Login btn', () => {
   let handleSubmit: UseFormHandleSubmit<EmailPasswordData>;
@@ -56,5 +57,21 @@ describe('Login btn', () => {
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', password: 'secure-password' }));
     expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
     expect(mockStore.getState().auth.userId).toBe('logged-user');
+  });
+
+  it('opens the email confirmation page instead of sending registration code inline', async () => {
+    const user = userEvent.setup();
+    const interactiveHandleSubmit = ((callback: (data: EmailPasswordData) => Promise<unknown>) => () =>
+      callback({
+        email: 'runner@example.test',
+        password: 'secure-password',
+      })) as UseFormHandleSubmit<EmailPasswordData>;
+    mockPush.mockClear();
+    mockStore.dispatch(setSignInPageState(SignInPageStates.register));
+
+    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} />);
+    await user.press(screen.getByText(REGISTER_BTN.russian.register));
+
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.confirmEmailCode}`);
   });
 });

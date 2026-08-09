@@ -4,10 +4,10 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES } from '@const/enums';
 import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
-import ErrorComponent from '@Routes/error-component/error-component';
+import ErrorComponent from '@S/error-component/error-component';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import type { MonthChips } from './types';
-import type { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
+import type { SPORTS_BTNS_VALUES } from '@const/sports';
 
 export default function MonthTypesChips({ userId, year, month, setSelectedType, selectedType }: MonthChips) {
   const { width } = useWindowDimensions();

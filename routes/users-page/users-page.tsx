@@ -4,8 +4,8 @@ import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react
 import { ActivityIndicator, Divider, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetFilteredUsersBySearchTextQuery } from '@R/services/profile/profile';
-import ErrorComponent from '@Routes/error-component/error-component';
-import UserListItem from '@Routes/user-list-item/user-list-item';
+import ErrorComponent from '@S/error-component/error-component';
+import UserListItem from '@S/user-list-item/user-list-item';
 import useDebounce from '@U/hooks/use-debounce';
 import useRefresh from '@U/hooks/use-refresh';
 import EmptyUsersList from './empty-list/empty-list';

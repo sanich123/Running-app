@@ -1,6 +1,8 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
+import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { LANGUAGES, ROUTES } from '@const/enums';
+import { SPORTS_BTNS_VALUES } from '@const/sports';
 import {
   saveDescription,
   saveEmotion,
@@ -18,13 +20,11 @@ import {
   setIsEditingActivity,
 } from '@R/slices/manual-activity/manual-activity';
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
-import { SPORTS_BTNS_VALUES } from '@Routes/save-activity-page/sports-btns/const';
 import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from './const';
 import ActivitySaveBtn from './save-btn';
 
 const mockBack = jest.fn();

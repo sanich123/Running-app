@@ -1,6 +1,6 @@
 import { act, screen } from '@testing-library/react-native';
 import { http } from 'msw';
-import { ERROR_COMPONENT_TEST_ID } from '@Routes/error-component/const';
+import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
@@ -24,31 +24,31 @@ jest.mock('react-native-paper', () => {
     },
   };
 });
-jest.mock('@Routes/card/like-btn/like-btn', () => {
+jest.mock('@S/card/like-btn/like-btn', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="comment-like-button" />;
 });
-jest.mock('@Routes/card/likes/likes', () => {
+jest.mock('@S/card/likes/likes', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="comment-likes" />;
 });
-jest.mock('@Routes/card/media-list/media-list', () => {
+jest.mock('@S/card/media-list/media-list', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="comment-media" />;
 });
-jest.mock('@Routes/user-name-surname/user-name-surname', () => {
+jest.mock('@Routes/comment-page/user-name-surname/user-name-surname', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="comment-user" />;
 });
-jest.mock('@Routes/user-sport-date/user-sport-date', () => {
+jest.mock('@Routes/comment-page/user-sport-date/user-sport-date', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="comment-sport-date" />;
 });
-jest.mock('./comments/comments', () => {
+jest.mock('@S/comments/comments/comments', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="comments-list" />;
 });
-jest.mock('./comment-input/comment-input', () => {
+jest.mock('@S/comments/comment-input/comment-input', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="comment-input" />;
 });

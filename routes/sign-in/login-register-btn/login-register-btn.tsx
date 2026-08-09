@@ -3,15 +3,10 @@ import { Button } from 'react-native-paper';
 import type { UseFormHandleSubmit } from 'react-hook-form';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
-import {
-  useLoginUserMutation,
-  useRegisterUserMutation,
-  useResetPasswordMutation,
-} from '@R/services/authentication/authentication';
+import { useLoginUserMutation } from '@R/services/authentication/authentication';
 import { saveEmail, savePassword, setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { SignInPageStates } from '@U/validate-email-password';
 import { REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
 import type { EmailPasswordData } from '@R/services/authentication/types';
@@ -20,11 +15,9 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const { pageState, isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
-  const { replace } = useRouter();
-  const [registerUser, { isLoading }] = useRegisterUserMutation();
+  const { push, replace } = useRouter();
   const [loginUser, { isLoading: isLoginingUser }] = useLoginUserMutation();
-  const [resetPassword] = useResetPasswordMutation();
-  const isSubmitting = isLoginingUser || isLoading;
+  const isSubmitting = isLoginingUser;
 
   return (
     <Button
@@ -40,25 +33,16 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
         dispatch(setIsDisabledWhenLogining(true));
         dispatch(saveEmail(email));
         dispatch(savePassword(password));
-        if (pageState === SignInPageStates.register) {
-          return await registerUser({ email, password })
-            .unwrap()
-            .then(({ message }) => showCrossPlatformToast(message))
-            .catch((error) => errorToast('Во время регистрации произошла ошибка: ', error))
-            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
+        if (pageState === SignInPageStates.register || pageState === SignInPageStates.reset) {
+          dispatch(setIsDisabledWhenLogining(false));
+          push(`/${ROUTES.confirmEmailCode}`);
+          return;
         }
         if (pageState === SignInPageStates.login) {
           return await loginUser({ email, password })
             .unwrap()
             .then(() => replace(ROUTES.root))
             .catch((error) => errorToast('Во время авторизации произошла ошибка: ', error))
-            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
-        }
-        if (pageState === SignInPageStates.reset) {
-          return await resetPassword({ email })
-            .unwrap()
-            .then(({ message }) => showCrossPlatformToast(message))
-            .catch((error) => errorToast('Во время сброса пароля произошла ошибка: ', error))
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }
       })}>

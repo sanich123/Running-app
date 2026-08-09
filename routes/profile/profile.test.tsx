@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react-native';
 import { http } from 'msw';
 import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
-import { ERROR_COMPONENT_TEST_ID } from '@Routes/error-component/const';
+import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
@@ -16,7 +16,7 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.userId }),
   usePathname: () => mockPathname,
 }));
-jest.mock('@Routes/avatar/showable/showable', () => {
+jest.mock('@S/avatar/showable/showable', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="profile-avatar" />;
 });
@@ -24,7 +24,7 @@ jest.mock('@Routes/profile/media-photos/media-photos', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="profile-media" />;
 });
-jest.mock('./follow-unfollow-btn/follow-unfollow-btn', () => {
+jest.mock('@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="profile-follow" />;
 });

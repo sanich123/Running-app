@@ -3,7 +3,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import IconChooseSport from './icon-choose-sport';
 
 const mockPresent = jest.fn();
-jest.mock('../choose-sport-modal/choose-sport-modal', () => {
+jest.mock('@S/choose-sport-modal/choose-sport-modal', () => {
   const { View } = jest.requireActual('react-native');
   return ({ chooseSportModalRef }: any) => {
     chooseSportModalRef.current = { present: mockPresent };

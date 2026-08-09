@@ -11,7 +11,7 @@ import reducer, {
   saveWeight,
   setIsDisabledWhileSendingProfile,
 } from './profile';
-import type { ProfileType } from '@Routes/card/types';
+import type { ProfileType } from '@S/card/types';
 
 describe('Profile slice', () => {
   it('should handle initial state properly', () => {
