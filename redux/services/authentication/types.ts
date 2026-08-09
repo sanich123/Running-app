@@ -5,7 +5,19 @@ export interface EmailPasswordData {
 
 export interface AccessData {
   id: string;
-  accessToken: string;
+  accessToken?: string;
+  access?: string;
+  refreshToken?: string;
+  refresh?: string;
+}
+
+export interface RefreshTokenResponse {
+  accessToken?: string;
+  access?: string;
+  refreshToken?: string;
+  refresh?: string;
+  access_token?: string;
+  refresh_token?: string;
 }
 
 export interface VerifyTokenRequest {
@@ -14,6 +26,9 @@ export interface VerifyTokenRequest {
 
 export interface VerifyTokenResponse {
   id: string;
-  appVersion: string;
-  accessToken: string;
+  appVersion?: string;
+  accessToken?: string;
+  access?: string;
+  refreshToken?: string;
+  refresh?: string;
 }

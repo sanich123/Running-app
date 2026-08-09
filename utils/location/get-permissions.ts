@@ -3,7 +3,7 @@ import {
   requestForegroundPermissionsAsync,
   hasServicesEnabledAsync,
 } from 'expo-location';
-import { errorToast } from '@C/shared/error-toast/error-toast';
+import { errorToast } from '@S/error-toast/error-toast';
 
 export async function getLocationPermissions({
   setIsForegroundPermission,

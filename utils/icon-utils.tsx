@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
 import { LANGUAGES } from '@const/enums';
+import { SPORTS_BTNS_VALUES } from '@const/sports';
 
 type MaterialCommunityIconName = keyof typeof MaterialCommunityIcons.glyphMap;
 

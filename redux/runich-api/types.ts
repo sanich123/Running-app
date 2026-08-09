@@ -1,5 +1,5 @@
-import type { ProfileType } from '@C/card/types';
 import type { ActivityToSend } from '@R/services/activity/types';
+import type { ProfileType } from '@S/card/types';
 
 export interface SendActivity {
   body: ActivityToSend;

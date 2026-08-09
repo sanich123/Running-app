@@ -1,3 +1,5 @@
+import { lazy, Suspense, useEffect } from 'react';
+import type { ComponentType, LazyExoticComponent } from 'react';
 import {
   PlusJakartaSans_400Regular,
   PlusJakartaSans_500Medium,
@@ -14,14 +16,29 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { useColorScheme } from 'react-native';
-import { Stack } from 'expo-router';
+import { Platform, useColorScheme } from 'react-native';
+import { Redirect, Stack, usePathname } from 'expo-router';
 import { configureFonts, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
-import FullPageActivityLoader from '@C/shared/full-page-activity-loader/full-page-activity-loader';
+import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { toastConfig } from '@const/toast-config';
 import { persistor, store } from '@R/store';
+import { useAppSelector } from '@R/typed-hooks';
+import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
+import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
+import useAppInitialization from '@U/hooks/use-app-initialization';
+
+const LazySaveBtn = lazy(() => import('@Routes/activity/save-btn/save-btn'));
+const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-settings-icons'));
+
+const PUBLIC_ROUTES = new Set([
+  `/${ROUTES.signIn}`,
+  `/${ROUTES.confirmEmailCode}`,
+  `/${ROUTES.privacyPolicy}`,
+  `/${ROUTES.legalInformation}`,
+  `/${ROUTES.maintenance}`,
+]);
 
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({
@@ -30,18 +47,16 @@ SplashScreen.setOptions({
 });
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [fontsLoaded] = useFonts({
     PlusJakartaSans_400Regular,
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_800ExtraBold,
   });
-  const fonts = configureFonts({ config: { fontFamily: FONT_FAMILIES.regular } });
-  const paperTheme =
-    colorScheme === 'dark'
-      ? { ...MD3DarkTheme, roundness: 2, fonts, colors: COLORS.dark }
-      : { ...MD3LightTheme, roundness: 2, fonts, colors: COLORS.light };
+
+  useEffect(() => {
+    if (fontsLoaded) void SplashScreen.hideAsync();
+  }, [fontsLoaded]);
 
   if (!fontsLoaded) {
     return null;
@@ -50,23 +65,177 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={<FullPageActivityLoader />} persistor={persistor}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <SafeAreaProvider>
-            <KeyboardProvider>
-              <SystemBars style="auto" />
-              <PaperProvider theme={paperTheme}>
-                <BottomSheetModalProvider>
-                  <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
-                    <Stack.Screen name="(protected)" />
-                    <Stack.Screen name="sign-in" />
-                  </Stack>
-                  <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
-                </BottomSheetModalProvider>
-              </PaperProvider>
-            </KeyboardProvider>
-          </SafeAreaProvider>
-        </GestureHandlerRootView>
+        <AppShell />
       </PersistGate>
     </Provider>
+  );
+}
+
+function AppShell() {
+  useAppInitialization();
+  const systemColorScheme = useColorScheme();
+  const { theme } = useAppSelector(({ language }) => language);
+  const { accessToken } = useAppSelector(({ auth }) => auth);
+  const { language } = useAppSelector(({ language }) => language);
+  const { isCameraVisible } = useAppSelector(({ manualActivity }) => manualActivity);
+  const pathname = usePathname();
+  const colorScheme = theme ?? systemColorScheme;
+  const appColors = colorScheme === 'dark' ? COLORS.dark : COLORS.light;
+  const fonts = configureFonts({ config: { fontFamily: FONT_FAMILIES.regular } });
+  const paperTheme =
+    colorScheme === 'dark'
+      ? { ...MD3DarkTheme, roundness: 2, fonts, colors: appColors }
+      : { ...MD3LightTheme, roundness: 2, fonts, colors: appColors };
+
+  if (!accessToken && !PUBLIC_ROUTES.has(pathname)) {
+    return <Redirect href={`/${ROUTES.signIn}`} />;
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <KeyboardProvider>
+          <SystemBars style="auto" />
+          <PaperProvider theme={paperTheme}>
+            <BottomSheetModalProvider>
+              <Stack
+                screenOptions={{
+                  gestureEnabled: false,
+                  headerTitle:
+                    Platform.OS === 'web' ? ({ children }) => <FeedHeaderTitle>{children}</FeedHeaderTitle> : undefined,
+                  headerStyle: { backgroundColor: appColors.surface },
+                  headerTintColor: appColors.onSurface,
+                  headerTitleStyle: {
+                    color: appColors.primary,
+                    fontFamily: FONT_FAMILIES.semiBold,
+                    fontSize: 16,
+                  },
+                }}>
+                <Stack.Screen name={ROUTES.tabs} options={{ headerShown: false, title: 'Главная' }} />
+                <Stack.Screen name={ROUTES.signIn} options={{ headerShown: false }} />
+                <Stack.Screen name={ROUTES.privacyPolicy} options={{ title: 'Политика конфиденциальности' }} />
+                <Stack.Screen name={ROUTES.legalInformation} options={{ title: 'Юридическая информация' }} />
+                <Stack.Screen name={ROUTES.maintenance} options={{ headerShown: false }} />
+                <Stack.Screen
+                  name={`${ROUTES.comment}/${ROUTES.routeId}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].comment,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.activity}/${ROUTES.routeId}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].activity,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.followers}/${ROUTES.routeId}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].followers,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.following}/${ROUTES.routeId}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].followings,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.likes}/${ROUTES.routeId}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].likes,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.map}/${ROUTES.routeId}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].map,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.media}/${ROUTES.photoUrl}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].photo,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.mediaGrid}/${ROUTES.routeId}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].photos,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.profile}/${ROUTES.routeId}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].profile,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.manualActivity}/${ROUTES.index}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazySaveBtn} />,
+                    title: '',
+                    headerShown: !isCameraVisible,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.settings}/${ROUTES.index}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].settings,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.users}/${ROUTES.index}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].users,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.monthStatistics}/${ROUTES.index}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].statistics,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.activitiesList}/${ROUTES.routeIds}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].activities,
+                  }}
+                />
+                <Stack.Screen
+                  name={`${ROUTES.migration}/${ROUTES.index}`}
+                  options={{
+                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                    title: LABELS[language].migration,
+                  }}
+                />
+              </Stack>
+              <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
+            </BottomSheetModalProvider>
+          </PaperProvider>
+        </KeyboardProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
+  );
+}
+
+function LazyHeader({ component: Component }: { component: LazyExoticComponent<ComponentType> }) {
+  return (
+    <Suspense fallback={null}>
+      <Component />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
-import type { EMOTIONS_BTNS_VALUES } from '@C/save-activity-page/emotion-btns/const';
-import type { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
+import type { SPORTS_BTNS_VALUES } from '@const/sports';
 import type { LastKmSplit } from '@R/slices/location/types';
+import type { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import type { LocationObject } from 'expo-location';
 
 export interface FinishedActivity {
@@ -35,6 +35,8 @@ export interface Activity {
   user_id: string;
   photoVideoUrls: string[];
   mapPhotoUrl: string;
+  locations?: LocationObject[];
+  kilometresSplit?: LastKmSplit[];
   duration: number;
   distance: number;
   profile: Profile;

@@ -1,7 +1,7 @@
 import { decode, encode } from 'base64-arraybuffer';
 import { File as ExpoFile } from 'expo-file-system';
 import { Platform } from 'react-native';
-import { errorToast } from '@C/shared/error-toast/error-toast';
+import { errorToast } from '@S/error-toast/error-toast';
 import { supabase } from '../supabase-init';
 
 export async function getBase64CodedImage(file: string | File) {
@@ -41,6 +41,57 @@ export async function getPublicUrl(path: string) {
     return data?.publicUrl;
   } catch (error) {
     errorToast('Не удалось получить ссылку на файл', error);
+  }
+}
+
+export function getPhotoStorageLocation(publicUrl: string) {
+  const marker = '/storage/v1/object/';
+  const markerIndex = publicUrl.indexOf(marker);
+
+  if (markerIndex === -1) return null;
+
+  try {
+    const [visibility, bucket, ...pathParts] = publicUrl.slice(markerIndex + marker.length).split('/');
+    if (!visibility || !bucket || !pathParts.length) return null;
+
+    return { bucket, path: decodeURIComponent(pathParts.join('/')) };
+  } catch {
+    const [visibility, bucket, ...pathParts] = publicUrl.slice(markerIndex + marker.length).split('/');
+    if (!visibility || !bucket || !pathParts.length) return null;
+
+    return { bucket, path: pathParts.join('/') };
+  }
+}
+
+export function getPhotoStoragePath(publicUrl: string) {
+  return getPhotoStorageLocation(publicUrl)?.path ?? null;
+}
+
+export async function removePhotos(publicUrls: string[]) {
+  const locations = publicUrls.map(getPhotoStorageLocation).filter(
+    (location): location is { bucket: string; path: string } => Boolean(location),
+  );
+
+  if (!locations.length) return true;
+
+  try {
+    const locationsByBucket = locations.reduce<Record<string, string[]>>((result, { bucket, path }) => {
+      result[bucket] = [...(result[bucket] ?? []), path];
+      return result;
+    }, {});
+
+    for (const [bucket, paths] of Object.entries(locationsByBucket)) {
+      const { error } = await supabase.storage.from(bucket).remove(paths);
+      if (error) {
+        errorToast('Не удалось удалить фото', error);
+        return false;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    errorToast('Не удалось удалить фото', error);
+    return false;
   }
 }
 

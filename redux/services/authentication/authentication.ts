@@ -1,5 +1,11 @@
 import { runichApi } from '@R/runich-api/runich-api';
-import type { AccessData, EmailPasswordData, VerifyTokenRequest, VerifyTokenResponse } from './types';
+import type {
+  AccessData,
+  EmailPasswordData,
+  RefreshTokenResponse,
+  VerifyTokenRequest,
+  VerifyTokenResponse,
+} from './types';
 
 export const authenticationApi = runichApi.injectEndpoints({
   overrideExisting: true,
@@ -15,6 +21,13 @@ export const authenticationApi = runichApi.injectEndpoints({
       query: ({ email, password }) => ({
         url: '/auth/login',
         body: { email, password },
+        method: 'POST',
+      }),
+    }),
+    refreshToken: mutation<RefreshTokenResponse, { refreshToken: string }>({
+      query: ({ refreshToken }) => ({
+        url: 'auth/refresh',
+        body: { refreshToken },
         method: 'POST',
       }),
     }),
@@ -51,6 +64,7 @@ export const authenticationApi = runichApi.injectEndpoints({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
+  useRefreshTokenMutation,
   useLazyVerifyConfigQuery,
   useDeleteUserMutation,
   useConfirmSignUpCodeByEmailMutation,

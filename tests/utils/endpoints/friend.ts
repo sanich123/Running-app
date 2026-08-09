@@ -1,13 +1,14 @@
+import { HttpResponse } from 'msw';
 import { MOCK_FOLLOWERS } from '@T/mocks/mock-followers';
 import { MOCK_FRIENDS } from '@T/mocks/mock-friends';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 
-export const deleteFriendSuccess = (req: any, res: any, ctx: any) => res(ctx.status(204), ctx.json(''));
+export const deleteFriendSuccess = () => new HttpResponse(null, { status: 204 });
 
-export const addFriendSuccess = (req: any, res: any, ctx: any) => res(ctx.status(201), ctx.json(MOCK_LOCATION));
+export const addFriendSuccess = () => HttpResponse.json(MOCK_LOCATION, { status: 201 });
 
-export const getFollowersSuccess = (req: any, res: any, ctx: any) => res(ctx.status(200), ctx.json(MOCK_FOLLOWERS));
+export const getFollowersSuccess = () => HttpResponse.json(MOCK_FOLLOWERS);
 
-export const getFollowingsSuccess = (req: any, res: any, ctx: any) => res(ctx.status(200), ctx.json(MOCK_FRIENDS));
+export const getFollowingsSuccess = () => HttpResponse.json(MOCK_FRIENDS);
 
-export const getFollowersFailure = (req: any, res: any, ctx: any) => res(ctx.status(400), ctx.json('FETCH_ERROR'));
+export const getFollowersFailure = () => HttpResponse.json('FETCH_ERROR', { status: 400 });

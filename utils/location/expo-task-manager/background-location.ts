@@ -6,11 +6,7 @@ import {
   watchPositionAsync,
 } from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import { SPORTS_BTNS_VALUES } from '@C/save-activity-page/sports-btns/const';
-import { errorToast } from '@C/shared/error-toast/error-toast';
-import { setIsTooMuchSpeed } from '@R/slices/location/location';
 import { store } from '@R/store';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 import { BACKGROUND_NOTIFICATION, DISTANCE_INTERVAL, LOCATION_TRACKING, TIME_INTERVAL } from '../const';
 import type { TaskManagerLocationEvent } from '../const';
@@ -30,27 +26,17 @@ async function processLocation(currentPosition: LocationObject) {
   }
 
   try {
-    const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer, lastArrayLength } =
+    const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer } =
       getMetricsTaskManager(currentPosition);
 
-    if (
-      !lastArrayLength ||
-      lastArrayLength < 10 ||
-      (currentPace > 3 && currentPace < Infinity) ||
-      store.getState().additionalInfoActivity.sport === SPORTS_BTNS_VALUES.bike
-    ) {
-      saveMetricsToStoreTaskManager(
-        currentKilometer,
-        currentPosition,
-        currentDuration,
-        currentPace,
-        currentAltitude,
-        currentDistance,
-      );
-    } else {
-      store.dispatch(setIsTooMuchSpeed(true));
-      errorToast('Геолокация отклонена из-за слишком высокой скорости относительно предыдущей точки.');
-    }
+    saveMetricsToStoreTaskManager(
+      currentKilometer,
+      currentPosition,
+      currentDuration,
+      currentPace,
+      currentAltitude,
+      currentDistance,
+    );
   } catch (error) {
     if (__DEV__) console.error('[tracking]', 'Something went wrong when saving a new location...', error);
   }
@@ -72,25 +58,48 @@ async function startForegroundLocationTracking() {
 }
 
 export async function startLocationTracking() {
-  if (!(await hasStartedLocationUpdatesAsync(LOCATION_TRACKING))) {
-    await startLocationUpdatesAsync(LOCATION_TRACKING, {
-      accuracy: Accuracy.High,
-      timeInterval: TIME_INTERVAL,
-      distanceInterval: DISTANCE_INTERVAL,
-      showsBackgroundLocationIndicator: true,
-      foregroundService: {
-        notificationTitle: BACKGROUND_NOTIFICATION[store.getState().language.language].isActive,
-        notificationBody: BACKGROUND_NOTIFICATION[store.getState().language.language].turnOff,
-        notificationColor: '#333333',
-      },
-    });
-  }
+  let didStartBackgroundTask = false;
 
-  await startForegroundLocationTracking();
-  showCrossPlatformToast('BgTracking started');
+  try {
+    if (!(await hasStartedLocationUpdatesAsync(LOCATION_TRACKING))) {
+      await startLocationUpdatesAsync(LOCATION_TRACKING, {
+        accuracy: Accuracy.High,
+        timeInterval: TIME_INTERVAL,
+        distanceInterval: DISTANCE_INTERVAL,
+        showsBackgroundLocationIndicator: true,
+        foregroundService: {
+          notificationTitle: BACKGROUND_NOTIFICATION[store.getState().language.language].isActive,
+          notificationBody: BACKGROUND_NOTIFICATION[store.getState().language.language].turnOff,
+          notificationColor: '#333333',
+        },
+      });
+      didStartBackgroundTask = true;
+    }
+
+    await startForegroundLocationTracking();
+  } catch (error) {
+    try {
+      foregroundLocationSubscription?.remove();
+    } catch {
+      // Keep the original error: it is the one the caller can act on.
+    }
+    foregroundLocationSubscription = null;
+
+    if (didStartBackgroundTask) {
+      try {
+        await stopLocationUpdatesAsync(LOCATION_TRACKING);
+      } catch {
+        // Keep the original error: it is the one the caller can act on.
+      }
+    }
+
+    throw error;
+  }
 }
 
 export async function stopLocationTracking() {
+  let stopError: unknown;
+
   try {
     if (await hasStartedLocationUpdatesAsync(LOCATION_TRACKING)) {
       await stopLocationUpdatesAsync(LOCATION_TRACKING);
@@ -99,14 +108,20 @@ export async function stopLocationTracking() {
     // The task can disappear after an app restart or while Android is
     // delivering a background event. Stopping it is still considered done.
     if (!isMissingLocationTaskError(error)) {
-      throw error;
+      stopError = error;
     }
+  } finally {
+    try {
+      foregroundLocationSubscription?.remove();
+    } catch (error) {
+      stopError ??= error;
+    }
+    foregroundLocationSubscription = null;
   }
 
-  foregroundLocationSubscription?.remove();
-  foregroundLocationSubscription = null;
-
-  showCrossPlatformToast('BgTracking stopped');
+  if (stopError) {
+    throw stopError;
+  }
 }
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLocationEvent) => {

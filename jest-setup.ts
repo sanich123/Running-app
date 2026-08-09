@@ -1,4 +1,7 @@
 import 'react-native-gesture-handler/jestSetup';
+import { cleanup } from '@testing-library/react-native';
+import { runichApi } from './redux/runich-api/runich-api';
+import { mockStore } from './tests/utils/mock-store';
 import { server } from './tests/utils/server';
 import type * as ExpoLinking from 'expo-linking';
 
@@ -32,6 +35,43 @@ jest.mock('redux-persist', () => {
 
 jest.mock('expo-font');
 jest.mock('expo-asset');
+jest.mock('expo-media-library', () => ({
+  getPermissionsAsync: jest.fn(() => Promise.resolve({ granted: true })),
+  requestPermissionsAsync: jest.fn(() => Promise.resolve({ granted: true })),
+  createAssetAsync: jest.fn(() => Promise.resolve({ id: 'mock-asset' })),
+  saveToLibraryAsync: jest.fn(() => Promise.resolve()),
+  usePermissions: jest.fn(() => [{ granted: true }, jest.fn()]),
+}));
+jest.mock('@rnmapbox/maps', () => {
+  const { View } = jest.requireActual('react-native');
+  return {
+    MapView: View,
+    Camera: View,
+    UserLocation: View,
+    ShapeSource: View,
+    LineLayer: View,
+    CircleLayer: View,
+    SymbolLayer: View,
+    PointAnnotation: View,
+    MarkerView: View,
+    Callout: View,
+  };
+});
+jest.mock('react-native-gifted-charts', () => {
+  const { View } = jest.requireActual('react-native');
+  return { BarChart: View };
+});
+jest.mock('mapbox-gl', () => ({
+  Map: jest.fn(() => ({
+    addControl: jest.fn(),
+    addLayer: jest.fn(),
+    addSource: jest.fn(),
+    remove: jest.fn(),
+    on: jest.fn(),
+  })),
+  Marker: jest.fn(() => ({ setLngLat: jest.fn().mockReturnThis(), addTo: jest.fn().mockReturnThis() })),
+  NavigationControl: jest.fn(),
+}));
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
 jest.mock('@A/supabase/supabase-init', () => ({
   supabase: {
@@ -70,10 +110,23 @@ jest.mock('expo-linking', () => {
   const module: typeof ExpoLinking = {
     ...jest.requireActual('expo-linking'),
     createURL: jest.fn(),
+    openSettings: jest.fn(() => Promise.resolve()),
+    openURL: jest.fn(() => Promise.resolve({} as never)),
   };
 
   return module;
 });
+
+jest.mock('expo-vpn-checker', () => ({
+  __esModule: true,
+  default: { checkVpn: jest.fn(() => false) },
+}));
+
+jest.mock('react-native-compressor', () => ({
+  Image: { compress: jest.fn(async (uri: string) => uri) },
+  Video: { compress: jest.fn(async (uri: string) => uri) },
+  getVideoMetaData: jest.fn(async () => ({})),
+}));
 
 jest.mock('expo-video', () => {
   const reactNative = jest.requireActual('react-native');
@@ -86,7 +139,13 @@ jest.mock('expo-video', () => {
 });
 
 jest.mock('expo-location', () => ({
+  Accuracy: { High: 6 },
   getCurrentPositionAsync: () => Promise.resolve({ coords: { latitude: 0, longitude: 0 } }),
+  getLastKnownPositionAsync: () => Promise.resolve({ coords: { latitude: 0, longitude: 0 }, timestamp: Date.now() }),
+  hasStartedLocationUpdatesAsync: () => Promise.resolve(false),
+  startLocationUpdatesAsync: () => Promise.resolve(),
+  stopLocationUpdatesAsync: () => Promise.resolve(),
+  watchPositionAsync: () => Promise.resolve({ remove: jest.fn() }),
   useForegroundPermissions: () => [jest.fn()],
   useBackgroundPermissions: () => [jest.fn()],
   PermissionStatus: { UNDETERMINED: 'UNDETERMINED', DENIED: 'DENIED' },
@@ -111,7 +170,9 @@ beforeEach(() => {
   });
 });
 afterAll(() => server.close());
-afterEach(() => {
+afterEach(async () => {
+  await cleanup();
+  mockStore.dispatch(runichApi.util.resetApiState());
   consoleErrorSpy.mockRestore();
   jest.clearAllMocks();
   server.resetHandlers();

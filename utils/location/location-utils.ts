@@ -4,48 +4,23 @@ import point from 'turf-point';
 import { POWERHOURS_COLORS } from '@const/theme-colors';
 import type { LocationObject } from 'expo-location';
 
-interface StaticMapFeature {
-  type: 'Feature';
-  properties: Record<string, string | number>;
-  geometry: {
-    type: 'Polygon';
-    coordinates: number[][][];
-  };
-};
+/**
+ * Upper bounds for the four sports available on the tracking screen.
+ * They intentionally leave room for a realistic sprint/descent, while
+ * filtering the most common GPS jumps.
+ */
+export const MAX_TRACKING_SPEED_KMH = {
+  walk: 15,
+  run: 30,
+  bike: 60,
+  hike: 20,
+} as const;
 
-function createHaloMarker(
-  longitude: number,
-  latitude: number,
-  color: string,
-  radius: number,
-  fillOpacity: number,
-  strokeWidth: number,
-): StaticMapFeature {
-  const longitudeScale = 1 / Math.cos((latitude * Math.PI) / 180);
+const DEFAULT_MAX_TRACKING_SPEED_KMH = MAX_TRACKING_SPEED_KMH.run;
 
-  const createCircle = (radius: number) =>
-    Array.from({ length: 25 }, (_, index) => {
-      const angle = (index / 24) * Math.PI * 2;
-      return [
-        longitude + Math.cos(angle) * radius * longitudeScale,
-        latitude + Math.sin(angle) * radius,
-      ];
-    });
-
-  return {
-    type: 'Feature',
-    properties: {
-      fill: color,
-      'fill-opacity': fillOpacity,
-      stroke: '#FFFFFF',
-      'stroke-width': strokeWidth,
-    },
-    geometry: {
-      type: 'Polygon',
-      coordinates: [createCircle(radius)],
-    },
-  };
-}
+/** Mapbox Static Images rejects URLs above roughly 8 KB. Leave headroom for tokens and encoding. */
+export const MAX_STATIC_MAP_URL_LENGTH = 7600;
+const MAX_STATIC_MAP_LOCATIONS = 500;
 
 export function getDistance(origin: LocationObject, destination: LocationObject) {
   const from = point([origin.coords.longitude, origin.coords.latitude]);
@@ -73,48 +48,77 @@ export function getSpeedInMinsInKm(distance: number, time: number) {
   return { paceAsNumber, paceAsString };
 }
 
-export function getMapBoxImage(locations: LocationObject[]) {
-  if (locations.length) {
-    const polylineLatLang = locations.map(({ coords }) => [coords.latitude, coords.longitude]);
-    const encodedPolyline = polyline.encode(polylineLatLang);
+export function getSpeedInKmPerHour(distance: number, time: number) {
+  if (!distance || !time || time <= 0) {
+    return 0;
+  }
 
-    const initialCoordinate = [locations[0].coords.longitude, locations[0].coords.latitude];
-    const lastCoordinate = [
-      locations[locations.length - 1].coords.longitude,
-      locations[locations.length - 1].coords.latitude,
-    ];
-    const lineOpacity = 0.8;
-    const lineWidth = 2;
-    const startMarkerColor = POWERHOURS_COLORS.success;
-    const finishMarkerColor = POWERHOURS_COLORS.orange;
-    const lineColor = finishMarkerColor.replace('#', '');
-    const outerRadius = 0.000047;
-    const innerRadius = 0.000023;
-    const markerGeoJson = {
-      type: 'FeatureCollection',
-      features: [
-        createHaloMarker(initialCoordinate[0], initialCoordinate[1], startMarkerColor, outerRadius, 0.25, 0),
-        createHaloMarker(initialCoordinate[0], initialCoordinate[1], startMarkerColor, innerRadius, 1, 1),
-        createHaloMarker(lastCoordinate[0], lastCoordinate[1], finishMarkerColor, outerRadius, 0.25, 0),
-        createHaloMarker(lastCoordinate[0], lastCoordinate[1], finishMarkerColor, innerRadius, 1, 1),
-      ],
+  return (distance / 1000) / (time / 3_600_000);
+}
+
+export function getMaxTrackingSpeedForSport(sport: string) {
+  return MAX_TRACKING_SPEED_KMH[sport as keyof typeof MAX_TRACKING_SPEED_KMH] ?? DEFAULT_MAX_TRACKING_SPEED_KMH;
+}
+
+export function getMapBoxImage(locations: LocationObject[]) {
+  const validLocations = locations.filter(
+    ({ coords }) => Number.isFinite(coords?.longitude) && Number.isFinite(coords?.latitude),
+  );
+
+  if (validLocations.length) {
+    const buildUrl = (routeLocations: LocationObject[]) => {
+      const polylineLatLang = routeLocations.map(({ coords }) => [coords.latitude, coords.longitude]);
+      const encodedPolyline = polyline.encode(polylineLatLang);
+
+      const initialCoordinate = [routeLocations[0].coords.longitude, routeLocations[0].coords.latitude];
+      const lastCoordinate = [
+        routeLocations[routeLocations.length - 1].coords.longitude,
+        routeLocations[routeLocations.length - 1].coords.latitude,
+      ];
+      const lineOpacity = 0.8;
+      const lineWidth = 2;
+      const startMarkerColor = POWERHOURS_COLORS.success.replace('#', '');
+      const finishMarkerColor = POWERHOURS_COLORS.orange.replace('#', '');
+      const lineColor = finishMarkerColor;
+      const routeOverlay =
+        routeLocations.length > 1
+          ? `path-${lineWidth}+${lineColor}-${lineOpacity}(${encodeURIComponent(encodedPolyline)})`
+          : '';
+      const startMarker = `pin-s+${startMarkerColor}(${initialCoordinate.join(',')})`;
+      const finishMarker = `pin-s+${finishMarkerColor}(${lastCoordinate.join(',')})`;
+      const width = 350;
+      const height = 200;
+      const doublePixels = '@2x';
+      const overlays = [routeOverlay, startMarker, finishMarker].filter(Boolean).join(',');
+
+      return `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${overlays}/auto/${width}x${height}${doublePixels}?access_token=${process.env.EXPO_PUBLIC_MAPBOX_TOKEN}`;
     };
-    const encodedMarkers = encodeURIComponent(JSON.stringify(markerGeoJson));
-    const width = 350;
-    const height = 200;
-    const doublePixels = '@2x';
-    return `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/path-${lineWidth}+${lineColor}-${lineOpacity}(${encodeURIComponent(
-      encodedPolyline,
-    )}),geojson(${encodedMarkers})/auto/${width}x${height}${doublePixels}?access_token=${process.env.EXPO_PUBLIC_MAPBOX_TOKEN}`;
+
+    let reducedLocations = getReducedLocations(validLocations, MAX_STATIC_MAP_LOCATIONS);
+    let imageUrl = buildUrl(reducedLocations);
+
+    while (imageUrl.length > MAX_STATIC_MAP_URL_LENGTH && reducedLocations.length > 2) {
+      const nextLimit = Math.max(2, Math.floor(reducedLocations.length * 0.75));
+      const nextLocations = getReducedLocations(reducedLocations, nextLimit);
+      if (nextLocations.length >= reducedLocations.length) {
+        break;
+      }
+      reducedLocations = nextLocations;
+      imageUrl = buildUrl(reducedLocations);
+    }
+
+    return imageUrl;
   } else {
     return '';
   }
 }
 
-export function getReducedLocations(locations: LocationObject[]) {
-  if (locations.length > 2000) {
-    const reducerCoefficient = Math.floor(locations.length / 1000);
-    return locations.filter((_, i) => i % reducerCoefficient === 0);
+export function getReducedLocations(locations: LocationObject[], maxLocations = 1000) {
+  if (locations.length > maxLocations) {
+    return Array.from({ length: maxLocations }, (_, index) => {
+      const sourceIndex = Math.round((index * (locations.length - 1)) / (maxLocations - 1));
+      return locations[sourceIndex];
+    });
   }
   return locations;
 }

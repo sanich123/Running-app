@@ -17,6 +17,8 @@ export const THEMES = {
 };
 
 export enum ROUTES {
+  root = '/',
+  tabs = '(tabs)',
   index = 'index',
   home = 'home',
   settings = 'settings',
@@ -36,9 +38,18 @@ export enum ROUTES {
   profileSettings = 'profile-settings',
   changePassword = 'change-password',
   statistic = 'statistic',
-  monthStatistic = 'month-statistic',
+  monthStatistics = 'month-statistic',
   activitiesList = 'activities-list',
   migration = 'migration',
+  signIn = 'sign-in',
+  privacyPolicy = 'privacy-policy',
+  legalInformation = 'legal-information',
+  maintenance = 'maintenance',
+  routeId = '[id]',
+  routeIds = '[...ids]',
+  photoUrl = '[photoUrl]',
+  confirmEmailNotification = 'confirm-email-notification',
+  confirmEmailCode = 'confirm-email-code',
 }
 
 export const LABELS = {

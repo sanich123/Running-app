@@ -10,6 +10,7 @@ export interface LastKmSplit {
 export interface LocationInitialState {
   activityStatus: STATUSES;
   isTooMuchSpeed: boolean;
+  tooMuchSpeed: number;
   isAppShutedByPhone: boolean;
   isMapVisible: boolean;
   initialLocation: LocationObject | null;
