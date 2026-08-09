@@ -17,8 +17,9 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => {
-        if (commentsModalRef?.current) {
-          commentsModalRef?.current?.close();
+        const modal = commentsModalRef?.current;
+        if (modal && typeof modal.close === 'function') {
+          modal.close();
         }
 
         push(`/${ROUTES.profile}/${userId}`);

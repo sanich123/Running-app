@@ -45,4 +45,22 @@ describe('UserInfo', () => {
     expect(close).toHaveBeenCalledTimes(1);
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.profile}/someUserId`);
   });
+
+  it('opens the user profile when the web modal ref has no callable close method', async () => {
+    const user = userEvent.setup();
+    await renderWithProviders(
+      <UserInfo
+        profile={MOCK_PROFILE}
+        sport={SPORTS_BTNS_VALUES.run}
+        date={`${new Date()}`}
+        userId="someUserId"
+        size={UserInfoSize.large}
+        commentsModalRef={{ current: { close: 'not-a-function' } } as any}
+      />,
+    );
+
+    await user.press(screen.getByText(new RegExp(MOCK_PROFILE.name)));
+
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.profile}/someUserId`);
+  });
 });
