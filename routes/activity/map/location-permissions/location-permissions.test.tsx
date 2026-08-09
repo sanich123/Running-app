@@ -54,4 +54,30 @@ describe('location permissions', () => {
     await user.press(links[0]);
     expect(mockNavigate).toHaveBeenCalledWith(`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`);
   });
+
+  it('explains when the profile cannot be checked', async () => {
+    const userId = 'profile-check-fails';
+    mockStore.dispatch(setUserId(userId));
+    server.use(
+      http.get(`${BASE_URL}/user/${userId}/profile`, () =>
+        HttpResponse.json({ message: 'server error' }, { status: 500 }),
+      ),
+    );
+
+    await renderWithProviders(
+      <LocationPermissions
+        isMapVisible
+        isLocationEnabled
+        foregroundPermissionStatus={{ granted: true } as any}
+        backgroundPermissionStatus={{ granted: true } as any}
+        setIsLocationEnabled={jest.fn()}
+        requestForegroundPermission={jest.fn()}
+        requestBackgroundPermission={jest.fn()}
+      />,
+    );
+
+    expect(await screen.findByTestId('profile-check-error')).toBeOnTheScreen();
+    expect(screen.getByText('Не удалось проверить профиль')).toBeOnTheScreen();
+    expect(screen.getByText(/Проверьте интернет/)).toBeOnTheScreen();
+  });
 });

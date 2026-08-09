@@ -12,10 +12,19 @@ jest.mock('@S/choose-sport-modal/choose-sport-modal', () => {
 });
 
 describe('icon choose sport', () => {
+  beforeEach(() => mockPresent.mockClear());
+
   it('opens the sport picker', async () => {
     const user = userEvent.setup();
     await renderWithProviders(<IconChooseSport />);
     await user.press(screen.getByTestId('choose-activity-sport'));
     expect(mockPresent).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not open the sport picker when it is disabled', async () => {
+    const user = userEvent.setup();
+    await renderWithProviders(<IconChooseSport disabled />);
+    await user.press(screen.getByTestId('choose-activity-sport'));
+    expect(mockPresent).not.toHaveBeenCalled();
   });
 });

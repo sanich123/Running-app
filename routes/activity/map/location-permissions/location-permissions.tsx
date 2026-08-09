@@ -24,7 +24,7 @@ export default function LocationPermissions({
   const { colors } = useTheme();
   const backgroundLocationEnabledModalRef = useRef<BottomSheetModal>(null);
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { data: profile, isSuccess } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const { data: profile, isSuccess, isError, refetch } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   return (
     <View style={[styles.container, { backgroundColor: colors.background }, isMapVisible && { height: '60%' }]}>
       {!isLocationEnabled && (
@@ -66,6 +66,36 @@ export default function LocationPermissions({
                 Создать профиль
               </Button>
             </Link>
+          </View>
+        </View>
+      )}
+      {(isError || !userId) && (
+        <View
+          testID="profile-check-error"
+          style={[
+            styles.profileNotice,
+            { backgroundColor: colors.errorContainer, borderColor: colors.outlineVariant },
+          ]}>
+          <View style={[styles.profileNoticeIcon, { backgroundColor: colors.error }]}>
+            <Icon source="cloud-alert-outline" size={24} color={colors.onError} />
+          </View>
+          <View style={styles.profileNoticeContent}>
+            <Text variant="titleSmall" style={{ color: colors.onErrorContainer }}>
+              Не удалось проверить профиль
+            </Text>
+            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+              Карта и запись активности появятся после проверки профиля. Проверьте интернет и попробуйте ещё раз.
+            </Text>
+            {isError && (
+              <Button
+                mode="contained-tonal"
+                compact
+                icon="refresh"
+                style={styles.profileNoticeButton}
+                onPress={refetch}>
+                Повторить
+              </Button>
+            )}
           </View>
         </View>
       )}

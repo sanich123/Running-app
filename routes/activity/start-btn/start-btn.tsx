@@ -18,7 +18,15 @@ import { startLocationTracking, stopLocationTracking } from '@U/location/expo-ta
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { ACTIVITY_START_BTN_TEST_ID, ACTIVITY_START_BTN, STOP_ICON } from './const';
 
-export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordLocation: boolean }) {
+export default function StartBtn({
+  isReadyToRecordLocation,
+  isGettingLocation: isGettingLocationProp,
+  onTrackingActionInProgressChange,
+}: {
+  isReadyToRecordLocation: boolean;
+  isGettingLocation?: boolean;
+  onTrackingActionInProgressChange?: (isInProgress: boolean) => void;
+}) {
   const dispatch = useAppDispatch();
   const { dark, colors } = useTheme();
   const {
@@ -33,7 +41,10 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
   const [pressScale] = useState(() => new Animated.Value(1));
   const [pulse] = useState(() => new Animated.Value(0));
   const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
-  const { isLoading: isGettingLocation } = useGetCurrentLocation(isReadyToRecordLocation);
+  const { isLoading: isGettingLocationFromHook } = useGetCurrentLocation(
+    isGettingLocationProp === undefined && isReadyToRecordLocation,
+  );
+  const isGettingLocation = isGettingLocationProp ?? isGettingLocationFromHook;
   const isRecording = activityStatus === STATUSES.started || activityStatus === STATUSES.continued;
   const isFinishing = activityStatus === STATUSES.paused;
 
@@ -82,6 +93,7 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
     }
 
     setIsTrackingActionInProgress(true);
+    onTrackingActionInProgressChange?.(true);
     try {
       if (activityStatus === STATUSES.initial) {
         await startLocationTracking();
@@ -114,6 +126,7 @@ export default function StartBtn({ isReadyToRecordLocation }: { isReadyToRecordL
       );
     } finally {
       setIsTrackingActionInProgress(false);
+      onTrackingActionInProgressChange?.(false);
     }
   };
 
