@@ -1,11 +1,5 @@
 import { runichApi } from '@R/runich-api/runich-api';
-import type {
-  AccessData,
-  EmailPasswordData,
-  RefreshTokenResponse,
-  VerifyTokenRequest,
-  VerifyTokenResponse,
-} from './types';
+import type { EmailPasswordData } from './types';
 
 export const authenticationApi = runichApi.injectEndpoints({
   overrideExisting: true,
@@ -17,21 +11,21 @@ export const authenticationApi = runichApi.injectEndpoints({
         method: 'POST',
       }),
     }),
-    loginUser: mutation<AccessData, EmailPasswordData>({
+    loginUser: mutation<{ accessToken: string; refreshToken: string; userId: string }, EmailPasswordData>({
       query: ({ email, password }) => ({
         url: '/auth/login',
         body: { email, password },
         method: 'POST',
       }),
     }),
-    refreshToken: mutation<RefreshTokenResponse, { refreshToken: string }>({
+    refreshToken: mutation<{ accessToken: string }, { refreshToken: string }>({
       query: ({ refreshToken }) => ({
-        url: 'auth/refresh',
+        url: '/auth/refresh',
         body: { refreshToken },
         method: 'POST',
       }),
     }),
-    verifyConfig: query<VerifyTokenResponse, VerifyTokenRequest>({
+    verifyConfig: query<{ accessToken: string; userId: string }, { accessToken: string }>({
       query: ({ accessToken }) => ({
         url: 'auth/verify',
         body: { accessToken },
@@ -40,13 +34,16 @@ export const authenticationApi = runichApi.injectEndpoints({
     }),
     deleteUser: mutation<void, { userId: string }>({
       query: ({ userId }) => ({
-        url: `auth/${userId}`,
+        url: `/auth/${userId}`,
         method: 'DELETE',
       }),
     }),
-    confirmSignUpCodeByEmail: mutation<VerifyTokenResponse, { confirmationCode: string; email: string }>({
+    confirmSignUpCodeByEmail: mutation<
+      { accessToken: string; id: string; userId: string },
+      { confirmationCode: string; email: string }
+    >({
       query: ({ confirmationCode, email }) => ({
-        url: 'auth/confirm-email',
+        url: '/auth/confirm-email',
         body: { confirmationCode, email },
         method: 'POST',
       }),

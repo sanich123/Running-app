@@ -1,7 +1,6 @@
 import { act, waitFor } from '@testing-library/react-native';
 import { http } from 'msw';
 import { ROUTES } from '@const/enums';
-import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { loadingResponse } from '@T/utils/response-states';
@@ -40,7 +39,7 @@ describe('ConfirmEmailCode', () => {
     await waitFor(() => expect(mockConfirmationSubmitProps.disabled).toBe(false));
     await act(async () => mockConfirmationSubmitProps.onPress());
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
-    expect(mockStoreUserId()).toBe(MOCK_SERVER_IDS.userId);
+    expect(mockStore.getState().auth.accessToken).toBe('test-access-token');
   });
 
   it('disables controls while the request is loading', async () => {
@@ -56,7 +55,3 @@ describe('ConfirmEmailCode', () => {
     expect(mockConfirmationSubmitProps.disabled).toBe(true);
   });
 });
-
-function mockStoreUserId() {
-  return mockStore.getState().auth.userId;
-}

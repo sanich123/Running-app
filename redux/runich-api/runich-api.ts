@@ -2,9 +2,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Mutex } from 'async-mutex';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
-import { resetAuthSlice, setAccessToken, setRefreshToken } from '@R/slices/auth/actions';
+import { resetAuthSlice, setAccessToken } from '@R/slices/auth/actions';
 import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
-import type { RefreshTokenResponse } from '@R/services/authentication/types';
 import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';
 
 interface ApiState {
@@ -55,13 +54,11 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
           api,
           extraOptions,
         );
-        const refreshData = refreshResult.data as RefreshTokenResponse | undefined;
-        const newAccessToken = refreshData?.accessToken ?? refreshData?.access_token ?? refreshData?.access;
-        const newRefreshToken = refreshData?.refreshToken ?? refreshData?.refresh_token ?? refreshData?.refresh;
+        const refreshData = refreshResult.data as { accessToken?: string } | undefined;
+        const newAccessToken = refreshData?.accessToken;
 
         if (newAccessToken) {
           api.dispatch(setAccessToken(newAccessToken));
-          if (newRefreshToken) api.dispatch(setRefreshToken(newRefreshToken));
           result = await baseQuery(args, api, extraOptions);
         } else {
           router.dismissAll();

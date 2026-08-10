@@ -4,15 +4,12 @@ import { useRouter } from 'expo-router';
 import { Button, TextInput, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useConfirmSignUpCodeByEmailMutation } from '@R/services/authentication/authentication';
-import { setAccessToken, setRefreshToken } from '@R/slices/auth/actions';
-import { useAppDispatch } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { CONFIRM_EMAIL_CODE_TEST_ID, CONFIRM_EMAIL_CODE_TEXT } from './const';
 
 export default function ConfirmEmailCode({ email }: { email: string }) {
   const [confirmationCode, setConfirmationCode] = useState('');
   const [confirmEmailByCode, { isLoading }] = useConfirmSignUpCodeByEmailMutation();
-  const dispatch = useAppDispatch();
   const { replace } = useRouter();
   const {
     colors: { primary, onBackground },
@@ -25,19 +22,10 @@ export default function ConfirmEmailCode({ email }: { email: string }) {
     }
 
     try {
-      const response = await confirmEmailByCode({
+      await confirmEmailByCode({
         email,
         confirmationCode: confirmationCode.trim(),
       }).unwrap();
-      const accessToken = response.accessToken ?? response.access;
-      const refreshToken = response.refreshToken ?? response.refresh;
-
-      if (accessToken) {
-        dispatch(setAccessToken(accessToken));
-      }
-      if (refreshToken) {
-        dispatch(setRefreshToken(refreshToken));
-      }
       replace(ROUTES.root);
     } catch (error) {
       errorToast(CONFIRM_EMAIL_CODE_TEXT.error, error);

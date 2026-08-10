@@ -49,14 +49,15 @@ describe('Login btn', () => {
     server.use(
       http.post(`${BASE_URL}/auth/login`, async ({ request }) => {
         requestBody = await request.json();
-        return HttpResponse.json({ id: 'logged-user', accessToken: 'access-token' });
+        return HttpResponse.json({ accessToken: 'access-token', refreshToken: 'refresh-token' });
       }),
     );
     await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} />);
     await user.press(screen.getByText(LOGIN_BTN.russian.login));
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', password: 'secure-password' }));
     expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
-    expect(mockStore.getState().auth.userId).toBe('logged-user');
+    expect(mockStore.getState().auth.accessToken).toBe('access-token');
+    expect(mockStore.getState().auth.refreshToken).toBe('refresh-token');
   });
 
   it('opens the email confirmation page instead of sending registration code inline', async () => {

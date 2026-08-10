@@ -24,10 +24,10 @@ const auth = createSlice({
     builder.addCase(resetAuthSlice, () => AUTH_INITIAL_STATE);
     builder.addMatcher(
       authenticationApi.endpoints.loginUser.matchFulfilled,
-      (state, { payload: { id, accessToken, access, refreshToken, refresh } }) => {
-        state.accessToken = accessToken ?? access ?? '';
-        state.refreshToken = refreshToken ?? refresh ?? '';
-        state.userId = id;
+      (state, { payload: { userId, accessToken, refreshToken } }) => {
+        state.accessToken = accessToken ?? '';
+        state.refreshToken = refreshToken ?? '';
+        state.userId = userId;
         state.isNeedToShowConfirmEmailInput = false;
       },
     );
@@ -37,10 +37,10 @@ const auth = createSlice({
     });
     builder.addMatcher(
       authenticationApi.endpoints.confirmSignUpCodeByEmail.matchFulfilled,
-      (state, { payload: { id, accessToken } }) => {
+      (state, { payload: { userId, accessToken } }) => {
         state.accessToken = accessToken ?? '';
         state.isNeedToShowConfirmEmailInput = false;
-        state.userId = id;
+        state.userId = userId;
       },
     );
   },

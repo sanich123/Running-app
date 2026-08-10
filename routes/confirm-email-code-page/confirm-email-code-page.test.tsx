@@ -43,12 +43,12 @@ describe('ConfirmEmailCodePage', () => {
     mockStore.dispatch(saveEmail('runner@example.test'));
   });
 
-  it('only submits the code and email, saves returned tokens and opens the home page', async () => {
+  it('only submits the code and email, saves the returned access token and opens the home page', async () => {
     let requestBody: unknown;
     server.use(
       http.post(`${BASE_URL}/auth/confirm-email`, async ({ request }) => {
         requestBody = await request.json();
-        return HttpResponse.json({ id: 'runner-id', access: 'access-token', refresh: 'refresh-token' });
+        return HttpResponse.json({ accessToken: 'access-token' });
       }),
     );
 
@@ -66,7 +66,6 @@ describe('ConfirmEmailCodePage', () => {
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', confirmationCode: '123456' }));
     expect(mockStore.getState().auth.accessToken).toBe('access-token');
-    expect(mockStore.getState().auth.refreshToken).toBe('refresh-token');
     expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
   });
 
