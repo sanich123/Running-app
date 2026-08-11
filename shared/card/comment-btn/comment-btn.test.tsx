@@ -1,6 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { Platform } from 'react-native';
-import { ROUTES } from '@const/enums';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -23,7 +22,7 @@ describe('Activity card comment btn', () => {
     expect(screen.getByTestId('activityCardCommentBtnIcon')).toBeOnTheScreen();
   });
 
-  it('opens the activity comments and stores their context', async () => {
+  it('opens the activity comments modal and stores their context on web', async () => {
     const user = userEvent.setup();
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
@@ -31,7 +30,7 @@ describe('Activity card comment btn', () => {
       <ActivityCardCommentBtn activityId="someActivityId" commentsLength={6} profile={MOCK_PROFILE} />,
     );
     await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.comment}/someActivityId`);
+    expect(mockPush).not.toHaveBeenCalled();
     expect(mockStore.getState().comment).toEqual(
       expect.objectContaining({ commentActivityId: 'someActivityId', commentsLength: 6, isShowingTextInput: false }),
     );
