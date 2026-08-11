@@ -48,6 +48,7 @@ export default function MonthTypesChips({ userId, year, month, setSelectedType, 
             </Text>
             <FlatList
               data={typesOfSport}
+              keyExtractor={(type) => type}
               renderItem={({ item: type, index }) => (
                 <Chip
                   compact
@@ -66,6 +67,11 @@ export default function MonthTypesChips({ userId, year, month, setSelectedType, 
               )}
               horizontal
               showsHorizontalScrollIndicator={false}
+              initialNumToRender={4}
+              maxToRenderPerBatch={4}
+              windowSize={3}
+              updateCellsBatchingPeriod={50}
+              removeClippedSubviews={Platform.OS === 'android'}
             />
           </>
         ) : isError ? (

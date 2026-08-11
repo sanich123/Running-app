@@ -4,7 +4,7 @@ import type { CurrentWeekStatisticsRequest, MonthStatisticsRequest } from './typ
 
 const { statistics } = Routes;
 
-export const statisticsApi = runichApi.injectEndpoints({
+const statisticsApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getAnnualStatisticsByUserId: builder.query({

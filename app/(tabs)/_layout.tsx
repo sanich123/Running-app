@@ -6,6 +6,7 @@ import { Icon, useTheme } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 const LazyAvatarShowable = lazy(() => import('@S/avatar/showable/showable'));
+const HOME_TAB_ROUTE = '(home)';
 
 export default function TabLayout() {
   const { replace } = useRouter();
@@ -53,7 +54,7 @@ export default function TabLayout() {
         blurEffect="systemMaterial"
         disableTransparentOnScrollEdge
         shadowColor={colors.outlineVariant}>
-        <NativeTabs.Trigger name={ROUTES.index} accessibilityLabel="Лента">
+        <NativeTabs.Trigger name={HOME_TAB_ROUTE} accessibilityLabel="Лента">
           <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
@@ -95,8 +96,9 @@ export default function TabLayout() {
         tabBarItemStyle: { paddingVertical: 4 },
       }}>
       <Tabs.Screen
-        name={ROUTES.index}
+        name={HOME_TAB_ROUTE}
         options={{
+          headerShown: false,
           tabBarAccessibilityLabel: 'Лента',
           tabBarIcon: ({ focused }) => renderTabIcon('home-outline', 'home-variant', focused),
         }}

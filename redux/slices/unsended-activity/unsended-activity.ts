@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { UnsyncedActivities } from './const';
 
-export const unsendedActivity = createSlice({
+const unsendedActivity = createSlice({
   name: 'unsendedActivity',
   initialState: { isHaveUnsyncedActivity: false, unsyncedActivities: [] as UnsyncedActivities },
   reducers: {
@@ -29,7 +29,6 @@ export const unsendedActivity = createSlice({
 export const {
   saveUnsendedActivity,
   setIsHaveUnsyncedActivity,
-  refreshUnsendedActivitiesList,
   removeUnsendedActivityFromList,
   clearUnsendedActivities,
 } = unsendedActivity.actions;

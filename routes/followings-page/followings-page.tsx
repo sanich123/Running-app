@@ -11,6 +11,20 @@ import ErrorComponent from '@S/error-component/error-component';
 import UserListItem from '@S/user-list-item/user-list-item';
 import useRefresh from '@U/hooks/use-refresh';
 
+const renderFollowingItem = ({ item }: { item: any }) => (
+  <UserListItem
+    city={item.profile?.city}
+    name={item.profile?.name}
+    surname={item.profile?.surname}
+    profilePhoto={item.profile?.profilePhoto}
+    placeholder={item.profile?.profilePhotoBlurhash}
+    user_id={item?.friendId}
+  />
+);
+
+const followingKeyExtractor = (item: any) => item.id || item.friendId;
+const renderDivider = () => <Divider />;
+
 export default function ListOfFollowing() {
   const { width } = useWindowDimensions();
   const { language } = useAppSelector(({ language }) => language);
@@ -35,16 +49,8 @@ export default function ListOfFollowing() {
               marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
             },
           ]}
-          renderItem={({ item }) => (
-            <UserListItem
-              city={item.profile?.city}
-              name={item.profile?.name}
-              surname={item.profile?.surname}
-              profilePhoto={item.profile?.profilePhoto}
-              placeholder={item.profile?.profilePhotoBlurhash}
-              user_id={item?.friendId}
-            />
-          )}
+          renderItem={renderFollowingItem}
+          keyExtractor={followingKeyExtractor}
           contentContainerStyle={{ flexGrow: 1 }}
           ListEmptyComponent={
             <EmptyState
@@ -53,7 +59,12 @@ export default function ListOfFollowing() {
               message={EMPTY_STATE_COPY[language].followings.message}
             />
           }
-          ItemSeparatorComponent={() => <Divider />}
+          ItemSeparatorComponent={renderDivider}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={7}
+          updateCellsBatchingPeriod={50}
+          removeClippedSubviews={Platform.OS === 'android'}
         />
       ) : isError ? (
         <ErrorComponent error={error} refetch={refetch} />

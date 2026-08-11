@@ -3,17 +3,27 @@ import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, TextInput, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
-import { useConfirmSignUpCodeByEmailMutation } from '@R/services/authentication/authentication';
-import { setAccessToken, setRefreshToken } from '@R/slices/auth/actions';
-import { useAppDispatch } from '@R/typed-hooks';
+import {
+  useConfirmSignUpCodeByEmailMutation,
+  useVerifyPasswordChangeCodeMutation,
+} from '@R/services/authentication/authentication';
 import { errorToast } from '@S/error-toast/error-toast';
 import { CONFIRM_EMAIL_CODE_TEST_ID, CONFIRM_EMAIL_CODE_TEXT } from './const';
 
-export default function ConfirmEmailCode({ email }: { email: string }) {
+export type ConfirmEmailCodeType = 'registration' | 'change-password';
+
+interface ConfirmEmailCodeProps {
+  email: string;
+  type?: ConfirmEmailCodeType;
+}
+
+export default function ConfirmEmailCode({ email, type = 'registration' }: ConfirmEmailCodeProps) {
   const [confirmationCode, setConfirmationCode] = useState('');
-  const [confirmEmailByCode, { isLoading }] = useConfirmSignUpCodeByEmailMutation();
-  const dispatch = useAppDispatch();
-  const { replace } = useRouter();
+  const [confirmEmailByCode, { isLoading: isConfirmingRegistration }] = useConfirmSignUpCodeByEmailMutation();
+  const [verifyPasswordChangeCode, { isLoading: isVerifyingPasswordChangeCode }] =
+    useVerifyPasswordChangeCodeMutation();
+  const { push, replace } = useRouter();
+  const isLoading = isConfirmingRegistration || isVerifyingPasswordChangeCode;
   const {
     colors: { primary, onBackground },
     dark,
@@ -25,20 +35,14 @@ export default function ConfirmEmailCode({ email }: { email: string }) {
     }
 
     try {
-      const response = await confirmEmailByCode({
-        email,
-        confirmationCode: confirmationCode.trim(),
-      }).unwrap();
-      const accessToken = response.accessToken ?? response.access;
-      const refreshToken = response.refreshToken ?? response.refresh;
-
-      if (accessToken) {
-        dispatch(setAccessToken(accessToken));
+      const code = confirmationCode.trim();
+      if (type === 'change-password') {
+        await verifyPasswordChangeCode({ email, confirmationCode: code }).unwrap();
+        push({ pathname: `/${ROUTES.changePassword}` as const, params: { email } });
+      } else {
+        await confirmEmailByCode({ email, confirmationCode: code }).unwrap();
+        replace(ROUTES.root);
       }
-      if (refreshToken) {
-        dispatch(setRefreshToken(refreshToken));
-      }
-      replace(ROUTES.root);
     } catch (error) {
       errorToast(CONFIRM_EMAIL_CODE_TEXT.error, error);
     }

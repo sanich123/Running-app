@@ -4,7 +4,7 @@ import type { EmailComment, EmailCommentLike, EmailDTO } from './types';
 
 const { email, comment, commentLike, like } = Routes;
 
-export const emailsApi = runichApi.injectEndpoints({
+const emailsApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     sendEmailAfterSendingLike: builder.mutation({

@@ -6,7 +6,7 @@ import ChooseSportModal from '@S/choose-sport-modal/choose-sport-modal';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-export default function IconChooseSport() {
+export default function IconChooseSport({ disabled = false }: { disabled?: boolean }) {
   const chooseSportModal = useRef<BottomSheetModal>(null);
   const { sport } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
 
@@ -16,6 +16,7 @@ export default function IconChooseSport() {
         testID="choose-activity-sport"
         icon={getIconNameByTypeOfSport(sport)}
         size={35}
+        disabled={disabled}
         onPress={() => chooseSportModal.current?.present()}
         mode="outlined"
       />

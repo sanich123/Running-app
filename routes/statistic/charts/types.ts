@@ -1,6 +1,6 @@
 export type MonthMetrics = Record<string, { totalDistance: number; totalDuration: number; totalItems: number }>;
 
-export interface ChartBarComponent {
+interface ChartBarComponent {
   value: number;
   label: string;
   topLabelComponent: () => void;

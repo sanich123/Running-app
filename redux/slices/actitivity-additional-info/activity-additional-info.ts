@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { ADDITIONAL_INFO_INITIAL_STATE } from './const';
 
-export const additionalInfoActivity = createSlice({
+const additionalInfoActivity = createSlice({
   name: 'additionalInfoActivity',
   initialState: ADDITIONAL_INFO_INITIAL_STATE,
   reducers: {
@@ -47,7 +47,6 @@ export const {
   addPhotoUrl,
   addPhotoUrls,
   deletePhotoUrl,
-  resetPhotoUrls,
   resetAdditionaInfoActivitySlice,
 } = additionalInfoActivity.actions;
 

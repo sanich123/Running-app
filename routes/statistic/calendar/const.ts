@@ -1,13 +1,3 @@
-export enum DaysOfTheWeek {
-  mondays = 'mondays',
-  tuesdays = 'tuesdays',
-  wednesdays = 'wednesdays',
-  thursdays = 'thursdays',
-  fridays = 'fridays',
-  saturdays = 'saturdays',
-  sundays = 'sundays',
-}
-
 export enum REDUCED_DAY_NAME_RU {
   monday = 'ПН',
   tuesday = 'ВТ',

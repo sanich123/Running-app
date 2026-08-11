@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { LOCATION_INITIAL_STATE } from './const';
 
-export const location = createSlice({
+const location = createSlice({
   name: 'location',
   initialState: LOCATION_INITIAL_STATE,
   reducers: {

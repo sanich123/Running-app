@@ -12,6 +12,7 @@ import PauseBtn from '@Routes/activity/pause-btn/pause-btn';
 import ShowMapBtn from '@Routes/activity/show-map-btn/show-map-btn';
 import StartBtn from '@Routes/activity/start-btn/start-btn';
 import { errorToast } from '@S/error-toast/error-toast';
+import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 
 export default function Activity() {
@@ -23,6 +24,8 @@ export default function Activity() {
   );
   const didPauseRecoveredTracking = useRef(false);
   const [isReadyToRecordLocation, setIsReadyToRecordLocation] = useState(false);
+  const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
+  const { isLoading: isGettingLocation } = useGetCurrentLocation(isReadyToRecordLocation);
 
   useEffect(() => {
     if (!shouldPauseRecoveredTracking.current || didPauseRecoveredTracking.current) {
@@ -49,9 +52,15 @@ export default function Activity() {
       </View>
       <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
         <View style={styles.metrics}>
-          {activityStatus === STATUSES.initial && <IconChooseSport />}
+          {activityStatus === STATUSES.initial && (
+            <IconChooseSport disabled={!isReadyToRecordLocation || isGettingLocation || isTrackingActionInProgress} />
+          )}
           {activityStatus === STATUSES.paused && <PauseBtn />}
-          <StartBtn isReadyToRecordLocation={isReadyToRecordLocation} />
+          <StartBtn
+            isReadyToRecordLocation={isReadyToRecordLocation}
+            isGettingLocation={isGettingLocation}
+            onTrackingActionInProgressChange={setIsTrackingActionInProgress}
+          />
           {activityStatus !== STATUSES.initial && <ShowMapBtn />}
         </View>
       </View>

@@ -6,7 +6,7 @@ export const LANGUAGE_INITIAL_STATE = {
   theme: null,
 };
 
-export const language = createSlice({
+const language = createSlice({
   name: 'language',
   initialState: LANGUAGE_INITIAL_STATE,
   reducers: {

@@ -26,21 +26,3 @@ export async function getLastKnownPosition({ setIsLoading, setIsError, setIsSucc
     setIsLoading(false);
   }
 }
-
-export async function getExactPosition({ setIsLoading, setIsError, setIsSuccess }: GetPositionProps) {
-  try {
-    setIsLoading(true);
-    setIsError(false);
-    const currentPosition = await getCurrentPositionAsync();
-    setIsSuccess(true);
-    store.dispatch(setInitialLocation(currentPosition));
-    setTimeout(() => setIsSuccess(false), 2000);
-  } catch (error) {
-    setIsLoading(false);
-    setIsError(true);
-    setTimeout(() => setIsError(false), 2000);
-    errorToast('Не удалось определить геопозицию', error);
-  } finally {
-    setIsLoading(false);
-  }
-}

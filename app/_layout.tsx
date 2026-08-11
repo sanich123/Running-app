@@ -35,9 +35,11 @@ const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-
 const PUBLIC_ROUTES = new Set([
   `/${ROUTES.signIn}`,
   `/${ROUTES.confirmEmailCode}`,
+  `/${ROUTES.changePassword}`,
   `/${ROUTES.privacyPolicy}`,
   `/${ROUTES.legalInformation}`,
   `/${ROUTES.maintenance}`,
+  `/${ROUTES.updateApp}`,
 ]);
 
 SplashScreen.preventAutoHideAsync();

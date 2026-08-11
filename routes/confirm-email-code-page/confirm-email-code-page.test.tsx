@@ -12,12 +12,14 @@ import ConfirmEmailCodePage from './confirm-email-code-page';
 import { CONFIRM_EMAIL_PAGE_TEXT } from './const';
 
 const mockReplace = jest.fn();
+const mockSearchParams: { email?: string; type?: string } = {};
 let mockConfirmationInputProps: { onChangeText: (value: string) => void };
 let mockConfirmationSubmitProps: { onPress: () => Promise<void>; disabled?: boolean };
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },
   useRouter: () => ({ replace: mockReplace }),
+  useLocalSearchParams: () => mockSearchParams,
 }));
 jest.mock('react-native-paper', () => {
   const actual = jest.requireActual('react-native-paper');
@@ -39,16 +41,18 @@ jest.mock('react-native-paper', () => {
 describe('ConfirmEmailCodePage', () => {
   beforeEach(() => {
     mockReplace.mockClear();
+    mockSearchParams.email = 'runner@example.test';
+    mockSearchParams.type = 'registration';
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(saveEmail('runner@example.test'));
   });
 
-  it('only submits the code and email, saves returned tokens and opens the home page', async () => {
+  it('only submits the code and email, saves the returned access token and opens the home page', async () => {
     let requestBody: unknown;
     server.use(
       http.post(`${BASE_URL}/auth/confirm-email`, async ({ request }) => {
         requestBody = await request.json();
-        return HttpResponse.json({ id: 'runner-id', access: 'access-token', refresh: 'refresh-token' });
+        return HttpResponse.json({ accessToken: 'access-token' });
       }),
     );
 
@@ -66,7 +70,6 @@ describe('ConfirmEmailCodePage', () => {
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', confirmationCode: '123456' }));
     expect(mockStore.getState().auth.accessToken).toBe('access-token');
-    expect(mockStore.getState().auth.refreshToken).toBe('refresh-token');
     expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
   });
 

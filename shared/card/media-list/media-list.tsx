@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { FlatList, Platform, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
@@ -13,35 +13,49 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
   const { push } = useRouter();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
 
-  const displayedData = mapPhotoUrl
-    ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...(photoVideoUrls ? photoVideoUrls : [])]
-    : photoVideoUrls;
+  const displayedData = useMemo(
+    () =>
+      mapPhotoUrl
+        ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...(photoVideoUrls || [])]
+        : photoVideoUrls,
+    [mapPhotoUrl, mapPhotoUrlBlurhash, photoVideoUrls],
+  );
+  const renderItem = useCallback(
+    ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => (
+      <TouchableRipple
+        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+        onPress={() => {
+          push(
+            item.url.includes('api.mapbox.com')
+              ? `/${ROUTES.map}/${id}`
+              : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
+          );
+        }}
+        borderless>
+        <CustomImage
+          style={{ width: mediaWidth, height: 202 }}
+          source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
+          contentFit="cover"
+          testID={item.url}
+          placeholder={item?.blurhash}
+        />
+      </TouchableRipple>
+    ),
+    [dark, id, mediaWidth, push],
+  );
 
   return (
     <FlatList
       data={displayedData}
-      renderItem={({ item, index }) => (
-        <TouchableRipple
-          rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-          onPress={() => {
-            push(
-              item.url.includes('api.mapbox.com')
-                ? `/${ROUTES.map}/${id}`
-                : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
-            );
-          }}
-          borderless>
-          <CustomImage
-            style={{ width: mediaWidth, height: 202 }}
-            source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
-            contentFit="cover"
-            testID={item.url}
-            placeholder={item?.blurhash}
-          />
-        </TouchableRipple>
-      )}
+      renderItem={renderItem}
       horizontal
       initialNumToRender={1}
+      maxToRenderPerBatch={3}
+      windowSize={3}
+      updateCellsBatchingPeriod={50}
+      removeClippedSubviews={Platform.OS === 'android'}
+      keyExtractor={(item) => item.url}
+      getItemLayout={(_, index) => ({ length: mediaWidth, offset: mediaWidth * index, index })}
     />
   );
 });

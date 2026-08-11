@@ -115,6 +115,7 @@ describe('Activity', () => {
     expect(screen.getByTestId('activity-metrics')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-start-ready')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-show-map')).toBeOnTheScreen();
+    expect(screen.queryByTestId('choose-activity-sport')).not.toBeOnTheScreen();
     expect(screen.queryByTestId('activity-sport-picker')).not.toBeOnTheScreen();
     if (shouldShowPause) {
       expect(screen.getByTestId('activity-pause')).toBeOnTheScreen();

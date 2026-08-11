@@ -9,7 +9,7 @@ import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { SignInPageStates } from '@U/validate-email-password';
-import { LOGIN_BTN, REGISTER_BTN } from './const';
+import { LOGIN_BTN, REGISTER_BTN, RESET_BTN } from './const';
 import LoginRegisterBtn from './login-register-btn';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 
@@ -49,18 +49,20 @@ describe('Login btn', () => {
     server.use(
       http.post(`${BASE_URL}/auth/login`, async ({ request }) => {
         requestBody = await request.json();
-        return HttpResponse.json({ id: 'logged-user', accessToken: 'access-token' });
+        return HttpResponse.json({ accessToken: 'access-token', refreshToken: 'refresh-token' });
       }),
     );
     await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} />);
     await user.press(screen.getByText(LOGIN_BTN.russian.login));
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', password: 'secure-password' }));
     expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
-    expect(mockStore.getState().auth.userId).toBe('logged-user');
+    expect(mockStore.getState().auth.accessToken).toBe('access-token');
+    expect(mockStore.getState().auth.refreshToken).toBe('refresh-token');
   });
 
   it('opens the email confirmation page instead of sending registration code inline', async () => {
     const user = userEvent.setup();
+    let requestBody: unknown;
     const interactiveHandleSubmit = ((callback: (data: EmailPasswordData) => Promise<unknown>) => () =>
       callback({
         email: 'runner@example.test',
@@ -68,10 +70,47 @@ describe('Login btn', () => {
       })) as UseFormHandleSubmit<EmailPasswordData>;
     mockPush.mockClear();
     mockStore.dispatch(setSignInPageState(SignInPageStates.register));
+    server.use(
+      http.post(`${BASE_URL}/auth/register`, async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({ message: 'Confirmation code sent' });
+      }),
+    );
 
     await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} />);
     await user.press(screen.getByText(REGISTER_BTN.russian.register));
 
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.confirmEmailCode}`);
+    await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', password: 'secure-password' }));
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: `/${ROUTES.confirmEmailCode}`,
+      params: { email: 'runner@example.test', type: 'registration' },
+    });
+  });
+
+  it('requests a password reset code and opens the email confirmation page', async () => {
+    const user = userEvent.setup();
+    let requestBody: unknown;
+    const interactiveHandleSubmit = ((callback: (data: EmailPasswordData) => Promise<unknown>) => () =>
+      callback({
+        email: 'runner@example.test',
+        password: '',
+      })) as UseFormHandleSubmit<EmailPasswordData>;
+    mockPush.mockClear();
+    mockStore.dispatch(setSignInPageState(SignInPageStates.reset));
+    server.use(
+      http.post(`${BASE_URL}/auth/get-email-code-for-password`, async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({ message: 'Confirmation code sent' });
+      }),
+    );
+
+    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} />);
+    await user.press(screen.getByText(RESET_BTN.russian.login));
+
+    await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test' }));
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: `/${ROUTES.confirmEmailCode}`,
+      params: { email: 'runner@example.test', type: 'change-password' },
+    });
   });
 });

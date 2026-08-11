@@ -11,6 +11,20 @@ import ErrorComponent from '@S/error-component/error-component';
 import UserListItem from '@S/user-list-item/user-list-item';
 import useRefresh from '@U/hooks/use-refresh';
 
+const renderFollowerItem = ({ item }: { item: any }) => (
+  <UserListItem
+    city={item.users.profile?.city}
+    name={item.users.profile?.name}
+    surname={item.users.profile?.surname}
+    profilePhoto={item.users.profile?.profilePhoto}
+    placeholder={item.users.profile?.profilePhotoBlurhash}
+    user_id={item.user_id}
+  />
+);
+
+const followerKeyExtractor = (item: any) => item.id || item.user_id;
+const renderDivider = () => <Divider />;
+
 export default function ListOfFollowers() {
   const { width } = useWindowDimensions();
   const { language } = useAppSelector(({ language }) => language);
@@ -43,16 +57,8 @@ export default function ListOfFollowers() {
               marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
             },
           ]}
-          renderItem={({ item }) => (
-            <UserListItem
-              city={item.users.profile?.city}
-              name={item.users.profile?.name}
-              surname={item.users.profile?.surname}
-              profilePhoto={item.users.profile?.profilePhoto}
-              placeholder={item.users.profile?.profilePhotoBlurhash}
-              user_id={item.user_id}
-            />
-          )}
+          renderItem={renderFollowerItem}
+          keyExtractor={followerKeyExtractor}
           contentContainerStyle={{ flexGrow: 1 }}
           ListEmptyComponent={
             <EmptyState
@@ -61,7 +67,12 @@ export default function ListOfFollowers() {
               message={EMPTY_STATE_COPY[language].followers.message}
             />
           }
-          ItemSeparatorComponent={() => <Divider />}
+          ItemSeparatorComponent={renderDivider}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={7}
+          updateCellsBatchingPeriod={50}
+          removeClippedSubviews={Platform.OS === 'android'}
         />
       ) : isError ? (
         <ErrorComponent error={error} refetch={refetch} />

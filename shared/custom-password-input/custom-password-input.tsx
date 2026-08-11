@@ -18,6 +18,9 @@ export default function CustomPasswordInput<T extends FieldValues>({
   callback,
   inputMode,
   onSubmitEditing,
+  placeholder,
+  testID,
+  visibilityTestID,
 }: CustomPasswordInputProps<T>) {
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
   const { colors } = useTheme();
@@ -32,6 +35,7 @@ export default function CustomPasswordInput<T extends FieldValues>({
         <>
           <TextInput
             label={label}
+            placeholder={placeholder}
             autoCapitalize={autoCapitalize}
             autoCorrect={false}
             autoComplete="current-password"
@@ -57,12 +61,13 @@ export default function CustomPasswordInput<T extends FieldValues>({
             activeOutlineColor={colors.primary}
             textColor={colors.onSurface}
             maxLength={maxLength}
-            testID={label}
+            testID={testID ?? label}
             disabled={shouldBeDisabled}
             returnKeyLabel={returnKeyLabel}
             returnKeyType={returnKeyType}
             right={
               <TextInput.Icon
+                testID={visibilityTestID}
                 icon={showPassword ? 'eye-off' : 'eye'}
                 onPress={() => setShowPassword((prevValue) => !prevValue)}
               />

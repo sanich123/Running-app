@@ -2,9 +2,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Mutex } from 'async-mutex';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
-import { resetAuthSlice, setAccessToken, setRefreshToken } from '@R/slices/auth/actions';
+import { resetAuthSlice, setAccessToken } from '@R/slices/auth/actions';
 import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
-import type { RefreshTokenResponse } from '@R/services/authentication/types';
 import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';
 
 interface ApiState {
@@ -40,7 +39,7 @@ async function showErrorToast(message: string, error?: unknown) {
 async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, extraOptions: object) {
   await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
-  const { accessToken, refreshToken } = (api.getState() as ApiState).auth;
+  const { refreshToken } = (api.getState() as ApiState).auth;
 
   if (result.error?.status === 401) {
     if (!mutex.isLocked()) {
@@ -50,23 +49,22 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
           {
             url: 'auth/refresh',
             method: 'POST',
-            body: { refreshToken: refreshToken || accessToken },
+            body: { refreshToken },
           },
           api,
           extraOptions,
         );
-        const refreshData = refreshResult.data as RefreshTokenResponse | undefined;
-        const newAccessToken = refreshData?.accessToken ?? refreshData?.access_token ?? refreshData?.access;
-        const newRefreshToken = refreshData?.refreshToken ?? refreshData?.refresh_token ?? refreshData?.refresh;
+        const refreshData = refreshResult.data as { accessToken?: string } | undefined;
+        const newAccessToken = refreshData?.accessToken;
 
         if (newAccessToken) {
           api.dispatch(setAccessToken(newAccessToken));
-          if (newRefreshToken) api.dispatch(setRefreshToken(newRefreshToken));
           result = await baseQuery(args, api, extraOptions);
         } else {
+          api.dispatch(resetAuthSlice());
           router.dismissAll();
           router.replace(`/${ROUTES.signIn}`);
-          api.dispatch(resetAuthSlice());
+
           await showErrorToast('Не удалось обновить авторизационные данные. Пожалуйста, авторизуйтесь повторно');
         }
       } catch (error) {

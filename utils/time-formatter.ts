@@ -9,12 +9,6 @@ export function formatDurationMinsSecs(time: number) {
   return utc(duration(time, 'ms').asMilliseconds()).format('mm:ss');
 }
 
-export function calculateAge(dateOfBirth: Date) {
-  const msDiff = Date.now() - dateOfBirth.getTime();
-  const ageDate = new Date(msDiff);
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-}
-
 export function formatDate(dateString: string, language: LANGUAGES) {
   return new Date(dateString).toLocaleDateString(`${language === LANGUAGES.english ? 'en-US' : 'ru'}`, {
     weekday: 'long',

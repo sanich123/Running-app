@@ -1,4 +1,3 @@
-/* eslint-disable import-x/no-named-as-default */
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { persistStore, persistReducer } from 'redux-persist';
@@ -59,5 +58,4 @@ setupListeners(store.dispatch);
 export const persistor = persistStore(store);
 
 export type RootState = AppState;
-export type AppStore = typeof store;
 export type AppDispatch = typeof store.dispatch;

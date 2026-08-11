@@ -3,7 +3,7 @@ import { runichApi } from '@R/runich-api/runich-api';
 import type { SendProfile } from './types';
 const { profile, user } = Routes;
 
-export const profileApi = runichApi.injectEndpoints({
+const profileApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getUserProfileByUserId: builder.query({

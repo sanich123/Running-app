@@ -78,6 +78,7 @@ export default function YearTypePicker({
             </Text>
             <FlatList
               data={availableYearsAndTypes?.find(({ year }: YearsAndTypes) => +year === selectedYear)?.types}
+              keyExtractor={(type) => type}
               renderItem={({ item: type, index }) => {
                 return (
                   <Chip
@@ -100,6 +101,11 @@ export default function YearTypePicker({
               }}
               horizontal
               showsHorizontalScrollIndicator={false}
+              initialNumToRender={4}
+              maxToRenderPerBatch={4}
+              windowSize={3}
+              updateCellsBatchingPeriod={50}
+              removeClippedSubviews={Platform.OS === 'android'}
             />
           </>
         ) : null}

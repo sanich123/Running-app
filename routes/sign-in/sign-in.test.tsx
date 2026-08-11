@@ -26,7 +26,7 @@ describe('sign in', () => {
     server.use(
       http.post(`${BASE_URL}/auth/login`, async ({ request }) => {
         requestBody = await request.json();
-        return HttpResponse.json({ id: 'signed-in-user', accessToken: 'access-token' });
+        return HttpResponse.json({ accessToken: 'access-token', refreshToken: 'refresh-token' });
       }),
     );
     await renderWithProviders(<SignIn />);

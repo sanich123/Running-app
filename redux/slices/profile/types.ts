@@ -1,10 +1,5 @@
 import type { ProfileType } from '@S/card/types';
 
-export interface ProfilePrivateInfo {
-  email: string;
-  password: string;
-}
-
 export interface ProfileSettings {
   gender?: string;
   name?: string;
@@ -20,7 +15,7 @@ export interface ProfileSettings {
 }
 
 export interface ProfileSlice {
-  privateInfo: ProfilePrivateInfo;
+  privateInfo: { email: string; password: string };
   isDisabledWhileSendingProfile: boolean;
   isNeedToPrefetchActivities: boolean;
   settings: ProfileSettings;

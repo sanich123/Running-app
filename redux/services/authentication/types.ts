@@ -4,31 +4,28 @@ export interface EmailPasswordData {
 }
 
 export interface AccessData {
-  id: string;
-  accessToken?: string;
-  access?: string;
-  refreshToken?: string;
-  refresh?: string;
-}
-
-export interface RefreshTokenResponse {
-  accessToken?: string;
-  access?: string;
-  refreshToken?: string;
-  refresh?: string;
-  access_token?: string;
-  refresh_token?: string;
-}
-
-export interface VerifyTokenRequest {
   accessToken: string;
+  refreshToken: string;
 }
 
-export interface VerifyTokenResponse {
-  id: string;
-  appVersion?: string;
-  accessToken?: string;
-  access?: string;
-  refreshToken?: string;
-  refresh?: string;
+export interface EmailData {
+  email: string;
+}
+
+export interface VerifyPasswordChangeCodeData extends EmailData {
+  confirmationCode: string;
+}
+
+export interface ChangePasswordData extends EmailData {
+  password1: string;
+  password2: string;
+}
+
+export interface ChangePasswordResponse {
+  accessToken: string;
+  userId?: string;
+}
+
+export interface AppConfig {
+  appVersion: string;
 }
