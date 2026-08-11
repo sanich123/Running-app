@@ -18,7 +18,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   const [focused, setFocused] = useState(false);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
-  const { commentActivityId, mapPhotoUrl, commentsLength } = useAppSelector(({ comment }) => comment);
+  const { commentActivityId, mapPhotoUrl } = useAppSelector(({ comment }) => comment);
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
@@ -89,7 +89,6 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
             activeOutlineColor={colors.primary}
             textColor={colors.onSurface}
             left={<PaperTextInput.Icon icon="comment-outline" color={colors.primary} />}
-            autoFocus={!commentsLength}
             onChangeText={setComment}
             onSubmitEditing={submitComment}
             onFocus={() => setFocused(true)}
@@ -111,7 +110,6 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
                   color: colors.onSurface,
                 },
               ]}
-              autoFocus={!commentsLength}
               onChangeText={setComment}
               onSubmitEditing={submitComment}
               onFocus={() => setFocused(true)}

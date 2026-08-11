@@ -1,8 +1,6 @@
 import { useContext, memo, useState, useEffect, useRef } from 'react';
-import { Platform, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { StyleSheet } from 'react-native';
 import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
-import { ROUTES } from '@const/enums';
 import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
 import {
   setCommentActivityId,
@@ -21,7 +19,6 @@ import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 export default memo(function CommentBtn({ activityId, commentsLength, profile, mapPhotoUrl }: CommentBtnProps) {
   const dispatch = useAppDispatch();
   const { dark, colors } = useTheme();
-  const { push } = useRouter();
   const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(false);
@@ -50,11 +47,7 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
         dispatch(setCommentActivityId(activityId));
         dispatch(setActivityOwnerProfile(profile));
         dispatch(setMapPhotoUrl(mapPhotoUrl));
-        if (Platform.OS === 'web') {
-          push(`/${ROUTES.comment}/${activityId}`);
-        } else {
-          commentsModalRef.current?.present();
-        }
+        commentsModalRef.current?.present?.();
       }}>
       <>
         {whatLengthToRender ? (

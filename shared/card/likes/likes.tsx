@@ -1,8 +1,6 @@
 import { Fragment, memo, useRef } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { ROUTES } from '@const/enums';
 import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToDownload } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch } from '@R/typed-hooks';
@@ -17,7 +15,6 @@ import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 export default memo(function Likes({ activityId, size }: LikesProps) {
   const dispatch = useAppDispatch();
   const { dark } = useTheme();
-  const { push } = useRouter();
   const { data: likes, isLoading, isError } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === LikesSize.big && likes?.length > 0 && likes?.length <= MAX_IN_ROW;
@@ -30,12 +27,8 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
           testID="pushToActivityLikes"
           rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           onPress={() => {
-            if (Platform.OS !== 'web') {
-              dispatch(setActivityIdWhichLikesToDownload(activityId));
-              likesListModal.current?.present();
-            } else {
-              push(`/${ROUTES.likes}/${activityId}`);
-            }
+            dispatch(setActivityIdWhichLikesToDownload(activityId));
+            likesListModal.current?.present?.();
           }}
           borderless
           disabled={isLoading || isError}
