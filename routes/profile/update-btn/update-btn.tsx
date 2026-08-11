@@ -18,10 +18,10 @@ export default function ProfileUpdateBtn() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const { settings, isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
-  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const { data: profile, isLoading: isProfileLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [createProfile, { isLoading: isCreating }] = useCreateProfileByUserIdMutation();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileByProfileIdMutation();
-  const isSaving = isCreating || isUpdating;
+  const isSaving = isProfileLoading || isCreating || isUpdating;
 
   return (
     <Button
@@ -59,7 +59,7 @@ export default function ProfileUpdateBtn() {
       style={styles.layout}>
       {!isSaving && (
         <Text variant="titleMedium" style={{ color: colors.primary }}>
-          {UPDATE_BTN[language].update}
+          {profile?.id ? UPDATE_BTN[language].update : UPDATE_BTN[language].create}
         </Text>
       )}
     </Button>

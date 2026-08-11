@@ -32,3 +32,18 @@ export const RESET_NAVIGATION = {
     btn: 'Cбросить',
   },
 } as const;
+
+export const EMAIL_LINK_NAVIGATION = {
+  [LANGUAGES.english]: {
+    text: 'Want to sign in by link?',
+    btn: 'Use email link',
+    backText: 'Sign in with a password?',
+    backBtn: 'Back to login',
+  },
+  [LANGUAGES.russian]: {
+    text: 'Войти по ссылке?',
+    btn: 'Войти по ссылке',
+    backText: 'Войти по паролю?',
+    backBtn: 'К логину',
+  },
+} as const;

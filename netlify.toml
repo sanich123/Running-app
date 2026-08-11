@@ -10,3 +10,9 @@
 
 [context.stage]
   command = "yarn web:export:stage"
+
+[[headers]]
+  for = "/.well-known/assetlinks.json"
+  [headers.values]
+    Content-Type = "application/json"
+    Cache-Control = "public, max-age=300"

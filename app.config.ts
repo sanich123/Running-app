@@ -22,7 +22,6 @@ export default {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
-      // associatedDomains: ['applinks:runich.expo.app'],
       entitlements: { 'com.apple.developer.networking.wifi-info': true },
       config: { usesNonExemptEncryption: false },
       infoPlist: {
@@ -57,7 +56,19 @@ export default {
           data: [
             {
               scheme: 'https',
-              host: 'runich.expo.app',
+              host: 'runich.netlify.app',
+              pathPrefix: '/sign-in',
+            },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'https',
+              host: 'stage--runich.netlify.app',
               pathPrefix: '/sign-in',
             },
           ],

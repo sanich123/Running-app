@@ -14,9 +14,11 @@ export async function getMigrationArchiveAndSendToServer({
   setIsRemovingMedia,
   setIsZipping,
   setIsSendingArchive,
+  setIsWaitingForServer,
   setIsDeletingCacheFolder,
   setIsSuccess,
   setIsError,
+  onArchiveUploadSuccess,
   userId,
   accessToken,
 }: GetMigrationArchiveAndSendToServerProps) {
@@ -33,10 +35,12 @@ export async function getMigrationArchiveAndSendToServer({
         await sendArchiveToServerWeb({
           archiveFile: selectedAsset.file,
           setIsSendingArchive,
+          setIsWaitingForServer,
           setIsError,
           userId,
           accessToken,
         });
+        onArchiveUploadSuccess();
         setIsSuccess(true);
         setIsDisabled(false);
         return;
@@ -62,7 +66,15 @@ export async function getMigrationArchiveAndSendToServer({
           throw new Error('Не удалось создать архив');
         }
         if (new File(toFileUri(pathToArchive)).exists) {
-          await sendArchiveToServer({ setIsSendingArchive, setIsError, pathToArchive, userId, accessToken });
+          await sendArchiveToServer({
+            setIsSendingArchive,
+            setIsWaitingForServer,
+            setIsError,
+            pathToArchive,
+            userId,
+            accessToken,
+          });
+          onArchiveUploadSuccess();
           await removeCacheFolder({ setIsDeletingCacheFolder, setIsError });
           setIsSuccess(true);
           setIsDisabled(false);
@@ -87,6 +99,7 @@ export async function getMigrationArchiveAndSendToServer({
     setIsRemovingMedia(false);
     setIsZipping(false);
     setIsSendingArchive(false);
+    setIsWaitingForServer(false);
     setIsDeletingCacheFolder(false);
     setTimeout(() => setIsSuccess(false), 2000);
     setTimeout(() => setIsError(''), 2000);

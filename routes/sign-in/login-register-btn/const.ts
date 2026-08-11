@@ -34,8 +34,20 @@ export const RESET_BTN = {
   },
 } as const;
 
+export const EMAIL_LINK_BTN = {
+  [LANGUAGES.english]: {
+    send: 'Send login link',
+    sending: 'Sending..',
+  },
+  [LANGUAGES.russian]: {
+    send: 'Получить ссылку',
+    sending: 'Отправляем..',
+  },
+} as const;
+
 export const LoginBtnIcons = {
   [SignInPageStates.login]: 'login',
   [SignInPageStates.register]: 'account',
   [SignInPageStates.reset]: 'key-change',
+  [SignInPageStates.emailLink]: 'email-outline',
 };

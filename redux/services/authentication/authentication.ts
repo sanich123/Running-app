@@ -25,6 +25,13 @@ export const authenticationApi = runichApi.injectEndpoints({
         method: 'POST',
       }),
     }),
+    requestEmailLink: mutation<{ message: string }, EmailData>({
+      query: ({ email }) => ({
+        url: '/auth/by-email-link',
+        body: { email },
+        method: 'POST',
+      }),
+    }),
     refreshToken: mutation<{ accessToken: string }, { refreshToken: string }>({
       query: ({ refreshToken }) => ({
         url: '/auth/refresh',
@@ -95,6 +102,7 @@ export const authenticationApi = runichApi.injectEndpoints({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
+  useRequestEmailLinkMutation,
   useGetAppConfigQuery,
   useLazyVerifyConfigQuery,
   useDeleteUserMutation,
