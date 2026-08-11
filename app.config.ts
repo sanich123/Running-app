@@ -6,7 +6,7 @@ export default {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
     scheme: 'runich',
-    version: '4.0.0',
+    version: '4.0.1',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
