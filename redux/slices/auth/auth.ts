@@ -25,10 +25,9 @@ const auth = createSlice({
     builder.addMatcher(
       authenticationApi.endpoints.loginUser.matchFulfilled,
       (state, { payload: { userId, accessToken, refreshToken } }) => {
-        state.accessToken = accessToken ?? '';
-        state.refreshToken = refreshToken ?? '';
+        state.accessToken = accessToken;
+        state.refreshToken = refreshToken;
         state.userId = userId;
-        state.isNeedToShowConfirmEmailInput = false;
       },
     );
 
@@ -37,12 +36,17 @@ const auth = createSlice({
     });
     builder.addMatcher(
       authenticationApi.endpoints.confirmSignUpCodeByEmail.matchFulfilled,
-      (state, { payload: { userId, accessToken } }) => {
-        state.accessToken = accessToken ?? '';
-        state.isNeedToShowConfirmEmailInput = false;
+      (state, { payload: { userId, accessToken, refreshToken } }) => {
+        state.accessToken = accessToken;
+        state.refreshToken = refreshToken;
         state.userId = userId;
       },
     );
+    builder.addMatcher(authenticationApi.endpoints.verifyConfig.matchFulfilled, (state, { payload }) => {
+      state.accessToken = payload.accessToken;
+      state.refreshToken = payload.refreshToken;
+      state.userId = payload.userId;
+    });
     builder.addMatcher(authenticationApi.endpoints.changePassword.matchFulfilled, (state, { payload }) => {
       state.accessToken = payload.accessToken;
       if (payload.userId) {

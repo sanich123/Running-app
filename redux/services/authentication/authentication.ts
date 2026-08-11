@@ -45,7 +45,7 @@ export const authenticationApi = runichApi.injectEndpoints({
         method: 'GET',
       }),
     }),
-    verifyConfig: query<{ accessToken: string; userId: string }, { accessToken: string }>({
+    verifyConfig: query<{ accessToken: string; userId: string; refreshToken: string }, { accessToken: string }>({
       query: ({ accessToken }) => ({
         url: '/auth/verify',
         body: { accessToken },
@@ -59,7 +59,7 @@ export const authenticationApi = runichApi.injectEndpoints({
       }),
     }),
     confirmSignUpCodeByEmail: mutation<
-      { accessToken: string; id: string; userId: string },
+      { accessToken: string; id: string; userId: string; refreshToken: string },
       { confirmationCode: string; email: string }
     >({
       query: ({ confirmationCode, email }) => ({
