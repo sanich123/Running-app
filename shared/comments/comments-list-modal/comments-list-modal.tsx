@@ -23,6 +23,7 @@ export default function CommentsListModal({ commentsModalRef }: CommentModalProp
       index={2}
       snapPoints={snapPoints}
       topInset={topInset}
+      style={{ maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}
       backdropComponent={renderBackdrop}
       handleStyle={{ backgroundColor: colors.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
       backgroundStyle={{ backgroundColor: colors.surface }}

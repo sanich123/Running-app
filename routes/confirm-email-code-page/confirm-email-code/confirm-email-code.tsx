@@ -38,7 +38,7 @@ export default function ConfirmEmailCode({ email, type = 'registration' }: Confi
       const code = confirmationCode.trim();
       if (type === 'change-password') {
         await verifyPasswordChangeCode({ email, confirmationCode: code }).unwrap();
-        push({ pathname: `/${ROUTES.changePassword}` as const, params: { email } });
+        push({ pathname: `/${ROUTES.changePassword}`, params: { email } });
       } else {
         await confirmEmailByCode({ email, confirmationCode: code }).unwrap();
         replace(ROUTES.root);
@@ -54,6 +54,7 @@ export default function ConfirmEmailCode({ email, type = 'registration' }: Confi
         testID={CONFIRM_EMAIL_CODE_TEST_ID.input}
         mode="outlined"
         placeholder={CONFIRM_EMAIL_CODE_TEXT.placeholder}
+        value={confirmationCode}
         onChangeText={(text) => setConfirmationCode(text)}
         style={[styles.input, { opacity: isLoading ? 0.7 : 1 }]}
         contentStyle={styles.inputContent}

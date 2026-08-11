@@ -21,14 +21,14 @@ const followersApi = runichApi.injectEndpoints({
         method: Methods.post,
         body,
       }),
-      invalidatesTags: (result, error, arg) => [{ type: Tags.friends, id: arg.body.userId }],
+      invalidatesTags: (result, error, arg) => [{ type: Tags.friends, id: arg.body.userId }, Tags.activities],
     }),
     deleteFriend: builder.mutation({
       query: (id: string) => ({
         url: `/${friend}/${id}`,
         method: Methods.delete,
       }),
-      invalidatesTags: [Tags.friends],
+      invalidatesTags: [Tags.friends, Tags.activities],
     }),
   }),
 });
