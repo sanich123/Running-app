@@ -1,0 +1,12 @@
+[build]
+  command = "yarn web:export:production"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22.13.0"
+
+[context.branch-deploy]
+  command = "yarn web:export:stage"
+
+[context.stage]
+  command = "yarn web:export:stage"
