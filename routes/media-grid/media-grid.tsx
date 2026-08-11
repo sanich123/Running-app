@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, FlatList, Platform, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
@@ -18,11 +18,40 @@ export default function MediaGrid() {
   const { language } = useAppSelector(({ language }) => language);
   const { id: userId } = useLocalSearchParams();
   const [take, setTake] = useState(28);
+  const isLoadingMore = useRef(false);
   const gridWidth = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
-  const { isLoading, isSuccess, data, error, isError, refetch } = useGetAllActivityPhotosByUserIdQuery(
+  const { isLoading, isSuccess, data, error, isError, refetch, isFetching } = useGetAllActivityPhotosByUserIdQuery(
     { userId: `${userId}`, take },
     { skip: !userId },
   );
+  const gridItemHeight = (gridWidth - 9) / 4;
+
+  useEffect(() => {
+    if (!isFetching) {
+      isLoadingMore.current = false;
+    }
+  }, [isFetching]);
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: PhotoVideoType; index: number }) => (
+      <MediaGridImage url={item.url} thumbnail={item.thumbnail} blurhash={item.blurhash} index={index} take={take} />
+    ),
+    [take],
+  );
+  const keyExtractor = useCallback((item: PhotoVideoType) => item.url, []);
+  const loadMore = useCallback(() => {
+    if (data?.isLastPage || isFetching || isLoadingMore.current) {
+      return;
+    }
+
+    isLoadingMore.current = true;
+    const increaseTake = () => setTake((currentTake) => currentTake + 28);
+    if (Platform.OS === 'web') {
+      setTimeout(increaseTake, 2000);
+    } else {
+      increaseTake();
+    }
+  }, [data?.isLastPage, isFetching]);
 
   return (
     <SafeAreaView
@@ -44,22 +73,20 @@ export default function MediaGrid() {
               (isLoading || isError) && styles.isInCenter,
             ]}
             data={data?.photos}
-            renderItem={({ item: { url, thumbnail, blurhash }, index }) => (
-              <MediaGridImage url={url} thumbnail={thumbnail} blurhash={blurhash} index={index} take={take} />
-            )}
+            renderItem={renderItem}
             initialNumToRender={20}
             maxToRenderPerBatch={20}
-            keyExtractor={(arg: PhotoVideoType, index: number) => `image-${index}`}
+            windowSize={5}
+            updateCellsBatchingPeriod={50}
+            removeClippedSubviews={Platform.OS === 'android'}
+            keyExtractor={keyExtractor}
+            getItemLayout={(_, index) => ({
+              length: gridItemHeight,
+              offset: gridItemHeight * Math.floor(index / 4),
+              index,
+            })}
             onEndReachedThreshold={0.5}
-            onEndReached={() => {
-              if (!data?.isLastPage) {
-                if (Platform.OS === 'web') {
-                  setTimeout(() => setTake(take + 28), 2000);
-                } else {
-                  setTake(take + 28);
-                }
-              }
-            }}
+            onEndReached={loadMore}
             ListFooterComponent={() => !data?.isLastPage && <ActivityIndicator size="large" />}
             numColumns={4}
             horizontal={false}

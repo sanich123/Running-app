@@ -11,6 +11,20 @@ import useRefresh from '@U/hooks/use-refresh';
 import EmptyUsersList from './empty-list/empty-list';
 import SearchInput from './search-input/search-input';
 
+const renderUserItem = ({ item }: { item: any }) => (
+  <UserListItem
+    city={item?.city}
+    name={item?.name}
+    surname={item?.surname}
+    profilePhoto={item?.profilePhoto}
+    placeholder={item?.profilePhotoBlurhash}
+    user_id={item?.user_id}
+  />
+);
+
+const userKeyExtractor = (item: any) => item.user_id;
+const renderDivider = () => <Divider />;
+
 export default function ListOfUsers() {
   const { colors } = useTheme();
   const [isInitial, setIsInitial] = useState(true);
@@ -41,24 +55,20 @@ export default function ListOfUsers() {
           onRefresh={onRefresh}
           refreshing={refreshing}
           data={users?.items}
-          renderItem={({ item }) => (
-            <UserListItem
-              city={item?.city}
-              name={item?.name}
-              surname={item?.surname}
-              profilePhoto={item?.profilePhoto}
-              placeholder={item?.profilePhotoBlurhash}
-              user_id={item?.user_id}
-            />
-          )}
+          renderItem={renderUserItem}
+          keyExtractor={userKeyExtractor}
           style={{
             flex: 1,
             width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
             marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
           }}
           ListEmptyComponent={<EmptyUsersList isInitial={isInitial} />}
-          ItemSeparatorComponent={() => <Divider />}
+          ItemSeparatorComponent={renderDivider}
           initialNumToRender={15}
+          maxToRenderPerBatch={10}
+          windowSize={7}
+          updateCellsBatchingPeriod={50}
+          removeClippedSubviews={Platform.OS === 'android'}
         />
       ) : isError ? (
         <View style={styles.stateOverlay}>

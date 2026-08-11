@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { ActivityIndicator } from 'react-native-paper';
 import { useGetActivitiesByUserIdInfiniteQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
@@ -12,11 +13,7 @@ export default function Activities() {
   const { data, isLoading, error, isError, refetch, isSuccess, fetchNextPage, isFetching } =
     useGetActivitiesByUserIdInfiniteQuery({ id: userId }, { skip: !userId });
   const { language } = useAppSelector(({ language }) => language);
-  const activities =
-    data?.pages
-      .flat()
-      .map(({ activities }) => activities)
-      .flat() ?? [];
+  const activities = useMemo(() => data?.pages.flatMap(({ activities }) => activities) ?? [], [data?.pages]);
 
   return (
     <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>

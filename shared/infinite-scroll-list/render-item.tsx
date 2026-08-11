@@ -42,4 +42,4 @@ export function renderCardsFunction({ item }: { item: ActivitiesType }) {
   );
 }
 
-export const keyExtractor = (_: unknown, index: number) => `activity-${index}`;
+export const keyExtractor = (item: ActivitiesType) => item.id;

@@ -43,6 +43,13 @@ const auth = createSlice({
         state.userId = userId;
       },
     );
+    builder.addMatcher(authenticationApi.endpoints.changePassword.matchFulfilled, (state, { payload }) => {
+      state.accessToken = payload.accessToken;
+      if (payload.userId) {
+        state.userId = payload.userId;
+      }
+      state.isNeedToShowConfirmEmailInput = false;
+    });
   },
 });
 

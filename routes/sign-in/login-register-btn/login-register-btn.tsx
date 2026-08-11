@@ -3,7 +3,11 @@ import { Button } from 'react-native-paper';
 import type { UseFormHandleSubmit } from 'react-hook-form';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
-import { useLoginUserMutation, useRegisterUserMutation } from '@R/services/authentication/authentication';
+import {
+  useGetEmailCodeForPasswordMutation,
+  useLoginUserMutation,
+  useRegisterUserMutation,
+} from '@R/services/authentication/authentication';
 import { saveEmail, savePassword, setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -18,7 +22,12 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
   const { push, replace } = useRouter();
   const [loginUser, { isLoading: isLoginingUser }] = useLoginUserMutation();
   const [registerUser, { isLoading: isRegisteringUser }] = useRegisterUserMutation();
-  const isSubmitting = isLoginingUser || isRegisteringUser;
+  const [getEmailCodeForPassword, { isLoading: isGettingPasswordCode }] = useGetEmailCodeForPasswordMutation();
+  const isSubmitting = isLoginingUser || isRegisteringUser || isGettingPasswordCode;
+  const confirmEmailPage = (email: string, type: 'registration' | 'change-password') => ({
+    pathname: `/${ROUTES.confirmEmailCode}` as const,
+    params: { email, type },
+  });
 
   return (
     <Button
@@ -34,11 +43,18 @@ export default function LoginRegisterBtn({ handleSubmit }: { handleSubmit: UseFo
         dispatch(setIsDisabledWhenLogining(true));
         dispatch(saveEmail(email));
         dispatch(savePassword(password));
-        if (pageState === SignInPageStates.register || pageState === SignInPageStates.reset) {
+        if (pageState === SignInPageStates.register) {
           return registerUser({ email, password })
             .unwrap()
-            .then(() => push(`/${ROUTES.confirmEmailCode}`))
+            .then(() => push(confirmEmailPage(email, 'registration')))
             .catch((error) => errorToast('Во время регистрации произошла ошибка: ', error))
+            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
+        }
+        if (pageState === SignInPageStates.reset) {
+          return getEmailCodeForPassword({ email })
+            .unwrap()
+            .then(() => push(confirmEmailPage(email, 'change-password')))
+            .catch((error) => errorToast('Во время сброса пароля произошла ошибка: ', error))
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }
         if (pageState === SignInPageStates.login) {

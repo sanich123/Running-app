@@ -45,6 +45,7 @@ export enum ROUTES {
   privacyPolicy = 'privacy-policy',
   legalInformation = 'legal-information',
   maintenance = 'maintenance',
+  updateApp = 'update-app',
   routeId = '[id]',
   routeIds = '[...ids]',
   photoUrl = '[photoUrl]',

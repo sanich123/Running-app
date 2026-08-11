@@ -12,12 +12,14 @@ import ConfirmEmailCodePage from './confirm-email-code-page';
 import { CONFIRM_EMAIL_PAGE_TEXT } from './const';
 
 const mockReplace = jest.fn();
+const mockSearchParams: { email?: string; type?: string } = {};
 let mockConfirmationInputProps: { onChangeText: (value: string) => void };
 let mockConfirmationSubmitProps: { onPress: () => Promise<void>; disabled?: boolean };
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },
   useRouter: () => ({ replace: mockReplace }),
+  useLocalSearchParams: () => mockSearchParams,
 }));
 jest.mock('react-native-paper', () => {
   const actual = jest.requireActual('react-native-paper');
@@ -39,6 +41,8 @@ jest.mock('react-native-paper', () => {
 describe('ConfirmEmailCodePage', () => {
   beforeEach(() => {
     mockReplace.mockClear();
+    mockSearchParams.email = 'runner@example.test';
+    mockSearchParams.type = 'registration';
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(saveEmail('runner@example.test'));
   });

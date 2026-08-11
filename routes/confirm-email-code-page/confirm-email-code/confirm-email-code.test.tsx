@@ -1,5 +1,5 @@
 import { act, waitFor } from '@testing-library/react-native';
-import { http } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
@@ -9,10 +9,11 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import ConfirmEmailCode from './confirm-email-code';
 
 const mockReplace = jest.fn();
+const mockPush = jest.fn();
 let mockConfirmationInputProps: { disabled: boolean; onChangeText: (value: string) => void };
 let mockConfirmationSubmitProps: { disabled: boolean; onPress: () => Promise<void> };
 
-jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) }));
+jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: mockReplace }) }));
 jest.mock('react-native-paper', () => {
   const actual = jest.requireActual('react-native-paper');
   const { View } = jest.requireActual('react-native');
@@ -53,5 +54,26 @@ describe('ConfirmEmailCode', () => {
     });
     await waitFor(() => expect(mockConfirmationInputProps.disabled).toBe(true));
     expect(mockConfirmationSubmitProps.disabled).toBe(true);
+  });
+
+  it('verifies a password change code and opens the change password page', async () => {
+    let requestBody: unknown;
+    server.use(
+      http.post(`${BASE_URL}/auth/verify-password-change-code`, async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({ message: 'Code verified' });
+      }),
+    );
+
+    await renderWithProviders(<ConfirmEmailCode email={mockEmail} type="change-password" />);
+    await act(async () => mockConfirmationInputProps.onChangeText(' 123456 '));
+    await waitFor(() => expect(mockConfirmationSubmitProps.disabled).toBe(false));
+    await act(async () => mockConfirmationSubmitProps.onPress());
+
+    await waitFor(() => expect(requestBody).toEqual({ email: mockEmail, confirmationCode: '123456' }));
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: `/${ROUTES.changePassword}`,
+      params: { email: mockEmail },
+    });
   });
 });

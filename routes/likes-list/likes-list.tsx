@@ -11,6 +11,23 @@ import ErrorComponent from '@S/error-component/error-component';
 import UserListItem from '@S/user-list-item/user-list-item';
 import useRefresh from '@U/hooks/use-refresh';
 
+const renderLikeItem = ({ item }: { item: any }) => {
+  const { profile } = item;
+  return (
+    <UserListItem
+      name={profile?.name}
+      surname={profile?.surname}
+      profilePhoto={profile?.profilePhoto}
+      placeholder={profile?.profilePhotoBlurhash}
+      city={profile?.city}
+      user_id={profile?.user_id}
+    />
+  );
+};
+
+const likeKeyExtractor = (item: any) => item.id || `${item.activityId}-${item.authorId}`;
+const renderDivider = () => <Divider />;
+
 export default function LikesList() {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
@@ -47,17 +64,14 @@ export default function LikesList() {
               onRefresh={onRefresh}
               refreshing={refreshing}
               data={likes}
-              renderItem={({ item: { profile } }) => (
-                <UserListItem
-                  name={profile?.name}
-                  surname={profile?.surname}
-                  profilePhoto={profile?.profilePhoto}
-                  placeholder={profile?.profilePhotoBlurhash}
-                  city={profile?.city}
-                  user_id={profile?.user_id}
-                />
-              )}
-              ItemSeparatorComponent={() => <Divider />}
+              renderItem={renderLikeItem}
+              keyExtractor={likeKeyExtractor}
+              ItemSeparatorComponent={renderDivider}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={7}
+              updateCellsBatchingPeriod={50}
+              removeClippedSubviews={Platform.OS === 'android'}
             />
           ) : (
             <EmptyState

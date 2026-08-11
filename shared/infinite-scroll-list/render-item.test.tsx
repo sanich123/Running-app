@@ -27,6 +27,6 @@ describe('render item', () => {
         distance: 2000,
       }),
     );
-    expect(keyExtractor(item, 4)).toBe('activity-4');
+    expect(keyExtractor(item)).toBe('activity-1');
   });
 });

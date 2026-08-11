@@ -1,5 +1,12 @@
 import { runichApi } from '@R/runich-api/runich-api';
-import type { EmailPasswordData } from './types';
+import type {
+  ChangePasswordData,
+  ChangePasswordResponse,
+  AppConfig,
+  EmailData,
+  EmailPasswordData,
+  VerifyPasswordChangeCodeData,
+} from './types';
 
 export const authenticationApi = runichApi.injectEndpoints({
   overrideExisting: true,
@@ -25,9 +32,15 @@ export const authenticationApi = runichApi.injectEndpoints({
         method: 'POST',
       }),
     }),
+    getAppConfig: query<AppConfig, void>({
+      query: () => ({
+        url: '/auth/config',
+        method: 'GET',
+      }),
+    }),
     verifyConfig: query<{ accessToken: string; userId: string }, { accessToken: string }>({
       query: ({ accessToken }) => ({
-        url: 'auth/verify',
+        url: '/auth/verify',
         body: { accessToken },
         method: 'POST',
       }),
@@ -50,8 +63,29 @@ export const authenticationApi = runichApi.injectEndpoints({
     }),
     resetPassword: mutation<{ message: string }, { email: string }>({
       query: ({ email }: { email: string }) => ({
-        url: 'auth/reset-password',
+        url: '/auth/reset-password',
         body: { email },
+        method: 'POST',
+      }),
+    }),
+    getEmailCodeForPassword: mutation<{ message: string }, EmailData>({
+      query: ({ email }) => ({
+        url: '/auth/get-email-code-for-password',
+        body: { email },
+        method: 'POST',
+      }),
+    }),
+    verifyPasswordChangeCode: mutation<{ message: string }, VerifyPasswordChangeCodeData>({
+      query: ({ email, confirmationCode }) => ({
+        url: '/auth/verify-password-change-code',
+        body: { email, confirmationCode },
+        method: 'POST',
+      }),
+    }),
+    changePassword: mutation<ChangePasswordResponse, ChangePasswordData>({
+      query: ({ password1, password2, email }) => ({
+        url: '/auth/change-password',
+        body: { password1, password2, email },
         method: 'POST',
       }),
     }),
@@ -61,7 +95,11 @@ export const authenticationApi = runichApi.injectEndpoints({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
+  useGetAppConfigQuery,
   useLazyVerifyConfigQuery,
   useDeleteUserMutation,
   useConfirmSignUpCodeByEmailMutation,
+  useGetEmailCodeForPasswordMutation,
+  useVerifyPasswordChangeCodeMutation,
+  useChangePasswordMutation,
 } = authenticationApi;

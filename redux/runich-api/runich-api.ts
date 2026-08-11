@@ -39,7 +39,7 @@ async function showErrorToast(message: string, error?: unknown) {
 async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, extraOptions: object) {
   await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
-  const { accessToken, refreshToken } = (api.getState() as ApiState).auth;
+  const { refreshToken } = (api.getState() as ApiState).auth;
 
   if (result.error?.status === 401) {
     if (!mutex.isLocked()) {
@@ -49,7 +49,7 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
           {
             url: 'auth/refresh',
             method: 'POST',
-            body: { refreshToken: refreshToken || accessToken },
+            body: { refreshToken },
           },
           api,
           extraOptions,
@@ -61,9 +61,10 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
           api.dispatch(setAccessToken(newAccessToken));
           result = await baseQuery(args, api, extraOptions);
         } else {
+          api.dispatch(resetAuthSlice());
           router.dismissAll();
           router.replace(`/${ROUTES.signIn}`);
-          api.dispatch(resetAuthSlice());
+
           await showErrorToast('Не удалось обновить авторизационные данные. Пожалуйста, авторизуйтесь повторно');
         }
       } catch (error) {

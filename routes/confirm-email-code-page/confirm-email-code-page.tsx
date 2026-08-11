@@ -1,18 +1,21 @@
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Card, Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
-import ConfirmEmailCode from './confirm-email-code/confirm-email-code';
+import ConfirmEmailCode, { type ConfirmEmailCodeType } from './confirm-email-code/confirm-email-code';
 import { CONFIRM_EMAIL_PAGE_TEXT } from './const';
 
 export default function ConfirmEmailCodePage() {
   const { colors } = useTheme();
   const { replace } = useRouter();
-  const { email } = useAppSelector(({ logining }) => logining);
+  const { email: savedEmail } = useAppSelector(({ logining }) => logining);
+  const { email: queryEmail, type: queryType } = useLocalSearchParams<{ email?: string; type?: string }>();
   const { language } = useAppSelector(({ language }) => language);
+  const email = typeof queryEmail === 'string' ? queryEmail : savedEmail;
+  const type: ConfirmEmailCodeType = queryType === 'change-password' ? 'change-password' : 'registration';
   const copy = CONFIRM_EMAIL_PAGE_TEXT[language];
 
   useEffect(() => {
@@ -51,7 +54,7 @@ export default function ConfirmEmailCodePage() {
             </Card.Content>
           </Card>
 
-          <ConfirmEmailCode email={email} />
+          <ConfirmEmailCode email={email} type={type} />
 
           <Text variant="bodyMedium" style={[styles.spamHint, { color: colors.onSurfaceVariant }]}>
             {copy.spam}

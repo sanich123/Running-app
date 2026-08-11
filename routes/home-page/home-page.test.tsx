@@ -1,6 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react-native';
-import { http } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
+import { setAccessToken } from '@R/slices/auth/actions';
 import { setUserId } from '@R/slices/auth/auth';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
@@ -12,7 +13,8 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import Feed from './home-page';
 
 const mockPush = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+const mockReplace = jest.fn();
+jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: mockReplace }) }));
 jest.mock('@S/infinite-scroll-list/infinite-scroll-list', () => {
   const { Text } = jest.requireActual('react-native');
   return ({ dataToRender }: any) => <Text>{dataToRender[0].title}</Text>;
@@ -23,7 +25,12 @@ jest.mock('@Routes/home-page/floating-btn/floating-btn', () => {
 });
 
 describe('Feed', () => {
-  beforeEach(() => mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId)));
+  beforeEach(() => {
+    mockReplace.mockClear();
+    mockStore.dispatch(setAccessToken('feed-access-token'));
+    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    server.use(http.get(`${BASE_URL}/auth/config`, () => HttpResponse.json({ appVersion: '0.0.0' })));
+  });
 
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/all`, loadingResponse));
@@ -42,5 +49,21 @@ describe('Feed', () => {
     server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/all`, errorResponse));
     await renderWithProviders(<Feed />);
     expect(await screen.findByTestId(ERROR_COMPONENT_TEST_ID)).toBeOnTheScreen();
+  });
+
+  it('checks the app version on the home page and redirects when an update is required', async () => {
+    let authorizationHeader: string | null = null;
+    server.use(
+      http.get(`${BASE_URL}/auth/config`, ({ request }) => {
+        authorizationHeader = request.headers.get('authorization');
+        return HttpResponse.json({ appVersion: '999.0.0' });
+      }),
+    );
+
+    await renderWithProviders(<Feed />);
+
+    expect(await screen.findByText(MOCK_SERVER_ACTIVITY.title)).toBeOnTheScreen();
+    expect(authorizationHeader).toBe('Bearer feed-access-token');
+    expect(mockReplace).toHaveBeenCalledWith(`/${ROUTES.updateApp}`);
   });
 });
