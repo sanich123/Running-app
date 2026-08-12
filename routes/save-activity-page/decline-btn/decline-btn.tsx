@@ -55,7 +55,7 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
 }
 
 const styles = StyleSheet.create({
-  button: { alignSelf: 'flex-start', borderRadius: 8, marginTop: 12 },
+  button: { alignSelf: 'stretch', borderRadius: 8, marginTop: 12 },
   content: { minHeight: 40 },
   disabledButton: { opacity: 0.7 },
 });

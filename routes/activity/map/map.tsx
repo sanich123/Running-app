@@ -6,8 +6,7 @@ import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
 import { Platform, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
-import { setLastPosition } from '@R/slices/location/location';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import BatteryOptimizationModal from '@Routes/activity/battery-optimization-modal/battery-optimization-modal';
 import MapKmSplit from '@S/display-activity-map/map-km-split/map-km-split';
 import MapRouteLine from '@S/display-activity-map/map-route-line/map-route-line';
@@ -17,7 +16,6 @@ import MapNavIcon from './map-nav-icon/map-nav-icon';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecordLocation: (arg: boolean) => void }) {
-  const dispatch = useAppDispatch();
   const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);
   const { userId } = useAppSelector(({ auth }) => auth);
   const { colors } = useTheme();
@@ -87,7 +85,6 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
             <UserLocation
               visible={false}
               animated
-              onUpdate={(location) => dispatch(setLastPosition(location))}
               {...(Platform.OS === 'android' ? { androidRenderMode: 'compass' as const } : {})}
             />
             <MapNavIcon profilePhoto={profile?.profilePhoto} />

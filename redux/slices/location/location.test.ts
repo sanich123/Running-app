@@ -143,8 +143,10 @@ describe('Location slice', () => {
   it('should correctly reset locations from background', () => {
     mockStore.dispatch(setLocationsFromBackground(MOCK_LOCATION));
     mockStore.dispatch(setDuration(MOCK_DURATION));
+    mockStore.dispatch(setDurationWithPauses(MOCK_DURATION));
     mockStore.dispatch(setDistance(MOCK_DISTANCE));
     mockStore.dispatch(setAltitude(MOCK_ALTITUDE));
+    mockStore.dispatch(setIsAppShuted(true));
     mockStore.dispatch(addDurationAndLocationToKmSplits(MOCK_LOCATION));
     mockStore.dispatch(setCurrentPace(MOCK_SPEED));
     mockStore.dispatch(setLocationsWhenContinued(MOCK_LOCATION));
@@ -153,10 +155,16 @@ describe('Location slice', () => {
     mockStore.dispatch(resetLocationsFromBackground());
     expect(mockStore.getState().location.locationsFromBackground).toEqual([]);
     expect(mockStore.getState().location.duration).toEqual(0);
+    expect(mockStore.getState().location.durationWithPauses).toEqual(0);
     expect(mockStore.getState().location.distance).toEqual(0);
     expect(mockStore.getState().location.altitude).toEqual(0);
     expect(mockStore.getState().location.kilometresSplit).toEqual([]);
     expect(mockStore.getState().location.currentPace).toEqual(0);
+    expect(mockStore.getState().location.lastKilometer).toEqual(0);
+    expect(mockStore.getState().location.lastKilometerDuration).toEqual(0);
+    expect(mockStore.getState().location.lastKilometerAltitude).toEqual(0);
+    expect(mockStore.getState().location.lastPosition).toEqual(null);
     expect(mockStore.getState().location.locationsWithPauses).toEqual([]);
+    expect(mockStore.getState().location.isAppShutedByPhone).toEqual(false);
   });
 });

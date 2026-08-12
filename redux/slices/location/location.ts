@@ -81,10 +81,16 @@ const location = createSlice({
       state.locationsFromBackground = [];
       state.duration = 0;
       state.distance = 0;
+      state.durationWithPauses = 0;
       state.altitude = 0;
       state.kilometresSplit = [];
       state.currentPace = 0;
+      state.lastKilometer = 0;
+      state.lastKilometerDuration = 0;
+      state.lastKilometerAltitude = 0;
+      state.lastPosition = null;
       state.locationsWithPauses = [];
+      state.isAppShutedByPhone = false;
       state.isTooMuchSpeed = false;
       state.tooMuchSpeed = 0;
     },

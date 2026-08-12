@@ -124,12 +124,12 @@ describe('Activity', () => {
     }
   });
 
-  it('does not mount the map when it is hidden during an active activity', async () => {
+  it('keeps the map mounted when it is hidden during an active activity', async () => {
     mockStore.dispatch(setActivityStatus(STATUSES.started));
     mockStore.dispatch(setIsMapVisible(false));
     await renderWithProviders(<Activity />);
 
-    expect(screen.queryByTestId('activity-map')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('activity-map')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-metrics')).toBeOnTheScreen();
   });
 
