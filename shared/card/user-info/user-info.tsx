@@ -8,6 +8,7 @@ import { CustomImage } from '@S/custom-image/custom-image';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import type { UserInfoProps } from './const';
+import type { SPORTS_BTNS_VALUES } from '@const/sports';
 
 export default function UserInfo({ profile, sport, date, userId, size, commentsModalRef }: UserInfoProps) {
   const { dark, colors } = useTheme();
@@ -44,7 +45,7 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
           </View>
           <View>
             <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-              {sport ? getIconByTypeOfSport(sport) : ''}
+              {sport ? getIconByTypeOfSport(sport as SPORTS_BTNS_VALUES) : ''}
               {`${size === 'small' ? '' : ' '}${formatDate(date, language)} ${getHoursMinutes(date, language)}`}
             </Text>
           </View>

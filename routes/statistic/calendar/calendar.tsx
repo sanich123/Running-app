@@ -26,7 +26,7 @@ export default function CalendarActivities({ year, month, userId, selectedType }
     { userId: `${userId}`, year: `${year}`, month: `${month}` },
     { skip: !userId || !year || !month },
   );
-  const daysOfTheWeek = getDaysOfTheMonthWithNames(year, month, monthStatistics?.activities, language);
+  const daysOfTheWeek = getDaysOfTheMonthWithNames(year, month, monthStatistics?.activities ?? [], language);
 
   return (
     <Card

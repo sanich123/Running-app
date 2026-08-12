@@ -1,3 +1,10 @@
+export type {
+  MonthActivityResponse,
+  MonthStatisticsResponse,
+  StatisticMetricResponse,
+  YearStatisticsResponse,
+} from '@R/runich-api/types';
+
 export interface CurrentWeekStatisticsRequest {
   userId: string;
   firstDay: string;

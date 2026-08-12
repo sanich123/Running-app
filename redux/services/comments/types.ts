@@ -1,3 +1,10 @@
+export type {
+  CommentLikeResponse,
+  CommentLikeSummaryResponse,
+  CommentResponse,
+  CommentsResponse,
+} from '@R/runich-api/types';
+
 export interface SendComment {
   body: {
     comment: string;

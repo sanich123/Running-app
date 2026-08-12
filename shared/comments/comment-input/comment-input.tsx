@@ -58,15 +58,15 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
     dispatch(setIsShowingTextInput(false));
     dispatch(setIdOfUpdatingComment(''));
     setComment('');
-    if (profile.emailNotifications && !commentToUpdate) {
+    if (profile.emailNotifications && profile.users?.email && !commentToUpdate) {
       const objectToSend = {
-        name,
-        surname,
-        profilePhoto,
+        name: name ?? '',
+        surname: surname ?? '',
+        profilePhoto: profilePhoto ?? '',
         comment,
-        recepientName: profile?.name,
-        recepientSurname: profile?.surname,
-        recepientEmail: profile?.users?.email,
+        recepientName: profile.name ?? '',
+        recepientSurname: profile.surname ?? '',
+        recepientEmail: profile.users.email,
         mapPhotoUrl: mapPhotoUrl ? mapPhotoUrl : '',
       };
       sendEmailAfterSendingComment(objectToSend);

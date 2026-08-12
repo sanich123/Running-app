@@ -13,13 +13,10 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
   const { push } = useRouter();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
 
-  const displayedData = useMemo(
-    () =>
-      mapPhotoUrl
-        ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...(photoVideoUrls || [])]
-        : photoVideoUrls,
-    [mapPhotoUrl, mapPhotoUrlBlurhash, photoVideoUrls],
-  );
+  const displayedData = useMemo(() => {
+    const media = photoVideoUrls ?? [];
+    return mapPhotoUrl ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...media] : media;
+  }, [mapPhotoUrl, mapPhotoUrlBlurhash, photoVideoUrls]);
   const renderItem = useCallback(
     ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => (
       <TouchableRipple

@@ -66,21 +66,21 @@ export default function WeekStatistics() {
               isError={isError}
               isSuccess={isSuccess}
               isLoading={isLoading}
-              metrics={weekStatistics?.totalItems}
+              metrics={`${weekStatistics?.totalItems ?? 0}`}
               title={WEEK_STATISTICS[language].activities}
             />
             <WeekStatisticsMetric
               isError={isError}
               isSuccess={isSuccess}
               isLoading={isLoading}
-              metrics={`${getHoursMinutesFromMilliseconds(weekStatistics?.totalDuration).hours}${isRussian ? 'ч' : 'h'} ${getHoursMinutesFromMilliseconds(weekStatistics?.totalDuration).minutes}${isRussian ? 'мин' : 'min'}`}
+              metrics={`${getHoursMinutesFromMilliseconds(weekStatistics?.totalDuration ?? 0).hours}${isRussian ? 'ч' : 'h'} ${getHoursMinutesFromMilliseconds(weekStatistics?.totalDuration ?? 0).minutes}${isRussian ? 'мин' : 'min'}`}
               title={WEEK_STATISTICS[language].duration}
             />
             <WeekStatisticsMetric
               isError={isError}
               isSuccess={isSuccess}
               isLoading={isLoading}
-              metrics={`${Math.round(weekStatistics?.totalDistance / 1000)} ${isRussian ? 'км' : 'km'}`}
+              metrics={`${Math.round((weekStatistics?.totalDistance ?? 0) / 1000)} ${isRussian ? 'км' : 'km'}`}
               title={WEEK_STATISTICS[language].distance}
             />
           </View>

@@ -20,7 +20,7 @@ export default function Metrics() {
       (total: number, { lastKilometerAltitude }: { lastKilometerAltitude: number }) =>
         lastKilometerAltitude > 0 ? (total += lastKilometerAltitude) : total,
       0,
-    ),
+    ) ?? 0,
   );
 
   return (
@@ -63,7 +63,8 @@ export default function Metrics() {
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].elevationGain}</Text>
               <Text variant="titleLarge">
-                {activity?.kilometresSplit?.length > 0 && `${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}
+                {Boolean(activity.kilometresSplit?.length) &&
+                  `${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}
               </Text>
             </View>
           </View>

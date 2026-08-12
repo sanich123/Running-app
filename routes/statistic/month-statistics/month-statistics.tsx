@@ -61,7 +61,7 @@ export default function MonthStatistics() {
             ]}>
             <MonthStatisticsMetrics
               title={MONTH_STATISTICS[language].activities}
-              metric={monthStatistics?.activitiesReducedBySport[selectedType]?.totalItems}
+              metric={monthStatistics?.activitiesReducedBySport[selectedType]?.totalItems ?? 0}
               postfix={''}
               isSuccess={isSuccess}
               isLoading={isLoading}
@@ -69,7 +69,7 @@ export default function MonthStatistics() {
             />
             <MonthStatisticsMetrics
               title={MONTH_STATISTICS[language].distance}
-              metric={`${Math.round(monthStatistics?.activitiesReducedBySport[selectedType]?.totalDistance / 1000)}`}
+              metric={`${Math.round((monthStatistics?.activitiesReducedBySport[selectedType]?.totalDistance ?? 0) / 1000)}`}
               postfix={`${isRussian ? 'км' : 'km'}`}
               isSuccess={isSuccess}
               isLoading={isLoading}
@@ -77,7 +77,7 @@ export default function MonthStatistics() {
             />
             <MonthStatisticsMetrics
               title={MONTH_STATISTICS[language].duration}
-              metric={`${Math.round(getHoursMinutesFromMilliseconds(monthStatistics?.activitiesReducedBySport[selectedType]?.totalDuration).hours)}`}
+              metric={`${Math.round(getHoursMinutesFromMilliseconds(monthStatistics?.activitiesReducedBySport[selectedType]?.totalDuration ?? 0).hours)}`}
               postfix={`${isRussian ? 'ч' : 'h'}`}
               isSuccess={isSuccess}
               isLoading={isLoading}

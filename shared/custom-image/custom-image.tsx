@@ -10,16 +10,16 @@ export function CustomImage({
   placeholder,
 }: {
   style: any;
-  source: { uri: string };
+  source: { uri: string | null | undefined };
   contentFit?: ImageContentFit;
   testID?: string;
-  placeholder?: string;
+  placeholder?: string | null;
 }) {
   if (Platform.OS !== 'web') {
     return (
       <Image
         style={style}
-        source={source}
+        source={{ uri: source.uri || '' }}
         contentFit={contentFit}
         testID={testID}
         placeholder={placeholder}
@@ -27,5 +27,5 @@ export function CustomImage({
       />
     );
   }
-  return <Image style={style} source={source} contentFit={contentFit} />;
+  return <Image style={style} source={{ uri: source.uri || '' }} contentFit={contentFit} />;
 }

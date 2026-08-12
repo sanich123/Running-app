@@ -21,6 +21,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
+  const photos = data?.photos ?? [];
 
   if (!isLoading && !isError && !data?.photos?.length) {
     return null;
@@ -43,8 +44,8 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
           (isLoading || isError) && styles.isInCenter,
         ]}>
         {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${errorExtracter(error)}`}</Text>}
-        {data?.photos?.length > 0 &&
-          data?.photos?.map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => {
+        {photos.length > 0 &&
+          photos.map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => {
             if (index === 3) {
               return (
                 <Fragment key={`${url}+${index}`}>

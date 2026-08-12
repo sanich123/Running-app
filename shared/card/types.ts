@@ -13,44 +13,45 @@ export interface LikeType {
   date: string;
   activityId: string;
   authorId: string;
-  profile: ProfileType;
+  profile?: ProfileType | null;
 }
 
 export interface ProfileType {
-  bio: string;
-  birthday: string | null;
-  city: string;
-  createdAt: string;
-  email: string | null;
-  gender: string;
-  id: string;
-  language: string | null;
-  name: string;
-  profilePhoto: string;
-  profilePhotoBlurhash: string;
-  sport: string | null;
-  surname: string;
-  updatedAt: string;
-  user_id: string;
-  weight: string;
-  emailNotifications: boolean;
-  users: { email: string };
+  bio?: string | null;
+  birthday?: string | null;
+  city?: string | null;
+  created_at?: string | null;
+  createdAt?: string | null;
+  email?: string | null;
+  gender?: string | null;
+  id?: string;
+  language?: string | null;
+  name?: string | null;
+  profilePhoto?: string | null;
+  profilePhotoBlurhash?: string | null;
+  sport?: string | null;
+  surname?: string | null;
+  updatedAt?: string | null;
+  user_id?: string;
+  weight?: string | null;
+  emailNotifications?: boolean | null;
+  users?: { email?: string | null } | null;
 }
 
 export interface ActivityCardProps {
   isFullView?: boolean;
   isShowDeleteBtn: boolean;
   isShowDescription: boolean;
-  description: string;
-  title: string;
+  description?: string | null;
+  title?: string | null;
   date: string;
-  sport: SPORTS_BTNS_VALUES;
+  sport: SPORTS_BTNS_VALUES | string;
   id: string;
   userId: string;
-  photoVideoUrls: PhotoVideoType[];
-  mapPhotoUrl?: string;
-  mapPhotoUrlBlurhash?: string;
-  locations?: LocationObject[];
+  photoVideoUrls?: PhotoVideoType[] | null;
+  mapPhotoUrl?: string | null;
+  mapPhotoUrlBlurhash?: string | null;
+  locations?: LocationObject[] | null;
   duration: number;
   distance: number;
   profile: ProfileType;
@@ -60,7 +61,7 @@ export interface ActivityCardProps {
 export interface PhotoVideoType {
   url: string;
   thumbnail: string | null;
-  blurhash?: string;
+  blurhash?: string | null;
 }
 
 export interface CardBtnsProps {
@@ -70,14 +71,14 @@ export interface CardBtnsProps {
   isShowDeleteBtn: boolean;
   commentsLength: number;
   profile: ProfileType;
-  mapPhotoUrl?: string;
+  mapPhotoUrl?: string | null;
 }
 
 export interface CommentBtnProps {
   activityId: string;
   commentsLength: number;
   profile: ProfileType;
-  mapPhotoUrl?: string;
+  mapPhotoUrl?: string | null;
 }
 
 export interface ModalLikesListProps {
@@ -104,7 +105,7 @@ interface Likes {
 export interface LikeBtnProps {
   activityId: string;
   profile: ProfileType;
-  mapPhotoUrl?: string;
+  mapPhotoUrl?: string | null;
 }
 
 export interface NumOfLikesProps {
@@ -115,9 +116,9 @@ export interface NumOfLikesProps {
 export interface MetricsProps {
   distance: number;
   duration: number;
-  title: string;
+  title?: string | null;
   isShowDescription: boolean;
-  description: string;
+  description?: string | null;
   userId: string;
   id: string;
 }
@@ -130,8 +131,8 @@ export interface LikesProps {
 type PhotoVideoUrls = PhotoVideoType[];
 
 export interface MediaListProps {
-  photoVideoUrls: PhotoVideoUrls;
-  mapPhotoUrl?: string;
-  mapPhotoUrlBlurhash?: string;
+  photoVideoUrls?: PhotoVideoUrls | null;
+  mapPhotoUrl?: string | null;
+  mapPhotoUrlBlurhash?: string | null;
   id: string;
 }

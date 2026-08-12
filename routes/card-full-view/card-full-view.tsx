@@ -52,7 +52,7 @@ export default function CardFullView() {
               commentsLength={activity?._count.comments}
             />
             <Metrics />
-            {activity?.kilometresSplit?.length > 0 && (
+            {Boolean(activity?.kilometresSplit?.length) && (
               <View
                 style={[
                   styles.splitsCard,
@@ -63,7 +63,7 @@ export default function CardFullView() {
                     marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
                   },
                 ]}>
-                <KmSplit kilometresSplit={activity.kilometresSplit} />
+                <KmSplit kilometresSplit={activity.kilometresSplit ?? []} />
               </View>
             )}
           </>

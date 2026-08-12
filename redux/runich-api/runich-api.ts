@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { resetAuthSlice, setAccessToken } from '@R/slices/auth/actions';
 import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
+import type { AuthResponse } from './types';
 import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';
 
 interface ApiState {
@@ -54,7 +55,7 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
           api,
           extraOptions,
         );
-        const refreshData = refreshResult.data as { accessToken?: string } | undefined;
+        const refreshData = refreshResult.data as AuthResponse | undefined;
         const newAccessToken = refreshData?.accessToken;
 
         if (newAccessToken) {

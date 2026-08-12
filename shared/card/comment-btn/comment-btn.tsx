@@ -58,7 +58,7 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
           icon={COMMENT_BTN_ICON}
           iconColor={colors.primary}
           size={25}
-          disabled={isLoading || isDisabled || !!commentsCount?.message || isErrorLoadingComments || isLoadingComments}
+          disabled={isLoading || isDisabled || isErrorLoadingComments || isLoadingComments}
         />
         <CommentsListModal commentsModalRef={commentsModalRef} />
       </>

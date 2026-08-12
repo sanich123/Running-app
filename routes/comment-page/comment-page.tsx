@@ -13,6 +13,7 @@ import MediaList from '@S/card/media-list/media-list';
 import CommentInput from '@S/comments/comment-input/comment-input';
 import Comments from '@S/comments/comments/comments';
 import ErrorComponent from '@S/error-component/error-component';
+import type { SPORTS_BTNS_VALUES } from '@const/sports';
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 export default function CommentFullViewPage() {
@@ -43,11 +44,11 @@ export default function CommentFullViewPage() {
       ]}>
       {isLoading ? (
         <ActivityIndicator size="large" testID="comment-page-loading" />
-      ) : isSuccess && !activity?.message ? (
+      ) : isSuccess ? (
         <View style={[Platform.OS === 'web' ? styles.webContent : styles.nativeContent, isLoading && styles.inCenter]}>
-          {(activity?.mapPhotoUrl || activity?.photoVideoUrls?.length > 0) && (
+          {(activity?.mapPhotoUrl || Boolean(activity?.photoVideoUrls?.length)) && (
             <MediaList
-              photoVideoUrls={activity?.photoVideoUrls}
+              photoVideoUrls={activity?.photoVideoUrls ?? []}
               mapPhotoUrl={activity?.mapPhotoUrl}
               id={`${activityId}`}
             />
@@ -58,7 +59,7 @@ export default function CommentFullViewPage() {
             </Text>
             <UserNameSurname userId={activity?.user_id} size="titleMedium" />
             <View style={styles.columnsLayout}>
-              <UserSportDate sport={activity?.sport} date={activity?.date} />
+              <UserSportDate sport={activity?.sport as SPORTS_BTNS_VALUES} date={activity?.date} />
               <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
             </View>
             <View style={styles.columnsLayout}>
@@ -91,8 +92,8 @@ export default function CommentFullViewPage() {
             )}
           </View>
         </View>
-      ) : isError || activity?.message ? (
-        <ErrorComponent error={error || activity} refetch={refetch} />
+      ) : isError ? (
+        <ErrorComponent error={error} refetch={refetch} />
       ) : null}
     </ScrollView>
   );
