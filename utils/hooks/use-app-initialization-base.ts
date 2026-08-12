@@ -14,6 +14,6 @@ export default function useAppInitializationBase() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (theme) Appearance.setColorScheme(theme);
+    if (theme) Appearance.setColorScheme?.(theme);
   }, [theme]);
 }

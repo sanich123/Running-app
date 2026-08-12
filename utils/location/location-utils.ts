@@ -2,7 +2,7 @@ import polyline from '@mapbox/polyline';
 import getDistanceInMeters from '@turf/distance';
 import point from 'turf-point';
 import { POWERHOURS_COLORS } from '@const/theme-colors';
-import type { LocationObject } from 'expo-location';
+import type { ActivityLocation } from '@S/card/types';
 
 /**
  * Upper bounds for the four sports available on the tracking screen.
@@ -22,7 +22,7 @@ const DEFAULT_MAX_TRACKING_SPEED_KMH = MAX_TRACKING_SPEED_KMH.run;
 const MAX_STATIC_MAP_URL_LENGTH = 7600;
 const MAX_STATIC_MAP_LOCATIONS = 500;
 
-export function getDistance(origin: LocationObject, destination: LocationObject) {
+export function getDistance(origin: ActivityLocation, destination: ActivityLocation) {
   const from = point([origin.coords.longitude, origin.coords.latitude]);
   const to = point([destination.coords.longitude, destination.coords.latitude]);
   return getDistanceInMeters(from, to, { units: 'meters' });
@@ -53,20 +53,20 @@ export function getSpeedInKmPerHour(distance: number, time: number) {
     return 0;
   }
 
-  return (distance / 1000) / (time / 3_600_000);
+  return distance / 1000 / (time / 3_600_000);
 }
 
 export function getMaxTrackingSpeedForSport(sport: string) {
   return MAX_TRACKING_SPEED_KMH[sport as keyof typeof MAX_TRACKING_SPEED_KMH] ?? DEFAULT_MAX_TRACKING_SPEED_KMH;
 }
 
-export function getMapBoxImage(locations: LocationObject[]) {
+export function getMapBoxImage(locations: ActivityLocation[]) {
   const validLocations = locations.filter(
     ({ coords }) => Number.isFinite(coords?.longitude) && Number.isFinite(coords?.latitude),
   );
 
   if (validLocations.length) {
-    const buildUrl = (routeLocations: LocationObject[]) => {
+    const buildUrl = (routeLocations: ActivityLocation[]) => {
       const polylineLatLang = routeLocations.map(({ coords }) => [coords.latitude, coords.longitude]);
       const encodedPolyline = polyline.encode(polylineLatLang);
 
@@ -113,7 +113,7 @@ export function getMapBoxImage(locations: LocationObject[]) {
   }
 }
 
-export function getReducedLocations(locations: LocationObject[], maxLocations = 1000) {
+export function getReducedLocations(locations: ActivityLocation[], maxLocations = 1000) {
   if (locations.length > maxLocations) {
     return Array.from({ length: maxLocations }, (_, index) => {
       const sourceIndex = Math.round((index * (locations.length - 1)) / (maxLocations - 1));

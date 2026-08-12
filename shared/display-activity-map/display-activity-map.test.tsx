@@ -12,6 +12,7 @@ jest.mock('@rnmapbox/maps', () => {
       </View>
     ),
     Camera: (props: any) => <View testID="activity-map-camera" {...props} />,
+    MarkerView: ({ children, ...props }: any) => <View {...props}>{children}</View>,
     ShapeSource: ({ children, ...props }: any) => <View {...props}>{children}</View>,
     LineLayer: View,
     CircleLayer: View,
@@ -51,5 +52,7 @@ describe('display activity map', () => {
     await renderWithProviders(<DisplayActivityMap locations={locations} kilometresSplit={[]} />);
     const camera = screen.getByTestId('activity-map-camera');
     expect(camera.props.bounds).toEqual({ ne: [37.8, 55.9], sw: [37.6, 55.7] });
+    expect(screen.getByTestId('activity-map-start-marker')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-map-end-marker')).toBeOnTheScreen();
   });
 });

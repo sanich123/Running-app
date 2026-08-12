@@ -44,27 +44,27 @@ export default function CommentFullViewPage() {
       ]}>
       {isLoading ? (
         <ActivityIndicator size="large" testID="comment-page-loading" />
-      ) : isSuccess ? (
+      ) : isSuccess && activity ? (
         <View style={[Platform.OS === 'web' ? styles.webContent : styles.nativeContent, isLoading && styles.inCenter]}>
           {(activity?.mapPhotoUrl || Boolean(activity?.photoVideoUrls?.length)) && (
             <MediaList
-              photoVideoUrls={activity?.photoVideoUrls ?? []}
-              mapPhotoUrl={activity?.mapPhotoUrl}
+              photoVideoUrls={activity.photoVideoUrls ?? []}
+              mapPhotoUrl={activity.mapPhotoUrl}
               id={`${activityId}`}
             />
           )}
           <Card.Content style={styles.contentLayout}>
             <Text variant="titleLarge" style={styles.title}>
-              {activity?.title}
+              {activity.title}
             </Text>
-            <UserNameSurname userId={activity?.user_id} size="titleMedium" />
+            <UserNameSurname userId={activity.user_id} size="titleMedium" />
             <View style={styles.columnsLayout}>
-              <UserSportDate sport={activity?.sport as SPORTS_BTNS_VALUES} date={activity?.date} />
-              <Text variant="bodyMedium">{` ${activity?.distance / 1000} км`}</Text>
+              <UserSportDate sport={activity.sport as SPORTS_BTNS_VALUES} date={activity.date} />
+              <Text variant="bodyMedium">{` ${activity.distance / 1000} км`}</Text>
             </View>
             <View style={styles.columnsLayout}>
-              <LikeBtn activityId={activity?.id} profile={activity?.profile} />
-              <Likes activityId={activity?.id} size={LikesSize.big} />
+              <LikeBtn activityId={activity.id} profile={activity.profile} />
+              <Likes activityId={activity.id} size={LikesSize.big} />
             </View>
           </Card.Content>
           <View style={{ position: 'relative' }}>
@@ -76,7 +76,7 @@ export default function CommentFullViewPage() {
               }}
             />
             {isShowingTextInput && !idOfUpdatingComment ? (
-              <CommentInput profile={activity?.profile} commentId="" />
+              <CommentInput profile={activity.profile} commentId="" />
             ) : (
               <View style={{ zIndex: 9, position: 'relative' }}>
                 <FAB

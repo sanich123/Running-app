@@ -32,27 +32,27 @@ export default function CardFullView() {
       <View collapsable={false} style={[styles.content, (isLoading || isError) && styles.state]}>
         {isLoading ? (
           <ActivityIndicator size="large" testID="homeActivityIndicator" />
-        ) : isSuccess ? (
+        ) : isSuccess && activity ? (
           <>
             <Card
               isFullView
               isShowDeleteBtn
-              isShowDescription={!!activity?.description}
-              userId={activity?.user_id}
-              description={activity?.description}
-              title={activity?.title}
-              date={activity?.date}
-              sport={activity?.sport}
-              id={activity?.id}
-              photoVideoUrls={activity?.photoVideoUrls}
-              duration={activity?.duration}
-              distance={activity?.distance}
-              mapPhotoUrl={activity?.mapPhotoUrl}
-              profile={activity?.profile}
-              commentsLength={activity?._count.comments}
+              isShowDescription={!!activity.description}
+              userId={activity.user_id}
+              description={activity.description}
+              title={activity.title}
+              date={activity.date}
+              sport={activity.sport}
+              id={activity.id}
+              photoVideoUrls={activity.photoVideoUrls}
+              duration={activity.duration}
+              distance={activity.distance}
+              mapPhotoUrl={activity.mapPhotoUrl}
+              profile={activity.profile}
+              commentsLength={activity._count.comments}
             />
             <Metrics />
-            {Boolean(activity?.kilometresSplit?.length) && (
+            {Boolean(activity.kilometresSplit?.length) && (
               <View
                 style={[
                   styles.splitsCard,

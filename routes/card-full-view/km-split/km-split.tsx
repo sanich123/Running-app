@@ -4,9 +4,9 @@ import { Divider, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { formatDurationMinsSecs } from '@U/time-formatter';
 import { KM_SPLITS } from './const';
-import type { LastKmSplit } from '@R/slices/location/types';
+import type { ActivityKilometreSplit } from '@S/card/types';
 
-export default function KmSplit({ kilometresSplit }: { kilometresSplit: LastKmSplit[] }) {
+export default function KmSplit({ kilometresSplit }: { kilometresSplit: ActivityKilometreSplit[] }) {
   const validSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
     (split) => Number.isFinite(split?.lastKilometerDuration) && split.lastKilometerDuration > 0,
   );

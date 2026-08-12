@@ -3,10 +3,30 @@ import type { View } from 'react-native';
 import type { LikesSize } from './likes/const';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
-import type { LastKmSplit } from '@R/slices/location/types';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import type { LocationObject } from 'expo-location';
+
+export interface ActivityLocation {
+  coords: {
+    latitude: number;
+    longitude: number;
+    altitude?: number | null;
+    accuracy?: number | null;
+    altitudeAccuracy?: number | null;
+    heading?: number | null;
+    speed?: number | null;
+    timestamp?: number | null;
+    mocked?: boolean | null;
+  };
+  timestamp?: number;
+  mocked?: boolean | null;
+}
+
+export interface ActivityKilometreSplit {
+  lastKilometerDuration: number;
+  lastKilometerAltitude: number;
+  kilometerPoint: ActivityLocation;
+}
 
 export interface LikeType {
   id: string;
@@ -51,7 +71,7 @@ export interface ActivityCardProps {
   photoVideoUrls?: PhotoVideoType[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
-  locations?: LocationObject[] | null;
+  locations?: ActivityLocation[] | null;
   duration: number;
   distance: number;
   profile: ProfileType;
@@ -87,8 +107,8 @@ export interface ModalLikesListProps {
 }
 
 export interface DisplayActivityMapProps {
-  locations: LocationObject[];
-  kilometresSplit: LastKmSplit[];
+  locations: ActivityLocation[];
+  kilometresSplit: ActivityKilometreSplit[];
 }
 
 export interface ShareBtnProps {

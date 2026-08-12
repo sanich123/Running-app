@@ -1,5 +1,6 @@
-import type { ProfileType } from '@S/card/types';
-import type { LocationObject } from 'expo-location';
+import type { ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
+
+export type ActivityLocationResponse = ActivityLocation;
 
 export interface ActivityPhotoResponse {
   url: string;
@@ -20,11 +21,7 @@ export interface ActivityCountResponse {
   comments: number;
 }
 
-export interface ActivityKilometreSplitResponse {
-  lastKilometerDuration: number;
-  lastKilometerAltitude: number;
-  kilometerPoint: LocationObject;
-}
+export type ActivityKilometreSplitResponse = ActivityKilometreSplit;
 
 export interface ActivityResponse {
   id: string;
@@ -44,7 +41,7 @@ export interface ActivityResponse {
   speed?: number | null;
   isPublic?: boolean | null;
   emotion?: string | null;
-  locations?: LocationObject[] | null;
+  locations?: ActivityLocationResponse[] | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
   sourceActivityId?: string | null;
@@ -70,7 +67,7 @@ export interface ActivityMutationResponse {
   speed: number;
   isPublic?: boolean | null;
   emotion?: string | null;
-  locations?: LocationObject[] | null;
+  locations?: ActivityLocationResponse[] | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
   sourceActivityId?: string | null;
@@ -87,8 +84,17 @@ export interface ActivityMediaResponse {
 }
 
 export interface ActivityLocationsResponse {
-  locations: LocationObject[] | null;
+  locations: ActivityLocationResponse[] | null;
   kilometresSplit: ActivityKilometreSplitResponse[] | null;
+}
+
+export interface CommentMutationResponse {
+  authorId: string;
+  comment: string;
+  activityId: string;
+  profileId: string;
+  id: string;
+  date: string;
 }
 
 export interface CommentLikeSummaryResponse {

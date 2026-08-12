@@ -33,11 +33,11 @@ export const activityApi = runichApi.injectEndpoints({
       query: ({ userId, take }) => `/activity/${userId}/photos?take=${take}`,
       providesTags: [Tags.activities],
     }),
-    getActivityByActivityId: query<ActivityResponse, string>({
+    getActivityByActivityId: query<ActivityResponse | null, string>({
       query: (id: string) => `/activity/activityId/${id}`,
       providesTags: (result, error, arg) => [Tags.activities, { type: Tags.activities, id: arg }],
     }),
-    getLocationsByActivityId: query<ActivityLocationsResponse, string>({
+    getLocationsByActivityId: query<ActivityLocationsResponse | null, string>({
       query: (activityId: string) => `/activity/${activityId}/locations`,
       providesTags: [Tags.activities],
     }),

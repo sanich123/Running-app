@@ -4,7 +4,7 @@ import type { DeleteCommentLike, SendComment, SendCommentLike, UpdateComment } f
 import type {
   CommentLikeResponse,
   CommentLikeSummaryResponse,
-  CommentResponse,
+  CommentMutationResponse,
   CommentsResponse,
 } from '@R/runich-api/types';
 
@@ -42,7 +42,7 @@ const commentsApi = runichApi.injectEndpoints({
         { type: Tags.activities, id: activityId },
       ],
     }),
-    updateCommentByCommentId: builder.mutation<CommentResponse, UpdateComment>({
+    updateCommentByCommentId: builder.mutation<CommentMutationResponse, UpdateComment>({
       query: ({ commentId, body }: UpdateComment) => ({
         url: `/${comment}/${commentId}`,
         method: Methods.patch,
