@@ -1,12 +1,10 @@
-import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { ROUTES } from '@const/enums';
 import { useChangePasswordMutation } from '@R/services/authentication/authentication';
-import { setAccessToken } from '@R/slices/auth/actions';
-import { setUserId } from '@R/slices/auth/auth';
+import { setAccessToken, setRefreshToken, setUserId } from '@R/slices/auth/auth';
 import { useAppDispatch } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import CustomPasswordInput from '@S/custom-password-input/custom-password-input';
@@ -31,32 +29,21 @@ export default function ChangePassword() {
     reValidateMode: 'onChange',
   });
 
-  useEffect(() => {
-    if (!email) {
-      replace(`/${ROUTES.signIn}`);
-    }
-  }, [email, replace]);
-
-  if (!email) {
-    return null;
-  }
-
   const submit = async ({ password1, password2 }: ChangePasswordForm) => {
     if (password1 !== password2) {
       setError('password2', { type: 'validate', message: CHANGE_PASSWORD_TEXT.mismatch });
       return;
     }
 
-    try {
-      const { accessToken, userId } = await changePassword({ password1, password2, email }).unwrap();
-      dispatch(setAccessToken(accessToken));
-      if (userId) {
+    changePassword({ password1, password2, email })
+      .unwrap()
+      .then(({ accessToken, userId, refreshToken }) => {
+        dispatch(setAccessToken(accessToken));
+        dispatch(setRefreshToken(refreshToken));
         dispatch(setUserId(userId));
-      }
-      replace(ROUTES.root);
-    } catch (error) {
-      errorToast('Во время смены пароля произошла ошибка: ', error);
-    }
+        replace(ROUTES.root);
+      })
+      .catch((error) => errorToast('', error));
   };
 
   return (

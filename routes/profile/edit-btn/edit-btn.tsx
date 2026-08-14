@@ -11,7 +11,7 @@ export default function EditBtn() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ language }) => language);
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { data: profile, isLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const { isLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   return (
     <Button
       compact
@@ -21,7 +21,7 @@ export default function EditBtn() {
       style={styles.layout}>
       {!isLoading && (
         <Text variant="titleMedium" style={{ color: colors.primary }}>
-          {profile ? EDIT_BTN[language].edit : EDIT_BTN[language].create}
+          {EDIT_BTN[language].edit}
         </Text>
       )}
     </Button>

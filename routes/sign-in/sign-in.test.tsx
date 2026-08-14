@@ -13,7 +13,7 @@ import SignIn from './sign-in';
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: mockReplace }) }));
-jest.mock('expo-linking', () => ({ useURL: () => null, parse: jest.fn() }));
+jest.mock('expo-linking', () => ({ useLinkingURL: () => null, parse: jest.fn() }));
 jest.mock('./intro/intro', () => () => null);
 
 describe('sign in', () => {

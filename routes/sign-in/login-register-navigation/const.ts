@@ -14,22 +14,22 @@ export const REGISTER_NAVIGATION = {
 export const LOGIN_NAVIGATION = {
   [LANGUAGES.english]: {
     text: 'Already have an account?',
-    btn: 'Login',
+    btn: 'Sign in',
   },
   [LANGUAGES.russian]: {
     text: 'Уже есть аккаунт?',
-    btn: 'Залогиниться',
+    btn: 'Войти',
   },
 } as const;
 
 export const RESET_NAVIGATION = {
   [LANGUAGES.english]: {
-    text: 'Forgot your password?',
-    btn: 'Reset',
+    text: 'Want to change your password?',
+    btn: 'Change password',
   },
   [LANGUAGES.russian]: {
-    text: 'Забыли ваш пароль?',
-    btn: 'Cбросить',
+    text: 'Хотите изменить пароль?',
+    btn: 'Изменить пароль',
   },
 } as const;
 

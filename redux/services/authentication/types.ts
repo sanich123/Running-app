@@ -29,7 +29,7 @@ export interface ChangePasswordData extends EmailData {
   password2: string;
 }
 
-export type ChangePasswordResponse = UserAuthResponse;
+export type ChangePasswordResponse = UserAuthResponse & {refreshToken: string};
 
 export type AppConfig = AppConfigResponse;
 export type AuthTokenResponse = AuthResponse;

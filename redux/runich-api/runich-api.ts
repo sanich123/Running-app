@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Mutex } from 'async-mutex';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
-import { resetAuthSlice, setAccessToken } from '@R/slices/auth/actions';
+import { resetAuthSlice, setAccessToken } from '@R/slices/auth/auth';
 import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
 import type { AuthResponse } from './types';
 import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';

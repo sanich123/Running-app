@@ -39,18 +39,18 @@ describe('Profile update btn', () => {
     await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1));
   });
 
-  it('creates a missing profile when the server returns an empty success response', async () => {
+  it('updates the empty profile returned by the server', async () => {
     const user = userEvent.setup();
     const userId = 'profile-without-profile';
     mockStore.dispatch(setUserId(userId));
     server.use(
-      http.get(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json(null)),
-      http.post(`${BASE_URL}/user/${userId}/profile`, () => new HttpResponse(null, { status: 204 })),
+      http.get(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json({ id: 'profile-id', user_id: userId })),
+      http.patch(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json({ id: 'profile-id', user_id: userId })),
     );
 
     await renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
-    const createButton = await screen.findByText(UPDATE_BTN.english.create);
-    await user.press(createButton);
+    const updateButton = await screen.findByText(UPDATE_BTN.english.update);
+    await user.press(updateButton);
 
     await waitFor(() => expect(mockBack).toHaveBeenCalled());
     expect(screen.queryByText(UPDATE_BTN_ERROR_MSG)).not.toBeOnTheScreen();

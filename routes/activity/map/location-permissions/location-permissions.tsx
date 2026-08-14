@@ -11,6 +11,7 @@ import ForegroundLocationSwitcher from '@Routes/activity/foregroud-location-swit
 import LocationSettingsSwitcher from '@Routes/activity/location-settings-switcher/location-settings-switcher';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { LocationPermissionsProps } from '@Routes/activity/types';
+import { hasProfileData } from '../profile-status';
 
 export default function LocationPermissions({
   isMapVisible,
@@ -42,7 +43,7 @@ export default function LocationPermissions({
           backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}
         />
       )}
-      {isSuccess && !profile && (
+      {isSuccess && !hasProfileData(profile) && (
         <View
           style={[
             styles.profileNotice,
@@ -53,17 +54,17 @@ export default function LocationPermissions({
           </View>
           <View style={styles.profileNoticeContent}>
             <Text variant="titleSmall" style={{ color: colors.onPrimaryContainer }}>
-              Профиль пользователя не создан
+              Заполните профиль
             </Text>
             <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-              Добавьте имя и фотографию, чтобы записывать и сохранять активности.
+              Заполните хотя бы одно поле профиля, чтобы записывать и сохранять активности.
             </Text>
             <Link
               testID="create-profile-link"
               href={`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`}
               asChild>
               <Button mode="contained-tonal" compact icon="account-plus-outline" style={styles.profileNoticeButton}>
-                Создать профиль
+              Заполнить профиль
               </Button>
             </Link>
           </View>

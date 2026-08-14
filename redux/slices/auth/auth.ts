@@ -1,6 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { authenticationApi } from '@R/services/authentication/authentication';
-import { resetAuthSlice, setAccessToken, setRefreshToken } from './actions';
 import { AUTH_INITIAL_STATE } from './const';
 
 const auth = createSlice({
@@ -13,51 +11,22 @@ const auth = createSlice({
     setRequiredAppVersion: (state, { payload }) => {
       state.appVersion = payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(setAccessToken, (state, { payload }) => {
+    setAccessToken: (state, { payload }) => {
       state.accessToken = payload;
-    });
-    builder.addCase(setRefreshToken, (state, { payload }) => {
+    },
+    setRefreshToken: (state, { payload }) => {
       state.refreshToken = payload;
-    });
-    builder.addCase(resetAuthSlice, () => AUTH_INITIAL_STATE);
-    builder.addMatcher(
-      authenticationApi.endpoints.loginUser.matchFulfilled,
-      (state, { payload: { userId, accessToken, refreshToken } }) => {
-        state.accessToken = accessToken;
-        state.refreshToken = refreshToken;
-        state.userId = userId;
-      },
-    );
-
-    builder.addMatcher(authenticationApi.endpoints.registerUser.matchFulfilled, (state) => {
-      state.isNeedToShowConfirmEmailInput = true;
-    });
-    builder.addMatcher(
-      authenticationApi.endpoints.confirmSignUpCodeByEmail.matchFulfilled,
-      (state, { payload: { userId, accessToken, refreshToken } }) => {
-        state.accessToken = accessToken;
-        state.refreshToken = refreshToken;
-        state.userId = userId;
-      },
-    );
-    builder.addMatcher(authenticationApi.endpoints.verifyConfig.matchFulfilled, (state, { payload }) => {
-      state.accessToken = payload.accessToken;
-      state.refreshToken = payload.refreshToken;
-      state.userId = payload.userId;
-    });
-    builder.addMatcher(authenticationApi.endpoints.changePassword.matchFulfilled, (state, { payload }) => {
-      state.accessToken = payload.accessToken;
-      if (payload.userId) {
-        state.userId = payload.userId;
-      }
-      state.isNeedToShowConfirmEmailInput = false;
-    });
+    },
+    resetAuthSlice: () => AUTH_INITIAL_STATE,
   },
 });
 
-export const { setUserId } = auth.actions;
-export { resetAuthSlice } from './actions';
+export const {
+  setUserId,
+  setRequiredAppVersion,
+  setAccessToken,
+  setRefreshToken,
+  resetAuthSlice,
+} = auth.actions;
 
 export default auth.reducer;

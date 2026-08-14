@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 import { useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Platform, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { CrossPlatformLayoutProps } from './types';
 
@@ -25,39 +25,38 @@ export default function CrossPlatformLayout({
       style={[{ flex: 1, backgroundColor: colors.background }, (isError || isLoading) && styles.centered]}
       edges={edges}>
       {scrollViewEnabled && !isStatusState ? (
-        <KeyboardAwareScrollView style={styles.flex}>
-          <ScrollView
-            testID="cross-platform-scroll-view"
-            style={styles.flex}
-            contentContainerStyle={[
-              styles.grow,
-              Platform.OS === 'web' && {
-                maxWidth: 600,
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                height: '100%',
-                width: '100%',
-              },
-              (isError || isLoading) && styles.centered,
-              { ...outerStyles },
-            ]}
-            refreshControl={
-              refetch && (
-                <RefreshControl
-                  testID="cross-platform-refresh-control"
-                  refreshing={refreshing}
-                  onRefresh={() => {
-                    setRefreshing(true);
-                    refetch?.();
-                    setTimeout(() => {
-                      setRefreshing(false);
-                    }, 2000);
-                  }}
-                />
-              )
-            }>
-            {content}
-          </ScrollView>
+        <KeyboardAwareScrollView
+          testID="cross-platform-scroll-view"
+          style={styles.flex}
+          bottomOffset={24}
+          contentContainerStyle={[
+            styles.grow,
+            Platform.OS === 'web' && {
+              maxWidth: 600,
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              height: '100%',
+              width: '100%',
+            },
+            (isError || isLoading) && styles.centered,
+            { ...outerStyles },
+          ]}
+          refreshControl={
+            refetch && (
+              <RefreshControl
+                testID="cross-platform-refresh-control"
+                refreshing={refreshing}
+                onRefresh={() => {
+                  setRefreshing(true);
+                  refetch?.();
+                  setTimeout(() => {
+                    setRefreshing(false);
+                  }, 2000);
+                }}
+              />
+            )
+          }>
+          {content}
         </KeyboardAwareScrollView>
       ) : (
         <View style={[styles.flex, isStatusState && styles.centered, outerStyles]}>{content}</View>

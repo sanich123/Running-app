@@ -3,5 +3,4 @@ export const AUTH_INITIAL_STATE = {
   refreshToken: '',
   userId: '',
   appVersion: '',
-  isNeedToShowConfirmEmailInput: false,
 };

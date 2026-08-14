@@ -3,11 +3,11 @@ import { SignInPageStates } from '@U/validate-email-password';
 
 export const LOGIN_BTN = {
   [LANGUAGES.english]: {
-    login: 'Login',
+    login: 'Sign in',
     logining: 'Logining..',
   },
   [LANGUAGES.russian]: {
-    login: 'Логин',
+    login: 'Войти',
     logining: 'Логинимся..',
   },
 } as const;
@@ -25,11 +25,11 @@ export const REGISTER_BTN = {
 
 export const RESET_BTN = {
   [LANGUAGES.english]: {
-    login: 'Reset',
+    login: 'Change password',
     logining: 'Resetting..',
   },
   [LANGUAGES.russian]: {
-    login: 'Сброс',
+    login: 'Изменить пароль',
     logining: 'Сбрасываем..',
   },
 } as const;

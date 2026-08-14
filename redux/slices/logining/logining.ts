@@ -1,9 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { SignInPageStates } from '@U/validate-email-password';
-
 const logining = createSlice({
   name: 'logining',
-  initialState: { email: '', password: '', isDisabledWhenLogining: false, pageState: SignInPageStates.login },
+  initialState: { email: '', password: '', isDisabledWhenLogining: false },
   reducers: {
     saveEmail: (state, { payload }) => {
       state.email = payload;
@@ -14,12 +12,9 @@ const logining = createSlice({
     setIsDisabledWhenLogining: (state, { payload }) => {
       state.isDisabledWhenLogining = payload;
     },
-    setSignInPageState: (state, { payload }) => {
-      state.pageState = payload;
-    },
   },
 });
 
-export const { saveEmail, savePassword, setIsDisabledWhenLogining, setSignInPageState } = logining.actions;
+export const { saveEmail, savePassword, setIsDisabledWhenLogining } = logining.actions;
 
 export default logining.reducer;

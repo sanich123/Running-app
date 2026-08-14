@@ -13,6 +13,7 @@ import MapRouteLine from '@S/display-activity-map/map-route-line/map-route-line'
 import { errorToast } from '@S/error-toast/error-toast';
 import LocationPermissions from './location-permissions/location-permissions';
 import MapNavIcon from './map-nav-icon/map-nav-icon';
+import { hasProfileData } from './profile-status';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecordLocation: (arg: boolean) => void }) {
@@ -30,7 +31,7 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
   const cameraRef = useRef<Camera>(null);
   const batteryOptimizationModalRef = useRef<BottomSheetModal>(null);
   const hasLocationPermissions = Boolean(
-    foregroundPermissionStatus?.granted && backgroundPermissionStatus?.granted && profile,
+    foregroundPermissionStatus?.granted && backgroundPermissionStatus?.granted && hasProfileData(profile),
   );
   const isReadyToShowLocationOnMap = Boolean(
     hasLocationPermissions && (Platform.OS !== 'android' || isLocationEnabled),
