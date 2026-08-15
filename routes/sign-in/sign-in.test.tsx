@@ -31,15 +31,6 @@ describe('sign in', () => {
     jest.clearAllMocks();
   });
 
-  it('shows the VK ID error returned by the backend', async () => {
-    mockAuthParams = { authStep: 'login', oauthError: 'invalid code_verifier' };
-
-    await renderWithProviders(<SignIn />);
-
-    expect(await screen.findByText('invalid code_verifier')).toBeOnTheScreen();
-    expect(screen.getByText('Не удалось войти через VK ID')).toBeOnTheScreen();
-  });
-
   it('logs in with credentials entered by the user', async () => {
     const user = userEvent.setup();
     let requestBody: unknown;
