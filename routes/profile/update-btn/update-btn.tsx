@@ -29,6 +29,10 @@ export default function ProfileUpdateBtn() {
           Object.entries(settings).filter(([, value]) => value !== null),
         ) as ProfileSettings;
 
+        if (body.birthday) {
+          body.birthday = new Date(body.birthday).toISOString();
+        }
+
         await updateProfile({ body, id: `${profile?.id}` })
           .unwrap()
           .then(() => {

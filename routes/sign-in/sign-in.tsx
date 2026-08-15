@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import Constants from 'expo-constants';
 import { useLinkingURL, parse } from 'expo-linking';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Surface, Text, useTheme } from 'react-native-paper';
+import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { ROUTES } from '@const/enums';
 import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
@@ -15,7 +15,7 @@ import CustomTextInput from '@S/custom-text-input/custom-text-input';
 import { emailValidation, passwordValidation } from '@S/custom-text-input/types';
 import { errorToast } from '@S/error-toast/error-toast';
 import { SignInPageStates } from '@U/validate-email-password';
-import { SIGN_IN_FIELDS } from './const';
+import { SIGN_IN_FIELDS, YANDEX_AUTH_URL } from './const';
 import Intro from './intro/intro';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
@@ -88,6 +88,15 @@ export default function SignIn() {
           />
         )}
         <LoginRegisterBtn handleSubmit={handleSubmit} authStep={currentAuthStep} />
+        {currentAuthStep === SignInPageStates.login && (
+          <Button
+            mode="outlined"
+            icon="account-circle-outline"
+            testID="yandex-auth"
+            onPress={() => void Linking.openURL(YANDEX_AUTH_URL)}>
+            Войти через Яндекс
+          </Button>
+        )}
         <LoginRegisterNavigation authStep={currentAuthStep} onAuthStepChange={setAuthStep} />
       </Surface>
       <View style={styles.footer}>
