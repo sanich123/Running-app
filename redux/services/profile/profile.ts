@@ -36,7 +36,6 @@ const profileApi = runichApi.injectEndpoints({
 
 export const {
   useGetUserProfileByUserIdQuery,
-  useCreateProfileByUserIdMutation,
   useUpdateProfileByProfileIdMutation,
   useGetFilteredUsersBySearchTextQuery,
 } = profileApi;
