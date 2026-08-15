@@ -5,7 +5,7 @@ jest.mock('react-native-toast-message', () => ({ show: jest.fn() }));
 
 describe('errorToast', () => {
   it.each([
-    [{ data: { message: 'Invalid input' }, status: 400 }, 'Invalid input, 400 code'],
+    [{ data: { message: 'Invalid input' }, status: 400 }, '400, Invalid input'],
     [{ status: 'FETCH_ERROR' }, 'Отсутствует соединение с Интернет'],
     [{ code: 'ENOENT', message: 'Missing' }, 'Код ENOENT, сообщение: Missing'],
   ])('normalizes API errors', (error, expected) => {

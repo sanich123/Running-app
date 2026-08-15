@@ -9,7 +9,7 @@ describe('Error component', () => {
     await renderWithProviders(<ErrorComponent error={{ data: { message: 'some message' }, status: 400 }} />, {
       store: mockStore,
     });
-    expect(screen.getByText('some message, 400 code')).toBeOnTheScreen();
+    expect(screen.getByText('400, some message')).toBeOnTheScreen();
   });
 
   it('retries the failed request', async () => {
