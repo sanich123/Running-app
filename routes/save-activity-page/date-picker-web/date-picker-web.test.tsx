@@ -1,12 +1,12 @@
-import { fireEvent, screen } from '@testing-library/react-native';
+import { fireEvent } from '@testing-library/react-native';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import DatePickerWeb from './date-picker-web';
 
 describe('date picker web', () => {
   it('stores the date chosen by the user', async () => {
-    await renderWithProviders(<DatePickerWeb isDisabled={false} />);
-    const input = screen.getByTestId('manual-date-picker');
+    const { container } = await renderWithProviders(<DatePickerWeb isDisabled={false} />);
+    const input = container.queryAll(({ type }) => type === 'input')[0];
     expect(input.props.style).toEqual(
       expect.objectContaining({ boxSizing: 'border-box', maxWidth: '100%', width: '100%' }),
     );

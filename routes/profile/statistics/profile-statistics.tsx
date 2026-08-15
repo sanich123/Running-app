@@ -24,7 +24,7 @@ export default function ProfileStatistics({ whosProfile }: { whosProfile: string
         <>
           <MonthStatisticsMetrics
             title={MONTH_STATISTICS[language].activities}
-            metric={`${allUserStatistics?.totalItems}`}
+            metric={`${allUserStatistics?.totalItems ?? 0}`}
             isSuccess={isSuccess}
             isLoading={isLoading}
             isError={isError}
@@ -32,7 +32,7 @@ export default function ProfileStatistics({ whosProfile }: { whosProfile: string
           />
           <MonthStatisticsMetrics
             title={MONTH_STATISTICS[language].distance}
-            metric={`${Math.round(allUserStatistics?.totalDistance / 1000)}`}
+            metric={`${Math.round((allUserStatistics?.totalDistance ?? 0) / 1000)}`}
             isSuccess={isSuccess}
             isLoading={isLoading}
             isError={isError}
@@ -40,7 +40,7 @@ export default function ProfileStatistics({ whosProfile }: { whosProfile: string
           />
           <MonthStatisticsMetrics
             title={MONTH_STATISTICS[language].duration}
-            metric={`${Math.round(getHoursMinutesFromMilliseconds(allUserStatistics?.totalDuration).hours)}`}
+            metric={`${Math.round(getHoursMinutesFromMilliseconds(allUserStatistics?.totalDuration ?? 0).hours)}`}
             isSuccess={isSuccess}
             isLoading={isLoading}
             isError={isError}

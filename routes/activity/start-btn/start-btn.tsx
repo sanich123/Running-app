@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
 import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
-import { saveFinishedActivity } from '@R/slices/activity/activity';
+import { resetFinishedActivity, saveFinishedActivity } from '@R/slices/activity/activity';
 import {
   resetLocationsFromBackground,
   setActivityStatus,
@@ -96,9 +96,12 @@ export default function StartBtn({
     onTrackingActionInProgressChange?.(true);
     try {
       if (activityStatus === STATUSES.initial) {
-        await startLocationTracking();
-        saveCurrentActivity();
+        // A new recording must never inherit a persisted recording or a
+        // location task left alive after an app restart.
+        await stopLocationTracking();
         dispatch(resetLocationsFromBackground());
+        dispatch(resetFinishedActivity());
+        await startLocationTracking();
         dispatch(setActivityStatus(STATUSES.started));
         return;
       }

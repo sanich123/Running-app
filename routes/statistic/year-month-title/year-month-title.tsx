@@ -7,7 +7,7 @@ export default function YearMonthTitle({ year, month }: { year: string; month: s
   const { language } = useAppSelector(({ language }) => language);
   return (
     <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
-      <Text variant="headlineLarge">{`${new Date(+year, +month).toLocaleDateString(language === LANGUAGES.russian ? 'ru' : 'en', { month: 'long', year: 'numeric' })}`}</Text>
+      <Text variant="headlineLarge">{`${new Date(+year, +month).toLocaleDateString(language === LANGUAGES.russian ? 'ru-RU' : 'en-US', { month: 'long', year: 'numeric' })}`}</Text>
     </View>
   );
 }

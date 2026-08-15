@@ -83,9 +83,9 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           Platform.OS === 'web' && styles.webStyles,
         ]}>
         <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
-        {(resolvedMapPhotoUrl || photoVideoUrls?.length > 0) && (
+        {(resolvedMapPhotoUrl || Boolean(photoVideoUrls?.length)) && (
           <MediaList
-            photoVideoUrls={photoVideoUrls}
+            photoVideoUrls={photoVideoUrls ?? []}
             mapPhotoUrl={resolvedMapPhotoUrl}
             mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
             id={id}

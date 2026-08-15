@@ -25,7 +25,7 @@ export default function MapPage() {
       {isLoading ? (
         <ActivityIndicator size="large" testID="map-page-loading" />
       ) : isSuccess ? (
-        <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
+        <DisplayActivityMap locations={activity?.locations ?? []} kilometresSplit={activity?.kilometresSplit ?? []} />
       ) : isError ? (
         <ErrorComponent error={error} refetch={refetch} />
       ) : null}

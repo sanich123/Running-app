@@ -29,7 +29,7 @@ export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
   return (
     <View style={styles.wrapper}>
       <input
-        {...({ testID: 'manual-date-picker' } as Record<string, string>)}
+        data-testid="manual-date-picker"
         disabled={shouldBeDisabled}
         style={{
           ...styles.picker,

@@ -9,6 +9,7 @@ import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout'
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import { MONTH_STATISTICS } from '@S/month-metric/const';
+import type { StatisticMetricResponse, YearCategoryStatistics } from '@R/runich-api/types';
 
 const LazyCharts = lazy(() => import('@Routes/statistic/charts/charts'));
 const LazyErrorComponent = lazy(() => import('@S/error-component/error-component'));
@@ -29,14 +30,25 @@ export default function Statistics() {
     refetch,
   } = useGetAnnualStatisticsByUserIdQuery({ userId }, { skip: !userId });
   const isRussian = language === LANGUAGES.russian;
+  type YearStatsByType = Record<string, YearCategoryStatistics>;
+  const getYearStats = (year: string | number): YearStatsByType | undefined => {
+    const value = yearStats?.[String(year)];
+    return value && typeof value === 'object' ? value : undefined;
+  };
   const availableYears = useMemo(
     () => (yearStats ? Object.keys(yearStats).filter((year) => year !== 'isUserHasActivities') : []),
     [yearStats],
   );
-  const displayedYear = yearStats?.[selectedYear] ? selectedYear : Number(availableYears[0]);
-  const selectedYearStats = yearStats?.[displayedYear] ?? yearStats?.[availableYears[0]];
+  const displayedYear = getYearStats(selectedYear) ? selectedYear : Number(availableYears[0]);
+  const selectedYearStats = getYearStats(displayedYear) ?? getYearStats(availableYears[0]);
   const displayedType = selectedYearStats?.[selectedType] ? selectedType : 'all';
   const selectedStats = selectedYearStats?.[displayedType];
+  const chartStats = selectedStats
+    ? (Object.fromEntries(Object.entries(selectedStats).filter(([, value]) => typeof value === 'object')) as Record<
+        string,
+        StatisticMetricResponse
+      >)
+    : {};
 
   return (
     <CrossPlatformLayout edges={[]} scrollViewEnabled isError={isError} isLoading={isLoading}>
@@ -53,7 +65,10 @@ export default function Statistics() {
                 selectedType={displayedType}
                 availableYearsAndTypes={availableYears.map((year) => ({
                   year,
-                  types: Object.keys(yearStats[year]),
+                  types: Object.keys(getYearStats(year) ?? {}).filter((type) => {
+                    const stats = getYearStats(year);
+                    return stats?.[type] && typeof stats[type] === 'object';
+                  }),
                 }))}
               />
               {selectedStats && (
@@ -84,7 +99,7 @@ export default function Statistics() {
                       isError={isError}
                     />
                   </View>
-                  <LazyCharts year={displayedYear} months={selectedStats} />
+                  <LazyCharts year={displayedYear} months={chartStats} />
                 </>
               )}
             </Suspense>

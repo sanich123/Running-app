@@ -2,10 +2,12 @@ export const enum SignInPageStates {
   register = 'register',
   login = 'login',
   reset = 'reset',
+  emailLink = 'email-link',
 }
 
 export const signInMap = {
-  [SignInPageStates.register]: SignInPageStates.login,
-  [SignInPageStates.login]: SignInPageStates.reset,
-  [SignInPageStates.reset]: SignInPageStates.register,
+  [SignInPageStates.login]: SignInPageStates.register,
+  [SignInPageStates.register]: SignInPageStates.reset,
+  [SignInPageStates.reset]: SignInPageStates.login,
+  [SignInPageStates.emailLink]: SignInPageStates.login,
 };

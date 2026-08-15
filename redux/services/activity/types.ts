@@ -1,7 +1,16 @@
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
+import type { ActivitiesResponse } from '@R/runich-api/types';
 import type { LastKmSplit } from '@R/slices/location/types';
 import type { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import type { LocationObject } from 'expo-location';
+
+export type {
+  ActivitiesResponse,
+  ActivityLocationsResponse,
+  ActivityMediaResponse,
+  ActivityMutationResponse,
+  ActivityResponse,
+} from '@R/runich-api/types';
 
 export interface FinishedActivity {
   date?: string;
@@ -18,7 +27,7 @@ export interface AdditionalInfoType {
   sport: SPORTS_BTNS_VALUES;
   emotion: EMOTIONS_BTNS_VALUES;
   isPublic: boolean;
-  photoVideoUrls: { url: string; thumbnail: null | string; blurhash?: string }[];
+  photoVideoUrls: { url: string; thumbnail: null | string; blurhash?: string | null }[];
 }
 
 export interface ActivityToSend {
@@ -26,37 +35,19 @@ export interface ActivityToSend {
   id: string;
 }
 
-interface Activity {
-  description: string;
-  title: string;
-  date: string;
-  sport: string;
+export interface ActivityUpdateRequest {
   id: string;
-  user_id: string;
-  photoVideoUrls: string[];
-  mapPhotoUrl: string;
-  locations?: LocationObject[];
-  kilometresSplit?: LastKmSplit[];
-  duration: number;
-  distance: number;
-  profile: Profile;
-  _count: {
-    comments: number;
-  };
+  body: Partial<FinishedActivity & AdditionalInfoType>;
 }
 
-interface Profile {
-  surname: string;
-  name: string;
-  profilePhoto: string;
-  profilePhotoblurhash: null;
-  emailNotifications: boolean;
-  users: {
-    email: string;
-  };
+export interface GetActivityPhotosRequest {
+  userId: string;
+  take: number;
 }
 
-export interface ActivitiesReponse {
-  activities: Activity[];
-  isLastPage: boolean;
+export interface GetActivitiesByIdsRequest {
+  ids: string;
 }
+
+/** Kept as an alias for existing imports. */
+export type ActivitiesReponse = ActivitiesResponse;

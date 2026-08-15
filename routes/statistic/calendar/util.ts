@@ -9,6 +9,7 @@ export function getDaysOfTheMonthWithNames(
   activities: StatisticActivities,
   language: LANGUAGES,
 ) {
+  const safeActivities = activities ?? [];
   const daysInMonth = new Date(+year, +month + 1, 0).getDate();
   const isRussian = language === LANGUAGES.russian;
   const daysOfTheWeek = [...Array(daysInMonth).keys()].reduce<ReducedDatesByDayOfTheWeek>(
@@ -16,7 +17,9 @@ export function getDaysOfTheMonthWithNames(
       const dateFromDay = new Date(+year, +month, day + 1);
       const dayFromDate = dateFromDay.getDay();
       const incrementedDay = day + 1;
-      const activitiesInThatDay = activities?.filter(({ date }) => new Date(date).getDate() === dateFromDay.getDate());
+      const activitiesInThatDay = safeActivities.filter(
+        ({ date }) => new Date(date).getDate() === dateFromDay.getDate(),
+      );
       acc[
         mapIndexToDayOfWeek[dayFromDate as keyof typeof mapIndexToDayOfWeek] as keyof ReducedDatesByDayOfTheWeek
       ].push({

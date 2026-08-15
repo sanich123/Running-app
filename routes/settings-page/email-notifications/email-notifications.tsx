@@ -20,12 +20,12 @@ export default function EmailNotificationsBtn() {
           leading={
             <Switch
               testID="email-notifications-switch"
-              value={profileInfo.emailNotifications}
+              value={!!profileInfo.emailNotifications}
               onValueChange={async () => {
                 try {
                   await updateProfile({
                     body: { emailNotifications: !profileInfo.emailNotifications },
-                    id: profileInfo.id,
+                    id: profileInfo.id ?? '',
                   }).unwrap();
                 } catch (error) {
                   errorToast('Не удалось изменить настройки уведомлений', error);

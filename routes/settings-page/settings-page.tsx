@@ -24,7 +24,7 @@ export default function SettingsPage() {
         marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
       }}>
       <LanguageSwitcher />
-      {Platform.OS !== 'web' && <ChangeTheme />}
+      <ChangeTheme />
       <MigrationBtn />
       <PrefetchActivitiesBtn />
       <EmailNotificationsBtn />

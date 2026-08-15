@@ -1,9 +1,9 @@
 import { CircleLayer, ShapeSource, SymbolLayer } from '@rnmapbox/maps';
 import { useTheme } from 'react-native-paper';
 import { COLORS } from '@const/theme-colors';
-import type { LastKmSplit } from '@R/slices/location/types';
+import type { ActivityKilometreSplit } from '@S/card/types';
 
-export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: LastKmSplit[] }) {
+export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: ActivityKilometreSplit[] }) {
   const { colors } = useTheme();
   const features = (Array.isArray(kilometresSplit) ? kilometresSplit : [])
     .filter(({ kilometerPoint }) => {

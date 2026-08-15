@@ -22,7 +22,7 @@ export default function FullViewMap() {
       {isLoading ? (
         <ActivityIndicator size="large" testID="full-view-map-loading" />
       ) : isSuccess ? (
-        <DisplayActivityMap locations={activity?.locations} kilometresSplit={activity?.kilometresSplit} />
+        <DisplayActivityMap locations={activity?.locations ?? []} kilometresSplit={activity?.kilometresSplit ?? []} />
       ) : isError ? (
         <ErrorComponent error={error} refetch={refetch} />
       ) : null}

@@ -28,25 +28,24 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
     isError,
     isLoading: isLikesLoading,
   } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
+  const likesList = likes ?? [];
   const [sendEmailNotification] = useSendEmailAfterSendingLikeMutation();
   const [sendLike, { isSuccess: isSuccessSending }] = useSendLikeMutation();
 
   const [deleteLike] = useDeleteLikeMutation();
 
-  const isLikedByYou = likes?.length
-    ? likes?.filter(({ authorId }: { authorId: string }) => authorId === userId)
-    : null;
-  const hasLikesFromOthers = !!likes?.length && !isLikedByYou?.length;
+  const isLikedByYou = likesList.filter(({ authorId }) => authorId === userId);
+  const hasLikesFromOthers = likesList.length > 0 && !isLikedByYou.length;
 
   useEffect(() => {
-    if (isSuccessSending && profile?.emailNotifications && profile?.users?.email) {
+    if (isSuccessSending && profile?.emailNotifications && profile.users?.email) {
       sendEmailNotification({
-        name,
-        surname,
-        profilePhoto,
-        recepientName: profile?.name,
-        recepientSurname: profile?.surname,
-        recepientEmail: profile?.users.email,
+        name: name ?? '',
+        surname: surname ?? '',
+        profilePhoto: profilePhoto ?? '',
+        recepientName: profile.name ?? '',
+        recepientSurname: profile.surname ?? '',
+        recepientEmail: profile.users.email,
         mapPhotoUrl: mapPhotoUrl || '',
       });
     }
@@ -54,26 +53,26 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
 
   return (
     <IconButton
-      testID={isLikedByYou?.length > 0 ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
-      icon={isLikedByYou?.length || hasLikesFromOthers ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
+      testID={isLikedByYou.length > 0 ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
+      icon={isLikedByYou.length || hasLikesFromOthers ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
       iconColor={
-        isError ? colors.error : isLikedByYou?.length || !hasLikesFromOthers ? colors.primary : colors.secondary
+        isError ? colors.error : isLikedByYou.length || !hasLikesFromOthers ? colors.primary : colors.secondary
       }
-      size={isLikedByYou?.length ? 29 : 25}
+      size={isLikedByYou.length ? 29 : 25}
       onPress={async () => {
         if (userId) {
           try {
-            if (isLikedByYou?.length > 0) {
+            if (isLikedByYou.length > 0) {
               await deleteLike({ id: isLikedByYou[0].id, activityId }).unwrap();
             } else {
-              await sendLike({ activityId, authorId: userId, profilePhoto }).unwrap();
+              await sendLike({ activityId, authorId: userId, profilePhoto: profilePhoto ?? '' }).unwrap();
             }
           } catch (error) {
-            errorToast(LIKE_BTN[language].errorAction(isLikedByYou?.length ? 'delete' : 'send'), error);
+            errorToast(LIKE_BTN[language].errorAction(isLikedByYou.length ? 'delete' : 'send'), error);
           }
         }
       }}
-      disabled={isLoading || isDisabled || isError || isLikesLoading || !!likes?.message}
+      disabled={isLoading || isDisabled || isError || isLikesLoading}
     />
   );
 });

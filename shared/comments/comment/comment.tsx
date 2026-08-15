@@ -10,7 +10,7 @@ import CommentInput from '../comment-input/comment-input';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
-import type { CommentLikeResponse, CommentResponse } from '@R/runich-api/types';
+import type { CommentResponse } from '@R/runich-api/types';
 
 export default function Comment({
   authorId,
@@ -20,7 +20,7 @@ export default function Comment({
   profile,
   commentLike,
   commentsModalRef,
-}: CommentResponse & CommentLikeResponse & { commentsModalRef: RefObject<BottomSheetModal | null> }) {
+}: CommentResponse & { commentsModalRef: RefObject<BottomSheetModal | null> }) {
   const { idOfUpdatingComment, commentActivityId } = useAppSelector(({ comment }) => comment);
   const { userId } = useAppSelector(({ auth }) => auth);
   const isYouAuthor = userId === authorId;

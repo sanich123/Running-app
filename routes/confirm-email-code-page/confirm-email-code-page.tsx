@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { Card, Icon, Text, useTheme } from 'react-native-paper';
-import { LANGUAGES, ROUTES } from '@const/enums';
+import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import ConfirmEmailCode, { type ConfirmEmailCodeType } from './confirm-email-code/confirm-email-code';
@@ -10,23 +9,12 @@ import { CONFIRM_EMAIL_PAGE_TEXT } from './const';
 
 export default function ConfirmEmailCodePage() {
   const { colors } = useTheme();
-  const { replace } = useRouter();
   const { email: savedEmail } = useAppSelector(({ logining }) => logining);
   const { email: queryEmail, type: queryType } = useLocalSearchParams<{ email?: string; type?: string }>();
   const { language } = useAppSelector(({ language }) => language);
   const email = typeof queryEmail === 'string' ? queryEmail : savedEmail;
   const type: ConfirmEmailCodeType = queryType === 'change-password' ? 'change-password' : 'registration';
   const copy = CONFIRM_EMAIL_PAGE_TEXT[language];
-
-  useEffect(() => {
-    if (!email) {
-      replace(`/${ROUTES.signIn}`);
-    }
-  }, [email, replace]);
-
-  if (!email) {
-    return null;
-  }
 
   return (
     <>

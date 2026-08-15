@@ -10,7 +10,7 @@ export function formatDurationMinsSecs(time: number) {
 }
 
 export function formatDate(dateString: string, language: LANGUAGES) {
-  return new Date(dateString).toLocaleDateString(`${language === LANGUAGES.english ? 'en-US' : 'ru'}`, {
+  return new Date(dateString).toLocaleDateString(language === LANGUAGES.english ? 'en-US' : 'ru-RU', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -19,11 +19,12 @@ export function formatDate(dateString: string, language: LANGUAGES) {
 }
 
 export function getHoursMinutes(dateString: string, language: LANGUAGES) {
-  const hours = new Date(dateString).getHours();
-  const minutes = new Date(dateString).getMinutes();
-  return `${language === LANGUAGES.english ? 'at' : 'в'} ${hours < 10 ? `0${hours}` : `${hours}`}:${
-    minutes < 10 ? `0${minutes}` : `${minutes}`
-  }`;
+  const time = new Date(dateString).toLocaleTimeString(language === LANGUAGES.english ? 'en-US' : 'ru-RU', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  return `${language === LANGUAGES.english ? 'at' : 'в'} ${time}`;
 }
 
 export function getMillisecondsFromHoursMinutes(hours: number, minutes: number) {

@@ -2,6 +2,7 @@ import polyline from '@mapbox/polyline';
 import getDistanceInMeters from '@turf/distance';
 import point from 'turf-point';
 import { POWERHOURS_COLORS } from '@const/theme-colors';
+import type { ActivityKilometreSplit, ActivityLocation } from '@S/card/types';
 import type { LocationObject } from 'expo-location';
 
 /**
@@ -21,8 +22,150 @@ const DEFAULT_MAX_TRACKING_SPEED_KMH = MAX_TRACKING_SPEED_KMH.run;
 /** Mapbox Static Images rejects URLs above roughly 8 KB. Leave headroom for tokens and encoding. */
 const MAX_STATIC_MAP_URL_LENGTH = 7600;
 const MAX_STATIC_MAP_LOCATIONS = 500;
+const METERS_IN_KILOMETER = 1000;
+const MIN_ELEVATION_DELTA_METERS = 2;
+const MAX_ALTITUDE_ACCURACY_METERS = 50;
 
-export function getDistance(origin: LocationObject, destination: LocationObject) {
+export interface KilometerSplitCalculation {
+  splits: ActivityKilometreSplit[];
+  remainingDistance: number;
+  remainingDuration: number;
+  remainingAltitude: number;
+}
+
+function getReliableAltitude(location: ActivityLocation) {
+  const altitude = location.coords.altitude;
+  const altitudeAccuracy = location.coords.altitudeAccuracy;
+
+  if (typeof altitude !== 'number' || !Number.isFinite(altitude)) {
+    return null;
+  }
+
+  if (
+    typeof altitudeAccuracy === 'number' &&
+    Number.isFinite(altitudeAccuracy) &&
+    (altitudeAccuracy < 0 || altitudeAccuracy > MAX_ALTITUDE_ACCURACY_METERS)
+  ) {
+    return null;
+  }
+
+  return altitude;
+}
+
+export function getElevationGainBetweenLocations(previous: ActivityLocation, current: ActivityLocation) {
+  const previousAltitude = getReliableAltitude(previous);
+  const currentAltitude = getReliableAltitude(current);
+
+  if (previousAltitude === null || currentAltitude === null) {
+    return 0;
+  }
+
+  const elevationDelta = currentAltitude - previousAltitude;
+  return elevationDelta > MIN_ELEVATION_DELTA_METERS ? elevationDelta : 0;
+}
+
+export function getElevationGain(locations: ActivityLocation[]) {
+  let elevationGain = 0;
+
+  for (let index = 1; index < locations.length; index += 1) {
+    elevationGain += getElevationGainBetweenLocations(locations[index - 1], locations[index]);
+  }
+
+  return elevationGain;
+}
+
+function interpolateLocation(start: LocationObject | null, end: LocationObject, fraction: number) {
+  if (!start) {
+    return end;
+  }
+
+  const clampedFraction = Math.min(1, Math.max(0, fraction));
+  const interpolate = (startValue: number, endValue: number) =>
+    startValue + (endValue - startValue) * clampedFraction;
+  const startAltitude = start.coords.altitude;
+  const endAltitude = end.coords.altitude;
+
+  return {
+    ...end,
+    timestamp: interpolate(start.timestamp, end.timestamp),
+    coords: {
+      ...end.coords,
+      latitude: interpolate(start.coords.latitude, end.coords.latitude),
+      longitude: interpolate(start.coords.longitude, end.coords.longitude),
+      altitude:
+        typeof startAltitude === 'number' && typeof endAltitude === 'number'
+          ? interpolate(startAltitude, endAltitude)
+          : endAltitude,
+    },
+  };
+}
+
+/**
+ * Splits one GPS segment at every crossed kilometre. A GPS update can cover
+ * more than one kilometre, so the split point is interpolated along the
+ * segment instead of being placed at the last received location.
+ */
+export function getKilometerSplitCalculation({
+  previousPosition,
+  currentPosition,
+  distance,
+  duration,
+  altitude,
+  previousKilometerDistance,
+  previousKilometerDuration,
+  previousKilometerAltitude,
+}: {
+  previousPosition: LocationObject | null;
+  currentPosition: LocationObject;
+  distance: number;
+  duration: number;
+  altitude: number;
+  previousKilometerDistance: number;
+  previousKilometerDuration: number;
+  previousKilometerAltitude: number;
+}): KilometerSplitCalculation {
+  const segmentDistance = Math.max(0, distance);
+  const segmentDuration = Math.max(0, duration);
+  const segmentAltitude = Number.isFinite(altitude) ? altitude : 0;
+  const splits: ActivityKilometreSplit[] = [];
+
+  let distanceInCurrentKilometer = Math.max(0, previousKilometerDistance);
+  let durationInCurrentKilometer = Math.max(0, previousKilometerDuration);
+  let altitudeInCurrentKilometer = Number.isFinite(previousKilometerAltitude) ? previousKilometerAltitude : 0;
+  let processedDistance = 0;
+  let processedDuration = 0;
+  let processedAltitude = 0;
+
+  while (distanceInCurrentKilometer + segmentDistance - processedDistance >= METERS_IN_KILOMETER) {
+    const distanceToSplit = METERS_IN_KILOMETER - distanceInCurrentKilometer;
+    const splitDistance = processedDistance + distanceToSplit;
+    const fraction = segmentDistance > 0 ? splitDistance / segmentDistance : 0;
+    const splitDuration = segmentDuration * fraction;
+    const splitAltitude = segmentAltitude * fraction;
+
+    splits.push({
+      lastKilometerDuration: durationInCurrentKilometer + splitDuration - processedDuration,
+      lastKilometerAltitude: altitudeInCurrentKilometer + splitAltitude - processedAltitude,
+      kilometerPoint: interpolateLocation(previousPosition, currentPosition, fraction),
+    });
+
+    processedDistance = splitDistance;
+    processedDuration = splitDuration;
+    processedAltitude = splitAltitude;
+    distanceInCurrentKilometer = 0;
+    durationInCurrentKilometer = 0;
+    altitudeInCurrentKilometer = 0;
+  }
+
+  return {
+    splits,
+    remainingDistance: distanceInCurrentKilometer + segmentDistance - processedDistance,
+    remainingDuration: durationInCurrentKilometer + segmentDuration - processedDuration,
+    remainingAltitude: altitudeInCurrentKilometer + segmentAltitude - processedAltitude,
+  };
+}
+
+export function getDistance(origin: ActivityLocation, destination: ActivityLocation) {
   const from = point([origin.coords.longitude, origin.coords.latitude]);
   const to = point([destination.coords.longitude, destination.coords.latitude]);
   return getDistanceInMeters(from, to, { units: 'meters' });
@@ -53,20 +196,20 @@ export function getSpeedInKmPerHour(distance: number, time: number) {
     return 0;
   }
 
-  return (distance / 1000) / (time / 3_600_000);
+  return distance / 1000 / (time / 3_600_000);
 }
 
 export function getMaxTrackingSpeedForSport(sport: string) {
   return MAX_TRACKING_SPEED_KMH[sport as keyof typeof MAX_TRACKING_SPEED_KMH] ?? DEFAULT_MAX_TRACKING_SPEED_KMH;
 }
 
-export function getMapBoxImage(locations: LocationObject[]) {
+export function getMapBoxImage(locations: ActivityLocation[]) {
   const validLocations = locations.filter(
     ({ coords }) => Number.isFinite(coords?.longitude) && Number.isFinite(coords?.latitude),
   );
 
   if (validLocations.length) {
-    const buildUrl = (routeLocations: LocationObject[]) => {
+    const buildUrl = (routeLocations: ActivityLocation[]) => {
       const polylineLatLang = routeLocations.map(({ coords }) => [coords.latitude, coords.longitude]);
       const encodedPolyline = polyline.encode(polylineLatLang);
 
@@ -113,7 +256,7 @@ export function getMapBoxImage(locations: LocationObject[]) {
   }
 }
 
-export function getReducedLocations(locations: LocationObject[], maxLocations = 1000) {
+export function getReducedLocations(locations: ActivityLocation[], maxLocations = 1000) {
   if (locations.length > maxLocations) {
     return Array.from({ length: maxLocations }, (_, index) => {
       const sourceIndex = Math.round((index * (locations.length - 1)) / (maxLocations - 1));

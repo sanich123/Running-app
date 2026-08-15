@@ -7,6 +7,7 @@ import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery }
 import { useAppSelector } from '@R/typed-hooks';
 import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
 import { CustomImage } from '@S/custom-image/custom-image';
+import type { ActivityPhotoResponse } from '@R/runich-api/types';
 
 const VIDEO_EXTENSIONS = ['mp4', 'avi', 'm4v'];
 
@@ -51,7 +52,7 @@ export default function PhotoViewer() {
     },
     { skip: !take },
   );
-  const itemsToRender = uuid.validate(`${photoUrl}`) ? activity?.photoVideoUrls : data?.photos;
+  const itemsToRender = uuid.validate(`${photoUrl}`) ? (activity?.photoVideoUrls ?? []) : (data?.photos ?? []);
 
   const isMapUrlExist = activity?.mapPhotoUrl ? +`${indexOfPhoto}` - 1 : +`${indexOfPhoto}`;
 
@@ -71,12 +72,12 @@ export default function PhotoViewer() {
         </>
       ) : (
         <>
-          {itemsToRender?.length > 0 && (
+          {itemsToRender.length > 0 && (
             <PagerView
               style={styles.viewPager}
               initialPage={uuid.validate(`${photoUrl}`) ? isMapUrlExist : +`${photoUrl}`}
               orientation="vertical">
-              {itemsToRender.map(({ url, blurhash }: { url: string; blurhash: string }, index: number) => (
+              {itemsToRender.map(({ url, blurhash }: ActivityPhotoResponse, index: number) => (
                 <View key={index}>
                   {['mp4', 'avi', 'm4v'].includes(url) ? (
                     <VideoViewer url={url} />

@@ -13,7 +13,6 @@ export default function AvatarShowable({ size, id, focused }: { size: number; id
   const { userId } = useAppSelector(({ auth }) => auth);
   const isMineAvatar = id === userId;
   const { data: profile, isSuccess, isError } = useGetUserProfileByUserIdQuery(id, { skip: !id });
-
   useEffect(() => {
     if (profile && isMineAvatar) {
       dispatch(saveWholeProfile(profile));

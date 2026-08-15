@@ -1,15 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Text, useTheme } from 'react-native-paper';
-import {
-  useCreateProfileByUserIdMutation,
-  useGetUserProfileByUserIdQuery,
-  useUpdateProfileByProfileIdMutation,
-} from '@R/services/profile/profile';
+import { useGetUserProfileByUserIdQuery, useUpdateProfileByProfileIdMutation } from '@R/services/profile/profile';
 import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { errorToast } from '@S/error-toast/error-toast';
-import { UPDATE_BTN_ERROR_MSG, UPDATE_BTN } from './const';
+import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
+import { UPDATE_BTN } from './const';
+import type { ProfileSettings } from '@R/slices/profile/types';
 
 export default function ProfileUpdateBtn() {
   const dispatch = useAppDispatch();
@@ -18,10 +15,9 @@ export default function ProfileUpdateBtn() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const { settings, isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
-  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
-  const [createProfile, { isLoading: isCreating }] = useCreateProfileByUserIdMutation();
+  const { data: profile, isLoading: isProfileLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileByProfileIdMutation();
-  const isSaving = isCreating || isUpdating;
+  const isSaving = isProfileLoading || isUpdating;
 
   return (
     <Button
@@ -29,31 +25,25 @@ export default function ProfileUpdateBtn() {
       loading={isSaving}
       onPress={async () => {
         dispatch(setIsDisabledWhileSendingProfile(true));
-        if (!profile?.id) {
-          await createProfile({ body: settings, id: userId })
-            .unwrap()
-            .then(() => {
-              dispatch(setIsDisabledWhileSendingProfile(false));
-              dispatch(resetSettings());
-              back();
-            })
-            .catch((error) => {
-              dispatch(setIsDisabledWhileSendingProfile(false));
-              errorToast(UPDATE_BTN_ERROR_MSG, error);
-            });
-        } else {
-          await updateProfile({ body: settings, id: `${profile?.id}` })
-            .unwrap()
-            .then(() => {
-              dispatch(setIsDisabledWhileSendingProfile(false));
-              dispatch(resetSettings());
-              back();
-            })
-            .catch((error) => {
-              dispatch(setIsDisabledWhileSendingProfile(false));
-              errorToast(UPDATE_BTN_ERROR_MSG, error);
-            });
+        const body = Object.fromEntries(
+          Object.entries(settings).filter(([, value]) => value !== null),
+        ) as ProfileSettings;
+
+        if (body.birthday) {
+          body.birthday = new Date(body.birthday).toISOString();
         }
+
+        await updateProfile({ body, id: `${profile?.id}` })
+          .unwrap()
+          .then(() => {
+            dispatch(resetSettings());
+            back();
+          })
+          .catch((error) => {
+            dispatch(setIsDisabledWhileSendingProfile(false));
+            errorToast('', getErrorMessageFromError(error));
+          })
+          .finally(() => dispatch(setIsDisabledWhileSendingProfile(false)));
       }}
       disabled={isSaving || isDisabledWhileSendingProfile}
       style={styles.layout}>

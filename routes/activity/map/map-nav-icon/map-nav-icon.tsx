@@ -4,7 +4,7 @@ import { Icon, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { CustomImage } from '@S/custom-image/custom-image';
 
-export default function MapNavIcon({ profilePhoto }: { profilePhoto?: string }) {
+export default function MapNavIcon({ profilePhoto }: { profilePhoto?: string | null }) {
   const { colors } = useTheme();
   const { lastPosition, initialLocation } = useAppSelector(({ location }) => location);
   const currentPosition = lastPosition ?? initialLocation;

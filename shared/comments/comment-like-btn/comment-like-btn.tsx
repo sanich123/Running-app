@@ -37,15 +37,15 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
 
   useEffect(() => {
     if (isSuccessSending || isSuccessDeleting) {
-      if (profile?.emailNotifications) {
+      if (profile?.emailNotifications && profile.users?.email) {
         sendEmailNotificationAfterSendingLike({
-          name,
-          surname,
-          profilePhoto,
+          name: name ?? '',
+          surname: surname ?? '',
+          profilePhoto: profilePhoto ?? '',
           comment,
-          recepientName: profile?.name,
-          recepientSurname: profile?.surname,
-          recepientEmail: profile?.users.email,
+          recepientName: profile.name ?? '',
+          recepientSurname: profile.surname ?? '',
+          recepientEmail: profile.users.email,
         });
       }
     }
@@ -63,7 +63,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
     profile?.name,
     profile?.surname,
     profile.email,
-    profile?.users.email,
+    profile?.users?.email,
   ]);
 
   return (

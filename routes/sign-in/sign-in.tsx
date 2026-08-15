@@ -1,52 +1,69 @@
 import { useEffect } from 'react';
 import Constants from 'expo-constants';
-import * as Linking from 'expo-linking';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Surface, Text, useTheme } from 'react-native-paper';
+import { useLinkingURL, parse } from 'expo-linking';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { ROUTES } from '@const/enums';
 import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
-import { useAppSelector } from '@R/typed-hooks';
+import { resetAuthSlice, setAccessToken, setRefreshToken, setUserId } from '@R/slices/auth/auth';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import CustomPasswordInput from '@S/custom-password-input/custom-password-input';
 import CustomTextInput from '@S/custom-text-input/custom-text-input';
 import { emailValidation, passwordValidation } from '@S/custom-text-input/types';
 import { errorToast } from '@S/error-toast/error-toast';
-import { showCrossPlatformToast } from '@U/custom-toast';
 import { SignInPageStates } from '@U/validate-email-password';
-import { SIGN_IN_FIELDS } from './const';
+import { SIGN_IN_FIELDS, YANDEX_AUTH_URL } from './const';
 import Intro from './intro/intro';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 
 export default function SignIn() {
-  const { email, password, pageState } = useAppSelector(({ logining }) => logining);
+  const dispatch = useAppDispatch();
+  const { email, password } = useAppSelector(({ logining }) => logining);
+  const { authStep } = useLocalSearchParams<{ authStep?: string }>();
+
   const { colors } = useTheme();
   const { control, handleSubmit } = useForm<EmailPasswordData>({
     defaultValues: { email, password },
     mode: 'onSubmit',
     reValidateMode: 'onChange',
   });
-  const { push, replace } = useRouter();
-  const url = Linking.useURL();
+  const { push, replace, dismissAll } = useRouter();
+  const isValidAuthStep =
+    authStep === SignInPageStates.login ||
+    authStep === SignInPageStates.register ||
+    authStep === SignInPageStates.reset ||
+    authStep === SignInPageStates.emailLink;
+  const currentAuthStep = isValidAuthStep ? (authStep as SignInPageStates) : SignInPageStates.login;
+  const setAuthStep = (nextAuthStep: SignInPageStates) =>
+    push({ pathname: `/${ROUTES.signIn}`, params: { authStep: nextAuthStep } });
+  const url = useLinkingURL();
   const [verifyToken] = useLazyVerifyConfigQuery();
 
   useEffect(() => {
     if (url) {
-      const { queryParams } = Linking.parse(url);
+      const { queryParams } = parse(url);
       if (queryParams?.accessToken) {
         verifyToken({ accessToken: queryParams.accessToken.toString() })
           .unwrap()
-          .then((success) => {
-            showCrossPlatformToast(success.toString());
+          .then(({ accessToken, refreshToken, userId }) => {
+            dispatch(setAccessToken(accessToken));
+            dispatch(setRefreshToken(refreshToken));
+            dispatch(setUserId(userId));
             replace(ROUTES.root);
           })
-          .catch((error) => errorToast('', error));
+          .catch((error) => {
+            dispatch(resetAuthSlice());
+            dismissAll();
+            errorToast('', error);
+          });
       }
     }
-  }, [replace, url, verifyToken]);
+  }, [dismissAll, dispatch, replace, url, verifyToken]);
 
   return (
     <CrossPlatformLayout edges={['bottom']} scrollViewEnabled>
@@ -60,7 +77,7 @@ export default function SignIn() {
           inputMode="email"
           autoComplete="email"
         />
-        {pageState !== SignInPageStates.reset && (
+        {currentAuthStep !== SignInPageStates.reset && currentAuthStep !== SignInPageStates.emailLink && (
           <CustomPasswordInput<EmailPasswordData>
             control={control}
             fieldName="password"
@@ -70,8 +87,17 @@ export default function SignIn() {
             returnKeyLabel="send"
           />
         )}
-        <LoginRegisterBtn handleSubmit={handleSubmit} />
-        <LoginRegisterNavigation />
+        <LoginRegisterBtn handleSubmit={handleSubmit} authStep={currentAuthStep} />
+        {currentAuthStep === SignInPageStates.login && (
+          <Button
+            mode="outlined"
+            icon="account-circle-outline"
+            testID="yandex-auth"
+            onPress={() => void Linking.openURL(YANDEX_AUTH_URL)}>
+            Войти через Яндекс
+          </Button>
+        )}
+        <LoginRegisterNavigation authStep={currentAuthStep} onAuthStepChange={setAuthStep} />
       </Surface>
       <View style={styles.footer}>
         <Text variant="bodySmall" style={styles.version}>

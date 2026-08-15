@@ -1,31 +1,42 @@
 import { runichApi } from '@R/runich-api/runich-api';
 import type {
+  AuthTokenResponse,
   ChangePasswordData,
   ChangePasswordResponse,
   AppConfig,
   EmailData,
   EmailPasswordData,
+  LoginUserResponse,
+  MessageApiResponse,
+  RegisterResponse,
   VerifyPasswordChangeCodeData,
 } from './types';
 
 export const authenticationApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ mutation, query }) => ({
-    registerUser: mutation<{ message: string }, EmailPasswordData>({
+    registerUser: mutation<RegisterResponse, EmailPasswordData>({
       query: ({ email, password }) => ({
         url: '/auth/register',
         body: { email, password },
         method: 'POST',
       }),
     }),
-    loginUser: mutation<{ accessToken: string; refreshToken: string; userId: string }, EmailPasswordData>({
+    loginUser: mutation<LoginUserResponse, EmailPasswordData>({
       query: ({ email, password }) => ({
         url: '/auth/login',
         body: { email, password },
         method: 'POST',
       }),
     }),
-    refreshToken: mutation<{ accessToken: string }, { refreshToken: string }>({
+    requestEmailLink: mutation<MessageApiResponse, EmailData>({
+      query: ({ email }) => ({
+        url: '/auth/by-email-link',
+        body: { email },
+        method: 'POST',
+      }),
+    }),
+    refreshToken: mutation<AuthTokenResponse, { refreshToken: string }>({
       query: ({ refreshToken }) => ({
         url: '/auth/refresh',
         body: { refreshToken },
@@ -38,7 +49,7 @@ export const authenticationApi = runichApi.injectEndpoints({
         method: 'GET',
       }),
     }),
-    verifyConfig: query<{ accessToken: string; userId: string }, { accessToken: string }>({
+    verifyConfig: query<LoginUserResponse, { accessToken: string }>({
       query: ({ accessToken }) => ({
         url: '/auth/verify',
         body: { accessToken },
@@ -51,31 +62,21 @@ export const authenticationApi = runichApi.injectEndpoints({
         method: 'DELETE',
       }),
     }),
-    confirmSignUpCodeByEmail: mutation<
-      { accessToken: string; id: string; userId: string },
-      { confirmationCode: string; email: string }
-    >({
+    confirmSignUpCodeByEmail: mutation<LoginUserResponse, { confirmationCode: string; email: string }>({
       query: ({ confirmationCode, email }) => ({
         url: '/auth/confirm-email',
         body: { confirmationCode, email },
         method: 'POST',
       }),
     }),
-    resetPassword: mutation<{ message: string }, { email: string }>({
-      query: ({ email }: { email: string }) => ({
-        url: '/auth/reset-password',
-        body: { email },
-        method: 'POST',
-      }),
-    }),
-    getEmailCodeForPassword: mutation<{ message: string }, EmailData>({
+    getEmailCodeForPassword: mutation<MessageApiResponse, EmailData>({
       query: ({ email }) => ({
         url: '/auth/get-email-code-for-password',
         body: { email },
         method: 'POST',
       }),
     }),
-    verifyPasswordChangeCode: mutation<{ message: string }, VerifyPasswordChangeCodeData>({
+    verifyPasswordChangeCode: mutation<MessageApiResponse, VerifyPasswordChangeCodeData>({
       query: ({ email, confirmationCode }) => ({
         url: '/auth/verify-password-change-code',
         body: { email, confirmationCode },
@@ -95,6 +96,7 @@ export const authenticationApi = runichApi.injectEndpoints({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
+  useRequestEmailLinkMutation,
   useGetAppConfigQuery,
   useLazyVerifyConfigQuery,
   useDeleteUserMutation,

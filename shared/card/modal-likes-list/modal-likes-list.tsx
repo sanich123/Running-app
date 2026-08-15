@@ -7,7 +7,8 @@ import { useAppSelector } from '@R/typed-hooks';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import UserListItem from '@S/user-list-item/user-list-item';
-import type { ModalLikesListProps, ProfileType } from '../types';
+import type { ModalLikesListProps } from '../types';
+import type { LikeListResponse } from '@R/runich-api/types';
 
 export default function ModalLikesList({ bottomSheetModalRef, likesLength }: ModalLikesListProps) {
   const { colors } = useTheme();
@@ -50,14 +51,14 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength }: Mod
             />
           ) : null
         }
-        renderItem={({ item: { profile } }: { item: { profile: ProfileType } }) => (
+        renderItem={({ item: { profile } }: { item: LikeListResponse }) => (
           <UserListItem
             name={profile?.name}
             surname={profile?.surname}
             profilePhoto={profile?.profilePhoto}
             placeholder={profile?.profilePhotoBlurhash}
             city={profile?.city}
-            user_id={profile?.user_id}
+            user_id={profile?.user_id ?? ''}
             commentsModalRef={bottomSheetModalRef}
           />
         )}

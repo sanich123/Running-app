@@ -45,9 +45,11 @@ export default function Activity() {
   return (
     <SafeAreaView style={[styles.layout, { backgroundColor: colors.surfaceVariant }]} edges={['bottom']}>
       <View style={styles.map}>
-        {(activityStatus === STATUSES.initial || isMapVisible) && (
+        <View
+          style={[styles.mapLayer, !isMapVisible && styles.hiddenMapLayer]}
+          pointerEvents={isMapVisible ? 'auto' : 'none'}>
           <Map setIsReadyToRecordLocation={setIsReadyToRecordLocation} />
-        )}
+        </View>
         {activityStatus !== STATUSES.initial && <Metrics />}
       </View>
       <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
@@ -77,6 +79,17 @@ const styles = StyleSheet.create({
   map: {
     height: Platform.OS === 'ios' ? '80%' : '75%',
     width: '100%',
+  },
+  mapLayer: {
+    flex: 1,
+  },
+  hiddenMapLayer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    opacity: 0,
   },
   metricsLayout: {
     height: Platform.OS === 'ios' ? '20%' : '25%',

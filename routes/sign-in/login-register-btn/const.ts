@@ -3,11 +3,11 @@ import { SignInPageStates } from '@U/validate-email-password';
 
 export const LOGIN_BTN = {
   [LANGUAGES.english]: {
-    login: 'Login',
+    login: 'Sign in',
     logining: 'Logining..',
   },
   [LANGUAGES.russian]: {
-    login: 'Логин',
+    login: 'Войти',
     logining: 'Логинимся..',
   },
 } as const;
@@ -25,12 +25,23 @@ export const REGISTER_BTN = {
 
 export const RESET_BTN = {
   [LANGUAGES.english]: {
-    login: 'Reset',
+    login: 'Change password',
     logining: 'Resetting..',
   },
   [LANGUAGES.russian]: {
-    login: 'Сброс',
+    login: 'Изменить пароль',
     logining: 'Сбрасываем..',
+  },
+} as const;
+
+export const EMAIL_LINK_BTN = {
+  [LANGUAGES.english]: {
+    send: 'Send login link',
+    sending: 'Sending..',
+  },
+  [LANGUAGES.russian]: {
+    send: 'Получить ссылку',
+    sending: 'Отправляем..',
   },
 } as const;
 
@@ -38,4 +49,5 @@ export const LoginBtnIcons = {
   [SignInPageStates.login]: 'login',
   [SignInPageStates.register]: 'account',
   [SignInPageStates.reset]: 'key-change',
+  [SignInPageStates.emailLink]: 'email-outline',
 };

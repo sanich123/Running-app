@@ -16,7 +16,7 @@ export function getErrorMessageFromError(error: unknown): string {
     const data = error.data as RunichErrorBody | string | undefined;
     if (typeof data === 'string') return `${status}: ${data}`;
     const message = Array.isArray(data?.message) ? data.message.join(', ') : data?.message || data?.error;
-    return message ? `${message}, ${status} code` : `Статус ${status}`;
+    return message ? `${status}, ${message}` : `Статус ${status}`;
   }
   if ('status' in error) {
     const { status } = error as { status: unknown; originalStatus?: unknown };

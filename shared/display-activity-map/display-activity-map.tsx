@@ -4,13 +4,13 @@ import getBbox from '@turf/bbox';
 import lineString from 'turf-linestring';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import ActivityMapMarkers from './activity-map-markers/activity-map-markers';
 import MapKmSplit from './map-km-split/map-km-split';
 import RouteLine from './map-route-line/map-route-line';
 import MapboxWeb from './mapbox-web/mapbox-web';
-import type { DisplayActivityMapProps } from '@S/card/types';
-import type { LocationObject } from 'expo-location';
+import type { ActivityLocation, DisplayActivityMapProps } from '@S/card/types';
 
-export function getActivityMapBounds(locations: LocationObject[]) {
+export function getActivityMapBounds(locations: ActivityLocation[]) {
   const routeCoordinates = locations.map(({ coords: { longitude, latitude } }) => [longitude, latitude]);
   const [minLng, minLat, maxLng, maxLat] = getBbox(lineString(routeCoordinates));
 
@@ -63,6 +63,7 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
           />
           <RouteLine locations={validLocations} />
           <MapKmSplit kilometresSplit={kilometresSplit} />
+          <ActivityMapMarkers locations={validLocations} />
         </MapView>
       )}
     </>

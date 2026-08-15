@@ -1,8 +1,9 @@
 import { getDocumentAsync } from 'expo-document-picker';
 import { Directory, File } from 'expo-file-system';
+import { Platform } from 'react-native';
 import { errorToast } from '@S/error-toast/error-toast';
 import { removeCacheFolder, removeMedia } from './remove-tools';
-import { sendArchiveToServer } from './send-tools';
+import { sendArchiveToServer, sendArchiveToServerWeb } from './send-tools';
 import { toFileUri } from './uri-tools';
 import { unzipFiles, zipFiles } from './zip-tools';
 import type { GetMigrationArchiveAndSendToServerProps } from './types';
@@ -13,9 +14,11 @@ export async function getMigrationArchiveAndSendToServer({
   setIsRemovingMedia,
   setIsZipping,
   setIsSendingArchive,
+  setIsWaitingForServer,
   setIsDeletingCacheFolder,
   setIsSuccess,
   setIsError,
+  onArchiveUploadSuccess,
   userId,
   accessToken,
 }: GetMigrationArchiveAndSendToServerProps) {
@@ -23,7 +26,27 @@ export async function getMigrationArchiveAndSendToServer({
     const file = await getDocumentAsync();
     if (!file.canceled) {
       setIsDisabled(true);
-      const uriToUnzip = file.assets?.[0]?.uri;
+      const selectedAsset = file.assets?.[0];
+      if (Platform.OS === 'web') {
+        if (!selectedAsset?.file) {
+          throw new Error('Выбранный файл недоступен в браузере');
+        }
+
+        await sendArchiveToServerWeb({
+          archiveFile: selectedAsset.file,
+          setIsSendingArchive,
+          setIsWaitingForServer,
+          setIsError,
+          userId,
+          accessToken,
+        });
+        onArchiveUploadSuccess();
+        setIsSuccess(true);
+        setIsDisabled(false);
+        return;
+      }
+
+      const uriToUnzip = selectedAsset?.uri;
       if (!uriToUnzip) {
         throw new Error('Выбранный файл не найден');
       }
@@ -43,7 +66,15 @@ export async function getMigrationArchiveAndSendToServer({
           throw new Error('Не удалось создать архив');
         }
         if (new File(toFileUri(pathToArchive)).exists) {
-          await sendArchiveToServer({ setIsSendingArchive, setIsError, pathToArchive, userId, accessToken });
+          await sendArchiveToServer({
+            setIsSendingArchive,
+            setIsWaitingForServer,
+            setIsError,
+            pathToArchive,
+            userId,
+            accessToken,
+          });
+          onArchiveUploadSuccess();
           await removeCacheFolder({ setIsDeletingCacheFolder, setIsError });
           setIsSuccess(true);
           setIsDisabled(false);
@@ -68,6 +99,7 @@ export async function getMigrationArchiveAndSendToServer({
     setIsRemovingMedia(false);
     setIsZipping(false);
     setIsSendingArchive(false);
+    setIsWaitingForServer(false);
     setIsDeletingCacheFolder(false);
     setTimeout(() => setIsSuccess(false), 2000);
     setTimeout(() => setIsError(''), 2000);

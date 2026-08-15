@@ -2,12 +2,14 @@ import { useMemo } from 'react';
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
 import { useTheme } from 'react-native-paper';
 import { getReducedLocations } from '@U/location/location-utils';
-import type { LocationObject } from 'expo-location';
+import type { ActivityLocation } from '@S/card/types';
 
-export default function MapRouteLine({ locations }: { locations: LocationObject[] | LocationObject[][] }) {
+export default function MapRouteLine({ locations }: { locations: ActivityLocation[] | ActivityLocation[][] }) {
   const { colors } = useTheme();
   const routeFeatures = useMemo(() => {
-    const segments = Array.isArray(locations[0]) ? (locations as LocationObject[][]) : [locations as LocationObject[]];
+    const segments = Array.isArray(locations[0])
+      ? (locations as ActivityLocation[][])
+      : [locations as ActivityLocation[]];
 
     return segments
       .filter((segment) => segment.length > 1)

@@ -6,6 +6,7 @@ export default function useGetStates() {
   const [isRemovingMedia, setIsRemovingMedia] = useState(false);
   const [isZipping, setIsZipping] = useState(false);
   const [isSendingArchive, setIsSendingArchive] = useState(false);
+  const [isWaitingForServer, setIsWaitingForServer] = useState(false);
   const [isDeletingCacheFolder, setIsDeletingCacheFolder] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState('');
@@ -15,6 +16,7 @@ export default function useGetStates() {
     !isRemovingMedia &&
     !isZipping &&
     !isSendingArchive &&
+    !isWaitingForServer &&
     !isDeletingCacheFolder &&
     !isSuccess &&
     !isError;
@@ -29,6 +31,8 @@ export default function useGetStates() {
     setIsZipping,
     isSendingArchive,
     setIsSendingArchive,
+    isWaitingForServer,
+    setIsWaitingForServer,
     isDeletingCacheFolder,
     setIsDeletingCacheFolder,
     isSuccess,

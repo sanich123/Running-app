@@ -15,11 +15,18 @@ import {
   setLocationsWhenContinued,
 } from '@R/slices/location/location';
 import { store } from '@R/store';
-import { getDistance, getMaxTrackingSpeedForSport, getSpeedInKmPerHour, getSpeedInMinsInKm } from '../location-utils';
+import {
+  getDistance,
+  getElevationGainBetweenLocations,
+  getKilometerSplitCalculation,
+  getMaxTrackingSpeedForSport,
+  getSpeedInKmPerHour,
+  getSpeedInMinsInKm,
+} from '../location-utils';
 import type { LocationObject } from 'expo-location';
 
 export function getMetricsTaskManager(currentPosition: LocationObject) {
-  const { lastKilometer, locationsWithPauses } = store.getState().location;
+  const { locationsWithPauses } = store.getState().location;
   const lastArrayLength = locationsWithPauses[locationsWithPauses.length - 1]?.length;
   const firstArrayLength = locationsWithPauses[0]?.length;
   const previousPosition =
@@ -28,34 +35,29 @@ export function getMetricsTaskManager(currentPosition: LocationObject) {
       : null;
   const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
   const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
-  const currentAltitude =
-    previousPosition?.coords.altitude && currentPosition?.coords.altitude
-      ? currentPosition.coords.altitude - previousPosition.coords.altitude
-      : 0;
+  const currentAltitude = previousPosition ? getElevationGainBetweenLocations(previousPosition, currentPosition) : 0;
   const isExistingDistanceDuration = currentDistance && currentDuration;
   const currentPace = isExistingDistanceDuration
     ? getSpeedInMinsInKm(currentDistance, currentDuration).paceAsNumber
     : 0;
-  const currentKilometer = lastKilometer + currentDistance;
-
   return {
+    previousPosition,
     currentDuration,
     currentDistance,
     currentAltitude,
     currentPace,
-    currentKilometer,
     firstArrayLength,
     lastArrayLength,
   };
 }
 
 export function saveMetricsToStoreTaskManager(
-  currentKilometer: number,
   currentPosition: LocationObject,
   currentDuration: number,
   currentPace: number,
   currentAltitude: number,
   currentDistance: number,
+  previousPosition: LocationObject | null,
 ) {
   const { sport } = store.getState().additionalInfoActivity;
   const speedInKmPerHour = getSpeedInKmPerHour(currentDistance, currentDuration);
@@ -67,15 +69,33 @@ export function saveMetricsToStoreTaskManager(
     return false;
   }
 
-  if (currentKilometer >= 1000) {
-    store.dispatch(addDurationAndLocationToKmSplits(currentPosition));
+  const { lastKilometer, lastKilometerDuration, lastKilometerAltitude } = store.getState().location;
+  const kilometerSplitCalculation = getKilometerSplitCalculation({
+    previousPosition,
+    currentPosition,
+    distance: currentDistance,
+    duration: currentDuration,
+    altitude: currentAltitude,
+    previousKilometerDistance: lastKilometer,
+    previousKilometerDuration: lastKilometerDuration,
+    previousKilometerAltitude: lastKilometerAltitude,
+  });
+
+  if (kilometerSplitCalculation.splits.length) {
     store.dispatch(resetLastKm());
-  } else {
-    store.dispatch(setLastKm(currentDistance));
-    store.dispatch(setLastKmDuration(currentDuration));
-    store.dispatch(setCurrentPace(currentPace));
-    store.dispatch(setLastKmAltitude(currentAltitude));
+    for (const split of kilometerSplitCalculation.splits) {
+      store.dispatch(setLastKmDuration(split.lastKilometerDuration));
+      store.dispatch(setLastKmAltitude(split.lastKilometerAltitude));
+      store.dispatch(addDurationAndLocationToKmSplits(split.kilometerPoint));
+      store.dispatch(resetLastKm());
+    }
   }
+  // The calculation already includes the previous remainder. Replace the
+  // stored values instead of adding the remainder to the old remainder.
+  store.dispatch(resetLastKm());
+  store.dispatch(setLastKm(kilometerSplitCalculation.remainingDistance));
+  store.dispatch(setLastKmDuration(kilometerSplitCalculation.remainingDuration));
+  store.dispatch(setLastKmAltitude(kilometerSplitCalculation.remainingAltitude));
   store.dispatch(setDistance(currentDistance));
   store.dispatch(setDuration(currentDuration));
   store.dispatch(setCurrentPace(currentPace));

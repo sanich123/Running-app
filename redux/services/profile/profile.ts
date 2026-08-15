@@ -1,16 +1,16 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
-import type { SendProfile } from './types';
+import type { FilteredProfilesResponse, ProfileResponse, SendProfile } from './types';
 const { profile, user } = Routes;
 
 const profileApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
-    getUserProfileByUserId: builder.query({
+    getUserProfileByUserId: builder.query<ProfileResponse | null, string>({
       query: (userId: string) => `${user}/${userId}/${profile}`,
       providesTags: [Tags.profile],
     }),
-    createProfileByUserId: builder.mutation({
+    createProfileByUserId: builder.mutation<ProfileResponse, SendProfile>({
       query: ({ body, id }: SendProfile) => ({
         url: `/${user}/${id}/${profile}`,
         method: Methods.post,
@@ -18,7 +18,7 @@ const profileApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
-    updateProfileByProfileId: builder.mutation({
+    updateProfileByProfileId: builder.mutation<ProfileResponse, SendProfile>({
       query: ({ body, id }: SendProfile) => ({
         url: `${user}/${id}/${profile}`,
         method: Methods.patch,
@@ -26,9 +26,9 @@ const profileApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
-    getFilteredUsersBySearchText: builder.query({
-      query: (search: string) =>
-        `/${profile}/filter?page=${0}&limit=${10}&offset=0&name=${search}&surname=${search}&email=${search}&city=${search}&gender=${search}&sport=${search}`,
+    getFilteredUsersBySearchText: builder.query<FilteredProfilesResponse, string>({
+      query: (search) =>
+        `/${profile}/filter?page=0&size=10&name=${encodeURIComponent(search)}&surname=${encodeURIComponent(search)}&email=${encodeURIComponent(search)}`,
       providesTags: [Tags.profile],
     }),
   }),

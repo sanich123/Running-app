@@ -2,7 +2,7 @@ import { useMemo, useRef, useEffect } from 'react';
 import { Map as MapboxMap } from 'mapbox-gl';
 import { useTheme } from 'react-native-paper';
 import { COLORS } from '@const/theme-colors';
-import type { LastKmSplit } from '@R/slices/location/types';
+import type { ActivityKilometreSplit } from '@S/card/types';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 export default function MapboxWeb({
@@ -12,7 +12,7 @@ export default function MapboxWeb({
 }: {
   boundBox: [number, number, number, number];
   routeCoordinates: number[][];
-  kilometresSplit: LastKmSplit[];
+  kilometresSplit: ActivityKilometreSplit[];
 }) {
   const { colors, dark } = useTheme();
   const mapRef = useRef<MapboxMap | null>(null);
@@ -34,6 +34,24 @@ export default function MapboxWeb({
         })),
     [kilometresSplit],
   );
+  const routeMarkerFeatures = useMemo(() => {
+    const start = routeCoordinates[0];
+    const end = routeCoordinates[routeCoordinates.length - 1];
+    if (!start || !end) return [];
+
+    return [
+      {
+        type: 'Feature' as const,
+        properties: { icon: '▶', markerType: 'start' },
+        geometry: { type: 'Point' as const, coordinates: start },
+      },
+      {
+        type: 'Feature' as const,
+        properties: { icon: '■', markerType: 'end' },
+        geometry: { type: 'Point' as const, coordinates: end },
+      },
+    ];
+  }, [routeCoordinates]);
 
   useEffect(() => {
     const node = mapNode.current;
@@ -112,13 +130,57 @@ export default function MapboxWeb({
           },
         });
       }
+
+      mapboxMap.addSource('route-markers', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: routeMarkerFeatures,
+        },
+      });
+      mapboxMap.addLayer({
+        id: 'route-marker-background',
+        type: 'circle',
+        source: 'route-markers',
+        paint: {
+          'circle-color': colors.surface,
+          'circle-radius': 18,
+          'circle-stroke-color': ['match', ['get', 'markerType'], 'start', colors.tertiary, colors.error],
+          'circle-stroke-width': 2,
+        },
+      });
+      mapboxMap.addLayer({
+        id: 'route-marker-icon',
+        type: 'symbol',
+        source: 'route-markers',
+        layout: {
+          'text-allow-overlap': true,
+          'text-anchor': 'center',
+          'text-field': ['get', 'icon'],
+          'text-ignore-placement': true,
+          'text-size': 18,
+        },
+        paint: {
+          'text-color': ['match', ['get', 'markerType'], 'start', colors.tertiary, colors.error],
+        },
+      });
     });
 
     return () => {
       mapboxMap.remove();
       mapRef.current = null;
     };
-  }, [boundBox, colors.primary, dark, kilometreSplitFeatures, routeCoordinates]);
+  }, [
+    boundBox,
+    colors.error,
+    colors.primary,
+    colors.surface,
+    colors.tertiary,
+    dark,
+    kilometreSplitFeatures,
+    routeCoordinates,
+    routeMarkerFeatures,
+  ]);
 
   return <div ref={mapNode} style={{ flex: 1, width: '100%', minHeight: 0 }} />;
 }

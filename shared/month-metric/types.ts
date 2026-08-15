@@ -1,6 +1,6 @@
 export interface MonthMetricsProps {
   title: string;
-  metric: string;
+  metric: string | number;
   isSuccess: boolean;
   isLoading: boolean;
   isError: boolean;

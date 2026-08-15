@@ -1,21 +1,27 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
 import type { DeleteCommentLike, SendComment, SendCommentLike, UpdateComment } from './types';
+import type {
+  CommentLikeResponse,
+  CommentLikeSummaryResponse,
+  CommentMutationResponse,
+  CommentsResponse,
+} from '@R/runich-api/types';
 
 const { comment, like } = Routes;
 
 const commentsApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
-    getCommentsByActivityId: builder.query({
-      query: ({ activityId, take }: { activityId: string; take: number }) => `/${comment}/${activityId}?&take=${take}`,
+    getCommentsByActivityId: builder.query<CommentsResponse, { activityId: string; take: number }>({
+      query: ({ activityId, take }) => `/${comment}/${activityId}?take=${take}`,
       providesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.activityId }],
     }),
-    getCommentsLengthByActivityId: builder.query({
+    getCommentsLengthByActivityId: builder.query<number, string>({
       query: (id: string) => `/${comment}/${id}/count`,
       providesTags: (result, error, arg) => [{ type: Tags.comments, id: arg }],
     }),
-    postCommentWithActivityId: builder.mutation({
+    postCommentWithActivityId: builder.mutation<void, SendComment>({
       query: ({ body, id }: SendComment) => ({
         url: `/${comment}/${id}`,
         method: Methods.post,
@@ -26,7 +32,7 @@ const commentsApi = runichApi.injectEndpoints({
         { type: Tags.activities, id: arg.id },
       ],
     }),
-    deleteCommentByCommentId: builder.mutation({
+    deleteCommentByCommentId: builder.mutation<void, { commentId: string; activityId: string }>({
       query: ({ commentId }: { commentId: string; activityId: string }) => ({
         url: `/${comment}/${commentId}`,
         method: Methods.delete,
@@ -36,7 +42,7 @@ const commentsApi = runichApi.injectEndpoints({
         { type: Tags.activities, id: activityId },
       ],
     }),
-    updateCommentByCommentId: builder.mutation({
+    updateCommentByCommentId: builder.mutation<CommentMutationResponse, UpdateComment>({
       query: ({ commentId, body }: UpdateComment) => ({
         url: `/${comment}/${commentId}`,
         method: Methods.patch,
@@ -47,11 +53,11 @@ const commentsApi = runichApi.injectEndpoints({
         { type: Tags.activities, id: activityId },
       ],
     }),
-    getLikesByCommentId: builder.query({
+    getLikesByCommentId: builder.query<CommentLikeSummaryResponse[], string>({
       query: (commentId: string) => `/${comment}/${commentId}/${like}`,
       providesTags: (result, error, arg) => [{ type: Tags.commentLikes, id: arg }],
     }),
-    sendLikeToComment: builder.mutation({
+    sendLikeToComment: builder.mutation<CommentLikeResponse, SendCommentLike>({
       query: ({ body, commentId }: SendCommentLike) => ({
         url: `/${comment}/${commentId}/${like}`,
         method: Methods.post,
@@ -61,10 +67,7 @@ const commentsApi = runichApi.injectEndpoints({
       async onQueryStarted({ body, commentId }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           commentsApi.util.updateQueryData('getLikesByCommentId', commentId, (draft) => {
-            draft.push({
-              commentId,
-              authorId: body.authorId,
-            });
+            draft.push({ authorId: body.authorId, id: `${commentId}:${body.authorId}` });
           }),
         );
         try {
@@ -74,7 +77,7 @@ const commentsApi = runichApi.injectEndpoints({
         }
       },
     }),
-    deleteLikeToComment: builder.mutation({
+    deleteLikeToComment: builder.mutation<void, DeleteCommentLike>({
       query: ({ likeId }: DeleteCommentLike) => ({
         url: `/${comment}/${likeId}/${like}`,
         method: Methods.delete,

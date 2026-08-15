@@ -3,7 +3,6 @@ import {
   hasStartedLocationUpdatesAsync,
   startLocationUpdatesAsync,
   stopLocationUpdatesAsync,
-  watchPositionAsync,
 } from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { store } from '@R/store';
@@ -12,58 +11,48 @@ import { BACKGROUND_NOTIFICATION, DISTANCE_INTERVAL, LOCATION_TRACKING, TIME_INT
 import type { TaskManagerLocationEvent } from '../const';
 import type { LocationObject } from 'expo-location';
 
-let foregroundLocationSubscription: { remove: () => void } | null = null;
+let isTrackingActive = false;
 
 function isMissingLocationTaskError(error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
   return message.includes('TaskNotFoundException') || message.includes(`Task '${LOCATION_TRACKING}' not found`);
 }
 
-async function processLocation(currentPosition: LocationObject) {
+function processLocation(currentPosition: LocationObject) {
+  if (!isTrackingActive) {
+    return;
+  }
+
   const lastPosition = store.getState().location.lastPosition;
   if (lastPosition && currentPosition.timestamp <= lastPosition.timestamp) {
     return;
   }
 
   try {
-    const { currentDuration, currentDistance, currentAltitude, currentPace, currentKilometer } =
+    const { previousPosition, currentDuration, currentDistance, currentAltitude, currentPace } =
       getMetricsTaskManager(currentPosition);
 
     saveMetricsToStoreTaskManager(
-      currentKilometer,
       currentPosition,
       currentDuration,
       currentPace,
       currentAltitude,
       currentDistance,
+      previousPosition,
     );
   } catch (error) {
     if (__DEV__) console.error('[tracking]', 'Something went wrong when saving a new location...', error);
   }
 }
 
-async function startForegroundLocationTracking() {
-  if (foregroundLocationSubscription) {
-    return;
-  }
-
-  foregroundLocationSubscription = await watchPositionAsync(
-    {
-      accuracy: Accuracy.High,
-      timeInterval: TIME_INTERVAL,
-      distanceInterval: 0,
-    },
-    processLocation,
-  );
-}
-
 export async function startLocationTracking() {
   let didStartBackgroundTask = false;
+  isTrackingActive = true;
 
   try {
     if (!(await hasStartedLocationUpdatesAsync(LOCATION_TRACKING))) {
       await startLocationUpdatesAsync(LOCATION_TRACKING, {
-        accuracy: Accuracy.High,
+        accuracy: Accuracy.BestForNavigation,
         timeInterval: TIME_INTERVAL,
         distanceInterval: DISTANCE_INTERVAL,
         showsBackgroundLocationIndicator: true,
@@ -75,15 +64,8 @@ export async function startLocationTracking() {
       });
       didStartBackgroundTask = true;
     }
-
-    await startForegroundLocationTracking();
   } catch (error) {
-    try {
-      foregroundLocationSubscription?.remove();
-    } catch {
-      // Keep the original error: it is the one the caller can act on.
-    }
-    foregroundLocationSubscription = null;
+    isTrackingActive = false;
 
     if (didStartBackgroundTask) {
       try {
@@ -99,6 +81,7 @@ export async function startLocationTracking() {
 
 export async function stopLocationTracking() {
   let stopError: unknown;
+  isTrackingActive = false;
 
   try {
     if (await hasStartedLocationUpdatesAsync(LOCATION_TRACKING)) {
@@ -110,13 +93,6 @@ export async function stopLocationTracking() {
     if (!isMissingLocationTaskError(error)) {
       stopError = error;
     }
-  } finally {
-    try {
-      foregroundLocationSubscription?.remove();
-    } catch (error) {
-      stopError ??= error;
-    }
-    foregroundLocationSubscription = null;
   }
 
   if (stopError) {
@@ -130,6 +106,6 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
   }
 
   for (const currentPosition of data.locations) {
-    await processLocation(currentPosition);
+    processLocation(currentPosition);
   }
 });

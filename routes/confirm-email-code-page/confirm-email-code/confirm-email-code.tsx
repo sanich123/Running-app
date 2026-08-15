@@ -7,6 +7,8 @@ import {
   useConfirmSignUpCodeByEmailMutation,
   useVerifyPasswordChangeCodeMutation,
 } from '@R/services/authentication/authentication';
+import { setAccessToken, setRefreshToken, setUserId } from '@R/slices/auth/auth';
+import { useAppDispatch } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { CONFIRM_EMAIL_CODE_TEST_ID, CONFIRM_EMAIL_CODE_TEXT } from './const';
 
@@ -18,6 +20,7 @@ interface ConfirmEmailCodeProps {
 }
 
 export default function ConfirmEmailCode({ email, type = 'registration' }: ConfirmEmailCodeProps) {
+  const dispatch = useAppDispatch();
   const [confirmationCode, setConfirmationCode] = useState('');
   const [confirmEmailByCode, { isLoading: isConfirmingRegistration }] = useConfirmSignUpCodeByEmailMutation();
   const [verifyPasswordChangeCode, { isLoading: isVerifyingPasswordChangeCode }] =
@@ -34,17 +37,22 @@ export default function ConfirmEmailCode({ email, type = 'registration' }: Confi
       return;
     }
 
-    try {
-      const code = confirmationCode.trim();
-      if (type === 'change-password') {
-        await verifyPasswordChangeCode({ email, confirmationCode: code }).unwrap();
-        push({ pathname: `/${ROUTES.changePassword}` as const, params: { email } });
-      } else {
-        await confirmEmailByCode({ email, confirmationCode: code }).unwrap();
-        replace(ROUTES.root);
-      }
-    } catch (error) {
-      errorToast(CONFIRM_EMAIL_CODE_TEXT.error, error);
+    const code = confirmationCode.trim();
+    if (type === 'change-password') {
+      verifyPasswordChangeCode({ email, confirmationCode: code })
+        .unwrap()
+        .then(() => push({ pathname: `/${ROUTES.changePassword}`, params: { email } }))
+        .catch((error) => errorToast(CONFIRM_EMAIL_CODE_TEXT.error, error));
+    } else {
+      confirmEmailByCode({ email, confirmationCode: code })
+        .unwrap()
+        .then(({ userId, accessToken, refreshToken }) => {
+          dispatch(setUserId(userId));
+          dispatch(setAccessToken(accessToken));
+          dispatch(setRefreshToken(refreshToken));
+          replace(ROUTES.root);
+        })
+        .catch((error) => errorToast(CONFIRM_EMAIL_CODE_TEXT.error, error));
     }
   };
 
@@ -54,6 +62,7 @@ export default function ConfirmEmailCode({ email, type = 'registration' }: Confi
         testID={CONFIRM_EMAIL_CODE_TEST_ID.input}
         mode="outlined"
         placeholder={CONFIRM_EMAIL_CODE_TEXT.placeholder}
+        value={confirmationCode}
         onChangeText={(text) => setConfirmationCode(text)}
         style={[styles.input, { opacity: isLoading ? 0.7 : 1 }]}
         contentStyle={styles.inputContent}

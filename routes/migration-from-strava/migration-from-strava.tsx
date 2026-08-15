@@ -1,9 +1,11 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { ActivityIndicator, Button, Card, Text, useTheme } from 'react-native-paper';
-import { LANGUAGES } from '@const/enums';
-import { useAppSelector } from '@R/typed-hooks';
+import { LANGUAGES, ROUTES } from '@const/enums';
+import { Tags } from '@R/runich-api/const';
+import { runichApi } from '@R/runich-api/runich-api';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getMigrationArchiveAndSendToServer } from '@U/migration-strava/migration-archive';
 import { MIGRATION_STATES } from './const';
 import useGetStates from './hooks';
@@ -15,6 +17,8 @@ const removeStepNumber = (text: string) => text.replace(/^\d+\.\s*/, '');
 
 export default function MigrationFromStrava() {
   const { userId, accessToken } = useAppSelector(({ auth }) => auth);
+  const dispatch = useAppDispatch();
+  const { replace } = useRouter();
   const { language } = useAppSelector(({ language }) => language);
   const { colors } = useTheme();
   const {
@@ -28,6 +32,8 @@ export default function MigrationFromStrava() {
     setIsZipping,
     isSendingArchive,
     setIsSendingArchive,
+    isWaitingForServer,
+    setIsWaitingForServer,
     isDeletingCacheFolder,
     setIsDeletingCacheFolder,
     isSuccess,
@@ -46,7 +52,9 @@ export default function MigrationFromStrava() {
       : isZipping
         ? copy.zipping
         : isSendingArchive
-          ? copy.transfer
+          ? isWaitingForServer
+            ? copy.waitingForServer
+            : copy.transfer
           : isDeletingCacheFolder
             ? copy.cleaning
             : isSuccess
@@ -63,7 +71,9 @@ export default function MigrationFromStrava() {
         : isZipping
           ? copy.zip
           : isSendingArchive
-            ? copy.sending
+            ? isWaitingForServer
+              ? copy.waiting
+              : copy.sending
             : isDeletingCacheFolder
               ? copy.clean
               : isSuccess
@@ -122,7 +132,7 @@ export default function MigrationFromStrava() {
         <View style={[styles.notice, { backgroundColor: colors.tertiaryContainer }]}>
           <MaterialCommunityIcons name="information-outline" size={22} color={colors.tertiary} />
           <Text variant="bodyMedium" style={{ color: colors.onTertiaryContainer, flex: 1 }}>
-            {copy.removeMedia} {copy.processUnZipping} {copy.wifiConnection}
+            {copy.removeMedia} {copy.processUnZipping} {copy.wifiConnection} {copy.serverResponseTime}
           </Text>
         </View>
 
@@ -161,9 +171,14 @@ export default function MigrationFromStrava() {
               setIsRemovingMedia,
               setIsZipping,
               setIsSendingArchive,
+              setIsWaitingForServer,
               setIsDeletingCacheFolder,
               setIsSuccess,
               setIsError,
+              onArchiveUploadSuccess: () => {
+                dispatch(runichApi.util.invalidateTags([Tags.activities]));
+                replace(ROUTES.root);
+              },
               userId,
               accessToken,
             })

@@ -15,3 +15,5 @@ export interface EmailComment extends EmailDTO {
 export interface EmailCommentLike extends EmailDTO {
   comment: string;
 }
+
+export type EmailLike = EmailDTO & { mapPhotoUrl: string };

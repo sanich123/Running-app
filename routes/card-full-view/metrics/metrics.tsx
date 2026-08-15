@@ -2,10 +2,10 @@ import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Text, Divider, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
+import { useGetActivityByActivityIdQuery, useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
-import { getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getElevationGain, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 import { HOME_ACTIVITY_FULL_VIEW_TEST_ID, HOME_ACTIVITY_FULL_VIEW } from './const';
 
@@ -13,14 +13,22 @@ export default function Metrics() {
   const { width } = useWindowDimensions();
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(`${activityId}`);
+  const { data: routeData } = useGetLocationsByActivityIdQuery(`${activityId}`, {
+    skip: !activityId || Boolean(activity?.locations?.length),
+  });
   const { language } = useAppSelector(({ language }) => language);
   const { colors } = useTheme();
+  const kilometresSplit = activity?.kilometresSplit ?? routeData?.kilometresSplit ?? [];
+  const splitElevationGain = kilometresSplit.reduce(
+    (total, { lastKilometerAltitude }) => total + Math.max(0, lastKilometerAltitude),
+    0,
+  );
+  // Older activities stored the signed net altitude change per kilometre.
+  // Keep their value as a fallback while new activities are recalculated from raw locations.
+  const hasLegacySignedSplits = kilometresSplit.some(({ lastKilometerAltitude }) => lastKilometerAltitude < 0);
+  const routeLocations = activity?.locations?.length ? activity.locations : routeData?.locations;
   const gainedElevation = Math.round(
-    activity?.kilometresSplit?.reduce(
-      (total: number, { lastKilometerAltitude }: { lastKilometerAltitude: number }) =>
-        lastKilometerAltitude > 0 ? (total += lastKilometerAltitude) : total,
-      0,
-    ),
+    !hasLegacySignedSplits && routeLocations?.length ? getElevationGain(routeLocations) : splitElevationGain,
   );
 
   return (
@@ -63,7 +71,8 @@ export default function Metrics() {
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].elevationGain}</Text>
               <Text variant="titleLarge">
-                {activity?.kilometresSplit?.length > 0 && `${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}
+                {Boolean(activity.kilometresSplit?.length) &&
+                  `${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}
               </Text>
             </View>
           </View>

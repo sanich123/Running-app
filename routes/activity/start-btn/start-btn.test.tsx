@@ -1,9 +1,10 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES, STATUSES } from '@const/enums';
+import { resetFinishedActivity } from '@R/slices/activity/activity';
 import { changeLanguage } from '@R/slices/language/language';
-import { setActivityStatus, setDuration, setDistance, setLocationsFromBackground } from '@R/slices/location/location';
+import { setActivityStatus, setDistance, setDuration, setLocationsFromBackground } from '@R/slices/location/location';
 import * as errorToastModule from '@S/error-toast/error-toast';
-import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION, MOCK_SPEED } from '@T/mocks/mock-location';
+import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
@@ -19,6 +20,7 @@ jest.mock('expo-router', () => ({
 describe('Activity start btn', () => {
   beforeEach(() => {
     mockStore.dispatch(require('@R/slices/location/location').resetLocationSlice());
+    mockStore.dispatch(resetFinishedActivity());
     jest.restoreAllMocks();
   });
 
@@ -61,18 +63,21 @@ describe('Activity start btn', () => {
     await userEvent.press(screen.getByTestId(ACTIVITY_START_BTN_TEST_ID));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.manualActivity}`);
   });
-  it('should correctly dispatch saveFinishedActivity', async () => {
+  it('cleans the previous recording before starting a new one', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setDuration(MOCK_DURATION));
     mockStore.dispatch(setDistance(MOCK_DISTANCE));
     mockStore.dispatch(setLocationsFromBackground(MOCK_LOCATION));
+    mockStore.dispatch(setActivityStatus(STATUSES.initial));
     await renderWithProviders(<ActivityStartBtn isReadyToRecordLocation />, { store: mockStore });
     const startBtn = screen.getByTestId(ACTIVITY_START_BTN_TEST_ID);
     await userEvent.press(startBtn);
-    expect(mockStore.getState().activity.finishedActivity.distance).toEqual(MOCK_DISTANCE);
-    expect(mockStore.getState().activity.finishedActivity.duration).toEqual(MOCK_DURATION);
-    expect(mockStore.getState().activity.finishedActivity.speed).toEqual(MOCK_SPEED);
-    expect(mockStore.getState().activity.finishedActivity.locations).toHaveLength(1);
+    expect(mockStore.getState().location.distance).toEqual(0);
+    expect(mockStore.getState().location.duration).toEqual(0);
+    expect(mockStore.getState().location.locationsFromBackground).toEqual([]);
+    expect(mockStore.getState().location.kilometresSplit).toEqual([]);
+    expect(mockStore.getState().activity.finishedActivity.distance).toEqual(0);
+    expect(mockStore.getState().activity.finishedActivity.locations).toEqual([]);
   });
   it('should correctly renders finish in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

@@ -1,7 +1,7 @@
 import Card from '@S/card/card';
-import type { ActivityCardProps } from '@S/card/types';
+import type { ActivityResponse } from '@R/runich-api/types';
 
-type ActivitiesType = ActivityCardProps & { user_id: string; _count: { comments: number } };
+type ActivitiesType = ActivityResponse;
 
 export function renderCardsFunction({ item }: { item: ActivitiesType }) {
   const {
@@ -24,8 +24,8 @@ export function renderCardsFunction({ item }: { item: ActivitiesType }) {
     <Card
       isShowDeleteBtn={false}
       isShowDescription={false}
-      description={description}
-      title={title}
+      description={description ?? ''}
+      title={title ?? ''}
       date={date}
       sport={sport}
       userId={user_id}
