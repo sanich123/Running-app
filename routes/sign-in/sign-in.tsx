@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Constants from 'expo-constants';
 import { useLinkingURL, parse } from 'expo-linking';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
@@ -25,7 +25,6 @@ export default function SignIn() {
   const dispatch = useAppDispatch();
   const { email, password } = useAppSelector(({ logining }) => logining);
   const { authStep, oauthError: localOauthError } = useLocalSearchParams<{ authStep?: string; oauthError?: string }>();
-  const [oauthError, setOauthError] = useState<string | null>(localOauthError ?? null);
 
   const { colors } = useTheme();
   const { control, handleSubmit } = useForm<EmailPasswordData>({
@@ -46,11 +45,8 @@ export default function SignIn() {
   const [verifyToken] = useLazyVerifyConfigQuery();
 
   useEffect(() => {
-    if (localOauthError) setOauthError(localOauthError);
     if (url) {
       const { queryParams } = parse(url);
-      const oauthErrorValue = queryParams?.oauthError?.toString();
-      if (oauthErrorValue) setOauthError(oauthErrorValue);
       if (queryParams?.accessToken) {
         verifyToken({ accessToken: queryParams.accessToken.toString() })
           .unwrap()
@@ -72,13 +68,6 @@ export default function SignIn() {
   return (
     <CrossPlatformLayout edges={['bottom']} scrollViewEnabled>
       <Intro />
-      {oauthError && (
-        <Surface mode="flat" style={styles.oauthError} testID="oauth-error">
-          <Text variant="titleSmall">Не удалось войти через VK ID</Text>
-          <Text>{oauthError}</Text>
-          <Text variant="bodySmall">Проверьте настройки VK ID и попробуйте ещё раз.</Text>
-        </Surface>
-      )}
       <Surface mode="flat" style={styles.inputsWrapper}>
         <CustomTextInput<EmailPasswordData>
           control={control}
