@@ -16,7 +16,6 @@ export default function ConfirmEmailCodePage() {
   const type: ConfirmEmailCodeType = queryType === 'change-password' ? 'change-password' : 'registration';
   const copy = CONFIRM_EMAIL_PAGE_TEXT[language];
 
-
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />

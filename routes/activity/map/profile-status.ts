@@ -1,6 +1,6 @@
 import type { ProfileType } from '@S/card/types';
 
-const profileDataKeys: Array<keyof ProfileType> = [
+const profileDataKeys: (keyof ProfileType)[] = [
   'bio',
   'birthday',
   'city',

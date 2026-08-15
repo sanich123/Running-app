@@ -18,7 +18,13 @@ import { SignInPageStates } from '@U/validate-email-password';
 import { EMAIL_LINK_BTN, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 
-export default function LoginRegisterBtn({ handleSubmit, authStep = SignInPageStates.login }: { handleSubmit: UseFormHandleSubmit<EmailPasswordData>; authStep?: SignInPageStates }) {
+export default function LoginRegisterBtn({
+  handleSubmit,
+  authStep = SignInPageStates.login,
+}: {
+  handleSubmit: UseFormHandleSubmit<EmailPasswordData>;
+  authStep?: SignInPageStates;
+}) {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);

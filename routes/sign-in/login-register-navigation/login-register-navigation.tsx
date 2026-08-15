@@ -5,7 +5,13 @@ import { useAppSelector } from '@R/typed-hooks';
 import { SignInPageStates, signInMap } from '@U/validate-email-password';
 import { EMAIL_LINK_NAVIGATION, LOGIN_NAVIGATION, REGISTER_NAVIGATION, RESET_NAVIGATION } from './const';
 
-export default function RegisterNavigation({ authStep = SignInPageStates.login, onAuthStepChange = () => undefined }: { authStep?: SignInPageStates; onAuthStepChange?: (step: SignInPageStates) => void }) {
+export default function RegisterNavigation({
+  authStep = SignInPageStates.login,
+  onAuthStepChange = () => undefined,
+}: {
+  authStep?: SignInPageStates;
+  onAuthStepChange?: (step: SignInPageStates) => void;
+}) {
   const { language } = useAppSelector(({ language }) => language);
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
   const { colors } = useTheme();

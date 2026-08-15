@@ -9,9 +9,9 @@ import BackgroundLocationModal from '@Routes/activity/background-location-modal/
 import BackgroundLocationSwitcher from '@Routes/activity/background-location-switcher/background-location-switcher';
 import ForegroundLocationSwitcher from '@Routes/activity/foregroud-location-switcher/foreground-location-switcher';
 import LocationSettingsSwitcher from '@Routes/activity/location-settings-switcher/location-settings-switcher';
+import { hasProfileData } from '../profile-status';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { LocationPermissionsProps } from '@Routes/activity/types';
-import { hasProfileData } from '../profile-status';
 
 export default function LocationPermissions({
   isMapVisible,
@@ -64,7 +64,7 @@ export default function LocationPermissions({
               href={`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`}
               asChild>
               <Button mode="contained-tonal" compact icon="account-plus-outline" style={styles.profileNoticeButton}>
-              Заполнить профиль
+                Заполнить профиль
               </Button>
             </Link>
           </View>
