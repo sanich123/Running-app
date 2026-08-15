@@ -168,7 +168,18 @@ describe('elevation gain calculation', () => {
     ];
 
     expect(getElevationGainBetweenLocations(locations[0], locations[1])).toBe(0);
-    expect(getElevationGainBetweenLocations(locations[1], locations[2])).toBe(8);
-    expect(getElevationGain(locations)).toBe(21);
+    expect(getElevationGainBetweenLocations(locations[1], locations[2])).toBe(0);
+    expect(getElevationGain(locations)).toBe(18);
+  });
+
+  it('ignores short GPS altitude oscillations and counts a sustained climb', () => {
+    const createLocation = (altitude: number) => ({
+      ...MOCK_LOCATION,
+      coords: { ...MOCK_LOCATION.coords, altitude, altitudeAccuracy: 5 },
+    });
+    const locations = [100, 104, 108, 112, 111, 116, 120, 118, 125].map(createLocation);
+
+    expect(getElevationGain(locations)).toBeGreaterThanOrEqual(15);
+    expect(getElevationGain(locations)).toBeLessThan(30);
   });
 });

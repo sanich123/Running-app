@@ -12,7 +12,7 @@ import type {
   VerifyPasswordChangeCodeData,
 } from './types';
 
-export const authenticationApi = runichApi.injectEndpoints({
+const authenticationApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ mutation, query }) => ({
     registerUser: mutation<RegisterResponse, EmailPasswordData>({

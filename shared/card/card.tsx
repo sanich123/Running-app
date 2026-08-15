@@ -1,11 +1,10 @@
-import { useRef, memo, useEffect, useMemo } from 'react';
+import { useRef, memo, useMemo } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { activityApi, useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
-import { useAppSelector } from '@R/typed-hooks';
+import { useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
 import UserInfo from '@S/card/user-info/user-info';
 import { getMapBoxImage } from '@U/location/location-utils';
 import Btns from './btns/btns';
@@ -40,9 +39,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const pathname = usePathname();
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
-  const { isNeedToPrefetchActivities } = useAppSelector(({ profile }) => profile);
   const cardRef = useRef<View>(null);
-  const prefetchFullActivity = activityApi.usePrefetch('getActivityByActivityId');
   const shouldLoadRouteLocations = !locations?.length && Boolean(mapPhotoUrl);
   const { data: routeData } = useGetLocationsByActivityIdQuery(id, { skip: !shouldLoadRouteLocations });
   const resolvedMapPhotoUrl = useMemo(() => {
@@ -53,12 +50,6 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     return mapPhotoUrl;
   }, [locations, mapPhotoUrl, routeData?.locations]);
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
-  useEffect(() => {
-    if (isNeedToPrefetchActivities && !process.env.IS_TESTING) {
-      prefetchFullActivity(`${id}`);
-    }
-  }, [id, isNeedToPrefetchActivities, prefetchFullActivity]);
-
   return (
     <>
       <ShareActivityImage

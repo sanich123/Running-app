@@ -1,4 +1,4 @@
-export interface EmailDTO {
+interface EmailDTO {
   name: string;
   surname: string;
   profilePhoto: string;

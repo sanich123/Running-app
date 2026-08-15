@@ -23,10 +23,14 @@ const DEFAULT_MAX_TRACKING_SPEED_KMH = MAX_TRACKING_SPEED_KMH.run;
 const MAX_STATIC_MAP_URL_LENGTH = 7600;
 const MAX_STATIC_MAP_LOCATIONS = 500;
 const METERS_IN_KILOMETER = 1000;
-const MIN_ELEVATION_DELTA_METERS = 2;
-const MAX_ALTITUDE_ACCURACY_METERS = 50;
+// GPS altitude is considerably noisier than horizontal position. Keep only
+// reasonably confident fixes and require a sustained climb before counting it.
+const MIN_ELEVATION_DELTA_METERS = 10;
+const MAX_ALTITUDE_ACCURACY_METERS = 15;
+const MAX_VERTICAL_SPEED_METERS_PER_SECOND = 3;
+const ELEVATION_SMOOTHING_WINDOW = 5;
 
-export interface KilometerSplitCalculation {
+interface KilometerSplitCalculation {
   splits: ActivityKilometreSplit[];
   remainingDistance: number;
   remainingDuration: number;
@@ -49,7 +53,22 @@ function getReliableAltitude(location: ActivityLocation) {
     return null;
   }
 
+  if (location.mocked === true || location.coords.mocked === true) {
+    return null;
+  }
+
   return altitude;
+}
+
+function isPlausibleVerticalChange(previous: ActivityLocation, current: ActivityLocation, elevationDelta: number) {
+  const previousTimestamp = previous.timestamp ?? previous.coords.timestamp;
+  const currentTimestamp = current.timestamp ?? current.coords.timestamp;
+  const elapsedSeconds =
+    typeof previousTimestamp === 'number' && typeof currentTimestamp === 'number'
+      ? (currentTimestamp - previousTimestamp) / 1000
+      : null;
+
+  return elapsedSeconds === null || elapsedSeconds <= 0 || Math.abs(elevationDelta) <= elapsedSeconds * MAX_VERTICAL_SPEED_METERS_PER_SECOND;
 }
 
 export function getElevationGainBetweenLocations(previous: ActivityLocation, current: ActivityLocation) {
@@ -61,16 +80,50 @@ export function getElevationGainBetweenLocations(previous: ActivityLocation, cur
   }
 
   const elevationDelta = currentAltitude - previousAltitude;
-  return elevationDelta > MIN_ELEVATION_DELTA_METERS ? elevationDelta : 0;
+  return elevationDelta > MIN_ELEVATION_DELTA_METERS && isPlausibleVerticalChange(previous, current, elevationDelta)
+    ? elevationDelta
+    : 0;
 }
 
 export function getElevationGain(locations: ActivityLocation[]) {
-  let elevationGain = 0;
+  const reliableLocations = locations.filter((location) => getReliableAltitude(location) !== null);
+  if (reliableLocations.length < 2) return 0;
 
-  for (let index = 1; index < locations.length; index += 1) {
-    elevationGain += getElevationGainBetweenLocations(locations[index - 1], locations[index]);
+  const halfWindow = Math.floor(ELEVATION_SMOOTHING_WINDOW / 2);
+  const smoothedLocations = reliableLocations.map((location, index) => {
+    const window = reliableLocations
+      .slice(Math.max(0, index - halfWindow), Math.min(reliableLocations.length, index + halfWindow + 1))
+      .map((item) => getReliableAltitude(item) as number)
+      .sort((first, second) => first - second);
+    const median = window[Math.floor(window.length / 2)];
+    return { ...location, coords: { ...location.coords, altitude: median } };
+  });
+
+  let elevationGain = 0;
+  let climbStart = getReliableAltitude(smoothedLocations[0]) as number;
+  let peak = climbStart;
+
+  for (let index = 1; index < smoothedLocations.length; index += 1) {
+    const current = smoothedLocations[index];
+    const currentAltitude = getReliableAltitude(current) as number;
+    if (currentAltitude >= peak) {
+      peak = currentAltitude;
+      continue;
+    }
+
+    const descentFromPeak = peak - currentAltitude;
+    if (descentFromPeak > 3) {
+      const climb = peak - climbStart;
+      if (climb >= MIN_ELEVATION_DELTA_METERS && isPlausibleVerticalChange(smoothedLocations[index - 1], current, currentAltitude - (getReliableAltitude(smoothedLocations[index - 1]) as number))) {
+        elevationGain += climb;
+      }
+      climbStart = currentAltitude;
+      peak = currentAltitude;
+    }
   }
 
+  const finalClimb = peak - climbStart;
+  if (finalClimb >= MIN_ELEVATION_DELTA_METERS) elevationGain += finalClimb;
   return elevationGain;
 }
 

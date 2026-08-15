@@ -32,9 +32,6 @@ const profile = createSlice({
     resetSettings: (state) => {
       state.settings = PROFILE_SETTINGS_INITIAL_STATE;
     },
-    setisNeedToPrefetchActivities: (state) => {
-      state.isNeedToPrefetchActivities = !state.isNeedToPrefetchActivities;
-    },
     saveWholeProfile: (state, action) => {
       state.profileFromServer = action.payload;
     },
@@ -55,7 +52,6 @@ export const {
   saveBio,
   saveGender,
   resetSettings,
-  setisNeedToPrefetchActivities,
   saveWholeProfile,
   resetProfileSlice,
 } = profile.actions;

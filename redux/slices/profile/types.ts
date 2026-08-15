@@ -17,7 +17,6 @@ export interface ProfileSettings {
 export interface ProfileSlice {
   privateInfo: { email: string; password: string };
   isDisabledWhileSendingProfile: boolean;
-  isNeedToPrefetchActivities: boolean;
   settings: ProfileSettings;
   profileFromServer: ProfileType;
 }
