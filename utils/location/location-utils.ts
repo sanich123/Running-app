@@ -26,7 +26,7 @@ const METERS_IN_KILOMETER = 1000;
 const MIN_ELEVATION_DELTA_METERS = 2;
 const MAX_ALTITUDE_ACCURACY_METERS = 50;
 
-export interface KilometerSplitCalculation {
+interface KilometerSplitCalculation {
   splits: ActivityKilometreSplit[];
   remainingDistance: number;
   remainingDuration: number;

@@ -15,7 +15,7 @@ import CustomTextInput from '@S/custom-text-input/custom-text-input';
 import { emailValidation, passwordValidation } from '@S/custom-text-input/types';
 import { errorToast } from '@S/error-toast/error-toast';
 import { SignInPageStates } from '@U/validate-email-password';
-import { REGISTERED_USERS_ONLY_LABEL, SIGN_IN_FIELDS, VK_AUTH_URL, YANDEX_AUTH_URL } from './const';
+import { SIGN_IN_FIELDS, VK_AUTH_URL, YANDEX_AUTH_URL } from './const';
 import Intro from './intro/intro';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';

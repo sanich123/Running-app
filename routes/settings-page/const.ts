@@ -6,6 +6,8 @@ export const SETTINGS = {
     rus: 'Russian',
     logout: 'Log out',
     cache: 'Clear cache',
+    switchOn: 'Switch on',
+    switchOff: 'Switch off',
     emailNotifications: 'email notifications',
   },
   [LANGUAGES.russian]: {
@@ -13,6 +15,8 @@ export const SETTINGS = {
     rus: 'Русский',
     logout: 'Выйти',
     cache: 'Почистить кэш',
+    switchOn: 'Включить',
+    switchOff: 'Выключить',
     emailNotifications: 'уведомления по электронной почте',
   },
 } as const;

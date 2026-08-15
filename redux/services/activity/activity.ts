@@ -10,7 +10,7 @@ import type {
 } from './types';
 import type { ActivityLocationsResponse, ActivityMediaResponse, ActivityResponse } from '@R/runich-api/types';
 
-export const activityApi = runichApi.injectEndpoints({
+const activityApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
     getActivitiesByUserId: infiniteQuery<ActivitiesReponse, { id: string }, number>({

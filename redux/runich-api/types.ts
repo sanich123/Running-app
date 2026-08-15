@@ -1,6 +1,6 @@
 import type { ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
 
-export type ActivityLocationResponse = ActivityLocation;
+type ActivityLocationResponse = ActivityLocation;
 
 export interface ActivityPhotoResponse {
   url: string;
@@ -8,7 +8,7 @@ export interface ActivityPhotoResponse {
   blurhash?: string | null;
 }
 
-export interface ActivityProfileResponse {
+interface ActivityProfileResponse {
   name?: string | null;
   surname?: string | null;
   profilePhoto?: string | null;
@@ -17,11 +17,11 @@ export interface ActivityProfileResponse {
   users?: { email?: string | null } | null;
 }
 
-export interface ActivityCountResponse {
+interface ActivityCountResponse {
   comments: number;
 }
 
-export type ActivityKilometreSplitResponse = ActivityKilometreSplit;
+type ActivityKilometreSplitResponse = ActivityKilometreSplit;
 
 export interface ActivityResponse {
   id: string;
@@ -102,7 +102,7 @@ export interface CommentLikeSummaryResponse {
   id: string;
 }
 
-export interface CommentProfileResponse {
+interface CommentProfileResponse {
   name?: string | null;
   surname?: string | null;
   profilePhoto?: string | null;
@@ -148,7 +148,7 @@ export interface LikeListResponse extends Omit<LikeResponse, 'profile'> {
   profile: ProfileType;
 }
 
-export interface FriendProfileResponse {
+interface FriendProfileResponse {
   name?: string | null;
   surname?: string | null;
   profilePhoto?: string | null;
@@ -188,7 +188,7 @@ export interface StatisticMetricResponse {
   totalItems: number;
 }
 
-export interface MonthActivityResponse {
+interface MonthActivityResponse {
   duration: number;
   distance: number;
   speed: number;
