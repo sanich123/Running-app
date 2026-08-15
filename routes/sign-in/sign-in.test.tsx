@@ -12,14 +12,34 @@ import SignIn from './sign-in';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
+let mockLinkingUrl: string | null = null;
+let mockAuthParams: { authStep: string; oauthError?: string } = { authStep: 'login' };
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: mockReplace, dismissAll: jest.fn() }),
-  useLocalSearchParams: () => ({ authStep: 'login' }),
+  useLocalSearchParams: () => mockAuthParams,
 }));
-jest.mock('expo-linking', () => ({ useLinkingURL: () => null, parse: jest.fn() }));
+jest.mock('expo-linking', () => ({
+  useLinkingURL: () => mockLinkingUrl,
+  parse: (value: string) => ({ queryParams: Object.fromEntries(new URL(value).searchParams.entries()) }),
+}));
 jest.mock('./intro/intro', () => () => null);
 
 describe('sign in', () => {
+  afterEach(() => {
+    mockLinkingUrl = null;
+    mockAuthParams = { authStep: 'login' };
+    jest.clearAllMocks();
+  });
+
+  it('shows the VK ID error returned by the backend', async () => {
+    mockAuthParams = { authStep: 'login', oauthError: 'invalid code_verifier' };
+
+    await renderWithProviders(<SignIn />);
+
+    expect(await screen.findByText('invalid code_verifier')).toBeOnTheScreen();
+    expect(screen.getByText('Не удалось войти через VK ID')).toBeOnTheScreen();
+  });
+
   it('logs in with credentials entered by the user', async () => {
     const user = userEvent.setup();
     let requestBody: unknown;

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Constants from 'expo-constants';
 import { useLinkingURL, parse } from 'expo-linking';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
@@ -24,7 +24,8 @@ import type { EmailPasswordData } from '@R/services/authentication/types';
 export default function SignIn() {
   const dispatch = useAppDispatch();
   const { email, password } = useAppSelector(({ logining }) => logining);
-  const { authStep } = useLocalSearchParams<{ authStep?: string }>();
+  const { authStep, oauthError: localOauthError } = useLocalSearchParams<{ authStep?: string; oauthError?: string }>();
+  const [oauthError, setOauthError] = useState<string | null>(localOauthError ?? null);
 
   const { colors } = useTheme();
   const { control, handleSubmit } = useForm<EmailPasswordData>({
@@ -45,8 +46,11 @@ export default function SignIn() {
   const [verifyToken] = useLazyVerifyConfigQuery();
 
   useEffect(() => {
+    if (localOauthError) setOauthError(localOauthError);
     if (url) {
       const { queryParams } = parse(url);
+      const oauthErrorValue = queryParams?.oauthError?.toString();
+      if (oauthErrorValue) setOauthError(oauthErrorValue);
       if (queryParams?.accessToken) {
         verifyToken({ accessToken: queryParams.accessToken.toString() })
           .unwrap()
@@ -63,11 +67,18 @@ export default function SignIn() {
           });
       }
     }
-  }, [dismissAll, dispatch, replace, url, verifyToken]);
+  }, [dismissAll, dispatch, localOauthError, replace, url, verifyToken]);
 
   return (
     <CrossPlatformLayout edges={['bottom']} scrollViewEnabled>
       <Intro />
+      {oauthError && (
+        <Surface mode="flat" style={styles.oauthError} testID="oauth-error">
+          <Text variant="titleSmall">Не удалось войти через VK ID</Text>
+          <Text>{oauthError}</Text>
+          <Text variant="bodySmall">Проверьте настройки VK ID и попробуйте ещё раз.</Text>
+        </Surface>
+      )}
       <Surface mode="flat" style={styles.inputsWrapper}>
         <CustomTextInput<EmailPasswordData>
           control={control}
@@ -153,6 +164,17 @@ const styles = StyleSheet.create({
     width: '94%',
     maxWidth: 351,
     marginHorizontal: 'auto',
+  },
+  oauthError: {
+    alignSelf: 'center',
+    borderColor: '#D32F2F',
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 4,
+    marginBottom: 12,
+    padding: 12,
+    width: '94%',
+    maxWidth: 351,
   },
   footer: {
     alignItems: 'center',
