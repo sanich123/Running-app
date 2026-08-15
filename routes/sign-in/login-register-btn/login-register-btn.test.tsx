@@ -3,7 +3,6 @@ import { http, HttpResponse } from 'msw';
 import { useForm, type UseFormHandleSubmit } from 'react-hook-form';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
-import { setSignInPageState } from '@R/slices/logining/logining';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -45,7 +44,6 @@ describe('Login btn', () => {
         email: 'runner@example.test',
         password: 'secure-password',
       })) as UseFormHandleSubmit<EmailPasswordData>;
-    mockStore.dispatch(setSignInPageState(SignInPageStates.login));
     server.use(
       http.post(`${BASE_URL}/auth/login`, async ({ request }) => {
         requestBody = await request.json();
@@ -69,7 +67,6 @@ describe('Login btn', () => {
         password: 'secure-password',
       })) as UseFormHandleSubmit<EmailPasswordData>;
     mockPush.mockClear();
-    mockStore.dispatch(setSignInPageState(SignInPageStates.register));
     server.use(
       http.post(`${BASE_URL}/auth/register`, async ({ request }) => {
         requestBody = await request.json();
@@ -77,7 +74,7 @@ describe('Login btn', () => {
       }),
     );
 
-    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} />);
+    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} authStep={SignInPageStates.register} />);
     await user.press(screen.getByText(REGISTER_BTN.russian.register));
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', password: 'secure-password' }));
@@ -96,7 +93,6 @@ describe('Login btn', () => {
         password: '',
       })) as UseFormHandleSubmit<EmailPasswordData>;
     mockPush.mockClear();
-    mockStore.dispatch(setSignInPageState(SignInPageStates.reset));
     server.use(
       http.post(`${BASE_URL}/auth/get-email-code-for-password`, async ({ request }) => {
         requestBody = await request.json();
@@ -104,7 +100,7 @@ describe('Login btn', () => {
       }),
     );
 
-    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} />);
+    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} authStep={SignInPageStates.reset} />);
     await user.press(screen.getByText(RESET_BTN.russian.login));
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test' }));
@@ -122,7 +118,6 @@ describe('Login btn', () => {
         email: 'runner@example.test',
         password: '',
       })) as UseFormHandleSubmit<EmailPasswordData>;
-    mockStore.dispatch(setSignInPageState(SignInPageStates.emailLink));
     server.use(
       http.post(`${BASE_URL}/auth/by-email-link`, async ({ request }) => {
         requestBody = await request.json();
@@ -130,7 +125,7 @@ describe('Login btn', () => {
       }),
     );
 
-    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} />);
+    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} authStep={SignInPageStates.emailLink} />);
     await user.press(screen.getByText(EMAIL_LINK_BTN.russian.send));
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test' }));

@@ -1,7 +1,7 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
-import { setIsDisabledWhenLogining, setSignInPageState } from '@R/slices/logining/logining';
+import { setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -12,7 +12,10 @@ import SignIn from './sign-in';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: mockReplace }) }));
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: mockPush, replace: mockReplace, dismissAll: jest.fn() }),
+  useLocalSearchParams: () => ({ authStep: 'login' }),
+}));
 jest.mock('expo-linking', () => ({ useLinkingURL: () => null, parse: jest.fn() }));
 jest.mock('./intro/intro', () => () => null);
 
@@ -20,7 +23,6 @@ describe('sign in', () => {
   it('logs in with credentials entered by the user', async () => {
     const user = userEvent.setup();
     let requestBody: unknown;
-    mockStore.dispatch(setSignInPageState(SignInPageStates.login));
     mockStore.dispatch(setIsDisabledWhenLogining(false));
     server.use(
       http.post(`${BASE_URL}/auth/login`, async ({ request }) => {
@@ -48,12 +50,10 @@ describe('sign in', () => {
 
   it('keeps the old navigation below the form and supports email link login', async () => {
     const user = userEvent.setup();
-    mockStore.dispatch(setSignInPageState(SignInPageStates.login));
     await renderWithProviders(<SignIn />);
 
     expect(screen.queryByTestId(`auth-mode-${SignInPageStates.login}`)).not.toBeOnTheScreen();
     await user.press(screen.getByTestId('email-link-navigation'));
-    expect(mockStore.getState().logining.pageState).toBe(SignInPageStates.emailLink);
-    expect(screen.queryByTestId(SIGN_IN_FIELDS.password)).not.toBeOnTheScreen();
+    expect(mockPush).toHaveBeenCalledWith({ pathname: `/${ROUTES.signIn}`, params: { authStep: 'email-link' } });
   });
 });
