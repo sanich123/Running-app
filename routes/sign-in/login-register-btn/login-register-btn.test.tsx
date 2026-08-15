@@ -74,7 +74,9 @@ describe('Login btn', () => {
       }),
     );
 
-    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} authStep={SignInPageStates.register} />);
+    await renderWithProviders(
+      <LoginRegisterBtn handleSubmit={interactiveHandleSubmit} authStep={SignInPageStates.register} />,
+    );
     await user.press(screen.getByText(REGISTER_BTN.russian.register));
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', password: 'secure-password' }));
@@ -100,7 +102,9 @@ describe('Login btn', () => {
       }),
     );
 
-    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} authStep={SignInPageStates.reset} />);
+    await renderWithProviders(
+      <LoginRegisterBtn handleSubmit={interactiveHandleSubmit} authStep={SignInPageStates.reset} />,
+    );
     await user.press(screen.getByText(RESET_BTN.russian.login));
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test' }));
@@ -125,7 +129,9 @@ describe('Login btn', () => {
       }),
     );
 
-    await renderWithProviders(<LoginRegisterBtn handleSubmit={interactiveHandleSubmit} authStep={SignInPageStates.emailLink} />);
+    await renderWithProviders(
+      <LoginRegisterBtn handleSubmit={interactiveHandleSubmit} authStep={SignInPageStates.emailLink} />,
+    );
     await user.press(screen.getByText(EMAIL_LINK_BTN.russian.send));
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test' }));

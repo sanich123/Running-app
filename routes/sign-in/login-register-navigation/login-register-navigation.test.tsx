@@ -4,7 +4,7 @@ import { changeLanguage } from '@R/slices/language/language';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { SignInPageStates } from '@U/validate-email-password';
-import { EMAIL_LINK_NAVIGATION, RESET_NAVIGATION } from './const';
+import { RESET_NAVIGATION } from './const';
 import RegisterNavigation from './login-register-navigation';
 
 describe('Register navigation', () => {
@@ -25,7 +25,9 @@ describe('Register navigation', () => {
     const user = userEvent.setup();
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const onAuthStepChange = jest.fn();
-    await renderWithProviders(<RegisterNavigation authStep={SignInPageStates.register} onAuthStepChange={onAuthStepChange} />);
+    await renderWithProviders(
+      <RegisterNavigation authStep={SignInPageStates.register} onAuthStepChange={onAuthStepChange} />,
+    );
     await user.press(screen.getByText(RESET_NAVIGATION.english.btn));
     expect(onAuthStepChange).toHaveBeenCalledWith(SignInPageStates.reset);
   });
@@ -34,7 +36,9 @@ describe('Register navigation', () => {
     const user = userEvent.setup();
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const onAuthStepChange = jest.fn();
-    await renderWithProviders(<RegisterNavigation authStep={SignInPageStates.login} onAuthStepChange={onAuthStepChange} />);
+    await renderWithProviders(
+      <RegisterNavigation authStep={SignInPageStates.login} onAuthStepChange={onAuthStepChange} />,
+    );
     await user.press(screen.getByTestId('email-link-navigation'));
     expect(onAuthStepChange).toHaveBeenCalledWith(SignInPageStates.emailLink);
   });
