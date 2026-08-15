@@ -7,7 +7,6 @@ import EmailNotificationsBtn from './email-notifications/email-notifications';
 import LanguageSwitcher from './language-switcher/language-switcher';
 import LogoutBtn from './logout/logout-btn';
 import MigrationBtn from './migration-btn/migration-btn';
-import PrefetchActivitiesBtn from './prefetch-activities-btn/prefetch-activities-btn';
 
 export default function SettingsPage() {
   const { colors } = useTheme();
@@ -26,7 +25,6 @@ export default function SettingsPage() {
       <LanguageSwitcher />
       <ChangeTheme />
       <MigrationBtn />
-      <PrefetchActivitiesBtn />
       <EmailNotificationsBtn />
       <LogoutBtn />
       <DeleteAccountBtn />

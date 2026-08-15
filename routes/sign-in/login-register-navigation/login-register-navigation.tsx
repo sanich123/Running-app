@@ -4,6 +4,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import { SignInPageStates, signInMap } from '@U/validate-email-password';
 import { EMAIL_LINK_NAVIGATION, LOGIN_NAVIGATION, REGISTER_NAVIGATION, RESET_NAVIGATION } from './const';
+import { REGISTERED_USERS_ONLY_LABEL } from '../const';
 
 export default function RegisterNavigation({
   authStep = SignInPageStates.login,
@@ -22,6 +23,7 @@ export default function RegisterNavigation({
     <View style={styles.layout}>
       {authStep === SignInPageStates.login && (
         <View style={styles.emailLinkRow}>
+          <Text style={styles.registeredUsersLabel}>{REGISTERED_USERS_ONLY_LABEL[language]}</Text>
           <Button
             testID="email-link-navigation"
             mode="contained-tonal"
@@ -79,6 +81,11 @@ const styles = StyleSheet.create({
   emailLinkRow: {
     alignItems: 'stretch',
     width: '100%',
+  },
+  registeredUsersLabel: {
+    fontSize: 12,
+    opacity: 0.7,
+    textAlign: 'center',
   },
   emailLinkButton: {
     borderRadius: 8,

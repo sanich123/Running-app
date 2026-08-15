@@ -15,7 +15,7 @@ import CustomTextInput from '@S/custom-text-input/custom-text-input';
 import { emailValidation, passwordValidation } from '@S/custom-text-input/types';
 import { errorToast } from '@S/error-toast/error-toast';
 import { SignInPageStates } from '@U/validate-email-password';
-import { SIGN_IN_FIELDS, YANDEX_AUTH_URL } from './const';
+import { REGISTERED_USERS_ONLY_LABEL, SIGN_IN_FIELDS, VK_AUTH_URL, YANDEX_AUTH_URL } from './const';
 import Intro from './intro/intro';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
@@ -89,13 +89,36 @@ export default function SignIn() {
         )}
         <LoginRegisterBtn handleSubmit={handleSubmit} authStep={currentAuthStep} />
         {currentAuthStep === SignInPageStates.login && (
-          <Button
-            mode="outlined"
-            icon="account-circle-outline"
-            testID="yandex-auth"
-            onPress={() => void Linking.openURL(YANDEX_AUTH_URL)}>
-            Войти через Яндекс
-          </Button>
+          <>
+            <Button
+              mode="outlined"
+              testID="yandex-auth"
+              contentStyle={styles.yandexContent}
+              labelStyle={styles.yandexButtonLabel}
+              style={styles.yandexButton}
+              onPress={() => void Linking.openURL(YANDEX_AUTH_URL)}>
+              <View style={styles.yandexLabel}>
+                <View style={styles.yandexIcon}>
+                  <Text style={styles.yandexIconText}>Я</Text>
+                </View>
+                <Text style={styles.yandexText}>Войти через Яндекс</Text>
+              </View>
+            </Button>
+            <Button
+              mode="outlined"
+              testID="vk-auth"
+              contentStyle={styles.yandexContent}
+              labelStyle={styles.yandexButtonLabel}
+              style={styles.vkButton}
+              onPress={() => void Linking.openURL(VK_AUTH_URL)}>
+              <View style={styles.yandexLabel}>
+                <View style={styles.vkIcon}>
+                  <Text style={styles.vkIconText}>vk</Text>
+                </View>
+                <Text style={styles.yandexText}>Войти через VK</Text>
+              </View>
+            </Button>
+          </>
         )}
         <LoginRegisterNavigation authStep={currentAuthStep} onAuthStepChange={setAuthStep} />
       </Surface>
@@ -143,6 +166,65 @@ const styles = StyleSheet.create({
   links: {
     alignItems: 'center',
     gap: 4,
+  },
+  yandexButton: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#D9D9D9',
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  vkButton: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#D9D9D9',
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  yandexContent: {
+    height: 48,
+    justifyContent: 'center',
+    paddingHorizontal: 0,
+  },
+  yandexButtonLabel: {
+    marginHorizontal: 0,
+  },
+  yandexLabel: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+  },
+  yandexIcon: {
+    alignItems: 'center',
+    backgroundColor: '#FC3F1D',
+    borderRadius: 6,
+    height: 24,
+    justifyContent: 'center',
+    width: 24,
+  },
+  yandexIconText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  vkIcon: {
+    alignItems: 'center',
+    backgroundColor: '#0077FF',
+    borderRadius: 6,
+    height: 24,
+    justifyContent: 'center',
+    width: 24,
+  },
+  vkIconText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+    lineHeight: 14,
+    textAlign: 'center',
+  },
+  yandexText: {
+    color: '#1F1F1F',
+    fontWeight: '600',
   },
   link: {
     color: '#3A9561',
