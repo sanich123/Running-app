@@ -17,6 +17,7 @@ import MapNavIcon from './map-nav-icon/map-nav-icon';
 import PauseMarkers from './pause-markers/pause-markers';
 import { hasProfileData } from './profile-status';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { Location as MapboxLocation } from '@rnmapbox/maps';
 import type { LocationObject } from 'expo-location';
 
 export default function Map({ onLocationReadinessChange }: { onLocationReadinessChange: (isReady: boolean) => void }) {
@@ -34,6 +35,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
   const [isCenteringOnCurrentLocation, setIsCenteringOnCurrentLocation] = useState(false);
   const [shouldFollowUserLocation, setShouldFollowUserLocation] = useState(true);
   const [mapZoomLevel, setMapZoomLevel] = useState(18);
+  const [mapboxLocation, setMapboxLocation] = useState<MapboxLocation | null>(null);
   const cameraRef = useRef<Camera>(null);
   const batteryOptimizationModalRef = useRef<BottomSheetModal>(null);
   const canUseLocation = Boolean(
@@ -43,6 +45,8 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
   const isLoadingLocationPrerequisites =
     isProfileLoading || foregroundPermissionStatus === null || backgroundPermissionStatus === null;
   const currentPosition: LocationObject | null = lastPosition ?? initialLocation;
+  const shouldShowMapboxLocation =
+    !currentPosition || !mapboxLocation || distanceInMeters(currentPosition, mapboxLocation) > 10;
   const hasPoorLocationAccuracy = (currentPosition?.coords.accuracy ?? 0) > 50;
   useEffect(() => {
     onLocationReadinessChange(canUseLocation);
@@ -93,8 +97,9 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
         <View style={styles.mapWrapper}>
           <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
             <UserLocation
-              visible={false}
+              visible={shouldShowMapboxLocation}
               animated
+              onUpdate={setMapboxLocation}
               {...(Platform.OS === 'android' ? { androidRenderMode: 'compass' as const } : {})}
             />
             <MapNavIcon profilePhoto={profile?.profilePhoto} />
@@ -149,6 +154,19 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
       )}
     </>
   );
+}
+
+function distanceInMeters(first: LocationObject, second: MapboxLocation) {
+  const earthRadius = 6_371_000;
+  const firstLatitude = (first.coords.latitude * Math.PI) / 180;
+  const secondLatitude = (second.coords.latitude * Math.PI) / 180;
+  const latitudeDelta = secondLatitude - firstLatitude;
+  const longitudeDelta = ((second.coords.longitude - first.coords.longitude) * Math.PI) / 180;
+  const haversine =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(firstLatitude) * Math.cos(secondLatitude) * Math.sin(longitudeDelta / 2) ** 2;
+
+  return earthRadius * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
 }
 
 const styles = StyleSheet.create({

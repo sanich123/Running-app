@@ -9,9 +9,9 @@
       "environment": "production",
       "env": {
         "EXPO_PUBLIC_BASE_URL": "https://runich-backend-production.up.railway.app",
-        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g",
+        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtc3Z0MnV5ZDA1ZW4yd3M3d212NTg1dGsifQ.ETJENZqd5m-yPfVbnCf4pg",
         "EXPO_PUBLIC_SUPABASE_URL": "https://ixvxeiqzuhzrfixglylt.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4dnhlaXF6dWh6cmZpeGdseWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM0NTA0ODEsImV4cCI6MjAzOTAyNjQ4MX0.yHbaFeYD1lxcuEKrQ7Y-CtwtlCgYct8xkyDSTxvLtcE",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_7v5KOwQLbwolzgKV9Ou5QQ_q5RHPeDw",
         "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWtvam9oazBrZjcza29kZ2hhMmtlcjEifQ.PkCRRfGrD8iiEOIBB9BLcg"
       }
     },
@@ -25,9 +25,9 @@
       "environment": "preview",
       "env": {
         "EXPO_PUBLIC_BASE_URL": "https://runich-backend-production.up.railway.app",
-        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWFkNmptaDAyaTczcm11NHF0cmp3d2sifQ.ZKH9THateIfnZ7zC23f3-g",
+        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtc3Z0MnV5ZDA1ZW4yd3M3d212NTg1dGsifQ.ETJENZqd5m-yPfVbnCf4pg",
         "EXPO_PUBLIC_SUPABASE_URL": "https://ixvxeiqzuhzrfixglylt.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4dnhlaXF6dWh6cmZpeGdseWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM0NTA0ODEsImV4cCI6MjAzOTAyNjQ4MX0.yHbaFeYD1lxcuEKrQ7Y-CtwtlCgYct8xkyDSTxvLtcE",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_7v5KOwQLbwolzgKV9Ou5QQ_q5RHPeDw",
         "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNsaWtvam9oazBrZjcza29kZ2hhMmtlcjEifQ.PkCRRfGrD8iiEOIBB9BLcg"
       },
       "channel": "preview"

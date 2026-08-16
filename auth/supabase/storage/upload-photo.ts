@@ -10,7 +10,8 @@ export async function getBase64CodedImage(file: string | File) {
       return file;
     } else {
       const bytes = await new ExpoFile(`${file}`).bytes();
-      return encode(bytes.buffer as ArrayBuffer);
+      const exactBuffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+      return encode(exactBuffer);
     }
   } catch (error) {
     errorToast('Не удалось обработать файл', error);
@@ -19,13 +20,13 @@ export async function getBase64CodedImage(file: string | File) {
 
 export async function uploadPhoto(userId: string, base64: string | File, extension: string) {
   const filePath = `${userId}/${new Date().getTime()}.${extension}`;
-  const contentType = ['mp4', 'avi', 'm4v'].includes(extension) ? 'video/mp4' : 'image/jpg';
+  const contentType = ['mp4', 'avi', 'm4v'].includes(extension.toLowerCase()) ? 'video/mp4' : 'image/jpeg';
   try {
     const { error, data: uploadedPhoto } = await supabase.storage
       .from('photos')
       .upload(filePath, base64 instanceof File ? base64 : decode(base64), { contentType });
     if (error) {
-      errorToast('Не удалось загрузить файл', error);
+      errorToast(`Не удалось загрузить файл: ${error.message || error.name || 'ошибка Supabase Storage'}`, error);
     }
     if (uploadedPhoto) {
       return uploadedPhoto.path;

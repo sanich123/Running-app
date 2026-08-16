@@ -57,7 +57,7 @@ export default {
             {
               scheme: 'https',
               host: 'runich.netlify.app',
-              pathPrefix: '/sign-in',
+              pathPrefix: '/login-from-url',
             },
           ],
           category: ['BROWSABLE', 'DEFAULT'],
@@ -69,7 +69,7 @@ export default {
             {
               scheme: 'https',
               host: 'stage--runich.netlify.app',
-              pathPrefix: '/sign-in',
+              pathPrefix: '/login-from-url',
             },
           ],
           category: ['BROWSABLE', 'DEFAULT'],

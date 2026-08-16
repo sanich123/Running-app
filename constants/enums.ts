@@ -42,6 +42,8 @@ export enum ROUTES {
   activitiesList = 'activities-list',
   migration = 'migration',
   signIn = 'sign-in',
+  feedback = 'feedback',
+  loginFromUrl = 'login-from-url',
   privacyPolicy = 'privacy-policy',
   legalInformation = 'legal-information',
   maintenance = 'maintenance',

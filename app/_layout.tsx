@@ -34,6 +34,7 @@ const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-
 
 const PUBLIC_ROUTES = new Set([
   `/${ROUTES.signIn}`,
+  `/${ROUTES.loginFromUrl}`,
   `/${ROUTES.confirmEmailCode}`,
   `/${ROUTES.changePassword}`,
   `/${ROUTES.privacyPolicy}`,
@@ -115,6 +116,8 @@ function AppShell() {
                 }}>
                 <Stack.Screen name={ROUTES.tabs} options={{ headerShown: false, title: 'Главная' }} />
                 <Stack.Screen name={ROUTES.signIn} options={{ headerShown: false }} />
+                <Stack.Screen name={ROUTES.feedback} options={{ title: 'Обратная связь' }} />
+                <Stack.Screen name={ROUTES.loginFromUrl} options={{ headerShown: false }} />
                 <Stack.Screen name={ROUTES.privacyPolicy} options={{ title: 'Политика конфиденциальности' }} />
                 <Stack.Screen name={ROUTES.legalInformation} options={{ title: 'Юридическая информация' }} />
                 <Stack.Screen name={ROUTES.maintenance} options={{ headerShown: false }} />

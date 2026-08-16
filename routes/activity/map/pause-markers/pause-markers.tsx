@@ -1,27 +1,9 @@
 import { MarkerView } from '@rnmapbox/maps';
 import { StyleSheet, View } from 'react-native';
-import { Icon, Text, useTheme } from 'react-native-paper';
-import { LANGUAGES } from '@const/enums';
-import { useAppSelector } from '@R/typed-hooks';
+import { Icon, useTheme } from 'react-native-paper';
 import type { LocationObject } from 'expo-location';
 
-function formatPauseTime(timestamp: number, language: LANGUAGES) {
-  return new Date(timestamp).toLocaleTimeString(language === LANGUAGES.russian ? 'ru-RU' : 'en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-}
-
-function PauseMarker({
-  location,
-  isResume,
-  language,
-}: {
-  location: LocationObject;
-  isResume: boolean;
-  language: LANGUAGES;
-}) {
+function PauseMarker({ location, isResume }: { location: LocationObject; isResume: boolean }) {
   const { colors } = useTheme();
   const markerColor = isResume ? colors.primary : colors.tertiary;
 
@@ -34,18 +16,12 @@ function PauseMarker({
         <View style={[styles.marker, { backgroundColor: colors.surface, borderColor: markerColor }]}>
           <Icon source={isResume ? 'play' : 'pause'} size={18} color={markerColor} />
         </View>
-        {!isResume && (
-          <Text style={[styles.time, { color: colors.onSurface }]}>
-            {formatPauseTime(location.timestamp, language)}
-          </Text>
-        )}
       </View>
     </MarkerView>
   );
 }
 
 export default function PauseMarkers({ locations }: { locations: LocationObject[][] }) {
-  const { language } = useAppSelector(({ language }) => language);
   const markers = locations.flatMap((segment, index) => {
     if (index === 0) {
       return [];
@@ -54,12 +30,8 @@ export default function PauseMarkers({ locations }: { locations: LocationObject[
     const pauseLocation = locations[index - 1]?.at(-1);
     const resumeLocation = segment[0];
     return [
-      pauseLocation ? (
-        <PauseMarker key={`pause-${index}`} location={pauseLocation} isResume={false} language={language} />
-      ) : null,
-      resumeLocation ? (
-        <PauseMarker key={`resume-${index}`} location={resumeLocation} isResume language={language} />
-      ) : null,
+      pauseLocation ? <PauseMarker key={`pause-${index}`} location={pauseLocation} isResume={false} /> : null,
+      resumeLocation ? <PauseMarker key={`resume-${index}`} location={resumeLocation} isResume /> : null,
     ];
   });
 
@@ -80,5 +52,4 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     width: 32,
   },
-  time: { backgroundColor: 'white', borderRadius: 4, fontSize: 11, marginTop: 2, paddingHorizontal: 3 },
 });
