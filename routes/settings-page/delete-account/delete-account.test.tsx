@@ -12,7 +12,13 @@ import { DELETE_ACCOUNT } from './const';
 import DeleteAccountBtn from './delete-account';
 
 const mockReplace = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) }));
+jest.mock('expo-router', () => ({
+  useRouter: () => ({
+    canDismiss: () => false,
+    dismissAll: jest.fn(),
+    replace: mockReplace,
+  }),
+}));
 
 describe('delete account', () => {
   beforeEach(() => {

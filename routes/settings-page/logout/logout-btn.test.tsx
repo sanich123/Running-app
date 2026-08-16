@@ -9,7 +9,13 @@ import { SETTINGS } from '../const';
 import LogoutBtn from './logout-btn';
 
 const mockReplace = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) }));
+jest.mock('expo-router', () => ({
+  useRouter: () => ({
+    canDismiss: () => false,
+    dismissAll: jest.fn(),
+    replace: mockReplace,
+  }),
+}));
 
 describe('logout btn', () => {
   it('clears the session and returns to sign in', async () => {

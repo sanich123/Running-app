@@ -68,5 +68,4 @@ describe('display activity map', () => {
     expect(screen.getByTestId('activity-map-increase-zoom')).toBeEnabled();
     expect(screen.getByTestId('activity-map-decrease-zoom')).toBeEnabled();
   });
-
 });
