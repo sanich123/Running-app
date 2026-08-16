@@ -1,4 +1,4 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
 import { MOCK_FRIENDS } from '@T/mocks/mock-friends';
@@ -26,11 +26,11 @@ describe('Users counter', () => {
     expect(await screen.findByText(USERS_COUNT.english.followings)).toBeOnTheScreen();
     expect(await screen.findByText(`${MOCK_FRIENDS.length}`)).toBeOnTheScreen();
   });
-  it('should correctly render an error in english', async () => {
+  it('does not render the counter when loading it fails', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<UsersCounter variant={USERS_VARIANT.whoFollowsUser} />, { store: mockStore });
-    expect(await screen.findByText(new RegExp(`${USERS_COUNT.english.error}`))).toBeOnTheScreen();
-    expect(await screen.findByText(/400/i)).toBeOnTheScreen();
+    await waitFor(() => expect(screen.queryByText(USERS_COUNT.english.followers)).not.toBeOnTheScreen());
+    expect(screen.queryByText(/400/i)).not.toBeOnTheScreen();
   });
 
   it('opens the followings list for the displayed profile', async () => {

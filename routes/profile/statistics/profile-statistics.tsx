@@ -18,9 +18,13 @@ export default function ProfileStatistics({ whosProfile }: { whosProfile: string
   const { language } = useAppSelector(({ language }) => language);
   const isRussian = language === LANGUAGES.russian;
 
+  if (isError) {
+    return null;
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {isLoading || isError || allUserStatistics?.totalItems ? (
+      {isLoading || allUserStatistics?.totalItems ? (
         <>
           <MonthStatisticsMetrics
             title={MONTH_STATISTICS[language].activities}

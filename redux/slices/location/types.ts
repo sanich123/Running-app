@@ -11,6 +11,7 @@ export interface LocationInitialState {
   activityStatus: STATUSES;
   isTooMuchSpeed: boolean;
   tooMuchSpeed: number;
+  tooMuchSpeedTimestamp: number | null;
   isAppShutedByPhone: boolean;
   isMapVisible: boolean;
   initialLocation: LocationObject | null;

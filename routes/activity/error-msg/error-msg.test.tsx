@@ -1,13 +1,25 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
-import { setIsAppShuted } from '@R/slices/location/location';
+import { setIsAppShuted, setIsTooMuchSpeed, setTooMuchSpeed, setTooMuchSpeedTimestamp } from '@R/slices/location/location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { ACTIVITY_ERROR_MSG } from './const';
 import ActivityErrorMsg from './error-msg';
 
 describe('Activity-error-msg', () => {
+  it('shows the abnormal point time and can be dismissed', async () => {
+    const user = userEvent.setup();
+    mockStore.dispatch(setIsTooMuchSpeed(true));
+    mockStore.dispatch(setTooMuchSpeed(60));
+    mockStore.dispatch(setTooMuchSpeedTimestamp(new Date(2026, 7, 16, 12, 34, 56).getTime()));
+    await renderWithProviders(<ActivityErrorMsg />, { store: mockStore });
+
+    expect(screen.getByText(/12:34:56/)).toBeOnTheScreen();
+    await user.press(screen.getByTestId('dismiss-too-much-speed'));
+    expect(screen.queryByTestId('dismiss-too-much-speed')).not.toBeOnTheScreen();
+  });
+
   it('should correctly render error message in russian, when initially', async () => {
     mockStore.dispatch(setIsAppShuted(true));
     await renderWithProviders(<ActivityErrorMsg />, { store: mockStore });

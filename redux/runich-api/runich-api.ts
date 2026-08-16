@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { resetAuthSlice, setAccessToken } from '@R/slices/auth/auth';
 import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
+import { deviceId, deviceName, deviceMetadata, platform } from '@U/device/device-id';
 import type { AuthResponse } from './types';
 import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';
 
@@ -22,6 +23,21 @@ const baseQuery = fetchBaseQuery({
     if (accessToken && !['registerUser', 'loginUser', 'refreshToken'].includes(endpoint)) {
       headers.set('authorization', `Bearer ${accessToken}`);
     }
+    headers.set('x-device-id', deviceId);
+    headers.set('x-device-name', deviceName);
+    headers.set('x-platform', platform);
+    const deviceHeaders = {
+      'x-device-model': deviceMetadata.model,
+      'x-device-manufacturer': deviceMetadata.manufacturer,
+      'x-device-os-name': deviceMetadata.osName,
+      'x-device-os-version': deviceMetadata.osVersion,
+      'x-device-type': deviceMetadata.deviceType,
+      'x-app-version': deviceMetadata.appVersion,
+      'x-app-build': deviceMetadata.appBuild,
+    };
+    Object.entries(deviceHeaders).forEach(([name, value]) => {
+      if (value) headers.set(name, value);
+    });
     return headers;
   },
 });
@@ -63,7 +79,6 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
           result = await baseQuery(args, api, extraOptions);
         } else {
           api.dispatch(resetAuthSlice());
-          router.dismissAll();
           router.replace(`/${ROUTES.signIn}`);
 
           await showErrorToast('Не удалось обновить авторизационные данные. Пожалуйста, авторизуйтесь повторно');

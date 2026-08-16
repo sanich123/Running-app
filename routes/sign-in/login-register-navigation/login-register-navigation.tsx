@@ -9,9 +9,11 @@ import { REGISTERED_USERS_ONLY_LABEL } from '../const';
 export default function RegisterNavigation({
   authStep = SignInPageStates.login,
   onAuthStepChange = () => undefined,
+  showEmailLinkNavigation = true,
 }: {
   authStep?: SignInPageStates;
   onAuthStepChange?: (step: SignInPageStates) => void;
+  showEmailLinkNavigation?: boolean;
 }) {
   const { language } = useAppSelector(({ language }) => language);
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
@@ -21,7 +23,7 @@ export default function RegisterNavigation({
 
   return (
     <View style={styles.layout}>
-      {authStep === SignInPageStates.login && (
+      {showEmailLinkNavigation && authStep === SignInPageStates.login && (
         <View style={styles.emailLinkRow}>
           <Text style={styles.registeredUsersLabel}>{REGISTERED_USERS_ONLY_LABEL[language]}</Text>
           <Button
@@ -69,14 +71,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
-    gap: 2,
+    marginTop: 4,
+    gap: 0,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 2,
+    gap: 0,
   },
   emailLinkRow: {
     alignItems: 'stretch',

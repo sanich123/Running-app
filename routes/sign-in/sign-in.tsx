@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import Constants from 'expo-constants';
 import { useLinkingURL, parse } from 'expo-linking';
-import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Button, Surface, Text, useTheme } from 'react-native-paper';
+import { Surface, Text } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { ROUTES } from '@const/enums';
 import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
@@ -15,10 +15,12 @@ import CustomTextInput from '@S/custom-text-input/custom-text-input';
 import { emailValidation, passwordValidation } from '@S/custom-text-input/types';
 import { errorToast } from '@S/error-toast/error-toast';
 import { SignInPageStates } from '@U/validate-email-password';
-import { SIGN_IN_FIELDS, VK_AUTH_URL, YANDEX_AUTH_URL } from './const';
-import Intro from './intro/intro';
+import { SIGN_IN_FIELDS } from './const';
+import AuthDivider from './auth-divider/auth-divider';
+import LegalLinks from './legal-links/legal-links';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
+import SocialAuthButtons from './social-auth-buttons/social-auth-buttons';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 
 export default function SignIn() {
@@ -26,7 +28,6 @@ export default function SignIn() {
   const { email, password } = useAppSelector(({ logining }) => logining);
   const { authStep, oauthError: localOauthError } = useLocalSearchParams<{ authStep?: string; oauthError?: string }>();
 
-  const { colors } = useTheme();
   const { control, handleSubmit } = useForm<EmailPasswordData>({
     defaultValues: { email, password },
     mode: 'onSubmit',
@@ -66,16 +67,25 @@ export default function SignIn() {
   }, [dismissAll, dispatch, localOauthError, replace, url, verifyToken]);
 
   return (
-    <CrossPlatformLayout edges={['bottom']} scrollViewEnabled>
-      <Intro />
+    <CrossPlatformLayout
+      edges={['top', 'bottom']}
+      scrollViewEnabled
+      outerStyles={styles.pageContent}>
       <Surface mode="flat" style={styles.inputsWrapper}>
-        <CustomTextInput<EmailPasswordData>
+        {currentAuthStep === SignInPageStates.login && (
+          <>
+            <SocialAuthButtons />
+            <AuthDivider />
+          </>
+        )}
+          <CustomTextInput<EmailPasswordData>
           control={control}
           fieldName="email"
           label={SIGN_IN_FIELDS.email}
           validation={emailValidation}
           inputMode="email"
           autoComplete="email"
+          compact
         />
         {currentAuthStep !== SignInPageStates.reset && currentAuthStep !== SignInPageStates.emailLink && (
           <CustomPasswordInput<EmailPasswordData>
@@ -85,74 +95,39 @@ export default function SignIn() {
             validation={passwordValidation}
             returnKeyType="send"
             returnKeyLabel="send"
+            compact
           />
         )}
         <LoginRegisterBtn handleSubmit={handleSubmit} authStep={currentAuthStep} />
-        {currentAuthStep === SignInPageStates.login && (
-          <>
-            <Button
-              mode="outlined"
-              testID="yandex-auth"
-              contentStyle={styles.yandexContent}
-              labelStyle={styles.yandexButtonLabel}
-              style={styles.yandexButton}
-              onPress={() => void Linking.openURL(YANDEX_AUTH_URL)}>
-              <View style={styles.yandexLabel}>
-                <View style={styles.yandexIcon}>
-                  <Text style={styles.yandexIconText}>Я</Text>
-                </View>
-                <Text style={styles.yandexText}>Войти через Яндекс</Text>
-              </View>
-            </Button>
-            <Button
-              mode="outlined"
-              testID="vk-auth"
-              contentStyle={styles.yandexContent}
-              labelStyle={styles.yandexButtonLabel}
-              style={styles.vkButton}
-              onPress={() => void Linking.openURL(VK_AUTH_URL)}>
-              <View style={styles.yandexLabel}>
-                <View style={styles.vkIcon}>
-                  <Text style={styles.vkIconText}>vk</Text>
-                </View>
-                <Text style={styles.yandexText}>Войти через VK</Text>
-              </View>
-            </Button>
-          </>
-        )}
-        <LoginRegisterNavigation authStep={currentAuthStep} onAuthStepChange={setAuthStep} />
+        <LoginRegisterNavigation
+          authStep={currentAuthStep}
+          onAuthStepChange={setAuthStep}
+          showEmailLinkNavigation={false}
+        />
+        {currentAuthStep === SignInPageStates.login && <LegalLinks />}
       </Surface>
       <View style={styles.footer}>
         <Text variant="bodySmall" style={styles.version}>
           Версия приложения {Constants.expoConfig?.version ?? '—'}
         </Text>
-        <View style={styles.links}>
-          <Pressable onPress={() => push(`/${ROUTES.privacyPolicy}`)} accessibilityRole="link">
-            <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>
-              Политика конфиденциальности
-            </Text>
-          </Pressable>
-          <Pressable onPress={() => push(`/${ROUTES.legalInformation}`)} accessibilityRole="link">
-            <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>
-              Юридическая информация
-            </Text>
-          </Pressable>
-        </View>
       </View>
     </CrossPlatformLayout>
   );
 }
 
 const styles = StyleSheet.create({
+  pageContent: {
+    justifyContent: 'center',
+    paddingVertical: 16,
+  },
   inputsWrapper: {
     alignSelf: 'center',
     borderRadius: 8,
     gap: 4,
-    marginBottom: 32,
+    marginBottom: 4,
     padding: 12,
     width: '94%',
     maxWidth: 351,
-    marginHorizontal: 'auto',
   },
   oauthError: {
     alignSelf: 'center',
@@ -167,79 +142,11 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 24,
+    gap: 0,
+    marginBottom: 0,
     paddingHorizontal: 20,
   },
   version: {
     opacity: 0.65,
-  },
-  links: {
-    alignItems: 'center',
-    gap: 4,
-  },
-  yandexButton: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#D9D9D9',
-    borderRadius: 8,
-    marginTop: 8,
-  },
-  vkButton: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#D9D9D9',
-    borderRadius: 8,
-    marginTop: 8,
-  },
-  yandexContent: {
-    height: 48,
-    justifyContent: 'center',
-    paddingHorizontal: 0,
-  },
-  yandexButtonLabel: {
-    marginHorizontal: 0,
-  },
-  yandexLabel: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 10,
-  },
-  yandexIcon: {
-    alignItems: 'center',
-    backgroundColor: '#FC3F1D',
-    borderRadius: 6,
-    height: 24,
-    justifyContent: 'center',
-    width: 24,
-  },
-  yandexIconText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-    lineHeight: 20,
-    textAlign: 'center',
-  },
-  vkIcon: {
-    alignItems: 'center',
-    backgroundColor: '#0077FF',
-    borderRadius: 6,
-    height: 24,
-    justifyContent: 'center',
-    width: 24,
-  },
-  vkIconText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '700',
-    lineHeight: 14,
-    textAlign: 'center',
-  },
-  yandexText: {
-    color: '#1F1F1F',
-    fontWeight: '600',
-  },
-  link: {
-    color: '#3A9561',
-    fontSize: 13,
-    textAlign: 'center',
   },
 });

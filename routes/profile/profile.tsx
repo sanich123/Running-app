@@ -5,6 +5,7 @@ import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
+import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import {
   saveBio,
@@ -41,7 +42,7 @@ export default function ProfilePage() {
     error,
     refetch,
   } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
-
+  const { data: photoPreviews } = useGetAllActivityPhotosByUserIdQuery({ userId, take: 4 }, { skip: !userId });
   const isProfilePage = !pathname.includes(ROUTES.home);
 
   useEffect(() => {
@@ -76,9 +77,12 @@ export default function ProfilePage() {
           <ActivityIndicator size="large" testID="profile-page-loading" />
         ) : isSuccess ? (
           <>
-            <View style={styles.mediaPhotosWrapper}>
-              <ProfileMediaPhotos userId={`${whosProfile}`} />
-            </View>
+            {photoPreviews?.photos?.length ? (
+              <View style={styles.mediaPhotosWrapper}>
+                <ProfileMediaPhotos userId={`${whosProfile}`} />
+              </View>
+            ) : null}
+
             <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
               <View style={[styles.avatarRing, { borderColor: colors.primary }]}>
                 <AvatarShowable size={92} id={`${whosProfile}`} />

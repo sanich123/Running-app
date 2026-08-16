@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Icon, Text, useTheme } from 'react-native-paper';
-import { setIsAppShuted } from '@R/slices/location/location';
+import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
+import { setIsAppShuted, setIsTooMuchSpeed, setTooMuchSpeed, setTooMuchSpeedTimestamp } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { TIMEOUT_MESSAGE } from '@Routes/activity/location-indicator/const';
 import { getMaxTrackingSpeedForSport } from '@U/location/location-utils';
@@ -10,9 +10,25 @@ import { ACTIVITY_ERROR_MSG } from './const';
 export default function ErrorMsg() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
-  const { isAppShutedByPhone, isTooMuchSpeed, tooMuchSpeed } = useAppSelector(({ location }) => location);
+  const { isAppShutedByPhone, isTooMuchSpeed, tooMuchSpeed, tooMuchSpeedTimestamp } = useAppSelector(
+    ({ location }) => location,
+  );
   const { sport } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
   const { language } = useAppSelector(({ language }) => language);
+  const tooMuchSpeedTime = tooMuchSpeedTimestamp
+    ? new Date(tooMuchSpeedTimestamp).toLocaleTimeString(language === 'russian' ? 'ru-RU' : 'en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      })
+    : '--:--:--';
+
+  const dismissTooMuchSpeed = () => {
+    dispatch(setIsTooMuchSpeed(false));
+    dispatch(setTooMuchSpeed(0));
+    dispatch(setTooMuchSpeedTimestamp(null));
+  };
 
   useEffect(() => {
     if (isAppShutedByPhone) {
@@ -45,9 +61,20 @@ export default function ErrorMsg() {
               {ACTIVITY_ERROR_MSG[language].speedTitle}
             </Text>
             <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-              {ACTIVITY_ERROR_MSG[language].tooMuchSpeed(tooMuchSpeed, getMaxTrackingSpeedForSport(sport))}
+              {ACTIVITY_ERROR_MSG[language].tooMuchSpeed(
+                tooMuchSpeed,
+                getMaxTrackingSpeedForSport(sport),
+                tooMuchSpeedTime,
+              )}
             </Text>
           </View>
+          <IconButton
+            testID="dismiss-too-much-speed"
+            icon="close"
+            size={18}
+            onPress={dismissTooMuchSpeed}
+            accessibilityLabel="Закрыть предупреждение о GPS"
+          />
         </View>
       )}
     </View>

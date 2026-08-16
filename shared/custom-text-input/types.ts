@@ -83,6 +83,7 @@ export interface CustomTextInputProps<T extends FieldValues> {
     | 'off';
   capitalizeValue?: boolean;
   onSubmitEditing?: () => void;
+  compact?: boolean;
 }
 
 export const passwordValidation = {

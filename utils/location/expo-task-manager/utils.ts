@@ -7,6 +7,7 @@ import {
   setDuration,
   setIsTooMuchSpeed,
   setTooMuchSpeed,
+  setTooMuchSpeedTimestamp,
   setLastKm,
   setLastKmAltitude,
   setLastKmDuration,
@@ -66,6 +67,7 @@ export function saveMetricsToStoreTaskManager(
   if (speedInKmPerHour > maxSpeedInKmPerHour) {
     store.dispatch(setIsTooMuchSpeed(true));
     store.dispatch(setTooMuchSpeed(speedInKmPerHour));
+    store.dispatch(setTooMuchSpeedTimestamp(currentPosition.timestamp));
     return false;
   }
 
@@ -105,5 +107,6 @@ export function saveMetricsToStoreTaskManager(
   store.dispatch(setLocationsFromBackground(currentPosition));
   store.dispatch(setIsTooMuchSpeed(false));
   store.dispatch(setTooMuchSpeed(0));
+  store.dispatch(setTooMuchSpeedTimestamp(null));
   return true;
 }
