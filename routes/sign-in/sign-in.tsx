@@ -15,8 +15,8 @@ import CustomTextInput from '@S/custom-text-input/custom-text-input';
 import { emailValidation, passwordValidation } from '@S/custom-text-input/types';
 import { errorToast } from '@S/error-toast/error-toast';
 import { SignInPageStates } from '@U/validate-email-password';
-import { SIGN_IN_FIELDS } from './const';
 import AuthDivider from './auth-divider/auth-divider';
+import { SIGN_IN_FIELDS } from './const';
 import LegalLinks from './legal-links/legal-links';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
@@ -67,10 +67,7 @@ export default function SignIn() {
   }, [dismissAll, dispatch, localOauthError, replace, url, verifyToken]);
 
   return (
-    <CrossPlatformLayout
-      edges={['top', 'bottom']}
-      scrollViewEnabled
-      outerStyles={styles.pageContent}>
+    <CrossPlatformLayout edges={['top', 'bottom']} scrollViewEnabled outerStyles={styles.pageContent}>
       <Surface mode="flat" style={styles.inputsWrapper}>
         {currentAuthStep === SignInPageStates.login && (
           <>
@@ -78,7 +75,7 @@ export default function SignIn() {
             <AuthDivider />
           </>
         )}
-          <CustomTextInput<EmailPasswordData>
+        <CustomTextInput<EmailPasswordData>
           control={control}
           fieldName="email"
           label={SIGN_IN_FIELDS.email}

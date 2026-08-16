@@ -1,6 +1,6 @@
-import { Camera } from '@rnmapbox/maps';
 import type { RefObject } from 'react';
 import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
+import type { Camera } from '@rnmapbox/maps';
 
 interface MapControlsProps {
   cameraRef: RefObject<Camera | null>;

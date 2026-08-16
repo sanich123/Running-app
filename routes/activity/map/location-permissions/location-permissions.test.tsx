@@ -48,9 +48,7 @@ describe('location permissions', () => {
     await renderWithProviders(<LocationPermissions {...props} />);
     expect(screen.queryByTestId('background-location-switcher')).not.toBeOnTheScreen();
 
-    await renderWithProviders(
-      <LocationPermissions {...props} foregroundPermissionStatus={{ granted: true } as any} />,
-    );
+    await renderWithProviders(<LocationPermissions {...props} foregroundPermissionStatus={{ granted: true } as any} />);
     expect(screen.getAllByTestId('background-location-switcher')).toHaveLength(1);
   });
 

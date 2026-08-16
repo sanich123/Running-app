@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
-import { useRouter } from 'expo-router';
 
 export default function LegalLinks() {
   const { colors } = useTheme();
@@ -13,11 +13,17 @@ export default function LegalLinks() {
       </Text>
       <View style={styles.links}>
         <Pressable onPress={() => push(`/${ROUTES.legalInformation}`)} accessibilityRole="link">
-          <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>Условиями пользования</Text>
+          <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>
+            Условиями пользования
+          </Text>
         </Pressable>
-        <Text variant="bodySmall" style={styles.caption}>и</Text>
+        <Text variant="bodySmall" style={styles.caption}>
+          и
+        </Text>
         <Pressable onPress={() => push(`/${ROUTES.privacyPolicy}`)} accessibilityRole="link">
-          <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>Политикой конфиденциальности</Text>
+          <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>
+            Политикой конфиденциальности
+          </Text>
         </Pressable>
       </View>
     </View>

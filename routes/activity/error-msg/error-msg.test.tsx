@@ -1,7 +1,12 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
-import { setIsAppShuted, setIsTooMuchSpeed, setTooMuchSpeed, setTooMuchSpeedTimestamp } from '@R/slices/location/location';
+import {
+  setIsAppShuted,
+  setIsTooMuchSpeed,
+  setTooMuchSpeed,
+  setTooMuchSpeedTimestamp,
+} from '@R/slices/location/location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { ACTIVITY_ERROR_MSG } from './const';

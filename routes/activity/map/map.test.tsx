@@ -37,9 +37,7 @@ describe('activity recording map', () => {
   it('shows a warning when location accuracy is worse than 50 meters', async () => {
     const onLocationReadinessChange = jest.fn();
     mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
-    mockStore.dispatch(
-      setInitialLocation({ coords: { latitude: 55.7, longitude: 37.6, accuracy: 51 } }),
-    );
+    mockStore.dispatch(setInitialLocation({ coords: { latitude: 55.7, longitude: 37.6, accuracy: 51 } }));
     await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);
 
     expect(await screen.findByTestId('poor-location-accuracy')).toBeOnTheScreen();
@@ -65,9 +63,10 @@ describe('activity recording map', () => {
     const onLocationReadinessChange = jest.fn();
     let resolveLocation!: (location: unknown) => void;
     (getCurrentPositionAsync as jest.Mock).mockImplementation(
-      () => new Promise((resolve) => {
-        resolveLocation = resolve;
-      }),
+      () =>
+        new Promise((resolve) => {
+          resolveLocation = resolve;
+        }),
     );
     mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
     await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);

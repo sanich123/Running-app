@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
-import { setIsAppShuted, setIsTooMuchSpeed, setTooMuchSpeed, setTooMuchSpeedTimestamp } from '@R/slices/location/location';
+import {
+  setIsAppShuted,
+  setIsTooMuchSpeed,
+  setTooMuchSpeed,
+  setTooMuchSpeedTimestamp,
+} from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { TIMEOUT_MESSAGE } from '@Routes/activity/location-indicator/const';
 import { getMaxTrackingSpeedForSport } from '@U/location/location-utils';

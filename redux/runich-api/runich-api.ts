@@ -3,8 +3,8 @@ import { Mutex } from 'async-mutex';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { resetAuthSlice, setAccessToken } from '@R/slices/auth/auth';
-import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
 import { deviceId, deviceName, deviceMetadata, platform } from '@U/device/device-id';
+import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
 import type { AuthResponse } from './types';
 import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';
 

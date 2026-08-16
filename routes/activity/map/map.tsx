@@ -39,9 +39,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
   const canUseLocation = Boolean(
     foregroundPermissionStatus?.granted && backgroundPermissionStatus?.granted && hasProfileData(profile),
   );
-  const canRenderMap = Boolean(
-    canUseLocation && (Platform.OS !== 'android' || isLocationServicesEnabled),
-  );
+  const canRenderMap = Boolean(canUseLocation && (Platform.OS !== 'android' || isLocationServicesEnabled));
   const isLoadingLocationPrerequisites =
     isProfileLoading || foregroundPermissionStatus === null || backgroundPermissionStatus === null;
   const currentPosition: LocationObject | null = lastPosition ?? initialLocation;

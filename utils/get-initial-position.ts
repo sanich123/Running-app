@@ -1,8 +1,8 @@
 import { getCurrentPositionAsync, getLastKnownPositionAsync } from 'expo-location';
-import type { LocationObject } from 'expo-location';
 import { setInitialLocation } from '@R/slices/location/location';
 import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
+import type { LocationObject } from 'expo-location';
 
 interface GetPositionProps {
   setIsLoading: (arg: boolean) => void;

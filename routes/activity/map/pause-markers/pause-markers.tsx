@@ -13,7 +13,15 @@ function formatPauseTime(timestamp: number, language: LANGUAGES) {
   });
 }
 
-function PauseMarker({ location, isResume, language }: { location: LocationObject; isResume: boolean; language: LANGUAGES }) {
+function PauseMarker({
+  location,
+  isResume,
+  language,
+}: {
+  location: LocationObject;
+  isResume: boolean;
+  language: LANGUAGES;
+}) {
   const { colors } = useTheme();
   const markerColor = isResume ? colors.primary : colors.tertiary;
 
@@ -27,7 +35,9 @@ function PauseMarker({ location, isResume, language }: { location: LocationObjec
           <Icon source={isResume ? 'play' : 'pause'} size={18} color={markerColor} />
         </View>
         {!isResume && (
-          <Text style={[styles.time, { color: colors.onSurface }]}>{formatPauseTime(location.timestamp, language)}</Text>
+          <Text style={[styles.time, { color: colors.onSurface }]}>
+            {formatPauseTime(location.timestamp, language)}
+          </Text>
         )}
       </View>
     </MarkerView>
@@ -44,7 +54,9 @@ export default function PauseMarkers({ locations }: { locations: LocationObject[
     const pauseLocation = locations[index - 1]?.at(-1);
     const resumeLocation = segment[0];
     return [
-      pauseLocation ? <PauseMarker key={`pause-${index}`} location={pauseLocation} isResume={false} language={language} /> : null,
+      pauseLocation ? (
+        <PauseMarker key={`pause-${index}`} location={pauseLocation} isResume={false} language={language} />
+      ) : null,
       resumeLocation ? (
         <PauseMarker key={`resume-${index}`} location={resumeLocation} isResume language={language} />
       ) : null,

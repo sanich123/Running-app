@@ -1,6 +1,6 @@
-import { createMMKV } from 'react-native-mmkv';
-import * as Device from 'expo-device';
 import Constants from 'expo-constants';
+import * as Device from 'expo-device';
+import { createMMKV } from 'react-native-mmkv';
 
 const storage = createMMKV({ id: 'runich-device' });
 const key = 'device-id';

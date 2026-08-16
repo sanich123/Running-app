@@ -21,9 +21,9 @@ jest.mock('@Routes/activity/icon-choose-sport/icon-choose-sport', () => ({
 jest.mock('@Routes/activity/map/map', () => ({
   __esModule: true,
   default: function ActivityMapMock({
-      onLocationReadinessChange,
+    onLocationReadinessChange,
   }: {
-      onLocationReadinessChange: (value: boolean) => void;
+    onLocationReadinessChange: (value: boolean) => void;
   }) {
     const React = require('react');
     const { View, Text } = require('react-native');
