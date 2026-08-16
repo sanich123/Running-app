@@ -46,7 +46,7 @@ export default function SaveBtn() {
                       ...additionalInfoActivity,
                       date: new Date(manualDate).toISOString(),
                       distance: manualDistance * 1000,
-                      duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
+                      duration: Math.round(getMillisecondsFromHoursMinutes(manualHours, manualMinutes)),
                       speed: getSpeedInMinsInKm(
                         manualDistance,
                         getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
@@ -55,6 +55,7 @@ export default function SaveBtn() {
                     }
                   : {
                       ...finishedActivity,
+                      duration: Math.round(finishedActivity.duration),
                       ...additionalInfoActivity,
                       mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
                     },
