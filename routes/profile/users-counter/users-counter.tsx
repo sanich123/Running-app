@@ -20,13 +20,11 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
   const {
     isLoading: isFollowersLoading,
     isError: isFollowersError,
-    error: followersError,
     data: whoFollowsUserList,
   } = useGetFollowersByUserIdQuery(whosId, { skip: variant === USERS_VARIANT.whoUserFollows });
 
   const {
     isLoading: isFollowingsLoading,
-    error: followingsError,
     isError: isFollowingsError,
     data: whoUserFollowsList,
   } = useGetYouFollowUsersByUserIdQuery(whosId, { skip: variant === USERS_VARIANT.whoFollowsUser });
