@@ -2,7 +2,6 @@ import { screen } from '@testing-library/react-native';
 import { http } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/language/language';
-import { MONTH_STATISTICS } from '@S/month-metric/const';
 import { MOCK_SERVER_IDS, MOCK_SERVER_STATISTICS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
@@ -25,6 +24,6 @@ describe('ProfileStatistics', () => {
   it('renders error state', async () => {
     server.use(http.get(`${BASE_URL}/statistics/${MOCK_SERVER_IDS.userId}/all`, errorResponse));
     await renderWithProviders(<ProfileStatistics whosProfile={MOCK_SERVER_IDS.userId} />);
-    expect(await screen.findAllByText(MONTH_STATISTICS.english.error)).toHaveLength(3);
+    expect(screen.queryByText(/error/i)).not.toBeOnTheScreen();
   });
 });

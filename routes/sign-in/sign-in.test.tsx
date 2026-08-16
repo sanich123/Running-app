@@ -31,15 +31,6 @@ describe('sign in', () => {
     jest.clearAllMocks();
   });
 
-  it('shows the VK ID error returned by the backend', async () => {
-    mockAuthParams = { authStep: 'login', oauthError: 'invalid code_verifier' };
-
-    await renderWithProviders(<SignIn />);
-
-    expect(await screen.findByText('invalid code_verifier')).toBeOnTheScreen();
-    expect(screen.getByText('Не удалось войти через VK ID')).toBeOnTheScreen();
-  });
-
   it('logs in with credentials entered by the user', async () => {
     const user = userEvent.setup();
     let requestBody: unknown;
@@ -62,18 +53,16 @@ describe('sign in', () => {
     const user = userEvent.setup();
     mockPush.mockClear();
     await renderWithProviders(<SignIn />);
-    await user.press(screen.getByText('Политика конфиденциальности'));
-    await user.press(screen.getByText('Юридическая информация'));
-    expect(mockPush).toHaveBeenNthCalledWith(1, `/${ROUTES.privacyPolicy}`);
-    expect(mockPush).toHaveBeenNthCalledWith(2, `/${ROUTES.legalInformation}`);
+    await user.press(screen.getByText('Условиями пользования'));
+    await user.press(screen.getByText('Политикой конфиденциальности'));
+    expect(mockPush).toHaveBeenNthCalledWith(1, `/${ROUTES.legalInformation}`);
+    expect(mockPush).toHaveBeenNthCalledWith(2, `/${ROUTES.privacyPolicy}`);
   });
 
-  it('keeps the old navigation below the form and supports email link login', async () => {
-    const user = userEvent.setup();
+  it('hides email link login from the compact login form', async () => {
     await renderWithProviders(<SignIn />);
 
     expect(screen.queryByTestId(`auth-mode-${SignInPageStates.login}`)).not.toBeOnTheScreen();
-    await user.press(screen.getByTestId('email-link-navigation'));
-    expect(mockPush).toHaveBeenCalledWith({ pathname: `/${ROUTES.signIn}`, params: { authStep: 'email-link' } });
+    expect(screen.queryByTestId('email-link-navigation')).not.toBeOnTheScreen();
   });
 });

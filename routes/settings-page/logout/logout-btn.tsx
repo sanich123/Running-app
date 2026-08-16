@@ -8,7 +8,7 @@ import SettingsRow from '../settings-row/settings-row';
 
 export default function LogoutBtn() {
   const { language } = useAppSelector(({ language }) => language);
-  const { replace } = useRouter();
+  const { replace, dismissAll, canDismiss } = useRouter();
   const dispatch = useAppDispatch();
   return (
     <SettingsRow
@@ -19,6 +19,9 @@ export default function LogoutBtn() {
         try {
           await persistor.purge();
           dispatch(resetStore());
+          if (canDismiss()) {
+            dismissAll();
+          }
           replace(`/${ROUTES.signIn}`);
         } catch (error) {
           errorToast('Не удалось выйти из аккаунта', error);

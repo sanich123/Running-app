@@ -4,6 +4,7 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import ChangeTheme from './change-theme/change-theme';
 import DeleteAccountBtn from './delete-account/delete-account';
 import EmailNotificationsBtn from './email-notifications/email-notifications';
+import FeedbackBtn from './feedback-btn/feedback-btn';
 import LanguageSwitcher from './language-switcher/language-switcher';
 import LogoutBtn from './logout/logout-btn';
 import MigrationBtn from './migration-btn/migration-btn';
@@ -26,6 +27,7 @@ export default function SettingsPage() {
       <ChangeTheme />
       <MigrationBtn />
       <EmailNotificationsBtn />
+      <FeedbackBtn />
       <LogoutBtn />
       <DeleteAccountBtn />
     </ScrollView>

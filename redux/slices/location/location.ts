@@ -77,6 +77,9 @@ const location = createSlice({
     setTooMuchSpeed: (state, action) => {
       state.tooMuchSpeed = action.payload;
     },
+    setTooMuchSpeedTimestamp: (state, action) => {
+      state.tooMuchSpeedTimestamp = action.payload;
+    },
     resetLocationsFromBackground: (state) => {
       state.locationsFromBackground = [];
       state.duration = 0;
@@ -93,6 +96,7 @@ const location = createSlice({
       state.isAppShutedByPhone = false;
       state.isTooMuchSpeed = false;
       state.tooMuchSpeed = 0;
+      state.tooMuchSpeedTimestamp = null;
     },
     resetLocationSlice: () => {
       return LOCATION_INITIAL_STATE;
@@ -122,6 +126,7 @@ export const {
   setLastPosition,
   setIsTooMuchSpeed,
   setTooMuchSpeed,
+  setTooMuchSpeedTimestamp,
   resetLocationSlice,
 } = location.actions;
 

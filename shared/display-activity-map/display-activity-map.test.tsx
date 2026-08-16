@@ -55,4 +55,17 @@ describe('display activity map', () => {
     expect(screen.getByTestId('activity-map-start-marker')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-map-end-marker')).toBeOnTheScreen();
   });
+
+  it('renders zoom controls for the activity map', async () => {
+    const locations = [
+      { coords: { longitude: 37.6, latitude: 55.7 } },
+      { coords: { longitude: 37.8, latitude: 55.9 } },
+    ] as LocationObject[];
+    await renderWithProviders(<DisplayActivityMap locations={locations} kilometresSplit={[]} />);
+
+    expect(screen.getByTestId('activity-map-increase-zoom')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-map-decrease-zoom')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-map-increase-zoom')).toBeEnabled();
+    expect(screen.getByTestId('activity-map-decrease-zoom')).toBeEnabled();
+  });
 });

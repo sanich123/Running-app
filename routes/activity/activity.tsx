@@ -23,9 +23,9 @@ export default function Activity() {
     activityStatus === STATUSES.started || activityStatus === STATUSES.continued,
   );
   const didPauseRecoveredTracking = useRef(false);
-  const [isReadyToRecordLocation, setIsReadyToRecordLocation] = useState(false);
+  const [isLocationReadyForRecording, setIsLocationReadyForRecording] = useState(false);
   const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
-  const { isLoading: isGettingLocation } = useGetCurrentLocation(isReadyToRecordLocation);
+  const { isLoading: isLocationLoading } = useGetCurrentLocation(isLocationReadyForRecording);
 
   useEffect(() => {
     if (!shouldPauseRecoveredTracking.current || didPauseRecoveredTracking.current) {
@@ -48,19 +48,21 @@ export default function Activity() {
         <View
           style={[styles.mapLayer, !isMapVisible && styles.hiddenMapLayer]}
           pointerEvents={isMapVisible ? 'auto' : 'none'}>
-          <Map setIsReadyToRecordLocation={setIsReadyToRecordLocation} />
+          <Map onLocationReadinessChange={setIsLocationReadyForRecording} />
         </View>
         {activityStatus !== STATUSES.initial && <Metrics />}
       </View>
       <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
         <View style={styles.metrics}>
           {activityStatus === STATUSES.initial && (
-            <IconChooseSport disabled={!isReadyToRecordLocation || isGettingLocation || isTrackingActionInProgress} />
+            <IconChooseSport
+              disabled={!isLocationReadyForRecording || isLocationLoading || isTrackingActionInProgress}
+            />
           )}
           {activityStatus === STATUSES.paused && <PauseBtn />}
           <StartBtn
-            isReadyToRecordLocation={isReadyToRecordLocation}
-            isGettingLocation={isGettingLocation}
+            isReadyToRecordLocation={isLocationReadyForRecording}
+            isGettingLocation={isLocationLoading}
             onTrackingActionInProgressChange={setIsTrackingActionInProgress}
           />
           {activityStatus !== STATUSES.initial && <ShowMapBtn />}

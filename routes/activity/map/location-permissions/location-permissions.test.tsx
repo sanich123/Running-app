@@ -23,11 +23,11 @@ jest.mock('expo-router', () => ({
 jest.mock('@Routes/activity/background-location-modal/background-location-modal', () => () => null);
 jest.mock('@Routes/activity/background-location-switcher/background-location-switcher', () => {
   const { View } = jest.requireActual('react-native');
-  return () => <View />;
+  return () => <View testID="background-location-switcher" />;
 });
 jest.mock('@Routes/activity/foregroud-location-switcher/foreground-location-switcher', () => {
   const { View } = jest.requireActual('react-native');
-  return () => <View />;
+  return () => <View testID="foreground-location-switcher" />;
 });
 jest.mock('@Routes/activity/location-settings-switcher/location-settings-switcher', () => {
   const { View } = jest.requireActual('react-native');
@@ -35,6 +35,23 @@ jest.mock('@Routes/activity/location-settings-switcher/location-settings-switche
 });
 
 describe('location permissions', () => {
+  it('shows the background permission prompt only after foreground permission is granted', async () => {
+    const props = {
+      isMapVisible: true,
+      isLocationEnabled: true,
+      foregroundPermissionStatus: { granted: false } as any,
+      backgroundPermissionStatus: { granted: false } as any,
+      setIsLocationEnabled: jest.fn(),
+      requestForegroundPermission: jest.fn(),
+      requestBackgroundPermission: jest.fn(),
+    };
+    await renderWithProviders(<LocationPermissions {...props} />);
+    expect(screen.queryByTestId('background-location-switcher')).not.toBeOnTheScreen();
+
+    await renderWithProviders(<LocationPermissions {...props} foregroundPermissionStatus={{ granted: true } as any} />);
+    expect(screen.getAllByTestId('background-location-switcher')).toHaveLength(1);
+  });
+
   it('opens profile creation when recording is blocked by a missing profile', async () => {
     const user = userEvent.setup();
     mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));

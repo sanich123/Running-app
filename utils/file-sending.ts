@@ -9,15 +9,15 @@ export async function compressAndSendFile(
   fileSrc: string | File,
   userId: string,
 ): Promise<{ url: string; thumbnail: string | null } | null | undefined> {
-  const splittedImg = fileSrc instanceof File ? fileSrc.name.split('.') : fileSrc.split('.');
-  const extension = splittedImg[splittedImg.length - 1];
+  const sourceName = typeof File !== 'undefined' && fileSrc instanceof File ? fileSrc.name : String(fileSrc);
+  const extension = getFileExtension(sourceName);
   const isVideoFile = ['mp4', 'avi', 'm4v'].includes(extension);
 
   const compressedFile = await compressImageOrVideo(fileSrc, extension);
   if (compressedFile) {
     const encodedFile = await getBase64CodedImage(compressedFile);
     if (encodedFile) {
-      const pathToFile = await uploadPhoto(userId, encodedFile, extension);
+      const pathToFile = await uploadPhoto(userId, encodedFile, isVideoFile ? 'mp4' : 'jpg');
       if (pathToFile) {
         const url = await getPublicUrl(pathToFile);
         if (url) {
@@ -53,7 +53,7 @@ export async function getAccessToGallery() {
 
 async function compressImageOrVideo(fileSrc: string | File, extension: string) {
   const MAX_VIDEO_SIZE = 15000;
-  const supportedImagesExtensions = /webp|png|avif|heic|jpeg|gif|svg|ico|jpg/;
+  const supportedImagesExtensions = /^(webp|png|avif|heic|jpeg|gif|svg|ico|jpg)$/;
   const isVideoFile = ['mp4', 'avi', 'm4v'].includes(extension);
   if (isVideoFile) {
     try {
@@ -81,4 +81,9 @@ async function compressImageOrVideo(fileSrc: string | File, extension: string) {
       errorToast('Ошибка во время сжатия изображения', error);
     }
   }
+}
+
+function getFileExtension(fileName: string) {
+  const cleanName = fileName.split(/[?#]/, 1)[0];
+  return cleanName.split('.').at(-1)?.toLowerCase() ?? '';
 }

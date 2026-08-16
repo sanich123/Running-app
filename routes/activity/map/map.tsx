@@ -12,54 +12,65 @@ import MapKmSplit from '@S/display-activity-map/map-km-split/map-km-split';
 import MapRouteLine from '@S/display-activity-map/map-route-line/map-route-line';
 import { errorToast } from '@S/error-toast/error-toast';
 import LocationPermissions from './location-permissions/location-permissions';
+import MapControls from './map-controls/map-controls';
 import MapNavIcon from './map-nav-icon/map-nav-icon';
+import PauseMarkers from './pause-markers/pause-markers';
 import { hasProfileData } from './profile-status';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { Location as MapboxLocation } from '@rnmapbox/maps';
+import type { LocationObject } from 'expo-location';
 
-export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecordLocation: (arg: boolean) => void }) {
-  const { isMapVisible, locationsWithPauses, kilometresSplit } = useAppSelector(({ location }) => location);
+export default function Map({ onLocationReadinessChange }: { onLocationReadinessChange: (isReady: boolean) => void }) {
+  const { isMapVisible, locationsWithPauses, kilometresSplit, lastPosition, initialLocation } = useAppSelector(
+    ({ location }) => location,
+  );
   const { userId } = useAppSelector(({ auth }) => auth);
   const { colors } = useTheme();
   const { data: profile, isLoading: isProfileLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
-  const [isLocationEnabled, setIsLocationEnabled] = useState(false);
+  const [isLocationServicesEnabled, setIsLocationServicesEnabled] = useState(false);
   const [foregroundPermissionStatus, requestForegroundPermission] = useForegroundPermissions();
   const [backgroundPermissionStatus, requestBackgroundPermission] = useBackgroundPermissions();
-  const [isNeedToRefreshPermission, setIsNeedToRefreshPermission] = useState(false);
-  const [isBatteryOptimizationEnabled, setIsBatteryOptimizationEnabled] = useState(false);
-  const [isFollowingUserLocation, setIsFollowingUserLocation] = useState(true);
-  const [zoomLevel, setZoomLevel] = useState(18);
+  const [shouldRefreshPermissionStatus, setShouldRefreshPermissionStatus] = useState(false);
+  const [isBatteryOptimizationActive, setIsBatteryOptimizationActive] = useState(false);
+  const [isCenteringOnCurrentLocation, setIsCenteringOnCurrentLocation] = useState(false);
+  const [shouldFollowUserLocation, setShouldFollowUserLocation] = useState(true);
+  const [mapZoomLevel, setMapZoomLevel] = useState(18);
+  const [mapboxLocation, setMapboxLocation] = useState<MapboxLocation | null>(null);
   const cameraRef = useRef<Camera>(null);
   const batteryOptimizationModalRef = useRef<BottomSheetModal>(null);
-  const hasLocationPermissions = Boolean(
+  const canUseLocation = Boolean(
     foregroundPermissionStatus?.granted && backgroundPermissionStatus?.granted && hasProfileData(profile),
   );
-  const isReadyToShowLocationOnMap = Boolean(
-    hasLocationPermissions && (Platform.OS !== 'android' || isLocationEnabled),
-  );
-  const isPermissionDataLoading =
+  const canRenderMap = Boolean(canUseLocation && (Platform.OS !== 'android' || isLocationServicesEnabled));
+  const isLoadingLocationPrerequisites =
     isProfileLoading || foregroundPermissionStatus === null || backgroundPermissionStatus === null;
+  const currentPosition: LocationObject | null = lastPosition ?? initialLocation;
+  const shouldShowMapboxLocation =
+    !currentPosition || !mapboxLocation || distanceInMeters(currentPosition, mapboxLocation) > 10;
+  const hasPoorLocationAccuracy = (currentPosition?.coords.accuracy ?? 0) > 50;
   useEffect(() => {
-    setIsReadyToRecordLocation(hasLocationPermissions);
-  }, [hasLocationPermissions, setIsReadyToRecordLocation]);
+    onLocationReadinessChange(canUseLocation);
+  }, [canUseLocation, onLocationReadinessChange]);
 
   useEffect(() => {
-    if (Platform.OS !== 'android' || !hasLocationPermissions) {
+    if (Platform.OS !== 'android' || !canUseLocation) {
       return;
     }
 
     BatteryOptEnabled()
       .then((isEnabled: boolean) => {
-        setIsBatteryOptimizationEnabled(isEnabled);
-        setIsNeedToRefreshPermission(false);
+        setIsBatteryOptimizationActive(isEnabled);
+        setShouldRefreshPermissionStatus(false);
       })
       .catch((error: unknown) => errorToast('Не удалось проверить оптимизацию батареи', error));
-  }, [hasLocationPermissions, isNeedToRefreshPermission]);
+  }, [canUseLocation, shouldRefreshPermissionStatus]);
 
-  const moveToCurrentLocation = async () => {
+  const centerMapOnCurrentLocation = async () => {
+    setIsCenteringOnCurrentLocation(true);
     try {
       const position = await getCurrentPositionAsync({ accuracy: 6 });
-      setIsFollowingUserLocation(false);
-      setZoomLevel(18);
+      setShouldFollowUserLocation(false);
+      setMapZoomLevel(18);
       setTimeout(() => {
         cameraRef.current?.setCamera({
           centerCoordinate: [position.coords.longitude, position.coords.latitude],
@@ -67,89 +78,52 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
           animationMode: 'flyTo',
           animationDuration: 800,
         });
-        setTimeout(() => setIsFollowingUserLocation(true), 900);
+        setTimeout(() => setShouldFollowUserLocation(true), 900);
       }, 50);
     } catch (error) {
       errorToast('Не удалось определить текущее местоположение', error);
+    } finally {
+      setIsCenteringOnCurrentLocation(false);
     }
   };
 
   return (
     <>
-      {isPermissionDataLoading ? (
+      {isLoadingLocationPrerequisites ? (
         <View style={[styles.permissionLoading, { backgroundColor: colors.background }]}>
           <ActivityIndicator size="large" testID="activity-permissions-loading" />
         </View>
-      ) : isReadyToShowLocationOnMap ? (
+      ) : canRenderMap ? (
         <View style={styles.mapWrapper}>
           <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
             <UserLocation
-              visible={false}
+              visible={shouldShowMapboxLocation}
               animated
+              onUpdate={setMapboxLocation}
               {...(Platform.OS === 'android' ? { androidRenderMode: 'compass' as const } : {})}
             />
             <MapNavIcon profilePhoto={profile?.profilePhoto} />
             <Camera
               ref={cameraRef}
-              followUserLocation={isFollowingUserLocation}
-              followZoomLevel={zoomLevel}
+              followUserLocation={shouldFollowUserLocation}
+              followZoomLevel={mapZoomLevel}
               animationMode="flyTo"
             />
             <MapRouteLine locations={locationsWithPauses} />
+            <PauseMarkers locations={locationsWithPauses} />
             <MapKmSplit kilometresSplit={kilometresSplit} />
           </MapView>
           <View style={styles.mapActions}>
-            <IconButton
-              testID="increase-map-zoom"
-              mode="contained-tonal"
-              icon="plus"
-              iconColor={colors.primary}
-              containerColor={colors.surface}
-              size={24}
-              disabled={zoomLevel >= 20}
-              onPress={() => {
-                const nextZoomLevel = Math.min(20, zoomLevel + 1);
-                setZoomLevel(nextZoomLevel);
-                setIsFollowingUserLocation(false);
-                cameraRef.current?.setCamera({
-                  zoomLevel: nextZoomLevel,
-                  animationMode: 'easeTo',
-                  animationDuration: 250,
-                });
-              }}
-              accessibilityLabel="Увеличить масштаб карты"
+            <MapControls
+              cameraRef={cameraRef}
+              mapZoomLevel={mapZoomLevel}
+              isCenteringOnCurrentLocation={isCenteringOnCurrentLocation}
+              hasPoorLocationAccuracy={hasPoorLocationAccuracy}
+              onZoomLevelChange={setMapZoomLevel}
+              onFollowUserLocationChange={setShouldFollowUserLocation}
+              onCenterOnCurrentLocation={centerMapOnCurrentLocation}
             />
-            <IconButton
-              testID="decrease-map-zoom"
-              mode="contained-tonal"
-              icon="minus"
-              iconColor={colors.primary}
-              containerColor={colors.surface}
-              size={24}
-              disabled={zoomLevel <= 3}
-              onPress={() => {
-                const nextZoomLevel = Math.max(3, zoomLevel - 1);
-                setZoomLevel(nextZoomLevel);
-                setIsFollowingUserLocation(false);
-                cameraRef.current?.setCamera({
-                  zoomLevel: nextZoomLevel,
-                  animationMode: 'easeTo',
-                  animationDuration: 250,
-                });
-              }}
-              accessibilityLabel="Уменьшить масштаб карты"
-            />
-            <IconButton
-              testID="move-to-current-location"
-              mode="contained-tonal"
-              icon="crosshairs-gps"
-              iconColor={colors.primary}
-              containerColor={colors.surface}
-              size={24}
-              onPress={moveToCurrentLocation}
-              accessibilityLabel="Текущее местоположение"
-            />
-            {isBatteryOptimizationEnabled && (
+            {isBatteryOptimizationActive && (
               <IconButton
                 testID="battery-optimization-info"
                 mode="contained-tonal"
@@ -164,22 +138,35 @@ export default function Map({ setIsReadyToRecordLocation }: { setIsReadyToRecord
           </View>
           <BatteryOptimizationModal
             batteryOptimizationEnabledModalRef={batteryOptimizationModalRef}
-            setIsNeedToRefreshPermission={setIsNeedToRefreshPermission}
+            setIsNeedToRefreshPermission={setShouldRefreshPermissionStatus}
           />
         </View>
       ) : (
         <LocationPermissions
           isMapVisible={isMapVisible}
-          isLocationEnabled={isLocationEnabled}
+          isLocationEnabled={isLocationServicesEnabled}
           foregroundPermissionStatus={foregroundPermissionStatus}
           backgroundPermissionStatus={backgroundPermissionStatus}
-          setIsLocationEnabled={setIsLocationEnabled}
+          setIsLocationEnabled={setIsLocationServicesEnabled}
           requestForegroundPermission={requestForegroundPermission}
           requestBackgroundPermission={requestBackgroundPermission}
         />
       )}
     </>
   );
+}
+
+function distanceInMeters(first: LocationObject, second: MapboxLocation) {
+  const earthRadius = 6_371_000;
+  const firstLatitude = (first.coords.latitude * Math.PI) / 180;
+  const secondLatitude = (second.coords.latitude * Math.PI) / 180;
+  const latitudeDelta = secondLatitude - firstLatitude;
+  const longitudeDelta = ((second.coords.longitude - first.coords.longitude) * Math.PI) / 180;
+  const haversine =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(firstLatitude) * Math.cos(secondLatitude) * Math.sin(longitudeDelta / 2) ** 2;
+
+  return earthRadius * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
 }
 
 const styles = StyleSheet.create({

@@ -21,13 +21,13 @@ jest.mock('@Routes/activity/icon-choose-sport/icon-choose-sport', () => ({
 jest.mock('@Routes/activity/map/map', () => ({
   __esModule: true,
   default: function ActivityMapMock({
-    setIsReadyToRecordLocation,
+    onLocationReadinessChange,
   }: {
-    setIsReadyToRecordLocation: (value: boolean) => void;
+    onLocationReadinessChange: (value: boolean) => void;
   }) {
     const React = require('react');
     const { View, Text } = require('react-native');
-    React.useEffect(() => setIsReadyToRecordLocation(true), [setIsReadyToRecordLocation]);
+    React.useEffect(() => onLocationReadinessChange(true), [onLocationReadinessChange]);
     return (
       <View testID="activity-map">
         <Text>map</Text>

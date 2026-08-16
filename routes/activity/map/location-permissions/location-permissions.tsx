@@ -37,7 +37,7 @@ export default function LocationPermissions({
           requestForegroundPermission={requestForegroundPermission}
         />
       )}
-      {!backgroundPermissionStatus?.granted && (
+      {foregroundPermissionStatus?.granted && !backgroundPermissionStatus?.granted && (
         <BackgroundLocationSwitcher
           backgroundPermissionStatus={!!backgroundPermissionStatus?.granted}
           backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}

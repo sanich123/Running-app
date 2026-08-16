@@ -22,6 +22,7 @@ export default function CustomTextInput<T extends FieldValues>({
   capitalizeValue = false,
   replaceCommaToDot = false,
   onSubmitEditing,
+  compact = false,
 }: CustomTextInputProps<T>) {
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
   const { colors } = useTheme();
@@ -41,7 +42,7 @@ export default function CustomTextInput<T extends FieldValues>({
             inputMode={inputMode}
             mode="outlined"
             style={{
-              marginTop: 12,
+              marginTop: compact ? 4 : 12,
               backgroundColor: colors.surface,
               fontSize: 15,
               minHeight: multiline ? 96 : 52,

@@ -21,6 +21,7 @@ export default function CustomPasswordInput<T extends FieldValues>({
   placeholder,
   testID,
   visibilityTestID,
+  compact = false,
 }: CustomPasswordInputProps<T>) {
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
   const { colors } = useTheme();
@@ -45,7 +46,7 @@ export default function CustomPasswordInput<T extends FieldValues>({
               backgroundColor: colors.surface,
               fontSize: 15,
               height: 52,
-              marginTop: 12,
+              marginTop: compact ? 4 : 12,
               opacity: shouldBeDisabled ? 0.7 : 1,
             }}
             contentStyle={{ fontFamily: FONT_FAMILIES.regular }}

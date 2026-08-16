@@ -5,7 +5,6 @@ import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
-import { errorExtracter } from '@U/error-handler';
 import { USERS_COUNT, USERS_VARIANT } from './const';
 
 export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
@@ -21,17 +20,17 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
   const {
     isLoading: isFollowersLoading,
     isError: isFollowersError,
-    error: followersError,
     data: whoFollowsUserList,
   } = useGetFollowersByUserIdQuery(whosId, { skip: variant === USERS_VARIANT.whoUserFollows });
 
   const {
     isLoading: isFollowingsLoading,
-    error: followingsError,
     isError: isFollowingsError,
     data: whoUserFollowsList,
   } = useGetYouFollowUsersByUserIdQuery(whosId, { skip: variant === USERS_VARIANT.whoFollowsUser });
-  const whatErrorToRespond = variant === USERS_VARIANT.whoUserFollows ? followingsError : followersError;
+  if (isFollowersError || isFollowingsError) {
+    return null;
+  }
 
   return (
     <TouchableRipple
@@ -41,14 +40,11 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
       borderless
       style={{ borderRadius: 8 }}>
       <View style={{ paddingHorizontal: 10, paddingVertical: 8 }}>
-        <Text variant="labelSmall">
-          {isFollowersError || isFollowingsError ? `${USERS_COUNT[language].error}:` : whatTitleToRender}
-        </Text>
+        <Text variant="labelSmall">{whatTitleToRender}</Text>
         <Text variant="titleMedium" style={{ fontFamily: FONT_FAMILIES.extraBold }}>
           {(isFollowersLoading || isFollowingsLoading) && ' '}
           {whoFollowsUserList?.length && `${whoFollowsUserList?.length}`}
           {whoUserFollowsList?.length && `${whoUserFollowsList?.length}`}
-          {whatErrorToRespond && `${errorExtracter(whatErrorToRespond)}`}
         </Text>
       </View>
     </TouchableRipple>

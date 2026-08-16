@@ -4,6 +4,7 @@ import { useTheme, Text, Button } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { ROUTES } from '@const/enums';
 import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/services/activity/activity';
+import { useUpdateSessionLocationMutation } from '@R/services/authentication/authentication';
 import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { setIsDisableWhileSending } from '@R/slices/activity/activity';
 import { resetLocationsFromBackground } from '@R/slices/location/location';
@@ -26,6 +27,7 @@ export default function SaveBtn() {
   const { language } = useAppSelector(({ language }) => language);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
   const [updateActivity, { isLoading: isUpdating }] = useUpdateActivityInfoMutation();
+  const [updateSessionLocation] = useUpdateSessionLocationMutation();
   const isSaving = isLoading || isUpdating;
   const textOnBtn = isEditingActivity ? ACTIVITY_SAVE_BTN[language].update : ACTIVITY_SAVE_BTN[language].save;
 
@@ -44,7 +46,7 @@ export default function SaveBtn() {
                       ...additionalInfoActivity,
                       date: new Date(manualDate).toISOString(),
                       distance: manualDistance * 1000,
-                      duration: getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
+                      duration: Math.round(getMillisecondsFromHoursMinutes(manualHours, manualMinutes)),
                       speed: getSpeedInMinsInKm(
                         manualDistance,
                         getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
@@ -53,11 +55,19 @@ export default function SaveBtn() {
                     }
                   : {
                       ...finishedActivity,
+                      duration: Math.round(finishedActivity.duration),
                       ...additionalInfoActivity,
                       mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
                     },
               id: isEditingActivity ? activityId : userId,
             };
+            const lastLocation = savedActivity.body.locations?.at(-1);
+            if (lastLocation) {
+              void updateSessionLocation({
+                latitude: lastLocation.coords.latitude,
+                longitude: lastLocation.coords.longitude,
+              });
+            }
             dispatch(setIsDisableWhileSending(true));
             if (isEditingActivity) {
               await updateActivity(savedActivity)

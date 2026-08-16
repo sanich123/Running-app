@@ -10,7 +10,6 @@ import { runichApi } from './runich-api';
 
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 
-const mockDismissAll = jest.fn();
 const mockReplace = jest.fn();
 
 const navigationProbeApi = runichApi.injectEndpoints({
@@ -22,9 +21,7 @@ const navigationProbeApi = runichApi.injectEndpoints({
 
 describe('runich API navigation', () => {
   beforeEach(() => {
-    mockDismissAll.mockClear();
     mockReplace.mockClear();
-    jest.spyOn(router, 'dismissAll').mockImplementation(mockDismissAll);
     jest.spyOn(router, 'replace').mockImplementation(mockReplace);
   });
 
@@ -39,7 +36,6 @@ describe('runich API navigation', () => {
 
     await store.dispatch(navigationProbeApi.endpoints.navigationProbe.initiate('/navigation/unauthorized'));
 
-    expect(mockDismissAll).toHaveBeenCalledTimes(1);
     expect(mockReplace).toHaveBeenCalledWith(`/${ROUTES.signIn}`);
     expect(store.getState().auth.accessToken).toBe('');
   });
