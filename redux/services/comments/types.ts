@@ -1,7 +1,6 @@
 export interface SendComment {
   body: {
     comment: string;
-    authorId: string;
   };
   id: string;
 }
@@ -15,7 +14,6 @@ export interface UpdateComment {
 export interface SendCommentLike {
   body: {
     commentId: string;
-    authorId: string;
   };
   commentId: string;
 }

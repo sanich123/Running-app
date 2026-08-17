@@ -50,7 +50,7 @@ describe('Comment input', () => {
     await renderWithProviders(<CommentInput commentId="" profile={{ ...MOCK_PROFILE, emailNotifications: false }} />);
     await user.type(screen.getByTestId(COMMENT_INPUT_TEST_ID), 'A real test comment');
     await user.press(screen.getByTestId(COMMENT_ICON_TEST_ID));
-    await waitFor(() => expect(requestBody).toEqual({ comment: 'A real test comment', authorId: 'comment-author-id' }));
+    await waitFor(() => expect(requestBody).toEqual({ comment: 'A real test comment' }));
     expect(mockStore.getState().comment.isShowingTextInput).toBe(false);
   });
 });

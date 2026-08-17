@@ -39,7 +39,7 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
       onPress={async () => {
         try {
           if (friendCell.length > 0) await deleteFriend(friendCell[0].id).unwrap();
-          else await addFriend({ body: { userId }, id: friendId }).unwrap();
+          else await addFriend({ id: friendId }).unwrap();
         } catch (error) {
           errorToast(FOLLOW_UNFOLLOW_BTN[language].errorMsg, error);
         }

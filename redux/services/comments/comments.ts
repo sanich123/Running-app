@@ -64,10 +64,10 @@ const commentsApi = runichApi.injectEndpoints({
         body,
       }),
       invalidatesTags: (result, error, arg) => [{ type: Tags.commentLikes, id: arg.commentId }],
-      async onQueryStarted({ body, commentId }, { dispatch, queryFulfilled }) {
+      async onQueryStarted({ commentId }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           commentsApi.util.updateQueryData('getLikesByCommentId', commentId, (draft) => {
-            draft.push({ authorId: body.authorId, id: `${commentId}:${body.authorId}` });
+            draft.push({ authorId: '', id: `:optimistic` });
           }),
         );
         try {

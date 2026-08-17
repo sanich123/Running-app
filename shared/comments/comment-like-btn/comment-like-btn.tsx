@@ -77,7 +77,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
           if (youGaveCommentLike?.length) {
             await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap();
           } else {
-            await sendLikeToComment({ body: { commentId, authorId: userId }, commentId }).unwrap();
+            await sendLikeToComment({ body: { commentId }, commentId }).unwrap();
           }
         } catch (error) {
           errorToast(COMMENT_LIKE_BTN[language].errorSending, error);
