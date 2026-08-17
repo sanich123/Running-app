@@ -56,7 +56,7 @@ export default function Feed() {
               <FloatingBtn
                 onPressFn={() => {
                   dispatch(resetManualActivitySlice());
-      dispatch(resetAdditionalInfoActivitySlice());
+                  dispatch(resetAdditionalInfoActivitySlice());
                   dispatch(resetFinishedActivity());
                   dispatch(setIsManualAdding(true));
                   push(`/${ROUTES.manualActivity}`);

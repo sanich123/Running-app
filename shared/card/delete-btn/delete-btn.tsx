@@ -6,8 +6,8 @@ import { ROUTES } from '@const/enums';
 import { useDeleteActivityByIdMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
-import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { errorToast } from '@S/error-toast/error-toast';
+import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from './const';
 
 export default function CardDeleteBtn({ activityId }: { activityId: string }) {

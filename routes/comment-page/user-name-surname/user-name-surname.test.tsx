@@ -18,13 +18,19 @@ describe('User name surname', () => {
     await renderWithProviders(<UserNameSurname userId="someUserIdWithAnError" size="bodyLarge" />, {
       store: mockStore,
     });
-    expect(await screen.findByText(`An error: ${getErrorMessageFromError({ status: 401, data: { message: 'bad request' } })}`)).toBeOnTheScreen();
+    expect(
+      await screen.findByText(
+        `An error: ${getErrorMessageFromError({ status: 401, data: { message: 'bad request' } })}`,
+      ),
+    ).toBeOnTheScreen();
   });
   it('should correctly render with isLoading and an error in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<UserNameSurname userId="someUserIdWithAnError" size="bodyLarge" />, {
       store: mockStore,
     });
-    expect(await screen.findByText(`Ошибка: ${getErrorMessageFromError({ status: 401, data: { message: 'bad request' } })}`)).toBeOnTheScreen();
+    expect(
+      await screen.findByText(`Ошибка: ${getErrorMessageFromError({ status: 401, data: { message: 'bad request' } })}`),
+    ).toBeOnTheScreen();
   });
 });

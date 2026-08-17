@@ -20,7 +20,7 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
   const shouldBeDisabled = isDisabled || isDisabledWhileSending;
 
   function declineActivity() {
-      dispatch(resetAdditionalInfoActivitySlice());
+    dispatch(resetAdditionalInfoActivitySlice());
     dispatch(resetFinishedActivity());
     dispatch(resetManualActivitySlice());
     replace(ROUTES.root);

@@ -43,7 +43,9 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
           },
           (isLoading || isError) && styles.isInCenter,
         ]}>
-        {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${getErrorMessageFromError(error)}`}</Text>}
+        {isError && (
+          <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${getErrorMessageFromError(error)}`}</Text>
+        )}
         {photos.length > 0 &&
           photos.map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => {
             if (index === 3) {

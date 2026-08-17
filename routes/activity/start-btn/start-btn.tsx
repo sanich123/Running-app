@@ -118,7 +118,7 @@ export default function StartBtn({
       dispatch(setActivityStatus(STATUSES.initial));
       dispatch(resetLocationsFromBackground());
       dispatch(resetManualActivitySlice());
-          dispatch(resetAdditionalInfoActivitySlice());
+      dispatch(resetAdditionalInfoActivitySlice());
       push(`/${ROUTES.manualActivity}`);
     } catch (error) {
       errorToast(

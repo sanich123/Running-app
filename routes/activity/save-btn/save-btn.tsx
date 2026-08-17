@@ -5,8 +5,8 @@ import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-sa
 import { ROUTES } from '@const/enums';
 import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/services/activity/activity';
 import { useUpdateSessionLocationMutation } from '@R/services/authentication/authentication';
-import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
 import { setIsDisableWhileSending } from '@R/slices/activity/activity';
+import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
 import { resetLocationsFromBackground } from '@R/slices/location/location';
 import { saveUnsendedActivity } from '@R/slices/unsended-activity/unsended-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -75,7 +75,7 @@ export default function SaveBtn() {
                 .then(() => back())
                 .catch((error) => errorToast('', error))
                 .finally(() => {
-        dispatch(resetAdditionalInfoActivitySlice());
+                  dispatch(resetAdditionalInfoActivitySlice());
                   dispatch(resetLocationsFromBackground());
                 });
             } else {

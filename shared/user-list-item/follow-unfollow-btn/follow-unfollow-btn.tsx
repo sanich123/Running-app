@@ -7,8 +7,7 @@ import {
   useAddFriendMutation,
 } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
-import { errorToast } from '@S/error-toast/error-toast';
-import { getErrorMessageFromError } from '@S/error-toast/error-toast';
+import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { FOLLOW_UNFOLLOW_BTN } from './const';
 
 export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {

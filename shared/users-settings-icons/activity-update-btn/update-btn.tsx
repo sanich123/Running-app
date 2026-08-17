@@ -3,6 +3,7 @@ import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN } from '@const/activity-save-btn';
 import { ROUTES } from '@const/enums';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
+import { resetFinishedActivity, setActivityId } from '@R/slices/activity/activity';
 import {
   addPhotoUrls,
   resetAdditionalInfoActivitySlice,
@@ -12,7 +13,6 @@ import {
   saveSport,
   saveTitle,
 } from '@R/slices/activity-additional-info/activity-additional-info';
-import { resetFinishedActivity, setActivityId } from '@R/slices/activity/activity';
 import {
   resetManualActivitySlice,
   setIsEditingActivity,
