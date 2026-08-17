@@ -1,5 +1,4 @@
 import { File, Paths } from 'expo-file-system';
-import { deleteAsync } from 'expo-file-system/legacy';
 import { unzip, zip } from 'react-native-zip-archive';
 
 export async function unzipFiles({
@@ -32,8 +31,9 @@ export async function zipFiles({
   try {
     setIsZipping(true);
     const archiveUri = `${Paths.cache.uri}archiveToSend.zip`;
-    if (new File(archiveUri).exists) {
-      await deleteAsync(archiveUri);
+    const archiveFile = new File(archiveUri);
+    if (archiveFile.exists) {
+      archiveFile.delete();
     }
     const pathToArchive = await zip(`${Paths.cache.uri}stravaMigration`, archiveUri);
     setIsZipping(false);
