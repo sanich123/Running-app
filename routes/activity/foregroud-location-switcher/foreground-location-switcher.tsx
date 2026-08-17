@@ -3,9 +3,9 @@ import { Button, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import type { ForgroundLocationSwitcher } from '../types';
+import type { ForegroundLocationSwitcherProps } from '../types';
 
-export default function ForegroundLocationSwitcher({ requestForegroundPermission }: ForgroundLocationSwitcher) {
+export default function ForegroundLocationSwitcher({ requestForegroundPermission }: ForegroundLocationSwitcherProps) {
   const { language } = useAppSelector(({ language }) => language);
   const { colors } = useTheme();
   return (

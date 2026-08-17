@@ -1,5 +1,4 @@
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
-import type { ActivitiesResponse } from '@R/runich-api/types';
 export type { ActivityMutationResponse } from '@R/runich-api/types';
 import type { LastKmSplit } from '@R/slices/location/types';
 import type { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
@@ -14,7 +13,7 @@ export interface FinishedActivity {
   kilometresSplit?: LastKmSplit[];
 }
 
-export interface AdditionalInfoType {
+export interface ActivityAdditionalInfo {
   title: string;
   description: string;
   sport: SPORTS_BTNS_VALUES;
@@ -24,13 +23,13 @@ export interface AdditionalInfoType {
 }
 
 export interface ActivityToSend {
-  body: FinishedActivity & AdditionalInfoType;
+  body: FinishedActivity & ActivityAdditionalInfo;
   id: string;
 }
 
 export interface ActivityUpdateRequest {
   id: string;
-  body: Partial<FinishedActivity & AdditionalInfoType>;
+  body: Partial<FinishedActivity & ActivityAdditionalInfo>;
 }
 
 export interface GetActivityPhotosRequest {
@@ -43,4 +42,3 @@ export interface GetActivitiesByIdsRequest {
 }
 
 /** Kept as an alias for existing imports. */
-export type ActivitiesReponse = ActivitiesResponse;

@@ -2,9 +2,9 @@ import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import { ROUTES } from '@const/enums';
+import * as errorToastModule from '@S/error-toast/error-toast';
 import { BASE_URL } from '@T/utils/handlers';
 import { server } from '@T/utils/server';
-import * as errorToastModule from '@S/error-toast/error-toast';
 import { CARD_DELETE_BTN, CARD_DELETE_BTN_TEST_ID } from './const';
 import ActivityCardDeleteBtn from './delete-btn';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
@@ -47,7 +47,9 @@ describe('Activity card delete btn', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
     server.use(
-      http.delete(`${BASE_URL}/activity/:activityId`, () => HttpResponse.json({ message: 'Delete failed' }, { status: 500 })),
+      http.delete(`${BASE_URL}/activity/:activityId`, () =>
+        HttpResponse.json({ message: 'Delete failed' }, { status: 500 }),
+      ),
     );
 
     await renderWithProviders(<ActivityCardDeleteBtn activityId="someActivityId" />);

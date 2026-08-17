@@ -2,9 +2,9 @@ import { memo } from 'react';
 import { Text } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { NUMBER_OF_LIKES } from './const';
-import type { NumOfLikesProps } from '../types';
+import type { NumberOfLikesProps } from '../types';
 
-export default memo(function NumberOfLikes({ likes }: NumOfLikesProps) {
+export default memo(function NumberOfLikes({ likes }: NumberOfLikesProps) {
   const { userId } = useAppSelector(({ auth }) => auth);
   const isOwnerLiked = likes.some(({ authorId }) => authorId === userId);
   const restLiked = isOwnerLiked ? likes.length - 1 : likes.length;

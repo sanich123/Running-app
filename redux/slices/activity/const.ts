@@ -1,7 +1,7 @@
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import type { ActivityInitialState } from './types';
-import type { AdditionalInfoType, FinishedActivity } from '@R/services/activity/types';
+import type { ActivityAdditionalInfo, FinishedActivity } from '@R/services/activity/types';
 
 export const FINISHED_ACTIVITY_INITIAL_STATE: FinishedActivity = {
   locations: [],
@@ -11,7 +11,7 @@ export const FINISHED_ACTIVITY_INITIAL_STATE: FinishedActivity = {
   kilometresSplit: [],
 };
 
-export const ADDITIONAL_INFO_INITIAL_STATE: AdditionalInfoType = {
+export const ADDITIONAL_INFO_INITIAL_STATE: ActivityAdditionalInfo = {
   title: '',
   description: '',
   sport: SPORTS_BTNS_VALUES.run,

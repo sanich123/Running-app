@@ -1,9 +1,9 @@
 import Card from '@S/card/card';
 import type { ActivityResponse } from '@R/runich-api/types';
 
-type ActivitiesType = ActivityResponse;
+type ActivityListItem = ActivityResponse;
 
-export function renderCardsFunction({ item }: { item: ActivitiesType }) {
+export function renderCardsFunction({ item }: { item: ActivityListItem }) {
   const {
     description,
     title,
@@ -42,4 +42,4 @@ export function renderCardsFunction({ item }: { item: ActivitiesType }) {
   );
 }
 
-export const keyExtractor = (item: ActivitiesType) => item.id;
+export const keyExtractor = (item: ActivityListItem) => item.id;

@@ -2,7 +2,7 @@ import type { RefObject } from 'react';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { ProfileType } from '@S/card/types';
 
-export interface ComentDeleteBtnProps {
+export interface CommentDeleteButtonProps {
   commentId: string;
   activityId: string;
 }
@@ -38,7 +38,7 @@ export interface CommentModalProps {
   commentsModalRef: RefObject<BottomSheetModal | null>;
 }
 
-export interface CommentsLoadMorBtnProps {
+export interface CommentsLoadMoreButtonProps {
   take: number;
   increaseTakeNumber: (arg: number) => void;
   commentsLength: number;

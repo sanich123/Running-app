@@ -22,6 +22,7 @@ const DEFAULT_MAX_TRACKING_SPEED_KMH = MAX_TRACKING_SPEED_KMH.run;
 /** Mapbox Static Images rejects URLs above roughly 8 KB. Leave headroom for tokens and encoding. */
 const MAX_STATIC_MAP_URL_LENGTH = 7600;
 const MAX_STATIC_MAP_LOCATIONS = 500;
+const STATIC_MAP_IMAGE_SIZE = 360;
 const METERS_IN_KILOMETER = 1000;
 // GPS altitude is considerably noisier than horizontal position. Keep only
 // reasonably confident fixes and require a sustained climb before counting it.
@@ -282,8 +283,8 @@ export function getMapBoxImage(locations: ActivityLocation[]) {
           : '';
       const startMarker = `pin-s+${startMarkerColor}(${initialCoordinate.join(',')})`;
       const finishMarker = `pin-s+${finishMarkerColor}(${lastCoordinate.join(',')})`;
-      const width = 350;
-      const height = 200;
+      const width = STATIC_MAP_IMAGE_SIZE;
+      const height = STATIC_MAP_IMAGE_SIZE;
       const doublePixels = '@2x';
       const overlays = [routeOverlay, startMarker, finishMarker].filter(Boolean).join(',');
 
