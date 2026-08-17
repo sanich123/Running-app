@@ -5,8 +5,8 @@ import { ActivityIndicator } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery } from '@R/services/activity/activity';
 import { useGetAppConfigQuery } from '@R/services/authentication/authentication';
-import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { resetFinishedActivity } from '@R/slices/activity/activity';
+import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
 import { resetManualActivitySlice, setIsManualAdding } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import EmptyActivitiesList from '@Routes/home-page/empty-activities-list/empty-activities-list';
@@ -56,7 +56,7 @@ export default function Feed() {
               <FloatingBtn
                 onPressFn={() => {
                   dispatch(resetManualActivitySlice());
-                  dispatch(resetAdditionaInfoActivitySlice());
+                  dispatch(resetAdditionalInfoActivitySlice());
                   dispatch(resetFinishedActivity());
                   dispatch(setIsManualAdding(true));
                   push(`/${ROUTES.manualActivity}`);

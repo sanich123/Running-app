@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
-import { saveIsPublic } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { saveIsPublic } from '@R/slices/activity-additional-info/activity-additional-info';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { CHECKBOX_TEST_ID, CHECKBOX } from './const';

@@ -40,9 +40,7 @@ describe('Activity card like btn', () => {
     const likeButton = await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED);
     await waitFor(() => expect(likeButton.props.accessibilityState?.disabled).toBe(false));
     await user.press(likeButton);
-    await waitFor(() =>
-      expect(requestBody).toEqual(expect.objectContaining({ activityId: 'someActivityId', authorId: 'new-user-id' })),
-    );
+    await waitFor(() => expect(requestBody).toEqual({ activityId: 'someActivityId' }));
   });
 
   it('deletes the current user like after a second heart action', async () => {

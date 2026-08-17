@@ -1,5 +1,5 @@
 import { SPORTS_BTNS_VALUES } from '@const/sports';
-import { saveSport } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { saveSport } from '@R/slices/activity-additional-info/activity-additional-info';
 import { resetLocationSlice, setLocationsWhenContinued } from '@R/slices/location/location';
 import { store } from '@R/store';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';

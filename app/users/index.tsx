@@ -3,7 +3,7 @@ import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activ
 
 const LazyListOfUsers = lazy(() => import('@Routes/users-page/users-page'));
 
-export default function HomeListOfUsers() {
+export default function UsersRoute() {
   return (
     <Suspense fallback={<FullPageActivityLoader />}>
       <LazyListOfUsers />

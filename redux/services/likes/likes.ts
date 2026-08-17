@@ -13,10 +13,10 @@ const likesApi = runichApi.injectEndpoints({
       providesTags: (result, error, arg) => [{ type: Tags.likes, id: arg }],
     }),
     sendLike: builder.mutation<LikeResponse, SendLike>({
-      query: ({ activityId, authorId }: LikeRequest) => ({
+      query: ({ activityId }: LikeRequest) => ({
         url: `/${like}`,
         method: Methods.post,
-        body: { activityId, authorId },
+        body: { activityId },
       }),
       invalidatesTags: (result, error, arg) => [{ type: Tags.likes, id: arg.activityId }],
       async onQueryStarted({ activityId, authorId, profilePhoto }, { dispatch, queryFulfilled }) {

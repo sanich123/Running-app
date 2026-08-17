@@ -23,7 +23,6 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ language }) => language);
-  const { userId } = useAppSelector(({ auth }) => auth);
   const [comment, setComment] = useState(commentToUpdate);
   const [sendEmailAfterSendingComment] = useSendEmailAfterSendingCommentMutation();
   const [postComment, { isLoading: isCommentSending }] = usePostCommentWithActivityIdMutation();
@@ -40,7 +39,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   }
 
   async function sendingComment() {
-    return await postComment({ body: { comment, authorId: userId }, id: commentActivityId })
+    return await postComment({ body: { comment }, id: commentActivityId })
       .unwrap()
       .then(() => sendingUpdatingCommentSuccessHandler())
       .catch((error) => errorToast('', error));

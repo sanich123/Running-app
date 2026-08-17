@@ -42,18 +42,18 @@ describe('Delete friend btn', () => {
 
   it('follows a user after pressing Follow', async () => {
     const user = userEvent.setup();
-    let requestBody: unknown;
+    let requestUrl = '';
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     server.use(
-      http.post(`${BASE_URL}/friend/someWrongFriendId`, async ({ request }) => {
-        requestBody = await request.json();
+      http.post(`${BASE_URL}/friend/someWrongFriendId`, ({ request }) => {
+        requestUrl = request.url;
         return HttpResponse.json({ id: 'friend-row-id' }, { status: 201 });
       }),
     );
     await renderWithProviders(<FollowUnfollowBtn friendId="someWrongFriendId" />);
     await user.press(await screen.findByText(FOLLOW_UNFOLLOW_BTN.english.follow));
-    await waitFor(() => expect(requestBody).toEqual({ userId: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b' }));
+    await waitFor(() => expect(requestUrl).toContain('/friend/someWrongFriendId'));
   });
 
   it('unfollows a user after pressing Unfollow', async () => {

@@ -3,9 +3,8 @@ import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
 import { Platform } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
+import { errorToast } from '@S/error-toast/error-toast';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { showCrossPlatformToast } from '@U/custom-toast';
-import { errorHandler } from '@U/error-handler';
 import type { ShareBtnProps } from '../types';
 
 export default memo(function ShareBtn({ cardRef }: ShareBtnProps) {
@@ -22,13 +21,13 @@ export default memo(function ShareBtn({ cardRef }: ShareBtnProps) {
             await Sharing.shareAsync(snapshot);
           } else {
             if (Platform.OS === 'web') {
-              showCrossPlatformToast('Функция поделиться не работает в этом браузере');
+              errorToast('Функция поделиться не работает в этом браузере');
             } else {
-              showCrossPlatformToast('Функция поделиться не работает на этом устройстве');
+              errorToast('Функция поделиться не работает на этом устройстве');
             }
           }
         } catch (error) {
-          errorHandler(error);
+          errorToast('', error);
         } finally {
           setIsDisabled(false);
         }

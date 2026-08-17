@@ -47,7 +47,12 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: Activity
               </Text>
             </View>
             <View style={styles.durationColumn}>
-              <Text style={{ color: colors.onSurface }} variant="bodyLarge">
+              <Text
+                style={{ color: colors.onSurface }}
+                variant="bodyLarge"
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}>
                 {formatDurationMinsSecs(lastKilometerDuration)}
               </Text>
             </View>
@@ -82,7 +87,7 @@ const styles = StyleSheet.create({
   splitRow: { alignItems: 'center', flexDirection: 'row', minHeight: 38, width: '100%' },
   kmColumn: { flex: 2 },
   paceColumn: { flex: 15 },
-  durationColumn: { flex: 3 },
+  durationColumn: { flex: 3, minWidth: 42 },
   barColumn: { flex: 12, justifyContent: 'center', paddingHorizontal: 8 },
   elevationColumn: { alignItems: 'flex-end', flex: 3 },
   barTrack: { borderRadius: 4, height: 8, overflow: 'hidden', width: '100%' },

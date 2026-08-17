@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { removePhotos } from '@A/supabase/storage/upload-photo';
-import { deletePhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { deletePhotoUrl } from '@R/slices/activity-additional-info/activity-additional-info';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import type { PreviewImagesProps } from '../preview-images/types';
 

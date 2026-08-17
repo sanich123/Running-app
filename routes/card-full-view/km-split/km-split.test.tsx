@@ -19,6 +19,7 @@ describe('Home activity full view km split', () => {
     );
     MOCK_ACTIVITY.kilometresSplit.map(({ lastKilometerDuration }) => {
       expect(screen.getByText(`${formatDurationMinsSecs(lastKilometerDuration)}`)).toBeOnTheScreen();
+      expect(screen.getByText(`${formatDurationMinsSecs(lastKilometerDuration)}`)).toHaveProp('numberOfLines', 1);
     });
   });
   it('should correctly renders in russian', async () => {

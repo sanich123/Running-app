@@ -5,9 +5,9 @@ import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-fee
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_DELETE_BTN } from './const';
-import type { ComentDeleteBtnProps } from '../types';
+import type { CommentDeleteButtonProps } from '../types';
 
-export default function CommentDeleteBtn({ commentId, activityId }: ComentDeleteBtnProps) {
+export default function CommentDeleteBtn({ commentId, activityId }: CommentDeleteButtonProps) {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);

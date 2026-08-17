@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Platform, StyleSheet, View, Text } from 'react-native';
 import { ActivityIndicator, Button, useTheme } from 'react-native-paper';
-import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { addPhotoUrl } from '@R/slices/activity-additional-info/activity-additional-info';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { errorHandler } from '@U/error-handler';
+import { errorToast } from '@S/error-toast/error-toast';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
 import { UPLOAD_PHOTO_BTN } from './ const';
 import type { UploadPhotoBtnProps } from './ const';
@@ -38,7 +38,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
                     dispatch(addPhotoUrl(fileWithThumbnail));
                   }
                 } catch (error) {
-                  errorHandler(error);
+                  errorToast('', error);
                 } finally {
                   setIsDisabled(false);
                   setIsLoading(false);
@@ -80,7 +80,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
                 }
               }
             } catch (error) {
-              errorHandler(error);
+              errorToast('', error);
             } finally {
               setIsDisabled(false);
               setIsLoading(false);

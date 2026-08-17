@@ -13,7 +13,7 @@ import { setAccessToken, setRefreshToken, setUserId } from '@R/slices/auth/auth'
 import { saveEmail, savePassword, setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { showCrossPlatformToast } from '@U/custom-toast';
+import { successToast } from '@S/success-toast/success-toast';
 import { SignInPageStates } from '@U/validate-email-password';
 import { EMAIL_LINK_BTN, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
 import type { EmailPasswordData } from '@R/services/authentication/types';
@@ -57,7 +57,7 @@ export default function LoginRegisterBtn({
         if (authStep === SignInPageStates.emailLink) {
           return requestEmailLink({ email })
             .unwrap()
-            .then(({ message }) => showCrossPlatformToast(message))
+            .then(({ message }) => successToast(message))
             .catch((error) => errorToast('', error))
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }

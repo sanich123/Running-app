@@ -58,11 +58,6 @@ describe('Comment like btn', () => {
     const likeButton = await screen.findByTestId('commentLikeBtn');
     await waitFor(() => expect(likeButton.props.accessibilityState?.disabled).toBe(false));
     await user.press(likeButton);
-    await waitFor(() =>
-      expect(requestBody).toEqual({
-        commentId: '922dca27-f99c-4165-96d6-5a04bbb6e9cb',
-        authorId: 'new-comment-like-author',
-      }),
-    );
+    await waitFor(() => expect(requestBody).toEqual({ commentId: '922dca27-f99c-4165-96d6-5a04bbb6e9cb' }));
   });
 });

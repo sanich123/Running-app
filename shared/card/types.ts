@@ -128,7 +128,7 @@ export interface LikeBtnProps {
   mapPhotoUrl?: string | null;
 }
 
-export interface NumOfLikesProps {
+export interface NumberOfLikesProps {
   likes: Likes[];
   error?: FetchBaseQueryError | SerializedError;
 }

@@ -7,7 +7,7 @@ import { ROUTES } from '@const/enums';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { CustomImage } from '@S/custom-image/custom-image';
-import { errorExtracter } from '@U/error-handler';
+import { getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { PROFILE_MEDIA } from './const';
 import type { PhotoVideoType } from '@S/card/types';
 
@@ -43,7 +43,9 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
           },
           (isLoading || isError) && styles.isInCenter,
         ]}>
-        {isError && <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${errorExtracter(error)}`}</Text>}
+        {isError && (
+          <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${getErrorMessageFromError(error)}`}</Text>
+        )}
         {photos.length > 0 &&
           photos.map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => {
             if (index === 3) {

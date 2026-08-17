@@ -25,7 +25,7 @@ export interface BatteryOptimizationSwitcherProps {
   isNeedToRefreshPermission: boolean;
 }
 
-export interface ForgroundLocationSwitcher {
+export interface ForegroundLocationSwitcherProps {
   foregroundPermissionStatus: LocationPermissionResponse;
   requestForegroundPermission: () => Promise<LocationPermissionResponse>;
 }

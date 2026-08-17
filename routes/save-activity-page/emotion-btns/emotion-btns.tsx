@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
-import { saveEmotion } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { saveEmotion } from '@R/slices/activity-additional-info/activity-additional-info';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS } from './const';

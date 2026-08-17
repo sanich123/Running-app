@@ -2,9 +2,9 @@ import { useState } from 'react';
 import * as MediaLibrary from 'expo-media-library';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
-import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { addPhotoUrl } from '@R/slices/activity-additional-info/activity-additional-info';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { errorHandler } from '@U/error-handler';
+import { errorToast } from '@S/error-toast/error-toast';
 import { compressAndSendFile } from '@U/file-sending';
 import { CAMERA_SETTINGS } from '../const';
 import type { ShotBtnProps } from '../types';
@@ -41,7 +41,7 @@ export default function ShotBtn({ cameraRef, setPhotos, photos }: ShotBtnProps) 
             }
           }
         } catch (error) {
-          errorHandler(error);
+          errorToast('', error);
         } finally {
           setIsLoading(false);
         }

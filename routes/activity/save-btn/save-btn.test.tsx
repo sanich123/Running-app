@@ -3,13 +3,13 @@ import { http, HttpResponse } from 'msw';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
+import { saveFinishedActivity, setActivityId } from '@R/slices/activity/activity';
 import {
   saveDescription,
   saveEmotion,
   saveSport,
   saveTitle,
-} from '@R/slices/actitivity-additional-info/activity-additional-info';
-import { saveFinishedActivity, setActivityId } from '@R/slices/activity/activity';
+} from '@R/slices/activity-additional-info/activity-additional-info';
 import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/language/language';
 import {

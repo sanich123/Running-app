@@ -3,7 +3,7 @@ import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activ
 
 const LazyActivitiesList = lazy(() => import('@Routes/activities-list/activities-list'));
 
-export default function ActivitiesListScreen() {
+export default function ActivitiesListRoute() {
   return (
     <Suspense fallback={<FullPageActivityLoader />}>
       <LazyActivitiesList />

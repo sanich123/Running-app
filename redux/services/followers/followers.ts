@@ -1,6 +1,5 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
-import type { SendFriend } from './types';
 import type { FollowerResponse, FollowingResponse } from '@R/runich-api/types';
 
 const { friend, followers } = Routes;
@@ -16,13 +15,15 @@ const followersApi = runichApi.injectEndpoints({
       query: (id: string) => `/${friend}/${id}/${followers}`,
       providesTags: (result, error, arg) => [{ type: Tags.friends, id: arg }],
     }),
-    addFriend: builder.mutation<FollowingResponse, SendFriend>({
-      query: ({ body, id }: SendFriend) => ({
+    addFriend: builder.mutation<FollowingResponse, { id: string }>({
+      query: ({ id }) => ({
         url: `/${friend}/${id}`,
         method: Methods.post,
-        body,
       }),
-      invalidatesTags: (result, error, arg) => [{ type: Tags.friends, id: arg.body.userId }, Tags.activities],
+      // The following-list query is keyed by the current user's id, while this
+      // mutation receives the followed user's id. Invalidate the whole friends
+      // tag so both following and followers queries refresh after a change.
+      invalidatesTags: [Tags.friends, Tags.activities],
     }),
     deleteFriend: builder.mutation<void, string>({
       query: (id: string) => ({

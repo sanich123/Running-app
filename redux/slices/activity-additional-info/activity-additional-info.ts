@@ -32,7 +32,7 @@ const additionalInfoActivity = createSlice({
     resetPhotoUrls: (state) => {
       state.photoVideoUrls = [];
     },
-    resetAdditionaInfoActivitySlice: () => {
+    resetAdditionalInfoActivitySlice: () => {
       return ADDITIONAL_INFO_INITIAL_STATE;
     },
   },
@@ -47,7 +47,7 @@ export const {
   addPhotoUrl,
   addPhotoUrls,
   deletePhotoUrl,
-  resetAdditionaInfoActivitySlice,
+  resetAdditionalInfoActivitySlice,
 } = additionalInfoActivity.actions;
 
 export default additionalInfoActivity.reducer;

@@ -3,7 +3,7 @@ import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activ
 
 const LazyMapPage = lazy(() => import('@Routes/map-page/map-page'));
 
-export default function HomeActivityMap() {
+export default function ActivityMapRoute() {
   return (
     <Suspense fallback={<FullPageActivityLoader />}>
       <LazyMapPage />

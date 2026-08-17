@@ -3,7 +3,7 @@ import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activ
 
 const LazyLikesList = lazy(() => import('@Routes/likes-list/likes-list'));
 
-export default function HomeLikes() {
+export default function LikesRoute() {
   return (
     <Suspense fallback={<FullPageActivityLoader />}>
       <LazyLikesList />

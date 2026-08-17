@@ -1,19 +1,23 @@
 import { Methods, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
 import type {
-  ActivitiesReponse,
   ActivityMutationResponse,
   ActivityToSend,
   ActivityUpdateRequest,
   GetActivitiesByIdsRequest,
   GetActivityPhotosRequest,
 } from './types';
-import type { ActivityLocationsResponse, ActivityMediaResponse, ActivityResponse } from '@R/runich-api/types';
+import type {
+  ActivitiesResponse,
+  ActivityLocationsResponse,
+  ActivityMediaResponse,
+  ActivityResponse,
+} from '@R/runich-api/types';
 
 const activityApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
-    getActivitiesByUserId: infiniteQuery<ActivitiesReponse, { id: string }, number>({
+    getActivitiesByUserId: infiniteQuery<ActivitiesResponse, { id: string }, number>({
       infiniteQueryOptions: {
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => lastPageParam + 1,
@@ -21,7 +25,7 @@ const activityApi = runichApi.injectEndpoints({
       query: ({ queryArg: { id }, pageParam }) => `/activity/${id}?page=${pageParam}&take=10`,
       providesTags: [Tags.activities],
     }),
-    getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesReponse, { id: string }, number>({
+    getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesResponse, { id: string }, number>({
       infiniteQueryOptions: {
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => lastPageParam + 1,
