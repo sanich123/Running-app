@@ -3,7 +3,7 @@ import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activ
 
 const LazyProfilePage = lazy(() => import('@Routes/profile/profile'));
 
-export default function HomeProfilePage() {
+export default function ProfileRoute() {
   return (
     <Suspense fallback={<FullPageActivityLoader />}>
       <LazyProfilePage />

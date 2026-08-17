@@ -8,7 +8,7 @@ import {
 } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { errorExtracter } from '@U/error-handler';
+import { getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { FOLLOW_UNFOLLOW_BTN } from './const';
 
 export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
@@ -47,7 +47,7 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
       }}>
       {!isError && !isLoading && friendCell.length > 0 && FOLLOW_UNFOLLOW_BTN[language].unfollow}
       {!isError && !isLoading && !friendCell.length && FOLLOW_UNFOLLOW_BTN[language].follow}
-      {isError && `${FOLLOW_UNFOLLOW_BTN[language].errorMsg}: ${errorExtracter(listOfFriendsError)}`}
+      {isError && `${FOLLOW_UNFOLLOW_BTN[language].errorMsg}: ${getErrorMessageFromError(listOfFriendsError)}`}
     </Button>
   );
 }

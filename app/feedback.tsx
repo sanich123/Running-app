@@ -26,8 +26,12 @@ export default function FeedbackPage() {
   const canWrite = kind === 'thanks' || (isBug && secondConsent) || (isFeature && secondConsent);
 
   async function choosePhoto() {
-    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.9 });
-    if (!result.canceled) setPhoto(result.assets[0]);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.9 });
+      if (!result.canceled) setPhoto(result.assets[0]);
+    } catch (error) {
+      errorToast('Не удалось открыть галерею', error);
+    }
   }
 
   async function submit() {

@@ -3,7 +3,7 @@ import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activ
 
 const LazyListOfFollowing = lazy(() => import('@Routes/followings-page/followings-page'));
 
-export default function HomeFollowing() {
+export default function FollowingRoute() {
   return (
     <Suspense fallback={<FullPageActivityLoader />}>
       <LazyListOfFollowing />

@@ -1,6 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { setIsDisableWhileSending } from '@R/slices/activity/activity';
+import { addPhotoUrl } from '@R/slices/activity-additional-info/activity-additional-info';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import PreviewImageCloseBtn from './preview-image-close-btn';

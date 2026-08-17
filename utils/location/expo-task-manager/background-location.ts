@@ -6,6 +6,7 @@ import {
 } from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { store } from '@R/store';
+import { errorToast } from '@S/error-toast/error-toast';
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 import { BACKGROUND_NOTIFICATION, DISTANCE_INTERVAL, LOCATION_TRACKING, TIME_INTERVAL } from '../const';
 import type { TaskManagerLocationEvent } from '../const';
@@ -101,7 +102,12 @@ export async function stopLocationTracking() {
 }
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLocationEvent) => {
-  if (error || !data?.locations?.length) {
+  if (error) {
+    errorToast('Ошибка фонового отслеживания геопозиции', error);
+    return;
+  }
+
+  if (!data?.locations?.length) {
     return;
   }
 

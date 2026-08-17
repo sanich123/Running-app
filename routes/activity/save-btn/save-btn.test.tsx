@@ -8,7 +8,7 @@ import {
   saveEmotion,
   saveSport,
   saveTitle,
-} from '@R/slices/actitivity-additional-info/activity-additional-info';
+} from '@R/slices/activity-additional-info/activity-additional-info';
 import { saveFinishedActivity, setActivityId } from '@R/slices/activity/activity';
 import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/language/language';

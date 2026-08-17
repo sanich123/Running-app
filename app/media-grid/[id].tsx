@@ -3,7 +3,7 @@ import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activ
 
 const LazyMediaGrid = lazy(() => import('@Routes/media-grid/media-grid'));
 
-export default function HomeMediaGrid() {
+export default function MediaGridRoute() {
   return (
     <Suspense fallback={<FullPageActivityLoader />}>
       <LazyMediaGrid />

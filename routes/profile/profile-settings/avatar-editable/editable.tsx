@@ -3,7 +3,6 @@ import { savePhotoUrl } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ProfileImage from '@Routes/profile/avatar/avatar';
 import { errorToast } from '@S/error-toast/error-toast';
-import { errorHandler } from '@U/error-handler';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
 import { AvatarEditableTestIds } from './const';
 import type { AvatarIconEditableProps } from './const';
@@ -36,7 +35,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
                     dispatch(savePhotoUrl(url));
                   }
                 } catch (error) {
-                  errorHandler(error);
+                  errorToast('', error);
                 } finally {
                   setIsDisabled(false);
                 }
@@ -63,7 +62,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
                 }
               }
             } catch (error) {
-              errorHandler(error);
+              errorToast('', error);
             } finally {
               setIsDisabled(false);
             }

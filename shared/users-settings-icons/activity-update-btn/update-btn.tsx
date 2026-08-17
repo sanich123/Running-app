@@ -5,13 +5,13 @@ import { ROUTES } from '@const/enums';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import {
   addPhotoUrls,
-  resetAdditionaInfoActivitySlice,
+  resetAdditionalInfoActivitySlice,
   saveDescription,
   saveEmotion,
   saveIsPublic,
   saveSport,
   saveTitle,
-} from '@R/slices/actitivity-additional-info/activity-additional-info';
+} from '@R/slices/activity-additional-info/activity-additional-info';
 import { resetFinishedActivity, setActivityId } from '@R/slices/activity/activity';
 import {
   resetManualActivitySlice,
@@ -43,7 +43,7 @@ export default function UpdateBtn() {
         if (activity) {
           dispatch(resetFinishedActivity());
           dispatch(resetManualActivitySlice());
-          dispatch(resetAdditionaInfoActivitySlice());
+          dispatch(resetAdditionalInfoActivitySlice());
 
           dispatch(setIsEditingActivity(true));
           dispatch(setActivityId(activity.id));
@@ -55,7 +55,6 @@ export default function UpdateBtn() {
           if (activity?.photoVideoUrls) {
             dispatch(addPhotoUrls(activity?.photoVideoUrls));
           }
-          dispatch(saveSport(activity?.sport));
           dispatch(setManualDate(new Date(activity?.date)));
           dispatch(setManualDistance(activity?.distance / 1000));
           dispatch(setManualHours(getHoursMinutesFromMilliseconds(activity?.duration).hours));

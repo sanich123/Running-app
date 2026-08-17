@@ -3,7 +3,7 @@ import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activ
 
 const LazyActivityFullViewPage = lazy(() => import('@Routes/card-full-view/card-full-view'));
 
-export default function HomeActivityFullViewPage() {
+export default function ActivityRoute() {
   return (
     <Suspense fallback={<FullPageActivityLoader />}>
       <LazyActivityFullViewPage />

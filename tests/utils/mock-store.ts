@@ -1,6 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import additionalInfoActivity from '@R/slices/actitivity-additional-info/activity-additional-info';
 import activity from '@R/slices/activity/activity';
+import additionalInfoActivity from '@R/slices/activity-additional-info/activity-additional-info';
 import auth from '@R/slices/auth/auth';
 import comment from '@R/slices/comment/comment';
 import language from '@R/slices/language/language';

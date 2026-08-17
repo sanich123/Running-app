@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-import { addPhotoUrl } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { addPhotoUrl } from '@R/slices/activity-additional-info/activity-additional-info';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import PreviewImage from '@Routes/save-activity-page/preview-image/preview-image';
-import { errorHandler } from '@U/error-handler';
+import { errorToast } from '@S/error-toast/error-toast';
 import { compressAndSendFile } from '@U/file-sending';
 
 interface PreviewUploadableImageProps {
@@ -39,7 +39,7 @@ export default function PreviewUploadableImage({ image, index, isDisabled }: Pre
             }
           }
         } catch (error) {
-          errorHandler(error);
+          errorToast('', error);
           setIsError(true);
           setTimeout(() => setIsError(false), 3000);
         } finally {

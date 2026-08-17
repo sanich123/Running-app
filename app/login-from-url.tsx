@@ -8,7 +8,7 @@ import { useAppDispatch } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
-export default function LoginFromUrlPage() {
+export default function LoginFromUrlRoute() {
   const dispatch = useAppDispatch();
   const url = useLinkingURL();
   const { dismissAll, replace, canDismiss } = useRouter();

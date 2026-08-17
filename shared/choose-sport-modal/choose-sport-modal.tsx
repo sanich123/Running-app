@@ -3,7 +3,7 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
-import { saveSport } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { saveSport } from '@R/slices/activity-additional-info/activity-additional-info';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { SPORTS_NAMES } from './const';

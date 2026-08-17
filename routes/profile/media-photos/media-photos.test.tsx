@@ -4,7 +4,7 @@ import { changeLanguage } from '@R/slices/language/language';
 import { BAD_REQUEST } from '@T/mocks/mock-requests';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { errorExtracter } from '@U/error-handler';
+import { getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { PROFILE_MEDIA } from './const';
 import ProfileMediaPhotos from './media-photos';
 
@@ -28,14 +28,14 @@ describe('Profile media photos', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<ProfileMediaPhotos userId="someWrongUserId" />, { store: mockStore });
     expect(
-      await screen.findByText(new RegExp(`${PROFILE_MEDIA.russian.error}: ${errorExtracter(BAD_REQUEST)}`)),
+      await screen.findByText(new RegExp(`${PROFILE_MEDIA.russian.error}: ${getErrorMessageFromError({ status: 400, data: BAD_REQUEST })}`)),
     ).toBeOnTheScreen();
   });
   it('should correctly handle an error in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<ProfileMediaPhotos userId="someWrongUserId" />, { store: mockStore });
     expect(
-      await screen.findByText(new RegExp(`${PROFILE_MEDIA.english.error}: ${errorExtracter(BAD_REQUEST)}`)),
+      await screen.findByText(new RegExp(`${PROFILE_MEDIA.english.error}: ${getErrorMessageFromError({ status: 400, data: BAD_REQUEST })}`)),
     ).toBeOnTheScreen();
   });
 

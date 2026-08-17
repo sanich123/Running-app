@@ -3,7 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { persistStore, persistReducer } from 'redux-persist';
 import { appStorage } from '@U/storage/storage';
 import { runichApi } from './runich-api/runich-api';
-import additionalInfoActivity from './slices/actitivity-additional-info/activity-additional-info';
+import additionalInfoActivity from './slices/activity-additional-info/activity-additional-info';
 import activity from './slices/activity/activity';
 import auth from './slices/auth/auth';
 import comment from './slices/comment/comment';

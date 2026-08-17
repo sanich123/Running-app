@@ -3,8 +3,8 @@ import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
-import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { resetFinishedActivity } from '@R/slices/activity/activity';
+import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
 import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
@@ -20,7 +20,7 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
   const shouldBeDisabled = isDisabled || isDisabledWhileSending;
 
   function declineActivity() {
-    dispatch(resetAdditionaInfoActivitySlice());
+      dispatch(resetAdditionalInfoActivitySlice());
     dispatch(resetFinishedActivity());
     dispatch(resetManualActivitySlice());
     replace(ROUTES.root);

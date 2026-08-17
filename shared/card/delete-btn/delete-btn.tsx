@@ -7,7 +7,7 @@ import { useDeleteActivityByIdMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import { errorHandler } from '@U/error-handler';
+import { errorToast } from '@S/error-toast/error-toast';
 import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from './const';
 
 export default function CardDeleteBtn({ activityId }: { activityId: string }) {
@@ -23,13 +23,12 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
     setIsDisabled(true);
     await deleteActivityById(activityId)
       .unwrap()
-      .then()
-      .catch((error) => errorHandler(error))
+      .then(() => replace(ROUTES.root))
+      .catch((error) => errorToast('', error))
       .finally(() => {
         setIsLoading(false);
         setIsDisabled(false);
       });
-    replace(ROUTES.root);
   }
 
   return (

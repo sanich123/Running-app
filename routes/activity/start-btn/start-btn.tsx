@@ -3,8 +3,8 @@ import { ActivityIndicator, Animated, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
-import { resetAdditionaInfoActivitySlice } from '@R/slices/actitivity-additional-info/activity-additional-info';
 import { resetFinishedActivity, saveFinishedActivity } from '@R/slices/activity/activity';
+import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
 import {
   resetLocationsFromBackground,
   setActivityStatus,
@@ -118,7 +118,7 @@ export default function StartBtn({
       dispatch(setActivityStatus(STATUSES.initial));
       dispatch(resetLocationsFromBackground());
       dispatch(resetManualActivitySlice());
-      dispatch(resetAdditionaInfoActivitySlice());
+          dispatch(resetAdditionalInfoActivitySlice());
       push(`/${ROUTES.manualActivity}`);
     } catch (error) {
       errorToast(

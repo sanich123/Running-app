@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
-import { saveDescription, saveTitle } from '@R/slices/actitivity-additional-info/activity-additional-info';
+import { saveDescription, saveTitle } from '@R/slices/activity-additional-info/activity-additional-info';
 import { store } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import {

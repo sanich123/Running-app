@@ -2,7 +2,7 @@ import { Text } from 'react-native-paper';
 import { useGetLikesByCommentIdQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import { NUMBER_OF_LIKES } from '@S/card/number-of-likes/const';
-import { errorExtracter } from '@U/error-handler';
+import { getErrorMessageFromError } from '@S/error-toast/error-toast';
 import type { CommentLikesLengthProps } from '../types';
 
 export default function CommentLikesLength({ commentId, commentLikesFromComment }: CommentLikesLengthProps) {
@@ -28,7 +28,7 @@ export default function CommentLikesLength({ commentId, commentLikesFromComment 
           {commentLikesLength > 0 ? NUMBER_OF_LIKES[language].manyGaveLikes : NUMBER_OF_LIKES[language].oneGaveLikes}
         </Text>
       )}
-      {isError && <Text variant="bodySmall">{`An error: ${errorExtracter(error)}`}</Text>}
+      {isError && <Text variant="bodySmall">{`An error: ${getErrorMessageFromError(error)}`}</Text>}
     </>
   );
 }
