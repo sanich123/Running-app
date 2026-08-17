@@ -30,7 +30,7 @@ export default function WeekStatistics() {
     },
     { skip: !userId },
   );
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const isRussian = language === LANGUAGES.russian;
 
   return (

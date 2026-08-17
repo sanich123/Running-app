@@ -10,7 +10,7 @@ const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-
 
 export default function StatisticsStack() {
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
 
   return (
     <Stack

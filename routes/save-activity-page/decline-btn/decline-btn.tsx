@@ -13,7 +13,7 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();
   const { replace } = useRouter();
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
   const shouldBeDisabled = isDisabled || isDisabledWhileSending;

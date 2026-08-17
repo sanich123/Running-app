@@ -13,7 +13,7 @@ export default function MonthStatisticsMetrics({
   metric,
   postfix,
 }: MonthMetricsProps) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   return (
     <View style={[styles.statistics, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>

@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import AvatarShowable from '@S/avatar/showable/showable';
 import { HOME_WELCOME_TEXT } from './const';
@@ -8,8 +9,8 @@ import { HOME_WELCOME_TEXT } from './const';
 export default function HomeWelcome() {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { profileFromServer, settings } = useAppSelector(({ profile }) => profile);
-  const name = profileFromServer?.name || settings.name || '';
+  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const name = profile?.name || '';
 
   return (
     <View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>

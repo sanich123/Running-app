@@ -17,9 +17,6 @@ const additionalInfoActivity = createSlice({
     deletePhotoUrl: (state, { payload }) => {
       state.photoVideoUrls = state.photoVideoUrls.filter(({ url }) => url !== payload);
     },
-    resetPhotoUrls: (state) => {
-      state.photoVideoUrls = [];
-    },
     resetAdditionalInfoActivitySlice: () => {
       return ADDITIONAL_INFO_INITIAL_STATE;
     },

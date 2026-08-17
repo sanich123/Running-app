@@ -20,7 +20,7 @@ export default function ErrorMsg() {
     ({ location }) => location,
   );
   const { sport } = useGlobalActivitySportParams();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const tooMuchSpeedTime = tooMuchSpeedTimestamp
     ? new Date(tooMuchSpeedTimestamp).toLocaleTimeString(language === 'russian' ? 'ru-RU' : 'en-US', {
         hour: '2-digit',

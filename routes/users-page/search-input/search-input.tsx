@@ -7,7 +7,7 @@ import { SEARCH_ICON_TEST_ID, SEARCH_INPUT, SEARCH_INPUT_TEST_ID } from './const
 import type { SearchInputProps } from './const';
 
 export default function SearchInput({ setSearch, setIsInitial, search }: SearchInputProps) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   return (

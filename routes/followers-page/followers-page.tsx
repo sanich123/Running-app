@@ -27,7 +27,7 @@ const renderDivider = () => <Divider />;
 
 export default function ListOfFollowers() {
   const { width } = useWindowDimensions();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
   const { id: friendId } = useLocalSearchParams();
   const {

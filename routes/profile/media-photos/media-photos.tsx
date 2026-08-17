@@ -19,7 +19,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const { colors, dark } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   const photos = data?.photos ?? [];
 

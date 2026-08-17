@@ -6,7 +6,7 @@ import { ACTIVITY_LOCATION_INDICATOR } from './const';
 
 export default function LocationIndicator() {
   const { isLoading, isError, isSuccess } = useGetCurrentLocation();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const isNeedToShowIndicator = isLoading || isError || isSuccess;
   return (
     <>

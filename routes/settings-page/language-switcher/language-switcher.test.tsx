@@ -1,6 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import LanguageSwitcher from './language-switcher';
@@ -11,6 +11,6 @@ describe('language switcher', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<LanguageSwitcher />);
     await user.press(screen.getByTestId('language-english'));
-    expect(mockStore.getState().language.language).toBe(LANGUAGES.english);
+    expect(mockStore.getState().settings.language).toBe(LANGUAGES.english);
   });
 });

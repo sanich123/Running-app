@@ -9,7 +9,7 @@ import UsersSettingsIcons from '@S/users-settings-icons/users-settings-icons';
 
 export default function HomeStack() {
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
 
   return (
     <Stack

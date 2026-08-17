@@ -15,7 +15,7 @@ export default function ProfileStatistics({ whosProfile }: { whosProfile: string
     isError,
     isSuccess,
   } = useGetAllTimeStatisticsByUserIdQuery({ userId: whosProfile }, { skip: !whosProfile });
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const isRussian = language === LANGUAGES.russian;
 
   if (isError) {

@@ -15,7 +15,7 @@ export default function RegisterNavigation({
   onAuthStepChange?: (step: SignInPageStates) => void;
   showEmailLinkNavigation?: boolean;
 }) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
   const { colors } = useTheme();
   const emailLinkNavigation = EMAIL_LINK_NAVIGATION[language];

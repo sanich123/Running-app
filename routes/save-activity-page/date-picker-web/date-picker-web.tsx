@@ -20,7 +20,7 @@ export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { manualDate } = useManualActivityParams();
   const { setManualDate } = useSetManualActivityParams();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const shouldBeDisabled = isDisabled || isDisabledWhileSending;
 

@@ -2,7 +2,7 @@ import { useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-rou
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { EMOTIONS_BTNS_VALUES } from './emotion-btns/const';
 
-export type ManualActivityMode = 'manual' | 'tracked' | 'edit';
+type ManualActivityMode = 'manual' | 'tracked' | 'edit';
 
 interface ManualActivitySearchParams {
   id?: string | string[];

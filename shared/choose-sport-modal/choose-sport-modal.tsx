@@ -14,7 +14,7 @@ export default function ChooseSportModal({
   selectedSport,
   onSportChange,
 }: ChooseSportModalProps) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const sport = selectedSport;
   const sportLabels = {

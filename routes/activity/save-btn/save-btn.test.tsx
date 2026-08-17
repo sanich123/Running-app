@@ -4,7 +4,7 @@ import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-sa
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { saveFinishedActivity } from '@R/slices/activity/activity';
 import { setUserId } from '@R/slices/auth/auth';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';

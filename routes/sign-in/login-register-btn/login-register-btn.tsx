@@ -26,7 +26,7 @@ export default function LoginRegisterBtn({
   authStep?: SignInPageStates;
 }) {
   const dispatch = useAppDispatch();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
   const { push, replace } = useRouter();
   const [loginUser, { isLoading: isLoginingUser }] = useLoginUserMutation();

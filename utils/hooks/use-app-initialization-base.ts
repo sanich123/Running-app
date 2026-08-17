@@ -5,7 +5,7 @@ import { changeNetworkState } from '@R/slices/network/network';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 
 export default function useAppInitializationBase() {
-  const { theme } = useAppSelector(({ language }) => language);
+  const { theme } = useAppSelector(({ settings }) => settings);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

@@ -11,7 +11,7 @@ export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) 
   const { setManualDate } = useSetManualActivityParams();
   const [open, setOpen] = useState(false);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const shouldBeDisabled = isDisabled || isDisabledWhileSending;
 

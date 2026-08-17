@@ -13,7 +13,7 @@ import {
 
 export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const { title, description } = useManualActivityParams();
   const { setTitle, setDescription } = useSetManualActivityParams();

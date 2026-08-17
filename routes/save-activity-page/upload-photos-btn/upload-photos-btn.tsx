@@ -11,7 +11,7 @@ import type { UploadPhotoBtnProps } from './ const';
 export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, images }: UploadPhotoBtnProps) {
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();

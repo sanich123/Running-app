@@ -1,8 +1,8 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES, STATUSES } from '@const/enums';
 import { resetFinishedActivity } from '@R/slices/activity/activity';
-import { changeLanguage } from '@R/slices/language/language';
 import { setActivityStatus, setDistance, setDuration, setLocationsFromBackground } from '@R/slices/location/location';
+import { changeLanguage } from '@R/slices/settings/settings';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';

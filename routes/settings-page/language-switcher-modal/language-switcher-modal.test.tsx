@@ -1,6 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LANGUAGES_ARRAY } from './const';
@@ -12,6 +12,6 @@ describe('language switcher modal', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<LanguageSwitcherModal languagesModalRef={{ current: null }} />);
     await user.press(screen.getByText(LANGUAGES_ARRAY.english.values[1].title));
-    expect(mockStore.getState().language.language).toBe(LANGUAGES.russian);
+    expect(mockStore.getState().settings.language).toBe(LANGUAGES.russian);
   });
 });

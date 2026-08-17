@@ -4,6 +4,7 @@ import { Button, Text, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery, useUpdateProfileByProfileIdMutation } from '@R/services/profile/profile';
 import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useProfileFormParams } from '@Routes/profile/profile-settings/profile-settings-params';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { UPDATE_BTN } from './const';
 import type { ProfileSettings } from '@R/slices/profile/types';
@@ -14,7 +15,8 @@ export default function ProfileUpdateBtn() {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { settings, isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
-  const { language } = useAppSelector(({ language }) => language);
+  const formValues = useProfileFormParams();
+  const { language } = useAppSelector(({ settings }) => settings);
   const { data: profile, isLoading: isProfileLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileByProfileIdMutation();
   const isSaving = isProfileLoading || isUpdating;
@@ -25,13 +27,7 @@ export default function ProfileUpdateBtn() {
       loading={isSaving}
       onPress={async () => {
         dispatch(setIsDisabledWhileSendingProfile(true));
-        const body = Object.fromEntries(
-          Object.entries(settings).filter(([, value]) => value !== null),
-        ) as ProfileSettings;
-
-        if (body.birthday) {
-          body.birthday = new Date(body.birthday).toISOString();
-        }
+        const body: ProfileSettings = { ...formValues, profilePhoto: settings.profilePhoto };
 
         await updateProfile({ body, id: `${profile?.id}` })
           .unwrap()

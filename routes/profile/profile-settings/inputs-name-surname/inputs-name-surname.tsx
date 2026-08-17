@@ -1,18 +1,16 @@
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
-import { saveName, saveSurname } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
+import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
 
 export default function InputsNameSurname({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useAppDispatch();
-  const { isDisabledWhileSendingProfile, settings } = useAppSelector(({ profile }) => profile);
-  const { language } = useAppSelector(({ language }) => language);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const [name, setName] = useState(settings?.name);
-  const [surname, setSurname] = useState(settings?.surname);
+  const { name, surname } = useProfileFormParams();
+  const { setName, setSurname } = useSetProfileFormParams();
   const shouldBeDisabled = isDisabled || isDisabledWhileSendingProfile;
 
   return (
@@ -29,10 +27,7 @@ export default function InputsNameSurname({ isDisabled }: { isDisabled: boolean 
         label={NAME_SURNAME[language].nameLabel}
         placeholder={NAME_SURNAME[language].namePlaceholder}
         value={name}
-        onChangeText={(name) => {
-          setName(name);
-          dispatch(saveName(name));
-        }}
+        onChangeText={setName}
         disabled={shouldBeDisabled}
       />
       <TextInput
@@ -47,10 +42,7 @@ export default function InputsNameSurname({ isDisabled }: { isDisabled: boolean 
         label={NAME_SURNAME[language].surnameLabel}
         placeholder={NAME_SURNAME[language].surnamePlaceholder}
         value={surname}
-        onChangeText={(surname) => {
-          setSurname(surname);
-          dispatch(saveSurname(surname));
-        }}
+        onChangeText={setSurname}
         disabled={shouldBeDisabled}
       />
     </View>

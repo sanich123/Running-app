@@ -13,7 +13,7 @@ export default function LocationSettingsSwitcher({
   setIsLocationEnabled,
 }: LocationSettingsSwitcherProps) {
   const [isNeedToRefreshPermission, setIsNeedToRefreshPermission] = useState(false);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   useEffect(() => {
     async function isLocationServicesEnabled() {

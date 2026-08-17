@@ -3,18 +3,18 @@ import activity from '@R/slices/activity/activity';
 import additionalInfoActivity from '@R/slices/activity-additional-info/activity-additional-info';
 import auth from '@R/slices/auth/auth';
 import comment from '@R/slices/comment/comment';
-import language from '@R/slices/language/language';
 import location from '@R/slices/location/location';
 import logining from '@R/slices/logining/logining';
 import mainFeed from '@R/slices/main-feed/main-feed';
 import network from '@R/slices/network/network';
 import profile from '@R/slices/profile/profile';
+import settings from '@R/slices/settings/settings';
 import unsendedActivity from '@R/slices/unsended-activity/unsended-activity';
 import { runichApi } from '../../redux/runich-api/runich-api';
 
 const rootReducer = combineReducers({
   network,
-  language,
+  settings,
   location,
   profile,
   activity,

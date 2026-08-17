@@ -10,7 +10,7 @@ import ErrorComponent from '@S/error-component/error-component';
 import { keyExtractor, renderCardsFunction } from '@S/infinite-scroll-list/render-item';
 
 export default function ActivitiesList() {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const {
     ids: [stringFromIdsArray],
   } = useLocalSearchParams();

@@ -9,7 +9,7 @@ import { EDIT_BTN } from './const';
 export default function EditBtn() {
   const { push } = useRouter();
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   return (

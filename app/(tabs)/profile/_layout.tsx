@@ -11,7 +11,7 @@ const LazyProfileUpdateBtn = lazy(() => import('@Routes/profile/update-btn/updat
 
 export default function ProfileStack() {
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
 
   return (

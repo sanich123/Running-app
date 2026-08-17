@@ -16,7 +16,7 @@ export default function UpdateBtn() {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
   const dispatch = useAppDispatch();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { id: globalActivityId } = useGlobalSearchParams<{ id?: string | string[] }>();
   const pathname = usePathname();
   const routeActivityId = pathname.startsWith(`/${ROUTES.activity}/`) ? pathname.split('/').at(-1) : undefined;

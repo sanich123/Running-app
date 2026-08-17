@@ -26,7 +26,7 @@ export default function YearTypePicker({
   availableYearsAndTypes,
 }: YearsAndTypesPickerProps) {
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const isRussian = language === LANGUAGES.russian;
 
   return (

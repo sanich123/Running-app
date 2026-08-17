@@ -7,24 +7,24 @@ import activity from './slices/activity/activity';
 import additionalInfoActivity from './slices/activity-additional-info/activity-additional-info';
 import auth from './slices/auth/auth';
 import comment from './slices/comment/comment';
-import language from './slices/language/language';
 import location from './slices/location/location';
 import logining from './slices/logining/logining';
 import mainFeed from './slices/main-feed/main-feed';
 import network from './slices/network/network';
 import profile from './slices/profile/profile';
+import settings from './slices/settings/settings';
 import unsendedActivity from './slices/unsended-activity/unsended-activity';
 import type { Action, Reducer } from '@reduxjs/toolkit';
 
 const persistConfig = {
   key: 'root',
   storage: appStorage,
-  whitelist: ['language', 'activity', 'location', 'auth', 'unsendedActivity'],
+  whitelist: ['settings', 'activity', 'location', 'auth', 'unsendedActivity'],
 };
 
 const appReducer = combineReducers({
   network,
-  language,
+  settings,
   location,
   profile,
   activity,

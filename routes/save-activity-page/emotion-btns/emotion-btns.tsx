@@ -5,7 +5,7 @@ import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_
 
 export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { emotion } = useManualActivityParams();
   const { setEmotion } = useSetManualActivityParams();
 

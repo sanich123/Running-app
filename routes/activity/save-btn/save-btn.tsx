@@ -37,7 +37,7 @@ export default function SaveBtn() {
     manualSeconds,
   } = useGlobalManualActivityParams();
   const { photoVideoUrls } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
   const [updateActivity, { isLoading: isUpdating }] = useUpdateActivityInfoMutation();
   const [updateSessionLocation] = useUpdateSessionLocationMutation();

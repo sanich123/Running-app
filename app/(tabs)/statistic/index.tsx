@@ -20,7 +20,7 @@ export default function Statistics() {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedType, setSelectedType] = useState<string>(SPORTS_BTNS_VALUES.run);
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const {
     data: yearStats,
     isLoading,

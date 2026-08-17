@@ -6,7 +6,7 @@ import { SHOW_CAMERA_BTN } from './const';
 
 export default function ShowCameraBtn({ isDisabled }: { isDisabled: boolean }) {
   const { setCameraIsVisible } = useSetManualActivityParams();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { colors } = useTheme();
   const shouldBeDisabled = isDisabled || isDisabledWhileSending;

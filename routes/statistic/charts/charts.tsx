@@ -11,7 +11,7 @@ import type { MonthMetrics } from './types';
 export default function Charts({ year, months }: { year: number; months: MonthMetrics }) {
   const { colors } = useTheme();
   const [chartValue, setChartValue] = useState<ChooseMetricsBtnsValues>(ChooseMetricsBtnsValues.distance);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const chartToRender = reduceMonthMetrics(months, language);
   const selectedChart = chartToRender[chartValue];
 

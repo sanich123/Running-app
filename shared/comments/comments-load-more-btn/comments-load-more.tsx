@@ -4,7 +4,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import type { CommentsLoadMoreButtonProps } from '../types';
 
 export default function CommentsLoadMoreBtn({ take, increaseTakeNumber, commentsLength }: CommentsLoadMoreButtonProps) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const diffBetweenAllCommentsAndDownloaded = commentsLength - take >= 10 ? 10 : commentsLength - take;
   return (
     <Button

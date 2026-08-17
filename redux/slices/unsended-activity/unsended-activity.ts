@@ -9,10 +9,6 @@ const unsendedActivity = createSlice({
       state.unsyncedActivities = [...state.unsyncedActivities, payload];
       state.isHaveUnsyncedActivity = true;
     },
-    refreshUnsendedActivitiesList: (state, { payload }) => {
-      state.unsyncedActivities = payload;
-      state.isHaveUnsyncedActivity = payload.length > 0;
-    },
     setIsHaveUnsyncedActivity: (state, { payload }) => {
       state.isHaveUnsyncedActivity = payload;
     },

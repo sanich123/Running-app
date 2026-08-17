@@ -5,7 +5,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { INTRO } from './const';
 
 export default function Intro() {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
 
   return (

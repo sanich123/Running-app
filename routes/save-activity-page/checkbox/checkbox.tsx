@@ -5,7 +5,7 @@ import { useManualActivityParams, useSetManualActivityParams } from '../manual-a
 import { CHECKBOX_TEST_ID, CHECKBOX } from './const';
 
 export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { isPublic } = useManualActivityParams();
   const { setIsPublic } = useSetManualActivityParams();

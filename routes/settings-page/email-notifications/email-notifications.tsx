@@ -7,7 +7,7 @@ import SettingsRow from '../settings-row/settings-row';
 
 export default function EmailNotificationsBtn() {
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { data: profileInfo, isSuccess } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [updateProfile] = useUpdateProfileByProfileIdMutation();
 

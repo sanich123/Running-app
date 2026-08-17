@@ -22,7 +22,7 @@ export default memo(function Metrics({
 }: MetricsProps) {
   const { dark } = useTheme();
   const { push } = useRouter();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const pathname = usePathname();
 
   return (

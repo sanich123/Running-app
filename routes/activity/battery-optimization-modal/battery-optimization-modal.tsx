@@ -13,7 +13,7 @@ export default function BatteryOptimizationModal({
   setIsNeedToRefreshPermission,
 }: BatteryOptimizationModalProps) {
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const renderBackdrop = useCallback(
     (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],

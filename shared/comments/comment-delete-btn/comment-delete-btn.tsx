@@ -10,7 +10,7 @@ import type { CommentDeleteButtonProps } from '../types';
 export default function CommentDeleteBtn({ commentId, activityId }: CommentDeleteButtonProps) {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const [deleteComment, { isSuccess: isSuccessDeleting, isLoading }] = useDeleteCommentByCommentIdMutation();
 
   useEffect(() => {

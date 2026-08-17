@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 import { http } from 'msw';
 import { LANGUAGES } from '@const/enums';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';

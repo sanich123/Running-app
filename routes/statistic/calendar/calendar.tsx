@@ -12,7 +12,7 @@ import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-da
 import type { CalendarStatisticsProps } from './types';
 
 export default function CalendarActivities({ year, month, userId, selectedType }: CalendarStatisticsProps) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const {

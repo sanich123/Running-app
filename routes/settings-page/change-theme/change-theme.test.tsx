@@ -1,7 +1,7 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { Appearance } from 'react-native';
 import { LANGUAGES, THEMES } from '@const/enums';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ChangeTheme from './change-theme';
@@ -14,7 +14,7 @@ describe('change theme', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<ChangeTheme />);
     await user.press(screen.getByText(THEMES_ARRAY.english[1].title));
-    expect(mockStore.getState().language.theme).toBe(THEMES.light);
+    expect(mockStore.getState().settings.theme).toBe(THEMES.light);
     expect(setColorScheme).toHaveBeenCalledWith(THEMES.light);
   });
 });

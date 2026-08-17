@@ -10,7 +10,7 @@ import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { sport } = useManualActivityParams();
   const { setSport } = useSetManualActivityParams();
   const { dark, colors } = useTheme();

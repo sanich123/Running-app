@@ -2,7 +2,7 @@ import { renderHook, screen, userEvent, waitFor } from '@testing-library/react-n
 import { http, HttpResponse } from 'msw';
 import { useForm, type UseFormHandleSubmit } from 'react-hook-form';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';

@@ -10,7 +10,7 @@ import type { VariantProp } from 'react-native-paper/lib/typescript/components/T
 
 export default memo(function UserNameSurname({ userId, size }: { userId: string; size: VariantProp<MD3TypescaleKey> }) {
   const { error, data: profileInfo } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   return (
     <View style={{ flex: 1, flexDirection: 'row' }}>
       <Text variant={size} style={{ fontWeight: 'bold' }}>

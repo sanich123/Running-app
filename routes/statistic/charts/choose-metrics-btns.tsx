@@ -11,7 +11,7 @@ export default function ChooseMetricsBtns({
   chartValue: ChooseMetricsBtnsValues;
   setChartValue: (arg: ChooseMetricsBtnsValues) => void;
 }) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const buttons = getMetricsBtnsValues(language);
   return (

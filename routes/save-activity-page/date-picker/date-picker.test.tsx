@@ -1,7 +1,7 @@
 import { act, screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { setIsDisableWhileSending } from '@R/slices/activity/activity';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { DATE_TIME_PICKER, DATE_TIME_PICKER_BTN_ID } from './const';

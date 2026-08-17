@@ -30,7 +30,7 @@ export default function MonthStatistics() {
     { userId: `${userId}`, year: `${year}`, month: `${month}` },
     { skip: !userId || !year || !month },
   );
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const isRussian = language === LANGUAGES.russian;
   return (
     <CrossPlatformLayout

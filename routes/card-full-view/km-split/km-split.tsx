@@ -13,7 +13,7 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: Activity
   const fastestKm = validSplits.length
     ? Math.min(...validSplits.map(({ lastKilometerDuration }) => lastKilometerDuration))
     : 0;
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
 
   return (

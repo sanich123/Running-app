@@ -7,7 +7,7 @@ export default function NetworkIndicator() {
   const {
     networkState: { isInternetReachable },
   } = useAppSelector(({ network }) => network);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
 
   return (
     <View style={[styles.indicatorLayout, isInternetReachable && { display: 'none' }]}>

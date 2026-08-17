@@ -10,7 +10,7 @@ import MetricsItem from './metrics-item/metrics-item';
 export default function Metrics() {
   const { colors } = useTheme();
   const { kilometresSplit, altitude, duration, distance, isMapVisible } = useAppSelector(({ location }) => location);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const formattedDuration = formatDuration(duration);
   const formattedDistance = (distance / 1000).toFixed(2);
   const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;

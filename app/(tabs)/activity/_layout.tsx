@@ -11,7 +11,7 @@ import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 const LazyActivityCloseBtn = lazy(() => import('@Routes/activity/close-btn/close-btn'));
 
 export default function ActivityStack() {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { sport } = useGlobalActivitySportParams();
   const { colors } = useTheme();
   return (

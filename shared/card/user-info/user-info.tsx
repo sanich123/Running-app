@@ -13,7 +13,7 @@ import type { SPORTS_BTNS_VALUES } from '@const/sports';
 export default function UserInfo({ profile, sport, date, userId, size, commentsModalRef }: UserInfoProps) {
   const { dark, colors } = useTheme();
   const { push } = useRouter();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}

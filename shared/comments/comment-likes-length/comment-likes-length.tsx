@@ -7,7 +7,7 @@ import type { CommentLikesLengthProps } from '../types';
 
 export default function CommentLikesLength({ commentId, commentLikesFromComment }: CommentLikesLengthProps) {
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { data: commentLikes, error, isError } = useGetLikesByCommentIdQuery(commentId);
 
   const whatCommentLikesToIterate = commentLikes ?? commentLikesFromComment ?? [];

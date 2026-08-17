@@ -27,7 +27,7 @@ const renderDivider = () => <Divider />;
 
 export default function ListOfFollowing() {
   const { width } = useWindowDimensions();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { id: userId } = useLocalSearchParams();
   const { isLoading, isSuccess, error, isError, data: users, refetch } = useGetYouFollowUsersByUserIdQuery(`${userId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);

@@ -77,9 +77,9 @@ export default function RootLayout() {
 function AppShell() {
   useAppInitialization();
   const systemColorScheme = useColorScheme();
-  const { theme } = useAppSelector(({ language }) => language);
+  const { theme } = useAppSelector(({ settings }) => settings);
   const { accessToken } = useAppSelector(({ auth }) => auth);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { cameraVisible } = useGlobalSearchParams<{ cameraVisible?: string | string[] }>();
   const isCameraVisible = Array.isArray(cameraVisible) ? cameraVisible[0] === 'true' : cameraVisible === 'true';
   const pathname = usePathname();

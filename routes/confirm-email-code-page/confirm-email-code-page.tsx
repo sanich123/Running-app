@@ -11,7 +11,7 @@ export default function ConfirmEmailCodePage() {
   const { colors } = useTheme();
   const { email: savedEmail } = useAppSelector(({ logining }) => logining);
   const { email: queryEmail, type: queryType } = useLocalSearchParams<{ email?: string; type?: string }>();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const email = typeof queryEmail === 'string' ? queryEmail : savedEmail;
   const type: ConfirmEmailCodeType = queryType === 'change-password' ? 'change-password' : 'registration';
   const copy = CONFIRM_EMAIL_PAGE_TEXT[language];

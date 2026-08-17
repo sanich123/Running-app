@@ -11,11 +11,6 @@ export interface EmailPasswordData {
   password: string;
 }
 
-export interface AccessData {
-  accessToken: string;
-  refreshToken: string;
-}
-
 export interface EmailData {
   email: string;
 }
@@ -40,7 +35,7 @@ export type MessageApiResponse = MessageResponse;
  * The backend currently returns a full Users row when an unconfirmed account
  * is registered again, and a message for a new account.
  */
-export interface ExistingRegistrationResponse {
+interface ExistingRegistrationResponse {
   id: string;
   email: string;
   instance_id: string | null;

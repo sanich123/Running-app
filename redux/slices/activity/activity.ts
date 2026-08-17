@@ -14,13 +14,9 @@ const activity = createSlice({
     resetFinishedActivity: (state) => {
       state.finishedActivity = FINISHED_ACTIVITY_INITIAL_STATE;
     },
-    resetActivitySlice: () => {
-      return ACTIVITY_INITIAL_STATE;
-    },
   },
 });
 
-export const { setIsDisableWhileSending, saveFinishedActivity, resetFinishedActivity, resetActivitySlice } =
-  activity.actions;
+export const { setIsDisableWhileSending, saveFinishedActivity, resetFinishedActivity } = activity.actions;
 
 export default activity.reducer;

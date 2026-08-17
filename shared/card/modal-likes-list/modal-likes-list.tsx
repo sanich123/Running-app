@@ -14,7 +14,7 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength }: Mod
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const { activityIdWhichLikesToDownload } = useAppSelector(({ mainFeed }) => mainFeed);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { data: likes, isSuccess } = useGetLikesByActivityIdQuery(`${activityIdWhichLikesToDownload}`, {
     skip: !activityIdWhichLikesToDownload,
   });

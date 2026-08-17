@@ -16,7 +16,7 @@ export default function Metrics() {
   const { data: routeData } = useGetLocationsByActivityIdQuery(`${activityId}`, {
     skip: !activityId || Boolean(activity?.locations?.length),
   });
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const kilometresSplit = activity?.kilometresSplit ?? routeData?.kilometresSplit ?? [];
   const splitElevationGain = kilometresSplit.reduce(

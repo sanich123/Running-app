@@ -36,7 +36,7 @@ export default function StartBtn({
     locationsFromBackground: locations,
     kilometresSplit,
   } = useAppSelector(({ location }) => location);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { push } = useRouter();
   const { sport } = useActivitySportParams();
   const [pressScale] = useState(() => new Animated.Value(1));

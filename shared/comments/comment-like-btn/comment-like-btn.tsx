@@ -14,7 +14,7 @@ import type { CommentLikeBtnProps } from '../types';
 export default function CommentLikeBtn({ commentId, commentLikesFromComment, profile, comment }: CommentLikeBtnProps) {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);

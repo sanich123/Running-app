@@ -8,7 +8,7 @@ export default memo(function NumberOfLikes({ likes }: NumberOfLikesProps) {
   const { userId } = useAppSelector(({ auth }) => auth);
   const isOwnerLiked = likes.some(({ authorId }) => authorId === userId);
   const restLiked = isOwnerLiked ? likes.length - 1 : likes.length;
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const twoIcons = likes.length === 2;
   const threeIcons = likes.length >= 3;
 

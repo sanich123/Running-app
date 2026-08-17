@@ -4,13 +4,13 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/
 import type { ColorSchemeName } from 'react-native';
 import { Appearance, View, StyleSheet } from 'react-native';
 import { useTheme, Text, Divider, RadioButton, TouchableRipple } from 'react-native-paper';
-import { changeTheme } from '@R/slices/language/language';
+import { changeTheme } from '@R/slices/settings/settings';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { THEMES_ARRAY } from './const';
 
 export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: RefObject<BottomSheetModal | null> }) {
   const dispatch = useAppDispatch();
-  const { language, theme } = useAppSelector(({ language }) => language);
+  const { language, theme } = useAppSelector(({ settings }) => settings);
   const { colors, dark } = useTheme();
 
   const renderBackdrop = useCallback(

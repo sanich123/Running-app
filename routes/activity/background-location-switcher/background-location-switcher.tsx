@@ -8,7 +8,7 @@ import type { BackgroundLocationSwitcherProps } from '../types';
 export default function BackgroundLocationSwitcher({
   backgroundLocationEnabledModalRef,
 }: BackgroundLocationSwitcherProps) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   return (
     <View style={[styles.switcherWrapper, { borderColor: colors.outlineVariant, backgroundColor: colors.surface }]}>

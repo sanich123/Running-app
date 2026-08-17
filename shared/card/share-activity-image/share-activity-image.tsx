@@ -22,7 +22,7 @@ export default function ShareActivityImage({
 }: Pick<ActivityCardProps, 'distance' | 'duration' | 'date' | 'title' | 'mapPhotoUrl'> & {
   cardRef: MutableRefObject<View | null>;
 }) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const isRussian = language === LANGUAGES.russian;
   const pace = getSpeedInMinsInKm(distance, duration);

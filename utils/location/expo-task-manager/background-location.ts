@@ -58,8 +58,8 @@ export async function startLocationTracking() {
         distanceInterval: DISTANCE_INTERVAL,
         showsBackgroundLocationIndicator: true,
         foregroundService: {
-          notificationTitle: BACKGROUND_NOTIFICATION[store.getState().language.language].isActive,
-          notificationBody: BACKGROUND_NOTIFICATION[store.getState().language.language].turnOff,
+          notificationTitle: BACKGROUND_NOTIFICATION[store.getState().settings.language].isActive,
+          notificationBody: BACKGROUND_NOTIFICATION[store.getState().settings.language].turnOff,
           notificationColor: '#333333',
         },
       });

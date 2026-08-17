@@ -3,6 +3,6 @@ import EmptyState from '@S/empty-state/empty-state';
 import { EMPTY_ACTIVITIES_LIST } from './const';
 
 export default function EmptyActivitiesList() {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   return <EmptyState icon="run-fast" title={EMPTY_ACTIVITIES_LIST[language].emptyActivities} />;
 }

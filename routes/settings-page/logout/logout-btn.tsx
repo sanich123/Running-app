@@ -7,7 +7,7 @@ import { SETTINGS } from '../const';
 import SettingsRow from '../settings-row/settings-row';
 
 export default function LogoutBtn() {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { replace, dismissAll, canDismiss } = useRouter();
   const dispatch = useAppDispatch();
   return (

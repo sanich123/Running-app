@@ -15,7 +15,7 @@ import type { PhotoVideoType } from '@S/card/types';
 export default function MediaGrid() {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { id: userId } = useLocalSearchParams();
   const [take, setTake] = useState(28);
   const isLoadingMore = useRef(false);

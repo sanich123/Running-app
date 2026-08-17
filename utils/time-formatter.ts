@@ -27,10 +27,6 @@ export function getHoursMinutes(dateString: string, language: LANGUAGES) {
   return `${language === LANGUAGES.english ? 'at' : 'в'} ${time}`;
 }
 
-export function getMillisecondsFromHoursMinutes(hours: number, minutes: number) {
-  return getMillisecondsFromHoursMinutesSeconds(hours, minutes, 0);
-}
-
 export function getMillisecondsFromHoursMinutesSeconds(hours: number, minutes: number, seconds: number) {
   const millisecondsInHour = 3600000;
   const millisecondsInMinute = 60000;

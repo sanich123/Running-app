@@ -113,6 +113,7 @@ export default {
           android: {
             enableProguardInReleaseBuilds: true,
             enableShrinkResourcesInReleaseBuilds: true,
+            extraProguardRules: '-keep class expo.modules.adapters.react.apploader.** { *; }',
           },
           ios: { ccacheEnabled: true },
         },

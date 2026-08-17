@@ -31,7 +31,7 @@ const renderDivider = () => <Divider />;
 export default function LikesList() {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { id: activityId } = useLocalSearchParams();
   const {
     isLoading,

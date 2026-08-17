@@ -2,8 +2,8 @@ import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-na
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
-import { changeLanguage } from '@R/slices/language/language';
 import { resetSettings } from '@R/slices/profile/profile';
+import { changeLanguage } from '@R/slices/settings/settings';
 import ProfilePage from '@Routes/profile/profile';
 import GenderBtns from '@Routes/profile/profile-settings/gender-btns/gender-btns';
 import { INPUT_BIO_TEST_ID } from '@Routes/profile/profile-settings/input-bio/const';
@@ -27,9 +27,19 @@ import { renderWithProviders } from '@T/utils/test-utils';
 
 const mockBack = jest.fn();
 const mockReplace = jest.fn();
+const mockProfileSettingsParams = {
+  id: MOCK_SERVER_IDS.userId,
+  name: MOCK_SERVER_PROFILE.name,
+  surname: MOCK_SERVER_PROFILE.surname,
+  city: MOCK_SERVER_PROFILE.city,
+  weight: MOCK_SERVER_PROFILE.weight,
+  bio: MOCK_SERVER_PROFILE.bio,
+  gender: MOCK_SERVER_PROFILE.gender,
+};
+const mockSetParams = jest.fn((params: Record<string, string>) => Object.assign(mockProfileSettingsParams, params));
 
 jest.mock('expo-router', () => ({
-  useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.userId }),
+  useLocalSearchParams: () => mockProfileSettingsParams,
   usePathname: () => '/profile',
   useRouter: () => ({
     back: mockBack,
@@ -37,6 +47,7 @@ jest.mock('expo-router', () => ({
     dismissAll: jest.fn(),
     push: jest.fn(),
     replace: mockReplace,
+    setParams: mockSetParams,
   }),
 }));
 
@@ -47,6 +58,15 @@ describe('profile and account integration flows', () => {
     mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(resetSettings());
+    Object.assign(mockProfileSettingsParams, {
+      id: MOCK_SERVER_IDS.userId,
+      name: MOCK_SERVER_PROFILE.name,
+      surname: MOCK_SERVER_PROFILE.surname,
+      city: MOCK_SERVER_PROFILE.city,
+      weight: MOCK_SERVER_PROFILE.weight,
+      bio: MOCK_SERVER_PROFILE.bio,
+      gender: MOCK_SERVER_PROFILE.gender,
+    });
   });
 
   it('views a profile, edits all profile fields, and sends the changed data to the server', async () => {
@@ -67,7 +87,6 @@ describe('profile and account integration flows', () => {
         <InputsWeightCity isDisabled={false} />
         <InputBio isDisabled={false} />
         <GenderBtns isDisabled={false} />
-        <ProfileUpdateBtn />
       </>,
     );
 
@@ -80,6 +99,7 @@ describe('profile and account integration flows', () => {
     await fireEvent.changeText(screen.getByTestId(INPUT_BIO_TEST_ID), 'Updated bio');
 
     await userEvent.press(screen.getByText('Женщина'));
+    await renderWithProviders(<ProfileUpdateBtn />);
     await userEvent.press(await screen.findByText(UPDATE_BTN.russian.update));
 
     await waitFor(() =>

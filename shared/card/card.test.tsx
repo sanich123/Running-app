@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import ActivityCard from './card';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';

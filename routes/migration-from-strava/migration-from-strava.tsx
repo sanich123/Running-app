@@ -19,7 +19,7 @@ export default function MigrationFromStrava() {
   const { userId, accessToken } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
   const { replace } = useRouter();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const {
     isDisabled,

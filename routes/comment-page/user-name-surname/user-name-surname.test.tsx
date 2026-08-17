@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';

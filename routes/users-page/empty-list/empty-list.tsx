@@ -4,7 +4,7 @@ import EmptyState from '@S/empty-state/empty-state';
 import { EMPTY_USERS_LIST } from './const';
 
 export default function EmptyUsersList({ isInitial }: { isInitial: boolean }) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const message = EMPTY_USERS_LIST[language];
 
   return (

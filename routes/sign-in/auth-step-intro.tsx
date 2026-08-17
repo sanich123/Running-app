@@ -35,7 +35,7 @@ const CONTENT = {
 } as const;
 
 export default function AuthStepIntro({ authStep }: { authStep: SignInPageStates }) {
-  const { language } = useAppSelector(({ language: languageState }) => languageState);
+  const { language } = useAppSelector(({ settings: settingsState }) => settingsState);
   const { colors } = useTheme();
   const content = CONTENT[language][authStep === SignInPageStates.emailLink ? 'emailLink' : authStep];
   const isLogin = authStep === SignInPageStates.login;

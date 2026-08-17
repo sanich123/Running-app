@@ -7,7 +7,7 @@ import { CHECK_EMAIL } from './const';
 
 export default function SignInNeedToConfirmEmail() {
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
 
   return (
     <>

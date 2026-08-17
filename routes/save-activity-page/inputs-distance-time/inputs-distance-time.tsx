@@ -8,7 +8,7 @@ import { INPUT_DISTANCE_ID, INPUTS_DISTANCE_TIME, INPUT_HOURS_ID, INPUT_MINUTES_
 export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean }) {
   const { manualDistance, manualHours, manualMinutes, manualSeconds } = useManualActivityParams();
   const { setManualDistance, setManualHours, setManualMinutes, setManualSeconds } = useSetManualActivityParams();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
   const { colors } = useTheme();
   const shouldBeDisabled = isDisabled || isDisabledWhileSending;

@@ -22,7 +22,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const [comment, setComment] = useState(commentToUpdate);
   const [sendEmailAfterSendingComment] = useSendEmailAfterSendingCommentMutation();
   const [postComment, { isLoading: isCommentSending }] = usePostCommentWithActivityIdMutation();

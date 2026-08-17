@@ -8,7 +8,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { USERS_COUNT, USERS_VARIANT } from './const';
 
 export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
   const { push } = useRouter();
   const { dark } = useTheme();
