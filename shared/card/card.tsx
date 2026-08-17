@@ -10,6 +10,7 @@ import { getMapBoxImage } from '@U/location/location-utils';
 import Btns from './btns/btns';
 import { LikesSize } from './likes/const';
 import Likes from './likes/likes';
+import { ACTIVITY_MEDIA_HEIGHT } from './media-list/const';
 import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
 import ShareActivityImage from './share-activity-image/share-activity-image';
@@ -40,15 +41,22 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const cardRef = useRef<View>(null);
+  const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
   const shouldLoadRouteLocations = !locations?.length && Boolean(mapPhotoUrl);
   const { data: routeData } = useGetLocationsByActivityIdQuery(id, { skip: !shouldLoadRouteLocations });
-  const resolvedMapPhotoUrl = useMemo(() => {
-    const routeLocations = locations?.length ? locations : routeData?.locations;
+  const routeLocations = locations?.length ? locations : routeData?.locations;
+  const shareMapPhotoUrl = useMemo(() => {
     if (routeLocations?.length) {
       return getMapBoxImage(routeLocations) || mapPhotoUrl;
     }
     return mapPhotoUrl;
-  }, [locations, mapPhotoUrl, routeData?.locations]);
+  }, [mapPhotoUrl, routeLocations]);
+  const resolvedMapPhotoUrl = useMemo(() => {
+    if (routeLocations?.length) {
+      return getMapBoxImage(routeLocations, { width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }) || mapPhotoUrl;
+    }
+    return mapPhotoUrl;
+  }, [mapPhotoUrl, mediaWidth, routeLocations]);
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
   return (
     <>
@@ -58,7 +66,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
         duration={duration}
         distance={distance}
         cardRef={cardRef}
-        mapPhotoUrl={resolvedMapPhotoUrl}
+        mapPhotoUrl={shareMapPhotoUrl}
       />
       <View
         style={[
@@ -68,7 +76,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             borderColor: colors.outlineVariant,
             borderWidth: 1,
             zIndex: 10,
-            width: width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH,
+            width: mediaWidth,
             marginBottom: isFullView ? 0 : 16,
           },
           Platform.OS === 'web' && styles.webStyles,

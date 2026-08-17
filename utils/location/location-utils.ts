@@ -69,7 +69,11 @@ function isPlausibleVerticalChange(previous: ActivityLocation, current: Activity
       ? (currentTimestamp - previousTimestamp) / 1000
       : null;
 
-  return elapsedSeconds === null || elapsedSeconds <= 0 || Math.abs(elevationDelta) <= elapsedSeconds * MAX_VERTICAL_SPEED_METERS_PER_SECOND;
+  return (
+    elapsedSeconds === null ||
+    elapsedSeconds <= 0 ||
+    Math.abs(elevationDelta) <= elapsedSeconds * MAX_VERTICAL_SPEED_METERS_PER_SECOND
+  );
 }
 
 export function getElevationGainBetweenLocations(previous: ActivityLocation, current: ActivityLocation) {
@@ -115,7 +119,14 @@ export function getElevationGain(locations: ActivityLocation[]) {
     const descentFromPeak = peak - currentAltitude;
     if (descentFromPeak > 3) {
       const climb = peak - climbStart;
-      if (climb >= MIN_ELEVATION_DELTA_METERS && isPlausibleVerticalChange(smoothedLocations[index - 1], current, currentAltitude - (getReliableAltitude(smoothedLocations[index - 1]) as number))) {
+      if (
+        climb >= MIN_ELEVATION_DELTA_METERS &&
+        isPlausibleVerticalChange(
+          smoothedLocations[index - 1],
+          current,
+          currentAltitude - (getReliableAltitude(smoothedLocations[index - 1]) as number),
+        )
+      ) {
         elevationGain += climb;
       }
       climbStart = currentAltitude;
@@ -134,8 +145,7 @@ function interpolateLocation(start: LocationObject | null, end: LocationObject, 
   }
 
   const clampedFraction = Math.min(1, Math.max(0, fraction));
-  const interpolate = (startValue: number, endValue: number) =>
-    startValue + (endValue - startValue) * clampedFraction;
+  const interpolate = (startValue: number, endValue: number) => startValue + (endValue - startValue) * clampedFraction;
   const startAltitude = start.coords.altitude;
   const endAltitude = end.coords.altitude;
 
@@ -257,7 +267,15 @@ export function getMaxTrackingSpeedForSport(sport: string) {
   return MAX_TRACKING_SPEED_KMH[sport as keyof typeof MAX_TRACKING_SPEED_KMH] ?? DEFAULT_MAX_TRACKING_SPEED_KMH;
 }
 
-export function getMapBoxImage(locations: ActivityLocation[]) {
+interface StaticMapImageSize {
+  width: number;
+  height: number;
+}
+
+export function getMapBoxImage(
+  locations: ActivityLocation[],
+  size: StaticMapImageSize = { width: STATIC_MAP_IMAGE_SIZE, height: STATIC_MAP_IMAGE_SIZE },
+) {
   const validLocations = locations.filter(
     ({ coords }) => Number.isFinite(coords?.longitude) && Number.isFinite(coords?.latitude),
   );
@@ -283,8 +301,8 @@ export function getMapBoxImage(locations: ActivityLocation[]) {
           : '';
       const startMarker = `pin-s+${startMarkerColor}(${initialCoordinate.join(',')})`;
       const finishMarker = `pin-s+${finishMarkerColor}(${lastCoordinate.join(',')})`;
-      const width = STATIC_MAP_IMAGE_SIZE;
-      const height = STATIC_MAP_IMAGE_SIZE;
+      const width = Math.max(1, Math.round(size.width));
+      const height = Math.max(1, Math.round(size.height));
       const doublePixels = '@2x';
       const overlays = [routeOverlay, startMarker, finishMarker].filter(Boolean).join(',');
 

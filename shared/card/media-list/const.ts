@@ -1,0 +1,1 @@
+export const ACTIVITY_MEDIA_HEIGHT = 202;

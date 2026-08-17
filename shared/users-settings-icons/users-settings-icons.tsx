@@ -12,7 +12,6 @@ export default function UsersSettingsIcons() {
   const { userId } = useGlobalSearchParams();
   const { userId: ownerId } = useAppSelector(({ auth }) => auth);
   const isMineActivity = userId === ownerId && pathname.includes(ROUTES.activity);
-  const isHomePage = pathname === ROUTES.root || pathname === `/${ROUTES.index}`;
   const isSettingsPage = pathname === `/${ROUTES.settings}`;
   const isUsersPage = pathname === `/${ROUTES.users}`;
 
@@ -23,7 +22,7 @@ export default function UsersSettingsIcons() {
   };
 
   return (
-    <View style={[styles.layout, isHomePage && styles.homeLayout]}>
+    <View style={styles.layout}>
       {isMineActivity ? (
         <ActivityUpdateBtn />
       ) : (
@@ -57,10 +56,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'transparent',
-    paddingRight: 8,
-  },
-  homeLayout: {
-    paddingRight: 16,
   },
   iconButton: {
     margin: 0,

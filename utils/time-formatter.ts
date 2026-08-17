@@ -28,9 +28,14 @@ export function getHoursMinutes(dateString: string, language: LANGUAGES) {
 }
 
 export function getMillisecondsFromHoursMinutes(hours: number, minutes: number) {
+  return getMillisecondsFromHoursMinutesSeconds(hours, minutes, 0);
+}
+
+export function getMillisecondsFromHoursMinutesSeconds(hours: number, minutes: number, seconds: number) {
   const millisecondsInHour = 3600000;
   const millisecondsInMinute = 60000;
-  return hours * millisecondsInHour + minutes * millisecondsInMinute;
+  const millisecondsInSecond = 1000;
+  return hours * millisecondsInHour + minutes * millisecondsInMinute + seconds * millisecondsInSecond;
 }
 
 export function getHoursMinutesFromMilliseconds(milliseconds: number) {
@@ -38,4 +43,15 @@ export function getHoursMinutesFromMilliseconds(milliseconds: number) {
   const difference = milliseconds - hours * 60 * 60 * 1000;
   const minutes = Math.abs(Math.round(difference / 1000 / 60));
   return { hours, minutes };
+}
+
+export function getHoursMinutesSecondsFromMilliseconds(milliseconds: number) {
+  const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+  const secondsInHour = 60 * 60;
+  const secondsInMinute = 60;
+  const hours = Math.floor(totalSeconds / secondsInHour);
+  const minutes = Math.floor((totalSeconds % secondsInHour) / secondsInMinute);
+  const seconds = totalSeconds % secondsInMinute;
+
+  return { hours, minutes, seconds };
 }
