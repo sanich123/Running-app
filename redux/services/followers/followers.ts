@@ -20,7 +20,10 @@ const followersApi = runichApi.injectEndpoints({
         url: `/${friend}/${id}`,
         method: Methods.post,
       }),
-      invalidatesTags: (result, error, arg) => [{ type: Tags.friends, id: arg.id }, Tags.activities],
+      // The following-list query is keyed by the current user's id, while this
+      // mutation receives the followed user's id. Invalidate the whole friends
+      // tag so both following and followers queries refresh after a change.
+      invalidatesTags: [Tags.friends, Tags.activities],
     }),
     deleteFriend: builder.mutation<void, string>({
       query: (id: string) => ({
