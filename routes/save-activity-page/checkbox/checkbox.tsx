@@ -1,26 +1,20 @@
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
-import { saveIsPublic } from '@R/slices/activity-additional-info/activity-additional-info';
-import { store } from '@R/store';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
+import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 import { CHECKBOX_TEST_ID, CHECKBOX } from './const';
 
 export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { isEditingActivity } = useAppSelector(({ manualActivity }) => manualActivity);
-  const [isPublic, setIsPublic] = useState(isEditingActivity ? store.getState().additionalInfoActivity.isPublic : true);
+  const { isPublic } = useManualActivityParams();
+  const { setIsPublic } = useSetManualActivityParams();
 
   return (
     <View style={styles.switcherWrapper}>
       <Switch
         value={isPublic}
-        onValueChange={() => {
-          dispatch(saveIsPublic(!isPublic));
-          setIsPublic(!isPublic);
-        }}
+        onValueChange={() => setIsPublic(!isPublic)}
         testID={CHECKBOX_TEST_ID}
         disabled={isDisabled || isDisabledWhileSending}
         style={styles.switch}

@@ -1,12 +1,11 @@
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
-import { setManualDate } from '@R/slices/manual-activity/manual-activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import { DATE_TIME_PICKER } from '../date-picker/const';
+import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 
-function toDateTimeInputValue(value: string) {
+function toDateTimeInputValue(value: Date | string) {
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) return '';
@@ -18,11 +17,10 @@ function toDateTimeInputValue(value: string) {
 }
 
 export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useAppDispatch();
   const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { manualDate } = useAppSelector(({ manualActivity }) => manualActivity);
+  const { manualDate } = useManualActivityParams();
+  const { setManualDate } = useSetManualActivityParams();
   const { language } = useAppSelector(({ language }) => language);
-  const [date, setDate] = useState(() => toDateTimeInputValue(manualDate));
   const { colors } = useTheme();
   const shouldBeDisabled = isDisabled || isDisabledWhileSending;
 
@@ -42,12 +40,11 @@ export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
         }}
         type="datetime-local"
         id="date-picker-date"
-        value={date}
+        value={toDateTimeInputValue(manualDate)}
         placeholder={DATE_TIME_PICKER[language].title}
         aria-label={DATE_TIME_PICKER[language].title}
         onChange={({ target }) => {
-          dispatch(setManualDate(new Date(Date.parse(target.value))));
-          setDate(target.value);
+          setManualDate(new Date(Date.parse(target.value)));
         }}
       />
       <View pointerEvents="none" style={styles.inputIcon}>

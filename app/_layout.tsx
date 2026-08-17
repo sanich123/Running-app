@@ -17,7 +17,7 @@ import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Platform, useColorScheme } from 'react-native';
-import { Redirect, Stack, usePathname } from 'expo-router';
+import { Redirect, Stack, useGlobalSearchParams, usePathname } from 'expo-router';
 import { configureFonts, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
@@ -80,7 +80,8 @@ function AppShell() {
   const { theme } = useAppSelector(({ language }) => language);
   const { accessToken } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ language }) => language);
-  const { isCameraVisible } = useAppSelector(({ manualActivity }) => manualActivity);
+  const { cameraVisible } = useGlobalSearchParams<{ cameraVisible?: string | string[] }>();
+  const isCameraVisible = Array.isArray(cameraVisible) ? cameraVisible[0] === 'true' : cameraVisible === 'true';
   const pathname = usePathname();
   const colorScheme = theme ?? systemColorScheme;
   const appColors = colorScheme === 'dark' ? COLORS.dark : COLORS.light;

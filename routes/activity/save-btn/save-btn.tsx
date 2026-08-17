@@ -10,20 +10,33 @@ import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-
 import { resetLocationsFromBackground } from '@R/slices/location/location';
 import { saveUnsendedActivity } from '@R/slices/unsended-activity/unsended-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useGlobalManualActivityParams } from '@Routes/save-activity-page/manual-activity-params';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
-import { getMillisecondsFromHoursMinutes } from '@U/time-formatter';
+import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
 
 export default function SaveBtn() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { back, replace } = useRouter();
-  const { activityId, isDisabledWhileSending, finishedActivity } = useAppSelector(({ activity }) => activity);
-  const { manualDate, manualHours, manualMinutes, manualDistance, isManualAdding, isEditingActivity } = useAppSelector(
-    ({ manualActivity }) => manualActivity,
-  );
-  const additionalInfoActivity = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
+  const { isDisabledWhileSending, finishedActivity } = useAppSelector(({ activity }) => activity);
+  const {
+    activityId,
+    isManualAdding,
+    isEditingActivity,
+    manualDate,
+    manualDistance,
+    title,
+    description,
+    sport,
+    emotion,
+    isPublic,
+    manualHours,
+    manualMinutes,
+    manualSeconds,
+  } = useGlobalManualActivityParams();
+  const { photoVideoUrls } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
   const { language } = useAppSelector(({ language }) => language);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
   const [updateActivity, { isLoading: isUpdating }] = useUpdateActivityInfoMutation();
@@ -39,18 +52,33 @@ export default function SaveBtn() {
       onPress={async () => {
         try {
           if (userId) {
+            const activityOwnerId = isEditingActivity ? activityId : userId;
+            if (!activityOwnerId) {
+              errorToast('Не удалось определить активность');
+              return;
+            }
+            const distance = Number(manualDistance) || 0;
+            const hours = Number(manualHours) || 0;
+            const minutes = Number(manualMinutes) || 0;
+            const seconds = Number(manualSeconds) || 0;
+            const duration = getMillisecondsFromHoursMinutesSeconds(hours, minutes, seconds);
+            const additionalInfoActivity = {
+              title,
+              description,
+              sport,
+              emotion,
+              isPublic,
+              photoVideoUrls,
+            };
             const savedActivity = {
               body:
                 isManualAdding || isEditingActivity
                   ? {
                       ...additionalInfoActivity,
                       date: new Date(manualDate).toISOString(),
-                      distance: manualDistance * 1000,
-                      duration: Math.round(getMillisecondsFromHoursMinutes(manualHours, manualMinutes)),
-                      speed: getSpeedInMinsInKm(
-                        manualDistance,
-                        getMillisecondsFromHoursMinutes(manualHours, manualMinutes),
-                      ).paceAsNumber,
+                      distance: distance * 1000,
+                      duration: Math.round(duration),
+                      speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
                       locations: [],
                     }
                   : {
@@ -59,7 +87,7 @@ export default function SaveBtn() {
                       ...additionalInfoActivity,
                       mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
                     },
-              id: isEditingActivity ? activityId : userId,
+              id: activityOwnerId,
             };
             const lastLocation = savedActivity.body.locations?.at(-1);
             if (lastLocation) {
@@ -120,7 +148,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 5,
-    marginRight: 5,
     borderRadius: 10,
   },
 });

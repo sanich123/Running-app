@@ -22,6 +22,5 @@ export const ADDITIONAL_INFO_INITIAL_STATE: ActivityAdditionalInfo = {
 
 export const ACTIVITY_INITIAL_STATE: ActivityInitialState = {
   isDisabledWhileSending: false,
-  activityId: '',
   finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
 };

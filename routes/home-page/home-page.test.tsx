@@ -42,7 +42,19 @@ describe('Feed', () => {
     await renderWithProviders(<Feed />);
     expect(await screen.findByText(MOCK_SERVER_ACTIVITY.title)).toBeOnTheScreen();
     fireEvent.press(screen.getByTestId('feed-add-activity'));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.manualActivity}`);
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: `/${ROUTES.manualActivity}`,
+        params: expect.objectContaining({
+          cameraVisible: 'false',
+          manualDistance: '0',
+          manualHours: '0',
+          manualMinutes: '0',
+          manualSeconds: '0',
+          mode: 'manual',
+        }),
+      }),
+    );
   });
 
   it('renders error state', async () => {

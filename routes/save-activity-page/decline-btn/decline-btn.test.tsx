@@ -1,8 +1,8 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import { ADDITIONAL_INFO_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from '@R/slices/activity/const';
+import { FINISHED_ACTIVITY_INITIAL_STATE } from '@R/slices/activity/const';
+import { ADDITIONAL_INFO_INITIAL_STATE } from '@R/slices/activity-additional-info/const';
 import { changeLanguage } from '@R/slices/language/language';
-import { MANUAL_ACTIVITY_INITIAL_STATE } from '@R/slices/manual-activity/const';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { DECLINE_BTN } from './const';
@@ -26,7 +26,6 @@ describe('Decline btn', () => {
     await userEvent.press(confirmBtn);
     expect(mockStore.getState().additionalInfoActivity).toEqual(ADDITIONAL_INFO_INITIAL_STATE);
     expect(mockStore.getState().activity.finishedActivity).toEqual(FINISHED_ACTIVITY_INITIAL_STATE);
-    expect(mockStore.getState().manualActivity).toEqual(MANUAL_ACTIVITY_INITIAL_STATE);
     expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
   });
   it('should correctly handle isDisabled state', async () => {

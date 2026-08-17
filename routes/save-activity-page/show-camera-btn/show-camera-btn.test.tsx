@@ -6,6 +6,12 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { SHOW_CAMERA_BTN } from './const';
 import ShowCameraBtn from './show-camera-btn';
 
+const mockSetParams = jest.fn();
+jest.mock('expo-router', () => ({
+  useLocalSearchParams: () => ({ cameraVisible: 'false' }),
+  useRouter: () => ({ setParams: mockSetParams }),
+}));
+
 describe('Show camera btn', () => {
   it('should correctly renders in english', async () => {
     await renderWithProviders(<ShowCameraBtn isDisabled={false} />, { store: mockStore });
@@ -18,9 +24,10 @@ describe('Show camera btn', () => {
   });
   it('should correctly change global store', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    mockSetParams.mockClear();
     await renderWithProviders(<ShowCameraBtn isDisabled={false} />, { store: mockStore });
     const showCameraBtn = screen.getByText(new RegExp(`${SHOW_CAMERA_BTN.russian.text}`));
     await userEvent.press(showCameraBtn);
-    expect(mockStore.getState().manualActivity.isCameraVisible).toEqual(true);
+    expect(mockSetParams).toHaveBeenCalledWith({ cameraVisible: 'true' });
   });
 });

@@ -6,6 +6,12 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import Checkbox from './checkbox';
 import { CHECKBOX, CHECKBOX_TEST_ID } from './const';
 
+const mockSetParams = jest.fn();
+jest.mock('expo-router', () => ({
+  useLocalSearchParams: () => ({ isPublic: 'true', mode: 'manual' }),
+  useRouter: () => ({ setParams: mockSetParams }),
+}));
+
 describe('Checkbox', () => {
   it('should correctly renders in russia', async () => {
     await renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
@@ -20,6 +26,6 @@ describe('Checkbox', () => {
   it('changes activity visibility', async () => {
     await renderWithProviders(<Checkbox isDisabled={false} />);
     await fireEvent(screen.getByTestId(CHECKBOX_TEST_ID), 'valueChange', false);
-    expect(mockStore.getState().additionalInfoActivity.isPublic).toBe(false);
+    expect(mockSetParams).toHaveBeenCalledWith({ isPublic: 'false' });
   });
 });

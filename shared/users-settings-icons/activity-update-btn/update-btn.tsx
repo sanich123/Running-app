@@ -1,70 +1,66 @@
-import { useGlobalSearchParams, useRouter } from 'expo-router';
+import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN } from '@const/activity-save-btn';
 import { ROUTES } from '@const/enums';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
-import { resetFinishedActivity, setActivityId } from '@R/slices/activity/activity';
+import { resetFinishedActivity } from '@R/slices/activity/activity';
 import {
   addPhotoUrls,
   resetAdditionalInfoActivitySlice,
-  saveDescription,
-  saveEmotion,
-  saveIsPublic,
-  saveSport,
-  saveTitle,
 } from '@R/slices/activity-additional-info/activity-additional-info';
-import {
-  resetManualActivitySlice,
-  setIsEditingActivity,
-  setManualDate,
-  setManualDistance,
-  setManualHours,
-  setManualMinutes,
-} from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
+import { getHoursMinutesSecondsFromMilliseconds } from '@U/time-formatter';
 
 export default function UpdateBtn() {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ language }) => language);
-  const { id: activityId } = useGlobalSearchParams();
+  const { id: globalActivityId } = useGlobalSearchParams<{ id?: string | string[] }>();
+  const pathname = usePathname();
+  const routeActivityId = pathname.startsWith(`/${ROUTES.activity}/`) ? pathname.split('/').at(-1) : undefined;
+  const activityId = routeActivityId ?? (Array.isArray(globalActivityId) ? globalActivityId[0] : globalActivityId);
   const { data: activity, error, isError, isLoading } = useGetActivityByActivityIdQuery(`${activityId}`);
   return (
     <TouchableRipple
       testID="activity-update-button"
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
-      style={{ padding: 5, borderRadius: 10, opacity: isLoading || isError ? 0.5 : 1 }}
+      style={{ paddingHorizontal: 5, paddingVertical: 5, borderRadius: 10, opacity: isLoading || isError ? 0.5 : 1 }}
       disabled={isError || isLoading}
       onPress={() => {
         if (activity) {
           dispatch(resetFinishedActivity());
-          dispatch(resetManualActivitySlice());
           dispatch(resetAdditionalInfoActivitySlice());
 
-          dispatch(setIsEditingActivity(true));
-          dispatch(setActivityId(activity.id));
-          dispatch(saveTitle(activity?.title));
-          dispatch(saveDescription(activity?.description));
-          dispatch(saveSport(activity?.sport));
-          dispatch(saveEmotion(activity?.emotion));
-          dispatch(saveIsPublic(activity?.isPublic));
           if (activity?.photoVideoUrls) {
             dispatch(addPhotoUrls(activity?.photoVideoUrls));
           }
-          dispatch(setManualDate(new Date(activity?.date)));
-          dispatch(setManualDistance(activity?.distance / 1000));
-          dispatch(setManualHours(getHoursMinutesFromMilliseconds(activity?.duration).hours));
-          dispatch(setManualMinutes(getHoursMinutesFromMilliseconds(activity?.duration).minutes));
-          push(`/${ROUTES.manualActivity}`);
+          const { hours, minutes, seconds } = getHoursMinutesSecondsFromMilliseconds(activity?.duration);
+          push({
+            pathname: `/${ROUTES.manualActivity}`,
+            params: {
+              cameraVisible: 'false',
+              id: activity.id,
+              manualDate: new Date(activity.date).toISOString(),
+              manualDistance: String(Number((activity.distance / 1000).toFixed(2))),
+              manualHours: String(hours),
+              manualMinutes: String(minutes),
+              manualSeconds: String(seconds),
+              mode: 'edit',
+              title: activity.title,
+              description: activity.description,
+              sport: activity.sport,
+              emotion: activity.emotion,
+              isPublic: String(activity.isPublic),
+            },
+          });
         } else {
           errorToast('Не удалось загрузить данные об активности', error);
         }
       }}>
-      <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant, marginRight: 15 }}>
+      <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
         {ACTIVITY_SAVE_BTN[language].edit}
       </Text>
     </TouchableRipple>

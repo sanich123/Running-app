@@ -11,7 +11,6 @@ import language from './slices/language/language';
 import location from './slices/location/location';
 import logining from './slices/logining/logining';
 import mainFeed from './slices/main-feed/main-feed';
-import manualActivity from './slices/manual-activity/manual-activity';
 import network from './slices/network/network';
 import profile from './slices/profile/profile';
 import unsendedActivity from './slices/unsended-activity/unsended-activity';
@@ -32,7 +31,6 @@ const appReducer = combineReducers({
   mainFeed,
   auth,
   logining,
-  manualActivity,
   additionalInfoActivity,
   unsendedActivity,
   comment,

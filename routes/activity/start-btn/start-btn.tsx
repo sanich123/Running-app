@@ -10,12 +10,12 @@ import {
   setActivityStatus,
   setEmptyLastArrayWhenPaused,
 } from '@R/slices/location/location';
-import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { useActivitySportParams } from '../activity-params';
 import { ACTIVITY_START_BTN_TEST_ID, ACTIVITY_START_BTN, STOP_ICON } from './const';
 
 export default function StartBtn({
@@ -38,6 +38,7 @@ export default function StartBtn({
   } = useAppSelector(({ location }) => location);
   const { language } = useAppSelector(({ language }) => language);
   const { push } = useRouter();
+  const { sport } = useActivitySportParams();
   const [pressScale] = useState(() => new Animated.Value(1));
   const [pulse] = useState(() => new Animated.Value(0));
   const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
@@ -117,9 +118,19 @@ export default function StartBtn({
 
       dispatch(setActivityStatus(STATUSES.initial));
       dispatch(resetLocationsFromBackground());
-      dispatch(resetManualActivitySlice());
       dispatch(resetAdditionalInfoActivitySlice());
-      push(`/${ROUTES.manualActivity}`);
+      push({
+        pathname: `/${ROUTES.manualActivity}`,
+        params: {
+          cameraVisible: 'false',
+          description: '',
+          emotion: 'normal',
+          isPublic: 'true',
+          mode: 'tracked',
+          sport,
+          title: '',
+        },
+      });
     } catch (error) {
       errorToast(
         activityStatus === STATUSES.initial

@@ -48,10 +48,13 @@ export default function PreviewImageCloseBtn({
 
 const styles = StyleSheet.create({
   closeBtn: {
+    elevation: 8,
+    height: 32,
     position: 'absolute',
-    right: -4,
+    right: 2,
     top: 5,
+    width: 32,
     zIndex: 10,
   },
-  compactCloseBtn: { right: -6, top: -7 },
+  compactCloseBtn: { height: 28, right: 2, top: 2, width: 28 },
 });

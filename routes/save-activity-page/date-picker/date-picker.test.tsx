@@ -7,6 +7,12 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { DATE_TIME_PICKER, DATE_TIME_PICKER_BTN_ID } from './const';
 import DateTimePicker from './date-picker';
 
+const mockSetParams = jest.fn();
+jest.mock('expo-router', () => ({
+  useLocalSearchParams: () => ({ manualDate: '2026-08-06T10:00:00.000Z' }),
+  useRouter: () => ({ setParams: mockSetParams }),
+}));
+
 jest.mock('react-native-date-picker', () => {
   const { View } = jest.requireActual('react-native');
   return (props: any) => <View testID="native-date-picker" {...props} />;
@@ -43,6 +49,6 @@ describe('Date time picker', () => {
     expect(screen.getByTestId('native-date-picker').props.open).toBe(true);
     const selectedDate = new Date('2026-08-06T10:00:00.000Z');
     await act(async () => screen.getByTestId('native-date-picker').props.onConfirm(selectedDate));
-    expect(mockStore.getState().manualActivity.manualDate).toEqual(selectedDate);
+    expect(mockSetParams).toHaveBeenCalledWith({ manualDate: selectedDate.toISOString() });
   });
 });

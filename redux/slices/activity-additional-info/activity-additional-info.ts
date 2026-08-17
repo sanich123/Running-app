@@ -5,20 +5,8 @@ const additionalInfoActivity = createSlice({
   name: 'additionalInfoActivity',
   initialState: ADDITIONAL_INFO_INITIAL_STATE,
   reducers: {
-    saveTitle: (state, { payload }) => {
-      state.title = payload;
-    },
-    saveDescription: (state, { payload }) => {
-      state.description = payload;
-    },
     saveSport: (state, { payload }) => {
       state.sport = payload;
-    },
-    saveEmotion: (state, { payload }) => {
-      state.emotion = payload;
-    },
-    saveIsPublic: (state, { payload }) => {
-      state.isPublic = payload;
     },
     addPhotoUrl: (state, { payload }) => {
       state.photoVideoUrls = [payload, ...state.photoVideoUrls];
@@ -38,16 +26,7 @@ const additionalInfoActivity = createSlice({
   },
 });
 
-export const {
-  saveTitle,
-  saveDescription,
-  saveSport,
-  saveEmotion,
-  saveIsPublic,
-  addPhotoUrl,
-  addPhotoUrls,
-  deletePhotoUrl,
-  resetAdditionalInfoActivitySlice,
-} = additionalInfoActivity.actions;
+export const { saveSport, addPhotoUrl, addPhotoUrls, deletePhotoUrl, resetAdditionalInfoActivitySlice } =
+  additionalInfoActivity.actions;
 
 export default additionalInfoActivity.reducer;

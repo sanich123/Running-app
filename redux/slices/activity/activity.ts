@@ -8,9 +8,6 @@ const activity = createSlice({
     setIsDisableWhileSending: (state, action) => {
       state.isDisabledWhileSending = action.payload;
     },
-    setActivityId: (state, { payload }) => {
-      state.activityId = payload;
-    },
     saveFinishedActivity: (state, action) => {
       state.finishedActivity = action.payload;
     },
@@ -23,12 +20,7 @@ const activity = createSlice({
   },
 });
 
-export const {
-  setIsDisableWhileSending,
-  saveFinishedActivity,
-  resetFinishedActivity,
-  resetActivitySlice,
-  setActivityId,
-} = activity.actions;
+export const { setIsDisableWhileSending, saveFinishedActivity, resetFinishedActivity, resetActivitySlice } =
+  activity.actions;
 
 export default activity.reducer;

@@ -16,6 +16,7 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({
     push: mockPush,
   }),
+  useLocalSearchParams: () => ({ sport: 'run' }),
 }));
 describe('Activity start btn', () => {
   beforeEach(() => {
@@ -61,7 +62,18 @@ describe('Activity start btn', () => {
     mockStore.dispatch(setActivityStatus(STATUSES.paused));
     await renderWithProviders(<ActivityStartBtn isReadyToRecordLocation />, { store: mockStore });
     await userEvent.press(screen.getByTestId(ACTIVITY_START_BTN_TEST_ID));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.manualActivity}`);
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: `/${ROUTES.manualActivity}`,
+      params: {
+        cameraVisible: 'false',
+        description: '',
+        emotion: 'normal',
+        isPublic: 'true',
+        mode: 'tracked',
+        sport: 'run',
+        title: '',
+      },
+    });
   });
   it('cleans the previous recording before starting a new one', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

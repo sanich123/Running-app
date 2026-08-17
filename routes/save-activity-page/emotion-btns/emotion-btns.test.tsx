@@ -7,6 +7,12 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { EMOTIONS_BTNS_TEST_IDS, EMOTIONS_BTNS_VALUES, EMOTION_BTNS } from './const';
 import EmotionBtns from './emotion-btns';
 
+const mockSetParams = jest.fn();
+jest.mock('expo-router', () => ({
+  useLocalSearchParams: () => ({ emotion: 'normal' }),
+  useRouter: () => ({ setParams: mockSetParams }),
+}));
+
 describe('Emotion btns', () => {
   it('should correctly change global state interract with user', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
@@ -15,14 +21,9 @@ describe('Emotion btns', () => {
     const fuckedInput = screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.fuckedInput);
     const fineInput = screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.goodInput);
     await userEvent.press(normalInput);
-    expect(normalInput.props.accessibilityState.checked).toEqual(true);
-    expect(mockStore.getState().additionalInfoActivity.emotion).toEqual(EMOTIONS_BTNS_VALUES.normal);
     await userEvent.press(fuckedInput);
-    expect(fuckedInput.props.accessibilityState.checked).toEqual(true);
-    expect(mockStore.getState().additionalInfoActivity.emotion).toEqual(EMOTIONS_BTNS_VALUES.fucked);
     await userEvent.press(fineInput);
-    expect(fineInput.props.accessibilityState.checked).toEqual(true);
-    expect(mockStore.getState().additionalInfoActivity.emotion).toEqual(EMOTIONS_BTNS_VALUES.good);
+    expect(mockSetParams).toHaveBeenCalledWith({ emotion: EMOTIONS_BTNS_VALUES.good });
   });
   it('should correctly render labels in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

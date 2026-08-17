@@ -5,7 +5,6 @@ import { Button, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { resetFinishedActivity } from '@R/slices/activity/activity';
 import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
-import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { DECLINE_BTN } from './const';
@@ -22,7 +21,6 @@ export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
   function declineActivity() {
     dispatch(resetAdditionalInfoActivitySlice());
     dispatch(resetFinishedActivity());
-    dispatch(resetManualActivitySlice());
     replace(ROUTES.root);
   }
 
