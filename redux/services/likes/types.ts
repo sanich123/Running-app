@@ -1,3 +1,5 @@
+export type { LikeResponse } from '@R/runich-api/types';
+
 export interface SendLike {
   activityId: string;
   authorId: string;
