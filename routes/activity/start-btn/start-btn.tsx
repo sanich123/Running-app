@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
-import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getElevationGainByKilometres, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { useActivitySportParams } from '../activity-params';
 import { ACTIVITY_START_BTN_TEST_ID, ACTIVITY_START_BTN, STOP_ICON } from './const';
 
@@ -76,12 +76,16 @@ export default function StartBtn({
   const isDisabled = isTrackingActionInProgress || (activityStatus === STATUSES.initial && !isReadyToRecordLocation);
 
   const saveCurrentActivity = () => {
+    const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
     dispatch(
       setFinishedActivity({
         duration,
         distance,
         locations: getReducedLocations(locations),
-        kilometresSplit,
+        kilometresSplit: kilometresSplit.map((split, index) => ({
+          ...split,
+          lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
+        })),
         speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
       }),
     );

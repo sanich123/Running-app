@@ -91,12 +91,12 @@ export function getElevationGainBetweenLocations(previous: ActivityLocation, cur
     : 0;
 }
 
-export function getElevationGain(locations: ActivityLocation[]) {
+function getSmoothedLocations(locations: ActivityLocation[]) {
   const reliableLocations = locations.filter((location) => getReliableAltitude(location) !== null);
-  if (reliableLocations.length < 2) return 0;
+  if (reliableLocations.length < 2) return [];
 
   const halfWindow = Math.floor(ELEVATION_SMOOTHING_WINDOW / 2);
-  const smoothedLocations = reliableLocations.map((location, index) => {
+  return reliableLocations.map((location, index) => {
     const window = reliableLocations
       .slice(Math.max(0, index - halfWindow), Math.min(reliableLocations.length, index + halfWindow + 1))
       .map((item) => getReliableAltitude(item) as number)
@@ -104,15 +104,61 @@ export function getElevationGain(locations: ActivityLocation[]) {
     const median = window[Math.floor(window.length / 2)];
     return { ...location, coords: { ...location.coords, altitude: median } };
   });
+}
+
+function getElevationGainCalculation(locations: ActivityLocation[], kilometreCount = 0) {
+  const smoothedLocations = getSmoothedLocations(locations);
+  const elevationGainByKilometre = Array.from(
+    { length: Math.max(0, Math.floor(kilometreCount)) },
+    () => null as number | null,
+  );
+  if (smoothedLocations.length < 2) {
+    return { elevationGain: 0, elevationGainByKilometre };
+  }
+
+  const distances = [0];
+  for (let index = 1; index < smoothedLocations.length; index += 1) {
+    distances.push(distances[index - 1] + getDistance(smoothedLocations[index - 1], smoothedLocations[index]));
+  }
+  if (elevationGainByKilometre.length) {
+    elevationGainByKilometre.fill(0);
+  }
 
   let elevationGain = 0;
   let climbStart = getReliableAltitude(smoothedLocations[0]) as number;
   let peak = climbStart;
+  let climbContributions: { locationIndex: number; elevation: number }[] = [];
+
+  const addClimb = (climb: number, isPlausible: boolean) => {
+    if (climb < MIN_ELEVATION_DELTA_METERS || !isPlausible) {
+      return;
+    }
+
+    elevationGain += climb;
+    for (const { locationIndex, elevation } of climbContributions) {
+      if (!elevationGainByKilometre.length) {
+        continue;
+      }
+
+      if (distances[locationIndex] >= elevationGainByKilometre.length * METERS_IN_KILOMETER) {
+        continue;
+      }
+
+      const kilometreIndex = Math.min(
+        elevationGainByKilometre.length - 1,
+        Math.max(0, Math.ceil(distances[locationIndex] / METERS_IN_KILOMETER) - 1),
+      );
+      elevationGainByKilometre[kilometreIndex] = (elevationGainByKilometre[kilometreIndex] ?? 0) + elevation;
+    }
+  };
 
   for (let index = 1; index < smoothedLocations.length; index += 1) {
     const current = smoothedLocations[index];
     const currentAltitude = getReliableAltitude(current) as number;
     if (currentAltitude >= peak) {
+      if (currentAltitude > peak) {
+        climbContributions.push({ locationIndex: index, elevation: currentAltitude - peak });
+      }
       peak = currentAltitude;
       continue;
     }
@@ -120,24 +166,36 @@ export function getElevationGain(locations: ActivityLocation[]) {
     const descentFromPeak = peak - currentAltitude;
     if (descentFromPeak > 3) {
       const climb = peak - climbStart;
-      if (
-        climb >= MIN_ELEVATION_DELTA_METERS &&
+      addClimb(
+        climb,
         isPlausibleVerticalChange(
           smoothedLocations[index - 1],
           current,
           currentAltitude - (getReliableAltitude(smoothedLocations[index - 1]) as number),
-        )
-      ) {
-        elevationGain += climb;
-      }
+        ),
+      );
       climbStart = currentAltitude;
       peak = currentAltitude;
+      climbContributions = [];
     }
   }
 
   const finalClimb = peak - climbStart;
-  if (finalClimb >= MIN_ELEVATION_DELTA_METERS) elevationGain += finalClimb;
-  return elevationGain;
+  addClimb(finalClimb, true);
+  return { elevationGain, elevationGainByKilometre };
+}
+
+export function getElevationGain(locations: ActivityLocation[]) {
+  return getElevationGainCalculation(locations).elevationGain;
+}
+
+/**
+ * Calculates the same ascent as getElevationGain and assigns it to completed
+ * kilometres by the location where each climb increment was recorded.
+ * Null means that there were not enough reliable altitude samples to recalculate.
+ */
+export function getElevationGainByKilometres(locations: ActivityLocation[], kilometreCount: number) {
+  return getElevationGainCalculation(locations, kilometreCount).elevationGainByKilometre;
 }
 
 function interpolateLocation(start: LocationObject | null, end: LocationObject, fraction: number) {

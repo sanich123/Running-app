@@ -5,6 +5,7 @@ import { store } from '@R/store';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import {
   getElevationGain,
+  getElevationGainByKilometres,
   getElevationGainBetweenLocations,
   getKilometerSplitCalculation,
   getSpeedInKmPerHour,
@@ -21,7 +22,7 @@ describe('location speed filtering', () => {
   });
 
   it('skips an implausibly fast running location', () => {
-  store.dispatch(setSport(SPORTS_BTNS_VALUES.run));
+    store.dispatch(setSport(SPORTS_BTNS_VALUES.run));
 
     saveMetricsToStoreTaskManager(MOCK_LOCATION, 60_000, 0, 0, 1000, null);
 
@@ -31,7 +32,7 @@ describe('location speed filtering', () => {
   });
 
   it('accepts a realistic cycling location at the same distance', () => {
-  store.dispatch(setSport(SPORTS_BTNS_VALUES.bike));
+    store.dispatch(setSport(SPORTS_BTNS_VALUES.bike));
 
     saveMetricsToStoreTaskManager(MOCK_LOCATION, 90_000, 0, 0, 1000, null);
 
@@ -178,5 +179,23 @@ describe('elevation gain calculation', () => {
 
     expect(getElevationGain(locations)).toBeGreaterThanOrEqual(15);
     expect(getElevationGain(locations)).toBeLessThan(30);
+  });
+
+  it('assigns the sustained climb to the kilometres where it happened', () => {
+    const locations = [100, 105, 110, 115, 125].map((altitude, index) => ({
+      ...MOCK_LOCATION,
+      timestamp: index * 600_000,
+      coords: {
+        ...MOCK_LOCATION.coords,
+        latitude: 55 + index * 0.0045,
+        altitude,
+        altitudeAccuracy: 5,
+      },
+    }));
+
+    const elevationGainByKilometre = getElevationGainByKilometres(locations, 2);
+    expect(elevationGainByKilometre[0]).toBeGreaterThan(0);
+    expect(elevationGainByKilometre[1]).toBeGreaterThan(0);
+    expect(elevationGainByKilometre[0]! + elevationGainByKilometre[1]!).toBeCloseTo(getElevationGain(locations));
   });
 });
