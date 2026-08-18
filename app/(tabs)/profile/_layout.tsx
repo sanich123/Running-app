@@ -17,9 +17,7 @@ export default function ProfileStack() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
-  const profileFormValues = getProfileFormValues(
-    useGlobalSearchParams() as Partial<ProfileSettingsSearchParams>,
-  );
+  const profileFormValues = getProfileFormValues(useGlobalSearchParams() as Partial<ProfileSettingsSearchParams>);
 
   return (
     <Stack

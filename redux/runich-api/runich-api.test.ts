@@ -42,7 +42,9 @@ describe('runich API navigation', () => {
 
   it('clears a stale session when refreshing it fails at the network level', async () => {
     server.use(
-      http.get(`${BASE_URL}/navigation/network-error`, () => HttpResponse.json({ message: 'expired' }, { status: 401 })),
+      http.get(`${BASE_URL}/navigation/network-error`, () =>
+        HttpResponse.json({ message: 'expired' }, { status: 401 }),
+      ),
       http.post(`${BASE_URL}/auth/refresh`, () => HttpResponse.error()),
     );
     const store = createApiStore();
@@ -57,7 +59,9 @@ describe('runich API navigation', () => {
 
   it('redirects to sign in when a protected request has no refresh token', async () => {
     server.use(
-      http.get(`${BASE_URL}/navigation/no-refresh-token`, () => HttpResponse.json({ message: 'expired' }, { status: 401 })),
+      http.get(`${BASE_URL}/navigation/no-refresh-token`, () =>
+        HttpResponse.json({ message: 'expired' }, { status: 401 }),
+      ),
     );
     const store = createApiStore();
     store.dispatch(setAccessToken('expired-access-token'));

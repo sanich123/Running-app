@@ -4,10 +4,7 @@ import { Button, Text, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery, useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
 import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import {
-  useProfileFormParams,
-  type ProfileFormValues,
-} from '@Routes/profile/profile-settings/profile-settings-params';
+import { useProfileFormParams, type ProfileFormValues } from '@Routes/profile/profile-settings/profile-settings-params';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { UPDATE_BTN } from './const';
 import type { ProfileSettings } from '@R/slices/profile/types';
