@@ -59,7 +59,7 @@ describe('RTK Query cache invalidation contracts', () => {
       'sendLikeToComment',
       'updateActivityInfo',
       'updateCommentByCommentId',
-      'updateProfileByProfileId',
+      'updateProfileByUserId',
     ]);
     expect(invalidatingEndpoints).toHaveLength(14);
 

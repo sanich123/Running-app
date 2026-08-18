@@ -64,6 +64,47 @@ describe('Profile update btn', () => {
     await waitFor(() => expect(mockBack).toHaveBeenCalled());
     expect(screen.queryByText(UPDATE_BTN_ERROR_MSG)).not.toBeOnTheScreen();
   });
+
+  it('uses the current form values supplied by the profile layout', async () => {
+    let requestBody: unknown;
+    const user = userEvent.setup();
+    const userId = 'layout-profile-user';
+    mockStore.dispatch(setUserId(userId));
+    server.use(
+      http.get(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json({ id: 'profile-id', user_id: userId })),
+      http.patch(`${BASE_URL}/user/${userId}/profile`, async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({ id: 'profile-id', user_id: userId });
+      }),
+    );
+
+    await renderWithProviders(
+      <ProfileUpdateBtn
+        formValues={{
+          name: 'Updated name',
+          surname: 'Updated surname',
+          weight: '80',
+          city: 'Moscow',
+          bio: 'Updated bio',
+          gender: 'MALE',
+        }}
+      />,
+      { store: mockStore },
+    );
+    await user.press(await screen.findByText(UPDATE_BTN.english.update));
+
+    await waitFor(() => expect(requestBody).toEqual(expect.objectContaining({ name: 'Updated name' })));
+    expect(requestBody).toEqual(
+      expect.objectContaining({
+        name: 'Updated name',
+        surname: 'Updated surname',
+        weight: '80',
+        city: 'Moscow',
+        bio: 'Updated bio',
+        gender: 'MALE',
+      }),
+    );
+  });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(setUserId('someUserId'));

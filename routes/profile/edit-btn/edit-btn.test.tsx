@@ -25,6 +25,9 @@ describe('Profile edit btn', () => {
     const user = userEvent.setup();
     await renderWithProviders(<ProfileEditBtn />);
     await user.press(screen.getByText(EDIT_BTN.russian.edit));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.profile}/${ROUTES.profileSettings}/`);
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: `/${ROUTES.profile}/${ROUTES.profileSettings}`,
+      params: { profileSettingsInitialized: 'false' },
+    });
   });
 });

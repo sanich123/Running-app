@@ -1,10 +1,14 @@
 import { lazy, Suspense } from 'react';
 import { Platform } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useGlobalSearchParams } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
+import {
+  getProfileFormValues,
+  type ProfileSettingsSearchParams,
+} from '@Routes/profile/profile-settings/profile-settings-params';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 const LazyProfileEditBtn = lazy(() => import('@Routes/profile/edit-btn/edit-btn'));
 const LazyProfileUpdateBtn = lazy(() => import('@Routes/profile/update-btn/update-btn'));
@@ -13,6 +17,9 @@ export default function ProfileStack() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
+  const profileFormValues = getProfileFormValues(
+    useGlobalSearchParams() as Partial<ProfileSettingsSearchParams>,
+  );
 
   return (
     <Stack
@@ -46,7 +53,7 @@ export default function ProfileStack() {
           headerRight: () =>
             userId && (
               <Suspense fallback={null}>
-                <LazyProfileUpdateBtn />
+                <LazyProfileUpdateBtn formValues={profileFormValues} />
               </Suspense>
             ),
         }}

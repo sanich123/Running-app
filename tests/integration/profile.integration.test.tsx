@@ -114,7 +114,7 @@ describe('profile and account integration flows', () => {
         }),
       ),
     );
-    expect(requestUrl).toContain(`/user/${MOCK_SERVER_PROFILE.id}/profile`);
+    expect(requestUrl).toContain(`/user/${MOCK_SERVER_IDS.userId}/profile`);
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 

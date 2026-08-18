@@ -14,7 +14,7 @@ describe('EmailNotificationsBtn', () => {
   it('updates the setting through the server', async () => {
     let requestBody: unknown;
     server.use(
-      http.patch(`${BASE_URL}/user/${MOCK_SERVER_PROFILE.id}/profile`, async ({ request }) => {
+      http.patch(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, async ({ request }) => {
         requestBody = await request.json();
         return HttpResponse.json(MOCK_SERVER_PROFILE);
       }),

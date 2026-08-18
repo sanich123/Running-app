@@ -17,7 +17,12 @@ export default function EditBtn() {
       compact
       loading={isLoading}
       disabled={isLoading}
-      onPress={() => push(`/${ROUTES.profile}/${ROUTES.profileSettings}/`)}
+      onPress={() =>
+        push({
+          pathname: `/${ROUTES.profile}/${ROUTES.profileSettings}`,
+          params: { profileSettingsInitialized: 'false' },
+        })
+      }
       style={styles.layout}>
       {!isLoading && (
         <Text variant="titleMedium" style={{ color: colors.primary }}>

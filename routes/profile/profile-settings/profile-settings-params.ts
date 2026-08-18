@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import type { ProfileType } from '@S/card/types';
 
-interface ProfileFormValues {
+export interface ProfileFormValues {
   name: string;
   surname: string;
   weight: string;

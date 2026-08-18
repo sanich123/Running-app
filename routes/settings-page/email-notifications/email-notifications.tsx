@@ -1,5 +1,5 @@
 import { Switch } from 'react-native-paper';
-import { useGetUserProfileByUserIdQuery, useUpdateProfileByProfileIdMutation } from '@R/services/profile/profile';
+import { useGetUserProfileByUserIdQuery, useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { SETTINGS } from '../const';
@@ -9,7 +9,7 @@ export default function EmailNotificationsBtn() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const { data: profileInfo, isSuccess } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
-  const [updateProfile] = useUpdateProfileByProfileIdMutation();
+  const [updateProfile] = useUpdateProfileByUserIdMutation();
 
   return (
     <>
@@ -25,7 +25,7 @@ export default function EmailNotificationsBtn() {
                 try {
                   await updateProfile({
                     body: { emailNotifications: !profileInfo.emailNotifications },
-                    id: profileInfo.id ?? '',
+                    id: userId,
                   }).unwrap();
                 } catch (error) {
                   errorToast('Не удалось изменить настройки уведомлений', error);

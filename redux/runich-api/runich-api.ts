@@ -53,12 +53,23 @@ async function showErrorToast(message: string, error?: unknown) {
   }
 }
 
+async function handleAuthFailure(api: BaseQueryApi) {
+  api.dispatch(resetAuthSlice());
+  router.replace(`/${ROUTES.signIn}`);
+  await showErrorToast('Не удалось обновить авторизационные данные. Пожалуйста, авторизуйтесь повторно');
+}
+
 async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, extraOptions: object) {
   await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
   const { refreshToken } = (api.getState() as ApiState).auth;
 
   if (result.error?.status === 401) {
+    if (!refreshToken) {
+      await handleAuthFailure(api);
+      return result;
+    }
+
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
       try {
@@ -79,12 +90,10 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
           if (refreshData?.refreshToken) api.dispatch(setRefreshToken(refreshData.refreshToken));
           result = await baseQuery(args, api, extraOptions);
         } else {
-          api.dispatch(resetAuthSlice());
-          router.replace(`/${ROUTES.signIn}`);
-
-          await showErrorToast('Не удалось обновить авторизационные данные. Пожалуйста, авторизуйтесь повторно');
+          await handleAuthFailure(api);
         }
       } catch (error) {
+        await handleAuthFailure(api);
         await showErrorToast('', error);
       } finally {
         release();
