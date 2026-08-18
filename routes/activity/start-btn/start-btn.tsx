@@ -3,8 +3,7 @@ import { ActivityIndicator, Animated, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
-import { resetFinishedActivity, saveFinishedActivity } from '@R/slices/activity/activity';
-import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
+import { resetActivityDraft, resetFinishedActivity, setFinishedActivity } from '@R/slices/activity/activity';
 import {
   resetLocationsFromBackground,
   setActivityStatus,
@@ -78,7 +77,7 @@ export default function StartBtn({
 
   const saveCurrentActivity = () => {
     dispatch(
-      saveFinishedActivity({
+      setFinishedActivity({
         duration,
         distance,
         locations: getReducedLocations(locations),
@@ -118,7 +117,7 @@ export default function StartBtn({
 
       dispatch(setActivityStatus(STATUSES.initial));
       dispatch(resetLocationsFromBackground());
-      dispatch(resetAdditionalInfoActivitySlice());
+      dispatch(resetActivityDraft());
       push({
         pathname: `/${ROUTES.manualActivity}`,
         params: {

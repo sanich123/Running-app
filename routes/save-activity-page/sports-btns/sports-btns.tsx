@@ -9,13 +9,13 @@ import { useManualActivityParams, useSetManualActivityParams } from '../manual-a
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ settings }) => settings);
   const { sport } = useManualActivityParams();
   const { setSport } = useSetManualActivityParams();
   const { dark, colors } = useTheme();
   const chooseSportModal = useRef<BottomSheetModal>(null);
-  const isSportPickerDisabled = isDisabledWhileSending || isDisabled;
+  const isSportPickerDisabled = isSavingDisabled || isDisabled;
 
   return (
     <>

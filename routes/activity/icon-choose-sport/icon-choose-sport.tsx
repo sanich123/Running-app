@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { View } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import { saveSport } from '@R/slices/activity-additional-info/activity-additional-info';
+import { setSport as setActivitySport } from '@R/slices/activity/activity';
 import { useAppDispatch } from '@R/typed-hooks';
 import ChooseSportModal from '@S/choose-sport-modal/choose-sport-modal';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
@@ -30,7 +30,7 @@ export default function IconChooseSport({ disabled = false }: { disabled?: boole
         selectedSport={sport}
         onSportChange={(value) => {
           setSport(value);
-          dispatch(saveSport(value as SPORTS_BTNS_VALUES));
+          dispatch(setActivitySport(value as SPORTS_BTNS_VALUES));
         }}
       />
     </View>

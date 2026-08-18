@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Platform, StyleSheet, View, Text } from 'react-native';
 import { ActivityIndicator, Button, useTheme } from 'react-native-paper';
-import { addPhotoUrl } from '@R/slices/activity-additional-info/activity-additional-info';
+import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
@@ -12,10 +12,10 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
-  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
+  const shouldBeDisabled = isDisabled || isSavingDisabled;
 
   return (
     <>

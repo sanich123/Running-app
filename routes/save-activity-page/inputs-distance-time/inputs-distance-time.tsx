@@ -9,9 +9,9 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
   const { manualDistance, manualHours, manualMinutes, manualSeconds } = useManualActivityParams();
   const { setManualDistance, setManualHours, setManualMinutes, setManualSeconds } = useSetManualActivityParams();
   const { language } = useAppSelector(({ settings }) => settings);
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { colors } = useTheme();
-  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
+  const shouldBeDisabled = isDisabled || isSavingDisabled;
 
   return (
     <View style={styles.inputWrapper}>

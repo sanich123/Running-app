@@ -1,8 +1,13 @@
 import { screen } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
+import { runichApi } from '@R/runich-api/runich-api';
+import { setCommentActivityId, setIsShowingTextInput } from '@R/slices/comment/comment';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import Comments from './comments';
@@ -15,6 +20,22 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Comments', () => {
+  beforeEach(() => {
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setCommentActivityId('someActivityId'));
+    mockStore.dispatch(setIsShowingTextInput(false));
+  });
+
+  it('shows the empty state without a loading indicator when there are no comments', async () => {
+    server.use(http.get(`${BASE_URL}/comment/someActivityId`, () => HttpResponse.json({ comments: [] })));
+    await renderWithProviders(
+      <Comments commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }} />,
+      { store: mockStore },
+    );
+    expect(await screen.findByText('Комментариев пока нет')).toBeOnTheScreen();
+    expect(screen.queryByTestId('commentsActivityIndicator')).not.toBeOnTheScreen();
+  });
+
   it('should correctly renders with isLoading state and data from server in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(

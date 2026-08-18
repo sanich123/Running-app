@@ -15,6 +15,11 @@ export interface EmailData {
   email: string;
 }
 
+export interface VerifyLoginData {
+  code?: string;
+  accessToken?: string;
+}
+
 export interface VerifyPasswordChangeCodeData extends EmailData {
   confirmationCode: string;
 }

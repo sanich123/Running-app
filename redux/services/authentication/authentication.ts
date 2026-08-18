@@ -9,6 +9,7 @@ import type {
   LoginUserResponse,
   MessageApiResponse,
   RegisterResponse,
+  VerifyLoginData,
   VerifyPasswordChangeCodeData,
 } from './types';
 
@@ -52,10 +53,10 @@ const authenticationApi = runichApi.injectEndpoints({
         method: 'GET',
       }),
     }),
-    verifyConfig: query<LoginUserResponse, { accessToken: string }>({
-      query: ({ accessToken }) => ({
+    verifyConfig: query<LoginUserResponse, VerifyLoginData>({
+      query: ({ code, accessToken }) => ({
         url: '/auth/verify',
-        body: { accessToken },
+        body: code ? { code } : { accessToken },
         method: 'POST',
       }),
     }),

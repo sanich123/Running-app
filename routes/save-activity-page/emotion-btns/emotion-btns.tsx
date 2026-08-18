@@ -4,7 +4,7 @@ import { useManualActivityParams, useSetManualActivityParams } from '../manual-a
 import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS } from './const';
 
 export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ settings }) => settings);
   const { emotion } = useManualActivityParams();
   const { setEmotion } = useSetManualActivityParams();
@@ -19,7 +19,7 @@ export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
           label: EMOTION_BTNS[language].fineLabel,
           icon: EMOTIONS_BTNS_ICONS.iconHappy,
           showSelectedCheck: true,
-          disabled: isDisabled || isDisabledWhileSending,
+          disabled: isDisabled || isSavingDisabled,
           testID: EMOTIONS_BTNS_TEST_IDS.goodInput,
         },
         {
@@ -27,7 +27,7 @@ export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
           label: EMOTION_BTNS[language].normalLabel,
           icon: EMOTIONS_BTNS_ICONS.iconNeutral,
           showSelectedCheck: true,
-          disabled: isDisabled || isDisabledWhileSending,
+          disabled: isDisabled || isSavingDisabled,
           testID: EMOTIONS_BTNS_TEST_IDS.normalInput,
         },
         {
@@ -35,7 +35,7 @@ export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
           label: EMOTION_BTNS[language].fuckedLabel,
           icon: EMOTIONS_BTNS_ICONS.iconFucked,
           showSelectedCheck: true,
-          disabled: isDisabled || isDisabledWhileSending,
+          disabled: isDisabled || isSavingDisabled,
           testID: EMOTIONS_BTNS_TEST_IDS.fuckedInput,
         },
       ]}

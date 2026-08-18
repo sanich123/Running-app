@@ -12,12 +12,12 @@ import {
 } from './const';
 
 export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const { title, description } = useManualActivityParams();
   const { setTitle, setDescription } = useSetManualActivityParams();
-  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
+  const shouldBeDisabled = isDisabled || isSavingDisabled;
 
   return (
     <>

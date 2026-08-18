@@ -5,14 +5,12 @@ import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-sa
 import { ROUTES } from '@const/enums';
 import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/services/activity/activity';
 import { useUpdateSessionLocationMutation } from '@R/services/authentication/authentication';
-import { setIsDisableWhileSending } from '@R/slices/activity/activity';
-import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
+import { queueUnsyncedActivity, resetActivityDraft, setSavingDisabled } from '@R/slices/activity/activity';
 import { resetLocationsFromBackground } from '@R/slices/location/location';
-import { saveUnsendedActivity } from '@R/slices/unsended-activity/unsended-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useGlobalManualActivityParams } from '@Routes/save-activity-page/manual-activity-params';
 import { errorToast } from '@S/error-toast/error-toast';
-import { getMapBoxImage, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getMapBoxImage, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
 
 export default function SaveBtn() {
@@ -20,7 +18,7 @@ export default function SaveBtn() {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { back, replace } = useRouter();
-  const { isDisabledWhileSending, finishedActivity } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled, finishedActivity, photoVideoUrls } = useAppSelector(({ activity }) => activity);
   const {
     activityId,
     isManualAdding,
@@ -36,7 +34,6 @@ export default function SaveBtn() {
     manualMinutes,
     manualSeconds,
   } = useGlobalManualActivityParams();
-  const { photoVideoUrls } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
   const { language } = useAppSelector(({ settings }) => settings);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
   const [updateActivity, { isLoading: isUpdating }] = useUpdateActivityInfoMutation();
@@ -62,7 +59,7 @@ export default function SaveBtn() {
             const minutes = Number(manualMinutes) || 0;
             const seconds = Number(manualSeconds) || 0;
             const duration = getMillisecondsFromHoursMinutesSeconds(hours, minutes, seconds);
-            const additionalInfoActivity = {
+            const activityDetails = {
               title,
               description,
               sport,
@@ -74,7 +71,7 @@ export default function SaveBtn() {
               body:
                 isManualAdding || isEditingActivity
                   ? {
-                      ...additionalInfoActivity,
+                      ...activityDetails,
                       date: new Date(manualDate).toISOString(),
                       distance: distance * 1000,
                       duration: Math.round(duration),
@@ -83,8 +80,9 @@ export default function SaveBtn() {
                     }
                   : {
                       ...finishedActivity,
+                      locations: getReducedLocations(finishedActivity.locations),
                       duration: Math.round(finishedActivity.duration),
-                      ...additionalInfoActivity,
+                      ...activityDetails,
                       mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
                     },
               id: activityOwnerId,
@@ -96,14 +94,14 @@ export default function SaveBtn() {
                 longitude: lastLocation.coords.longitude,
               });
             }
-            dispatch(setIsDisableWhileSending(true));
+            dispatch(setSavingDisabled(true));
             if (isEditingActivity) {
               await updateActivity(savedActivity)
                 .unwrap()
                 .then(() => back())
                 .catch((error) => errorToast('', error))
                 .finally(() => {
-                  dispatch(resetAdditionalInfoActivitySlice());
+                  dispatch(resetActivityDraft());
                   dispatch(resetLocationsFromBackground());
                 });
             } else {
@@ -115,13 +113,13 @@ export default function SaveBtn() {
                 .then(() => (isManualAdding ? back() : replace(ROUTES.root)))
                 .catch((error) => {
                   if (!isEditingActivity) {
-                    dispatch(saveUnsendedActivity(savedActivity));
+                    dispatch(queueUnsyncedActivity(savedActivity));
                     replace(ROUTES.root);
                   }
                   errorToast('', error);
                 })
                 .finally(() => {
-                  dispatch(resetAdditionalInfoActivitySlice());
+                  dispatch(resetActivityDraft());
                   dispatch(resetLocationsFromBackground());
                 });
             }
@@ -129,10 +127,10 @@ export default function SaveBtn() {
         } catch (error) {
           errorToast('', error);
         } finally {
-          dispatch(setIsDisableWhileSending(false));
+          dispatch(setSavingDisabled(false));
         }
       }}
-      disabled={isDisabledWhileSending}>
+      disabled={isSavingDisabled}>
       {!isSaving && (
         <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
           {textOnBtn}

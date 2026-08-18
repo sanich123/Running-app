@@ -1,16 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Platform, View } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
+import { View } from 'react-native';
 import { useGetCommentsByActivityIdQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
 import Comment from '../comment/comment';
 import CommentsEmptyList from '../comments-empty/comments-empty';
 import CommentsLoadMoreBtn from '../comments-load-more-btn/comments-load-more';
-import type { CommentModalProps } from '../types';
+import type { CommentsProps } from '../types';
 import type { CommentResponse } from '@R/runich-api/types';
 
-export default function Comments({ commentsModalRef }: CommentModalProps) {
+export default function Comments({ commentsModalRef, onViewStateChange, showEmptyState = true }: CommentsProps) {
   const { isShowingTextInput, commentActivityId } = useAppSelector(({ comment }) => comment);
   const isNeedToGetUpdatedComments = true;
   const [take, increaseTakeNumber] = useState(10);
@@ -23,30 +22,18 @@ export default function Comments({ commentsModalRef }: CommentModalProps) {
   const comments = useMemo(() => data?.comments ?? [], [data?.comments]);
 
   useEffect(() => {
-    if (Platform.OS !== 'web' && !process.env.IS_TESTING) {
-      if (!comments.length) {
-        commentsModalRef.current?.snapToIndex(1);
-      }
-      if (comments.length === 1) {
-        commentsModalRef.current?.snapToIndex(1);
-      }
-      if (comments.length === 2) {
-        commentsModalRef.current?.snapToIndex(2);
-      }
-      if (comments.length === 3) {
-        commentsModalRef.current?.snapToIndex(3);
-      }
-      if (comments.length > 3) {
-        commentsModalRef.current?.snapToIndex(4);
-      }
+    if (isLoading) {
+      onViewStateChange?.('loading');
+    } else if (isSuccess) {
+      onViewStateChange?.(comments.length ? 'loaded' : 'empty');
+    } else if (isError) {
+      onViewStateChange?.('error');
     }
-  }, [comments, commentsModalRef]);
+  }, [comments.length, isError, isLoading, isSuccess, onViewStateChange]);
 
   return (
     <View>
-      {isLoading ? (
-        <ActivityIndicator testID="commentsActivityIndicator" size="large" />
-      ) : isSuccess ? (
+      {isLoading ? null : isSuccess ? (
         <>
           {comments.length >= 10 && take < (data?.allCommentsLength ?? 0) && (
             <CommentsLoadMoreBtn
@@ -61,7 +48,7 @@ export default function Comments({ commentsModalRef }: CommentModalProps) {
               .sort((a: CommentResponse, b: CommentResponse) => Date.parse(a.date) - Date.parse(b.date))
               .map((comment) => <Comment {...comment} key={comment.id} commentsModalRef={commentsModalRef} />)}
 
-          {!comments.length && !isShowingTextInput && <CommentsEmptyList />}
+          {showEmptyState && !comments.length && (!isShowingTextInput || onViewStateChange) && <CommentsEmptyList />}
         </>
       ) : isError ? (
         <ErrorComponent error={error} refetch={refetch} />

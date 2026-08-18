@@ -1,6 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { setIsDisableWhileSending } from '@R/slices/activity/activity';
+import { setSavingDisabled } from '@R/slices/activity/activity';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -47,9 +47,9 @@ describe('Emotion btns', () => {
     const fineInput = screen.getByText(EMOTION_BTNS.english.fineLabel);
     [normalInput, fuckedInput, fineInput].map((input) => expect(input).toBeDisabled());
   });
-  it('should correctly handle isDisabledWhileSending state', async () => {
+  it('should correctly handle isSavingDisabled state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockStore.dispatch(setIsDisableWhileSending(true));
+    mockStore.dispatch(setSavingDisabled(true));
     await renderWithProviders(<EmotionBtns isDisabled={false} />, { store: mockStore });
     const normalInput = screen.getByText(EMOTION_BTNS.english.normalLabel);
     const fuckedInput = screen.getByText(EMOTION_BTNS.english.fuckedLabel);

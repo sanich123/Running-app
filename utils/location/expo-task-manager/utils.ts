@@ -60,7 +60,7 @@ export function saveMetricsToStoreTaskManager(
   currentDistance: number,
   previousPosition: LocationObject | null,
 ) {
-  const { sport } = store.getState().additionalInfoActivity;
+  const { sport } = store.getState().activity;
   const speedInKmPerHour = getSpeedInKmPerHour(currentDistance, currentDuration);
   const maxSpeedInKmPerHour = getMaxTrackingSpeedForSport(sport);
 

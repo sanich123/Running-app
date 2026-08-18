@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ActivityIndicator, Animated, View, StyleSheet } from 'react-native';
 import { TouchableRipple, useTheme, Icon } from 'react-native-paper';
 import { STATUSES } from '@const/enums';
-import { saveFinishedActivity } from '@R/slices/activity/activity';
+import { setFinishedActivity } from '@R/slices/activity/activity';
 import { setActivityStatus, setEmptyLastArrayWhenPaused } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -35,7 +35,7 @@ export default function PauseBtn() {
       } else {
         await stopLocationTracking();
         dispatch(
-          saveFinishedActivity({
+          setFinishedActivity({
             duration,
             distance,
             locations: getReducedLocations(locations),

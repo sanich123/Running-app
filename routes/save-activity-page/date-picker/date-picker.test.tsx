@@ -1,6 +1,6 @@
 import { act, screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { setIsDisableWhileSending } from '@R/slices/activity/activity';
+import { setSavingDisabled } from '@R/slices/activity/activity';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -36,14 +36,14 @@ describe('Date time picker', () => {
   });
   it('should correctly handle isDisabled WhileSending state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    mockStore.dispatch(setIsDisableWhileSending(true));
+    mockStore.dispatch(setSavingDisabled(true));
     await renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(new RegExp(DATE_TIME_PICKER.russian.title))).toBeOnTheScreen();
   });
 
   it('opens the picker and stores the confirmed date', async () => {
     const user = userEvent.setup();
-    mockStore.dispatch(setIsDisableWhileSending(false));
+    mockStore.dispatch(setSavingDisabled(false));
     await renderWithProviders(<DateTimePicker isDisabled={false} />);
     await user.press(screen.getByTestId(DATE_TIME_PICKER_BTN_ID));
     expect(screen.getByTestId('native-date-picker').props.open).toBe(true);

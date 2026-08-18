@@ -1,7 +1,16 @@
+import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
 import { MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
 import { MOCK_LOCATIONS } from '@T/mocks/mock-locations';
-import reducer, { saveFinishedActivity, setIsDisableWhileSending } from './activity';
+import { MOCK_UNSYNCED_ACTIVITY } from '@T/mocks/mock-unsynced-activity';
+import reducer, {
+  addPhotoUrl,
+  clearUnsyncedActivities,
+  queueUnsyncedActivity,
+  setFinishedActivity,
+  setSavingDisabled,
+  setSport,
+} from './activity';
 import { ACTIVITY_INITIAL_STATE } from './const';
 
 describe('Activity slice', () => {
@@ -16,17 +25,33 @@ describe('Activity slice', () => {
     expect(reducer(undefined, { type: '' })).toEqual(ACTIVITY_INITIAL_STATE);
   });
 
-  it('should correctly change isDisableWhileSending', () => {
-    expect(reducer(ACTIVITY_INITIAL_STATE, setIsDisableWhileSending(true))).toEqual({
+  it('should correctly change isSavingDisabled', () => {
+    expect(reducer(ACTIVITY_INITIAL_STATE, setSavingDisabled(true))).toEqual({
       ...ACTIVITY_INITIAL_STATE,
-      isDisabledWhileSending: true,
+      isSavingDisabled: true,
     });
   });
 
   it('should change finishedActivity', () => {
-    expect(reducer(ACTIVITY_INITIAL_STATE, saveFinishedActivity(MOCK_FINISHED_ACTIVITY))).toEqual({
+    expect(reducer(ACTIVITY_INITIAL_STATE, setFinishedActivity(MOCK_FINISHED_ACTIVITY))).toEqual({
       ...ACTIVITY_INITIAL_STATE,
       finishedActivity: MOCK_FINISHED_ACTIVITY,
     });
+  });
+
+  it('should manage the activity draft', () => {
+    const photo = { url: 'photo-url', thumbnail: null };
+    const withSport = reducer(ACTIVITY_INITIAL_STATE, setSport(SPORTS_BTNS_VALUES.bike));
+    const withPhoto = reducer(withSport, addPhotoUrl(photo));
+
+    expect(withPhoto.sport).toBe(SPORTS_BTNS_VALUES.bike);
+    expect(withPhoto.photoVideoUrls).toEqual([photo]);
+  });
+
+  it('should queue and clear unsynced activities', () => {
+    const queued = reducer(ACTIVITY_INITIAL_STATE, queueUnsyncedActivity(MOCK_UNSYNCED_ACTIVITY));
+
+    expect(queued.unsyncedActivities).toEqual([MOCK_UNSYNCED_ACTIVITY]);
+    expect(reducer(queued, clearUnsyncedActivities()).unsyncedActivities).toEqual([]);
   });
 });

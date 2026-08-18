@@ -38,6 +38,17 @@ export interface CommentModalProps {
   commentsModalRef: RefObject<BottomSheetModal | null>;
 }
 
+export interface CommentsListModalProps extends CommentModalProps {
+  commentsLength?: number;
+}
+
+export type CommentsViewState = 'loading' | 'empty' | 'loaded' | 'error';
+
+export interface CommentsProps extends CommentModalProps {
+  onViewStateChange?: (state: CommentsViewState) => void;
+  showEmptyState?: boolean;
+}
+
 export interface CommentsLoadMoreButtonProps {
   take: number;
   increaseTakeNumber: (arg: number) => void;

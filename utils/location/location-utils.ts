@@ -2,6 +2,7 @@ import polyline from '@mapbox/polyline';
 import getDistanceInMeters from '@turf/distance';
 import point from 'turf-point';
 import { POWERHOURS_COLORS } from '@const/theme-colors';
+import { MAX_ACTIVITY_LOCATIONS } from './const';
 import type { ActivityKilometreSplit, ActivityLocation } from '@S/card/types';
 import type { LocationObject } from 'expo-location';
 
@@ -328,7 +329,9 @@ export function getMapBoxImage(
   }
 }
 
-export function getReducedLocations(locations: ActivityLocation[], maxLocations = 1000) {
+export function getReducedLocations(locations: LocationObject[], maxLocations?: number): LocationObject[];
+export function getReducedLocations(locations: ActivityLocation[], maxLocations?: number): ActivityLocation[];
+export function getReducedLocations(locations: ActivityLocation[], maxLocations = MAX_ACTIVITY_LOCATIONS) {
   if (locations.length > maxLocations) {
     return Array.from({ length: maxLocations }, (_, index) => {
       const sourceIndex = Math.round((index * (locations.length - 1)) / (maxLocations - 1));

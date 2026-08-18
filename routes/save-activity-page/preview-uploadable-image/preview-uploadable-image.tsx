@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-import { addPhotoUrl } from '@R/slices/activity-additional-info/activity-additional-info';
+import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import PreviewImage from '@Routes/save-activity-page/preview-image/preview-image';
 import { errorToast } from '@S/error-toast/error-toast';

@@ -6,7 +6,7 @@ import { CHECKBOX_TEST_ID, CHECKBOX } from './const';
 
 export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
   const { language } = useAppSelector(({ settings }) => settings);
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { isPublic } = useManualActivityParams();
   const { setIsPublic } = useSetManualActivityParams();
 
@@ -16,10 +16,10 @@ export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
         value={isPublic}
         onValueChange={() => setIsPublic(!isPublic)}
         testID={CHECKBOX_TEST_ID}
-        disabled={isDisabled || isDisabledWhileSending}
+        disabled={isDisabled || isSavingDisabled}
         style={styles.switch}
       />
-      <Text variant="titleSmall" style={[styles.label, (isDisabled || isDisabledWhileSending) && styles.disabledLabel]}>
+      <Text variant="titleSmall" style={[styles.label, (isDisabled || isSavingDisabled) && styles.disabledLabel]}>
         {CHECKBOX[language].public}
       </Text>
     </View>

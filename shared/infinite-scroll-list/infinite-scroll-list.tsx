@@ -15,7 +15,7 @@ export default function InfiniteScrollList({
   isFetching,
 }: InfiniteScrollListProps) {
   const { onRefresh, refreshing } = useRefresh(refetch);
-  const { unsyncedActivities } = useAppSelector(({ unsendedActivity }) => unsendedActivity);
+  const { unsyncedActivities } = useAppSelector(({ activity }) => activity);
   return (
     <FlatList
       testID="infinite-scroll-list"

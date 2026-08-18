@@ -21,6 +21,8 @@ describe('Home activity full view km split', () => {
       expect(screen.getByText(`${formatDurationMinsSecs(lastKilometerDuration)}`)).toBeOnTheScreen();
       expect(screen.getByText(`${formatDurationMinsSecs(lastKilometerDuration)}`)).toHaveProp('numberOfLines', 1);
     });
+    expect(screen.getByText('3.3')).toBeOnTheScreen();
+    expect(screen.getByText('17.5')).toBeOnTheScreen();
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

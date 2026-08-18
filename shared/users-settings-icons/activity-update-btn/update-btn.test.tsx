@@ -20,7 +20,7 @@ describe('update btn', () => {
     await waitFor(() => expect(updateButton.props.accessibilityState?.disabled).toBe(false));
     await user.press(updateButton);
     const state = mockStore.getState();
-    expect(state.additionalInfoActivity).toEqual(
+    expect(state.activity).toEqual(
       expect.objectContaining({
         photoVideoUrls: MOCK_SERVER_ACTIVITY.photoVideoUrls,
       }),

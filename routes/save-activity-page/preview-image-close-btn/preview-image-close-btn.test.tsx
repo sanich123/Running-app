@@ -1,6 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { setIsDisableWhileSending } from '@R/slices/activity/activity';
-import { addPhotoUrl } from '@R/slices/activity-additional-info/activity-additional-info';
+import { addPhotoUrl, setSavingDisabled } from '@R/slices/activity/activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import PreviewImageCloseBtn from './preview-image-close-btn';
@@ -23,7 +22,7 @@ describe('Preview image close btn', () => {
     const deleteIcon = screen.getByTestId('deleteIcon');
     await userEvent.press(deleteIcon);
     expect(setImages).toHaveBeenCalled();
-    expect(mockStore.getState().additionalInfoActivity.photoVideoUrls).toEqual([]);
+    expect(mockStore.getState().activity.photoVideoUrls).toEqual([]);
   });
   it('should be disabled, when isDisabled', async () => {
     const setImages = jest.fn();
@@ -40,8 +39,8 @@ describe('Preview image close btn', () => {
     );
     expect(screen.getByTestId('deleteIcon')).toBeDisabled();
   });
-  it('should be disabled, when isDisabledWhileSending', async () => {
-    mockStore.dispatch(setIsDisableWhileSending(true));
+  it('should be disabled, when isSavingDisabled', async () => {
+    mockStore.dispatch(setSavingDisabled(true));
     const setImages = jest.fn();
     await renderWithProviders(
       <PreviewImageCloseBtn

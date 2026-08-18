@@ -1,5 +1,5 @@
 import { act, screen } from '@testing-library/react-native';
-import { setIsDisableWhileSending } from '@R/slices/activity/activity';
+import { setSavingDisabled } from '@R/slices/activity/activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID, INPUT_SECONDS_ID } from './const';
@@ -24,8 +24,8 @@ describe('Inputs manual distance duration', () => {
       expect(screen.getByTestId(testId)).toBeDisabled(),
     );
   });
-  it('shoudl correctly handle isDisabledWhileSending state', async () => {
-    mockStore.dispatch(setIsDisableWhileSending(true));
+  it('should correctly handle isSavingDisabled state', async () => {
+    mockStore.dispatch(setSavingDisabled(true));
     await renderWithProviders(<InputsDistanceTime isDisabled={false} />, { store: mockStore });
     [INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID, INPUT_SECONDS_ID].map((testId) =>
       expect(screen.getByTestId(testId)).toBeDisabled(),
@@ -33,7 +33,7 @@ describe('Inputs manual distance duration', () => {
   });
 
   it('stores distance, hours and minutes entered by the user', async () => {
-    mockStore.dispatch(setIsDisableWhileSending(false));
+    mockStore.dispatch(setSavingDisabled(false));
     await renderWithProviders(<InputsDistanceTime isDisabled={false} />);
     act(() => {
       screen.getByTestId(INPUT_DISTANCE_ID).props.onChangeText('12.5');

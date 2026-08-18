@@ -3,11 +3,7 @@ import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN } from '@const/activity-save-btn';
 import { ROUTES } from '@const/enums';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
-import { resetFinishedActivity } from '@R/slices/activity/activity';
-import {
-  addPhotoUrls,
-  resetAdditionalInfoActivitySlice,
-} from '@R/slices/activity-additional-info/activity-additional-info';
+import { addPhotoUrls, resetActivityDraft, resetFinishedActivity } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getHoursMinutesSecondsFromMilliseconds } from '@U/time-formatter';
@@ -32,7 +28,7 @@ export default function UpdateBtn() {
       onPress={() => {
         if (activity) {
           dispatch(resetFinishedActivity());
-          dispatch(resetAdditionalInfoActivitySlice());
+          dispatch(resetActivityDraft());
 
           if (activity?.photoVideoUrls) {
             dispatch(addPhotoUrls(activity?.photoVideoUrls));

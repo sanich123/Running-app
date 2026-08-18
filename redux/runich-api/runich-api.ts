@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Mutex } from 'async-mutex';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
-import { resetAuthSlice, setAccessToken } from '@R/slices/auth/auth';
+import { resetAuthSlice, setAccessToken, setRefreshToken } from '@R/slices/auth/auth';
 import { deviceId, deviceName, deviceMetadata, platform } from '@U/device/device-id';
 import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
 import type { AuthResponse } from './types';
@@ -76,6 +76,7 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
 
         if (newAccessToken) {
           api.dispatch(setAccessToken(newAccessToken));
+          if (refreshData?.refreshToken) api.dispatch(setRefreshToken(refreshData.refreshToken));
           result = await baseQuery(args, api, extraOptions);
         } else {
           api.dispatch(resetAuthSlice());

@@ -1,5 +1,5 @@
 import { SPORTS_BTNS_VALUES } from '@const/sports';
-import { saveSport } from '@R/slices/activity-additional-info/activity-additional-info';
+import { setSport } from '@R/slices/activity/activity';
 import { resetLocationSlice, setLocationsWhenContinued } from '@R/slices/location/location';
 import { store } from '@R/store';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
@@ -21,7 +21,7 @@ describe('location speed filtering', () => {
   });
 
   it('skips an implausibly fast running location', () => {
-    store.dispatch(saveSport(SPORTS_BTNS_VALUES.run));
+  store.dispatch(setSport(SPORTS_BTNS_VALUES.run));
 
     saveMetricsToStoreTaskManager(MOCK_LOCATION, 60_000, 0, 0, 1000, null);
 
@@ -31,7 +31,7 @@ describe('location speed filtering', () => {
   });
 
   it('accepts a realistic cycling location at the same distance', () => {
-    store.dispatch(saveSport(SPORTS_BTNS_VALUES.bike));
+  store.dispatch(setSport(SPORTS_BTNS_VALUES.bike));
 
     saveMetricsToStoreTaskManager(MOCK_LOCATION, 90_000, 0, 0, 1000, null);
 

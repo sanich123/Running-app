@@ -1,7 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import { FINISHED_ACTIVITY_INITIAL_STATE } from '@R/slices/activity/const';
-import { ADDITIONAL_INFO_INITIAL_STATE } from '@R/slices/activity-additional-info/const';
+import { ACTIVITY_DRAFT_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from '@R/slices/activity/const';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -24,7 +23,11 @@ describe('Decline btn', () => {
     await userEvent.press(discardBtn);
     const confirmBtn = await screen.findByText(DECLINE_BTN.english.accept);
     await userEvent.press(confirmBtn);
-    expect(mockStore.getState().additionalInfoActivity).toEqual(ADDITIONAL_INFO_INITIAL_STATE);
+    expect(mockStore.getState().activity).toEqual(
+      expect.objectContaining({
+        ...ACTIVITY_DRAFT_INITIAL_STATE,
+      }),
+    );
     expect(mockStore.getState().activity.finishedActivity).toEqual(FINISHED_ACTIVITY_INITIAL_STATE);
     expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
   });

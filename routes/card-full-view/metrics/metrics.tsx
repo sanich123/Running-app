@@ -18,17 +18,16 @@ export default function Metrics() {
   });
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const kilometresSplit = activity?.kilometresSplit ?? routeData?.kilometresSplit ?? [];
+  const kilometresSplit = activity?.kilometresSplit?.length
+    ? activity.kilometresSplit
+    : (routeData?.kilometresSplit ?? []);
   const splitElevationGain = kilometresSplit.reduce(
     (total, { lastKilometerAltitude }) => total + Math.max(0, lastKilometerAltitude),
     0,
   );
-  // Older activities stored the signed net altitude change per kilometre.
-  // Keep their value as a fallback while new activities are recalculated from raw locations.
-  const hasLegacySignedSplits = kilometresSplit.some(({ lastKilometerAltitude }) => lastKilometerAltitude < 0);
   const routeLocations = activity?.locations?.length ? activity.locations : routeData?.locations;
   const gainedElevation = Math.round(
-    !hasLegacySignedSplits && routeLocations?.length ? getElevationGain(routeLocations) : splitElevationGain,
+    kilometresSplit.length ? splitElevationGain : routeLocations?.length ? getElevationGain(routeLocations) : 0,
   );
 
   return (
@@ -71,8 +70,7 @@ export default function Metrics() {
             <View style={styles.alignedCenter}>
               <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].elevationGain}</Text>
               <Text variant="titleLarge">
-                {Boolean(activity.kilometresSplit?.length) &&
-                  `${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}
+                {Boolean(kilometresSplit.length) && `${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}
               </Text>
             </View>
           </View>

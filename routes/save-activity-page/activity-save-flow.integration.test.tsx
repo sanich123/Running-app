@@ -3,11 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { runichApi } from '@R/runich-api/runich-api';
-import { resetFinishedActivity } from '@R/slices/activity/activity';
-import {
-  resetAdditionalInfoActivitySlice,
-  addPhotoUrl,
-} from '@R/slices/activity-additional-info/activity-additional-info';
+import { resetFinishedActivity, addPhotoUrl, resetActivityDraft } from '@R/slices/activity/activity';
 import { setUserId, resetAuthSlice } from '@R/slices/auth/auth';
 import { resetLocationSlice, setDistance, setDuration, setLocationsFromBackground } from '@R/slices/location/location';
 import ActivitySaveBtn from '@Routes/activity/save-btn/save-btn';
@@ -132,7 +128,7 @@ function EditActivityHarness() {
 function resetActivityFlowState() {
   mockStore.dispatch(resetAuthSlice());
   mockStore.dispatch(resetFinishedActivity());
-  mockStore.dispatch(resetAdditionalInfoActivitySlice());
+  mockStore.dispatch(resetActivityDraft());
   mockStore.dispatch(resetLocationSlice());
   mockStore.dispatch(runichApi.util.resetApiState());
 }

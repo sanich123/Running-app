@@ -2,7 +2,7 @@ import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import { saveFinishedActivity } from '@R/slices/activity/activity';
+import { setFinishedActivity } from '@R/slices/activity/activity';
 import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
@@ -10,6 +10,7 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { MAX_ACTIVITY_LOCATIONS } from '@U/location/const';
 import ActivitySaveBtn from './save-btn';
 
 const mockBack = jest.fn();
@@ -64,13 +65,13 @@ describe('Activity save btn', () => {
     mockStore.dispatch(setUserId('someUserId'));
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
-    expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
+    expect(mockStore.getState().activity.isSavingDisabled).toEqual(false);
     await userEvent.press(saveBtn);
   });
   it('should correctly change global state after successfully sending activity', async () => {
     mockStore.dispatch(setUserId('someUserId'));
     mockStore.dispatch(
-      saveFinishedActivity({
+      setFinishedActivity({
         locations: [MOCK_LOCATION],
         duration: MOCK_DURATION,
         speed: MOCK_SPEED,
@@ -80,7 +81,7 @@ describe('Activity save btn', () => {
     );
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
-    expect(mockStore.getState().activity.isDisabledWhileSending).toEqual(false);
+    expect(mockStore.getState().activity.isSavingDisabled).toEqual(false);
     await userEvent.press(saveBtn);
   });
 
@@ -106,7 +107,7 @@ describe('Activity save btn', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockManualActivityMode = 'tracked';
     mockStore.dispatch(
-      saveFinishedActivity({
+      setFinishedActivity({
         locations: [MOCK_LOCATION],
         duration: MOCK_DURATION,
         speed: MOCK_SPEED,
@@ -120,11 +121,37 @@ describe('Activity save btn', () => {
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
   });
 
+  it('caps tracked locations at the API limit before sending', async () => {
+    let requestBody: Record<string, unknown> | undefined;
+    server.use(
+      http.post(`${BASE_URL}/activity/someUserId`, async ({ request }) => {
+        requestBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({ id: 'activity-id' });
+      }),
+    );
+    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(
+      setFinishedActivity({
+        locations: Array.from({ length: MAX_ACTIVITY_LOCATIONS + 1 }, () => MOCK_LOCATION),
+        duration: MOCK_DURATION,
+        speed: MOCK_SPEED,
+        distance: MOCK_DISTANCE,
+        kilometresSplit: [],
+      }),
+    );
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+
+    await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
+
+    await waitFor(() => expect((requestBody?.locations as unknown[])?.length).toBe(MAX_ACTIVITY_LOCATIONS));
+    await waitFor(() => expect(mockStore.getState().activity.isSavingDisabled).toBe(false));
+  });
+
   it('returns to the feed after an unsent tracked activity fails to save', async () => {
     mockStore.dispatch(setUserId('someWrongUserId'));
     mockManualActivityMode = 'tracked';
     mockStore.dispatch(
-      saveFinishedActivity({
+      setFinishedActivity({
         locations: [MOCK_LOCATION],
         duration: MOCK_DURATION,
         speed: MOCK_SPEED,

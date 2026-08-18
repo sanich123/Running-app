@@ -4,7 +4,6 @@ import { persistStore, persistReducer } from 'redux-persist';
 import { appStorage } from '@U/storage/storage';
 import { runichApi } from './runich-api/runich-api';
 import activity from './slices/activity/activity';
-import additionalInfoActivity from './slices/activity-additional-info/activity-additional-info';
 import auth from './slices/auth/auth';
 import comment from './slices/comment/comment';
 import location from './slices/location/location';
@@ -13,13 +12,12 @@ import mainFeed from './slices/main-feed/main-feed';
 import network from './slices/network/network';
 import profile from './slices/profile/profile';
 import settings from './slices/settings/settings';
-import unsendedActivity from './slices/unsended-activity/unsended-activity';
 import type { Action, Reducer } from '@reduxjs/toolkit';
 
 const persistConfig = {
   key: 'root',
   storage: appStorage,
-  whitelist: ['settings', 'activity', 'location', 'auth', 'unsendedActivity'],
+  whitelist: ['settings', 'activity', 'location', 'auth'],
 };
 
 const appReducer = combineReducers({
@@ -31,8 +29,6 @@ const appReducer = combineReducers({
   mainFeed,
   auth,
   logining,
-  additionalInfoActivity,
-  unsendedActivity,
   comment,
   [runichApi.reducerPath]: runichApi.reducer,
 });

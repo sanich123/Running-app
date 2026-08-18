@@ -25,7 +25,7 @@ module.exports = function withCustomPlugin(config) {
   config = setGradlePropertiesValue(
     config,
     'org.gradle.jvmargs',
-    '-Xmx4096m -XX:MaxMetaspaceSize=2048m', //Set data of your choice
+    '-Xmx4096m -XX:MaxMetaspaceSize=2048m --enable-native-access=ALL-UNNAMED',
   );
 
   return config;
