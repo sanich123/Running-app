@@ -75,8 +75,13 @@ export default function FeedbackPage() {
             <RadioButton.Item label="Поблагодарить разработчика" value="thanks" />
             <RadioButton.Item label="Хочу фичу" value="feature" />
           </RadioButton.Group>
+        </Card.Content>
+      </Card>
 
-          {(isBug || isFeature) && (
+      {(isBug || isFeature) && (
+        <Card mode="contained" style={{ backgroundColor: colors.surface }}>
+          <Card.Content style={styles.cardContent}>
+            <Text variant="titleMedium">Перед отправкой</Text>
             <View style={styles.switches}>
               <SwitchRow
                 label="Runich полностью бесплатный сервис"
@@ -91,45 +96,49 @@ export default function FeedbackPage() {
                 />
               )}
             </View>
-          )}
-          {canWrite && (
-            <>
-              <TextInput
-                mode="outlined"
-                multiline
-                value={text}
-                onChangeText={setText}
-                placeholder={
-                  isBug
-                    ? 'Максимально точно опишите, при каком сценарии можно воспроизвести баг'
-                    : isFeature
-                      ? 'Опишите желаемую функцию'
-                      : 'Напишите сообщение разработчику'
-                }
-                style={styles.textInput}
-              />
-              {(isBug || isFeature) && (
-                <Button icon="image-plus" mode="outlined" onPress={() => void choosePhoto()}>
-                  {photo ? 'Фото выбрано' : 'Добавить фото/скриншот'}
-                </Button>
-              )}
-              <Button
-                mode="contained"
-                disabled={!text.trim() || isLoading}
-                loading={isLoading}
-                onPress={() => void submit()}>
-                Послать
+          </Card.Content>
+        </Card>
+      )}
+
+      {canWrite && (
+        <Card mode="contained" style={{ backgroundColor: colors.surface }}>
+          <Card.Content style={styles.cardContent}>
+            <Text variant="titleMedium">Текст обратной связи</Text>
+            <TextInput
+              mode="outlined"
+              multiline
+              value={text}
+              onChangeText={setText}
+              placeholder={
+                isBug
+                  ? 'Максимально точно опишите, при каком сценарии можно воспроизвести баг'
+                  : isFeature
+                    ? 'Опишите желаемую функцию'
+                    : 'Напишите сообщение разработчику'
+              }
+              style={styles.textInput}
+            />
+            {(isBug || isFeature) && (
+              <Button icon="image-plus" mode="outlined" onPress={() => void choosePhoto()}>
+                {photo ? 'Фото выбрано' : 'Добавить фото/скриншот'}
               </Button>
-            </>
-          )}
-        </Card.Content>
-      </Card>
+            )}
+            <Button
+              mode="contained"
+              disabled={!text.trim() || isLoading}
+              loading={isLoading}
+              onPress={() => void submit()}>
+              Послать
+            </Button>
+          </Card.Content>
+        </Card>
+      )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { padding: 12, gap: 8 },
+  content: { padding: 12, gap: 12 },
   cardContent: { gap: 12 },
   switches: { gap: 8 },
   textInput: { minHeight: 140 },
