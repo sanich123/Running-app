@@ -1,4 +1,4 @@
-import { renderCardsFunction, keyExtractor } from './render-item';
+import { renderCardsFunction, keyExtractor } from './utils';
 
 describe('render item', () => {
   it('maps an activity list item to the card props', () => {

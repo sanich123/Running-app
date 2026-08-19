@@ -1,4 +1,4 @@
-import { FlatList, Platform, StyleSheet, useWindowDimensions } from 'react-native';
+import { FlatList, Platform, useWindowDimensions, StyleSheet } from 'react-native';
 import { ActivityIndicator, Card, Chip, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES } from '@const/enums';

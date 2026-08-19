@@ -6,7 +6,8 @@ import MediaList from './media-list';
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
 jest.mock('@S/custom-image/custom-image', () => ({
-  CustomImage: (props: { testID?: string; contentFit?: string }) => {
+  __esModule: true,
+  default: (props: { testID?: string; contentFit?: string }) => {
     const { View } = require('react-native');
     return <View {...props} />;
   },

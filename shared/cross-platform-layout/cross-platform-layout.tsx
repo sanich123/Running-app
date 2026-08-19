@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 import { useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
+import { Platform, RefreshControl, View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { CrossPlatformLayoutProps } from './types';
 

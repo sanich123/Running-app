@@ -1,20 +1,21 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Suspense, useMemo, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
+import {
+  LazyCharts,
+  LazyErrorComponent,
+  LazyMonthStatisticsMetrics,
+  LazyYearTypePicker,
+} from '@Routes/app-routes/const';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import { MONTH_STATISTICS } from '@S/month-metric/const';
 import type { StatisticMetricResponse, YearCategoryStatistics } from '@R/runich-api/types';
-
-const LazyCharts = lazy(() => import('@Routes/statistic/charts/charts'));
-const LazyErrorComponent = lazy(() => import('@S/error-component/error-component'));
-const LazyMonthStatisticsMetrics = lazy(() => import('@S/month-metric/month-metric'));
-const LazyYearTypePicker = lazy(() => import('@Routes/statistic/year-type-picker/year-type-picker'));
 
 export default function Statistics() {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
@@ -51,13 +52,18 @@ export default function Statistics() {
     : {};
 
   return (
-    <CrossPlatformLayout edges={[]} scrollViewEnabled isError={isError} isLoading={isLoading}>
-      {isLoading ? (
-        <ActivityIndicator size="large" />
-      ) : isSuccess ? (
-        yearStats?.isUserHasActivities ? (
-          <>
-            <Suspense fallback={<ActivityIndicator size="large" />}>
+    <Suspense
+      fallback={
+        <CrossPlatformLayout edges={[]} isLoading>
+          <ActivityIndicator size="large" testID="statistics-loading" />
+        </CrossPlatformLayout>
+      }>
+      <CrossPlatformLayout edges={[]} scrollViewEnabled isError={isError} isLoading={isLoading}>
+        {isLoading ? (
+          <ActivityIndicator size="large" testID="statistics-loading" />
+        ) : isSuccess ? (
+          yearStats?.isUserHasActivities ? (
+            <>
               <LazyYearTypePicker
                 setSelectedYear={setSelectedYear}
                 setSelectedType={setSelectedType}
@@ -102,25 +108,23 @@ export default function Statistics() {
                   <LazyCharts year={displayedYear} months={chartStats} />
                 </>
               )}
-            </Suspense>
-          </>
-        ) : (
-          <EmptyState
-            icon="chart-line-variant"
-            title={EMPTY_STATE_COPY[language].activities.title}
-            message={
-              isRussian
-                ? 'Добавьте первую активность, и здесь появятся ваши показатели.'
-                : 'Add your first activity to see your progress here.'
-            }
-          />
-        )
-      ) : isError ? (
-        <Suspense fallback={<ActivityIndicator size="large" />}>
+            </>
+          ) : (
+            <EmptyState
+              icon="chart-line-variant"
+              title={EMPTY_STATE_COPY[language].activities.title}
+              message={
+                isRussian
+                  ? 'Добавьте первую активность, и здесь появятся ваши показатели.'
+                  : 'Add your first activity to see your progress here.'
+              }
+            />
+          )
+        ) : isError ? (
           <LazyErrorComponent error={error} refetch={refetch} />
-        </Suspense>
-      ) : null}
-    </CrossPlatformLayout>
+        ) : null}
+      </CrossPlatformLayout>
+    </Suspense>
   );
 }
 
@@ -128,8 +132,9 @@ const styles = StyleSheet.create({
   metricsContainer: {
     display: 'flex',
     flexDirection: 'row',
+    columnGap: 8,
     padding: 10,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     marginVertical: 15,
   },
   isInCenter: { alignItems: 'center', justifyContent: 'center' },

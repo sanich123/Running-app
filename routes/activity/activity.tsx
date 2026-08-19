@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Platform, StyleSheet, View } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { STATUSES } from '@const/enums';
 import { setActivityStatus, setEmptyLastArrayWhenPaused, setIsAppShuted } from '@R/slices/location/location';

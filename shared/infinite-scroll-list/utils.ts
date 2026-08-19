@@ -1,3 +1,4 @@
+import { createElement } from 'react';
 import Card from '@S/card/card';
 import type { ActivityResponse } from '@R/runich-api/types';
 
@@ -20,26 +21,24 @@ export function renderCardsFunction({ item }: { item: ActivityListItem }) {
     _count: { comments: commentsLength },
   } = item;
 
-  return (
-    <Card
-      isShowDeleteBtn={false}
-      isShowDescription={false}
-      description={description ?? ''}
-      title={title ?? ''}
-      date={date}
-      sport={sport}
-      userId={user_id}
-      id={id}
-      key={id}
-      mapPhotoUrl={mapPhotoUrl}
-      locations={locations}
-      photoVideoUrls={photoVideoUrls}
-      duration={duration}
-      distance={distance}
-      profile={profile}
-      commentsLength={commentsLength}
-    />
-  );
+  return createElement(Card, {
+    isShowDeleteBtn: false,
+    isShowDescription: false,
+    description: description ?? '',
+    title: title ?? '',
+    date,
+    sport,
+    userId: user_id,
+    id,
+    key: id,
+    mapPhotoUrl,
+    locations,
+    photoVideoUrls,
+    duration,
+    distance,
+    profile,
+    commentsLength,
+  });
 }
 
 export const keyExtractor = (item: ActivityListItem) => item.id;

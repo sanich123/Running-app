@@ -5,7 +5,8 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import ProfileAvatar from './avatar';
 
 jest.mock('@S/custom-image/custom-image', () => ({
-  CustomImage: ({ testID, source }: { testID?: string; source: { uri: string } }) => {
+  __esModule: true,
+  default: ({ testID, source }: { testID?: string; source: { uri: string } }) => {
     const { Text } = require('react-native');
     return <Text testID={testID}>{source.uri}</Text>;
   },

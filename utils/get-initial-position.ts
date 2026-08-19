@@ -10,17 +10,19 @@ interface GetPositionProps {
   setIsSuccess: (arg: boolean) => void;
 }
 
+export async function getCurrentOrLastKnownPosition() {
+  try {
+    return await getCurrentPositionAsync({ accuracy: 6 });
+  } catch {
+    return getLastKnownPositionAsync();
+  }
+}
+
 export async function getLastKnownPosition({ setIsLoading, setIsError, setIsSuccess }: GetPositionProps) {
   try {
     setIsLoading(true);
     setIsError(false);
-    let currentPosition: LocationObject | null = null;
-
-    try {
-      currentPosition = await getCurrentPositionAsync({ accuracy: 6 });
-    } catch {
-      currentPosition = await getLastKnownPositionAsync();
-    }
+    const currentPosition: LocationObject | null = await getCurrentOrLastKnownPosition();
 
     if (!currentPosition) {
       throw new Error('Position is unavailable');

@@ -1,24 +1,21 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
-import { Platform, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
+import { Suspense, useEffect, useState } from 'react';
+import { Platform, ScrollView, useWindowDimensions, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { savePhotoUrl } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import {
+  LazyAvatarIconEditable,
+  LazyGenderBtns,
+  LazyInputBio,
+  LazyInputsNameSurname,
+  LazyInputsWeightCity,
+} from '@Routes/app-routes/const';
 import { getInitialProfileSettingsParams } from '@Routes/profile/profile-settings/profile-settings-params';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import type { ProfileSettingsSearchParams } from '@Routes/profile/profile-settings/profile-settings-params';
-
-const LazyAvatarIconEditable = lazy(() => import('@Routes/profile/profile-settings/avatar-editable/editable'));
-const LazyGenderBtns = lazy(() => import('@Routes/profile/profile-settings/gender-btns/gender-btns'));
-const LazyInputBio = lazy(() => import('@Routes/profile/profile-settings/input-bio/input-bio'));
-const LazyInputsNameSurname = lazy(
-  () => import('@Routes/profile/profile-settings/inputs-name-surname/inputs-name-surname'),
-);
-const LazyInputsWeightCity = lazy(
-  () => import('@Routes/profile/profile-settings/inputs-weight-city/inputs-weight-city'),
-);
 
 export default function ProfileSettings() {
   const { colors } = useTheme();

@@ -1,9 +1,9 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
+import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 
 export default function InputsNameSurname({ isDisabled }: { isDisabled: boolean }) {
   const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);

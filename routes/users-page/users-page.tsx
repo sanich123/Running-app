@@ -1,29 +1,15 @@
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { ActivityIndicator, Divider, useTheme } from 'react-native-paper';
+import { FlatList, Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetFilteredUsersBySearchTextQuery } from '@R/services/profile/profile';
 import ErrorComponent from '@S/error-component/error-component';
-import UserListItem from '@S/user-list-item/user-list-item';
 import useDebounce from '@U/hooks/use-debounce';
 import useRefresh from '@U/hooks/use-refresh';
 import EmptyUsersList from './empty-list/empty-list';
 import SearchInput from './search-input/search-input';
-
-const renderUserItem = ({ item }: { item: any }) => (
-  <UserListItem
-    city={item?.city}
-    name={item?.name}
-    surname={item?.surname}
-    profilePhoto={item?.profilePhoto}
-    placeholder={item?.profilePhotoBlurhash}
-    user_id={item?.user_id}
-  />
-);
-
-const userKeyExtractor = (item: any) => item.user_id;
-const renderDivider = () => <Divider />;
+import { renderDivider, renderUserItem, userKeyExtractor } from './utils';
 
 export default function ListOfUsers() {
   const { colors } = useTheme();

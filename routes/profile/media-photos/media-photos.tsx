@@ -1,12 +1,12 @@
 import { Fragment } from 'react';
-import { Platform, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Platform, View, useWindowDimensions, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
-import { CustomImage } from '@S/custom-image/custom-image';
+import CustomImage from '@S/custom-image/custom-image';
 import { getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { PROFILE_MEDIA } from './const';
 import type { PhotoVideoType } from '@S/card/types';

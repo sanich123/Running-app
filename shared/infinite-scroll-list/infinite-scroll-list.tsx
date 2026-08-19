@@ -4,7 +4,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import UnsendedActivitiesIndicator from '@S/infinite-scroll-list/unsended-activities/unsended-activities-indicator';
 import WeekStatistics from '@S/infinite-scroll-list/week-statistics/week-statistics';
 import useRefresh from '@U/hooks/use-refresh';
-import { keyExtractor, renderCardsFunction } from './render-item';
+import { keyExtractor, renderCardsFunction } from './utils';
 import type { InfiniteScrollListProps } from './type';
 
 export default function InfiniteScrollList({

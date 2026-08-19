@@ -1,5 +1,5 @@
 import { BarChart } from 'react-native-gifted-charts';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { View, useWindowDimensions, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';

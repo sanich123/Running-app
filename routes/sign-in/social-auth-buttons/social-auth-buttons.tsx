@@ -1,5 +1,5 @@
 import { FontAwesome5 } from '@expo/vector-icons';
-import { Linking, StyleSheet, View } from 'react-native';
+import { Linking, View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { VK_AUTH_URL, YANDEX_AUTH_URL } from '../const';
 

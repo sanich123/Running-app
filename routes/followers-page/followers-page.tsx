@@ -1,6 +1,6 @@
-import { FlatList, Platform, StyleSheet, useWindowDimensions } from 'react-native';
+import { FlatList, Platform, useWindowDimensions, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Divider } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetFollowersByUserIdQuery } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
@@ -8,22 +8,8 @@ import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout'
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
-import UserListItem from '@S/user-list-item/user-list-item';
 import useRefresh from '@U/hooks/use-refresh';
-
-const renderFollowerItem = ({ item }: { item: any }) => (
-  <UserListItem
-    city={item.users.profile?.city}
-    name={item.users.profile?.name}
-    surname={item.users.profile?.surname}
-    profilePhoto={item.users.profile?.profilePhoto}
-    placeholder={item.users.profile?.profilePhotoBlurhash}
-    user_id={item.user_id}
-  />
-);
-
-const followerKeyExtractor = (item: any) => item.id || item.user_id;
-const renderDivider = () => <Divider />;
+import { renderDivider, renderFollowerItem, followerKeyExtractor } from './utils';
 
 export default function ListOfFollowers() {
   const { width } = useWindowDimensions();

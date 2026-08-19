@@ -1,5 +1,5 @@
 import { Fragment, memo, useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToDownload } from '@R/slices/main-feed/main-feed';
@@ -7,7 +7,7 @@ import { useAppDispatch } from '@R/typed-hooks';
 import { AvatarShowableTestIds } from '@S/avatar/showable/const';
 import ModalLikesList from '@S/card/modal-likes-list/modal-likes-list';
 import NumberOfLikes from '@S/card/number-of-likes/number-of-likes';
-import { CustomImage } from '@S/custom-image/custom-image';
+import CustomImage from '@S/custom-image/custom-image';
 import { LikesSize, MAX_IN_ROW, MAX_NUMBER_IN_ROW_OTHER_PAGE, SHIFT_RIGHT } from './const';
 import type { LikesProps, LikeType } from '../types';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';

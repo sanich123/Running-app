@@ -1,32 +1,15 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, FlatList, StyleSheet, useWindowDimensions, Platform } from 'react-native';
+import { View, FlatList, useWindowDimensions, Platform, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Divider, useTheme } from 'react-native-paper';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
 import { useAppSelector } from '@R/typed-hooks';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
-import UserListItem from '@S/user-list-item/user-list-item';
 import useRefresh from '@U/hooks/use-refresh';
-
-const renderLikeItem = ({ item }: { item: any }) => {
-  const { profile } = item;
-  return (
-    <UserListItem
-      name={profile?.name}
-      surname={profile?.surname}
-      profilePhoto={profile?.profilePhoto}
-      placeholder={profile?.profilePhotoBlurhash}
-      city={profile?.city}
-      user_id={profile?.user_id}
-    />
-  );
-};
-
-const likeKeyExtractor = (item: any) => item.id || `${item.activityId}-${item.authorId}`;
-const renderDivider = () => <Divider />;
+import { likeKeyExtractor, renderDivider, renderLikeItem } from './utils';
 
 export default function LikesList() {
   const { width } = useWindowDimensions();

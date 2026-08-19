@@ -6,12 +6,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import PreviewImage from '@Routes/save-activity-page/preview-image/preview-image';
 import { errorToast } from '@S/error-toast/error-toast';
 import { compressAndSendFile } from '@U/file-sending';
-
-interface PreviewUploadableImageProps {
-  image: string;
-  index: number;
-  isDisabled: boolean;
-}
+import type { PreviewUploadableImageProps } from './types';
 
 export default function PreviewUploadableImage({ image, index, isDisabled }: PreviewUploadableImageProps) {
   const { userId } = useAppSelector(({ auth }) => auth);

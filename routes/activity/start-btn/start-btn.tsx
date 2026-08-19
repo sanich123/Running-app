@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Animated, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Animated, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
 import { resetActivityDraft, resetFinishedActivity, setFinishedActivity } from '@R/slices/activity/activity';
 import {
   resetLocationsFromBackground,
+  setInitialLocation,
   setActivityStatus,
   setEmptyLastArrayWhenPaused,
 } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import { getCurrentOrLastKnownPosition } from '@U/get-initial-position';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getElevationGainByKilometres, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
@@ -100,6 +102,12 @@ export default function StartBtn({
     onTrackingActionInProgressChange?.(true);
     try {
       if (activityStatus === STATUSES.initial) {
+        const initialLocation = await getCurrentOrLastKnownPosition();
+        if (!initialLocation) {
+          throw new Error('Position is unavailable');
+        }
+
+        dispatch(setInitialLocation(initialLocation));
         // A new recording must never inherit a persisted recording or a
         // location task left alive after an app restart.
         await stopLocationTracking();

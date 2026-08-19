@@ -83,6 +83,7 @@ export default function CloseBtn() {
     </>
   );
 }
+
 const styles = StyleSheet.create({
   layout: {
     display: 'flex',

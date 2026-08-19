@@ -1,5 +1,5 @@
 import { LANGUAGES } from '@const/enums';
-import { reduceMonthMetrics } from './reduce-month-metrics';
+import { reduceMonthMetrics } from './utils';
 import type { MonthMetrics } from './types';
 
 describe('reduce month metrics', () => {

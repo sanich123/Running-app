@@ -4,7 +4,7 @@ import { Avatar, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { saveWholeProfile } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { CustomImage } from '@S/custom-image/custom-image';
+import CustomImage from '@S/custom-image/custom-image';
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 
 export default function AvatarShowable({ size, id, focused }: { size: number; id: string; focused?: boolean }) {

@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, useWindowDimensions } from 'react-native';
+import { Platform, useWindowDimensions, StyleSheet } from 'react-native';
 import { TextInput, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { FONT_FAMILIES } from '@const/fonts';

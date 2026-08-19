@@ -1,5 +1,5 @@
 import { useRef, memo, useMemo } from 'react';
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -15,6 +15,7 @@ import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
 import ShareActivityImage from './share-activity-image/share-activity-image';
 import { UserInfoSize } from './user-info/const';
+import { getCardMapPhotoUrl } from './utils';
 import type { ActivityCardProps } from './types';
 
 export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
@@ -42,6 +43,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const { colors } = useTheme();
   const cardRef = useRef<View>(null);
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
+  const cardMapPhotoUrl = useMemo(() => getCardMapPhotoUrl(mapPhotoUrl, mediaWidth), [mapPhotoUrl, mediaWidth]);
   const shouldLoadRouteLocations = !locations?.length && Boolean(mapPhotoUrl);
   const { data: routeData } = useGetLocationsByActivityIdQuery(id, { skip: !shouldLoadRouteLocations });
   const routeLocations = locations?.length ? locations : routeData?.locations;
@@ -55,8 +57,8 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     if (routeLocations?.length) {
       return getMapBoxImage(routeLocations, { width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }) || mapPhotoUrl;
     }
-    return mapPhotoUrl;
-  }, [mapPhotoUrl, mediaWidth, routeLocations]);
+    return cardMapPhotoUrl;
+  }, [cardMapPhotoUrl, mapPhotoUrl, mediaWidth, routeLocations]);
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
   return (
     <>

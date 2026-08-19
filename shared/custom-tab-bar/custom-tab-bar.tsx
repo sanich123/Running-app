@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
+import { View, Platform, TouchableOpacity, StyleSheet } from 'react-native';
 import { usePathname } from 'expo-router';
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';

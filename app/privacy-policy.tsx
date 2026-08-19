@@ -1,7 +1,6 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { LazyPrivacyPolicy } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
-
-const LazyPrivacyPolicy = lazy(() => import('@Routes/privacy-policy/privacy-policy'));
 
 export default function PrivacyPolicyScreen() {
   return (

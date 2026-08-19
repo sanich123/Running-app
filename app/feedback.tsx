@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button, Card, RadioButton, Switch, Text, TextInput, useTheme } from 'react-native-paper';
+import { Button, Card, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import SwitchRow from '@S/feedback/switch-row';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
-
-type FeedbackKind = 'bug' | 'thanks' | 'feature';
+import type { FeedbackKind } from '@Routes/feedback/const';
 
 export default function FeedbackPage() {
   const { colors } = useTheme();
@@ -128,28 +128,9 @@ export default function FeedbackPage() {
   );
 }
 
-function SwitchRow({
-  label,
-  value,
-  onValueChange,
-}: {
-  label: string;
-  value: boolean;
-  onValueChange: (value: boolean) => void;
-}) {
-  return (
-    <View style={styles.switchRow}>
-      <Text style={styles.switchLabel}>{label}</Text>
-      <Switch value={value} onValueChange={onValueChange} />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   content: { padding: 12, gap: 8 },
   cardContent: { gap: 12 },
   switches: { gap: 8 },
-  switchRow: { alignItems: 'center', flexDirection: 'row', gap: 8 },
-  switchLabel: { flex: 1 },
   textInput: { minHeight: 140 },
 });

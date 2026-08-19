@@ -1,18 +1,7 @@
-import type { ReactNode } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Platform, StyleSheet, View } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-
-interface SettingsRowProps {
-  testID?: string;
-  icon?: keyof typeof MaterialCommunityIcons.glyphMap;
-  title: string;
-  description?: string;
-  onPress?: () => void;
-  leading?: ReactNode;
-  right?: ReactNode;
-  destructive?: boolean;
-}
+import type { SettingsRowProps } from './types';
 
 export default function SettingsRow({
   testID,

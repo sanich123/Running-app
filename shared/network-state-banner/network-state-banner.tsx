@@ -12,13 +12,11 @@ export default function NetworkStateBanner() {
   const { type, isConnected, isInternetReachable, details } = useNetInfo();
 
   useEffect(() => {
-    if (!process.env.IS_TESTING) {
-      if (Platform.OS !== 'web') {
-        checkVpn(setIsVpnEnabled);
-      }
-      if (Platform.OS === 'android') {
-        checkAirplaneMode(setIsAirplaneMode);
-      }
+    if (Platform.OS !== 'web') {
+      checkVpn(setIsVpnEnabled);
+    }
+    if (Platform.OS === 'android') {
+      checkAirplaneMode(setIsAirplaneMode);
     }
   }, [type, isConnected, isInternetReachable, details]);
 

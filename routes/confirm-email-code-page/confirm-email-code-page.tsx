@@ -1,11 +1,12 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { Card, Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
-import ConfirmEmailCode, { type ConfirmEmailCodeType } from './confirm-email-code/confirm-email-code';
+import ConfirmEmailCode from './confirm-email-code/confirm-email-code';
 import { CONFIRM_EMAIL_PAGE_TEXT } from './const';
+import type { ConfirmEmailCodeType } from './confirm-email-code/types';
 
 export default function ConfirmEmailCodePage() {
   const { colors } = useTheme();

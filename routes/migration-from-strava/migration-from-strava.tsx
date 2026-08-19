@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { ActivityIndicator, Button, Card, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES, ROUTES } from '@const/enums';
@@ -7,13 +7,9 @@ import { Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getMigrationArchiveAndSendToServer } from '@U/migration-strava/migration-archive';
-import { MIGRATION_STATES } from './const';
+import { MIGRATION_STATES, STRAVA_EXPORT_URL } from './const';
 import useGetStates from './hooks';
-
-const STRAVA_EXPORT_URL =
-  'https://support.strava.com/hc/en-us/articles/216918437-Exporting-your-Data-and-Bulk-Export#h_01GG58HC4F1BGQ9PQZZVANN6WF';
-
-const removeStepNumber = (text: string) => text.replace(/^\d+\.\s*/, '');
+import { removeStepNumber } from './utils';
 
 export default function MigrationFromStrava() {
   const { userId, accessToken } = useAppSelector(({ auth }) => auth);

@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "APP_VARIANT=development expo start --clear",
-    "test": "IS_TESTING=true EXPO_PUBLIC_BASE_URL=https://runich-backend-production.up.railway.app jest --maxWorkers=50% --no-watchman",
-    "test:debug": "IS_TESTING=true EXPO_PUBLIC_BASE_URL=https://runich-backend-production.up.railway.app jest --runInBand --detectOpenHandles --forceExit --no-watchman",
+    "test": "jest --maxWorkers=50% --no-watchman",
+    "test:debug": "jest --runInBand --detectOpenHandles --forceExit --no-watchman",
     "build:dev:android": "eas build --profile development -p android --local --output \"$HOME/Desktop/runich-app/$(date +%d-%m-%Y_%H-%M).apk\"",
     "build:preview:internal:android": "eas build --profile preview -p android --local --output \"$HOME/Desktop/runich-app/$(date +%d-%m-%Y_%H-%M).apk\"",
     "build:production:android": "eas build -p android --local --output \"$HOME/Desktop/runich-app/$(date +%d-%m-%Y_%H-%M).aab\"",

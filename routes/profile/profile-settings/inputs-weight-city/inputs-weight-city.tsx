@@ -1,9 +1,9 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import { CITY_TEST_ID, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
 import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
+import { CITY_TEST_ID, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
 
 export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }) {
   const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);

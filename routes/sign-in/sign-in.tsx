@@ -1,5 +1,5 @@
 import Constants from 'expo-constants';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Surface, Text } from 'react-native-paper';
 import { useForm } from 'react-hook-form';

@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Card, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import BarChartWrapper from './bar-chart-wrapper';
 import ChooseMetricsBtns from './choose-metrics-btns';
-import { reduceMonthMetrics } from './reduce-month-metrics';
 import { ChooseMetricsBtnsValues } from './types';
+import { reduceMonthMetrics } from './utils';
 import type { MonthMetrics } from './types';
 
 export default function Charts({ year, months }: { year: number; months: MonthMetrics }) {

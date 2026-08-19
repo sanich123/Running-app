@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { useAppSelector } from '@R/typed-hooks';

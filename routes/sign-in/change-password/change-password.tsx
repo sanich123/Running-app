@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
@@ -10,11 +10,7 @@ import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout'
 import CustomPasswordInput from '@S/custom-password-input/custom-password-input';
 import { errorToast } from '@S/error-toast/error-toast';
 import { changePasswordValidation, CHANGE_PASSWORD_TEST_ID, CHANGE_PASSWORD_TEXT } from './const';
-
-interface ChangePasswordForm {
-  password1: string;
-  password2: string;
-}
+import type { ChangePasswordForm } from './types';
 
 export default function ChangePassword() {
   const dispatch = useAppDispatch();

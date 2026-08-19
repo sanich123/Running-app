@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import { useAddActivityByUserIdMutation } from '@R/services/activity/activity';
 import { clearUnsyncedActivities, removeFirstUnsyncedActivity } from '@R/slices/activity/activity';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { Icon, IconButton, TextInput as PaperTextInput, useTheme } from 'react-native-paper';
 import {
   usePostCommentWithActivityIdMutation,

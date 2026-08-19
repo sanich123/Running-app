@@ -7,7 +7,7 @@ import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout'
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
-import { keyExtractor, renderCardsFunction } from '@S/infinite-scroll-list/render-item';
+import { keyExtractor, renderCardsFunction } from '@S/infinite-scroll-list/utils';
 
 export default function ActivitiesList() {
   const { language } = useAppSelector(({ settings }) => settings);

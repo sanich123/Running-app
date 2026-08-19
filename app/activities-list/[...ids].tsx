@@ -1,7 +1,6 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { LazyActivitiesList } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
-
-const LazyActivitiesList = lazy(() => import('@Routes/activities-list/activities-list'));
 
 export default function ActivitiesListRoute() {
   return (

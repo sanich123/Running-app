@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { CustomImage } from '@S/custom-image/custom-image';
+import CustomImage from '@S/custom-image/custom-image';
 import { ACTIVITY_MEDIA_HEIGHT } from './const';
 import type { MediaListProps } from '../types';
 

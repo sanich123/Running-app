@@ -10,9 +10,7 @@ export default function ModalItem({ setSelectedValue, controlRef, onChange, valu
   } = useTheme();
 
   const handleClosePress = useCallback(() => {
-    if (!process.env.IS_TESTING) {
-      controlRef.current?.close();
-    }
+    controlRef.current?.close();
   }, [controlRef]);
   return (
     <TouchableOpacity
@@ -21,9 +19,7 @@ export default function ModalItem({ setSelectedValue, controlRef, onChange, valu
       onPress={() => {
         setSelectedValue(title, value);
         onChange(value);
-        if (!process.env.IS_TESTING) {
-          handleClosePress();
-        }
+        handleClosePress();
       }}
       style={[styles.listItem, { backgroundColor: background }]}>
       <Text variant="bodyLarge">{title}</Text>

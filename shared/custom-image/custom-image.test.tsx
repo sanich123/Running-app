@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react-native';
-import { CustomImage } from './custom-image';
+import CustomImage from './custom-image';
 
 describe('custom image', () => {
   it('passes the source, fit and placeholder to the image implementation', async () => {

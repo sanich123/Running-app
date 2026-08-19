@@ -1,8 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
-
-const MOCK_VALUE_STYLE = { backgroundColor: '#FFF59D' } as const;
+import { MOCK_VALUE_STYLE } from './const';
 
 export default function PrivacyPolicyPage() {
   return (

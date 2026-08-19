@@ -44,7 +44,7 @@ import {
   getServerYearStatistics,
 } from './endpoints/server-responses';
 import { addUser } from './endpoints/user';
-export const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
+export const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL ?? 'http://localhost:3000';
 
 export const handlers = [
   http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, getServerProfile),

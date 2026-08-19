@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { Platform } from 'react-native';
 import type { ImageContentFit } from 'expo-image';
 
-export function CustomImage({
+export default function CustomImage({
   style,
   source,
   contentFit,

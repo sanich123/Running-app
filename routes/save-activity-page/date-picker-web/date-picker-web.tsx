@@ -1,20 +1,10 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import { DATE_TIME_PICKER } from '../date-picker/const';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
-
-function toDateTimeInputValue(value: Date | string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) return '';
-
-  const pad = (part: number) => `${part}`.padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(
-    date.getMinutes(),
-  )}`;
-}
+import { toDateTimeInputValue } from './utils';
 
 export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);

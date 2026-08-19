@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { ActivityIndicator, Card, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
@@ -114,7 +114,8 @@ const styles = StyleSheet.create({
   calendarContainer: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    columnGap: 4,
+    justifyContent: 'flex-start',
     marginTop: 18,
     paddingHorizontal: 0,
   },

@@ -1,17 +1,16 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Platform } from 'react-native';
 import { Stack, useGlobalSearchParams } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
+import { LazyProfileEditBtn, LazyProfileUpdateBtn } from '@Routes/app-routes/const';
 import {
   getProfileFormValues,
   type ProfileSettingsSearchParams,
 } from '@Routes/profile/profile-settings/profile-settings-params';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
-const LazyProfileEditBtn = lazy(() => import('@Routes/profile/edit-btn/edit-btn'));
-const LazyProfileUpdateBtn = lazy(() => import('@Routes/profile/update-btn/update-btn'));
 
 export default function ProfileStack() {
   const { colors } = useTheme();

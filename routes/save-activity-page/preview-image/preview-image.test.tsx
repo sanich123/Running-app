@@ -5,7 +5,8 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import PreviewImage from './preview-image';
 
 jest.mock('@S/custom-image/custom-image', () => ({
-  CustomImage: ({ testID, style, source }: { testID: string; style: any; source: { uri: string } }) => {
+  __esModule: true,
+  default: ({ testID, style, source }: { testID: string; style: any; source: { uri: string } }) => {
     const { Text } = require('react-native');
     return (
       <Text testID={testID} style={style}>

@@ -1,7 +1,6 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { LazySaveResult } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
-
-const LazySaveResult = lazy(() => import('@Routes/save-activity-page/save-activity-page'));
 
 export default function ManualActivity() {
   return (

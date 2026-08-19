@@ -1,14 +1,6 @@
-import type { StyleProp, ViewStyle } from 'react-native';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
-
-interface EmptyStateProps {
-  icon: string;
-  title: string;
-  message?: string;
-  style?: StyleProp<ViewStyle>;
-  testID?: string;
-}
+import type { EmptyStateProps } from './types';
 
 export default function EmptyState({ icon, title, message, style, testID }: EmptyStateProps) {
   const { colors } = useTheme();

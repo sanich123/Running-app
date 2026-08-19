@@ -6,6 +6,8 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { CHECK_EMAIL } from './const';
 import SignInNeedToConfirmEmail from './need-to-confirm';
 
+jest.mock('expo-router', () => ({ Stack: { Screen: () => null } }));
+
 describe('Sign-in-need-to-confirm page', () => {
   it('should correctly renders in russian', async () => {
     await renderWithProviders(<SignInNeedToConfirmEmail />);

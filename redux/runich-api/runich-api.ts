@@ -16,7 +16,7 @@ interface ApiState {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
+  baseUrl: process.env.EXPO_PUBLIC_BASE_URL ?? 'http://localhost:3000',
   timeout: LIMIT_OF_REQUEST,
   prepareHeaders: (headers, { endpoint, getState }) => {
     const accessToken = (getState() as ApiState).auth.accessToken;

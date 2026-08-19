@@ -1,8 +1,8 @@
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import { INPUT_BIO, INPUT_BIO_TEST_ID } from './const';
 import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
+import { INPUT_BIO, INPUT_BIO_TEST_ID } from './const';
 
 export default function InputBio({ isDisabled }: { isDisabled: boolean }) {
   const { language } = useAppSelector(({ settings }) => settings);

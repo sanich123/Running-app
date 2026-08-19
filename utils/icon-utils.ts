@@ -1,3 +1,4 @@
+import { createElement } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LANGUAGES } from '@const/enums';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
@@ -34,7 +35,7 @@ function getSportIconName(sport: string): MaterialCommunityIconName {
 }
 
 export function getIconByTypeOfSport(sport: SPORTS_BTNS_VALUES, size = 15) {
-  return <MaterialCommunityIcons name={getSportIconName(`${sport}`)} size={size} />;
+  return createElement(MaterialCommunityIcons, { name: getSportIconName(`${sport}`), size });
 }
 
 export function getIconNameByTypeOfSport(sport: string) {

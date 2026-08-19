@@ -1,4 +1,4 @@
-import { Appearance, StyleSheet, View } from 'react-native';
+import { Appearance, View, StyleSheet } from 'react-native';
 import { SegmentedButtons, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { changeTheme } from '@R/slices/settings/settings';

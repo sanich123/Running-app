@@ -1,7 +1,6 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { LazyListOfUsers } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
-
-const LazyListOfUsers = lazy(() => import('@Routes/users-page/users-page'));
 
 export default function UsersRoute() {
   return (

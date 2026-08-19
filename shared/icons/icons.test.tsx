@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react-native';
-import { ActivityIcon, HomeIcon } from './icons';
+import ActivityIcon from './activity-icon';
+import HomeIcon from './home-icon';
 
 jest.mock('react-native-paper', () => {
   const actual = jest.requireActual('react-native-paper');

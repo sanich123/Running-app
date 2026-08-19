@@ -4,6 +4,7 @@ import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import ActivityCard from './card';
+import { getCardMapPhotoUrl } from './utils';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
@@ -15,6 +16,14 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Activity card', () => {
+  it('resizes the saved square Mapbox image before route locations load', () => {
+    const mapPhotoUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/360x360@2x?access_token=test';
+
+    expect(getCardMapPhotoUrl(mapPhotoUrl, 351)).toBe(
+      'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/351x202@2x?access_token=test',
+    );
+  });
+
   it('should correctly renders', async () => {
     mockStore.dispatch(setUserId('someUserId'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

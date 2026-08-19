@@ -3,7 +3,8 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import YearTypePicker, { scrollYearsByWheel } from './year-type-picker';
+import { scrollYearsByWheel } from './util';
+import YearTypePicker from './year-type-picker';
 
 const availableYearsAndTypes = [
   { year: '2026', types: ['run', 'walk'] },

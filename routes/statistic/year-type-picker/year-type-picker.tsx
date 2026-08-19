@@ -3,20 +3,9 @@ import { Chip, Card, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
-import { getTypesByYear } from './util';
+import { getTypesByYear, scrollYearsByWheel } from './util';
 import type { YearsAndTypes, YearsAndTypesPickerProps } from './types';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
-
-export function scrollYearsByWheel(event: {
-  currentTarget: { clientWidth: number; scrollLeft: number; scrollWidth: number };
-  deltaY: number;
-}) {
-  const { currentTarget, deltaY } = event;
-
-  if (currentTarget.scrollWidth > currentTarget.clientWidth && deltaY) {
-    currentTarget.scrollLeft += deltaY;
-  }
-}
 
 export default function YearTypePicker({
   setSelectedYear,

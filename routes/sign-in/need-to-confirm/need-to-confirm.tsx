@@ -11,9 +11,7 @@ export default function SignInNeedToConfirmEmail() {
 
   return (
     <>
-      {!process.env.IS_TESTING && (
-        <Stack.Screen options={{ title: ROUTES.confirmEmailNotification, headerShown: false }} />
-      )}
+      <Stack.Screen options={{ title: ROUTES.confirmEmailNotification, headerShown: false }} />
       <View
         style={{
           backgroundColor: colors.background,

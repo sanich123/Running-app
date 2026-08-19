@@ -1,11 +1,9 @@
-import { lazy, Suspense, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { useWindowDimensions, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { LazyActivities, LazyProfilePage } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
-
-const LazyActivities = lazy(() => import('@Routes/activities/activities'));
-const LazyProfilePage = lazy(() => import('@Routes/profile/profile'));
 
 export default function ProfileIndexPage() {
   const { colors } = useTheme();

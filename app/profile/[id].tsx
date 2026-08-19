@@ -1,7 +1,6 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { LazyProfilePage } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
-
-const LazyProfilePage = lazy(() => import('@Routes/profile/profile'));
 
 export default function ProfileRoute() {
   return (

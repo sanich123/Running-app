@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Platform, StyleSheet, View, Text } from 'react-native';
+import { Platform, View, Text, StyleSheet } from 'react-native';
 import { ActivityIndicator, Button, useTheme } from 'react-native-paper';
 import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
