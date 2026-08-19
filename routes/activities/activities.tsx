@@ -12,7 +12,7 @@ export default function Activities() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const { data, isLoading, error, isError, refetch, isSuccess, fetchNextPage, isFetching } =
     useGetActivitiesByUserIdInfiniteQuery({ id: userId }, { skip: !userId });
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const activities = useMemo(() => data?.pages.flatMap(({ activities }) => activities) ?? [], [data?.pages]);
 
   return (

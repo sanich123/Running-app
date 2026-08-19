@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { act, screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MIGRATION_STATES } from './const';

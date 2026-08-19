@@ -4,7 +4,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import SettingsRow from '../settings-row/settings-row';
 
 export default function FeedbackBtn() {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { push } = useRouter();
   return (
     <SettingsRow

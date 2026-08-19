@@ -1,5 +1,8 @@
 import { LANGUAGES } from '@const/enums';
 
+export const STRAVA_EXPORT_URL =
+  'https://support.strava.com/hc/en-us/articles/216918437-Exporting-your-Data-and-Bulk-Export#h_01GG58HC4F1BGQ9PQZZVANN6WF';
+
 export const MIGRATION_STATES = {
   [LANGUAGES.russian]: {
     ableToTransfer: 'Перенесите все свои активности из Strava в наш сервис.',

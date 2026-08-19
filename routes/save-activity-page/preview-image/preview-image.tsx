@@ -1,16 +1,10 @@
 import { useWindowDimensions } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
-import { CustomImage } from '@S/custom-image/custom-image';
-
-interface PreviewImageProps {
-  image: string;
-  index: number;
-  isDisabled: boolean;
-  compact?: boolean;
-}
+import CustomImage from '@S/custom-image/custom-image';
+import type { PreviewImageProps } from './types';
 
 export default function PreviewImage({ image, index, isDisabled, compact = false }: PreviewImageProps) {
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { width } = useWindowDimensions();
   return (
     <CustomImage
@@ -23,7 +17,7 @@ export default function PreviewImage({ image, index, isDisabled, compact = false
           height: compact ? 68 : 100,
           borderRadius: compact ? 10 : 0,
         },
-        (isDisabled || isDisabledWhileSending) && { opacity: 0.5 },
+        (isDisabled || isSavingDisabled) && { opacity: 0.5 },
       ]}
     />
   );

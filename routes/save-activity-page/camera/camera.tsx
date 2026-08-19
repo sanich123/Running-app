@@ -23,7 +23,7 @@ export default function CameraLauncher() {
   const [flashEnable, setFlashEnable] = useState<FlashMode>(FlashModes.off);
   const [permission, requestPermission] = useCameraPermissions();
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const copy = CAMERA_TEXT[language];
 
   const requestAccess = useCallback(async () => {

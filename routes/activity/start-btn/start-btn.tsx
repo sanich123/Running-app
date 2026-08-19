@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Animated, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Animated, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
-import { resetFinishedActivity, saveFinishedActivity } from '@R/slices/activity/activity';
-import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
+import { resetActivityDraft, resetFinishedActivity, setFinishedActivity } from '@R/slices/activity/activity';
 import {
   resetLocationsFromBackground,
+  setInitialLocation,
   setActivityStatus,
   setEmptyLastArrayWhenPaused,
 } from '@R/slices/location/location';
-import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import { getCurrentOrLastKnownPosition } from '@U/get-initial-position';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
-import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getElevationGainByKilometres, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { useActivitySportParams } from '../activity-params';
 import { ACTIVITY_START_BTN_TEST_ID, ACTIVITY_START_BTN, STOP_ICON } from './const';
 
 export default function StartBtn({
@@ -36,8 +37,9 @@ export default function StartBtn({
     locationsFromBackground: locations,
     kilometresSplit,
   } = useAppSelector(({ location }) => location);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { push } = useRouter();
+  const { sport } = useActivitySportParams();
   const [pressScale] = useState(() => new Animated.Value(1));
   const [pulse] = useState(() => new Animated.Value(0));
   const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
@@ -76,12 +78,16 @@ export default function StartBtn({
   const isDisabled = isTrackingActionInProgress || (activityStatus === STATUSES.initial && !isReadyToRecordLocation);
 
   const saveCurrentActivity = () => {
+    const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
     dispatch(
-      saveFinishedActivity({
+      setFinishedActivity({
         duration,
         distance,
         locations: getReducedLocations(locations),
-        kilometresSplit,
+        kilometresSplit: kilometresSplit.map((split, index) => ({
+          ...split,
+          lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
+        })),
         speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
       }),
     );
@@ -96,6 +102,12 @@ export default function StartBtn({
     onTrackingActionInProgressChange?.(true);
     try {
       if (activityStatus === STATUSES.initial) {
+        const initialLocation = await getCurrentOrLastKnownPosition();
+        if (!initialLocation) {
+          throw new Error('Position is unavailable');
+        }
+
+        dispatch(setInitialLocation(initialLocation));
         // A new recording must never inherit a persisted recording or a
         // location task left alive after an app restart.
         await stopLocationTracking();
@@ -117,9 +129,19 @@ export default function StartBtn({
 
       dispatch(setActivityStatus(STATUSES.initial));
       dispatch(resetLocationsFromBackground());
-      dispatch(resetManualActivitySlice());
-      dispatch(resetAdditionalInfoActivitySlice());
-      push(`/${ROUTES.manualActivity}`);
+      dispatch(resetActivityDraft());
+      push({
+        pathname: `/${ROUTES.manualActivity}`,
+        params: {
+          cameraVisible: 'false',
+          description: '',
+          emotion: 'normal',
+          isPublic: 'true',
+          mode: 'tracked',
+          sport,
+          title: '',
+        },
+      });
     } catch (error) {
       errorToast(
         activityStatus === STATUSES.initial

@@ -3,7 +3,7 @@ import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 
 export default function CommentsEmptyList() {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   return (
     <EmptyState
       icon="comment-text-outline"

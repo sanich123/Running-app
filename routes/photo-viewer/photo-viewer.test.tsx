@@ -11,7 +11,8 @@ jest.mock('@R/services/activity/activity', () => ({
   useGetAllActivityPhotosByUserIdQuery: jest.fn(() => ({ data: undefined })),
 }));
 jest.mock('@S/custom-image/custom-image', () => ({
-  CustomImage: ({ source }: { source: { uri: string } }) => {
+  __esModule: true,
+  default: ({ source }: { source: { uri: string } }) => {
     const { Text } = require('react-native');
     return <Text testID="photo-viewer-image">{source.uri}</Text>;
   },

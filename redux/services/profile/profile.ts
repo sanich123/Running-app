@@ -7,7 +7,7 @@ const profileApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getUserProfileByUserId: builder.query<ProfileResponse | null, string>({
-      query: (userId: string) => `${user}/${userId}/${profile}`,
+      query: (userId: string) => `/${user}/${userId}/${profile}`,
       providesTags: [Tags.profile],
     }),
     createProfileByUserId: builder.mutation<ProfileResponse, SendProfile>({
@@ -18,9 +18,9 @@ const profileApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
-    updateProfileByProfileId: builder.mutation<ProfileResponse, SendProfile>({
+    updateProfileByUserId: builder.mutation<ProfileResponse, SendProfile>({
       query: ({ body, id }: SendProfile) => ({
-        url: `${user}/${id}/${profile}`,
+        url: `/${user}/${id}/${profile}`,
         method: Methods.patch,
         body,
       }),
@@ -36,6 +36,6 @@ const profileApi = runichApi.injectEndpoints({
 
 export const {
   useGetUserProfileByUserIdQuery,
-  useUpdateProfileByProfileIdMutation,
+  useUpdateProfileByUserIdMutation,
   useGetFilteredUsersBySearchTextQuery,
 } = profileApi;

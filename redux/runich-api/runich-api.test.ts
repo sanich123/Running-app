@@ -40,6 +40,38 @@ describe('runich API navigation', () => {
     expect(store.getState().auth.accessToken).toBe('');
   });
 
+  it('clears a stale session when refreshing it fails at the network level', async () => {
+    server.use(
+      http.get(`${BASE_URL}/navigation/network-error`, () =>
+        HttpResponse.json({ message: 'expired' }, { status: 401 }),
+      ),
+      http.post(`${BASE_URL}/auth/refresh`, () => HttpResponse.error()),
+    );
+    const store = createApiStore();
+    store.dispatch(setAccessToken('expired-access-token'));
+    store.dispatch(setRefreshToken('expired-refresh-token'));
+
+    await store.dispatch(navigationProbeApi.endpoints.navigationProbe.initiate('/navigation/network-error'));
+
+    expect(mockReplace).toHaveBeenCalledWith(`/${ROUTES.signIn}`);
+    expect(store.getState().auth.accessToken).toBe('');
+  });
+
+  it('redirects to sign in when a protected request has no refresh token', async () => {
+    server.use(
+      http.get(`${BASE_URL}/navigation/no-refresh-token`, () =>
+        HttpResponse.json({ message: 'expired' }, { status: 401 }),
+      ),
+    );
+    const store = createApiStore();
+    store.dispatch(setAccessToken('expired-access-token'));
+
+    await store.dispatch(navigationProbeApi.endpoints.navigationProbe.initiate('/navigation/no-refresh-token'));
+
+    expect(mockReplace).toHaveBeenCalledWith(`/${ROUTES.signIn}`);
+    expect(store.getState().auth.accessToken).toBe('');
+  });
+
   it('redirects to maintenance after a gateway failure', async () => {
     server.use(
       http.get(

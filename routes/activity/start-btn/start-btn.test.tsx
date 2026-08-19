@@ -1,12 +1,13 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES, STATUSES } from '@const/enums';
 import { resetFinishedActivity } from '@R/slices/activity/activity';
-import { changeLanguage } from '@R/slices/language/language';
 import { setActivityStatus, setDistance, setDuration, setLocationsFromBackground } from '@R/slices/location/location';
+import { changeLanguage } from '@R/slices/settings/settings';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import * as initialPosition from '@U/get-initial-position';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
 import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID } from './const';
 import ActivityStartBtn from './start-btn';
@@ -16,6 +17,7 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({
     push: mockPush,
   }),
+  useLocalSearchParams: () => ({ sport: 'run' }),
 }));
 describe('Activity start btn', () => {
   beforeEach(() => {
@@ -61,7 +63,18 @@ describe('Activity start btn', () => {
     mockStore.dispatch(setActivityStatus(STATUSES.paused));
     await renderWithProviders(<ActivityStartBtn isReadyToRecordLocation />, { store: mockStore });
     await userEvent.press(screen.getByTestId(ACTIVITY_START_BTN_TEST_ID));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.manualActivity}`);
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: `/${ROUTES.manualActivity}`,
+      params: {
+        cameraVisible: 'false',
+        description: '',
+        emotion: 'normal',
+        isPublic: 'true',
+        mode: 'tracked',
+        sport: 'run',
+        title: '',
+      },
+    });
   });
   it('cleans the previous recording before starting a new one', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
@@ -94,6 +107,28 @@ describe('Activity start btn', () => {
     mockStore.dispatch(setActivityStatus(STATUSES.started));
     await renderWithProviders(<ActivityStartBtn isReadyToRecordLocation={false} />, { store: mockStore });
     expect(screen.getByTestId(new RegExp(`${ACTIVITY_START_BTN_TEST_ID}`))).toBeOnTheScreen();
+  });
+
+  it('locks and shows a loader while getting the initial location', async () => {
+    let resolvePosition!: (position: typeof MOCK_LOCATION) => void;
+    const positionPromise = new Promise<typeof MOCK_LOCATION>((resolve) => {
+      resolvePosition = resolve;
+    });
+    const positionSpy = jest.spyOn(initialPosition, 'getCurrentOrLastKnownPosition').mockReturnValue(positionPromise);
+    const startSpy = jest.spyOn(backgroundLocation, 'startLocationTracking').mockResolvedValue();
+
+    await renderWithProviders(<ActivityStartBtn isReadyToRecordLocation isGettingLocation={false} />);
+    const startButton = screen.getByTestId(ACTIVITY_START_BTN_TEST_ID);
+
+    await userEvent.press(startButton);
+    await waitFor(() => expect(screen.getByTestId('location-loading')).toBeOnTheScreen());
+    expect(startButton).toBeDisabled();
+    expect(startSpy).not.toHaveBeenCalled();
+
+    resolvePosition(MOCK_LOCATION);
+    await waitFor(() => expect(mockStore.getState().location.activityStatus).toBe(STATUSES.started));
+    expect(positionSpy).toHaveBeenCalledTimes(1);
+    expect(mockStore.getState().location.initialLocation).toBe(MOCK_LOCATION);
   });
 
   it('locks the button while starting and changes status only after success', async () => {

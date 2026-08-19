@@ -1,16 +1,15 @@
-import { useState } from 'react';
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
-import { saveBio } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
+import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
 import { INPUT_BIO, INPUT_BIO_TEST_ID } from './const';
 
 export default function InputBio({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useAppDispatch();
-  const { language } = useAppSelector(({ language }) => language);
-  const { isDisabledWhileSendingProfile, settings } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { colors } = useTheme();
-  const [bio, setBio] = useState(settings?.bio);
+  const { bio } = useProfileFormParams();
+  const { setBio } = useSetProfileFormParams();
   const shouldBeDisabled = isDisabled || isDisabledWhileSendingProfile;
 
   return (
@@ -28,10 +27,7 @@ export default function InputBio({ isDisabled }: { isDisabled: boolean }) {
       multiline
       numberOfLines={4}
       value={bio}
-      onChangeText={(bio) => {
-        setBio(bio);
-        dispatch(saveBio(bio));
-      }}
+      onChangeText={setBio}
       disabled={shouldBeDisabled}
     />
   );

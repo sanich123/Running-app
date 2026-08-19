@@ -5,7 +5,7 @@ import { useAppSelector } from '@R/typed-hooks';
 
 export default function FullPageActivityLoader() {
   const systemColorScheme = useColorScheme();
-  const { theme } = useAppSelector(({ language }) => language);
+  const { theme } = useAppSelector(({ settings }) => settings);
   const isDark = theme ? theme === 'dark' : systemColorScheme === 'dark';
   const themeColors = isDark ? COLORS.dark : COLORS.light;
 

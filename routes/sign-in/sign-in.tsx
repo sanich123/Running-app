@@ -1,5 +1,5 @@
 import Constants from 'expo-constants';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Surface, Text } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
@@ -55,6 +55,7 @@ export default function SignIn() {
           validation={emailValidation}
           inputMode="email"
           autoComplete="email"
+          accessibilityLabel="auth-email"
           compact
         />
         {currentAuthStep !== SignInPageStates.reset && currentAuthStep !== SignInPageStates.emailLink && (
@@ -65,6 +66,7 @@ export default function SignIn() {
             validation={passwordValidation}
             returnKeyType="send"
             returnKeyLabel="send"
+            accessibilityLabel="auth-password"
             compact
           />
         )}

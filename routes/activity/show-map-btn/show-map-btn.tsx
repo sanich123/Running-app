@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
 import { setIsMapVisible } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';

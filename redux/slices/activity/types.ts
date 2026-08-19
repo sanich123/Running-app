@@ -1,7 +1,16 @@
-import type { FinishedActivity } from '@R/services/activity/types';
+import type { SPORTS_BTNS_VALUES } from '@const/sports';
+import type { FinishedActivity, ActivityToSend } from '@R/services/activity/types';
 
-export interface ActivityInitialState {
-  isDisabledWhileSending: boolean;
+export interface ActivityPhoto {
+  url: string;
+  thumbnail: string | null;
+  blurhash?: string | null;
+}
+
+export interface ActivityState {
+  isSavingDisabled: boolean;
   finishedActivity: FinishedActivity;
-  activityId: string;
+  sport: SPORTS_BTNS_VALUES;
+  photoVideoUrls: ActivityPhoto[];
+  unsyncedActivities: ActivityToSend[];
 }

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import * as MediaLibrary from 'expo-media-library';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View, StyleSheet } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
-import { addPhotoUrl } from '@R/slices/activity-additional-info/activity-additional-info';
+import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { compressAndSendFile } from '@U/file-sending';

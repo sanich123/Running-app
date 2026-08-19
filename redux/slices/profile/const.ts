@@ -2,12 +2,6 @@ import type { ProfileSlice } from './types';
 import type { ProfileType } from '@S/card/types';
 
 export const PROFILE_SETTINGS_INITIAL_STATE = {
-  gender: '',
-  name: '',
-  surname: '',
-  city: '',
-  weight: '',
-  bio: '',
   profilePhoto: '',
 };
 

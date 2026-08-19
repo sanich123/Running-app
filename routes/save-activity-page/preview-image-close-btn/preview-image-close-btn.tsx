@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { removePhotos } from '@A/supabase/storage/upload-photo';
-import { deletePhotoUrl } from '@R/slices/activity-additional-info/activity-additional-info';
+import { removePhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import type { PreviewImagesProps } from '../preview-images/types';
 
@@ -14,18 +14,18 @@ export default function PreviewImageCloseBtn({
   thumbnail,
   compact = false,
 }: PreviewImagesProps & { image: string; thumbnail?: string | null }) {
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const [isDeleting, setIsDeleting] = useState(false);
-  const shouldBeDisabled = isDisabled || isDisabledWhileSending || isDeleting;
+  const shouldBeDisabled = isDisabled || isSavingDisabled || isDeleting;
 
   async function deleteImage() {
     setIsDeleting(true);
     try {
       await removePhotos([image, thumbnail].filter((photo): photo is string => Boolean(photo)));
       setImages(images.filter(({ url }) => url !== image));
-      dispatch(deletePhotoUrl(image));
+      dispatch(removePhotoUrl(image));
     } finally {
       setIsDeleting(false);
     }
@@ -48,10 +48,13 @@ export default function PreviewImageCloseBtn({
 
 const styles = StyleSheet.create({
   closeBtn: {
+    elevation: 8,
+    height: 32,
     position: 'absolute',
-    right: -4,
+    right: 2,
     top: 5,
+    width: 32,
     zIndex: 10,
   },
-  compactCloseBtn: { right: -6, top: -7 },
+  compactCloseBtn: { height: 28, right: 2, top: 2, width: 28 },
 });

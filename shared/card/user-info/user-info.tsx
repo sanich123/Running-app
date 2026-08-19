@@ -4,7 +4,7 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import { CustomImage } from '@S/custom-image/custom-image';
+import CustomImage from '@S/custom-image/custom-image';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import type { UserInfoProps } from './const';
@@ -13,7 +13,7 @@ import type { SPORTS_BTNS_VALUES } from '@const/sports';
 export default function UserInfo({ profile, sport, date, userId, size, commentsModalRef }: UserInfoProps) {
   const { dark, colors } = useTheme();
   const { push } = useRouter();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}

@@ -1,17 +1,7 @@
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
-export type { ActivityMutationResponse } from '@R/runich-api/types';
-import type { ActivitiesResponse } from '@R/runich-api/types';
 import type { LastKmSplit } from '@R/slices/location/types';
 import type { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import type { LocationObject } from 'expo-location';
-
-export type {
-  ActivitiesResponse,
-  ActivityLocationsResponse,
-  ActivityMediaResponse,
-  ActivityMutationResponse,
-  ActivityResponse,
-} from '@R/runich-api/types';
 
 export interface FinishedActivity {
   date?: string;
@@ -22,7 +12,7 @@ export interface FinishedActivity {
   kilometresSplit?: LastKmSplit[];
 }
 
-export interface ActivityAdditionalInfo {
+interface ActivityAdditionalInfo {
   title: string;
   description: string;
   sport: SPORTS_BTNS_VALUES;

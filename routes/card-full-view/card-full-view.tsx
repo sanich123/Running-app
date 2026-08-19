@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';

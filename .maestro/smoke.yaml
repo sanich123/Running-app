@@ -1,0 +1,83 @@
+appId: com.sanich123.runningapp
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      text: "http://.*:8081"
+    timeout: 30000
+- tapOn:
+    text: "http://.*:8081"
+- extendedWaitUntil:
+    visible:
+      text: Continue
+    timeout: 30000
+- tapOn:
+    text: Continue
+- tapOn:
+    text: Close
+- assertVisible:
+    text: auth-email
+- tapOn:
+    text: auth-email
+- tapOn:
+    text: Cancel
+    optional: true
+- eraseText: 100
+- inputText: ${E2E_EMAIL}
+- hideKeyboard
+- tapOn:
+    text: auth-password
+- eraseText: 100
+- inputText: ${E2E_PASSWORD}
+- hideKeyboard
+- tapOn:
+    id: auth-submit
+- extendedWaitUntil:
+    visible:
+      id: floatingBtn
+    timeout: 30000
+
+- tapOn:
+    text: Активность
+- extendedWaitUntil:
+    visible:
+      id: startButton
+    timeout: 30000
+- tapOn:
+    id: startButton
+- extendedWaitUntil:
+    visible:
+      id: stopIcon
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 8000
+- tapOn:
+    id: startButton
+- waitForAnimationToEnd:
+    timeout: 1000
+- tapOn:
+    id: startButton
+- extendedWaitUntil:
+    visible:
+      id: activitySaveBtn
+    timeout: 30000
+- tapOn:
+    id: activitySaveBtn
+- extendedWaitUntil:
+    visible:
+      id: floatingBtn
+    timeout: 30000
+
+- tapOn:
+    text: Статистика
+- extendedWaitUntil:
+    visible:
+      text: Год
+    timeout: 30000
+- tapOn:
+    text: Профиль
+- extendedWaitUntil:
+    visible:
+      text: E2E Runner
+    timeout: 30000

@@ -18,7 +18,7 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
     isError,
     data: listOfFriends,
   } = useGetYouFollowUsersByUserIdQuery(userId, { skip: !userId });
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
 
   const friendCell = (listOfFriends ?? []).filter(
     ({ friendId: friendIdOnServer }: { friendId: string }) => friendIdOnServer === friendId,

@@ -1,10 +1,12 @@
 import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { CHECK_EMAIL } from './const';
 import SignInNeedToConfirmEmail from './need-to-confirm';
+
+jest.mock('expo-router', () => ({ Stack: { Screen: () => null } }));
 
 describe('Sign-in-need-to-confirm page', () => {
   it('should correctly renders in russian', async () => {

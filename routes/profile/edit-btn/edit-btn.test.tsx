@@ -1,6 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { EDIT_BTN } from './const';
@@ -25,6 +25,9 @@ describe('Profile edit btn', () => {
     const user = userEvent.setup();
     await renderWithProviders(<ProfileEditBtn />);
     await user.press(screen.getByText(EDIT_BTN.russian.edit));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.profile}/${ROUTES.profileSettings}/`);
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: `/${ROUTES.profile}/${ROUTES.profileSettings}`,
+      params: { profileSettingsInitialized: 'false' },
+    });
   });
 });

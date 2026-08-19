@@ -1,14 +1,14 @@
-import { Appearance, StyleSheet, View } from 'react-native';
+import { Appearance, View, StyleSheet } from 'react-native';
 import { SegmentedButtons, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
-import { changeTheme } from '@R/slices/language/language';
+import { changeTheme } from '@R/slices/settings/settings';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { THEMES_ARRAY } from '../change-theme-modal/const';
 import SettingsRow from '../settings-row/settings-row';
 
 export default function ChangeTheme() {
   const { colors } = useTheme();
-  const { language, theme } = useAppSelector(({ language }) => language);
+  const { language, theme } = useAppSelector(({ settings }) => settings);
   const dispatch = useAppDispatch();
   const isRussian = language === LANGUAGES.russian;
   const selectedTheme = theme ?? 'system';

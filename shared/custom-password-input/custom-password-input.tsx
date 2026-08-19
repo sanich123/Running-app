@@ -21,6 +21,7 @@ export default function CustomPasswordInput<T extends FieldValues>({
   placeholder,
   testID,
   visibilityTestID,
+  accessibilityLabel,
   compact = false,
 }: CustomPasswordInputProps<T>) {
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
@@ -62,6 +63,7 @@ export default function CustomPasswordInput<T extends FieldValues>({
             activeOutlineColor={colors.primary}
             textColor={colors.onSurface}
             maxLength={maxLength}
+            accessibilityLabel={accessibilityLabel}
             testID={testID ?? label}
             disabled={shouldBeDisabled}
             returnKeyLabel={returnKeyLabel}

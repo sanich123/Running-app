@@ -1,17 +1,25 @@
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Platform, useWindowDimensions, StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
+import { getFloatingButtonPosition } from './const';
 
 export default function FloatingBtn({ onPressFn }: { onPressFn: (arg: any) => void }) {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const overlapsTabBar = Platform.OS === 'ios';
+
   return (
     <FAB
       testID="floatingBtn"
       icon="plus"
-      style={{
-        position: 'absolute',
-        margin: 16,
-        right: 0,
-        bottom: 0,
-      }}
+      style={[styles.button, getFloatingButtonPosition({ width, insets, overlapsTabBar })]}
       onPress={onPressFn}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    position: 'absolute',
+  },
+});

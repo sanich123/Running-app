@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { SETTINGS } from '../const';
 
 export default function ClearCacheBtn() {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const dispatch = useAppDispatch();
   const { dark } = useTheme();
   return (

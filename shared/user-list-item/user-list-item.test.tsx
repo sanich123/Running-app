@@ -1,7 +1,7 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { FOLLOW_UNFOLLOW_BTN } from '@S/user-list-item/follow-unfollow-btn/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';

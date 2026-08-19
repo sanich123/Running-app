@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button, Card, RadioButton, Switch, Text, TextInput, useTheme } from 'react-native-paper';
+import { Button, Card, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import SwitchRow from '@S/feedback/switch-row';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
-
-type FeedbackKind = 'bug' | 'thanks' | 'feature';
+import type { FeedbackKind } from '@Routes/feedback/const';
 
 export default function FeedbackPage() {
   const { colors } = useTheme();
@@ -75,8 +75,13 @@ export default function FeedbackPage() {
             <RadioButton.Item label="Поблагодарить разработчика" value="thanks" />
             <RadioButton.Item label="Хочу фичу" value="feature" />
           </RadioButton.Group>
+        </Card.Content>
+      </Card>
 
-          {(isBug || isFeature) && (
+      {(isBug || isFeature) && (
+        <Card mode="contained" style={{ backgroundColor: colors.surface }}>
+          <Card.Content style={styles.cardContent}>
+            <Text variant="titleMedium">Перед отправкой</Text>
             <View style={styles.switches}>
               <SwitchRow
                 label="Runich полностью бесплатный сервис"
@@ -91,65 +96,50 @@ export default function FeedbackPage() {
                 />
               )}
             </View>
-          )}
-          {canWrite && (
-            <>
-              <TextInput
-                mode="outlined"
-                multiline
-                value={text}
-                onChangeText={setText}
-                placeholder={
-                  isBug
-                    ? 'Максимально точно опишите, при каком сценарии можно воспроизвести баг'
-                    : isFeature
-                      ? 'Опишите желаемую функцию'
-                      : 'Напишите сообщение разработчику'
-                }
-                style={styles.textInput}
-              />
-              {(isBug || isFeature) && (
-                <Button icon="image-plus" mode="outlined" onPress={() => void choosePhoto()}>
-                  {photo ? 'Фото выбрано' : 'Добавить фото/скриншот'}
-                </Button>
-              )}
-              <Button
-                mode="contained"
-                disabled={!text.trim() || isLoading}
-                loading={isLoading}
-                onPress={() => void submit()}>
-                Послать
+          </Card.Content>
+        </Card>
+      )}
+
+      {canWrite && (
+        <Card mode="contained" style={{ backgroundColor: colors.surface }}>
+          <Card.Content style={styles.cardContent}>
+            <Text variant="titleMedium">Текст обратной связи</Text>
+            <TextInput
+              mode="outlined"
+              multiline
+              value={text}
+              onChangeText={setText}
+              placeholder={
+                isBug
+                  ? 'Максимально точно опишите, при каком сценарии можно воспроизвести баг'
+                  : isFeature
+                    ? 'Опишите желаемую функцию'
+                    : 'Напишите сообщение разработчику'
+              }
+              style={styles.textInput}
+            />
+            {(isBug || isFeature) && (
+              <Button icon="image-plus" mode="outlined" onPress={() => void choosePhoto()}>
+                {photo ? 'Фото выбрано' : 'Добавить фото/скриншот'}
               </Button>
-            </>
-          )}
-        </Card.Content>
-      </Card>
+            )}
+            <Button
+              mode="contained"
+              disabled={!text.trim() || isLoading}
+              loading={isLoading}
+              onPress={() => void submit()}>
+              Послать
+            </Button>
+          </Card.Content>
+        </Card>
+      )}
     </ScrollView>
   );
 }
 
-function SwitchRow({
-  label,
-  value,
-  onValueChange,
-}: {
-  label: string;
-  value: boolean;
-  onValueChange: (value: boolean) => void;
-}) {
-  return (
-    <View style={styles.switchRow}>
-      <Text style={styles.switchLabel}>{label}</Text>
-      <Switch value={value} onValueChange={onValueChange} />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  content: { padding: 12, gap: 8 },
+  content: { padding: 12, gap: 12 },
   cardContent: { gap: 12 },
   switches: { gap: 8 },
-  switchRow: { alignItems: 'center', flexDirection: 'row', gap: 8 },
-  switchLabel: { flex: 1 },
   textInput: { minHeight: 140 },
 });

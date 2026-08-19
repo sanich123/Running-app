@@ -14,7 +14,7 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
   const [deleteActivityById] = useDeleteActivityByIdMutation();
   const { isLoading, isDisabled, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
   const { replace } = useRouter();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
 

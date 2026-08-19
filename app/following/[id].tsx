@@ -1,7 +1,6 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { LazyListOfFollowing } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
-
-const LazyListOfFollowing = lazy(() => import('@Routes/followings-page/followings-page'));
 
 export default function FollowingRoute() {
   return (

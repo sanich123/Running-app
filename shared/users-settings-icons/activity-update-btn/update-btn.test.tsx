@@ -8,6 +8,7 @@ import UpdateBtn from './update-btn';
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useGlobalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }),
+  usePathname: () => `/activity/${MOCK_SERVER_IDS.activityId}`,
   useRouter: () => ({ push: mockPush }),
 }));
 
@@ -18,9 +19,29 @@ describe('update btn', () => {
     const updateButton = screen.getByTestId('activity-update-button');
     await waitFor(() => expect(updateButton.props.accessibilityState?.disabled).toBe(false));
     await user.press(updateButton);
-    expect(mockStore.getState().activity.activityId).toBe(MOCK_SERVER_ACTIVITY.id);
-    expect(mockStore.getState().manualActivity.isEditingActivity).toBe(true);
-    expect(mockStore.getState().additionalInfoActivity.title).toBe(MOCK_SERVER_ACTIVITY.title);
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.manualActivity}`);
+    const state = mockStore.getState();
+    expect(state.activity).toEqual(
+      expect.objectContaining({
+        photoVideoUrls: MOCK_SERVER_ACTIVITY.photoVideoUrls,
+      }),
+    );
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: `/${ROUTES.manualActivity}`,
+      params: {
+        cameraVisible: 'false',
+        id: MOCK_SERVER_ACTIVITY.id,
+        manualDate: new Date(MOCK_SERVER_ACTIVITY.date).toISOString(),
+        manualDistance: '28.32',
+        manualHours: '0',
+        manualMinutes: '0',
+        manualSeconds: '3',
+        mode: 'edit',
+        title: MOCK_SERVER_ACTIVITY.title,
+        description: MOCK_SERVER_ACTIVITY.description,
+        sport: MOCK_SERVER_ACTIVITY.sport,
+        emotion: MOCK_SERVER_ACTIVITY.emotion,
+        isPublic: String(MOCK_SERVER_ACTIVITY.isPublic),
+      },
+    });
   });
 });

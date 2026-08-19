@@ -1,7 +1,7 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { LANGUAGES, STATUSES } from '@const/enums';
-import { changeLanguage } from '@R/slices/language/language';
 import { resetLocationSlice, setDuration } from '@R/slices/location/location';
+import { changeLanguage } from '@R/slices/settings/settings';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';

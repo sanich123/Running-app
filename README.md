@@ -149,6 +149,47 @@ Alternatively use `More (...) → Location → Routes` in the Android Emulator.
 
 Activity start requires foreground and background location permissions. Battery optimization is advisory: it may interrupt background recording but does not block starting an activity.
 
+## Local Android E2E with Maestro
+
+The repository contains a local-only Android smoke flow. It uses a native debug build from `expo run:android`, the backend from `../../runich-backend/project` (the sibling `runich-backend` directory), PostgreSQL in Docker and an Android Emulator. EAS is not involved.
+
+Install Java 17+ and the mobile Maestro CLI once, start an Android Emulator, then run:
+
+```bash
+java -version
+curl -fsSL "https://get.maestro.mobile.dev" | bash
+```
+
+```bash
+yarn e2e:android
+```
+
+The command will:
+
+- start an isolated PostgreSQL 18.6 container with the same timezone, volume layout and healthcheck settings as the backend on `127.0.0.1:55432`, then apply backend migrations;
+- seed a deterministic local user (`e2e@runich.app`) and activities;
+- start the backend on `localhost:3000` and complete the test profile through the API;
+- build and install the development Android app with `http://10.0.2.2:3000` as its API;
+- grant location permissions, play the bundled GPX route and run `.maestro/smoke.yaml`.
+
+Useful options:
+
+```bash
+yarn e2e:android --skip-build
+yarn e2e:android --backend-only
+yarn e2e:android --no-route
+yarn e2e:android --route-points 120 --route-interval 500
+ANDROID_SERIAL=emulator-5554 yarn e2e:android
+```
+
+If the backend is already running, use `--skip-backend`. For another backend location, set `RUNICH_BACKEND_DIR`; for another emulator API address, set `RUNICH_E2E_ANDROID_BASE_URL`. The local E2E password can be overridden with `RUNICH_E2E_PASSWORD`, but it must match the password used by the backend seed.
+
+Run a single flow directly after the app and backend are prepared:
+
+```bash
+maestro test -e E2E_EMAIL=e2e@runich.app -e 'E2E_PASSWORD=7FWD&rlm' .maestro/smoke.yaml
+```
+
 ## Project structure
 
 ```text

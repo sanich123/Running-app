@@ -1,7 +1,6 @@
 import { Methods, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
 import type {
-  ActivityMutationResponse,
   ActivityToSend,
   ActivityUpdateRequest,
   GetActivitiesByIdsRequest,
@@ -9,6 +8,7 @@ import type {
 } from './types';
 import type {
   ActivitiesResponse,
+  ActivityMutationResponse,
   ActivityLocationsResponse,
   ActivityMediaResponse,
   ActivityResponse,

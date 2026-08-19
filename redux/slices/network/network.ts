@@ -22,12 +22,8 @@ const network = createSlice({
     changeNetworkState: (state, action) => {
       state.networkState = action.payload;
     },
-    resetNetworkSlice: (state) => {
-      state = NETWORK_INITIAL_STATE;
-      return state;
-    },
   },
 });
 
-export const { changeNetworkState, resetNetworkSlice } = network.actions;
+export const { changeNetworkState } = network.actions;
 export default network.reducer;

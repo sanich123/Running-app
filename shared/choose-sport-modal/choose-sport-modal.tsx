@@ -1,19 +1,22 @@
 import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
-import { saveSport } from '@R/slices/activity-additional-info/activity-additional-info';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { SPORTS_NAMES } from './const';
 import type { ChooseSportModalProps } from './types';
 
-export default function ChooseSportModal({ chooseSportModalRef, isDisabled = false }: ChooseSportModalProps) {
-  const { language } = useAppSelector(({ language }) => language);
-  const { sport } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
+export default function ChooseSportModal({
+  chooseSportModalRef,
+  isDisabled = false,
+  selectedSport,
+  onSportChange,
+}: ChooseSportModalProps) {
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const dispatch = useAppDispatch();
+  const sport = selectedSport;
   const sportLabels = {
     walk: language === LANGUAGES.russian ? 'Ходьба' : 'Walking',
     run: language === LANGUAGES.russian ? 'Бег' : 'Running',
@@ -68,7 +71,7 @@ export default function ChooseSportModal({ chooseSportModalRef, isDisabled = fal
                   },
                 ]}
                 onPress={() => {
-                  dispatch(saveSport(value));
+                  onSportChange(value);
                   chooseSportModalRef.current?.close();
                 }}>
                 <View style={styles.optionContent}>

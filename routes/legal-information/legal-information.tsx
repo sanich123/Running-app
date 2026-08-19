@@ -1,17 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
-
-const MOCK_VALUE_STYLE = { backgroundColor: '#FFF59D' } as const;
-
-const details = [
-  ['Наименование', 'ООО «РУНИЧ» (моковые данные)'],
-  ['Юридический адрес', '123456, г. Москва, ул. Примерная, д. 1 (моковые данные)'],
-  ['ОГРН', '0000000000000 (моковые данные)'],
-  ['ИНН / КПП', '0000000000 / 000000000 (моковые данные)'],
-  ['Электронная почта', 'legal@example.test (моковые данные)'],
-  ['Телефон', '+7 (000) 000-00-00 (моковые данные)'],
-];
+import { DETAILS, MOCK_VALUE_STYLE } from './const';
 
 export default function LegalInformationPage() {
   return (
@@ -24,7 +14,7 @@ export default function LegalInformationPage() {
         заменены на фактические данные до публикации приложения.
       </Text>
       <View style={styles.details}>
-        {details.map(([label, value]) => (
+        {DETAILS.map(([label, value]) => (
           <View key={label} style={styles.row}>
             <Text variant="bodyMedium" style={styles.label}>
               {label}:{' '}

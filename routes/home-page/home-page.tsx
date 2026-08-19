@@ -5,9 +5,7 @@ import { ActivityIndicator } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery } from '@R/services/activity/activity';
 import { useGetAppConfigQuery } from '@R/services/authentication/authentication';
-import { resetFinishedActivity } from '@R/slices/activity/activity';
-import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
-import { resetManualActivitySlice, setIsManualAdding } from '@R/slices/manual-activity/manual-activity';
+import { resetActivityDraft, resetFinishedActivity } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import EmptyActivitiesList from '@Routes/home-page/empty-activities-list/empty-activities-list';
 import FloatingBtn from '@Routes/home-page/floating-btn/floating-btn';
@@ -55,11 +53,25 @@ export default function Feed() {
               />
               <FloatingBtn
                 onPressFn={() => {
-                  dispatch(resetManualActivitySlice());
-                  dispatch(resetAdditionalInfoActivitySlice());
+                  dispatch(resetActivityDraft());
                   dispatch(resetFinishedActivity());
-                  dispatch(setIsManualAdding(true));
-                  push(`/${ROUTES.manualActivity}`);
+                  push({
+                    pathname: `/${ROUTES.manualActivity}`,
+                    params: {
+                      cameraVisible: 'false',
+                      manualDate: new Date().toISOString(),
+                      manualDistance: '0',
+                      manualHours: '0',
+                      manualMinutes: '0',
+                      manualSeconds: '0',
+                      mode: 'manual',
+                      title: '',
+                      description: '',
+                      sport: 'run',
+                      emotion: 'normal',
+                      isPublic: 'true',
+                    },
+                  });
                 }}
               />
             </>

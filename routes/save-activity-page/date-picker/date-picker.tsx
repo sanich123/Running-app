@@ -2,20 +2,18 @@ import { useState } from 'react';
 import DatePicker from 'react-native-date-picker';
 import { StyleSheet } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
-import { setManualDate } from '@R/slices/manual-activity/manual-activity';
-import { store } from '@R/store';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
+import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 import { DATE_TIME_PICKER_BTN_ID, DATE_TIME_PICKER } from './const';
 
 export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) {
-  const savedDate = store.getState().manualActivity.manualDate;
-  const [date, setDate] = useState(savedDate ? new Date(savedDate) : new Date());
+  const { manualDate } = useManualActivityParams();
+  const { setManualDate } = useSetManualActivityParams();
   const [open, setOpen] = useState(false);
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const dispatch = useAppDispatch();
-  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
+  const shouldBeDisabled = isDisabled || isSavingDisabled;
 
   return (
     <>
@@ -34,11 +32,10 @@ export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) 
       <DatePicker
         modal
         open={open}
-        date={date}
+        date={new Date(manualDate)}
         onConfirm={(date) => {
           setOpen(false);
-          setDate(date);
-          dispatch(setManualDate(date));
+          setManualDate(date);
         }}
         onCancel={() => setOpen(false)}
         title={DATE_TIME_PICKER[language].title}

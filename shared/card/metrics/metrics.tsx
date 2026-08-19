@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { usePathname, useRouter } from 'expo-router';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
@@ -20,9 +20,9 @@ export default memo(function Metrics({
   userId,
   id,
 }: MetricsProps) {
-  const { dark } = useTheme();
+  const { colors, dark } = useTheme();
   const { push } = useRouter();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const pathname = usePathname();
 
   return (
@@ -53,9 +53,25 @@ export default memo(function Metrics({
           />
         </View>
         {isShowDescription ? (
-          <Text variant="bodyLarge" style={{ marginBottom: 5 }}>
-            {description}
-          </Text>
+          <View
+            style={[
+              styles.descriptionCard,
+              {
+                backgroundColor: colors.primaryContainer,
+                borderColor: colors.outlineVariant,
+                borderLeftColor: colors.primary,
+              },
+            ]}>
+            <View style={styles.descriptionHeader}>
+              <Icon source="text-box-outline" size={19} color={colors.primary} />
+              <Text variant="labelLarge" style={[styles.descriptionLabel, { color: colors.primary }]}>
+                {CARD_METRICS[language].description}
+              </Text>
+            </View>
+            <Text variant="bodyLarge" style={[styles.descriptionText, { color: colors.onSurfaceVariant }]}>
+              {description}
+            </Text>
+          </View>
         ) : null}
       </>
     </TouchableRipple>
@@ -72,5 +88,26 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FONT_FAMILIES.semiBold,
     marginBottom: 2,
+  },
+  descriptionCard: {
+    borderLeftWidth: 3,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginTop: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  descriptionHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 5,
+  },
+  descriptionLabel: {
+    fontFamily: FONT_FAMILIES.semiBold,
+    letterSpacing: 0.4,
+  },
+  descriptionText: {
+    lineHeight: 23,
   },
 });

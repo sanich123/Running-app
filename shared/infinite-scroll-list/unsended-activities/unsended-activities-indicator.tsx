@@ -1,7 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import { useAddActivityByUserIdMutation } from '@R/services/activity/activity';
-import { clearUnsendedActivities, removeUnsendedActivityFromList } from '@R/slices/unsended-activity/unsended-activity';
+import { clearUnsyncedActivities, removeFirstUnsyncedActivity } from '@R/slices/activity/activity';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { successToast } from '@S/success-toast/success-toast';
@@ -9,7 +9,7 @@ import { successToast } from '@S/success-toast/success-toast';
 export default function UnsendedActivitiesIndicator() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
-  const { unsyncedActivities } = useAppSelector(({ unsendedActivity }) => unsendedActivity);
+  const { unsyncedActivities } = useAppSelector(({ activity }) => activity);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
 
   return (
@@ -40,7 +40,7 @@ export default function UnsendedActivitiesIndicator() {
               await sendActivity(unsyncedActivities?.[0])
                 .unwrap()
                 .then(() => {
-                  dispatch(removeUnsendedActivityFromList());
+                  dispatch(removeFirstUnsyncedActivity());
                   successToast('Успешно обновили');
                 })
                 .catch((error) => errorToast('', getErrorMessageFromError(error)));
@@ -58,7 +58,7 @@ export default function UnsendedActivitiesIndicator() {
           containerColor={colors.errorContainer}
           loading={isLoading}
           disabled={isLoading}
-          onPress={() => dispatch(clearUnsendedActivities())}
+          onPress={() => dispatch(clearUnsyncedActivities())}
           accessibilityLabel="Удалить несинхронизированные активности"
         />
       </View>

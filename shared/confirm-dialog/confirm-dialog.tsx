@@ -1,14 +1,5 @@
 import { ActivityIndicator, Dialog, Button, Portal, Text, useTheme } from 'react-native-paper';
-
-interface ConfirmDialogProps {
-  visible: boolean;
-  title: string;
-  message: string;
-  confirmText: string;
-  loading?: boolean;
-  onConfirm: () => void | Promise<void>;
-  onDismiss: () => void;
-}
+import type { ConfirmDialogProps } from './types';
 
 export default function ConfirmDialog({
   visible,

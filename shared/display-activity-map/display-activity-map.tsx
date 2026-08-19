@@ -1,28 +1,13 @@
 import { useMemo, useRef, useState } from 'react';
 import { MapView, Camera } from '@rnmapbox/maps';
-import getBbox from '@turf/bbox';
-import lineString from 'turf-linestring';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import ActivityMapMarkers from './activity-map-markers/activity-map-markers';
 import MapKmSplit from './map-km-split/map-km-split';
 import RouteLine from './map-route-line/map-route-line';
 import MapboxWeb from './mapbox-web/mapbox-web';
-import type { ActivityLocation, DisplayActivityMapProps } from '@S/card/types';
-
-export function getActivityMapBounds(locations: ActivityLocation[]) {
-  const routeCoordinates = locations.map(({ coords: { longitude, latitude } }) => [longitude, latitude]);
-  const [minLng, minLat, maxLng, maxLat] = getBbox(lineString(routeCoordinates));
-
-  return {
-    boundBox: [minLng, minLat, maxLng, maxLat] as [number, number, number, number],
-    bounds: {
-      ne: [maxLng, maxLat] as [number, number],
-      sw: [minLng, minLat] as [number, number],
-    },
-    routeCoordinates,
-  };
-}
+import { getActivityMapBounds } from './utils';
+import type { DisplayActivityMapProps } from '@S/card/types';
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
   const { colors } = useTheme();

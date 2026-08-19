@@ -3,9 +3,7 @@ import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
-import { resetFinishedActivity } from '@R/slices/activity/activity';
-import { resetAdditionalInfoActivitySlice } from '@R/slices/activity-additional-info/activity-additional-info';
-import { resetManualActivitySlice } from '@R/slices/manual-activity/manual-activity';
+import { resetActivityDraft, resetFinishedActivity } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { DECLINE_BTN } from './const';
@@ -13,16 +11,15 @@ import { DECLINE_BTN } from './const';
 export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();
   const { replace } = useRouter();
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
-  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
+  const shouldBeDisabled = isDisabled || isSavingDisabled;
 
   function declineActivity() {
-    dispatch(resetAdditionalInfoActivitySlice());
+    dispatch(resetActivityDraft());
     dispatch(resetFinishedActivity());
-    dispatch(resetManualActivitySlice());
     replace(ROUTES.root);
   }
 

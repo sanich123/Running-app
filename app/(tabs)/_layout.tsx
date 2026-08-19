@@ -1,12 +1,11 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { Platform, View } from 'react-native';
 import { Tabs, usePathname, useRouter } from 'expo-router';
 import { Icon, useTheme } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-const LazyAvatarShowable = lazy(() => import('@S/avatar/showable/showable'));
-const HOME_TAB_ROUTE = '(home)';
+import { LazyAvatarShowable, HOME_TAB_ROUTE } from '@Routes/app-routes/const';
 
 export default function TabLayout() {
   const { replace } = useRouter();

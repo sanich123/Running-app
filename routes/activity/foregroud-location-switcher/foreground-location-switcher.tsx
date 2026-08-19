@@ -6,7 +6,7 @@ import { errorToast } from '@S/error-toast/error-toast';
 import type { ForegroundLocationSwitcherProps } from '../types';
 
 export default function ForegroundLocationSwitcher({ requestForegroundPermission }: ForegroundLocationSwitcherProps) {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   return (
     <View style={[styles.switcherWrapper, { borderColor: colors.outlineVariant, backgroundColor: colors.surface }]}>

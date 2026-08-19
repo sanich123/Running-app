@@ -1,30 +1,18 @@
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
-import { setManualDate } from '@R/slices/manual-activity/manual-activity';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import { DATE_TIME_PICKER } from '../date-picker/const';
-
-function toDateTimeInputValue(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) return '';
-
-  const pad = (part: number) => `${part}`.padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(
-    date.getMinutes(),
-  )}`;
-}
+import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
+import { toDateTimeInputValue } from './utils';
 
 export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useAppDispatch();
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { manualDate } = useAppSelector(({ manualActivity }) => manualActivity);
-  const { language } = useAppSelector(({ language }) => language);
-  const [date, setDate] = useState(() => toDateTimeInputValue(manualDate));
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
+  const { manualDate } = useManualActivityParams();
+  const { setManualDate } = useSetManualActivityParams();
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
+  const shouldBeDisabled = isDisabled || isSavingDisabled;
 
   return (
     <View style={styles.wrapper}>
@@ -42,12 +30,11 @@ export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
         }}
         type="datetime-local"
         id="date-picker-date"
-        value={date}
+        value={toDateTimeInputValue(manualDate)}
         placeholder={DATE_TIME_PICKER[language].title}
         aria-label={DATE_TIME_PICKER[language].title}
         onChange={({ target }) => {
-          dispatch(setManualDate(new Date(Date.parse(target.value))));
-          setDate(target.value);
+          setManualDate(new Date(Date.parse(target.value)));
         }}
       />
       <View pointerEvents="none" style={styles.inputIcon}>

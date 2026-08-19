@@ -1,10 +1,10 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { TouchableRipple, useTheme, Text } from 'react-native-paper';
+import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
-import { getIconByTypeOfSport } from '@U/icon-utils';
+import { FONT_FAMILIES } from '@const/fonts';
+import { CALENDAR_SPORT_ICONS } from '../calendar/const';
 import type { CalendarDateProps, CalendarDateWithActivityProps } from '../calendar/types';
-import type { SPORTS_BTNS_VALUES } from '@const/sports';
 
 export default function CalendarDateWithActivity({
   isWeekend,
@@ -15,6 +15,7 @@ export default function CalendarDateWithActivity({
 }: CalendarDateWithActivityProps & CalendarDateProps) {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
+  const activityIcon = CALENDAR_SPORT_ICONS[activities[0]?.sport] ?? 'run-fast';
   return (
     <>
       {!isTitle ? (
@@ -39,15 +40,14 @@ export default function CalendarDateWithActivity({
               }
             }
           }}>
-          <Text
-            variant={activities.length ? 'headlineMedium' : 'bodyMedium'}
-            style={{
-              color: colors.onPrimaryContainer,
-              fontWeight: isTitle || !activities.length ? 'bold' : 'normal',
-            }}>
-            {activities.length > 1 && activities.length}
-            {activities.length === 1 && getIconByTypeOfSport(activities[0].sport as SPORTS_BTNS_VALUES, 30)}
-          </Text>
+          {activities.length > 1 ? (
+            <View style={styles.activityCount}>
+              <Icon source={activityIcon} size={17} color={colors.primary} />
+              <Text style={[styles.activityCountValue, { color: colors.onPrimaryContainer }]}>{activities.length}</Text>
+            </View>
+          ) : (
+            <Icon source={activityIcon} size={23} color={colors.primary} />
+          )}
         </TouchableRipple>
       ) : (
         <View
@@ -94,4 +94,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 12,
   },
+  activityCount: { alignItems: 'center', flexDirection: 'row', gap: 3 },
+  activityCountValue: { fontFamily: FONT_FAMILIES.extraBold, fontSize: 16 },
 });

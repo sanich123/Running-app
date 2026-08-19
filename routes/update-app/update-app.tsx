@@ -1,23 +1,11 @@
 import * as Linking from 'expo-linking';
-import { Platform, StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
 import { Button, Icon, Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
-
-const MOCK_MARKET_URLS = {
-  ios: 'https://example.com/runich-app-store',
-  android: 'https://example.com/runich-google-play',
-  default: 'https://example.com/runich-market',
-} as const;
-
-function getMarketUrl() {
-  return Platform.select({
-    ios: MOCK_MARKET_URLS.ios,
-    android: MOCK_MARKET_URLS.android,
-    default: MOCK_MARKET_URLS.default,
-  });
-}
+import { MOCK_MARKET_URLS } from './const';
+import { getMarketUrl } from './utils';
 
 export default function UpdateAppPage() {
   const { colors } = useTheme();

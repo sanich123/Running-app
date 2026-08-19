@@ -8,7 +8,8 @@ export default function PreviewImages({ setImages, images, isDisabled, compact =
     <View style={styles.imagesWrapper}>
       {images.length > 0 &&
         images.map(({ url, thumbnail }, index) => (
-          <View style={{ position: 'relative', zIndex: 0 }} key={`${url}/${index}`}>
+          <View style={[styles.imageContainer, { zIndex: images.length - index }]} key={`${url}/${index}`}>
+            <PreviewImage image={thumbnail || url} isDisabled={isDisabled} index={index} compact={compact} />
             <PreviewImageCloseBtn
               setImages={setImages}
               images={images}
@@ -17,7 +18,6 @@ export default function PreviewImages({ setImages, images, isDisabled, compact =
               isDisabled={isDisabled}
               compact={compact}
             />
-            <PreviewImage image={thumbnail || url} isDisabled={isDisabled} index={index} compact={compact} />
           </View>
         ))}
     </View>
@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     columnGap: 5,
   },
-  imageStyle: {
-    marginTop: 15,
+  imageContainer: {
+    overflow: 'visible',
+    position: 'relative',
   },
 });

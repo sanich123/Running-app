@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { Icon, IconButton, TextInput as PaperTextInput, useTheme } from 'react-native-paper';
 import {
   usePostCommentWithActivityIdMutation,
@@ -22,7 +22,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const [comment, setComment] = useState(commentToUpdate);
   const [sendEmailAfterSendingComment] = useSendEmailAfterSendingCommentMutation();
   const [postComment, { isLoading: isCommentSending }] = usePostCommentWithActivityIdMutation();

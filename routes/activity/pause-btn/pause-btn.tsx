@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { ActivityIndicator, Animated, View, StyleSheet } from 'react-native';
 import { TouchableRipple, useTheme, Icon } from 'react-native-paper';
 import { STATUSES } from '@const/enums';
-import { saveFinishedActivity } from '@R/slices/activity/activity';
+import { setFinishedActivity } from '@R/slices/activity/activity';
 import { setActivityStatus, setEmptyLastArrayWhenPaused } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
-import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getElevationGainByKilometres, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 
 export default function PauseBtn() {
   const { dark, colors } = useTheme();
@@ -34,12 +34,16 @@ export default function PauseBtn() {
         dispatch(setActivityStatus(STATUSES.continued));
       } else {
         await stopLocationTracking();
+        const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
         dispatch(
-          saveFinishedActivity({
+          setFinishedActivity({
             duration,
             distance,
             locations: getReducedLocations(locations),
-            kilometresSplit,
+            kilometresSplit: kilometresSplit.map((split, index) => ({
+              ...split,
+              lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
+            })),
             speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
           }),
         );

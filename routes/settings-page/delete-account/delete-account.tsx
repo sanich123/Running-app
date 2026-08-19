@@ -11,7 +11,7 @@ import { DELETE_ACCOUNT } from './const';
 import SettingsRow from '../settings-row/settings-row';
 
 export default function DeleteAccountBtn() {
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
   const [deleteAccount, { isLoading: isDeleting }] = useDeleteUserMutation();

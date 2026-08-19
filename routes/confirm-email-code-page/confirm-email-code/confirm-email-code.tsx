@@ -11,13 +11,7 @@ import { setAccessToken, setRefreshToken, setUserId } from '@R/slices/auth/auth'
 import { useAppDispatch } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { CONFIRM_EMAIL_CODE_TEST_ID, CONFIRM_EMAIL_CODE_TEXT } from './const';
-
-export type ConfirmEmailCodeType = 'registration' | 'change-password';
-
-interface ConfirmEmailCodeProps {
-  email: string;
-  type?: ConfirmEmailCodeType;
-}
+import type { ConfirmEmailCodeProps } from './types';
 
 export default function ConfirmEmailCode({ email, type = 'registration' }: ConfirmEmailCodeProps) {
   const dispatch = useAppDispatch();

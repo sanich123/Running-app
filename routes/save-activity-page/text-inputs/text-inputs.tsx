@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
-import { saveDescription, saveTitle } from '@R/slices/activity-additional-info/activity-additional-info';
-import { store } from '@R/store';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
+import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 import {
   TEXT_INPUTS,
   TEXT_INPUTS_TITLE_LEFT_ICON,
@@ -13,13 +12,12 @@ import {
 } from './const';
 
 export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useAppDispatch();
-  const { isDisabledWhileSending } = useAppSelector(({ activity }) => activity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const [title, setTitle] = useState(store.getState().additionalInfoActivity.title);
-  const [description, setDescription] = useState(store.getState().additionalInfoActivity.description);
-  const shouldBeDisabled = isDisabled || isDisabledWhileSending;
+  const { title, description } = useManualActivityParams();
+  const { setTitle, setDescription } = useSetManualActivityParams();
+  const shouldBeDisabled = isDisabled || isSavingDisabled;
 
   return (
     <>
@@ -27,22 +25,17 @@ export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
         testID={TEXT_INPUTS_TITLE_TEST_ID}
         mode="outlined"
         value={title}
-        onBlur={() => dispatch(saveTitle(title))}
-        onChangeText={(title) => {
-          setTitle(title);
-          dispatch(saveTitle(title));
-        }}
+        onChangeText={setTitle}
         placeholder={TEXT_INPUTS[language].titlePlaceholder}
         left={<TextInput.Icon icon="format-title" testID={TEXT_INPUTS_TITLE_LEFT_ICON} />}
-        style={{
-          marginTop: 12,
-          backgroundColor: colors.surface,
-          fontSize: 15,
-          minHeight: 52,
-          opacity: shouldBeDisabled ? 0.7 : 1,
-        }}
-        contentStyle={{ fontFamily: FONT_FAMILIES.regular }}
-        outlineStyle={{ borderRadius: 8 }}
+        style={[
+          styles.input,
+          styles.titleInput,
+          { backgroundColor: colors.surface },
+          shouldBeDisabled && styles.disabledInput,
+        ]}
+        contentStyle={[styles.content, styles.titleContent]}
+        outlineStyle={styles.outline}
         outlineColor={colors.outlineVariant}
         activeOutlineColor={colors.primary}
         textColor={colors.onSurface}
@@ -52,23 +45,18 @@ export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
         testID={TEXT_INPUTS_DESCRIPTION_TEST_ID}
         mode="outlined"
         value={description}
-        onBlur={() => dispatch(saveDescription(description))}
-        onChangeText={(description) => {
-          setDescription(description);
-          dispatch(saveDescription(description));
-        }}
+        onChangeText={setDescription}
         placeholder={TEXT_INPUTS[language].descriptionPlaceholder}
         multiline
         numberOfLines={4}
-        style={{
-          minHeight: 96,
-          marginTop: 12,
-          backgroundColor: colors.surface,
-          fontSize: 15,
-          opacity: shouldBeDisabled ? 0.7 : 1,
-        }}
-        contentStyle={{ fontFamily: FONT_FAMILIES.regular }}
-        outlineStyle={{ borderRadius: 8 }}
+        style={[
+          styles.input,
+          styles.descriptionInput,
+          { backgroundColor: colors.surface },
+          shouldBeDisabled && styles.disabledInput,
+        ]}
+        contentStyle={[styles.content, styles.descriptionContent]}
+        outlineStyle={styles.outline}
         outlineColor={colors.outlineVariant}
         activeOutlineColor={colors.primary}
         textColor={colors.onSurface}
@@ -78,3 +66,39 @@ export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  input: {
+    borderRadius: 8,
+    fontSize: 15,
+    marginTop: 12,
+    width: '100%',
+  },
+  titleInput: {
+    height: 52,
+  },
+  descriptionInput: {
+    height: 96,
+  },
+  content: {
+    fontFamily: FONT_FAMILIES.regular,
+    paddingHorizontal: 0,
+  },
+  titleContent: {
+    height: 52,
+    paddingVertical: 0,
+    textAlignVertical: 'center' as const,
+  },
+  descriptionContent: {
+    minHeight: 94,
+    paddingBottom: 12,
+    paddingTop: 12,
+    textAlignVertical: 'top' as const,
+  },
+  outline: {
+    borderRadius: 8,
+  },
+  disabledInput: {
+    opacity: 0.7,
+  },
+});

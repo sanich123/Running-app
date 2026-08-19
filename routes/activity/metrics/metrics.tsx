@@ -1,4 +1,4 @@
-import { Platform, View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
@@ -10,7 +10,7 @@ import MetricsItem from './metrics-item/metrics-item';
 export default function Metrics() {
   const { colors } = useTheme();
   const { kilometresSplit, altitude, duration, distance, isMapVisible } = useAppSelector(({ location }) => location);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const formattedDuration = formatDuration(duration);
   const formattedDistance = (distance / 1000).toFixed(2);
   const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;

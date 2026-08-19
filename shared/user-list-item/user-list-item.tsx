@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import { CustomImage } from '@S/custom-image/custom-image';
+import CustomImage from '@S/custom-image/custom-image';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
 import type { UserListItemType } from './const';
 

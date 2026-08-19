@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, ScrollView, View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useAppSelector } from '@R/typed-hooks';
@@ -12,6 +12,7 @@ import DateTimePicker from './date-picker/date-picker';
 import DeclineBtn from './decline-btn/decline-btn';
 import EmotionBtns from './emotion-btns/emotion-btns';
 import InputsDistanceTime from './inputs-distance-time/inputs-distance-time';
+import { useManualActivityParams } from './manual-activity-params';
 import PreviewImages from './preview-images/preview-images';
 import ShowCameraBtn from './show-camera-btn/show-camera-btn';
 import SportsBtns from './sports-btns/sports-btns';
@@ -22,8 +23,8 @@ export default function SaveResult() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [isDisabled, setIsDisabled] = useState(false);
-  const { isManualAdding, isEditingActivity, isCameraVisible } = useAppSelector(({ manualActivity }) => manualActivity);
-  const { photoVideoUrls } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
+  const { isCameraVisible, isManualAdding, isEditingActivity } = useManualActivityParams();
+  const { photoVideoUrls } = useAppSelector(({ activity }) => activity);
   const [images, setImages] = useState<{ url: string; thumbnail: string | null }[]>([]);
 
   return (

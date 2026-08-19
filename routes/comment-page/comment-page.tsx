@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, ScrollView, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Card, FAB, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';

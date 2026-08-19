@@ -52,6 +52,11 @@ describe('Avatar icon editable', () => {
     expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeDisabled();
   });
 
+  it('should show a loader while the avatar is uploading', async () => {
+    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled />, { store: mockStore });
+    expect(screen.getByTestId(AvatarEditableTestIds.loading)).toBeOnTheScreen();
+  });
+
   it('selects, uploads and stores a new avatar', async () => {
     const user = userEvent.setup();
     const setIsDisabled = jest.fn();

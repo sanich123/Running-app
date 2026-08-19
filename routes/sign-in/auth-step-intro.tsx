@@ -1,43 +1,14 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, View, StyleSheet } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import { SignInPageStates } from '@U/validate-email-password';
-
-const CONTENT = {
-  russian: {
-    login: {
-      title: 'Тренируйся и общайся',
-      description: 'Российский сервис Runich: тренировки, прогресс и социальная сеть без VPN.',
-    },
-    register: {
-      title: 'Создай аккаунт',
-      description: 'Заполни данные — мы отправим ссылку и код подтверждения на почту.',
-    },
-    reset: { title: 'Изменение пароля', description: 'Укажи почту, и мы отправим инструкции для смены пароля.' },
-    emailLink: { title: 'Вход по ссылке', description: 'Отправим безопасную ссылку для входа на твою почту.' },
-  },
-  english: {
-    login: {
-      title: 'Train and connect',
-      description: 'Runich is a Russian fitness and social service that works without a VPN.',
-    },
-    register: {
-      title: 'Create an account',
-      description: 'Fill in your details and we will send a confirmation link and code.',
-    },
-    reset: {
-      title: 'Change your password',
-      description: 'Enter your email and we will send instructions to change it.',
-    },
-    emailLink: { title: 'Sign in with a link', description: 'We will send a secure sign-in link to your email.' },
-  },
-} as const;
+import { AUTH_STEP_INTRO_CONTENT } from './const';
 
 export default function AuthStepIntro({ authStep }: { authStep: SignInPageStates }) {
-  const { language } = useAppSelector(({ language: languageState }) => languageState);
+  const { language } = useAppSelector(({ settings: settingsState }) => settingsState);
   const { colors } = useTheme();
-  const content = CONTENT[language][authStep === SignInPageStates.emailLink ? 'emailLink' : authStep];
+  const content = AUTH_STEP_INTRO_CONTENT[language][authStep === SignInPageStates.emailLink ? 'emailLink' : authStep];
   const isLogin = authStep === SignInPageStates.login;
   const icon =
     authStep === SignInPageStates.login

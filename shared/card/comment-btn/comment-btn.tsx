@@ -43,7 +43,7 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
       borderless
       onPress={() => {
         dispatch(setCommentsLength(commentsLength));
-        dispatch(setIsShowingTextInput(!commentsLength ? true : false));
+        dispatch(setIsShowingTextInput(false));
         dispatch(setCommentActivityId(activityId));
         dispatch(setActivityOwnerProfile(profile));
         dispatch(setMapPhotoUrl(mapPhotoUrl));
@@ -60,7 +60,7 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
           size={25}
           disabled={isLoading || isDisabled || isErrorLoadingComments || isLoadingComments}
         />
-        <CommentsListModal commentsModalRef={commentsModalRef} />
+        <CommentsListModal commentsModalRef={commentsModalRef} commentsLength={commentsLength} />
       </>
     </TouchableRipple>
   );

@@ -1,10 +1,9 @@
 import { StyleSheet } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import { setCameraIsVisible } from '@R/slices/manual-activity/manual-activity';
-import { useAppDispatch } from '@R/typed-hooks';
+import { useSetManualActivityParams } from '../../manual-activity-params';
 
 export default function CloseBtn() {
-  const dispatch = useAppDispatch();
+  const { setCameraIsVisible } = useSetManualActivityParams();
 
   return (
     <IconButton
@@ -14,7 +13,7 @@ export default function CloseBtn() {
       iconColor="#fff"
       containerColor="rgba(0, 0, 0, 0.45)"
       style={styles.button}
-      onPress={() => dispatch(setCameraIsVisible(false))}
+      onPress={() => setCameraIsVisible(false)}
       testID="CloseBtn"
       accessibilityLabel="Закрыть камеру"
     />

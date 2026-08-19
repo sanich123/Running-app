@@ -1,4 +1,4 @@
-import { FlatList, Platform, StyleSheet, useWindowDimensions } from 'react-native';
+import { FlatList, Platform, useWindowDimensions, StyleSheet } from 'react-native';
 import { ActivityIndicator, Card, Chip, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES } from '@const/enums';
@@ -23,7 +23,7 @@ export default function MonthTypesChips({ userId, year, month, setSelectedType, 
     { userId: `${userId}`, year: `${year}`, month: `${month}` },
     { skip: !userId || !year || !month },
   );
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const isRussian = language === LANGUAGES.russian;
   const typesOfSport = monthStatistics ? Object.keys(monthStatistics?.activitiesReducedBySport) : [];
   return (

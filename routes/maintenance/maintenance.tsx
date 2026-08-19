@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';

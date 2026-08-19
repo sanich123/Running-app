@@ -2,7 +2,7 @@ import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
-import { changeLanguage } from '@R/slices/language/language';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -11,7 +11,16 @@ import { UPDATE_BTN, UPDATE_BTN_ERROR_MSG } from './const';
 import ProfileUpdateBtn from './update-btn';
 
 const mockBack = jest.fn();
+const mockProfileSettingsParams = {
+  name: '',
+  surname: '',
+  weight: '',
+  city: '',
+  bio: '',
+  gender: '',
+};
 jest.mock('expo-router', () => ({
+  useLocalSearchParams: () => mockProfileSettingsParams,
   useRouter: () => ({ push: jest.fn(), back: mockBack }),
 }));
 describe('Profile update btn', () => {
@@ -54,6 +63,47 @@ describe('Profile update btn', () => {
 
     await waitFor(() => expect(mockBack).toHaveBeenCalled());
     expect(screen.queryByText(UPDATE_BTN_ERROR_MSG)).not.toBeOnTheScreen();
+  });
+
+  it('uses the current form values supplied by the profile layout', async () => {
+    let requestBody: unknown;
+    const user = userEvent.setup();
+    const userId = 'layout-profile-user';
+    mockStore.dispatch(setUserId(userId));
+    server.use(
+      http.get(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json({ id: 'profile-id', user_id: userId })),
+      http.patch(`${BASE_URL}/user/${userId}/profile`, async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({ id: 'profile-id', user_id: userId });
+      }),
+    );
+
+    await renderWithProviders(
+      <ProfileUpdateBtn
+        formValues={{
+          name: 'Updated name',
+          surname: 'Updated surname',
+          weight: '80',
+          city: 'Moscow',
+          bio: 'Updated bio',
+          gender: 'MALE',
+        }}
+      />,
+      { store: mockStore },
+    );
+    await user.press(await screen.findByText(UPDATE_BTN.english.update));
+
+    await waitFor(() => expect(requestBody).toEqual(expect.objectContaining({ name: 'Updated name' })));
+    expect(requestBody).toEqual(
+      expect.objectContaining({
+        name: 'Updated name',
+        surname: 'Updated surname',
+        weight: '80',
+        city: 'Moscow',
+        bio: 'Updated bio',
+        gender: 'MALE',
+      }),
+    );
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

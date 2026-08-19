@@ -25,7 +25,7 @@ export default function BatteryOptimizationSwitcher({
         .catch((error: unknown) => errorToast('Не удалось проверить оптимизацию батареи', error));
     }
   }, [isAppOptimizedByPhone, setIsAppOptimizedByPhone, isNeedToRefreshPermission, setIsNeedToRefreshPermission]);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
 
   return (

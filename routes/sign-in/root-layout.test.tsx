@@ -31,6 +31,7 @@ jest.mock('expo-router', () => {
       </View>
     ),
     Stack,
+    useGlobalSearchParams: () => ({}),
     usePathname: () => mockPathname,
   };
 });

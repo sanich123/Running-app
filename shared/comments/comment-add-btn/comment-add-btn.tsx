@@ -6,7 +6,7 @@ import { useAppDispatch } from '@R/typed-hooks';
 export default function CommentAddBtn() {
   const dispatch = useAppDispatch();
   return (
-    <View style={{ position: 'absolute', right: 20, bottom: 70, zIndex: 100 }}>
+    <View style={{ position: 'absolute', right: 20, bottom: 110, zIndex: 100 }}>
       <FAB
         testID="floatingBtn"
         icon="plus"

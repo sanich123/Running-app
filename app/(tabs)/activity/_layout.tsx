@@ -1,17 +1,17 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
+import { useGlobalActivitySportParams } from '@Routes/activity/activity-params';
+import { LazyActivityCloseBtn } from '@Routes/app-routes/const';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 
-const LazyActivityCloseBtn = lazy(() => import('@Routes/activity/close-btn/close-btn'));
-
 export default function ActivityStack() {
-  const { sport } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const { sport } = useGlobalActivitySportParams();
   const { colors } = useTheme();
   return (
     <Stack

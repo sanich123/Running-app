@@ -17,9 +17,10 @@ export default function LoginFromUrlRoute() {
   useEffect(() => {
     if (url) {
       const { queryParams } = parse(url);
+      const code = queryParams?.code?.toString();
       const accessToken = queryParams?.accessToken?.toString();
-      if (accessToken) {
-        verifyToken({ accessToken })
+      if (code || accessToken) {
+        verifyToken(code ? { code } : { accessToken })
           .unwrap()
           .then(({ accessToken: verifiedAccessToken, refreshToken, userId }) => {
             dispatch(setAccessToken(verifiedAccessToken));

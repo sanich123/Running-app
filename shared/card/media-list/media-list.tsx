@@ -4,7 +4,8 @@ import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { CustomImage } from '@S/custom-image/custom-image';
+import CustomImage from '@S/custom-image/custom-image';
+import { ACTIVITY_MEDIA_HEIGHT } from './const';
 import type { MediaListProps } from '../types';
 
 export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPhotoUrlBlurhash }: MediaListProps) {
@@ -30,9 +31,9 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
         }}
         borderless>
         <CustomImage
-          style={{ width: mediaWidth, height: 202 }}
+          style={{ width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }}
           source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
-          contentFit="cover"
+          contentFit={item.url.includes('api.mapbox.com') ? 'contain' : 'cover'}
           testID={item.url}
           placeholder={item?.blurhash}
         />

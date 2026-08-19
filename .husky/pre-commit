@@ -33,16 +33,8 @@ yarn madge \
 # 7. Проверка неиспользуемых импортов ts-prune
 yarn ts-prune --ignore 'app|jest.config.js|.*\.test\.(ts|tsx)$'
 
-# 8. Проверка orphan файлов (без app, node_modules и прочих)
-# yarn madge \
-#   --ts-config ./tsconfig.json \
-#   --orphans \
-#   --extensions ts,tsx \
-#   --exclude '^(app|node_modules|android|ios|\.expo|dist|coverage)/|\.test\.tsx?$' \
-#   ./auth ./routes ./shared ./constants ./redux ./utils
+# 8. Обновление зависимостей
+yarn npm-check-updates || true
 
-# 9. Обновление зависимостей
-yarn npm-check-updates
-
-# 10. Проверка неиспользуемых зависимостей опционально
+# 9. Проверка неиспользуемых зависимостей опционально
 yarn depcheck || true

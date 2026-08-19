@@ -5,7 +5,7 @@ import SettingsRow from '../settings-row/settings-row';
 
 export default function MigrationBtn() {
   const { push } = useRouter();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { profileFromServer } = useAppSelector(({ profile }) => profile);
   const isRussian = language === LANGUAGES.russian;
   return profileFromServer?.id ? (

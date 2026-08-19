@@ -18,7 +18,7 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);

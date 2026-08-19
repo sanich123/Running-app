@@ -1,22 +1,26 @@
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Text, useTheme } from 'react-native-paper';
-import { useGetUserProfileByUserIdQuery, useUpdateProfileByProfileIdMutation } from '@R/services/profile/profile';
+import { useGetUserProfileByUserIdQuery, useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
 import { resetSettings, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useProfileFormParams } from '@Routes/profile/profile-settings/profile-settings-params';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { UPDATE_BTN } from './const';
+import type { ProfileUpdateBtnProps } from './types';
 import type { ProfileSettings } from '@R/slices/profile/types';
 
-export default function ProfileUpdateBtn() {
+export default function ProfileUpdateBtn({ formValues: formValuesFromLayout }: ProfileUpdateBtnProps) {
   const dispatch = useAppDispatch();
   const { back } = useRouter();
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { settings, isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
-  const { language } = useAppSelector(({ language }) => language);
-  const { data: profile, isLoading: isProfileLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
-  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileByProfileIdMutation();
+  const formValuesFromRoute = useProfileFormParams();
+  const formValues = formValuesFromLayout ?? formValuesFromRoute;
+  const { language } = useAppSelector(({ settings }) => settings);
+  const { isLoading: isProfileLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileByUserIdMutation();
   const isSaving = isProfileLoading || isUpdating;
 
   return (
@@ -25,15 +29,15 @@ export default function ProfileUpdateBtn() {
       loading={isSaving}
       onPress={async () => {
         dispatch(setIsDisabledWhileSendingProfile(true));
-        const body = Object.fromEntries(
-          Object.entries(settings).filter(([, value]) => value !== null),
-        ) as ProfileSettings;
+        const body: ProfileSettings = { ...formValues, profilePhoto: settings.profilePhoto };
 
-        if (body.birthday) {
-          body.birthday = new Date(body.birthday).toISOString();
+        if (!userId) {
+          dispatch(setIsDisabledWhileSendingProfile(false));
+          errorToast('', 'Не удалось определить пользователя');
+          return;
         }
 
-        await updateProfile({ body, id: `${profile?.id}` })
+        await updateProfile({ body, id: userId })
           .unwrap()
           .then(() => {
             dispatch(resetSettings());
@@ -61,6 +65,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
-    marginRight: 5,
   },
 });

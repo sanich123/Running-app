@@ -65,9 +65,9 @@ function getPhotoStorageLocation(publicUrl: string) {
 }
 
 export async function removePhotos(publicUrls: string[]) {
-  const locations = publicUrls.map(getPhotoStorageLocation).filter(
-    (location): location is { bucket: string; path: string } => Boolean(location),
-  );
+  const locations = publicUrls
+    .map(getPhotoStorageLocation)
+    .filter((location): location is { bucket: string; path: string } => Boolean(location));
 
   if (!locations.length) return true;
 

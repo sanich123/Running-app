@@ -3,7 +3,7 @@ import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
 import { getCurrentPositionAsync, useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
 // @ts-expect-error package has no types
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
@@ -16,6 +16,7 @@ import MapControls from './map-controls/map-controls';
 import MapNavIcon from './map-nav-icon/map-nav-icon';
 import PauseMarkers from './pause-markers/pause-markers';
 import { hasProfileData } from './profile-status';
+import { distanceInMeters } from './utils';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { Location as MapboxLocation } from '@rnmapbox/maps';
 import type { LocationObject } from 'expo-location';
@@ -119,6 +120,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
               mapZoomLevel={mapZoomLevel}
               isCenteringOnCurrentLocation={isCenteringOnCurrentLocation}
               hasPoorLocationAccuracy={hasPoorLocationAccuracy}
+              locationAccuracy={currentPosition?.coords.accuracy ?? 0}
               onZoomLevelChange={setMapZoomLevel}
               onFollowUserLocationChange={setShouldFollowUserLocation}
               onCenterOnCurrentLocation={centerMapOnCurrentLocation}
@@ -154,19 +156,6 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
       )}
     </>
   );
-}
-
-function distanceInMeters(first: LocationObject, second: MapboxLocation) {
-  const earthRadius = 6_371_000;
-  const firstLatitude = (first.coords.latitude * Math.PI) / 180;
-  const secondLatitude = (second.coords.latitude * Math.PI) / 180;
-  const latitudeDelta = secondLatitude - firstLatitude;
-  const longitudeDelta = ((second.coords.longitude - first.coords.longitude) * Math.PI) / 180;
-  const haversine =
-    Math.sin(latitudeDelta / 2) ** 2 +
-    Math.cos(firstLatitude) * Math.cos(secondLatitude) * Math.sin(longitudeDelta / 2) ** 2;
-
-  return earthRadius * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
 }
 
 const styles = StyleSheet.create({

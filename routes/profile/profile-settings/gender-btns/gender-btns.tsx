@@ -1,22 +1,18 @@
-import { useState } from 'react';
 import { SegmentedButtons } from 'react-native-paper';
-import { saveGender } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import { GENDER_BTNS, GENDER_BTNS_VALUES } from './const';
+import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
 
 export default function GenderBtns({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useAppDispatch();
-  const { language } = useAppSelector(({ language }) => language);
-  const { isDisabledWhileSendingProfile, settings } = useAppSelector(({ profile }) => profile);
-  const [gender, setGender] = useState(settings?.gender || '');
+  const { language } = useAppSelector(({ settings }) => settings);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { gender } = useProfileFormParams();
+  const { setGender } = useSetProfileFormParams();
 
   return (
     <SegmentedButtons
       value={gender}
-      onValueChange={(gender: string) => {
-        setGender(gender);
-        dispatch(saveGender(gender));
-      }}
+      onValueChange={setGender}
       buttons={[
         {
           value: GENDER_BTNS_VALUES.male,

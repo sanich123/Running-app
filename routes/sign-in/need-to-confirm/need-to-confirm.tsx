@@ -7,13 +7,11 @@ import { CHECK_EMAIL } from './const';
 
 export default function SignInNeedToConfirmEmail() {
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
 
   return (
     <>
-      {!process.env.IS_TESTING && (
-        <Stack.Screen options={{ title: ROUTES.confirmEmailNotification, headerShown: false }} />
-      )}
+      <Stack.Screen options={{ title: ROUTES.confirmEmailNotification, headerShown: false }} />
       <View
         style={{
           backgroundColor: colors.background,

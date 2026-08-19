@@ -20,7 +20,7 @@ export default function CloseBtn() {
   const { colors } = useTheme();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
   const { duration } = useAppSelector(({ location }) => location);
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const dispatch = useAppDispatch();
   const [isStoppingTracking, setIsStoppingTracking] = useState(false);
 
@@ -83,6 +83,7 @@ export default function CloseBtn() {
     </>
   );
 }
+
 const styles = StyleSheet.create({
   layout: {
     display: 'flex',

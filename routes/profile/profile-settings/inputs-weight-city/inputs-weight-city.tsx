@@ -1,18 +1,16 @@
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
-import { saveCity, saveWeight } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
+import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
 import { CITY_TEST_ID, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
 
 export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }) {
-  const dispatch = useAppDispatch();
-  const { isDisabledWhileSendingProfile, settings } = useAppSelector(({ profile }) => profile);
-  const { language } = useAppSelector(({ language }) => language);
+  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const [city, setCity] = useState(settings?.city);
-  const [weight, setWeight] = useState(settings?.weight);
+  const { city, weight } = useProfileFormParams();
+  const { setCity, setWeight } = useSetProfileFormParams();
   const shouldBeDisabled = isDisabled || isDisabledWhileSendingProfile;
 
   return (
@@ -29,10 +27,7 @@ export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }
         label={WEIGHT_CITY[language].cityLabel}
         placeholder={WEIGHT_CITY[language].cityPlaceholder}
         value={city}
-        onChangeText={(city) => {
-          setCity(city);
-          dispatch(saveCity(city));
-        }}
+        onChangeText={setCity}
         disabled={shouldBeDisabled}
       />
       <TextInput
@@ -48,10 +43,7 @@ export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }
         placeholder={WEIGHT_CITY[language].weightPlaceholder}
         inputMode="numeric"
         value={weight}
-        onChangeText={(weight) => {
-          setWeight(weight);
-          dispatch(saveWeight(weight));
-        }}
+        onChangeText={setWeight}
         disabled={shouldBeDisabled}
       />
     </View>

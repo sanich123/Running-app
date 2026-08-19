@@ -1,16 +1,16 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
+import { LazyUsersSettingsIcons } from '@Routes/app-routes/const';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
-const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-settings-icons'));
 
 export default function StatisticsStack() {
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
 
   return (
     <Stack

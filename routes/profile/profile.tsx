@@ -1,22 +1,11 @@
-import { useEffect } from 'react';
-import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { useLocalSearchParams, usePathname } from 'expo-router';
+import { Platform, ScrollView, useWindowDimensions, View, StyleSheet } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
-import {
-  saveBio,
-  saveCity,
-  saveGender,
-  saveName,
-  savePhotoUrl,
-  saveSurname,
-  saveWeight,
-} from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import ProfileMediaPhotos from '@Routes/profile/media-photos/media-photos';
 import AvatarShowable from '@S/avatar/showable/showable';
 import ErrorComponent from '@S/error-component/error-component';
@@ -27,8 +16,6 @@ import UsersCounter from './users-counter/users-counter';
 
 export default function ProfilePage() {
   const { width } = useWindowDimensions();
-  const pathname = usePathname();
-  const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { id: whosProfileViewing } = useLocalSearchParams();
   const { userId } = useAppSelector(({ auth }) => auth);
@@ -43,21 +30,6 @@ export default function ProfilePage() {
     refetch,
   } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
   const { data: photoPreviews } = useGetAllActivityPhotosByUserIdQuery({ userId, take: 4 }, { skip: !userId });
-  const isProfilePage = !pathname.includes(ROUTES.home);
-
-  useEffect(() => {
-    if (isSuccess && isProfilePage && profile?.user_id === userId) {
-      if (profile) {
-        dispatch(saveGender(profile?.gender));
-        dispatch(saveName(profile?.name));
-        dispatch(saveSurname(profile?.surname));
-        dispatch(saveCity(profile?.city));
-        dispatch(saveWeight(profile?.weight));
-        dispatch(saveBio(profile?.bio));
-        dispatch(savePhotoUrl(profile?.profilePhoto));
-      }
-    }
-  }, [dispatch, isProfilePage, isSuccess, profile, userId]);
 
   return (
     <>

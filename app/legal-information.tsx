@@ -1,7 +1,6 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { LazyLegalInformation } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
-
-const LazyLegalInformation = lazy(() => import('@Routes/legal-information/legal-information'));
 
 export default function LegalInformationScreen() {
   return (

@@ -19,7 +19,7 @@ function getWebColorScheme(): 'light' | 'dark' {
 
 export default function useAppInitialization() {
   useAppInitializationBase();
-  const { theme } = useAppSelector(({ language }) => language);
+  const { theme } = useAppSelector(({ settings }) => settings);
   const [isCustomAppearanceLoaded, setIsCustomAppearanceLoaded] = useState(false);
 
   useEffect(() => {

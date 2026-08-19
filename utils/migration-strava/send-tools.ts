@@ -20,7 +20,7 @@ function sendArchiveRequest(
         setIsWaitingForServer(true);
       }
     };
-    request.upload.onprogress = event => {
+    request.upload.onprogress = (event) => {
       if (event.lengthComputable && event.total > 0 && event.loaded >= event.total) {
         startWaitingForServer();
       }

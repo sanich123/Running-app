@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Mutex } from 'async-mutex';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
-import { resetAuthSlice, setAccessToken } from '@R/slices/auth/auth';
+import { resetAuthSlice, setAccessToken, setRefreshToken } from '@R/slices/auth/auth';
 import { deviceId, deviceName, deviceMetadata, platform } from '@U/device/device-id';
 import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
 import type { AuthResponse } from './types';
@@ -16,7 +16,7 @@ interface ApiState {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.EXPO_PUBLIC_BASE_URL,
+  baseUrl: process.env.EXPO_PUBLIC_BASE_URL ?? 'http://localhost:3000',
   timeout: LIMIT_OF_REQUEST,
   prepareHeaders: (headers, { endpoint, getState }) => {
     const accessToken = (getState() as ApiState).auth.accessToken;
@@ -53,12 +53,23 @@ async function showErrorToast(message: string, error?: unknown) {
   }
 }
 
+async function handleAuthFailure(api: BaseQueryApi) {
+  api.dispatch(resetAuthSlice());
+  router.replace(`/${ROUTES.signIn}`);
+  await showErrorToast('Не удалось обновить авторизационные данные. Пожалуйста, авторизуйтесь повторно');
+}
+
 async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, extraOptions: object) {
   await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
   const { refreshToken } = (api.getState() as ApiState).auth;
 
   if (result.error?.status === 401) {
+    if (!refreshToken) {
+      await handleAuthFailure(api);
+      return result;
+    }
+
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
       try {
@@ -76,14 +87,13 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
 
         if (newAccessToken) {
           api.dispatch(setAccessToken(newAccessToken));
+          if (refreshData?.refreshToken) api.dispatch(setRefreshToken(refreshData.refreshToken));
           result = await baseQuery(args, api, extraOptions);
         } else {
-          api.dispatch(resetAuthSlice());
-          router.replace(`/${ROUTES.signIn}`);
-
-          await showErrorToast('Не удалось обновить авторизационные данные. Пожалуйста, авторизуйтесь повторно');
+          await handleAuthFailure(api);
         }
       } catch (error) {
+        await handleAuthFailure(api);
         await showErrorToast('', error);
       } finally {
         release();

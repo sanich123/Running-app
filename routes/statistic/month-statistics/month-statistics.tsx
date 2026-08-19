@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -30,7 +30,7 @@ export default function MonthStatistics() {
     { userId: `${userId}`, year: `${year}`, month: `${month}` },
     { skip: !userId || !year || !month },
   );
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const isRussian = language === LANGUAGES.russian;
   return (
     <CrossPlatformLayout
@@ -97,8 +97,9 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flexDirection: 'row',
+    columnGap: 8,
     padding: 10,
-    justifyContent: 'space-between',
-    marginVertical: 15,
+    justifyContent: 'flex-start',
+    marginVertical: 6,
   },
 });

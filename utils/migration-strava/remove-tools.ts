@@ -1,5 +1,4 @@
 import { Directory, Paths } from 'expo-file-system';
-import { deleteAsync } from 'expo-file-system/legacy';
 import { toFileUri } from './uri-tools';
 
 export async function removeMedia({
@@ -13,9 +12,10 @@ export async function removeMedia({
 }) {
   try {
     const mediaUri = `${toFileUri(pathToMedia)}/media`;
-    if (new Directory(mediaUri).exists) {
+    const mediaDirectory = new Directory(mediaUri);
+    if (mediaDirectory.exists) {
       setIsRemovingMedia(true);
-      await deleteAsync(mediaUri);
+      mediaDirectory.delete();
       setIsRemovingMedia(false);
     }
   } catch (error) {
@@ -33,9 +33,10 @@ export async function removeCacheFolder({
 }) {
   try {
     const migrationDirectoryUri = `${Paths.cache.uri}stravaMigration`;
-    if (new Directory(migrationDirectoryUri).exists) {
+    const migrationDirectory = new Directory(migrationDirectoryUri);
+    if (migrationDirectory.exists) {
       setIsDeletingCacheFolder?.(true);
-      await deleteAsync(migrationDirectoryUri);
+      migrationDirectory.delete();
       setIsDeletingCacheFolder?.(false);
     }
   } catch (error) {

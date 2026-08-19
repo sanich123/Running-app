@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
 import CommentBtn from '@S/card/comment-btn/comment-btn';
 import DeleteBtn from '@S/card/delete-btn/delete-btn';

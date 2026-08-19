@@ -1,6 +1,6 @@
-import { FlatList, Platform, StyleSheet, useWindowDimensions } from 'react-native';
+import { FlatList, Platform, useWindowDimensions, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Divider } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
@@ -8,26 +8,12 @@ import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout'
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
-import UserListItem from '@S/user-list-item/user-list-item';
 import useRefresh from '@U/hooks/use-refresh';
-
-const renderFollowingItem = ({ item }: { item: any }) => (
-  <UserListItem
-    city={item.profile?.city}
-    name={item.profile?.name}
-    surname={item.profile?.surname}
-    profilePhoto={item.profile?.profilePhoto}
-    placeholder={item.profile?.profilePhotoBlurhash}
-    user_id={item?.friendId}
-  />
-);
-
-const followingKeyExtractor = (item: any) => item.id || item.friendId;
-const renderDivider = () => <Divider />;
+import { followingKeyExtractor, renderDivider, renderFollowingItem } from './utils';
 
 export default function ListOfFollowing() {
   const { width } = useWindowDimensions();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { id: userId } = useLocalSearchParams();
   const { isLoading, isSuccess, error, isError, data: users, refetch } = useGetYouFollowUsersByUserIdQuery(`${userId}`);
   const { refreshing, onRefresh } = useRefresh(refetch);

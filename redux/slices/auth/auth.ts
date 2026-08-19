@@ -8,9 +8,6 @@ const auth = createSlice({
     setUserId: (state, { payload }) => {
       state.userId = payload;
     },
-    setRequiredAppVersion: (state, { payload }) => {
-      state.appVersion = payload;
-    },
     setAccessToken: (state, { payload }) => {
       state.accessToken = payload;
     },
@@ -21,6 +18,6 @@ const auth = createSlice({
   },
 });
 
-export const { setUserId, setRequiredAppVersion, setAccessToken, setRefreshToken, resetAuthSlice } = auth.actions;
+export const { setUserId, setAccessToken, setRefreshToken, resetAuthSlice } = auth.actions;
 
 export default auth.reducer;

@@ -10,6 +10,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { TIMEOUT_MESSAGE } from '@Routes/activity/location-indicator/const';
 import { getMaxTrackingSpeedForSport } from '@U/location/location-utils';
+import { useGlobalActivitySportParams } from '../activity-params';
 import { ACTIVITY_ERROR_MSG } from './const';
 
 export default function ErrorMsg() {
@@ -18,8 +19,8 @@ export default function ErrorMsg() {
   const { isAppShutedByPhone, isTooMuchSpeed, tooMuchSpeed, tooMuchSpeedTimestamp } = useAppSelector(
     ({ location }) => location,
   );
-  const { sport } = useAppSelector(({ additionalInfoActivity }) => additionalInfoActivity);
-  const { language } = useAppSelector(({ language }) => language);
+  const { sport } = useGlobalActivitySportParams();
+  const { language } = useAppSelector(({ settings }) => settings);
   const tooMuchSpeedTime = tooMuchSpeedTimestamp
     ? new Date(tooMuchSpeedTimestamp).toLocaleTimeString(language === 'russian' ? 'ru-RU' : 'en-US', {
         hour: '2-digit',

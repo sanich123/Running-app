@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, FlatList, Platform, useWindowDimensions } from 'react-native';
+import { FlatList, Platform, useWindowDimensions, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -15,7 +15,7 @@ import type { PhotoVideoType } from '@S/card/types';
 export default function MediaGrid() {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ language }) => language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { id: userId } = useLocalSearchParams();
   const [take, setTake] = useState(28);
   const isLoadingMore = useRef(false);

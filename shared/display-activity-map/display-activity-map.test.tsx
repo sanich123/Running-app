@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
-import DisplayActivityMap, { getActivityMapBounds } from './display-activity-map';
+import DisplayActivityMap from './display-activity-map';
+import { getActivityMapBounds } from './utils';
 import type { LocationObject } from 'expo-location';
 
 jest.mock('@rnmapbox/maps', () => {
