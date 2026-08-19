@@ -83,6 +83,7 @@ export interface CustomTextInputProps<T extends FieldValues> {
     | 'off';
   capitalizeValue?: boolean;
   onSubmitEditing?: () => void;
+  accessibilityLabel?: string;
   compact?: boolean;
 }
 

@@ -22,6 +22,7 @@ export default function CustomTextInput<T extends FieldValues>({
   capitalizeValue = false,
   replaceCommaToDot = false,
   onSubmitEditing,
+  accessibilityLabel,
   compact = false,
 }: CustomTextInputProps<T>) {
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
@@ -78,6 +79,7 @@ export default function CustomTextInput<T extends FieldValues>({
             activeOutlineColor={colors.primary}
             textColor={colors.onSurface}
             maxLength={maxLength}
+            accessibilityLabel={accessibilityLabel}
             testID={label}
             disabled={shouldBeDisabled}
             returnKeyLabel={returnKeyLabel}

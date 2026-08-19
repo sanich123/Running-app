@@ -55,6 +55,7 @@ export default function SignIn() {
           validation={emailValidation}
           inputMode="email"
           autoComplete="email"
+          accessibilityLabel="auth-email"
           compact
         />
         {currentAuthStep !== SignInPageStates.reset && currentAuthStep !== SignInPageStates.emailLink && (
@@ -65,6 +66,7 @@ export default function SignIn() {
             validation={passwordValidation}
             returnKeyType="send"
             returnKeyLabel="send"
+            accessibilityLabel="auth-password"
             compact
           />
         )}
