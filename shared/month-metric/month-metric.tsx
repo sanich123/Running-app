@@ -1,7 +1,8 @@
 import { View, StyleSheet } from 'react-native';
-import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
+import Skeleton from '@S/skeleton/skeleton';
 import { MONTH_STATISTICS } from './const';
 import type { MonthMetricsProps } from './types';
 
@@ -30,7 +31,7 @@ export default function MonthStatisticsMetrics({
           </Text>
         </>
       )}
-      {isLoading && <ActivityIndicator size="small" />}
+      {isLoading && <Skeleton testID="month-statistics-skeleton" style={styles.loadingSkeleton} />}
       {isError && <Text variant="bodySmall">{MONTH_STATISTICS[language].error}</Text>}
     </View>
   );
@@ -49,4 +50,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     rowGap: 3,
   },
+  loadingSkeleton: { width: '72%', height: 48 },
 });

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
-import { Avatar, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Avatar, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { saveWholeProfile } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -12,7 +12,7 @@ export default function AvatarShowable({ size, id, focused }: { size: number; id
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const isMineAvatar = id === userId;
-  const { data: profile, isSuccess, isError } = useGetUserProfileByUserIdQuery(id, { skip: !id });
+  const { data: profile, isLoading, isSuccess, isError } = useGetUserProfileByUserIdQuery(id, { skip: !id });
   useEffect(() => {
     if (profile && isMineAvatar) {
       dispatch(saveWholeProfile(profile));
@@ -21,6 +21,13 @@ export default function AvatarShowable({ size, id, focused }: { size: number; id
 
   return (
     <>
+      {isLoading && (
+        <ActivityIndicator
+          testID={AvatarShowableTestIds.isLoading}
+          size={Math.round(size * 0.6)}
+          color={focused ? colors.primary : colors.onSurfaceDisabled}
+        />
+      )}
       {isSuccess ? (
         <>
           {profile?.profilePhoto ? (

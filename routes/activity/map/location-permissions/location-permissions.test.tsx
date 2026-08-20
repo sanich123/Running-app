@@ -1,11 +1,9 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
+import { setIsProfileFilled } from '@R/slices/settings/settings';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
-import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
-import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import LocationPermissions from './location-permissions';
 
@@ -55,7 +53,7 @@ describe('location permissions', () => {
   it('opens profile creation when recording is blocked by a missing profile', async () => {
     const user = userEvent.setup();
     mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
-    server.use(http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, () => HttpResponse.json(null)));
+    mockStore.dispatch(setIsProfileFilled(false));
     await renderWithProviders(
       <LocationPermissions
         isMapVisible
@@ -72,15 +70,9 @@ describe('location permissions', () => {
     expect(mockNavigate).toHaveBeenCalledWith(`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`);
   });
 
-  it('explains when the profile cannot be checked', async () => {
-    const userId = 'profile-check-fails';
-    mockStore.dispatch(setUserId(userId));
-    server.use(
-      http.get(`${BASE_URL}/user/${userId}/profile`, () =>
-        HttpResponse.json({ message: 'server error' }, { status: 500 }),
-      ),
-    );
-
+  it('does not request the profile when the local profile flag is set', async () => {
+    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setIsProfileFilled(true));
     await renderWithProviders(
       <LocationPermissions
         isMapVisible
@@ -93,8 +85,7 @@ describe('location permissions', () => {
       />,
     );
 
-    expect(await screen.findByTestId('profile-check-error')).toBeOnTheScreen();
-    expect(screen.getByText('Не удалось проверить профиль')).toBeOnTheScreen();
-    expect(screen.getByText(/Проверьте интернет/)).toBeOnTheScreen();
+    expect(screen.queryByTestId('create-profile-link')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('profile-check-error')).not.toBeOnTheScreen();
   });
 });

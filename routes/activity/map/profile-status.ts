@@ -12,6 +12,6 @@ const profileDataKeys: (keyof ProfileType)[] = [
   'weight',
 ];
 
-export function hasProfileData(profile?: ProfileType | null) {
+export function hasProfileData(profile?: Partial<ProfileType> | null) {
   return Boolean(profile && profileDataKeys.some((key) => Boolean(profile[key])));
 }

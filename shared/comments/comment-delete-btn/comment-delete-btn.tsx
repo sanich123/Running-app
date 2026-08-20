@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useDeleteCommentByCommentIdMutation } from '@R/services/comments/comments';
 import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
@@ -21,9 +22,15 @@ export default function CommentDeleteBtn({ commentId, activityId }: CommentDelet
 
   return (
     <IconButton
-      icon="delete"
-      iconColor={colors.primary}
-      size={20}
+      testID="comment-delete-button"
+      accessibilityLabel={COMMENT_DELETE_BTN[language].label}
+      icon="delete-outline"
+      iconColor={colors.error}
+      containerColor={colors.errorContainer}
+      mode="contained-tonal"
+      size={19}
+      loading={isLoading}
+      style={styles.button}
       onPress={async () => {
         try {
           await deleteComment({ commentId, activityId }).unwrap();
@@ -35,3 +42,12 @@ export default function CommentDeleteBtn({ commentId, activityId }: CommentDelet
     />
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    borderRadius: 12,
+    height: 40,
+    margin: 0,
+    width: 40,
+  },
+});

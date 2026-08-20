@@ -1,4 +1,5 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { createProfileListenerMiddleware } from '../../redux/middleware/profile-listener';
 import activity from '@R/slices/activity/activity';
 import auth from '@R/slices/auth/auth';
 import comment from '@R/slices/comment/comment';
@@ -26,7 +27,11 @@ const rootReducer = combineReducers({
 export const mockStore = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware({ serializableCheck: false }).concat(runichApi.middleware);
+    const profileListenerMiddleware = createProfileListenerMiddleware();
+    return getDefaultMiddleware({ serializableCheck: false }).concat(
+      profileListenerMiddleware.middleware,
+      runichApi.middleware,
+    );
   },
 });
 

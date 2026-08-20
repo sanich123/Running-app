@@ -1,10 +1,11 @@
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import { useAppSelector } from '@R/typed-hooks';
+import Skeleton from '@S/skeleton/skeleton';
 import { USERS_COUNT, USERS_VARIANT } from './const';
 
 export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
@@ -32,21 +33,36 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
     return null;
   }
 
+  const isLoading = isFollowersLoading || isFollowingsLoading;
+
   return (
     <TouchableRipple
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => push(`/${whereToPush}/${whosId}`)}
-      disabled={isFollowersError || isFollowersLoading || isFollowingsLoading || isFollowingsError}
+      disabled={isFollowersError || isLoading || isFollowingsError}
       borderless
       style={{ borderRadius: 8 }}>
       <View style={{ paddingHorizontal: 10, paddingVertical: 8 }}>
-        <Text variant="labelSmall">{whatTitleToRender}</Text>
-        <Text variant="titleMedium" style={{ fontFamily: FONT_FAMILIES.extraBold }}>
-          {(isFollowersLoading || isFollowingsLoading) && ' '}
-          {whoFollowsUserList?.length && `${whoFollowsUserList?.length}`}
-          {whoUserFollowsList?.length && `${whoUserFollowsList?.length}`}
-        </Text>
+        {isLoading ? (
+          <>
+            <Skeleton testID={`users-counter-${variant}-loading`} style={styles.titleSkeleton} />
+            <Skeleton style={styles.valueSkeleton} />
+          </>
+        ) : (
+          <>
+            <Text variant="labelSmall">{whatTitleToRender}</Text>
+            <Text variant="titleMedium" style={{ fontFamily: FONT_FAMILIES.extraBold }}>
+              {whoFollowsUserList?.length && `${whoFollowsUserList?.length}`}
+              {whoUserFollowsList?.length && `${whoUserFollowsList?.length}`}
+            </Text>
+          </>
+        )}
       </View>
     </TouchableRipple>
   );
 }
+
+const styles = StyleSheet.create({
+  titleSkeleton: { width: 68, height: 13 },
+  valueSkeleton: { width: 40, height: 22, marginTop: 4 },
+});

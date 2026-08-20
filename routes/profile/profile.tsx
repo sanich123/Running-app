@@ -1,6 +1,6 @@
 import { Platform, ScrollView, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
@@ -10,6 +10,7 @@ import ProfileMediaPhotos from '@Routes/profile/media-photos/media-photos';
 import AvatarShowable from '@S/avatar/showable/showable';
 import ErrorComponent from '@S/error-component/error-component';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
+import ProfileSkeleton from './profile-skeleton/profile-skeleton';
 import ProfileStatistics from './statistics/profile-statistics';
 import { USERS_VARIANT } from './users-counter/const';
 import UsersCounter from './users-counter/users-counter';
@@ -43,10 +44,10 @@ export default function ProfilePage() {
             width: width < MAX_MOBILE_WIDTH ? '100%' : MAX_MOBILE_WIDTH,
             marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
           },
-          (isLoading || isError) && styles.isInCenter,
+          isError && styles.isInCenter,
         ]}>
         {isLoading ? (
-          <ActivityIndicator size="large" testID="profile-page-loading" />
+          <ProfileSkeleton />
         ) : isSuccess ? (
           <>
             {photoPreviews?.photos?.length ? (

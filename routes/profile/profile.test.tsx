@@ -43,7 +43,11 @@ describe('ProfilePage', () => {
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, loadingResponse));
     await renderWithProviders(<ProfilePage />);
-    expect(screen.getByTestId('profile-page-loading')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-page-skeleton')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-skeleton-avatar')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-skeleton-name')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-skeleton-followers')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-skeleton-statistics')).toBeOnTheScreen();
   });
 
   it('renders the profile returned by the server', async () => {

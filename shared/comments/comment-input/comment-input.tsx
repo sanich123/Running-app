@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { Platform, View, StyleSheet } from 'react-native';
-import { Icon, IconButton, TextInput as PaperTextInput, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Keyboard, Platform, View, StyleSheet } from 'react-native';
+import { Button, Icon, IconButton, Text, TextInput as PaperTextInput, useTheme } from 'react-native-paper';
 import {
   usePostCommentWithActivityIdMutation,
   useUpdateCommentByCommentIdMutation,
@@ -14,8 +14,14 @@ import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
 import type { CommentInputProps } from '../types';
 
-export default function CommentInput({ commentToUpdate = '', commentId = '', profile }: CommentInputProps) {
+export default function CommentInput({
+  commentToUpdate = '',
+  commentId = '',
+  profile,
+  commentsModalRef,
+}: CommentInputProps) {
   const [focused, setFocused] = useState(false);
+  const [inputHeight, setInputHeight] = useState(52);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { commentActivityId, mapPhotoUrl } = useAppSelector(({ comment }) => comment);
@@ -27,42 +33,51 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   const [sendEmailAfterSendingComment] = useSendEmailAfterSendingCommentMutation();
   const [postComment, { isLoading: isCommentSending }] = usePostCommentWithActivityIdMutation();
   const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
+  const isSending = isCommentSending || isUpdatingComment;
+  const isEditing = Boolean(commentToUpdate);
+  const shouldUseBottomSheetInput = Platform.OS !== 'web' && Boolean(commentsModalRef);
+
+  function closeInput() {
+    Keyboard.dismiss();
+    dispatch(setIsShowingTextInput(false));
+    dispatch(setIdOfUpdatingComment(''));
+  }
 
   async function submitComment() {
-    if (!comment) return;
+    const normalizedComment = comment.trim();
+    if (!normalizedComment || isSending) return;
 
     if (!commentToUpdate) {
-      await sendingComment();
-    } else if (comment !== commentToUpdate) {
-      await updatingComment();
+      await sendingComment(normalizedComment);
+    } else if (normalizedComment !== commentToUpdate.trim()) {
+      await updatingComment(normalizedComment);
     }
   }
 
-  async function sendingComment() {
-    return await postComment({ body: { comment }, id: commentActivityId })
+  async function sendingComment(normalizedComment: string) {
+    return await postComment({ body: { comment: normalizedComment }, id: commentActivityId })
       .unwrap()
-      .then(() => sendingUpdatingCommentSuccessHandler())
+      .then(() => sendingUpdatingCommentSuccessHandler(normalizedComment))
       .catch((error) => errorToast('', error));
   }
 
-  async function updatingComment() {
-    return await updateComment({ activityId: commentActivityId, commentId, body: { comment } })
+  async function updatingComment(normalizedComment: string) {
+    return await updateComment({ activityId: commentActivityId, commentId, body: { comment: normalizedComment } })
       .unwrap()
-      .then(sendingUpdatingCommentSuccessHandler)
+      .then(() => sendingUpdatingCommentSuccessHandler(normalizedComment))
       .catch((error) => errorToast('', error));
   }
 
-  async function sendingUpdatingCommentSuccessHandler() {
+  async function sendingUpdatingCommentSuccessHandler(sentComment = comment) {
     dispatch(setActivityIdWhichCommentsToUpdate(commentActivityId));
-    dispatch(setIsShowingTextInput(false));
-    dispatch(setIdOfUpdatingComment(''));
+    closeInput();
     setComment('');
     if (profile.emailNotifications && profile.users?.email && !commentToUpdate) {
       const objectToSend = {
         name: name ?? '',
         surname: surname ?? '',
         profilePhoto: profilePhoto ?? '',
-        comment,
+        comment: sentComment,
         recepientName: profile.name ?? '',
         recepientSurname: profile.surname ?? '',
         recepientEmail: profile.users.email,
@@ -74,14 +89,22 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
 
   return (
     <View style={styles.wrapper}>
+      <View style={styles.header}>
+        <Text variant="labelLarge">
+          {isEditing ? COMMENT_INPUT[language].editingLabel : COMMENT_INPUT[language].label}
+        </Text>
+        <Button compact mode="text" onPress={closeInput} testID="comment-input-cancel">
+          {COMMENT_INPUT[language].cancel}
+        </Button>
+      </View>
       <View style={styles.inputRow}>
-        {Platform.OS === 'web' ? (
+        {!shouldUseBottomSheetInput ? (
           <PaperTextInput
             testID={COMMENT_INPUT_TEST_ID}
             mode="outlined"
             placeholder={COMMENT_INPUT[language].placeholder}
             value={comment}
-            style={[styles.paperInput, { backgroundColor: colors.surface }]}
+            style={[styles.paperInput, { backgroundColor: colors.surface, height: inputHeight }]}
             contentStyle={styles.content}
             outlineStyle={styles.outline}
             outlineColor={colors.outlineVariant}
@@ -92,6 +115,11 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
             onSubmitEditing={submitComment}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
+            autoFocus
+            multiline
+            onContentSizeChange={({ nativeEvent }) =>
+              setInputHeight(Math.min(Math.max(nativeEvent.contentSize.height, 52), 120))
+            }
             enterKeyHint="send"
           />
         ) : (
@@ -107,12 +135,18 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
                   borderColor: colors.primary,
                   borderWidth: focused ? 2 : 1,
                   color: colors.onSurface,
+                  height: inputHeight,
                 },
               ]}
+              autoFocus
+              multiline
               onChangeText={setComment}
               onSubmitEditing={submitComment}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
+              onContentSizeChange={({ nativeEvent }) =>
+                setInputHeight(Math.min(Math.max(nativeEvent.contentSize.height, 52), 120))
+              }
               enterKeyHint="send"
             />
             <View style={styles.inputIcon}>
@@ -120,7 +154,11 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
             </View>
           </>
         )}
-        {comment.length > 0 ? (
+        {isSending ? (
+          <View style={styles.loadingButton}>
+            <ActivityIndicator size="small" color={colors.primary} />
+          </View>
+        ) : comment.trim().length > 0 ? (
           <IconButton
             testID={COMMENT_ICON_TEST_ID}
             icon="send"
@@ -129,7 +167,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
             containerColor={colors.primaryContainer}
             style={styles.sendButton}
             onPress={submitComment}
-            disabled={isCommentSending || isUpdatingComment}
+            disabled={isSending}
           />
         ) : null}
       </View>
@@ -139,21 +177,29 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
 
 const styles = StyleSheet.create({
   wrapper: {
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingTop: 8,
+  },
+  header: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    minHeight: 36,
   },
   inputRow: {
     minHeight: 52,
+    paddingBottom: 10,
     position: 'relative',
   },
   paperInput: {
     fontSize: 15,
-    height: 52,
+    minHeight: 52,
     width: '100%',
   },
   nativeInput: {
     borderRadius: 8,
     fontSize: 16,
-    height: 52,
+    minHeight: 52,
     paddingLeft: 44,
     paddingRight: 50,
     paddingVertical: 13,
@@ -174,6 +220,15 @@ const styles = StyleSheet.create({
   sendButton: {
     height: 40,
     margin: 0,
+    position: 'absolute',
+    right: 4,
+    top: 6,
+    width: 40,
+  },
+  loadingButton: {
+    alignItems: 'center',
+    height: 40,
+    justifyContent: 'center',
     position: 'absolute',
     right: 4,
     top: 6,

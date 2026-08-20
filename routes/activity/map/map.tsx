@@ -5,7 +5,6 @@ import { getCurrentPositionAsync, useBackgroundPermissions, useForegroundPermiss
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
 import { Platform, View, StyleSheet } from 'react-native';
 import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
-import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import BatteryOptimizationModal from '@Routes/activity/battery-optimization-modal/battery-optimization-modal';
 import MapKmSplit from '@S/display-activity-map/map-km-split/map-km-split';
@@ -15,7 +14,6 @@ import LocationPermissions from './location-permissions/location-permissions';
 import MapControls from './map-controls/map-controls';
 import MapNavIcon from './map-nav-icon/map-nav-icon';
 import PauseMarkers from './pause-markers/pause-markers';
-import { hasProfileData } from './profile-status';
 import { distanceInMeters } from './utils';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { Location as MapboxLocation } from '@rnmapbox/maps';
@@ -26,8 +24,9 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
     ({ location }) => location,
   );
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { isProfileFilled } = useAppSelector(({ settings }) => settings);
+  const { profileFromServer } = useAppSelector(({ profile }) => profile);
   const { colors } = useTheme();
-  const { data: profile, isLoading: isProfileLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [isLocationServicesEnabled, setIsLocationServicesEnabled] = useState(false);
   const [foregroundPermissionStatus, requestForegroundPermission] = useForegroundPermissions();
   const [backgroundPermissionStatus, requestBackgroundPermission] = useBackgroundPermissions();
@@ -40,11 +39,10 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
   const cameraRef = useRef<Camera>(null);
   const batteryOptimizationModalRef = useRef<BottomSheetModal>(null);
   const canUseLocation = Boolean(
-    foregroundPermissionStatus?.granted && backgroundPermissionStatus?.granted && hasProfileData(profile),
+    userId && foregroundPermissionStatus?.granted && backgroundPermissionStatus?.granted && isProfileFilled,
   );
   const canRenderMap = Boolean(canUseLocation && (Platform.OS !== 'android' || isLocationServicesEnabled));
-  const isLoadingLocationPrerequisites =
-    isProfileLoading || foregroundPermissionStatus === null || backgroundPermissionStatus === null;
+  const isLoadingLocationPrerequisites = foregroundPermissionStatus === null || backgroundPermissionStatus === null;
   const currentPosition: LocationObject | null = lastPosition ?? initialLocation;
   const shouldShowMapboxLocation =
     !currentPosition || !mapboxLocation || distanceInMeters(currentPosition, mapboxLocation) > 10;
@@ -103,7 +101,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
               onUpdate={setMapboxLocation}
               {...(Platform.OS === 'android' ? { androidRenderMode: 'compass' as const } : {})}
             />
-            <MapNavIcon profilePhoto={profile?.profilePhoto} />
+            <MapNavIcon profilePhoto={profileFromServer?.profilePhoto} />
             <Camera
               ref={cameraRef}
               followUserLocation={shouldFollowUserLocation}

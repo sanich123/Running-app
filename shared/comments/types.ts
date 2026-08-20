@@ -1,4 +1,5 @@
-import type { RefObject } from 'react';
+import type { ReactNode, RefObject } from 'react';
+import type { StyleProp, ViewStyle } from 'react-native';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { ProfileType } from '@S/card/types';
 
@@ -47,10 +48,13 @@ export type CommentsViewState = 'loading' | 'empty' | 'loaded' | 'error';
 export interface CommentsProps extends CommentModalProps {
   onViewStateChange?: (state: CommentsViewState) => void;
   showEmptyState?: boolean;
+  isBottomSheet?: boolean;
+  headerComponent?: ReactNode;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
 export interface CommentsLoadMoreButtonProps {
-  take: number;
-  increaseTakeNumber: (arg: number) => void;
-  commentsLength: number;
+  onPress: () => void;
+  isLoading: boolean;
+  isError: boolean;
 }

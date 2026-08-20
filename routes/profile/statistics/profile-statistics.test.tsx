@@ -15,6 +15,7 @@ describe('ProfileStatistics', () => {
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/statistics/${MOCK_SERVER_IDS.userId}/all`, loadingResponse));
     await renderWithProviders(<ProfileStatistics whosProfile={MOCK_SERVER_IDS.userId} />);
+    expect(screen.getAllByTestId('month-statistics-skeleton')).toHaveLength(3);
     expect(screen.queryByText(`${MOCK_SERVER_STATISTICS.all.totalItems}`)).not.toBeOnTheScreen();
   });
   it('renders success state', async () => {

@@ -2,11 +2,15 @@ import { LANGUAGES } from '@const/enums';
 
 export const COMMENT_INPUT = {
   [LANGUAGES.english]: {
+    cancel: 'Cancel',
+    editingLabel: 'Edit comment',
     label: 'Comment',
     placeholder: 'Add a comment',
     errorSending: 'An error occured while sending a comment',
   },
   [LANGUAGES.russian]: {
+    cancel: 'Отмена',
+    editingLabel: 'Редактирование комментария',
     label: 'Комментарий',
     placeholder: 'Добавьте комментарий',
     errorSending: 'Во время отправки комментария произошла ошибка',

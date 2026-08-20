@@ -35,6 +35,8 @@ describe('Card metrics', () => {
     [getSpeedInMinsInKm(MOCK_DISTANCE, MOCK_DURATION).paceAsString, formatDuration(MOCK_DURATION)].map((metric) =>
       expect(screen.getByText(new RegExp(`${metric}`, 'i'))).toBeOnTheScreen(),
     );
+    expect(screen.getByText('some description')).toBeOnTheScreen();
+    expect(screen.queryByText('Description')).not.toBeOnTheScreen();
   });
 
   it('opens the full activity when the metrics are pressed', async () => {
