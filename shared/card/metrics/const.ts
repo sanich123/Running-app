@@ -6,13 +6,11 @@ export const CARD_METRICS = {
     pace: 'Pace',
     time: 'Time',
     km: 'km',
-    description: 'Description',
   },
   [LANGUAGES.russian]: {
     distance: 'Дистанция',
     pace: 'Темп',
     time: 'Время',
     km: 'км',
-    description: 'Описание',
   },
 } as const;

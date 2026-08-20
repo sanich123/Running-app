@@ -3,13 +3,11 @@ import { View, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import { Button, Icon, Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
-import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import BackgroundLocationModal from '@Routes/activity/background-location-modal/background-location-modal';
 import BackgroundLocationSwitcher from '@Routes/activity/background-location-switcher/background-location-switcher';
 import ForegroundLocationSwitcher from '@Routes/activity/foregroud-location-switcher/foreground-location-switcher';
 import LocationSettingsSwitcher from '@Routes/activity/location-settings-switcher/location-settings-switcher';
-import { hasProfileData } from '../profile-status';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { LocationPermissionsProps } from '@Routes/activity/types';
 
@@ -25,7 +23,7 @@ export default function LocationPermissions({
   const { colors } = useTheme();
   const backgroundLocationEnabledModalRef = useRef<BottomSheetModal>(null);
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { data: profile, isSuccess, isError, refetch } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const { isProfileFilled } = useAppSelector(({ settings }) => settings);
   return (
     <View style={[styles.container, { backgroundColor: colors.background }, isMapVisible && { height: '60%' }]}>
       {!isLocationEnabled && (
@@ -43,7 +41,7 @@ export default function LocationPermissions({
           backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}
         />
       )}
-      {isSuccess && !hasProfileData(profile) && (
+      {!isProfileFilled && userId && (
         <View
           style={[
             styles.profileNotice,
@@ -70,7 +68,7 @@ export default function LocationPermissions({
           </View>
         </View>
       )}
-      {(isError || !userId) && (
+      {!userId && (
         <View
           testID="profile-check-error"
           style={[
@@ -87,16 +85,6 @@ export default function LocationPermissions({
             <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
               Карта и запись активности появятся после проверки профиля. Проверьте интернет и попробуйте ещё раз.
             </Text>
-            {isError && (
-              <Button
-                mode="contained-tonal"
-                compact
-                icon="refresh"
-                style={styles.profileNoticeButton}
-                onPress={refetch}>
-                Повторить
-              </Button>
-            )}
           </View>
         </View>
       )}

@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { persistStore, persistReducer } from 'redux-persist';
 import { appStorage } from '@U/storage/storage';
+import { createProfileListenerMiddleware } from './middleware/profile-listener';
 import { runichApi } from './runich-api/runich-api';
 import activity from './slices/activity/activity';
 import auth from './slices/auth/auth';
@@ -37,6 +38,7 @@ export const RESET_STORE = 'app/resetStore';
 export const resetStore = () => ({ type: RESET_STORE });
 
 type AppState = ReturnType<typeof appReducer>;
+const profileListenerMiddleware = createProfileListenerMiddleware();
 const persistedReducer = persistReducer(persistConfig, appReducer);
 const rootReducer: Reducer<AppState, Action> = (state, action) =>
   (persistedReducer as unknown as Reducer<AppState, Action>)(action.type === RESET_STORE ? undefined : state, action);
@@ -46,7 +48,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(runichApi.middleware),
+    }).concat(profileListenerMiddleware.middleware, runichApi.middleware),
 });
 setupListeners(store.dispatch);
 export const persistor = persistStore(store);

@@ -1,4 +1,5 @@
-import { act, screen } from '@testing-library/react-native';
+import type { ReactNode } from 'react';
+import { screen, userEvent } from '@testing-library/react-native';
 import { http } from 'msw';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
@@ -8,22 +9,7 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CommentFullViewPage from './comment-page';
 
-let mockFabOnPress: () => void;
-let mockFabIcon = '';
-
 jest.mock('expo-router', () => ({ useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }) }));
-jest.mock('react-native-paper', () => {
-  const actual = jest.requireActual('react-native-paper');
-  const { View } = jest.requireActual('react-native');
-  return {
-    ...actual,
-    FAB: ({ icon, onPress }: { icon: string; onPress: () => void }) => {
-      mockFabOnPress = onPress;
-      mockFabIcon = icon;
-      return <View testID="floatingBtn" />;
-    },
-  };
-});
 jest.mock('@S/card/like-btn/like-btn', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="comment-like-button" />;
@@ -46,7 +32,12 @@ jest.mock('@Routes/comment-page/user-sport-date/user-sport-date', () => {
 });
 jest.mock('@S/comments/comments/comments', () => {
   const { View } = jest.requireActual('react-native');
-  return () => <View testID="comments-list" />;
+  return ({ headerComponent }: { headerComponent?: ReactNode }) => (
+    <View>
+      <View testID="comments-list" />
+      {headerComponent}
+    </View>
+  );
 });
 jest.mock('@S/comments/comment-input/comment-input', () => {
   const { View } = jest.requireActual('react-native');
@@ -61,11 +52,11 @@ describe('CommentFullViewPage', () => {
   });
 
   it('renders server activity and opens the comment input', async () => {
+    const user = userEvent.setup();
     await renderWithProviders(<CommentFullViewPage />);
     expect(await screen.findByText(MOCK_SERVER_ACTIVITY.title)).toBeOnTheScreen();
     expect(screen.getByTestId('floatingBtn')).toBeOnTheScreen();
-    expect(mockFabIcon).toBe('plus');
-    await act(async () => mockFabOnPress());
+    await user.press(screen.getByTestId('floatingBtn'));
     expect(await screen.findByTestId('comment-input')).toBeOnTheScreen();
   });
 

@@ -124,7 +124,8 @@ export interface CommentResponse {
 
 export interface CommentsResponse {
   comments: CommentResponse[];
-  allCommentsLength: number;
+  hasMore: boolean;
+  nextCursor: string | null;
 }
 
 export interface CommentLikeResponse {

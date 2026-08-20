@@ -3,7 +3,7 @@ import { runichApi } from '@R/runich-api/runich-api';
 import type { FilteredProfilesResponse, ProfileResponse, SendProfile } from './types';
 const { profile, user } = Routes;
 
-const profileApi = runichApi.injectEndpoints({
+export const profileApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getUserProfileByUserId: builder.query<ProfileResponse | null, string>({

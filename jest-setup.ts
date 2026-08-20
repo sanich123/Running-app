@@ -87,6 +87,7 @@ jest.mock('expo-image', () => {
   return { __esModule: true, default: Image, Image };
 });
 jest.mock('@gorhom/bottom-sheet', () => {
+  const { createElement } = jest.requireActual('react');
   const reactNative = jest.requireActual('react-native');
   const { View, FlatList, ScrollView, TextInput, TouchableOpacity } = reactNative;
 
@@ -94,8 +95,15 @@ jest.mock('@gorhom/bottom-sheet', () => {
     __esModule: true,
     default: View,
     BottomSheetTextInput: TextInput,
-    BottomSheetModal: View,
+    BottomSheetModal: ({ children, footerComponent: FooterComponent }: any) =>
+      createElement(
+        View,
+        null,
+        children,
+        FooterComponent ? createElement(FooterComponent, { animatedFooterPosition: { get: () => 0 } }) : null,
+      ),
     BottomSheetModalProvider: View,
+    BottomSheetFooter: ({ children }: any) => createElement(View, null, children),
     BottomSheetFlatList: FlatList,
     BottomSheetView: View,
     BottomSheetScrollView: ScrollView,

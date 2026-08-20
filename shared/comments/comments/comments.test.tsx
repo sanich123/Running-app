@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
@@ -64,5 +64,40 @@ describe('Comments', () => {
     expect(
       await screen.findByText(new RegExp(`${getHoursMinutes(MOCK_COMMENTS[0].date, LANGUAGES.russian)}`, 'i')),
     ).toBeOnTheScreen();
+  });
+
+  it('loads the next cursor page when the user returns to the top', async () => {
+    const requests: string[] = [];
+    server.use(
+      http.get(`${BASE_URL}/comment/someActivityId`, ({ request }) => {
+        requests.push(request.url);
+        const cursor = new URL(request.url).searchParams.get('cursor');
+        return HttpResponse.json(
+          cursor
+            ? { comments: [MOCK_COMMENTS[1]], hasMore: false, nextCursor: null }
+            : { comments: [MOCK_COMMENTS[0]], hasMore: true, nextCursor: 'older-cursor' },
+        );
+      }),
+    );
+
+    await renderWithProviders(
+      <Comments commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }} />,
+      { store: mockStore },
+    );
+    const commentsList = await screen.findByTestId('comments-list');
+
+    await act(async () =>
+      fireEvent.scroll(commentsList, {
+        nativeEvent: { contentOffset: { y: 100 }, layoutMeasurement: { height: 400 }, contentSize: { height: 800 } },
+      }),
+    );
+    await act(async () =>
+      fireEvent.scroll(commentsList, {
+        nativeEvent: { contentOffset: { y: 0 }, layoutMeasurement: { height: 400 }, contentSize: { height: 800 } },
+      }),
+    );
+
+    await waitFor(() => expect(requests).toHaveLength(2));
+    expect(new URL(requests[1]).searchParams.get('cursor')).toBe('older-cursor');
   });
 });

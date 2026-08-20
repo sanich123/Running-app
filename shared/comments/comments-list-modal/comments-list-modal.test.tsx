@@ -43,6 +43,7 @@ describe('comments list modal', () => {
     await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} commentsLength={0} />);
     expect(screen.queryByTestId('comments-list')).not.toBeOnTheScreen();
     expect(screen.getByText('Комментариев пока нет')).toBeOnTheScreen();
+    expect(screen.getByTestId('comments-composer')).toBeOnTheScreen();
     expect(screen.getByTestId('comments-add')).toBeOnTheScreen();
     expect(screen.queryByTestId('comments-input')).not.toBeOnTheScreen();
   });
@@ -51,6 +52,7 @@ describe('comments list modal', () => {
     mockCommentsViewState = 'empty';
     await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} />);
     expect(screen.getByText('Комментариев пока нет')).toBeOnTheScreen();
+    expect(screen.getByTestId('comments-composer')).toBeOnTheScreen();
     expect(screen.getByTestId('comments-add')).toBeOnTheScreen();
     expect(screen.queryByTestId('comments-input')).not.toBeOnTheScreen();
 

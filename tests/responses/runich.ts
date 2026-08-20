@@ -134,7 +134,8 @@ export const MOCK_SERVER_COMMENTS = {
       commentLike: [{ authorId: 'e49287d2-ec4e-4164-8dc2-02165218f849', id: '3de0b97b-1803-4f98-b6db-dc183ffff7f7' }],
     },
   ],
-  allCommentsLength: 3,
+  hasMore: false,
+  nextCursor: null,
 } as const;
 
 export const MOCK_SERVER_COMMENT_LIKES = MOCK_SERVER_COMMENTS.comments[0].commentLike;

@@ -37,7 +37,12 @@ export default function Comment({
       </View>
       <View style={styles.textCommentWrapper}>
         {idOfUpdatingComment === id ? (
-          <CommentInput profile={profile} commentToUpdate={comment} commentId={id} />
+          <CommentInput
+            profile={profile}
+            commentToUpdate={comment}
+            commentId={id}
+            commentsModalRef={commentsModalRef}
+          />
         ) : (
           <Text variant="bodyLarge">{comment}</Text>
         )}
@@ -47,7 +52,7 @@ export default function Comment({
           <CommentLikeBtn commentId={id} commentLikesFromComment={commentLike} profile={profile} comment={comment} />
           <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
         </View>
-        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <View style={styles.actions}>
           {isYouAuthor && <CommentEditBtn commentId={id} idOfUpdatingComment={idOfUpdatingComment} />}
           {isYouAuthor && <CommentDeleteBtn commentId={id} activityId={commentActivityId} />}
         </View>
@@ -75,6 +80,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  actions: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 6,
+    paddingRight: 10,
   },
   dateTimeWrapper: {
     display: 'flex',

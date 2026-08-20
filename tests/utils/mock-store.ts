@@ -8,6 +8,7 @@ import mainFeed from '@R/slices/main-feed/main-feed';
 import network from '@R/slices/network/network';
 import profile from '@R/slices/profile/profile';
 import settings from '@R/slices/settings/settings';
+import { createProfileListenerMiddleware } from '../../redux/middleware/profile-listener';
 import { runichApi } from '../../redux/runich-api/runich-api';
 
 const rootReducer = combineReducers({
@@ -26,7 +27,11 @@ const rootReducer = combineReducers({
 export const mockStore = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware({ serializableCheck: false }).concat(runichApi.middleware);
+    const profileListenerMiddleware = createProfileListenerMiddleware();
+    return getDefaultMiddleware({ serializableCheck: false }).concat(
+      profileListenerMiddleware.middleware,
+      runichApi.middleware,
+    );
   },
 });
 

@@ -2,6 +2,7 @@ import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { getCurrentPositionAsync } from 'expo-location';
 import { setUserId } from '@R/slices/auth/auth';
 import { resetLocationSlice, setInitialLocation } from '@R/slices/location/location';
+import { setIsProfileFilled } from '@R/slices/settings/settings';
 import * as infoToastModule from '@S/info-toast/info-toast';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore } from '@T/utils/mock-store';
@@ -33,6 +34,8 @@ describe('activity recording map', () => {
   beforeEach(() => {
     mockSetCamera.mockClear();
     mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setIsProfileFilled(true));
   });
 
   it('shows a warning when location accuracy is worse than 50 meters', async () => {

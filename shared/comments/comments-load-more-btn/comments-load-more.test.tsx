@@ -3,13 +3,11 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import CommentsLoadMoreBtn from './comments-load-more';
 
 describe('comments load more', () => {
-  it('requests the next ten comments', async () => {
+  it('retries a failed comments page', async () => {
     const user = userEvent.setup();
-    const increaseTakeNumber = jest.fn();
-    await renderWithProviders(
-      <CommentsLoadMoreBtn take={10} commentsLength={27} increaseTakeNumber={increaseTakeNumber} />,
-    );
+    const onPress = jest.fn();
+    await renderWithProviders(<CommentsLoadMoreBtn onPress={onPress} isLoading={false} isError />);
     await user.press(screen.getByTestId('comments-load-more'));
-    expect(increaseTakeNumber).toHaveBeenCalledWith(20);
+    expect(onPress).toHaveBeenCalledTimes(1);
   });
 });

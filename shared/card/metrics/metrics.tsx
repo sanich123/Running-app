@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { usePathname, useRouter } from 'expo-router';
-import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
@@ -57,18 +57,11 @@ export default memo(function Metrics({
             style={[
               styles.descriptionCard,
               {
-                backgroundColor: colors.primaryContainer,
+                backgroundColor: colors.background,
                 borderColor: colors.outlineVariant,
-                borderLeftColor: colors.primary,
               },
             ]}>
-            <View style={styles.descriptionHeader}>
-              <Icon source="text-box-outline" size={19} color={colors.primary} />
-              <Text variant="labelLarge" style={[styles.descriptionLabel, { color: colors.primary }]}>
-                {CARD_METRICS[language].description}
-              </Text>
-            </View>
-            <Text variant="bodyLarge" style={[styles.descriptionText, { color: colors.onSurfaceVariant }]}>
+            <Text variant="bodyLarge" style={[styles.descriptionText, { color: colors.onBackground }]}>
               {description}
             </Text>
           </View>
@@ -90,22 +83,11 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   descriptionCard: {
-    borderLeftWidth: 3,
     borderRadius: 14,
     borderWidth: 1,
     marginTop: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
-  },
-  descriptionHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 6,
-    marginBottom: 5,
-  },
-  descriptionLabel: {
-    fontFamily: FONT_FAMILIES.semiBold,
-    letterSpacing: 0.4,
   },
   descriptionText: {
     lineHeight: 23,
