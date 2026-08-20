@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Card, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
@@ -13,10 +13,10 @@ import UserSportDate from '@Routes/comment-page/user-sport-date/user-sport-date'
 import LikeBtn from '@S/card/like-btn/like-btn';
 import { LikesSize } from '@S/card/likes/const';
 import Likes from '@S/card/likes/likes';
+import MediaList from '@S/card/media-list/media-list';
 import CommentAddBtn from '@S/comments/comment-add-btn/comment-add-btn';
 import CommentInput from '@S/comments/comment-input/comment-input';
 import Comments from '@S/comments/comments/comments';
-import MediaList from '@S/card/media-list/media-list';
 import ErrorComponent from '@S/error-component/error-component';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';

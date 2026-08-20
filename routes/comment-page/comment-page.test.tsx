@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { http } from 'msw';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
@@ -7,7 +8,6 @@ import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CommentFullViewPage from './comment-page';
-import type { ReactNode } from 'react';
 
 jest.mock('expo-router', () => ({ useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }) }));
 jest.mock('@S/card/like-btn/like-btn', () => {

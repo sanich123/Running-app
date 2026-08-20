@@ -1,5 +1,4 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { createProfileListenerMiddleware } from '../../redux/middleware/profile-listener';
 import activity from '@R/slices/activity/activity';
 import auth from '@R/slices/auth/auth';
 import comment from '@R/slices/comment/comment';
@@ -9,6 +8,7 @@ import mainFeed from '@R/slices/main-feed/main-feed';
 import network from '@R/slices/network/network';
 import profile from '@R/slices/profile/profile';
 import settings from '@R/slices/settings/settings';
+import { createProfileListenerMiddleware } from '../../redux/middleware/profile-listener';
 import { runichApi } from '../../redux/runich-api/runich-api';
 
 const rootReducer = combineReducers({

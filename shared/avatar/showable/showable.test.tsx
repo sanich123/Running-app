@@ -1,5 +1,5 @@
-import { http } from 'msw';
 import { screen } from '@testing-library/react-native';
+import { http } from 'msw';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { loadingResponse } from '@T/utils/response-states';

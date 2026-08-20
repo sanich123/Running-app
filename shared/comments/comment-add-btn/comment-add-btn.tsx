@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
+import { LANGUAGES } from '@const/enums';
 import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { LANGUAGES } from '@const/enums';
 
 export default function CommentAddBtn() {
   const dispatch = useAppDispatch();
