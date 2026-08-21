@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { Animated } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import {
   useSendLikeToCommentMutation,
@@ -34,6 +35,24 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
     ? whatCommentLikesToIterate.filter(({ authorId }: { authorId: string }) => authorId === userId)
     : [];
   const hasLikesFromOthers = !!whatCommentLikesToIterate.length && !youGaveCommentLike.length;
+  const [likeScale] = useState(() => new Animated.Value(1));
+
+  const animateLike = useCallback(() => {
+    Animated.sequence([
+      Animated.spring(likeScale, {
+        toValue: 0.82,
+        useNativeDriver: true,
+        speed: 30,
+        bounciness: 4,
+      }),
+      Animated.spring(likeScale, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 20,
+        bounciness: 8,
+      }),
+    ]).start();
+  }, [likeScale]);
 
   useEffect(() => {
     if (isSuccessSending || isSuccessDeleting) {
@@ -67,24 +86,27 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
   ]);
 
   return (
-    <IconButton
-      testID={`commentLikeBtn${youGaveCommentLike?.length ? '-active' : ''}`}
-      icon={whatCommentLikesToIterate.length ? 'cards-heart' : 'cards-heart-outline'}
-      size={youGaveCommentLike.length ? 24 : 20}
-      iconColor={youGaveCommentLike.length ? colors.primary : hasLikesFromOthers ? colors.secondary : colors.primary}
-      onPress={async () => {
-        try {
-          if (youGaveCommentLike?.length) {
-            await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap();
-          } else {
-            await sendLikeToComment({ body: { commentId }, commentId }).unwrap();
+    <Animated.View style={{ transform: [{ scale: likeScale }] }}>
+      <IconButton
+        testID={`commentLikeBtn${youGaveCommentLike?.length ? '-active' : ''}`}
+        icon={whatCommentLikesToIterate.length ? 'cards-heart' : 'cards-heart-outline'}
+        size={youGaveCommentLike.length ? 24 : 20}
+        iconColor={youGaveCommentLike.length ? colors.primary : hasLikesFromOthers ? colors.secondary : colors.primary}
+        onPress={async () => {
+          animateLike();
+          try {
+            if (youGaveCommentLike?.length) {
+              await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap();
+            } else {
+              await sendLikeToComment({ body: { commentId }, commentId }).unwrap();
+            }
+          } catch (error) {
+            errorToast(COMMENT_LIKE_BTN[language].errorSending, error);
           }
-        } catch (error) {
-          errorToast(COMMENT_LIKE_BTN[language].errorSending, error);
-        }
-      }}
-      disabled={isLoadingLikes || isErrorToGetLikes}
-      loading={isSendingLike || isDeletingLike}
-    />
+        }}
+        disabled={isLoadingLikes || isErrorToGetLikes}
+        loading={isSendingLike || isDeletingLike}
+      />
+    </Animated.View>
   );
 }

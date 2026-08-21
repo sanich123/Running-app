@@ -1,4 +1,5 @@
-import { useContext, useEffect, memo } from 'react';
+import { useCallback, useContext, useEffect, memo, useState } from 'react';
+import { Animated } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
 import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/services/likes/likes';
@@ -36,6 +37,24 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
 
   const isLikedByYou = likesList.filter(({ authorId }) => authorId === userId);
   const hasLikesFromOthers = likesList.length > 0 && !isLikedByYou.length;
+  const [likeScale] = useState(() => new Animated.Value(1));
+
+  const animateLike = useCallback(() => {
+    Animated.sequence([
+      Animated.spring(likeScale, {
+        toValue: 0.82,
+        useNativeDriver: true,
+        speed: 30,
+        bounciness: 4,
+      }),
+      Animated.spring(likeScale, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 20,
+        bounciness: 8,
+      }),
+    ]).start();
+  }, [likeScale]);
 
   useEffect(() => {
     if (isSuccessSending && profile?.emailNotifications && profile.users?.email) {
@@ -52,27 +71,30 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
   }, [isSuccessSending, mapPhotoUrl, name, profile, profilePhoto, sendEmailNotification, surname]);
 
   return (
-    <IconButton
-      testID={isLikedByYou.length > 0 ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
-      icon={isLikedByYou.length || hasLikesFromOthers ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
-      iconColor={
-        isError ? colors.error : isLikedByYou.length || !hasLikesFromOthers ? colors.primary : colors.secondary
-      }
-      size={isLikedByYou.length ? 29 : 25}
-      onPress={async () => {
-        if (userId) {
-          try {
-            if (isLikedByYou.length > 0) {
-              await deleteLike({ id: isLikedByYou[0].id, activityId }).unwrap();
-            } else {
-              await sendLike({ activityId, authorId: userId, profilePhoto: profilePhoto ?? '' }).unwrap();
-            }
-          } catch (error) {
-            errorToast(LIKE_BTN[language].errorAction(isLikedByYou.length ? 'delete' : 'send'), error);
-          }
+    <Animated.View style={{ transform: [{ scale: likeScale }] }}>
+      <IconButton
+        testID={isLikedByYou.length > 0 ? CARD_LIKE_BTN_TEST_ID_LIKED : CARD_LIKE_BTN_TEST_ID_NOT_LIKED}
+        icon={isLikedByYou.length || hasLikesFromOthers ? CARD_LIKE_BTN_ICON_LIKED : CARD_LIKE_BTN_ICON_NOT_LIKED}
+        iconColor={
+          isError ? colors.error : isLikedByYou.length || !hasLikesFromOthers ? colors.primary : colors.secondary
         }
-      }}
-      disabled={isLoading || isDisabled || isError || isLikesLoading}
-    />
+        size={isLikedByYou.length ? 29 : 25}
+        onPress={async () => {
+          if (userId) {
+            animateLike();
+            try {
+              if (isLikedByYou.length > 0) {
+                await deleteLike({ id: isLikedByYou[0].id, activityId }).unwrap();
+              } else {
+                await sendLike({ activityId, authorId: userId, profilePhoto: profilePhoto ?? '' }).unwrap();
+              }
+            } catch (error) {
+              errorToast(LIKE_BTN[language].errorAction(isLikedByYou.length ? 'delete' : 'send'), error);
+            }
+          }
+        }}
+        disabled={isLoading || isDisabled || isError || isLikesLoading}
+      />
+    </Animated.View>
   );
 });

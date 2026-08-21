@@ -1,5 +1,5 @@
-import type { RefObject } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { useEffect, useState, type RefObject } from 'react';
+import { Animated, View, StyleSheet } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { UserInfoSize } from '@S/card/user-info/const';
@@ -24,8 +24,26 @@ export default function Comment({
   const { idOfUpdatingComment, commentActivityId } = useAppSelector(({ comment }) => comment);
   const { userId } = useAppSelector(({ auth }) => auth);
   const isYouAuthor = userId === authorId;
+  const [commentAnimation] = useState(() => new Animated.Value(0));
+
+  useEffect(() => {
+    Animated.timing(commentAnimation, {
+      toValue: 1,
+      duration: 220,
+      useNativeDriver: true,
+    }).start();
+  }, [commentAnimation]);
+
   return (
-    <>
+    <Animated.View
+      style={{
+        opacity: commentAnimation,
+        transform: [
+          {
+            translateY: commentAnimation.interpolate({ inputRange: [0, 1], outputRange: [8, 0] }),
+          },
+        ],
+      }}>
       <View style={{ padding: 10 }}>
         <UserInfo
           profile={profile}
@@ -37,12 +55,7 @@ export default function Comment({
       </View>
       <View style={styles.textCommentWrapper}>
         {idOfUpdatingComment === id ? (
-          <CommentInput
-            profile={profile}
-            commentToUpdate={comment}
-            commentId={id}
-            commentsModalRef={commentsModalRef}
-          />
+          <CommentInput profile={profile} commentToUpdate={comment} commentId={id} />
         ) : (
           <Text variant="bodyLarge">{comment}</Text>
         )}
@@ -58,7 +71,7 @@ export default function Comment({
         </View>
       </View>
       <Divider />
-    </>
+    </Animated.View>
   );
 }
 

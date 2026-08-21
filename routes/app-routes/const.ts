@@ -8,7 +8,6 @@ export const LazyActivityFullViewPage = lazy(() => import('@Routes/card-full-vie
 export const LazyAvatarIconEditable = lazy(() => import('@Routes/profile/profile-settings/avatar-editable/editable'));
 export const LazyAvatarShowable = lazy(() => import('@S/avatar/showable/showable'));
 export const LazyCharts = lazy(() => import('@Routes/statistic/charts/charts'));
-export const LazyCommentFullViewPage = lazy(() => import('@Routes/comment-page/comment-page'));
 export const LazyErrorComponent = lazy(() => import('@S/error-component/error-component'));
 export const LazyGenderBtns = lazy(() => import('@Routes/profile/profile-settings/gender-btns/gender-btns'));
 export const LazyInputBio = lazy(() => import('@Routes/profile/profile-settings/input-bio/input-bio'));

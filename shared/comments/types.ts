@@ -17,7 +17,6 @@ export interface CommentInputProps {
   profile: ProfileType;
   commentToUpdate?: string;
   commentId: string;
-  commentsModalRef?: RefObject<BottomSheetModal | null>;
 }
 
 export interface CommentLikeBtnProps {

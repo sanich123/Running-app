@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { ComponentRef } from 'react';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { ActivityIndicator, Keyboard, Platform, View, StyleSheet } from 'react-native';
-import { Button, Icon, IconButton, Text, TextInput as PaperTextInput, useTheme } from 'react-native-paper';
+import { Keyboard, View, StyleSheet } from 'react-native';
+import { Button, Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import {
   usePostCommentWithActivityIdMutation,
   useUpdateCommentByCommentIdMutation,
@@ -12,16 +13,17 @@ import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-fee
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
+import { focusBottomSheetInput, getCommentInputHeight } from './utils';
 import type { CommentInputProps } from '../types';
 
 export default function CommentInput({
   commentToUpdate = '',
   commentId = '',
   profile,
-  commentsModalRef,
 }: CommentInputProps) {
   const [focused, setFocused] = useState(false);
   const [inputHeight, setInputHeight] = useState(52);
+  const bottomSheetInputRef = useRef<ComponentRef<typeof BottomSheetTextInput>>(null);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { commentActivityId, mapPhotoUrl } = useAppSelector(({ comment }) => comment);
@@ -35,7 +37,10 @@ export default function CommentInput({
   const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
   const isSending = isCommentSending || isUpdatingComment;
   const isEditing = Boolean(commentToUpdate);
-  const shouldUseBottomSheetInput = Platform.OS !== 'web' && Boolean(commentsModalRef);
+
+  useEffect(() => {
+    return focusBottomSheetInput(bottomSheetInputRef);
+  }, []);
 
   function closeInput() {
     Keyboard.dismiss();
@@ -98,68 +103,35 @@ export default function CommentInput({
         </Button>
       </View>
       <View style={styles.inputRow}>
-        {!shouldUseBottomSheetInput ? (
-          <PaperTextInput
-            testID={COMMENT_INPUT_TEST_ID}
-            mode="outlined"
-            placeholder={COMMENT_INPUT[language].placeholder}
-            value={comment}
-            style={[styles.paperInput, { backgroundColor: colors.surface, height: inputHeight }]}
-            contentStyle={styles.content}
-            outlineStyle={styles.outline}
-            outlineColor={colors.outlineVariant}
-            activeOutlineColor={colors.primary}
-            textColor={colors.onSurface}
-            left={<PaperTextInput.Icon icon="comment-outline" color={colors.primary} />}
-            onChangeText={setComment}
-            onSubmitEditing={submitComment}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            autoFocus
-            multiline
-            onContentSizeChange={({ nativeEvent }) =>
-              setInputHeight(Math.min(Math.max(nativeEvent.contentSize.height, 52), 120))
-            }
-            enterKeyHint="send"
-          />
-        ) : (
-          <>
-            <BottomSheetTextInput
-              testID={COMMENT_INPUT_TEST_ID}
-              placeholder={COMMENT_INPUT[language].placeholder}
-              value={comment}
-              style={[
-                styles.nativeInput,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: colors.primary,
-                  borderWidth: focused ? 2 : 1,
-                  color: colors.onSurface,
-                  height: inputHeight,
-                },
-              ]}
-              autoFocus
-              multiline
-              onChangeText={setComment}
-              onSubmitEditing={submitComment}
-              onFocus={() => setFocused(true)}
-              onBlur={() => setFocused(false)}
-              onContentSizeChange={({ nativeEvent }) =>
-                setInputHeight(Math.min(Math.max(nativeEvent.contentSize.height, 52), 120))
-              }
-              enterKeyHint="send"
-            />
-            <View style={styles.inputIcon}>
-              <Icon source="comment-outline" size={20} color={colors.primary} />
-            </View>
-          </>
-        )}
-        {isSending ? (
-          <View style={styles.loadingButton}>
-            <ActivityIndicator size="small" color={colors.primary} />
-          </View>
-        ) : comment.trim().length > 0 ? (
+        <BottomSheetTextInput
+          ref={bottomSheetInputRef}
+          testID={COMMENT_INPUT_TEST_ID}
+          placeholder={COMMENT_INPUT[language].placeholder}
+          value={comment}
+          style={[
+            styles.input,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.primary,
+              borderWidth: focused ? 2 : 1,
+              color: colors.onSurface,
+              height: inputHeight,
+            },
+          ]}
+          multiline
+          onChangeText={setComment}
+          onSubmitEditing={submitComment}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          onContentSizeChange={({ nativeEvent }) => setInputHeight(getCommentInputHeight(nativeEvent.contentSize.height))}
+          enterKeyHint="send"
+        />
+        <View style={styles.inputIcon}>
+          <Icon source="comment-outline" size={20} color={colors.primary} />
+        </View>
+        {comment.trim().length > 0 ? (
           <IconButton
+            loading={isSending}
             testID={COMMENT_ICON_TEST_ID}
             icon="send"
             iconColor={colors.primary}
@@ -191,12 +163,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     position: 'relative',
   },
-  paperInput: {
-    fontSize: 15,
-    minHeight: 52,
-    width: '100%',
-  },
-  nativeInput: {
+  input: {
     borderRadius: 8,
     fontSize: 16,
     minHeight: 52,
@@ -206,12 +173,6 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     width: '100%',
   },
-  content: {
-    paddingRight: 42,
-  },
-  outline: {
-    borderRadius: 8,
-  },
   inputIcon: {
     left: 12,
     position: 'absolute',
@@ -220,15 +181,6 @@ const styles = StyleSheet.create({
   sendButton: {
     height: 40,
     margin: 0,
-    position: 'absolute',
-    right: 4,
-    top: 6,
-    width: 40,
-  },
-  loadingButton: {
-    alignItems: 'center',
-    height: 40,
-    justifyContent: 'center',
     position: 'absolute',
     right: 4,
     top: 6,

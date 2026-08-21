@@ -1,12 +1,12 @@
-import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { setActivityOwnerProfile, setCommentActivityId } from '@R/slices/comment/comment';
-import CommentFullViewPage from '@Routes/comment-page/comment-page';
 import LikesList from '@Routes/likes-list/likes-list';
 import MapPage from '@Routes/map-page/map-page';
 import ActivityCard from '@S/card/card';
+import CommentBtn from '@S/card/comment-btn/comment-btn';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '@S/card/like-btn/const';
 import LikeBtn from '@S/card/like-btn/like-btn';
 import { COMMENT_INPUT_TEST_ID, COMMENT_ICON_TEST_ID } from '@S/comments/comment-input/const';
@@ -141,7 +141,13 @@ describe('activity and social integration flows', () => {
     );
 
     const user = userEvent.setup();
-    await renderWithProviders(<CommentFullViewPage />);
+    await renderWithProviders(
+      <CommentBtn
+        activityId={MOCK_SERVER_IDS.activityId}
+        commentsLength={MOCK_SERVER_ACTIVITY._count.comments}
+        profile={MOCK_SERVER_ACTIVITY.profile}
+      />,
+    );
     expect(await screen.findByText('Вдохновляет на свою пробежку.')).toBeOnTheScreen();
 
     await user.press(await screen.findByTestId('commentLikeBtn'));
@@ -149,7 +155,7 @@ describe('activity and social integration flows', () => {
     expect(await screen.findByTestId('commentLikeBtn-active')).toBeOnTheScreen();
 
     await user.press(screen.getByTestId('floatingBtn'));
-    await fireEvent.changeText(await screen.findByTestId(COMMENT_INPUT_TEST_ID), 'Новый комментарий');
+    await user.type(await screen.findByTestId(COMMENT_INPUT_TEST_ID), 'Новый комментарий');
     await user.press(screen.getByTestId(COMMENT_ICON_TEST_ID));
     await waitFor(() => expect(commentBody).toEqual({ comment: 'Новый комментарий' }));
   });
