@@ -16,11 +16,7 @@ import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './co
 import { focusBottomSheetInput, getCommentInputHeight } from './utils';
 import type { CommentInputProps } from '../types';
 
-export default function CommentInput({
-  commentToUpdate = '',
-  commentId = '',
-  profile,
-}: CommentInputProps) {
+export default function CommentInput({ commentToUpdate = '', commentId = '', profile }: CommentInputProps) {
   const [focused, setFocused] = useState(false);
   const [inputHeight, setInputHeight] = useState(52);
   const bottomSheetInputRef = useRef<ComponentRef<typeof BottomSheetTextInput>>(null);
@@ -123,7 +119,9 @@ export default function CommentInput({
           onSubmitEditing={submitComment}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          onContentSizeChange={({ nativeEvent }) => setInputHeight(getCommentInputHeight(nativeEvent.contentSize.height))}
+          onContentSizeChange={({ nativeEvent }) =>
+            setInputHeight(getCommentInputHeight(nativeEvent.contentSize.height))
+          }
           enterKeyHint="send"
         />
         <View style={styles.inputIcon}>
