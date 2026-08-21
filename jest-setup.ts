@@ -35,6 +35,16 @@ jest.mock('redux-persist', () => {
 
 jest.mock('expo-font');
 jest.mock('expo-asset');
+jest.mock('expo-speech', () => ({
+  getAvailableVoicesAsync: jest.fn(() =>
+    Promise.resolve([
+      { identifier: 'mock-russian-voice', language: 'ru-RU', name: 'Mock Russian voice', quality: 'Default' },
+      { identifier: 'mock-english-voice', language: 'en-US', name: 'Mock English voice', quality: 'Default' },
+    ]),
+  ),
+  speak: jest.fn(),
+  stop: jest.fn(),
+}));
 jest.mock('expo-media-library', () => ({
   getPermissionsAsync: jest.fn(() => Promise.resolve({ granted: true })),
   requestPermissionsAsync: jest.fn(() => Promise.resolve({ granted: true })),

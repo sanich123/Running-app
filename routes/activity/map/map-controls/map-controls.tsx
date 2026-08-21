@@ -1,21 +1,15 @@
 import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
-import { infoToast } from '@S/info-toast/info-toast';
-import { LOCATION_ACCURACY_WARNING } from './const';
 import type { MapControlsProps } from './types';
 
 export default function MapControls({
   cameraRef,
   mapZoomLevel,
   isCenteringOnCurrentLocation,
-  hasPoorLocationAccuracy,
-  locationAccuracy,
   onZoomLevelChange,
   onFollowUserLocationChange,
   onCenterOnCurrentLocation,
 }: MapControlsProps) {
   const { colors } = useTheme();
-  const { language } = useAppSelector(({ settings }) => settings);
 
   const changeZoom = (nextZoomLevel: number) => {
     onZoomLevelChange(nextZoomLevel);
@@ -25,18 +19,6 @@ export default function MapControls({
 
   return (
     <>
-      {hasPoorLocationAccuracy && (
-        <IconButton
-          testID="poor-location-accuracy"
-          mode="contained-tonal"
-          icon="map-marker-alert-outline"
-          iconColor={colors.error}
-          containerColor={colors.surface}
-          size={24}
-          onPress={() => infoToast(LOCATION_ACCURACY_WARNING[language](Math.round(locationAccuracy)))}
-          accessibilityLabel="Низкая точность геопозиции"
-        />
-      )}
       <IconButton
         testID="increase-map-zoom"
         mode="contained-tonal"

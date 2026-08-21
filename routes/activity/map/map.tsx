@@ -46,7 +46,6 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
   const currentPosition: LocationObject | null = lastPosition ?? initialLocation;
   const shouldShowMapboxLocation =
     !currentPosition || !mapboxLocation || distanceInMeters(currentPosition, mapboxLocation) > 10;
-  const hasPoorLocationAccuracy = (currentPosition?.coords.accuracy ?? 0) > 50;
   useEffect(() => {
     onLocationReadinessChange(canUseLocation);
   }, [canUseLocation, onLocationReadinessChange]);
@@ -117,8 +116,6 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
               cameraRef={cameraRef}
               mapZoomLevel={mapZoomLevel}
               isCenteringOnCurrentLocation={isCenteringOnCurrentLocation}
-              hasPoorLocationAccuracy={hasPoorLocationAccuracy}
-              locationAccuracy={currentPosition?.coords.accuracy ?? 0}
               onZoomLevelChange={setMapZoomLevel}
               onFollowUserLocationChange={setShouldFollowUserLocation}
               onCenterOnCurrentLocation={centerMapOnCurrentLocation}

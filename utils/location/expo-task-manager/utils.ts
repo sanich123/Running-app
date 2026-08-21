@@ -15,7 +15,9 @@ import {
   setLocationsFromBackground,
   setLocationsWhenContinued,
 } from '@R/slices/location/location';
+import { getActivitySettings } from '@R/slices/settings/settings';
 import { store } from '@R/store';
+import { speakActivityReminder, speakCompletedKilometer } from '@U/speech/activity-voice';
 import {
   getDistance,
   getElevationGainBetweenLocations,
@@ -25,6 +27,27 @@ import {
   getSpeedInMinsInKm,
 } from '../location-utils';
 import type { LocationObject } from 'expo-location';
+
+export function getCompletedReminderCount(
+  previousMovingDuration: number,
+  currentMovingDuration: number,
+  intervalMinutes: number,
+) {
+  const intervalMilliseconds = intervalMinutes * 60_000;
+  if (
+    !Number.isFinite(previousMovingDuration) ||
+    !Number.isFinite(currentMovingDuration) ||
+    !Number.isFinite(intervalMilliseconds) ||
+    intervalMilliseconds <= 0 ||
+    currentMovingDuration <= previousMovingDuration
+  ) {
+    return 0;
+  }
+
+  return (
+    Math.floor(currentMovingDuration / intervalMilliseconds) - Math.floor(previousMovingDuration / intervalMilliseconds)
+  );
+}
 
 export function getMetricsTaskManager(currentPosition: LocationObject) {
   const { locationsWithPauses } = store.getState().location;
@@ -61,6 +84,15 @@ export function saveMetricsToStoreTaskManager(
   previousPosition: LocationObject | null,
 ) {
   const { sport } = store.getState().activity;
+  const { duration: totalMovingDuration, kilometresSplit: completedKilometres } = store.getState().location;
+  const { language } = store.getState().settings;
+  const {
+    activityVoiceEnabled,
+    activityVoiceMetrics,
+    activityVoiceIdentifier,
+    activityReminderEnabled,
+    activityReminders,
+  } = getActivitySettings(store.getState().settings);
   const speedInKmPerHour = getSpeedInKmPerHour(currentDistance, currentDuration);
   const maxSpeedInKmPerHour = getMaxTrackingSpeedForSport(sport);
 
@@ -69,6 +101,19 @@ export function saveMetricsToStoreTaskManager(
     store.dispatch(setTooMuchSpeed(speedInKmPerHour));
     store.dispatch(setTooMuchSpeedTimestamp(currentPosition.timestamp));
     return false;
+  }
+
+  if (activityReminderEnabled) {
+    for (const reminder of activityReminders) {
+      const reminderCount = getCompletedReminderCount(
+        totalMovingDuration,
+        totalMovingDuration + currentDuration,
+        reminder.intervalMinutes,
+      );
+      for (let index = 0; index < reminderCount; index += 1) {
+        speakActivityReminder(reminder.text, language, activityVoiceIdentifier);
+      }
+    }
   }
 
   const { lastKilometer, lastKilometerDuration, lastKilometerAltitude } = store.getState().location;
@@ -85,10 +130,26 @@ export function saveMetricsToStoreTaskManager(
 
   if (kilometerSplitCalculation.splits.length) {
     store.dispatch(resetLastKm());
-    for (const split of kilometerSplitCalculation.splits) {
+    for (const [index, split] of kilometerSplitCalculation.splits.entries()) {
       store.dispatch(setLastKmDuration(split.lastKilometerDuration));
       store.dispatch(setLastKmAltitude(split.lastKilometerAltitude));
       store.dispatch(addDurationAndLocationToKmSplits(split.kilometerPoint));
+      const splitTimestamp = split.kilometerPoint.timestamp;
+      const previousTimestamp = previousPosition?.timestamp;
+      const durationFromSegmentStart =
+        typeof splitTimestamp === 'number' && typeof previousTimestamp === 'number'
+          ? Math.max(0, splitTimestamp - previousTimestamp)
+          : 0;
+      speakCompletedKilometer(
+        {
+          kilometer: completedKilometres.length + index + 1,
+          paceDuration: split.lastKilometerDuration,
+          movingDuration: totalMovingDuration + durationFromSegmentStart,
+          elevationGain: split.lastKilometerAltitude,
+          language,
+        },
+        { activityVoiceEnabled, activityVoiceMetrics, activityVoiceIdentifier },
+      );
       store.dispatch(resetLastKm());
     }
   }
