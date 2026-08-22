@@ -114,15 +114,21 @@ describe('Comment like btn', () => {
     await waitFor(() => expect(likeButton.props.accessibilityState?.disabled).toBe(false));
     await user.press(likeButton);
 
-    await waitFor(() => expect(emailBody).toEqual(expect.objectContaining({
-      comment: 'Great route',
-      recepientEmail: 'owner@example.com',
-    })));
+    await waitFor(() =>
+      expect(emailBody).toEqual(
+        expect.objectContaining({
+          comment: 'Great route',
+          recepientEmail: 'owner@example.com',
+        }),
+      ),
+    );
   });
 
   it('disables the button when likes cannot be loaded and reports a failed like request', async () => {
     server.use(
-      http.get(`${BASE_URL}/comment/broken-comment/like`, () => HttpResponse.json({ message: 'failed' }, { status: 500 })),
+      http.get(`${BASE_URL}/comment/broken-comment/like`, () =>
+        HttpResponse.json({ message: 'failed' }, { status: 500 }),
+      ),
     );
     await renderWithProviders(
       <CommentLikeBtn
@@ -138,7 +144,9 @@ describe('Comment like btn', () => {
     const user = userEvent.setup();
     server.use(
       http.get(`${BASE_URL}/comment/failed-like/like`, () => HttpResponse.json([])),
-      http.post(`${BASE_URL}/comment/failed-like/like`, () => HttpResponse.json({ message: 'failed' }, { status: 500 })),
+      http.post(`${BASE_URL}/comment/failed-like/like`, () =>
+        HttpResponse.json({ message: 'failed' }, { status: 500 }),
+      ),
     );
     await renderWithProviders(
       <CommentLikeBtn

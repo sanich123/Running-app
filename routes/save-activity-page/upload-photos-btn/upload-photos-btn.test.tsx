@@ -27,7 +27,6 @@ jest.mock('@U/file-sending', () => ({
 }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 
-
 const originalPlatform = Platform.OS;
 
 describe('Upload photos btn', () => {

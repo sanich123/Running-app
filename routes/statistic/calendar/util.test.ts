@@ -12,9 +12,9 @@ describe('getDaysOfTheMonthWithNames', () => {
     const englishCalendar = getDaysOfTheMonthWithNames('2026', '6', [], LANGUAGES.english);
 
     expect(russianCalendar.wednesdays[0].dateValue).toBe('СР');
-    expect(russianCalendar.wednesdays.find(({ dateValue }: { dateValue: string }) => dateValue === '15')?.activities).toEqual(
-      activities,
-    );
+    expect(
+      russianCalendar.wednesdays.find(({ dateValue }: { dateValue: string }) => dateValue === '15')?.activities,
+    ).toEqual(activities);
     expect(englishCalendar.mondays[0].dateValue).toBe('MO');
     expect(englishCalendar.sundays[0].dateValue).toBe('SU');
   });
@@ -26,9 +26,7 @@ describe('getDaysOfTheMonthWithNames', () => {
         days.slice(1).map(({ dateValue }: { dateValue: string }) => dateValue),
       );
 
-      expect(dates.filter((dateValue) => /^\d+$/.test(dateValue))).toHaveLength(
-        new Date(2026, month + 1, 0).getDate(),
-      );
+      expect(dates.filter((dateValue) => /^\d+$/.test(dateValue))).toHaveLength(new Date(2026, month + 1, 0).getDate());
     }
   });
 });

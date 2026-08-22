@@ -83,7 +83,11 @@ describe('Comment input', () => {
       }),
     );
     await renderWithProviders(
-      <CommentInput commentId="edit-comment" commentToUpdate="Old text" profile={{ ...MOCK_PROFILE, emailNotifications: false }} />,
+      <CommentInput
+        commentId="edit-comment"
+        commentToUpdate="Old text"
+        profile={{ ...MOCK_PROFILE, emailNotifications: false }}
+      />,
     );
     expect(screen.getByText('Редактирование комментария')).toBeOnTheScreen();
     const input = screen.getByTestId(COMMENT_INPUT_TEST_ID);
@@ -133,10 +137,14 @@ describe('Comment input', () => {
     await user.type(screen.getByTestId(COMMENT_INPUT_TEST_ID), 'Notify the owner');
     await user.press(screen.getByTestId(COMMENT_ICON_TEST_ID));
 
-    await waitFor(() => expect(emailBody).toEqual(expect.objectContaining({
-      comment: 'Notify the owner',
-      recepientEmail: 'recipient@example.com',
-      mapPhotoUrl: 'https://cdn.example/map.jpg',
-    })));
+    await waitFor(() =>
+      expect(emailBody).toEqual(
+        expect.objectContaining({
+          comment: 'Notify the owner',
+          recepientEmail: 'recipient@example.com',
+          mapPhotoUrl: 'https://cdn.example/map.jpg',
+        }),
+      ),
+    );
   });
 });
