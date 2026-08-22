@@ -102,8 +102,9 @@ export async function resumePedometerActivity() {
   return startSegment();
 }
 
-export async function pausePedometerActivity() {
+export async function pausePedometerActivity(): Promise<PedometerActivityData> {
   await stopActiveSegment();
+  return getPedometerActivityData();
 }
 
 export async function finishPedometerActivity(): Promise<PedometerActivityData> {

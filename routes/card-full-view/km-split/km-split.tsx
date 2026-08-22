@@ -3,21 +3,15 @@ import { View, StyleSheet } from 'react-native';
 import { Divider, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { KM_SPLITS } from './const';
-import { getFastestSplitValue, getSplitBarWidth, getSplitMetric, getSplitMetricLabel } from './utils';
+import { getFastestSplitDuration, getSplitBarWidth, getSplitMetric } from './utils';
 import type { ActivityKilometreSplit } from '@S/card/types';
 
-export default function KmSplit({
-  kilometresSplit,
-  sport = 'run',
-}: {
-  kilometresSplit: ActivityKilometreSplit[];
-  sport?: string;
-}) {
+export default function KmSplit({ kilometresSplit }: { kilometresSplit: ActivityKilometreSplit[] }) {
   const { language } = useAppSelector(({ settings }) => settings);
   const validSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
     (split) => Number.isFinite(split?.lastKilometerDuration) && split.lastKilometerDuration > 0,
   );
-  const fastestSplitValue = getFastestSplitValue(validSplits, sport);
+  const fastestSplitDuration = getFastestSplitDuration(validSplits);
   const { colors } = useTheme();
 
   return (
@@ -33,7 +27,7 @@ export default function KmSplit({
         </View>
         <View style={styles.paceColumn}>
           <Text variant="labelMedium" style={[styles.headerText, { color: colors.onSurfaceVariant }]}>
-            {getSplitMetricLabel(sport, language)}
+            {KM_SPLITS[language].pace}
           </Text>
         </View>
         <View style={styles.elevationColumn}>
@@ -57,7 +51,7 @@ export default function KmSplit({
                 numberOfLines={1}
                 adjustsFontSizeToFit
                 minimumFontScale={0.8}>
-                {getSplitMetric(split, sport, language)}
+                {getSplitMetric(split)}
               </Text>
             </View>
 
@@ -66,7 +60,7 @@ export default function KmSplit({
                 <View
                   style={[
                     styles.bar,
-                    { backgroundColor: colors.primary, width: `${getSplitBarWidth(split, fastestSplitValue, sport)}%` },
+                    { backgroundColor: colors.primary, width: `${getSplitBarWidth(split, fastestSplitDuration)}%` },
                   ]}
                 />
               </View>

@@ -1,9 +1,7 @@
 import {
-  getAverageCadence,
   getSpeedInKmPerHour,
   getSpeedInMinsInKm,
   isRunningActivity,
-  isWalkingActivity,
   isWalkingOrHikingActivity,
 } from '@U/location/location-utils';
 import { formatDurationMinsSecs } from '@U/time-formatter';
@@ -44,10 +42,6 @@ export function getLiveLastKmMetric({
   split?: LastKmSplit;
   language: LANGUAGES;
 }) {
-  if (isWalkingActivity(sport)) {
-    return `${getAverageCadence(split?.lastKilometerSteps ?? 0, split?.lastKilometerDuration ?? 0)} ${MAP_METRICS[language].spm}`;
-  }
-
   if (isRunningActivity(sport)) {
     return formatDurationMinsSecs(split?.lastKilometerDuration ?? 0);
   }

@@ -147,6 +147,7 @@ describe('Location slice', () => {
     mockStore.dispatch(setDistance(MOCK_DISTANCE));
     mockStore.dispatch(setAltitude(MOCK_ALTITUDE));
     mockStore.dispatch(setIsAppShuted(true));
+    mockStore.dispatch(setIsMapVisible(false));
     mockStore.dispatch(addDurationAndLocationToKmSplits(MOCK_LOCATION));
     mockStore.dispatch(setCurrentPace(MOCK_SPEED));
     mockStore.dispatch(setLocationsWhenContinued(MOCK_LOCATION));
@@ -166,5 +167,6 @@ describe('Location slice', () => {
     expect(mockStore.getState().location.lastPosition).toEqual(null);
     expect(mockStore.getState().location.locationsWithPauses).toEqual([]);
     expect(mockStore.getState().location.isAppShutedByPhone).toEqual(false);
+    expect(mockStore.getState().location.isMapVisible).toEqual(true);
   });
 });

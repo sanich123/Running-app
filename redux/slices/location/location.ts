@@ -88,6 +88,7 @@ const location = createSlice({
       state.duration = 0;
       state.distance = 0;
       state.steps = 0;
+      state.isMapVisible = true;
       state.durationWithPauses = 0;
       state.altitude = 0;
       state.kilometresSplit = [];

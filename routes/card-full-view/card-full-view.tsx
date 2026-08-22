@@ -66,7 +66,7 @@ export default function CardFullView() {
                     marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
                   },
                 ]}>
-                <KmSplit kilometresSplit={activity.kilometresSplit ?? []} sport={activity.sport} />
+                <KmSplit kilometresSplit={activity.kilometresSplit ?? []} />
               </View>
             )}
           </>

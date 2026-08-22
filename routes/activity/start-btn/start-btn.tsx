@@ -18,7 +18,7 @@ import { startLocationTracking, stopLocationTracking } from '@U/location/expo-ta
 import { getElevationGainByKilometres, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import {
   finishPedometerActivity,
-  getStepsForKilometreSplits,
+  pausePedometerActivity,
   startPedometerActivity,
   resetPedometerActivity,
 } from '@U/pedometer/pedometer';
@@ -85,7 +85,6 @@ export default function StartBtn({
 
   const saveCurrentActivity = (pedometerData: Awaited<ReturnType<typeof finishPedometerActivity>>) => {
     const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
-    const splitSteps = getStepsForKilometreSplits(kilometresSplit, pedometerData);
     const hasPedometerData = pedometerData.samples.length > 0;
     dispatch(
       setFinishedActivity({
@@ -96,7 +95,6 @@ export default function StartBtn({
         kilometresSplit: kilometresSplit.map((split, index) => ({
           ...split,
           lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
-          ...(hasPedometerData ? { lastKilometerSteps: splitSteps[index] ?? 0 } : {}),
         })),
         speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
       }),
@@ -130,7 +128,7 @@ export default function StartBtn({
       }
 
       await stopLocationTracking();
-      const pedometerData = await finishPedometerActivity();
+      const pedometerData = isRecording ? await pausePedometerActivity() : await finishPedometerActivity();
       saveCurrentActivity(pedometerData);
 
       if (isRecording) {

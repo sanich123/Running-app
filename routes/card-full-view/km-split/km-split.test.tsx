@@ -37,11 +37,10 @@ describe('Home activity full view km split', () => {
     });
   });
 
-  it('shows cadence for walking splits', async () => {
+  it('keeps time and relative speed for walking splits', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(
       <KmSplit
-        sport="walk"
         kilometresSplit={[
           {
             kilometerPoint: MOCK_ACTIVITY.kilometresSplit[0].kilometerPoint,
@@ -54,47 +53,8 @@ describe('Home activity full view km split', () => {
       { store: mockStore },
     );
 
-    expect(screen.getByText(KM_SPLITS.english.cadence)).toBeOnTheScreen();
-    expect(screen.getByText('120 spm')).toBeOnTheScreen();
-  });
-
-  it('shows cycling speed in kilometres per hour', async () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    await renderWithProviders(
-      <KmSplit
-        sport="bike"
-        kilometresSplit={[
-          {
-            kilometerPoint: MOCK_ACTIVITY.kilometresSplit[0].kilometerPoint,
-            lastKilometerAltitude: 0,
-            lastKilometerDuration: 60_000,
-          },
-        ]}
-      />,
-      { store: mockStore },
-    );
-
-    expect(screen.getByText(KM_SPLITS.english.speed)).toBeOnTheScreen();
-    expect(screen.getByText('60.0 km/h')).toBeOnTheScreen();
-  });
-
-  it('shows hiking speed in kilometres per hour', async () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    await renderWithProviders(
-      <KmSplit
-        sport="hike"
-        kilometresSplit={[
-          {
-            kilometerPoint: MOCK_ACTIVITY.kilometresSplit[0].kilometerPoint,
-            lastKilometerAltitude: 0,
-            lastKilometerDuration: 60_000,
-          },
-        ]}
-      />,
-      { store: mockStore },
-    );
-
-    expect(screen.getByText(KM_SPLITS.english.speed)).toBeOnTheScreen();
-    expect(screen.getByText('60.0 km/h')).toBeOnTheScreen();
+    expect(screen.getByText(KM_SPLITS.english.pace)).toBeOnTheScreen();
+    expect(screen.getByText('01:00')).toBeOnTheScreen();
+    expect(screen.queryByText(/CADENCE/)).not.toBeOnTheScreen();
   });
 });
