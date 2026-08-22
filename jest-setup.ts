@@ -45,6 +45,19 @@ jest.mock('expo-speech', () => ({
   speak: jest.fn(),
   stop: jest.fn(),
 }));
+jest.mock('expo-sensors', () => ({
+  Accelerometer: {
+    addListener: jest.fn(() => ({ remove: jest.fn() })),
+    setUpdateInterval: jest.fn(),
+  },
+  Pedometer: {
+    getPermissionsAsync: jest.fn().mockResolvedValue({ granted: false }),
+    getStepCountAsync: jest.fn().mockResolvedValue({ steps: 0 }),
+    isAvailableAsync: jest.fn().mockResolvedValue(false),
+    requestPermissionsAsync: jest.fn().mockResolvedValue({ granted: false }),
+    watchStepCount: jest.fn(() => ({ remove: jest.fn() })),
+  },
+}));
 jest.mock('expo-media-library', () => ({
   getPermissionsAsync: jest.fn(() => Promise.resolve({ granted: true })),
   requestPermissionsAsync: jest.fn(() => Promise.resolve({ granted: true })),

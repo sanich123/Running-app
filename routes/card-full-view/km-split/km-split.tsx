@@ -2,18 +2,22 @@ import { Fragment } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Divider, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { formatDurationMinsSecs } from '@U/time-formatter';
 import { KM_SPLITS } from './const';
+import { getFastestSplitValue, getSplitBarWidth, getSplitMetric, getSplitMetricLabel } from './utils';
 import type { ActivityKilometreSplit } from '@S/card/types';
 
-export default function KmSplit({ kilometresSplit }: { kilometresSplit: ActivityKilometreSplit[] }) {
+export default function KmSplit({
+  kilometresSplit,
+  sport = 'run',
+}: {
+  kilometresSplit: ActivityKilometreSplit[];
+  sport?: string;
+}) {
+  const { language } = useAppSelector(({ settings }) => settings);
   const validSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
     (split) => Number.isFinite(split?.lastKilometerDuration) && split.lastKilometerDuration > 0,
   );
-  const fastestKm = validSplits.length
-    ? Math.min(...validSplits.map(({ lastKilometerDuration }) => lastKilometerDuration))
-    : 0;
-  const { language } = useAppSelector(({ settings }) => settings);
+  const fastestSplitValue = getFastestSplitValue(validSplits, sport);
   const { colors } = useTheme();
 
   return (
@@ -29,7 +33,7 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: Activity
         </View>
         <View style={styles.paceColumn}>
           <Text variant="labelMedium" style={[styles.headerText, { color: colors.onSurfaceVariant }]}>
-            {KM_SPLITS[language].pace}
+            {getSplitMetricLabel(sport, language)}
           </Text>
         </View>
         <View style={styles.elevationColumn}>
@@ -38,9 +42,9 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: Activity
           </Text>
         </View>
       </View>
-      {validSplits.map(({ lastKilometerAltitude, lastKilometerDuration }, index) => (
-        <Fragment key={`${lastKilometerAltitude}/${lastKilometerDuration}/${index}`}>
-          <View style={styles.splitRow} key={`${index}/${lastKilometerAltitude * lastKilometerDuration}`}>
+      {validSplits.map((split, index) => (
+        <Fragment key={`${split.lastKilometerAltitude}/${split.lastKilometerDuration}/${index}`}>
+          <View style={styles.splitRow} key={`${index}/${split.lastKilometerAltitude * split.lastKilometerDuration}`}>
             <View style={styles.kmColumn}>
               <Text style={{ color: colors.onSurface }} variant="bodyLarge">
                 {index + 1}
@@ -53,7 +57,7 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: Activity
                 numberOfLines={1}
                 adjustsFontSizeToFit
                 minimumFontScale={0.8}>
-                {formatDurationMinsSecs(lastKilometerDuration)}
+                {getSplitMetric(split, sport, language)}
               </Text>
             </View>
 
@@ -62,14 +66,16 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: Activity
                 <View
                   style={[
                     styles.bar,
-                    { backgroundColor: colors.primary, width: `${(fastestKm / lastKilometerDuration) * 100}%` },
+                    { backgroundColor: colors.primary, width: `${getSplitBarWidth(split, fastestSplitValue, sport)}%` },
                   ]}
                 />
               </View>
             </View>
             <View style={styles.elevationColumn}>
               <Text style={{ color: colors.onSurface }} variant="bodyLarge">
-                {Number.isFinite(lastKilometerAltitude) ? Math.max(0, lastKilometerAltitude).toFixed(1) : '—'}
+                {Number.isFinite(split.lastKilometerAltitude)
+                  ? Math.max(0, split.lastKilometerAltitude).toFixed(1)
+                  : '—'}
               </Text>
             </View>
           </View>

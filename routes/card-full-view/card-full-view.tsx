@@ -47,6 +47,9 @@ export default function CardFullView() {
               photoVideoUrls={activity.photoVideoUrls}
               duration={activity.duration}
               distance={activity.distance}
+              steps={activity.steps}
+              kilometresSplit={activity.kilometresSplit}
+              locations={activity.locations}
               mapPhotoUrl={activity.mapPhotoUrl}
               profile={activity.profile}
               commentsLength={activity._count.comments}
@@ -63,7 +66,7 @@ export default function CardFullView() {
                     marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
                   },
                 ]}>
-                <KmSplit kilometresSplit={activity.kilometresSplit ?? []} />
+                <KmSplit kilometresSplit={activity.kilometresSplit ?? []} sport={activity.sport} />
               </View>
             )}
           </>

@@ -12,6 +12,7 @@ import { TIMEOUT_MESSAGE } from '@Routes/activity/location-indicator/const';
 import { getMaxTrackingSpeedForSport } from '@U/location/location-utils';
 import { useGlobalActivitySportParams } from '../activity-params';
 import { ACTIVITY_ERROR_MSG } from './const';
+import ActivityMotionStatus from '../motion-status/motion-status';
 
 export default function ErrorMsg() {
   const dispatch = useAppDispatch();
@@ -83,6 +84,7 @@ export default function ErrorMsg() {
           />
         </View>
       )}
+      <ActivityMotionStatus />
     </View>
   );
 }

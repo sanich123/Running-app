@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getElevationGainByKilometres, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { pausePedometerActivity, resumePedometerActivity } from '@U/pedometer/pedometer';
 
 export default function PauseBtn() {
   const { dark, colors } = useTheme();
@@ -31,9 +32,11 @@ export default function PauseBtn() {
     try {
       if (activityStatus === STATUSES.paused) {
         await startLocationTracking();
+        await resumePedometerActivity();
         dispatch(setActivityStatus(STATUSES.continued));
       } else {
         await stopLocationTracking();
+        await pausePedometerActivity();
         const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
         dispatch(
           setFinishedActivity({

@@ -1,19 +1,26 @@
 import { View, StyleSheet, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { getSpeedInMinsInKm } from '@U/location/location-utils';
-import { formatDuration, formatDurationMinsSecs } from '@U/time-formatter';
+import { formatDuration } from '@U/time-formatter';
 import { MAP_METRICS } from './const';
+import { getLiveLastKmMetric, getLiveMainMetric, getLiveTopMetric } from './utils';
+import { useActivitySportParams } from '../activity-params';
 import ActivityErrorMsg from '../error-msg/error-msg';
 import MetricsItem from './metrics-item/metrics-item';
 
 export default function Metrics() {
   const { colors } = useTheme();
-  const { kilometresSplit, altitude, duration, distance, isMapVisible } = useAppSelector(({ location }) => location);
+  const { kilometresSplit, altitude, duration, distance, steps, isMapVisible } = useAppSelector(
+    ({ location }) => location,
+  );
   const { language } = useAppSelector(({ settings }) => settings);
+  const { sport } = useActivitySportParams();
   const formattedDuration = formatDuration(duration);
   const formattedDistance = (distance / 1000).toFixed(2);
-  const lastKmPace = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : 0;
+  const lastKmSplit = kilometresSplit?.length > 0 ? kilometresSplit[kilometresSplit.length - 1] : undefined;
+  const primaryMetric = getLiveMainMetric({ sport, distance, duration, language });
+  const lastKmMetric = getLiveLastKmMetric({ sport, split: lastKmSplit, language });
+  const topMetric = getLiveTopMetric({ sport, altitude, steps, language });
 
   return (
     <>
@@ -26,26 +33,14 @@ export default function Metrics() {
           isCentral={false}
         />
         {!isMapVisible && (
-          <MetricsItem
-            isMapVisible={isMapVisible}
-            title={`${MAP_METRICS[language].altitude}:`}
-            metric={`${altitude.toFixed(2)} ${`${MAP_METRICS[language].m}`}`}
-            isCentral={false}
-          />
+          <MetricsItem isMapVisible={isMapVisible} title={`${topMetric.title}:`} metric={topMetric.metric} isCentral={false} />
         )}
-        <MetricsItem
-          isMapVisible={isMapVisible}
-          title={`${MAP_METRICS[language].pace}:`}
-          metric={`${
-            duration && distance ? getSpeedInMinsInKm(distance, duration).paceAsString : 0
-          } /${`${MAP_METRICS[language].km}`}`}
-          isCentral
-        />
+        <MetricsItem isMapVisible={isMapVisible} title={primaryMetric.title + ':'} metric={primaryMetric.metric} isCentral />
         {!isMapVisible && (
           <MetricsItem
             isMapVisible={isMapVisible}
             title={`${MAP_METRICS[language].lastKm}:`}
-            metric={formatDurationMinsSecs(lastKmPace ? lastKmPace.lastKilometerDuration : 0)}
+            metric={lastKmMetric}
             isCentral={false}
           />
         )}
@@ -62,6 +57,7 @@ export default function Metrics() {
 
 const styles = StyleSheet.create({
   layout: {
+    alignContent: 'space-between',
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',

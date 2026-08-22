@@ -4,8 +4,9 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "APP_VARIANT=development expo start --clear",
+    "dev": "expo start --clear",
     "test": "jest --maxWorkers=50% --no-watchman",
+    "test:coverage": "yarn test --coverage",
     "test:debug": "jest --runInBand --detectOpenHandles --forceExit --no-watchman",
     "build:dev:android": "eas build --profile development -p android --local --output \"$HOME/Desktop/runich-app/$(date +%d-%m-%Y_%H-%M).apk\"",
     "build:preview:internal:android": "eas build --profile preview -p android --local --output \"$HOME/Desktop/runich-app/$(date +%d-%m-%Y_%H-%M).apk\"",
@@ -64,6 +65,7 @@
     "expo-network": "~57.0.1",
     "expo-router": "~57.0.15",
     "expo-secure-store": "~57.0.1",
+    "expo-sensors": "~57.0.2",
     "expo-sharing": "~57.0.14",
     "expo-speech": "~57.0.1",
     "expo-splash-screen": "~57.0.7",

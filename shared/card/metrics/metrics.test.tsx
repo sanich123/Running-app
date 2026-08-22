@@ -4,7 +4,7 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_DISTANCE, MOCK_DURATION } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getSpeedInKmPerHour, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 import CardMetrics from './metrics';
 
@@ -24,6 +24,8 @@ describe('Card metrics', () => {
         title="some title"
         distance={MOCK_DISTANCE}
         duration={MOCK_DURATION}
+        sport="run"
+        elevationGain={42}
         isShowDescription
         description="some description"
         userId="someUserId"
@@ -31,12 +33,63 @@ describe('Card metrics', () => {
       />,
       { store: mockStore },
     );
-    ['pace', 'distance', 'time'].map((metric) => expect(screen.getByText(new RegExp(metric, 'i'))).toBeOnTheScreen());
+    ['pace', 'distance', 'time', 'elevation gain'].map((metric) =>
+      expect(screen.getByText(new RegExp(metric, 'i'))).toBeOnTheScreen(),
+    );
     [getSpeedInMinsInKm(MOCK_DISTANCE, MOCK_DURATION).paceAsString, formatDuration(MOCK_DURATION)].map((metric) =>
       expect(screen.getByText(new RegExp(`${metric}`, 'i'))).toBeOnTheScreen(),
     );
     expect(screen.getByText('some description')).toBeOnTheScreen();
+    expect(screen.getByText('42 m')).toBeOnTheScreen();
     expect(screen.queryByText('Description')).not.toBeOnTheScreen();
+  });
+
+  it('shows kilometres per hour and total steps for walking', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await renderWithProviders(
+      <CardMetrics
+        title="walking"
+        distance={MOCK_DISTANCE}
+        duration={MOCK_DURATION}
+        sport="walk"
+        steps={1234}
+        elevationGain={42}
+        isShowDescription={false}
+        description=""
+        userId="someUserId"
+        id="someUUID"
+      />,
+      { store: mockStore },
+    );
+
+    expect(screen.getByText(/Speed/i)).toBeOnTheScreen();
+    expect(screen.getByText(/Steps/i)).toBeOnTheScreen();
+    expect(screen.getByText(`${getSpeedInKmPerHour(MOCK_DISTANCE, MOCK_DURATION).toFixed(1)} km/h`)).toBeOnTheScreen();
+    expect(screen.getByText('1234')).toBeOnTheScreen();
+    expect(screen.queryByText(/Pace/i)).not.toBeOnTheScreen();
+    expect(screen.queryByText(/Elevation gain/i)).not.toBeOnTheScreen();
+  });
+
+  it.each(['hike', 'bike'])('keeps the existing three metrics for %s', async (sport) => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await renderWithProviders(
+      <CardMetrics
+        title={sport}
+        distance={MOCK_DISTANCE}
+        duration={MOCK_DURATION}
+        sport={sport}
+        isShowDescription={false}
+        description=""
+        userId="someUserId"
+        id="someUUID"
+        elevationGain={42}
+      />,
+      { store: mockStore },
+    );
+
+    expect(screen.getByText(/Speed/i)).toBeOnTheScreen();
+    expect(screen.queryByText(/Elevation gain/i)).not.toBeOnTheScreen();
+    expect(screen.queryByText(/Steps/i)).not.toBeOnTheScreen();
   });
 
   it('opens the full activity when the metrics are pressed', async () => {
@@ -46,6 +99,8 @@ describe('Card metrics', () => {
         title="some title"
         distance={MOCK_DISTANCE}
         duration={MOCK_DURATION}
+        sport="run"
+        elevationGain={0}
         isShowDescription={false}
         description=""
         userId="someUserId"

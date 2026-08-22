@@ -7694,6 +7694,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-sensors@npm:~57.0.2":
+  version: 57.0.2
+  resolution: "expo-sensors@npm:57.0.2"
+  dependencies:
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    expo: "*"
+    react-native: "*"
+  checksum: 10c0/e2a1af7ceba5a2402a767ef1796a2d88d5a7721b85fe2106e72160e51ac2c416570660c42161f9b2a9044dd8ea0e18786a3012b962e42a6abe028c153a77d3e0
+  languageName: node
+  linkType: hard
+
 "expo-server@npm:^57.0.3":
   version: 57.0.3
   resolution: "expo-server@npm:57.0.3"
@@ -13330,6 +13342,7 @@ __metadata:
     expo-network: "npm:~57.0.1"
     expo-router: "npm:~57.0.15"
     expo-secure-store: "npm:~57.0.1"
+    expo-sensors: "npm:~57.0.2"
     expo-sharing: "npm:~57.0.14"
     expo-speech: "npm:~57.0.1"
     expo-splash-screen: "npm:~57.0.7"

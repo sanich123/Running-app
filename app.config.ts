@@ -83,6 +83,7 @@ export default {
       permissions: [
         'android.permission.RECORD_AUDIO',
         'android.permission.RECEIVE_BOOT_COMPLETED',
+        'android.permission.ACTIVITY_RECOGNITION',
         'ACCESS_BACKGROUND_LOCATION',
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
@@ -105,6 +106,13 @@ export default {
       'expo-font',
       'expo-video',
       'expo-secure-store',
+      [
+        'expo-sensors',
+        {
+          motionPermission:
+            'Разрешите приложению Runich доступ к данным движения для подсчёта шагов во время тренировки',
+        },
+      ],
       '@rnmapbox/maps',
       ['expo-secure-store', { faceIDPermission: 'Разрешите приложению runich доступ к биометрическим данным FaceId ' }],
       [

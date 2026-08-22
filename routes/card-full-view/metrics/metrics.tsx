@@ -5,9 +5,9 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityByActivityIdQuery, useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
-import { getElevationGain, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 import { HOME_ACTIVITY_FULL_VIEW_TEST_ID, HOME_ACTIVITY_FULL_VIEW } from './const';
+import { getActivityAdditionalMetric, getActivityElevationGain, getActivityMainMetric } from './utils';
 
 export default function Metrics() {
   const { width } = useWindowDimensions();
@@ -21,14 +21,24 @@ export default function Metrics() {
   const kilometresSplit = activity?.kilometresSplit?.length
     ? activity.kilometresSplit
     : (routeData?.kilometresSplit ?? []);
-  const splitElevationGain = kilometresSplit.reduce(
-    (total, { lastKilometerAltitude }) => total + Math.max(0, lastKilometerAltitude),
-    0,
-  );
   const routeLocations = activity?.locations?.length ? activity.locations : routeData?.locations;
-  const gainedElevation = Math.round(
-    kilometresSplit.length ? splitElevationGain : routeLocations?.length ? getElevationGain(routeLocations) : 0,
-  );
+  const gainedElevation = getActivityElevationGain(kilometresSplit, routeLocations);
+  const mainMetric = activity
+    ? getActivityMainMetric({
+        sport: activity.sport,
+        distance: activity.distance,
+        duration: activity.duration,
+        language,
+      })
+    : null;
+  const additionalMetric = activity
+    ? getActivityAdditionalMetric({
+        sport: activity.sport,
+        steps: activity.steps,
+        duration: activity.duration,
+        language,
+      })
+    : null;
 
   return (
     <View
@@ -54,10 +64,11 @@ export default function Metrics() {
             </View>
 
             <View style={styles.alignedCenter}>
-              <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].averagePace}</Text>
+              <Text variant="bodyLarge">
+                {mainMetric?.title}
+              </Text>
               <Text variant="titleLarge">
-                {getSpeedInMinsInKm(activity.distance, activity.duration).paceAsString}
-                {` /${HOME_ACTIVITY_FULL_VIEW[language].km}`}
+                {mainMetric?.value}
               </Text>
             </View>
           </View>
@@ -74,6 +85,17 @@ export default function Metrics() {
               </Text>
             </View>
           </View>
+          {additionalMetric && (
+            <>
+              <Divider />
+              <View style={styles.columnLayout}>
+                <View style={styles.alignedCenter}>
+                  <Text variant="bodyLarge">{additionalMetric.title}</Text>
+                  <Text variant="titleLarge">{additionalMetric.value}</Text>
+                </View>
+              </View>
+            </>
+          )}
         </>
       )}
     </View>

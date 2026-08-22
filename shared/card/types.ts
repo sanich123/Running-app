@@ -26,6 +26,7 @@ export interface ActivityKilometreSplit {
   lastKilometerDuration: number;
   lastKilometerAltitude: number;
   kilometerPoint: ActivityLocation;
+  lastKilometerSteps?: number | null;
 }
 
 export interface LikeType {
@@ -74,6 +75,8 @@ export interface ActivityCardProps {
   locations?: ActivityLocation[] | null;
   duration: number;
   distance: number;
+  steps?: number | null;
+  kilometresSplit?: ActivityKilometreSplit[] | null;
   profile: ProfileType;
   commentsLength: number;
 }
@@ -136,6 +139,9 @@ export interface NumberOfLikesProps {
 export interface MetricsProps {
   distance: number;
   duration: number;
+  sport: string;
+  steps?: number | null;
+  elevationGain: number;
   title?: string | null;
   isShowDescription: boolean;
   description?: string | null;

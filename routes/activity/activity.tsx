@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { STATUSES } from '@const/enums';
-import { setActivityStatus, setEmptyLastArrayWhenPaused, setIsAppShuted } from '@R/slices/location/location';
+import { setActivityStatus, setEmptyLastArrayWhenPaused, setIsAppShuted, setSteps } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import IconChooseSport from '@Routes/activity/icon-choose-sport/icon-choose-sport';
 import Map from '@Routes/activity/map/map';
@@ -14,6 +14,7 @@ import StartBtn from '@Routes/activity/start-btn/start-btn';
 import { errorToast } from '@S/error-toast/error-toast';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
+import { pausePedometerActivity, subscribePedometerSteps } from '@U/pedometer/pedometer';
 
 export default function Activity() {
   const dispatch = useAppDispatch();
@@ -27,6 +28,8 @@ export default function Activity() {
   const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
   const { isLoading: isLocationLoading } = useGetCurrentLocation(isLocationReadyForRecording);
 
+  useEffect(() => subscribePedometerSteps((steps) => dispatch(setSteps(steps))), [dispatch]);
+
   useEffect(() => {
     if (!shouldPauseRecoveredTracking.current || didPauseRecoveredTracking.current) {
       return;
@@ -34,7 +37,8 @@ export default function Activity() {
 
     didPauseRecoveredTracking.current = true;
     stopLocationTracking()
-      .then(() => {
+      .then(async () => {
+        await pausePedometerActivity();
         dispatch(setActivityStatus(STATUSES.paused));
         dispatch(setEmptyLastArrayWhenPaused());
         dispatch(setIsAppShuted(true));

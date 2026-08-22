@@ -38,6 +38,7 @@ export interface ActivityResponse {
   mapPhotoUrlBlurhash?: string | null;
   duration: number;
   distance: number;
+  steps?: number | null;
   speed?: number | null;
   isPublic?: boolean | null;
   emotion?: string | null;
@@ -64,6 +65,7 @@ export interface ActivityMutationResponse {
   mapPhotoUrlBlurhash?: string | null;
   duration: number;
   distance: number;
+  steps?: number | null;
   speed: number;
   isPublic?: boolean | null;
   emotion?: string | null;

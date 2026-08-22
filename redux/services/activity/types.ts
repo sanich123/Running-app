@@ -9,6 +9,7 @@ export interface FinishedActivity {
   duration: number;
   speed: number;
   distance: number;
+  steps?: number;
   kilometresSplit?: LastKmSplit[];
 }
 

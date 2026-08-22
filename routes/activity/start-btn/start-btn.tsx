@@ -16,6 +16,12 @@ import { getCurrentOrLastKnownPosition } from '@U/get-initial-position';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getElevationGainByKilometres, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import {
+  finishPedometerActivity,
+  getStepsForKilometreSplits,
+  startPedometerActivity,
+  resetPedometerActivity,
+} from '@U/pedometer/pedometer';
 import { useActivitySportParams } from '../activity-params';
 import { ACTIVITY_START_BTN_TEST_ID, ACTIVITY_START_BTN, STOP_ICON } from './const';
 
@@ -77,16 +83,20 @@ export default function StartBtn({
     activityStatus === STATUSES.initial && (isGettingLocation || isTrackingActionInProgress);
   const isDisabled = isTrackingActionInProgress || (activityStatus === STATUSES.initial && !isReadyToRecordLocation);
 
-  const saveCurrentActivity = () => {
+  const saveCurrentActivity = (pedometerData: Awaited<ReturnType<typeof finishPedometerActivity>>) => {
     const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
+    const splitSteps = getStepsForKilometreSplits(kilometresSplit, pedometerData);
+    const hasPedometerData = pedometerData.samples.length > 0;
     dispatch(
       setFinishedActivity({
         duration,
         distance,
+        ...(hasPedometerData ? { steps: pedometerData.steps } : {}),
         locations: getReducedLocations(locations),
         kilometresSplit: kilometresSplit.map((split, index) => ({
           ...split,
           lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
+          ...(hasPedometerData ? { lastKilometerSteps: splitSteps[index] ?? 0 } : {}),
         })),
         speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
       }),
@@ -113,13 +123,15 @@ export default function StartBtn({
         await stopLocationTracking();
         dispatch(resetLocationsFromBackground());
         dispatch(resetFinishedActivity());
+        await startPedometerActivity();
         await startLocationTracking();
         dispatch(setActivityStatus(STATUSES.started));
         return;
       }
 
       await stopLocationTracking();
-      saveCurrentActivity();
+      const pedometerData = await finishPedometerActivity();
+      saveCurrentActivity(pedometerData);
 
       if (isRecording) {
         dispatch(setActivityStatus(STATUSES.paused));
@@ -143,6 +155,7 @@ export default function StartBtn({
         },
       });
     } catch (error) {
+      resetPedometerActivity();
       errorToast(
         activityStatus === STATUSES.initial
           ? 'Не удалось запустить отслеживание геопозиции'
