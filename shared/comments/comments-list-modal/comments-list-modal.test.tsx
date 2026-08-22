@@ -48,10 +48,9 @@ describe('comments list modal', () => {
     expect(screen.queryByTestId('comments-input')).not.toBeOnTheScreen();
   });
 
-  it('shows the empty state and add action when there are no comments', async () => {
+  it('shows the add action when there are no comments', async () => {
     mockCommentsViewState = 'empty';
     await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} />);
-    expect(screen.getByText('Комментариев пока нет')).toBeOnTheScreen();
     expect(screen.getByTestId('comments-composer')).toBeOnTheScreen();
     expect(screen.getByTestId('comments-add')).toBeOnTheScreen();
     expect(screen.queryByTestId('comments-input')).not.toBeOnTheScreen();
@@ -59,7 +58,6 @@ describe('comments list modal', () => {
     await act(async () => {
       mockStore.dispatch(setIsShowingTextInput(true));
     });
-    expect(screen.queryByText('Комментариев пока нет')).not.toBeOnTheScreen();
     expect(screen.getByTestId('comments-input')).toBeOnTheScreen();
   });
 

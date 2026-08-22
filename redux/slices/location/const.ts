@@ -10,6 +10,7 @@ export const LOCATION_INITIAL_STATE: LocationInitialState = {
   isMapVisible: true,
   initialLocation: null,
   distance: 0,
+  steps: 0,
   duration: 0,
   durationWithPauses: 0,
   altitude: 0,

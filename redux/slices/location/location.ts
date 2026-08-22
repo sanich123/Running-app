@@ -14,6 +14,9 @@ const location = createSlice({
     setDistance: (state, action) => {
       state.distance = state.distance + action.payload;
     },
+    setSteps: (state, action) => {
+      state.steps = action.payload;
+    },
     setDuration: (state, action) => {
       state.duration = state.duration + action.payload;
     },
@@ -84,6 +87,7 @@ const location = createSlice({
       state.locationsFromBackground = [];
       state.duration = 0;
       state.distance = 0;
+      state.steps = 0;
       state.durationWithPauses = 0;
       state.altitude = 0;
       state.kilometresSplit = [];
@@ -109,6 +113,7 @@ export const {
   setLocationsFromBackground,
   resetLocationsFromBackground,
   setDistance,
+  setSteps,
   setDuration,
   setAltitude,
   setLastKmAltitude,

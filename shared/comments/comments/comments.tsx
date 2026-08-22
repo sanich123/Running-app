@@ -3,6 +3,7 @@ import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import {
   FlatList,
   StyleSheet,
+  View,
   type FlatListProps,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
@@ -60,7 +61,7 @@ export default function Comments({
   const isInitialLoading = isLoading && !hasLoadedPage;
   const isInitialError = isError && !hasLoadedPage;
   const shouldShowPaginationAction = Boolean(hasNextPage || (isError && hasLoadedPage));
-  const emptyState = showEmptyState && (!isShowingTextInput || onViewStateChange) ? <CommentsEmptyList /> : null;
+  const emptyState = showEmptyState && !isShowingTextInput ? <CommentsEmptyList /> : null;
 
   useEffect(() => {
     if (isInitialLoading) {
@@ -73,10 +74,17 @@ export default function Comments({
   }, [comments.length, isInitialError, isInitialLoading, onViewStateChange]);
 
   if (isInitialLoading) {
-    return isBottomSheet ? null : <ActivityIndicator size="large" testID="commentsActivityIndicator" />;
+    return isBottomSheet ? (
+      <View style={styles.list} />
+    ) : (
+      <ActivityIndicator size="large" testID="commentsActivityIndicator" />
+    );
   }
 
-  if (isInitialError) return <ErrorComponent error={error} refetch={refetch} />;
+  if (isInitialError) {
+    const errorComponent = <ErrorComponent error={error} refetch={refetch} />;
+    return isBottomSheet ? <View style={styles.list}>{errorComponent}</View> : errorComponent;
+  }
 
   const listProps: FlatListProps<CommentResponse> = {
     data: comments,

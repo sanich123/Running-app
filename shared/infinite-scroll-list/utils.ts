@@ -15,6 +15,8 @@ export function renderCardsFunction({ item }: { item: ActivityListItem }) {
     locations,
     duration,
     distance,
+    steps,
+    kilometresSplit,
     id,
     user_id,
     profile,
@@ -36,6 +38,8 @@ export function renderCardsFunction({ item }: { item: ActivityListItem }) {
     photoVideoUrls,
     duration,
     distance,
+    steps,
+    kilometresSplit,
     profile,
     commentsLength,
   });

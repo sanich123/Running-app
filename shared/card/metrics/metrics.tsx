@@ -6,9 +6,9 @@ import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import ShowMetrics from '@S/card/show-metrics/show-metrics';
-import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 import { CARD_METRICS } from './const';
+import { getCardAdditionalMetric, getCardSpeedMetric } from './utils';
 import type { MetricsProps } from '../types';
 
 export default memo(function Metrics({
@@ -19,11 +19,16 @@ export default memo(function Metrics({
   description,
   userId,
   id,
+  sport,
+  steps,
+  elevationGain,
 }: MetricsProps) {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
   const pathname = usePathname();
+  const speedMetric = getCardSpeedMetric({ sport, distance, duration, language });
+  const additionalMetric = getCardAdditionalMetric({ sport, steps, elevationGain, language });
 
   return (
     <TouchableRipple
@@ -43,14 +48,12 @@ export default memo(function Metrics({
         ) : null}
         <View style={styles.metricsWrapper}>
           <ShowMetrics title={`${CARD_METRICS[language].time}: `} metrics={`${formatDuration(duration)}`} />
-          <ShowMetrics
-            title={`${CARD_METRICS[language].pace}: `}
-            metrics={`${getSpeedInMinsInKm(distance, duration).paceAsString} /${CARD_METRICS[language].km}`}
-          />
+          <ShowMetrics title={`${speedMetric.title}: `} metrics={speedMetric.metrics} />
           <ShowMetrics
             title={`${CARD_METRICS[language].distance}: `}
             metrics={`${(distance / 1000).toFixed(2)} ${CARD_METRICS[language].km}`}
           />
+          {additionalMetric && <ShowMetrics title={`${additionalMetric.title}: `} metrics={additionalMetric.metrics} />}
         </View>
         {isShowDescription ? (
           <View

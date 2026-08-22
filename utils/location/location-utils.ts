@@ -322,6 +322,34 @@ export function getSpeedInKmPerHour(distance: number, time: number) {
   return distance / 1000 / (time / 3_600_000);
 }
 
+export function getAverageCadence(steps: number | null | undefined, duration: number) {
+  if (!steps || !duration || duration <= 0) return 0;
+  return Math.round((steps * 60_000) / duration);
+}
+
+export function isWalkingActivity(sport: string) {
+  return sport.toLowerCase() === 'walk' || sport.toLowerCase() === 'walking';
+}
+
+export function isHikingActivity(sport: string) {
+  const normalizedSport = sport.toLowerCase();
+  return normalizedSport === 'hike' || normalizedSport === 'hiking';
+}
+
+export function isWalkingOrHikingActivity(sport: string) {
+  return isWalkingActivity(sport) || isHikingActivity(sport);
+}
+
+export function isCyclingActivity(sport: string) {
+  const normalizedSport = sport.toLowerCase();
+  return normalizedSport === 'bike' || normalizedSport === 'ride' || normalizedSport === 'cycling';
+}
+
+export function isRunningActivity(sport: string) {
+  const normalizedSport = sport.toLowerCase();
+  return normalizedSport === 'run' || normalizedSport === 'running';
+}
+
 export function getMaxTrackingSpeedForSport(sport: string) {
   return MAX_TRACKING_SPEED_KMH[sport as keyof typeof MAX_TRACKING_SPEED_KMH] ?? DEFAULT_MAX_TRACKING_SPEED_KMH;
 }

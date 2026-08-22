@@ -29,7 +29,10 @@ describe('Comments', () => {
   it('shows the empty state without a loading indicator when there are no comments', async () => {
     server.use(http.get(`${BASE_URL}/comment/someActivityId`, () => HttpResponse.json({ comments: [] })));
     await renderWithProviders(
-      <Comments commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }} />,
+      <Comments
+        commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }}
+        isBottomSheet
+      />,
       { store: mockStore },
     );
     expect(await screen.findByText('Комментариев пока нет')).toBeOnTheScreen();

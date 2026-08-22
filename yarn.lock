@@ -7694,6 +7694,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-sensors@npm:~57.0.2":
+  version: 57.0.2
+  resolution: "expo-sensors@npm:57.0.2"
+  dependencies:
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    expo: "*"
+    react-native: "*"
+  checksum: 10c0/e2a1af7ceba5a2402a767ef1796a2d88d5a7721b85fe2106e72160e51ac2c416570660c42161f9b2a9044dd8ea0e18786a3012b962e42a6abe028c153a77d3e0
+  languageName: node
+  linkType: hard
+
 "expo-server@npm:^57.0.3":
   version: 57.0.3
   resolution: "expo-server@npm:57.0.3"
@@ -7713,6 +7725,15 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/500df4926dc2cc3864c2f8ed54c77e5ce93526fa61a0cf908c113967f4a4eacfe4467226f7d60cb55bfa41395804d647aa7b2ec6da3b549c23808fdd06eec898
+  languageName: node
+  linkType: hard
+
+"expo-speech@npm:~57.0.1":
+  version: 57.0.1
+  resolution: "expo-speech@npm:57.0.1"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/dfc69288593300f0c88b2181625b50b79aa6c982dbd624cdfebe797e862cf8c6a1bbbba764b0eb316df1d82848511041225f01384d8c5152b432cf3a049b8ff3
   languageName: node
   linkType: hard
 
@@ -13321,7 +13342,9 @@ __metadata:
     expo-network: "npm:~57.0.1"
     expo-router: "npm:~57.0.15"
     expo-secure-store: "npm:~57.0.1"
+    expo-sensors: "npm:~57.0.2"
     expo-sharing: "npm:~57.0.14"
+    expo-speech: "npm:~57.0.1"
     expo-splash-screen: "npm:~57.0.7"
     expo-status-bar: "npm:~57.0.1"
     expo-system-ui: "npm:~57.0.2"

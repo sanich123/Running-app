@@ -33,4 +33,21 @@ describe('share activity image', () => {
     expect(screen.getByText('Активность')).toBeOnTheScreen();
     expect(screen.queryByText('not-a-date')).not.toBeOnTheScreen();
   });
+
+  it('uses kilometres per hour for non-running activities', async () => {
+    await renderWithProviders(
+      <ShareActivityImage
+        distance={5000}
+        duration={300000}
+        date="2026-08-09T10:00:00.000Z"
+        title="Велопрогулка"
+        sport="bike"
+        cardRef={createRef<View>()}
+      />,
+    );
+
+    expect(screen.getByText('Скорость')).toBeOnTheScreen();
+    expect(screen.getByText('60.0 км/ч')).toBeOnTheScreen();
+    expect(screen.queryByText('Темп')).not.toBeOnTheScreen();
+  });
 });

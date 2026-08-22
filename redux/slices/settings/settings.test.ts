@@ -3,7 +3,7 @@ import { profileApi } from '@R/services/profile/profile';
 import { setUserId } from '@R/slices/auth/auth';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore } from '@T/utils/mock-store';
-import reducer, { SETTINGS_INITIAL_STATE, changeLanguage, setIsProfileFilled } from './settings';
+import reducer, { SETTINGS_INITIAL_STATE, changeLanguage, getActivitySettings, setIsProfileFilled } from './settings';
 
 describe('Settings slice', () => {
   it('should handle initial state properly', () => {
@@ -11,15 +11,23 @@ describe('Settings slice', () => {
   });
   it('should change language', () => {
     expect(reducer(SETTINGS_INITIAL_STATE, changeLanguage(LANGUAGES.russian))).toEqual({
+      ...SETTINGS_INITIAL_STATE,
       language: LANGUAGES.russian,
-      theme: null,
-      isProfileFilled: false,
     });
   });
   it('stores whether the profile has been filled', () => {
     expect(reducer(SETTINGS_INITIAL_STATE, setIsProfileFilled(true))).toEqual({
       ...SETTINGS_INITIAL_STATE,
       isProfileFilled: true,
+    });
+  });
+  it('uses defaults when an older persisted settings object has no activity fields', () => {
+    expect(getActivitySettings({ language: LANGUAGES.russian, theme: null, isProfileFilled: false })).toMatchObject({
+      activityVoiceEnabled: true,
+      activityVoiceMetrics: ['pace', 'movingTime', 'elevation'],
+      activityVoiceIdentifier: null,
+      activityReminderEnabled: false,
+      activityReminders: [],
     });
   });
   it('marks the profile as filled after a successful profile query', async () => {

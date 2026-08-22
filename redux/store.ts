@@ -38,7 +38,7 @@ export const RESET_STORE = 'app/resetStore';
 export const resetStore = () => ({ type: RESET_STORE });
 
 type AppState = ReturnType<typeof appReducer>;
-const profileListenerMiddleware = createProfileListenerMiddleware();
+const profileListenerMiddleware = createProfileListenerMiddleware<AppState>();
 const persistedReducer = persistReducer(persistConfig, appReducer);
 const rootReducer: Reducer<AppState, Action> = (state, action) =>
   (persistedReducer as unknown as Reducer<AppState, Action>)(action.type === RESET_STORE ? undefined : state, action);

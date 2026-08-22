@@ -5,11 +5,11 @@ import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import CustomImage from '@S/custom-image/custom-image';
-import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
 import { SHARE_IMAGE_SIZE } from './const';
 import Metric from './metric';
 import { CARD_METRICS } from '../metrics/const';
+import { getCardSpeedMetric } from '../metrics/utils';
 import { getShareMapPhotoUrl } from '../utils';
 import type { ActivityCardProps } from '../types';
 
@@ -20,14 +20,16 @@ export default function ShareActivityImage({
   title,
   mapPhotoUrl,
   cardRef,
+  sport = 'run',
 }: Pick<ActivityCardProps, 'distance' | 'duration' | 'date' | 'title' | 'mapPhotoUrl'> & {
+  sport?: string;
   cardRef: MutableRefObject<View | null>;
 }) {
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const isRussian = language === LANGUAGES.russian;
   const shareMapPhotoUrl = getShareMapPhotoUrl(mapPhotoUrl) ?? mapPhotoUrl;
-  const pace = getSpeedInMinsInKm(distance, duration);
+  const speedMetric = getCardSpeedMetric({ sport, distance, duration, language });
   const formattedDate = Number.isNaN(new Date(date).getTime())
     ? ''
     : new Date(date).toLocaleDateString(isRussian ? 'ru-RU' : 'en-US', {
@@ -62,7 +64,7 @@ export default function ShareActivityImage({
 
       <View style={styles.footer}>
         <View style={styles.metricsWrapper}>
-          <Metric label={CARD_METRICS[language].pace} value={`${pace.paceAsString} /${CARD_METRICS[language].km}`} />
+          <Metric label={speedMetric.title} value={speedMetric.metrics} />
           <Metric label={CARD_METRICS[language].time} value={formatDuration(duration)} />
           <Metric
             label={CARD_METRICS[language].distance}

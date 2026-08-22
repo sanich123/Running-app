@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { errorToast } from '@S/error-toast/error-toast';
 import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
+import { resetPedometerActivity } from '@U/pedometer/pedometer';
 import { ACTIVITY_CLOSE_BTN } from './const';
 
 export default function CloseBtn() {
@@ -43,6 +44,7 @@ export default function CloseBtn() {
     setIsStoppingTracking(true);
     try {
       await stopLocationTracking();
+      resetPedometerActivity();
       dispatch(setActivityStatus(STATUSES.paused));
       dispatch(setEmptyLastArrayWhenPaused());
       if (duration > 0) {

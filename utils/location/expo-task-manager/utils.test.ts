@@ -1,6 +1,13 @@
+import * as Speech from 'expo-speech';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { setSport } from '@R/slices/activity/activity';
 import { resetLocationSlice, setLocationsWhenContinued } from '@R/slices/location/location';
+import {
+  addActivityReminder,
+  resetActivityReminders,
+  setActivityReminderEnabled,
+  setActivityVoiceEnabled,
+} from '@R/slices/settings/settings';
 import { store } from '@R/store';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import {
@@ -10,7 +17,7 @@ import {
   getKilometerSplitCalculation,
   getSpeedInKmPerHour,
 } from '../location-utils';
-import { saveMetricsToStoreTaskManager } from './utils';
+import { getCompletedReminderCount, saveMetricsToStoreTaskManager } from './utils';
 
 describe('location speed filtering', () => {
   beforeEach(() => {
@@ -128,6 +135,17 @@ describe('kilometre split calculation', () => {
     expect(location.distance).toBe(2_500);
     expect(location.duration).toBe(600_000);
     expect(location.altitude).toBe(30);
+    expect(Speech.speak).toHaveBeenCalledTimes(2);
+    expect(Speech.speak).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining('1 километр'),
+      expect.objectContaining({ language: 'ru-RU' }),
+    );
+    expect(Speech.speak).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining('2 километр'),
+      expect.objectContaining({ language: 'ru-RU' }),
+    );
   });
 
   it('does not create another split for every update after crossing a kilometre', () => {
@@ -145,6 +163,54 @@ describe('kilometre split calculation', () => {
     expect(location.kilometresSplit).toHaveLength(1);
     expect(location.lastKilometer).toBe(30);
     expect(location.distance).toBe(1_030);
+  });
+});
+
+describe('activity reminders', () => {
+  beforeEach(() => {
+    store.dispatch(resetLocationSlice());
+    store.dispatch(resetActivityReminders());
+    store.dispatch(setActivityReminderEnabled(true));
+    store.dispatch(
+      addActivityReminder({ id: 'water-reminder', intervalMinutes: 30, text: 'Пора сделать глоток воды.' }),
+    );
+    store.dispatch(setActivityVoiceEnabled(false));
+  });
+
+  it('counts each interval crossed by moving time', () => {
+    expect(getCompletedReminderCount(0, 31 * 60_000, 30)).toBe(1);
+    expect(getCompletedReminderCount(30 * 60_000, 61 * 60_000, 30)).toBe(1);
+    expect(getCompletedReminderCount(0, 29 * 60_000, 30)).toBe(0);
+  });
+
+  it('speaks the custom text after the selected moving-time interval', () => {
+    const start = { ...MOCK_LOCATION, timestamp: 0 };
+    const end = { ...MOCK_LOCATION, timestamp: 31 * 60_000 };
+
+    store.dispatch(setLocationsWhenContinued(start));
+    saveMetricsToStoreTaskManager(end, 31 * 60_000, 0, 0, 1000, start);
+
+    expect(Speech.speak).toHaveBeenCalledWith('Пора сделать глоток воды.', {
+      language: 'ru-RU',
+      voice: undefined,
+      rate: 0.95,
+      useApplicationAudioSession: false,
+    });
+  });
+
+  it('speaks each saved reminder independently', () => {
+    store.dispatch(addActivityReminder({ id: 'meal-reminder', intervalMinutes: 45, text: 'Пора перекусить.' }));
+    const start = { ...MOCK_LOCATION, timestamp: 0 };
+    const end = { ...MOCK_LOCATION, timestamp: 46 * 60_000 };
+
+    store.dispatch(setLocationsWhenContinued(start));
+    saveMetricsToStoreTaskManager(end, 46 * 60_000, 0, 0, 1000, start);
+
+    expect(Speech.speak).toHaveBeenCalledWith(
+      'Пора сделать глоток воды.',
+      expect.objectContaining({ language: 'ru-RU' }),
+    );
+    expect(Speech.speak).toHaveBeenCalledWith('Пора перекусить.', expect.objectContaining({ language: 'ru-RU' }));
   });
 });
 

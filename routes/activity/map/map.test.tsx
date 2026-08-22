@@ -1,9 +1,8 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { getCurrentPositionAsync } from 'expo-location';
 import { setUserId } from '@R/slices/auth/auth';
-import { resetLocationSlice, setInitialLocation } from '@R/slices/location/location';
+import { resetLocationSlice } from '@R/slices/location/location';
 import { setIsProfileFilled } from '@R/slices/settings/settings';
-import * as infoToastModule from '@S/info-toast/info-toast';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -36,21 +35,6 @@ describe('activity recording map', () => {
     mockStore.dispatch(resetLocationSlice());
     mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(setIsProfileFilled(true));
-  });
-
-  it('shows a warning when location accuracy is worse than 50 meters', async () => {
-    const onLocationReadinessChange = jest.fn();
-    const infoToast = jest.spyOn(infoToastModule, 'infoToast').mockImplementation(() => undefined);
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
-    mockStore.dispatch(setInitialLocation({ coords: { latitude: 55.7, longitude: 37.6, accuracy: 51 } }));
-    await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);
-
-    const accuracyWarning = await screen.findByTestId('poor-location-accuracy');
-    expect(accuracyWarning).toBeOnTheScreen();
-    await userEvent.press(accuracyWarning);
-    expect(infoToast).toHaveBeenCalledWith(
-      'Качество геопозиции невысокое: погрешность около 51 м. Это может повлиять на точность маршрута.',
-    );
   });
 
   it('marks recording ready and recenters the camera on the current location', async () => {

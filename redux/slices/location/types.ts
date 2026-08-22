@@ -5,6 +5,7 @@ export interface LastKmSplit {
   lastKilometerDuration: number;
   kilometerPoint: LocationObject;
   lastKilometerAltitude: number;
+  lastKilometerSteps?: number;
 }
 
 export interface LocationInitialState {
@@ -16,6 +17,7 @@ export interface LocationInitialState {
   isMapVisible: boolean;
   initialLocation: LocationObject | null;
   distance: number;
+  steps: number;
   duration: number;
   altitude: number;
   durationWithPauses: number;

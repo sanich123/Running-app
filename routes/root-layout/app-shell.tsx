@@ -65,13 +65,7 @@ export default function AppShell() {
                 <Stack.Screen name={ROUTES.privacyPolicy} options={{ title: 'Политика конфиденциальности' }} />
                 <Stack.Screen name={ROUTES.legalInformation} options={{ title: 'Юридическая информация' }} />
                 <Stack.Screen name={ROUTES.maintenance} options={{ headerShown: false }} />
-                <Stack.Screen
-                  name={`${ROUTES.comment}/${ROUTES.routeId}`}
-                  options={{
-                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
-                    title: LABELS[language].comment,
-                  }}
-                />
+
                 <Stack.Screen
                   name={`${ROUTES.activity}/${ROUTES.routeId}`}
                   options={{

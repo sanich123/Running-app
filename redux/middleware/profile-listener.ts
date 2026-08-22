@@ -2,10 +2,15 @@ import { createListenerMiddleware } from '@reduxjs/toolkit';
 import { profileApi } from '@R/services/profile/profile';
 import { setIsProfileFilled } from '@R/slices/settings/settings';
 import { hasProfileData } from '@Routes/activity/map/profile-status';
-import type { RootState } from '@R/store';
 
-export function createProfileListenerMiddleware() {
-  const middleware = createListenerMiddleware<RootState>();
+interface ProfileListenerState {
+  auth: {
+    userId: string;
+  };
+}
+
+export function createProfileListenerMiddleware<State extends ProfileListenerState = ProfileListenerState>() {
+  const middleware = createListenerMiddleware<State>();
 
   middleware.startListening({
     matcher: profileApi.endpoints.getUserProfileByUserId.matchFulfilled,

@@ -15,7 +15,7 @@ import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
 import ShareActivityImage from './share-activity-image/share-activity-image';
 import { UserInfoSize } from './user-info/const';
-import { getCardMapPhotoUrl } from './utils';
+import { getActivityCardElevationGain, getCardMapPhotoUrl } from './utils';
 import type { ActivityCardProps } from './types';
 
 export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
@@ -29,6 +29,8 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     photoVideoUrls,
     duration,
     distance,
+    steps,
+    kilometresSplit,
     isShowDescription,
     isShowDeleteBtn,
     mapPhotoUrl,
@@ -67,6 +69,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
         date={date}
         duration={duration}
         distance={distance}
+        sport={sport}
         cardRef={cardRef}
         mapPhotoUrl={shareMapPhotoUrl}
       />
@@ -100,6 +103,9 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           description={description}
           userId={userId}
           id={id}
+          sport={sport}
+          steps={steps}
+          elevationGain={getActivityCardElevationGain(kilometresSplit, locations)}
         />
         <View style={{ height: 40, paddingHorizontal: 8 }}>
           <Likes activityId={id} size={likesSize} />

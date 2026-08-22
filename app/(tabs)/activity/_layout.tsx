@@ -5,6 +5,7 @@ import { Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { useGlobalActivitySportParams } from '@Routes/activity/activity-params';
+import ActivitySettingsButton from '@Routes/activity/activity-settings/activity-settings-button';
 import { LazyActivityCloseBtn } from '@Routes/app-routes/const';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
@@ -27,6 +28,7 @@ export default function ActivityStack() {
               <LazyActivityCloseBtn />
             </Suspense>
           ),
+          headerRight: () => <ActivitySettingsButton />,
           headerTitle: () =>
             Platform.OS === 'web' ? (
               <FeedHeaderTitle>{MAP_SPORT_TO_TITLE[sport][language]}</FeedHeaderTitle>
