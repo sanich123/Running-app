@@ -1,6 +1,11 @@
 const config = {
   collectCoverage: true,
   coverageReporters: ['text', 'json', 'html'],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+    },
+  },
   preset: 'jest-expo',
   setupFilesAfterEnv: ['./jest-setup.ts'],
   transform: {

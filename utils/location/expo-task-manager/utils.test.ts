@@ -17,7 +17,7 @@ import {
   getKilometerSplitCalculation,
   getSpeedInKmPerHour,
 } from '../location-utils';
-import { getCompletedReminderCount, saveMetricsToStoreTaskManager } from './utils';
+import { getCompletedReminderCount, getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 
 describe('location speed filtering', () => {
   beforeEach(() => {
@@ -181,6 +181,10 @@ describe('activity reminders', () => {
     expect(getCompletedReminderCount(0, 31 * 60_000, 30)).toBe(1);
     expect(getCompletedReminderCount(30 * 60_000, 61 * 60_000, 30)).toBe(1);
     expect(getCompletedReminderCount(0, 29 * 60_000, 30)).toBe(0);
+    expect(getCompletedReminderCount(Number.NaN, 31 * 60_000, 30)).toBe(0);
+    expect(getCompletedReminderCount(0, Number.POSITIVE_INFINITY, 30)).toBe(0);
+    expect(getCompletedReminderCount(0, 31 * 60_000, 0)).toBe(0);
+    expect(getCompletedReminderCount(31 * 60_000, 30 * 60_000, 30)).toBe(0);
   });
 
   it('speaks the custom text after the selected moving-time interval', () => {
@@ -211,6 +215,43 @@ describe('activity reminders', () => {
       expect.objectContaining({ language: 'ru-RU' }),
     );
     expect(Speech.speak).toHaveBeenCalledWith('Пора перекусить.', expect.objectContaining({ language: 'ru-RU' }));
+  });
+});
+
+describe('background metric calculation', () => {
+  beforeEach(() => {
+    store.dispatch(resetLocationSlice());
+  });
+
+  it('returns zero metrics before the first location is available', () => {
+    expect(getMetricsTaskManager(MOCK_LOCATION)).toEqual({
+      previousPosition: null,
+      currentDuration: 0,
+      currentDistance: 0,
+      currentAltitude: 0,
+      currentPace: 0,
+      firstArrayLength: 0,
+      lastArrayLength: 0,
+    });
+  });
+
+  it('calculates a segment from the last location after a pause or continuation', () => {
+    const start = { ...MOCK_LOCATION, timestamp: 1_000 };
+    const end = {
+      ...MOCK_LOCATION,
+      timestamp: 61_000,
+      coords: { ...MOCK_LOCATION.coords, latitude: MOCK_LOCATION.coords.latitude + 0.01 },
+    };
+    store.dispatch(setLocationsWhenContinued(start));
+
+    const metrics = getMetricsTaskManager(end);
+
+    expect(metrics.previousPosition).toBe(start);
+    expect(metrics.currentDuration).toBe(60_000);
+    expect(metrics.currentDistance).toBeGreaterThan(0);
+    expect(metrics.currentPace).toBeGreaterThan(0);
+    expect(metrics.firstArrayLength).toBe(1);
+    expect(metrics.lastArrayLength).toBe(1);
   });
 });
 
