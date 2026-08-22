@@ -33,9 +33,19 @@ export default function Metrics() {
           isCentral={false}
         />
         {!isMapVisible && (
-          <MetricsItem isMapVisible={isMapVisible} title={`${topMetric.title}:`} metric={topMetric.metric} isCentral={false} />
+          <MetricsItem
+            isMapVisible={isMapVisible}
+            title={`${topMetric.title}:`}
+            metric={topMetric.metric}
+            isCentral={false}
+          />
         )}
-        <MetricsItem isMapVisible={isMapVisible} title={primaryMetric.title + ':'} metric={primaryMetric.metric} isCentral />
+        <MetricsItem
+          isMapVisible={isMapVisible}
+          title={primaryMetric.title + ':'}
+          metric={primaryMetric.metric}
+          isCentral
+        />
         {!isMapVisible && (
           <MetricsItem
             isMapVisible={isMapVisible}

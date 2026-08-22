@@ -73,16 +73,12 @@ describe('Home activity full view', () => {
     await renderWithProviders(<Metrics />, { store: mockStore });
 
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.english.averageCadence)).toBeOnTheScreen();
-    expect(
-      await screen.findByText(`${getAverageCadence(steps, MOCK_ACTIVITY.duration)} spm`),
-    ).toBeOnTheScreen();
+    expect(await screen.findByText(`${getAverageCadence(steps, MOCK_ACTIVITY.duration)} spm`)).toBeOnTheScreen();
   });
 
   it.each(['hike', 'ride'])('shows kilometres per hour for %s', async (sport) => {
     server.use(
-      http.get(`${BASE_URL}/activity/activityId/someActivityId`, () =>
-        HttpResponse.json({ ...MOCK_ACTIVITY, sport }),
-      ),
+      http.get(`${BASE_URL}/activity/activityId/someActivityId`, () => HttpResponse.json({ ...MOCK_ACTIVITY, sport })),
     );
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
 

@@ -64,12 +64,8 @@ export default function Metrics() {
             </View>
 
             <View style={styles.alignedCenter}>
-              <Text variant="bodyLarge">
-                {mainMetric?.title}
-              </Text>
-              <Text variant="titleLarge">
-                {mainMetric?.value}
-              </Text>
+              <Text variant="bodyLarge">{mainMetric?.title}</Text>
+              <Text variant="titleLarge">{mainMetric?.value}</Text>
             </View>
           </View>
           <Divider />
