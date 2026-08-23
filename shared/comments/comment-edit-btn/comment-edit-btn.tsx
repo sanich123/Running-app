@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
-import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
+import { setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { COMMENT_EDIT_BTN } from './const';
 import type { CommentEditBtnProps } from '../types';
@@ -21,12 +21,10 @@ export default function CommentEditBtn({ idOfUpdatingComment, commentId }: Comme
         containerColor={colors.primaryContainer}
         style={styles.button}
         onPress={() => {
-          dispatch(setIsShowingTextInput(true));
           if (commentId !== idOfUpdatingComment) {
             dispatch(setIdOfUpdatingComment(commentId));
           } else {
             dispatch(setIdOfUpdatingComment(''));
-            setIsShowingTextInput(false);
           }
         }}
       />

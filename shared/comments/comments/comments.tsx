@@ -1,34 +1,19 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import {
-  FlatList,
-  StyleSheet,
-  View,
-  type FlatListProps,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-} from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
+import { StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useGetCommentsByActivityIdInfiniteQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
+import { TOP_LOAD_THRESHOLD } from './const';
 import Comment from '../comment/comment';
 import CommentsEmptyList from '../comments-empty/comments-empty';
 import CommentsLoadMoreBtn from '../comments-load-more-btn/comments-load-more';
+import CommentsSkeleton from '../comments-skeleton/comments-skeleton';
 import type { CommentsProps } from '../types';
 import type { CommentResponse } from '@R/runich-api/types';
 
-const TOP_LOAD_THRESHOLD = 48;
-
-export default function Comments({
-  commentsModalRef,
-  onViewStateChange,
-  showEmptyState = true,
-  isBottomSheet = false,
-  headerComponent,
-  contentContainerStyle,
-}: CommentsProps) {
-  const { isShowingTextInput, commentActivityId } = useAppSelector(({ comment }) => comment);
+export default function Comments({ commentsModalRef }: CommentsProps) {
+  const { commentActivityId } = useAppSelector(({ comment }) => comment);
   const { data, error, refetch, isLoading, isError, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetCommentsByActivityIdInfiniteQuery({ activityId: commentActivityId }, { skip: !commentActivityId });
   const hasLoadedPage = Boolean(data?.pages.length);
@@ -61,54 +46,41 @@ export default function Comments({
   const isInitialLoading = isLoading && !hasLoadedPage;
   const isInitialError = isError && !hasLoadedPage;
   const shouldShowPaginationAction = Boolean(hasNextPage || (isError && hasLoadedPage));
-  const emptyState = showEmptyState && !isShowingTextInput ? <CommentsEmptyList /> : null;
-
-  useEffect(() => {
-    if (isInitialLoading) {
-      onViewStateChange?.('loading');
-    } else if (isInitialError) {
-      onViewStateChange?.('error');
-    } else {
-      onViewStateChange?.(comments.length ? 'loaded' : 'empty');
-    }
-  }, [comments.length, isInitialError, isInitialLoading, onViewStateChange]);
 
   if (isInitialLoading) {
-    return isBottomSheet ? (
-      <View style={styles.list} />
-    ) : (
-      <ActivityIndicator size="large" testID="commentsActivityIndicator" />
-    );
+    return <CommentsSkeleton />;
   }
 
   if (isInitialError) {
-    const errorComponent = <ErrorComponent error={error} refetch={refetch} />;
-    return isBottomSheet ? <View style={styles.list}>{errorComponent}</View> : errorComponent;
+    return (
+      <View style={styles.list}>
+        <ErrorComponent error={error} refetch={refetch} />
+      </View>
+    );
   }
 
-  const listProps: FlatListProps<CommentResponse> = {
-    data: comments,
-    testID: 'comments-list',
-    keyExtractor: (comment) => comment.id,
-    renderItem: ({ item }) => <Comment {...item} commentsModalRef={commentsModalRef} />,
-    contentContainerStyle: [styles.content, contentContainerStyle],
-    ListHeaderComponent: () => (
-      <>
-        {headerComponent}
-        {shouldShowPaginationAction && (
-          <CommentsLoadMoreBtn onPress={loadMoreComments} isLoading={isFetchingNextPage} isError={isError} />
-        )}
-      </>
-    ),
-    ListEmptyComponent: emptyState,
-    maintainVisibleContentPosition: { minIndexForVisible: 1 },
-    keyboardShouldPersistTaps: 'handled',
-    onScroll: handleScroll,
-    scrollEventThrottle: 16,
-    style: styles.list,
-  };
-
-  return isBottomSheet ? <BottomSheetFlatList {...listProps} /> : <FlatList {...listProps} />;
+  return (
+    <BottomSheetFlatList<CommentResponse>
+      data={comments}
+      testID="comments-list"
+      keyExtractor={(comment) => comment.id}
+      renderItem={({ item }) => <Comment {...item} commentsModalRef={commentsModalRef} />}
+      contentContainerStyle={styles.content}
+      ListHeaderComponent={() => (
+        <>
+          {shouldShowPaginationAction && (
+            <CommentsLoadMoreBtn onPress={loadMoreComments} isLoading={isFetchingNextPage} isError={isError} />
+          )}
+        </>
+      )}
+      ListEmptyComponent={<CommentsEmptyList />}
+      maintainVisibleContentPosition={{ minIndexForVisible: 1 }}
+      keyboardShouldPersistTaps="handled"
+      onScrollEndDrag={handleScroll}
+      onMomentumScrollEnd={handleScroll}
+      style={styles.list}
+    />
+  );
 }
 
 const styles = StyleSheet.create({

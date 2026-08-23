@@ -7,7 +7,7 @@ import {
   useUpdateCommentByCommentIdMutation,
 } from '@R/services/comments/comments';
 import { useSendEmailAfterSendingCommentMutation } from '@R/services/emails/emails';
-import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
+import { setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -39,7 +39,6 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   function closeInput() {
     Keyboard.dismiss();
     setComment('');
-    dispatch(setIsShowingTextInput(false));
     dispatch(setIdOfUpdatingComment(''));
   }
 

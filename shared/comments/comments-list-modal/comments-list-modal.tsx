@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,30 +7,15 @@ import { useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import CommentInput from '@S/comments/comment-input/comment-input';
 import Comments from '@S/comments/comments/comments';
-import CommentsEmptyList from '@S/comments/comments-empty/comments-empty';
 import { backdrop } from '@U/backdrop';
-import type { CommentsListModalProps, CommentsViewState } from '../types';
+import { COMMENT_KEYBOARD_OFFSET } from './const';
+import type { CommentsListModalProps } from '../types';
 
-export default function CommentsListModal({
-  commentsModalRef,
-  commentsLength: knownCommentsLength,
-}: CommentsListModalProps) {
+export default function CommentsListModal({ commentsModalRef }: CommentsListModalProps) {
   const { colors } = useTheme();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
-  const { activityOwnerProfile, commentsLength, isShowingTextInput, idOfUpdatingComment } = useAppSelector(
-    ({ comment }) => comment,
-  );
-  const expectedCommentsLength = knownCommentsLength ?? commentsLength;
-  const initialCommentsViewState = (expectedCommentsLength > 0 ? 'loaded' : 'empty') as CommentsViewState;
-  const [commentsViewState, setCommentsViewState] = useState<CommentsViewState>(initialCommentsViewState);
-  const [isCommentsResolved, setIsCommentsResolved] = useState(false);
+  const { activityOwnerProfile, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
   const renderBackdrop = useCallback((props: any) => backdrop(props), []);
-  const handleCommentsViewStateChange = useCallback((state: CommentsViewState) => {
-    if (state !== 'loading') {
-      setCommentsViewState(state);
-      setIsCommentsResolved(true);
-    }
-  }, []);
   return (
     <BottomSheetModal
       ref={commentsModalRef}
@@ -47,18 +32,12 @@ export default function CommentsListModal({
       keyboardBehavior="extend"
       android_keyboardInputMode="adjustResize">
       <View style={styles.commentsContainer}>
-        <Comments
-          commentsModalRef={commentsModalRef}
-          onViewStateChange={handleCommentsViewStateChange}
-          isBottomSheet
-          contentContainerStyle={styles.commentsContent}
-        />
-        {!isCommentsResolved && commentsViewState === 'empty' && !isShowingTextInput && (
-          <View pointerEvents="none" style={styles.emptyStateOverlay}>
-            <CommentsEmptyList />
-          </View>
-        )}
-        <KeyboardAvoidingView behavior="position" automaticOffset style={styles.keyboardAvoidingComposer}>
+        <Comments commentsModalRef={commentsModalRef} />
+        <KeyboardAvoidingView
+          behavior="position"
+          automaticOffset
+          keyboardVerticalOffset={COMMENT_KEYBOARD_OFFSET}
+          style={styles.keyboardAvoidingComposer}>
           <View
             testID="comments-composer"
             style={[
@@ -80,13 +59,6 @@ export default function CommentsListModal({
 const styles = StyleSheet.create({
   commentsContainer: {
     flex: 1,
-  },
-  emptyStateOverlay: {
-    ...StyleSheet.absoluteFill,
-    justifyContent: 'center',
-  },
-  commentsContent: {
-    paddingBottom: 8,
   },
   composer: {
     borderTopWidth: 1,

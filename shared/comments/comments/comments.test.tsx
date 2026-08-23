@@ -2,7 +2,7 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
-import { setCommentActivityId, setIsShowingTextInput } from '@R/slices/comment/comment';
+import { setCommentActivityId } from '@R/slices/comment/comment';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
 import { BASE_URL } from '@T/utils/handlers';
@@ -23,16 +23,29 @@ describe('Comments', () => {
   beforeEach(() => {
     mockStore.dispatch(runichApi.util.resetApiState());
     mockStore.dispatch(setCommentActivityId('someActivityId'));
-    mockStore.dispatch(setIsShowingTextInput(false));
+  });
+
+  it('shows a skeleton during the initial comments request', async () => {
+    server.use(
+      http.get(`${BASE_URL}/comment/someActivityId`, async () => {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        return HttpResponse.json({ comments: [] });
+      }),
+    );
+
+    await renderWithProviders(
+      <Comments commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }} />,
+      { store: mockStore },
+    );
+
+    expect(screen.getByTestId('comments-skeleton')).toBeOnTheScreen();
+    expect(await screen.findByText('Комментариев пока нет')).toBeOnTheScreen();
   });
 
   it('shows the empty state without a loading indicator when there are no comments', async () => {
     server.use(http.get(`${BASE_URL}/comment/someActivityId`, () => HttpResponse.json({ comments: [] })));
     await renderWithProviders(
-      <Comments
-        commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }}
-        isBottomSheet
-      />,
+      <Comments commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }} />,
       { store: mockStore },
     );
     expect(await screen.findByText('Комментариев пока нет')).toBeOnTheScreen();
@@ -90,12 +103,12 @@ describe('Comments', () => {
     const commentsList = await screen.findByTestId('comments-list');
 
     await act(async () =>
-      fireEvent.scroll(commentsList, {
+      fireEvent(commentsList, 'scrollEndDrag', {
         nativeEvent: { contentOffset: { y: 100 }, layoutMeasurement: { height: 400 }, contentSize: { height: 800 } },
       }),
     );
     await act(async () =>
-      fireEvent.scroll(commentsList, {
+      fireEvent(commentsList, 'scrollEndDrag', {
         nativeEvent: { contentOffset: { y: 0 }, layoutMeasurement: { height: 400 }, contentSize: { height: 800 } },
       }),
     );

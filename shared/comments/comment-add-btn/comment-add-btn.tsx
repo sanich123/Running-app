@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
-import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
+import { setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 
 export default function CommentAddBtn() {
@@ -19,7 +19,6 @@ export default function CommentAddBtn() {
       textColor={colors.onSecondaryContainer}
       onPress={() => {
         dispatch(setIdOfUpdatingComment(''));
-        dispatch(setIsShowingTextInput(true));
       }}>
       {language === LANGUAGES.russian ? 'Добавить комментарий' : 'Add a comment'}
     </Button>

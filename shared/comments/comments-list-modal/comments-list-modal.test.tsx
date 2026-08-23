@@ -1,19 +1,20 @@
 import { screen } from '@testing-library/react-native';
-import { setIsShowingTextInput, setIdOfUpdatingComment } from '@R/slices/comment/comment';
+import { setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CommentsListModal from './comments-list-modal';
-import type { CommentsViewState } from '../types';
 
-let mockCommentsViewState: CommentsViewState = 'loaded';
+let mockCommentsViewState: 'loading' | 'loaded' | 'empty' = 'loaded';
 
 jest.mock('@S/comments/comments/comments', () => ({
   __esModule: true,
-  default: function MockComments({ onViewStateChange }: { onViewStateChange?: (state: CommentsViewState) => void }) {
+  default: function MockComments() {
     const { Text } = require('react-native');
-    const { useEffect } = require('react');
-    useEffect(() => onViewStateChange?.(mockCommentsViewState), [onViewStateChange]);
-    return mockCommentsViewState === 'loading' ? null : <Text testID="comments-list">comments</Text>;
+    return mockCommentsViewState === 'loading' ? (
+      <Text testID="comments-skeleton">skeleton</Text>
+    ) : (
+      <Text testID="comments-list">comments</Text>
+    );
   },
 }));
 jest.mock('@S/comments/comment-input/comment-input', () => ({
@@ -26,15 +27,15 @@ jest.mock('@S/comments/comment-input/comment-input', () => ({
 describe('comments list modal', () => {
   beforeEach(() => {
     mockCommentsViewState = 'loaded';
-    mockStore.dispatch(setIsShowingTextInput(false));
     mockStore.dispatch(setIdOfUpdatingComment(''));
   });
 
-  it('uses the known empty state while comments are loading', async () => {
+  it('shows a skeleton while comments are loading', async () => {
     mockCommentsViewState = 'loading';
     await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} commentsLength={0} />);
     expect(screen.queryByTestId('comments-list')).not.toBeOnTheScreen();
-    expect(screen.getByText('Комментариев пока нет')).toBeOnTheScreen();
+    expect(screen.getByTestId('comments-skeleton')).toBeOnTheScreen();
+    expect(screen.queryByText('Комментариев пока нет')).not.toBeOnTheScreen();
     expect(screen.getByTestId('comments-composer')).toBeOnTheScreen();
     expect(screen.getByTestId('comments-input')).toBeOnTheScreen();
   });

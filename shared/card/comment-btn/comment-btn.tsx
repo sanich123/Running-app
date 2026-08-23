@@ -6,7 +6,6 @@ import {
   setCommentActivityId,
   setActivityOwnerProfile,
   setMapPhotoUrl,
-  setIsShowingTextInput,
   setCommentsLength,
 } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -43,7 +42,6 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
       borderless
       onPress={() => {
         dispatch(setCommentsLength(commentsLength));
-        dispatch(setIsShowingTextInput(false));
         dispatch(setCommentActivityId(activityId));
         dispatch(setActivityOwnerProfile(profile));
         dispatch(setMapPhotoUrl(mapPhotoUrl));

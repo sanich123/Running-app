@@ -1,12 +1,7 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { setUserId } from '@R/slices/auth/auth';
-import {
-  setCommentActivityId,
-  setIdOfUpdatingComment,
-  setIsShowingTextInput,
-  setMapPhotoUrl,
-} from '@R/slices/comment/comment';
+import { setCommentActivityId, setIdOfUpdatingComment, setMapPhotoUrl } from '@R/slices/comment/comment';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
 import { server } from '@T/utils/server';
@@ -45,7 +40,6 @@ describe('Comment input', () => {
     let requestBody: unknown;
     mockStore.dispatch(setUserId('comment-author-id'));
     mockStore.dispatch(setCommentActivityId('someActivityId'));
-    mockStore.dispatch(setIsShowingTextInput(true));
     server.use(
       http.post(`${BASE_URL}/comment/someActivityId`, async ({ request }) => {
         requestBody = await request.json();
@@ -56,20 +50,16 @@ describe('Comment input', () => {
     await user.type(screen.getByTestId(COMMENT_INPUT_TEST_ID), 'A real test comment');
     await user.press(screen.getByTestId(COMMENT_ICON_TEST_ID));
     await waitFor(() => expect(requestBody).toEqual({ comment: 'A real test comment' }));
-    expect(mockStore.getState().comment.isShowingTextInput).toBe(false);
   });
 
   it('closes the composer without sending an empty comment', async () => {
     const user = userEvent.setup();
     mockStore.dispatch(setIdOfUpdatingComment(''));
-    mockStore.dispatch(setIsShowingTextInput(true));
     await renderWithProviders(<CommentInput commentId="" profile={MOCK_PROFILE} />);
 
     await user.press(screen.getByTestId('comment-input-cancel'));
 
-    expect(mockStore.getState().comment).toEqual(
-      expect.objectContaining({ idOfUpdatingComment: '', isShowingTextInput: false }),
-    );
+    expect(mockStore.getState().comment.idOfUpdatingComment).toBe('');
   });
 
   it('updates an existing comment only when its normalized text changes', async () => {
@@ -96,7 +86,6 @@ describe('Comment input', () => {
     await user.press(screen.getByTestId(COMMENT_ICON_TEST_ID));
 
     await waitFor(() => expect(requestBody).toEqual({ comment: 'Updated text' }));
-    expect(mockStore.getState().comment.isShowingTextInput).toBe(false);
   });
 
   it('does not send an unchanged or empty edited comment', async () => {
@@ -107,7 +96,6 @@ describe('Comment input', () => {
     );
     const input = screen.getByTestId(COMMENT_INPUT_TEST_ID);
     await user.press(screen.getByTestId(COMMENT_ICON_TEST_ID));
-    expect(mockStore.getState().comment.isShowingTextInput).toBe(false);
 
     await user.clear(input);
     await act(async () => {

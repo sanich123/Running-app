@@ -5,7 +5,6 @@ const comment = createSlice({
   name: 'comment',
   initialState: {
     commentActivityId: '',
-    isShowingTextInput: false,
     idOfUpdatingComment: '',
     activityOwnerProfile: {} as ProfileType,
     mapPhotoUrl: '',
@@ -17,9 +16,6 @@ const comment = createSlice({
     },
     setActivityOwnerProfile: (state, { payload }) => {
       state.activityOwnerProfile = payload;
-    },
-    setIsShowingTextInput: (state, { payload }) => {
-      state.isShowingTextInput = payload;
     },
     setIdOfUpdatingComment: (state, { payload }) => {
       state.idOfUpdatingComment = payload;
@@ -36,7 +32,6 @@ const comment = createSlice({
 export const {
   setCommentActivityId,
   setActivityOwnerProfile,
-  setIsShowingTextInput,
   setIdOfUpdatingComment,
   setMapPhotoUrl,
   setCommentsLength,
