@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
@@ -8,7 +9,6 @@ import CommentInput from '@S/comments/comment-input/comment-input';
 import Comments from '@S/comments/comments/comments';
 import CommentsEmptyList from '@S/comments/comments-empty/comments-empty';
 import { backdrop } from '@U/backdrop';
-import CommentAddBtn from '../comment-add-btn/comment-add-btn';
 import type { CommentsListModalProps, CommentsViewState } from '../types';
 
 export default function CommentsListModal({
@@ -31,12 +31,10 @@ export default function CommentsListModal({
       setIsCommentsResolved(true);
     }
   }, []);
-  const isComposerOpen = isShowingTextInput && !idOfUpdatingComment;
-
   return (
     <BottomSheetModal
       ref={commentsModalRef}
-      index={0}
+      index={1}
       snapPoints={['50%', '100%']}
       enableDynamicSizing={false}
       topInset={topInset}
@@ -46,8 +44,8 @@ export default function CommentsListModal({
       backgroundStyle={{ backgroundColor: colors.surface }}
       handleIndicatorStyle={{ backgroundColor: colors.primary }}
       keyboardBlurBehavior="restore"
-      keyboardBehavior="interactive"
-      android_keyboardInputMode="adjustPan">
+      keyboardBehavior="extend"
+      android_keyboardInputMode="adjustResize">
       <View style={styles.commentsContainer}>
         <Comments
           commentsModalRef={commentsModalRef}
@@ -60,18 +58,20 @@ export default function CommentsListModal({
             <CommentsEmptyList />
           </View>
         )}
-        <View
-          testID="comments-composer"
-          style={[
-            styles.composer,
-            {
-              backgroundColor: colors.surface,
-              borderTopColor: colors.outlineVariant,
-              paddingBottom: bottomInset + 8,
-            },
-          ]}>
-          {isComposerOpen ? <CommentInput profile={activityOwnerProfile} commentId="" /> : <CommentAddBtn />}
-        </View>
+        <KeyboardAvoidingView behavior="position" automaticOffset style={styles.keyboardAvoidingComposer}>
+          <View
+            testID="comments-composer"
+            style={[
+              styles.composer,
+              {
+                backgroundColor: colors.surface,
+                borderTopColor: colors.outlineVariant,
+                paddingBottom: bottomInset + 8,
+              },
+            ]}>
+            {!idOfUpdatingComment && <CommentInput profile={activityOwnerProfile} commentId="" />}
+          </View>
+        </KeyboardAvoidingView>
       </View>
     </BottomSheetModal>
   );
@@ -90,5 +90,8 @@ const styles = StyleSheet.create({
   },
   composer: {
     borderTopWidth: 1,
+  },
+  keyboardAvoidingComposer: {
+    width: '100%',
   },
 });

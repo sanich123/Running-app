@@ -8,7 +8,7 @@ export const SETTINGS_INITIAL_STATE: ActivitySettings = {
   language: LANGUAGES.russian,
   theme: null as 'light' | 'dark' | null,
   isProfileFilled: false,
-  activityVoiceEnabled: true,
+  activityVoiceEnabled: false,
   activityVoiceMetrics: [...DEFAULT_ACTIVITY_VOICE_METRICS],
   activityVoiceIdentifier: null as string | null,
   activityReminderEnabled: false,
@@ -78,10 +78,10 @@ const settings = createSlice({
       state.activityReminderEnabled = action.payload;
     },
     addActivityReminder: (state, action) => {
-      state.activityReminders.push(action.payload);
+      state.activityReminders = [...(state.activityReminders ?? []), action.payload];
     },
     removeActivityReminder: (state, action) => {
-      state.activityReminders = state.activityReminders.filter((reminder) => reminder.id !== action.payload);
+      state.activityReminders = (state.activityReminders ?? []).filter((reminder) => reminder.id !== action.payload);
     },
     resetActivityReminders: (state) => {
       state.activityReminders = [];

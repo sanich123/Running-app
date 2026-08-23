@@ -123,6 +123,7 @@ describe('kilometre split calculation', () => {
     };
 
     store.dispatch(setLocationsWhenContinued(start));
+    store.dispatch(setActivityVoiceEnabled(true));
     saveMetricsToStoreTaskManager(end, 600_000, 0, 30, 2_500, start);
 
     const { location } = store.getState();

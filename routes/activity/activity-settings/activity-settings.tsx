@@ -1,7 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { ComponentRef } from 'react';
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
+} from '@gorhom/bottom-sheet';
 import * as Speech from 'expo-speech';
-import { ActivityIndicator, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import { ActivityIndicator, Keyboard, StyleSheet, View } from 'react-native';
 import { Button, Divider, IconButton, RadioButton, Switch, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import {
@@ -33,6 +40,8 @@ export default function ActivitySettings({ settingsModalRef }: ActivitySettingsP
   } = getActivitySettings(settings);
   const [intervalInput, setIntervalInput] = useState('');
   const [reminderTextInput, setReminderTextInput] = useState('');
+  const reminderTextInputRef = useRef<ComponentRef<typeof BottomSheetTextInput>>(null);
+  const settingsScrollViewRef = useRef<KeyboardAwareScrollViewRef>(null);
   const [voices, setVoices] = useState<Voice[]>([]);
   const [isLoadingVoices, setIsLoadingVoices] = useState(true);
   const labels = ACTIVITY_SETTINGS[language];
@@ -68,6 +77,20 @@ export default function ActivitySettings({ settingsModalRef }: ActivitySettingsP
     (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
+
+  const scrollToReminderFields = useCallback(() => {
+    const scrollToEnd = () => settingsScrollViewRef.current?.scrollTo({ y: 10000, animated: true });
+
+    requestAnimationFrame(() => {
+      scrollToEnd();
+      requestAnimationFrame(scrollToEnd);
+    });
+  }, []);
+
+  useEffect(() => {
+    const keyboardSubscription = Keyboard.addListener('keyboardDidShow', scrollToReminderFields);
+    return () => keyboardSubscription?.remove();
+  }, [scrollToReminderFields]);
 
   const previewVoice = async (voiceIdentifier: string | null) => {
     try {
@@ -139,13 +162,22 @@ export default function ActivitySettings({ settingsModalRef }: ActivitySettingsP
     <BottomSheetModal
       ref={settingsModalRef}
       index={0}
-      snapPoints={['82%']}
+      snapPoints={['90%']}
       enableDynamicSizing={false}
       backdropComponent={renderBackdrop}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
       handleStyle={{ backgroundColor: colors.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
       backgroundStyle={{ backgroundColor: colors.surface }}
       handleIndicatorStyle={{ backgroundColor: colors.primary }}>
-      <BottomSheetScrollView contentContainerStyle={styles.content}>
+      <KeyboardAwareScrollView
+        ref={settingsScrollViewRef}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        mode="layout"
+        bottomOffset={24}
+        ScrollViewComponent={BottomSheetScrollView as never}>
         <Text variant="headlineSmall" style={{ color: colors.onSurface }}>
           {labels.title}
         </Text>
@@ -248,7 +280,7 @@ export default function ActivitySettings({ settingsModalRef }: ActivitySettingsP
             <Text variant="titleSmall" style={{ color: colors.onSurface }}>
               {labels.reminderInterval}
             </Text>
-            <TextInput
+            <BottomSheetTextInput
               testID="activity-reminder-interval"
               placeholder={labels.reminderIntervalPlaceholder}
               value={intervalInput}
@@ -260,11 +292,16 @@ export default function ActivitySettings({ settingsModalRef }: ActivitySettingsP
                 const normalizedValue = value.replace(/\D/g, '').slice(0, 3);
                 setIntervalInput(normalizedValue);
               }}
+              returnKeyType="next"
+              submitBehavior="submit"
+              onFocus={scrollToReminderFields}
+              onSubmitEditing={() => reminderTextInputRef.current?.focus()}
             />
             <Text variant="titleSmall" style={{ color: colors.onSurface }}>
               {labels.reminderText}
             </Text>
-            <TextInput
+            <BottomSheetTextInput
+              ref={reminderTextInputRef}
               testID="activity-reminder-text-input"
               placeholder={labels.reminderTextPlaceholder}
               value={reminderTextInput}
@@ -277,6 +314,11 @@ export default function ActivitySettings({ settingsModalRef }: ActivitySettingsP
                 { borderColor: colors.outline, color: colors.onSurface },
               ]}
               onChangeText={setReminderTextInput}
+              returnKeyType="done"
+              submitBehavior="submit"
+              enterKeyHint="done"
+              onFocus={scrollToReminderFields}
+              onSubmitEditing={installReminder}
             />
             <Button
               testID="activity-reminder-install"
@@ -318,7 +360,7 @@ export default function ActivitySettings({ settingsModalRef }: ActivitySettingsP
             )}
           </View>
         )}
-      </BottomSheetScrollView>
+      </KeyboardAwareScrollView>
     </BottomSheetModal>
   );
 }

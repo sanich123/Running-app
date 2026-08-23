@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react-native';
+import { screen } from '@testing-library/react-native';
 import { setIsShowingTextInput, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -23,14 +23,6 @@ jest.mock('@S/comments/comment-input/comment-input', () => ({
     return <Text testID="comments-input">input</Text>;
   },
 }));
-jest.mock('../comment-add-btn/comment-add-btn', () => ({
-  __esModule: true,
-  default: () => {
-    const { Text } = require('react-native');
-    return <Text testID="comments-add">add</Text>;
-  },
-}));
-
 describe('comments list modal', () => {
   beforeEach(() => {
     mockCommentsViewState = 'loaded';
@@ -44,33 +36,25 @@ describe('comments list modal', () => {
     expect(screen.queryByTestId('comments-list')).not.toBeOnTheScreen();
     expect(screen.getByText('Комментариев пока нет')).toBeOnTheScreen();
     expect(screen.getByTestId('comments-composer')).toBeOnTheScreen();
-    expect(screen.getByTestId('comments-add')).toBeOnTheScreen();
-    expect(screen.queryByTestId('comments-input')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('comments-input')).toBeOnTheScreen();
   });
 
-  it('shows the add action when there are no comments', async () => {
+  it('shows the comment input when there are no comments', async () => {
     mockCommentsViewState = 'empty';
     await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} />);
     expect(screen.getByTestId('comments-composer')).toBeOnTheScreen();
-    expect(screen.getByTestId('comments-add')).toBeOnTheScreen();
-    expect(screen.queryByTestId('comments-input')).not.toBeOnTheScreen();
-
-    await act(async () => {
-      mockStore.dispatch(setIsShowingTextInput(true));
-    });
     expect(screen.getByTestId('comments-input')).toBeOnTheScreen();
   });
 
-  it('shows the add action when the input is closed', async () => {
+  it('shows the comment input when the modal is opened', async () => {
     await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} />);
     expect(screen.getByTestId('comments-list')).toBeOnTheScreen();
-    expect(screen.getByTestId('comments-add')).toBeOnTheScreen();
+    expect(screen.getByTestId('comments-input')).toBeOnTheScreen();
   });
 
-  it('shows the comment input when a new comment is being written', async () => {
-    mockStore.dispatch(setIsShowingTextInput(true));
+  it('keeps the composer hidden while an existing comment is edited inline', async () => {
+    mockStore.dispatch(setIdOfUpdatingComment('comment-id'));
     await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} />);
-    expect(screen.getByTestId('comments-input')).toBeOnTheScreen();
-    expect(screen.queryByTestId('comments-add')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('comments-input')).not.toBeOnTheScreen();
   });
 });

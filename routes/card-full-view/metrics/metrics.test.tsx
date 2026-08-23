@@ -28,7 +28,7 @@ describe('Home activity full view', () => {
     expect(await screen.findByText('00:58:34')).toBeOnTheScreen();
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.english.elevationGain)).toBeOnTheScreen();
     expect(await screen.findByText('21 m')).toBeOnTheScreen();
-    expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.english.averageCadence)).toBeOnTheScreen();
+    expect(screen.queryByText(HOME_ACTIVITY_FULL_VIEW.english.averageCadence)).not.toBeOnTheScreen();
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
@@ -39,7 +39,7 @@ describe('Home activity full view', () => {
     expect(await screen.findByText('00:58:34')).toBeOnTheScreen();
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.russian.elevationGain)).toBeOnTheScreen();
     expect(await screen.findByText(new RegExp(`21 ${HOME_ACTIVITY_FULL_VIEW.russian.m}`))).toBeOnTheScreen();
-    expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.russian.averageCadence)).toBeOnTheScreen();
+    expect(screen.queryByText(HOME_ACTIVITY_FULL_VIEW.russian.averageCadence)).not.toBeOnTheScreen();
   });
 
   it('shows walking speed and total steps as separate metrics', async () => {
@@ -74,6 +74,21 @@ describe('Home activity full view', () => {
 
     expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.english.averageCadence)).toBeOnTheScreen();
     expect(await screen.findByText(`${getAverageCadence(steps, MOCK_ACTIVITY.duration)} spm`)).toBeOnTheScreen();
+  });
+
+  it('hides average cadence when running has no steps', async () => {
+    server.use(
+      http.get(`${BASE_URL}/activity/activityId/someActivityId`, () =>
+        HttpResponse.json({ ...MOCK_ACTIVITY, sport: 'run', steps: 0 }),
+      ),
+    );
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+
+    await renderWithProviders(<Metrics />, { store: mockStore });
+
+    expect(await screen.findByText(HOME_ACTIVITY_FULL_VIEW.english.averagePace)).toBeOnTheScreen();
+    expect(screen.queryByText(HOME_ACTIVITY_FULL_VIEW.english.averageCadence)).not.toBeOnTheScreen();
+    expect(screen.queryByText(/0 spm/i)).not.toBeOnTheScreen();
   });
 
   it.each(['hike', 'ride'])('shows kilometres per hour for %s', async (sport) => {

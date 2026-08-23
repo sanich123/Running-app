@@ -58,17 +58,22 @@ export function getActivityAdditionalMetric({
   duration: number;
   language: LANGUAGES;
 }) {
-  if (isWalkingActivity(sport)) {
+  if (isWalkingActivity(sport) && steps != null && steps > 0) {
     return {
       title: HOME_ACTIVITY_FULL_VIEW[language].steps,
-      value: `${steps ?? 0}`,
+      value: `${steps}`,
     };
   }
 
   if (isRunningActivity(sport)) {
+    const averageCadence = getAverageCadence(steps, duration);
+    if (averageCadence <= 0) {
+      return null;
+    }
+
     return {
       title: HOME_ACTIVITY_FULL_VIEW[language].averageCadence,
-      value: `${getAverageCadence(steps, duration)} ${HOME_ACTIVITY_FULL_VIEW[language].spm}`,
+      value: `${averageCadence} ${HOME_ACTIVITY_FULL_VIEW[language].spm}`,
     };
   }
 

@@ -19,9 +19,9 @@ describe('save activity page', () => {
     expect(screen.getByTestId('activity-title-input')).toBeOnTheScreen();
   });
 
-  it('shows the camera instead of the editor when camera mode is enabled', async () => {
+  it('keeps the editor visible when the camera mode parameter is enabled', async () => {
     mockManualActivityParams = { mode: 'manual', cameraVisible: 'true' };
     await renderWithProviders(<SaveResult />);
-    expect(screen.queryByTestId('activity-title-input')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('activity-title-input')).toBeOnTheScreen();
   });
 });

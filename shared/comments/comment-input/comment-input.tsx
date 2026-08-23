@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-import type { ComponentRef } from 'react';
+import { useState } from 'react';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Keyboard, View, StyleSheet } from 'react-native';
 import { Button, Icon, IconButton, Text, useTheme } from 'react-native-paper';
@@ -13,13 +12,12 @@ import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-fee
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
-import { focusBottomSheetInput, getCommentInputHeight } from './utils';
+import { getCommentInputHeight } from './utils';
 import type { CommentInputProps } from '../types';
 
 export default function CommentInput({ commentToUpdate = '', commentId = '', profile }: CommentInputProps) {
   const [focused, setFocused] = useState(false);
   const [inputHeight, setInputHeight] = useState(52);
-  const bottomSheetInputRef = useRef<ComponentRef<typeof BottomSheetTextInput>>(null);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { commentActivityId, mapPhotoUrl } = useAppSelector(({ comment }) => comment);
@@ -34,12 +32,13 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   const isSending = isCommentSending || isUpdatingComment;
   const isEditing = Boolean(commentToUpdate);
 
-  useEffect(() => {
-    return focusBottomSheetInput(bottomSheetInputRef);
-  }, []);
+  const handleInputFocus = () => {
+    setFocused(true);
+  };
 
   function closeInput() {
     Keyboard.dismiss();
+    setComment('');
     dispatch(setIsShowingTextInput(false));
     dispatch(setIdOfUpdatingComment(''));
   }
@@ -72,7 +71,6 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   async function sendingUpdatingCommentSuccessHandler(sentComment = comment) {
     dispatch(setActivityIdWhichCommentsToUpdate(commentActivityId));
     closeInput();
-    setComment('');
     if (profile.emailNotifications && profile.users?.email && !commentToUpdate) {
       const objectToSend = {
         name: name ?? '',
@@ -100,7 +98,6 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
       </View>
       <View style={styles.inputRow}>
         <BottomSheetTextInput
-          ref={bottomSheetInputRef}
           testID={COMMENT_INPUT_TEST_ID}
           placeholder={COMMENT_INPUT[language].placeholder}
           value={comment}
@@ -117,11 +114,15 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
           multiline
           onChangeText={setComment}
           onSubmitEditing={submitComment}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onFocus={handleInputFocus}
+          onBlur={() => {
+            setFocused(false);
+          }}
           onContentSizeChange={({ nativeEvent }) =>
             setInputHeight(getCommentInputHeight(nativeEvent.contentSize.height))
           }
+          returnKeyType="send"
+          submitBehavior="submit"
           enterKeyHint="send"
         />
         <View style={styles.inputIcon}>

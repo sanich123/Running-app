@@ -97,6 +97,23 @@ describe('ActivitySettings', () => {
     ]);
   });
 
+  it('installs a reminder from the keyboard action', async () => {
+    mockStore.dispatch(setActivityReminderEnabled(true));
+    await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
+
+    await act(async () => {
+      screen.getByTestId('activity-reminder-interval').props.onChangeText('20');
+      screen.getByTestId('activity-reminder-text-input').props.onChangeText('Пора сделать глоток воды.');
+    });
+    await act(async () => {
+      screen.getByTestId('activity-reminder-text-input').props.onSubmitEditing();
+    });
+
+    expect(mockStore.getState().settings.activityReminders).toEqual([
+      expect.objectContaining({ intervalMinutes: 20, text: 'Пора сделать глоток воды.' }),
+    ]);
+  });
+
   it('persists selected voice metrics', async () => {
     await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
 

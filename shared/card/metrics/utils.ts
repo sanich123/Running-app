@@ -42,17 +42,19 @@ export function getCardAdditionalMetric({
   elevationGain: number;
   language: LANGUAGES;
 }) {
-  if (isRunningActivity(sport)) {
+  const normalizedElevationGain = Math.max(0, elevationGain);
+
+  if (isRunningActivity(sport) && normalizedElevationGain > 0) {
     return {
       title: CARD_METRICS[language].elevation,
-      metrics: `${Math.round(Math.max(0, elevationGain))} ${CARD_METRICS[language].m}`,
+      metrics: `${Math.round(normalizedElevationGain)} ${CARD_METRICS[language].m}`,
     };
   }
 
-  if (isWalkingActivity(sport)) {
+  if (isWalkingActivity(sport) && steps != null && steps > 0) {
     return {
       title: CARD_METRICS[language].steps,
-      metrics: `${steps ?? 0}`,
+      metrics: `${steps}`,
     };
   }
 

@@ -88,7 +88,7 @@ export default {
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
       ],
-      softwareKeyboardLayoutMode: 'pan',
+      softwareKeyboardLayoutMode: 'resize',
       usesCleartextTraffic: IS_DEV,
     },
     web: {

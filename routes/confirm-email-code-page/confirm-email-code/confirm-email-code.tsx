@@ -58,6 +58,9 @@ export default function ConfirmEmailCode({ email, type = 'registration' }: Confi
         placeholder={CONFIRM_EMAIL_CODE_TEXT.placeholder}
         value={confirmationCode}
         onChangeText={(text) => setConfirmationCode(text)}
+        onSubmitEditing={handleSubmit}
+        returnKeyType="send"
+        enterKeyHint="send"
         style={[styles.input, { opacity: isLoading ? 0.7 : 1 }]}
         contentStyle={styles.inputContent}
         disabled={isLoading}
