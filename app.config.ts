@@ -14,7 +14,7 @@ export default {
     splash: {
       image: './assets/images/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#292929',
+      backgroundColor: '#363636',
     },
     experiments: {
       typedRoutes: true,
@@ -164,7 +164,7 @@ export default {
       [
         'expo-splash-screen',
         {
-          backgroundColor: '#292929',
+          backgroundColor: '#363636',
           image: './assets/images/splash.png',
           resizeMode: 'contain',
           imageWidth: 350,
