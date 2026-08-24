@@ -77,7 +77,7 @@ export default {
       ],
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
-        backgroundColor: '#333333',
+        backgroundColor: '#292929',
       },
       package: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
       permissions: [
