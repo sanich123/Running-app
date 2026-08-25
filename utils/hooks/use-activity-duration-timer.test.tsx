@@ -1,7 +1,12 @@
 import { act, screen } from '@testing-library/react-native';
 import { AppState, Text } from 'react-native';
 import { STATUSES } from '@const/enums';
-import { resetLocationSlice, setActivityStatus, stopDurationTimer } from '@R/slices/location/location';
+import {
+  resetLocationSlice,
+  setActivityStatus,
+  startDurationTimer,
+  stopDurationTimer,
+} from '@R/slices/location/location';
 import { useAppSelector } from '@R/typed-hooks';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -32,6 +37,17 @@ describe('useActivityDurationTimer', () => {
     });
 
     expect(screen.getByTestId('duration')).toHaveTextContent('3000');
+    expect(mockStore.getState().location.durationTimerStartedAt).toBe(1_000);
+  });
+
+  it('keeps an existing timer anchor when the hook mounts', async () => {
+    await act(async () => {
+      mockStore.dispatch(setActivityStatus(STATUSES.started));
+      mockStore.dispatch(startDurationTimer(1_000));
+    });
+
+    await renderWithProviders(<TimerHarness />, { store: mockStore });
+
     expect(mockStore.getState().location.durationTimerStartedAt).toBe(1_000);
   });
 
