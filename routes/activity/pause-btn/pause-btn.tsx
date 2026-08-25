@@ -3,9 +3,16 @@ import { ActivityIndicator, Animated, View, StyleSheet } from 'react-native';
 import { TouchableRipple, useTheme, Icon } from 'react-native-paper';
 import { STATUSES } from '@const/enums';
 import { setFinishedActivity } from '@R/slices/activity/activity';
-import { setActivityStatus, setEmptyLastArrayWhenPaused } from '@R/slices/location/location';
+import {
+  setActivityStatus,
+  setDurationAt,
+  setEmptyLastArrayWhenPaused,
+  startDurationTimer,
+  stopDurationTimer,
+} from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import { getCurrentActivityDuration } from '@U/activity-duration';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getElevationGainByKilometres, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { pausePedometerActivity, resumePedometerActivity } from '@U/pedometer/pedometer';
@@ -16,6 +23,8 @@ export default function PauseBtn() {
   const {
     activityStatus,
     duration,
+    durationTimerBase,
+    durationTimerStartedAt,
     distance,
     locationsFromBackground: locations,
     kilometresSplit,
@@ -33,21 +42,25 @@ export default function PauseBtn() {
       if (activityStatus === STATUSES.paused) {
         await startLocationTracking();
         await resumePedometerActivity();
+        dispatch(startDurationTimer(Date.now()));
         dispatch(setActivityStatus(STATUSES.continued));
       } else {
         await stopLocationTracking();
         await pausePedometerActivity();
+        const durationForSave = getCurrentActivityDuration({ duration, durationTimerBase, durationTimerStartedAt });
+        dispatch(setDurationAt(durationForSave));
+        dispatch(stopDurationTimer());
         const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
         dispatch(
           setFinishedActivity({
-            duration,
+            duration: durationForSave,
             distance,
             locations: getReducedLocations(locations),
             kilometresSplit: kilometresSplit.map((split, index) => ({
               ...split,
               lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
             })),
-            speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
+            speed: getSpeedInMinsInKm(distance, durationForSave).paceAsNumber,
           }),
         );
         dispatch(setActivityStatus(STATUSES.paused));

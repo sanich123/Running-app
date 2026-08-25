@@ -1,7 +1,7 @@
 import * as Speech from 'expo-speech';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { setSport } from '@R/slices/activity/activity';
-import { resetLocationSlice, setLocationsWhenContinued } from '@R/slices/location/location';
+import { resetLocationSlice, setLocationsWhenContinued, startDurationTimer } from '@R/slices/location/location';
 import {
   addActivityReminder,
   resetActivityReminders,
@@ -253,6 +253,24 @@ describe('background metric calculation', () => {
     expect(metrics.currentPace).toBeGreaterThan(0);
     expect(metrics.firstArrayLength).toBe(1);
     expect(metrics.lastArrayLength).toBe(1);
+  });
+
+  it('synchronizes the local timer with the duration represented by GPS timestamps', () => {
+    jest.setSystemTime(1_000);
+    const start = { ...MOCK_LOCATION, timestamp: 1_000 };
+    const firstUpdate = { ...MOCK_LOCATION, timestamp: 6_000 };
+    const secondUpdate = { ...MOCK_LOCATION, timestamp: 10_000 };
+
+    store.dispatch(setLocationsWhenContinued(start));
+    store.dispatch(startDurationTimer(1_000));
+    jest.advanceTimersByTime(8_000);
+
+    saveMetricsToStoreTaskManager(firstUpdate, 5_000, 0, 0, 0, start);
+    expect(store.getState().location.duration).toBe(5_000);
+    expect(store.getState().location.durationAtLastLocation).toBe(5_000);
+
+    saveMetricsToStoreTaskManager(secondUpdate, 4_000, 0, 0, 0, firstUpdate);
+    expect(store.getState().location.duration).toBe(9_000);
   });
 });
 

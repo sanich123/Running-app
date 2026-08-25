@@ -3,7 +3,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { STATUSES } from '@const/enums';
-import { setActivityStatus, setEmptyLastArrayWhenPaused, setIsAppShuted, setSteps } from '@R/slices/location/location';
+import {
+  setActivityStatus,
+  setEmptyLastArrayWhenPaused,
+  setIsAppShuted,
+  setSteps,
+  stopDurationTimer,
+} from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import IconChooseSport from '@Routes/activity/icon-choose-sport/icon-choose-sport';
 import Map from '@Routes/activity/map/map';
@@ -12,6 +18,7 @@ import PauseBtn from '@Routes/activity/pause-btn/pause-btn';
 import ShowMapBtn from '@Routes/activity/show-map-btn/show-map-btn';
 import StartBtn from '@Routes/activity/start-btn/start-btn';
 import { errorToast } from '@S/error-toast/error-toast';
+import useActivityDurationTimer from '@U/hooks/use-activity-duration-timer';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { pausePedometerActivity, subscribePedometerSteps } from '@U/pedometer/pedometer';
@@ -20,8 +27,8 @@ export default function Activity() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
-  const shouldPauseRecoveredTracking = useRef(
-    activityStatus === STATUSES.started || activityStatus === STATUSES.continued,
+  const [isRecoveringTracking, setIsRecoveringTracking] = useState(
+    () => activityStatus === STATUSES.started || activityStatus === STATUSES.continued,
   );
   const didPauseRecoveredTracking = useRef(false);
   const [isLocationReadyForRecording, setIsLocationReadyForRecording] = useState(false);
@@ -31,7 +38,7 @@ export default function Activity() {
   useEffect(() => subscribePedometerSteps((steps) => dispatch(setSteps(steps))), [dispatch]);
 
   useEffect(() => {
-    if (!shouldPauseRecoveredTracking.current || didPauseRecoveredTracking.current) {
+    if (!isRecoveringTracking || didPauseRecoveredTracking.current) {
       return;
     }
 
@@ -39,12 +46,16 @@ export default function Activity() {
     stopLocationTracking()
       .then(async () => {
         await pausePedometerActivity();
+        dispatch(stopDurationTimer());
+        setIsRecoveringTracking(false);
         dispatch(setActivityStatus(STATUSES.paused));
         dispatch(setEmptyLastArrayWhenPaused());
         dispatch(setIsAppShuted(true));
       })
       .catch((error) => errorToast('Не удалось поставить отслеживание на паузу', error));
-  }, [dispatch]);
+  }, [dispatch, isRecoveringTracking]);
+
+  useActivityDurationTimer(!isRecoveringTracking);
 
   return (
     <SafeAreaView style={[styles.layout, { backgroundColor: colors.surfaceVariant }]} edges={['bottom']}>

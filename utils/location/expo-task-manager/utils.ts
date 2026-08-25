@@ -4,7 +4,7 @@ import {
   setAltitude,
   setCurrentPace,
   setDistance,
-  setDuration,
+  syncDurationFromLocation,
   setIsTooMuchSpeed,
   setTooMuchSpeed,
   setTooMuchSpeedTimestamp,
@@ -17,6 +17,7 @@ import {
 } from '@R/slices/location/location';
 import { getActivitySettings } from '@R/slices/settings/settings';
 import { store } from '@R/store';
+import { getCurrentActivityDuration } from '@U/activity-duration';
 import { speakActivityReminder, speakCompletedKilometer } from '@U/speech/activity-voice';
 import {
   getDistance,
@@ -159,8 +160,23 @@ export function saveMetricsToStoreTaskManager(
   store.dispatch(setLastKm(kilometerSplitCalculation.remainingDistance));
   store.dispatch(setLastKmDuration(kilometerSplitCalculation.remainingDuration));
   store.dispatch(setLastKmAltitude(kilometerSplitCalculation.remainingAltitude));
+  const locationState = store.getState().location;
+  const normalizedCurrentDuration = Number.isFinite(currentDuration) ? Math.max(0, currentDuration) : 0;
+  const durationAtLastLocation = Number.isFinite(locationState.durationAtLastLocation)
+    ? locationState.durationAtLastLocation
+    : Number.isFinite(locationState.duration)
+      ? locationState.duration
+      : 0;
+  const synchronizedDuration = previousPosition
+    ? durationAtLastLocation + normalizedCurrentDuration
+    : getCurrentActivityDuration(locationState);
+  store.dispatch(
+    syncDurationFromLocation({
+      duration: synchronizedDuration,
+      syncedAt: Date.now(),
+    }),
+  );
   store.dispatch(setDistance(currentDistance));
-  store.dispatch(setDuration(currentDuration));
   store.dispatch(setCurrentPace(currentPace));
   store.dispatch(setAltitude(currentAltitude));
   store.dispatch(setLocationsWhenContinued(currentPosition));

@@ -9,9 +9,13 @@ import {
   setInitialLocation,
   setActivityStatus,
   setEmptyLastArrayWhenPaused,
+  setDurationAt,
+  startDurationTimer,
+  stopDurationTimer,
 } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import { getCurrentActivityDuration } from '@U/activity-duration';
 import { getCurrentOrLastKnownPosition } from '@U/get-initial-position';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
@@ -39,6 +43,8 @@ export default function StartBtn({
   const {
     activityStatus,
     duration,
+    durationTimerBase,
+    durationTimerStartedAt,
     distance,
     locationsFromBackground: locations,
     kilometresSplit,
@@ -83,12 +89,15 @@ export default function StartBtn({
     activityStatus === STATUSES.initial && (isGettingLocation || isTrackingActionInProgress);
   const isDisabled = isTrackingActionInProgress || (activityStatus === STATUSES.initial && !isReadyToRecordLocation);
 
-  const saveCurrentActivity = (pedometerData: Awaited<ReturnType<typeof finishPedometerActivity>>) => {
+  const saveCurrentActivity = (
+    durationForSave: number,
+    pedometerData: Awaited<ReturnType<typeof finishPedometerActivity>>,
+  ) => {
     const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
     const hasPedometerData = pedometerData.samples.length > 0;
     dispatch(
       setFinishedActivity({
-        duration,
+        duration: durationForSave,
         distance,
         ...(hasPedometerData ? { steps: pedometerData.steps } : {}),
         locations: getReducedLocations(locations),
@@ -96,7 +105,7 @@ export default function StartBtn({
           ...split,
           lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
         })),
-        speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
+        speed: getSpeedInMinsInKm(distance, durationForSave).paceAsNumber,
       }),
     );
   };
@@ -123,13 +132,17 @@ export default function StartBtn({
         dispatch(resetFinishedActivity());
         await startPedometerActivity();
         await startLocationTracking();
+        dispatch(startDurationTimer(Date.now()));
         dispatch(setActivityStatus(STATUSES.started));
         return;
       }
 
       await stopLocationTracking();
       const pedometerData = isRecording ? await pausePedometerActivity() : await finishPedometerActivity();
-      saveCurrentActivity(pedometerData);
+      const durationForSave = getCurrentActivityDuration({ duration, durationTimerBase, durationTimerStartedAt });
+      dispatch(setDurationAt(durationForSave));
+      dispatch(stopDurationTimer());
+      saveCurrentActivity(durationForSave, pedometerData);
 
       if (isRecording) {
         dispatch(setActivityStatus(STATUSES.paused));

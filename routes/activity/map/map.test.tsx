@@ -1,7 +1,7 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { getCurrentPositionAsync } from 'expo-location';
 import { setUserId } from '@R/slices/auth/auth';
-import { resetLocationSlice } from '@R/slices/location/location';
+import { resetLocationSlice, setInitialLocation } from '@R/slices/location/location';
 import { setIsProfileFilled } from '@R/slices/settings/settings';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore } from '@T/utils/mock-store';
@@ -16,7 +16,12 @@ jest.mock('@rnmapbox/maps', () => {
     React.useImperativeHandle(ref, () => ({ setCamera: mockSetCamera }));
     return <View testID="recording-map-camera" {...props} />;
   });
-  return { MapView: View, Camera, MarkerView: View, UserLocation: View };
+  return {
+    MapView: View,
+    Camera,
+    MarkerView: View,
+    UserLocation: (props: any) => <View testID="mapbox-user-location" {...props} />,
+  };
 });
 jest.mock('expo-location', () => ({
   getCurrentPositionAsync: jest.fn(),
@@ -83,5 +88,22 @@ describe('activity recording map', () => {
 
     await user.press(screen.getByTestId('decrease-map-zoom'));
     expect(mockSetCamera).toHaveBeenCalledWith(expect.objectContaining({ zoomLevel: 18 }));
+  });
+
+  it('hides the native puck after Redux has a canonical activity position', async () => {
+    const onLocationReadinessChange = jest.fn();
+    mockStore.dispatch(setInitialLocation({ coords: { longitude: 37.6, latitude: 55.7 } }));
+
+    await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);
+
+    expect(screen.getByTestId('mapbox-user-location').props.visible).toBe(false);
+  });
+
+  it('keeps the native puck visible until Redux has a canonical position', async () => {
+    const onLocationReadinessChange = jest.fn();
+
+    await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);
+
+    expect(screen.getByTestId('mapbox-user-location').props.visible).toBe(true);
   });
 });

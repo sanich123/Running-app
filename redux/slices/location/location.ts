@@ -18,7 +18,31 @@ const location = createSlice({
       state.steps = action.payload;
     },
     setDuration: (state, action) => {
-      state.duration = state.duration + action.payload;
+      const durationIncrement = Number.isFinite(action.payload) ? action.payload : 0;
+      state.duration = (Number.isFinite(state.duration) ? state.duration : 0) + durationIncrement;
+      state.durationAtLastLocation =
+        (Number.isFinite(state.durationAtLastLocation) ? state.durationAtLastLocation : 0) + durationIncrement;
+      state.durationTimerBase =
+        (Number.isFinite(state.durationTimerBase) ? state.durationTimerBase : 0) + durationIncrement;
+      state.durationTimerStartedAt = null;
+    },
+    setDurationAt: (state, action) => {
+      state.duration = Math.max(0, Number.isFinite(action.payload) ? action.payload : 0);
+    },
+    startDurationTimer: (state, action) => {
+      state.durationTimerBase = Number.isFinite(state.duration) ? state.duration : 0;
+      state.durationTimerStartedAt = action.payload;
+    },
+    stopDurationTimer: (state) => {
+      state.durationTimerBase = Number.isFinite(state.duration) ? state.duration : 0;
+      state.durationTimerStartedAt = null;
+    },
+    syncDurationFromLocation: (state, action) => {
+      const { duration, syncedAt } = action.payload;
+      state.duration = Math.max(0, duration);
+      state.durationAtLastLocation = Math.max(0, duration);
+      state.durationTimerBase = Math.max(0, duration);
+      state.durationTimerStartedAt = syncedAt;
     },
     setDurationWithPauses: (state, action) => {
       state.durationWithPauses = action.payload;
@@ -90,6 +114,9 @@ const location = createSlice({
       state.steps = 0;
       state.isMapVisible = true;
       state.durationWithPauses = 0;
+      state.durationAtLastLocation = 0;
+      state.durationTimerBase = 0;
+      state.durationTimerStartedAt = null;
       state.altitude = 0;
       state.kilometresSplit = [];
       state.currentPace = 0;
@@ -116,6 +143,10 @@ export const {
   setDistance,
   setSteps,
   setDuration,
+  setDurationAt,
+  startDurationTimer,
+  stopDurationTimer,
+  syncDurationFromLocation,
   setAltitude,
   setLastKmAltitude,
   setActivityStatus,

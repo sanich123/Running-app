@@ -51,6 +51,8 @@ describe('Location slice', () => {
     expect(reducer(LOCATION_INITIAL_STATE, setDuration(MOCK_DURATION))).toEqual({
       ...LOCATION_INITIAL_STATE,
       duration: MOCK_DURATION,
+      durationAtLastLocation: MOCK_DURATION,
+      durationTimerBase: MOCK_DURATION,
     });
   });
   it('should change duration with pauses', () => {

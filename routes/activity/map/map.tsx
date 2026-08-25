@@ -14,9 +14,7 @@ import LocationPermissions from './location-permissions/location-permissions';
 import MapControls from './map-controls/map-controls';
 import MapNavIcon from './map-nav-icon/map-nav-icon';
 import PauseMarkers from './pause-markers/pause-markers';
-import { distanceInMeters } from './utils';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
-import type { Location as MapboxLocation } from '@rnmapbox/maps';
 import type { LocationObject } from 'expo-location';
 
 export default function Map({ onLocationReadinessChange }: { onLocationReadinessChange: (isReady: boolean) => void }) {
@@ -35,7 +33,6 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
   const [isCenteringOnCurrentLocation, setIsCenteringOnCurrentLocation] = useState(false);
   const [shouldFollowUserLocation, setShouldFollowUserLocation] = useState(true);
   const [mapZoomLevel, setMapZoomLevel] = useState(18);
-  const [mapboxLocation, setMapboxLocation] = useState<MapboxLocation | null>(null);
   const cameraRef = useRef<Camera>(null);
   const batteryOptimizationModalRef = useRef<BottomSheetModal>(null);
   const canUseLocation = Boolean(
@@ -44,8 +41,6 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
   const canRenderMap = Boolean(canUseLocation && (Platform.OS !== 'android' || isLocationServicesEnabled));
   const isLoadingLocationPrerequisites = foregroundPermissionStatus === null || backgroundPermissionStatus === null;
   const currentPosition: LocationObject | null = lastPosition ?? initialLocation;
-  const shouldShowMapboxLocation =
-    !currentPosition || !mapboxLocation || distanceInMeters(currentPosition, mapboxLocation) > 10;
   useEffect(() => {
     onLocationReadinessChange(canUseLocation);
   }, [canUseLocation, onLocationReadinessChange]);
@@ -95,9 +90,9 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
         <View style={styles.mapWrapper}>
           <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
             <UserLocation
-              visible={shouldShowMapboxLocation}
+              visible={!currentPosition}
               animated
-              onUpdate={setMapboxLocation}
+              onUpdate={() => undefined}
               {...(Platform.OS === 'android' ? { androidRenderMode: 'compass' as const } : {})}
             />
             <MapNavIcon profilePhoto={profileFromServer?.profilePhoto} />
