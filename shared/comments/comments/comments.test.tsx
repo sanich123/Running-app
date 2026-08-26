@@ -101,6 +101,7 @@ describe('Comments', () => {
       { store: mockStore },
     );
     const commentsList = await screen.findByTestId('comments-list');
+    expect(commentsList.props.enableFooterMarginAdjustment).toBe(true);
 
     await act(async () =>
       fireEvent(commentsList, 'scrollEndDrag', {

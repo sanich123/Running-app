@@ -1,1 +1,0 @@
-export const COMMENT_KEYBOARD_OFFSET = 8;

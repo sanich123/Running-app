@@ -74,6 +74,7 @@ export default function Comments({ commentsModalRef }: CommentsProps) {
         </>
       )}
       ListEmptyComponent={<CommentsEmptyList />}
+      enableFooterMarginAdjustment
       maintainVisibleContentPosition={{ minIndexForVisible: 1 }}
       keyboardShouldPersistTaps="handled"
       onScrollEndDrag={handleScroll}

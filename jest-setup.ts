@@ -189,6 +189,7 @@ jest.mock('react-native-keyboard-controller', () => {
   return {
     KeyboardAwareScrollView: View,
     KeyboardAvoidingView: View,
+    KeyboardStickyView: View,
   };
 });
 beforeAll(() => {

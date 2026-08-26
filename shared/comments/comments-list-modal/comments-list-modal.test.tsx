@@ -37,6 +37,7 @@ describe('comments list modal', () => {
     expect(screen.getByTestId('comments-skeleton')).toBeOnTheScreen();
     expect(screen.queryByText('Комментариев пока нет')).not.toBeOnTheScreen();
     expect(screen.getByTestId('comments-composer')).toBeOnTheScreen();
+    expect(screen.getByTestId('comments-composer-keyboard-sticky').props.offset).toEqual({ opened: -8 });
     expect(screen.getByTestId('comments-input')).toBeOnTheScreen();
   });
 
