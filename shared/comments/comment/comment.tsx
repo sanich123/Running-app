@@ -6,7 +6,6 @@ import { UserInfoSize } from '@S/card/user-info/const';
 import UserInfo from '@S/card/user-info/user-info';
 import CommentDeleteBtn from '../comment-delete-btn/comment-delete-btn';
 import CommentEditBtn from '../comment-edit-btn/comment-edit-btn';
-import CommentInput from '../comment-input/comment-input';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -54,11 +53,7 @@ export default function Comment({
         />
       </View>
       <View style={styles.textCommentWrapper}>
-        {idOfUpdatingComment === id ? (
-          <CommentInput profile={profile} commentToUpdate={comment} commentId={id} />
-        ) : (
-          <Text variant="bodyLarge">{comment}</Text>
-        )}
+        <Text variant="bodyLarge">{comment}</Text>
       </View>
       <View style={styles.likesWrapper}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -66,7 +61,7 @@ export default function Comment({
           <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
         </View>
         <View style={styles.actions}>
-          {isYouAuthor && <CommentEditBtn commentId={id} idOfUpdatingComment={idOfUpdatingComment} />}
+          {isYouAuthor && <CommentEditBtn commentId={id} comment={comment} idOfUpdatingComment={idOfUpdatingComment} />}
           {isYouAuthor && <CommentDeleteBtn commentId={id} activityId={commentActivityId} />}
         </View>
       </View>

@@ -1,7 +1,12 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { setUserId } from '@R/slices/auth/auth';
-import { setCommentActivityId, setIdOfUpdatingComment, setMapPhotoUrl } from '@R/slices/comment/comment';
+import {
+  setCommentActivityId,
+  setCommentToUpdate,
+  setIdOfUpdatingComment,
+  setMapPhotoUrl,
+} from '@R/slices/comment/comment';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
 import { server } from '@T/utils/server';
@@ -55,11 +60,13 @@ describe('Comment input', () => {
   it('closes the composer without sending an empty comment', async () => {
     const user = userEvent.setup();
     mockStore.dispatch(setIdOfUpdatingComment(''));
+    mockStore.dispatch(setCommentToUpdate(''));
     await renderWithProviders(<CommentInput commentId="" profile={MOCK_PROFILE} />);
 
     await user.press(screen.getByTestId('comment-input-cancel'));
 
     expect(mockStore.getState().comment.idOfUpdatingComment).toBe('');
+    expect(mockStore.getState().comment.commentToUpdate).toBe('');
   });
 
   it('updates an existing comment only when its normalized text changes', async () => {

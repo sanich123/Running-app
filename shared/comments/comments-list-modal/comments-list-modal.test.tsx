@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react-native';
-import { setIdOfUpdatingComment } from '@R/slices/comment/comment';
+import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CommentsListModal from './comments-list-modal';
@@ -19,14 +19,19 @@ jest.mock('@S/comments/comments/comments', () => ({
 }));
 jest.mock('@S/comments/comment-input/comment-input', () => ({
   __esModule: true,
-  default: () => {
+  default: ({ commentId, commentToUpdate }: { commentId: string; commentToUpdate?: string }) => {
     const { Text } = require('react-native');
-    return <Text testID="comments-input">input</Text>;
+    return (
+      <Text testID="comments-input">
+        {commentId}:{commentToUpdate}
+      </Text>
+    );
   },
 }));
 describe('comments list modal', () => {
   beforeEach(() => {
     mockCommentsViewState = 'loaded';
+    mockStore.dispatch(setCommentToUpdate(''));
     mockStore.dispatch(setIdOfUpdatingComment(''));
   });
 
@@ -54,9 +59,10 @@ describe('comments list modal', () => {
     expect(screen.getByTestId('comments-input')).toBeOnTheScreen();
   });
 
-  it('keeps the composer hidden while an existing comment is edited inline', async () => {
+  it('renders the selected comment in the keyboard-aware composer for editing', async () => {
+    mockStore.dispatch(setCommentToUpdate('Existing comment text'));
     mockStore.dispatch(setIdOfUpdatingComment('comment-id'));
     await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} />);
-    expect(screen.queryByTestId('comments-input')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('comments-input')).toHaveTextContent('comment-id:Existing comment text');
   });
 });

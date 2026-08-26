@@ -7,7 +7,7 @@ import {
   useUpdateCommentByCommentIdMutation,
 } from '@R/services/comments/comments';
 import { useSendEmailAfterSendingCommentMutation } from '@R/services/emails/emails';
-import { setIdOfUpdatingComment } from '@R/slices/comment/comment';
+import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -30,7 +30,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   const [postComment, { isLoading: isCommentSending }] = usePostCommentWithActivityIdMutation();
   const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
   const isSending = isCommentSending || isUpdatingComment;
-  const isEditing = Boolean(commentToUpdate);
+  const isEditing = Boolean(commentId && commentToUpdate);
 
   const handleInputFocus = () => {
     setFocused(true);
@@ -39,6 +39,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   function closeInput() {
     Keyboard.dismiss();
     setComment('');
+    dispatch(setCommentToUpdate(''));
     dispatch(setIdOfUpdatingComment(''));
   }
 

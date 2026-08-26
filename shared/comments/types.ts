@@ -10,6 +10,7 @@ export interface CommentDeleteButtonProps {
 export interface CommentEditBtnProps {
   idOfUpdatingComment: string;
   commentId: string;
+  comment: string;
 }
 
 export interface CommentInputProps {

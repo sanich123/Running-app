@@ -13,7 +13,7 @@ import type { CommentsListModalProps } from '../types';
 export default function CommentsListModal({ commentsModalRef }: CommentsListModalProps) {
   const { colors } = useTheme();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
-  const { activityOwnerProfile, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
+  const { activityOwnerProfile, commentToUpdate, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
   const renderBackdrop = useCallback((props: any) => backdrop(props), []);
   const renderFooter = useCallback(
     ({ animatedFooterPosition }: BottomSheetFooterProps) => (
@@ -31,12 +31,17 @@ export default function CommentsListModal({ commentsModalRef }: CommentsListModa
                 borderTopColor: colors.outlineVariant,
               },
             ]}>
-            {!idOfUpdatingComment && <CommentInput profile={activityOwnerProfile} commentId="" />}
+            <CommentInput
+              key={idOfUpdatingComment || 'new-comment'}
+              profile={activityOwnerProfile}
+              commentId={idOfUpdatingComment}
+              commentToUpdate={commentToUpdate}
+            />
           </View>
         </KeyboardStickyView>
       </BottomSheetFooter>
     ),
-    [activityOwnerProfile, bottomInset, colors.outlineVariant, colors.surface, idOfUpdatingComment],
+    [activityOwnerProfile, bottomInset, colors.outlineVariant, colors.surface, commentToUpdate, idOfUpdatingComment],
   );
 
   return (

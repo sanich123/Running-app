@@ -6,6 +6,7 @@ const comment = createSlice({
   initialState: {
     commentActivityId: '',
     idOfUpdatingComment: '',
+    commentToUpdate: '',
     activityOwnerProfile: {} as ProfileType,
     mapPhotoUrl: '',
     commentsLength: 0,
@@ -20,6 +21,9 @@ const comment = createSlice({
     setIdOfUpdatingComment: (state, { payload }) => {
       state.idOfUpdatingComment = payload;
     },
+    setCommentToUpdate: (state, { payload }) => {
+      state.commentToUpdate = payload;
+    },
     setMapPhotoUrl: (state, { payload }) => {
       state.mapPhotoUrl = payload;
     },
@@ -33,6 +37,7 @@ export const {
   setCommentActivityId,
   setActivityOwnerProfile,
   setIdOfUpdatingComment,
+  setCommentToUpdate,
   setMapPhotoUrl,
   setCommentsLength,
 } = comment.actions;
