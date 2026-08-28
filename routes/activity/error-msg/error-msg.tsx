@@ -37,9 +37,14 @@ export default function ErrorMsg() {
     dispatch(setTooMuchSpeedTimestamp(null));
   };
 
+  const dismissRecovery = () => {
+    dispatch(setIsAppShuted(false));
+  };
+
   useEffect(() => {
     if (isAppShutedByPhone) {
-      setTimeout(() => dispatch(setIsAppShuted(false)), TIMEOUT_MESSAGE);
+      const timeout = setTimeout(() => dispatch(setIsAppShuted(false)), TIMEOUT_MESSAGE);
+      return () => clearTimeout(timeout);
     }
   }, [isAppShutedByPhone, dispatch]);
 
@@ -57,6 +62,13 @@ export default function ErrorMsg() {
               {ACTIVITY_ERROR_MSG[language].errorMsg}
             </Text>
           </View>
+          <IconButton
+            testID="dismiss-tracking-paused"
+            icon="close"
+            size={18}
+            onPress={dismissRecovery}
+            accessibilityLabel="Закрыть уведомление о паузе отслеживания"
+          />
         </View>
       )}
       {isTooMuchSpeed && (

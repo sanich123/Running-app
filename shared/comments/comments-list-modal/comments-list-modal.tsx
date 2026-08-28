@@ -4,17 +4,23 @@ import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
+import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CommentInput from '@S/comments/comment-input/comment-input';
 import Comments from '@S/comments/comments/comments';
 import { backdrop } from '@U/backdrop';
 import type { CommentsListModalProps } from '../types';
 
 export default function CommentsListModal({ commentsModalRef }: CommentsListModalProps) {
+  const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   const { activityOwnerProfile, commentToUpdate, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
   const renderBackdrop = useCallback((props: any) => backdrop(props), []);
+  const clearCommentEditing = useCallback(() => {
+    dispatch(setCommentToUpdate(''));
+    dispatch(setIdOfUpdatingComment(''));
+  }, [dispatch]);
   const renderFooter = useCallback(
     ({ animatedFooterPosition }: BottomSheetFooterProps) => (
       <BottomSheetFooter animatedFooterPosition={animatedFooterPosition} bottomInset={bottomInset}>
@@ -53,6 +59,7 @@ export default function CommentsListModal({ commentsModalRef }: CommentsListModa
       topInset={topInset}
       style={{ maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}
       backdropComponent={renderBackdrop}
+      onDismiss={clearCommentEditing}
       handleStyle={{ backgroundColor: colors.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
       backgroundStyle={{ backgroundColor: colors.surface }}
       handleIndicatorStyle={{ backgroundColor: colors.primary }}

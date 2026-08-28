@@ -1,5 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { Platform } from 'react-native';
+import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -35,5 +36,20 @@ describe('Activity card comment btn', () => {
       expect.objectContaining({ commentActivityId: 'someActivityId', commentsLength: 6 }),
     );
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
+  });
+
+  it('clears the previous edit mode before opening another activity comments modal', async () => {
+    const user = userEvent.setup();
+    mockStore.dispatch(setCommentToUpdate('Comment from another activity'));
+    mockStore.dispatch(setIdOfUpdatingComment('comment-id'));
+
+    await renderWithProviders(
+      <ActivityCardCommentBtn activityId="newActivityId" commentsLength={0} profile={MOCK_PROFILE} />,
+    );
+    await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
+
+    expect(mockStore.getState().comment).toEqual(
+      expect.objectContaining({ commentActivityId: 'newActivityId', commentToUpdate: '', idOfUpdatingComment: '' }),
+    );
   });
 });
