@@ -79,9 +79,7 @@ describe('photo viewer', () => {
     expect(screen.getAllByTestId('photo-viewer-image').map((element) => element.props.children)).toContain(
       'https://cdn.example.com/run.jpg',
     );
-    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain(
-      'mp4',
-    );
+    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain('mp4');
   });
 
   it('renders native user photos without an activity map offset', async () => {
@@ -103,9 +101,7 @@ describe('photo viewer', () => {
     expect(screen.getAllByTestId('photo-viewer-image').map((element) => element.props.children)).toContain(
       'https://cdn.example.com/photo.jpg',
     );
-    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain(
-      'avi',
-    );
+    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain('avi');
   });
 
   it('does not render a pager when a valid activity has no media', async () => {

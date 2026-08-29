@@ -1,9 +1,9 @@
 import { act, fireEvent, screen, userEvent } from '@testing-library/react-native';
 import { useForm } from 'react-hook-form';
-import { renderWithProviders } from '@T/utils/test-utils';
-import CustomTextInput from './custom-text-input';
 import { setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { mockStore } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
+import CustomTextInput from './custom-text-input';
 
 function TextInputHarness({
   callback,
@@ -32,13 +32,7 @@ function TextInputHarness({
 function NumericInputHarness({ callback }: { callback?: (value: string) => void }) {
   const { control } = useForm<{ value: string }>({ defaultValues: { value: '' } });
   return (
-    <CustomTextInput
-      control={control}
-      fieldName="value"
-      label="Test number"
-      replaceCommaToDot
-      callback={callback}
-    />
+    <CustomTextInput control={control} fieldName="value" label="Test number" replaceCommaToDot callback={callback} />
   );
 }
 
@@ -55,9 +49,7 @@ describe('custom text input', () => {
   it('uppercases regular input and supports compact multiline props', async () => {
     const user = userEvent.setup();
     const callback = jest.fn();
-    await renderWithProviders(
-      <TextInputHarness callback={callback} capitalizeValue compact multiline />,
-    );
+    await renderWithProviders(<TextInputHarness callback={callback} capitalizeValue compact multiline />);
     const input = screen.getByTestId('Test email');
 
     await user.type(input, 'ab');

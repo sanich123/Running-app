@@ -2,8 +2,8 @@ import { screen } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { NETWORK_WARNING_TEXT } from './const';
-import { checkAirplaneMode, checkVpn } from './utils';
 import NetworkStateBanner from './network-state-banner';
+import { checkAirplaneMode, checkVpn } from './utils';
 
 const mockNetworkInfo: {
   type: string;

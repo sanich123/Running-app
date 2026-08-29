@@ -86,9 +86,7 @@ describe('Location slice', () => {
       durationTimerBase: 0,
       durationTimerStartedAt: null,
     });
-    expect(
-      reducer(LOCATION_INITIAL_STATE, syncDurationFromLocation({ duration: -10, syncedAt: 789 })),
-    ).toMatchObject({
+    expect(reducer(LOCATION_INITIAL_STATE, syncDurationFromLocation({ duration: -10, syncedAt: 789 }))).toMatchObject({
       duration: 0,
       durationAtLastLocation: 0,
       durationTimerBase: 0,

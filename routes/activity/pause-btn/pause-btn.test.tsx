@@ -80,9 +80,7 @@ describe('pause btn', () => {
     await renderWithProviders(<PauseBtn />);
     await userEvent.press(screen.getByTestId('activity-pause-toggle'));
 
-    await waitFor(() =>
-      expect(errorToast).toHaveBeenCalledWith('Не удалось запустить отслеживание геопозиции', error),
-    );
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось запустить отслеживание геопозиции', error));
     expect(mockStore.getState().location.activityStatus).toBe(STATUSES.paused);
   });
 

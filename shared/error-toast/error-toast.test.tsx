@@ -21,7 +21,10 @@ describe('errorToast', () => {
     [{ status: 422, data: { message: ['First', 'Second'] } }, '422, First, Second'],
     [{ status: 422, data: { error: 'Invalid request' } }, '422, Invalid request'],
     [{ status: 422, data: {} }, 'Статус 422'],
-    [{ status: 'TIMEOUT_ERROR' }, 'Не удалось получить ответ от сервера в течение 35 секунд. Возможно, есть проблемы с интернет-соединением'],
+    [
+      { status: 'TIMEOUT_ERROR' },
+      'Не удалось получить ответ от сервера в течение 35 секунд. Возможно, есть проблемы с интернет-соединением',
+    ],
     [{ status: 500, originalStatus: 503 }, 'Статус 500, 503'],
     [{ status: 500 }, 'Статус 500'],
     [{ code: 'E_UNKNOWN' }, 'Код E_UNKNOWN, сообщение: неизвестная ошибка'],

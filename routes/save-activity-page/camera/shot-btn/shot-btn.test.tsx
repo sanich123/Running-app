@@ -2,9 +2,9 @@ import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { setUserId, resetAuthSlice } from '@R/slices/auth/auth';
 import * as errorToastModule from '@S/error-toast/error-toast';
-import { compressAndSendFile } from '@U/file-sending';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { compressAndSendFile } from '@U/file-sending';
 import ShotBtn from './shot-btn';
 
 jest.mock('expo-media-library', () => ({ Asset: { create: jest.fn() } }));
