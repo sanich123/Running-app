@@ -21,4 +21,10 @@ describe('bar chart wrapper', () => {
     await act(async () => screen.getByTestId('interactive-bar-chart').props.onPress({}, 4));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.monthStatistics}?userId=statistics-user&year=2026&month=4`);
   });
+
+  it('renders an empty-state label when there are no values', async () => {
+    await renderWithProviders(<BarChartWrapper metricsArr={[]} year={2026} title="Distance" />);
+
+    expect(screen.getByText('Нет данных за этот период')).toBeOnTheScreen();
+  });
 });

@@ -13,5 +13,7 @@ describe('reduce month metrics', () => {
     expect(result.distance.items[1].value).toBe(0);
     expect(result.amount.items[0].value).toBe(2);
     expect(result.duration.title).toBe('Time');
+    expect(result.distance.items[0].topLabelComponent()).toBeTruthy();
+    expect(result.distance.items[1].topLabelComponent()).toBeTruthy();
   });
 });

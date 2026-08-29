@@ -7,8 +7,16 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { formatDurationMinsSecs } from '@U/time-formatter';
 import { KM_SPLITS } from './const';
 import KmSplit from './km-split';
+import { getFastestSplitDuration, getSplitBarWidth } from './utils';
 
 describe('Home activity full view km split', () => {
+  it('handles empty and zero-duration split calculations', () => {
+    expect(getFastestSplitDuration([])).toBe(0);
+    expect(getSplitBarWidth(MOCK_ACTIVITY.kilometresSplit[0], 0)).toBe(0);
+    expect(getSplitBarWidth({ ...MOCK_ACTIVITY.kilometresSplit[0], lastKilometerDuration: 0 }, 100)).toBe(0);
+    expect(getSplitBarWidth(MOCK_ACTIVITY.kilometresSplit[0], 100)).toBeGreaterThan(0);
+  });
+
   it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<KmSplit kilometresSplit={MOCK_ACTIVITY.kilometresSplit} />, {
