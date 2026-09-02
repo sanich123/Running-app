@@ -67,9 +67,7 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: Activity
             </View>
             <View style={styles.elevationColumn}>
               <Text style={{ color: colors.onSurface }} variant="bodyLarge">
-                {Number.isFinite(split.lastKilometerAltitude)
-                  ? Math.max(0, split.lastKilometerAltitude).toFixed(1)
-                  : '—'}
+                {Number.isFinite(split.lastKilometerAltitude) ? split.lastKilometerAltitude.toFixed(1) : '—'}
               </Text>
             </View>
           </View>

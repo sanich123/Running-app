@@ -1,6 +1,7 @@
 import { MAX_ACTIVITY_LOCATIONS } from './const';
 import {
   getAverageCadence,
+  getElevationChangeBetweenLocations,
   getElevationGain,
   getElevationGainByKilometres,
   getElevationGainBetweenLocations,
@@ -53,16 +54,17 @@ describe('activity metrics', () => {
 });
 
 describe('elevation validation', () => {
-  const createLocation = (altitude?: unknown, extra: Record<string, unknown> = {}) => ({
-    ...extra,
-    coords: {
-      latitude: 55,
-      longitude: 37,
-      altitude,
-      altitudeAccuracy: 5,
-      ...(extra.coords as Record<string, unknown> | undefined),
-    },
-  }) as unknown as ActivityLocation;
+  const createLocation = (altitude?: unknown, extra: Record<string, unknown> = {}) =>
+    ({
+      ...extra,
+      coords: {
+        latitude: 55,
+        longitude: 37,
+        altitude,
+        altitudeAccuracy: 5,
+        ...(extra.coords as Record<string, unknown> | undefined),
+      },
+    }) as unknown as ActivityLocation;
 
   it('rejects unreliable altitude samples and accepts reliable timestamp variants', () => {
     expect(getElevationGainBetweenLocations(createLocation(undefined), createLocation(20))).toBe(0);
@@ -70,13 +72,14 @@ describe('elevation validation', () => {
     expect(
       getElevationGainBetweenLocations(createLocation(100, { coords: { altitudeAccuracy: 16 } }), createLocation(120)),
     ).toBe(0);
-    expect(
-      getElevationGainBetweenLocations(createLocation(100, { mocked: true }), createLocation(120)),
-    ).toBe(0);
+    expect(getElevationGainBetweenLocations(createLocation(100, { mocked: true }), createLocation(120))).toBe(0);
     expect(
       getElevationGainBetweenLocations(createLocation(100, { coords: { mocked: true } }), createLocation(120)),
     ).toBe(0);
     expect(getElevationGainBetweenLocations(createLocation(100), createLocation(111))).toBe(11);
+    expect(getElevationChangeBetweenLocations(createLocation(100), createLocation(102))).toBe(2);
+    expect(getElevationChangeBetweenLocations(createLocation(100), createLocation(89))).toBe(-11);
+    expect(getElevationGainBetweenLocations(createLocation(100), createLocation(89))).toBe(0);
     expect(
       getElevationGainBetweenLocations(
         createLocation(100, { timestamp: 10_000 }),
@@ -110,6 +113,23 @@ describe('elevation validation', () => {
     const gainByKilometre = getElevationGainByKilometres(locations, 1);
     expect(gainByKilometre).toHaveLength(1);
     expect(gainByKilometre[0]).toBeGreaterThanOrEqual(0);
+  });
+
+  it('accumulates signed elevation changes in each kilometre', () => {
+    const metresPerEquatorDegree = 111_195.080233;
+    const locations = [100, 100, 100, 136, 136, 136, 136, 136, 124, 124, 124, 124, 124].map((altitude, index) =>
+      createLocation(altitude, {
+        coords: {
+          latitude: 0,
+          longitude: (index * 200) / metresPerEquatorDegree,
+        },
+      }),
+    );
+
+    const elevationChangeByKilometre = getElevationGainByKilometres(locations, 2);
+
+    expect(elevationChangeByKilometre[0]).toBeCloseTo(36, 3);
+    expect(elevationChangeByKilometre[1]).toBeCloseTo(-12, 3);
   });
 });
 
@@ -170,7 +190,9 @@ describe('getMapBoxImage', () => {
     const previousToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN;
     process.env.EXPO_PUBLIC_MAPBOX_TOKEN = 'token'.repeat(2_000);
     const imageUrl = getMapBoxImage(
-      Array.from({ length: 4 }, (_, index) => ({ coords: { latitude: 55 + index / 100, longitude: 37 + index / 100 } })),
+      Array.from({ length: 4 }, (_, index) => ({
+        coords: { latitude: 55 + index / 100, longitude: 37 + index / 100 },
+      })),
     );
     expect(imageUrl).toContain('/360x360@2x');
     process.env.EXPO_PUBLIC_MAPBOX_TOKEN = previousToken;

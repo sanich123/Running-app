@@ -21,6 +21,7 @@ import { getCurrentActivityDuration } from '@U/activity-duration';
 import { speakActivityReminder, speakCompletedKilometer } from '@U/speech/activity-voice';
 import {
   getDistance,
+  getElevationChangeBetweenLocations,
   getElevationGainBetweenLocations,
   getKilometerSplitCalculation,
   getMaxTrackingSpeedForSport,
@@ -118,12 +119,14 @@ export function saveMetricsToStoreTaskManager(
   }
 
   const { lastKilometer, lastKilometerDuration, lastKilometerAltitude } = store.getState().location;
+  const elevationChange = previousPosition ? getElevationChangeBetweenLocations(previousPosition, currentPosition) : 0;
+  const currentElevationChange = elevationChange || currentAltitude;
   const kilometerSplitCalculation = getKilometerSplitCalculation({
     previousPosition,
     currentPosition,
     distance: currentDistance,
     duration: currentDuration,
-    altitude: currentAltitude,
+    altitude: currentElevationChange,
     previousKilometerDistance: lastKilometer,
     previousKilometerDuration: lastKilometerDuration,
     previousKilometerAltitude: lastKilometerAltitude,

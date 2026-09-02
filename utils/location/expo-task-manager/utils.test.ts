@@ -149,6 +149,29 @@ describe('kilometre split calculation', () => {
     );
   });
 
+  it('stores a signed elevation change for a completed kilometre', () => {
+    const start = {
+      ...MOCK_LOCATION,
+      timestamp: 0,
+      coords: { ...MOCK_LOCATION.coords, altitude: 100, altitudeAccuracy: 5 },
+    };
+    const end = {
+      ...MOCK_LOCATION,
+      timestamp: 600_000,
+      coords: {
+        ...MOCK_LOCATION.coords,
+        latitude: MOCK_LOCATION.coords.latitude + 0.01,
+        altitude: 88,
+        altitudeAccuracy: 5,
+      },
+    };
+
+    store.dispatch(setLocationsWhenContinued(start));
+    saveMetricsToStoreTaskManager(end, 600_000, 0, 0, 1_000, start);
+
+    expect(store.getState().location.kilometresSplit[0].lastKilometerAltitude).toBe(-12);
+  });
+
   it('does not create another split for every update after crossing a kilometre', () => {
     const start = { ...MOCK_LOCATION, timestamp: 0 };
     const firstUpdate = { ...MOCK_LOCATION, timestamp: 120_000 };
