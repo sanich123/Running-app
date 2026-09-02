@@ -29,9 +29,9 @@ describe('Home activity full view km split', () => {
       expect(screen.getByText(`${formatDurationMinsSecs(lastKilometerDuration)}`)).toBeOnTheScreen();
       expect(screen.getByText(`${formatDurationMinsSecs(lastKilometerDuration)}`)).toHaveProp('numberOfLines', 1);
     });
-    expect(screen.getByText('3.3')).toBeOnTheScreen();
-    expect(screen.getByText('-14.7')).toBeOnTheScreen();
-    expect(screen.getByText('17.5')).toBeOnTheScreen();
+    expect(screen.getAllByText('3').length).toBeGreaterThan(1);
+    expect(screen.getByText('-15')).toBeOnTheScreen();
+    expect(screen.getByText('18')).toBeOnTheScreen();
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
@@ -65,5 +65,31 @@ describe('Home activity full view km split', () => {
     expect(screen.getByText(KM_SPLITS.english.pace)).toBeOnTheScreen();
     expect(screen.getByText('01:00')).toBeOnTheScreen();
     expect(screen.queryByText(/CADENCE/)).not.toBeOnTheScreen();
+  });
+
+  it('rounds elevation and keeps three-digit values on one line', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await renderWithProviders(
+      <KmSplit
+        kilometresSplit={[
+          {
+            kilometerPoint: MOCK_ACTIVITY.kilometresSplit[0].kilometerPoint,
+            lastKilometerAltitude: -99.6,
+            lastKilometerDuration: 60_000,
+            lastKilometerSteps: 120,
+          },
+          {
+            kilometerPoint: MOCK_ACTIVITY.kilometresSplit[1].kilometerPoint,
+            lastKilometerAltitude: 123.6,
+            lastKilometerDuration: 120_000,
+            lastKilometerSteps: 120,
+          },
+        ]}
+      />,
+      { store: mockStore },
+    );
+
+    expect(screen.getByText('-100')).toHaveProp('numberOfLines', 1);
+    expect(screen.getByText('124')).toHaveProp('numberOfLines', 1);
   });
 });

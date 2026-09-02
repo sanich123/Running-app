@@ -66,8 +66,13 @@ export default function KmSplit({ kilometresSplit }: { kilometresSplit: Activity
               </View>
             </View>
             <View style={styles.elevationColumn}>
-              <Text style={{ color: colors.onSurface }} variant="bodyLarge">
-                {Number.isFinite(split.lastKilometerAltitude) ? split.lastKilometerAltitude.toFixed(1) : '—'}
+              <Text
+                style={{ color: colors.onSurface }}
+                variant="bodyLarge"
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}>
+                {Number.isFinite(split.lastKilometerAltitude) ? Math.round(split.lastKilometerAltitude) : '—'}
               </Text>
             </View>
           </View>
@@ -87,7 +92,7 @@ const styles = StyleSheet.create({
   paceColumn: { flex: 15 },
   durationColumn: { flex: 1.5, minWidth: 42 },
   barColumn: { flex: 13.5, justifyContent: 'center', paddingHorizontal: 8 },
-  elevationColumn: { alignItems: 'flex-end', flex: 3 },
+  elevationColumn: { alignItems: 'flex-end', flex: 3, minWidth: 48 },
   barTrack: { borderRadius: 4, height: 8, overflow: 'hidden', width: '100%' },
   bar: { borderRadius: 4, height: '100%' },
 });
