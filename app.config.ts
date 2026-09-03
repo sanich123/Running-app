@@ -5,7 +5,6 @@ export default {
     owner: 'sanich123',
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
-    scheme: 'runich',
     version: '4.0.1',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
@@ -26,11 +25,6 @@ export default {
       config: { usesNonExemptEncryption: false },
       infoPlist: {
         UIBackgroundModes: ['location', 'fetch', 'remote-notification'],
-        CFBundleURLTypes: [
-          {
-            CFBundleURLSchemes: ['runich'],
-          },
-        ],
         privacyManifests: {
           NSPrivacyAccessedAPITypes: [
             {
