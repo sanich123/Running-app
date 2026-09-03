@@ -1,4 +1,4 @@
-import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { STATUSES } from '@const/enums';
 import { addDurationAndLocationToKmSplits, setActivityStatus } from '@R/slices/location/location';
 import * as errorToastModule from '@S/error-toast/error-toast';
@@ -93,11 +93,18 @@ describe('pause btn', () => {
     mockStore.dispatch(setActivityStatus(STATUSES.started));
     await renderWithProviders(<PauseBtn />);
 
-    const firstPress = mockOnPress!();
+    let firstPress!: Promise<void>;
+    await act(async () => {
+      firstPress = mockOnPress!();
+    });
     await waitFor(() => expect(screen.getByTestId('pause-tracking-action-loading')).toBeOnTheScreen());
-    await mockOnPress!();
+    await act(async () => {
+      await mockOnPress!();
+    });
     resolveStop();
-    await firstPress;
+    await act(async () => {
+      await firstPress;
+    });
 
     expect(mockStore.getState().location.activityStatus).toBe(STATUSES.paused);
   });
