@@ -158,8 +158,5 @@
       ]
     }
   },
-  "packageManager": "yarn@4.18.0",
-  "resolutions": {
-    "jest-environment-node": "30.4.1"
-  }
+  "packageManager": "yarn@4.18.0"
 }
