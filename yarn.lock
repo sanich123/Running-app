@@ -3270,7 +3270,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/supabase-js@npm:^2.112.4":
+"@supabase/supabase-js@npm:^2.114.0":
   version: 2.114.0
   resolution: "@supabase/supabase-js@npm:2.114.0"
   dependencies:
@@ -6535,7 +6535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-refresh@npm:^0.5.5":
+"eslint-plugin-react-refresh@npm:^0.5.6":
   version: 0.5.6
   resolution: "eslint-plugin-react-refresh@npm:0.5.6"
   peerDependencies:
@@ -12270,7 +12270,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-zip-archive@npm:^9.4.0":
+"react-native-zip-archive@npm:^9.4.1":
   version: 9.4.1
   resolution: "react-native-zip-archive@npm:9.4.1"
   peerDependencies:
@@ -12820,7 +12820,7 @@ __metadata:
     "@react-native/jest-preset": "npm:^0.86.2"
     "@reduxjs/toolkit": "npm:^2.12.0"
     "@rnmapbox/maps": "npm:^10.3.5"
-    "@supabase/supabase-js": "npm:^2.112.4"
+    "@supabase/supabase-js": "npm:^2.114.0"
     "@testing-library/react-native": "npm:^14.0.1"
     "@turf/bbox": "npm:^7.4.0"
     "@turf/distance": "npm:^7.4.0"
@@ -12837,7 +12837,7 @@ __metadata:
     eslint-plugin-import-x: "npm:^4.17.1"
     eslint-plugin-react: "npm:^7.37.5"
     eslint-plugin-react-hooks: "npm:^7.1.1"
-    eslint-plugin-react-refresh: "npm:^0.5.5"
+    eslint-plugin-react-refresh: "npm:^0.5.6"
     eslint-plugin-unused-imports: "npm:^4.4.1"
     expo: "npm:~57.0.19"
     expo-build-properties: "npm:~57.0.16"
@@ -12904,7 +12904,7 @@ __metadata:
     react-native-view-shot: "npm:5.1.0"
     react-native-web: "npm:^0.21.2"
     react-native-worklets: "npm:0.10.1"
-    react-native-zip-archive: "npm:^9.4.0"
+    react-native-zip-archive: "npm:^9.4.1"
     react-redux: "npm:^9.3.0"
     redux-persist: "npm:^6.0.0"
     test-renderer: "npm:^1.2.0"
