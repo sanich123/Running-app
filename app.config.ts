@@ -113,9 +113,15 @@ export default {
         'expo-build-properties',
         {
           android: {
-            enableProguardInReleaseBuilds: true,
+            usePrecompiledHeaders: true,
+            enableMinifyInReleaseBuilds: true,
             enableShrinkResourcesInReleaseBuilds: true,
-            extraProguardRules: '-keep class expo.modules.adapters.react.apploader.** { *; }',
+            extraProguardRules: [
+              '-keep class expo.modules.adapters.react.apploader.** { *; }',
+              '-dontwarn com.google.mlkit.vision.barcode.**',
+              '-dontwarn com.google.mlkit.vision.codescanner.**',
+              '-dontwarn com.google.mlkit.vision.common.**',
+            ].join('\n'),
           },
           ios: { ccacheEnabled: true },
         },
@@ -140,7 +146,9 @@ export default {
       [
         'expo-camera',
         {
-          cameraPermission: 'Разрешите приложению Runich доступ к камере телефона',
+          cameraPermission: 'Приложению необходим доступ к камере для создания отчета по транспортному средству',
+          recordAudioAndroid: false,
+          barcodeScannerEnabled: false,
         },
       ],
       [

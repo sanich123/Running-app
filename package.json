@@ -151,6 +151,13 @@
         ]
       }
     },
+    "autolinking": {
+      "android": {
+        "buildFromSource": [
+          "expo-camera"
+        ]
+      }
+    },
     "install": {
       "exclude": [
         "jest",
