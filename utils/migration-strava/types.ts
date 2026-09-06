@@ -1,3 +1,5 @@
+import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
+
 export interface GetMigrationArchiveAndSendToServerProps {
   setIsDisabled: (arg: boolean) => void;
   setIsUnzipping: (arg: boolean) => void;
@@ -6,9 +8,8 @@ export interface GetMigrationArchiveAndSendToServerProps {
   setIsSendingArchive: (arg: boolean) => void;
   setIsWaitingForServer: (arg: boolean) => void;
   setIsDeletingCacheFolder: (arg: boolean) => void;
-  setIsSuccess: (arg: boolean) => void;
   setIsError: (arg: string) => void;
-  onArchiveUploadSuccess: () => void;
+  onArchiveUploadAccepted: (job: ActivityMigrationJobResponse) => void;
   userId: string;
   accessToken: string;
 }

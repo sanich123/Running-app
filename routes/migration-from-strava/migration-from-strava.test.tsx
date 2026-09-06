@@ -1,12 +1,16 @@
 import type { ReactNode } from 'react';
 import { act, screen, userEvent } from '@testing-library/react-native';
-import { LANGUAGES, ROUTES } from '@const/enums';
+import { http, HttpResponse } from 'msw';
+import { LANGUAGES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MIGRATION_STATES } from './const';
 import MigrationFromStrava from './migration-from-strava';
+import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
 
 interface MigrationArgs {
   setIsDisabled: (value: boolean) => void;
@@ -16,9 +20,8 @@ interface MigrationArgs {
   setIsSendingArchive: (value: boolean) => void;
   setIsWaitingForServer: (value: boolean) => void;
   setIsDeletingCacheFolder: (value: boolean) => void;
-  setIsSuccess: (value: boolean) => void;
   setIsError: (value: string) => void;
-  onArchiveUploadSuccess: () => void;
+  onArchiveUploadAccepted: (job: ActivityMigrationJobResponse) => void;
 }
 
 let latestMigrationArgs: MigrationArgs | undefined;
@@ -27,7 +30,6 @@ const mockMigrate = jest.fn().mockImplementation((args: MigrationArgs) => {
   return Promise.resolve();
 });
 const mockExternalNavigate = jest.fn();
-const mockReplace = jest.fn();
 jest.mock('@U/migration-strava/migration-archive', () => ({
   getMigrationArchiveAndSendToServer: (args: unknown) => mockMigrate(args),
 }));
@@ -39,7 +41,6 @@ jest.mock('expo-router', () => {
         <Text>{children}</Text>
       </Pressable>
     ),
-    useRouter: () => ({ replace: mockReplace }),
   };
 });
 
@@ -81,20 +82,47 @@ describe('migration from strava', () => {
     expect(screen.getByText(MIGRATION_STATES.english.waitingForServer)).toBeTruthy();
   });
 
-  it('redirects to the home page after a successful server response', async () => {
+  it('keeps the migration page open while the server processes the archive', async () => {
     const user = userEvent.setup();
-    mockReplace.mockClear();
+    server.use(
+      http.get(`${BASE_URL}/activity/migration-strava/jobs/job-id`, () =>
+        HttpResponse.json({
+          jobId: 'job-id',
+          status: 'processing',
+          totalActivities: 10,
+          processedActivities: 4,
+          importedActivities: 3,
+          skippedActivities: 1,
+          errorMessage: null,
+          createdAt: new Date().toISOString(),
+          startedAt: new Date().toISOString(),
+          finishedAt: null,
+        }),
+      ),
+    );
     await renderWithProviders(<MigrationFromStrava />);
     await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
 
     await act(async () => {
-      latestMigrationArgs?.onArchiveUploadSuccess();
+      latestMigrationArgs?.onArchiveUploadAccepted({
+        jobId: 'job-id',
+        status: 'queued',
+        totalActivities: 0,
+        processedActivities: 0,
+        importedActivities: 0,
+        skippedActivities: 0,
+        errorMessage: null,
+        createdAt: new Date().toISOString(),
+        startedAt: null,
+        finishedAt: null,
+      });
     });
 
-    expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
+    expect(await screen.findAllByText(MIGRATION_STATES.english.processing)).toHaveLength(2);
+    expect(await screen.findByText('Activities processed: 4/10')).toBeOnTheScreen();
   });
 
-  it('renders each archive-processing stage and the final success or error state', async () => {
+  it('renders each local archive-processing stage and an error state', async () => {
     const user = userEvent.setup();
     await renderWithProviders(<MigrationFromStrava />);
     await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
@@ -145,13 +173,6 @@ describe('migration from strava', () => {
 
     await act(async () => {
       args.setIsDeletingCacheFolder(false);
-      args.setIsSuccess(true);
-    });
-    expect(screen.getByText(MIGRATION_STATES.english.successSending)).toBeOnTheScreen();
-    expect(screen.getByText(MIGRATION_STATES.english.success)).toBeOnTheScreen();
-
-    await act(async () => {
-      args.setIsSuccess(false);
       args.setIsError('archive failed');
     });
     expect(screen.getAllByText(MIGRATION_STATES.english.error)).toHaveLength(2);

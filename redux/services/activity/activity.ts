@@ -11,6 +11,7 @@ import type {
   ActivityMutationResponse,
   ActivityLocationsResponse,
   ActivityMediaResponse,
+  ActivityMigrationJobResponse,
   ActivityResponse,
 } from '@R/runich-api/types';
 
@@ -44,6 +45,9 @@ const activityApi = runichApi.injectEndpoints({
     getLocationsByActivityId: query<ActivityLocationsResponse | null, string>({
       query: (activityId: string) => `/activity/${activityId}/locations`,
       providesTags: [Tags.activities],
+    }),
+    getStravaMigrationStatus: query<ActivityMigrationJobResponse, string>({
+      query: (jobId: string) => `/activity/migration-strava/jobs/${jobId}`,
     }),
     updateActivityInfo: mutation<ActivityMutationResponse, ActivityUpdateRequest>({
       query: ({ body, id }) => ({
@@ -84,6 +88,7 @@ export const {
   useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery,
   useGetActivityByActivityIdQuery,
   useGetLocationsByActivityIdQuery,
+  useGetStravaMigrationStatusQuery,
   useAddActivityByUserIdMutation,
   useDeleteActivityByIdMutation,
   useGetSeveralActivitiesByTheirIdsQuery,

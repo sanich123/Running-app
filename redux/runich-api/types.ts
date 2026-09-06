@@ -1,5 +1,27 @@
 import type { ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
 
+export const ACTIVITY_MIGRATION_STATUS = {
+  queued: 'queued',
+  processing: 'processing',
+  completed: 'completed',
+  failed: 'failed',
+} as const;
+
+export type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof typeof ACTIVITY_MIGRATION_STATUS];
+
+export interface ActivityMigrationJobResponse {
+  jobId: string;
+  status: ActivityMigrationStatus;
+  totalActivities: number;
+  processedActivities: number;
+  importedActivities: number;
+  skippedActivities: number;
+  errorMessage: string | null;
+  createdAt: string;
+  startedAt: string | null;
+  finishedAt: string | null;
+}
+
 type ActivityLocationResponse = ActivityLocation;
 
 export interface ActivityPhotoResponse {
