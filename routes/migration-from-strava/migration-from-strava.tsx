@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView, View, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { ActivityIndicator, Button, Card, ProgressBar, Text, useTheme } from 'react-native-paper';
-import { LANGUAGES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
 import { useGetStravaMigrationStatusQuery } from '@R/services/activity/activity';
@@ -14,11 +14,14 @@ import useGetStates from './hooks';
 import { removeStepNumber } from './utils';
 import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
 
+const HOME_TAB_ROUTE = '(home)';
+
 export default function MigrationFromStrava() {
   const { userId, accessToken } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
+  const { replace } = useRouter();
   const [migrationJobId, setMigrationJobId] = useState<string | null>(null);
   const {
     isDisabled,
@@ -103,10 +106,14 @@ export default function MigrationFromStrava() {
   const progress = migrationJob?.totalActivities
     ? Math.min(1, migrationJob.processedActivities / migrationJob.totalActivities)
     : 0;
+  const progressPercent = Math.round(progress * 100);
 
   useEffect(() => {
     if (migrationJob?.status === 'completed') {
       dispatch(runichApi.util.invalidateTags([Tags.activities]));
+      if (migrationJob.processedActivities >= migrationJob.totalActivities) {
+        replace(`/${ROUTES.tabs}/${HOME_TAB_ROUTE}`);
+      }
     }
 
     if (!migrationJobId || migrationJob?.status === 'completed' || migrationJob?.status === 'failed') return;
@@ -125,7 +132,15 @@ export default function MigrationFromStrava() {
       isCancelled = true;
       clearTimeout(timeout);
     };
-  }, [dispatch, migrationJobId, migrationJob?.status, refetchMigrationStatus]);
+  }, [
+    dispatch,
+    migrationJobId,
+    migrationJob?.processedActivities,
+    migrationJob?.status,
+    migrationJob?.totalActivities,
+    refetchMigrationStatus,
+    replace,
+  ]);
 
   const handleArchiveUploadAccepted = (job: ActivityMigrationJobResponse) => {
     setIsError('');
@@ -187,6 +202,17 @@ export default function MigrationFromStrava() {
           </Text>
         </View>
 
+        <View style={[styles.notice, { backgroundColor: colors.secondaryContainer }]}>
+          <MaterialCommunityIcons name="file-alert-outline" size={22} color={colors.secondary} />
+          <Text variant="bodyMedium" style={{ color: colors.onSecondaryContainer, flex: 1 }}>
+            {copy.archiveLimit}
+            <Link href={`/${ROUTES.feedback}`} style={{ color: colors.primary }}>
+              {copy.feedbackLink}
+            </Link>
+            .
+          </Text>
+        </View>
+
         {(isProcessing || migrationJobId || Boolean(isError)) && (
           <View
             style={[
@@ -224,52 +250,79 @@ export default function MigrationFromStrava() {
             </View>
             {migrationJob && (
               <View style={styles.progressDetails}>
+                <View style={styles.progressHeader}>
+                  <Text variant="labelLarge" style={{ color: colors.onSurfaceVariant }}>
+                    {copy.progress}
+                  </Text>
+                  <Text variant="titleMedium" style={{ color: colors.primary }}>
+                    {progressPercent}%
+                  </Text>
+                </View>
                 <ProgressBar progress={progress} color={colors.primary} style={styles.progressBar} />
-                <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                  {copy.progress}: {migrationJob.processedActivities}/{migrationJob.totalActivities || '—'}
-                </Text>
-                <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                  {copy.imported}: {migrationJob.importedActivities} · {copy.skipped}: {migrationJob.skippedActivities}
-                </Text>
+                <View style={styles.progressStats}>
+                  <View style={[styles.progressStat, { backgroundColor: colors.surfaceVariant }]}>
+                    <Text variant="titleMedium" style={{ color: colors.onSurface }}>
+                      {migrationJob.processedActivities}/{migrationJob.totalActivities || '—'}
+                    </Text>
+                    <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+                      {copy.processed}
+                    </Text>
+                  </View>
+                  <View style={[styles.progressStat, { backgroundColor: colors.surfaceVariant }]}>
+                    <Text variant="titleMedium" style={{ color: colors.tertiary }}>
+                      {migrationJob.importedActivities}
+                    </Text>
+                    <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+                      {copy.imported}
+                    </Text>
+                  </View>
+                  <View style={[styles.progressStat, { backgroundColor: colors.surfaceVariant }]}>
+                    <Text variant="titleMedium" style={{ color: colors.error }}>
+                      {migrationJob.skippedActivities}
+                    </Text>
+                    <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+                      {copy.skipped}
+                    </Text>
+                  </View>
+                </View>
               </View>
             )}
           </View>
         )}
 
-        <Button
-          mode="contained"
-          icon={
-            isServerProcessing || isServerStatusError
-              ? 'progress-clock'
-              : isInitial || isServerCompleted || isServerFailed
+        {!isProcessing && (
+          <Button
+            mode="contained"
+            icon={
+              isInitial || isServerCompleted || isServerFailed
                 ? 'file-upload-outline'
                 : isError
                   ? 'refresh'
                   : 'progress-clock'
-          }
-          onPress={async () => {
-            if (isServerCompleted || isServerFailed) {
-              setMigrationJobId(null);
             }
-            await getMigrationArchiveAndSendToServer({
-              setIsDisabled,
-              setIsUnzipping,
-              setIsRemovingMedia,
-              setIsZipping,
-              setIsSendingArchive,
-              setIsWaitingForServer,
-              setIsDeletingCacheFolder,
-              setIsError,
-              onArchiveUploadAccepted: handleArchiveUploadAccepted,
-              userId,
-              accessToken,
-            });
-          }}
-          disabled={isDisabled || isServerProcessing || isServerStatusError}
-          style={styles.action}
-          contentStyle={styles.actionContent}>
-          {buttonText}
-        </Button>
+            onPress={async () => {
+              if (isServerCompleted || isServerFailed) {
+                setMigrationJobId(null);
+              }
+              await getMigrationArchiveAndSendToServer({
+                setIsDisabled,
+                setIsUnzipping,
+                setIsRemovingMedia,
+                setIsZipping,
+                setIsSendingArchive,
+                setIsWaitingForServer,
+                setIsDeletingCacheFolder,
+                setIsError,
+                onArchiveUploadAccepted: handleArchiveUploadAccepted,
+                userId,
+                accessToken,
+              });
+            }}
+            style={styles.action}
+            contentStyle={styles.actionContent}>
+            {buttonText}
+          </Button>
+        )}
       </View>
     </ScrollView>
   );
@@ -350,13 +403,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   progressDetails: {
-    gap: 4,
-    marginLeft: 34,
-    marginTop: 8,
+    gap: 10,
+    marginTop: 12,
+  },
+  progressHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  progressStats: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  progressStat: {
+    alignItems: 'center',
+    borderRadius: 12,
+    flex: 1,
+    gap: 2,
+    paddingHorizontal: 6,
+    paddingVertical: 8,
   },
   progressBar: {
-    height: 6,
-    marginBottom: 2,
+    height: 7,
   },
   action: {
     borderRadius: 14,

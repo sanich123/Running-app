@@ -1,7 +1,11 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { deletePhotos } from '@U/file-sending';
 import PreviewImages from './preview-images';
+
+jest.mock('@U/file-sending', () => ({ deletePhotos: jest.fn().mockResolvedValue(true) }));
+const mockDeletePhotos = deletePhotos as jest.MockedFunction<typeof deletePhotos>;
 
 jest.mock('react-native-compressor', () => ({
   Image: () => ({
@@ -33,5 +37,6 @@ describe('Preview images', () => {
     expect(deleteBtn).toBeOnTheScreen();
     await userEvent.press(deleteBtn);
     expect(setImages).toHaveBeenCalled();
+    expect(mockDeletePhotos).toHaveBeenCalledWith(['someUrl']);
   });
 });

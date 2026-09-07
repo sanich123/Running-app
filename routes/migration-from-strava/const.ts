@@ -14,6 +14,8 @@ export const MIGRATION_STATES = {
     wifiConnection: 'Для загрузки нужен стабильный интернет, желательно быстрый Wi‑Fi.',
     serverResponseTime:
       'После загрузки архив обрабатывается в фоне. Оставайтесь на этой странице, чтобы видеть прогресс.',
+    archiveLimit: 'Размер архива не должен превышать 100 МБ. Если нужно загрузить архив большего размера, ',
+    feedbackLink: 'напишите в обратную связь',
     unzipping: 'Распаковываем архив',
     remove: 'Удаляем медиа',
     zipping: 'Собираем архив',
@@ -26,6 +28,7 @@ export const MIGRATION_STATES = {
     failed: 'Не удалось обработать архив',
     statusError: 'Не удалось получить статус обработки. Повторяем попытку...',
     progress: 'Обработано активностей',
+    processed: 'Обработано',
     imported: 'Импортировано',
     skipped: 'Пропущено',
     chooseArchive: 'Выбрать ZIP-архив',
@@ -48,6 +51,8 @@ export const MIGRATION_STATES = {
     wifiConnection: 'A stable internet connection is required, preferably fast Wi‑Fi.',
     serverResponseTime:
       'After uploading, the archive is processed in the background. Stay on this page to see the progress.',
+    archiveLimit: 'The archive size must not exceed 100 MB. If you need to upload a larger archive, ',
+    feedbackLink: 'contact us through feedback',
     unzipping: 'Unzipping',
     remove: 'Remove media',
     zipping: 'Repacking the archive',
@@ -60,6 +65,7 @@ export const MIGRATION_STATES = {
     failed: 'The archive could not be processed',
     statusError: 'Could not load the processing status. Retrying...',
     progress: 'Activities processed',
+    processed: 'Processed',
     imported: 'Imported',
     skipped: 'Skipped',
     chooseArchive: 'Choose a ZIP archive',

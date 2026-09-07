@@ -21,7 +21,7 @@ The client targets Android, iOS and web and is built with Expo, React Native, Ex
 - Corepack and Yarn
 - Android Studio and an Android SDK for Android development
 - Xcode and CocoaPods for iOS development on macOS
-- A configured Runich backend, Supabase project and Mapbox public token
+- A configured Runich backend with S3-compatible storage and a Mapbox public token
 
 ## Getting started
 
@@ -37,8 +37,6 @@ Create a local `.env` file when local or alternate services are required:
 ```dotenv
 EXPO_PUBLIC_BASE_URL=http://localhost:3000
 EXPO_PUBLIC_MAPBOX_TOKEN=<mapbox-public-token>
-EXPO_PUBLIC_SUPABASE_URL=<supabase-url>
-EXPO_PUBLIC_SUPABASE_ANON_KEY=<supabase-anon-key>
 ```
 
 Never commit `.env`, access tokens, signing files or other credentials. The Mapbox `sk...` download token belongs in EAS Secrets and must not be placed in the repository or in the client bundle.

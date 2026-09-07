@@ -23,7 +23,7 @@ changed the supported platform or development workflow.
 - Improved activity saving, retrying and handling of interrupted recordings.
 - Improved map initialization, route bounds and platform-specific behavior.
 - Refined location tracking metrics and elevation calculation.
-- Continued migration from Supabase-owned authentication to the Runich backend.
+- Continued migration from hosted authentication to the Runich backend.
 
 ### Fixed
 
@@ -85,7 +85,7 @@ changed the supported platform or development workflow.
 ### Authentication and account management
 
 - Added registration, login and profile creation/update functionality.
-- Migrated to a new Supabase project and added account deletion.
+- Migrated to a new storage project and added account deletion.
 - Added Strava activity migration and email notifications for comments and
   likes.
 
