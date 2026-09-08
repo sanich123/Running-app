@@ -1,22 +1,19 @@
 import { createElement } from 'react';
 import Card from '@S/card/card';
-import type { ActivityResponse } from '@R/runich-api/types';
+import type { ActivityListItemResponse } from '@R/runich-api/types';
 
-type ActivityListItem = ActivityResponse;
+type ActivityListItem = ActivityListItemResponse;
 
 export function renderCardsFunction({ item }: { item: ActivityListItem }) {
   const {
-    description,
     title,
     date,
     sport,
     photoVideoUrls,
     mapPhotoUrl,
-    locations,
     duration,
     distance,
     steps,
-    kilometresSplit,
     id,
     userId,
     profile,
@@ -26,7 +23,6 @@ export function renderCardsFunction({ item }: { item: ActivityListItem }) {
   return createElement(Card, {
     isShowDeleteBtn: false,
     isShowDescription: false,
-    description: description ?? '',
     title: title ?? '',
     date,
     sport,
@@ -34,12 +30,10 @@ export function renderCardsFunction({ item }: { item: ActivityListItem }) {
     id,
     key: id,
     mapPhotoUrl,
-    locations,
     photoVideoUrls,
     duration,
     distance,
     steps,
-    kilometresSplit,
     profile,
     commentsLength,
   });

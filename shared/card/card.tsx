@@ -49,6 +49,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const shouldLoadRouteLocations = !locations?.length && Boolean(mapPhotoUrl);
   const { data: routeData } = useGetLocationsByActivityIdQuery(id, { skip: !shouldLoadRouteLocations });
   const routeLocations = locations?.length ? locations : routeData?.locations;
+  const routeKilometresSplit = kilometresSplit?.length ? kilometresSplit : routeData?.kilometresSplit;
   const shareMapPhotoUrl = useMemo(() => {
     if (routeLocations?.length) {
       return getMapBoxImage(routeLocations) || mapPhotoUrl;
@@ -105,7 +106,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           id={id}
           sport={sport}
           steps={steps}
-          elevationGain={getActivityCardElevationGain(kilometresSplit, locations)}
+          elevationGain={getActivityCardElevationGain(routeKilometresSplit, routeLocations)}
         />
         <View style={{ height: 40, paddingHorizontal: 8 }}>
           <Likes activityId={id} size={likesSize} />

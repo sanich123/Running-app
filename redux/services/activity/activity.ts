@@ -8,6 +8,7 @@ import type {
 } from './types';
 import type {
   ActivitiesResponse,
+  ActivityListItemResponse,
   ActivityMutationResponse,
   ActivityLocationsResponse,
   ActivityMediaResponse,
@@ -74,7 +75,7 @@ const activityApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.activities],
     }),
-    getSeveralActivitiesByTheirIds: query<ActivityResponse[], GetActivitiesByIdsRequest>({
+    getSeveralActivitiesByTheirIds: query<ActivityListItemResponse[], GetActivitiesByIdsRequest>({
       query: ({ ids }) => ({
         url: `/activity/activityIds?${ids}`,
       }),

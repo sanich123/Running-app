@@ -72,6 +72,23 @@ export interface ActivityResponse {
   _count: ActivityCountResponse;
 }
 
+export type ActivityListItemResponse = Pick<
+  ActivityResponse,
+  | 'id'
+  | 'userId'
+  | 'date'
+  | 'title'
+  | 'sport'
+  | 'photoVideoUrls'
+  | 'mapPhotoUrl'
+  | 'mapPhotoUrlBlurhash'
+  | 'duration'
+  | 'distance'
+  | 'steps'
+  | 'profile'
+  | '_count'
+>;
+
 export interface ActivityMutationResponse {
   id: string;
   userId: string;
@@ -98,7 +115,7 @@ export interface ActivityMutationResponse {
 }
 
 export interface ActivitiesResponse {
-  activities: ActivityResponse[];
+  activities: ActivityListItemResponse[];
   isLastPage: boolean;
 }
 
@@ -143,7 +160,7 @@ export interface CommentResponse {
   id: string;
   date: string;
   profile: CommentProfileResponse;
-  commentLike: CommentLikeSummaryResponse[];
+  commentLike?: CommentLikeSummaryResponse[];
 }
 
 export interface CommentsResponse {
