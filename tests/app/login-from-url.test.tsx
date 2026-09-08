@@ -6,7 +6,7 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import type LoginFromUrlRouteComponent from './login-from-url';
+import type LoginFromUrlRouteComponent from '../../app/login-from-url';
 
 const mockDismissAll = jest.fn();
 const mockReplace = jest.fn();
@@ -38,7 +38,7 @@ describe('login from URL', () => {
     };
     linkingModule.useLinkingURL = mockUseLinkingURL;
     linkingModule.parse = mockParse;
-    const loginFromUrlModule = require('./login-from-url') as { default: typeof LoginFromUrlRoute };
+    const loginFromUrlModule = require('../../app/login-from-url') as { default: typeof LoginFromUrlRoute };
     LoginFromUrlRoute = loginFromUrlModule.default;
   });
 
