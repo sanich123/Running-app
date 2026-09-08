@@ -11,7 +11,7 @@ export const MOCK_COMMENTS = [
       name: 'Александр ',
       profilePhoto: 'https://images.example.test/user-a/comment.jpg',
       profilePhotoBlurhash: 'UVLhM4EJ-s_N,|xvpCtQJ}RiM{M_-:t7V^n,',
-      users: { email: 'someEmail@yandex.ru' },
+      user: { email: 'someEmail@yandex.ru' },
     },
     commentLike: [
       {
@@ -32,7 +32,7 @@ export const MOCK_COMMENTS = [
       name: 'Александр ',
       profilePhoto: 'https://images.example.test/user-a/comment.jpg',
       profilePhotoBlurhash: 'UVLhM4EJ-s_N,|xvpCtQJ}RiM{M_-:t7V^n,',
-      users: { email: 'someEmail@yandex.ru' },
+      user: { email: 'someEmail@yandex.ru' },
     },
     commentLike: [],
   },
@@ -48,7 +48,7 @@ export const MOCK_COMMENTS = [
       name: 'Александр ',
       profilePhoto: 'https://images.example.test/user-a/comment.jpg',
       profilePhotoBlurhash: 'UVLhM4EJ-s_N,|xvpCtQJ}RiM{M_-:t7V^n,',
-      users: { email: 'someEmail@yandex.ru' },
+      user: { email: 'someEmail@yandex.ru' },
     },
     commentLike: [],
   },
@@ -64,7 +64,7 @@ export const MOCK_COMMENTS = [
       name: 'Настя Лимонова',
       profilePhoto: 'https://example.com/avatar.jpg',
       profilePhotoBlurhash: 'UPHw.8TLS#Vs.TtSxWV??^tSV@Ri_3-;slRP',
-      users: { email: 'someEmail@yandex.ru' },
+      user: { email: 'someEmail@yandex.ru' },
     },
     commentLike: [
       {
@@ -85,7 +85,7 @@ export const MOCK_COMMENTS = [
       name: 'Александр ',
       profilePhoto: 'https://images.example.test/user-a/comment.jpg',
       profilePhotoBlurhash: 'UVLhM4EJ-s_N,|xvpCtQJ}RiM{M_-:t7V^n,',
-      users: { email: 'someEmail@yandex.ru' },
+      user: { email: 'someEmail@yandex.ru' },
     },
     commentLike: [
       {

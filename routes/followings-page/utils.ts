@@ -9,7 +9,7 @@ export const renderFollowingItem = ({ item }: { item: any }) =>
     surname: item.profile?.surname,
     profilePhoto: item.profile?.profilePhoto,
     placeholder: item.profile?.profilePhotoBlurhash,
-    user_id: item?.friendId,
+    userId: item?.friendId,
   });
 
 export const followingKeyExtractor = (item: any) => item.id || item.friendId;

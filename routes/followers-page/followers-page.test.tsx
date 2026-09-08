@@ -28,7 +28,7 @@ describe('ListOfFollowers', () => {
     await renderWithProviders(<ListOfFollowers />);
     expect(
       await screen.findByText(
-        new RegExp(`${MOCK_SERVER_FOLLOWERS[0].users.profile.name}.*${MOCK_SERVER_FOLLOWERS[0].users.profile.surname}`),
+        new RegExp(`${MOCK_SERVER_FOLLOWERS[0].user.profile.name}.*${MOCK_SERVER_FOLLOWERS[0].user.profile.surname}`),
       ),
     ).toBeOnTheScreen();
   });

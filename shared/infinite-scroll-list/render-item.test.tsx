@@ -13,7 +13,7 @@ describe('render item', () => {
       duration: 1000,
       distance: 2000,
       id: 'activity-1',
-      user_id: 'user-1',
+      userId: 'user-1',
       profile: {},
       _count: { comments: 3 },
     };
@@ -28,5 +28,24 @@ describe('render item', () => {
       }),
     );
     expect(keyExtractor(item)).toBe('activity-1');
+  });
+
+  it('maps the current camelCase user id returned by the API', () => {
+    const item: any = {
+      ...{
+        date: '2026-08-09',
+        sport: 'run',
+        duration: 1000,
+        distance: 2000,
+        id: 'activity-2',
+        profile: {},
+        _count: { comments: 0 },
+      },
+      userId: 'user-2',
+    };
+
+    const element = renderCardsFunction({ item });
+
+    expect(element.props.userId).toBe('user-2');
   });
 });

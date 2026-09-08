@@ -72,8 +72,8 @@ export const MOCK_PROFILE = {
   sport: 'run',
   surname: 'Ядгаров',
   updatedAt: '2023-09-27T06:03:22.257Z',
-  user_id: '9320e08f-299a-468a-8b03-5a1b5ef28ee1',
+  userId: '9320e08f-299a-468a-8b03-5a1b5ef28ee1',
   weight: '70',
   emailNotifications: true,
-  users: { email: 'someEmail@yandex.ru' },
+  user: { email: 'someEmail@yandex.ru' },
 };

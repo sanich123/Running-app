@@ -10,7 +10,7 @@ export const renderLikeItem = ({ item }: { item: any }) => {
     profilePhoto: profile?.profilePhoto,
     placeholder: profile?.profilePhotoBlurhash,
     city: profile?.city,
-    user_id: profile?.user_id,
+    userId: profile?.userId,
   });
 };
 

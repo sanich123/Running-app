@@ -14,13 +14,13 @@ export default memo(function UserListItem({
   profilePhoto,
   placeholder,
   city,
-  user_id,
+  userId,
   commentsModalRef,
 }: UserListItemType) {
   const { dark } = useTheme();
-  const { userId } = useAppSelector(({ auth }) => auth);
+  const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { push } = useRouter();
-  const isMineActivity = user_id === userId;
+  const isMineActivity = userId === currentUserId;
 
   return (
     <TouchableRipple
@@ -28,7 +28,7 @@ export default memo(function UserListItem({
       borderless
       onPress={() => {
         commentsModalRef?.current?.dismiss();
-        push(`/${ROUTES.profile}/${user_id}`);
+        push(`/${ROUTES.profile}/${userId}`);
       }}>
       <View style={styles.userItemWrapper}>
         <View style={styles.contentWrapper}>
@@ -47,7 +47,7 @@ export default memo(function UserListItem({
             {city ? <Text variant="bodyMedium">{city}</Text> : null}
           </View>
         </View>
-        {!isMineActivity && <FollowUnfollowBtn friendId={user_id} />}
+        {!isMineActivity && <FollowUnfollowBtn friendId={userId} />}
       </View>
     </TouchableRipple>
   );

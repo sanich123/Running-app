@@ -34,6 +34,7 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
   const [sendLike, { isSuccess: isSuccessSending }] = useSendLikeMutation();
 
   const [deleteLike] = useDeleteLikeMutation();
+  const recipientEmail = profile?.email ?? profile?.user?.email;
 
   const isLikedByYou = likesList.filter(({ authorId }) => authorId === userId);
   const hasLikesFromOthers = likesList.length > 0 && !isLikedByYou.length;
@@ -57,18 +58,18 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
   }, [likeScale]);
 
   useEffect(() => {
-    if (isSuccessSending && profile?.emailNotifications && profile.users?.email) {
+    if (isSuccessSending && profile?.emailNotifications && recipientEmail) {
       sendEmailNotification({
         name: name ?? '',
         surname: surname ?? '',
         profilePhoto: profilePhoto ?? '',
         recepientName: profile.name ?? '',
         recepientSurname: profile.surname ?? '',
-        recepientEmail: profile.users.email,
+        recepientEmail: recipientEmail,
         mapPhotoUrl: mapPhotoUrl || '',
       });
     }
-  }, [isSuccessSending, mapPhotoUrl, name, profile, profilePhoto, sendEmailNotification, surname]);
+  }, [isSuccessSending, mapPhotoUrl, name, profile, profilePhoto, recipientEmail, sendEmailNotification, surname]);
 
   return (
     <Animated.View style={{ transform: [{ scale: likeScale }] }}>

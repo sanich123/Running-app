@@ -36,7 +36,7 @@ interface ActivityProfileResponse {
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
   emailNotifications?: boolean | null;
-  users?: { email?: string | null } | null;
+  user?: { email?: string | null } | null;
 }
 
 interface ActivityCountResponse {
@@ -47,7 +47,7 @@ type ActivityKilometreSplitResponse = ActivityKilometreSplit;
 
 export interface ActivityResponse {
   id: string;
-  user_id: string;
+  userId: string;
   profileId?: string;
   date: string;
   createdAt?: string;
@@ -74,7 +74,7 @@ export interface ActivityResponse {
 
 export interface ActivityMutationResponse {
   id: string;
-  user_id: string;
+  userId: string;
   profileId: string;
   date: string;
   createdAt: string;
@@ -132,7 +132,7 @@ interface CommentProfileResponse {
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
   emailNotifications?: boolean | null;
-  users?: { email?: string | null } | null;
+  user?: { email?: string | null } | null;
 }
 
 export interface CommentResponse {
@@ -183,7 +183,7 @@ interface FriendProfileResponse {
 export interface FollowingResponse {
   createdAt: string;
   updatedAt: string;
-  user_id: string;
+  userId: string;
   friendId: string;
   profileId: string;
   id: string;
@@ -193,11 +193,11 @@ export interface FollowingResponse {
 export interface FollowerResponse {
   createdAt: string;
   updatedAt: string;
-  user_id: string;
+  userId: string;
   friendId: string;
   profileId: string;
   id: string;
-  users?: { profile?: FriendProfileResponse | null } | null;
+  user: { profile?: FriendProfileResponse | null };
 }
 
 export interface PaginationResponse<T> {

@@ -18,7 +18,7 @@ export function renderCardsFunction({ item }: { item: ActivityListItem }) {
     steps,
     kilometresSplit,
     id,
-    user_id,
+    userId,
     profile,
     _count: { comments: commentsLength },
   } = item;
@@ -30,7 +30,7 @@ export function renderCardsFunction({ item }: { item: ActivityListItem }) {
     title: title ?? '',
     date,
     sport,
-    userId: user_id,
+    userId,
     id,
     key: id,
     mapPhotoUrl,

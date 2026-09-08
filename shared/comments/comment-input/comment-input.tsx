@@ -31,6 +31,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
   const isSending = isCommentSending || isUpdatingComment;
   const isEditing = Boolean(commentId && commentToUpdate);
+  const recipientEmail = profile?.email ?? profile?.user?.email;
 
   const handleInputFocus = () => {
     setFocused(true);
@@ -71,7 +72,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   async function sendingUpdatingCommentSuccessHandler(sentComment = comment) {
     dispatch(setActivityIdWhichCommentsToUpdate(commentActivityId));
     closeInput();
-    if (profile.emailNotifications && profile.users?.email && !commentToUpdate) {
+    if (profile.emailNotifications && recipientEmail && !commentToUpdate) {
       const objectToSend = {
         name: name ?? '',
         surname: surname ?? '',
@@ -79,7 +80,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
         comment: sentComment,
         recepientName: profile.name ?? '',
         recepientSurname: profile.surname ?? '',
-        recepientEmail: profile.users.email,
+        recepientEmail: recipientEmail,
         mapPhotoUrl: mapPhotoUrl ? mapPhotoUrl : '',
       };
       sendEmailAfterSendingComment(objectToSend);

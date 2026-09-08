@@ -30,7 +30,7 @@ export const MOCK_ACTIVITY = {
   sport: 'run',
   title: 'Moscow',
   updatedAt: '2023-11-03T15:28:51.031Z',
-  user_id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
+  userId: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
   profile: {
     bio: '',
     birthday: null,
@@ -46,7 +46,7 @@ export const MOCK_ACTIVITY = {
     sport: null,
     surname: 'Ядгаров',
     updatedAt: new Date(Date.now()).toString(),
-    user_id: '',
+    userId: '',
     weight: '',
   },
 };

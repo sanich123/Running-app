@@ -4,13 +4,13 @@ import UserListItem from '@S/user-list-item/user-list-item';
 
 export const renderFollowerItem = ({ item }: { item: any }) =>
   createElement(UserListItem, {
-    city: item.users.profile?.city,
-    name: item.users.profile?.name,
-    surname: item.users.profile?.surname,
-    profilePhoto: item.users.profile?.profilePhoto,
-    placeholder: item.users.profile?.profilePhotoBlurhash,
-    user_id: item.user_id,
+    city: item.user?.profile?.city,
+    name: item.user?.profile?.name,
+    surname: item.user?.profile?.surname,
+    profilePhoto: item.user?.profile?.profilePhoto,
+    placeholder: item.user?.profile?.profilePhotoBlurhash,
+    userId: item.userId,
   });
 
-export const followerKeyExtractor = (item: any) => item.id || item.user_id;
+export const followerKeyExtractor = (item: any) => item.id || item.userId;
 export const renderDivider = () => createElement(Divider);

@@ -38,7 +38,7 @@ export default function CardFullView() {
               isFullView
               isShowDeleteBtn
               isShowDescription={!!activity.description}
-              userId={activity.user_id}
+              userId={activity.userId}
               description={activity.description}
               title={activity.title}
               date={activity.date}

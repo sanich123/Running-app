@@ -106,7 +106,12 @@ describe('Comment like btn', () => {
       <CommentLikeBtn
         commentId="email-comment"
         commentLikesFromComment={[]}
-        profile={{ ...MOCK_PROFILE, emailNotifications: true, users: { email: 'owner@example.com' } }}
+        profile={{
+          ...MOCK_PROFILE,
+          email: null,
+          emailNotifications: true,
+          user: { email: 'owner@example.com' },
+        }}
         comment="Great route"
       />,
     );

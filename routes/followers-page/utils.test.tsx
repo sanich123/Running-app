@@ -1,0 +1,22 @@
+import { renderFollowerItem, followerKeyExtractor } from './utils';
+
+describe('followers page response mapping', () => {
+  it('maps the current user.profile relation and userId field', () => {
+    const item = {
+      id: 'friend-1',
+      userId: 'follower-1',
+      user: { profile: { name: 'Ivan', surname: 'Runner', profilePhoto: 'photo' } },
+    };
+    const element = renderFollowerItem({ item });
+
+    expect(element.props).toEqual(
+      expect.objectContaining({
+        name: 'Ivan',
+        surname: 'Runner',
+        profilePhoto: 'photo',
+        userId: 'follower-1',
+      }),
+    );
+    expect(followerKeyExtractor(item)).toBe('friend-1');
+  });
+});

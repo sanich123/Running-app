@@ -5,7 +5,7 @@ export const MOCK_FRIENDS = [
     friendPhoto: 'https://images.example.test/user-a/friend-1.jpg',
     id: '999c9319-f9fb-4d6c-9b66-f46eb75d52ab',
     updatedAt: '2023-10-13T18:04:26.493Z',
-    user_id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
+    userId: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
   },
   {
     createdAt: '2023-10-29T19:11:02.433Z',
@@ -13,7 +13,7 @@ export const MOCK_FRIENDS = [
     friendPhoto: 'https://images.example.test/user-a/friend-2.jpg',
     id: 'd228dbe1-c95a-406a-847e-1de9fdfe0145',
     updatedAt: '2023-10-29T19:11:02.433Z',
-    user_id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
+    userId: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
   },
   {
     createdAt: '2023-11-04T08:28:24.466Z',
@@ -21,7 +21,7 @@ export const MOCK_FRIENDS = [
     friendPhoto: 'https://images.example.test/user-a/friend-3.jpg',
     id: 'ae33fd6d-0d0f-4ff7-80ce-f6a54960c895',
     updatedAt: '2023-11-04T08:28:24.466Z',
-    user_id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
+    userId: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
   },
   {
     createdAt: '2023-11-07T20:05:46.353Z',
@@ -29,6 +29,6 @@ export const MOCK_FRIENDS = [
     friendPhoto: 'https://www.lottie.com/cdn/shop/articles/Courtney-Dauwalter_1024x1024.jpg?v=1625646452',
     id: 'b58a5ec6-30bf-4915-af9a-fe3cf310f312',
     updatedAt: '2023-11-07T20:05:46.353Z',
-    user_id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
+    userId: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
   },
 ];

@@ -30,7 +30,10 @@ export default function ProfilePage() {
     error,
     refetch,
   } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
-  const { data: photoPreviews } = useGetAllActivityPhotosByUserIdQuery({ userId, take: 4 }, { skip: !userId });
+  const { data: photoPreviews } = useGetAllActivityPhotosByUserIdQuery(
+    { userId: `${whosProfile}`, take: 4 },
+    { skip: !whosProfile },
+  );
 
   return (
     <>

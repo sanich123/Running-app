@@ -126,7 +126,12 @@ describe('Comment input', () => {
     await renderWithProviders(
       <CommentInput
         commentId=""
-        profile={{ ...MOCK_PROFILE, emailNotifications: true, users: { email: 'recipient@example.com' } }}
+        profile={{
+          ...MOCK_PROFILE,
+          email: null,
+          emailNotifications: true,
+          user: { email: 'recipient@example.com' },
+        }}
       />,
     );
     await user.type(screen.getByTestId(COMMENT_INPUT_TEST_ID), 'Notify the owner');
