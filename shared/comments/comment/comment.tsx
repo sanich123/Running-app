@@ -57,7 +57,12 @@ export default function Comment({
       </View>
       <View style={styles.likesWrapper}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <CommentLikeBtn commentId={id} commentLikesFromComment={commentLike ?? []} profile={profile} comment={comment} />
+          <CommentLikeBtn
+            commentId={id}
+            commentLikesFromComment={commentLike ?? []}
+            profile={profile}
+            comment={comment}
+          />
           <CommentLikesLength commentId={id} commentLikesFromComment={commentLike ?? []} />
         </View>
         <View style={styles.actions}>
