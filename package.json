@@ -28,8 +28,8 @@
     "clear-cache:android": "rm -rf android/.gradle && rm -rf android/app/build && rm -rf node_modules && rm -rf ~/.gradle/caches",
     "export:atlas": "EXPO_ATLAS=true npx expo export",
     "show:atlas": "npx expo-atlas .expo/atlas.jsonl",
-    "web:export:stage": "EXPO_PUBLIC_BASE_URL=https://runich-backend-production.up.railway.app expo export -p web -c",
-    "web:export:production": "EXPO_PUBLIC_BASE_URL=https://runich-backend-production.up.railway.app expo export -p web -c",
+    "web:export:stage": "EXPO_PUBLIC_BASE_URL=https://runich-backend-stage.up.railway.app expo export -p web -c",
+    "web:export:production": "EXPO_PUBLIC_BASE_URL=https://api.runich-app.ru expo export -p web -c",
     "web:serve:single": "npx serve dist --single",
     "prepare": "husky"
   },
