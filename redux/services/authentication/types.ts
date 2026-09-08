@@ -16,8 +16,7 @@ export interface EmailData {
 }
 
 export interface VerifyLoginData {
-  code?: string;
-  accessToken?: string;
+  code: string;
 }
 
 export interface VerifyPasswordChangeCodeData extends EmailData {

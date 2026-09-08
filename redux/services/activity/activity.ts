@@ -15,6 +15,8 @@ import type {
   ActivityResponse,
 } from '@R/runich-api/types';
 
+const ACTIVITY_PAGE_SIZE = 20;
+
 const activityApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
@@ -23,7 +25,7 @@ const activityApi = runichApi.injectEndpoints({
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => lastPageParam + 1,
       },
-      query: ({ queryArg: { id }, pageParam }) => `/activity/${id}?page=${pageParam}&take=10`,
+      query: ({ queryArg: { id }, pageParam }) => `/activity/${id}?page=${pageParam}&take=${ACTIVITY_PAGE_SIZE}`,
       providesTags: [Tags.activities],
     }),
     getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesResponse, { id: string }, number>({
@@ -31,7 +33,7 @@ const activityApi = runichApi.injectEndpoints({
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => lastPageParam + 1,
       },
-      query: ({ queryArg: { id }, pageParam }) => `/activity/${id}/all?page=${pageParam}&take=10`,
+      query: ({ queryArg: { id }, pageParam }) => `/activity/${id}/all?page=${pageParam}&take=${ACTIVITY_PAGE_SIZE}`,
       providesTags: [Tags.activities],
     }),
     getAllActivityPhotosByUserId: query<ActivityMediaResponse, GetActivityPhotosRequest>({

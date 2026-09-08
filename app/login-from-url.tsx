@@ -18,9 +18,8 @@ export default function LoginFromUrlRoute() {
     if (url) {
       const { queryParams } = parse(url);
       const code = queryParams?.code?.toString();
-      const accessToken = queryParams?.accessToken?.toString();
-      if (code || accessToken) {
-        verifyToken(code ? { code } : { accessToken })
+      if (code) {
+        verifyToken({ code })
           .unwrap()
           .then(({ accessToken: verifiedAccessToken, refreshToken, userId }) => {
             dispatch(setAccessToken(verifiedAccessToken));
