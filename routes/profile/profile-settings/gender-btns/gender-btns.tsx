@@ -28,13 +28,6 @@ export default function GenderBtns({ isDisabled }: { isDisabled: boolean }) {
           showSelectedCheck: true,
           disabled: isDisabled || isDisabledWhileSendingProfile,
         },
-        {
-          value: GENDER_BTNS_VALUES.packman,
-          label: GENDER_BTNS[language].packmanLabel,
-          icon: 'pac-man',
-          showSelectedCheck: true,
-          disabled: isDisabled || isDisabledWhileSendingProfile,
-        },
       ]}
       style={{ width: '100%' }}
     />

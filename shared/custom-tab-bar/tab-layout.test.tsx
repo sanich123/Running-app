@@ -9,6 +9,8 @@ import TabLayout from '../../app/(tabs)/_layout';
 
 const mockReplace = jest.fn();
 let mockPathname = `/${ROUTES.home}`;
+let mockTabsScreenOptions: { sceneStyle?: unknown } | undefined;
+const mockNativeTriggerContentStyles: unknown[] = [];
 
 jest.mock('expo-router', () => {
   const { View } = jest.requireActual('react-native');
@@ -18,7 +20,13 @@ jest.mock('expo-router', () => {
       {options?.tabBarIcon?.({ focused: false })}
     </View>
   );
-  const Tabs = Object.assign(({ children }: { children: ReactNode }) => <View>{children}</View>, { Screen });
+  const Tabs = Object.assign(
+    ({ children, screenOptions }: { children: ReactNode; screenOptions?: { sceneStyle?: unknown } }) => {
+      mockTabsScreenOptions = screenOptions;
+      return <View>{children}</View>;
+    },
+    { Screen },
+  );
   return {
     Tabs,
     usePathname: () => mockPathname,
@@ -28,7 +36,12 @@ jest.mock('expo-router', () => {
 
 jest.mock('expo-router/unstable-native-tabs', () => {
   const { View } = jest.requireActual('react-native');
-  const Trigger = () => null;
+  const Trigger = ({ children, contentStyle }: { children?: ReactNode; contentStyle?: unknown }) => {
+    if (contentStyle) {
+      mockNativeTriggerContentStyles.push(contentStyle);
+    }
+    return <View>{children}</View>;
+  };
   Trigger.Icon = () => null;
   Trigger.Label = () => null;
   const NativeTabs = Object.assign(({ children }: { children: ReactNode }) => <View>{children}</View>, { Trigger });
@@ -40,6 +53,11 @@ jest.mock('@Routes/app-routes/const', () => {
 });
 
 describe('TabLayout', () => {
+  beforeEach(() => {
+    mockTabsScreenOptions = undefined;
+    mockNativeTriggerContentStyles.length = 0;
+  });
+
   it('opens the activity screen when tracking is active on another route', async () => {
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
@@ -73,6 +91,10 @@ describe('TabLayout', () => {
 
     expect(result.toJSON()).toBeTruthy();
     expect(mockReplace).not.toHaveBeenCalled();
+    expect(mockNativeTriggerContentStyles).toHaveLength(4);
+    expect(mockNativeTriggerContentStyles).toEqual(
+      expect.arrayContaining([expect.objectContaining({ backgroundColor: expect.any(String) })]),
+    );
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 
@@ -87,6 +109,7 @@ describe('TabLayout', () => {
 
     expect(result.toJSON()).toBeTruthy();
     expect(mockReplace).not.toHaveBeenCalled();
+    expect(mockTabsScreenOptions?.sceneStyle).toEqual({ backgroundColor: expect.any(String) });
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 });

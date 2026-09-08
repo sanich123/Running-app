@@ -21,6 +21,7 @@ export default function ProfileStack() {
   return (
     <Stack
       screenOptions={{
+        contentStyle: { backgroundColor: colors.background },
         headerStyle: { backgroundColor: colors.surface },
         headerTintColor: colors.onSurface,
         headerTitleStyle: {

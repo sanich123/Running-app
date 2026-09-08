@@ -53,21 +53,33 @@ export default function TabLayout() {
         blurEffect="systemMaterial"
         disableTransparentOnScrollEdge
         shadowColor={colors.outlineVariant}>
-        <NativeTabs.Trigger name={HOME_TAB_ROUTE} accessibilityLabel="Лента">
+        <NativeTabs.Trigger
+          name={HOME_TAB_ROUTE}
+          accessibilityLabel="Лента"
+          contentStyle={{ backgroundColor: colors.background }}>
           <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name={ROUTES.activity} accessibilityLabel="Активность">
+        <NativeTabs.Trigger
+          name={ROUTES.activity}
+          accessibilityLabel="Активность"
+          contentStyle={{ backgroundColor: colors.background }}>
           <NativeTabs.Trigger.Icon sf="figure.run" />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name={ROUTES.statistic} accessibilityLabel="Статистика">
+        <NativeTabs.Trigger
+          name={ROUTES.statistic}
+          accessibilityLabel="Статистика"
+          contentStyle={{ backgroundColor: colors.background }}>
           <NativeTabs.Trigger.Icon
             sf={{ default: 'chart.line.uptrend.xyaxis', selected: 'chart.line.uptrend.xyaxis' }}
           />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name={ROUTES.profile} accessibilityLabel="Профиль">
+        <NativeTabs.Trigger
+          name={ROUTES.profile}
+          accessibilityLabel="Профиль"
+          contentStyle={{ backgroundColor: colors.background }}>
           <NativeTabs.Trigger.Icon sf={{ default: 'person.crop.circle', selected: 'person.crop.circle.fill' }} />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
@@ -78,6 +90,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        sceneStyle: { backgroundColor: colors.background },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.onSurfaceDisabled,
         tabBarAllowFontScaling: false,
