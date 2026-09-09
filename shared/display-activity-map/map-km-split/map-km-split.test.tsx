@@ -29,8 +29,8 @@ describe('map km split', () => {
     );
     const shapeSource = screen.getByTestId('km-shape-source');
     expect(shapeSource.props.shape.features).toEqual([
-      expect.objectContaining({ properties: { label: '1' } }),
-      expect.objectContaining({ properties: { label: '2' } }),
+      expect.objectContaining({ properties: { label: '1', sortKey: 0 } }),
+      expect.objectContaining({ properties: { label: '2', sortKey: 1 } }),
     ]);
   });
 });

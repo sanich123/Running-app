@@ -26,7 +26,7 @@ export default function MapboxWeb({
         })
         .map(({ kilometerPoint }, index) => ({
           type: 'Feature' as const,
-          properties: { label: `${index + 1}` },
+          properties: { label: `${index + 1}`, sortKey: index },
           geometry: {
             type: 'Point' as const,
             coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
@@ -108,6 +108,9 @@ export default function MapboxWeb({
           id: 'kilometre-split-background',
           type: 'circle',
           source: 'kilometre-splits',
+          layout: {
+            'circle-sort-key': ['get', 'sortKey'],
+          },
           paint: {
             'circle-color': COLORS.light.surface,
             'circle-radius': 15,
@@ -124,6 +127,7 @@ export default function MapboxWeb({
             'text-field': ['get', 'label'],
             'text-ignore-placement': true,
             'text-size': 12,
+            'symbol-sort-key': ['get', 'sortKey'],
           },
           paint: {
             'text-color': colors.primary,

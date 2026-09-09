@@ -85,6 +85,12 @@ describe('mapbox web', () => {
     expect(splitSource?.[1].data.features).toHaveLength(1);
     expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'kilometre-split-background' }));
     expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'kilometre-split-label' }));
+    const splitBackgroundLayer = mockMap.addLayer.mock.calls.find(
+      ([layer]) => layer.id === 'kilometre-split-background',
+    )?.[0];
+    const splitLabelLayer = mockMap.addLayer.mock.calls.find(([layer]) => layer.id === 'kilometre-split-label')?.[0];
+    expect(splitBackgroundLayer.layout['circle-sort-key']).toEqual(['get', 'sortKey']);
+    expect(splitLabelLayer.layout['symbol-sort-key']).toEqual(['get', 'sortKey']);
     const markerSource = mockMap.addSource.mock.calls.find(([id]) => id === 'route-markers');
     expect(markerSource?.[1].data.features).toEqual([]);
   });
