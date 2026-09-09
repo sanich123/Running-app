@@ -1,5 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AUTH_INITIAL_STATE } from './const';
+import type { PayloadAction } from '@reduxjs/toolkit';
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken?: string;
+}
+
+export interface AuthSession {
+  userId: string;
+  accessToken: string;
+  refreshToken: string;
+}
 
 const auth = createSlice({
   name: 'auth',
@@ -8,16 +20,19 @@ const auth = createSlice({
     setUserId: (state, { payload }) => {
       state.userId = payload;
     },
-    setAccessToken: (state, { payload }) => {
-      state.accessToken = payload;
+    setAuthTokens: (state, { payload }: PayloadAction<AuthTokens>) => {
+      state.accessToken = payload.accessToken;
+      if (payload.refreshToken) state.refreshToken = payload.refreshToken;
     },
-    setRefreshToken: (state, { payload }) => {
-      state.refreshToken = payload;
+    setAuthSession: (state, { payload }: PayloadAction<AuthSession>) => {
+      state.userId = payload.userId;
+      state.accessToken = payload.accessToken;
+      state.refreshToken = payload.refreshToken;
     },
     resetAuthSlice: () => AUTH_INITIAL_STATE,
   },
 });
 
-export const { setUserId, setAccessToken, setRefreshToken, resetAuthSlice } = auth.actions;
+export const { setUserId, setAuthTokens, setAuthSession, resetAuthSlice } = auth.actions;
 
 export default auth.reducer;

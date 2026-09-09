@@ -4,7 +4,8 @@ import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { ROUTES } from '@const/enums';
 import { useChangePasswordMutation } from '@R/services/authentication/authentication';
-import { setAccessToken, setRefreshToken, setUserId } from '@R/slices/auth/auth';
+import { setAuthSession } from '@R/slices/auth/auth';
+import { flushAuthPersistence } from '@R/slices/auth/persistence';
 import { useAppDispatch } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import CustomPasswordInput from '@S/custom-password-input/custom-password-input';
@@ -33,10 +34,9 @@ export default function ChangePassword() {
 
     changePassword({ password1, password2, email })
       .unwrap()
-      .then(({ accessToken, userId, refreshToken }) => {
-        dispatch(setAccessToken(accessToken));
-        dispatch(setRefreshToken(refreshToken));
-        dispatch(setUserId(userId));
+      .then(async (session) => {
+        dispatch(setAuthSession(session));
+        await flushAuthPersistence();
         replace(ROUTES.root);
       })
       .catch((error) => errorToast('', error));

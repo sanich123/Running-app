@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { useForm, type UseFormHandleSubmit } from 'react-hook-form';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
+import * as errorToastModule from '@S/error-toast/error-toast';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -18,6 +19,11 @@ jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: m
 
 describe('Login btn', () => {
   let handleSubmit: UseFormHandleSubmit<EmailPasswordData>;
+
+  beforeEach(() => {
+    mockReplace.mockClear();
+    mockPush.mockClear();
+  });
 
   beforeAll(async () => {
     const { result } = await renderHook(() =>
@@ -84,6 +90,33 @@ describe('Login btn', () => {
       pathname: `/${ROUTES.confirmEmailCode}`,
       params: { email: 'runner@example.test', type: 'registration' },
     });
+  });
+
+  it('shows the email delivery error and does not navigate when registration email fails', async () => {
+    const user = userEvent.setup();
+    const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
+    const interactiveHandleSubmit = ((callback: (data: EmailPasswordData) => Promise<unknown>) => () =>
+      callback({
+        email: 'runner@example.test',
+        password: 'secure-password',
+      })) as UseFormHandleSubmit<EmailPasswordData>;
+    server.use(
+      http.post(`${BASE_URL}/auth/register`, () =>
+        HttpResponse.json(
+          { message: 'Не удалось отправить письмо. Причина: почтовый сервер отклонил авторизацию' },
+          { status: 503 },
+        ),
+      ),
+    );
+
+    await renderWithProviders(
+      <LoginRegisterBtn handleSubmit={interactiveHandleSubmit} authStep={SignInPageStates.register} />,
+    );
+    await user.press(screen.getByText(REGISTER_BTN.russian.register));
+
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось отправить письмо', expect.anything()));
+    expect(mockPush).not.toHaveBeenCalled();
+    errorToast.mockRestore();
   });
 
   it('requests a password reset code and opens the email confirmation page', async () => {

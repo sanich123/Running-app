@@ -2,25 +2,19 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Mutex } from 'async-mutex';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
-import { resetAuthSlice, setAccessToken, setRefreshToken } from '@R/slices/auth/auth';
+import { resetAuthSlice, setAuthTokens } from '@R/slices/auth/auth';
+import { flushAuthPersistence } from '@R/slices/auth/persistence';
 import { deviceId, deviceName, deviceMetadata, platform } from '@U/device/device-id';
-import { API_NAME, LIMIT_OF_REQUEST, Tags } from './const';
-import type { AuthResponse } from './types';
+import { API_NAME, LIMIT_OF_REQUEST, PUBLIC_AUTH_ENDPOINTS, Tags } from './const';
+import type { ApiState, AuthResponse } from './types';
 import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';
-
-interface ApiState {
-  auth: {
-    accessToken?: string;
-    refreshToken?: string;
-  };
-}
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.EXPO_PUBLIC_BASE_URL ?? 'http://localhost:3000',
   timeout: LIMIT_OF_REQUEST,
   prepareHeaders: (headers, { endpoint, getState }) => {
     const accessToken = (getState() as ApiState).auth.accessToken;
-    if (accessToken && !['registerUser', 'loginUser', 'refreshToken'].includes(endpoint)) {
+    if (accessToken && !PUBLIC_AUTH_ENDPOINTS.has(endpoint)) {
       headers.set('authorization', `Bearer ${accessToken}`);
     }
     headers.set('x-device-id', deviceId);
@@ -55,6 +49,7 @@ async function showErrorToast(message: string, error?: unknown) {
 
 async function handleAuthFailure(api: BaseQueryApi) {
   api.dispatch(resetAuthSlice());
+  await flushAuthPersistence();
   router.replace(`/${ROUTES.signIn}`);
   await showErrorToast('Не удалось обновить авторизационные данные. Пожалуйста, авторизуйтесь повторно');
 }
@@ -64,7 +59,7 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
   let result = await baseQuery(args, api, extraOptions);
   const { refreshToken } = (api.getState() as ApiState).auth;
 
-  if (result.error?.status === 401) {
+  if (result.error?.status === 401 && !PUBLIC_AUTH_ENDPOINTS.has(api.endpoint)) {
     if (!refreshToken) {
       await handleAuthFailure(api);
       return result;
@@ -86,8 +81,8 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
         const newAccessToken = refreshData?.accessToken;
 
         if (newAccessToken) {
-          api.dispatch(setAccessToken(newAccessToken));
-          if (refreshData?.refreshToken) api.dispatch(setRefreshToken(refreshData.refreshToken));
+          api.dispatch(setAuthTokens({ accessToken: newAccessToken, refreshToken: refreshData?.refreshToken }));
+          await flushAuthPersistence();
           result = await baseQuery(args, api, extraOptions);
         } else {
           await handleAuthFailure(api);

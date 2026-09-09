@@ -35,3 +35,15 @@ export enum Routes {
 
 export const API_NAME = 'runnichApi';
 export const LIMIT_OF_REQUEST = 25000;
+
+export const PUBLIC_AUTH_ENDPOINTS = new Set([
+  'registerUser',
+  'loginUser',
+  'requestEmailLink',
+  'refreshToken',
+  'verifyConfig',
+  'confirmSignUpCodeByEmail',
+  'getEmailCodeForPassword',
+  'verifyPasswordChangeCode',
+  'changePassword',
+]);

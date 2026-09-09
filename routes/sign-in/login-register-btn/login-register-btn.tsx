@@ -9,7 +9,8 @@ import {
   useRequestEmailLinkMutation,
   useRegisterUserMutation,
 } from '@R/services/authentication/authentication';
-import { setAccessToken, setRefreshToken, setUserId } from '@R/slices/auth/auth';
+import { setAuthSession } from '@R/slices/auth/auth';
+import { flushAuthPersistence } from '@R/slices/auth/persistence';
 import { saveEmail, savePassword, setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -17,6 +18,8 @@ import { successToast } from '@S/success-toast/success-toast';
 import { SignInPageStates } from '@U/validate-email-password';
 import { EMAIL_LINK_BTN, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
 import type { EmailPasswordData } from '@R/services/authentication/types';
+
+const EMAIL_SEND_ERROR = 'Не удалось отправить письмо';
 
 export default function LoginRegisterBtn({
   handleSubmit,
@@ -58,30 +61,29 @@ export default function LoginRegisterBtn({
           return requestEmailLink({ email })
             .unwrap()
             .then(({ message }) => successToast(message))
-            .catch((error) => errorToast('', error))
+            .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }
         if (authStep === SignInPageStates.register) {
           return registerUser({ email, password })
             .unwrap()
             .then(() => push(confirmEmailPage(email, 'registration')))
-            .catch((error) => errorToast('', error))
+            .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }
         if (authStep === SignInPageStates.reset) {
           return getEmailCodeForPassword({ email })
             .unwrap()
             .then(() => push(confirmEmailPage(email, 'change-password')))
-            .catch((error) => errorToast('', error))
+            .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }
         if (authStep === SignInPageStates.login) {
           return await loginUser({ email, password })
             .unwrap()
-            .then(({ userId, accessToken, refreshToken }) => {
-              dispatch(setUserId(userId));
-              dispatch(setAccessToken(accessToken));
-              dispatch(setRefreshToken(refreshToken));
+            .then(async (session) => {
+              dispatch(setAuthSession(session));
+              await flushAuthPersistence();
               replace(ROUTES.root);
             })
             .catch((error) => errorToast('', error))

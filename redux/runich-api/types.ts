@@ -256,6 +256,13 @@ export interface AuthResponse {
   refreshToken?: string;
 }
 
+export interface ApiState {
+  auth: {
+    accessToken?: string;
+    refreshToken?: string;
+  };
+}
+
 export interface UserAuthResponse extends AuthResponse {
   userId: string;
 }

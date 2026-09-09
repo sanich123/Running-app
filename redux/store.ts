@@ -6,6 +6,7 @@ import { createProfileListenerMiddleware } from './middleware/profile-listener';
 import { runichApi } from './runich-api/runich-api';
 import activity from './slices/activity/activity';
 import auth from './slices/auth/auth';
+import { configureAuthPersistence } from './slices/auth/persistence';
 import comment from './slices/comment/comment';
 import location from './slices/location/location';
 import logining from './slices/logining/logining';
@@ -52,6 +53,7 @@ export const store = configureStore({
 });
 setupListeners(store.dispatch);
 export const persistor = persistStore(store);
+configureAuthPersistence(persistor);
 
 export type RootState = AppState;
 export type AppDispatch = typeof store.dispatch;

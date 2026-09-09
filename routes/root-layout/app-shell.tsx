@@ -21,7 +21,7 @@ export default function AppShell() {
   useAppInitialization();
   const systemColorScheme = useColorScheme();
   const { theme } = useAppSelector(({ settings }) => settings);
-  const { accessToken } = useAppSelector(({ auth }) => auth);
+  const { accessToken, refreshToken } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const { cameraVisible } = useGlobalSearchParams<{ cameraVisible?: string | string[] }>();
   const isCameraVisible = Array.isArray(cameraVisible) ? cameraVisible[0] === 'true' : cameraVisible === 'true';
@@ -34,7 +34,7 @@ export default function AppShell() {
       ? { ...MD3DarkTheme, roundness: 2, fonts, colors: appColors }
       : { ...MD3LightTheme, roundness: 2, fonts, colors: appColors };
 
-  if (!accessToken && !PUBLIC_ROUTES.has(pathname)) {
+  if (!accessToken && !refreshToken && !PUBLIC_ROUTES.has(pathname)) {
     return <Redirect href={`/${ROUTES.signIn}`} />;
   }
 
