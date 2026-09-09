@@ -21,24 +21,31 @@ const ACTIVITY_PAGE_SIZE = 20;
 const activityApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
-    getActivitiesByUserId: infiniteQuery<ActivitiesResponse, { id: string }, number>({
+    getActivitiesByUserId: infiniteQuery<ActivitiesResponse, { id: string }, string>({
       infiniteQueryOptions: {
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages, lastPageParam) => lastPageParam + 1,
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       },
-      query: ({ queryArg: { id }, pageParam }) => `/activity/${id}?page=${pageParam}&take=${ACTIVITY_PAGE_SIZE}`,
+      query: ({ queryArg: { id }, pageParam }) =>
+        `/activity/${id}?take=${ACTIVITY_PAGE_SIZE}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
       providesTags: [Tags.activities],
     }),
-    getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesResponse, { id: string }, number>({
+    getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesResponse, { id: string }, string>({
       infiniteQueryOptions: {
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages, lastPageParam) => lastPageParam + 1,
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       },
-      query: ({ queryArg: { id }, pageParam }) => `/activity/${id}/all?page=${pageParam}&take=${ACTIVITY_PAGE_SIZE}`,
+      query: ({ queryArg: { id }, pageParam }) =>
+        `/activity/${id}/all?take=${ACTIVITY_PAGE_SIZE}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
       providesTags: [Tags.activities],
     }),
-    getAllActivityPhotosByUserId: query<ActivityMediaResponse, GetActivityPhotosRequest>({
-      query: ({ userId, take }) => `/activity/${userId}/photos?take=${take}`,
+    getAllActivityPhotosByUserId: infiniteQuery<ActivityMediaResponse, GetActivityPhotosRequest, string>({
+      infiniteQueryOptions: {
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      },
+      query: ({ queryArg: { userId, take }, pageParam }) =>
+        `/activity/${userId}/photos?take=${take}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
       providesTags: [Tags.activities],
     }),
     getActivityByActivityId: query<ActivityResponse | null, string>({
@@ -87,7 +94,7 @@ const activityApi = runichApi.injectEndpoints({
 export const {
   useUpdateActivityInfoMutation,
   useGetActivitiesByUserIdInfiniteQuery,
-  useGetAllActivityPhotosByUserIdQuery,
+  useGetAllActivityPhotosByUserIdInfiniteQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery,
   useGetActivityByActivityIdQuery,
   useGetLocationsByActivityIdQuery,

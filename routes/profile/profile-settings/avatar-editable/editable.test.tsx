@@ -24,6 +24,7 @@ describe('Avatar icon editable', () => {
       store: mockStore,
     });
     expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeOnTheScreen();
+    expect(screen.getByTestId(AvatarEditableTestIds.editIcon)).toBeOnTheScreen();
   });
   it('should renders an image, when profile has an image url', async () => {
     mockStore.dispatch(savePhotoUrl(MOCK_PROFILE.profilePhoto));

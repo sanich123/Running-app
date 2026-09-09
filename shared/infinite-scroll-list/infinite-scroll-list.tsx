@@ -25,11 +25,10 @@ export default function InfiniteScrollList({
       keyExtractor={keyExtractor}
       renderItem={renderCardsFunction}
       initialNumToRender={5}
-      maxToRenderPerBatch={10}
-      windowSize={7}
+      maxToRenderPerBatch={20}
       updateCellsBatchingPeriod={50}
       removeClippedSubviews={Platform.OS === 'android'}
-      onEndReachedThreshold={0.5}
+      onEndReachedThreshold={0.3}
       onEndReached={async () => {
         if (!isLastPage && !isFetching) {
           await nextPageCallback();

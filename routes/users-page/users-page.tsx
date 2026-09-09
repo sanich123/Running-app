@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList, Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { useGetFilteredUsersBySearchTextQuery } from '@R/services/profile/profile';
+import { useGetFilteredUsersBySearchTextInfiniteQuery } from '@R/services/profile/profile';
 import ErrorComponent from '@S/error-component/error-component';
 import useDebounce from '@U/hooks/use-debounce';
 import useRefresh from '@U/hooks/use-refresh';
@@ -22,9 +22,16 @@ export default function ListOfUsers() {
     isError,
     isSuccess,
     error,
-    data: users,
+    data: userPages,
     refetch,
-  } = useGetFilteredUsersBySearchTextQuery(debouncedSearch, { skip: !debouncedSearch });
+    fetchNextPage,
+    isFetching,
+  } = useGetFilteredUsersBySearchTextInfiniteQuery(debouncedSearch, { skip: !debouncedSearch });
+  const users = useMemo(() => userPages?.pages.flatMap(({ items }) => items) ?? [], [userPages?.pages]);
+  const lastPage = userPages?.pages.at(-1);
+  const loadMore = useCallback(() => {
+    if (lastPage?.hasMore && !isFetching) void fetchNextPage();
+  }, [fetchNextPage, isFetching, lastPage?.hasMore]);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
@@ -40,7 +47,7 @@ export default function ListOfUsers() {
           keyboardShouldPersistTaps="handled"
           onRefresh={onRefresh}
           refreshing={refreshing}
-          data={users?.items}
+          data={users}
           renderItem={renderUserItem}
           keyExtractor={userKeyExtractor}
           style={{
@@ -55,6 +62,9 @@ export default function ListOfUsers() {
           windowSize={7}
           updateCellsBatchingPeriod={50}
           removeClippedSubviews={Platform.OS === 'android'}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={lastPage?.hasMore ? <ActivityIndicator size="small" /> : null}
         />
       ) : isError ? (
         <View style={styles.stateOverlay}>

@@ -41,7 +41,15 @@ export default function ShareActivityImage({
   return (
     <View ref={cardRef} collapsable={false} style={styles.captureRoot}>
       {mapPhotoUrl ? (
-        <CustomImage style={styles.map} source={{ uri: shareMapPhotoUrl }} contentFit="cover" testID={mapPhotoUrl} />
+        <CustomImage
+          style={styles.map}
+          source={{ uri: shareMapPhotoUrl }}
+          contentFit="cover"
+          priority="low"
+          cachePolicy="disk"
+          recyclingKey={shareMapPhotoUrl}
+          testID={mapPhotoUrl}
+        />
       ) : (
         <View style={[styles.mapFallback, { backgroundColor: colors.primaryContainer }]} />
       )}

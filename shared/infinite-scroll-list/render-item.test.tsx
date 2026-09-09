@@ -8,6 +8,7 @@ describe('render item', () => {
       sport: 'run',
       photoVideoUrls: [],
       mapPhotoUrl: 'map',
+      mapPhotoUrlBlurhash: 'map-blurhash',
       duration: 1000,
       distance: 2000,
       id: 'activity-1',
@@ -23,6 +24,7 @@ describe('render item', () => {
         id: 'activity-1',
         commentsLength: 3,
         distance: 2000,
+        mapPhotoUrlBlurhash: 'map-blurhash',
       }),
     );
     expect(element.props.locations).toBeUndefined();

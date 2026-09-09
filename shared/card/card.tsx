@@ -46,7 +46,11 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const cardRef = useRef<View>(null);
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
   const cardMapPhotoUrl = useMemo(() => getCardMapPhotoUrl(mapPhotoUrl, mediaWidth), [mapPhotoUrl, mediaWidth]);
-  const shouldLoadRouteLocations = !locations?.length && Boolean(mapPhotoUrl);
+  // The feed already has a static map preview. Loading the complete route for
+  // every visible card creates an extra request per card and replaces the
+  // image URL while the list is being scrolled. The full activity view still
+  // loads the route when the detail response does not contain it.
+  const shouldLoadRouteLocations = isFullView && !locations?.length && Boolean(mapPhotoUrl);
   const { data: routeData } = useGetLocationsByActivityIdQuery(id, { skip: !shouldLoadRouteLocations });
   const routeLocations = locations?.length ? locations : routeData?.locations;
   const routeKilometresSplit = kilometresSplit?.length ? kilometresSplit : routeData?.kilometresSplit;

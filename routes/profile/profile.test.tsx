@@ -64,7 +64,7 @@ describe('ProfilePage', () => {
     server.use(
       http.get(`${BASE_URL}/activity/${viewedUserId}/photos`, ({ request }) => {
         requestedUrl = request.url;
-        return HttpResponse.json({ photos: [], isLastPage: true });
+        return HttpResponse.json({ photos: [], hasMore: false, nextCursor: null });
       }),
       http.get(`${BASE_URL}/activity/${loggedInUserId}/photos`, () => {
         throw new Error('The logged-in user id must not be used for the viewed profile media request');

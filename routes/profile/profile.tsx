@@ -3,7 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { FONT_FAMILIES } from '@const/fonts';
-import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
+import { useGetAllActivityPhotosByUserIdInfiniteQuery } from '@R/services/activity/activity';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import ProfileMediaPhotos from '@Routes/profile/media-photos/media-photos';
@@ -30,10 +30,11 @@ export default function ProfilePage() {
     error,
     refetch,
   } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
-  const { data: photoPreviews } = useGetAllActivityPhotosByUserIdQuery(
+  const { data: photoPreviewPages } = useGetAllActivityPhotosByUserIdInfiniteQuery(
     { userId: `${whosProfile}`, take: 4 },
     { skip: !whosProfile },
   );
+  const photoPreviews = photoPreviewPages?.pages[0];
 
   return (
     <>

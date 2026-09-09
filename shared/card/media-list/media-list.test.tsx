@@ -29,6 +29,23 @@ describe('media list', () => {
     expect(screen.getByTestId(mapUrl).props.contentFit).toBe('contain');
   });
 
+  it('uses the map blurhash and prioritized disk cache for fast scrolling', async () => {
+    const mapUrl = 'https://api.mapbox.com/styles/v1/map.png';
+    await renderWithProviders(
+      <MediaList id="activity-id" mapPhotoUrl={mapUrl} mapPhotoUrlBlurhash="map-blurhash" photoVideoUrls={[]} />,
+    );
+
+    expect(screen.getByTestId(mapUrl).props).toEqual(
+      expect.objectContaining({
+        placeholder: 'map-blurhash',
+        placeholderContentFit: 'cover',
+        priority: 'high',
+        cachePolicy: 'memory-disk',
+        recyclingKey: mapUrl,
+      }),
+    );
+  });
+
   it('continues covering regular photos in the card preview', async () => {
     const photoUrl = 'https://images.example.test/activity.jpg';
     await renderWithProviders(

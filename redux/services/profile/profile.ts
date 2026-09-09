@@ -5,12 +5,12 @@ const { profile, user } = Routes;
 
 export const profileApi = runichApi.injectEndpoints({
   overrideExisting: true,
-  endpoints: (builder) => ({
-    getUserProfileByUserId: builder.query<ProfileResponse | null, string>({
+  endpoints: ({ query, mutation, infiniteQuery }) => ({
+    getUserProfileByUserId: query<ProfileResponse | null, string>({
       query: (userId: string) => `/${user}/${userId}/${profile}`,
       providesTags: [Tags.profile],
     }),
-    createProfileByUserId: builder.mutation<ProfileResponse, SendProfile>({
+    createProfileByUserId: mutation<ProfileResponse, SendProfile>({
       query: ({ body, id }: SendProfile) => ({
         url: `/${user}/${id}/${profile}`,
         method: Methods.post,
@@ -18,7 +18,7 @@ export const profileApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
-    updateProfileByUserId: builder.mutation<ProfileResponse, SendProfile>({
+    updateProfileByUserId: mutation<ProfileResponse, SendProfile>({
       query: ({ body, id }: SendProfile) => ({
         url: `/${user}/${id}/${profile}`,
         method: Methods.patch,
@@ -26,9 +26,13 @@ export const profileApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
     }),
-    getFilteredUsersBySearchText: builder.query<FilteredProfilesResponse, string>({
-      query: (search) =>
-        `/${profile}/filter?page=0&size=10&name=${encodeURIComponent(search)}&surname=${encodeURIComponent(search)}&email=${encodeURIComponent(search)}`,
+    getFilteredUsersBySearchText: infiniteQuery<FilteredProfilesResponse, string, string>({
+      infiniteQueryOptions: {
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      },
+      query: ({ queryArg: search, pageParam }) =>
+        `/${profile}/filter?take=10&name=${encodeURIComponent(search)}&surname=${encodeURIComponent(search)}&email=${encodeURIComponent(search)}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
       providesTags: [Tags.profile],
     }),
   }),
@@ -37,5 +41,5 @@ export const profileApi = runichApi.injectEndpoints({
 export const {
   useGetUserProfileByUserIdQuery,
   useUpdateProfileByUserIdMutation,
-  useGetFilteredUsersBySearchTextQuery,
+  useGetFilteredUsersBySearchTextInfiniteQuery,
 } = profileApi;

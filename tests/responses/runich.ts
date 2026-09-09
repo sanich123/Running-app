@@ -61,6 +61,8 @@ export const MOCK_SERVER_ACTIVITY = {
 
 export const MOCK_SERVER_ACTIVITIES = {
   activities: [MOCK_SERVER_ACTIVITY],
+  hasMore: false,
+  nextCursor: null,
   isLastPage: true,
 } as const;
 
@@ -172,14 +174,15 @@ export const MOCK_SERVER_FOLLOWERS = [
 
 export const MOCK_SERVER_PHOTOS = {
   photos: MOCK_SERVER_ACTIVITY.photoVideoUrls,
+  hasMore: false,
+  nextCursor: null,
   isLastPage: true,
 } as const;
 
 export const MOCK_SERVER_USERS = {
-  totalItems: 1,
   items: [MOCK_SERVER_PROFILE],
-  page: 0,
-  size: 10,
+  hasMore: false,
+  nextCursor: null,
 } as const;
 
 export const MOCK_SERVER_STATISTICS = {

@@ -24,7 +24,7 @@ export default function Activities() {
           <InfiniteScrollList
             dataToRender={activities}
             refetch={refetch}
-            isLastPage={data?.pages[data?.pages.length - 1]?.isLastPage}
+            isLastPage={!data?.pages[data?.pages.length - 1]?.hasMore}
             nextPageCallback={fetchNextPage}
             isFetching={isFetching}
           />

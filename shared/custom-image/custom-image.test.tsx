@@ -9,6 +9,9 @@ describe('custom image', () => {
         source={{ uri: 'https://example.com/photo.jpg' }}
         contentFit="cover"
         placeholder="blurhash"
+        priority="high"
+        cachePolicy="memory-disk"
+        recyclingKey="photo"
         style={{ width: 100, height: 100 }}
       />,
     );
@@ -16,6 +19,10 @@ describe('custom image', () => {
     expect(image.props.source).toEqual({ uri: 'https://example.com/photo.jpg' });
     expect(image.props.contentFit).toBe('cover');
     expect(image.props.placeholder).toBe('blurhash');
+    expect(image.props.placeholderContentFit).toBeUndefined();
+    expect(image.props.priority).toBe('high');
+    expect(image.props.cachePolicy).toBe('memory-disk');
+    expect(image.props.recyclingKey).toBe('photo');
     expect(image.props.transition).toBe(500);
   });
 });

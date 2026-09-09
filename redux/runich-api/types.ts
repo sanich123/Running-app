@@ -116,12 +116,16 @@ export interface ActivityMutationResponse {
 
 export interface ActivitiesResponse {
   activities: ActivityListItemResponse[];
-  isLastPage: boolean;
+  hasMore: boolean;
+  nextCursor: string | null;
+  isLastPage?: boolean;
 }
 
 export interface ActivityMediaResponse {
   photos: ActivityPhotoResponse[];
-  isLastPage: boolean;
+  hasMore: boolean;
+  nextCursor: string | null;
+  isLastPage?: boolean;
 }
 
 export interface ActivityLocationsResponse {
@@ -215,13 +219,6 @@ export interface FollowerResponse {
   profileId: string;
   id: string;
   user: { profile?: FriendProfileResponse | null };
-}
-
-export interface PaginationResponse<T> {
-  totalItems: number;
-  page: number;
-  size: number;
-  items: T[];
 }
 
 export interface StatisticMetricResponse {

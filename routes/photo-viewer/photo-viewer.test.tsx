@@ -1,17 +1,24 @@
 import { screen } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { useGetActivityByActivityIdQuery, useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
+import {
+  useGetActivityByActivityIdQuery,
+  useGetAllActivityPhotosByUserIdInfiniteQuery,
+} from '@R/services/activity/activity';
 import { renderWithProviders } from '@T/utils/test-utils';
 import PhotoViewer from './photo-viewer';
 
 const mockUseLocalSearchParams = useLocalSearchParams as jest.Mock;
 const mockUseActivity = useGetActivityByActivityIdQuery as jest.Mock;
-const mockUsePhotos = useGetAllActivityPhotosByUserIdQuery as jest.Mock;
+const mockUsePhotos = useGetAllActivityPhotosByUserIdInfiniteQuery as jest.Mock;
 jest.mock('expo-router', () => ({ useLocalSearchParams: jest.fn() }));
 jest.mock('@R/services/activity/activity', () => ({
   useGetActivityByActivityIdQuery: jest.fn(() => ({ data: undefined })),
-  useGetAllActivityPhotosByUserIdQuery: jest.fn(() => ({ data: undefined })),
+  useGetAllActivityPhotosByUserIdInfiniteQuery: jest.fn(() => ({
+    data: undefined,
+    fetchNextPage: jest.fn(),
+    isFetching: false,
+  })),
 }));
 jest.mock('@S/custom-image/custom-image', () => ({
   __esModule: true,
@@ -71,7 +78,7 @@ describe('photo viewer', () => {
         ],
       },
     });
-    mockUsePhotos.mockReturnValue({ data: undefined });
+    mockUsePhotos.mockReturnValue({ data: undefined, fetchNextPage: jest.fn(), isFetching: false });
 
     await renderWithProviders(<PhotoViewer />);
 
@@ -88,11 +95,19 @@ describe('photo viewer', () => {
     mockUseActivity.mockReturnValue({ data: undefined });
     mockUsePhotos.mockReturnValue({
       data: {
-        photos: [
-          { url: 'https://cdn.example.com/photo.jpg', blurhash: 'blurhash' },
-          { url: 'avi', blurhash: null },
+        pages: [
+          {
+            photos: [
+              { url: 'https://cdn.example.com/photo.jpg', blurhash: 'blurhash' },
+              { url: 'avi', blurhash: null },
+            ],
+            hasMore: false,
+            nextCursor: null,
+          },
         ],
       },
+      fetchNextPage: jest.fn(),
+      isFetching: false,
     });
 
     await renderWithProviders(<PhotoViewer />);
@@ -111,7 +126,7 @@ describe('photo viewer', () => {
       indexOfPhoto: '0',
     });
     mockUseActivity.mockReturnValue({ data: {} });
-    mockUsePhotos.mockReturnValue({ data: undefined });
+    mockUsePhotos.mockReturnValue({ data: undefined, fetchNextPage: jest.fn(), isFetching: false });
 
     await renderWithProviders(<PhotoViewer />);
 

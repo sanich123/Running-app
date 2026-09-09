@@ -45,7 +45,7 @@ describe('Activities', () => {
     server.use(
       http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}`, ({ request }) => {
         requestedTake = new URL(request.url).searchParams.get('take');
-        return HttpResponse.json({ activities: [MOCK_SERVER_ACTIVITY], isLastPage: false });
+        return HttpResponse.json({ activities: [MOCK_SERVER_ACTIVITY], hasMore: false, nextCursor: null });
       }),
     );
 
