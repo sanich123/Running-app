@@ -5,7 +5,7 @@ export default {
     owner: 'sanich123',
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
-    scheme: 'runich',
+    scheme: IS_DEV ? 'runich-dev' : 'runich',
     version: '4.0.1',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
@@ -14,7 +14,7 @@ export default {
     splash: {
       image: './assets/images/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#292929',
+      backgroundColor: '#363636',
     },
     experiments: {
       typedRoutes: true,
@@ -26,11 +26,6 @@ export default {
       config: { usesNonExemptEncryption: false },
       infoPlist: {
         UIBackgroundModes: ['location', 'fetch', 'remote-notification'],
-        CFBundleURLTypes: [
-          {
-            CFBundleURLSchemes: ['runich'],
-          },
-        ],
         privacyManifests: {
           NSPrivacyAccessedAPITypes: [
             {
@@ -77,7 +72,7 @@ export default {
       ],
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
-        backgroundColor: '#333333',
+        backgroundColor: '#292929',
       },
       package: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
       permissions: [
@@ -88,7 +83,7 @@ export default {
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
       ],
-      softwareKeyboardLayoutMode: 'pan',
+      softwareKeyboardLayoutMode: 'resize',
       usesCleartextTraffic: IS_DEV,
     },
     web: {
@@ -119,9 +114,15 @@ export default {
         'expo-build-properties',
         {
           android: {
-            enableProguardInReleaseBuilds: true,
+            usePrecompiledHeaders: true,
+            enableMinifyInReleaseBuilds: true,
             enableShrinkResourcesInReleaseBuilds: true,
-            extraProguardRules: '-keep class expo.modules.adapters.react.apploader.** { *; }',
+            extraProguardRules: [
+              '-keep class expo.modules.adapters.react.apploader.** { *; }',
+              '-dontwarn com.google.mlkit.vision.barcode.**',
+              '-dontwarn com.google.mlkit.vision.codescanner.**',
+              '-dontwarn com.google.mlkit.vision.common.**',
+            ].join('\n'),
           },
           ios: { ccacheEnabled: true },
         },
@@ -146,7 +147,9 @@ export default {
       [
         'expo-camera',
         {
-          cameraPermission: 'Разрешите приложению Runich доступ к камере телефона',
+          cameraPermission: 'Приложению необходим доступ к камере для создания отчета по транспортному средству',
+          recordAudioAndroid: false,
+          barcodeScannerEnabled: false,
         },
       ],
       [
@@ -164,7 +167,7 @@ export default {
       [
         'expo-splash-screen',
         {
-          backgroundColor: '#292929',
+          backgroundColor: '#363636',
           image: './assets/images/splash.png',
           resizeMode: 'contain',
           imageWidth: 350,

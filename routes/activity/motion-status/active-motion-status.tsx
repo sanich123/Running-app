@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Accelerometer } from 'expo-sensors';
 import { View, StyleSheet } from 'react-native';
-import { Icon, Text, useTheme } from 'react-native-paper';
+import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { ACCELEROMETER_UPDATE_INTERVAL } from '@U/motion/const';
 import { createMotionStatusDetector } from '@U/motion/motion-detector';
@@ -15,6 +15,7 @@ export default function ActiveMotionStatus({ language }: { language: LANGUAGES }
   const { colors } = useTheme();
   const { lastPosition, steps } = useAppSelector(({ location }) => location);
   const [restingSources, setRestingSources] = useState<MotionSource[]>([]);
+  const [isDismissed, setIsDismissed] = useState(false);
   const lastPositionRef = useRef(lastPosition);
   const stepsRef = useRef(steps);
 
@@ -41,6 +42,9 @@ export default function ActiveMotionStatus({ language }: { language: LANGUAGES }
           pedometerSteps: stepsRef.current,
           pedometerAvailable: pedometerData.samples.length > 0,
         });
+        if (result.status !== 'resting') {
+          setIsDismissed(false);
+        }
         setRestingSources(result.status === 'resting' ? result.restingSources : []);
       });
     } catch {
@@ -53,7 +57,7 @@ export default function ActiveMotionStatus({ language }: { language: LANGUAGES }
     };
   }, []);
 
-  if (!restingSources.length) {
+  if (!restingSources.length || isDismissed) {
     return null;
   }
 
@@ -73,6 +77,13 @@ export default function ActiveMotionStatus({ language }: { language: LANGUAGES }
           {ACTIVITY_MOTION_STATUS[language].basedOn(sources)}
         </Text>
       </View>
+      <IconButton
+        testID="dismiss-no-movement"
+        icon="close"
+        size={18}
+        onPress={() => setIsDismissed(true)}
+        accessibilityLabel="Закрыть уведомление об отсутствии движения"
+      />
     </View>
   );
 }

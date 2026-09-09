@@ -38,7 +38,7 @@ export default function CardFullView() {
               isFullView
               isShowDeleteBtn
               isShowDescription={!!activity.description}
-              userId={activity.user_id}
+              userId={activity.userId}
               description={activity.description}
               title={activity.title}
               date={activity.date}
@@ -66,7 +66,7 @@ export default function CardFullView() {
                     marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
                   },
                 ]}>
-                <KmSplit kilometresSplit={activity.kilometresSplit ?? []} sport={activity.sport} />
+                <KmSplit kilometresSplit={activity.kilometresSplit ?? []} />
               </View>
             )}
           </>

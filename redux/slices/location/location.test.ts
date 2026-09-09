@@ -5,11 +5,13 @@ import { LOCATION_INITIAL_STATE } from './const';
 import reducer, {
   addDurationAndLocationToKmSplits,
   resetLocationsFromBackground,
+  resetLastKm,
   setActivityStatus,
   setAltitude,
   setCurrentPace,
   setDistance,
   setDuration,
+  setDurationAt,
   setDurationWithPauses,
   setEmptyLastArrayWhenPaused,
   setInitialLocation,
@@ -22,6 +24,9 @@ import reducer, {
   setLastPosition,
   setLocationsFromBackground,
   setLocationsWhenContinued,
+  startDurationTimer,
+  stopDurationTimer,
+  syncDurationFromLocation,
 } from './location';
 
 describe('Location slice', () => {
@@ -51,6 +56,41 @@ describe('Location slice', () => {
     expect(reducer(LOCATION_INITIAL_STATE, setDuration(MOCK_DURATION))).toEqual({
       ...LOCATION_INITIAL_STATE,
       duration: MOCK_DURATION,
+      durationAtLastLocation: MOCK_DURATION,
+      durationTimerBase: MOCK_DURATION,
+    });
+  });
+
+  it('normalizes invalid duration values and clears timer anchors', () => {
+    const invalidDurationState = {
+      ...LOCATION_INITIAL_STATE,
+      duration: Number.NaN,
+      durationAtLastLocation: Number.NaN,
+      durationTimerBase: Number.NaN,
+      durationTimerStartedAt: 123,
+    };
+
+    expect(reducer(invalidDurationState, setDuration(Number.NaN))).toMatchObject({
+      duration: 0,
+      durationAtLastLocation: 0,
+      durationTimerBase: 0,
+      durationTimerStartedAt: null,
+    });
+    expect(reducer(LOCATION_INITIAL_STATE, setDurationAt(-10)).duration).toBe(0);
+    expect(reducer(LOCATION_INITIAL_STATE, setDurationAt(Number.NaN)).duration).toBe(0);
+    expect(reducer({ ...LOCATION_INITIAL_STATE, duration: Number.NaN }, startDurationTimer(456))).toMatchObject({
+      durationTimerBase: 0,
+      durationTimerStartedAt: 456,
+    });
+    expect(reducer({ ...LOCATION_INITIAL_STATE, duration: Number.NaN }, stopDurationTimer())).toMatchObject({
+      durationTimerBase: 0,
+      durationTimerStartedAt: null,
+    });
+    expect(reducer(LOCATION_INITIAL_STATE, syncDurationFromLocation({ duration: -10, syncedAt: 789 }))).toMatchObject({
+      duration: 0,
+      durationAtLastLocation: 0,
+      durationTimerBase: 0,
+      durationTimerStartedAt: 789,
     });
   });
   it('should change duration with pauses', () => {
@@ -128,6 +168,21 @@ describe('Location slice', () => {
       locationsWithPauses: [[MOCK_LOCATION], []],
     });
   });
+
+  it('starts a new pause segment when continuing from an empty state', () => {
+    const state = reducer(LOCATION_INITIAL_STATE, setLocationsWhenContinued(MOCK_LOCATION));
+
+    expect(state.locationsWithPauses).toEqual([[MOCK_LOCATION]]);
+  });
+
+  it('resets the last kilometre values', () => {
+    expect(
+      reducer(
+        { ...LOCATION_INITIAL_STATE, lastKilometer: 1, lastKilometerDuration: 2, lastKilometerAltitude: 3 },
+        resetLastKm(),
+      ),
+    ).toMatchObject({ lastKilometer: 0, lastKilometerDuration: 0, lastKilometerAltitude: 0 });
+  });
   it('should change a last position', () => {
     expect(reducer(mockStore.getState().location, setLastPosition(MOCK_LOCATION))).toEqual({
       ...mockStore.getState().location,
@@ -147,6 +202,7 @@ describe('Location slice', () => {
     mockStore.dispatch(setDistance(MOCK_DISTANCE));
     mockStore.dispatch(setAltitude(MOCK_ALTITUDE));
     mockStore.dispatch(setIsAppShuted(true));
+    mockStore.dispatch(setIsMapVisible(false));
     mockStore.dispatch(addDurationAndLocationToKmSplits(MOCK_LOCATION));
     mockStore.dispatch(setCurrentPace(MOCK_SPEED));
     mockStore.dispatch(setLocationsWhenContinued(MOCK_LOCATION));
@@ -166,5 +222,6 @@ describe('Location slice', () => {
     expect(mockStore.getState().location.lastPosition).toEqual(null);
     expect(mockStore.getState().location.locationsWithPauses).toEqual([]);
     expect(mockStore.getState().location.isAppShutedByPhone).toEqual(false);
+    expect(mockStore.getState().location.isMapVisible).toEqual(true);
   });
 });

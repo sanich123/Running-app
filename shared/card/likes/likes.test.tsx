@@ -5,7 +5,7 @@ import { setUserId } from '@R/slices/auth/auth';
 import { AvatarShowableTestIds } from '@S/avatar/showable/const';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LikesSize } from './const';
+import { LIKE_BTN, LikesSize } from './const';
 import Likes from './likes';
 
 const mockPush = jest.fn();
@@ -16,6 +16,13 @@ jest.mock('expo-router', () => ({
   }),
 }));
 describe('Card likes', () => {
+  it('formats like action errors in both languages', () => {
+    expect(LIKE_BTN.english.errorAction('delete')).toContain('deleting');
+    expect(LIKE_BTN.english.errorAction('send')).toContain('sending');
+    expect(LIKE_BTN.russian.errorAction('delete')).toContain('удаления');
+    expect(LIKE_BTN.russian.errorAction('send')).toContain('отправки');
+  });
+
   it('should correctly renders', async () => {
     jest.spyOn(router, 'usePathname').mockImplementation(() => 'some path');
     mockStore.dispatch(setUserId('someUserId'));
@@ -24,6 +31,18 @@ describe('Card likes', () => {
     });
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
     expect(await screen.findByTestId(AvatarShowableTestIds.success)).toBeOnTheScreen();
+  });
+
+  it('renders the compact likes count', async () => {
+    await renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.small} />);
+
+    expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
+  });
+
+  it('renders an empty state when likes are skipped', async () => {
+    await renderWithProviders(<Likes activityId="" size={LikesSize.big} />);
+
+    expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
   });
 
   it('opens the likes modal in the web flow', async () => {

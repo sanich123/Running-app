@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { ScrollView, View, StyleSheet } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Card, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
@@ -57,7 +58,11 @@ export default function FeedbackPage() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.content} style={{ backgroundColor: colors.background }}>
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.content}
+      style={{ backgroundColor: colors.background }}
+      keyboardShouldPersistTaps="handled"
+      bottomOffset={24}>
       <Card mode="contained" style={{ backgroundColor: colors.surface }}>
         <Card.Content style={styles.cardContent}>
           <Text variant="titleLarge">Обратная связь</Text>
@@ -117,6 +122,10 @@ export default function FeedbackPage() {
                     : 'Напишите сообщение разработчику'
               }
               style={styles.textInput}
+              returnKeyType="send"
+              submitBehavior="submit"
+              enterKeyHint="send"
+              onSubmitEditing={() => void submit()}
             />
             {(isBug || isFeature) && (
               <Button icon="image-plus" mode="outlined" onPress={() => void choosePhoto()}>
@@ -133,7 +142,7 @@ export default function FeedbackPage() {
           </Card.Content>
         </Card>
       )}
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 

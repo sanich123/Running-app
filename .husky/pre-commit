@@ -28,7 +28,7 @@ yarn madge \
   --warning \
   --circular \
   --extensions ts,tsx \
-  ./app ./auth ./routes ./shared ./constants ./redux ./utils
+  ./app ./routes ./shared ./constants ./redux ./utils
 
 # 7. Проверка неиспользуемых импортов ts-prune
 yarn ts-prune --ignore 'app|jest.config.js|.*\.test\.(ts|tsx)$'

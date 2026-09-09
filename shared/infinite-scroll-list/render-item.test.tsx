@@ -3,17 +3,16 @@ import { renderCardsFunction, keyExtractor } from './utils';
 describe('render item', () => {
   it('maps an activity list item to the card props', () => {
     const item: any = {
-      description: 'after work',
       title: 'Run',
       date: '2026-08-09',
       sport: 'run',
       photoVideoUrls: [],
       mapPhotoUrl: 'map',
-      locations: [],
+      mapPhotoUrlBlurhash: 'map-blurhash',
       duration: 1000,
       distance: 2000,
       id: 'activity-1',
-      user_id: 'user-1',
+      userId: 'user-1',
       profile: {},
       _count: { comments: 3 },
     };
@@ -25,8 +24,30 @@ describe('render item', () => {
         id: 'activity-1',
         commentsLength: 3,
         distance: 2000,
+        mapPhotoUrlBlurhash: 'map-blurhash',
       }),
     );
+    expect(element.props.locations).toBeUndefined();
+    expect(element.props.kilometresSplit).toBeUndefined();
     expect(keyExtractor(item)).toBe('activity-1');
+  });
+
+  it('maps the current camelCase user id returned by the API', () => {
+    const item: any = {
+      ...{
+        date: '2026-08-09',
+        sport: 'run',
+        duration: 1000,
+        distance: 2000,
+        id: 'activity-2',
+        profile: {},
+        _count: { comments: 0 },
+      },
+      userId: 'user-2',
+    };
+
+    const element = renderCardsFunction({ item });
+
+    expect(element.props.userId).toBe('user-2');
   });
 });

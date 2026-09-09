@@ -70,6 +70,31 @@ describe('Card metrics', () => {
     expect(screen.queryByText(/Elevation gain/i)).not.toBeOnTheScreen();
   });
 
+  it.each([
+    ['running without elevation gain', 'run', undefined, 0, /Elevation gain/i],
+    ['walking without steps', 'walk', undefined, 42, /Steps/i],
+    ['walking with zero steps', 'walk', 0, 42, /Steps/i],
+  ])('hides the additional metric when there is %s', async (_caseName, sport, steps, elevationGain, metric) => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await renderWithProviders(
+      <CardMetrics
+        title={sport}
+        distance={MOCK_DISTANCE}
+        duration={MOCK_DURATION}
+        sport={sport}
+        steps={steps}
+        elevationGain={elevationGain}
+        isShowDescription={false}
+        description=""
+        userId="someUserId"
+        id="someUUID"
+      />,
+      { store: mockStore },
+    );
+
+    expect(screen.queryByText(metric)).not.toBeOnTheScreen();
+  });
+
   it.each(['hike', 'bike'])('keeps the existing three metrics for %s', async (sport) => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(

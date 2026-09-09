@@ -2,6 +2,7 @@ import { act, fireEvent, screen, userEvent, waitFor } from '@testing-library/rea
 import * as Speech from 'expo-speech';
 import {
   addActivityReminder,
+  changeLanguage,
   setActivityReminderEnabled,
   resetActivityReminders,
   setActivityVoiceEnabled,
@@ -96,6 +97,23 @@ describe('ActivitySettings', () => {
     ]);
   });
 
+  it('installs a reminder from the keyboard action', async () => {
+    mockStore.dispatch(setActivityReminderEnabled(true));
+    await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
+
+    await act(async () => {
+      screen.getByTestId('activity-reminder-interval').props.onChangeText('20');
+      screen.getByTestId('activity-reminder-text-input').props.onChangeText('Пора сделать глоток воды.');
+    });
+    await act(async () => {
+      screen.getByTestId('activity-reminder-text-input').props.onSubmitEditing();
+    });
+
+    expect(mockStore.getState().settings.activityReminders).toEqual([
+      expect.objectContaining({ intervalMinutes: 20, text: 'Пора сделать глоток воды.' }),
+    ]);
+  });
+
   it('persists selected voice metrics', async () => {
     await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
 
@@ -124,5 +142,48 @@ describe('ActivitySettings', () => {
         },
       ),
     );
+  });
+
+  it('falls back to voices from another locale and supports selecting the system voice', async () => {
+    mockStore.dispatch(changeLanguage('english'));
+    mockStore.dispatch(setActivityVoiceMetrics([]));
+    (Speech.getAvailableVoicesAsync as jest.Mock).mockResolvedValue([
+      { identifier: 'russian-only-voice', language: 'ru-RU', name: 'Russian only', quality: 'Default' },
+    ]);
+    await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
+
+    const voice = await screen.findByTestId('activity-voice-russian-only-voice');
+    expect(voice).toBeOnTheScreen();
+    await userEvent.setup().press(screen.getByTestId('activity-system-voice'));
+    expect(Speech.speak).toHaveBeenCalledWith(
+      'First kilometre. Pace five minutes thirty seconds per kilometre. Moving time five minutes thirty seconds. Elevation gain ten meters.',
+      expect.objectContaining({ language: 'en-US', voice: undefined }),
+    );
+
+    await act(async () => {
+      screen.getByTestId('activity-voice-metric-pace').props.onChange({ nativeEvent: { value: true } });
+    });
+    expect(mockStore.getState().settings.activityVoiceMetrics).toEqual(['pace']);
+  });
+
+  it('shows unavailable voices, ignores invalid reminders and survives preview errors', async () => {
+    mockStore.dispatch(changeLanguage('english'));
+    mockStore.dispatch(setActivityReminderEnabled(true));
+    (Speech.getAvailableVoicesAsync as jest.Mock).mockRejectedValue(new Error('voices unavailable'));
+    (Speech.stop as jest.Mock).mockRejectedValue(new Error('stop unavailable'));
+    (Speech.speak as jest.Mock).mockImplementation(() => {
+      throw new Error('speech unavailable');
+    });
+    await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
+
+    await waitFor(() => expect(screen.getByText('No system voices available')).toBeOnTheScreen());
+    await act(async () => {
+      screen.getByTestId('activity-reminder-interval').props.onChangeText('0');
+      screen.getByTestId('activity-reminder-text-input').props.onChangeText('   ');
+    });
+    fireEvent.press(screen.getByTestId('activity-reminder-install'));
+    expect(mockStore.getState().settings.activityReminders).toEqual([]);
+    const user = userEvent.setup();
+    await expect(user.press(screen.getByTestId('activity-system-voice'))).resolves.toBeUndefined();
   });
 });

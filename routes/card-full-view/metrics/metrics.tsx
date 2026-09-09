@@ -23,6 +23,7 @@ export default function Metrics() {
     : (routeData?.kilometresSplit ?? []);
   const routeLocations = activity?.locations?.length ? activity.locations : routeData?.locations;
   const gainedElevation = getActivityElevationGain(kilometresSplit, routeLocations);
+  const hasElevationGain = gainedElevation > 0;
   const mainMetric = activity
     ? getActivityMainMetric({
         sport: activity.sport,
@@ -74,12 +75,12 @@ export default function Metrics() {
               <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].movingTime}</Text>
               <Text variant="titleLarge">{formatDuration(activity.duration)}</Text>
             </View>
-            <View style={styles.alignedCenter}>
-              <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].elevationGain}</Text>
-              <Text variant="titleLarge">
-                {Boolean(kilometresSplit.length) && `${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}
-              </Text>
-            </View>
+            {hasElevationGain ? (
+              <View style={styles.alignedCenter}>
+                <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].elevationGain}</Text>
+                <Text variant="titleLarge">{`${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}</Text>
+              </View>
+            ) : null}
           </View>
           {additionalMetric && (
             <>

@@ -27,13 +27,6 @@ jest.mock('../comment-edit-btn/comment-edit-btn', () => ({
     return <Text testID="comment-edit">edit</Text>;
   },
 }));
-jest.mock('../comment-input/comment-input', () => ({
-  __esModule: true,
-  default: () => {
-    const { Text } = require('react-native');
-    return <Text testID="comment-input">input</Text>;
-  },
-}));
 jest.mock('../comment-like-btn/comment-like-btn', () => ({
   __esModule: true,
   default: () => null,
@@ -68,10 +61,10 @@ describe('comment', () => {
     expect(screen.getByTestId('comment-delete')).toBeOnTheScreen();
   });
 
-  it('shows the edit input for the selected comment', async () => {
+  it('keeps the selected comment in the list while editing is rendered in the modal composer', async () => {
     mockStore.dispatch(setIdOfUpdatingComment('comment-1'));
     await renderWithProviders(<Comment {...commentProps} />);
-    expect(screen.getByTestId('comment-input')).toBeOnTheScreen();
-    expect(screen.queryByText('Отличная тренировка!')).not.toBeOnTheScreen();
+    expect(screen.getByText('Отличная тренировка!')).toBeOnTheScreen();
+    expect(screen.queryByTestId('comment-input')).not.toBeOnTheScreen();
   });
 });

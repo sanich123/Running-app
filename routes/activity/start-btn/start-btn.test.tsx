@@ -9,6 +9,7 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as initialPosition from '@U/get-initial-position';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
+import * as pedometer from '@U/pedometer/pedometer';
 import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID } from './const';
 import ActivityStartBtn from './start-btn';
 
@@ -76,6 +77,29 @@ describe('Activity start btn', () => {
       },
     });
   });
+
+  it('keeps the accumulated steps when the activity is finished after a pause', async () => {
+    const pedometerData = {
+      steps: 1_234,
+      samples: [
+        { timestamp: 1_000, steps: 0 },
+        { timestamp: 2_000, steps: 1_234 },
+      ],
+    };
+    jest.spyOn(pedometer, 'pausePedometerActivity').mockResolvedValue(pedometerData);
+    jest.spyOn(pedometer, 'finishPedometerActivity').mockResolvedValue(pedometerData);
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    await renderWithProviders(<ActivityStartBtn isReadyToRecordLocation />);
+
+    const startBtn = screen.getByTestId(ACTIVITY_START_BTN_TEST_ID);
+    await userEvent.press(startBtn);
+    expect(mockStore.getState().activity.finishedActivity.steps).toBe(1_234);
+
+    await userEvent.press(startBtn);
+    expect(mockStore.getState().activity.finishedActivity.steps).toBe(1_234);
+  });
+
   it('cleans the previous recording before starting a new one', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setDuration(MOCK_DURATION));

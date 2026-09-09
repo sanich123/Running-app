@@ -18,9 +18,16 @@ export default function LoginFromUrlRoute() {
     if (url) {
       const { queryParams } = parse(url);
       const code = queryParams?.code?.toString();
-      const accessToken = queryParams?.accessToken?.toString();
-      if (code || accessToken) {
-        verifyToken(code ? { code } : { accessToken })
+      const oauthError = queryParams?.oauthError?.toString();
+      if (oauthError) {
+        dispatch(resetAuthSlice());
+        if (canDismiss()) {
+          dismissAll();
+        }
+        replace(`/${ROUTES.signIn}`);
+        errorToast('', oauthError);
+      } else if (code) {
+        verifyToken({ code })
           .unwrap()
           .then(({ accessToken: verifiedAccessToken, refreshToken, userId }) => {
             dispatch(setAccessToken(verifiedAccessToken));

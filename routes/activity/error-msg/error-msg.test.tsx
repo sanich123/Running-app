@@ -35,4 +35,14 @@ describe('Activity-error-msg', () => {
     await renderWithProviders(<ActivityErrorMsg />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_ERROR_MSG.english.errorMsg)).toBeOnTheScreen();
   });
+
+  it('allows the tracking recovery notification to be dismissed', async () => {
+    const user = userEvent.setup();
+    mockStore.dispatch(setIsAppShuted(true));
+    await renderWithProviders(<ActivityErrorMsg />, { store: mockStore });
+
+    await user.press(screen.getByTestId('dismiss-tracking-paused'));
+
+    expect(screen.queryByTestId('dismiss-tracking-paused')).not.toBeOnTheScreen();
+  });
 });

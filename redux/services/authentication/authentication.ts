@@ -54,9 +54,9 @@ const authenticationApi = runichApi.injectEndpoints({
       }),
     }),
     verifyConfig: query<LoginUserResponse, VerifyLoginData>({
-      query: ({ code, accessToken }) => ({
+      query: ({ code }) => ({
         url: '/auth/verify',
-        body: code ? { code } : { accessToken },
+        body: { code },
         method: 'POST',
       }),
     }),

@@ -71,7 +71,8 @@ describe('Metrics', () => {
       MAP_METRICS.russian.steps,
       MAP_METRICS.russian.lastKm,
     ].map((metric) => expect(screen.getByText(new RegExp(metric))).toBeOnTheScreen());
-    [`0.0 ${MAP_METRICS.russian.kmh}`, `0.00 ${MAP_METRICS.russian.km}`, '00:00:00', '1234'].map((metric) =>
+    expect(screen.getAllByText(new RegExp(`0.0 ${MAP_METRICS.russian.kmh}`))).toHaveLength(2);
+    [`0.00 ${MAP_METRICS.russian.km}`, '00:00:00', '1234'].map((metric) =>
       expect(screen.getByText(new RegExp(metric))).toBeOnTheScreen(),
     );
     expect(screen.queryByText(new RegExp(MAP_METRICS.russian.altitude))).not.toBeOnTheScreen();

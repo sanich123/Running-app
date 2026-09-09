@@ -1,7 +1,7 @@
 import * as Speech from 'expo-speech';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { setSport } from '@R/slices/activity/activity';
-import { resetLocationSlice, setLocationsWhenContinued } from '@R/slices/location/location';
+import { resetLocationSlice, setLocationsWhenContinued, startDurationTimer } from '@R/slices/location/location';
 import {
   addActivityReminder,
   resetActivityReminders,
@@ -17,7 +17,7 @@ import {
   getKilometerSplitCalculation,
   getSpeedInKmPerHour,
 } from '../location-utils';
-import { getCompletedReminderCount, saveMetricsToStoreTaskManager } from './utils';
+import { getCompletedReminderCount, getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 
 describe('location speed filtering', () => {
   beforeEach(() => {
@@ -123,6 +123,7 @@ describe('kilometre split calculation', () => {
     };
 
     store.dispatch(setLocationsWhenContinued(start));
+    store.dispatch(setActivityVoiceEnabled(true));
     saveMetricsToStoreTaskManager(end, 600_000, 0, 30, 2_500, start);
 
     const { location } = store.getState();
@@ -146,6 +147,29 @@ describe('kilometre split calculation', () => {
       expect.stringContaining('2 километр'),
       expect.objectContaining({ language: 'ru-RU' }),
     );
+  });
+
+  it('stores a signed elevation change for a completed kilometre', () => {
+    const start = {
+      ...MOCK_LOCATION,
+      timestamp: 0,
+      coords: { ...MOCK_LOCATION.coords, altitude: 100, altitudeAccuracy: 5 },
+    };
+    const end = {
+      ...MOCK_LOCATION,
+      timestamp: 600_000,
+      coords: {
+        ...MOCK_LOCATION.coords,
+        latitude: MOCK_LOCATION.coords.latitude + 0.01,
+        altitude: 88,
+        altitudeAccuracy: 5,
+      },
+    };
+
+    store.dispatch(setLocationsWhenContinued(start));
+    saveMetricsToStoreTaskManager(end, 600_000, 0, 0, 1_000, start);
+
+    expect(store.getState().location.kilometresSplit[0].lastKilometerAltitude).toBe(-12);
   });
 
   it('does not create another split for every update after crossing a kilometre', () => {
@@ -181,6 +205,10 @@ describe('activity reminders', () => {
     expect(getCompletedReminderCount(0, 31 * 60_000, 30)).toBe(1);
     expect(getCompletedReminderCount(30 * 60_000, 61 * 60_000, 30)).toBe(1);
     expect(getCompletedReminderCount(0, 29 * 60_000, 30)).toBe(0);
+    expect(getCompletedReminderCount(Number.NaN, 31 * 60_000, 30)).toBe(0);
+    expect(getCompletedReminderCount(0, Number.POSITIVE_INFINITY, 30)).toBe(0);
+    expect(getCompletedReminderCount(0, 31 * 60_000, 0)).toBe(0);
+    expect(getCompletedReminderCount(31 * 60_000, 30 * 60_000, 30)).toBe(0);
   });
 
   it('speaks the custom text after the selected moving-time interval', () => {
@@ -211,6 +239,61 @@ describe('activity reminders', () => {
       expect.objectContaining({ language: 'ru-RU' }),
     );
     expect(Speech.speak).toHaveBeenCalledWith('Пора перекусить.', expect.objectContaining({ language: 'ru-RU' }));
+  });
+});
+
+describe('background metric calculation', () => {
+  beforeEach(() => {
+    store.dispatch(resetLocationSlice());
+  });
+
+  it('returns zero metrics before the first location is available', () => {
+    expect(getMetricsTaskManager(MOCK_LOCATION)).toEqual({
+      previousPosition: null,
+      currentDuration: 0,
+      currentDistance: 0,
+      currentAltitude: 0,
+      currentPace: 0,
+      firstArrayLength: 0,
+      lastArrayLength: 0,
+    });
+  });
+
+  it('calculates a segment from the last location after a pause or continuation', () => {
+    const start = { ...MOCK_LOCATION, timestamp: 1_000 };
+    const end = {
+      ...MOCK_LOCATION,
+      timestamp: 61_000,
+      coords: { ...MOCK_LOCATION.coords, latitude: MOCK_LOCATION.coords.latitude + 0.01 },
+    };
+    store.dispatch(setLocationsWhenContinued(start));
+
+    const metrics = getMetricsTaskManager(end);
+
+    expect(metrics.previousPosition).toBe(start);
+    expect(metrics.currentDuration).toBe(60_000);
+    expect(metrics.currentDistance).toBeGreaterThan(0);
+    expect(metrics.currentPace).toBeGreaterThan(0);
+    expect(metrics.firstArrayLength).toBe(1);
+    expect(metrics.lastArrayLength).toBe(1);
+  });
+
+  it('synchronizes the local timer with the duration represented by GPS timestamps', () => {
+    jest.setSystemTime(1_000);
+    const start = { ...MOCK_LOCATION, timestamp: 1_000 };
+    const firstUpdate = { ...MOCK_LOCATION, timestamp: 6_000 };
+    const secondUpdate = { ...MOCK_LOCATION, timestamp: 10_000 };
+
+    store.dispatch(setLocationsWhenContinued(start));
+    store.dispatch(startDurationTimer(1_000));
+    jest.advanceTimersByTime(8_000);
+
+    saveMetricsToStoreTaskManager(firstUpdate, 5_000, 0, 0, 0, start);
+    expect(store.getState().location.duration).toBe(5_000);
+    expect(store.getState().location.durationAtLastLocation).toBe(5_000);
+
+    saveMetricsToStoreTaskManager(secondUpdate, 4_000, 0, 0, 0, firstUpdate);
+    expect(store.getState().location.duration).toBe(9_000);
   });
 });
 

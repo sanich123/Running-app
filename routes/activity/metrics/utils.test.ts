@@ -17,7 +17,7 @@ describe('live activity metrics', () => {
 
   it.each([
     ['run', '05:00'],
-    ['walk', '120 spm'],
+    ['walk', '60.0 km/h'],
     ['bike', '12.0 km/h'],
     ['hike', '12.0 km/h'],
   ])('uses the sport-specific last kilometre metric for %s', (sport, expectedMetric) => {

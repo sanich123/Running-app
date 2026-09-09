@@ -1,11 +1,26 @@
-import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { STATUSES } from '@const/enums';
-import { setActivityStatus } from '@R/slices/location/location';
+import { addDurationAndLocationToKmSplits, setActivityStatus } from '@R/slices/location/location';
 import * as errorToastModule from '@S/error-toast/error-toast';
+import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
 import PauseBtn from './pause-btn';
+
+let mockOnPress: (() => Promise<void>) | undefined;
+
+jest.mock('react-native-paper', () => {
+  const actual = jest.requireActual('react-native-paper');
+  const { Pressable } = jest.requireActual('react-native');
+  return {
+    ...actual,
+    TouchableRipple: ({ children, ...props }: Record<string, any>) => {
+      mockOnPress = props.onPress;
+      return <Pressable {...props}>{children}</Pressable>;
+    },
+  };
+});
 
 describe('pause btn', () => {
   beforeEach(() => {
@@ -55,5 +70,54 @@ describe('pause btn', () => {
       expect(errorToast).toHaveBeenCalledWith('Не удалось остановить отслеживание геопозиции', error),
     );
     expect(mockStore.getState().location.activityStatus).toBe(STATUSES.started);
+  });
+
+  it('reports a resume error without changing the activity status', async () => {
+    const error = new Error('start failed');
+    jest.spyOn(backgroundLocation, 'startLocationTracking').mockRejectedValue(error);
+    const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
+    mockStore.dispatch(setActivityStatus(STATUSES.paused));
+    await renderWithProviders(<PauseBtn />);
+    await userEvent.press(screen.getByTestId('activity-pause-toggle'));
+
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось запустить отслеживание геопозиции', error));
+    expect(mockStore.getState().location.activityStatus).toBe(STATUSES.paused);
+  });
+
+  it('ignores a second tracking action while the first one is pending', async () => {
+    let resolveStop!: () => void;
+    const stopPromise = new Promise<void>((resolve) => {
+      resolveStop = resolve;
+    });
+    jest.spyOn(backgroundLocation, 'stopLocationTracking').mockReturnValue(stopPromise);
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    await renderWithProviders(<PauseBtn />);
+
+    let firstPress!: Promise<void>;
+    await act(async () => {
+      firstPress = mockOnPress!();
+    });
+    await waitFor(() => expect(screen.getByTestId('pause-tracking-action-loading')).toBeOnTheScreen());
+    await act(async () => {
+      await mockOnPress!();
+    });
+    resolveStop();
+    await act(async () => {
+      await firstPress;
+    });
+
+    expect(mockStore.getState().location.activityStatus).toBe(STATUSES.paused);
+  });
+
+  it('preserves the split altitude when no calculated elevation is available', async () => {
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(addDurationAndLocationToKmSplits(MOCK_LOCATION));
+    await renderWithProviders(<PauseBtn />);
+    await userEvent.press(screen.getByTestId('activity-pause-toggle'));
+
+    await waitFor(() => expect(mockStore.getState().location.activityStatus).toBe(STATUSES.paused));
+    expect(mockStore.getState().activity.finishedActivity?.kilometresSplit).toEqual([
+      expect.objectContaining({ lastKilometerAltitude: 0 }),
+    ]);
   });
 });

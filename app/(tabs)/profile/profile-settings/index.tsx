@@ -1,5 +1,6 @@
 import { Suspense, useEffect, useState } from 'react';
-import { Platform, ScrollView, useWindowDimensions, StyleSheet } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { Platform, useWindowDimensions, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -48,8 +49,9 @@ export default function ProfileSettings() {
   const isFormDisabled = isDisabled || isProfileLoading;
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
       keyboardShouldPersistTaps="handled"
+      bottomOffset={24}
       style={[styles.scroll, { backgroundColor: colors.background }]}
       contentContainerStyle={[
         styles.container,
@@ -66,7 +68,7 @@ export default function ProfileSettings() {
         <LazyInputBio isDisabled={isFormDisabled} />
         <LazyGenderBtns isDisabled={isFormDisabled} />
       </Suspense>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 

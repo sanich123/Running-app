@@ -19,26 +19,33 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
     return mapPhotoUrl ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...media] : media;
   }, [mapPhotoUrl, mapPhotoUrlBlurhash, photoVideoUrls]);
   const renderItem = useCallback(
-    ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => (
-      <TouchableRipple
-        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-        onPress={() => {
-          push(
-            item.url.includes('api.mapbox.com')
-              ? `/${ROUTES.map}/${id}`
-              : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
-          );
-        }}
-        borderless>
-        <CustomImage
-          style={{ width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }}
-          source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
-          contentFit={item.url.includes('api.mapbox.com') ? 'contain' : 'cover'}
-          testID={item.url}
-          placeholder={item?.blurhash}
-        />
-      </TouchableRipple>
-    ),
+    ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => {
+      const isMap = item.url.includes('api.mapbox.com');
+      return (
+        <TouchableRipple
+          rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+          onPress={() => {
+            push(
+              isMap
+                ? `/${ROUTES.map}/${id}`
+                : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
+            );
+          }}
+          borderless>
+          <CustomImage
+            style={{ width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }}
+            source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
+            contentFit={isMap ? 'contain' : 'cover'}
+            placeholderContentFit="cover"
+            priority={index === 0 ? 'high' : 'normal'}
+            cachePolicy="memory-disk"
+            recyclingKey={item.url}
+            testID={item.url}
+            placeholder={item?.blurhash}
+          />
+        </TouchableRipple>
+      );
+    },
     [dark, id, mediaWidth, push],
   );
 

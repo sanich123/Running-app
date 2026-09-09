@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { savePhotoUrl } from '@R/slices/profile/profile';
@@ -17,6 +18,9 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
   const avatar = (
     <View style={styles.avatarContainer}>
       <ProfileImage />
+      <View pointerEvents="none" testID={AvatarEditableTestIds.editIcon} style={styles.editIcon}>
+        <MaterialCommunityIcons name="camera-plus-outline" size={20} color="#fff" />
+      </View>
       {isUploading ? (
         <View testID={AvatarEditableTestIds.loading} style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color="#fff" />
@@ -104,5 +108,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 75,
     backgroundColor: 'rgba(0, 0, 0, 0.45)',
+  },
+  editIcon: {
+    position: 'absolute',
+    right: 8,
+    bottom: 8,
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 18,
+    backgroundColor: 'rgba(0, 0, 0, 0.68)',
+    borderColor: '#fff',
+    borderWidth: 1,
   },
 });

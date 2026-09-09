@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react-native';
-import { http } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
@@ -54,6 +54,27 @@ describe('ProfilePage', () => {
     await renderWithProviders(<ProfilePage />);
     expect(await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`)).toBeOnTheScreen();
     expect(screen.getByTestId('profile-statistics')).toBeOnTheScreen();
+  });
+
+  it('loads media previews for the viewed profile', async () => {
+    const viewedUserId = MOCK_SERVER_IDS.userId;
+    const loggedInUserId = 'another-user-id';
+    let requestedUrl = '';
+    mockStore.dispatch(setUserId(loggedInUserId));
+    server.use(
+      http.get(`${BASE_URL}/activity/${viewedUserId}/photos`, ({ request }) => {
+        requestedUrl = request.url;
+        return HttpResponse.json({ photos: [], hasMore: false, nextCursor: null });
+      }),
+      http.get(`${BASE_URL}/activity/${loggedInUserId}/photos`, () => {
+        throw new Error('The logged-in user id must not be used for the viewed profile media request');
+      }),
+    );
+
+    await renderWithProviders(<ProfilePage />);
+    await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
+
+    expect(requestedUrl).toContain(`/activity/${viewedUserId}/photos?take=4`);
   });
 
   it('renders error state', async () => {

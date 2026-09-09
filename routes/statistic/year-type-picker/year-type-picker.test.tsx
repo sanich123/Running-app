@@ -53,4 +53,12 @@ describe('year type picker', () => {
 
     expect(currentTarget.scrollLeft).toBe(80);
   });
+
+  it('ignores a wheel event when there is no horizontal overflow', () => {
+    const currentTarget = { clientWidth: 120, scrollLeft: 0, scrollWidth: 120 };
+
+    scrollYearsByWheel({ currentTarget, deltaY: 80 });
+
+    expect(currentTarget.scrollLeft).toBe(0);
+  });
 });

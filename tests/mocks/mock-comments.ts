@@ -9,10 +9,9 @@ export const MOCK_COMMENTS = [
     profile: {
       surname: 'Воронин',
       name: 'Александр ',
-      profilePhoto:
-        'https://rrlmesbmowaoyzvniffr.supabase.co/storage/v1/object/public/photos/2e2faecd-76ac-4f96-8218-100e060f2190/1715027528985.jpeg',
+      profilePhoto: 'https://images.example.test/user-a/comment.jpg',
       profilePhotoBlurhash: 'UVLhM4EJ-s_N,|xvpCtQJ}RiM{M_-:t7V^n,',
-      users: { email: 'someEmail@yandex.ru' },
+      user: { email: 'someEmail@yandex.ru' },
     },
     commentLike: [
       {
@@ -31,10 +30,9 @@ export const MOCK_COMMENTS = [
     profile: {
       surname: 'Воронин',
       name: 'Александр ',
-      profilePhoto:
-        'https://rrlmesbmowaoyzvniffr.supabase.co/storage/v1/object/public/photos/2e2faecd-76ac-4f96-8218-100e060f2190/1715027528985.jpeg',
+      profilePhoto: 'https://images.example.test/user-a/comment.jpg',
       profilePhotoBlurhash: 'UVLhM4EJ-s_N,|xvpCtQJ}RiM{M_-:t7V^n,',
-      users: { email: 'someEmail@yandex.ru' },
+      user: { email: 'someEmail@yandex.ru' },
     },
     commentLike: [],
   },
@@ -48,10 +46,9 @@ export const MOCK_COMMENTS = [
     profile: {
       surname: 'Воронин',
       name: 'Александр ',
-      profilePhoto:
-        'https://rrlmesbmowaoyzvniffr.supabase.co/storage/v1/object/public/photos/2e2faecd-76ac-4f96-8218-100e060f2190/1715027528985.jpeg',
+      profilePhoto: 'https://images.example.test/user-a/comment.jpg',
       profilePhotoBlurhash: 'UVLhM4EJ-s_N,|xvpCtQJ}RiM{M_-:t7V^n,',
-      users: { email: 'someEmail@yandex.ru' },
+      user: { email: 'someEmail@yandex.ru' },
     },
     commentLike: [],
   },
@@ -67,7 +64,7 @@ export const MOCK_COMMENTS = [
       name: 'Настя Лимонова',
       profilePhoto: 'https://example.com/avatar.jpg',
       profilePhotoBlurhash: 'UPHw.8TLS#Vs.TtSxWV??^tSV@Ri_3-;slRP',
-      users: { email: 'someEmail@yandex.ru' },
+      user: { email: 'someEmail@yandex.ru' },
     },
     commentLike: [
       {
@@ -86,10 +83,9 @@ export const MOCK_COMMENTS = [
     profile: {
       surname: 'Воронин',
       name: 'Александр ',
-      profilePhoto:
-        'https://rrlmesbmowaoyzvniffr.supabase.co/storage/v1/object/public/photos/2e2faecd-76ac-4f96-8218-100e060f2190/1715027528985.jpeg',
+      profilePhoto: 'https://images.example.test/user-a/comment.jpg',
       profilePhotoBlurhash: 'UVLhM4EJ-s_N,|xvpCtQJ}RiM{M_-:t7V^n,',
-      users: { email: 'someEmail@yandex.ru' },
+      user: { email: 'someEmail@yandex.ru' },
     },
     commentLike: [
       {

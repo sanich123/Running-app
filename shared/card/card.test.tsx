@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
@@ -6,7 +7,9 @@ import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import ActivityCard from './card';
 import { getCardMapPhotoUrl } from './utils';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
+import { BASE_URL } from '../../tests/utils/handlers';
 import { mockStore } from '../../tests/utils/mock-store';
+import { server } from '../../tests/utils/server';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 
@@ -22,6 +25,35 @@ describe('Activity card', () => {
     expect(getCardMapPhotoUrl(mapPhotoUrl, 351)).toBe(
       'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/351x202@2x?access_token=test',
     );
+  });
+
+  it('does not load full route locations for a feed card', async () => {
+    let requests = 0;
+    server.use(
+      http.get(`${BASE_URL}/activity/${MOCK_ACTIVITY.id}/locations`, () => {
+        requests += 1;
+        return HttpResponse.json({ locations: [], kilometresSplit: [] });
+      }),
+    );
+
+    await renderWithProviders(
+      <ActivityCard
+        isShowDeleteBtn={false}
+        isShowDescription={false}
+        title={MOCK_ACTIVITY.title}
+        date={MOCK_ACTIVITY.date}
+        sport={MOCK_ACTIVITY.sport as SPORTS_BTNS_VALUES}
+        id={MOCK_ACTIVITY.id}
+        userId={MOCK_ACTIVITY.userId}
+        mapPhotoUrl="https://api.mapbox.com/styles/v1/map.png"
+        duration={MOCK_ACTIVITY.duration}
+        distance={MOCK_ACTIVITY.distance}
+        profile={MOCK_PROFILE}
+        commentsLength={0}
+      />,
+    );
+
+    expect(requests).toBe(0);
   });
 
   it('should correctly renders', async () => {

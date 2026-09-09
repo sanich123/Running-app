@@ -5,7 +5,7 @@ export const SEARCH_INPUT = {
     label: 'Type user email or name',
   },
   [LANGUAGES.russian]: {
-    label: 'Введите имя или email юзера',
+    label: 'Введите имя или email пользователя',
   },
 } as const;
 

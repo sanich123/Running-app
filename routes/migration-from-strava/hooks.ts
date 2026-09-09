@@ -8,7 +8,6 @@ export default function useGetStates() {
   const [isSendingArchive, setIsSendingArchive] = useState(false);
   const [isWaitingForServer, setIsWaitingForServer] = useState(false);
   const [isDeletingCacheFolder, setIsDeletingCacheFolder] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState('');
   const isInitial =
     !isDisabled &&
@@ -18,7 +17,6 @@ export default function useGetStates() {
     !isSendingArchive &&
     !isWaitingForServer &&
     !isDeletingCacheFolder &&
-    !isSuccess &&
     !isError;
   return {
     isDisabled,
@@ -35,8 +33,6 @@ export default function useGetStates() {
     setIsWaitingForServer,
     isDeletingCacheFolder,
     setIsDeletingCacheFolder,
-    isSuccess,
-    setIsSuccess,
     isError,
     setIsError,
     isInitial,

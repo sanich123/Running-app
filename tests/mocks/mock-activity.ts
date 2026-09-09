@@ -22,7 +22,7 @@ export const MOCK_ACTIVITY = {
   locations: MOCK_LOCATIONS,
   photoVideoUrls: [
     {
-      url: 'https://rrlmesbmowaoyzvniffr.supabase.co/storage/v1/object/sign/files/926f4a53-08b5-43c6-99ee-cf31fdfbb49b/1699025324799.jpeg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJmaWxlcy85MjZmNGE1My0wOGI1LTQzYzYtOTllZS1jZjMxZmRmYmI0OWIvMTY5OTAyNTMyNDc5OS5qcGVnIiwiaWF0IjoxNjk5MDI1MzI3LCJleHAiOjI2OTkwMjUzMjd9.i_vqKxSwp0w2PgwYmFcSMcJ84ewfKq0UbJTm85bhTls',
+      url: 'https://images.example.test/user-a/activity.jpg',
       thumbnail: null,
     },
   ],
@@ -30,7 +30,7 @@ export const MOCK_ACTIVITY = {
   sport: 'run',
   title: 'Moscow',
   updatedAt: '2023-11-03T15:28:51.031Z',
-  user_id: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
+  userId: '926f4a53-08b5-43c6-99ee-cf31fdfbb49b',
   profile: {
     bio: '',
     birthday: null,
@@ -46,7 +46,7 @@ export const MOCK_ACTIVITY = {
     sport: null,
     surname: 'Ядгаров',
     updatedAt: new Date(Date.now()).toString(),
-    user_id: '',
+    userId: '',
     weight: '',
   },
 };

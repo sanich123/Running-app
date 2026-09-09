@@ -4,10 +4,11 @@ import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper
 import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
 import {
   setCommentActivityId,
+  setCommentToUpdate,
   setActivityOwnerProfile,
   setMapPhotoUrl,
-  setIsShowingTextInput,
   setCommentsLength,
+  setIdOfUpdatingComment,
 } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CommentsListModal from '@S/comments/comments-list-modal/comments-list-modal';
@@ -42,8 +43,9 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       onPress={() => {
+        dispatch(setCommentToUpdate(''));
+        dispatch(setIdOfUpdatingComment(''));
         dispatch(setCommentsLength(commentsLength));
-        dispatch(setIsShowingTextInput(false));
         dispatch(setCommentActivityId(activityId));
         dispatch(setActivityOwnerProfile(profile));
         dispatch(setMapPhotoUrl(mapPhotoUrl));

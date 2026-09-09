@@ -53,8 +53,8 @@ describe('Profile update btn', () => {
     const userId = 'profile-without-profile';
     mockStore.dispatch(setUserId(userId));
     server.use(
-      http.get(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json({ id: 'profile-id', user_id: userId })),
-      http.patch(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json({ id: 'profile-id', user_id: userId })),
+      http.get(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json({ id: 'profile-id', userId: userId })),
+      http.patch(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json({ id: 'profile-id', userId: userId })),
     );
 
     await renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
@@ -71,10 +71,10 @@ describe('Profile update btn', () => {
     const userId = 'layout-profile-user';
     mockStore.dispatch(setUserId(userId));
     server.use(
-      http.get(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json({ id: 'profile-id', user_id: userId })),
+      http.get(`${BASE_URL}/user/${userId}/profile`, () => HttpResponse.json({ id: 'profile-id', userId: userId })),
       http.patch(`${BASE_URL}/user/${userId}/profile`, async ({ request }) => {
         requestBody = await request.json();
-        return HttpResponse.json({ id: 'profile-id', user_id: userId });
+        return HttpResponse.json({ id: 'profile-id', userId: userId });
       }),
     );
 

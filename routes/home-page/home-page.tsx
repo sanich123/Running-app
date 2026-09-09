@@ -27,7 +27,7 @@ export default function Feed() {
     );
   const { data: appConfig } = useGetAppConfigQuery(undefined, { skip: !accessToken });
   const activities = useMemo(() => data?.pages.flatMap(({ activities }) => activities) ?? [], [data?.pages]);
-  const isLastPage = data?.pages.at(-1)?.isLastPage ?? false;
+  const isLastPage = !(data?.pages.at(-1)?.hasMore ?? false);
 
   useEffect(() => {
     const currentVersion = Constants.expoConfig?.version ?? '0.0.0';

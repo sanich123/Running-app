@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList, Platform, useWindowDimensions, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { useGetAllActivityPhotosByUserIdQuery } from '@R/services/activity/activity';
+import { useGetAllActivityPhotosByUserIdInfiniteQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
@@ -17,20 +17,21 @@ export default function MediaGrid() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { id: userId } = useLocalSearchParams();
-  const [take, setTake] = useState(28);
-  const isLoadingMore = useRef(false);
+  const take = 28;
   const gridWidth = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
-  const { isLoading, isSuccess, data, error, isError, refetch, isFetching } = useGetAllActivityPhotosByUserIdQuery(
-    { userId: `${userId}`, take },
-    { skip: !userId },
-  );
+  const {
+    isLoading,
+    isSuccess,
+    data: pages,
+    error,
+    isError,
+    refetch,
+    isFetching,
+    fetchNextPage,
+  } = useGetAllActivityPhotosByUserIdInfiniteQuery({ userId: `${userId}`, take }, { skip: !userId });
+  const data = pages?.pages.at(-1);
+  const photos = pages?.pages.flatMap(({ photos: pagePhotos }) => pagePhotos) ?? [];
   const gridItemHeight = (gridWidth - 9) / 4;
-
-  useEffect(() => {
-    if (!isFetching) {
-      isLoadingMore.current = false;
-    }
-  }, [isFetching]);
 
   const renderItem = useCallback(
     ({ item, index }: { item: PhotoVideoType; index: number }) => (
@@ -40,18 +41,11 @@ export default function MediaGrid() {
   );
   const keyExtractor = useCallback((item: PhotoVideoType) => item.url, []);
   const loadMore = useCallback(() => {
-    if (data?.isLastPage || isFetching || isLoadingMore.current) {
+    if (!data?.hasMore || isFetching) {
       return;
     }
-
-    isLoadingMore.current = true;
-    const increaseTake = () => setTake((currentTake) => currentTake + 28);
-    if (Platform.OS === 'web') {
-      setTimeout(increaseTake, 2000);
-    } else {
-      increaseTake();
-    }
-  }, [data?.isLastPage, isFetching]);
+    void fetchNextPage();
+  }, [data?.hasMore, fetchNextPage, isFetching]);
 
   return (
     <SafeAreaView
@@ -60,7 +54,7 @@ export default function MediaGrid() {
       {isLoading ? (
         <ActivityIndicator size="large" testID="media-grid-loading" />
       ) : isSuccess ? (
-        data?.photos?.length ? (
+        photos.length ? (
           <FlatList
             testID="media-grid-list"
             style={[styles.list, { width: gridWidth }]}
@@ -72,7 +66,7 @@ export default function MediaGrid() {
               styles.layout,
               (isLoading || isError) && styles.isInCenter,
             ]}
-            data={data?.photos}
+            data={photos}
             renderItem={renderItem}
             initialNumToRender={20}
             maxToRenderPerBatch={20}
@@ -87,7 +81,7 @@ export default function MediaGrid() {
             })}
             onEndReachedThreshold={0.5}
             onEndReached={loadMore}
-            ListFooterComponent={() => !data?.isLastPage && <ActivityIndicator size="large" />}
+            ListFooterComponent={() => data?.hasMore && <ActivityIndicator size="large" />}
             numColumns={4}
             horizontal={false}
           />

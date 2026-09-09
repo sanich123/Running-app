@@ -23,7 +23,7 @@ describe('User list item', () => {
         placeholder="someString"
         city={MOCK_PROFILE.city}
         profilePhoto="someString"
-        user_id="someUserId"
+        userId="someUserId"
       />,
       { store: mockStore },
     );
@@ -41,7 +41,7 @@ describe('User list item', () => {
         placeholder="someString"
         city={MOCK_PROFILE.city}
         profilePhoto="someString"
-        user_id="someUserId"
+        userId="someUserId"
       />,
       { store: mockStore },
     );
@@ -60,7 +60,7 @@ describe('User list item', () => {
         placeholder="someString"
         city={MOCK_PROFILE.city}
         profilePhoto="someString"
-        user_id="a6135312-595f-4524-b3f3-496a05165d22"
+        userId="a6135312-595f-4524-b3f3-496a05165d22"
       />,
       { store: mockStore },
     );
@@ -80,7 +80,7 @@ describe('User list item', () => {
         city={MOCK_PROFILE.city}
         profilePhoto={MOCK_PROFILE.profilePhoto}
         placeholder={MOCK_PROFILE.profilePhotoBlurhash}
-        user_id="selected-user"
+        userId="selected-user"
       />,
     );
     await user.press(await screen.findByText(new RegExp(MOCK_PROFILE.name)));

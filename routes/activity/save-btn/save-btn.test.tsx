@@ -121,6 +121,32 @@ describe('Activity save btn', () => {
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
   });
 
+  it('sends the recorded steps in a tracked activity payload', async () => {
+    let requestBody: Record<string, unknown> | undefined;
+    server.use(
+      http.post(`${BASE_URL}/activity/someUserId`, async ({ request }) => {
+        requestBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({ id: 'activity-id' });
+      }),
+    );
+    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(
+      setFinishedActivity({
+        locations: [MOCK_LOCATION],
+        duration: MOCK_DURATION,
+        speed: MOCK_SPEED,
+        distance: MOCK_DISTANCE,
+        steps: 1_234,
+        kilometresSplit: [],
+      }),
+    );
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+
+    await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
+
+    await waitFor(() => expect(requestBody?.steps).toBe(1_234));
+  });
+
   it('caps tracked locations at the API limit before sending', async () => {
     let requestBody: Record<string, unknown> | undefined;
     server.use(

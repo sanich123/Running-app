@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-import type { ComponentRef } from 'react';
+import { useState } from 'react';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Keyboard, View, StyleSheet } from 'react-native';
 import { Button, Icon, IconButton, Text, useTheme } from 'react-native-paper';
@@ -8,18 +7,17 @@ import {
   useUpdateCommentByCommentIdMutation,
 } from '@R/services/comments/comments';
 import { useSendEmailAfterSendingCommentMutation } from '@R/services/emails/emails';
-import { setIdOfUpdatingComment, setIsShowingTextInput } from '@R/slices/comment/comment';
+import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
-import { focusBottomSheetInput, getCommentInputHeight } from './utils';
+import { getCommentInputHeight } from './utils';
 import type { CommentInputProps } from '../types';
 
 export default function CommentInput({ commentToUpdate = '', commentId = '', profile }: CommentInputProps) {
   const [focused, setFocused] = useState(false);
   const [inputHeight, setInputHeight] = useState(52);
-  const bottomSheetInputRef = useRef<ComponentRef<typeof BottomSheetTextInput>>(null);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { commentActivityId, mapPhotoUrl } = useAppSelector(({ comment }) => comment);
@@ -32,15 +30,17 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   const [postComment, { isLoading: isCommentSending }] = usePostCommentWithActivityIdMutation();
   const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
   const isSending = isCommentSending || isUpdatingComment;
-  const isEditing = Boolean(commentToUpdate);
+  const isEditing = Boolean(commentId && commentToUpdate);
+  const recipientEmail = profile?.email ?? profile?.user?.email;
 
-  useEffect(() => {
-    return focusBottomSheetInput(bottomSheetInputRef);
-  }, []);
+  const handleInputFocus = () => {
+    setFocused(true);
+  };
 
   function closeInput() {
     Keyboard.dismiss();
-    dispatch(setIsShowingTextInput(false));
+    setComment('');
+    dispatch(setCommentToUpdate(''));
     dispatch(setIdOfUpdatingComment(''));
   }
 
@@ -72,8 +72,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   async function sendingUpdatingCommentSuccessHandler(sentComment = comment) {
     dispatch(setActivityIdWhichCommentsToUpdate(commentActivityId));
     closeInput();
-    setComment('');
-    if (profile.emailNotifications && profile.users?.email && !commentToUpdate) {
+    if (profile.emailNotifications && recipientEmail && !commentToUpdate) {
       const objectToSend = {
         name: name ?? '',
         surname: surname ?? '',
@@ -81,7 +80,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
         comment: sentComment,
         recepientName: profile.name ?? '',
         recepientSurname: profile.surname ?? '',
-        recepientEmail: profile.users.email,
+        recepientEmail: recipientEmail,
         mapPhotoUrl: mapPhotoUrl ? mapPhotoUrl : '',
       };
       sendEmailAfterSendingComment(objectToSend);
@@ -100,7 +99,6 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
       </View>
       <View style={styles.inputRow}>
         <BottomSheetTextInput
-          ref={bottomSheetInputRef}
           testID={COMMENT_INPUT_TEST_ID}
           placeholder={COMMENT_INPUT[language].placeholder}
           value={comment}
@@ -117,11 +115,15 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
           multiline
           onChangeText={setComment}
           onSubmitEditing={submitComment}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onFocus={handleInputFocus}
+          onBlur={() => {
+            setFocused(false);
+          }}
           onContentSizeChange={({ nativeEvent }) =>
             setInputHeight(getCommentInputHeight(nativeEvent.contentSize.height))
           }
+          returnKeyType="send"
+          submitBehavior="submit"
           enterKeyHint="send"
         />
         <View style={styles.inputIcon}>

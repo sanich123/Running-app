@@ -22,11 +22,16 @@ describe('MediaGrid', () => {
   });
 
   it('renders server photos and loads more at the end', async () => {
-    const takes: string[] = [];
+    const cursors: string[] = [];
     server.use(
       http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/photos`, ({ request }) => {
-        takes.push(new URL(request.url).searchParams.get('take') ?? '');
-        return HttpResponse.json({ ...MOCK_SERVER_PHOTOS, isLastPage: takes.length > 1 });
+        cursors.push(new URL(request.url).searchParams.get('cursor') ?? '');
+        return HttpResponse.json({
+          ...MOCK_SERVER_PHOTOS,
+          photos: cursors.length > 1 ? [] : MOCK_SERVER_PHOTOS.photos,
+          hasMore: cursors.length === 1,
+          nextCursor: cursors.length === 1 ? 'next-cursor' : null,
+        });
       }),
     );
     await renderWithProviders(<MediaGrid />);
@@ -40,7 +45,7 @@ describe('MediaGrid', () => {
       ]),
     );
     await act(async () => list.props.onEndReached());
-    await waitFor(() => expect(takes).toEqual(['28', '56']));
+    await waitFor(() => expect(cursors).toEqual(['', 'next-cursor']));
   });
 
   it('renders error state', async () => {

@@ -40,7 +40,7 @@ const cardProps = {
   date: MOCK_SERVER_ACTIVITY.date,
   sport: MOCK_SERVER_ACTIVITY.sport,
   id: MOCK_SERVER_ACTIVITY.id,
-  userId: MOCK_SERVER_ACTIVITY.user_id,
+  userId: MOCK_SERVER_ACTIVITY.userId,
   photoVideoUrls: [...MOCK_SERVER_ACTIVITY.photoVideoUrls],
   mapPhotoUrl: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/360x360@2x?access_token=test',
   locations: [...MOCK_SERVER_LOCATIONS.locations],
@@ -154,7 +154,6 @@ describe('activity and social integration flows', () => {
     await waitFor(() => expect(commentLikeBody).toEqual({ commentId: MOCK_SERVER_IDS.commentId }));
     expect(await screen.findByTestId('commentLikeBtn-active')).toBeOnTheScreen();
 
-    await user.press(screen.getByTestId('floatingBtn'));
     await user.type(await screen.findByTestId(COMMENT_INPUT_TEST_ID), 'Новый комментарий');
     await user.press(screen.getByTestId(COMMENT_ICON_TEST_ID));
     await waitFor(() => expect(commentBody).toEqual({ comment: 'Новый комментарий' }));

@@ -1,22 +1,28 @@
+import { useEffect, useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { Link, useRouter } from 'expo-router';
-import { ActivityIndicator, Button, Card, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, ProgressBar, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
+import { useGetStravaMigrationStatusQuery } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { getMigrationArchiveAndSendToServer } from '@U/migration-strava/migration-archive';
 import { MIGRATION_STATES, STRAVA_EXPORT_URL } from './const';
 import useGetStates from './hooks';
 import { removeStepNumber } from './utils';
+import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
+
+const HOME_TAB_ROUTE = '(home)';
 
 export default function MigrationFromStrava() {
   const { userId, accessToken } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
-  const { replace } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
+  const { replace } = useRouter();
+  const [migrationJobId, setMigrationJobId] = useState<string | null>(null);
   const {
     isDisabled,
     setIsDisabled,
@@ -32,15 +38,25 @@ export default function MigrationFromStrava() {
     setIsWaitingForServer,
     isDeletingCacheFolder,
     setIsDeletingCacheFolder,
-    isSuccess,
-    setIsSuccess,
     isError,
     setIsError,
     isInitial,
   } = useGetStates();
+  const {
+    data: migrationJob,
+    error: migrationStatusError,
+    refetch: refetchMigrationStatus,
+  } = useGetStravaMigrationStatusQuery(migrationJobId ?? '', { skip: !migrationJobId });
   const copy = MIGRATION_STATES[language];
   const isRussian = language === LANGUAGES.russian;
-  const isProcessing = isDisabled && !isSuccess && !isError;
+  const isServerStatusError = Boolean(migrationJobId && migrationStatusError);
+  const isServerProcessing = Boolean(
+    migrationJobId && !isServerStatusError && migrationJob?.status !== 'completed' && migrationJob?.status !== 'failed',
+  );
+  const isServerCompleted = migrationJob?.status === 'completed';
+  const isServerFailed = migrationJob?.status === 'failed';
+  const isProcessing = (isDisabled && !isError) || isServerProcessing || isServerStatusError;
+  const hasStatusError = Boolean(isError) || isServerFailed || isServerStatusError;
   const statusText = isUnzipping
     ? copy.unzipping
     : isRemovingMedia
@@ -53,29 +69,83 @@ export default function MigrationFromStrava() {
             : copy.transfer
           : isDeletingCacheFolder
             ? copy.cleaning
-            : isSuccess
-              ? copy.successSending
-              : isError
-                ? copy.error
-                : '';
-  const buttonText = isInitial
-    ? copy.chooseArchive
-    : isUnzipping
-      ? copy.unzip
-      : isRemovingMedia
-        ? copy.removing
-        : isZipping
-          ? copy.zip
-          : isSendingArchive
-            ? isWaitingForServer
-              ? copy.waiting
-              : copy.sending
-            : isDeletingCacheFolder
-              ? copy.clean
-              : isSuccess
-                ? copy.success
-                : copy.error;
+            : isError
+              ? copy.error
+              : isServerStatusError
+                ? copy.statusError
+                : isServerCompleted
+                  ? copy.successSending
+                  : isServerFailed
+                    ? migrationJob?.errorMessage || copy.failed
+                    : isServerProcessing
+                      ? migrationJob?.status === 'queued'
+                        ? copy.queued
+                        : copy.processing
+                      : '';
+  const buttonText =
+    isServerProcessing || isServerStatusError
+      ? copy.processing
+      : isServerCompleted || isServerFailed
+        ? copy.chooseArchive
+        : isInitial
+          ? copy.chooseArchive
+          : isUnzipping
+            ? copy.unzip
+            : isRemovingMedia
+              ? copy.removing
+              : isZipping
+                ? copy.zip
+                : isSendingArchive
+                  ? isWaitingForServer
+                    ? copy.waiting
+                    : copy.sending
+                  : isDeletingCacheFolder
+                    ? copy.clean
+                    : copy.error;
   const steps = [copy.archiveToEmail, copy.whereToUpload];
+  const progress = migrationJob?.totalActivities
+    ? Math.min(1, migrationJob.processedActivities / migrationJob.totalActivities)
+    : 0;
+  const progressPercent = Math.round(progress * 100);
+
+  useEffect(() => {
+    if (migrationJob?.status === 'completed') {
+      dispatch(runichApi.util.invalidateTags([Tags.activities]));
+      if (migrationJob.processedActivities >= migrationJob.totalActivities) {
+        replace(`/${ROUTES.tabs}/${HOME_TAB_ROUTE}`);
+      }
+    }
+
+    if (!migrationJobId || migrationJob?.status === 'completed' || migrationJob?.status === 'failed') return;
+
+    let isCancelled = false;
+    let timeout: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      const result = await refetchMigrationStatus();
+      if (!isCancelled && result.data?.status !== 'completed' && result.data?.status !== 'failed') {
+        timeout = setTimeout(poll, 2000);
+      }
+    };
+    timeout = setTimeout(poll, 2000);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(timeout);
+    };
+  }, [
+    dispatch,
+    migrationJobId,
+    migrationJob?.processedActivities,
+    migrationJob?.status,
+    migrationJob?.totalActivities,
+    refetchMigrationStatus,
+    replace,
+  ]);
+
+  const handleArchiveUploadAccepted = (job: ActivityMigrationJobResponse) => {
+    setIsError('');
+    setMigrationJobId(job.jobId);
+  };
 
   return (
     <ScrollView
@@ -132,58 +202,127 @@ export default function MigrationFromStrava() {
           </Text>
         </View>
 
-        {(isProcessing || isSuccess || Boolean(isError)) && (
+        <View style={[styles.notice, { backgroundColor: colors.secondaryContainer }]}>
+          <MaterialCommunityIcons name="file-alert-outline" size={22} color={colors.secondary} />
+          <Text variant="bodyMedium" style={{ color: colors.onSecondaryContainer, flex: 1 }}>
+            {copy.archiveLimit}
+            <Link href={`/${ROUTES.feedback}`} style={{ color: colors.primary }}>
+              {copy.feedbackLink}
+            </Link>
+            .
+          </Text>
+        </View>
+
+        {(isProcessing || migrationJobId || Boolean(isError)) && (
           <View
             style={[
               styles.status,
               {
-                backgroundColor: isError
+                backgroundColor: hasStatusError
                   ? colors.errorContainer
-                  : isSuccess
+                  : isServerCompleted
                     ? colors.tertiaryContainer
                     : colors.surface,
               },
             ]}>
-            {isProcessing && <ActivityIndicator size="small" color={colors.primary} />}
-            {isSuccess && <MaterialCommunityIcons name="check-circle-outline" size={24} color={colors.tertiary} />}
-            {Boolean(isError) && <MaterialCommunityIcons name="alert-circle-outline" size={24} color={colors.error} />}
-            <Text
-              variant="bodyMedium"
-              style={{
-                color: isError ? colors.onErrorContainer : isSuccess ? colors.onTertiaryContainer : colors.onSurface,
-              }}>
-              {statusText}
-            </Text>
+            <View style={styles.statusHeader}>
+              {isProcessing && <ActivityIndicator size="small" color={colors.primary} />}
+              {!isProcessing && isServerCompleted && (
+                <MaterialCommunityIcons name="check-circle-outline" size={24} color={colors.tertiary} />
+              )}
+              {!isProcessing && hasStatusError && (
+                <MaterialCommunityIcons name="alert-circle-outline" size={24} color={colors.error} />
+              )}
+              <Text
+                variant="bodyMedium"
+                style={[
+                  styles.statusText,
+                  {
+                    color: hasStatusError
+                      ? colors.onErrorContainer
+                      : isServerCompleted
+                        ? colors.onTertiaryContainer
+                        : colors.onSurface,
+                  },
+                ]}>
+                {statusText}
+              </Text>
+            </View>
+            {migrationJob && (
+              <View style={styles.progressDetails}>
+                <View style={styles.progressHeader}>
+                  <Text variant="labelLarge" style={{ color: colors.onSurfaceVariant }}>
+                    {copy.progress}
+                  </Text>
+                  <Text variant="titleMedium" style={{ color: colors.primary }}>
+                    {progressPercent}%
+                  </Text>
+                </View>
+                <ProgressBar progress={progress} color={colors.primary} style={styles.progressBar} />
+                <View style={styles.progressStats}>
+                  <View style={[styles.progressStat, { backgroundColor: colors.surfaceVariant }]}>
+                    <Text variant="titleMedium" style={{ color: colors.onSurface }}>
+                      {migrationJob.processedActivities}/{migrationJob.totalActivities || '—'}
+                    </Text>
+                    <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+                      {copy.processed}
+                    </Text>
+                  </View>
+                  <View style={[styles.progressStat, { backgroundColor: colors.surfaceVariant }]}>
+                    <Text variant="titleMedium" style={{ color: colors.tertiary }}>
+                      {migrationJob.importedActivities}
+                    </Text>
+                    <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+                      {copy.imported}
+                    </Text>
+                  </View>
+                  <View style={[styles.progressStat, { backgroundColor: colors.surfaceVariant }]}>
+                    <Text variant="titleMedium" style={{ color: colors.error }}>
+                      {migrationJob.skippedActivities}
+                    </Text>
+                    <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+                      {copy.skipped}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )}
           </View>
         )}
 
-        <Button
-          mode="contained"
-          icon={isInitial ? 'file-upload-outline' : isSuccess ? 'check' : isError ? 'refresh' : 'progress-clock'}
-          onPress={async () =>
-            getMigrationArchiveAndSendToServer({
-              setIsDisabled,
-              setIsUnzipping,
-              setIsRemovingMedia,
-              setIsZipping,
-              setIsSendingArchive,
-              setIsWaitingForServer,
-              setIsDeletingCacheFolder,
-              setIsSuccess,
-              setIsError,
-              onArchiveUploadSuccess: () => {
-                dispatch(runichApi.util.invalidateTags([Tags.activities]));
-                replace(ROUTES.root);
-              },
-              userId,
-              accessToken,
-            })
-          }
-          disabled={isDisabled && !isError}
-          style={styles.action}
-          contentStyle={styles.actionContent}>
-          {buttonText}
-        </Button>
+        {!isProcessing && (
+          <Button
+            mode="contained"
+            icon={
+              isInitial || isServerCompleted || isServerFailed
+                ? 'file-upload-outline'
+                : isError
+                  ? 'refresh'
+                  : 'progress-clock'
+            }
+            onPress={async () => {
+              if (isServerCompleted || isServerFailed) {
+                setMigrationJobId(null);
+              }
+              await getMigrationArchiveAndSendToServer({
+                setIsDisabled,
+                setIsUnzipping,
+                setIsRemovingMedia,
+                setIsZipping,
+                setIsSendingArchive,
+                setIsWaitingForServer,
+                setIsDeletingCacheFolder,
+                setIsError,
+                onArchiveUploadAccepted: handleArchiveUploadAccepted,
+                userId,
+                accessToken,
+              });
+            }}
+            style={styles.action}
+            contentStyle={styles.actionContent}>
+            {buttonText}
+          </Button>
+        )}
       </View>
     </ScrollView>
   );
@@ -249,13 +388,43 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   status: {
-    alignItems: 'center',
+    alignItems: 'stretch',
     borderRadius: 16,
-    flexDirection: 'row',
-    gap: 10,
     minHeight: 56,
     paddingHorizontal: 14,
     paddingVertical: 12,
+  },
+  statusHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+  },
+  statusText: {
+    flex: 1,
+  },
+  progressDetails: {
+    gap: 10,
+    marginTop: 12,
+  },
+  progressHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  progressStats: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  progressStat: {
+    alignItems: 'center',
+    borderRadius: 12,
+    flex: 1,
+    gap: 2,
+    paddingHorizontal: 6,
+    paddingVertical: 8,
+  },
+  progressBar: {
+    height: 7,
   },
   action: {
     borderRadius: 14,

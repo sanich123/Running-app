@@ -7,6 +7,6 @@ export interface UserListItemType {
   placeholder?: string | null;
   profilePhoto?: string | null;
   city?: string | null;
-  user_id: string;
+  userId: string;
   commentsModalRef?: RefObject<BottomSheetModal | null>;
 }

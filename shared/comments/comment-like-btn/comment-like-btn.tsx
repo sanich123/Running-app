@@ -31,6 +31,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
   const [sendEmailNotificationAfterSendingLike] = useSendEmailAfterSendingCommentLikeMutation();
 
   const whatCommentLikesToIterate = commentLikes ?? commentLikesFromComment ?? [];
+  const recipientEmail = profile?.email ?? profile?.user?.email;
   const youGaveCommentLike = whatCommentLikesToIterate?.length
     ? whatCommentLikesToIterate.filter(({ authorId }: { authorId: string }) => authorId === userId)
     : [];
@@ -56,7 +57,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
 
   useEffect(() => {
     if (isSuccessSending || isSuccessDeleting) {
-      if (profile?.emailNotifications && profile.users?.email) {
+      if (profile?.emailNotifications && recipientEmail) {
         sendEmailNotificationAfterSendingLike({
           name: name ?? '',
           surname: surname ?? '',
@@ -64,7 +65,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
           comment,
           recepientName: profile.name ?? '',
           recepientSurname: profile.surname ?? '',
-          recepientEmail: profile.users.email,
+          recepientEmail: recipientEmail,
         });
       }
     }
@@ -82,7 +83,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
     profile?.name,
     profile?.surname,
     profile.email,
-    profile?.users?.email,
+    recipientEmail,
   ]);
 
   return (

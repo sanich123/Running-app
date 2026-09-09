@@ -62,4 +62,30 @@ describe('mapbox web', () => {
     expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'route-marker-background' }));
     expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'route-marker-icon' }));
   });
+
+  it('filters invalid kilometre points and adds valid split layers', async () => {
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
+    mockMap.addSource.mockClear();
+    mockMap.addLayer.mockClear();
+    mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
+
+    await render(
+      <MapboxWeb
+        boundBox={[37.6, 55.7, 37.8, 55.9]}
+        routeCoordinates={[]}
+        kilometresSplit={[
+          { kilometerPoint: { coords: { longitude: 37.6, latitude: 55.7 } } } as any,
+          { kilometerPoint: { coords: { longitude: Number.NaN, latitude: 55.8 } } } as any,
+          { kilometerPoint: undefined } as any,
+        ]}
+      />,
+    );
+
+    const splitSource = mockMap.addSource.mock.calls.find(([id]) => id === 'kilometre-splits');
+    expect(splitSource?.[1].data.features).toHaveLength(1);
+    expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'kilometre-split-background' }));
+    expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'kilometre-split-label' }));
+    const markerSource = mockMap.addSource.mock.calls.find(([id]) => id === 'route-markers');
+    expect(markerSource?.[1].data.features).toEqual([]);
+  });
 });

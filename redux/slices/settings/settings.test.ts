@@ -3,7 +3,13 @@ import { profileApi } from '@R/services/profile/profile';
 import { setUserId } from '@R/slices/auth/auth';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore } from '@T/utils/mock-store';
-import reducer, { SETTINGS_INITIAL_STATE, changeLanguage, getActivitySettings, setIsProfileFilled } from './settings';
+import reducer, {
+  addActivityReminder,
+  SETTINGS_INITIAL_STATE,
+  changeLanguage,
+  getActivitySettings,
+  setIsProfileFilled,
+} from './settings';
 
 describe('Settings slice', () => {
   it('should handle initial state properly', () => {
@@ -23,12 +29,22 @@ describe('Settings slice', () => {
   });
   it('uses defaults when an older persisted settings object has no activity fields', () => {
     expect(getActivitySettings({ language: LANGUAGES.russian, theme: null, isProfileFilled: false })).toMatchObject({
-      activityVoiceEnabled: true,
+      activityVoiceEnabled: false,
       activityVoiceMetrics: ['pace', 'movingTime', 'elevation'],
       activityVoiceIdentifier: null,
       activityReminderEnabled: false,
       activityReminders: [],
     });
+  });
+  it('can add a reminder when an older persisted state has no reminders array', () => {
+    const olderSettings = {
+      ...SETTINGS_INITIAL_STATE,
+      activityReminders: undefined,
+    } as unknown as typeof SETTINGS_INITIAL_STATE;
+
+    expect(
+      reducer(olderSettings, addActivityReminder({ id: 'water-reminder', intervalMinutes: 20, text: 'Вода' })),
+    ).toMatchObject({ activityReminders: [{ id: 'water-reminder', intervalMinutes: 20, text: 'Вода' }] });
   });
   it('marks the profile as filled after a successful profile query', async () => {
     mockStore.dispatch(setIsProfileFilled(false));

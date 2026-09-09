@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
-import { removePhotos } from '@A/supabase/storage/upload-photo';
 import { removePhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { deletePhotos } from '@U/file-sending';
 import type { PreviewImagesProps } from '../preview-images/types';
 
 export default function PreviewImageCloseBtn({
@@ -23,7 +23,7 @@ export default function PreviewImageCloseBtn({
   async function deleteImage() {
     setIsDeleting(true);
     try {
-      await removePhotos([image, thumbnail].filter((photo): photo is string => Boolean(photo)));
+      await deletePhotos([image, thumbnail].filter((photo): photo is string => Boolean(photo)));
       setImages(images.filter(({ url }) => url !== image));
       dispatch(removePhotoUrl(image));
     } finally {

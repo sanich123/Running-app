@@ -17,7 +17,10 @@ describe('share activity image', () => {
       />,
     );
 
-    expect(screen.getByTestId('https://example.com/map.jpg')).toBeOnTheScreen();
+    const map = screen.getByTestId('https://example.com/map.jpg');
+    expect(map).toBeOnTheScreen();
+    expect(map.props.priority).toBe('low');
+    expect(map.props.cachePolicy).toBe('disk');
     expect(screen.getByText('runich')).toBeOnTheScreen();
     expect(screen.getByText('Утренняя пробежка')).toBeOnTheScreen();
     expect(screen.getByText('00:05:00')).toBeOnTheScreen();

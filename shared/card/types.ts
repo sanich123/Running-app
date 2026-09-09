@@ -41,7 +41,6 @@ export interface ProfileType {
   bio?: string | null;
   birthday?: string | null;
   city?: string | null;
-  created_at?: string | null;
   createdAt?: string | null;
   email?: string | null;
   gender?: string | null;
@@ -53,10 +52,10 @@ export interface ProfileType {
   sport?: string | null;
   surname?: string | null;
   updatedAt?: string | null;
-  user_id?: string;
+  userId?: string;
   weight?: string | null;
   emailNotifications?: boolean | null;
-  users?: { email?: string | null } | null;
+  user?: { email?: string | null } | null;
 }
 
 export interface ActivityCardProps {

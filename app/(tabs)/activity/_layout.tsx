@@ -17,6 +17,7 @@ export default function ActivityStack() {
   return (
     <Stack
       screenOptions={{
+        contentStyle: { backgroundColor: colors.background },
         headerStyle: { backgroundColor: colors.surfaceVariant },
       }}>
       <Stack.Screen

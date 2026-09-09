@@ -58,7 +58,7 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength }: Mod
             profilePhoto={profile?.profilePhoto}
             placeholder={profile?.profilePhotoBlurhash}
             city={profile?.city}
-            user_id={profile?.user_id ?? ''}
+            userId={profile?.userId ?? ''}
             commentsModalRef={bottomSheetModalRef}
           />
         )}

@@ -1,77 +1,74 @@
-import { useCallback, useState } from 'react';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useCallback } from 'react';
+import { BottomSheetFooter, BottomSheetModal, type BottomSheetFooterProps } from '@gorhom/bottom-sheet';
+import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
+import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CommentInput from '@S/comments/comment-input/comment-input';
 import Comments from '@S/comments/comments/comments';
-import CommentsEmptyList from '@S/comments/comments-empty/comments-empty';
 import { backdrop } from '@U/backdrop';
-import CommentAddBtn from '../comment-add-btn/comment-add-btn';
-import type { CommentsListModalProps, CommentsViewState } from '../types';
+import type { CommentsListModalProps } from '../types';
 
-export default function CommentsListModal({
-  commentsModalRef,
-  commentsLength: knownCommentsLength,
-}: CommentsListModalProps) {
+export default function CommentsListModal({ commentsModalRef }: CommentsListModalProps) {
+  const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
-  const { activityOwnerProfile, commentsLength, isShowingTextInput, idOfUpdatingComment } = useAppSelector(
-    ({ comment }) => comment,
-  );
-  const expectedCommentsLength = knownCommentsLength ?? commentsLength;
-  const initialCommentsViewState = (expectedCommentsLength > 0 ? 'loaded' : 'empty') as CommentsViewState;
-  const [commentsViewState, setCommentsViewState] = useState<CommentsViewState>(initialCommentsViewState);
-  const [isCommentsResolved, setIsCommentsResolved] = useState(false);
+  const { activityOwnerProfile, commentToUpdate, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
   const renderBackdrop = useCallback((props: any) => backdrop(props), []);
-  const handleCommentsViewStateChange = useCallback((state: CommentsViewState) => {
-    if (state !== 'loading') {
-      setCommentsViewState(state);
-      setIsCommentsResolved(true);
-    }
-  }, []);
-  const isComposerOpen = isShowingTextInput && !idOfUpdatingComment;
+  const clearCommentEditing = useCallback(() => {
+    dispatch(setCommentToUpdate(''));
+    dispatch(setIdOfUpdatingComment(''));
+  }, [dispatch]);
+  const renderFooter = useCallback(
+    ({ animatedFooterPosition }: BottomSheetFooterProps) => (
+      <BottomSheetFooter animatedFooterPosition={animatedFooterPosition} bottomInset={bottomInset}>
+        <KeyboardStickyView
+          testID="comments-composer-keyboard-sticky"
+          offset={{ opened: -8 }}
+          style={styles.stickyComposer}>
+          <View
+            testID="comments-composer"
+            style={[
+              styles.composer,
+              {
+                backgroundColor: colors.surface,
+                borderTopColor: colors.outlineVariant,
+              },
+            ]}>
+            <CommentInput
+              key={idOfUpdatingComment || 'new-comment'}
+              profile={activityOwnerProfile}
+              commentId={idOfUpdatingComment}
+              commentToUpdate={commentToUpdate}
+            />
+          </View>
+        </KeyboardStickyView>
+      </BottomSheetFooter>
+    ),
+    [activityOwnerProfile, bottomInset, colors.outlineVariant, colors.surface, commentToUpdate, idOfUpdatingComment],
+  );
 
   return (
     <BottomSheetModal
       ref={commentsModalRef}
-      index={0}
+      index={1}
       snapPoints={['50%', '100%']}
       enableDynamicSizing={false}
       topInset={topInset}
       style={{ maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}
       backdropComponent={renderBackdrop}
+      onDismiss={clearCommentEditing}
       handleStyle={{ backgroundColor: colors.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
       backgroundStyle={{ backgroundColor: colors.surface }}
       handleIndicatorStyle={{ backgroundColor: colors.primary }}
       keyboardBlurBehavior="restore"
-      keyboardBehavior="interactive"
-      android_keyboardInputMode="adjustPan">
+      keyboardBehavior="extend"
+      android_keyboardInputMode="adjustResize"
+      footerComponent={renderFooter}>
       <View style={styles.commentsContainer}>
-        <Comments
-          commentsModalRef={commentsModalRef}
-          onViewStateChange={handleCommentsViewStateChange}
-          isBottomSheet
-          contentContainerStyle={styles.commentsContent}
-        />
-        {!isCommentsResolved && commentsViewState === 'empty' && !isShowingTextInput && (
-          <View pointerEvents="none" style={styles.emptyStateOverlay}>
-            <CommentsEmptyList />
-          </View>
-        )}
-        <View
-          testID="comments-composer"
-          style={[
-            styles.composer,
-            {
-              backgroundColor: colors.surface,
-              borderTopColor: colors.outlineVariant,
-              paddingBottom: bottomInset + 8,
-            },
-          ]}>
-          {isComposerOpen ? <CommentInput profile={activityOwnerProfile} commentId="" /> : <CommentAddBtn />}
-        </View>
+        <Comments commentsModalRef={commentsModalRef} />
       </View>
     </BottomSheetModal>
   );
@@ -81,14 +78,11 @@ const styles = StyleSheet.create({
   commentsContainer: {
     flex: 1,
   },
-  emptyStateOverlay: {
-    ...StyleSheet.absoluteFill,
-    justifyContent: 'center',
-  },
-  commentsContent: {
-    paddingBottom: 8,
-  },
   composer: {
     borderTopWidth: 1,
+    paddingBottom: 8,
+  },
+  stickyComposer: {
+    width: '100%',
   },
 });

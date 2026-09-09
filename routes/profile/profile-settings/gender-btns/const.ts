@@ -10,11 +10,9 @@ export const GENDER_BTNS = {
   [LANGUAGES.english]: {
     maleLabel: 'Male',
     femaleLabel: 'Female',
-    packmanLabel: 'Packman',
   },
   [LANGUAGES.russian]: {
     maleLabel: 'Мужчина',
     femaleLabel: 'Женщина',
-    packmanLabel: 'Ультрамарафонец',
   },
 } as const;

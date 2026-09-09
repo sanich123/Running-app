@@ -16,9 +16,8 @@ export async function getMigrationArchiveAndSendToServer({
   setIsSendingArchive,
   setIsWaitingForServer,
   setIsDeletingCacheFolder,
-  setIsSuccess,
   setIsError,
-  onArchiveUploadSuccess,
+  onArchiveUploadAccepted,
   userId,
   accessToken,
 }: GetMigrationArchiveAndSendToServerProps) {
@@ -32,7 +31,7 @@ export async function getMigrationArchiveAndSendToServer({
           throw new Error('Выбранный файл недоступен в браузере');
         }
 
-        await sendArchiveToServerWeb({
+        const job = await sendArchiveToServerWeb({
           archiveFile: selectedAsset.file,
           setIsSendingArchive,
           setIsWaitingForServer,
@@ -40,8 +39,7 @@ export async function getMigrationArchiveAndSendToServer({
           userId,
           accessToken,
         });
-        onArchiveUploadSuccess();
-        setIsSuccess(true);
+        onArchiveUploadAccepted(job);
         setIsDisabled(false);
         return;
       }
@@ -66,7 +64,7 @@ export async function getMigrationArchiveAndSendToServer({
           throw new Error('Не удалось создать архив');
         }
         if (new File(toFileUri(pathToArchive)).exists) {
-          await sendArchiveToServer({
+          const job = await sendArchiveToServer({
             setIsSendingArchive,
             setIsWaitingForServer,
             setIsError,
@@ -74,9 +72,8 @@ export async function getMigrationArchiveAndSendToServer({
             userId,
             accessToken,
           });
-          onArchiveUploadSuccess();
+          onArchiveUploadAccepted(job);
           await removeCacheFolder({ setIsDeletingCacheFolder, setIsError });
-          setIsSuccess(true);
           setIsDisabled(false);
         } else {
           throw new Error('Нет файла для отправки');
@@ -101,7 +98,6 @@ export async function getMigrationArchiveAndSendToServer({
     setIsSendingArchive(false);
     setIsWaitingForServer(false);
     setIsDeletingCacheFolder(false);
-    setTimeout(() => setIsSuccess(false), 2000);
     setTimeout(() => setIsError(''), 2000);
   }
 }

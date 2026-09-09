@@ -96,15 +96,6 @@ jest.mock('mapbox-gl', () => ({
   NavigationControl: jest.fn(),
 }));
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
-jest.mock('@A/supabase/supabase-init', () => ({
-  supabase: {
-    auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-      setSession: jest.fn(),
-    },
-  },
-}));
 jest.mock('expo-image', () => {
   const { Image } = jest.requireActual('react-native');
   return { __esModule: true, default: Image, Image };
@@ -189,6 +180,7 @@ jest.mock('react-native-keyboard-controller', () => {
   return {
     KeyboardAwareScrollView: View,
     KeyboardAvoidingView: View,
+    KeyboardStickyView: View,
   };
 });
 beforeAll(() => {

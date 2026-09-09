@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react-native';
+import { act, screen, userEvent } from '@testing-library/react-native';
 import { Accelerometer } from 'expo-sensors';
 import { LANGUAGES } from '@const/enums';
 import { resetLocationSlice } from '@R/slices/location/location';
@@ -59,5 +59,9 @@ describe('Activity-motion-status', () => {
 
     expect(screen.getByText(ACTIVITY_MOTION_STATUS.russian.title)).toBeOnTheScreen();
     expect(screen.getByText(ACTIVITY_MOTION_STATUS.russian.basedOn('акселерометра'))).toBeOnTheScreen();
+
+    const user = userEvent.setup();
+    await user.press(screen.getByTestId('dismiss-no-movement'));
+    expect(screen.queryByTestId('dismiss-no-movement')).not.toBeOnTheScreen();
   });
 });

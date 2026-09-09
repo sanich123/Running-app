@@ -9,8 +9,8 @@ export const renderUserItem = ({ item }: { item: any }) =>
     surname: item?.surname,
     profilePhoto: item?.profilePhoto,
     placeholder: item?.profilePhotoBlurhash,
-    user_id: item?.user_id,
+    userId: item?.userId,
   });
 
-export const userKeyExtractor = (item: any) => item.user_id;
+export const userKeyExtractor = (item: any) => item.userId;
 export const renderDivider = () => createElement(Divider);

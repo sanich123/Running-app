@@ -48,6 +48,7 @@ export default function AppShell() {
               <Stack
                 screenOptions={{
                   gestureEnabled: false,
+                  contentStyle: { backgroundColor: appColors.background },
                   headerTitle:
                     Platform.OS === 'web' ? ({ children }) => <FeedHeaderTitle>{children}</FeedHeaderTitle> : undefined,
                   headerStyle: { backgroundColor: appColors.surface },

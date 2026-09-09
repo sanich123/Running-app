@@ -1,5 +1,5 @@
 import { fireEvent, screen } from '@testing-library/react-native';
-import { http } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setUserId } from '@R/slices/auth/auth';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
@@ -38,6 +38,20 @@ describe('Activities', () => {
     expect(await screen.findByText(MOCK_SERVER_ACTIVITY.title)).toBeOnTheScreen();
     fireEvent.press(screen.getByTestId('activities-next-page'));
     expect(mockNextPage).toHaveBeenCalledTimes(1);
+  });
+
+  it('requests twenty activities per page', async () => {
+    let requestedTake: string | null = null;
+    server.use(
+      http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}`, ({ request }) => {
+        requestedTake = new URL(request.url).searchParams.get('take');
+        return HttpResponse.json({ activities: [MOCK_SERVER_ACTIVITY], hasMore: false, nextCursor: null });
+      }),
+    );
+
+    await renderWithProviders(<Activities />);
+    expect(await screen.findByText(MOCK_SERVER_ACTIVITY.title)).toBeOnTheScreen();
+    expect(requestedTake).toBe('20');
   });
 
   it('renders error state', async () => {

@@ -1,5 +1,27 @@
 import type { ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
 
+export const ACTIVITY_MIGRATION_STATUS = {
+  queued: 'queued',
+  processing: 'processing',
+  completed: 'completed',
+  failed: 'failed',
+} as const;
+
+export type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof typeof ACTIVITY_MIGRATION_STATUS];
+
+export interface ActivityMigrationJobResponse {
+  jobId: string;
+  status: ActivityMigrationStatus;
+  totalActivities: number;
+  processedActivities: number;
+  importedActivities: number;
+  skippedActivities: number;
+  errorMessage: string | null;
+  createdAt: string;
+  startedAt: string | null;
+  finishedAt: string | null;
+}
+
 type ActivityLocationResponse = ActivityLocation;
 
 export interface ActivityPhotoResponse {
@@ -14,7 +36,7 @@ interface ActivityProfileResponse {
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
   emailNotifications?: boolean | null;
-  users?: { email?: string | null } | null;
+  user?: { email?: string | null } | null;
 }
 
 interface ActivityCountResponse {
@@ -25,7 +47,7 @@ type ActivityKilometreSplitResponse = ActivityKilometreSplit;
 
 export interface ActivityResponse {
   id: string;
-  user_id: string;
+  userId: string;
   profileId?: string;
   date: string;
   createdAt?: string;
@@ -50,9 +72,26 @@ export interface ActivityResponse {
   _count: ActivityCountResponse;
 }
 
+export type ActivityListItemResponse = Pick<
+  ActivityResponse,
+  | 'id'
+  | 'userId'
+  | 'date'
+  | 'title'
+  | 'sport'
+  | 'photoVideoUrls'
+  | 'mapPhotoUrl'
+  | 'mapPhotoUrlBlurhash'
+  | 'duration'
+  | 'distance'
+  | 'steps'
+  | 'profile'
+  | '_count'
+>;
+
 export interface ActivityMutationResponse {
   id: string;
-  user_id: string;
+  userId: string;
   profileId: string;
   date: string;
   createdAt: string;
@@ -76,13 +115,17 @@ export interface ActivityMutationResponse {
 }
 
 export interface ActivitiesResponse {
-  activities: ActivityResponse[];
-  isLastPage: boolean;
+  activities: ActivityListItemResponse[];
+  hasMore: boolean;
+  nextCursor: string | null;
+  isLastPage?: boolean;
 }
 
 export interface ActivityMediaResponse {
   photos: ActivityPhotoResponse[];
-  isLastPage: boolean;
+  hasMore: boolean;
+  nextCursor: string | null;
+  isLastPage?: boolean;
 }
 
 export interface ActivityLocationsResponse {
@@ -110,7 +153,7 @@ interface CommentProfileResponse {
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
   emailNotifications?: boolean | null;
-  users?: { email?: string | null } | null;
+  user?: { email?: string | null } | null;
 }
 
 export interface CommentResponse {
@@ -121,7 +164,7 @@ export interface CommentResponse {
   id: string;
   date: string;
   profile: CommentProfileResponse;
-  commentLike: CommentLikeSummaryResponse[];
+  commentLike?: CommentLikeSummaryResponse[];
 }
 
 export interface CommentsResponse {
@@ -161,7 +204,7 @@ interface FriendProfileResponse {
 export interface FollowingResponse {
   createdAt: string;
   updatedAt: string;
-  user_id: string;
+  userId: string;
   friendId: string;
   profileId: string;
   id: string;
@@ -171,18 +214,11 @@ export interface FollowingResponse {
 export interface FollowerResponse {
   createdAt: string;
   updatedAt: string;
-  user_id: string;
+  userId: string;
   friendId: string;
   profileId: string;
   id: string;
-  users?: { profile?: FriendProfileResponse | null } | null;
-}
-
-export interface PaginationResponse<T> {
-  totalItems: number;
-  page: number;
-  size: number;
-  items: T[];
+  user: { profile?: FriendProfileResponse | null };
 }
 
 export interface StatisticMetricResponse {

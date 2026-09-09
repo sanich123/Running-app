@@ -9,9 +9,9 @@ export const MOCK_SERVER_IDS = {
 } as const;
 
 export const MOCK_SERVER_PROFILE = {
-  created_at: '2026-08-05T13:08:20.371Z',
+  createdAt: '2026-08-05T13:08:20.371Z',
   name: 'Eliud',
-  user_id: MOCK_SERVER_IDS.userId,
+  userId: MOCK_SERVER_IDS.userId,
   bio: 'runich-mock-v5',
   birthday: '1985-01-01T00:00:00.000Z',
   city: 'Kaptagat',
@@ -34,7 +34,7 @@ export const MOCK_SERVER_ACTIVITY = {
   date: '2026-08-04T13:08:22.785Z',
   sport: 'walk',
   id: MOCK_SERVER_IDS.activityId,
-  user_id: MOCK_SERVER_IDS.userId,
+  userId: MOCK_SERVER_IDS.userId,
   photoVideoUrls: [
     {
       url: 'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg',
@@ -54,13 +54,15 @@ export const MOCK_SERVER_ACTIVITY = {
     profilePhoto: MOCK_SERVER_PROFILE.profilePhoto,
     profilePhotoBlurhash: null,
     emailNotifications: false,
-    users: { email: MOCK_SERVER_PROFILE.email },
+    user: { email: MOCK_SERVER_PROFILE.email },
   },
   _count: { comments: 3 },
 } as const;
 
 export const MOCK_SERVER_ACTIVITIES = {
   activities: [MOCK_SERVER_ACTIVITY],
+  hasMore: false,
+  nextCursor: null,
   isLastPage: true,
 } as const;
 
@@ -107,7 +109,7 @@ export const MOCK_SERVER_LIKES = [
       name: 'Haile',
       surname: 'Gebrselassie',
       city: 'Addis Ababa',
-      user_id: 'e49287d2-ec4e-4164-8dc2-02165218f849',
+      userId: 'e49287d2-ec4e-4164-8dc2-02165218f849',
       profilePhoto: 'https://images.pexels.com/photos/3621185/pexels-photo-3621185.jpeg?w=256',
       profilePhotoBlurhash: null,
     },
@@ -129,7 +131,7 @@ export const MOCK_SERVER_COMMENTS = {
         profilePhoto: 'https://images.pexels.com/photos/3621185/pexels-photo-3621185.jpeg?w=256',
         profilePhotoBlurhash: null,
         emailNotifications: false,
-        users: { email: 'runich.mock.runner.04@runich.app' },
+        user: { email: 'runich.mock.runner.04@runich.app' },
       },
       commentLike: [{ authorId: 'e49287d2-ec4e-4164-8dc2-02165218f849', id: '3de0b97b-1803-4f98-b6db-dc183ffff7f7' }],
     },
@@ -144,7 +146,7 @@ export const MOCK_SERVER_FOLLOWINGS = [
   {
     createdAt: '2026-08-05T13:15:28.217Z',
     updatedAt: '2026-08-05T13:15:28.217Z',
-    user_id: MOCK_SERVER_IDS.userId,
+    userId: MOCK_SERVER_IDS.userId,
     friendId: '839cf445-c240-4a39-8f45-9d98bd8b3830',
     profileId: 'e079ca3e-3537-4d0c-8733-1622997d50ab',
     id: 'a0f3c9f0-f528-4891-924d-aec7b71888ba',
@@ -160,21 +162,27 @@ export const MOCK_SERVER_FOLLOWINGS = [
 
 export const MOCK_SERVER_FOLLOWERS = [
   {
-    user_id: '839cf445-c240-4a39-8f45-9d98bd8b3830',
-    users: { profile: MOCK_SERVER_FOLLOWINGS[0].profile },
+    createdAt: '2026-08-05T13:15:28.217Z',
+    userId: '839cf445-c240-4a39-8f45-9d98bd8b3830',
+    friendId: MOCK_SERVER_IDS.userId,
+    profileId: 'e079ca3e-3537-4d0c-8733-1622997d50ab',
+    id: 'f4a4f6dc-40a6-4b04-a4fd-b2d71c40f2a8',
+    updatedAt: '2026-08-05T13:15:28.217Z',
+    user: { profile: MOCK_SERVER_FOLLOWINGS[0].profile },
   },
 ] as const;
 
 export const MOCK_SERVER_PHOTOS = {
   photos: MOCK_SERVER_ACTIVITY.photoVideoUrls,
+  hasMore: false,
+  nextCursor: null,
   isLastPage: true,
 } as const;
 
 export const MOCK_SERVER_USERS = {
-  totalItems: 1,
   items: [MOCK_SERVER_PROFILE],
-  page: 0,
-  size: 10,
+  hasMore: false,
+  nextCursor: null,
 } as const;
 
 export const MOCK_SERVER_STATISTICS = {
