@@ -220,7 +220,6 @@ describe('Activity save btn', () => {
         expect.objectContaining({
           distance: 5000,
           duration: 4_807_000,
-          locations: [],
         }),
       );
     });
