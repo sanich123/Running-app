@@ -7,12 +7,42 @@ import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@
 import { useUpdateSessionLocationMutation } from '@R/services/authentication/authentication';
 import { queueUnsyncedActivity, resetActivityDraft, setSavingDisabled } from '@R/slices/activity/activity';
 import { resetLocationsFromBackground } from '@R/slices/location/location';
+import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useGlobalManualActivityParams } from '@Routes/save-activity-page/manual-activity-params';
 import { errorToast } from '@S/error-toast/error-toast';
+import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
+import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
 import { getMapBoxImage, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
 import type { ActivityToSend, ActivityUpdateRequest } from '@R/services/activity/types';
+import type { FinishedActivityDraft } from '@R/slices/activity/types';
+
+type ActivityDetails = Pick<
+  ActivityToSend['body'],
+  'title' | 'description' | 'sport' | 'emotion' | 'isPublic' | 'photoVideoUrls'
+>;
+
+function createTrackedActivityBody(
+  finishedActivity: FinishedActivityDraft,
+  activityDetails: ActivityDetails,
+): ActivityToSend['body'] {
+  const { routeJournalId, ...finishedActivityMetrics } = finishedActivity;
+  const routeLocations = routeJournalId ? (readLocationJournal(routeJournalId)?.locations ?? []) : [];
+  const locations = getReducedLocations(routeLocations, MAX_SAVED_ROUTE_LOCATIONS);
+
+  if (!locations.length) {
+    throw new Error('Маршрут тренировки не найден');
+  }
+
+  return {
+    ...finishedActivityMetrics,
+    locations,
+    duration: Math.round(finishedActivity.duration),
+    ...activityDetails,
+    mapPhotoUrl: getMapBoxImage(routeLocations),
+  };
+}
 
 export default function SaveBtn() {
   const dispatch = useAppDispatch();
@@ -100,13 +130,7 @@ export default function SaveBtn() {
                       speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
                       locations: [],
                     }
-                  : {
-                      ...finishedActivity,
-                      locations: getReducedLocations(finishedActivity.locations),
-                      duration: Math.round(finishedActivity.duration),
-                      ...activityDetails,
-                      mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
-                    },
+                  : createTrackedActivityBody(finishedActivity, activityDetails),
                 id: activityOwnerId,
               };
               const lastLocation = savedActivity.body.locations.at(-1);
@@ -121,10 +145,28 @@ export default function SaveBtn() {
               }
               await sendActivity(savedActivity)
                 .unwrap()
-                .then(() => (isManualAdding ? back() : replace(ROUTES.root)))
+                .then(() => {
+                  if (!isManualAdding && finishedActivity.routeJournalId) {
+                    removeLocationJournal(finishedActivity.routeJournalId);
+                    dispatch(clearTrackingRecovery());
+                  }
+                  return isManualAdding ? back() : replace(ROUTES.root);
+                })
                 .catch((error) => {
                   if (!isEditingActivity) {
-                    dispatch(queueUnsyncedActivity(savedActivity));
+                    const { locations: _locations, ...pendingBody } = savedActivity.body;
+                    void _locations;
+                    dispatch(
+                      queueUnsyncedActivity({
+                        id: savedActivity.id,
+                        routeJournalId: isManualAdding ? null : finishedActivity.routeJournalId,
+                        body: pendingBody,
+                      }),
+                    );
+                    if (finishedActivity.routeJournalId) {
+                      deactivateLocationJournal(finishedActivity.routeJournalId);
+                      dispatch(clearTrackingRecovery());
+                    }
                     replace(ROUTES.root);
                   }
                   errorToast('', error);

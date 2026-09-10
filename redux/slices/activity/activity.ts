@@ -1,7 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { ACTIVITY_DRAFT_INITIAL_STATE, ACTIVITY_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from './const';
-import type { ActivityPhoto, ActivityState } from './types';
-import type { ActivityToSend, FinishedActivity } from '@R/services/activity/types';
+import type { ActivityPhoto, ActivityState, FinishedActivityDraft, PendingActivity } from './types';
 
 const activity = createSlice({
   name: 'activity',
@@ -10,7 +9,7 @@ const activity = createSlice({
     setSavingDisabled: (state, action: PayloadAction<boolean>) => {
       state.isSavingDisabled = action.payload;
     },
-    setFinishedActivity: (state, action: PayloadAction<FinishedActivity>) => {
+    setFinishedActivity: (state, action: PayloadAction<FinishedActivityDraft>) => {
       state.finishedActivity = action.payload;
     },
     resetFinishedActivity: (state) => {
@@ -32,7 +31,7 @@ const activity = createSlice({
       state.sport = ACTIVITY_DRAFT_INITIAL_STATE.sport;
       state.photoVideoUrls = [];
     },
-    queueUnsyncedActivity: (state, action: PayloadAction<ActivityToSend>) => {
+    queueUnsyncedActivity: (state, action: PayloadAction<PendingActivity>) => {
       state.unsyncedActivities.push(action.payload);
     },
     removeFirstUnsyncedActivity: (state) => {

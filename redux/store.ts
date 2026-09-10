@@ -14,12 +14,13 @@ import mainFeed from './slices/main-feed/main-feed';
 import network from './slices/network/network';
 import profile from './slices/profile/profile';
 import settings from './slices/settings/settings';
+import trackingRecovery from './slices/tracking-recovery/tracking-recovery';
 import type { Action, Reducer } from '@reduxjs/toolkit';
 
 const persistConfig = {
   key: 'root',
   storage: appStorage,
-  whitelist: ['settings', 'activity', 'location', 'auth'],
+  whitelist: ['settings', 'activity', 'trackingRecovery', 'auth'],
 };
 
 const appReducer = combineReducers({
@@ -28,6 +29,7 @@ const appReducer = combineReducers({
   location,
   profile,
   activity,
+  trackingRecovery,
   mainFeed,
   auth,
   logining,

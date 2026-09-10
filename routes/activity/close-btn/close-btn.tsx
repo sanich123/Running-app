@@ -11,11 +11,13 @@ import {
   setEmptyLastArrayWhenPaused,
   stopDurationTimer,
 } from '@R/slices/location/location';
+import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
+import { getActiveLocationJournalId, removeLocationJournal } from '@U/location/location-journal';
 import { resetPedometerActivity } from '@U/pedometer/pedometer';
 import { ACTIVITY_CLOSE_BTN } from './const';
 
@@ -29,6 +31,9 @@ export default function CloseBtn() {
   const [isStoppingTracking, setIsStoppingTracking] = useState(false);
 
   function closeActivity() {
+    const journalId = getActiveLocationJournalId();
+    if (journalId) removeLocationJournal(journalId);
+    dispatch(clearTrackingRecovery());
     dispatch(setActivityStatus(STATUSES.initial));
     dispatch(resetLastKm());
     dispatch(resetLocationsFromBackground());

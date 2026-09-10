@@ -10,11 +10,13 @@ import {
   startDurationTimer,
   stopDurationTimer,
 } from '@R/slices/location/location';
+import { setTrackingRecoveryStatus } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
-import { getElevationGainByKilometres, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getActiveLocationJournalId } from '@U/location/location-journal';
+import { getElevationGainByKilometres, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { pausePedometerActivity, resumePedometerActivity } from '@U/pedometer/pedometer';
 
 export default function PauseBtn() {
@@ -43,6 +45,7 @@ export default function PauseBtn() {
         await startLocationTracking();
         await resumePedometerActivity();
         dispatch(startDurationTimer(Date.now()));
+        dispatch(setTrackingRecoveryStatus(STATUSES.continued));
         dispatch(setActivityStatus(STATUSES.continued));
       } else {
         await stopLocationTracking();
@@ -55,7 +58,7 @@ export default function PauseBtn() {
           setFinishedActivity({
             duration: durationForSave,
             distance,
-            locations: getReducedLocations(locations),
+            routeJournalId: getActiveLocationJournalId(),
             kilometresSplit: kilometresSplit.map((split, index) => ({
               ...split,
               lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
@@ -63,6 +66,7 @@ export default function PauseBtn() {
             speed: getSpeedInMinsInKm(distance, durationForSave).paceAsNumber,
           }),
         );
+        dispatch(setTrackingRecoveryStatus(STATUSES.paused));
         dispatch(setActivityStatus(STATUSES.paused));
         dispatch(setEmptyLastArrayWhenPaused());
       }

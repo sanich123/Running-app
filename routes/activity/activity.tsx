@@ -7,9 +7,12 @@ import {
   setActivityStatus,
   setEmptyLastArrayWhenPaused,
   setIsAppShuted,
+  restoreLocationsFromJournal,
+  restoreTrackingMetrics,
   setSteps,
   stopDurationTimer,
 } from '@R/slices/location/location';
+import { clearTrackingRecovery, setTrackingRecoveryStatus } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import IconChooseSport from '@Routes/activity/icon-choose-sport/icon-choose-sport';
 import Map from '@Routes/activity/map/map';
@@ -21,19 +24,50 @@ import { errorToast } from '@S/error-toast/error-toast';
 import useActivityDurationTimer from '@U/hooks/use-activity-duration-timer';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
+import { markLocationJournalPause, readLocationJournal } from '@U/location/location-journal';
 import { pausePedometerActivity, subscribePedometerSteps } from '@U/pedometer/pedometer';
 
 export default function Activity() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
+  const trackingRecovery = useAppSelector(({ trackingRecovery }) => trackingRecovery);
+  const initialRecovery = useRef(trackingRecovery);
+  const hydratedJournalId = useRef<string | null>(null);
   const [isRecoveringTracking, setIsRecoveringTracking] = useState(
-    () => activityStatus === STATUSES.started || activityStatus === STATUSES.continued,
+    () => trackingRecovery.status === STATUSES.started || trackingRecovery.status === STATUSES.continued,
   );
   const didPauseRecoveredTracking = useRef(false);
   const [isLocationReadyForRecording, setIsLocationReadyForRecording] = useState(false);
   const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
   const { isLoading: isLocationLoading } = useGetCurrentLocation(isLocationReadyForRecording);
+
+  useEffect(() => {
+    const recovery = initialRecovery.current;
+    if (
+      !recovery.journalId ||
+      recovery.status === STATUSES.initial ||
+      hydratedJournalId.current === recovery.journalId
+    ) {
+      return;
+    }
+
+    const snapshot = readLocationJournal(recovery.journalId);
+    if (!snapshot) {
+      dispatch(clearTrackingRecovery());
+      return;
+    }
+
+    hydratedJournalId.current = recovery.journalId;
+    dispatch(restoreTrackingMetrics(recovery.metrics));
+    dispatch(
+      restoreLocationsFromJournal({
+        locationsFromBackground: snapshot.locations,
+        locationsWithPauses: snapshot.segments,
+      }),
+    );
+    dispatch(setActivityStatus(recovery.status));
+  }, [dispatch]);
 
   useEffect(() => subscribePedometerSteps((steps) => dispatch(setSteps(steps))), [dispatch]);
 
@@ -43,11 +77,15 @@ export default function Activity() {
     }
 
     didPauseRecoveredTracking.current = true;
+    const recoveryJournalId = initialRecovery.current.journalId;
+    if (!recoveryJournalId) return;
     stopLocationTracking()
       .then(async () => {
         await pausePedometerActivity();
         dispatch(stopDurationTimer());
         setIsRecoveringTracking(false);
+        markLocationJournalPause(recoveryJournalId);
+        dispatch(setTrackingRecoveryStatus(STATUSES.paused));
         dispatch(setActivityStatus(STATUSES.paused));
         dispatch(setEmptyLastArrayWhenPaused());
         dispatch(setIsAppShuted(true));

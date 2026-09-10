@@ -1,7 +1,6 @@
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
 import { MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
-import { MOCK_LOCATIONS } from '@T/mocks/mock-locations';
 import { MOCK_UNSYNCED_ACTIVITY } from '@T/mocks/mock-unsynced-activity';
 import reducer, {
   addPhotoUrl,
@@ -15,11 +14,11 @@ import { ACTIVITY_INITIAL_STATE } from './const';
 
 describe('Activity slice', () => {
   const MOCK_FINISHED_ACTIVITY = {
-    locations: MOCK_LOCATIONS,
     duration: MOCK_DURATION,
     speed: MOCK_SPEED,
     distance: MOCK_DISTANCE,
     kilometresSplit: MOCK_ACTIVITY.kilometresSplit,
+    routeJournalId: null,
   };
   it('should handle initial state properly', () => {
     expect(reducer(undefined, { type: '' })).toEqual(ACTIVITY_INITIAL_STATE);

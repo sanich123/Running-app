@@ -5,8 +5,14 @@ import {
   stopLocationUpdatesAsync,
 } from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
+import { setTrackingRecoveryProgress } from '@R/slices/tracking-recovery/tracking-recovery';
 import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
+import {
+  appendLocationToJournal,
+  getLocationJournalProgress,
+  getActiveLocationJournalId,
+} from '@U/location/location-journal';
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 import { BACKGROUND_NOTIFICATION, DISTANCE_INTERVAL, LOCATION_TRACKING, TIME_INTERVAL } from '../const';
 import type { TaskManagerLocationEvent } from '../const';
@@ -21,19 +27,19 @@ function isMissingLocationTaskError(error: unknown) {
 
 function processLocation(currentPosition: LocationObject) {
   if (!isTrackingActive) {
-    return;
+    return false;
   }
 
   const lastPosition = store.getState().location.lastPosition;
   if (lastPosition && currentPosition.timestamp <= lastPosition.timestamp) {
-    return;
+    return false;
   }
 
   try {
     const { previousPosition, currentDuration, currentDistance, currentAltitude, currentPace } =
       getMetricsTaskManager(currentPosition);
 
-    saveMetricsToStoreTaskManager(
+    const didSave = saveMetricsToStoreTaskManager(
       currentPosition,
       currentDuration,
       currentPace,
@@ -41,8 +47,39 @@ function processLocation(currentPosition: LocationObject) {
       currentDistance,
       previousPosition,
     );
+    if (!didSave) return false;
+    const journalId = getActiveLocationJournalId();
+    if (!journalId || !appendLocationToJournal(journalId, currentPosition)) return false;
+    const progress = getLocationJournalProgress(journalId);
+    if (progress) {
+      const locationState = store.getState().location;
+      store.dispatch(
+        setTrackingRecoveryProgress({
+          ...progress,
+          metrics: {
+            initialLocation: locationState.initialLocation,
+            lastPosition: locationState.lastPosition,
+            distance: locationState.distance,
+            steps: locationState.steps,
+            duration: locationState.duration,
+            durationAtLastLocation: locationState.durationAtLastLocation,
+            durationTimerBase: locationState.durationTimerBase,
+            durationTimerStartedAt: locationState.durationTimerStartedAt,
+            durationWithPauses: locationState.durationWithPauses,
+            altitude: locationState.altitude,
+            lastKilometerAltitude: locationState.lastKilometerAltitude,
+            lastKilometer: locationState.lastKilometer,
+            lastKilometerDuration: locationState.lastKilometerDuration,
+            currentPace: locationState.currentPace,
+            kilometresSplit: locationState.kilometresSplit,
+          },
+        }),
+      );
+    }
+    return true;
   } catch (error) {
     if (__DEV__) console.error('[tracking]', 'Something went wrong when saving a new location...', error);
+    return false;
   }
 }
 

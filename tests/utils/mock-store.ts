@@ -8,6 +8,7 @@ import mainFeed from '@R/slices/main-feed/main-feed';
 import network from '@R/slices/network/network';
 import profile from '@R/slices/profile/profile';
 import settings from '@R/slices/settings/settings';
+import trackingRecovery from '@R/slices/tracking-recovery/tracking-recovery';
 import { createProfileListenerMiddleware } from '../../redux/middleware/profile-listener';
 import { runichApi } from '../../redux/runich-api/runich-api';
 
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   location,
   profile,
   activity,
+  trackingRecovery,
   mainFeed,
   auth,
   logining,

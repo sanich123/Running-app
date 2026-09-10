@@ -3,6 +3,7 @@ import { LANGUAGES, ROUTES, STATUSES } from '@const/enums';
 import { resetFinishedActivity } from '@R/slices/activity/activity';
 import { setActivityStatus, setDistance, setDuration, setLocationsFromBackground } from '@R/slices/location/location';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
@@ -24,6 +25,7 @@ describe('Activity start btn', () => {
   beforeEach(() => {
     mockStore.dispatch(require('@R/slices/location/location').resetLocationSlice());
     mockStore.dispatch(resetFinishedActivity());
+    mockStore.dispatch(clearTrackingRecovery());
     jest.restoreAllMocks();
   });
 
@@ -114,7 +116,7 @@ describe('Activity start btn', () => {
     expect(mockStore.getState().location.locationsFromBackground).toEqual([]);
     expect(mockStore.getState().location.kilometresSplit).toEqual([]);
     expect(mockStore.getState().activity.finishedActivity.distance).toEqual(0);
-    expect(mockStore.getState().activity.finishedActivity.locations).toEqual([]);
+    expect(mockStore.getState().activity.finishedActivity.routeJournalId).toBeNull();
   });
   it('should correctly renders finish in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

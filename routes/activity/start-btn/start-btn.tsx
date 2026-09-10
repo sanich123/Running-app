@@ -13,13 +13,26 @@ import {
   startDurationTimer,
   stopDurationTimer,
 } from '@R/slices/location/location';
+import {
+  clearTrackingRecovery,
+  setTrackingRecoveryStatus,
+  startTrackingRecovery,
+} from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { getCurrentOrLastKnownPosition } from '@U/get-initial-position';
 import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
-import { getElevationGainByKilometres, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import {
+  appendLocationToJournal,
+  createLocationJournal,
+  getActiveLocationJournalId,
+  markLocationJournalPause,
+  readLocationJournal,
+  removeLocationJournal,
+} from '@U/location/location-journal';
+import { getElevationGainByKilometres, getSpeedInMinsInKm } from '@U/location/location-utils';
 import {
   finishPedometerActivity,
   pausePedometerActivity,
@@ -93,14 +106,20 @@ export default function StartBtn({
     durationForSave: number,
     pedometerData: Awaited<ReturnType<typeof finishPedometerActivity>>,
   ) => {
-    const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
+    const currentJournalId = getActiveLocationJournalId();
+    const journalLocations = currentJournalId ? readLocationJournal(currentJournalId)?.locations : null;
+    const trackedLocations = journalLocations?.length ? journalLocations : locations;
+    if (currentJournalId && !journalLocations?.length) {
+      trackedLocations.forEach((location) => appendLocationToJournal(currentJournalId, location));
+    }
+    const elevationGainByKilometre = getElevationGainByKilometres(trackedLocations, kilometresSplit.length);
     const hasPedometerData = pedometerData.samples.length > 0;
     dispatch(
       setFinishedActivity({
         duration: durationForSave,
         distance,
         ...(hasPedometerData ? { steps: pedometerData.steps } : {}),
-        locations: getReducedLocations(locations),
+        routeJournalId: currentJournalId,
         kilometresSplit: kilometresSplit.map((split, index) => ({
           ...split,
           lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
@@ -117,6 +136,7 @@ export default function StartBtn({
 
     setIsTrackingActionInProgress(true);
     onTrackingActionInProgressChange?.(true);
+    let createdJournalId: string | null = null;
     try {
       if (activityStatus === STATUSES.initial) {
         const initialLocation = await getCurrentOrLastKnownPosition();
@@ -128,8 +148,13 @@ export default function StartBtn({
         // A new recording must never inherit a persisted recording or a
         // location task left alive after an app restart.
         await stopLocationTracking();
+        const oldJournalId = getActiveLocationJournalId();
+        if (oldJournalId) removeLocationJournal(oldJournalId);
+        dispatch(clearTrackingRecovery());
         dispatch(resetLocationsFromBackground());
         dispatch(resetFinishedActivity());
+        createdJournalId = createLocationJournal();
+        dispatch(startTrackingRecovery(createdJournalId));
         await startPedometerActivity();
         await startLocationTracking();
         dispatch(startDurationTimer(Date.now()));
@@ -145,11 +170,15 @@ export default function StartBtn({
       saveCurrentActivity(durationForSave, pedometerData);
 
       if (isRecording) {
+        const currentJournalId = getActiveLocationJournalId();
+        if (currentJournalId) markLocationJournalPause(currentJournalId);
+        dispatch(setTrackingRecoveryStatus(STATUSES.paused));
         dispatch(setActivityStatus(STATUSES.paused));
         dispatch(setEmptyLastArrayWhenPaused());
         return;
       }
 
+      dispatch(setTrackingRecoveryStatus(STATUSES.paused));
       dispatch(setActivityStatus(STATUSES.initial));
       dispatch(resetLocationsFromBackground());
       dispatch(resetActivityDraft());
@@ -166,6 +195,10 @@ export default function StartBtn({
         },
       });
     } catch (error) {
+      if (createdJournalId) {
+        removeLocationJournal(createdJournalId);
+        dispatch(clearTrackingRecovery());
+      }
       resetPedometerActivity();
       errorToast(
         activityStatus === STATUSES.initial
