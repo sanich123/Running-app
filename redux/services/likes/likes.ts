@@ -12,6 +12,10 @@ const likesApi = runichApi.injectEndpoints({
       query: (id: string) => `/${like}/${id}`,
       providesTags: (result, error, arg) => [{ type: Tags.likes, id: arg }],
     }),
+    getLikesLengthByActivityId: builder.query<number, string>({
+      query: (id: string) => `/${like}/${id}/count`,
+      providesTags: (result, error, arg) => [{ type: Tags.likes, id: arg }],
+    }),
     sendLike: builder.mutation<LikeResponse, SendLike>({
       query: ({ activityId }: LikeRequest) => ({
         url: `/${like}`,
@@ -49,4 +53,9 @@ const likesApi = runichApi.injectEndpoints({
   }),
 });
 
-export const { useGetLikesByActivityIdQuery, useSendLikeMutation, useDeleteLikeMutation } = likesApi;
+export const {
+  useGetLikesByActivityIdQuery,
+  useGetLikesLengthByActivityIdQuery,
+  useSendLikeMutation,
+  useDeleteLikeMutation,
+} = likesApi;

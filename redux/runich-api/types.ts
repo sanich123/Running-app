@@ -41,6 +41,7 @@ interface ActivityProfileResponse {
 
 interface ActivityCountResponse {
   comments: number;
+  likes: number;
 }
 
 type ActivityKilometreSplitResponse = ActivityKilometreSplit;

@@ -2,6 +2,7 @@ interface EmailDTO {
   name: string;
   surname: string;
   profilePhoto: string;
+  activityId: string;
   recepientName: string;
   recepientSurname: string;
   recepientEmail: string;

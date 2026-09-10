@@ -69,6 +69,30 @@ export default {
           ],
           category: ['BROWSABLE', 'DEFAULT'],
         },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'https',
+              host: 'runich.netlify.app',
+              pathPrefix: '/activity',
+            },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'https',
+              host: 'stage--runich.netlify.app',
+              pathPrefix: '/activity',
+            },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
       ],
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',

@@ -78,6 +78,7 @@ export interface ActivityCardProps {
   kilometresSplit?: ActivityKilometreSplit[] | null;
   profile: ProfileType;
   commentsLength: number;
+  likesLength?: number;
 }
 
 export interface PhotoVideoType {
@@ -92,6 +93,7 @@ export interface CardBtnsProps {
   cardRef: MutableRefObject<View | null>;
   isShowDeleteBtn: boolean;
   commentsLength: number;
+  likesLength?: number;
   profile: ProfileType;
   mapPhotoUrl?: string | null;
 }
@@ -127,11 +129,13 @@ interface Likes {
 export interface LikeBtnProps {
   activityId: string;
   profile: ProfileType;
+  likesLength?: number;
   mapPhotoUrl?: string | null;
 }
 
 export interface NumberOfLikesProps {
   likes: Likes[];
+  likesLength?: number;
   error?: FetchBaseQueryError | SerializedError;
 }
 
@@ -151,6 +155,7 @@ export interface MetricsProps {
 export interface LikesProps {
   activityId: string;
   size: LikesSize;
+  likesLength?: number;
 }
 
 type PhotoVideoUrls = PhotoVideoType[];

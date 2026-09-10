@@ -2,8 +2,14 @@ import { useCallback, useContext, useEffect, memo, useState } from 'react';
 import { Animated } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
-import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/services/likes/likes';
-import { useAppSelector } from '@R/typed-hooks';
+import {
+  useDeleteLikeMutation,
+  useGetLikesByActivityIdQuery,
+  useGetLikesLengthByActivityIdQuery,
+  useSendLikeMutation,
+} from '@R/services/likes/likes';
+import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import {
@@ -15,11 +21,13 @@ import {
 import { LIKE_BTN } from '../likes/const';
 import type { LikeBtnProps } from '../types';
 
-export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeBtnProps) {
+export default memo(function LikeBtn({ activityId, likesLength, profile, mapPhotoUrl }: LikeBtnProps) {
+  const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
   const { language } = useAppSelector(({ settings }) => settings);
+  const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
@@ -30,6 +38,10 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
     isLoading: isLikesLoading,
   } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
   const likesList = likes ?? [];
+  const isNeedToGetUpdatedLikes = activityIdWhichLikesToUpdate === activityId;
+  const { isError: isErrorLoadingUpdatedLikes } = useGetLikesLengthByActivityIdQuery(activityId, {
+    skip: !isNeedToGetUpdatedLikes || likesLength === undefined,
+  });
   const [sendEmailNotification] = useSendEmailAfterSendingLikeMutation();
   const [sendLike, { isSuccess: isSuccessSending }] = useSendLikeMutation();
 
@@ -67,9 +79,20 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
         recepientSurname: profile.surname ?? '',
         recepientEmail: recipientEmail,
         mapPhotoUrl: mapPhotoUrl || '',
+        activityId,
       });
     }
-  }, [isSuccessSending, mapPhotoUrl, name, profile, profilePhoto, recipientEmail, sendEmailNotification, surname]);
+  }, [
+    activityId,
+    isSuccessSending,
+    mapPhotoUrl,
+    name,
+    profile,
+    profilePhoto,
+    recipientEmail,
+    sendEmailNotification,
+    surname,
+  ]);
 
   return (
     <Animated.View style={{ transform: [{ scale: likeScale }] }}>
@@ -89,12 +112,13 @@ export default memo(function LikeBtn({ activityId, profile, mapPhotoUrl }: LikeB
               } else {
                 await sendLike({ activityId, authorId: userId, profilePhoto: profilePhoto ?? '' }).unwrap();
               }
+              dispatch(setActivityIdWhichLikesToUpdate(activityId));
             } catch (error) {
               errorToast(LIKE_BTN[language].errorAction(isLikedByYou.length ? 'delete' : 'send'), error);
             }
           }
         }}
-        disabled={isLoading || isDisabled || isError || isLikesLoading}
+        disabled={isLoading || isDisabled || isError || isLikesLoading || isErrorLoadingUpdatedLikes}
       />
     </Animated.View>
   );

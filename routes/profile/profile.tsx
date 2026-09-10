@@ -1,6 +1,7 @@
-import { Platform, ScrollView, useWindowDimensions, View, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { Modal, Platform, Pressable, ScrollView, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { Text, useTheme } from 'react-native-paper';
+import { IconButton, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useGetAllActivityPhotosByUserIdInfiniteQuery } from '@R/services/activity/activity';
@@ -8,6 +9,7 @@ import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import ProfileMediaPhotos from '@Routes/profile/media-photos/media-photos';
 import AvatarShowable from '@S/avatar/showable/showable';
+import CustomImage from '@S/custom-image/custom-image';
 import ErrorComponent from '@S/error-component/error-component';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
 import ProfileSkeleton from './profile-skeleton/profile-skeleton';
@@ -20,6 +22,7 @@ export default function ProfilePage() {
   const { colors } = useTheme();
   const { id: whosProfileViewing } = useLocalSearchParams();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const [isProfilePhotoVisible, setIsProfilePhotoVisible] = useState(false);
   const whosProfile = whosProfileViewing ? whosProfileViewing : userId;
 
   const {
@@ -61,9 +64,14 @@ export default function ProfilePage() {
             ) : null}
 
             <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
-              <View style={[styles.avatarRing, { borderColor: colors.primary }]}>
+              <TouchableRipple
+                testID="profile-avatar-open-button"
+                borderless
+                disabled={!profile?.profilePhoto}
+                onPress={() => setIsProfilePhotoVisible(true)}
+                style={[styles.avatarRing, { borderColor: colors.primary }]}>
                 <AvatarShowable size={92} id={`${whosProfile}`} />
-              </View>
+              </TouchableRipple>
               <View style={styles.nicknameWrapper}>
                 <Text variant="titleLarge" style={styles.profileName}>
                   {profile?.name} {profile?.surname}
@@ -90,6 +98,35 @@ export default function ProfilePage() {
           <ErrorComponent error={error} refetch={refetch} />
         ) : null}
       </ScrollView>
+      <Modal
+        visible={isProfilePhotoVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsProfilePhotoVisible(false)}>
+        <View style={styles.photoModal}>
+          <Pressable
+            testID="profile-photo-modal-backdrop"
+            style={StyleSheet.absoluteFill}
+            onPress={() => setIsProfilePhotoVisible(false)}
+          />
+          <View style={styles.photoModalContent}>
+            <CustomImage
+              testID="profile-photo-modal-image"
+              source={{ uri: profile?.profilePhoto }}
+              contentFit="contain"
+              style={styles.photoModalImage}
+            />
+            <IconButton
+              testID="profile-photo-modal-close"
+              icon="close"
+              iconColor="#FFFFFF"
+              size={28}
+              onPress={() => setIsProfilePhotoVisible(false)}
+              style={styles.photoModalClose}
+            />
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }
@@ -146,6 +183,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileName: { fontFamily: FONT_FAMILIES.extraBold },
+  photoModal: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.88)',
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  photoModalContent: {
+    alignItems: 'center',
+    height: '80%',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  photoModalImage: {
+    height: '100%',
+    width: '100%',
+  },
+  photoModalClose: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
   statistics: {
     display: 'flex',
     borderWidth: 1,

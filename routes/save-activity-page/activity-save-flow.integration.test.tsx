@@ -342,12 +342,10 @@ describe('activity save flows', () => {
         sport: SPORTS_BTNS_VALUES.bike,
         emotion: EMOTIONS_BTNS_VALUES.good,
         isPublic: false,
-        photoVideoUrls: MOCK_SERVER_ACTIVITY.photoVideoUrls,
         date: '2026-08-18T12:30:00.000Z',
         distance: 12_500,
         duration,
         speed: getSpeedInMinsInKm(12.5, duration).paceAsNumber,
-        locations: [],
       });
       expect(mockBack).toHaveBeenCalledTimes(1);
     });

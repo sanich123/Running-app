@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
@@ -54,6 +54,18 @@ describe('ProfilePage', () => {
     await renderWithProviders(<ProfilePage />);
     expect(await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`)).toBeOnTheScreen();
     expect(screen.getByTestId('profile-statistics')).toBeOnTheScreen();
+  });
+
+  it('opens the profile photo in a modal', async () => {
+    const user = userEvent.setup();
+    await renderWithProviders(<ProfilePage />);
+    const avatarButton = await screen.findByTestId('profile-avatar-open-button');
+
+    await user.press(avatarButton);
+
+    expect(await screen.findByTestId('profile-photo-modal-image')).toBeOnTheScreen();
+    await user.press(screen.getByTestId('profile-photo-modal-close'));
+    expect(screen.queryByTestId('profile-photo-modal-image')).not.toBeOnTheScreen();
   });
 
   it('loads media previews for the viewed profile', async () => {

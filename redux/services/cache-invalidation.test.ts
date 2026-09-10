@@ -8,6 +8,11 @@ interface EndpointBuilder {
   infiniteQuery: (definition: EndpointDefinition) => EndpointDefinition;
 }
 
+interface LikeMutationArgs {
+  activityId: string;
+}
+type InvalidateTags = (result: unknown, error: unknown, args: LikeMutationArgs) => unknown;
+
 describe('RTK Query cache invalidation contracts', () => {
   it('declares invalidation for every cache-mutating endpoint', async () => {
     const endpointDefinitions: Record<string, EndpointDefinition> = {};
@@ -66,5 +71,14 @@ describe('RTK Query cache invalidation contracts', () => {
     for (const endpointName of invalidatingEndpoints) {
       expect(endpointDefinitions[endpointName].invalidatesTags).toBeDefined();
     }
+
+    const sendLikeInvalidatesTags = endpointDefinitions.sendLike.invalidatesTags as InvalidateTags;
+    const deleteLikeInvalidatesTags = endpointDefinitions.deleteLike.invalidatesTags as InvalidateTags;
+    const activityId = 'activity-id';
+
+    expect(sendLikeInvalidatesTags(undefined, undefined, { activityId })).toEqual([{ type: 'likes', id: activityId }]);
+    expect(deleteLikeInvalidatesTags(undefined, undefined, { activityId })).toEqual([
+      { type: 'likes', id: activityId },
+    ]);
   });
 });

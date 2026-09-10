@@ -53,6 +53,7 @@ export default function CardFullView() {
               mapPhotoUrl={activity.mapPhotoUrl}
               profile={activity.profile}
               commentsLength={activity._count.comments}
+              likesLength={activity._count.likes}
             />
             <Metrics />
             {Boolean(activity.kilometresSplit?.length) && (

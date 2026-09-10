@@ -38,6 +38,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     locations,
     profile,
     commentsLength,
+    likesLength,
     isFullView,
   } = rest;
   const pathname = usePathname();
@@ -113,7 +114,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           elevationGain={getActivityCardElevationGain(routeKilometresSplit, routeLocations)}
         />
         <View style={{ height: 40, paddingHorizontal: 8 }}>
-          <Likes activityId={id} size={likesSize} />
+          <Likes activityId={id} size={likesSize} likesLength={likesLength} />
         </View>
         <Card.Actions style={styles.actions}>
           <Btns
@@ -122,6 +123,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             cardRef={cardRef}
             isShowDeleteBtn={isShowDeleteBtn}
             commentsLength={commentsLength}
+            likesLength={likesLength}
             profile={profile}
             mapPhotoUrl={resolvedMapPhotoUrl}
           />

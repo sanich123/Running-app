@@ -14,6 +14,7 @@ export default memo(function CardBtns({
   cardRef,
   isShowDeleteBtn,
   commentsLength,
+  likesLength,
   profile,
   mapPhotoUrl,
 }: CardBtnsProps) {
@@ -25,7 +26,7 @@ export default memo(function CardBtns({
   return (
     <ActivityCardBtnsContext.Provider value={{ isLoading, isDisabled, setIsLoading, setIsDisabled }}>
       <View style={styles.layout}>
-        <LikeBtn activityId={activityId} profile={profile} mapPhotoUrl={mapPhotoUrl} />
+        <LikeBtn activityId={activityId} likesLength={likesLength} profile={profile} mapPhotoUrl={mapPhotoUrl} />
         <CommentBtn
           activityId={activityId}
           commentsLength={commentsLength}

@@ -18,7 +18,7 @@ export function renderCardsFunction({ item }: { item: ActivityListItem }) {
     id,
     userId,
     profile,
-    _count: { comments: commentsLength },
+    _count: { comments: commentsLength, likes: likesLength },
   } = item;
 
   return createElement(Card, {
@@ -38,6 +38,7 @@ export function renderCardsFunction({ item }: { item: ActivityListItem }) {
     steps,
     profile,
     commentsLength,
+    likesLength,
   });
 }
 

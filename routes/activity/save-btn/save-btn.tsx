@@ -12,6 +12,7 @@ import { useGlobalManualActivityParams } from '@Routes/save-activity-page/manual
 import { errorToast } from '@S/error-toast/error-toast';
 import { getMapBoxImage, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
+import type { ActivityToSend, ActivityUpdateRequest } from '@R/services/activity/types';
 
 export default function SaveBtn() {
   const dispatch = useAppDispatch();
@@ -59,19 +60,40 @@ export default function SaveBtn() {
             const minutes = Number(manualMinutes) || 0;
             const seconds = Number(manualSeconds) || 0;
             const duration = getMillisecondsFromHoursMinutesSeconds(hours, minutes, seconds);
-            const activityDetails = {
+            const editableActivityDetails = {
               title,
               description,
               sport,
               emotion,
               isPublic,
-              photoVideoUrls,
             };
-            const savedActivity = {
-              body:
-                isManualAdding || isEditingActivity
+            const activityDetails = { ...editableActivityDetails, photoVideoUrls };
+            dispatch(setSavingDisabled(true));
+            if (isEditingActivity) {
+              const savedActivity: ActivityUpdateRequest = {
+                body: {
+                  ...editableActivityDetails,
+                  date: new Date(manualDate).toISOString(),
+                  distance: distance * 1000,
+                  duration: Math.round(duration),
+                  speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
+                },
+                id: activityOwnerId,
+              };
+              await updateActivity(savedActivity)
+                .unwrap()
+                .then(() => back())
+                .catch((error) => errorToast('', error))
+                .finally(() => {
+                  dispatch(resetActivityDraft());
+                  dispatch(resetLocationsFromBackground());
+                });
+            } else {
+              const savedActivity: ActivityToSend = {
+                body: isManualAdding
                   ? {
-                      ...activityDetails,
+                      ...editableActivityDetails,
+                      photoVideoUrls,
                       date: new Date(manualDate).toISOString(),
                       distance: distance * 1000,
                       duration: Math.round(duration),
@@ -85,27 +107,16 @@ export default function SaveBtn() {
                       ...activityDetails,
                       mapPhotoUrl: `${getMapBoxImage(finishedActivity.locations)}`,
                     },
-              id: activityOwnerId,
-            };
-            const lastLocation = savedActivity.body.locations?.at(-1);
-            if (lastLocation) {
-              void updateSessionLocation({
-                latitude: lastLocation.coords.latitude,
-                longitude: lastLocation.coords.longitude,
-              });
-            }
-            dispatch(setSavingDisabled(true));
-            if (isEditingActivity) {
-              await updateActivity(savedActivity)
-                .unwrap()
-                .then(() => back())
-                .catch((error) => errorToast('', error))
-                .finally(() => {
-                  dispatch(resetActivityDraft());
-                  dispatch(resetLocationsFromBackground());
+                id: activityOwnerId,
+              };
+              const lastLocation = savedActivity.body.locations.at(-1);
+              if (lastLocation) {
+                void updateSessionLocation({
+                  latitude: lastLocation.coords.latitude,
+                  longitude: lastLocation.coords.longitude,
                 });
-            } else {
-              if (!savedActivity?.body?.speed || !savedActivity?.body?.duration) {
+              }
+              if (!savedActivity.body.speed || !savedActivity.body.duration) {
                 return errorToast('Активность не имеет скорости или продолжительности');
               }
               await sendActivity(savedActivity)

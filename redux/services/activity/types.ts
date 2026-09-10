@@ -23,13 +23,16 @@ interface ActivityAdditionalInfo {
 }
 
 export interface ActivityToSend {
-  body: FinishedActivity & ActivityAdditionalInfo;
+  body: FinishedActivity & ActivityAdditionalInfo & { mapPhotoUrl?: string | null };
   id: string;
 }
 
+type ActivityEditableInfo = Pick<ActivityAdditionalInfo, 'title' | 'description' | 'sport' | 'emotion' | 'isPublic'>;
+type ActivityEditableMetrics = Pick<FinishedActivity, 'date' | 'distance' | 'duration' | 'speed'>;
+
 export interface ActivityUpdateRequest {
   id: string;
-  body: Partial<FinishedActivity & ActivityAdditionalInfo>;
+  body: Partial<ActivityEditableInfo & ActivityEditableMetrics>;
 }
 
 export interface GetActivityPhotosRequest {

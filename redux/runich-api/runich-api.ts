@@ -99,10 +99,13 @@ async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQueryApi, 
     }
   }
 
-  if (
-    result.error?.status === 'PARSING_ERROR' &&
-    (result.error.originalStatus === 502 || result.error.originalStatus === 503)
-  ) {
+  const isGatewayFailure =
+    result.error?.status === 502 ||
+    result.error?.status === 503 ||
+    (result.error?.status === 'PARSING_ERROR' &&
+      (result.error.originalStatus === 502 || result.error.originalStatus === 503));
+
+  if (isGatewayFailure) {
     router.replace(`/${ROUTES.maintenance}`);
   }
 
