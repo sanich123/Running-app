@@ -71,7 +71,6 @@ export interface ActivityCardProps {
   photoVideoUrls?: PhotoVideoType[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
-  locations?: ActivityLocation[] | null;
   duration: number;
   distance: number;
   steps?: number | null;

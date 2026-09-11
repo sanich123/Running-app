@@ -43,7 +43,6 @@ const cardProps = {
   userId: MOCK_SERVER_ACTIVITY.userId,
   photoVideoUrls: [...MOCK_SERVER_ACTIVITY.photoVideoUrls],
   mapPhotoUrl: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/360x360@2x?access_token=test',
-  locations: [...MOCK_SERVER_LOCATIONS.locations],
   duration: MOCK_SERVER_ACTIVITY.duration,
   distance: MOCK_SERVER_ACTIVITY.distance,
   profile: MOCK_SERVER_ACTIVITY.profile,

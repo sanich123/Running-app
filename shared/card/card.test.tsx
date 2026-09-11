@@ -1,9 +1,10 @@
-import { screen } from '@testing-library/react-native';
+import { screen, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
+import { MOCK_LOCATIONS } from '@T/mocks/mock-locations';
 import ActivityCard from './card';
 import { getCardMapPhotoUrl } from './utils';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
@@ -12,6 +13,9 @@ import { mockStore } from '../../tests/utils/mock-store';
 import { server } from '../../tests/utils/server';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
+
+jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(), shareAsync: jest.fn() }));
+jest.mock('react-native-view-shot', () => ({ captureRef: jest.fn() }));
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -54,6 +58,35 @@ describe('Activity card', () => {
     );
 
     expect(requests).toBe(0);
+  });
+
+  it('keeps the saved map preview when full route locations load', async () => {
+    const mapPhotoUrl = 'https://cdn.example.test/activity-map.jpg';
+    server.use(
+      http.get(`${BASE_URL}/activity/${MOCK_ACTIVITY.id}/locations`, () =>
+        HttpResponse.json({ locations: MOCK_LOCATIONS, kilometresSplit: [] }),
+      ),
+    );
+
+    await renderWithProviders(
+      <ActivityCard
+        isFullView
+        isShowDeleteBtn={false}
+        isShowDescription={false}
+        title={MOCK_ACTIVITY.title}
+        date={MOCK_ACTIVITY.date}
+        sport={MOCK_ACTIVITY.sport as SPORTS_BTNS_VALUES}
+        id={MOCK_ACTIVITY.id}
+        userId={MOCK_ACTIVITY.userId}
+        mapPhotoUrl={mapPhotoUrl}
+        duration={MOCK_ACTIVITY.duration}
+        distance={MOCK_ACTIVITY.distance}
+        profile={MOCK_PROFILE}
+        commentsLength={0}
+      />,
+    );
+
+    await waitFor(() => expect(screen.getAllByTestId(mapPhotoUrl)).toHaveLength(2));
   });
 
   it('should correctly renders', async () => {

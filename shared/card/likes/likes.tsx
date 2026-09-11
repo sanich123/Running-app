@@ -55,8 +55,8 @@ export default memo(function Likes({ activityId, size, likesLength }: LikesProps
                   {likesList
                     .slice(0, lastLikeInTheRow)
                     .sort((a: LikeType, b: LikeType) => Date.parse(b.date) - Date.parse(a.date))
-                    .map(({ authorId, id, profile }: LikeType, index: number) => (
-                      <Fragment key={`${id}/${index}/${authorId}`}>
+                    .map(({ authorId, profile }: LikeType, index: number) => (
+                      <Fragment key={authorId}>
                         {likesList.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 ? (
                           <View style={[styles.lastAvatarWrapper, { left: index * SHIFT_RIGHT + 13 }]}>
                             <Text variant="bodySmall">{`+${whatLikesLengthToRender - MAX_IN_ROW}`}</Text>
@@ -72,6 +72,10 @@ export default memo(function Likes({ activityId, size, likesLength }: LikesProps
                             style={{ width: 30, height: 30, borderRadius: 70 }}
                             source={{ uri: profile?.profilePhoto }}
                             contentFit="cover"
+                            placeholder={profile?.profilePhotoBlurhash}
+                            cachePolicy="memory-disk"
+                            recyclingKey={authorId}
+                            transition={0}
                             testID={AvatarShowableTestIds.success}
                           />
                         </View>

@@ -30,7 +30,11 @@ describe('Card likes', () => {
       store: mockStore,
     });
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
-    expect(await screen.findByTestId(AvatarShowableTestIds.success)).toBeOnTheScreen();
+    const avatar = await screen.findByTestId(AvatarShowableTestIds.success);
+    expect(avatar).toBeOnTheScreen();
+    expect(avatar.props.cachePolicy).toBe('memory-disk');
+    expect(avatar.props.recyclingKey).toBe('someUserId');
+    expect(avatar.props.transition).toBe(0);
   });
 
   it('renders the compact likes count', async () => {

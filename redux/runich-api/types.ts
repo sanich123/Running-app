@@ -68,7 +68,6 @@ export interface ActivityResponse {
   speed?: number | null;
   isPublic?: boolean | null;
   emotion?: string | null;
-  locations?: ActivityLocationResponse[] | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
   sourceActivityId?: string | null;
@@ -112,7 +111,6 @@ export interface ActivityMutationResponse {
   speed: number;
   isPublic?: boolean | null;
   emotion?: string | null;
-  locations?: ActivityLocationResponse[] | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
   sourceActivityId?: string | null;
