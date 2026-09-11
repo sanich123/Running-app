@@ -1,10 +1,1 @@
-export const MOCK_VALUE_STYLE = { backgroundColor: '#FFF59D' } as const;
-
-export const DETAILS = [
-  ['Наименование', 'ООО «РУНИЧ» (моковые данные)'],
-  ['Юридический адрес', '123456, г. Москва, ул. Примерная, д. 1 (моковые данные)'],
-  ['ОГРН', '0000000000000 (моковые данные)'],
-  ['ИНН / КПП', '0000000000 / 000000000 (моковые данные)'],
-  ['Электронная почта', 'legal@example.test (моковые данные)'],
-  ['Телефон', '+7 (000) 000-00-00 (моковые данные)'],
-];
+export { LEGAL_OPERATOR, LEGAL_DOCUMENT_VERSION } from '@Routes/legal-documents/content';

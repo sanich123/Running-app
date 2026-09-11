@@ -1,10 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { View, StyleSheet } from 'react-native';
 import { useTheme, Text, Button } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { BACKGROUND_LOCATIONS } from './const';
+import LocationConsent from '../location-consent/location-consent';
 import type { BackgroundLocationModalProps } from '../types';
 
 export default function BackgroundLocationModal({
@@ -13,6 +14,7 @@ export default function BackgroundLocationModal({
 }: BackgroundLocationModalProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
+  const [locationConsentAccepted, setLocationConsentAccepted] = useState(false);
   const renderBackdrop = useCallback(
     (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
@@ -37,10 +39,12 @@ export default function BackgroundLocationModal({
             </Text>
           ))}
         </View>
+        <LocationConsent accepted={locationConsentAccepted} onChange={setLocationConsentAccepted} />
         <Button
           testID="background-location-allow"
           mode="contained"
           style={styles.button}
+          disabled={!locationConsentAccepted}
           onPress={async () => {
             try {
               await requestBackgroundPermission();

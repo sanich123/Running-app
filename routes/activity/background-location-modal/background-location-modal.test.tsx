@@ -23,6 +23,8 @@ describe('background location modal', () => {
         requestBackgroundPermission={requestBackgroundPermission}
       />,
     );
+    expect(screen.getByTestId('background-location-allow')).toBeDisabled();
+    await user.press(screen.getByTestId('location-consent-checkbox'));
     await user.press(screen.getByTestId('background-location-allow'));
     expect(requestBackgroundPermission).toHaveBeenCalledTimes(1);
     expect(close).toHaveBeenCalledTimes(1);

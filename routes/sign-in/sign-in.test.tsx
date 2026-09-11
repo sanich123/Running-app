@@ -42,21 +42,62 @@ describe('sign in', () => {
       }),
     );
     await renderWithProviders(<SignIn />);
-    await user.type(screen.getByTestId(SIGN_IN_FIELDS.email), 'runner@example.test');
-    await user.type(screen.getByTestId(SIGN_IN_FIELDS.password), 'strong-password');
+    const emailInput = screen.getByTestId(SIGN_IN_FIELDS.email);
+    const passwordInput = screen.getByTestId(SIGN_IN_FIELDS.password);
+    await user.clear(emailInput);
+    await user.clear(passwordInput);
+    await user.type(emailInput, 'runner@example.test');
+    await user.type(passwordInput, 'strong-password');
     await user.press(screen.getByTestId('auth-submit'));
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', password: 'strong-password' }));
     expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
   });
 
-  it('opens the privacy policy and legal information from the footer', async () => {
+  it('opens the user agreement and privacy policy from the footer', async () => {
     const user = userEvent.setup();
     mockPush.mockClear();
     await renderWithProviders(<SignIn />);
-    await user.press(screen.getByText('Условиями пользования'));
-    await user.press(screen.getByText('Политикой конфиденциальности'));
-    expect(mockPush).toHaveBeenNthCalledWith(1, `/${ROUTES.legalInformation}`);
+    await user.press(screen.getByText('Пользовательским соглашением'));
+    await user.press(screen.getAllByText('Политикой конфиденциальности').at(-1)!);
+    expect(mockPush).toHaveBeenNthCalledWith(1, `/${ROUTES.userAgreement}`);
     expect(mockPush).toHaveBeenNthCalledWith(2, `/${ROUTES.privacyPolicy}`);
+  });
+
+  it('allows email registration without inline consent checkboxes', async () => {
+    const user = userEvent.setup();
+    let requestBody: unknown;
+    mockAuthParams = { authStep: SignInPageStates.register };
+    mockStore.dispatch(setIsDisabledWhenLogining(false));
+    server.use(
+      http.post(`${BASE_URL}/auth/register`, async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({ message: 'Confirmation code sent' });
+      }),
+    );
+
+    await renderWithProviders(<SignIn />);
+    const submit = screen.getByTestId('auth-submit');
+    expect(submit).not.toBeDisabled();
+    expect(screen.queryByTestId('legal-consent-privacy')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('legal-consent-agreement')).not.toBeOnTheScreen();
+    expect(screen.getByText('Продолжая, вы соглашаетесь с')).toBeOnTheScreen();
+    expect(
+      screen.getByText(/\* Регистрация по email — только с адресом российского почтового оператора/),
+    ).toBeOnTheScreen();
+    await user.press(screen.getByTestId('registration-email-restriction'));
+    expect(screen.getByText('Ограничение регистрации')).toBeOnTheScreen();
+    expect(screen.getByText(/С 1 декабря 2023 года Федеральный закон/)).toBeOnTheScreen();
+    await user.press(screen.getByText('Закрыть'));
+    await waitFor(() => expect(screen.queryByText('Ограничение регистрации')).not.toBeOnTheScreen());
+    const emailInput = screen.getByTestId(SIGN_IN_FIELDS.email);
+    const passwordInput = screen.getByTestId(SIGN_IN_FIELDS.password);
+    await user.clear(emailInput);
+    await user.clear(passwordInput);
+    await user.type(emailInput, 'runner@yandex.ru');
+    await user.type(passwordInput, 'strong-password');
+    await user.press(screen.getByTestId('auth-submit'));
+
+    await waitFor(() => expect(requestBody).toEqual({ email: 'runner@yandex.ru', password: 'strong-password' }));
   });
 
   it('hides email link login from the compact login form', async () => {

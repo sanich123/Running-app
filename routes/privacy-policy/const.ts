@@ -1,1 +1,1 @@
-export const MOCK_VALUE_STYLE = { backgroundColor: '#FFF59D' } as const;
+export { LEGAL_OPERATOR, LEGAL_DOCUMENT_VERSION } from '@Routes/legal-documents/content';

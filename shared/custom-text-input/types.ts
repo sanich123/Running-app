@@ -103,11 +103,34 @@ export const passwordValidation = {
   },
 };
 
+const RUSSIAN_EMAIL_DOMAIN_SUFFIXES = ['.ru', '.рф', '.xn--p1ai'] as const;
+
+export function isRussianEmailAddress(email: string) {
+  const normalizedEmail = email.trim().toLowerCase();
+  const atIndex = normalizedEmail.lastIndexOf('@');
+  if (atIndex <= 0 || atIndex === normalizedEmail.length - 1) return false;
+
+  const domain = normalizedEmail.slice(atIndex + 1);
+  return RUSSIAN_EMAIL_DOMAIN_SUFFIXES.some((suffix) => domain.endsWith(suffix));
+}
+
 export const emailValidation = {
   required: 'Обязательно для заполнения',
   validate: (value: string) => {
     if (!isEmail(value)) {
       return 'Адрес электронной почты должен быть правильным';
+    }
+    return true;
+  },
+};
+
+export const registrationEmailValidation = {
+  required: emailValidation.required,
+  validate: (value: string) => {
+    const emailError = emailValidation.validate(value);
+    if (emailError !== true) return emailError;
+    if (!isRussianEmailAddress(value)) {
+      return 'Для регистрации используйте адрес российского почтового оператора (.ru или .рф)';
     }
     return true;
   },
