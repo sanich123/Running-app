@@ -12,6 +12,8 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
 import { appendLocationToJournal, createLocationJournal } from '@U/location/location-journal';
+import ActivitySaveBtn from './save-btn';
+
 function createFinishedActivityDraft(routeLocations = [MOCK_LOCATION]) {
   const routeJournalId = createLocationJournal();
   routeLocations.forEach((location, index) => {
@@ -26,7 +28,6 @@ function createFinishedActivityDraft(routeLocations = [MOCK_LOCATION]) {
     routeJournalId,
   };
 }
-import ActivitySaveBtn from './save-btn';
 
 const mockBack = jest.fn();
 const mockReplace = jest.fn();

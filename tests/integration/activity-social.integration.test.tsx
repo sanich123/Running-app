@@ -10,13 +10,7 @@ import CommentBtn from '@S/card/comment-btn/comment-btn';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '@S/card/like-btn/const';
 import LikeBtn from '@S/card/like-btn/like-btn';
 import { COMMENT_INPUT_TEST_ID, COMMENT_ICON_TEST_ID } from '@S/comments/comment-input/const';
-import {
-  MOCK_SERVER_ACTIVITY,
-  MOCK_SERVER_COMMENTS,
-  MOCK_SERVER_IDS,
-  MOCK_SERVER_LIKES,
-  MOCK_SERVER_LOCATIONS,
-} from '@T/responses/runich';
+import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_COMMENTS, MOCK_SERVER_IDS, MOCK_SERVER_LIKES } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
