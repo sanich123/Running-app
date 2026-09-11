@@ -7,13 +7,21 @@ import type * as ExpoLinking from 'expo-linking';
 
 let consoleErrorSpy: jest.SpiedFunction<typeof console.error>;
 
-jest.mock('react-native-mmkv', () => ({
-  createMMKV: () => ({
-    getString: jest.fn(),
-    set: jest.fn(),
-    remove: jest.fn(),
-  }),
-}));
+jest.mock('react-native-mmkv', () => {
+  const stores = new Map<string, Map<string, string>>();
+
+  return {
+    createMMKV: ({ id = 'default' } = {}) => {
+      const values = stores.get(id) ?? new Map<string, string>();
+      stores.set(id, values);
+      return {
+        getString: (key: string) => values.get(key),
+        set: (key: string, value: string) => values.set(key, value),
+        remove: (key: string) => values.delete(key),
+      };
+    },
+  };
+});
 
 jest.mock('redux-persist', () => {
   const actualReduxPersist = jest.requireActual('redux-persist');

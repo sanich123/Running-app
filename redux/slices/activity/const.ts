@@ -1,13 +1,12 @@
 import { SPORTS_BTNS_VALUES } from '@const/sports';
-import type { ActivityState } from './types';
-import type { FinishedActivity } from '@R/services/activity/types';
+import type { ActivityState, FinishedActivityDraft } from './types';
 
-export const FINISHED_ACTIVITY_INITIAL_STATE: FinishedActivity = {
-  locations: [],
+export const FINISHED_ACTIVITY_INITIAL_STATE: FinishedActivityDraft = {
   duration: 0,
   speed: 0,
   distance: 0,
   kilometresSplit: [],
+  routeJournalId: null,
 };
 
 export const ACTIVITY_DRAFT_INITIAL_STATE = {

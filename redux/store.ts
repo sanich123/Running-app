@@ -6,6 +6,7 @@ import { createProfileListenerMiddleware } from './middleware/profile-listener';
 import { runichApi } from './runich-api/runich-api';
 import activity from './slices/activity/activity';
 import auth from './slices/auth/auth';
+import { configureAuthPersistence } from './slices/auth/persistence';
 import comment from './slices/comment/comment';
 import location from './slices/location/location';
 import logining from './slices/logining/logining';
@@ -13,12 +14,13 @@ import mainFeed from './slices/main-feed/main-feed';
 import network from './slices/network/network';
 import profile from './slices/profile/profile';
 import settings from './slices/settings/settings';
+import trackingRecovery from './slices/tracking-recovery/tracking-recovery';
 import type { Action, Reducer } from '@reduxjs/toolkit';
 
 const persistConfig = {
   key: 'root',
   storage: appStorage,
-  whitelist: ['settings', 'activity', 'location', 'auth'],
+  whitelist: ['settings', 'activity', 'trackingRecovery', 'auth'],
 };
 
 const appReducer = combineReducers({
@@ -27,6 +29,7 @@ const appReducer = combineReducers({
   location,
   profile,
   activity,
+  trackingRecovery,
   mainFeed,
   auth,
   logining,
@@ -52,6 +55,7 @@ export const store = configureStore({
 });
 setupListeners(store.dispatch);
 export const persistor = persistStore(store);
+configureAuthPersistence(persistor);
 
 export type RootState = AppState;
 export type AppDispatch = typeof store.dispatch;

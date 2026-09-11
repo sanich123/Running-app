@@ -16,6 +16,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
+  const { commentActivityId } = useAppSelector(({ comment }) => comment);
   const {
     profileFromServer: { profilePhoto, name, surname },
   } = useAppSelector(({ profile }) => profile);
@@ -62,6 +63,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
           name: name ?? '',
           surname: surname ?? '',
           profilePhoto: profilePhoto ?? '',
+          activityId: commentActivityId,
           comment,
           recepientName: profile.name ?? '',
           recepientSurname: profile.surname ?? '',
@@ -74,6 +76,7 @@ export default function CommentLikeBtn({ commentId, commentLikesFromComment, pro
     isSuccessDeleting,
     language,
     commentId,
+    commentActivityId,
     profile?.emailNotifications,
     sendEmailNotificationAfterSendingLike,
     name,

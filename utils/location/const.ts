@@ -23,3 +23,4 @@ export const BACKGROUND_NOTIFICATION = {
 export const TIME_INTERVAL = 3000;
 export const DISTANCE_INTERVAL = 10;
 export const MAX_ACTIVITY_LOCATIONS = 5000;
+export const MAX_SAVED_ROUTE_LOCATIONS = 1000;

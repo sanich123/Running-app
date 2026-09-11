@@ -16,7 +16,7 @@ export default function EmailNotificationsBtn() {
       {isSuccess && profileInfo && (
         <SettingsRow
           title={language === 'russian' ? 'Уведомления по почте' : 'Email notifications'}
-          description={`${profileInfo.emailNotifications ? SETTINGS[language].switchOn : SETTINGS[language].switchOff} ${SETTINGS[language].emailNotifications}`}
+          description={`${profileInfo.emailNotifications ? SETTINGS[language].switchOff : SETTINGS[language].switchOn} ${SETTINGS[language].emailNotifications}`}
           leading={
             <Switch
               testID="email-notifications-switch"

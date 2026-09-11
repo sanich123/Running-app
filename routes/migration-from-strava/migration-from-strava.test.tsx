@@ -94,6 +94,9 @@ describe('migration from strava', () => {
         HttpResponse.json({
           jobId: 'job-id',
           status: 'processing',
+          queuePosition: null,
+          queueAhead: 0,
+          queueSize: 1,
           totalActivities: 10,
           processedActivities: 4,
           importedActivities: 3,
@@ -112,6 +115,9 @@ describe('migration from strava', () => {
       latestMigrationArgs?.onArchiveUploadAccepted({
         jobId: 'job-id',
         status: 'queued',
+        queuePosition: 1,
+        queueAhead: 0,
+        queueSize: 1,
         totalActivities: 0,
         processedActivities: 0,
         importedActivities: 0,
@@ -127,6 +133,32 @@ describe('migration from strava', () => {
     expect(await screen.findByText('4/10')).toBeOnTheScreen();
     expect(await screen.findByText(MIGRATION_STATES.english.imported)).toBeOnTheScreen();
     expect(await screen.findByText(MIGRATION_STATES.english.skipped)).toBeOnTheScreen();
+  });
+
+  it('shows the queue position while the archive is waiting for the worker', async () => {
+    const user = userEvent.setup();
+    await renderWithProviders(<MigrationFromStrava />);
+    await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
+
+    await act(async () => {
+      latestMigrationArgs?.onArchiveUploadAccepted({
+        jobId: 'job-id',
+        status: 'queued',
+        queuePosition: 3,
+        queueAhead: 2,
+        queueSize: 4,
+        totalActivities: 0,
+        processedActivities: 0,
+        importedActivities: 0,
+        skippedActivities: 0,
+        errorMessage: null,
+        createdAt: new Date().toISOString(),
+        startedAt: null,
+        finishedAt: null,
+      });
+    });
+
+    expect(await screen.findByText(MIGRATION_STATES.english.queueAhead(2, 3, 4))).toBeOnTheScreen();
   });
 
   it('returns to the home page after all activities are processed', async () => {
@@ -154,6 +186,9 @@ describe('migration from strava', () => {
       latestMigrationArgs?.onArchiveUploadAccepted({
         jobId: 'job-id',
         status: 'queued',
+        queuePosition: 1,
+        queueAhead: 0,
+        queueSize: 1,
         totalActivities: 0,
         processedActivities: 0,
         importedActivities: 0,

@@ -1,8 +1,9 @@
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
-import type { ActivityToSend } from '@R/services/activity/types';
+import type { PendingActivity } from '@R/slices/activity/types';
 
-export const MOCK_UNSYNCED_ACTIVITY: ActivityToSend = {
+export const MOCK_UNSYNCED_ACTIVITY: PendingActivity = {
+  routeJournalId: null,
   body: {
     description: 'Unsynced activity',
     distance: 1000,
@@ -10,7 +11,6 @@ export const MOCK_UNSYNCED_ACTIVITY: ActivityToSend = {
     emotion: EMOTIONS_BTNS_VALUES.normal,
     isPublic: true,
     kilometresSplit: [],
-    locations: [],
     photoVideoUrls: [],
     speed: 10,
     sport: SPORTS_BTNS_VALUES.run,

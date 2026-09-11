@@ -1,8 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
-import { setAccessToken } from '@R/slices/auth/actions';
-import { setUserId } from '@R/slices/auth/auth';
+import { setAuthTokens, setUserId } from '@R/slices/auth/auth';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
@@ -27,7 +26,7 @@ jest.mock('@Routes/home-page/floating-btn/floating-btn', () => {
 describe('Feed', () => {
   beforeEach(() => {
     mockReplace.mockClear();
-    mockStore.dispatch(setAccessToken('feed-access-token'));
+    mockStore.dispatch(setAuthTokens({ accessToken: 'feed-access-token' }));
     mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
     server.use(http.get(`${BASE_URL}/auth/config`, () => HttpResponse.json({ appVersion: '0.0.0' })));
   });

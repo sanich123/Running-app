@@ -1,9 +1,9 @@
 import { Fragment, memo, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
+import { useGetLikesByActivityIdQuery, useGetLikesLengthByActivityIdQuery } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToDownload } from '@R/slices/main-feed/main-feed';
-import { useAppDispatch } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { AvatarShowableTestIds } from '@S/avatar/showable/const';
 import ModalLikesList from '@S/card/modal-likes-list/modal-likes-list';
 import NumberOfLikes from '@S/card/number-of-likes/number-of-likes';
@@ -12,18 +12,27 @@ import { LikesSize, MAX_IN_ROW, MAX_NUMBER_IN_ROW_OTHER_PAGE, SHIFT_RIGHT } from
 import type { LikesProps, LikeType } from '../types';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-export default memo(function Likes({ activityId, size }: LikesProps) {
+export default memo(function Likes({ activityId, size, likesLength }: LikesProps) {
   const dispatch = useAppDispatch();
   const { dark } = useTheme();
+  const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const { data: likes, isLoading, isError } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
   const likesList = likes ?? [];
+  const isNeedToGetUpdatedLikes = activityIdWhichLikesToUpdate === activityId;
+  const { data: updatedLikesLength, isError: isErrorLoadingUpdatedLikes } = useGetLikesLengthByActivityIdQuery(
+    activityId,
+    { skip: !isNeedToGetUpdatedLikes || likesLength === undefined },
+  );
+  const whatLikesLengthToRender = updatedLikesLength ?? likesLength ?? likesList.length;
+  const hasLikes = whatLikesLengthToRender > 0 || likesList.length > 0;
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
-  const lessThanNineLikes = size === LikesSize.big && likesList.length > 0 && likesList.length <= MAX_IN_ROW;
-  const moreThanNineLikes = size === LikesSize.big && likesList.length > 0 && likesList.length > MAX_IN_ROW;
+  const lessThanNineLikes =
+    size === LikesSize.big && whatLikesLengthToRender > 0 && whatLikesLengthToRender <= MAX_IN_ROW;
+  const moreThanNineLikes = size === LikesSize.big && whatLikesLengthToRender > MAX_IN_ROW;
   const likesListModal = useRef<BottomSheetModal>(null);
   return (
     <>
-      {likesList.length > 0 ? (
+      {hasLikes ? (
         <TouchableRipple
           testID="pushToActivityLikes"
           rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
@@ -32,13 +41,13 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
             likesListModal.current?.present?.();
           }}
           borderless
-          disabled={isLoading || isError}
+          disabled={isLoading || isError || isErrorLoadingUpdatedLikes}
           style={{ borderRadius: 10 }}>
           <View style={styles.likesWrapper}>
             <View
               style={[
                 styles.likesLayout,
-                lessThanNineLikes && { width: likesList.length * SHIFT_RIGHT + 10 },
+                lessThanNineLikes && { width: whatLikesLengthToRender * SHIFT_RIGHT + 10 },
                 moreThanNineLikes && { width: MAX_IN_ROW * SHIFT_RIGHT + 10 },
               ]}>
               {likesList.length > 0 ? (
@@ -46,11 +55,11 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
                   {likesList
                     .slice(0, lastLikeInTheRow)
                     .sort((a: LikeType, b: LikeType) => Date.parse(b.date) - Date.parse(a.date))
-                    .map(({ authorId, id, profile }: LikeType, index: number) => (
-                      <Fragment key={`${id}/${index}/${authorId}`}>
+                    .map(({ authorId, profile }: LikeType, index: number) => (
+                      <Fragment key={authorId}>
                         {likesList.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 ? (
                           <View style={[styles.lastAvatarWrapper, { left: index * SHIFT_RIGHT + 13 }]}>
-                            <Text variant="bodySmall">{`+${likesList.length - MAX_IN_ROW}`}</Text>
+                            <Text variant="bodySmall">{`+${whatLikesLengthToRender - MAX_IN_ROW}`}</Text>
                           </View>
                         ) : null}
                         <View
@@ -63,6 +72,10 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
                             style={{ width: 30, height: 30, borderRadius: 70 }}
                             source={{ uri: profile?.profilePhoto }}
                             contentFit="cover"
+                            placeholder={profile?.profilePhotoBlurhash}
+                            cachePolicy="memory-disk"
+                            recyclingKey={authorId}
+                            transition={0}
                             testID={AvatarShowableTestIds.success}
                           />
                         </View>
@@ -70,14 +83,16 @@ export default memo(function Likes({ activityId, size }: LikesProps) {
                     ))}
                 </View>
               ) : null}
-              {likesList.length && size === LikesSize.small ? <NumberOfLikes likes={likesList} /> : null}
+              {hasLikes && size === LikesSize.small ? (
+                <NumberOfLikes likes={likesList} likesLength={whatLikesLengthToRender} />
+              ) : null}
             </View>
           </View>
         </TouchableRipple>
       ) : (
         <View />
       )}
-      <ModalLikesList bottomSheetModalRef={likesListModal} likesLength={likesList.length} />
+      <ModalLikesList bottomSheetModalRef={likesListModal} likesLength={whatLikesLengthToRender} />
     </>
   );
 });

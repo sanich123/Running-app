@@ -10,8 +10,24 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { MAX_ACTIVITY_LOCATIONS } from '@U/location/const';
+import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
+import { appendLocationToJournal, createLocationJournal } from '@U/location/location-journal';
 import ActivitySaveBtn from './save-btn';
+
+function createFinishedActivityDraft(routeLocations = [MOCK_LOCATION]) {
+  const routeJournalId = createLocationJournal();
+  routeLocations.forEach((location, index) => {
+    appendLocationToJournal(routeJournalId, { ...location, timestamp: location.timestamp + index + 1 });
+  });
+
+  return {
+    duration: MOCK_DURATION,
+    speed: MOCK_SPEED,
+    distance: MOCK_DISTANCE,
+    kilometresSplit: [],
+    routeJournalId,
+  };
+}
 
 const mockBack = jest.fn();
 const mockReplace = jest.fn();
@@ -72,11 +88,7 @@ describe('Activity save btn', () => {
     mockStore.dispatch(setUserId('someUserId'));
     mockStore.dispatch(
       setFinishedActivity({
-        locations: [MOCK_LOCATION],
-        duration: MOCK_DURATION,
-        speed: MOCK_SPEED,
-        distance: MOCK_DISTANCE,
-        kilometresSplit: [],
+        ...createFinishedActivityDraft(),
       }),
     );
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
@@ -108,11 +120,7 @@ describe('Activity save btn', () => {
     mockManualActivityMode = 'tracked';
     mockStore.dispatch(
       setFinishedActivity({
-        locations: [MOCK_LOCATION],
-        duration: MOCK_DURATION,
-        speed: MOCK_SPEED,
-        distance: MOCK_DISTANCE,
-        kilometresSplit: [],
+        ...createFinishedActivityDraft(),
       }),
     );
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
@@ -132,12 +140,8 @@ describe('Activity save btn', () => {
     mockStore.dispatch(setUserId('someUserId'));
     mockStore.dispatch(
       setFinishedActivity({
-        locations: [MOCK_LOCATION],
-        duration: MOCK_DURATION,
-        speed: MOCK_SPEED,
-        distance: MOCK_DISTANCE,
+        ...createFinishedActivityDraft(),
         steps: 1_234,
-        kilometresSplit: [],
       }),
     );
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
@@ -147,7 +151,7 @@ describe('Activity save btn', () => {
     await waitFor(() => expect(requestBody?.steps).toBe(1_234));
   });
 
-  it('caps tracked locations at the API limit before sending', async () => {
+  it('caps tracked locations at the client limit before sending', async () => {
     let requestBody: Record<string, unknown> | undefined;
     server.use(
       http.post(`${BASE_URL}/activity/someUserId`, async ({ request }) => {
@@ -158,18 +162,19 @@ describe('Activity save btn', () => {
     mockStore.dispatch(setUserId('someUserId'));
     mockStore.dispatch(
       setFinishedActivity({
-        locations: Array.from({ length: MAX_ACTIVITY_LOCATIONS + 1 }, () => MOCK_LOCATION),
-        duration: MOCK_DURATION,
-        speed: MOCK_SPEED,
-        distance: MOCK_DISTANCE,
-        kilometresSplit: [],
+        ...createFinishedActivityDraft(
+          Array.from({ length: MAX_SAVED_ROUTE_LOCATIONS + 1 }, (_, index) => ({
+            ...MOCK_LOCATION,
+            timestamp: MOCK_LOCATION.timestamp + index,
+          })),
+        ),
       }),
     );
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
 
     await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
 
-    await waitFor(() => expect((requestBody?.locations as unknown[])?.length).toBe(MAX_ACTIVITY_LOCATIONS));
+    await waitFor(() => expect((requestBody?.locations as unknown[])?.length).toBe(MAX_SAVED_ROUTE_LOCATIONS));
     await waitFor(() => expect(mockStore.getState().activity.isSavingDisabled).toBe(false));
   });
 
@@ -178,11 +183,7 @@ describe('Activity save btn', () => {
     mockManualActivityMode = 'tracked';
     mockStore.dispatch(
       setFinishedActivity({
-        locations: [MOCK_LOCATION],
-        duration: MOCK_DURATION,
-        speed: MOCK_SPEED,
-        distance: MOCK_DISTANCE,
-        kilometresSplit: [],
+        ...createFinishedActivityDraft(),
       }),
     );
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
@@ -220,7 +221,6 @@ describe('Activity save btn', () => {
         expect.objectContaining({
           distance: 5000,
           duration: 4_807_000,
-          locations: [],
         }),
       );
     });

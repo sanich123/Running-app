@@ -1,10 +1,19 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { LOCATION_INITIAL_STATE } from './const';
+import type { TrackingRecoveryMetrics } from '@R/slices/tracking-recovery/types';
 
 const location = createSlice({
   name: 'location',
   initialState: LOCATION_INITIAL_STATE,
   reducers: {
+    restoreLocationsFromJournal: (state, action) => {
+      const { locationsFromBackground, locationsWithPauses } = action.payload;
+      state.locationsFromBackground = locationsFromBackground;
+      state.locationsWithPauses = locationsWithPauses.length ? locationsWithPauses : [[]];
+    },
+    restoreTrackingMetrics: (state, action: PayloadAction<TrackingRecoveryMetrics>) => {
+      Object.assign(state, action.payload);
+    },
     setInitialLocation: (state, action) => {
       state.initialLocation = action.payload;
     },
@@ -137,6 +146,8 @@ const location = createSlice({
 });
 
 export const {
+  restoreLocationsFromJournal,
+  restoreTrackingMetrics,
   setInitialLocation,
   setLocationsFromBackground,
   resetLocationsFromBackground,

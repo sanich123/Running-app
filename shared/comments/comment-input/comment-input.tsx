@@ -77,6 +77,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
         name: name ?? '',
         surname: surname ?? '',
         profilePhoto: profilePhoto ?? '',
+        activityId: commentActivityId,
         comment: sentComment,
         recepientName: profile.name ?? '',
         recepientSurname: profile.surname ?? '',

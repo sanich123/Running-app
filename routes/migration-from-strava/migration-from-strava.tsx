@@ -23,6 +23,7 @@ export default function MigrationFromStrava() {
   const { colors } = useTheme();
   const { replace } = useRouter();
   const [migrationJobId, setMigrationJobId] = useState<string | null>(null);
+  const [acceptedMigrationJob, setAcceptedMigrationJob] = useState<ActivityMigrationJobResponse | null>(null);
   const {
     isDisabled,
     setIsDisabled,
@@ -43,10 +44,11 @@ export default function MigrationFromStrava() {
     isInitial,
   } = useGetStates();
   const {
-    data: migrationJob,
+    data: fetchedMigrationJob,
     error: migrationStatusError,
     refetch: refetchMigrationStatus,
   } = useGetStravaMigrationStatusQuery(migrationJobId ?? '', { skip: !migrationJobId });
+  const migrationJob = fetchedMigrationJob ?? acceptedMigrationJob;
   const copy = MIGRATION_STATES[language];
   const isRussian = language === LANGUAGES.russian;
   const isServerStatusError = Boolean(migrationJobId && migrationStatusError);
@@ -107,6 +109,19 @@ export default function MigrationFromStrava() {
     ? Math.min(1, migrationJob.processedActivities / migrationJob.totalActivities)
     : 0;
   const progressPercent = Math.round(progress * 100);
+  const queueStatusText =
+    migrationJob?.status === 'queued' &&
+    typeof migrationJob.queuePosition === 'number' &&
+    typeof migrationJob.queueAhead === 'number' &&
+    typeof migrationJob.queueSize === 'number'
+      ? migrationJob.queueAhead > 0
+        ? copy.queueAhead(
+            migrationJob.queueAhead,
+            migrationJob.queuePosition ?? migrationJob.queueAhead + 1,
+            migrationJob.queueSize,
+          )
+        : copy.queueNext(migrationJob.queuePosition ?? 1, migrationJob.queueSize)
+      : null;
 
   useEffect(() => {
     if (migrationJob?.status === 'completed') {
@@ -144,6 +159,7 @@ export default function MigrationFromStrava() {
 
   const handleArchiveUploadAccepted = (job: ActivityMigrationJobResponse) => {
     setIsError('');
+    setAcceptedMigrationJob(job);
     setMigrationJobId(job.jobId);
   };
 
@@ -248,6 +264,14 @@ export default function MigrationFromStrava() {
                 {statusText}
               </Text>
             </View>
+            {queueStatusText && (
+              <View style={[styles.queueNotice, { backgroundColor: colors.primaryContainer }]}>
+                <MaterialCommunityIcons name="clock-outline" size={20} color={colors.primary} />
+                <Text variant="bodySmall" style={{ color: colors.onPrimaryContainer, flex: 1 }}>
+                  {queueStatusText}
+                </Text>
+              </View>
+            )}
             {migrationJob && (
               <View style={styles.progressDetails}>
                 <View style={styles.progressHeader}>
@@ -303,6 +327,7 @@ export default function MigrationFromStrava() {
             onPress={async () => {
               if (isServerCompleted || isServerFailed) {
                 setMigrationJobId(null);
+                setAcceptedMigrationJob(null);
               }
               await getMigrationArchiveAndSendToServer({
                 setIsDisabled,
@@ -398,6 +423,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     gap: 10,
+  },
+  queueNotice: {
+    alignItems: 'center',
+    borderRadius: 12,
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 12,
+    padding: 10,
   },
   statusText: {
     flex: 1,

@@ -1,28 +1,35 @@
 import { Pressable, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
-import { ROUTES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
 
 export default function LegalLinks() {
   const { colors } = useTheme();
   const { push } = useRouter();
+  const { language } = useAppSelector(({ settings }) => settings);
+  const isRussian = language === LANGUAGES.russian;
   return (
     <View style={styles.layout}>
       <Text variant="bodySmall" style={styles.caption}>
-        Продолжая, вы соглашаетесь с
+        {isRussian ? 'Продолжая, вы соглашаетесь с' : 'By continuing, you agree to the'}
       </Text>
       <View style={styles.links}>
-        <Pressable onPress={() => push(`/${ROUTES.legalInformation}`)} accessibilityRole="link">
+        <Pressable
+          onPress={() => push(`/${isRussian ? ROUTES.userAgreement : ROUTES.userAgreementEnglish}`)}
+          accessibilityRole="link">
           <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>
-            Условиями пользования
+            {isRussian ? 'Пользовательским соглашением' : 'User Agreement'}
           </Text>
         </Pressable>
         <Text variant="bodySmall" style={styles.caption}>
-          и
+          {isRussian ? 'и' : 'and'}
         </Text>
-        <Pressable onPress={() => push(`/${ROUTES.privacyPolicy}`)} accessibilityRole="link">
+        <Pressable
+          onPress={() => push(`/${isRussian ? ROUTES.privacyPolicy : ROUTES.privacyPolicyEnglish}`)}
+          accessibilityRole="link">
           <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>
-            Политикой конфиденциальности
+            {isRussian ? 'Политикой конфиденциальности' : 'Privacy Policy'}
           </Text>
         </Pressable>
       </View>

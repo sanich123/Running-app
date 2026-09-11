@@ -2,14 +2,19 @@ import { View, StyleSheet } from 'react-native';
 import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import { useAddActivityByUserIdMutation } from '@R/services/activity/activity';
 import { clearUnsyncedActivities, removeFirstUnsyncedActivity } from '@R/slices/activity/activity';
+import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { successToast } from '@S/success-toast/success-toast';
+import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
+import { readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
+import { getReducedLocations } from '@U/location/location-utils';
 
 export default function UnsendedActivitiesIndicator() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { unsyncedActivities } = useAppSelector(({ activity }) => activity);
+  const trackingRecovery = useAppSelector(({ trackingRecovery }) => trackingRecovery);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
 
   return (
@@ -36,10 +41,26 @@ export default function UnsendedActivitiesIndicator() {
           containerColor={colors.surface}
           loading={isLoading}
           onPress={async () => {
-            if (unsyncedActivities?.[0]) {
-              await sendActivity(unsyncedActivities?.[0])
+            const pendingActivity = unsyncedActivities?.[0];
+            if (pendingActivity) {
+              const journalId = pendingActivity.routeJournalId ?? null;
+              const routeLocations = journalId ? (readLocationJournal(journalId)?.locations ?? []) : [];
+              if (journalId && !routeLocations.length) {
+                errorToast('', 'Не удалось восстановить маршрут активности');
+                return;
+              }
+
+              await sendActivity({
+                id: pendingActivity.id,
+                body: {
+                  ...pendingActivity.body,
+                  locations: getReducedLocations(routeLocations, MAX_SAVED_ROUTE_LOCATIONS),
+                },
+              })
                 .unwrap()
                 .then(() => {
+                  if (journalId) removeLocationJournal(journalId);
+                  if (journalId && trackingRecovery.journalId === journalId) dispatch(clearTrackingRecovery());
                   dispatch(removeFirstUnsyncedActivity());
                   successToast('Успешно обновили');
                 })
@@ -58,7 +79,16 @@ export default function UnsendedActivitiesIndicator() {
           containerColor={colors.errorContainer}
           loading={isLoading}
           disabled={isLoading}
-          onPress={() => dispatch(clearUnsyncedActivities())}
+          onPress={() => {
+            const shouldClearRecovery = unsyncedActivities.some(
+              ({ routeJournalId }) => routeJournalId && routeJournalId === trackingRecovery.journalId,
+            );
+            unsyncedActivities.forEach(({ routeJournalId }) => {
+              if (routeJournalId) removeLocationJournal(routeJournalId);
+            });
+            if (shouldClearRecovery) dispatch(clearTrackingRecovery());
+            dispatch(clearUnsyncedActivities());
+          }}
           accessibilityLabel="Удалить несинхронизированные активности"
         />
       </View>

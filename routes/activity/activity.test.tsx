@@ -1,10 +1,16 @@
 import { screen, waitFor } from '@testing-library/react-native';
 import { STATUSES } from '@const/enums';
 import { resetLocationSlice, setActivityStatus, setIsMapVisible } from '@R/slices/location/location';
+import {
+  clearTrackingRecovery,
+  setTrackingRecoveryStatus,
+  startTrackingRecovery,
+} from '@R/slices/tracking-recovery/tracking-recovery';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
+import { createLocationJournal } from '@U/location/location-journal';
 import Activity from './activity';
 
 jest.mock('@Routes/activity/icon-choose-sport/icon-choose-sport', () => ({
@@ -86,6 +92,7 @@ describe('Activity', () => {
 
   beforeEach(() => {
     mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(clearTrackingRecovery());
     mockStopLocationTracking = jest.spyOn(backgroundLocation, 'stopLocationTracking').mockResolvedValue(undefined);
     mockErrorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
   });
@@ -134,7 +141,7 @@ describe('Activity', () => {
   });
 
   it('pauses recovered tracking only after stopping the location service', async () => {
-    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(startTrackingRecovery(createLocationJournal()));
     await renderWithProviders(<Activity />);
 
     await waitFor(() => expect(mockStopLocationTracking).toHaveBeenCalledTimes(1));
@@ -142,13 +149,14 @@ describe('Activity', () => {
       expect(mockStore.getState().location.activityStatus).toBe(STATUSES.paused);
       expect(mockStore.getState().location.isAppShutedByPhone).toBe(true);
     });
-    expect(mockStore.getState().location.locationsWithPauses).toHaveLength(2);
+    await waitFor(() => expect(mockStore.getState().location.locationsWithPauses).toHaveLength(2));
   });
 
   it('keeps recovered tracking active and reports an error when stopping fails', async () => {
     const error = new Error('stop failed');
     mockStopLocationTracking.mockRejectedValueOnce(error);
-    mockStore.dispatch(setActivityStatus(STATUSES.continued));
+    mockStore.dispatch(startTrackingRecovery(createLocationJournal()));
+    mockStore.dispatch(setTrackingRecoveryStatus(STATUSES.continued));
 
     await renderWithProviders(<Activity />);
 

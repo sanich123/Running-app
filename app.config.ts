@@ -6,7 +6,7 @@ export default {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
     scheme: IS_DEV ? 'runich-dev' : 'runich',
-    version: '4.0.1',
+    version: '1.0.0',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
@@ -65,6 +65,30 @@ export default {
               scheme: 'https',
               host: 'stage--runich.netlify.app',
               pathPrefix: '/login-from-url',
+            },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'https',
+              host: 'runich.netlify.app',
+              pathPrefix: '/activity',
+            },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'https',
+              host: 'stage--runich.netlify.app',
+              pathPrefix: '/activity',
             },
           ],
           category: ['BROWSABLE', 'DEFAULT'],

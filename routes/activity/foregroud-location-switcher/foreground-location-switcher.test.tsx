@@ -12,6 +12,8 @@ describe('foreground location switcher', () => {
         requestForegroundPermission={requestForegroundPermission}
       />,
     );
+    expect(screen.getByTestId('foreground-location-allow')).toBeDisabled();
+    await user.press(screen.getByTestId('location-consent-checkbox'));
     await user.press(screen.getByTestId('foreground-location-allow'));
     expect(requestForegroundPermission).toHaveBeenCalledTimes(1);
   });

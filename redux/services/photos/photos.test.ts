@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { runichApi } from '@R/runich-api/runich-api';
-import authReducer, { setAccessToken } from '@R/slices/auth/auth';
+import authReducer, { setAuthTokens } from '@R/slices/auth/auth';
 import { photosApi } from './photos';
 
 interface MockXhr {
@@ -61,7 +61,7 @@ describe('photos API upload transport', () => {
     const formData = new FormData();
     formData.append('file', 'native-file-descriptor');
     const store = createStore();
-    store.dispatch(setAccessToken('access-token'));
+    store.dispatch(setAuthTokens({ accessToken: 'access-token' }));
 
     await expect(store.dispatch(photosApi.endpoints.uploadPhoto.initiate(formData)).unwrap()).resolves.toEqual({
       url: 'https://cdn.example/photo.jpg',

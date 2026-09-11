@@ -12,6 +12,7 @@ export default function CustomImage({
   priority,
   cachePolicy,
   recyclingKey,
+  transition,
 }: {
   style: any;
   source: { uri: string | null | undefined };
@@ -22,6 +23,7 @@ export default function CustomImage({
   priority?: ImageProps['priority'];
   cachePolicy?: ImageProps['cachePolicy'];
   recyclingKey?: string | null;
+  transition?: ImageProps['transition'];
 }) {
   return (
     <Image
@@ -34,7 +36,7 @@ export default function CustomImage({
       priority={priority}
       cachePolicy={cachePolicy}
       recyclingKey={Platform.OS !== 'web' ? recyclingKey : undefined}
-      transition={Platform.OS !== 'web' ? 500 : undefined}
+      transition={transition ?? (Platform.OS !== 'web' ? 500 : undefined)}
     />
   );
 }

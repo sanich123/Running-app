@@ -6,11 +6,9 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import { useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
 import UserInfo from '@S/card/user-info/user-info';
-import { getMapBoxImage } from '@U/location/location-utils';
 import Btns from './btns/btns';
 import { LikesSize } from './likes/const';
 import Likes from './likes/likes';
-import { ACTIVITY_MEDIA_HEIGHT } from './media-list/const';
 import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
 import ShareActivityImage from './share-activity-image/share-activity-image';
@@ -35,9 +33,9 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     isShowDeleteBtn,
     mapPhotoUrl,
     mapPhotoUrlBlurhash,
-    locations,
     profile,
     commentsLength,
+    likesLength,
     isFullView,
   } = rest;
   const pathname = usePathname();
@@ -50,22 +48,14 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   // every visible card creates an extra request per card and replaces the
   // image URL while the list is being scrolled. The full activity view still
   // loads the route when the detail response does not contain it.
-  const shouldLoadRouteLocations = isFullView && !locations?.length && Boolean(mapPhotoUrl);
+  const shouldLoadRouteLocations = isFullView && Boolean(mapPhotoUrl);
   const { data: routeData } = useGetLocationsByActivityIdQuery(id, { skip: !shouldLoadRouteLocations });
-  const routeLocations = locations?.length ? locations : routeData?.locations;
+  const routeLocations = routeData?.locations;
   const routeKilometresSplit = kilometresSplit?.length ? kilometresSplit : routeData?.kilometresSplit;
-  const shareMapPhotoUrl = useMemo(() => {
-    if (routeLocations?.length) {
-      return getMapBoxImage(routeLocations) || mapPhotoUrl;
-    }
-    return mapPhotoUrl;
-  }, [mapPhotoUrl, routeLocations]);
-  const resolvedMapPhotoUrl = useMemo(() => {
-    if (routeLocations?.length) {
-      return getMapBoxImage(routeLocations, { width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }) || mapPhotoUrl;
-    }
-    return cardMapPhotoUrl;
-  }, [cardMapPhotoUrl, mapPhotoUrl, mediaWidth, routeLocations]);
+  // Keep the persisted preview URL stable while route data is loading. The
+  // route is still used for metrics and by the dedicated map screen.
+  const shareMapPhotoUrl = mapPhotoUrl;
+  const resolvedMapPhotoUrl = cardMapPhotoUrl;
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
   return (
     <>
@@ -113,7 +103,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           elevationGain={getActivityCardElevationGain(routeKilometresSplit, routeLocations)}
         />
         <View style={{ height: 40, paddingHorizontal: 8 }}>
-          <Likes activityId={id} size={likesSize} />
+          <Likes activityId={id} size={likesSize} likesLength={likesLength} />
         </View>
         <Card.Actions style={styles.actions}>
           <Btns
@@ -122,6 +112,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             cardRef={cardRef}
             isShowDeleteBtn={isShowDeleteBtn}
             commentsLength={commentsLength}
+            likesLength={likesLength}
             profile={profile}
             mapPhotoUrl={resolvedMapPhotoUrl}
           />

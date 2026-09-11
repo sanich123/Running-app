@@ -27,7 +27,6 @@ describe('render item', () => {
         mapPhotoUrlBlurhash: 'map-blurhash',
       }),
     );
-    expect(element.props.locations).toBeUndefined();
     expect(element.props.kilometresSplit).toBeUndefined();
     expect(keyExtractor(item)).toBe('activity-1');
   });

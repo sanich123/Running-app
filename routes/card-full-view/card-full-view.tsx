@@ -49,10 +49,10 @@ export default function CardFullView() {
               distance={activity.distance}
               steps={activity.steps}
               kilometresSplit={activity.kilometresSplit}
-              locations={activity.locations}
               mapPhotoUrl={activity.mapPhotoUrl}
               profile={activity.profile}
               commentsLength={activity._count.comments}
+              likesLength={activity._count.likes}
             />
             <Metrics />
             {Boolean(activity.kilometresSplit?.length) && (

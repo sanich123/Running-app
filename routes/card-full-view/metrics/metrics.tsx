@@ -14,14 +14,14 @@ export default function Metrics() {
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(`${activityId}`);
   const { data: routeData } = useGetLocationsByActivityIdQuery(`${activityId}`, {
-    skip: !activityId || Boolean(activity?.locations?.length),
+    skip: !activityId,
   });
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const kilometresSplit = activity?.kilometresSplit?.length
     ? activity.kilometresSplit
     : (routeData?.kilometresSplit ?? []);
-  const routeLocations = activity?.locations?.length ? activity.locations : routeData?.locations;
+  const routeLocations = routeData?.locations;
   const gainedElevation = getActivityElevationGain(kilometresSplit, routeLocations);
   const hasElevationGain = gainedElevation > 0;
   const mainMetric = activity

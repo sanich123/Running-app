@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
-import { resetAuthSlice } from '@R/slices/auth/auth';
+import { resetAuthSlice, setAuthTokens } from '@R/slices/auth/auth';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -50,9 +50,11 @@ describe('login from URL', () => {
 
   it('verifies the backend login code and opens the home page', async () => {
     let requestBody: unknown;
+    let authorizationHeader: string | null = null;
     server.use(
       http.post(`${BASE_URL}/auth/verify`, async ({ request }) => {
         requestBody = await request.json();
+        authorizationHeader = request.headers.get('authorization');
         return HttpResponse.json({
           accessToken: 'access-token',
           refreshToken: 'refresh-token',
@@ -72,6 +74,26 @@ describe('login from URL', () => {
     });
     expect(mockDismissAll).toHaveBeenCalled();
     expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
+    expect(authorizationHeader).toBeNull();
+  });
+
+  it('keeps the existing session when a repeated login link is invalid', async () => {
+    mockStore.dispatch(setAuthTokens({ accessToken: 'current-access-token', refreshToken: 'current-refresh-token' }));
+    server.use(
+      http.post(`${BASE_URL}/auth/verify`, () =>
+        HttpResponse.json({ message: 'Код уже использован' }, { status: 401 }),
+      ),
+    );
+    mockUseLinkingURL.mockReturnValue('https://runich.netlify.app/login-from-url?code=used-code');
+
+    await renderWithProviders(<LoginFromUrlRoute />, { store: mockStore });
+
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
+    expect(mockStore.getState().auth).toMatchObject({
+      accessToken: 'current-access-token',
+      refreshToken: 'current-refresh-token',
+    });
+    expect(mockErrorToast).toHaveBeenCalled();
   });
 
   it('returns to sign-in and shows an OAuth error from the backend', async () => {

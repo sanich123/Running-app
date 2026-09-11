@@ -12,6 +12,9 @@ export type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof t
 export interface ActivityMigrationJobResponse {
   jobId: string;
   status: ActivityMigrationStatus;
+  queuePosition: number | null;
+  queueAhead: number;
+  queueSize: number;
   totalActivities: number;
   processedActivities: number;
   importedActivities: number;
@@ -41,6 +44,7 @@ interface ActivityProfileResponse {
 
 interface ActivityCountResponse {
   comments: number;
+  likes: number;
 }
 
 type ActivityKilometreSplitResponse = ActivityKilometreSplit;
@@ -64,7 +68,6 @@ export interface ActivityResponse {
   speed?: number | null;
   isPublic?: boolean | null;
   emotion?: string | null;
-  locations?: ActivityLocationResponse[] | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
   sourceActivityId?: string | null;
@@ -108,7 +111,6 @@ export interface ActivityMutationResponse {
   speed: number;
   isPublic?: boolean | null;
   emotion?: string | null;
-  locations?: ActivityLocationResponse[] | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
   sourceActivityId?: string | null;
@@ -254,6 +256,13 @@ export interface MessageResponse {
 export interface AuthResponse {
   accessToken: string;
   refreshToken?: string;
+}
+
+export interface ApiState {
+  auth: {
+    accessToken?: string;
+    refreshToken?: string;
+  };
 }
 
 export interface UserAuthResponse extends AuthResponse {

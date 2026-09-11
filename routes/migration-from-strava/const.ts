@@ -22,6 +22,10 @@ export const MIGRATION_STATES = {
     transfer: 'Загружаем архив на сервер',
     waitingForServer: 'Ожидаем ответа сервера',
     queued: 'Архив принят в обработку',
+    queueAhead: (count: number, position: number, total: number) =>
+      `Ваша задача в очереди: ${position} из ${total}. Перед вами: ${count}.`,
+    queueNext: (position: number, total: number) =>
+      `Ваша задача следующая: ${position} из ${total}. Начнём сразу после текущей обработки.`,
     processing: 'Обрабатываем архив',
     cleaning: 'Удаляем временные файлы',
     successSending: 'Архив обработан, активности добавлены.',
@@ -59,6 +63,10 @@ export const MIGRATION_STATES = {
     transfer: 'Uploading archive to the server',
     waitingForServer: 'Waiting for the server response',
     queued: 'Archive accepted for processing',
+    queueAhead: (count: number, position: number, total: number) =>
+      `Your task is ${position} of ${total} in the queue. There are ${count} tasks ahead of yours.`,
+    queueNext: (position: number, total: number) =>
+      `Your task is next: ${position} of ${total}. It will start as soon as the current task finishes.`,
     processing: 'Processing the archive',
     cleaning: 'Removing temporary files',
     successSending: 'Archive processed and activities imported.',

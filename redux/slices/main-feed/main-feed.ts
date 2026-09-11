@@ -6,6 +6,7 @@ const mainFeed = createSlice({
     activityIdWhichCommentsToUpdate: '',
     needToRefreshActivities: false,
     activityIdWhichLikesToDownload: '',
+    activityIdWhichLikesToUpdate: '',
   },
   reducers: {
     setActivityIdWhichCommentsToUpdate: (state, action) => {
@@ -14,17 +15,25 @@ const mainFeed = createSlice({
     setActivityIdWhichLikesToDownload: (state, action) => {
       state.activityIdWhichLikesToDownload = action.payload;
     },
+    setActivityIdWhichLikesToUpdate: (state, action) => {
+      state.activityIdWhichLikesToUpdate = action.payload;
+    },
     resetMainFeedSlice: () => {
       return {
         activityIdWhichCommentsToUpdate: '',
         needToRefreshActivities: false,
         activityIdWhichLikesToDownload: '',
+        activityIdWhichLikesToUpdate: '',
       };
     },
   },
 });
 
-export const { setActivityIdWhichCommentsToUpdate, setActivityIdWhichLikesToDownload, resetMainFeedSlice } =
-  mainFeed.actions;
+export const {
+  setActivityIdWhichCommentsToUpdate,
+  setActivityIdWhichLikesToDownload,
+  setActivityIdWhichLikesToUpdate,
+  resetMainFeedSlice,
+} = mainFeed.actions;
 
 export default mainFeed.reducer;

@@ -56,7 +56,7 @@ export const MOCK_SERVER_ACTIVITY = {
     emailNotifications: false,
     user: { email: MOCK_SERVER_PROFILE.email },
   },
-  _count: { comments: 3 },
+  _count: { comments: 3, likes: 0 },
 } as const;
 
 export const MOCK_SERVER_ACTIVITIES = {

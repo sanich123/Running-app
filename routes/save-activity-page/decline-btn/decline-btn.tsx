@@ -4,20 +4,25 @@ import { useRouter } from 'expo-router';
 import { Button, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { resetActivityDraft, resetFinishedActivity } from '@R/slices/activity/activity';
+import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
+import { getActiveLocationJournalId, removeLocationJournal } from '@U/location/location-journal';
 import { DECLINE_BTN } from './const';
 
 export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
   const dispatch = useAppDispatch();
   const { replace } = useRouter();
-  const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled, finishedActivity } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
   const shouldBeDisabled = isDisabled || isSavingDisabled;
 
   function declineActivity() {
+    const journalId = finishedActivity.routeJournalId ?? getActiveLocationJournalId();
+    if (journalId) removeLocationJournal(journalId);
+    dispatch(clearTrackingRecovery());
     dispatch(resetActivityDraft());
     dispatch(resetFinishedActivity());
     replace(ROUTES.root);

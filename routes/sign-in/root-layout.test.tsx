@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
-import { resetAuthSlice } from '@R/slices/auth/actions';
+import { resetAuthSlice } from '@R/slices/auth/auth';
 import { store } from '@R/store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import RootLayout from '../../app/_layout';

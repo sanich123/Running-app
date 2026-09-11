@@ -8,11 +8,12 @@ import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import CustomPasswordInput from '@S/custom-password-input/custom-password-input';
 import CustomTextInput from '@S/custom-text-input/custom-text-input';
-import { emailValidation, passwordValidation } from '@S/custom-text-input/types';
+import { emailValidation, passwordValidation, registrationEmailValidation } from '@S/custom-text-input/types';
 import { SignInPageStates } from '@U/validate-email-password';
 import AuthDivider from './auth-divider/auth-divider';
 import AuthStepIntro from './auth-step-intro';
 import { SIGN_IN_FIELDS } from './const';
+import EmailRegistrationRestriction from './email-registration-restriction/email-registration-restriction';
 import LegalLinks from './legal-links/legal-links';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
@@ -52,7 +53,7 @@ export default function SignIn() {
           control={control}
           fieldName="email"
           label={SIGN_IN_FIELDS.email}
-          validation={emailValidation}
+          validation={currentAuthStep === SignInPageStates.register ? registrationEmailValidation : emailValidation}
           inputMode="email"
           autoComplete="email"
           accessibilityLabel="auth-email"
@@ -70,13 +71,16 @@ export default function SignIn() {
             compact
           />
         )}
+        {currentAuthStep === SignInPageStates.register && <EmailRegistrationRestriction />}
         <LoginRegisterBtn handleSubmit={handleSubmit} authStep={currentAuthStep} />
         <LoginRegisterNavigation
           authStep={currentAuthStep}
           onAuthStepChange={setAuthStep}
           showEmailLinkNavigation={false}
         />
-        {currentAuthStep === SignInPageStates.login && <LegalLinks />}
+        {(currentAuthStep === SignInPageStates.login || currentAuthStep === SignInPageStates.register) && (
+          <LegalLinks />
+        )}
         <View style={styles.footer}>
           <Text variant="bodySmall" style={styles.version}>
             Версия приложения {Constants.expoConfig?.version ?? '—'}

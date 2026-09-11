@@ -12,7 +12,7 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: Activ
     })
     .map(({ kilometerPoint }, index) => ({
       type: 'Feature' as const,
-      properties: { label: `${index + 1}` },
+      properties: { label: `${index + 1}`, sortKey: index },
       geometry: {
         type: 'Point' as const,
         coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
@@ -38,6 +38,7 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: Activ
           circleRadius: 15,
           circleStrokeColor: colors.primary,
           circleStrokeWidth: 2,
+          circleSortKey: ['get', 'sortKey'],
         }}
       />
       <SymbolLayer
@@ -49,6 +50,7 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: Activ
           textField: ['get', 'label'],
           textIgnorePlacement: true,
           textSize: 12,
+          symbolSortKey: ['get', 'sortKey'],
         }}
       />
     </ShapeSource>
