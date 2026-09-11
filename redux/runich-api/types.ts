@@ -12,6 +12,9 @@ export type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof t
 export interface ActivityMigrationJobResponse {
   jobId: string;
   status: ActivityMigrationStatus;
+  queuePosition: number | null;
+  queueAhead: number;
+  queueSize: number;
   totalActivities: number;
   processedActivities: number;
   importedActivities: number;
