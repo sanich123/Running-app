@@ -12,9 +12,7 @@ jest.mock('expo-router', () => ({ useLocalSearchParams: () => ({ id: MOCK_SERVER
 jest.mock('@S/card/card', () => {
   const { Text, View } = jest.requireActual('react-native');
   return ({ description, isShowDescription }: { description?: string | null; isShowDescription?: boolean }) => (
-    <View testID="full-view-card">
-      {isShowDescription && description ? <Text>{description}</Text> : null}
-    </View>
+    <View testID="full-view-card">{isShowDescription && description ? <Text>{description}</Text> : null}</View>
   );
 });
 jest.mock('./metrics/metrics', () => {
