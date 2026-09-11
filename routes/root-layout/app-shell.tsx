@@ -12,6 +12,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { toastConfig } from '@const/toast-config';
 import { useAppSelector } from '@R/typed-hooks';
+import MigrationStatusSync from '@Routes/migration-from-strava/migration-status-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 import useAppInitialization from '@U/hooks/use-app-initialization';
 import { LazySaveBtn, LazyUsersSettingsIcons, PUBLIC_ROUTES } from './const';
@@ -45,6 +46,7 @@ export default function AppShell() {
           <SystemBars style="auto" />
           <PaperProvider theme={paperTheme}>
             <BottomSheetModalProvider>
+              <MigrationStatusSync />
               <Stack
                 screenOptions={{
                   gestureEnabled: false,

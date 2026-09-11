@@ -11,6 +11,7 @@ import comment from './slices/comment/comment';
 import location from './slices/location/location';
 import logining from './slices/logining/logining';
 import mainFeed from './slices/main-feed/main-feed';
+import migration from './slices/migration/migration';
 import network from './slices/network/network';
 import profile from './slices/profile/profile';
 import settings from './slices/settings/settings';
@@ -31,6 +32,7 @@ const appReducer = combineReducers({
   activity,
   trackingRecovery,
   mainFeed,
+  migration,
   auth,
   logining,
   comment,

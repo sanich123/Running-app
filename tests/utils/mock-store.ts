@@ -5,6 +5,7 @@ import comment from '@R/slices/comment/comment';
 import location from '@R/slices/location/location';
 import logining from '@R/slices/logining/logining';
 import mainFeed from '@R/slices/main-feed/main-feed';
+import migration from '@R/slices/migration/migration';
 import network from '@R/slices/network/network';
 import profile from '@R/slices/profile/profile';
 import settings from '@R/slices/settings/settings';
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   activity,
   trackingRecovery,
   mainFeed,
+  migration,
   auth,
   logining,
   comment,
