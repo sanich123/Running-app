@@ -64,6 +64,7 @@ export interface ActivityResponse {
   mapPhotoUrlBlurhash?: string | null;
   duration: number;
   distance: number;
+  elevationGain: number;
   steps?: number | null;
   speed?: number | null;
   isPublic?: boolean | null;
@@ -87,6 +88,7 @@ export type ActivityListItemResponse = Pick<
   | 'mapPhotoUrlBlurhash'
   | 'duration'
   | 'distance'
+  | 'elevationGain'
   | 'steps'
   | 'profile'
   | '_count'
@@ -107,6 +109,7 @@ export interface ActivityMutationResponse {
   mapPhotoUrlBlurhash?: string | null;
   duration: number;
   distance: number;
+  elevationGain: number;
   steps?: number | null;
   speed: number;
   isPublic?: boolean | null;
@@ -118,6 +121,7 @@ export interface ActivityMutationResponse {
 
 export interface ActivitiesResponse {
   activities: ActivityListItemResponse[];
+  currentUserProfile?: ActivityProfileResponse | null;
   hasMore: boolean;
   nextCursor: string | null;
   isLastPage?: boolean;
@@ -166,7 +170,7 @@ export interface CommentResponse {
   id: string;
   date: string;
   profile: CommentProfileResponse;
-  commentLike?: CommentLikeSummaryResponse[];
+  commentLike: CommentLikeSummaryResponse[];
 }
 
 export interface CommentsResponse {

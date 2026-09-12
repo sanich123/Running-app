@@ -45,6 +45,7 @@ export const MOCK_SERVER_ACTIVITY = {
   mapPhotoUrlBlurhash: null,
   duration: 3062,
   distance: 28325,
+  elevationGain: 0,
   isPublic: true,
   emotion: 'HAPPY',
   kilometresSplit: [],
@@ -61,6 +62,7 @@ export const MOCK_SERVER_ACTIVITY = {
 
 export const MOCK_SERVER_ACTIVITIES = {
   activities: [MOCK_SERVER_ACTIVITY],
+  currentUserProfile: MOCK_SERVER_PROFILE,
   hasMore: false,
   nextCursor: null,
   isLastPage: true,

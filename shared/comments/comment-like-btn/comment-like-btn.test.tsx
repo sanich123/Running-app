@@ -43,8 +43,13 @@ describe('Comment like btn', () => {
   it('sends a like to the comment after pressing the heart', async () => {
     const user = userEvent.setup();
     let requestBody: unknown;
+    let getRequests = 0;
     mockStore.dispatch(setUserId('new-comment-like-author'));
     server.use(
+      http.get(`${BASE_URL}/comment/922dca27-f99c-4165-96d6-5a04bbb6e9cb/like`, () => {
+        getRequests += 1;
+        return HttpResponse.json([]);
+      }),
       http.post(`${BASE_URL}/comment/922dca27-f99c-4165-96d6-5a04bbb6e9cb/like`, async ({ request }) => {
         requestBody = await request.json();
         return HttpResponse.json({ id: 'comment-like-id' }, { status: 201 });
@@ -58,6 +63,7 @@ describe('Comment like btn', () => {
         comment="Test comment"
       />,
     );
+    expect(getRequests).toBe(0);
     const likeButton = await screen.findByTestId('commentLikeBtn');
     await waitFor(() => expect(likeButton.props.accessibilityState?.disabled).toBe(false));
     await user.press(likeButton);
@@ -138,7 +144,7 @@ describe('Comment like btn', () => {
     await renderWithProviders(
       <CommentLikeBtn
         commentId="broken-comment"
-        commentLikesFromComment={[]}
+        commentLikesFromComment={[{ id: 'known-like', authorId: 'other-author' }]}
         profile={{ ...MOCK_PROFILE, emailNotifications: false }}
         comment="Broken route"
       />,

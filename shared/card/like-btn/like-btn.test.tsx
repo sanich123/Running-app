@@ -26,6 +26,22 @@ describe('Activity card like btn', () => {
     expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();
   });
 
+  it('does not request likes when the activity count is zero', async () => {
+    let requests = 0;
+    const activityId = 'activity-without-likes';
+    server.use(
+      http.get(`${BASE_URL}/like/${activityId}`, () => {
+        requests += 1;
+        return HttpResponse.json([]);
+      }),
+    );
+
+    await renderWithProviders(<ActivityCardLikeBtn activityId={activityId} likesLength={0} profile={MOCK_PROFILE} />);
+
+    expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();
+    expect(requests).toBe(0);
+  });
+
   it('sends a like after the user presses the heart', async () => {
     const user = userEvent.setup();
     let requestBody: unknown;

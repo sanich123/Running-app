@@ -1,6 +1,5 @@
 import {
   getAverageCadence,
-  getElevationGain,
   getSpeedInKmPerHour,
   getSpeedInMinsInKm,
   isRunningActivity,
@@ -8,20 +7,6 @@ import {
 } from '@U/location/location-utils';
 import { HOME_ACTIVITY_FULL_VIEW } from './const';
 import type { LANGUAGES } from '@const/enums';
-import type { ActivityKilometreSplit, ActivityLocation } from '@S/card/types';
-
-export function getActivityElevationGain(
-  kilometresSplit: ActivityKilometreSplit[],
-  routeLocations: ActivityLocation[] | null | undefined,
-) {
-  if (kilometresSplit.length) {
-    return Math.round(
-      kilometresSplit.reduce((total, { lastKilometerAltitude }) => total + Math.max(0, lastKilometerAltitude), 0),
-    );
-  }
-
-  return Math.round(routeLocations?.length ? getElevationGain(routeLocations) : 0);
-}
 
 export function getActivityMainMetric({
   sport,

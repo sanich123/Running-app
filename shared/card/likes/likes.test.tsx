@@ -1,9 +1,12 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import * as router from 'expo-router';
 import { setUserId } from '@R/slices/auth/auth';
 import { AvatarShowableTestIds } from '@S/avatar/showable/const';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LIKE_BTN, LikesSize } from './const';
 import Likes from './likes';
@@ -46,6 +49,22 @@ describe('Card likes', () => {
   it('renders an empty state when likes are skipped', async () => {
     await renderWithProviders(<Likes activityId="" size={LikesSize.big} />);
 
+    expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
+  });
+
+  it('does not request likes when the activity count is zero', async () => {
+    let requests = 0;
+    const activityId = 'activity-without-likes';
+    server.use(
+      http.get(`${BASE_URL}/like/${activityId}`, () => {
+        requests += 1;
+        return HttpResponse.json([]);
+      }),
+    );
+
+    await renderWithProviders(<Likes activityId={activityId} size={LikesSize.small} likesLength={0} />);
+
+    expect(requests).toBe(0);
     expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
   });
 

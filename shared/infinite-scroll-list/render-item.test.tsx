@@ -11,6 +11,7 @@ describe('render item', () => {
       mapPhotoUrlBlurhash: 'map-blurhash',
       duration: 1000,
       distance: 2000,
+      elevationGain: 15,
       id: 'activity-1',
       userId: 'user-1',
       profile: {},
@@ -27,7 +28,7 @@ describe('render item', () => {
         mapPhotoUrlBlurhash: 'map-blurhash',
       }),
     );
-    expect(element.props.kilometresSplit).toBeUndefined();
+    expect(element.props.elevationGain).toBe(15);
     expect(keyExtractor(item)).toBe('activity-1');
   });
 

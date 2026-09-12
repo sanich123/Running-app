@@ -10,7 +10,7 @@ import InfiniteScrollList from '@S/infinite-scroll-list/infinite-scroll-list';
 
 export default function Activities() {
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { data, isLoading, error, isError, refetch, isSuccess, fetchNextPage, isFetching } =
+  const { data, isLoading, error, isError, refetch, isSuccess, fetchNextPage, isFetchingNextPage } =
     useGetActivitiesByUserIdInfiniteQuery({ id: userId }, { skip: !userId });
   const { language } = useAppSelector(({ settings }) => settings);
   const activities = useMemo(() => data?.pages.flatMap(({ activities }) => activities) ?? [], [data?.pages]);
@@ -26,7 +26,7 @@ export default function Activities() {
             refetch={refetch}
             isLastPage={!data?.pages[data?.pages.length - 1]?.hasMore}
             nextPageCallback={fetchNextPage}
-            isFetching={isFetching}
+            isFetchingNextPage={isFetchingNextPage}
           />
         ) : (
           <EmptyState

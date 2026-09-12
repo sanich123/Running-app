@@ -1,14 +1,31 @@
 import { screen } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { NUMBER_OF_LIKES } from '@S/card/number-of-likes/const';
 import { MOCK_COMMENT_LIKES } from '@T/mocks/mock-comment-likes';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CommentLikesLength from './comment-likes-length';
 
 describe('Comment likes length', () => {
+  it('does not request comment likes when the comment has none', async () => {
+    let requests = 0;
+    server.use(
+      http.get(`${BASE_URL}/comment/comment-without-likes/like`, () => {
+        requests += 1;
+        return HttpResponse.json([]);
+      }),
+    );
+
+    await renderWithProviders(<CommentLikesLength commentId="comment-without-likes" commentLikesFromComment={[]} />);
+
+    expect(requests).toBe(0);
+  });
+
   it('should correctly renders in english, when you and others gave likes', async () => {
     mockStore.dispatch(setUserId('7857abb1-b125-4f39-becf-8f30216b46ec'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

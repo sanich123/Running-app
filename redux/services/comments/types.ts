@@ -16,6 +16,7 @@ export interface SendCommentLike {
     commentId: string;
   };
   commentId: string;
+  activityId?: string;
 }
 
 export interface DeleteCommentLike {

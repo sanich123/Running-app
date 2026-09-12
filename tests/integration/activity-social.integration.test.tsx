@@ -39,6 +39,7 @@ const cardProps = {
   mapPhotoUrl: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/360x360@2x?access_token=test',
   duration: MOCK_SERVER_ACTIVITY.duration,
   distance: MOCK_SERVER_ACTIVITY.distance,
+  elevationGain: MOCK_SERVER_ACTIVITY.elevationGain,
   profile: MOCK_SERVER_ACTIVITY.profile,
   commentsLength: MOCK_SERVER_ACTIVITY._count.comments,
 };

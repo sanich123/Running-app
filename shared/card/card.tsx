@@ -4,7 +4,6 @@ import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
 import UserInfo from '@S/card/user-info/user-info';
 import Btns from './btns/btns';
 import { LikesSize } from './likes/const';
@@ -13,7 +12,7 @@ import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
 import ShareActivityImage from './share-activity-image/share-activity-image';
 import { UserInfoSize } from './user-info/const';
-import { getActivityCardElevationGain, getCardMapPhotoUrl } from './utils';
+import { getCardMapPhotoUrl } from './utils';
 import type { ActivityCardProps } from './types';
 
 export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
@@ -27,8 +26,8 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     photoVideoUrls,
     duration,
     distance,
+    elevationGain,
     steps,
-    kilometresSplit,
     isShowDescription,
     isShowDeleteBtn,
     mapPhotoUrl,
@@ -44,11 +43,6 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const cardRef = useRef<View>(null);
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
   const cardMapPhotoUrl = useMemo(() => getCardMapPhotoUrl(mapPhotoUrl, mediaWidth), [mapPhotoUrl, mediaWidth]);
-
-  const shouldLoadRouteLocations = isFullView && Boolean(mapPhotoUrl);
-  const { data: routeData } = useGetLocationsByActivityIdQuery(id, { skip: !shouldLoadRouteLocations });
-  const routeLocations = routeData?.locations;
-  const routeKilometresSplit = kilometresSplit?.length ? kilometresSplit : routeData?.kilometresSplit;
 
   const shareMapPhotoUrl = mapPhotoUrl;
   const resolvedMapPhotoUrl = cardMapPhotoUrl;
@@ -96,7 +90,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           id={id}
           sport={sport}
           steps={steps}
-          elevationGain={getActivityCardElevationGain(routeKilometresSplit, routeLocations)}
+          elevationGain={elevationGain}
         />
         <View style={{ height: 40, paddingHorizontal: 8 }}>
           <Likes activityId={id} size={likesSize} likesLength={likesLength} />

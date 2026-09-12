@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react-native';
-import { http } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { loadingResponse } from '@T/utils/response-states';
@@ -27,5 +27,22 @@ describe('Avatar showable', () => {
   it('should render a default icon, when !error !isLoading !profile', async () => {
     await renderWithProviders(<AvatarShowable size={25} id="someUserIdWithoutPhoto" />, { store: mockStore });
     expect(await screen.findByTestId(AvatarShowableTestIds.default)).toBeOnTheScreen();
+  });
+
+  it('uses a supplied profile without requesting it again', async () => {
+    let requests = 0;
+    server.use(
+      http.get(`${BASE_URL}/user/feed-user/profile`, () => {
+        requests += 1;
+        return HttpResponse.json({ profilePhoto: 'server-avatar' });
+      }),
+    );
+
+    await renderWithProviders(<AvatarShowable size={25} id="feed-user" profile={{ profilePhoto: 'feed-avatar' }} />, {
+      store: mockStore,
+    });
+
+    expect(await screen.findByTestId(AvatarShowableTestIds.success)).toBeOnTheScreen();
+    expect(requests).toBe(0);
   });
 });

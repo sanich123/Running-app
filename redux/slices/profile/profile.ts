@@ -17,9 +17,13 @@ const profile = createSlice({
     saveWholeProfile: (state, action) => {
       state.profileFromServer = action.payload;
     },
+    saveProfilePreview: (state, action) => {
+      state.profileFromServer = { ...state.profileFromServer, ...action.payload };
+    },
   },
 });
 
-export const { setIsDisabledWhileSendingProfile, savePhotoUrl, resetSettings, saveWholeProfile } = profile.actions;
+export const { setIsDisabledWhileSendingProfile, savePhotoUrl, resetSettings, saveWholeProfile, saveProfilePreview } =
+  profile.actions;
 
 export default profile.reducer;

@@ -14,6 +14,7 @@ import type { CommentResponse } from '@R/runich-api/types';
 export default function Comment({
   authorId,
   comment,
+  activityId,
   id,
   date,
   profile,
@@ -58,12 +59,13 @@ export default function Comment({
       <View style={styles.likesWrapper}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <CommentLikeBtn
+            activityId={activityId}
             commentId={id}
-            commentLikesFromComment={commentLike ?? []}
+            commentLikesFromComment={commentLike}
             profile={profile}
             comment={comment}
           />
-          <CommentLikesLength commentId={id} commentLikesFromComment={commentLike ?? []} />
+          <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
         </View>
         <View style={styles.actions}>
           {isYouAuthor && <CommentEditBtn commentId={id} comment={comment} idOfUpdatingComment={idOfUpdatingComment} />}
