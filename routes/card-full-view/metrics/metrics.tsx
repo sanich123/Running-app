@@ -16,6 +16,7 @@ export default function Metrics() {
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const gainedElevation = activity?.elevationGain ?? 0;
+  const roundedGainedElevation = Math.round(Math.max(0, gainedElevation));
   const hasElevationGain = gainedElevation > 0;
   const mainMetric = activity
     ? getActivityMainMetric({
@@ -71,7 +72,7 @@ export default function Metrics() {
             {hasElevationGain ? (
               <View style={styles.alignedCenter}>
                 <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].elevationGain}</Text>
-                <Text variant="titleLarge">{`${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}</Text>
+                <Text variant="titleLarge">{`${roundedGainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}</Text>
               </View>
             ) : null}
           </View>
