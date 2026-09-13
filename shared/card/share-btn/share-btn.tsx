@@ -6,8 +6,8 @@ import { IconButton, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
-import type { ShareBtnProps } from '../types';
 import { SHARE_BUTTON_TEXT } from './const';
+import type { ShareBtnProps } from '../types';
 
 export default memo(function ShareBtn({ cardRef }: ShareBtnProps) {
   const { colors } = useTheme();

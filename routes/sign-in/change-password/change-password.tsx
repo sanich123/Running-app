@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
-import { LANGUAGES, ROUTES } from '@const/enums';
+import { ROUTES } from '@const/enums';
 import { useChangePasswordMutation } from '@R/services/authentication/authentication';
 import { setAuthSession } from '@R/slices/auth/auth';
 import { flushAuthPersistence } from '@R/slices/auth/persistence';

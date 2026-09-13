@@ -4,12 +4,12 @@ import { Platform, View, StyleSheet } from 'react-native';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import ActivityMapMarkers from './activity-map-markers/activity-map-markers';
+import { DISPLAY_ACTIVITY_MAP_TEXT } from './const';
 import MapKmSplit from './map-km-split/map-km-split';
 import RouteLine from './map-route-line/map-route-line';
 import MapboxWeb from './mapbox-web/mapbox-web';
 import { getActivityMapBounds } from './utils';
 import type { DisplayActivityMapProps } from '@S/card/types';
-import { DISPLAY_ACTIVITY_MAP_TEXT } from './const';
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
   const { colors } = useTheme();

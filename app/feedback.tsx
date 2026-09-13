@@ -6,10 +6,10 @@ import { useRouter } from 'expo-router';
 import { Button, Card, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
 import { useAppSelector } from '@R/typed-hooks';
+import { FEEDBACK_TEXT } from '@Routes/feedback/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import SwitchRow from '@S/feedback/switch-row';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
-import { FEEDBACK_TEXT } from '@Routes/feedback/const';
 import type { FeedbackKind } from '@Routes/feedback/const';
 
 export default function FeedbackPage() {
@@ -91,17 +91,9 @@ export default function FeedbackPage() {
           <Card.Content style={styles.cardContent}>
             <Text variant="titleMedium">{copy.beforeSend}</Text>
             <View style={styles.switches}>
-              <SwitchRow
-                label={copy.freeService}
-                value={firstConsent}
-                onValueChange={setFirstConsent}
-              />
+              <SwitchRow label={copy.freeService} value={firstConsent} onValueChange={setFirstConsent} />
               {firstConsent && (
-                <SwitchRow
-                  label={copy.soloDeveloper}
-                  value={secondConsent}
-                  onValueChange={setSecondConsent}
-                />
+                <SwitchRow label={copy.soloDeveloper} value={secondConsent} onValueChange={setSecondConsent} />
               )}
             </View>
           </Card.Content>
@@ -117,13 +109,7 @@ export default function FeedbackPage() {
               multiline
               value={text}
               onChangeText={setText}
-              placeholder={
-                isBug
-                  ? copy.bugPlaceholder
-                  : isFeature
-                    ? copy.featurePlaceholder
-                    : copy.thanksPlaceholder
-              }
+              placeholder={isBug ? copy.bugPlaceholder : isFeature ? copy.featurePlaceholder : copy.thanksPlaceholder}
               style={styles.textInput}
               returnKeyType="send"
               submitBehavior="submit"

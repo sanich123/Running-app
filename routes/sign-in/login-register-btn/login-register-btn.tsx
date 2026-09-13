@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
 import type { UseFormHandleSubmit } from 'react-hook-form';
+import { EMAIL_DELIVERY_NOTICE } from '@const/email-delivery';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import {
@@ -16,7 +17,6 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { successToast } from '@S/success-toast/success-toast';
 import { SignInPageStates } from '@U/validate-email-password';
-import { EMAIL_DELIVERY_NOTICE } from '@const/email-delivery';
 import { EMAIL_LINK_BTN, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 

@@ -41,16 +41,10 @@ export default function NetworkStateBanner() {
           }}>
           {isVpnEnabled && <Text variant="bodyMedium">{copy.vpn}</Text>}
           {!isInternetReachable && (
-            <Text variant="bodyMedium">
-              {isConnected ? copy.maybeNoInternet : copy.noInternet}
-            </Text>
+            <Text variant="bodyMedium">{isConnected ? copy.maybeNoInternet : copy.noInternet}</Text>
           )}
-          {isCellularWarning && (
-            <Text variant="bodyMedium">{copy.cellular(`${details?.cellularGeneration}`)}</Text>
-          )}
-          {Platform.OS === 'android' && isAirplaneMode && (
-            <Text variant="bodyMedium">{copy.airplane}</Text>
-          )}
+          {isCellularWarning && <Text variant="bodyMedium">{copy.cellular(`${details?.cellularGeneration}`)}</Text>}
+          {Platform.OS === 'android' && isAirplaneMode && <Text variant="bodyMedium">{copy.airplane}</Text>}
         </View>
       )}
     </>

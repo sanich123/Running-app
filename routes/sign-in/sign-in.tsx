@@ -8,11 +8,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import CustomPasswordInput from '@S/custom-password-input/custom-password-input';
 import CustomTextInput from '@S/custom-text-input/custom-text-input';
-import {
-  getEmailValidation,
-  getPasswordValidation,
-  getRegistrationEmailValidation,
-} from '@S/custom-text-input/types';
+import { getEmailValidation, getPasswordValidation, getRegistrationEmailValidation } from '@S/custom-text-input/types';
 import { SignInPageStates } from '@U/validate-email-password';
 import AuthDivider from './auth-divider/auth-divider';
 import AuthStepIntro from './auth-step-intro';

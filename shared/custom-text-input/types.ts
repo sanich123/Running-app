@@ -1,7 +1,7 @@
 import isEmail from 'validator/lib/isEmail';
-import { LANGUAGES } from '@const/enums';
 import type { InputModeOptions, ReturnKeyTypeOptions } from 'react-native';
 import type { Control, FieldValues, Path, ValidateResult } from 'react-hook-form';
+import { LANGUAGES } from '@const/enums';
 export interface CustomTextInputProps<T extends FieldValues> {
   label: string;
   control?: Control<T>;
@@ -141,17 +141,17 @@ export const getRegistrationEmailValidation = (language: LANGUAGES) => {
   const validation = getEmailValidation(language);
   return {
     required: validation.required,
-  validate: (value: string) => {
-    const emailError = validation.validate(value);
-    if (emailError !== true) return emailError;
-    if (!isRussianEmailAddress(value)) {
-      return language === LANGUAGES.english
-        ? 'For registration, use an email address from a Russian provider (.ru or .рф)'
-        : 'Для регистрации используйте адрес российского почтового оператора (.ru или .рф)';
-    }
-    return true;
-  },
-};
+    validate: (value: string) => {
+      const emailError = validation.validate(value);
+      if (emailError !== true) return emailError;
+      if (!isRussianEmailAddress(value)) {
+        return language === LANGUAGES.english
+          ? 'For registration, use an email address from a Russian provider (.ru or .рф)'
+          : 'Для регистрации используйте адрес российского почтового оператора (.ru или .рф)';
+      }
+      return true;
+    },
+  };
 };
 
 export const registrationEmailValidation = getRegistrationEmailValidation(LANGUAGES.russian);

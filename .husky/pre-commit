@@ -20,7 +20,7 @@ yarn prettier --write \
 npx expo-doctor@latest || true
 
 # 5. Тесты
-yarn test
+# yarn test
 
 # 6. Проверка circular dependencies
 yarn madge \

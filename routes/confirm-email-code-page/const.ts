@@ -1,5 +1,5 @@
-import { LANGUAGES } from '@const/enums';
 import { EMAIL_DELIVERY_NOTICE } from '@const/email-delivery';
+import { LANGUAGES } from '@const/enums';
 
 export const CONFIRM_EMAIL_PAGE_TEXT = {
   [LANGUAGES.english]: {

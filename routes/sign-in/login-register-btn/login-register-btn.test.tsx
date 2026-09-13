@@ -1,16 +1,16 @@
 import { renderHook, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { useForm, type UseFormHandleSubmit } from 'react-hook-form';
+import { EMAIL_DELIVERY_NOTICE } from '@const/email-delivery';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import * as errorToastModule from '@S/error-toast/error-toast';
+import * as successToastModule from '@S/success-toast/success-toast';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { SignInPageStates } from '@U/validate-email-password';
-import { EMAIL_DELIVERY_NOTICE } from '@const/email-delivery';
-import * as successToastModule from '@S/success-toast/success-toast';
 import { EMAIL_LINK_BTN, LOGIN_BTN, REGISTER_BTN, RESET_BTN } from './const';
 import LoginRegisterBtn from './login-register-btn';
 import type { EmailPasswordData } from '@R/services/authentication/types';
