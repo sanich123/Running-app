@@ -49,12 +49,6 @@ export default function LegalIndexPage({ language }: { language: LANGUAGES }) {
           <Text style={styles.label}>{language === LANGUAGES.russian ? 'ИНН' : 'INN'}: </Text>
           {LEGAL_OPERATOR.inn}
         </Text>
-        <Text variant="bodyMedium">
-          <Text style={styles.label}>
-            {language === LANGUAGES.russian ? 'Адрес для корреспонденции' : 'Correspondence address'}:{' '}
-          </Text>
-          {LEGAL_OPERATOR.address}
-        </Text>
         <Text variant="bodyMedium">{LEGAL_OPERATOR.email}</Text>
       </View>
 

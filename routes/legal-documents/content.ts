@@ -42,7 +42,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '1. Оператор',
         paragraphs: [
-          `Оператор: ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}, адрес для корреспонденции: ${LEGAL_OPERATOR.address}, email: ${LEGAL_OPERATOR.email}. Runich предоставляет функции авторизации, записи тренировок, маршрутов, статистики, профиля и общения пользователей.`,
+          `Оператор: ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich предоставляет функции авторизации, записи тренировок, маршрутов, статистики, профиля и общения пользователей.`,
         ],
       },
       {
@@ -115,7 +115,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '1. Сервис и оператор',
         paragraphs: [
-          `Сервис предоставляет ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}, адрес для корреспонденции: ${LEGAL_OPERATOR.address}, email: ${LEGAL_OPERATOR.email}. Runich предоставляет инструменты авторизации, записи тренировок, маршрутов и статистики, профиля и общения пользователей.`,
+          `Сервис предоставляет ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich предоставляет инструменты авторизации, записи тренировок, маршрутов и статистики, профиля и общения пользователей.`,
         ],
       },
       {
@@ -226,7 +226,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   accountDeletion: {
     title: 'Удаление аккаунта и обращения пользователя',
     intro: [
-      `Удалить аккаунт можно в приложении Runich или по email оператора: ${LEGAL_OPERATOR.email}. Оператор: ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}, адрес для корреспонденции: ${LEGAL_OPERATOR.address}.`,
+      `Удалить аккаунт можно в приложении Runich или по email оператора: ${LEGAL_OPERATOR.email}. Оператор: ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}.`,
     ],
     sections: [
       {
