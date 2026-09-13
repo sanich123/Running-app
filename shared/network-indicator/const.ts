@@ -8,7 +8,7 @@ export const NETWORK_INDICATOR = {
   },
   [LANGUAGES.russian]: {
     offline: 'Вы оффлайн',
-    slowNetwork: 'You have slow connection, 3g or 2g',
+    slowNetwork: 'Медленное соединение, 3G или 2G',
     type: 'Тип соединения',
   },
 } as const;

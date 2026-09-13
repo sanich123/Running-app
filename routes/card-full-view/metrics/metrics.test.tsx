@@ -61,6 +61,20 @@ describe('Home activity full view', () => {
     expect(screen.queryByText(HOME_ACTIVITY_FULL_VIEW.english.averagePace)).not.toBeOnTheScreen();
   });
 
+  it('rounds the total elevation gain before displaying it', async () => {
+    server.use(
+      http.get(`${BASE_URL}/activity/activityId/someActivityId`, () =>
+        HttpResponse.json({ ...MOCK_ACTIVITY, elevationGain: 23.199999999999996 }),
+      ),
+    );
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+
+    await renderWithProviders(<Metrics />, { store: mockStore });
+
+    expect(await screen.findByText('23 m')).toBeOnTheScreen();
+    expect(screen.queryByText(/23\.199/)).not.toBeOnTheScreen();
+  });
+
   it('shows average cadence for running', async () => {
     const steps = 1200;
     server.use(

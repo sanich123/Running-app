@@ -8,11 +8,11 @@ import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import CustomPasswordInput from '@S/custom-password-input/custom-password-input';
 import CustomTextInput from '@S/custom-text-input/custom-text-input';
-import { emailValidation, passwordValidation, registrationEmailValidation } from '@S/custom-text-input/types';
+import { getEmailValidation, getPasswordValidation, getRegistrationEmailValidation } from '@S/custom-text-input/types';
 import { SignInPageStates } from '@U/validate-email-password';
 import AuthDivider from './auth-divider/auth-divider';
 import AuthStepIntro from './auth-step-intro';
-import { SIGN_IN_FIELDS } from './const';
+import { SIGN_IN_FIELD_LABELS, SIGN_IN_FOOTER_TEXT } from './const';
 import EmailRegistrationRestriction from './email-registration-restriction/email-registration-restriction';
 import LegalLinks from './legal-links/legal-links';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
@@ -22,6 +22,7 @@ import type { EmailPasswordData } from '@R/services/authentication/types';
 
 export default function SignIn() {
   const { email, password } = useAppSelector(({ logining }) => logining);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { authStep } = useLocalSearchParams<{ authStep?: string; oauthError?: string }>();
 
   const { control, handleSubmit } = useForm<EmailPasswordData>({
@@ -52,8 +53,12 @@ export default function SignIn() {
         <CustomTextInput<EmailPasswordData>
           control={control}
           fieldName="email"
-          label={SIGN_IN_FIELDS.email}
-          validation={currentAuthStep === SignInPageStates.register ? registrationEmailValidation : emailValidation}
+          label={SIGN_IN_FIELD_LABELS[language].email}
+          validation={
+            currentAuthStep === SignInPageStates.register
+              ? getRegistrationEmailValidation(language)
+              : getEmailValidation(language)
+          }
           inputMode="email"
           autoComplete="email"
           accessibilityLabel="auth-email"
@@ -63,8 +68,8 @@ export default function SignIn() {
           <CustomPasswordInput<EmailPasswordData>
             control={control}
             fieldName="password"
-            label={SIGN_IN_FIELDS.password}
-            validation={passwordValidation}
+            label={SIGN_IN_FIELD_LABELS[language].password}
+            validation={getPasswordValidation(language)}
             returnKeyType="send"
             returnKeyLabel="send"
             accessibilityLabel="auth-password"
@@ -83,7 +88,7 @@ export default function SignIn() {
         )}
         <View style={styles.footer}>
           <Text variant="bodySmall" style={styles.version}>
-            Версия приложения {Constants.expoConfig?.version ?? '—'}
+            {SIGN_IN_FOOTER_TEXT[language]} {Constants.expoConfig?.version ?? '—'}
           </Text>
         </View>
       </Surface>

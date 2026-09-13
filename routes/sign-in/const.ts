@@ -1,3 +1,5 @@
+import { LANGUAGES } from '@const/enums';
+
 export const AUTH_STEP_INTRO_CONTENT = {
   russian: {
     login: {
@@ -31,6 +33,35 @@ export const AUTH_STEP_INTRO_CONTENT = {
 export const SIGN_IN_FIELDS = {
   email: 'Электронная почта',
   password: 'Пароль',
+} as const;
+
+export const SIGN_IN_FIELD_LABELS = {
+  [LANGUAGES.english]: {
+    email: 'Email',
+    password: 'Password',
+  },
+  [LANGUAGES.russian]: SIGN_IN_FIELDS,
+} as const;
+
+export const AUTH_DIVIDER_TEXT = {
+  [LANGUAGES.english]: 'or',
+  [LANGUAGES.russian]: 'или',
+} as const;
+
+export const SOCIAL_AUTH_TEXT = {
+  [LANGUAGES.english]: {
+    yandex: 'Sign in with Yandex ID',
+    vk: 'Sign in with VK ID',
+  },
+  [LANGUAGES.russian]: {
+    yandex: 'Войти с Яндекс ID',
+    vk: 'Войти с VK ID',
+  },
+} as const;
+
+export const SIGN_IN_FOOTER_TEXT = {
+  [LANGUAGES.english]: 'App version',
+  [LANGUAGES.russian]: 'Версия приложения',
 } as const;
 
 const AUTH_BASE_URL = process.env.EXPO_PUBLIC_BASE_URL ?? 'http://localhost:3000';

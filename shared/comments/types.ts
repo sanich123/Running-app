@@ -20,6 +20,7 @@ export interface CommentInputProps {
 }
 
 export interface CommentLikeBtnProps {
+  activityId?: string;
   commentId: string;
   commentLikesFromComment: { authorId: string; id: string }[];
   comment: string;

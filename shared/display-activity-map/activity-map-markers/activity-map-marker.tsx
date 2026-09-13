@@ -1,7 +1,9 @@
 import { MarkerView } from '@rnmapbox/maps';
 import { View, StyleSheet } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
 import { MARKER_CONFIG } from './const';
+import { DISPLAY_ACTIVITY_MAP_TEXT } from '../const';
 import type { ActivityMapMarkerType } from './const';
 import type { ActivityLocation } from '@S/card/types';
 
@@ -13,6 +15,7 @@ export default function ActivityMapMarker({
   type: ActivityMapMarkerType;
 }) {
   const { colors } = useTheme();
+  const { language } = useAppSelector(({ settings }) => settings);
   const { icon, testId } = MARKER_CONFIG[type];
   const markerColor = type === 'start' ? colors.tertiary : colors.error;
 
@@ -24,7 +27,9 @@ export default function ActivityMapMarker({
       <View
         testID={testId}
         style={[styles.marker, { backgroundColor: colors.surface, borderColor: markerColor }]}
-        accessibilityLabel={type === 'start' ? 'Начало тренировки' : 'Конец тренировки'}>
+        accessibilityLabel={
+          type === 'start' ? DISPLAY_ACTIVITY_MAP_TEXT[language].start : DISPLAY_ACTIVITY_MAP_TEXT[language].end
+        }>
         <Icon source={icon} size={22} color={markerColor} />
       </View>
     </MarkerView>

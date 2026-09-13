@@ -1,7 +1,8 @@
 import { View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
 import { getErrorMessageFromError } from '@S/error-toast/error-toast';
-import { ERROR_COMPONENT_TEST_ID, ERROR_COMPONENT_TEXT } from './const';
+import { ERROR_COMPONENT_COPY, ERROR_COMPONENT_TEST_ID } from './const';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
@@ -12,6 +13,8 @@ export default function ErrorComponent({
   error: FetchBaseQueryError | SerializedError;
   refetch?: () => object;
 }) {
+  const { language } = useAppSelector(({ settings }) => settings);
+
   return (
     <View testID={ERROR_COMPONENT_TEST_ID} style={{ alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <Text variant="bodyMedium" style={{ marginTop: 8, textAlign: 'center' }}>
@@ -19,7 +22,7 @@ export default function ErrorComponent({
       </Text>
       {refetch && (
         <Button mode="contained" style={{ marginTop: 16 }} onPress={() => refetch()}>
-          {ERROR_COMPONENT_TEXT.retry}
+          {ERROR_COMPONENT_COPY[language].retry}
         </Button>
       )}
     </View>

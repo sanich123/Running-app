@@ -1,5 +1,7 @@
 import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
 
+export type MigrationCancelHandler = (() => void) | null;
+
 export interface GetMigrationArchiveAndSendToServerProps {
   setIsDisabled: (arg: boolean) => void;
   setIsUnzipping: (arg: boolean) => void;
@@ -8,7 +10,9 @@ export interface GetMigrationArchiveAndSendToServerProps {
   setIsSendingArchive: (arg: boolean) => void;
   setIsWaitingForServer: (arg: boolean) => void;
   setIsDeletingCacheFolder: (arg: boolean) => void;
+  setUploadProgress: (arg: number) => void;
   setIsError: (arg: string) => void;
+  onCancelReady: (cancel: MigrationCancelHandler) => void;
   onArchiveUploadAccepted: (job: ActivityMigrationJobResponse) => void;
   userId: string;
   accessToken: string;

@@ -5,6 +5,8 @@ export const STRAVA_EXPORT_URL =
 
 export const MIGRATION_STATES = {
   [LANGUAGES.russian]: {
+    title: 'Миграция из Strava',
+    howItWorks: 'Как это работает',
     ableToTransfer: 'Перенесите все свои активности из Strava в наш сервис.',
     moreInfo: '1. Подробная инструкция по экспорту данных',
     archiveToEmail: '2. На электронную почту придёт письмо со ссылкой на ZIP-архив',
@@ -43,9 +45,15 @@ export const MIGRATION_STATES = {
     waiting: 'Ожидаем ответа сервера...',
     clean: 'Удаляем временные файлы...',
     success: 'Успешно!',
+    uploadProgress: 'Прогресс загрузки архива',
+    cancel: 'Отменить загрузку',
+    errorTitle: 'Ошибка миграции',
+    closeError: 'Закрыть сообщение об ошибке',
     error: 'Ошибка',
   },
   [LANGUAGES.english]: {
+    title: 'Migration from Strava',
+    howItWorks: 'How it works',
     ableToTransfer: 'Bring all your Strava activities to Runich.',
     moreInfo: '1. Read the detailed export instructions',
     archiveToEmail: '2. You will receive an email with a link to a ZIP archive',
@@ -84,6 +92,12 @@ export const MIGRATION_STATES = {
     waiting: 'Waiting for the server response...',
     clean: 'Removing temporary files...',
     success: 'Success!',
+    uploadProgress: 'Archive upload progress',
+    cancel: 'Cancel upload',
+    errorTitle: 'Migration error',
+    closeError: 'Close error message',
     error: 'Error',
   },
 };
+
+export type MigrationCopy = (typeof MIGRATION_STATES)[LANGUAGES.english];

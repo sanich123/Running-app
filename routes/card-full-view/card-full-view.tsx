@@ -47,8 +47,8 @@ export default function CardFullView() {
               photoVideoUrls={activity.photoVideoUrls}
               duration={activity.duration}
               distance={activity.distance}
+              elevationGain={activity.elevationGain}
               steps={activity.steps}
-              kilometresSplit={activity.kilometresSplit}
               mapPhotoUrl={activity.mapPhotoUrl}
               profile={activity.profile}
               commentsLength={activity._count.comments}

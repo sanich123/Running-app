@@ -6,13 +6,33 @@ import { saveWholeProfile } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CustomImage from '@S/custom-image/custom-image';
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
+import type { ProfileType } from '@S/card/types';
 
-export default function AvatarShowable({ size, id, focused }: { size: number; id: string; focused?: boolean }) {
+export default function AvatarShowable({
+  size,
+  id,
+  focused,
+  profile: profileFromProps,
+}: {
+  size: number;
+  id: string;
+  focused?: boolean;
+  profile?: ProfileType;
+}) {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const isMineAvatar = id === userId;
-  const { data: profile, isLoading, isSuccess, isError } = useGetUserProfileByUserIdQuery(id, { skip: !id });
+  const {
+    data: profileFromServer,
+    isLoading: isProfileLoading,
+    isSuccess: isProfileLoaded,
+    isError: isProfileError,
+  } = useGetUserProfileByUserIdQuery(id, { skip: !id || Boolean(profileFromProps) });
+  const profile = profileFromProps ?? profileFromServer;
+  const isLoading = !profileFromProps && isProfileLoading;
+  const isSuccess = Boolean(profileFromProps) || isProfileLoaded;
+  const isError = !profileFromProps && isProfileError;
   useEffect(() => {
     if (profile && isMineAvatar) {
       dispatch(saveWholeProfile(profile));

@@ -1,10 +1,13 @@
 import { openSettings, openURL } from 'expo-linking';
 import { Platform } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { APP_SETTINGS_TEXT } from './const';
+import { APP_SETTINGS_TEXT_BY_LANGUAGE } from './const';
 
 export default function AppSettingsBtn() {
+  const { language } = useAppSelector(({ settings }) => settings);
+
   return (
     <TouchableRipple
       testID="app-settings-button"
@@ -18,7 +21,7 @@ export default function AppSettingsBtn() {
           errorToast('Не удалось открыть настройки устройства', error);
         }
       }}>
-      <Text variant="bodyLarge">{APP_SETTINGS_TEXT}</Text>
+      <Text variant="bodyLarge">{APP_SETTINGS_TEXT_BY_LANGUAGE[language]}</Text>
     </TouchableRipple>
   );
 }

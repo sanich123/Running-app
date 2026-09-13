@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { Platform, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { NETWORK_WARNING_TEXT } from './const';
+import { useAppSelector } from '@R/typed-hooks';
+import { NETWORK_WARNING_COPY } from './const';
 import { checkAirplaneMode, checkVpn } from './utils';
 
 export default function NetworkStateBanner() {
   const [isVpnEnabled, setIsVpnEnabled] = useState(false);
   const [isAirplaneMode, setIsAirplaneMode] = useState(false);
   const { colors } = useTheme();
+  const { language } = useAppSelector(({ settings }) => settings);
+  const copy = NETWORK_WARNING_COPY[language];
   const { type, isConnected, isInternetReachable, details } = useNetInfo();
 
   useEffect(() => {
@@ -36,18 +39,12 @@ export default function NetworkStateBanner() {
             rowGap: 5,
             backgroundColor: colors.surfaceVariant,
           }}>
-          {isVpnEnabled && <Text variant="bodyMedium">{NETWORK_WARNING_TEXT.vpn}</Text>}
+          {isVpnEnabled && <Text variant="bodyMedium">{copy.vpn}</Text>}
           {!isInternetReachable && (
-            <Text variant="bodyMedium">
-              {isConnected ? NETWORK_WARNING_TEXT.maybeNoInternet : NETWORK_WARNING_TEXT.noInternet}
-            </Text>
+            <Text variant="bodyMedium">{isConnected ? copy.maybeNoInternet : copy.noInternet}</Text>
           )}
-          {isCellularWarning && (
-            <Text variant="bodyMedium">{NETWORK_WARNING_TEXT.cellular(`${details?.cellularGeneration}`)}</Text>
-          )}
-          {Platform.OS === 'android' && isAirplaneMode && (
-            <Text variant="bodyMedium">{NETWORK_WARNING_TEXT.airplane}</Text>
-          )}
+          {isCellularWarning && <Text variant="bodyMedium">{copy.cellular(`${details?.cellularGeneration}`)}</Text>}
+          {Platform.OS === 'android' && isAirplaneMode && <Text variant="bodyMedium">{copy.airplane}</Text>}
         </View>
       )}
     </>

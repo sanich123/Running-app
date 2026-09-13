@@ -16,13 +16,20 @@ export default memo(function Likes({ activityId, size, likesLength }: LikesProps
   const dispatch = useAppDispatch();
   const { dark } = useTheme();
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
-  const { data: likes, isLoading, isError } = useGetLikesByActivityIdQuery(activityId, { skip: !activityId });
-  const likesList = likes ?? [];
   const isNeedToGetUpdatedLikes = activityIdWhichLikesToUpdate === activityId;
   const { data: updatedLikesLength, isError: isErrorLoadingUpdatedLikes } = useGetLikesLengthByActivityIdQuery(
     activityId,
     { skip: !isNeedToGetUpdatedLikes || likesLength === undefined },
   );
+  const knownLikesLength = updatedLikesLength ?? likesLength;
+  const {
+    data: likes,
+    isLoading,
+    isError,
+  } = useGetLikesByActivityIdQuery(activityId, {
+    skip: !activityId || (knownLikesLength !== undefined && knownLikesLength === 0),
+  });
+  const likesList = likes ?? [];
   const whatLikesLengthToRender = updatedLikesLength ?? likesLength ?? likesList.length;
   const hasLikes = whatLikesLengthToRender > 0 || likesList.length > 0;
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;

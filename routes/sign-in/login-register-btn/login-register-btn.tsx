@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
 import type { UseFormHandleSubmit } from 'react-hook-form';
+import { EMAIL_DELIVERY_NOTICE } from '@const/email-delivery';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import {
@@ -60,7 +61,7 @@ export default function LoginRegisterBtn({
         if (authStep === SignInPageStates.emailLink) {
           return requestEmailLink({ email })
             .unwrap()
-            .then(({ message }) => successToast(message))
+            .then(({ message }) => successToast(`${message}. ${EMAIL_DELIVERY_NOTICE[language]}`))
             .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }

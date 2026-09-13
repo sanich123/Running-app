@@ -2,7 +2,9 @@ import { useMemo, useRef, useState } from 'react';
 import { MapView, Camera } from '@rnmapbox/maps';
 import { Platform, View, StyleSheet } from 'react-native';
 import { IconButton, Text, useTheme } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
 import ActivityMapMarkers from './activity-map-markers/activity-map-markers';
+import { DISPLAY_ACTIVITY_MAP_TEXT } from './const';
 import MapKmSplit from './map-km-split/map-km-split';
 import RouteLine from './map-route-line/map-route-line';
 import MapboxWeb from './mapbox-web/mapbox-web';
@@ -11,6 +13,8 @@ import type { DisplayActivityMapProps } from '@S/card/types';
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
   const { colors } = useTheme();
+  const { language } = useAppSelector(({ settings }) => settings);
+  const copy = DISPLAY_ACTIVITY_MAP_TEXT[language];
   const cameraRef = useRef<Camera>(null);
   const [zoomLevel, setZoomLevel] = useState(14);
   const validLocations = useMemo(
@@ -30,7 +34,7 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
   if (!mapData) {
     return (
       <View style={styles.emptyState}>
-        <Text variant="bodyLarge">Недостаточно данных для отображения маршрута</Text>
+        <Text variant="bodyLarge">{copy.insufficientData}</Text>
       </View>
     );
   }
@@ -68,7 +72,7 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
                 cameraRef.current?.zoomTo(nextZoomLevel, 250);
               }}
               disabled={zoomLevel >= 20}
-              accessibilityLabel="Увеличить масштаб карты"
+              accessibilityLabel={copy.zoomIn}
             />
             <IconButton
               testID="activity-map-decrease-zoom"
@@ -82,7 +86,7 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
                 cameraRef.current?.zoomTo(nextZoomLevel, 250);
               }}
               disabled={zoomLevel <= 3}
-              accessibilityLabel="Уменьшить масштаб карты"
+              accessibilityLabel={copy.zoomOut}
             />
           </View>
         </View>

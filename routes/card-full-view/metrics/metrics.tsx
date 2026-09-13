@@ -2,27 +2,21 @@ import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Text, Divider, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { useGetActivityByActivityIdQuery, useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
+import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
 import { formatDuration } from '@U/time-formatter';
 import { HOME_ACTIVITY_FULL_VIEW_TEST_ID, HOME_ACTIVITY_FULL_VIEW } from './const';
-import { getActivityAdditionalMetric, getActivityElevationGain, getActivityMainMetric } from './utils';
+import { getActivityAdditionalMetric, getActivityMainMetric } from './utils';
 
 export default function Metrics() {
   const { width } = useWindowDimensions();
   const { id: activityId } = useLocalSearchParams();
   const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(`${activityId}`);
-  const { data: routeData } = useGetLocationsByActivityIdQuery(`${activityId}`, {
-    skip: !activityId,
-  });
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const kilometresSplit = activity?.kilometresSplit?.length
-    ? activity.kilometresSplit
-    : (routeData?.kilometresSplit ?? []);
-  const routeLocations = routeData?.locations;
-  const gainedElevation = getActivityElevationGain(kilometresSplit, routeLocations);
+  const gainedElevation = activity?.elevationGain ?? 0;
+  const roundedGainedElevation = Math.round(Math.max(0, gainedElevation));
   const hasElevationGain = gainedElevation > 0;
   const mainMetric = activity
     ? getActivityMainMetric({
@@ -78,7 +72,7 @@ export default function Metrics() {
             {hasElevationGain ? (
               <View style={styles.alignedCenter}>
                 <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].elevationGain}</Text>
-                <Text variant="titleLarge">{`${gainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}</Text>
+                <Text variant="titleLarge">{`${roundedGainedElevation} ${HOME_ACTIVITY_FULL_VIEW[language].m}`}</Text>
               </View>
             ) : null}
           </View>

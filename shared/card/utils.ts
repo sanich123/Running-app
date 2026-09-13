@@ -1,6 +1,4 @@
-import { getElevationGain } from '@U/location/location-utils';
 import { ACTIVITY_MEDIA_HEIGHT } from './media-list/const';
-import type { ActivityKilometreSplit, ActivityLocation } from './types';
 
 const MAPBOX_IMAGE_SIZE_PATTERN = /(\/)\d+x\d+(@\d+x)?(?=\?|$)/;
 
@@ -20,15 +18,4 @@ export function getShareMapPhotoUrl(mapPhotoUrl: string | null | undefined) {
 
   const separator = mapPhotoUrl.includes('?') ? '&' : '?';
   return `${mapPhotoUrl}${separator}attribution=false`;
-}
-
-export function getActivityCardElevationGain(
-  kilometresSplit: ActivityKilometreSplit[] | null | undefined,
-  locations: ActivityLocation[] | null | undefined,
-) {
-  if (kilometresSplit?.length) {
-    return kilometresSplit.reduce((total, split) => total + Math.max(0, split.lastKilometerAltitude), 0);
-  }
-
-  return locations?.length ? getElevationGain(locations) : 0;
 }

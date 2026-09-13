@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { Button, Card, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
 import { useAppSelector } from '@R/typed-hooks';
+import { FEEDBACK_TEXT } from '@Routes/feedback/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import SwitchRow from '@S/feedback/switch-row';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
@@ -15,6 +16,8 @@ export default function FeedbackPage() {
   const { colors } = useTheme();
   const { back } = useRouter();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const copy = FEEDBACK_TEXT[language];
   const [kind, setKind] = useState<FeedbackKind | null>(null);
   const [firstConsent, setFirstConsent] = useState(false);
   const [secondConsent, setSecondConsent] = useState(false);
@@ -31,7 +34,7 @@ export default function FeedbackPage() {
       const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.9 });
       if (!result.canceled) setPhoto(result.assets[0]);
     } catch (error) {
-      errorToast('Не удалось открыть галерею', error);
+      errorToast(copy.openGalleryError, error);
     }
   }
 
@@ -53,7 +56,7 @@ export default function FeedbackPage() {
       await sendFeedback(body).unwrap();
       back();
     } catch (error) {
-      errorToast('Не удалось отправить обратную связь', error);
+      errorToast(copy.submitError, error);
     }
   }
 
@@ -65,9 +68,9 @@ export default function FeedbackPage() {
       bottomOffset={24}>
       <Card mode="contained" style={{ backgroundColor: colors.surface }}>
         <Card.Content style={styles.cardContent}>
-          <Text variant="titleLarge">Обратная связь</Text>
+          <Text variant="titleLarge">{copy.title}</Text>
           <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-            Выбери, чем хочешь поделиться с разработчиком.
+            {copy.intro}
           </Text>
           <RadioButton.Group
             onValueChange={(value) => {
@@ -76,9 +79,9 @@ export default function FeedbackPage() {
               setSecondConsent(false);
             }}
             value={kind ?? ''}>
-            <RadioButton.Item label="Поведать о баге" value="bug" />
-            <RadioButton.Item label="Поблагодарить разработчика" value="thanks" />
-            <RadioButton.Item label="Хочу фичу" value="feature" />
+            <RadioButton.Item label={copy.bug} value="bug" />
+            <RadioButton.Item label={copy.thanks} value="thanks" />
+            <RadioButton.Item label={copy.feature} value="feature" />
           </RadioButton.Group>
         </Card.Content>
       </Card>
@@ -86,19 +89,11 @@ export default function FeedbackPage() {
       {(isBug || isFeature) && (
         <Card mode="contained" style={{ backgroundColor: colors.surface }}>
           <Card.Content style={styles.cardContent}>
-            <Text variant="titleMedium">Перед отправкой</Text>
+            <Text variant="titleMedium">{copy.beforeSend}</Text>
             <View style={styles.switches}>
-              <SwitchRow
-                label="Runich полностью бесплатный сервис"
-                value={firstConsent}
-                onValueChange={setFirstConsent}
-              />
+              <SwitchRow label={copy.freeService} value={firstConsent} onValueChange={setFirstConsent} />
               {firstConsent && (
-                <SwitchRow
-                  label="Runich полностью был написан и поддерживается одним разработчиком в свободное от работы время"
-                  value={secondConsent}
-                  onValueChange={setSecondConsent}
-                />
+                <SwitchRow label={copy.soloDeveloper} value={secondConsent} onValueChange={setSecondConsent} />
               )}
             </View>
           </Card.Content>
@@ -108,19 +103,13 @@ export default function FeedbackPage() {
       {canWrite && (
         <Card mode="contained" style={{ backgroundColor: colors.surface }}>
           <Card.Content style={styles.cardContent}>
-            <Text variant="titleMedium">Текст обратной связи</Text>
+            <Text variant="titleMedium">{copy.feedbackText}</Text>
             <TextInput
               mode="outlined"
               multiline
               value={text}
               onChangeText={setText}
-              placeholder={
-                isBug
-                  ? 'Максимально точно опишите, при каком сценарии можно воспроизвести баг'
-                  : isFeature
-                    ? 'Опишите желаемую функцию'
-                    : 'Напишите сообщение разработчику'
-              }
+              placeholder={isBug ? copy.bugPlaceholder : isFeature ? copy.featurePlaceholder : copy.thanksPlaceholder}
               style={styles.textInput}
               returnKeyType="send"
               submitBehavior="submit"
@@ -129,7 +118,7 @@ export default function FeedbackPage() {
             />
             {(isBug || isFeature) && (
               <Button icon="image-plus" mode="outlined" onPress={() => void choosePhoto()}>
-                {photo ? 'Фото выбрано' : 'Добавить фото/скриншот'}
+                {photo ? copy.photoSelected : copy.addPhoto}
               </Button>
             )}
             <Button
@@ -137,7 +126,7 @@ export default function FeedbackPage() {
               disabled={!text.trim() || isLoading}
               loading={isLoading}
               onPress={() => void submit()}>
-              Послать
+              {copy.send}
             </Button>
           </Card.Content>
         </Card>

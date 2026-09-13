@@ -6,11 +6,11 @@ import { ROUTES } from '@const/enums';
 import { useChangePasswordMutation } from '@R/services/authentication/authentication';
 import { setAuthSession } from '@R/slices/auth/auth';
 import { flushAuthPersistence } from '@R/slices/auth/persistence';
-import { useAppDispatch } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import CustomPasswordInput from '@S/custom-password-input/custom-password-input';
 import { errorToast } from '@S/error-toast/error-toast';
-import { changePasswordValidation, CHANGE_PASSWORD_TEST_ID, CHANGE_PASSWORD_TEXT } from './const';
+import { CHANGE_PASSWORD_COPY, CHANGE_PASSWORD_TEST_ID, getChangePasswordValidation } from './const';
 import type { ChangePasswordForm } from './types';
 
 export default function ChangePassword() {
@@ -19,6 +19,9 @@ export default function ChangePassword() {
   const { email: queryEmail } = useLocalSearchParams<{ email?: string }>();
   const email = typeof queryEmail === 'string' ? queryEmail : '';
   const { colors } = useTheme();
+  const { language } = useAppSelector(({ settings }) => settings);
+  const copy = CHANGE_PASSWORD_COPY[language];
+  const validation = getChangePasswordValidation(language);
   const [changePassword, { isLoading }] = useChangePasswordMutation();
   const { control, handleSubmit, setError } = useForm<ChangePasswordForm>({
     defaultValues: { password1: '', password2: '' },
@@ -28,7 +31,7 @@ export default function ChangePassword() {
 
   const submit = async ({ password1, password2 }: ChangePasswordForm) => {
     if (password1 !== password2) {
-      setError('password2', { type: 'validate', message: CHANGE_PASSWORD_TEXT.mismatch });
+      setError('password2', { type: 'validate', message: copy.mismatch });
       return;
     }
 
@@ -48,15 +51,15 @@ export default function ChangePassword() {
       <CrossPlatformLayout edges={['top', 'bottom']} scrollViewEnabled>
         <View style={styles.container}>
           <Text variant="headlineSmall" style={styles.title}>
-            {CHANGE_PASSWORD_TEXT.title}
+            {copy.title}
           </Text>
           <Surface mode="flat" style={[styles.form, { backgroundColor: colors.surface }]}>
             <CustomPasswordInput<ChangePasswordForm>
               control={control}
               fieldName="password1"
-              label={CHANGE_PASSWORD_TEXT.passwordLabel}
-              placeholder={CHANGE_PASSWORD_TEXT.passwordPlaceholder}
-              validation={changePasswordValidation}
+              label={copy.passwordLabel}
+              placeholder={copy.passwordPlaceholder}
+              validation={validation}
               testID={CHANGE_PASSWORD_TEST_ID.input}
               visibilityTestID={CHANGE_PASSWORD_TEST_ID.visibility}
               autoCapitalize="none"
@@ -64,9 +67,9 @@ export default function ChangePassword() {
             <CustomPasswordInput<ChangePasswordForm>
               control={control}
               fieldName="password2"
-              label={CHANGE_PASSWORD_TEXT.confirmationLabel}
-              placeholder={CHANGE_PASSWORD_TEXT.confirmationPlaceholder}
-              validation={changePasswordValidation}
+              label={copy.confirmationLabel}
+              placeholder={copy.confirmationPlaceholder}
+              validation={validation}
               testID={CHANGE_PASSWORD_TEST_ID.confirmationInput}
               visibilityTestID={CHANGE_PASSWORD_TEST_ID.confirmationVisibility}
               autoCapitalize="none"
@@ -75,7 +78,7 @@ export default function ChangePassword() {
               testID={CHANGE_PASSWORD_TEST_ID.requirements}
               variant="bodySmall"
               style={[styles.requirements, { color: colors.onSurfaceVariant }]}>
-              {CHANGE_PASSWORD_TEXT.description}
+              {copy.description}
             </Text>
             <Button
               testID={CHANGE_PASSWORD_TEST_ID.submit}
@@ -85,7 +88,7 @@ export default function ChangePassword() {
               disabled={isLoading}
               contentStyle={styles.submitContent}
               style={styles.submit}>
-              {!isLoading && CHANGE_PASSWORD_TEXT.submit}
+              {!isLoading && copy.submit}
             </Button>
           </Surface>
         </View>

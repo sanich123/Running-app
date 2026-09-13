@@ -1,9 +1,13 @@
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Linking, View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { VK_AUTH_URL, YANDEX_AUTH_URL } from '../const';
+import { useAppSelector } from '@R/typed-hooks';
+import { SOCIAL_AUTH_TEXT, VK_AUTH_URL, YANDEX_AUTH_URL } from '../const';
 
 export default function SocialAuthButtons() {
+  const { language } = useAppSelector(({ settings }) => settings);
+  const copy = SOCIAL_AUTH_TEXT[language];
+
   return (
     <View style={styles.layout}>
       <Button
@@ -14,7 +18,7 @@ export default function SocialAuthButtons() {
         onPress={() => void Linking.openURL(YANDEX_AUTH_URL)}>
         <View style={styles.label}>
           <FontAwesome5 name="yandex" size={17} color="#FFFFFF" style={styles.yandexIcon} />
-          <Text style={styles.buttonText}>Войти с Яндекс ID</Text>
+          <Text style={styles.buttonText}>{copy.yandex}</Text>
         </View>
       </Button>
       <Button
@@ -25,7 +29,7 @@ export default function SocialAuthButtons() {
         onPress={() => void Linking.openURL(VK_AUTH_URL)}>
         <View style={styles.label}>
           <FontAwesome5 name="vk" size={22} color="#FFFFFF" />
-          <Text style={styles.buttonText}>Войти с VK ID</Text>
+          <Text style={styles.buttonText}>{copy.vk}</Text>
         </View>
       </Button>
     </View>

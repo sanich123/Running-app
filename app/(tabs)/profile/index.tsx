@@ -2,12 +2,16 @@ import { Suspense, useState } from 'react';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { useWindowDimensions, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { LABELS } from '@const/enums';
+import { useAppSelector } from '@R/typed-hooks';
 import { LazyActivities, LazyProfilePage } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 export default function ProfileIndexPage() {
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
+  const { language } = useAppSelector(({ settings }) => settings);
+  const labels = LABELS[language];
   const [index, setIndex] = useState(0);
   const renderScene = ({ route }: { route: { key: string } }) => (
     <Suspense fallback={<FullPageActivityLoader />}>
@@ -21,8 +25,8 @@ export default function ProfileIndexPage() {
         navigationState={{
           index,
           routes: [
-            { key: 'openTasks', title: 'Профиль' },
-            { key: 'closeTasks', title: 'Тренировки' },
+            { key: 'openTasks', title: labels.profile },
+            { key: 'closeTasks', title: labels.activities },
           ],
         }}
         renderScene={renderScene}

@@ -2,7 +2,9 @@ import type { ReactNode } from 'react';
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
+import { runichApi } from '@R/runich-api/runich-api';
 import { setUserId } from '@R/slices/auth/auth';
+import { resetMigration, setMigrationError, setMigrationJob } from '@R/slices/migration/migration';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
@@ -10,6 +12,7 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MIGRATION_STATES } from './const';
 import MigrationFromStrava from './migration-from-strava';
+import MigrationStatusSync from './migration-status-sync';
 import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
 
 interface MigrationArgs {
@@ -20,7 +23,9 @@ interface MigrationArgs {
   setIsSendingArchive: (value: boolean) => void;
   setIsWaitingForServer: (value: boolean) => void;
   setIsDeletingCacheFolder: (value: boolean) => void;
+  setUploadProgress: (value: number) => void;
   setIsError: (value: string) => void;
+  onCancelReady: (cancel: (() => void) | null) => void;
   onArchiveUploadAccepted: (job: ActivityMigrationJobResponse) => void;
 }
 
@@ -53,14 +58,24 @@ describe('migration from strava', () => {
     latestMigrationArgs = undefined;
     mockMigrate.mockClear();
     mockReplace.mockClear();
+    mockStore.dispatch(resetMigration());
+    mockStore.dispatch(runichApi.util.resetApiState());
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
   });
+
+  const renderMigrationPage = () =>
+    renderWithProviders(
+      <>
+        <MigrationStatusSync />
+        <MigrationFromStrava />
+      </>,
+    );
 
   it('starts importing the archive selected by the user', async () => {
     const user = userEvent.setup();
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setUserId('migration-user'));
-    await renderWithProviders(<MigrationFromStrava />);
+    await renderMigrationPage();
     await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
     expect(mockMigrate).toHaveBeenCalledWith(expect.objectContaining({ userId: 'migration-user' }));
   });
@@ -68,14 +83,14 @@ describe('migration from strava', () => {
   it('opens Strava export instructions', async () => {
     const user = userEvent.setup();
     mockExternalNavigate.mockClear();
-    await renderWithProviders(<MigrationFromStrava />);
+    await renderMigrationPage();
     await user.press(screen.getByTestId('strava-export-link'));
     expect(mockExternalNavigate).toHaveBeenCalledWith(expect.stringContaining('support.strava.com'));
   });
 
   it('shows a separate stage while waiting for the server response', async () => {
     const user = userEvent.setup();
-    await renderWithProviders(<MigrationFromStrava />);
+    await renderMigrationPage();
     await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
 
     await act(async () => {
@@ -85,6 +100,27 @@ describe('migration from strava', () => {
     });
 
     expect(screen.getByText(MIGRATION_STATES.english.waitingForServer)).toBeTruthy();
+  });
+
+  it('shows upload progress and lets the user cancel the migration', async () => {
+    const user = userEvent.setup();
+    await renderMigrationPage();
+    await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
+
+    const cancel = jest.fn();
+    await act(async () => {
+      latestMigrationArgs?.setIsDisabled(true);
+      latestMigrationArgs?.setIsSendingArchive(true);
+      latestMigrationArgs?.setUploadProgress(0.42);
+      latestMigrationArgs?.onCancelReady(cancel);
+    });
+
+    expect(screen.getByTestId('migration-upload-progress')).toBeOnTheScreen();
+    expect(screen.getByText(MIGRATION_STATES.english.uploadProgress)).toBeOnTheScreen();
+    expect(screen.getByText('42%')).toBeOnTheScreen();
+
+    await user.press(screen.getByTestId('migration-cancel'));
+    expect(cancel).toHaveBeenCalledTimes(1);
   });
 
   it('keeps the migration page open while the server processes the archive', async () => {
@@ -108,7 +144,7 @@ describe('migration from strava', () => {
         }),
       ),
     );
-    await renderWithProviders(<MigrationFromStrava />);
+    await renderMigrationPage();
     await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
 
     await act(async () => {
@@ -135,9 +171,33 @@ describe('migration from strava', () => {
     expect(await screen.findByText(MIGRATION_STATES.english.skipped)).toBeOnTheScreen();
   });
 
+  it('renders active migration progress restored from global state', async () => {
+    mockStore.dispatch(
+      setMigrationJob({
+        jobId: 'job-id',
+        status: 'processing',
+        queuePosition: null,
+        queueAhead: 0,
+        queueSize: 1,
+        totalActivities: 20,
+        processedActivities: 7,
+        importedActivities: 6,
+        skippedActivities: 1,
+        errorMessage: null,
+        createdAt: new Date().toISOString(),
+        startedAt: new Date().toISOString(),
+        finishedAt: null,
+      }),
+    );
+
+    await renderWithProviders(<MigrationFromStrava />);
+    expect(screen.getByText('7/20')).toBeOnTheScreen();
+    expect(screen.getByText(MIGRATION_STATES.english.processing)).toBeOnTheScreen();
+  });
+
   it('shows the queue position while the archive is waiting for the worker', async () => {
     const user = userEvent.setup();
-    await renderWithProviders(<MigrationFromStrava />);
+    await renderMigrationPage();
     await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
 
     await act(async () => {
@@ -179,7 +239,7 @@ describe('migration from strava', () => {
         }),
       ),
     );
-    await renderWithProviders(<MigrationFromStrava />);
+    await renderMigrationPage();
     await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
 
     await act(async () => {
@@ -205,7 +265,7 @@ describe('migration from strava', () => {
 
   it('renders each local archive-processing stage and an error state', async () => {
     const user = userEvent.setup();
-    await renderWithProviders(<MigrationFromStrava />);
+    await renderMigrationPage();
     await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
     const args = latestMigrationArgs!;
 
@@ -253,8 +313,25 @@ describe('migration from strava', () => {
     expect(screen.getAllByText(MIGRATION_STATES.english.error)).toHaveLength(2);
   });
 
+  it('shows an explicit transfer error and closes it with the close button', async () => {
+    const user = userEvent.setup();
+    await renderMigrationPage();
+    const errorMessage = 'Ошибка передачи архива: Сервер вернул статус 413';
+
+    await act(async () => {
+      mockStore.dispatch(setMigrationError(errorMessage));
+    });
+
+    expect(screen.getByTestId('migration-error')).toBeOnTheScreen();
+    expect(screen.getByText(errorMessage)).toBeOnTheScreen();
+
+    await user.press(screen.getByTestId('migration-error-close'));
+    expect(screen.queryByText(errorMessage)).toBeNull();
+    expect(mockStore.getState().migration.error).toBeNull();
+  });
+
   it('shows the archive size limit and feedback link', async () => {
-    await renderWithProviders(<MigrationFromStrava />);
+    await renderMigrationPage();
 
     expect(screen.getByText(/archive size must not exceed 100 MB/)).toBeOnTheScreen();
     expect(screen.getByText(MIGRATION_STATES.english.feedbackLink)).toBeOnTheScreen();
@@ -262,7 +339,7 @@ describe('migration from strava', () => {
 
   it('renders Russian copy for the migration instructions', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    await renderWithProviders(<MigrationFromStrava />);
+    await renderMigrationPage();
 
     expect(screen.getByText('Миграция из Strava')).toBeOnTheScreen();
     expect(screen.getByText(MIGRATION_STATES.russian.chooseArchive)).toBeOnTheScreen();

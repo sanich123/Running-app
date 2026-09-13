@@ -73,8 +73,8 @@ export interface ActivityCardProps {
   mapPhotoUrlBlurhash?: string | null;
   duration: number;
   distance: number;
+  elevationGain: number;
   steps?: number | null;
-  kilometresSplit?: ActivityKilometreSplit[] | null;
   profile: ProfileType;
   commentsLength: number;
   likesLength?: number;

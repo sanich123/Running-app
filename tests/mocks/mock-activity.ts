@@ -5,6 +5,7 @@ export const MOCK_ACTIVITY = {
   date: '2023-11-03T15:28:51.031Z',
   description: '',
   distance: 8396,
+  elevationGain: 21,
   duration: 3514208,
   emotion: '',
   id: 'e315eb5b-989c-4215-9d14-d77f4e7e2974',

@@ -3,5 +3,5 @@ export interface InfiniteScrollListProps {
   refetch: () => void;
   isLastPage: boolean;
   nextPageCallback: () => Promise<unknown>;
-  isFetching: boolean;
+  isFetchingNextPage: boolean;
 }

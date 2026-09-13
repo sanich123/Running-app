@@ -17,11 +17,14 @@ export default function CustomTabBar({
 }) {
   const { colors, dark } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { profileFromServer } = useAppSelector(({ profile }) => profile);
   const pathname = usePathname();
   const icons = {
     home: (props: { color: string }) => <Icon source="home-outline" color={props.color} size={30} />,
     activity: (props: { color: string }) => <Icon source="run" size={30} color={props.color} />,
-    profile: (props: { color: string }) => <AvatarShowable size={45} id={userId} {...props} />,
+    profile: (props: { color: string }) => (
+      <AvatarShowable size={45} id={userId} profile={profileFromServer} {...props} />
+    ),
     statistic: (props: { color: string }) => <Icon source="chart-donut" size={30} color={props.color} />,
   };
 

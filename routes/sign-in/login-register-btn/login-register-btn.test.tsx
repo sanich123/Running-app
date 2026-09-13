@@ -1,9 +1,11 @@
 import { renderHook, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { useForm, type UseFormHandleSubmit } from 'react-hook-form';
+import { EMAIL_DELIVERY_NOTICE } from '@const/email-delivery';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import * as errorToastModule from '@S/error-toast/error-toast';
+import * as successToastModule from '@S/success-toast/success-toast';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -149,6 +151,7 @@ describe('Login btn', () => {
 
   it('requests a login link by email', async () => {
     const user = userEvent.setup();
+    const successToast = jest.spyOn(successToastModule, 'successToast').mockImplementation(() => undefined);
     let requestBody: unknown;
     const interactiveHandleSubmit = ((callback: (data: EmailPasswordData) => Promise<unknown>) => () =>
       callback({
@@ -168,5 +171,7 @@ describe('Login btn', () => {
     await user.press(screen.getByText(EMAIL_LINK_BTN.russian.send));
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test' }));
+    expect(successToast).toHaveBeenCalledWith(`Login link sent. ${EMAIL_DELIVERY_NOTICE.russian}`);
+    successToast.mockRestore();
   });
 });

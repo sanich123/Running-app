@@ -1,40 +1,47 @@
-import { useState } from 'react';
+import { useAppSelector } from '@R/typed-hooks';
+import type { MigrationState } from '@R/slices/migration/types';
 
-export default function useGetStates() {
-  const [isDisabled, setIsDisabled] = useState(false);
-  const [isUnzipping, setIsUnzipping] = useState(false);
-  const [isRemovingMedia, setIsRemovingMedia] = useState(false);
-  const [isZipping, setIsZipping] = useState(false);
-  const [isSendingArchive, setIsSendingArchive] = useState(false);
-  const [isWaitingForServer, setIsWaitingForServer] = useState(false);
-  const [isDeletingCacheFolder, setIsDeletingCacheFolder] = useState(false);
-  const [isError, setIsError] = useState('');
-  const isInitial =
-    !isDisabled &&
-    !isUnzipping &&
-    !isRemovingMedia &&
-    !isZipping &&
-    !isSendingArchive &&
-    !isWaitingForServer &&
-    !isDeletingCacheFolder &&
-    !isError;
+export type MigrationViewState = MigrationState & {
+  isInitial: boolean;
+  isProcessing: boolean;
+  isServerCompleted: boolean;
+  isServerFailed: boolean;
+  isArchiveTransferActive: boolean;
+  progress: number;
+  progressPercent: number;
+  uploadProgressPercent: number;
+};
+
+export default function useMigrationState(): MigrationViewState {
+  const migration = useAppSelector(({ migration: state }) => state);
+  const isServerProcessing = Boolean(
+    migration.jobId && migration.job?.status !== 'completed' && migration.job?.status !== 'failed',
+  );
+  const isServerCompleted = migration.job?.status === 'completed';
+  const isServerFailed = migration.job?.status === 'failed';
+  const isProcessing = (migration.isDisabled && !migration.error) || isServerProcessing;
+  const progress = migration.job?.totalActivities
+    ? Math.min(1, migration.job.processedActivities / migration.job.totalActivities)
+    : 0;
+
   return {
-    isDisabled,
-    setIsDisabled,
-    isUnzipping,
-    setIsUnzipping,
-    isRemovingMedia,
-    setIsRemovingMedia,
-    isZipping,
-    setIsZipping,
-    isSendingArchive,
-    setIsSendingArchive,
-    isWaitingForServer,
-    setIsWaitingForServer,
-    isDeletingCacheFolder,
-    setIsDeletingCacheFolder,
-    isError,
-    setIsError,
-    isInitial,
+    ...migration,
+    isInitial:
+      !migration.isDisabled &&
+      !migration.isUnzipping &&
+      !migration.isRemovingMedia &&
+      !migration.isZipping &&
+      !migration.isSendingArchive &&
+      !migration.isWaitingForServer &&
+      !migration.isDeletingCacheFolder &&
+      !migration.error &&
+      !migration.jobId,
+    isProcessing,
+    isServerCompleted,
+    isServerFailed,
+    isArchiveTransferActive: migration.isSendingArchive || migration.isWaitingForServer,
+    progress,
+    progressPercent: Math.round(progress * 100),
+    uploadProgressPercent: Math.round(migration.uploadProgress * 100),
   };
 }

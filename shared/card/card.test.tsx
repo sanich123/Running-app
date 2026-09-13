@@ -4,7 +4,6 @@ import { LANGUAGES } from '@const/enums';
 import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
-import { MOCK_LOCATIONS } from '@T/mocks/mock-locations';
 import ActivityCard from './card';
 import { getCardMapPhotoUrl } from './utils';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
@@ -23,7 +22,7 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Activity card', () => {
-  it('resizes the saved square Mapbox image before route locations load', () => {
+  it('resizes the saved square Mapbox image for card dimensions', () => {
     const mapPhotoUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/360x360@2x?access_token=test';
 
     expect(getCardMapPhotoUrl(mapPhotoUrl, 351)).toBe(
@@ -52,6 +51,7 @@ describe('Activity card', () => {
         mapPhotoUrl="https://api.mapbox.com/styles/v1/map.png"
         duration={MOCK_ACTIVITY.duration}
         distance={MOCK_ACTIVITY.distance}
+        elevationGain={MOCK_ACTIVITY.elevationGain}
         profile={MOCK_PROFILE}
         commentsLength={0}
       />,
@@ -60,13 +60,8 @@ describe('Activity card', () => {
     expect(requests).toBe(0);
   });
 
-  it('keeps the saved map preview when full route locations load', async () => {
+  it('keeps the saved map preview in the full view', async () => {
     const mapPhotoUrl = 'https://cdn.example.test/activity-map.jpg';
-    server.use(
-      http.get(`${BASE_URL}/activity/${MOCK_ACTIVITY.id}/locations`, () =>
-        HttpResponse.json({ locations: MOCK_LOCATIONS, kilometresSplit: [] }),
-      ),
-    );
 
     await renderWithProviders(
       <ActivityCard
@@ -81,6 +76,7 @@ describe('Activity card', () => {
         mapPhotoUrl={mapPhotoUrl}
         duration={MOCK_ACTIVITY.duration}
         distance={MOCK_ACTIVITY.distance}
+        elevationGain={MOCK_ACTIVITY.elevationGain}
         profile={MOCK_PROFILE}
         commentsLength={0}
       />,
@@ -106,6 +102,7 @@ describe('Activity card', () => {
         photoVideoUrls={photoVideoUrls}
         duration={duration}
         distance={distance}
+        elevationGain={MOCK_ACTIVITY.elevationGain}
         profile={MOCK_PROFILE}
         commentsLength={6}
       />,
