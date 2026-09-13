@@ -9,6 +9,8 @@ import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { SignInPageStates } from '@U/validate-email-password';
+import { EMAIL_DELIVERY_NOTICE } from '@const/email-delivery';
+import * as successToastModule from '@S/success-toast/success-toast';
 import { EMAIL_LINK_BTN, LOGIN_BTN, REGISTER_BTN, RESET_BTN } from './const';
 import LoginRegisterBtn from './login-register-btn';
 import type { EmailPasswordData } from '@R/services/authentication/types';
@@ -149,6 +151,7 @@ describe('Login btn', () => {
 
   it('requests a login link by email', async () => {
     const user = userEvent.setup();
+    const successToast = jest.spyOn(successToastModule, 'successToast').mockImplementation(() => undefined);
     let requestBody: unknown;
     const interactiveHandleSubmit = ((callback: (data: EmailPasswordData) => Promise<unknown>) => () =>
       callback({
@@ -168,5 +171,7 @@ describe('Login btn', () => {
     await user.press(screen.getByText(EMAIL_LINK_BTN.russian.send));
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test' }));
+    expect(successToast).toHaveBeenCalledWith(`Login link sent. ${EMAIL_DELIVERY_NOTICE.russian}`);
+    successToast.mockRestore();
   });
 });

@@ -1,15 +1,16 @@
 import { LANGUAGES } from '@const/enums';
+import { EMAIL_DELIVERY_NOTICE } from '@const/email-delivery';
 
 export const CONFIRM_EMAIL_PAGE_TEXT = {
   [LANGUAGES.english]: {
     title: 'Check your email',
     description: (email: string) => `Enter the confirmation code from the email sent to ${email} to continue.`,
-    spam: 'No email yet? Check your Spam or Junk folder and make sure the address is correct.',
+    spam: EMAIL_DELIVERY_NOTICE[LANGUAGES.english],
   },
   [LANGUAGES.russian]: {
     title: 'Проверьте почту',
     description: (email: string) =>
       `Введите код подтверждения из письма, отправленного на адрес ${email}, чтобы продолжить.`,
-    spam: 'Если письма нет, проверьте папку «Спам» и убедитесь, что адрес указан правильно.',
+    spam: EMAIL_DELIVERY_NOTICE[LANGUAGES.russian],
   },
 } as const;

@@ -13,11 +13,13 @@ describe('Sign-in-need-to-confirm page', () => {
     await renderWithProviders(<SignInNeedToConfirmEmail />);
     expect(screen.getByText(CHECK_EMAIL.russian.mailHasBeenSent)).toBeOnTheScreen();
     expect(screen.getByText(CHECK_EMAIL.russian.needToCheckEmail)).toBeOnTheScreen();
+    expect(screen.getByText(CHECK_EMAIL.russian.spam)).toBeOnTheScreen();
   });
   it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<SignInNeedToConfirmEmail />, { store: mockStore });
     expect(screen.getByText(CHECK_EMAIL.english.mailHasBeenSent)).toBeOnTheScreen();
     expect(screen.getByText(CHECK_EMAIL.english.needToCheckEmail)).toBeOnTheScreen();
+    expect(screen.getByText(CHECK_EMAIL.english.spam)).toBeOnTheScreen();
   });
 });

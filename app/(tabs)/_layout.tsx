@@ -3,7 +3,7 @@ import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { Platform, View } from 'react-native';
 import { Tabs, usePathname, useRouter } from 'expo-router';
 import { Icon, useTheme } from 'react-native-paper';
-import { ROUTES, STATUSES } from '@const/enums';
+import { LABELS, ROUTES, STATUSES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { LazyAvatarShowable, HOME_TAB_ROUTE } from '@Routes/app-routes/const';
 
@@ -11,6 +11,8 @@ export default function TabLayout() {
   const { replace } = useRouter();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { profileFromServer } = useAppSelector(({ profile }) => profile);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const labels = LABELS[language];
   const { colors } = useTheme();
   const pathname = usePathname();
   const { activityStatus } = useAppSelector(({ location }) => location);
@@ -56,21 +58,21 @@ export default function TabLayout() {
         shadowColor={colors.outlineVariant}>
         <NativeTabs.Trigger
           name={HOME_TAB_ROUTE}
-          accessibilityLabel="Лента"
+          accessibilityLabel={labels.feed}
           contentStyle={{ backgroundColor: colors.background }}>
           <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
           name={ROUTES.activity}
-          accessibilityLabel="Активность"
+          accessibilityLabel={labels.activity}
           contentStyle={{ backgroundColor: colors.background }}>
           <NativeTabs.Trigger.Icon sf="figure.run" />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
           name={ROUTES.statistic}
-          accessibilityLabel="Статистика"
+          accessibilityLabel={labels.statistics}
           contentStyle={{ backgroundColor: colors.background }}>
           <NativeTabs.Trigger.Icon
             sf={{ default: 'chart.line.uptrend.xyaxis', selected: 'chart.line.uptrend.xyaxis' }}
@@ -79,7 +81,7 @@ export default function TabLayout() {
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
           name={ROUTES.profile}
-          accessibilityLabel="Профиль"
+          accessibilityLabel={labels.profile}
           contentStyle={{ backgroundColor: colors.background }}>
           <NativeTabs.Trigger.Icon sf={{ default: 'person.crop.circle', selected: 'person.crop.circle.fill' }} />
           <NativeTabs.Trigger.Label hidden />
@@ -112,7 +114,7 @@ export default function TabLayout() {
         name={HOME_TAB_ROUTE}
         options={{
           headerShown: false,
-          tabBarAccessibilityLabel: 'Лента',
+          tabBarAccessibilityLabel: labels.feed,
           tabBarIcon: ({ focused }) => renderTabIcon('home-outline', 'home-variant', focused),
         }}
       />
@@ -120,7 +122,7 @@ export default function TabLayout() {
         name={ROUTES.activity}
         options={{
           href: Platform.OS === 'web' ? null : undefined,
-          tabBarAccessibilityLabel: 'Активность',
+          tabBarAccessibilityLabel: labels.activity,
           headerShown: false,
           tabBarIcon: ({ focused }) =>
             renderTabIcon('run-fast', 'run-fast', focused, focused ? colors.tertiary : colors.primary),
@@ -130,14 +132,14 @@ export default function TabLayout() {
         name={ROUTES.statistic}
         options={{
           headerShown: false,
-          tabBarAccessibilityLabel: 'Статистика',
+          tabBarAccessibilityLabel: labels.statistics,
           tabBarIcon: ({ focused }) => renderTabIcon('chart-line', 'chart-line', focused),
         }}
       />
       <Tabs.Screen
         name={ROUTES.profile}
         options={{
-          tabBarAccessibilityLabel: 'Профиль',
+          tabBarAccessibilityLabel: labels.profile,
           headerShown: false,
           tabBarIcon: ({ focused }) => (
             <View

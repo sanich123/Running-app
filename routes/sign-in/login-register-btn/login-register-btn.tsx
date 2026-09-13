@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { successToast } from '@S/success-toast/success-toast';
 import { SignInPageStates } from '@U/validate-email-password';
+import { EMAIL_DELIVERY_NOTICE } from '@const/email-delivery';
 import { EMAIL_LINK_BTN, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 
@@ -60,7 +61,7 @@ export default function LoginRegisterBtn({
         if (authStep === SignInPageStates.emailLink) {
           return requestEmailLink({ email })
             .unwrap()
-            .then(({ message }) => successToast(message))
+            .then(({ message }) => successToast(`${message}. ${EMAIL_DELIVERY_NOTICE[language]}`))
             .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
             .finally(() => dispatch(setIsDisabledWhenLogining(false)));
         }

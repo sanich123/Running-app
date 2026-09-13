@@ -26,6 +26,9 @@ export default function SignInNeedToConfirmEmail() {
         <Text variant="bodyLarge" style={{ textAlign: 'center', marginTop: 20 }}>
           {CHECK_EMAIL[language].needToCheckEmail}
         </Text>
+        <Text variant="bodyMedium" style={{ textAlign: 'center', marginTop: 20 }}>
+          {CHECK_EMAIL[language].spam}
+        </Text>
       </View>
     </>
   );

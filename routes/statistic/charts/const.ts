@@ -24,6 +24,17 @@ export const METRICS_TITLES = {
   },
 };
 
+export const CHART_COPY = {
+  [LANGUAGES.russian]: {
+    months: 'месяцев',
+    noData: 'Нет данных за этот период',
+  },
+  [LANGUAGES.english]: {
+    months: 'months',
+    noData: 'No data for this period',
+  },
+} as const;
+
 const METRICS_BTNS_VALUES = {
   [LANGUAGES.russian]: {
     distance: 'Расстояние',

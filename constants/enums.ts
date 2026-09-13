@@ -70,7 +70,7 @@ export const LABELS = {
   [LANGUAGES.english]: {
     feed: 'Feed',
     activity: 'Activity',
-    activities: 'Тренировки',
+    activities: 'Activities',
     statistics: 'Statistics',
     profile: 'Profile',
     settings: 'Settings',

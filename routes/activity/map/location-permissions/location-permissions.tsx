@@ -10,6 +10,7 @@ import ForegroundLocationSwitcher from '@Routes/activity/foregroud-location-swit
 import LocationSettingsSwitcher from '@Routes/activity/location-settings-switcher/location-settings-switcher';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { LocationPermissionsProps } from '@Routes/activity/types';
+import { LOCATION_PERMISSIONS_TEXT } from './const';
 
 export default function LocationPermissions({
   isMapVisible,
@@ -23,7 +24,8 @@ export default function LocationPermissions({
   const { colors } = useTheme();
   const backgroundLocationEnabledModalRef = useRef<BottomSheetModal>(null);
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { isProfileFilled } = useAppSelector(({ settings }) => settings);
+  const { isProfileFilled, language } = useAppSelector(({ settings }) => settings);
+  const copy = LOCATION_PERMISSIONS_TEXT[language];
   return (
     <View style={[styles.container, { backgroundColor: colors.background }, isMapVisible && { height: '60%' }]}>
       {!isLocationEnabled && (
@@ -52,17 +54,17 @@ export default function LocationPermissions({
           </View>
           <View style={styles.profileNoticeContent}>
             <Text variant="titleSmall" style={{ color: colors.onPrimaryContainer }}>
-              Заполните профиль
+              {copy.profileTitle}
             </Text>
             <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-              Заполните хотя бы одно поле профиля, чтобы записывать и сохранять активности.
+              {copy.profileDescription}
             </Text>
             <Link
               testID="create-profile-link"
               href={`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`}
               asChild>
               <Button mode="contained-tonal" compact icon="account-plus-outline" style={styles.profileNoticeButton}>
-                Заполнить профиль
+                {copy.profileAction}
               </Button>
             </Link>
           </View>
@@ -80,10 +82,10 @@ export default function LocationPermissions({
           </View>
           <View style={styles.profileNoticeContent}>
             <Text variant="titleSmall" style={{ color: colors.onErrorContainer }}>
-              Не удалось проверить профиль
+              {copy.profileErrorTitle}
             </Text>
             <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-              Карта и запись активности появятся после проверки профиля. Проверьте интернет и попробуйте ещё раз.
+              {copy.profileErrorDescription}
             </Text>
           </View>
         </View>

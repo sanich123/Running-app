@@ -9,10 +9,13 @@ import { successToast } from '@S/success-toast/success-toast';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
 import { readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
 import { getReducedLocations } from '@U/location/location-utils';
+import { UNSYNCED_ACTIVITIES_TEXT } from './const';
 
 export default function UnsendedActivitiesIndicator() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
+  const { language } = useAppSelector(({ settings }) => settings);
+  const copy = UNSYNCED_ACTIVITIES_TEXT[language];
   const { unsyncedActivities } = useAppSelector(({ activity }) => activity);
   const trackingRecovery = useAppSelector(({ trackingRecovery }) => trackingRecovery);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
@@ -25,10 +28,10 @@ export default function UnsendedActivitiesIndicator() {
         </View>
         <View style={styles.copy}>
           <Text variant="titleMedium" style={{ color: colors.onPrimaryContainer }}>
-            Есть {unsyncedActivities.length} сохраненные активности
+            {copy.title(unsyncedActivities.length)}
           </Text>
           <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-            {isLoading ? 'Отправляем активности…' : 'Они будут отправлены при подключении'}
+            {isLoading ? copy.sending : copy.pending}
           </Text>
         </View>
       </View>
@@ -46,7 +49,7 @@ export default function UnsendedActivitiesIndicator() {
               const journalId = pendingActivity.routeJournalId ?? null;
               const routeLocations = journalId ? (readLocationJournal(journalId)?.locations ?? []) : [];
               if (journalId && !routeLocations.length) {
-                errorToast('', 'Не удалось восстановить маршрут активности');
+                errorToast('', copy.restoreRouteError);
                 return;
               }
 
@@ -62,13 +65,13 @@ export default function UnsendedActivitiesIndicator() {
                   if (journalId) removeLocationJournal(journalId);
                   if (journalId && trackingRecovery.journalId === journalId) dispatch(clearTrackingRecovery());
                   dispatch(removeFirstUnsyncedActivity());
-                  successToast('Успешно обновили');
+                  successToast(copy.success);
                 })
                 .catch((error) => errorToast('', getErrorMessageFromError(error)));
             }
           }}
           disabled={isLoading}
-          accessibilityLabel="Отправить несинхронизированные активности"
+          accessibilityLabel={copy.send}
         />
 
         <IconButton
@@ -89,7 +92,7 @@ export default function UnsendedActivitiesIndicator() {
             if (shouldClearRecovery) dispatch(clearTrackingRecovery());
             dispatch(clearUnsyncedActivities());
           }}
-          accessibilityLabel="Удалить несинхронизированные активности"
+          accessibilityLabel={copy.remove}
         />
       </View>
     </View>

@@ -6,9 +6,9 @@ import SettingsRow from '../settings-row/settings-row';
 export default function MigrationBtn() {
   const { push } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
-  const { profileFromServer } = useAppSelector(({ profile }) => profile);
+
   const isRussian = language === LANGUAGES.russian;
-  return profileFromServer?.id ? (
+  return (
     <SettingsRow
       testID="migration-settings-row"
       icon="run"
@@ -16,5 +16,5 @@ export default function MigrationBtn() {
       description={isRussian ? 'Импортируйте историю тренировок' : 'Import your workout history'}
       onPress={() => push(`/${ROUTES.migration}`)}
     />
-  ) : null;
+  );
 }
