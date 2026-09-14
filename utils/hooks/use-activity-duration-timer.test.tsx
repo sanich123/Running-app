@@ -1,14 +1,9 @@
 import { act, screen } from '@testing-library/react-native';
 import { AppState, Text } from 'react-native';
 import { STATUSES } from '@const/enums';
-import {
-  resetLocationSlice,
-  setActivityStatus,
-  startDurationTimer,
-  stopDurationTimer,
-} from '@R/slices/location/location';
+import { setActivityStatus, startDurationTimer, stopDurationTimer } from '@R/slices/location/location';
 import { useAppSelector } from '@R/typed-hooks';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import useActivityDurationTimer from './use-activity-duration-timer';
 
@@ -20,7 +15,7 @@ function TimerHarness() {
 
 describe('useActivityDurationTimer', () => {
   beforeEach(() => {
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
     jest.setSystemTime(1_000);
   });
 

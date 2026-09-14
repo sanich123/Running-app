@@ -1,8 +1,7 @@
 import { LANGUAGES } from '@const/enums';
 import { profileApi } from '@R/services/profile/profile';
-import { setUserId } from '@R/slices/auth/auth';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import reducer, {
   addActivityReminder,
   SETTINGS_INITIAL_STATE,
@@ -48,7 +47,7 @@ describe('Settings slice', () => {
   });
   it('marks the profile as filled after a successful profile query', async () => {
     mockStore.dispatch(setIsProfileFilled(false));
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
 
     const query = mockStore.dispatch(profileApi.endpoints.getUserProfileByUserId.initiate(MOCK_SERVER_IDS.userId));
     await query.unwrap();

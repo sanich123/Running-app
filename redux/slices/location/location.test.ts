@@ -10,9 +10,7 @@ import reducer, {
   setAltitude,
   setCurrentPace,
   setDistance,
-  setDuration,
   setDurationAt,
-  setDurationWithPauses,
   setEmptyLastArrayWhenPaused,
   setInitialLocation,
   setIsAppShuted,
@@ -52,30 +50,7 @@ describe('Location slice', () => {
       distance: MOCK_DISTANCE,
     });
   });
-  it('should change total duration', () => {
-    expect(reducer(LOCATION_INITIAL_STATE, setDuration(MOCK_DURATION))).toEqual({
-      ...LOCATION_INITIAL_STATE,
-      duration: MOCK_DURATION,
-      durationAtLastLocation: MOCK_DURATION,
-      durationTimerBase: MOCK_DURATION,
-    });
-  });
-
   it('normalizes invalid duration values and clears timer anchors', () => {
-    const invalidDurationState = {
-      ...LOCATION_INITIAL_STATE,
-      duration: Number.NaN,
-      durationAtLastLocation: Number.NaN,
-      durationTimerBase: Number.NaN,
-      durationTimerStartedAt: 123,
-    };
-
-    expect(reducer(invalidDurationState, setDuration(Number.NaN))).toMatchObject({
-      duration: 0,
-      durationAtLastLocation: 0,
-      durationTimerBase: 0,
-      durationTimerStartedAt: null,
-    });
     expect(reducer(LOCATION_INITIAL_STATE, setDurationAt(-10)).duration).toBe(0);
     expect(reducer(LOCATION_INITIAL_STATE, setDurationAt(Number.NaN)).duration).toBe(0);
     expect(reducer({ ...LOCATION_INITIAL_STATE, duration: Number.NaN }, startDurationTimer(456))).toMatchObject({
@@ -91,12 +66,6 @@ describe('Location slice', () => {
       durationAtLastLocation: 0,
       durationTimerBase: 0,
       durationTimerStartedAt: 789,
-    });
-  });
-  it('should change duration with pauses', () => {
-    expect(reducer(LOCATION_INITIAL_STATE, setDurationWithPauses(MOCK_DURATION))).toEqual({
-      ...LOCATION_INITIAL_STATE,
-      durationWithPauses: MOCK_DURATION,
     });
   });
   it('should change altitude', () => {
@@ -197,8 +166,7 @@ describe('Location slice', () => {
   });
   it('should correctly reset locations from background', () => {
     mockStore.dispatch(setLocationsFromBackground(MOCK_LOCATION));
-    mockStore.dispatch(setDuration(MOCK_DURATION));
-    mockStore.dispatch(setDurationWithPauses(MOCK_DURATION));
+    mockStore.dispatch(setDurationAt(MOCK_DURATION));
     mockStore.dispatch(setDistance(MOCK_DISTANCE));
     mockStore.dispatch(setAltitude(MOCK_ALTITUDE));
     mockStore.dispatch(setIsAppShuted(true));
@@ -211,7 +179,6 @@ describe('Location slice', () => {
     mockStore.dispatch(resetLocationsFromBackground());
     expect(mockStore.getState().location.locationsFromBackground).toEqual([]);
     expect(mockStore.getState().location.duration).toEqual(0);
-    expect(mockStore.getState().location.durationWithPauses).toEqual(0);
     expect(mockStore.getState().location.distance).toEqual(0);
     expect(mockStore.getState().location.altitude).toEqual(0);
     expect(mockStore.getState().location.kilometresSplit).toEqual([]);

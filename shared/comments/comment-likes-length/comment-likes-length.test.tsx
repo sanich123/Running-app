@@ -1,12 +1,11 @@
 import { screen } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { NUMBER_OF_LIKES } from '@S/card/number-of-likes/const';
 import { MOCK_COMMENT_LIKES } from '@T/mocks/mock-comment-likes';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CommentLikesLength from './comment-likes-length';
@@ -27,7 +26,7 @@ describe('Comment likes length', () => {
   });
 
   it('should correctly renders in english, when you and others gave likes', async () => {
-    mockStore.dispatch(setUserId('7857abb1-b125-4f39-becf-8f30216b46ec'));
+    mockStore.dispatch(setMockUserId('7857abb1-b125-4f39-becf-8f30216b46ec'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(
       <CommentLikesLength
@@ -42,7 +41,7 @@ describe('Comment likes length', () => {
   });
   it('should correctly renders in russian, when you and others gave likes', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    mockStore.dispatch(setUserId('7857abb1-b125-4f39-becf-8f30216b46ec'));
+    mockStore.dispatch(setMockUserId('7857abb1-b125-4f39-becf-8f30216b46ec'));
     await renderWithProviders(
       <CommentLikesLength
         commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
@@ -56,7 +55,7 @@ describe('Comment likes length', () => {
   });
   it('should correctly renders in english, when you didnt like', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockStore.dispatch(setUserId('someWrongId'));
+    mockStore.dispatch(setMockUserId('someWrongId'));
     await renderWithProviders(
       <CommentLikesLength
         commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
@@ -68,7 +67,7 @@ describe('Comment likes length', () => {
   });
   it('should correctly renders in russian, when you didnt like', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    mockStore.dispatch(setUserId('someWrongId'));
+    mockStore.dispatch(setMockUserId('someWrongId'));
     await renderWithProviders(
       <CommentLikesLength
         commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"

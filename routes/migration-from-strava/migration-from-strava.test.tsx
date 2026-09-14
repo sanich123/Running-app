@@ -3,11 +3,10 @@ import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
-import { setUserId } from '@R/slices/auth/auth';
 import { resetMigration, setMigrationError, setMigrationJob } from '@R/slices/migration/migration';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MIGRATION_STATES } from './const';
@@ -74,7 +73,7 @@ describe('migration from strava', () => {
   it('starts importing the archive selected by the user', async () => {
     const user = userEvent.setup();
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockStore.dispatch(setUserId('migration-user'));
+    mockStore.dispatch(setMockUserId('migration-user'));
     await renderMigrationPage();
     await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
     expect(mockMigrate).toHaveBeenCalledWith(expect.objectContaining({ userId: 'migration-user' }));

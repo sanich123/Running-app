@@ -1,7 +1,7 @@
 import * as ExpoLocation from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import { resetLocationSlice, setLastPosition } from '@R/slices/location/location';
-import { store } from '@R/store';
+import { setLastPosition } from '@R/slices/location/location';
+import { resetStore, store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
 import { LOCATION_TRACKING } from '../const';
 import { startLocationTracking, stopLocationTracking } from './background-location';
@@ -26,7 +26,7 @@ const location = { timestamp: 2_000, coords: { latitude: 55, longitude: 37 } } a
 
 describe('background location tracking', () => {
   beforeEach(() => {
-    store.dispatch(resetLocationSlice());
+    store.dispatch(resetStore());
     jest.clearAllMocks();
     jest.spyOn(ExpoLocation, 'hasStartedLocationUpdatesAsync').mockResolvedValue(false);
     jest.spyOn(ExpoLocation, 'startLocationUpdatesAsync').mockResolvedValue(undefined);
@@ -66,9 +66,7 @@ describe('background location tracking', () => {
     (ExpoLocation.stopLocationUpdatesAsync as jest.Mock).mockRejectedValueOnce(new Error('TaskNotFoundException'));
     await expect(stopLocationTracking()).resolves.toBeUndefined();
 
-    (ExpoLocation.stopLocationUpdatesAsync as jest.Mock).mockRejectedValueOnce(
-      `Task '${LOCATION_TRACKING}' not found`,
-    );
+    (ExpoLocation.stopLocationUpdatesAsync as jest.Mock).mockRejectedValueOnce(`Task '${LOCATION_TRACKING}' not found`);
     await expect(stopLocationTracking()).resolves.toBeUndefined();
   });
 
@@ -106,7 +104,7 @@ describe('background location tracking', () => {
     await taskHandler({ error: null, data: { locations: [location] } });
     expect(getMetricsTaskManager).not.toHaveBeenCalled();
 
-    store.dispatch(resetLocationSlice());
+    store.dispatch(resetStore());
     (getMetricsTaskManager as jest.Mock).mockImplementation(() => {
       throw new Error('metric failure');
     });

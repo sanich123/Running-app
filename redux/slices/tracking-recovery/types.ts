@@ -11,7 +11,6 @@ export interface TrackingRecoveryMetrics {
   durationAtLastLocation: number;
   durationTimerBase: number;
   durationTimerStartedAt: number | null;
-  durationWithPauses: number;
   altitude: number;
   lastKilometerAltitude: number;
   lastKilometer: number;

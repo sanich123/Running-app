@@ -1,8 +1,7 @@
 import { createRef } from 'react';
 import { screen } from '@testing-library/react-native';
-import { setUserId } from '@R/slices/auth/auth';
 import { setIdOfUpdatingComment } from '@R/slices/comment/comment';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import Comment from './comment';
 
@@ -48,12 +47,12 @@ const commentProps: any = {
 
 describe('comment', () => {
   beforeEach(() => {
-    mockStore.dispatch(setUserId(''));
+    mockStore.dispatch(setMockUserId(''));
     mockStore.dispatch(setIdOfUpdatingComment(''));
   });
 
   it('renders the comment and author actions only for its author', async () => {
-    mockStore.dispatch(setUserId('user-1'));
+    mockStore.dispatch(setMockUserId('user-1'));
     await renderWithProviders(<Comment {...commentProps} />);
     expect(screen.getByText('Отличная тренировка!')).toBeOnTheScreen();
     expect(screen.getByTestId('comment-author')).toBeOnTheScreen();

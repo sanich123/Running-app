@@ -17,9 +17,6 @@ const auth = createSlice({
   name: 'auth',
   initialState: AUTH_INITIAL_STATE,
   reducers: {
-    setUserId: (state, { payload }) => {
-      state.userId = payload;
-    },
     setAuthTokens: (state, { payload }: PayloadAction<AuthTokens>) => {
       state.accessToken = payload.accessToken;
       if (payload.refreshToken) state.refreshToken = payload.refreshToken;
@@ -33,6 +30,6 @@ const auth = createSlice({
   },
 });
 
-export const { setUserId, setAuthTokens, setAuthSession, resetAuthSlice } = auth.actions;
+export const { setAuthTokens, setAuthSession, resetAuthSlice } = auth.actions;
 
 export default auth.reducer;

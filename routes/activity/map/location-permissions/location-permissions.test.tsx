@@ -1,9 +1,8 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
 import { setIsProfileFilled } from '@R/slices/settings/settings';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import LocationPermissions from './location-permissions';
 
@@ -52,7 +51,7 @@ describe('location permissions', () => {
 
   it('opens profile creation when recording is blocked by a missing profile', async () => {
     const user = userEvent.setup();
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(setIsProfileFilled(false));
     await renderWithProviders(
       <LocationPermissions
@@ -71,7 +70,7 @@ describe('location permissions', () => {
   });
 
   it('does not request the profile when the local profile flag is set', async () => {
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(setIsProfileFilled(true));
     await renderWithProviders(
       <LocationPermissions

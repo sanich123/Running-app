@@ -1,9 +1,8 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { setUserId } from '@R/slices/auth/auth';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from './const';
@@ -11,7 +10,7 @@ import ActivityCardLikeBtn from './like-btn';
 
 describe('Activity card like btn', () => {
   it('should correctly renders when activity was liked by you', async () => {
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" profile={MOCK_PROFILE} />, {
       store: mockStore,
     });
@@ -19,7 +18,7 @@ describe('Activity card like btn', () => {
     expect(likesBtn).toBeOnTheScreen();
   });
   it('should correctly renders, when you didnt liked activity', async () => {
-    mockStore.dispatch(setUserId('wrongUserId'));
+    mockStore.dispatch(setMockUserId('wrongUserId'));
     await renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" profile={MOCK_PROFILE} />, {
       store: mockStore,
     });
@@ -45,7 +44,7 @@ describe('Activity card like btn', () => {
   it('sends a like after the user presses the heart', async () => {
     const user = userEvent.setup();
     let requestBody: unknown;
-    mockStore.dispatch(setUserId('new-user-id'));
+    mockStore.dispatch(setMockUserId('new-user-id'));
     server.use(
       http.post(`${BASE_URL}/like`, async ({ request }) => {
         requestBody = await request.json();
@@ -62,7 +61,7 @@ describe('Activity card like btn', () => {
   it('deletes the current user like after a second heart action', async () => {
     const user = userEvent.setup();
     let deletedUrl = '';
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     server.use(
       http.delete(`${BASE_URL}/like/:likeId/:activityId`, ({ request }) => {
         deletedUrl = request.url;

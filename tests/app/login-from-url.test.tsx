@@ -106,6 +106,6 @@ describe('login from URL', () => {
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(`/${ROUTES.signIn}`));
     expect(mockDismissAll).toHaveBeenCalled();
     expect(mockErrorToast).toHaveBeenCalledWith('', 'VK не вернул device_id');
-    expect(mockStore.getState().auth).toEqual({ accessToken: '', refreshToken: '', userId: '', appVersion: '' });
+    expect(mockStore.getState().auth).toEqual({ accessToken: '', refreshToken: '', userId: '' });
   });
 });

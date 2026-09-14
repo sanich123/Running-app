@@ -19,8 +19,8 @@ const SESSION = {
   accessToken: 'access-token',
   refreshToken: 'refresh-token',
 };
-const EXPECTED_AUTH = { ...SESSION, appVersion: '' };
-const EMPTY_AUTH = { accessToken: '', refreshToken: '', userId: '', appVersion: '' };
+const EXPECTED_AUTH = SESSION;
+const EMPTY_AUTH = { accessToken: '', refreshToken: '', userId: '' };
 
 type Runtime = ReturnType<typeof createRuntime>;
 
@@ -201,7 +201,7 @@ describe('cold start persistence', () => {
     const reopenedApp = createRuntime();
     await waitForRehydration(reopenedApp.persistor);
 
-    expect(reopenedApp.store.getState().auth).toEqual({ ...SESSION, userId: 'vk-user', appVersion: '' });
+    expect(reopenedApp.store.getState().auth).toEqual({ ...SESSION, userId: 'vk-user' });
 
     await closeRuntime(reopenedApp);
   });
@@ -232,7 +232,7 @@ describe('cold start persistence', () => {
     const reopenedApp = createRuntime();
     await waitForRehydration(reopenedApp.persistor);
 
-    expect(reopenedApp.store.getState().auth).toEqual({ ...SESSION, userId: 'yandex-user', appVersion: '' });
+    expect(reopenedApp.store.getState().auth).toEqual({ ...SESSION, userId: 'yandex-user' });
 
     await closeRuntime(foreground);
     await closeRuntime(headlessLocationRuntime);

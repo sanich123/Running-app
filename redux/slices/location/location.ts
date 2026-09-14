@@ -26,15 +26,6 @@ const location = createSlice({
     setSteps: (state, action) => {
       state.steps = action.payload;
     },
-    setDuration: (state, action) => {
-      const durationIncrement = Number.isFinite(action.payload) ? action.payload : 0;
-      state.duration = (Number.isFinite(state.duration) ? state.duration : 0) + durationIncrement;
-      state.durationAtLastLocation =
-        (Number.isFinite(state.durationAtLastLocation) ? state.durationAtLastLocation : 0) + durationIncrement;
-      state.durationTimerBase =
-        (Number.isFinite(state.durationTimerBase) ? state.durationTimerBase : 0) + durationIncrement;
-      state.durationTimerStartedAt = null;
-    },
     setDurationAt: (state, action) => {
       state.duration = Math.max(0, Number.isFinite(action.payload) ? action.payload : 0);
     },
@@ -52,9 +43,6 @@ const location = createSlice({
       state.durationAtLastLocation = Math.max(0, duration);
       state.durationTimerBase = Math.max(0, duration);
       state.durationTimerStartedAt = syncedAt;
-    },
-    setDurationWithPauses: (state, action) => {
-      state.durationWithPauses = action.payload;
     },
     setAltitude: (state, action) => {
       state.altitude = state.altitude + action.payload;
@@ -122,7 +110,6 @@ const location = createSlice({
       state.distance = 0;
       state.steps = 0;
       state.isMapVisible = true;
-      state.durationWithPauses = 0;
       state.durationAtLastLocation = 0;
       state.durationTimerBase = 0;
       state.durationTimerStartedAt = null;
@@ -139,9 +126,6 @@ const location = createSlice({
       state.tooMuchSpeed = 0;
       state.tooMuchSpeedTimestamp = null;
     },
-    resetLocationSlice: () => {
-      return LOCATION_INITIAL_STATE;
-    },
   },
 });
 
@@ -153,7 +137,6 @@ export const {
   resetLocationsFromBackground,
   setDistance,
   setSteps,
-  setDuration,
   setDurationAt,
   startDurationTimer,
   stopDurationTimer,
@@ -170,12 +153,10 @@ export const {
   setIsMapVisible,
   setEmptyLastArrayWhenPaused,
   setLocationsWhenContinued,
-  setDurationWithPauses,
   setLastPosition,
   setIsTooMuchSpeed,
   setTooMuchSpeed,
   setTooMuchSpeedTimestamp,
-  resetLocationSlice,
 } = location.actions;
 
 export default location.reducer;

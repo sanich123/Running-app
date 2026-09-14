@@ -1,6 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import activity from '@R/slices/activity/activity';
-import auth from '@R/slices/auth/auth';
+import auth, { setAuthSession } from '@R/slices/auth/auth';
 import comment from '@R/slices/comment/comment';
 import location from '@R/slices/location/location';
 import logining from '@R/slices/logining/logining';
@@ -28,8 +28,24 @@ const rootReducer = combineReducers({
   [runichApi.reducerPath]: runichApi.reducer,
 });
 
+const RESET_MOCK_LOCATION = 'tests/resetMockLocation';
+const RESET_MOCK_MAIN_FEED = 'tests/resetMockMainFeed';
+const RESET_MOCK_ACTIVITY_REMINDERS = 'tests/resetMockActivityReminders';
+const resettableReducer = (
+  state: ReturnType<typeof rootReducer> | undefined,
+  action: Parameters<typeof rootReducer>[1],
+) => {
+  const nextState = rootReducer(state, action);
+  if (action.type === RESET_MOCK_LOCATION) return { ...nextState, location: location(undefined, action) };
+  if (action.type === RESET_MOCK_MAIN_FEED) return { ...nextState, mainFeed: mainFeed(undefined, action) };
+  if (action.type === RESET_MOCK_ACTIVITY_REMINDERS) {
+    return { ...nextState, settings: { ...nextState.settings, activityReminders: [] } };
+  }
+  return nextState;
+};
+
 export const mockStore = configureStore({
-  reducer: rootReducer,
+  reducer: resettableReducer,
   middleware: (getDefaultMiddleware) => {
     const profileListenerMiddleware = createProfileListenerMiddleware();
     return getDefaultMiddleware({ serializableCheck: false }).concat(
@@ -38,5 +54,16 @@ export const mockStore = configureStore({
     );
   },
 });
+
+export const resetMockLocation = () => ({ type: RESET_MOCK_LOCATION });
+
+export const resetMockMainFeed = () => ({ type: RESET_MOCK_MAIN_FEED });
+
+export const resetMockActivityReminders = () => ({ type: RESET_MOCK_ACTIVITY_REMINDERS });
+
+export const setMockUserId = (userId: string) => {
+  const { accessToken, refreshToken } = mockStore.getState().auth;
+  return setAuthSession({ userId, accessToken, refreshToken });
+};
 
 export type AppStore = typeof mockStore;

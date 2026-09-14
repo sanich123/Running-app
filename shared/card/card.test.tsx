@@ -1,14 +1,13 @@
 import { screen, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import ActivityCard from './card';
 import { getCardMapPhotoUrl } from './utils';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { BASE_URL } from '../../tests/utils/handlers';
-import { mockStore } from '../../tests/utils/mock-store';
+import { mockStore, setMockUserId } from '../../tests/utils/mock-store';
 import { server } from '../../tests/utils/server';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
@@ -86,7 +85,7 @@ describe('Activity card', () => {
   });
 
   it('should correctly renders', async () => {
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const { description, title, date, sport, id, photoVideoUrls, profile, duration, distance } = MOCK_ACTIVITY;
     await renderWithProviders(

@@ -1,9 +1,9 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { LANGUAGES, STATUSES } from '@const/enums';
-import { resetLocationSlice, setDuration } from '@R/slices/location/location';
+import { setDurationAt } from '@R/slices/location/location';
 import { changeLanguage } from '@R/slices/settings/settings';
 import * as errorToastModule from '@S/error-toast/error-toast';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
 import ActivityCloseBtn from './close-btn';
@@ -22,7 +22,7 @@ jest.mock('expo-router', () => ({
 
 describe('Activity close btn', () => {
   beforeEach(() => {
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
     jest.restoreAllMocks();
     mockCanGoBack.mockReturnValue(true);
   });
@@ -38,7 +38,7 @@ describe('Activity close btn', () => {
   });
   it('should correctly show alert message, when duration is greater than 0', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockStore.dispatch(setDuration(10000));
+    mockStore.dispatch(setDurationAt(10000));
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
     const closeBtn = screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText);
     await userEvent.press(closeBtn);
@@ -49,7 +49,7 @@ describe('Activity close btn', () => {
   it('returns to the previous screen when there is no recorded activity', async () => {
     mockBack.mockClear();
     mockCanGoBack.mockReturnValue(true);
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
     await userEvent.press(screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText));
     expect(mockBack).toHaveBeenCalledTimes(1);
@@ -58,7 +58,7 @@ describe('Activity close btn', () => {
   it('returns to the previous screen after confirming an active recording close', async () => {
     mockBack.mockClear();
     mockCanGoBack.mockReturnValue(true);
-    mockStore.dispatch(setDuration(10000));
+    mockStore.dispatch(setDurationAt(10000));
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
     await userEvent.press(screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText));
     await userEvent.press(await screen.findByText(ACTIVITY_CLOSE_BTN.english.alertAccept));
@@ -69,7 +69,7 @@ describe('Activity close btn', () => {
     mockCanGoBack.mockReturnValue(false);
     mockBack.mockClear();
     mockReplace.mockClear();
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
 
     await userEvent.press(screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText));

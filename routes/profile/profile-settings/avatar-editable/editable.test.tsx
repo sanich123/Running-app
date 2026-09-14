@@ -1,10 +1,9 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { setUserId } from '@R/slices/auth/auth';
 import { savePhotoUrl, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { AvatarEditableTestIds } from './const';
@@ -72,7 +71,7 @@ describe('Avatar icon editable', () => {
       }),
     );
     mockStore.dispatch(setIsDisabledWhileSendingProfile(false));
-    mockStore.dispatch(setUserId('avatar-user'));
+    mockStore.dispatch(setMockUserId('avatar-user'));
     await renderWithProviders(<AvatarIconEditable setIsDisabled={setIsDisabled} isDisabled={false} />);
     await user.press(screen.getByTestId(AvatarEditableTestIds.editBtn));
     await waitFor(() => expect(requestBody).toEqual({ profilePhoto: 'https://images.example.test/avatar.jpg' }));

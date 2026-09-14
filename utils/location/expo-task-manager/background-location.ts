@@ -65,7 +65,6 @@ function processLocation(currentPosition: LocationObject) {
             durationAtLastLocation: locationState.durationAtLastLocation,
             durationTimerBase: locationState.durationTimerBase,
             durationTimerStartedAt: locationState.durationTimerStartedAt,
-            durationWithPauses: locationState.durationWithPauses,
             altitude: locationState.altitude,
             lastKilometerAltitude: locationState.lastKilometerAltitude,
             lastKilometer: locationState.lastKilometer,

@@ -26,10 +26,6 @@ describe('Profile slice', () => {
     expect(
       reducer(
         {
-          privateInfo: {
-            email: '',
-            password: '',
-          },
           isDisabledWhileSendingProfile: false,
           settings: { profilePhoto: MOCK_SETTINGS.profilePhoto },
           profileFromServer: {} as ProfileType,

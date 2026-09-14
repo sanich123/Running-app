@@ -2,9 +2,9 @@ import type { ReactNode } from 'react';
 import { waitFor } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import { ROUTES, STATUSES } from '@const/enums';
-import { resetLocationSlice, setActivityStatus } from '@R/slices/location/location';
+import { setActivityStatus } from '@R/slices/location/location';
 import { clearTrackingRecovery, startTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import TabLayout from '../../app/(tabs)/_layout';
 
@@ -57,7 +57,7 @@ describe('TabLayout', () => {
   beforeEach(() => {
     mockTabsScreenOptions = undefined;
     mockNativeTriggerContentStyles.length = 0;
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
     mockStore.dispatch(clearTrackingRecovery());
   });
 
@@ -101,7 +101,7 @@ describe('TabLayout', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     mockPathname = `/${ROUTES.home}`;
     mockReplace.mockClear();
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
 
     const result = await renderWithProviders(<TabLayout />);
 
@@ -119,7 +119,7 @@ describe('TabLayout', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     mockPathname = `/${ROUTES.home}`;
     mockReplace.mockClear();
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
 
     const result = await renderWithProviders(<TabLayout />);
 

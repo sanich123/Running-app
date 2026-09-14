@@ -1,10 +1,9 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { setUserId } from '@R/slices/auth/auth';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -25,7 +24,7 @@ jest.mock('@S/infinite-scroll-list/infinite-scroll-list', () => {
 });
 
 describe('Activities', () => {
-  beforeEach(() => mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId)));
+  beforeEach(() => mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId)));
 
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}`, loadingResponse));

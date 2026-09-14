@@ -1,10 +1,9 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { FOLLOW_UNFOLLOW_BTN } from './const';
@@ -12,7 +11,7 @@ import FollowUnfollowBtn from './follow-unfollow-btn';
 
 describe('Delete friend btn', () => {
   it('should correctly renders as unfollow btn, when passed friendId is in an array of friends of the user', async () => {
-    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
+    mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<FollowUnfollowBtn friendId="f38e13df-1ee3-49d8-81df-8327f2b1f728" />, {
       store: mockStore,
@@ -20,14 +19,14 @@ describe('Delete friend btn', () => {
     expect(await screen.findByText(FOLLOW_UNFOLLOW_BTN.english.unfollow)).toBeOnTheScreen();
   });
   it('should correctly renders as follow btn, when passed friendId is not in an array of friends of the user', async () => {
-    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
+    mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<FollowUnfollowBtn friendId="someWrongFriendId" />, { store: mockStore });
     expect(await screen.findByText(FOLLOW_UNFOLLOW_BTN.english.follow)).toBeOnTheScreen();
   });
   it('should correctly renders as unfollow btn in russian, when passed friendId is in an array of friends of the user', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
+    mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     await renderWithProviders(<FollowUnfollowBtn friendId="f38e13df-1ee3-49d8-81df-8327f2b1f728" />, {
       store: mockStore,
     });
@@ -35,7 +34,7 @@ describe('Delete friend btn', () => {
   });
   it('should correctly renders as follow btn in russian, when passed friendId is not in an array of friends of the user', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
+    mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     await renderWithProviders(<FollowUnfollowBtn friendId="someWrongFriendId" />, { store: mockStore });
     expect(await screen.findByText(FOLLOW_UNFOLLOW_BTN.russian.follow)).toBeOnTheScreen();
   });
@@ -44,7 +43,7 @@ describe('Delete friend btn', () => {
     const user = userEvent.setup();
     let requestUrl = '';
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
+    mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     server.use(
       http.post(`${BASE_URL}/friend/someWrongFriendId`, ({ request }) => {
         requestUrl = request.url;
@@ -60,7 +59,7 @@ describe('Delete friend btn', () => {
     const user = userEvent.setup();
     let deletedUrl = '';
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
+    mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     server.use(
       http.delete(`${BASE_URL}/friend/:friendRowId`, ({ request }) => {
         deletedUrl = request.url;
@@ -79,7 +78,7 @@ describe('Delete friend btn', () => {
       resolveRequest = resolve;
     });
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
+    mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     server.use(
       http.post(`${BASE_URL}/friend/someWrongFriendId`, async () => {
         await requestPending;

@@ -2,12 +2,11 @@ import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
-import { setUserId } from '@R/slices/auth/auth';
 import CalendarActivities from '@Routes/statistic/calendar/calendar';
 import Charts from '@Routes/statistic/charts/charts';
 import MonthStatistics from '@Routes/statistic/month-statistics/month-statistics';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 
 const mockPush = jest.fn();
@@ -41,7 +40,7 @@ describe('statistics integration flows', () => {
   beforeEach(() => {
     mockPush.mockClear();
     mockParams = { userId: MOCK_SERVER_IDS.userId, year: '2026', month: '7' };
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
   });
 
   it('opens the statistics page and navigates from a year chart to monthly statistics', async () => {
