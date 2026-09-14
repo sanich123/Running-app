@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { ROUTES } from '@const/enums';
+import { purgeAuthPersistence } from '@R/slices/auth/persistence';
 import { persistor, resetStore } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -19,6 +20,7 @@ export default function LogoutBtn() {
         try {
           await persistor.purge();
           dispatch(resetStore());
+          await purgeAuthPersistence();
           await persistor.flush();
           if (canDismiss()) {
             dismissAll();
