@@ -29,6 +29,16 @@ describe('Card likes', () => {
   it('should correctly renders', async () => {
     jest.spyOn(router, 'usePathname').mockImplementation(() => 'some path');
     mockStore.dispatch(setUserId('someUserId'));
+    server.use(
+      http.get(`${BASE_URL}/like/617dddae-05b3-418a-9a8e-5d408a1b897a`, () =>
+        HttpResponse.json([
+          {
+            authorId: 'someUserId',
+            profile: { name: 'Some', surname: 'User', profilePhoto: 'https://example.com/avatar.jpg' },
+          },
+        ]),
+      ),
+    );
     await renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />, {
       store: mockStore,
     });

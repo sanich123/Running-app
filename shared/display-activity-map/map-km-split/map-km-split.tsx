@@ -5,19 +5,18 @@ import type { ActivityKilometreSplit } from '@S/card/types';
 
 export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: ActivityKilometreSplit[] }) {
   const { colors } = useTheme();
-  const features = (Array.isArray(kilometresSplit) ? kilometresSplit : [])
-    .filter(({ kilometerPoint }) => {
-      const { longitude, latitude } = kilometerPoint?.coords ?? {};
-      return Number.isFinite(longitude) && Number.isFinite(latitude);
-    })
-    .map(({ kilometerPoint }, index) => ({
-      type: 'Feature' as const,
-      properties: { label: `${index + 1}`, sortKey: index },
-      geometry: {
-        type: 'Point' as const,
-        coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
-      },
-    }));
+  const validKilometreSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(({ kilometerPoint }) => {
+    const { longitude, latitude } = kilometerPoint?.coords ?? {};
+    return Number.isFinite(longitude) && Number.isFinite(latitude);
+  });
+  const features = validKilometreSplits.map(({ kilometerPoint }, index) => ({
+    type: 'Feature' as const,
+    properties: { label: `${index + 1}`, sortKey: index, labelSortKey: validKilometreSplits.length - index },
+    geometry: {
+      type: 'Point' as const,
+      coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
+    },
+  }));
 
   if (!features.length) {
     return null;
@@ -45,12 +44,13 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: Activ
         id="kilometre-split-label"
         aboveLayerID="kilometre-split-background"
         style={{
-          textAllowOverlap: true,
+          textAllowOverlap: false,
           textColor: colors.primary,
           textField: ['get', 'label'],
-          textIgnorePlacement: true,
+          textIgnorePlacement: false,
+          textPadding: 12,
           textSize: 12,
-          symbolSortKey: ['get', 'sortKey'],
+          symbolSortKey: ['get', 'labelSortKey'],
         }}
       />
     </ShapeSource>

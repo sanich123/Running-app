@@ -1,8 +1,11 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { setUserId } from '@R/slices/auth/auth';
 import { savePhotoUrl, setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { AvatarEditableTestIds } from './const';
 import AvatarIconEditable from './editable';
@@ -61,10 +64,18 @@ describe('Avatar icon editable', () => {
   it('selects, uploads and stores a new avatar', async () => {
     const user = userEvent.setup();
     const setIsDisabled = jest.fn();
+    let requestBody: unknown;
+    server.use(
+      http.patch(`${BASE_URL}/user/avatar-user/profile`, async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({ profilePhoto: 'https://images.example.test/avatar.jpg' });
+      }),
+    );
     mockStore.dispatch(setIsDisabledWhileSendingProfile(false));
     mockStore.dispatch(setUserId('avatar-user'));
     await renderWithProviders(<AvatarIconEditable setIsDisabled={setIsDisabled} isDisabled={false} />);
     await user.press(screen.getByTestId(AvatarEditableTestIds.editBtn));
+    await waitFor(() => expect(requestBody).toEqual({ profilePhoto: 'https://images.example.test/avatar.jpg' }));
     expect(mockStore.getState().profile.settings.profilePhoto).toBe('https://images.example.test/avatar.jpg');
     expect(setIsDisabled).toHaveBeenNthCalledWith(1, true);
     expect(setIsDisabled).toHaveBeenLastCalledWith(false);

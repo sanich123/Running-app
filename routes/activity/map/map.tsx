@@ -95,7 +95,11 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
               onUpdate={() => undefined}
               {...(Platform.OS === 'android' ? { androidRenderMode: 'compass' as const } : {})}
             />
-            <MapNavIcon profilePhoto={profileFromServer?.profilePhoto} />
+            <MapNavIcon
+              profilePhoto={profileFromServer?.profilePhoto}
+              name={profileFromServer?.name}
+              surname={profileFromServer?.surname}
+            />
             <Camera
               ref={cameraRef}
               followUserLocation={shouldFollowUserLocation}

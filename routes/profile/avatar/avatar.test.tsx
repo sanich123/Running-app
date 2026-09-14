@@ -4,14 +4,6 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ProfileAvatar from './avatar';
 
-jest.mock('@S/custom-image/custom-image', () => ({
-  __esModule: true,
-  default: ({ testID, source }: { testID?: string; source: { uri: string } }) => {
-    const { Text } = require('react-native');
-    return <Text testID={testID}>{source.uri}</Text>;
-  },
-}));
-
 describe('avatar', () => {
   beforeEach(() => mockStore.dispatch(resetSettings()));
 
@@ -23,7 +15,9 @@ describe('avatar', () => {
   it('shows the saved profile photo when one exists', async () => {
     mockStore.dispatch(savePhotoUrl('https://example.com/profile.jpg'));
     await renderWithProviders(<ProfileAvatar />);
-    expect(screen.getByTestId('avatarEditableImage')).toHaveTextContent('https://example.com/profile.jpg');
+    expect(screen.getByTestId('avatarEditableImage').props.source).toEqual({
+      uri: 'https://example.com/profile.jpg',
+    });
     expect(screen.queryByTestId('avatarEditableDefaultIcon')).not.toBeOnTheScreen();
   });
 });
