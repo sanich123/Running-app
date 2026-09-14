@@ -12,28 +12,28 @@ const statisticsApi = runichApi.injectEndpoints({
       query: ({ userId }: { userId: string }) => ({
         url: `/${statistics}/${userId}/year-category`,
       }),
-      providesTags: [Tags.activities],
+      providesTags: [Tags.statistics],
     }),
 
     getCurrentWeekStatistics: builder.query<StatisticMetricResponse, CurrentWeekStatisticsRequest>({
       query: ({ userId, firstDay, lastDay }: CurrentWeekStatisticsRequest) => ({
         url: `/${statistics}/${userId}/week?firstDay=${firstDay}&lastDay=${lastDay}`,
       }),
-      providesTags: [Tags.activities],
+      providesTags: [Tags.statistics],
     }),
 
     getAllTimeStatisticsByUserId: builder.query<StatisticMetricResponse, { userId: string }>({
       query: ({ userId }: { userId: string }) => ({
         url: `/${statistics}/${userId}/all`,
       }),
-      providesTags: [Tags.activities],
+      providesTags: [Tags.statistics],
     }),
 
     getMonthStatistics: builder.query<MonthStatisticsResponse, MonthStatisticsRequest>({
       query: ({ userId, year, month }: MonthStatisticsRequest) => ({
         url: `/${statistics}/${userId}/year-month?year=${year}&month=${month}`,
       }),
-      providesTags: [Tags.activities],
+      providesTags: [Tags.statistics],
     }),
   }),
 });

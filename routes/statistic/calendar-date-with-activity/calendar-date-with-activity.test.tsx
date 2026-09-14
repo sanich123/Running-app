@@ -19,6 +19,7 @@ describe('calendar date with activity', () => {
       />,
     );
     await user.press(screen.getByTestId('calendar-activities-activity-one'));
+    expect(screen.getByTestId('calendar-activity-icon-activity-one')).toBeOnTheScreen();
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activity}/activity-one`);
   });
 
@@ -36,6 +37,8 @@ describe('calendar date with activity', () => {
         ]}
       />,
     );
+    expect(screen.getByText('2')).toBeOnTheScreen();
+    expect(screen.queryByTestId('calendar-activity-icon-first')).not.toBeOnTheScreen();
     await user.press(screen.getByTestId('calendar-activities-first-second'));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activitiesList}/ids=first&ids=second`);
   });

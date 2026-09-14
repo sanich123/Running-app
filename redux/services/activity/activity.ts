@@ -65,7 +65,7 @@ const activityApi = runichApi.injectEndpoints({
         method: Methods.patch,
         body,
       }),
-      invalidatesTags: [Tags.activities],
+      invalidatesTags: [Tags.activities, Tags.statistics],
     }),
     addActivityByUserId: mutation<ActivityMutationResponse, ActivityToSend>({
       query: ({ body, id }: ActivityToSend) => ({
@@ -73,14 +73,14 @@ const activityApi = runichApi.injectEndpoints({
         method: Methods.post,
         body,
       }),
-      invalidatesTags: [Tags.activities],
+      invalidatesTags: [Tags.activities, Tags.statistics],
     }),
     deleteActivityById: mutation<void, string>({
       query: (id: string) => ({
         url: `/activity/${id}`,
         method: Methods.delete,
       }),
-      invalidatesTags: [Tags.activities],
+      invalidatesTags: [Tags.activities, Tags.statistics],
     }),
     getSeveralActivitiesByTheirIds: query<ActivityListItemResponse[], GetActivitiesByIdsRequest>({
       query: ({ ids }) => ({

@@ -29,4 +29,19 @@ describe('user avatar', () => {
 
     expect(result.getByTestId('avatar-image').props.source).toEqual({ uri: 'https://example.com/avatar.jpg' });
   });
+
+  it('clips custom profile photos to the avatar shape', async () => {
+    const result = await render(
+      <UserAvatar
+        size={40}
+        profilePhoto="https://example.com/avatar.jpg"
+        placeholder="blurhash"
+        testID="custom-avatar-image"
+      />,
+    );
+    const root = result.root;
+    if (!root) throw new Error('Avatar root was not rendered');
+
+    expect(root.props.style[1]).toEqual([{ overflow: 'hidden' }, undefined]);
+  });
 });

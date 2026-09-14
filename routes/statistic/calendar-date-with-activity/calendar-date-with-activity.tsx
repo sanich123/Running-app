@@ -41,12 +41,11 @@ export default function CalendarDateWithActivity({
             }
           }}>
           {activities.length > 1 ? (
-            <View style={styles.activityCount}>
-              <Icon source={activityIcon} size={17} color={colors.primary} />
-              <Text style={[styles.activityCountValue, { color: colors.onPrimaryContainer }]}>{activities.length}</Text>
-            </View>
+            <Text style={[styles.activityCountValue, { color: colors.onPrimaryContainer }]}>{activities.length}</Text>
           ) : (
-            <Icon source={activityIcon} size={23} color={colors.primary} />
+            <View testID={`calendar-activity-icon-${activities[0]?.id}`}>
+              <Icon source={activityIcon} size={23} color={colors.primary} />
+            </View>
           )}
         </TouchableRipple>
       ) : (
@@ -94,6 +93,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 12,
   },
-  activityCount: { alignItems: 'center', flexDirection: 'row', gap: 3 },
   activityCountValue: { fontFamily: FONT_FAMILIES.extraBold, fontSize: 16 },
 });

@@ -14,6 +14,7 @@ export const headers = { 'Content-type': 'application/json' };
 
 export enum Tags {
   activities = 'activities',
+  statistics = 'statistics',
   profile = 'profile',
   comments = 'comments',
   commentLikes = 'commentLikes',

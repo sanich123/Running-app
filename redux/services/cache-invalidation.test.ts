@@ -1,5 +1,6 @@
 interface EndpointDefinition {
   invalidatesTags?: unknown;
+  providesTags?: unknown;
 }
 
 interface EndpointBuilder {
@@ -43,6 +44,7 @@ describe('RTK Query cache invalidation contracts', () => {
       require('./followers/followers');
       require('./likes/likes');
       require('./profile/profile');
+      require('./statistics/statistics');
     });
 
     const invalidatingEndpoints = Object.entries(endpointDefinitions)
@@ -80,5 +82,15 @@ describe('RTK Query cache invalidation contracts', () => {
     expect(deleteLikeInvalidatesTags(undefined, undefined, { activityId })).toEqual([
       { type: 'likes', id: activityId },
     ]);
+    expect(endpointDefinitions.deleteActivityById.invalidatesTags).toEqual(['activities', 'statistics']);
+
+    for (const endpointName of [
+      'getAnnualStatisticsByUserId',
+      'getCurrentWeekStatistics',
+      'getAllTimeStatisticsByUserId',
+      'getMonthStatistics',
+    ]) {
+      expect(endpointDefinitions[endpointName].providesTags).toEqual(['statistics']);
+    }
   });
 });
