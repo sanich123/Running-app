@@ -25,6 +25,7 @@ export default function DeleteAccountBtn() {
       await deleteAccount({ userId }).unwrap();
       await persistor.purge();
       dispatch(resetStore());
+      await persistor.flush();
       if (canDismiss()) {
         dismissAll();
       }

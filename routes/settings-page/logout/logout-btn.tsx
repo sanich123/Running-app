@@ -19,6 +19,7 @@ export default function LogoutBtn() {
         try {
           await persistor.purge();
           dispatch(resetStore());
+          await persistor.flush();
           if (canDismiss()) {
             dismissAll();
           }
