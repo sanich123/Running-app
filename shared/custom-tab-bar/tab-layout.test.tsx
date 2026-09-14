@@ -2,8 +2,9 @@ import type { ReactNode } from 'react';
 import { waitFor } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import { ROUTES, STATUSES } from '@const/enums';
-import { resetLocationSlice, setActivityStatus } from '@R/slices/location/location';
-import { mockStore } from '@T/utils/mock-store';
+import { setActivityStatus } from '@R/slices/location/location';
+import { clearTrackingRecovery, startTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import TabLayout from '../../app/(tabs)/_layout';
 
@@ -56,14 +57,16 @@ describe('TabLayout', () => {
   beforeEach(() => {
     mockTabsScreenOptions = undefined;
     mockNativeTriggerContentStyles.length = 0;
+    mockStore.dispatch(resetMockLocation());
+    mockStore.dispatch(clearTrackingRecovery());
   });
 
-  it('opens the activity screen when tracking is active on another route', async () => {
+  it('opens the activity screen when tracking recovery is active on another route', async () => {
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     mockPathname = `/${ROUTES.home}`;
     mockReplace.mockClear();
-    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(startTrackingRecovery('tracking-journal'));
     await renderWithProviders(<TabLayout />);
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(`/${ROUTES.activity}`));
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
@@ -74,8 +77,21 @@ describe('TabLayout', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     mockPathname = `/${ROUTES.activity}`;
     mockReplace.mockClear();
-    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(startTrackingRecovery('tracking-journal'));
     await renderWithProviders(<TabLayout />);
+    expect(mockReplace).not.toHaveBeenCalled();
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
+  });
+
+  it('does not redirect based only on volatile activity status', async () => {
+    const originalOS = Platform.OS;
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    mockPathname = `/${ROUTES.home}`;
+    mockReplace.mockClear();
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+
+    await renderWithProviders(<TabLayout />);
+
     expect(mockReplace).not.toHaveBeenCalled();
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
@@ -85,7 +101,7 @@ describe('TabLayout', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     mockPathname = `/${ROUTES.home}`;
     mockReplace.mockClear();
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
 
     const result = await renderWithProviders(<TabLayout />);
 
@@ -103,7 +119,7 @@ describe('TabLayout', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     mockPathname = `/${ROUTES.home}`;
     mockReplace.mockClear();
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
 
     const result = await renderWithProviders(<TabLayout />);
 

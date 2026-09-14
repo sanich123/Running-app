@@ -1,12 +1,12 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES, STATUSES } from '@const/enums';
 import { resetFinishedActivity } from '@R/slices/activity/activity';
-import { setActivityStatus, setDistance, setDuration, setLocationsFromBackground } from '@R/slices/location/location';
+import { setActivityStatus, setDistance, setLocationsFromBackground, setDurationAt } from '@R/slices/location/location';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { MOCK_DURATION, MOCK_DISTANCE, MOCK_LOCATION } from '@T/mocks/mock-location';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as initialPosition from '@U/get-initial-position';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
@@ -23,7 +23,7 @@ jest.mock('expo-router', () => ({
 }));
 describe('Activity start btn', () => {
   beforeEach(() => {
-    mockStore.dispatch(require('@R/slices/location/location').resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
     mockStore.dispatch(resetFinishedActivity());
     mockStore.dispatch(clearTrackingRecovery());
     jest.restoreAllMocks();
@@ -104,7 +104,7 @@ describe('Activity start btn', () => {
 
   it('cleans the previous recording before starting a new one', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockStore.dispatch(setDuration(MOCK_DURATION));
+    mockStore.dispatch(setDurationAt(MOCK_DURATION));
     mockStore.dispatch(setDistance(MOCK_DISTANCE));
     mockStore.dispatch(setLocationsFromBackground(MOCK_LOCATION));
     mockStore.dispatch(setActivityStatus(STATUSES.initial));

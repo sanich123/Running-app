@@ -1,11 +1,5 @@
+import type { ACTIVITY_MIGRATION_STATUS } from './migration-status';
 import type { ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
-
-export const ACTIVITY_MIGRATION_STATUS = {
-  queued: 'queued',
-  processing: 'processing',
-  completed: 'completed',
-  failed: 'failed',
-} as const;
 
 export type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof typeof ACTIVITY_MIGRATION_STATUS];
 

@@ -1,6 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { setUserId } from '@R/slices/auth/auth';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import PreviewUploadableImage from './preview-uploadable-image';
 
@@ -16,14 +15,14 @@ jest.mock('@U/file-sending', () => ({
 }));
 describe('Preview uploadable image', () => {
   it('should correctly renders', async () => {
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(<PreviewUploadableImage image="someUrl" index={1} isDisabled={false} />, {
       store: mockStore,
     });
     expect(screen.getByText(new RegExp(/Add to activity/i))).toBeOnTheScreen();
   });
   it('should correctly handle isDisabled state', async () => {
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(<PreviewUploadableImage image="someUrl" index={1} isDisabled />, {
       store: mockStore,
     });
@@ -32,7 +31,7 @@ describe('Preview uploadable image', () => {
 
   it('uploads and adds the selected image to the activity', async () => {
     const user = userEvent.setup();
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(<PreviewUploadableImage image="file://activity.jpg" index={0} isDisabled={false} />);
     await user.press(screen.getByTestId('previewUploadable'));
     expect(mockStore.getState().activity.photoVideoUrls[0]).toEqual({

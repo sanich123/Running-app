@@ -25,6 +25,8 @@ export default function CustomImage({
   recyclingKey?: string | null;
   transition?: ImageProps['transition'];
 }) {
+  const resolvedTransition = transition ?? { duration: 650, timing: 'ease-out' as const };
+
   return (
     <Image
       style={style}
@@ -32,11 +34,11 @@ export default function CustomImage({
       contentFit={contentFit}
       testID={Platform.OS !== 'web' ? testID : undefined}
       placeholder={placeholder}
-      placeholderContentFit={placeholderContentFit}
+      placeholderContentFit={placeholderContentFit ?? contentFit}
       priority={priority}
       cachePolicy={cachePolicy}
       recyclingKey={Platform.OS !== 'web' ? recyclingKey : undefined}
-      transition={transition ?? (Platform.OS !== 'web' ? 500 : undefined)}
+      transition={resolvedTransition}
     />
   );
 }

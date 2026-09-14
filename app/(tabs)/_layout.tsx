@@ -15,7 +15,7 @@ export default function TabLayout() {
   const labels = LABELS[language];
   const { colors } = useTheme();
   const pathname = usePathname();
-  const { activityStatus } = useAppSelector(({ location }) => location);
+  const { status: trackingRecoveryStatus } = useAppSelector(({ trackingRecovery }) => trackingRecovery);
   const hideTabBar =
     pathname.includes(ROUTES.manualActivity) ||
     pathname.includes(ROUTES.changePassword) ||
@@ -36,12 +36,12 @@ export default function TabLayout() {
     </View>
   );
   useEffect(() => {
-    const isTracking = activityStatus === STATUSES.started || activityStatus === STATUSES.continued;
+    const isTracking = trackingRecoveryStatus === STATUSES.started || trackingRecoveryStatus === STATUSES.continued;
 
     if (isTracking && !isActivityRoute) {
       replace(`/${ROUTES.activity}`);
     }
-  }, [activityStatus, isActivityRoute, replace]);
+  }, [isActivityRoute, replace, trackingRecoveryStatus]);
 
   if (Platform.OS === 'ios') {
     return (

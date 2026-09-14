@@ -1,6 +1,5 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { setUserId } from '@R/slices/auth/auth';
 import {
   setCommentActivityId,
   setCommentToUpdate,
@@ -12,7 +11,7 @@ import { BASE_URL } from '@T/utils/handlers';
 import { server } from '@T/utils/server';
 import CommentInput from './comment-input';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT_TEST_ID } from './const';
-import { mockStore } from '../../../tests/utils/mock-store';
+import { mockStore, setMockUserId } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
 
 describe('Comment input', () => {
@@ -43,7 +42,7 @@ describe('Comment input', () => {
   it('posts the written comment and closes the input after success', async () => {
     const user = userEvent.setup();
     let requestBody: unknown;
-    mockStore.dispatch(setUserId('comment-author-id'));
+    mockStore.dispatch(setMockUserId('comment-author-id'));
     mockStore.dispatch(setCommentActivityId('someActivityId'));
     server.use(
       http.post(`${BASE_URL}/comment/someActivityId`, async ({ request }) => {

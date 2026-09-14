@@ -1,10 +1,18 @@
 import { MarkerView } from '@rnmapbox/maps';
 import { View, StyleSheet } from 'react-native';
-import { Icon, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import CustomImage from '@S/custom-image/custom-image';
+import UserAvatar from '@S/avatar/avatar';
 
-export default function MapNavIcon({ profilePhoto }: { profilePhoto?: string | null }) {
+export default function MapNavIcon({
+  profilePhoto,
+  name,
+  surname,
+}: {
+  profilePhoto?: string | null;
+  name?: string | null;
+  surname?: string | null;
+}) {
   const { colors } = useTheme();
   const { lastPosition, initialLocation } = useAppSelector(({ location }) => location);
   const currentPosition = lastPosition ?? initialLocation;
@@ -18,11 +26,7 @@ export default function MapNavIcon({ profilePhoto }: { profilePhoto?: string | n
           allowOverlap
           allowOverlapWithPuck>
           <View style={[styles.customHome, { backgroundColor: colors.surface, borderColor: colors.primary }]}>
-            {profilePhoto ? (
-              <CustomImage style={styles.avatar} source={{ uri: profilePhoto }} contentFit="cover" />
-            ) : (
-              <Icon source="account-circle-outline" size={28} color={colors.primary} />
-            )}
+            <UserAvatar size={36} profilePhoto={profilePhoto} name={name} surname={surname} testID="map-nav-avatar" />
           </View>
         </MarkerView>
       ) : null}
@@ -44,5 +48,4 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     width: 44,
   },
-  avatar: { borderRadius: 18, height: 36, width: 36 },
 });

@@ -83,9 +83,6 @@ const settings = createSlice({
     removeActivityReminder: (state, action) => {
       state.activityReminders = (state.activityReminders ?? []).filter((reminder) => reminder.id !== action.payload);
     },
-    resetActivityReminders: (state) => {
-      state.activityReminders = [];
-    },
   },
 });
 
@@ -99,6 +96,5 @@ export const {
   setActivityReminderEnabled,
   addActivityReminder,
   removeActivityReminder,
-  resetActivityReminders,
 } = settings.actions;
 export default settings.reducer;

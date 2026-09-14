@@ -1,10 +1,9 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -23,7 +22,7 @@ jest.mock('expo-router', () => ({
 describe('delete account', () => {
   beforeEach(() => {
     mockReplace.mockClear();
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
   });
 
   it('shows confirmation before deleting the account and returns to sign in after success', async () => {

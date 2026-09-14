@@ -7,5 +7,4 @@ export const enum AvatarShowableTestIds {
 
 export const enum AvatarShowableIcons {
   error = 'web-cancel',
-  default = 'account-circle-outline',
 }

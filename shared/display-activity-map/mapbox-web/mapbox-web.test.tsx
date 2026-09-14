@@ -83,6 +83,7 @@ describe('mapbox web', () => {
 
     const splitSource = mockMap.addSource.mock.calls.find(([id]) => id === 'kilometre-splits');
     expect(splitSource?.[1].data.features).toHaveLength(1);
+    expect(splitSource?.[1].data.features[0].properties).toEqual({ label: '1', sortKey: 0, labelSortKey: 1 });
     expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'kilometre-split-background' }));
     expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'kilometre-split-label' }));
     const splitBackgroundLayer = mockMap.addLayer.mock.calls.find(
@@ -90,7 +91,10 @@ describe('mapbox web', () => {
     )?.[0];
     const splitLabelLayer = mockMap.addLayer.mock.calls.find(([layer]) => layer.id === 'kilometre-split-label')?.[0];
     expect(splitBackgroundLayer.layout['circle-sort-key']).toEqual(['get', 'sortKey']);
-    expect(splitLabelLayer.layout['symbol-sort-key']).toEqual(['get', 'sortKey']);
+    expect(splitLabelLayer.layout['symbol-sort-key']).toEqual(['get', 'labelSortKey']);
+    expect(splitLabelLayer.layout['text-allow-overlap']).toBe(false);
+    expect(splitLabelLayer.layout['text-ignore-placement']).toBe(false);
+    expect(splitLabelLayer.layout['text-padding']).toBe(12);
     const markerSource = mockMap.addSource.mock.calls.find(([id]) => id === 'route-markers');
     expect(markerSource?.[1].data.features).toEqual([]);
   });

@@ -3,7 +3,7 @@ import { STATUSES } from '@const/enums';
 import { addDurationAndLocationToKmSplits, setActivityStatus } from '@R/slices/location/location';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
 import PauseBtn from './pause-btn';
@@ -24,7 +24,7 @@ jest.mock('react-native-paper', () => {
 
 describe('pause btn', () => {
   beforeEach(() => {
-    mockStore.dispatch(require('@R/slices/location/location').resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
     jest.restoreAllMocks();
   });
 

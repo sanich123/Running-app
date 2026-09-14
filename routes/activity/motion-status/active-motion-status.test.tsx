@@ -1,9 +1,8 @@
 import { act, screen, userEvent } from '@testing-library/react-native';
 import { Accelerometer } from 'expo-sensors';
 import { LANGUAGES } from '@const/enums';
-import { resetLocationSlice } from '@R/slices/location/location';
 import { changeLanguage } from '@R/slices/settings/settings';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { getPedometerActivityData } from '@U/pedometer/pedometer';
 import ActiveMotionStatus from './active-motion-status';
@@ -31,7 +30,7 @@ describe('Activity-motion-status', () => {
 
   beforeEach(() => {
     jest.useRealTimers();
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     getPedometerActivityDataMock.mockReturnValue({ steps: 0, samples: [] });
     addListenerMock.mockImplementation((callback: AccelerometerListener) => {

@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react-native';
 import { setInitialLocation, setLastPosition } from '@R/slices/location/location';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import MapNavIcon from './map-nav-icon';
 
@@ -15,16 +15,8 @@ jest.mock('@rnmapbox/maps', () => {
     ),
   };
 });
-jest.mock('@S/custom-image/custom-image', () => ({
-  __esModule: true,
-  default: ({ testID, source }: { testID?: string; source: { uri: string } }) => {
-    const { Text } = require('react-native');
-    return <Text testID={testID}>{source.uri}</Text>;
-  },
-}));
-
 describe('map nav icon', () => {
-  beforeEach(() => mockStore.dispatch(require('@R/slices/location/location').resetLocationSlice()));
+  beforeEach(() => mockStore.dispatch(resetMockLocation()));
 
   it('does not render a marker before a location is available', async () => {
     await renderWithProviders(<MapNavIcon />);
@@ -52,6 +44,7 @@ describe('map nav icon', () => {
       latestPosition.coords.longitude,
       latestPosition.coords.latitude,
     ]);
-    expect(screen.getByText('https://example.com/avatar.jpg')).toBeOnTheScreen();
+    const avatar = screen.getByTestId('map-nav-avatar');
+    expect(avatar.props.source).toEqual({ uri: 'https://example.com/avatar.jpg' });
   });
 });

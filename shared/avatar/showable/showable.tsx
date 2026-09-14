@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
 import { ActivityIndicator, Avatar, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { saveWholeProfile } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import CustomImage from '@S/custom-image/custom-image';
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
+import UserAvatar from '../avatar';
 import type { ProfileType } from '@S/card/types';
 
 export default function AvatarShowable({
@@ -49,45 +48,18 @@ export default function AvatarShowable({
         />
       )}
       {isSuccess ? (
-        <>
-          {profile?.profilePhoto ? (
-            <CustomImage
-              style={[
-                { width: size, height: size, borderRadius: 70 },
-                { borderWidth: 1, borderColor: focused ? colors.primary : 'transparent' },
-              ]}
-              source={{ uri: profile?.profilePhoto }}
-              contentFit="cover"
-              testID={AvatarShowableTestIds.success}
-              placeholder={profile?.profilePhotoBlurhash}
-            />
-          ) : (
-            <Avatar.Icon
-              testID={AvatarShowableTestIds.default}
-              size={size}
-              icon={AvatarShowableIcons.default}
-              style={styles.placeInCenter}
-            />
-          )}
-        </>
+        <UserAvatar
+          size={size}
+          profilePhoto={profile?.profilePhoto}
+          name={profile?.name}
+          surname={profile?.surname}
+          placeholder={profile?.profilePhotoBlurhash}
+          testID={profile?.profilePhoto ? AvatarShowableTestIds.success : AvatarShowableTestIds.default}
+          style={{ borderWidth: 1, borderColor: focused ? colors.primary : 'transparent' }}
+        />
       ) : null}
 
-      {isError && (
-        <Avatar.Icon
-          testID={AvatarShowableTestIds.error}
-          size={size}
-          icon={AvatarShowableIcons.error}
-          style={styles.placeInCenter}
-        />
-      )}
+      {isError && <Avatar.Icon testID={AvatarShowableTestIds.error} size={size} icon={AvatarShowableIcons.error} />}
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  placeInCenter: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

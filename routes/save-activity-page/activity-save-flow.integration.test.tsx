@@ -4,15 +4,15 @@ import { ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { runichApi } from '@R/runich-api/runich-api';
 import { resetFinishedActivity, addPhotoUrl, resetActivityDraft } from '@R/slices/activity/activity';
-import { setUserId, resetAuthSlice } from '@R/slices/auth/auth';
-import { resetLocationSlice, setDistance, setDuration, setLocationsFromBackground } from '@R/slices/location/location';
+import { resetAuthSlice } from '@R/slices/auth/auth';
+import { setDistance, setLocationsFromBackground, setDurationAt, stopDurationTimer } from '@R/slices/location/location';
 import ActivitySaveBtn from '@Routes/activity/save-btn/save-btn';
 import StartBtn from '@Routes/activity/start-btn/start-btn';
 import UpdateBtn from '@S/users-settings-icons/activity-update-btn/update-btn';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId, resetMockLocation } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
@@ -129,7 +129,7 @@ function resetActivityFlowState() {
   mockStore.dispatch(resetAuthSlice());
   mockStore.dispatch(resetFinishedActivity());
   mockStore.dispatch(resetActivityDraft());
-  mockStore.dispatch(resetLocationSlice());
+  mockStore.dispatch(resetMockLocation());
   mockStore.dispatch(runichApi.util.resetApiState());
 }
 
@@ -191,7 +191,7 @@ describe('activity save flows', () => {
       }),
     );
 
-    mockStore.dispatch(setUserId(mockUserId));
+    mockStore.dispatch(setMockUserId(mockUserId));
     mockStore.dispatch(addPhotoUrl(mockActivityPhoto));
     setMockRouteParams({
       cameraVisible: 'false',
@@ -247,7 +247,7 @@ describe('activity save flows', () => {
       }),
     );
 
-    mockStore.dispatch(setUserId(mockUserId));
+    mockStore.dispatch(setMockUserId(mockUserId));
     setMockRouteParams({
       cameraVisible: 'false',
       mode: 'recording',
@@ -262,7 +262,8 @@ describe('activity save flows', () => {
     const trackedDuration = 90_007;
     const trackedDistance = 2_500;
     await act(async () => {
-      mockStore.dispatch(setDuration(trackedDuration));
+      mockStore.dispatch(setDurationAt(trackedDuration));
+      mockStore.dispatch(stopDurationTimer());
       mockStore.dispatch(setDistance(trackedDistance));
       mockStore.dispatch(setLocationsFromBackground(MOCK_LOCATION));
     });
@@ -314,7 +315,7 @@ describe('activity save flows', () => {
       }),
     );
 
-    mockStore.dispatch(setUserId(mockUserId));
+    mockStore.dispatch(setMockUserId(mockUserId));
     setMockRouteParams({
       cameraVisible: 'false',
       id: MOCK_SERVER_IDS.activityId,

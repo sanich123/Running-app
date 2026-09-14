@@ -4,20 +4,19 @@ import {
   addActivityReminder,
   changeLanguage,
   setActivityReminderEnabled,
-  resetActivityReminders,
   setActivityVoiceEnabled,
   setActivityVoiceMetrics,
 } from '@R/slices/settings/settings';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, resetMockActivityReminders } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivitySettings from './activity-settings';
 
 describe('ActivitySettings', () => {
   beforeEach(() => {
+    mockStore.dispatch(resetMockActivityReminders());
     mockStore.dispatch(setActivityVoiceEnabled(true));
     mockStore.dispatch(setActivityVoiceMetrics(['pace', 'movingTime', 'elevation']));
     mockStore.dispatch(setActivityReminderEnabled(false));
-    mockStore.dispatch(resetActivityReminders());
   });
 
   it('shows settings under the corresponding enabled switch', async () => {

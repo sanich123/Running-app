@@ -1,10 +1,9 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { FOLLOW_UNFOLLOW_BTN } from '@S/user-list-item/follow-unfollow-btn/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import UserListItem from '../user-list-item/user-list-item';
 
@@ -15,7 +14,7 @@ jest.mock('expo-router', () => ({
 
 describe('User list item', () => {
   it('should correctly renders from server', async () => {
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(
       <UserListItem
         name={MOCK_PROFILE.name}
@@ -32,7 +31,7 @@ describe('User list item', () => {
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
   });
   it('should show follow btn, when userId !== user.id and userId is not in the list of friends', async () => {
-    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
+    mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(
       <UserListItem
@@ -51,7 +50,7 @@ describe('User list item', () => {
     expect(await screen.findByText(FOLLOW_UNFOLLOW_BTN.english.follow)).toBeOnTheScreen();
   });
   it('should correctly show unfollow btn, when user is in the list of friends', async () => {
-    mockStore.dispatch(setUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
+    mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(
       <UserListItem
@@ -72,7 +71,7 @@ describe('User list item', () => {
 
   it('opens the selected user profile', async () => {
     const user = userEvent.setup();
-    mockStore.dispatch(setUserId('current-user'));
+    mockStore.dispatch(setMockUserId('current-user'));
     await renderWithProviders(
       <UserListItem
         name={MOCK_PROFILE.name}

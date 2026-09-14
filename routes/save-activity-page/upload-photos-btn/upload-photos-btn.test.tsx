@@ -1,10 +1,9 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { errorToast } from '@S/error-toast/error-toast';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { compressAndSendFile, getAccessToGallery } from '@U/file-sending';
 import { UPLOAD_PHOTO_BTN } from './ const';
@@ -34,7 +33,7 @@ describe('Upload photos btn', () => {
     jest.clearAllMocks();
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockStore.dispatch(setUserId('upload-user'));
+    mockStore.dispatch(setMockUserId('upload-user'));
   });
 
   afterEach(() => {
@@ -105,7 +104,7 @@ describe('Upload photos btn', () => {
     expect(setImages).not.toHaveBeenCalled();
 
     await act(async () => {
-      mockStore.dispatch(setUserId(''));
+      mockStore.dispatch(setMockUserId(''));
     });
     (getAccessToGallery as jest.Mock).mockResolvedValue({ canceled: false, assets: [{ uri: 'photo.jpg' }] });
     await user.press(screen.getByText(UPLOAD_PHOTO_BTN.english.isInitial));

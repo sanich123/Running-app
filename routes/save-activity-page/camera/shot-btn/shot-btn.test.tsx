@@ -1,8 +1,8 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import * as MediaLibrary from 'expo-media-library';
-import { setUserId, resetAuthSlice } from '@R/slices/auth/auth';
+import { resetAuthSlice } from '@R/slices/auth/auth';
 import * as errorToastModule from '@S/error-toast/error-toast';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { compressAndSendFile } from '@U/file-sending';
 import ShotBtn from './shot-btn';
@@ -33,7 +33,7 @@ describe('shot btn', () => {
   it('uploads a photo for an authenticated user and dispatches it', async () => {
     const user = userEvent.setup();
     const setPhotos = jest.fn();
-    mockStore.dispatch(setUserId('shot-user'));
+    mockStore.dispatch(setMockUserId('shot-user'));
     mockCompressAndSendFile.mockResolvedValue({ url: 'https://cdn.example.com/photo.jpg', thumbnail: 'thumb' });
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
     await renderWithProviders(
@@ -72,7 +72,7 @@ describe('shot btn', () => {
   it('keeps the existing photos when upload returns nothing', async () => {
     const user = userEvent.setup();
     const setPhotos = jest.fn();
-    mockStore.dispatch(setUserId('shot-user'));
+    mockStore.dispatch(setMockUserId('shot-user'));
     mockCompressAndSendFile.mockResolvedValue(null);
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
     await renderWithProviders(

@@ -3,14 +3,12 @@ import { SystemBars } from 'react-native-edge-to-edge';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
 import { Platform, useColorScheme } from 'react-native';
 import { Redirect, Stack, useGlobalSearchParams, usePathname } from 'expo-router';
 import { configureFonts, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
-import { toastConfig } from '@const/toast-config';
 import { useAppSelector } from '@R/typed-hooks';
 import MigrationStatusSync from '@Routes/migration-from-strava/migration-status-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
@@ -183,7 +181,6 @@ export default function AppShell() {
                   }}
                 />
               </Stack>
-              <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
             </BottomSheetModalProvider>
           </PaperProvider>
         </KeyboardProvider>

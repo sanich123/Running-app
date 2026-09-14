@@ -1,14 +1,9 @@
 import * as Speech from 'expo-speech';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { setSport } from '@R/slices/activity/activity';
-import { resetLocationSlice, setLocationsWhenContinued, startDurationTimer } from '@R/slices/location/location';
-import {
-  addActivityReminder,
-  resetActivityReminders,
-  setActivityReminderEnabled,
-  setActivityVoiceEnabled,
-} from '@R/slices/settings/settings';
-import { store } from '@R/store';
+import { setLocationsWhenContinued, startDurationTimer } from '@R/slices/location/location';
+import { addActivityReminder, setActivityReminderEnabled, setActivityVoiceEnabled } from '@R/slices/settings/settings';
+import { resetStore, store } from '@R/store';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import {
   getElevationGain,
@@ -21,7 +16,7 @@ import { getCompletedReminderCount, getMetricsTaskManager, saveMetricsToStoreTas
 
 describe('location speed filtering', () => {
   beforeEach(() => {
-    store.dispatch(resetLocationSlice());
+    store.dispatch(resetStore());
   });
 
   it('calculates speed in kilometres per hour', () => {
@@ -50,7 +45,7 @@ describe('location speed filtering', () => {
 
 describe('kilometre split calculation', () => {
   beforeEach(() => {
-    store.dispatch(resetLocationSlice());
+    store.dispatch(resetStore());
   });
 
   it('creates every crossed kilometre and interpolates its point', () => {
@@ -192,8 +187,7 @@ describe('kilometre split calculation', () => {
 
 describe('activity reminders', () => {
   beforeEach(() => {
-    store.dispatch(resetLocationSlice());
-    store.dispatch(resetActivityReminders());
+    store.dispatch(resetStore());
     store.dispatch(setActivityReminderEnabled(true));
     store.dispatch(
       addActivityReminder({ id: 'water-reminder', intervalMinutes: 30, text: 'Пора сделать глоток воды.' }),
@@ -244,7 +238,7 @@ describe('activity reminders', () => {
 
 describe('background metric calculation', () => {
   beforeEach(() => {
-    store.dispatch(resetLocationSlice());
+    store.dispatch(resetStore());
   });
 
   it('returns zero metrics before the first location is available', () => {

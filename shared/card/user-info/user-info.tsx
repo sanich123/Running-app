@@ -4,7 +4,7 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import CustomImage from '@S/custom-image/custom-image';
+import UserAvatar from '@S/avatar/avatar';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import type { UserInfoProps } from './const';
@@ -28,11 +28,12 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
       borderless
       style={{ paddingVertical: 10, paddingHorizontal: 12 }}>
       <View style={styles.userInfoWrapper}>
-        <CustomImage
-          style={[size === 'small' ? styles.avatarImageSmall : styles.avatarImageBig]}
-          source={{ uri: profile?.profilePhoto }}
+        <UserAvatar
+          size={size === 'small' ? 35 : 40}
+          profilePhoto={profile?.profilePhoto}
+          name={profile?.name}
+          surname={profile?.surname}
           placeholder={profile?.profilePhotoBlurhash}
-          contentFit="cover"
         />
         <View>
           <View>
@@ -61,15 +62,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  avatarImageBig: {
-    width: 40,
-    height: 40,
-    borderRadius: 70,
-  },
-  avatarImageSmall: {
-    width: 35,
-    height: 35,
-    borderRadius: 70,
   },
 });

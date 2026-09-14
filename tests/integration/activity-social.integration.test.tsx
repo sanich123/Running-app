@@ -1,7 +1,6 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
 import { setActivityOwnerProfile, setCommentActivityId } from '@R/slices/comment/comment';
 import LikesList from '@Routes/likes-list/likes-list';
 import MapPage from '@Routes/map-page/map-page';
@@ -12,7 +11,7 @@ import LikeBtn from '@S/card/like-btn/like-btn';
 import { COMMENT_INPUT_TEST_ID, COMMENT_ICON_TEST_ID } from '@S/comments/comment-input/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_COMMENTS, MOCK_SERVER_IDS, MOCK_SERVER_LIKES } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 
@@ -49,7 +48,7 @@ describe('activity and social integration flows', () => {
     mockPush.mockClear();
     mockPathname = '/';
     mockParams.id = MOCK_SERVER_IDS.activityId;
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(setCommentActivityId(MOCK_SERVER_IDS.activityId));
     mockStore.dispatch(setActivityOwnerProfile(MOCK_SERVER_ACTIVITY.profile));
   });

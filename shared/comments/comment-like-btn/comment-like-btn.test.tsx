@@ -1,11 +1,10 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { setUserId } from '@R/slices/auth/auth';
 import { errorToast } from '@S/error-toast/error-toast';
 import { MOCK_LIKES } from '@T/mocks/mock-likes';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CommentLikeBtn from './comment-like-btn';
@@ -14,7 +13,7 @@ jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 
 describe('Comment like btn', () => {
   it('should correctly renders, when liked by you', async () => {
-    mockStore.dispatch(setUserId('7857abb1-b125-4f39-becf-8f30216b46ec'));
+    mockStore.dispatch(setMockUserId('7857abb1-b125-4f39-becf-8f30216b46ec'));
     await renderWithProviders(
       <CommentLikeBtn
         commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
@@ -27,7 +26,7 @@ describe('Comment like btn', () => {
     expect(await screen.findByTestId('commentLikeBtn-active')).toBeOnTheScreen();
   });
   it('should correctly renders, when not liked by you', async () => {
-    mockStore.dispatch(setUserId('someWrongId'));
+    mockStore.dispatch(setMockUserId('someWrongId'));
     await renderWithProviders(
       <CommentLikeBtn
         commentId="922dca27-f99c-4165-96d6-5a04bbb6e9cb"
@@ -44,7 +43,7 @@ describe('Comment like btn', () => {
     const user = userEvent.setup();
     let requestBody: unknown;
     let getRequests = 0;
-    mockStore.dispatch(setUserId('new-comment-like-author'));
+    mockStore.dispatch(setMockUserId('new-comment-like-author'));
     server.use(
       http.get(`${BASE_URL}/comment/922dca27-f99c-4165-96d6-5a04bbb6e9cb/like`, () => {
         getRequests += 1;
@@ -74,7 +73,7 @@ describe('Comment like btn', () => {
     const user = userEvent.setup();
     let deleteRequest: string | undefined;
     const ownLike = MOCK_LIKES[0];
-    mockStore.dispatch(setUserId(ownLike.authorId));
+    mockStore.dispatch(setMockUserId(ownLike.authorId));
     server.use(
       http.get(`${BASE_URL}/comment/${ownLike.activityId}/like`, () => HttpResponse.json([ownLike])),
       http.delete(`${BASE_URL}/comment/${ownLike.id}/like`, ({ request }) => {
@@ -99,7 +98,7 @@ describe('Comment like btn', () => {
   it('notifies the comment owner after a successful like when notifications are enabled', async () => {
     const user = userEvent.setup();
     let emailBody: unknown;
-    mockStore.dispatch(setUserId('new-like-author'));
+    mockStore.dispatch(setMockUserId('new-like-author'));
     server.use(
       http.post(`${BASE_URL}/comment/email-comment/like`, () => HttpResponse.json({ id: 'like' }, { status: 201 })),
       http.get(`${BASE_URL}/comment/email-comment/like`, () => HttpResponse.json([])),

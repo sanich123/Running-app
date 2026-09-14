@@ -2,10 +2,9 @@ import { screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import * as router from 'expo-router';
-import { setUserId } from '@R/slices/auth/auth';
 import { AvatarShowableTestIds } from '@S/avatar/showable/const';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { LIKE_BTN, LikesSize } from './const';
@@ -28,7 +27,17 @@ describe('Card likes', () => {
 
   it('should correctly renders', async () => {
     jest.spyOn(router, 'usePathname').mockImplementation(() => 'some path');
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
+    server.use(
+      http.get(`${BASE_URL}/like/617dddae-05b3-418a-9a8e-5d408a1b897a`, () =>
+        HttpResponse.json([
+          {
+            authorId: 'someUserId',
+            profile: { name: 'Some', surname: 'User', profilePhoto: 'https://example.com/avatar.jpg' },
+          },
+        ]),
+      ),
+    );
     await renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />, {
       store: mockStore,
     });

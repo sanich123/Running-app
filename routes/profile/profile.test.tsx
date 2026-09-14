@@ -1,11 +1,10 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -38,7 +37,7 @@ jest.mock('./users-counter/users-counter', () => {
 });
 
 describe('ProfilePage', () => {
-  beforeEach(() => mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId)));
+  beforeEach(() => mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId)));
 
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, loadingResponse));
@@ -72,7 +71,7 @@ describe('ProfilePage', () => {
     const viewedUserId = MOCK_SERVER_IDS.userId;
     const loggedInUserId = 'another-user-id';
     let requestedUrl = '';
-    mockStore.dispatch(setUserId(loggedInUserId));
+    mockStore.dispatch(setMockUserId(loggedInUserId));
     server.use(
       http.get(`${BASE_URL}/activity/${viewedUserId}/photos`, ({ request }) => {
         requestedUrl = request.url;

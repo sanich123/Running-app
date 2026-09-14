@@ -6,10 +6,6 @@ export const PROFILE_SETTINGS_INITIAL_STATE = {
 };
 
 export const PROFILE_INITIAL_STATE: ProfileSlice = {
-  privateInfo: {
-    email: '',
-    password: '',
-  },
   isDisabledWhileSendingProfile: false,
   settings: PROFILE_SETTINGS_INITIAL_STATE,
   profileFromServer: {} as ProfileType,

@@ -15,7 +15,6 @@ export interface ProfileSettings {
 }
 
 export interface ProfileSlice {
-  privateInfo: { email: string; password: string };
   isDisabledWhileSendingProfile: boolean;
   settings: Pick<ProfileSettings, 'profilePhoto'>;
   profileFromServer: ProfileType;

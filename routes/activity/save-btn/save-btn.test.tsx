@@ -3,11 +3,10 @@ import { http, HttpResponse } from 'msw';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { setFinishedActivity } from '@R/slices/activity/activity';
-import { setUserId } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
@@ -78,14 +77,14 @@ describe('Activity save btn', () => {
     expect(screen.getByText(ACTIVITY_SAVE_BTN.russian.save)).toBeOnTheScreen();
   });
   it('should correctly change global state', async () => {
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isSavingDisabled).toEqual(false);
     await userEvent.press(saveBtn);
   });
   it('should correctly change global state after successfully sending activity', async () => {
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     mockStore.dispatch(
       setFinishedActivity({
         ...createFinishedActivityDraft(),
@@ -98,7 +97,7 @@ describe('Activity save btn', () => {
   });
 
   it('returns to the previous screen after saving a manual activity', async () => {
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockManualActivityMode = 'manual';
     mockManualActivityParams = {
@@ -115,7 +114,7 @@ describe('Activity save btn', () => {
   });
 
   it('returns to the feed after saving a tracked activity', async () => {
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockManualActivityMode = 'tracked';
     mockStore.dispatch(
@@ -137,7 +136,7 @@ describe('Activity save btn', () => {
         return HttpResponse.json({ id: 'activity-id' });
       }),
     );
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     mockStore.dispatch(
       setFinishedActivity({
         ...createFinishedActivityDraft(),
@@ -159,7 +158,7 @@ describe('Activity save btn', () => {
         return HttpResponse.json({ id: 'activity-id' });
       }),
     );
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     mockStore.dispatch(
       setFinishedActivity({
         ...createFinishedActivityDraft(
@@ -179,7 +178,7 @@ describe('Activity save btn', () => {
   });
 
   it('returns to the feed after an unsent tracked activity fails to save', async () => {
-    mockStore.dispatch(setUserId('someWrongUserId'));
+    mockStore.dispatch(setMockUserId('someWrongUserId'));
     mockManualActivityMode = 'tracked';
     mockStore.dispatch(
       setFinishedActivity({
@@ -199,7 +198,7 @@ describe('Activity save btn', () => {
         return HttpResponse.json({ id: 'activity-id' });
       }),
     );
-    mockStore.dispatch(setUserId('someUserId'));
+    mockStore.dispatch(setMockUserId('someUserId'));
     mockManualActivityMode = 'edit';
     mockManualActivityId = 'activity-id';
     mockManualActivityParams = {

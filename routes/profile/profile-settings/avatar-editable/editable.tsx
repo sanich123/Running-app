@@ -1,23 +1,46 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import { savePhotoUrl } from '@R/slices/profile/profile';
+import { useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
+import { savePhotoUrl, saveProfilePreview } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ProfileImage from '@Routes/profile/avatar/avatar';
-import { errorToast } from '@S/error-toast/error-toast';
+import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
+import { useProfileFormParams } from '../profile-settings-params';
 import { AvatarEditableTestIds } from './const';
 import type { AvatarIconEditableProps } from './const';
 
 export default function AvatarIconEditable({ isDisabled, setIsDisabled }: AvatarIconEditableProps) {
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
-  const isUploading = isDisabled || isDisabledWhileSendingProfile;
+  const { settings, isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const [updateProfile, { isLoading: isUpdatingProfile }] = useUpdateProfileByUserIdMutation();
+  const { name, surname } = useProfileFormParams();
+  const isUploading = isDisabled || isDisabledWhileSendingProfile || isUpdatingProfile;
+
+  async function uploadAvatar(image: Parameters<typeof compressAndSendFile>[0]) {
+    if (!userId) return;
+
+    const previousPhoto = settings.profilePhoto;
+    const fileWithThumbnail = await compressAndSendFile(image, userId);
+    if (!fileWithThumbnail) return;
+
+    const { url } = fileWithThumbnail;
+    dispatch(savePhotoUrl(url));
+
+    try {
+      const updatedProfile = await updateProfile({ id: userId, body: { profilePhoto: url } }).unwrap();
+      dispatch(saveProfilePreview(updatedProfile));
+    } catch (error) {
+      dispatch(savePhotoUrl(previousPhoto));
+      throw error;
+    }
+  }
 
   const avatar = (
     <View style={styles.avatarContainer}>
-      <ProfileImage />
+      <ProfileImage name={name} surname={surname} />
       <View pointerEvents="none" testID={AvatarEditableTestIds.editIcon} style={styles.editIcon}>
         <MaterialCommunityIcons name="camera-plus-outline" size={20} color="#fff" />
       </View>
@@ -40,20 +63,17 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
             disabled={isUploading}
             onChange={async (e) => {
               if (userId && e.target.files) {
-                if (/mp4|avi|m4v/.test(e.target.files[0].name)) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (/mp4|avi|m4v/.test(file.name)) {
                   errorToast('Нельзя использовать видео файлы для аватары');
                   return;
                 }
-                const imgSrc = e.target.files[0];
                 try {
                   setIsDisabled(true);
-                  const fileWithThumbnail = await compressAndSendFile(imgSrc, userId);
-                  if (fileWithThumbnail) {
-                    const { url } = fileWithThumbnail;
-                    dispatch(savePhotoUrl(url));
-                  }
+                  await uploadAvatar(file);
                 } catch (error) {
-                  errorToast('', error);
+                  errorToast('', getErrorMessageFromError(error));
                 } finally {
                   setIsDisabled(false);
                 }
@@ -70,17 +90,11 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
             try {
               const result = await getAccessToGallery();
               if (result && !result.canceled) {
-                const imgSrc = result.assets[0].uri;
-                if (userId) {
-                  const fileWithThumbnail = await compressAndSendFile(imgSrc, userId);
-                  if (fileWithThumbnail) {
-                    const { url } = fileWithThumbnail;
-                    dispatch(savePhotoUrl(url));
-                  }
-                }
+                const imgSrc = result.assets?.[0]?.uri;
+                if (imgSrc) await uploadAvatar(imgSrc);
               }
             } catch (error) {
-              errorToast('', error);
+              errorToast('', getErrorMessageFromError(error));
             } finally {
               setIsDisabled(false);
             }

@@ -1,13 +1,13 @@
 import { screen, waitFor } from '@testing-library/react-native';
 import { STATUSES } from '@const/enums';
-import { resetLocationSlice, setActivityStatus, setIsMapVisible } from '@R/slices/location/location';
+import { setActivityStatus, setIsMapVisible } from '@R/slices/location/location';
 import {
   clearTrackingRecovery,
   setTrackingRecoveryStatus,
   startTrackingRecovery,
 } from '@R/slices/tracking-recovery/tracking-recovery';
 import * as errorToastModule from '@S/error-toast/error-toast';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
 import { createLocationJournal } from '@U/location/location-journal';
@@ -91,7 +91,7 @@ describe('Activity', () => {
   let mockErrorToast: jest.SpiedFunction<typeof errorToastModule.errorToast>;
 
   beforeEach(() => {
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
     mockStore.dispatch(clearTrackingRecovery());
     mockStopLocationTracking = jest.spyOn(backgroundLocation, 'stopLocationTracking').mockResolvedValue(undefined);
     mockErrorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);

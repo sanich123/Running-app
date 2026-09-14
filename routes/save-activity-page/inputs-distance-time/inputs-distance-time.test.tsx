@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react-native';
+import { act, fireEvent, screen } from '@testing-library/react-native';
 import { setSavingDisabled } from '@R/slices/activity/activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -35,7 +35,7 @@ describe('Inputs manual distance duration', () => {
   it('stores distance, hours and minutes entered by the user', async () => {
     mockStore.dispatch(setSavingDisabled(false));
     await renderWithProviders(<InputsDistanceTime isDisabled={false} />);
-    act(() => {
+    await act(async () => {
       screen.getByTestId(INPUT_DISTANCE_ID).props.onChangeText('12.5');
       screen.getByTestId(INPUT_HOURS_ID).props.onChangeText('1');
       screen.getByTestId(INPUT_MINUTES_ID).props.onChangeText('35');
@@ -45,5 +45,31 @@ describe('Inputs manual distance duration', () => {
     expect(mockSetParams).toHaveBeenCalledWith({ manualHours: '1' });
     expect(mockSetParams).toHaveBeenCalledWith({ manualMinutes: '35' });
     expect(mockSetParams).toHaveBeenCalledWith({ manualSeconds: '12' });
+  });
+
+  it('limits hours to 48 and minutes and seconds to 59', async () => {
+    mockStore.dispatch(setSavingDisabled(false));
+    const { getByTestId } = await renderWithProviders(<InputsDistanceTime isDisabled={false} />);
+
+    await fireEvent.changeText(getByTestId(INPUT_HOURS_ID), '49');
+    await fireEvent.changeText(getByTestId(INPUT_MINUTES_ID), '65');
+    await fireEvent.changeText(getByTestId(INPUT_SECONDS_ID), '65');
+
+    expect(getByTestId(INPUT_HOURS_ID).props.value).toBe('48');
+    expect(getByTestId(INPUT_MINUTES_ID).props.value).toBe('59');
+    expect(getByTestId(INPUT_SECONDS_ID).props.value).toBe('59');
+    expect(mockSetParams).toHaveBeenCalledWith({ manualHours: '48' });
+    expect(mockSetParams).toHaveBeenCalledWith({ manualMinutes: '59' });
+    expect(mockSetParams).toHaveBeenCalledWith({ manualSeconds: '59' });
+  });
+
+  it('clears a zero value immediately on focus', async () => {
+    mockStore.dispatch(setSavingDisabled(false));
+    const { getByTestId } = await renderWithProviders(<InputsDistanceTime isDisabled={false} />);
+
+    await fireEvent(getByTestId(INPUT_HOURS_ID), 'focus');
+
+    expect(getByTestId(INPUT_HOURS_ID).props.value).toBe('');
+    expect(mockSetParams).toHaveBeenCalledWith({ manualHours: '' });
   });
 });

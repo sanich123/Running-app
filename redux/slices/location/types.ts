@@ -23,7 +23,6 @@ export interface LocationInitialState {
   durationTimerBase: number;
   durationTimerStartedAt: number | null;
   altitude: number;
-  durationWithPauses: number;
   lastKilometerAltitude: number;
   lastKilometer: number;
   lastKilometerDuration: number;

@@ -1,10 +1,9 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { getCurrentPositionAsync } from 'expo-location';
-import { setUserId } from '@R/slices/auth/auth';
-import { resetLocationSlice, setInitialLocation } from '@R/slices/location/location';
+import { setInitialLocation } from '@R/slices/location/location';
 import { setIsProfileFilled } from '@R/slices/settings/settings';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import Map from './map';
 
@@ -37,15 +36,15 @@ jest.mock('./location-permissions/location-permissions', () => () => null);
 describe('activity recording map', () => {
   beforeEach(() => {
     mockSetCamera.mockClear();
-    mockStore.dispatch(resetLocationSlice());
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(resetMockLocation());
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(setIsProfileFilled(true));
   });
 
   it('marks recording ready and recenters the camera on the current location', async () => {
     const user = userEvent.setup();
     const onLocationReadinessChange = jest.fn();
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     (getCurrentPositionAsync as jest.Mock).mockResolvedValue({ coords: { longitude: 37.6, latitude: 55.7 } });
     await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);
     await waitFor(() => expect(onLocationReadinessChange).toHaveBeenCalledWith(true));
@@ -67,7 +66,7 @@ describe('activity recording map', () => {
           resolveLocation = resolve;
         }),
     );
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);
 
     await user.press(await screen.findByTestId('move-to-current-location'));
@@ -80,7 +79,7 @@ describe('activity recording map', () => {
   it('changes the map zoom with the plus and minus controls', async () => {
     const user = userEvent.setup();
     const onLocationReadinessChange = jest.fn();
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);
 
     await user.press(await screen.findByTestId('increase-map-zoom'));

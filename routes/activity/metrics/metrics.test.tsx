@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { resetLocationSlice, setAltitude, setIsMapVisible, setSteps } from '@R/slices/location/location';
+import { setAltitude, setIsMapVisible, setSteps } from '@R/slices/location/location';
 import { changeLanguage } from '@R/slices/settings/settings';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { useActivitySportParams } from '../activity-params';
 import { MAP_METRICS } from './const';
@@ -17,7 +17,7 @@ const mockUseActivitySportParams = useActivitySportParams as jest.Mock;
 
 describe('Metrics', () => {
   beforeEach(() => {
-    mockStore.dispatch(resetLocationSlice());
+    mockStore.dispatch(resetMockLocation());
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockUseActivitySportParams.mockReturnValue({ sport: 'run' });
   });

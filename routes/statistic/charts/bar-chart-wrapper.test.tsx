@@ -1,7 +1,6 @@
 import { act, screen } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import BarChartWrapper from './bar-chart-wrapper';
 
@@ -14,7 +13,7 @@ jest.mock('react-native-gifted-charts', () => {
 
 describe('bar chart wrapper', () => {
   it('opens statistics for the selected month', async () => {
-    mockStore.dispatch(setUserId('statistics-user'));
+    mockStore.dispatch(setMockUserId('statistics-user'));
     await renderWithProviders(
       <BarChartWrapper metricsArr={[{ value: 10, label: 'Jan' }]} year={2026} title="Distance" />,
     );

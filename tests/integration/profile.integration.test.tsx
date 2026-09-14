@@ -1,7 +1,6 @@
 import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import { setUserId } from '@R/slices/auth/auth';
 import { resetSettings } from '@R/slices/profile/profile';
 import { changeLanguage } from '@R/slices/settings/settings';
 import ProfilePage from '@Routes/profile/profile';
@@ -21,7 +20,7 @@ import LogoutBtn from '@Routes/settings-page/logout/logout-btn';
 import SettingsPage from '@Routes/settings-page/settings-page';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 
@@ -55,7 +54,7 @@ describe('profile and account integration flows', () => {
   beforeEach(() => {
     mockBack.mockClear();
     mockReplace.mockClear();
-    mockStore.dispatch(setUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(resetSettings());
     Object.assign(mockProfileSettingsParams, {

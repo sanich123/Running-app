@@ -17,23 +17,23 @@ export default function MapboxWeb({
   const { colors, dark } = useTheme();
   const mapRef = useRef<MapboxMap | null>(null);
   const mapNode = useRef<HTMLDivElement | null>(null);
-  const kilometreSplitFeatures = useMemo(
-    () =>
-      (Array.isArray(kilometresSplit) ? kilometresSplit : [])
-        .filter(({ kilometerPoint }) => {
-          const { longitude, latitude } = kilometerPoint?.coords ?? {};
-          return Number.isFinite(longitude) && Number.isFinite(latitude);
-        })
-        .map(({ kilometerPoint }, index) => ({
-          type: 'Feature' as const,
-          properties: { label: `${index + 1}`, sortKey: index },
-          geometry: {
-            type: 'Point' as const,
-            coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
-          },
-        })),
-    [kilometresSplit],
-  );
+  const kilometreSplitFeatures = useMemo(() => {
+    const validKilometreSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
+      ({ kilometerPoint }) => {
+        const { longitude, latitude } = kilometerPoint?.coords ?? {};
+        return Number.isFinite(longitude) && Number.isFinite(latitude);
+      },
+    );
+
+    return validKilometreSplits.map(({ kilometerPoint }, index) => ({
+      type: 'Feature' as const,
+      properties: { label: `${index + 1}`, sortKey: index, labelSortKey: validKilometreSplits.length - index },
+      geometry: {
+        type: 'Point' as const,
+        coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
+      },
+    }));
+  }, [kilometresSplit]);
   const routeMarkerFeatures = useMemo(() => {
     const start = routeCoordinates[0];
     const end = routeCoordinates[routeCoordinates.length - 1];
@@ -123,11 +123,12 @@ export default function MapboxWeb({
           type: 'symbol',
           source: 'kilometre-splits',
           layout: {
-            'text-allow-overlap': true,
+            'text-allow-overlap': false,
             'text-field': ['get', 'label'],
-            'text-ignore-placement': true,
+            'text-ignore-placement': false,
+            'text-padding': 12,
             'text-size': 12,
-            'symbol-sort-key': ['get', 'sortKey'],
+            'symbol-sort-key': ['get', 'labelSortKey'],
           },
           paint: {
             'text-color': colors.primary,
