@@ -68,6 +68,7 @@ export const handlers = [
     HttpResponse.json(MOCK_SERVER_ACTIVITY, { status: 201 }),
   ),
   http.post(`${BASE_URL}/auth/confirm-email`, () => HttpResponse.json({ accessToken: 'test-access-token' })),
+  http.post(`${BASE_URL}/auth/logout`, () => new HttpResponse(null, { status: 204 })),
   http.post(`${BASE_URL}/activity/someUserId`, postActivitySuccess),
   http.post(`${BASE_URL}/activity/someWrongUserId`, postActivityFailure),
   http.get(`${BASE_URL}/activity/activityId/someActivityId`, getActivityByActivityId),
