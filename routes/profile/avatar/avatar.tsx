@@ -1,16 +1,22 @@
-import { useAppSelector } from '@R/typed-hooks';
 import { AvatarEditableTestIds } from '@Routes/profile/profile-settings/avatar-editable/const';
 import UserAvatar from '@S/avatar/avatar';
 
-export default function ProfileAvatar({ name, surname }: { name?: string; surname?: string }) {
-  const { settings } = useAppSelector(({ profile }) => profile);
+export default function ProfileAvatar({
+  name,
+  surname,
+  profilePhoto,
+}: {
+  name?: string;
+  surname?: string;
+  profilePhoto?: string | null;
+}) {
   return (
     <UserAvatar
       size={150}
-      profilePhoto={settings.profilePhoto}
+      profilePhoto={profilePhoto}
       name={name}
       surname={surname}
-      testID={settings.profilePhoto ? AvatarEditableTestIds.successImg : AvatarEditableTestIds.default}
+      testID={profilePhoto ? AvatarEditableTestIds.successImg : AvatarEditableTestIds.default}
     />
   );
 }

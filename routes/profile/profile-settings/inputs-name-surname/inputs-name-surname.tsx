@@ -6,12 +6,11 @@ import { useProfileFormParams, useSetProfileFormParams } from '../profile-settin
 import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
 
 export default function InputsNameSurname({ isDisabled }: { isDisabled: boolean }) {
-  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const { name, surname } = useProfileFormParams();
   const { setName, setSurname } = useSetProfileFormParams();
-  const shouldBeDisabled = isDisabled || isDisabledWhileSendingProfile;
+  const shouldBeDisabled = isDisabled;
 
   return (
     <View style={styles.inputWrapper}>

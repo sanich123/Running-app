@@ -7,6 +7,7 @@ import {
   useDeleteLikeToCommentMutation,
 } from '@R/services/comments/comments';
 import { useSendEmailAfterSendingCommentLikeMutation } from '@R/services/emails/emails';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_LIKE_BTN } from './const';
@@ -23,9 +24,8 @@ export default function CommentLikeBtn({
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const { commentActivityId } = useAppSelector(({ comment }) => comment);
-  const {
-    profileFromServer: { profilePhoto, name, surname },
-  } = useAppSelector(({ profile }) => profile);
+  const { data: currentUserProfile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const { profilePhoto, name, surname } = currentUserProfile ?? {};
 
   const [sendLikeToComment, { isSuccess: isSuccessSending, isLoading: isSendingLike }] = useSendLikeToCommentMutation();
   const [deleteLikeToComment, { isSuccess: isSuccessDeleting, isLoading: isDeletingLike }] =

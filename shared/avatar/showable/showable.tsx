@@ -1,8 +1,5 @@
-import { useEffect } from 'react';
 import { ActivityIndicator, Avatar, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
-import { saveWholeProfile } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { AvatarShowableIcons, AvatarShowableTestIds } from './const';
 import UserAvatar from '../avatar';
 import type { ProfileType } from '@S/card/types';
@@ -19,9 +16,6 @@ export default function AvatarShowable({
   profile?: ProfileType;
 }) {
   const { colors } = useTheme();
-  const dispatch = useAppDispatch();
-  const { userId } = useAppSelector(({ auth }) => auth);
-  const isMineAvatar = id === userId;
   const {
     data: profileFromServer,
     isLoading: isProfileLoading,
@@ -32,11 +26,6 @@ export default function AvatarShowable({
   const isLoading = !profileFromProps && isProfileLoading;
   const isSuccess = Boolean(profileFromProps) || isProfileLoaded;
   const isError = !profileFromProps && isProfileError;
-  useEffect(() => {
-    if (profile && isMineAvatar) {
-      dispatch(saveWholeProfile(profile));
-    }
-  }, [dispatch, isMineAvatar, profile]);
 
   return (
     <>

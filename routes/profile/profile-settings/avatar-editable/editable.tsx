@@ -1,9 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import { useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
-import { savePhotoUrl, saveProfilePreview } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useGetUserProfileByUserIdQuery, useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
+import { useAppSelector } from '@R/typed-hooks';
 import ProfileImage from '@Routes/profile/avatar/avatar';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
@@ -12,35 +11,32 @@ import { AvatarEditableTestIds } from './const';
 import type { AvatarIconEditableProps } from './const';
 
 export default function AvatarIconEditable({ isDisabled, setIsDisabled }: AvatarIconEditableProps) {
-  const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { settings, isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
+  const {
+    data: profile,
+    isLoading: isProfileLoading,
+    refetch,
+  } = useGetUserProfileByUserIdQuery(userId, {
+    skip: !userId,
+  });
   const [updateProfile, { isLoading: isUpdatingProfile }] = useUpdateProfileByUserIdMutation();
   const { name, surname } = useProfileFormParams();
-  const isUploading = isDisabled || isDisabledWhileSendingProfile || isUpdatingProfile;
+  const isUploading = isDisabled || isProfileLoading || isUpdatingProfile;
 
   async function uploadAvatar(image: Parameters<typeof compressAndSendFile>[0]) {
     if (!userId) return;
 
-    const previousPhoto = settings.profilePhoto;
     const fileWithThumbnail = await compressAndSendFile(image, userId);
     if (!fileWithThumbnail) return;
 
     const { url } = fileWithThumbnail;
-    dispatch(savePhotoUrl(url));
-
-    try {
-      const updatedProfile = await updateProfile({ id: userId, body: { profilePhoto: url } }).unwrap();
-      dispatch(saveProfilePreview(updatedProfile));
-    } catch (error) {
-      dispatch(savePhotoUrl(previousPhoto));
-      throw error;
-    }
+    await updateProfile({ id: userId, body: { profilePhoto: url } }).unwrap();
+    await refetch();
   }
 
   const avatar = (
     <View style={styles.avatarContainer}>
-      <ProfileImage name={name} surname={surname} />
+      <ProfileImage name={name} surname={surname} profilePhoto={profile?.profilePhoto} />
       <View pointerEvents="none" testID={AvatarEditableTestIds.editIcon} style={styles.editIcon}>
         <MaterialCommunityIcons name="camera-plus-outline" size={20} color="#fff" />
       </View>

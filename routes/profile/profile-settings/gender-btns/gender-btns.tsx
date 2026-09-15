@@ -5,7 +5,6 @@ import { useProfileFormParams, useSetProfileFormParams } from '../profile-settin
 
 export default function GenderBtns({ isDisabled }: { isDisabled: boolean }) {
   const { language } = useAppSelector(({ settings }) => settings);
-  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { gender } = useProfileFormParams();
   const { setGender } = useSetProfileFormParams();
 
@@ -19,14 +18,14 @@ export default function GenderBtns({ isDisabled }: { isDisabled: boolean }) {
           label: GENDER_BTNS[language].maleLabel,
           icon: 'human-male',
           showSelectedCheck: true,
-          disabled: isDisabled || isDisabledWhileSendingProfile,
+          disabled: isDisabled,
         },
         {
           value: GENDER_BTNS_VALUES.female,
           label: GENDER_BTNS[language].femaleLabel,
           icon: 'human-female',
           showSelectedCheck: true,
-          disabled: isDisabled || isDisabledWhileSendingProfile,
+          disabled: isDisabled,
         },
       ]}
       style={{ width: '100%' }}

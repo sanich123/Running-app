@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/react-native';
-import { setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { CITY_TEST_ID, WEIGHT_TEST_ID } from './const';
@@ -17,7 +16,6 @@ describe('Inputs weight-city', () => {
   beforeEach(() => {
     mockParams.city = '';
     mockParams.weight = '';
-    mockStore.dispatch(setIsDisabledWhileSendingProfile(false));
   });
 
   it('should render values from local search params and update them', async () => {
@@ -34,13 +32,7 @@ describe('Inputs weight-city', () => {
     expect(mockSetParams).toHaveBeenCalledWith({ city: 'Otso-city' });
   });
   it('should correctly handle isDisabled state', async () => {
-    await renderWithProviders(<InputsWeightCity isDisabled />, { store: mockStore });
-    expect(screen.getByTestId(WEIGHT_TEST_ID)).toBeDisabled();
-    expect(screen.getByTestId(CITY_TEST_ID)).toBeDisabled();
-  });
-  it('should correctly handle isDisabledWhileSending state', async () => {
-    mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
-    await renderWithProviders(<InputsWeightCity isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<InputsWeightCity isDisabled />);
     expect(screen.getByTestId(WEIGHT_TEST_ID)).toBeDisabled();
     expect(screen.getByTestId(CITY_TEST_ID)).toBeDisabled();
   });

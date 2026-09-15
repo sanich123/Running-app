@@ -14,7 +14,7 @@ export default function HomeWelcome() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
-      <AvatarShowable size={44} id={userId} />
+      <AvatarShowable size={44} id={userId} profile={profile ?? undefined} />
       <View style={styles.copy}>
         <Text variant="titleMedium" style={styles.title}>
           {HOME_WELCOME_TEXT.greeting(name)}

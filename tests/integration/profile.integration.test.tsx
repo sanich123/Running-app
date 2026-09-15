@@ -1,7 +1,6 @@
 import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import { resetSettings } from '@R/slices/profile/profile';
 import { changeLanguage } from '@R/slices/settings/settings';
 import ProfilePage from '@Routes/profile/profile';
 import GenderBtns from '@Routes/profile/profile-settings/gender-btns/gender-btns';
@@ -39,6 +38,7 @@ const mockSetParams = jest.fn((params: Record<string, string>) => Object.assign(
 
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockProfileSettingsParams,
+  useGlobalSearchParams: () => mockProfileSettingsParams,
   usePathname: () => '/profile',
   useRouter: () => ({
     back: mockBack,
@@ -56,7 +56,6 @@ describe('profile and account integration flows', () => {
     mockReplace.mockClear();
     mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    mockStore.dispatch(resetSettings());
     Object.assign(mockProfileSettingsParams, {
       id: MOCK_SERVER_IDS.userId,
       name: MOCK_SERVER_PROFILE.name,

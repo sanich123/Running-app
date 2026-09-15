@@ -1,6 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -32,16 +31,8 @@ describe('Gender btns', () => {
     expect(mockSetParams).toHaveBeenCalledWith({ gender: GENDER_BTNS_VALUES.female });
   });
   it('should correctly handle isDisabled state', async () => {
-    await renderWithProviders(<GenderBtns isDisabled />, { store: mockStore });
+    await renderWithProviders(<GenderBtns isDisabled />);
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    const maleInput = screen.getByText(GENDER_BTNS.english.maleLabel);
-    const femaleInput = screen.getByText(GENDER_BTNS.english.femaleLabel);
-    expect(maleInput).toBeDisabled();
-    expect(femaleInput).toBeDisabled();
-  });
-  it('should correctly handle isDisabledWhileSending state', async () => {
-    mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
-    await renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
     const maleInput = screen.getByText(GENDER_BTNS.english.maleLabel);
     const femaleInput = screen.getByText(GENDER_BTNS.english.femaleLabel);
     expect(maleInput).toBeDisabled();

@@ -16,7 +16,7 @@ export default function DeleteAccountBtn() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const dispatch = useAppDispatch();
   const [deleteAccount, { isLoading: isDeleting }] = useDeleteUserMutation();
-  const { replace, canDismiss, dismissAll } = useRouter();
+  const { replace } = useRouter();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
 
   async function deleteUserHandler() {
@@ -28,9 +28,7 @@ export default function DeleteAccountBtn() {
       dispatch(resetStore());
       await purgeAuthPersistence();
       await persistor.flush();
-      if (canDismiss()) {
-        dismissAll();
-      }
+
       replace(`/${ROUTES.signIn}`);
     } catch (error) {
       errorToast('Не удалось удалить аккаунт', error);

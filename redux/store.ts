@@ -13,7 +13,6 @@ import logining from './slices/logining/logining';
 import mainFeed from './slices/main-feed/main-feed';
 import migration from './slices/migration/migration';
 import network from './slices/network/network';
-import profile from './slices/profile/profile';
 import settings from './slices/settings/settings';
 import trackingRecovery from './slices/tracking-recovery/tracking-recovery';
 import type { Action, Reducer } from '@reduxjs/toolkit';
@@ -38,7 +37,6 @@ const appReducer = combineReducers({
   network,
   settings,
   location,
-  profile,
   activity,
   trackingRecovery,
   mainFeed,

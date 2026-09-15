@@ -6,11 +6,10 @@ import { INPUT_BIO, INPUT_BIO_TEST_ID } from './const';
 
 export default function InputBio({ isDisabled }: { isDisabled: boolean }) {
   const { language } = useAppSelector(({ settings }) => settings);
-  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { colors } = useTheme();
   const { bio } = useProfileFormParams();
   const { setBio } = useSetProfileFormParams();
-  const shouldBeDisabled = isDisabled || isDisabledWhileSendingProfile;
+  const shouldBeDisabled = isDisabled;
 
   return (
     <TextInput

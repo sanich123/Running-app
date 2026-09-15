@@ -5,8 +5,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
-import { savePhotoUrl } from '@R/slices/profile/profile';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import {
   LazyAvatarIconEditable,
   LazyGenderBtns,
@@ -20,7 +19,6 @@ import type { ProfileSettingsSearchParams } from '@Routes/profile/profile-settin
 
 export default function ProfileSettings() {
   const { colors } = useTheme();
-  const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { profileSettingsInitialized } = useLocalSearchParams() as Partial<ProfileSettingsSearchParams>;
   const { setParams } = useRouter();
@@ -39,12 +37,11 @@ export default function ProfileSettings() {
       return;
     }
 
-    dispatch(savePhotoUrl(profile?.profilePhoto ?? ''));
     setParams({
       profileSettingsInitialized: 'true',
       ...getInitialProfileSettingsParams(profile),
     });
-  }, [dispatch, isSuccess, profile, profileSettingsInitialized, setParams]);
+  }, [isSuccess, profile, profileSettingsInitialized, setParams]);
 
   const isFormDisabled = isDisabled || isProfileLoading;
 

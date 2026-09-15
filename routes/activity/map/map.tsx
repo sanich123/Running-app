@@ -5,6 +5,7 @@ import { getCurrentPositionAsync, useBackgroundPermissions, useForegroundPermiss
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
 import { Platform, View, StyleSheet } from 'react-native';
 import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import BatteryOptimizationModal from '@Routes/activity/battery-optimization-modal/battery-optimization-modal';
 import MapKmSplit from '@S/display-activity-map/map-km-split/map-km-split';
@@ -23,7 +24,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
   );
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isProfileFilled } = useAppSelector(({ settings }) => settings);
-  const { profileFromServer } = useAppSelector(({ profile }) => profile);
+  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const { colors } = useTheme();
   const [isLocationServicesEnabled, setIsLocationServicesEnabled] = useState(false);
   const [foregroundPermissionStatus, requestForegroundPermission] = useForegroundPermissions();
@@ -95,11 +96,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
               onUpdate={() => undefined}
               {...(Platform.OS === 'android' ? { androidRenderMode: 'compass' as const } : {})}
             />
-            <MapNavIcon
-              profilePhoto={profileFromServer?.profilePhoto}
-              name={profileFromServer?.name}
-              surname={profileFromServer?.surname}
-            />
+            <MapNavIcon profilePhoto={profile?.profilePhoto} name={profile?.name} surname={profile?.surname} />
             <Camera
               ref={cameraRef}
               followUserLocation={shouldFollowUserLocation}
