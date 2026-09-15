@@ -26,7 +26,7 @@ export default function MigrationStatusSync() {
 
     if (data.status === 'completed' && lastCompletedJob.current !== data.jobId) {
       lastCompletedJob.current = data.jobId;
-      dispatch(runichApi.util.invalidateTags([Tags.activities]));
+      dispatch(runichApi.util.invalidateTags([Tags.activities, Tags.statistics]));
     }
   }, [data, dispatch]);
 

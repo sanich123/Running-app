@@ -1,11 +1,8 @@
 export interface SendLike {
   activityId: string;
   authorId: string;
-  /** Used only for the optimistic cache entry; the API does not accept it. */
-  profilePhoto: string;
+  profilePhoto?: string | null;
 }
-
-export type LikeRequest = Omit<SendLike, 'profilePhoto'>;
 
 export interface DeleteLike {
   id: string;

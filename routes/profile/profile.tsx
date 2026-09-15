@@ -70,7 +70,7 @@ export default function ProfilePage() {
                 disabled={!profile?.profilePhoto}
                 onPress={() => setIsProfilePhotoVisible(true)}
                 style={[styles.avatarRing, { borderColor: colors.primary }]}>
-                <AvatarShowable size={92} id={`${whosProfile}`} />
+                <AvatarShowable size={92} id={`${whosProfile}`} profile={profile ?? undefined} />
               </TouchableRipple>
               <View style={styles.nicknameWrapper}>
                 <Text variant="titleLarge" style={styles.profileName}>

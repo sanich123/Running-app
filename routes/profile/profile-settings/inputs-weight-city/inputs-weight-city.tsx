@@ -6,12 +6,11 @@ import { useProfileFormParams, useSetProfileFormParams } from '../profile-settin
 import { CITY_TEST_ID, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
 
 export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }) {
-  const { isDisabledWhileSendingProfile } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const { city, weight } = useProfileFormParams();
   const { setCity, setWeight } = useSetProfileFormParams();
-  const shouldBeDisabled = isDisabled || isDisabledWhileSendingProfile;
+  const shouldBeDisabled = isDisabled;
 
   return (
     <View style={styles.inputWrapper}>

@@ -1,6 +1,5 @@
 import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -18,7 +17,6 @@ jest.mock('expo-router', () => ({
 describe('Input bio', () => {
   beforeEach(() => {
     mockParams.bio = '';
-    mockStore.dispatch(setIsDisabledWhileSendingProfile(false));
   });
 
   it('should render and update the value from local search params', async () => {
@@ -31,17 +29,9 @@ describe('Input bio', () => {
     textInput.props.onChangeText('some text');
     expect(mockSetParams).toHaveBeenCalledWith({ bio: 'some text' });
   });
-  it('should correctly handle isDisabledWhenSendingProfile state', async () => {
-    mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    await renderWithProviders(<InputBio isDisabled={false} />, { store: mockStore });
-    const bioInput = screen.getByTestId(INPUT_BIO_TEST_ID);
-    expect(bioInput).toBeDisabled();
-    expect(await screen.findAllByText(/bio/i)).toHaveLength(2);
-  });
   it('should correctly handle isDisabled state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    await renderWithProviders(<InputBio isDisabled />, { store: mockStore });
+    await renderWithProviders(<InputBio isDisabled />);
     const bioInput = screen.getByTestId(INPUT_BIO_TEST_ID);
     expect(bioInput).toBeDisabled();
     expect(await screen.findAllByText(/bio/i)).toHaveLength(2);

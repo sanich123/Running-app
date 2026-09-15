@@ -20,9 +20,22 @@ const mockProfileSettingsParams = {
 };
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockProfileSettingsParams,
+  useGlobalSearchParams: () => mockProfileSettingsParams,
   useRouter: () => ({ push: jest.fn(), back: mockBack }),
 }));
 describe('Profile update btn', () => {
+  beforeEach(() => {
+    mockBack.mockClear();
+    Object.assign(mockProfileSettingsParams, {
+      name: '',
+      surname: '',
+      weight: '',
+      city: '',
+      bio: '',
+      gender: '',
+    });
+  });
+
   it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setMockUserId('someUserId'));
@@ -33,9 +46,8 @@ describe('Profile update btn', () => {
     mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
     const updateBtn = await screen.findByText(UPDATE_BTN.english.update);
-    expect(mockStore.getState().profile.isDisabledWhileSendingProfile).toEqual(false);
     await userEvent.press(updateBtn);
-    expect(mockStore.getState().profile.isDisabledWhileSendingProfile).toEqual(false);
+    await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1));
   });
 
   it('returns to the profile after successfully updating it', async () => {
@@ -64,7 +76,7 @@ describe('Profile update btn', () => {
     expect(screen.queryByText(UPDATE_BTN_ERROR_MSG)).not.toBeOnTheScreen();
   });
 
-  it('uses the current form values supplied by the profile layout', async () => {
+  it('uses the current form values from the profile route params', async () => {
     let requestBody: unknown;
     const user = userEvent.setup();
     const userId = 'layout-profile-user';
@@ -77,19 +89,15 @@ describe('Profile update btn', () => {
       }),
     );
 
-    await renderWithProviders(
-      <ProfileUpdateBtn
-        formValues={{
-          name: 'Updated name',
-          surname: 'Updated surname',
-          weight: '80',
-          city: 'Moscow',
-          bio: 'Updated bio',
-          gender: 'MALE',
-        }}
-      />,
-      { store: mockStore },
-    );
+    Object.assign(mockProfileSettingsParams, {
+      name: 'Updated name',
+      surname: 'Updated surname',
+      weight: '80',
+      city: 'Moscow',
+      bio: 'Updated bio',
+      gender: 'MALE',
+    });
+    await renderWithProviders(<ProfileUpdateBtn />, { store: mockStore });
     await user.press(await screen.findByText(UPDATE_BTN.english.update));
 
     await waitFor(() => expect(requestBody).toEqual(expect.objectContaining({ name: 'Updated name' })));

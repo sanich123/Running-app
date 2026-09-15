@@ -53,7 +53,7 @@ export default function UserAvatar({
     return (
       <Avatar.Image
         size={size}
-        style={style}
+        style={[styles.imageContainer, style]}
         source={() => (
           <CustomImage
             style={[styles.image, { width: size, height: size, borderRadius: size / 2 }]}
@@ -81,6 +81,9 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
   },
   image: {
+    overflow: 'hidden',
+  },
+  imageContainer: {
     overflow: 'hidden',
   },
 });

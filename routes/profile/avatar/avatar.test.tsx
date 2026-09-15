@@ -1,20 +1,15 @@
 import { screen } from '@testing-library/react-native';
-import { savePhotoUrl, resetSettings } from '@R/slices/profile/profile';
-import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ProfileAvatar from './avatar';
 
 describe('avatar', () => {
-  beforeEach(() => mockStore.dispatch(resetSettings()));
-
   it('shows the default avatar when no profile photo exists', async () => {
     await renderWithProviders(<ProfileAvatar />);
     expect(screen.getByTestId('avatarEditableDefaultIcon')).toBeOnTheScreen();
   });
 
   it('shows the saved profile photo when one exists', async () => {
-    mockStore.dispatch(savePhotoUrl('https://example.com/profile.jpg'));
-    await renderWithProviders(<ProfileAvatar />);
+    await renderWithProviders(<ProfileAvatar profilePhoto="https://example.com/profile.jpg" />);
     expect(screen.getByTestId('avatarEditableImage').props.source).toEqual({
       uri: 'https://example.com/profile.jpg',
     });

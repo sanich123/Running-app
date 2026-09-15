@@ -1,7 +1,7 @@
 import { Fragment, memo, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { useGetLikesByActivityIdQuery, useGetLikesLengthByActivityIdQuery } from '@R/services/likes/likes';
+import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToDownload } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import UserAvatar from '@S/avatar/avatar';
@@ -16,26 +16,21 @@ export default memo(function Likes({ activityId, size, likesLength }: LikesProps
   const dispatch = useAppDispatch();
   const { dark } = useTheme();
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
-  const isNeedToGetUpdatedLikes = activityIdWhichLikesToUpdate === activityId;
-  const { data: updatedLikesLength, isError: isErrorLoadingUpdatedLikes } = useGetLikesLengthByActivityIdQuery(
-    activityId,
-    { skip: !isNeedToGetUpdatedLikes || likesLength === undefined },
-  );
-  const knownLikesLength = updatedLikesLength ?? likesLength;
+  const isLikesMarkedForUpdate = activityIdWhichLikesToUpdate === activityId;
+  const shouldLoadLikes = likesLength !== 0 || isLikesMarkedForUpdate;
   const {
     data: likes,
     isLoading,
     isError,
   } = useGetLikesByActivityIdQuery(activityId, {
-    skip: !activityId || (knownLikesLength !== undefined && knownLikesLength === 0),
+    skip: !activityId || !shouldLoadLikes,
   });
   const likesList = likes ?? [];
-  const whatLikesLengthToRender = updatedLikesLength ?? likesLength ?? likesList.length;
-  const hasLikes = whatLikesLengthToRender > 0 || likesList.length > 0;
+  const likesCount = isLikesMarkedForUpdate ? likesList.length : (likesLength ?? likesList.length);
+  const hasLikes = likesCount > 0;
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
-  const lessThanNineLikes =
-    size === LikesSize.big && whatLikesLengthToRender > 0 && whatLikesLengthToRender <= MAX_IN_ROW;
-  const moreThanNineLikes = size === LikesSize.big && whatLikesLengthToRender > MAX_IN_ROW;
+  const lessThanNineLikes = size === LikesSize.big && likesCount > 0 && likesCount <= MAX_IN_ROW;
+  const moreThanNineLikes = size === LikesSize.big && likesCount > MAX_IN_ROW;
   const likesListModal = useRef<BottomSheetModal>(null);
   return (
     <>
@@ -48,13 +43,13 @@ export default memo(function Likes({ activityId, size, likesLength }: LikesProps
             likesListModal.current?.present?.();
           }}
           borderless
-          disabled={isLoading || isError || isErrorLoadingUpdatedLikes}
+          disabled={isLoading || isError}
           style={{ borderRadius: 10 }}>
           <View style={styles.likesWrapper}>
             <View
               style={[
                 styles.likesLayout,
-                lessThanNineLikes && { width: whatLikesLengthToRender * SHIFT_RIGHT + 10 },
+                lessThanNineLikes && { width: likesCount * SHIFT_RIGHT + 10 },
                 moreThanNineLikes && { width: MAX_IN_ROW * SHIFT_RIGHT + 10 },
               ]}>
               {likesList.length > 0 ? (
@@ -66,7 +61,7 @@ export default memo(function Likes({ activityId, size, likesLength }: LikesProps
                       <Fragment key={authorId}>
                         {likesList.length > MAX_IN_ROW && index === MAX_IN_ROW - 1 ? (
                           <View style={[styles.lastAvatarWrapper, { left: index * SHIFT_RIGHT + 13 }]}>
-                            <Text variant="bodySmall">{`+${whatLikesLengthToRender - MAX_IN_ROW}`}</Text>
+                            <Text variant="bodySmall">{`+${likesCount - MAX_IN_ROW}`}</Text>
                           </View>
                         ) : null}
                         <View
@@ -92,7 +87,7 @@ export default memo(function Likes({ activityId, size, likesLength }: LikesProps
                 </View>
               ) : null}
               {hasLikes && size === LikesSize.small ? (
-                <NumberOfLikes likes={likesList} likesLength={whatLikesLengthToRender} />
+                <NumberOfLikes likes={likesList} likesLength={likesCount} />
               ) : null}
             </View>
           </View>
@@ -100,7 +95,7 @@ export default memo(function Likes({ activityId, size, likesLength }: LikesProps
       ) : (
         <View />
       )}
-      <ModalLikesList bottomSheetModalRef={likesListModal} likesLength={whatLikesLengthToRender} />
+      <ModalLikesList bottomSheetModalRef={likesListModal} likesLength={likesCount} />
     </>
   );
 });

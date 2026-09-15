@@ -2,12 +2,8 @@ import { useCallback, useContext, useEffect, memo, useState } from 'react';
 import { Animated } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
-import {
-  useDeleteLikeMutation,
-  useGetLikesByActivityIdQuery,
-  useGetLikesLengthByActivityIdQuery,
-  useSendLikeMutation,
-} from '@R/services/likes/likes';
+import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/services/likes/likes';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -25,41 +21,32 @@ export default memo(function LikeBtn({ activityId, likesLength, profile, mapPhot
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { data: currentUserProfile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
   const { language } = useAppSelector(({ settings }) => settings);
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
-  const {
-    profileFromServer: { profilePhoto, name, surname },
-  } = useAppSelector(({ profile }) => profile);
+  const { profilePhoto, name, surname } = currentUserProfile ?? {};
 
-  const [optimisticLike, setOptimisticLike] = useState<{ id: string; authorId: string } | null>(null);
-
-  const isNeedToGetUpdatedLikes = activityIdWhichLikesToUpdate === activityId;
-  const { data: updatedLikesLength, isError: isErrorLoadingUpdatedLikes } = useGetLikesLengthByActivityIdQuery(
-    activityId,
-    { skip: !isNeedToGetUpdatedLikes || likesLength === undefined },
-  );
-  const knownLikesLength = updatedLikesLength ?? likesLength;
+  const isLikesMarkedForUpdate = activityIdWhichLikesToUpdate === activityId;
+  const shouldLoadLikes = likesLength !== 0 || isLikesMarkedForUpdate;
 
   const {
     data: likes,
     isError,
     isLoading: isLikesLoading,
+    isFetching: isLikesFetching,
   } = useGetLikesByActivityIdQuery(activityId, {
-    skip: !activityId || (knownLikesLength !== undefined && knownLikesLength === 0 && !optimisticLike),
+    skip: !activityId || !shouldLoadLikes,
   });
   const likesList = likes ?? [];
-  const likesWithOptimisticLike = optimisticLike
-    ? [...likesList, { id: optimisticLike.id, authorId: optimisticLike.authorId }]
-    : likesList;
   const [sendEmailNotification] = useSendEmailAfterSendingLikeMutation();
-  const [sendLike, { isSuccess: isSuccessSending }] = useSendLikeMutation();
+  const [sendLike, { isLoading: isSendingLike, isSuccess: isSuccessSending }] = useSendLikeMutation();
 
-  const [deleteLike] = useDeleteLikeMutation();
+  const [deleteLike, { isLoading: isDeletingLike }] = useDeleteLikeMutation();
   const recipientEmail = profile?.email ?? profile?.user?.email;
 
-  const isLikedByYou = likesWithOptimisticLike.filter(({ authorId }) => authorId === userId);
-  const hasLikesFromOthers = likesWithOptimisticLike.length > 0 && !isLikedByYou.length;
+  const isLikedByYou = likesList.filter(({ authorId }) => authorId === userId);
+  const hasLikesFromOthers = likesList.length > 0 && !isLikedByYou.length;
   const [likeScale] = useState(() => new Animated.Value(1));
 
   const animateLike = useCallback(() => {
@@ -119,14 +106,8 @@ export default memo(function LikeBtn({ activityId, likesLength, profile, mapPhot
             try {
               if (isLikedByYou.length > 0) {
                 await deleteLike({ id: isLikedByYou[0].id, activityId }).unwrap();
-                setOptimisticLike(null);
               } else {
-                const result = await sendLike({
-                  activityId,
-                  authorId: userId,
-                  profilePhoto: profilePhoto ?? '',
-                }).unwrap();
-                setOptimisticLike({ id: result.id, authorId: result.authorId ?? userId });
+                await sendLike({ activityId, authorId: userId, profilePhoto: profilePhoto ?? '' }).unwrap();
               }
               dispatch(setActivityIdWhichLikesToUpdate(activityId));
             } catch (error) {
@@ -134,7 +115,9 @@ export default memo(function LikeBtn({ activityId, likesLength, profile, mapPhot
             }
           }
         }}
-        disabled={isLoading || isDisabled || isError || isLikesLoading || isErrorLoadingUpdatedLikes}
+        disabled={
+          isLoading || isDisabled || isError || isLikesLoading || isLikesFetching || isSendingLike || isDeletingLike
+        }
       />
     </Animated.View>
   );

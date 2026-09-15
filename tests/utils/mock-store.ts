@@ -7,7 +7,6 @@ import logining from '@R/slices/logining/logining';
 import mainFeed from '@R/slices/main-feed/main-feed';
 import migration from '@R/slices/migration/migration';
 import network from '@R/slices/network/network';
-import profile from '@R/slices/profile/profile';
 import settings from '@R/slices/settings/settings';
 import trackingRecovery from '@R/slices/tracking-recovery/tracking-recovery';
 import { createProfileListenerMiddleware } from '../../redux/middleware/profile-listener';
@@ -17,7 +16,6 @@ const rootReducer = combineReducers({
   network,
   settings,
   location,
-  profile,
   activity,
   trackingRecovery,
   mainFeed,

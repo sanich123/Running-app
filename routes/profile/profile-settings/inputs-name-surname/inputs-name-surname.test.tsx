@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/react-native';
-import { setIsDisabledWhileSendingProfile } from '@R/slices/profile/profile';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { NAME_TEST_ID, SURNAME_TEST_ID } from './const';
@@ -17,7 +16,6 @@ describe('Inputs name-surname', () => {
   beforeEach(() => {
     mockParams.name = '';
     mockParams.surname = '';
-    mockStore.dispatch(setIsDisabledWhileSendingProfile(false));
   });
 
   it('should render values from local search params and update them', async () => {
@@ -34,18 +32,8 @@ describe('Inputs name-surname', () => {
     inputSurname.props.onChangeText('Putin');
     expect(mockSetParams).toHaveBeenCalledWith({ surname: 'Putin' });
   });
-  it('should correctly handle isDisableWhileSending', async () => {
-    mockStore.dispatch(setIsDisabledWhileSendingProfile(true));
-    await renderWithProviders(<InputsNameSurname isDisabled={false} />, { store: mockStore });
-    const inputName = screen.getByTestId(NAME_TEST_ID);
-    const inputSurname = screen.getByTestId(SURNAME_TEST_ID);
-    expect(inputName).toBeDisabled();
-    expect(inputSurname).toBeDisabled();
-  });
   it('should correctly handle isDisabled', async () => {
-    await renderWithProviders(<InputsNameSurname isDisabled />, {
-      store: mockStore,
-    });
+    await renderWithProviders(<InputsNameSurname isDisabled />);
     const inputName = screen.getByTestId(NAME_TEST_ID);
     const inputSurname = screen.getByTestId(SURNAME_TEST_ID);
     expect(inputName).toBeDisabled();

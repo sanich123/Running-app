@@ -7,6 +7,7 @@ import {
   useUpdateCommentByCommentIdMutation,
 } from '@R/services/comments/comments';
 import { useSendEmailAfterSendingCommentMutation } from '@R/services/emails/emails';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -20,10 +21,10 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   const [inputHeight, setInputHeight] = useState(52);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { commentActivityId, mapPhotoUrl } = useAppSelector(({ comment }) => comment);
-  const {
-    profileFromServer: { profilePhoto, name, surname },
-  } = useAppSelector(({ profile }) => profile);
+  const { data: currentUserProfile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const { profilePhoto, name, surname } = currentUserProfile ?? {};
   const { language } = useAppSelector(({ settings }) => settings);
   const [comment, setComment] = useState(commentToUpdate);
   const [sendEmailAfterSendingComment] = useSendEmailAfterSendingCommentMutation();

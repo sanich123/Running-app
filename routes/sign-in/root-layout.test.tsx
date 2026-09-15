@@ -20,6 +20,10 @@ jest.mock('expo-splash-screen', () => ({
   preventAutoHideAsync: jest.fn(),
   setOptions: jest.fn(),
 }));
+jest.mock('react-native-toast-message', () => ({
+  __esModule: true,
+  default: () => null,
+}));
 jest.mock('expo-router', () => {
   const { Text, View } = jest.requireActual('react-native');
   const Screen = () => null;

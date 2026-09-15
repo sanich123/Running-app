@@ -1,7 +1,8 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { act, screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import * as router from 'expo-router';
+import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { AvatarShowableTestIds } from '@S/avatar/showable/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
@@ -18,6 +19,10 @@ jest.mock('expo-router', () => ({
   }),
 }));
 describe('Card likes', () => {
+  beforeEach(() => {
+    mockStore.dispatch(setActivityIdWhichLikesToUpdate(''));
+  });
+
   it('formats like action errors in both languages', () => {
     expect(LIKE_BTN.english.errorAction('delete')).toContain('deleting');
     expect(LIKE_BTN.english.errorAction('send')).toContain('sending');
@@ -75,6 +80,35 @@ describe('Card likes', () => {
 
     expect(requests).toBe(0);
     expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
+  });
+
+  it('starts requesting likes after the activity is marked for update', async () => {
+    let requests = 0;
+    const activityId = 'activity-marked-for-like-update';
+    server.use(
+      http.get(`${BASE_URL}/like/${activityId}`, () => {
+        requests += 1;
+        return HttpResponse.json([
+          {
+            id: 'like-id',
+            activityId,
+            authorId: 'author-id',
+            date: new Date().toISOString(),
+            profile: { name: 'Runner' },
+          },
+        ]);
+      }),
+    );
+
+    await renderWithProviders(<Likes activityId={activityId} size={LikesSize.small} likesLength={0} />);
+    expect(requests).toBe(0);
+
+    await act(async () => {
+      mockStore.dispatch(setActivityIdWhichLikesToUpdate(activityId));
+    });
+
+    expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
+    expect(requests).toBe(1);
   });
 
   it('opens the likes modal in the web flow', async () => {

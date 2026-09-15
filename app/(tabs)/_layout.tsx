@@ -10,7 +10,6 @@ import { LazyAvatarShowable, HOME_TAB_ROUTE } from '@Routes/app-routes/const';
 export default function TabLayout() {
   const { replace } = useRouter();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { profileFromServer } = useAppSelector(({ profile }) => profile);
   const { language } = useAppSelector(({ settings }) => settings);
   const labels = LABELS[language];
   const { colors } = useTheme();
@@ -152,7 +151,7 @@ export default function TabLayout() {
                 backgroundColor: focused ? colors.primaryContainer : 'transparent',
               }}>
               <Suspense fallback={null}>
-                <LazyAvatarShowable size={34} id={userId} focused={focused} profile={profileFromServer} />
+                <LazyAvatarShowable size={34} id={userId} focused={focused} />
               </Suspense>
             </View>
           ),

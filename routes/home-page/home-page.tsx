@@ -6,7 +6,6 @@ import { ROUTES } from '@const/enums';
 import { useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery } from '@R/services/activity/activity';
 import { useGetAppConfigQuery } from '@R/services/authentication/authentication';
 import { resetActivityDraft, resetFinishedActivity } from '@R/slices/activity/activity';
-import { saveProfilePreview } from '@R/slices/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import EmptyActivitiesList from '@Routes/home-page/empty-activities-list/empty-activities-list';
 import FloatingBtn from '@Routes/home-page/floating-btn/floating-btn';
@@ -28,11 +27,7 @@ export default function Feed() {
     );
   const { data: appConfig } = useGetAppConfigQuery(undefined, { skip: !accessToken });
   const activities = useMemo(() => data?.pages.flatMap(({ activities }) => activities) ?? [], [data?.pages]);
-  const currentUserProfile = data?.pages[0]?.currentUserProfile;
 
-  useEffect(() => {
-    if (currentUserProfile) dispatch(saveProfilePreview(currentUserProfile));
-  }, [currentUserProfile, dispatch]);
   const isLastPage = !(data?.pages.at(-1)?.hasMore ?? false);
 
   useEffect(() => {
