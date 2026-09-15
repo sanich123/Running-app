@@ -44,6 +44,12 @@ const authenticationApi = runichApi.injectEndpoints({
         method: 'POST',
       }),
     }),
+    logout: mutation<void, void>({
+      query: () => ({
+        url: '/auth/logout',
+        method: 'POST',
+      }),
+    }),
     updateSessionLocation: mutation<{ updated: boolean }, { latitude: number; longitude: number }>({
       query: (body) => ({ url: '/auth/session/location', method: 'PATCH', body }),
     }),
@@ -101,6 +107,7 @@ export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useRequestEmailLinkMutation,
+  useLogoutMutation,
   useUpdateSessionLocationMutation,
   useGetAppConfigQuery,
   useLazyVerifyConfigQuery,
