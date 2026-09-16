@@ -27,7 +27,7 @@ export default function LocationConsent({
       />
       <Text variant="bodySmall" style={[styles.label, { color: colors.onSurface }]}>
         {isRussian
-          ? 'Даю отдельное согласие на обработку данных геолокации для записи тренировок. '
+          ? 'Даю согласие на обработку данных геолокации для записи тренировок. '
           : 'I give separate consent to process location data for workout recording. '}
         <Text
           accessibilityRole="link"
