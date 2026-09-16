@@ -46,7 +46,7 @@
     "aes-js": "^3.1.2",
     "async-mutex": "^0.5.0",
     "expo": "~57.0.23",
-    "expo-build-properties": "~57.0.18",
+    "expo-build-properties": "~57.0.20",
     "expo-camera": "~57.0.5",
     "expo-constants": "~57.0.18",
     "expo-dev-client": "~57.0.19",
