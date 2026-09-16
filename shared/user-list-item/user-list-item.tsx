@@ -39,7 +39,11 @@ export default memo(function UserListItem({
                 {name} {surname}
               </Text>
             </View>
-            {city ? <Text variant="bodyMedium">{city}</Text> : null}
+            {city ? (
+              <Text variant="bodyMedium" numberOfLines={1} ellipsizeMode="tail">
+                {city}
+              </Text>
+            ) : null}
           </View>
         </View>
         {!isMineActivity && <FollowUnfollowBtn friendId={userId} />}

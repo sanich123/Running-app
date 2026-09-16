@@ -1,6 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
+import { PROFILE_INPUT_LIMITS, normalizeWeightInput } from '@const/input-limits';
 import { useAppSelector } from '@R/typed-hooks';
 import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
 import { CITY_TEST_ID, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
@@ -25,6 +26,7 @@ export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }
         textColor={colors.onSurface}
         label={WEIGHT_CITY[language].cityLabel}
         placeholder={WEIGHT_CITY[language].cityPlaceholder}
+        maxLength={PROFILE_INPUT_LIMITS.city}
         value={city}
         onChangeText={setCity}
         disabled={shouldBeDisabled}
@@ -40,9 +42,10 @@ export default function InputsWeightCity({ isDisabled }: { isDisabled: boolean }
         textColor={colors.onSurface}
         label={WEIGHT_CITY[language].weightLabel}
         placeholder={WEIGHT_CITY[language].weightPlaceholder}
+        maxLength={PROFILE_INPUT_LIMITS.weight}
         inputMode="numeric"
         value={weight}
-        onChangeText={setWeight}
+        onChangeText={(value) => setWeight(normalizeWeightInput(value))}
         disabled={shouldBeDisabled}
       />
     </View>

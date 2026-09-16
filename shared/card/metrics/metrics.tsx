@@ -22,6 +22,7 @@ export default memo(function Metrics({
   sport,
   steps,
   elevationGain,
+  isFullView,
 }: MetricsProps) {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
@@ -42,7 +43,11 @@ export default memo(function Metrics({
       style={{ paddingHorizontal: 12, paddingVertical: 10 }}>
       <>
         {title ? (
-          <Text variant="titleMedium" style={styles.title}>
+          <Text
+            variant="titleMedium"
+            numberOfLines={isFullView ? undefined : 2}
+            ellipsizeMode="tail"
+            style={styles.title}>
             {title}
           </Text>
         ) : null}
@@ -64,7 +69,11 @@ export default memo(function Metrics({
                 borderColor: colors.outlineVariant,
               },
             ]}>
-            <Text variant="bodyLarge" style={[styles.descriptionText, { color: colors.onBackground }]}>
+            <Text
+              variant="bodyLarge"
+              numberOfLines={isFullView ? undefined : 4}
+              ellipsizeMode="tail"
+              style={[styles.descriptionText, { color: colors.onBackground }]}>
               {description}
             </Text>
           </View>

@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react-native';
+import { PROFILE_INPUT_LIMITS } from '@const/input-limits';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { NAME_TEST_ID, SURNAME_TEST_ID } from './const';
@@ -26,11 +27,16 @@ describe('Inputs name-surname', () => {
     const inputSurname = screen.getByTestId(SURNAME_TEST_ID);
     expect(inputName.props.value).toEqual('Alexander');
     expect(inputSurname.props.value).toEqual('Voronin');
+    expect(inputName.props.maxLength).toBe(PROFILE_INPUT_LIMITS.name);
+    expect(inputSurname.props.maxLength).toBe(PROFILE_INPUT_LIMITS.surname);
 
     inputName.props.onChangeText('Vova');
     expect(mockSetParams).toHaveBeenCalledWith({ name: 'Vova' });
     inputSurname.props.onChangeText('Putin');
     expect(mockSetParams).toHaveBeenCalledWith({ surname: 'Putin' });
+
+    inputName.props.onChangeText('N'.repeat(PROFILE_INPUT_LIMITS.name + 1));
+    expect(mockSetParams).toHaveBeenCalledWith({ name: 'N'.repeat(PROFILE_INPUT_LIMITS.name) });
   });
   it('should correctly handle isDisabled', async () => {
     await renderWithProviders(<InputsNameSurname isDisabled />);

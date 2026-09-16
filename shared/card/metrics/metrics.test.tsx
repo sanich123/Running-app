@@ -39,7 +39,10 @@ describe('Card metrics', () => {
     [getSpeedInMinsInKm(MOCK_DISTANCE, MOCK_DURATION).paceAsString, formatDuration(MOCK_DURATION)].map((metric) =>
       expect(screen.getByText(new RegExp(`${metric}`, 'i'))).toBeOnTheScreen(),
     );
-    expect(screen.getByText('some description')).toBeOnTheScreen();
+    expect(screen.getByText('some title')).toHaveProp('numberOfLines', 2);
+    expect(screen.getByText('some title')).toHaveProp('ellipsizeMode', 'tail');
+    expect(screen.getByText('some description')).toHaveProp('numberOfLines', 4);
+    expect(screen.getByText('some description')).toHaveProp('ellipsizeMode', 'tail');
     expect(screen.getByText('42 m')).toBeOnTheScreen();
     expect(screen.queryByText('Description')).not.toBeOnTheScreen();
   });
@@ -134,5 +137,25 @@ describe('Card metrics', () => {
     );
     await user.press(screen.getByText('some title'));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activity}/someUUID?userId=someUserId`);
+  });
+
+  it('does not truncate the full activity description', async () => {
+    await renderWithProviders(
+      <CardMetrics
+        title="some title"
+        distance={MOCK_DISTANCE}
+        duration={MOCK_DURATION}
+        sport="run"
+        elevationGain={0}
+        isShowDescription
+        description="some description"
+        userId="someUserId"
+        id="someUUID"
+        isFullView
+      />,
+    );
+
+    expect(screen.getByText('some title').props.numberOfLines).toBeUndefined();
+    expect(screen.getByText('some description').props.numberOfLines).toBeUndefined();
   });
 });

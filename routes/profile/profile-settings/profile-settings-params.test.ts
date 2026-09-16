@@ -51,4 +51,20 @@ describe('profile settings params', () => {
       gender: 'male',
     });
   });
+
+  it('bounds legacy long profile values before they reach the form', () => {
+    const result = getProfileFormValues({
+      name: 'N'.repeat(60),
+      surname: 'S'.repeat(60),
+      city: 'C'.repeat(120),
+      bio: 'B'.repeat(520),
+      weight: '70kg999',
+    });
+
+    expect(result.name).toHaveLength(50);
+    expect(result.surname).toHaveLength(50);
+    expect(result.city).toHaveLength(100);
+    expect(result.bio).toHaveLength(500);
+    expect(result.weight).toBe('709');
+  });
 });

@@ -28,7 +28,9 @@ describe('User list item', () => {
     );
     expect(await screen.findByText(new RegExp(`${MOCK_PROFILE.name}`))).toBeOnTheScreen();
     expect(await screen.findByText(new RegExp(`${MOCK_PROFILE.surname}`))).toBeOnTheScreen();
-    expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
+    const city = await screen.findByText(MOCK_PROFILE.city);
+    expect(city).toHaveProp('numberOfLines', 1);
+    expect(city).toHaveProp('ellipsizeMode', 'tail');
   });
   it('should show follow btn, when userId !== user.id and userId is not in the list of friends', async () => {
     mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));

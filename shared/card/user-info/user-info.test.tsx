@@ -25,7 +25,7 @@ describe('UserInfo', () => {
       />,
       { store: mockStore },
     );
-    expect(screen.getByText(new RegExp(`${MOCK_PROFILE.name}`))).toBeOnTheScreen();
+    expect(screen.getByText(new RegExp(`${MOCK_PROFILE.name}`))).toHaveProp('numberOfLines', 1);
   });
 
   it('opens the user profile and closes an enclosing comments modal', async () => {

@@ -1,6 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
+import { PROFILE_INPUT_LIMITS } from '@const/input-limits';
 import { useAppSelector } from '@R/typed-hooks';
 import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
 import { NAME_SURNAME, NAME_TEST_ID, SURNAME_TEST_ID } from './const';
@@ -25,6 +26,7 @@ export default function InputsNameSurname({ isDisabled }: { isDisabled: boolean 
         textColor={colors.onSurface}
         label={NAME_SURNAME[language].nameLabel}
         placeholder={NAME_SURNAME[language].namePlaceholder}
+        maxLength={PROFILE_INPUT_LIMITS.name}
         value={name}
         onChangeText={setName}
         disabled={shouldBeDisabled}
@@ -40,6 +42,7 @@ export default function InputsNameSurname({ isDisabled }: { isDisabled: boolean 
         textColor={colors.onSurface}
         label={NAME_SURNAME[language].surnameLabel}
         placeholder={NAME_SURNAME[language].surnamePlaceholder}
+        maxLength={PROFILE_INPUT_LIMITS.surname}
         value={surname}
         onChangeText={setSurname}
         disabled={shouldBeDisabled}

@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { PROFILE_INPUT_LIMITS, limitText, normalizeWeightInput } from '@const/input-limits';
 import type { ProfileType } from '@S/card/types';
 
 export interface ProfileFormValues {
@@ -26,22 +27,22 @@ function getFirstParam(value: string | string[] | undefined) {
 
 export function getProfileFormValues(params: Partial<ProfileSettingsSearchParams>): ProfileFormValues {
   return {
-    name: getFirstParam(params.name) ?? '',
-    surname: getFirstParam(params.surname) ?? '',
-    weight: getFirstParam(params.weight) ?? '',
-    city: getFirstParam(params.city) ?? '',
-    bio: getFirstParam(params.bio) ?? '',
+    name: limitText(getFirstParam(params.name) ?? '', PROFILE_INPUT_LIMITS.name),
+    surname: limitText(getFirstParam(params.surname) ?? '', PROFILE_INPUT_LIMITS.surname),
+    weight: normalizeWeightInput(getFirstParam(params.weight) ?? ''),
+    city: limitText(getFirstParam(params.city) ?? '', PROFILE_INPUT_LIMITS.city),
+    bio: limitText(getFirstParam(params.bio) ?? '', PROFILE_INPUT_LIMITS.bio),
     gender: getFirstParam(params.gender) ?? '',
   };
 }
 
 export function getInitialProfileSettingsParams(profile: ProfileType) {
   return {
-    name: profile.name ?? '',
-    surname: profile.surname ?? '',
-    weight: profile.weight ?? '',
-    city: profile.city ?? '',
-    bio: profile.bio ?? '',
+    name: limitText(profile.name ?? '', PROFILE_INPUT_LIMITS.name),
+    surname: limitText(profile.surname ?? '', PROFILE_INPUT_LIMITS.surname),
+    weight: normalizeWeightInput(profile.weight ?? ''),
+    city: limitText(profile.city ?? '', PROFILE_INPUT_LIMITS.city),
+    bio: limitText(profile.bio ?? '', PROFILE_INPUT_LIMITS.bio),
     gender: profile.gender ?? '',
   };
 }
@@ -54,11 +55,11 @@ export function useSetProfileFormParams() {
   const { setParams } = useRouter();
 
   return {
-    setName: (name: string) => setParams({ name }),
-    setSurname: (surname: string) => setParams({ surname }),
-    setWeight: (weight: string) => setParams({ weight }),
-    setCity: (city: string) => setParams({ city }),
-    setBio: (bio: string) => setParams({ bio }),
+    setName: (name: string) => setParams({ name: limitText(name, PROFILE_INPUT_LIMITS.name) }),
+    setSurname: (surname: string) => setParams({ surname: limitText(surname, PROFILE_INPUT_LIMITS.surname) }),
+    setWeight: (weight: string) => setParams({ weight: normalizeWeightInput(weight) }),
+    setCity: (city: string) => setParams({ city: limitText(city, PROFILE_INPUT_LIMITS.city) }),
+    setBio: (bio: string) => setParams({ bio: limitText(bio, PROFILE_INPUT_LIMITS.bio) }),
     setGender: (gender: string) => setParams({ gender }),
   };
 }
