@@ -11,7 +11,7 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: Activ
   });
   const features = validKilometreSplits.map(({ kilometerPoint }, index) => ({
     type: 'Feature' as const,
-    properties: { label: `${index + 1}`, sortKey: index, labelSortKey: validKilometreSplits.length - index },
+    properties: { label: `${index + 1}`, sortKey: index },
     geometry: {
       type: 'Point' as const,
       coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
@@ -44,13 +44,13 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: Activ
         id="kilometre-split-label"
         aboveLayerID="kilometre-split-background"
         style={{
-          textAllowOverlap: false,
+          textAllowOverlap: true,
           textColor: colors.primary,
           textField: ['get', 'label'],
-          textIgnorePlacement: false,
+          textIgnorePlacement: true,
           textPadding: 12,
           textSize: 12,
-          symbolSortKey: ['get', 'labelSortKey'],
+          symbolSortKey: ['get', 'sortKey'],
         }}
       />
     </ShapeSource>
