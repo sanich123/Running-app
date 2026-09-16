@@ -26,4 +26,14 @@ describe('bar chart wrapper', () => {
 
     expect(screen.getByText('Нет данных за этот период')).toBeOnTheScreen();
   });
+
+  it('widens the top-label container for multi-digit values', async () => {
+    await renderWithProviders(
+      <BarChartWrapper metricsArr={[{ value: 1000, label: 'Jan' }]} year={2026} title="Distance" />,
+    );
+
+    expect(screen.getByTestId('interactive-bar-chart').props.topLabelContainerStyle).toEqual(
+      expect.objectContaining({ width: 38 }),
+    );
+  });
 });

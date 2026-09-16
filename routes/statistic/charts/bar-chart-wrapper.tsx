@@ -22,6 +22,7 @@ export default function BarChartWrapper({ metricsArr, year }: BarChartWrapperPro
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   const chartWidth = widthOfScreen - 68;
   const barWidth = Math.max((widthOfScreen - 150) / 12, 10);
+  const topLabelWidth = Math.max(barWidth, String(maxValueFromData).length * 8 + 6);
   const hasValues = Boolean(valuesArr?.length);
 
   return (
@@ -65,6 +66,10 @@ export default function BarChartWrapper({ metricsArr, year }: BarChartWrapperPro
         spacing={6}
         initialSpacing={8}
         endSpacing={0}
+        topLabelContainerStyle={{
+          width: topLabelWidth,
+          left: (barWidth - topLabelWidth) / 2,
+        }}
         backgroundColor={colors.surface}
         rulesColor={colors.outlineVariant}
         yAxisColor={colors.outlineVariant}

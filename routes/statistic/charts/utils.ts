@@ -46,6 +46,11 @@ function prepareValuesToCharts(value: number, language: LANGUAGES, index: number
     value,
     label: mapNumberToMonth(index, language),
     topLabelComponent: () =>
-      createElement(Text, { variant: 'bodySmall', style: { fontSize: 12, fontWeight: 'bold' }, children: value || '' }),
+      createElement(Text, {
+        variant: 'bodySmall',
+        numberOfLines: 1,
+        style: { fontSize: 12, fontWeight: 'bold', textAlign: 'center', width: '100%' },
+        children: value || '',
+      }),
   };
 }
