@@ -14,6 +14,13 @@ const trackingRecovery = createSlice({
       state.lastTimestamp = null;
       state.metrics = TRACKING_RECOVERY_METRICS_INITIAL_STATE;
     },
+    setTrackingRecoveryStartContext: (
+      state,
+      action: PayloadAction<{ startedAt: number; timeZone: string }>,
+    ) => {
+      state.metrics.recordingStartedAt = action.payload.startedAt;
+      state.metrics.recordingTimeZone = action.payload.timeZone;
+    },
     setTrackingRecoveryStatus: (state, action: PayloadAction<STATUSES>) => {
       state.status = action.payload;
     },
@@ -33,7 +40,12 @@ const trackingRecovery = createSlice({
   },
 });
 
-export const { startTrackingRecovery, setTrackingRecoveryStatus, setTrackingRecoveryProgress, clearTrackingRecovery } =
-  trackingRecovery.actions;
+export const {
+  startTrackingRecovery,
+  setTrackingRecoveryStartContext,
+  setTrackingRecoveryStatus,
+  setTrackingRecoveryProgress,
+  clearTrackingRecovery,
+} = trackingRecovery.actions;
 
 export default trackingRecovery.reducer;

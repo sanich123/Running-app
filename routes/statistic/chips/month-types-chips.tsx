@@ -6,12 +6,14 @@ import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
+import { getDeviceTimeZone } from '@U/time-zone';
 import type { MonthChips } from './types';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 
 export default function MonthTypesChips({ userId, year, month, setSelectedType, selectedType }: MonthChips) {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
+  const timeZone = getDeviceTimeZone();
   const {
     data: monthStatistics,
     isSuccess,
@@ -20,7 +22,7 @@ export default function MonthTypesChips({ userId, year, month, setSelectedType, 
     error,
     refetch,
   } = useGetMonthStatisticsQuery(
-    { userId: `${userId}`, year: `${year}`, month: `${month}` },
+    { userId: `${userId}`, year: `${year}`, month: `${month}`, timeZone },
     { skip: !userId || !year || !month },
   );
   const { language } = useAppSelector(({ settings }) => settings);

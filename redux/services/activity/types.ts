@@ -5,6 +5,7 @@ import type { LocationObject } from 'expo-location';
 
 export interface FinishedActivity {
   date?: string;
+  timeZone?: string;
   locations: LocationObject[];
   duration: number;
   speed: number;
@@ -20,6 +21,7 @@ interface ActivityAdditionalInfo {
   emotion: EMOTIONS_BTNS_VALUES;
   isPublic: boolean;
   photoVideoUrls: { url: string; thumbnail: null | string; blurhash?: string | null }[];
+  timeZone: string;
 }
 
 export interface ActivityToSend {

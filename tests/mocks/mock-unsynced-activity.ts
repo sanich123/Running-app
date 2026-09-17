@@ -15,6 +15,7 @@ export const MOCK_UNSYNCED_ACTIVITY: PendingActivity = {
     speed: 10,
     sport: SPORTS_BTNS_VALUES.run,
     title: 'Unsynced activity',
+    timeZone: 'UTC',
   },
   id: 'someUserId',
 };

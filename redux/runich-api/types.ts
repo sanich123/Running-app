@@ -48,6 +48,7 @@ export interface ActivityResponse {
   userId: string;
   profileId?: string;
   date: string;
+  timeZone?: string | null;
   createdAt?: string;
   updatedAt?: string;
   description?: string | null;
@@ -75,6 +76,7 @@ export type ActivityListItemResponse = Pick<
   | 'id'
   | 'userId'
   | 'date'
+  | 'timeZone'
   | 'title'
   | 'sport'
   | 'photoVideoUrls'
@@ -93,6 +95,7 @@ export interface ActivityMutationResponse {
   userId: string;
   profileId: string;
   date: string;
+  timeZone?: string | null;
   createdAt: string;
   updatedAt: string;
   description?: string | null;

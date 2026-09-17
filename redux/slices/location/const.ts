@@ -15,6 +15,8 @@ export const LOCATION_INITIAL_STATE: LocationInitialState = {
   durationAtLastLocation: 0,
   durationTimerBase: 0,
   durationTimerStartedAt: null,
+  recordingStartedAt: null,
+  recordingTimeZone: null,
   altitude: 0,
   lastKilometerAltitude: 0,
   lastKilometer: 0,

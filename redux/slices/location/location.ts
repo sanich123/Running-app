@@ -33,6 +33,10 @@ const location = createSlice({
       state.durationTimerBase = Number.isFinite(state.duration) ? state.duration : 0;
       state.durationTimerStartedAt = action.payload;
     },
+    setActivityStartContext: (state, action: PayloadAction<{ startedAt: number; timeZone: string }>) => {
+      state.recordingStartedAt = action.payload.startedAt;
+      state.recordingTimeZone = action.payload.timeZone;
+    },
     stopDurationTimer: (state) => {
       state.durationTimerBase = Number.isFinite(state.duration) ? state.duration : 0;
       state.durationTimerStartedAt = null;
@@ -113,6 +117,8 @@ const location = createSlice({
       state.durationAtLastLocation = 0;
       state.durationTimerBase = 0;
       state.durationTimerStartedAt = null;
+      state.recordingStartedAt = null;
+      state.recordingTimeZone = null;
       state.altitude = 0;
       state.kilometresSplit = [];
       state.currentPace = 0;
@@ -139,6 +145,7 @@ export const {
   setSteps,
   setDurationAt,
   startDurationTimer,
+  setActivityStartContext,
   stopDurationTimer,
   syncDurationFromLocation,
   setAltitude,

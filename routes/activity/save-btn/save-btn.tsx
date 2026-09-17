@@ -15,6 +15,7 @@ import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
 import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
 import { getMapBoxImage, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
+import { getDeviceTimeZone } from '@U/time-zone';
 import type { ActivityToSend, ActivityUpdateRequest } from '@R/services/activity/types';
 import type { FinishedActivityDraft } from '@R/slices/activity/types';
 
@@ -39,6 +40,7 @@ function createTrackedActivityBody(
     ...finishedActivityMetrics,
     locations,
     duration: Math.round(finishedActivity.duration),
+    timeZone: finishedActivity.timeZone ?? getDeviceTimeZone(),
     ...activityDetails,
     mapPhotoUrl: getMapBoxImage(routeLocations),
   };
@@ -98,6 +100,7 @@ export default function SaveBtn() {
               isPublic,
             };
             const activityDetails = { ...editableActivityDetails, photoVideoUrls };
+            const timeZone = getDeviceTimeZone();
             dispatch(setSavingDisabled(true));
             if (isEditingActivity) {
               const savedActivity: ActivityUpdateRequest = {
@@ -124,6 +127,7 @@ export default function SaveBtn() {
                   ? {
                       ...editableActivityDetails,
                       photoVideoUrls,
+                      timeZone,
                       date: new Date(manualDate).toISOString(),
                       distance: distance * 1000,
                       duration: Math.round(duration),

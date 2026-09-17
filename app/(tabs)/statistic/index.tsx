@@ -14,6 +14,7 @@ import {
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
+import { getDeviceTimeZone } from '@U/time-zone';
 import { MONTH_STATISTICS } from '@S/month-metric/const';
 import type { StatisticMetricResponse, YearCategoryStatistics } from '@R/runich-api/types';
 
@@ -22,6 +23,7 @@ export default function Statistics() {
   const [selectedType, setSelectedType] = useState<string>(SPORTS_BTNS_VALUES.run);
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
+  const timeZone = getDeviceTimeZone();
   const {
     data: yearStats,
     isLoading,
@@ -29,7 +31,7 @@ export default function Statistics() {
     isSuccess,
     error,
     refetch,
-  } = useGetAnnualStatisticsByUserIdQuery({ userId }, { skip: !userId });
+  } = useGetAnnualStatisticsByUserIdQuery({ userId, timeZone }, { skip: !userId });
   const isRussian = language === LANGUAGES.russian;
   type YearStatsByType = Record<string, YearCategoryStatistics>;
   const getYearStats = (year: string | number): YearStatsByType | undefined => {

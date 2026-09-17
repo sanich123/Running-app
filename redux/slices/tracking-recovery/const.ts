@@ -10,6 +10,8 @@ export const TRACKING_RECOVERY_METRICS_INITIAL_STATE: TrackingRecoveryMetrics = 
   durationAtLastLocation: 0,
   durationTimerBase: 0,
   durationTimerStartedAt: null,
+  recordingStartedAt: null,
+  recordingTimeZone: null,
   altitude: 0,
   lastKilometerAltitude: 0,
   lastKilometer: 0,

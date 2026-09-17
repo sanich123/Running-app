@@ -6,6 +6,7 @@ import { ROUTES, STATUSES } from '@const/enums';
 import { resetActivityDraft, resetFinishedActivity, setFinishedActivity } from '@R/slices/activity/activity';
 import {
   resetLocationsFromBackground,
+  setActivityStartContext,
   setInitialLocation,
   setActivityStatus,
   setEmptyLastArrayWhenPaused,
@@ -15,6 +16,7 @@ import {
 } from '@R/slices/location/location';
 import {
   clearTrackingRecovery,
+  setTrackingRecoveryStartContext,
   setTrackingRecoveryStatus,
   startTrackingRecovery,
 } from '@R/slices/tracking-recovery/tracking-recovery';
@@ -33,6 +35,7 @@ import {
   removeLocationJournal,
 } from '@U/location/location-journal';
 import { getElevationGainByKilometres, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getDeviceTimeZone } from '@U/time-zone';
 import {
   finishPedometerActivity,
   pausePedometerActivity,
@@ -58,6 +61,8 @@ export default function StartBtn({
     duration,
     durationTimerBase,
     durationTimerStartedAt,
+    recordingStartedAt,
+    recordingTimeZone,
     distance,
     locationsFromBackground: locations,
     kilometresSplit,
@@ -117,6 +122,8 @@ export default function StartBtn({
     dispatch(
       setFinishedActivity({
         duration: durationForSave,
+        date: recordingStartedAt ? new Date(recordingStartedAt).toISOString() : undefined,
+        timeZone: recordingTimeZone ?? getDeviceTimeZone(),
         distance,
         ...(hasPedometerData ? { steps: pedometerData.steps } : {}),
         routeJournalId: currentJournalId,
@@ -157,7 +164,11 @@ export default function StartBtn({
         dispatch(startTrackingRecovery(createdJournalId));
         await startPedometerActivity();
         await startLocationTracking();
-        dispatch(startDurationTimer(Date.now()));
+        const startedAt = Date.now();
+        const timeZone = getDeviceTimeZone();
+        dispatch(setActivityStartContext({ startedAt, timeZone }));
+        dispatch(setTrackingRecoveryStartContext({ startedAt, timeZone }));
+        dispatch(startDurationTimer(startedAt));
         dispatch(setActivityStatus(STATUSES.started));
         return;
       }

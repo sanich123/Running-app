@@ -17,6 +17,7 @@ import { getCurrentActivityDuration } from '@U/activity-duration';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getActiveLocationJournalId } from '@U/location/location-journal';
 import { getElevationGainByKilometres, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getDeviceTimeZone } from '@U/time-zone';
 import { pausePedometerActivity, resumePedometerActivity } from '@U/pedometer/pedometer';
 
 export default function PauseBtn() {
@@ -27,6 +28,8 @@ export default function PauseBtn() {
     duration,
     durationTimerBase,
     durationTimerStartedAt,
+    recordingStartedAt,
+    recordingTimeZone,
     distance,
     locationsFromBackground: locations,
     kilometresSplit,
@@ -57,6 +60,8 @@ export default function PauseBtn() {
         dispatch(
           setFinishedActivity({
             duration: durationForSave,
+            date: recordingStartedAt ? new Date(recordingStartedAt).toISOString() : undefined,
+            timeZone: recordingTimeZone ?? getDeviceTimeZone(),
             distance,
             routeJournalId: getActiveLocationJournalId(),
             kilometresSplit: kilometresSplit.map((split, index) => ({

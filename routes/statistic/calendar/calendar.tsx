@@ -9,12 +9,14 @@ import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
 import { getDaysOfTheMonthWithNames } from './util';
 import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';
 import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-date-with-activity';
+import { getDeviceTimeZone } from '@U/time-zone';
 import type { CalendarStatisticsProps } from './types';
 
 export default function CalendarActivities({ year, month, userId, selectedType }: CalendarStatisticsProps) {
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
+  const timeZone = getDeviceTimeZone();
   const {
     data: monthStatistics,
     isLoading,
@@ -23,7 +25,7 @@ export default function CalendarActivities({ year, month, userId, selectedType }
     error,
     refetch,
   } = useGetMonthStatisticsQuery(
-    { userId: `${userId}`, year: `${year}`, month: `${month}` },
+    { userId: `${userId}`, year: `${year}`, month: `${month}`, timeZone },
     { skip: !userId || !year || !month },
   );
   const daysOfTheWeek = getDaysOfTheMonthWithNames(year, month, monthStatistics?.activities ?? [], language);

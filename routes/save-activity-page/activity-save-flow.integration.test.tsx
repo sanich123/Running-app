@@ -18,6 +18,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
 import { getMapBoxImage, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
+import { getDeviceTimeZone } from '@U/time-zone';
 import { CHECKBOX_TEST_ID } from './checkbox/const';
 import { DATE_TIME_PICKER_BTN_ID } from './date-picker/const';
 import { EMOTIONS_BTNS_TEST_IDS, EMOTIONS_BTNS_VALUES } from './emotion-btns/const';
@@ -224,6 +225,7 @@ describe('activity save flows', () => {
         isPublic: false,
         photoVideoUrls: [mockActivityPhoto],
         date: '2026-08-18T12:30:00.000Z',
+        timeZone: getDeviceTimeZone(),
         distance: 12_500,
         duration,
         speed: getSpeedInMinsInKm(12.5, duration).paceAsNumber,
@@ -286,6 +288,8 @@ describe('activity save flows', () => {
     await waitFor(() => {
       expect(activityRequestBody).toEqual({
         locations: trackedLocations,
+        date: expect.any(String),
+        timeZone: getDeviceTimeZone(),
         duration: trackedDuration,
         speed: getSpeedInMinsInKm(trackedDistance, trackedDuration).paceAsNumber,
         distance: trackedDistance,
