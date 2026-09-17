@@ -18,7 +18,8 @@ import {
   setUploadProgress,
 } from '@R/slices/migration/migration';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { getMigrationArchiveAndSendToServer } from '@U/migration-strava/migration-archive';
+import { errorToast } from '@S/error-toast/error-toast';
+import { startStravaMigration } from '@U/migration-strava/migration-archive';
 import { MIGRATION_STATES } from './const';
 import useMigrationState from './hooks';
 import MigrationActions from './migration-actions';
@@ -55,21 +56,25 @@ export default function MigrationFromStrava() {
 
   const handleChooseArchive = async () => {
     dispatch(resetMigration());
-    await getMigrationArchiveAndSendToServer({
-      setIsDisabled: (value) => dispatch(setIsDisabled(value)),
-      setIsUnzipping: (value) => dispatch(setIsUnzipping(value)),
-      setIsRemovingMedia: (value) => dispatch(setIsRemovingMedia(value)),
-      setIsZipping: (value) => dispatch(setIsZipping(value)),
-      setIsSendingArchive: (value) => dispatch(setIsSendingArchive(value)),
-      setIsWaitingForServer: (value) => dispatch(setIsWaitingForServer(value)),
-      setIsDeletingCacheFolder: (value) => dispatch(setIsDeletingCacheFolder(value)),
-      setUploadProgress: (value) => dispatch(setUploadProgress(value)),
-      setIsError: (value) => dispatch(setMigrationError(value)),
-      onCancelReady: handleCancelReady,
-      onArchiveUploadAccepted: (job) => dispatch(acceptMigrationJob(job)),
-      userId,
-      accessToken,
-    });
+    try {
+      await startStravaMigration({
+        setIsDisabled: (value) => dispatch(setIsDisabled(value)),
+        setIsUnzipping: (value) => dispatch(setIsUnzipping(value)),
+        setIsRemovingMedia: (value) => dispatch(setIsRemovingMedia(value)),
+        setIsZipping: (value) => dispatch(setIsZipping(value)),
+        setIsSendingArchive: (value) => dispatch(setIsSendingArchive(value)),
+        setIsWaitingForServer: (value) => dispatch(setIsWaitingForServer(value)),
+        setIsDeletingCacheFolder: (value) => dispatch(setIsDeletingCacheFolder(value)),
+        setUploadProgress: (value) => dispatch(setUploadProgress(value)),
+        setIsError: (value) => dispatch(setMigrationError(value)),
+        onCancelReady: handleCancelReady,
+        onArchiveUploadAccepted: (job) => dispatch(acceptMigrationJob(job)),
+        userId,
+        accessToken,
+      });
+    } catch (error) {
+      errorToast('Ошибка миграции из Strava', error);
+    }
   };
 
   return (

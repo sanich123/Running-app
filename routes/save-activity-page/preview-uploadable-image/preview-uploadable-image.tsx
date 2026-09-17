@@ -5,7 +5,7 @@ import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import PreviewImage from '@Routes/save-activity-page/preview-image/preview-image';
 import { errorToast } from '@S/error-toast/error-toast';
-import { compressAndSendFile } from '@U/file-sending';
+import { uploadActivityMedia } from '../utils';
 import type { PreviewUploadableImageProps } from './types';
 
 export default function PreviewUploadableImage({ image, index, isDisabled }: PreviewUploadableImageProps) {
@@ -24,7 +24,7 @@ export default function PreviewUploadableImage({ image, index, isDisabled }: Pre
         setIsLoading(true);
         try {
           if (userId) {
-            const fileWithThumbnail = await compressAndSendFile(image, userId);
+            const fileWithThumbnail = await uploadActivityMedia(image);
             if (fileWithThumbnail) {
               const { url, thumbnail } = fileWithThumbnail;
               dispatch(addPhotoUrl({ url, thumbnail }));

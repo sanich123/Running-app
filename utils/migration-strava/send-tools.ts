@@ -1,15 +1,11 @@
-import { toFileUri } from './uri-tools';
+import { errorToast } from '@S/error-toast/error-toast';
+import { MigrationArchiveCancelledError, getMigrationErrorMessage, toFileUri } from './utils';
 import type { MigrationCancelHandler } from './types';
 import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
 
 const MIGRATION_ARCHIVE_REQUEST_TIMEOUT = 5 * 60 * 1000;
 
-export class MigrationArchiveCancelledError extends Error {
-  constructor() {
-    super('Отправка архива отменена');
-    this.name = 'MigrationArchiveCancelledError';
-  }
-}
+export { MigrationArchiveCancelledError } from './utils';
 
 export class MigrationArchiveTransferError extends Error {
   constructor(message: string) {
@@ -22,12 +18,6 @@ export const isMigrationArchiveCancelledError = (error: unknown): error is Migra
   error instanceof MigrationArchiveCancelledError;
 export const isMigrationArchiveTransferError = (error: unknown): error is MigrationArchiveTransferError =>
   error instanceof MigrationArchiveTransferError;
-
-function getErrorDescription(error: unknown) {
-  if (error instanceof Error) return error.message;
-  if (typeof error === 'string') return error;
-  return JSON.stringify(error);
-}
 
 function sendArchiveRequest(
   formData: FormData,
@@ -88,34 +78,32 @@ function sendArchiveRequest(
   });
 }
 
-export async function sendArchiveToServer({
-  setIsSendingArchive,
-  setIsWaitingForServer,
-  setUploadProgress,
-  onCancelReady,
-  setIsError,
-  pathToArchive,
-  userId,
-  accessToken,
-}: {
+interface SendArchiveOptions {
   setIsSendingArchive: (arg: boolean) => void;
   setIsWaitingForServer: (arg: boolean) => void;
   setUploadProgress: (arg: number) => void;
   onCancelReady: (cancel: MigrationCancelHandler) => void;
   setIsError: (arg: string) => void;
-  pathToArchive: string;
   userId: string;
   accessToken: string;
-}): Promise<ActivityMigrationJobResponse> {
+}
+
+async function sendArchiveFormData(
+  createFormData: () => FormData,
+  {
+    setIsSendingArchive,
+    setIsWaitingForServer,
+    setUploadProgress,
+    onCancelReady,
+    setIsError,
+    userId,
+    accessToken,
+  }: SendArchiveOptions,
+): Promise<ActivityMigrationJobResponse> {
   try {
     setIsSendingArchive(true);
     setIsWaitingForServer(false);
-    const formData = new FormData();
-    formData.append('archive', {
-      uri: toFileUri(pathToArchive),
-      name: 'archiveToSend.zip',
-      type: 'application/zip',
-    } as unknown as Blob);
+    const formData = createFormData();
     return await sendArchiveRequest(
       formData,
       userId,
@@ -128,8 +116,9 @@ export async function sendArchiveToServer({
     if (isMigrationArchiveCancelledError(error)) throw error;
     const transferError = isMigrationArchiveTransferError(error)
       ? error
-      : new MigrationArchiveTransferError(getErrorDescription(error));
+      : new MigrationArchiveTransferError(getMigrationErrorMessage(error));
     setIsError(transferError.message);
+    errorToast('Ошибка передачи архива', transferError);
     throw transferError;
   } finally {
     setIsSendingArchive(false);
@@ -138,48 +127,30 @@ export async function sendArchiveToServer({
   }
 }
 
+export async function sendArchiveToServer({
+  pathToArchive,
+  ...options
+}: SendArchiveOptions & { pathToArchive: string }) {
+  return await sendArchiveFormData(() => {
+    const formData = new FormData();
+    formData.append('archive', {
+      uri: toFileUri(pathToArchive),
+      name: 'archiveToSend.zip',
+      type: 'application/zip',
+    } as unknown as Blob);
+    return formData;
+  }, options);
+}
+
 export async function sendArchiveToServerWeb({
   archiveFile,
-  setIsSendingArchive,
-  setIsWaitingForServer,
-  setUploadProgress,
-  onCancelReady,
-  setIsError,
-  userId,
-  accessToken,
-}: {
+  ...options
+}: SendArchiveOptions & {
   archiveFile: Blob & { name?: string };
-  setIsSendingArchive: (arg: boolean) => void;
-  setIsWaitingForServer: (arg: boolean) => void;
-  setUploadProgress: (arg: number) => void;
-  onCancelReady: (cancel: MigrationCancelHandler) => void;
-  setIsError: (arg: string) => void;
-  userId: string;
-  accessToken: string;
-}): Promise<ActivityMigrationJobResponse> {
-  try {
-    setIsSendingArchive(true);
-    setIsWaitingForServer(false);
+}) {
+  return await sendArchiveFormData(() => {
     const formData = new FormData();
     formData.append('archive', archiveFile, archiveFile.name || 'archiveToSend.zip');
-    return await sendArchiveRequest(
-      formData,
-      userId,
-      accessToken,
-      setIsWaitingForServer,
-      setUploadProgress,
-      onCancelReady,
-    );
-  } catch (error) {
-    if (isMigrationArchiveCancelledError(error)) throw error;
-    const transferError = isMigrationArchiveTransferError(error)
-      ? error
-      : new MigrationArchiveTransferError(getErrorDescription(error));
-    setIsError(transferError.message);
-    throw transferError;
-  } finally {
-    setIsSendingArchive(false);
-    setIsWaitingForServer(false);
-    onCancelReady(null);
-  }
+    return formData;
+  }, options);
 }

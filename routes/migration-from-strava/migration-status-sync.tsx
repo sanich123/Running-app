@@ -4,7 +4,7 @@ import { runichApi } from '@R/runich-api/runich-api';
 import { useGetStravaMigrationStatusQuery } from '@R/services/activity/activity';
 import { setMigrationError, setMigrationJob } from '@R/slices/migration/migration';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { getErrorMessageFromError } from '@S/error-toast/error-toast';
+import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 
 export default function MigrationStatusSync() {
   const dispatch = useAppDispatch();
@@ -37,6 +37,7 @@ export default function MigrationStatusSync() {
     if (lastStatusError.current === message) return;
     lastStatusError.current = message;
     dispatch(setMigrationError(message));
+    errorToast(message, error);
   }, [dispatch, error, jobId]);
 
   return null;

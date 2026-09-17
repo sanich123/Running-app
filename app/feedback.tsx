@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import * as ImagePicker from 'expo-image-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import uuid from 'react-native-uuid';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Card, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
@@ -10,12 +10,14 @@ import { FEEDBACK_TEXT } from '@Routes/feedback/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import SwitchRow from '@S/feedback/switch-row';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
+import { getAccessToGallery } from '@U/file-sending';
+import { uploadFeedbackAttachment } from './utils';
 import type { FeedbackKind } from '@Routes/feedback/const';
+import type * as ImagePicker from 'expo-image-picker';
 
 export default function FeedbackPage() {
   const { colors } = useTheme();
   const { back } = useRouter();
-  const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const copy = FEEDBACK_TEXT[language];
   const [kind, setKind] = useState<FeedbackKind | null>(null);
@@ -23,6 +25,8 @@ export default function FeedbackPage() {
   const [secondConsent, setSecondConsent] = useState(false);
   const [text, setText] = useState('');
   const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset | null>(null);
+  const [feedbackId] = useState(() => String(uuid.v4()));
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [sendFeedback, { isLoading }] = useSendFeedbackMutation();
 
   const isBug = kind === 'bug';
@@ -31,8 +35,8 @@ export default function FeedbackPage() {
 
   async function choosePhoto() {
     try {
-      const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.9 });
-      if (!result.canceled) setPhoto(result.assets[0]);
+      const result = await getAccessToGallery(['images', 'videos']);
+      if (result && !result.canceled) setPhoto(result.assets[0]);
     } catch (error) {
       errorToast(copy.openGalleryError, error);
     }
@@ -40,23 +44,23 @@ export default function FeedbackPage() {
 
   async function submit() {
     if (!kind || !text.trim() || !canWrite) return;
-    const body = new FormData();
-    body.append('kind', kind);
-    body.append('userId', userId);
-    body.append('text', text.trim());
-    body.append('deviceInfo', JSON.stringify({ platform, deviceName, ...deviceMetadata }));
-    if (photo) {
-      body.append('photo', {
-        uri: photo.uri,
-        name: photo.fileName ?? 'feedback-photo.jpg',
-        type: photo.mimeType ?? 'image/jpeg',
-      } as never);
-    }
     try {
-      await sendFeedback(body).unwrap();
+      setIsUploadingPhoto(Boolean(photo));
+      const attachment = photo ? await uploadFeedbackAttachment(photo.file ?? photo.uri, feedbackId) : undefined;
+      if (photo && !attachment) return;
+
+      await sendFeedback({
+        feedbackId,
+        kind,
+        text: text.trim(),
+        deviceInfo: JSON.stringify({ platform, deviceName, ...deviceMetadata }),
+        ...(attachment ? { attachments: [attachment] } : {}),
+      }).unwrap();
       back();
     } catch (error) {
       errorToast(copy.submitError, error);
+    } finally {
+      setIsUploadingPhoto(false);
     }
   }
 
@@ -123,8 +127,8 @@ export default function FeedbackPage() {
             )}
             <Button
               mode="contained"
-              disabled={!text.trim() || isLoading}
-              loading={isLoading}
+              disabled={!text.trim() || isLoading || isUploadingPhoto}
+              loading={isLoading || isUploadingPhoto}
               onPress={() => void submit()}>
               {copy.send}
             </Button>

@@ -1,6 +1,7 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { uploadActivityMedia } from '../utils';
 import PreviewUploadableImage from './preview-uploadable-image';
 
 jest.mock('react-native-compressor', () => ({
@@ -8,8 +9,8 @@ jest.mock('react-native-compressor', () => ({
     compress: jest.fn(),
   }),
 }));
-jest.mock('@U/file-sending', () => ({
-  compressAndSendFile: jest.fn(() =>
+jest.mock('../utils', () => ({
+  uploadActivityMedia: jest.fn(() =>
     Promise.resolve({ url: 'https://images.example.test/activity.jpg', thumbnail: 'thumbnail.jpg' }),
   ),
 }));
@@ -34,6 +35,7 @@ describe('Preview uploadable image', () => {
     mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(<PreviewUploadableImage image="file://activity.jpg" index={0} isDisabled={false} />);
     await user.press(screen.getByTestId('previewUploadable'));
+    expect(uploadActivityMedia).toHaveBeenCalledWith('file://activity.jpg');
     expect(mockStore.getState().activity.photoVideoUrls[0]).toEqual({
       url: 'https://images.example.test/activity.jpg',
       thumbnail: 'thumbnail.jpg',

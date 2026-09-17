@@ -4,18 +4,18 @@ import { resetAuthSlice } from '@R/slices/auth/auth';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { compressAndSendFile } from '@U/file-sending';
 import ShotBtn from './shot-btn';
+import { uploadActivityMedia } from '../../utils';
 
 jest.mock('expo-media-library', () => ({ Asset: { create: jest.fn() } }));
-jest.mock('@U/file-sending', () => ({ compressAndSendFile: jest.fn() }));
+jest.mock('../../utils', () => ({ uploadActivityMedia: jest.fn() }));
 
-const mockCompressAndSendFile = compressAndSendFile as jest.Mock;
+const mockUploadActivityMedia = uploadActivityMedia as jest.Mock;
 
 describe('shot btn', () => {
   beforeEach(() => {
     mockStore.dispatch(resetAuthSlice());
-    mockCompressAndSendFile.mockReset();
+    mockUploadActivityMedia.mockReset();
   });
 
   it('takes a photo, adds it to preview and saves it to the library', async () => {
@@ -34,7 +34,7 @@ describe('shot btn', () => {
     const user = userEvent.setup();
     const setPhotos = jest.fn();
     mockStore.dispatch(setMockUserId('shot-user'));
-    mockCompressAndSendFile.mockResolvedValue({ url: 'https://cdn.example.com/photo.jpg', thumbnail: 'thumb' });
+    mockUploadActivityMedia.mockResolvedValue({ url: 'https://cdn.example.com/photo.jpg', thumbnail: 'thumb' });
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
     await renderWithProviders(
       <ShotBtn cameraRef={{ current: { takePictureAsync } } as any} setPhotos={setPhotos} photos={[]} />,
@@ -42,7 +42,7 @@ describe('shot btn', () => {
 
     await user.press(screen.getByTestId('camera-shot-button'));
 
-    expect(mockCompressAndSendFile).toHaveBeenCalledWith('file://photo.jpg', 'shot-user');
+    expect(mockUploadActivityMedia).toHaveBeenCalledWith('file://photo.jpg');
     expect(setPhotos).toHaveBeenCalledWith([{ url: 'https://cdn.example.com/photo.jpg', thumbnail: 'thumb' }]);
     expect(mockStore.getState().activity.photoVideoUrls).toContainEqual({
       url: 'https://cdn.example.com/photo.jpg',
@@ -73,7 +73,7 @@ describe('shot btn', () => {
     const user = userEvent.setup();
     const setPhotos = jest.fn();
     mockStore.dispatch(setMockUserId('shot-user'));
-    mockCompressAndSendFile.mockResolvedValue(null);
+    mockUploadActivityMedia.mockResolvedValue(null);
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
     await renderWithProviders(
       <ShotBtn cameraRef={{ current: { takePictureAsync } } as any} setPhotos={setPhotos} photos={[]} />,

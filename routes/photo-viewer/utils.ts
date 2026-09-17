@@ -20,5 +20,5 @@ export function getPhotoUrl(value: string | string[] | undefined) {
 
 export function isVideoUrl(url: string) {
   const pathname = url.split('?')[0].toLowerCase();
-  return VIDEO_EXTENSIONS.some((extension) => pathname.endsWith(`.${extension}`));
+  return VIDEO_EXTENSIONS.some((extension) => pathname === extension || pathname.endsWith(`.${extension}`));
 }

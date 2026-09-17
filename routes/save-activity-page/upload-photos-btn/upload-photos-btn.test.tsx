@@ -5,7 +5,8 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { errorToast } from '@S/error-toast/error-toast';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { compressAndSendFile, getAccessToGallery } from '@U/file-sending';
+import { getAccessToGallery } from '@U/file-sending';
+import { uploadActivityMedia } from '../utils';
 import { UPLOAD_PHOTO_BTN } from './ const';
 import UploadPhotosBtn from './upload-photos-btn';
 
@@ -22,8 +23,8 @@ jest.mock('react-native-compressor', () => ({
 }));
 jest.mock('@U/file-sending', () => ({
   getAccessToGallery: jest.fn(),
-  compressAndSendFile: jest.fn(),
 }));
+jest.mock('../utils', () => ({ uploadActivityMedia: jest.fn() }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 
 const originalPlatform = Platform.OS;
@@ -78,13 +79,13 @@ describe('Upload photos btn', () => {
     const setImages = jest.fn();
     const uploadedImage = { url: 'https://cdn/photo.jpg', thumbnail: null };
     (getAccessToGallery as jest.Mock).mockResolvedValue({ canceled: false, assets: [{ uri: 'photo.jpg' }] });
-    (compressAndSendFile as jest.Mock).mockResolvedValue(uploadedImage);
+    (uploadActivityMedia as jest.Mock).mockResolvedValue(uploadedImage);
     await renderWithProviders(
       <UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} setImages={setImages} images={[]} />,
     );
 
     await user.press(screen.getByText(UPLOAD_PHOTO_BTN.english.isInitial));
-    await waitFor(() => expect(compressAndSendFile).toHaveBeenCalledWith('photo.jpg', 'upload-user'));
+    await waitFor(() => expect(uploadActivityMedia).toHaveBeenCalledWith('photo.jpg'));
     expect(setImages).toHaveBeenCalledWith([uploadedImage]);
     expect(setIsDisabled).toHaveBeenNthCalledWith(1, true);
     expect(setIsDisabled).toHaveBeenLastCalledWith(false);
@@ -100,7 +101,7 @@ describe('Upload photos btn', () => {
       <UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} setImages={setImages} images={[]} />,
     );
     await user.press(screen.getByText(UPLOAD_PHOTO_BTN.english.isInitial));
-    expect(compressAndSendFile).not.toHaveBeenCalled();
+    expect(uploadActivityMedia).not.toHaveBeenCalled();
     expect(setImages).not.toHaveBeenCalled();
 
     await act(async () => {
@@ -108,7 +109,7 @@ describe('Upload photos btn', () => {
     });
     (getAccessToGallery as jest.Mock).mockResolvedValue({ canceled: false, assets: [{ uri: 'photo.jpg' }] });
     await user.press(screen.getByText(UPLOAD_PHOTO_BTN.english.isInitial));
-    expect(compressAndSendFile).not.toHaveBeenCalled();
+    expect(uploadActivityMedia).not.toHaveBeenCalled();
   });
 
   it('handles a failed gallery request and an upload that returns no file', async () => {
@@ -123,7 +124,7 @@ describe('Upload photos btn', () => {
     expect(errorToast).toHaveBeenCalledWith('', expect.any(Error));
 
     (getAccessToGallery as jest.Mock).mockResolvedValue({ canceled: false, assets: [{ uri: 'photo.jpg' }] });
-    (compressAndSendFile as jest.Mock).mockResolvedValue(null);
+    (uploadActivityMedia as jest.Mock).mockResolvedValue(null);
     await user.press(screen.getByText(UPLOAD_PHOTO_BTN.english.isInitial));
     expect(setImages).not.toHaveBeenCalled();
   });
@@ -133,7 +134,7 @@ describe('Upload photos btn', () => {
     const setImages = jest.fn();
     const setIsDisabled = jest.fn();
     const uploadedImage = { url: 'https://cdn/web.jpg', thumbnail: null };
-    (compressAndSendFile as jest.Mock).mockResolvedValue(uploadedImage);
+    (uploadActivityMedia as jest.Mock).mockResolvedValue(uploadedImage);
     await renderWithProviders(
       <UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} setImages={setImages} images={[]} />,
     );
@@ -142,7 +143,7 @@ describe('Upload photos btn', () => {
     await act(async () => {
       await input.props.onChange({ target: { files: [{ name: 'web.jpg' }] } });
     });
-    await waitFor(() => expect(compressAndSendFile).toHaveBeenCalledWith({ name: 'web.jpg' }, 'upload-user'));
+    await waitFor(() => expect(uploadActivityMedia).toHaveBeenCalledWith({ name: 'web.jpg' }));
     expect(setImages).toHaveBeenCalledWith([uploadedImage]);
   });
 });

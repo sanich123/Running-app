@@ -4,7 +4,8 @@ import { ActivityIndicator, Button, useTheme } from 'react-native-paper';
 import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
+import { getAccessToGallery } from '@U/file-sending';
+import { uploadActivityMedia } from '../utils';
 import { UPLOAD_PHOTO_BTN } from './ const';
 import type { UploadPhotoBtnProps } from './ const';
 
@@ -25,6 +26,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
             style={{ display: 'none' }}
             id="image-video-uploader"
             type="file"
+            accept="image/*,video/*"
             disabled={shouldBeDisabled}
             onChange={async (e) => {
               if (userId && e.target.files) {
@@ -32,7 +34,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
                 try {
                   setIsDisabled(true);
                   setIsLoading(true);
-                  const fileWithThumbnail = await compressAndSendFile(fileSrc, userId);
+                  const fileWithThumbnail = await uploadActivityMedia(fileSrc);
                   if (fileWithThumbnail) {
                     setImages([...images, fileWithThumbnail]);
                     dispatch(addPhotoUrl(fileWithThumbnail));
@@ -72,7 +74,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
               if (result && !result.canceled) {
                 const fileSrc = result.assets[0].uri;
                 if (userId) {
-                  const fileWithThumbnail = await compressAndSendFile(fileSrc, userId);
+                  const fileWithThumbnail = await uploadActivityMedia(fileSrc);
                   if (fileWithThumbnail) {
                     setImages([...images, fileWithThumbnail]);
                     dispatch(addPhotoUrl(fileWithThumbnail));

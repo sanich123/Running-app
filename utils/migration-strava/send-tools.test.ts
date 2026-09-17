@@ -1,4 +1,7 @@
+import { errorToast } from '@S/error-toast/error-toast';
 import { sendArchiveToServerWeb, MigrationArchiveCancelledError } from './send-tools';
+
+jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 
 interface MockXhr {
   open: jest.Mock;
@@ -22,6 +25,7 @@ describe('Strava archive upload transport', () => {
   let xhr: MockXhr;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     xhr = {
       open: jest.fn(),
       setRequestHeader: jest.fn(),
@@ -119,5 +123,6 @@ describe('Strava archive upload transport', () => {
 
     await expect(promise).rejects.toThrow('Сервер вернул статус 413');
     expect(setIsError).toHaveBeenCalledWith('Ошибка передачи архива: Сервер вернул статус 413');
+    expect(errorToast).toHaveBeenCalledWith('Ошибка передачи архива', expect.any(Error));
   });
 });

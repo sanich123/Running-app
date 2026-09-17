@@ -5,65 +5,76 @@ import { Platform } from 'react-native';
 import { photosApi, type UploadedPhotoResponse } from '@R/services/photos/photos';
 import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
+import {
+  MAX_MEDIA_FILE_SIZE,
+  createMediaUploadFormData,
+  getMediaFileInfo,
+  isSupportedImageExtension,
+} from './file-sending/file-utils';
+import type { CompressedMediaFile, MediaSource, MediaUploadOptions } from './file-sending/file-sending-types';
 
-export type SendPhoto = (body: FormData) => Promise<UploadedPhotoResponse>;
+export type { CompressedMediaFile, MediaSource, MediaUploadOptions } from './file-sending/file-sending-types';
 
-export async function compressAndSendFile(
-  fileSrc: string | File,
-  userId: string,
-  sendPhoto: SendPhoto = uploadPhotoToServer,
-): Promise<{ url: string; thumbnail: string | null } | null | undefined> {
-  const sourceName = typeof fileSrc === 'string' ? fileSrc : fileSrc.name;
-  const extension = getFileExtension(sourceName);
-  const isVideoFile = ['mp4', 'avi', 'm4v'].includes(extension);
+export type UploadMediaRequest = (body: FormData) => Promise<UploadedPhotoResponse>;
 
-  const compressedFile = await compressImageOrVideo(fileSrc, extension);
-  if (compressedFile) {
-    const uploadedPhoto = await sendPhoto(createUploadFormData(compressedFile, fileSrc, extension, isVideoFile));
-    if (uploadedPhoto) {
-      if (isVideoFile) {
-        const { uri } = await VideoThumbnails.getThumbnailAsync(uploadedPhoto.url);
-        const uploadedImage = await compressAndSendFile(uri, userId, sendPhoto);
-        if (uploadedImage) return { url: uploadedPhoto.url, thumbnail: uploadedImage.url };
-      } else {
-        return { url: uploadedPhoto.url, thumbnail: null };
-      }
-    }
-  } else {
+export async function compressMediaFile(fileSrc: MediaSource): Promise<CompressedMediaFile | null> {
+  const { fileName, extension, isVideo } = getMediaFileInfo(fileSrc);
+
+  if (!isVideo && !isSupportedImageExtension(extension)) {
+    errorToast('Такое разрешение нельзя использовать для изображения');
+    return null;
+  }
+
+  try {
+    const compressedFile = isVideo ? await compressVideo(fileSrc) : await compressImage(fileSrc);
+    if (!compressedFile) return null;
+
+    return {
+      file: compressedFile,
+      originalName: fileName,
+      extension,
+      isVideo,
+    };
+  } catch (error) {
+    errorToast(isVideo ? 'Ошибка во время сжатия видео' : 'Ошибка во время сжатия изображения', error);
     return null;
   }
 }
 
-export async function uploadPhotoToServer(body: FormData) {
-  return await store.dispatch(photosApi.endpoints.uploadPhoto.initiate(body)).unwrap();
-}
-
-export async function deletePhotos(publicUrls: string[]) {
-  for (const url of publicUrls) {
-    await store.dispatch(photosApi.endpoints.deletePhoto.initiate({ url })).unwrap();
+export async function uploadMediaFile(
+  compressedFile: CompressedMediaFile,
+  uploadOptions: MediaUploadOptions = { scope: 'activity' },
+  uploadRequest: UploadMediaRequest = uploadMediaToServer,
+): Promise<UploadedPhotoResponse | null> {
+  try {
+    const formData = createMediaUploadFormData({
+      file: compressedFile.file,
+      originalName: compressedFile.originalName,
+      extension: compressedFile.extension,
+      isVideo: compressedFile.isVideo,
+      uploadOptions,
+    });
+    return (await uploadRequest(formData)) ?? null;
+  } catch (error) {
+    errorToast('Не удалось загрузить медиафайл', error);
+    return null;
   }
-  return true;
 }
 
-function createUploadFormData(file: string | File, originalFile: string | File, extension: string, isVideo: boolean) {
-  const formData = new FormData();
-  const isBrowserFile = typeof file !== 'string';
-  const originalName = typeof originalFile === 'string' ? originalFile : originalFile.name;
-  const uploadFile = isBrowserFile
-    ? file
-    : {
-        uri: String(file),
-        name: originalName || `runich-${Date.now()}.${isVideo ? 'mp4' : extension || 'jpg'}`,
-        type: isVideo ? 'video/mp4' : 'image/jpeg',
-      };
-  formData.append('file', uploadFile as never);
-  return formData;
+export async function createVideoThumbnail(videoUrl: string): Promise<string | null> {
+  try {
+    const { uri } = await VideoThumbnails.getThumbnailAsync(videoUrl);
+    return uri;
+  } catch (error) {
+    errorToast('Не удалось создать превью видео', error);
+    return null;
+  }
 }
 
-export async function getAccessToGallery() {
+export async function getAccessToGallery(mediaTypes: ImagePicker.MediaType[] = ['images', 'videos']) {
   try {
     return await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
+      mediaTypes,
       aspect: [4, 3],
       quality: 1,
     });
@@ -72,39 +83,41 @@ export async function getAccessToGallery() {
   }
 }
 
-async function compressImageOrVideo(fileSrc: string | File, extension: string) {
-  const MAX_VIDEO_SIZE = 15000;
-  const supportedImagesExtensions = /^(webp|png|avif|heic|jpeg|gif|svg|ico|jpg)$/;
-  const isVideoFile = ['mp4', 'avi', 'm4v'].includes(extension);
-  if (isVideoFile) {
-    try {
-      const metaData = await getVideoMetaData(`${fileSrc}`);
-      if (metaData.size > MAX_VIDEO_SIZE) {
-        errorToast('Файл слишком большой, размер файла не более 15 МБ');
-        return null;
-      } else {
-        return await VideoCompressor.compress(`${fileSrc}`);
-      }
-    } catch (error) {
-      errorToast('Ошибка во время сжатия видео', error);
+export async function deleteUploadedMedia(publicUrls: string[]) {
+  try {
+    for (const url of publicUrls) {
+      await store.dispatch(photosApi.endpoints.deletePhoto.initiate({ url })).unwrap();
     }
-  } else {
-    try {
-      if (Platform.OS === 'web') {
-        return fileSrc;
-      }
-      if (supportedImagesExtensions.test(extension)) {
-        return await ImageCompressor.compress(`${fileSrc}`);
-      } else {
-        errorToast('Такое разрешение нельзя использовать для изображения');
-      }
-    } catch (error) {
-      errorToast('Ошибка во время сжатия изображения', error);
-    }
+    return true;
+  } catch (error) {
+    errorToast('Не удалось удалить медиафайл', error);
+    return false;
   }
 }
 
-function getFileExtension(fileName: string) {
-  const cleanName = fileName.split(/[?#]/, 1)[0];
-  return cleanName.split('.').at(-1)?.toLowerCase() ?? '';
+async function compressVideo(fileSrc: MediaSource): Promise<MediaSource | null> {
+  if (Platform.OS === 'web') {
+    if (typeof fileSrc !== 'string' && fileSrc.size > MAX_MEDIA_FILE_SIZE) {
+      errorToast('Файл слишком большой, размер файла не более 15 МБ');
+      return null;
+    }
+    return fileSrc;
+  }
+
+  const metaData = await getVideoMetaData(String(fileSrc));
+  if (metaData.size > MAX_MEDIA_FILE_SIZE) {
+    errorToast('Файл слишком большой, размер файла не более 15 МБ');
+    return null;
+  }
+
+  return await VideoCompressor.compress(String(fileSrc));
+}
+
+async function compressImage(fileSrc: MediaSource): Promise<MediaSource> {
+  if (Platform.OS === 'web') return fileSrc;
+  return await ImageCompressor.compress(String(fileSrc));
+}
+
+async function uploadMediaToServer(body: FormData) {
+  return await store.dispatch(photosApi.endpoints.uploadPhoto.initiate(body)).unwrap();
 }

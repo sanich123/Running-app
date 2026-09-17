@@ -5,7 +5,7 @@ import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { compressAndSendFile } from '@U/file-sending';
+import { uploadActivityMedia } from '../../utils';
 import { CAMERA_SETTINGS } from '../const';
 import type { ShotBtnProps } from '../types';
 
@@ -31,7 +31,7 @@ export default function ShotBtn({ cameraRef, setPhotos, photos }: ShotBtnProps) 
             const newPhoto = await cameraRef?.current.takePictureAsync(CAMERA_SETTINGS);
             if (newPhoto) {
               const localPhoto = { url: newPhoto.uri, thumbnail: null };
-              const uploadedPhoto = userId ? await compressAndSendFile(newPhoto.uri, userId) : localPhoto;
+              const uploadedPhoto = userId ? await uploadActivityMedia(newPhoto.uri) : localPhoto;
 
               if (uploadedPhoto) {
                 setPhotos([...photos, uploadedPhoto]);

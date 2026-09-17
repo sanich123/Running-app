@@ -88,7 +88,7 @@ export default function PhotoViewer() {
               orientation="vertical">
               {itemsToRender.map(({ url, blurhash }: ActivityPhotoResponse, index: number) => (
                 <View key={index}>
-                  {['mp4', 'avi', 'm4v'].includes(url) ? (
+                  {isVideoUrl(url) ? (
                     <VideoViewer url={url} />
                   ) : (
                     <CustomImage

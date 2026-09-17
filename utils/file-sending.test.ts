@@ -3,7 +3,13 @@ import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 import { Platform } from 'react-native';
 import { errorToast } from '@S/error-toast/error-toast';
-import { compressAndSendFile, getAccessToGallery, type SendPhoto } from './file-sending';
+import {
+  compressMediaFile,
+  createVideoThumbnail,
+  getAccessToGallery,
+  uploadMediaFile,
+  type UploadMediaRequest,
+} from './file-sending';
 
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
 jest.mock('expo-video-thumbnails', () => ({ getThumbnailAsync: jest.fn() }));
@@ -14,7 +20,7 @@ jest.mock('react-native-compressor', () => ({
 }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 const originalPlatform = Platform.OS;
-const sendPhoto = jest.fn() as jest.MockedFunction<SendPhoto>;
+const uploadMedia = jest.fn() as jest.MockedFunction<UploadMediaRequest>;
 
 describe('file sending', () => {
   beforeEach(() => {
@@ -23,7 +29,7 @@ describe('file sending', () => {
     (ImageCompressor.compress as jest.Mock).mockResolvedValue('compressed-image.jpg');
     (VideoCompressor.compress as jest.Mock).mockResolvedValue('compressed-video.mp4');
     (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 1_000 });
-    sendPhoto.mockResolvedValue({
+    uploadMedia.mockResolvedValue({
       url: 'https://cdn.example/photo.jpg',
       key: 'user/photo.jpg',
       contentType: 'image/jpeg',
@@ -35,70 +41,122 @@ describe('file sending', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatform });
   });
 
-  it('compresses and uploads an image, preserving the image-only response shape', async () => {
-    await expect(compressAndSendFile('photo.JPG?cache=1', 'user-id', sendPhoto)).resolves.toEqual({
-      url: 'https://cdn.example/photo.jpg',
-      thumbnail: null,
+  it('compresses an image without uploading it', async () => {
+    await expect(compressMediaFile('photo.JPG?cache=1')).resolves.toEqual({
+      file: 'compressed-image.jpg',
+      originalName: 'photo.JPG',
+      extension: 'jpg',
+      isVideo: false,
     });
     expect(ImageCompressor.compress).toHaveBeenCalledWith('photo.JPG?cache=1');
-    expect(sendPhoto).toHaveBeenCalledWith(expect.any(FormData));
+    expect(uploadMedia).not.toHaveBeenCalled();
   });
 
-  it('uploads a video together with a generated and compressed thumbnail', async () => {
-    sendPhoto
-      .mockResolvedValueOnce({ url: 'https://cdn.example/video.mp4', key: 'user/video.mp4', contentType: 'video/mp4' })
-      .mockResolvedValueOnce({
-        url: 'https://cdn.example/thumbnail.jpg',
-        key: 'user/thumbnail.jpg',
-        contentType: 'image/jpeg',
-      });
-    (VideoThumbnails.getThumbnailAsync as jest.Mock).mockResolvedValue({ uri: 'thumbnail.jpg' });
+  it('uploads a compressed file and adds scope metadata', async () => {
+    const compressedFile = {
+      file: 'compressed-image.jpg',
+      originalName: 'feedback.jpg',
+      extension: 'jpg',
+      isVideo: false,
+    };
 
-    await expect(compressAndSendFile('activity.MP4', 'user-id', sendPhoto)).resolves.toEqual({
-      url: 'https://cdn.example/video.mp4',
-      thumbnail: 'https://cdn.example/thumbnail.jpg',
+    await expect(
+      uploadMediaFile(compressedFile, { scope: 'feedback', feedbackId: 'feedback-id' }, uploadMedia),
+    ).resolves.toEqual({
+      url: 'https://cdn.example/photo.jpg',
+      key: 'user/photo.jpg',
+      contentType: 'image/jpeg',
+    });
+
+    const body = uploadMedia.mock.calls[0]?.[0] as FormData;
+    expect(body.get('scope')).toBe('feedback');
+    expect(body.get('feedbackId')).toBe('feedback-id');
+  });
+
+  it('compresses videos independently from uploading them', async () => {
+    await expect(compressMediaFile('activity.MP4')).resolves.toEqual({
+      file: 'compressed-video.mp4',
+      originalName: 'activity.MP4',
+      extension: 'mp4',
+      isVideo: true,
     });
     expect(VideoCompressor.compress).toHaveBeenCalledWith('activity.MP4');
+
+    const thumbnail = await createVideoThumbnail('https://cdn.example/video.mp4');
+    expect(thumbnail).toBeNull();
+    expect(errorToast).toHaveBeenCalledWith('Не удалось создать превью видео', expect.anything());
+  });
+
+  it('creates a video thumbnail as a separate operation', async () => {
+    (VideoThumbnails.getThumbnailAsync as jest.Mock).mockResolvedValue({ uri: 'thumbnail.jpg' });
+
+    await expect(createVideoThumbnail('https://cdn.example/video.mp4')).resolves.toBe('thumbnail.jpg');
     expect(VideoThumbnails.getThumbnailAsync).toHaveBeenCalledWith('https://cdn.example/video.mp4');
-    expect(ImageCompressor.compress).toHaveBeenCalledWith('thumbnail.jpg');
   });
 
-  it('returns null for an oversized video and leaves unsupported files uncompressed', async () => {
-    (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 15_001 });
-    await expect(compressAndSendFile('large.mp4', 'user-id', sendPhoto)).resolves.toBeNull();
-    expect(VideoCompressor.compress).not.toHaveBeenCalled();
-
-    await expect(compressAndSendFile('document.pdf', 'user-id', sendPhoto)).resolves.toBeNull();
+  it('reports unsupported and oversized files during compression', async () => {
+    await expect(compressMediaFile('document.pdf')).resolves.toBeNull();
     expect(errorToast).toHaveBeenCalledWith('Такое разрешение нельзя использовать для изображения');
+
+    (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 15 * 1024 * 1024 + 1 });
+    await expect(compressMediaFile('large.mp4')).resolves.toBeNull();
+    expect(VideoCompressor.compress).not.toHaveBeenCalled();
+    expect(errorToast).toHaveBeenCalledWith('Файл слишком большой, размер файла не более 15 МБ');
   });
 
-  it('reports compression failures and stops when an intermediate upload result is missing', async () => {
-    (ImageCompressor.compress as jest.Mock).mockRejectedValue(new Error('image compression failed'));
-    await expect(compressAndSendFile('photo.jpg', 'user-id', sendPhoto)).resolves.toBeNull();
-    expect(errorToast).toHaveBeenCalledWith('Ошибка во время сжатия изображения', expect.any(Error));
+  it('reports compression, upload and thumbnail errors independently', async () => {
+    const compressionError = new Error('image compression failed');
+    (ImageCompressor.compress as jest.Mock).mockRejectedValue(compressionError);
+    await expect(compressMediaFile('photo.jpg')).resolves.toBeNull();
+    expect(errorToast).toHaveBeenCalledWith('Ошибка во время сжатия изображения', compressionError);
 
-    (ImageCompressor.compress as jest.Mock).mockResolvedValue('compressed.jpg');
-    sendPhoto.mockResolvedValueOnce(undefined as never);
-    await expect(compressAndSendFile('photo.jpg', 'user-id', sendPhoto)).resolves.toBeUndefined();
+    const uploadError = new Error('upload failed');
+    uploadMedia.mockRejectedValue(uploadError);
+    await expect(
+      uploadMediaFile(
+        { file: 'compressed.jpg', originalName: 'photo.jpg', extension: 'jpg', isVideo: false },
+        undefined,
+        uploadMedia,
+      ),
+    ).resolves.toBeNull();
+    expect(errorToast).toHaveBeenCalledWith('Не удалось загрузить медиафайл', uploadError);
 
-    sendPhoto.mockResolvedValueOnce(undefined as never);
-    await expect(compressAndSendFile('photo.jpg', 'user-id', sendPhoto)).resolves.toBeUndefined();
+    const thumbnailError = new Error('thumbnail failed');
+    (VideoThumbnails.getThumbnailAsync as jest.Mock).mockRejectedValue(thumbnailError);
+    await expect(createVideoThumbnail('https://cdn.example/video.mp4')).resolves.toBeNull();
+    expect(errorToast).toHaveBeenCalledWith('Не удалось создать превью видео', thumbnailError);
   });
 
-  it('uses the web file as-is and handles gallery access errors', async () => {
+  it('uses browser files as-is and reports gallery errors', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
-    const webFile = { name: 'photo.png' } as unknown as File;
+    const webFile = { name: 'photo.png', size: 1_000, type: 'image/png' } as unknown as File;
     (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValue({ canceled: false, assets: [] });
 
     await expect(getAccessToGallery()).resolves.toEqual({ canceled: false, assets: [] });
-    await expect(compressAndSendFile(webFile, 'user-id', sendPhoto)).resolves.toEqual({
-      url: 'https://cdn.example/photo.jpg',
-      thumbnail: null,
+    await expect(compressMediaFile(webFile)).resolves.toEqual({
+      file: webFile,
+      originalName: 'photo.png',
+      extension: 'png',
+      isVideo: false,
     });
     expect(ImageCompressor.compress).not.toHaveBeenCalled();
 
     (ImagePicker.launchImageLibraryAsync as jest.Mock).mockRejectedValue(new Error('gallery unavailable'));
     await expect(getAccessToGallery()).resolves.toBeUndefined();
     expect(errorToast).toHaveBeenCalledWith('Не удалось открыть галерею', expect.any(Error));
+  });
+
+  it('passes browser videos through without using the native compressor', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+    const webFile = { name: 'clip.mp4', size: 1_000, type: 'video/mp4' } as unknown as File;
+
+    await expect(compressMediaFile(webFile)).resolves.toEqual({
+      file: webFile,
+      originalName: 'clip.mp4',
+      extension: 'mp4',
+      isVideo: true,
+    });
+    expect(VideoCompressor.compress).not.toHaveBeenCalled();
+    expect(getVideoMetaData).not.toHaveBeenCalled();
   });
 });
