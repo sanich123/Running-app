@@ -5,11 +5,11 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
+import { getDeviceTimeZone } from '@U/time-zone';
 import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
 import { getDaysOfTheMonthWithNames } from './util';
 import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';
 import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-date-with-activity';
-import { getDeviceTimeZone } from '@U/time-zone';
 import type { CalendarStatisticsProps } from './types';
 
 export default function CalendarActivities({ year, month, userId, selectedType }: CalendarStatisticsProps) {

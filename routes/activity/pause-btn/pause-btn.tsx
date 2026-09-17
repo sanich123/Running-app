@@ -17,8 +17,8 @@ import { getCurrentActivityDuration } from '@U/activity-duration';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getActiveLocationJournalId } from '@U/location/location-journal';
 import { getElevationGainByKilometres, getSpeedInMinsInKm } from '@U/location/location-utils';
-import { getDeviceTimeZone } from '@U/time-zone';
 import { pausePedometerActivity, resumePedometerActivity } from '@U/pedometer/pedometer';
+import { getDeviceTimeZone } from '@U/time-zone';
 
 export default function PauseBtn() {
   const { dark, colors } = useTheme();

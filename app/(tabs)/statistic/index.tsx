@@ -14,8 +14,8 @@ import {
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
-import { getDeviceTimeZone } from '@U/time-zone';
 import { MONTH_STATISTICS } from '@S/month-metric/const';
+import { getDeviceTimeZone } from '@U/time-zone';
 import type { StatisticMetricResponse, YearCategoryStatistics } from '@R/runich-api/types';
 
 export default function Statistics() {

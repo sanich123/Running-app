@@ -14,10 +14,7 @@ const trackingRecovery = createSlice({
       state.lastTimestamp = null;
       state.metrics = TRACKING_RECOVERY_METRICS_INITIAL_STATE;
     },
-    setTrackingRecoveryStartContext: (
-      state,
-      action: PayloadAction<{ startedAt: number; timeZone: string }>,
-    ) => {
+    setTrackingRecoveryStartContext: (state, action: PayloadAction<{ startedAt: number; timeZone: string }>) => {
       state.metrics.recordingStartedAt = action.payload.startedAt;
       state.metrics.recordingTimeZone = action.payload.timeZone;
     },

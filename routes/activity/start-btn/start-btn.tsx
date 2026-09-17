@@ -35,13 +35,13 @@ import {
   removeLocationJournal,
 } from '@U/location/location-journal';
 import { getElevationGainByKilometres, getSpeedInMinsInKm } from '@U/location/location-utils';
-import { getDeviceTimeZone } from '@U/time-zone';
 import {
   finishPedometerActivity,
   pausePedometerActivity,
   startPedometerActivity,
   resetPedometerActivity,
 } from '@U/pedometer/pedometer';
+import { getDeviceTimeZone } from '@U/time-zone';
 import { useActivitySportParams } from '../activity-params';
 import { ACTIVITY_START_BTN_TEST_ID, ACTIVITY_START_BTN, STOP_ICON } from './const';
 
