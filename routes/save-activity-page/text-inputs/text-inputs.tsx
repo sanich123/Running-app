@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
+import { ACTIVITY_INPUT_LIMITS } from '@const/input-limits';
 import { useAppSelector } from '@R/typed-hooks';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 import {
@@ -27,6 +28,8 @@ export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
         value={title}
         onChangeText={setTitle}
         placeholder={TEXT_INPUTS[language].titlePlaceholder}
+        maxLength={ACTIVITY_INPUT_LIMITS.title}
+        right={<TextInput.Affix text={`${title.length}/${ACTIVITY_INPUT_LIMITS.title}`} />}
         left={<TextInput.Icon icon="format-title" testID={TEXT_INPUTS_TITLE_LEFT_ICON} />}
         style={[
           styles.input,
@@ -47,6 +50,8 @@ export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
         value={description}
         onChangeText={setDescription}
         placeholder={TEXT_INPUTS[language].descriptionPlaceholder}
+        maxLength={ACTIVITY_INPUT_LIMITS.description}
+        right={<TextInput.Affix text={`${description.length}/${ACTIVITY_INPUT_LIMITS.description}`} />}
         multiline
         numberOfLines={4}
         style={[

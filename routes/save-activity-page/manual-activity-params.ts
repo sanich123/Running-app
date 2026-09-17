@@ -1,4 +1,5 @@
 import { useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-router';
+import { ACTIVITY_INPUT_LIMITS, limitText } from '@const/input-limits';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { EMOTIONS_BTNS_VALUES } from './emotion-btns/const';
 
@@ -38,8 +39,8 @@ function getManualActivityParams(params: ManualActivitySearchParams) {
     manualHours: getFirstParam(params.manualHours) ?? '0',
     manualMinutes: getFirstParam(params.manualMinutes) ?? '0',
     manualSeconds: getFirstParam(params.manualSeconds) ?? '0',
-    title: getFirstParam(params.title) ?? '',
-    description: getFirstParam(params.description) ?? '',
+    title: limitText(getFirstParam(params.title) ?? '', ACTIVITY_INPUT_LIMITS.title),
+    description: limitText(getFirstParam(params.description) ?? '', ACTIVITY_INPUT_LIMITS.description),
     sport: (getFirstParam(params.sport) ?? SPORTS_BTNS_VALUES.run) as SPORTS_BTNS_VALUES,
     emotion: (getFirstParam(params.emotion) ?? EMOTIONS_BTNS_VALUES.normal) as EMOTIONS_BTNS_VALUES,
     isPublic: getFirstParam(params.isPublic) !== 'false',
@@ -68,8 +69,9 @@ export function useSetManualActivityParams() {
     setManualHours: (hours: string) => setParams({ manualHours: hours }),
     setManualMinutes: (minutes: string) => setParams({ manualMinutes: minutes }),
     setManualSeconds: (seconds: string) => setParams({ manualSeconds: seconds }),
-    setTitle: (title: string) => setParams({ title }),
-    setDescription: (description: string) => setParams({ description }),
+    setTitle: (title: string) => setParams({ title: limitText(title, ACTIVITY_INPUT_LIMITS.title) }),
+    setDescription: (description: string) =>
+      setParams({ description: limitText(description, ACTIVITY_INPUT_LIMITS.description) }),
     setSport: (sport: string) => setParams({ sport }),
     setEmotion: (emotion: string) => setParams({ emotion }),
     setIsPublic: (isPublic: boolean) => setParams({ isPublic: String(isPublic) }),

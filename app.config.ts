@@ -100,13 +100,13 @@ export default {
       },
       package: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
       permissions: [
-        'android.permission.RECORD_AUDIO',
         'android.permission.RECEIVE_BOOT_COMPLETED',
         'android.permission.ACTIVITY_RECOGNITION',
         'ACCESS_BACKGROUND_LOCATION',
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
       ],
+      blockedPermissions: ['android.permission.SYSTEM_ALERT_WINDOW'],
       softwareKeyboardLayoutMode: 'resize',
       usesCleartextTraffic: IS_DEV,
     },
@@ -156,6 +156,7 @@ export default {
         {
           photosPermission:
             'Для добавления фото к тренировке необходимо дать разрешение на доступ к галерее устройства',
+          microphonePermission: false,
         },
       ],
       [
@@ -181,7 +182,8 @@ export default {
         {
           photosPermission: 'Allow $(PRODUCT_NAME) to access your photos.',
           savePhotosPermission: 'Allow $(PRODUCT_NAME) to save photos.',
-          isAccessMediaLocationEnabled: true,
+          granularPermissions: ['photo'],
+          isAccessMediaLocationEnabled: false,
         },
       ],
       [

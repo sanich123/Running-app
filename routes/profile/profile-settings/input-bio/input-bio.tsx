@@ -1,5 +1,6 @@
 import { TextInput, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
+import { PROFILE_INPUT_LIMITS } from '@const/input-limits';
 import { useAppSelector } from '@R/typed-hooks';
 import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
 import { INPUT_BIO, INPUT_BIO_TEST_ID } from './const';
@@ -23,6 +24,7 @@ export default function InputBio({ isDisabled }: { isDisabled: boolean }) {
       textColor={colors.onSurface}
       label={INPUT_BIO[language].label}
       placeholder={INPUT_BIO[language].placeholder}
+      maxLength={PROFILE_INPUT_LIMITS.bio}
       multiline
       numberOfLines={4}
       value={bio}

@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
+import { PROFILE_INPUT_LIMITS } from '@const/input-limits';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -26,6 +27,7 @@ describe('Input bio', () => {
     const textInput = screen.getByTestId(INPUT_BIO_TEST_ID);
     expect(textInput).toBeOnTheScreen();
     expect(textInput.props.value).toEqual('Existing bio');
+    expect(textInput.props.maxLength).toBe(PROFILE_INPUT_LIMITS.bio);
     textInput.props.onChangeText('some text');
     expect(mockSetParams).toHaveBeenCalledWith({ bio: 'some text' });
   });

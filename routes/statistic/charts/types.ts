@@ -1,9 +1,11 @@
+import type { ReactNode } from 'react';
+
 export type MonthMetrics = Record<string, { totalDistance: number; totalDuration: number; totalItems: number }>;
 
 interface ChartBarComponent {
   value: number;
   label: string;
-  topLabelComponent: () => void;
+  topLabelComponent: () => ReactNode;
 }
 
 export interface AccumulatorValues {

@@ -73,10 +73,14 @@ export default function ProfilePage() {
                 <AvatarShowable size={92} id={`${whosProfile}`} profile={profile ?? undefined} />
               </TouchableRipple>
               <View style={styles.nicknameWrapper}>
-                <Text variant="titleLarge" style={styles.profileName}>
+                <Text variant="titleLarge" numberOfLines={2} ellipsizeMode="tail" style={styles.profileName}>
                   {profile?.name} {profile?.surname}
                 </Text>
-                <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                <Text
+                  variant="bodyMedium"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={{ color: colors.onSurfaceVariant }}>
                   {profile?.city}
                 </Text>
               </View>
@@ -166,6 +170,7 @@ const styles = StyleSheet.create({
   },
   nicknameWrapper: {
     flex: 1,
+    minWidth: 0,
     justifyContent: 'center',
   },
   bio: {

@@ -35,10 +35,12 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
           surname={profile?.surname}
           placeholder={profile?.profilePhotoBlurhash}
         />
-        <View>
-          <View>
+        <View style={styles.textWrapper}>
+          <View style={styles.nameWrapper}>
             <Text
               variant={size === 'large' ? 'titleSmall' : 'bodyMedium'}
+              numberOfLines={1}
+              ellipsizeMode="tail"
               style={{
                 color: colors.onSurface,
                 fontFamily: FONT_FAMILIES.semiBold,
@@ -62,5 +64,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  textWrapper: {
+    flex: 1,
+    minWidth: 0,
+  },
+  nameWrapper: {
+    minWidth: 0,
   },
 });

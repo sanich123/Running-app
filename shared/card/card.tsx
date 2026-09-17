@@ -91,6 +91,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           sport={sport}
           steps={steps}
           elevationGain={elevationGain}
+          isFullView={isFullView}
         />
         <View style={{ height: 40, paddingHorizontal: 8 }}>
           <Likes activityId={id} size={likesSize} likesLength={likesLength} />

@@ -27,7 +27,7 @@ export default function MapboxWeb({
 
     return validKilometreSplits.map(({ kilometerPoint }, index) => ({
       type: 'Feature' as const,
-      properties: { label: `${index + 1}`, sortKey: index, labelSortKey: validKilometreSplits.length - index },
+      properties: { label: `${index + 1}`, sortKey: index },
       geometry: {
         type: 'Point' as const,
         coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
@@ -123,12 +123,12 @@ export default function MapboxWeb({
           type: 'symbol',
           source: 'kilometre-splits',
           layout: {
-            'text-allow-overlap': false,
+            'text-allow-overlap': true,
             'text-field': ['get', 'label'],
-            'text-ignore-placement': false,
+            'text-ignore-placement': true,
             'text-padding': 12,
             'text-size': 12,
-            'symbol-sort-key': ['get', 'labelSortKey'],
+            'symbol-sort-key': ['get', 'sortKey'],
           },
           paint: {
             'text-color': colors.primary,

@@ -149,6 +149,7 @@ export interface MetricsProps {
   description?: string | null;
   userId: string;
   id: string;
+  isFullView?: boolean;
 }
 
 export interface LikesProps {
