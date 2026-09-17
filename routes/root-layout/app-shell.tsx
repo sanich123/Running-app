@@ -71,8 +71,6 @@ export default function AppShell() {
                 <Stack.Screen name={ROUTES.privacyPolicyEnglish} options={{ title: 'Privacy Policy' }} />
                 <Stack.Screen name={ROUTES.userAgreement} options={{ title: 'Пользовательское соглашение' }} />
                 <Stack.Screen name={ROUTES.userAgreementEnglish} options={{ title: 'User Agreement' }} />
-                <Stack.Screen name={ROUTES.consents} options={{ title: 'Согласия пользователя' }} />
-                <Stack.Screen name={ROUTES.consentsEnglish} options={{ title: 'User Consents' }} />
                 <Stack.Screen name={ROUTES.locationConsent} options={{ title: 'Согласие на геолокацию' }} />
                 <Stack.Screen name={ROUTES.locationConsentEnglish} options={{ title: 'Location Consent' }} />
                 <Stack.Screen name={ROUTES.accountDeletion} options={{ title: 'Удаление аккаунта' }} />
@@ -80,7 +78,6 @@ export default function AppShell() {
                 <Stack.Screen name={ROUTES.legalInformationEnglish} options={{ title: 'Legal Information' }} />
                 <Stack.Screen name={ROUTES.legal} options={{ title: 'Юридическая информация' }} />
                 <Stack.Screen name={ROUTES.maintenance} options={{ headerShown: false }} />
-
                 <Stack.Screen
                   name={`${ROUTES.activity}/${ROUTES.routeId}`}
                   options={{

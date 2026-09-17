@@ -13,8 +13,6 @@ export const PUBLIC_ROUTES = new Set([
   `/${ROUTES.privacyPolicyEnglish}`,
   `/${ROUTES.userAgreement}`,
   `/${ROUTES.userAgreementEnglish}`,
-  `/${ROUTES.consents}`,
-  `/${ROUTES.consentsEnglish}`,
   `/${ROUTES.locationConsent}`,
   `/${ROUTES.locationConsentEnglish}`,
   `/${ROUTES.accountDeletion}`,

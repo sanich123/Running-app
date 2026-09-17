@@ -5,12 +5,11 @@ import { LANGUAGES, ROUTES } from '@const/enums';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import { LEGAL_DOCUMENT_LABELS, LEGAL_DOCUMENT_VERSION, LEGAL_OPERATOR, type LegalDocumentId } from './content';
 
-const DOCUMENTS: LegalDocumentId[] = ['privacy', 'agreement', 'consents', 'locationConsent', 'accountDeletion'];
+const DOCUMENTS: LegalDocumentId[] = ['privacy', 'agreement', 'locationConsent', 'accountDeletion'];
 
 const DOCUMENT_PATHS: Record<LegalDocumentId, { russian: string; english: string }> = {
   privacy: { russian: `/${ROUTES.privacyPolicy}`, english: `/${ROUTES.privacyPolicyEnglish}` },
   agreement: { russian: `/${ROUTES.userAgreement}`, english: `/${ROUTES.userAgreementEnglish}` },
-  consents: { russian: `/${ROUTES.consents}`, english: `/${ROUTES.consentsEnglish}` },
   locationConsent: { russian: `/${ROUTES.locationConsent}`, english: `/${ROUTES.locationConsentEnglish}` },
   accountDeletion: { russian: `/${ROUTES.accountDeletion}`, english: `/${ROUTES.accountDeletionEnglish}` },
 };

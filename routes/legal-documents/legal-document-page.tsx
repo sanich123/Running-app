@@ -7,17 +7,15 @@ import { LEGAL_DOCUMENT_LABELS, LEGAL_DOCUMENT_VERSION, LEGAL_DOCUMENTS, type Le
 import type { LANGUAGES } from '@const/enums';
 
 const RELATED_DOCUMENTS: Record<LegalDocumentId, LegalDocumentId[]> = {
-  privacy: ['agreement', 'consents', 'locationConsent', 'accountDeletion'],
-  agreement: ['privacy', 'consents', 'locationConsent', 'accountDeletion'],
-  consents: ['privacy', 'agreement', 'locationConsent', 'accountDeletion'],
-  locationConsent: ['privacy', 'agreement', 'consents', 'accountDeletion'],
-  accountDeletion: ['privacy', 'agreement', 'consents', 'locationConsent'],
+  privacy: ['agreement', 'locationConsent', 'accountDeletion'],
+  agreement: ['privacy', 'locationConsent', 'accountDeletion'],
+  locationConsent: ['privacy', 'agreement', 'accountDeletion'],
+  accountDeletion: ['privacy', 'agreement', 'locationConsent'],
 };
 
 const DOCUMENT_PATHS: Record<LegalDocumentId, { russian: string; english: string }> = {
   privacy: { russian: `/${ROUTES.privacyPolicy}`, english: `/${ROUTES.privacyPolicyEnglish}` },
   agreement: { russian: `/${ROUTES.userAgreement}`, english: `/${ROUTES.userAgreementEnglish}` },
-  consents: { russian: `/${ROUTES.consents}`, english: `/${ROUTES.consentsEnglish}` },
   locationConsent: { russian: `/${ROUTES.locationConsent}`, english: `/${ROUTES.locationConsentEnglish}` },
   accountDeletion: { russian: `/${ROUTES.accountDeletion}`, english: `/${ROUTES.accountDeletionEnglish}` },
 };
