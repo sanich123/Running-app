@@ -1,1 +1,17 @@
-export const VIDEO_EXTENSIONS = ['mp4', 'mov', 'avi', 'm4v', 'webm', 'mkv', '3gp'];
+export const VIDEO_EXTENSIONS = [
+  '3g2',
+  '3gp',
+  'avi',
+  'flv',
+  'm2ts',
+  'm4v',
+  'mkv',
+  'mov',
+  'mp4',
+  'mpeg',
+  'mpg',
+  'ogv',
+  'ts',
+  'webm',
+  'wmv',
+];

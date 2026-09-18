@@ -1,14 +1,15 @@
 import { errorToast } from '@S/error-toast/error-toast';
 import { compressMediaFile, createVideoThumbnail, uploadMediaFile } from '../file-sending';
-import type { MediaSource, MediaUploadOptions } from './file-sending-types';
+import type { MediaSource, MediaSourceMetadata, MediaUploadOptions } from './file-sending-types';
 
 export async function uploadMediaWithThumbnail(
   fileSrc: MediaSource,
   uploadOptions: MediaUploadOptions,
   errorMessage: string,
+  metadata: MediaSourceMetadata = {},
 ) {
   try {
-    const compressedFile = await compressMediaFile(fileSrc);
+    const compressedFile = await compressMediaFile(fileSrc, metadata);
     if (!compressedFile) return null;
 
     const uploadedFile = await uploadMediaFile(compressedFile, uploadOptions);
@@ -16,7 +17,9 @@ export async function uploadMediaWithThumbnail(
 
     if (!compressedFile.isVideo) return { url: uploadedFile.url, thumbnail: null };
 
-    const thumbnailSource = await createVideoThumbnail(uploadedFile.url);
+    const thumbnailSource = await createVideoThumbnail(
+      typeof compressedFile.file === 'string' ? compressedFile.file : uploadedFile.url,
+    );
     if (!thumbnailSource) return { url: uploadedFile.url, thumbnail: null };
 
     const compressedThumbnail = await compressMediaFile(thumbnailSource);

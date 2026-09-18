@@ -39,7 +39,11 @@ export default function BackgroundLocationModal({
             </Text>
           ))}
         </View>
-        <LocationConsent accepted={locationConsentAccepted} onChange={setLocationConsentAccepted} />
+        <LocationConsent
+          accepted={locationConsentAccepted}
+          onChange={setLocationConsentAccepted}
+          onDetailsPress={() => backgroundLocationEnabledModalRef.current?.close()}
+        />
         <Button
           testID="background-location-allow"
           mode="contained"

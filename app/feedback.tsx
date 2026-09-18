@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import uuid from 'react-native-uuid';
-import { View, StyleSheet } from 'react-native';
+import { Linking, Pressable, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Card, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
 import { useAppSelector } from '@R/typed-hooks';
 import { FEEDBACK_TEXT } from '@Routes/feedback/const';
-import { errorToast } from '@S/error-toast/error-toast';
+import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import SwitchRow from '@S/feedback/switch-row';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
 import { getAccessToGallery } from '@U/file-sending';
@@ -25,8 +25,13 @@ export default function FeedbackPage() {
   const [secondConsent, setSecondConsent] = useState(false);
   const [text, setText] = useState('');
   const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset | null>(null);
+  const [uploadedAttachment, setUploadedAttachment] = useState<{
+    url: string;
+    thumbnail: string | null;
+  } | null>(null);
   const [feedbackId] = useState(() => String(uuid.v4()));
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [feedbackError, setFeedbackError] = useState<string | null>(null);
   const [sendFeedback, { isLoading }] = useSendFeedbackMutation();
 
   const isBug = kind === 'bug';
@@ -36,18 +41,36 @@ export default function FeedbackPage() {
   async function choosePhoto() {
     try {
       const result = await getAccessToGallery(['images', 'videos']);
-      if (result && !result.canceled) setPhoto(result.assets[0]);
+      if (result && !result.canceled && result.assets[0]) {
+        setPhoto(result.assets[0]);
+        setUploadedAttachment(null);
+        setFeedbackError(null);
+      }
     } catch (error) {
       errorToast(copy.openGalleryError, error);
+      setFeedbackError(`${copy.openGalleryError}: ${getErrorMessageFromError(error)}`);
     }
   }
 
   async function submit() {
     if (!kind || !text.trim() || !canWrite) return;
+    setFeedbackError(null);
+    let attachment = uploadedAttachment;
     try {
-      setIsUploadingPhoto(Boolean(photo));
-      const attachment = photo ? await uploadFeedbackAttachment(photo.file ?? photo.uri, feedbackId) : undefined;
-      if (photo && !attachment) return;
+      if (photo && !attachment) {
+        setIsUploadingPhoto(true);
+        attachment = await uploadFeedbackAttachment(photo.file ?? photo.uri, feedbackId, {
+          fileName: photo.fileName,
+          mimeType: photo.mimeType,
+          mediaType: photo.type === 'video' ? 'video' : 'image',
+        });
+        setIsUploadingPhoto(false);
+        if (!attachment) {
+          setFeedbackError(copy.attachmentUploadError);
+          return;
+        }
+        setUploadedAttachment(attachment);
+      }
 
       await sendFeedback({
         feedbackId,
@@ -59,6 +82,7 @@ export default function FeedbackPage() {
       back();
     } catch (error) {
       errorToast(copy.submitError, error);
+      setFeedbackError(`${copy.submitError}: ${getErrorMessageFromError(error)}`);
     } finally {
       setIsUploadingPhoto(false);
     }
@@ -121,9 +145,33 @@ export default function FeedbackPage() {
               onSubmitEditing={() => void submit()}
             />
             {(isBug || isFeature) && (
-              <Button icon="image-plus" mode="outlined" onPress={() => void choosePhoto()}>
-                {photo ? copy.photoSelected : copy.addPhoto}
-              </Button>
+              <>
+                <Button icon="image-plus" mode="outlined" onPress={() => void choosePhoto()}>
+                  {uploadedAttachment ? copy.photoUploaded : photo ? copy.photoSelected : copy.addPhoto}
+                </Button>
+                {photo && (
+                  <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                    {photo.fileName ?? photo.uri.split(/[\\/]/).at(-1) ?? copy.photoSelected}
+                  </Text>
+                )}
+                {uploadedAttachment && (
+                  <View style={[styles.uploadedAttachment, { borderColor: colors.outlineVariant }]}>
+                    <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                      {copy.attachmentLink}
+                    </Text>
+                    <Pressable accessibilityRole="link" onPress={() => void Linking.openURL(uploadedAttachment.url)}>
+                      <Text variant="bodySmall" style={{ color: colors.primary }} numberOfLines={2}>
+                        {uploadedAttachment.url}
+                      </Text>
+                    </Pressable>
+                  </View>
+                )}
+              </>
+            )}
+            {feedbackError && (
+              <Text testID="feedback-error" variant="bodySmall" style={{ color: colors.error }}>
+                {feedbackError}
+              </Text>
             )}
             <Button
               mode="contained"
@@ -144,4 +192,5 @@ const styles = StyleSheet.create({
   cardContent: { gap: 12 },
   switches: { gap: 8 },
   textInput: { minHeight: 140 },
+  uploadedAttachment: { borderRadius: 8, borderWidth: 1, gap: 4, padding: 8 },
 });

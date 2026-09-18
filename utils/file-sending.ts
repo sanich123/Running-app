@@ -9,18 +9,38 @@ import {
   MAX_MEDIA_FILE_SIZE,
   createMediaUploadFormData,
   getMediaFileInfo,
+  SUPPORTED_VIDEO_FILE_EXTENSIONS,
+  SUPPORTED_VIDEO_MIME_TYPES,
   isSupportedImageExtension,
 } from './file-sending/file-utils';
-import type { CompressedMediaFile, MediaSource, MediaUploadOptions } from './file-sending/file-sending-types';
+import type {
+  CompressedMediaFile,
+  MediaSource,
+  MediaSourceMetadata,
+  MediaUploadOptions,
+} from './file-sending/file-sending-types';
 
-export type { CompressedMediaFile, MediaSource, MediaUploadOptions } from './file-sending/file-sending-types';
+export type {
+  CompressedMediaFile,
+  MediaSource,
+  MediaSourceMetadata,
+  MediaUploadOptions,
+} from './file-sending/file-sending-types';
 
 export type UploadMediaRequest = (body: FormData) => Promise<UploadedPhotoResponse>;
 
-export async function compressMediaFile(fileSrc: MediaSource): Promise<CompressedMediaFile | null> {
-  const { fileName, extension, isVideo } = getMediaFileInfo(fileSrc);
+export async function compressMediaFile(
+  fileSrc: MediaSource,
+  metadata: MediaSourceMetadata = {},
+): Promise<CompressedMediaFile | null> {
+  const { fileName, extension, isVideo, mimeType } = getMediaFileInfo(fileSrc, metadata);
 
-  if (!isVideo && !isSupportedImageExtension(extension)) {
+  if (isVideo && !isSupportedVideoFormat(extension, mimeType)) {
+    errorToast('Поддерживаются только видео MP4, MOV и WebM');
+    return null;
+  }
+
+  if (!isVideo && !mimeType.startsWith('image/') && !isSupportedImageExtension(extension)) {
     errorToast('Такое разрешение нельзя использовать для изображения');
     return null;
   }
@@ -34,6 +54,7 @@ export async function compressMediaFile(fileSrc: MediaSource): Promise<Compresse
       originalName: fileName,
       extension,
       isVideo,
+      mimeType,
     };
   } catch (error) {
     errorToast(isVideo ? 'Ошибка во время сжатия видео' : 'Ошибка во время сжатия изображения', error);
@@ -52,6 +73,7 @@ export async function uploadMediaFile(
       originalName: compressedFile.originalName,
       extension: compressedFile.extension,
       isVideo: compressedFile.isVideo,
+      mimeType: compressedFile.mimeType,
       uploadOptions,
     });
     return (await uploadRequest(formData)) ?? null;
@@ -111,6 +133,10 @@ async function compressVideo(fileSrc: MediaSource): Promise<MediaSource | null> 
   }
 
   return await VideoCompressor.compress(String(fileSrc));
+}
+
+function isSupportedVideoFormat(extension: string, mimeType: string) {
+  return extension ? SUPPORTED_VIDEO_FILE_EXTENSIONS.has(extension) : SUPPORTED_VIDEO_MIME_TYPES.has(mimeType);
 }
 
 async function compressImage(fileSrc: MediaSource): Promise<MediaSource> {

@@ -1,10 +1,15 @@
 import { uploadMediaWithThumbnail } from '@U/file-sending/utils';
-import type { MediaSource } from '@U/file-sending';
+import type { MediaSource, MediaSourceMetadata } from '@U/file-sending';
 
-export async function uploadFeedbackAttachment(fileSrc: MediaSource, feedbackId: string) {
+export async function uploadFeedbackAttachment(
+  fileSrc: MediaSource,
+  feedbackId: string,
+  metadata: MediaSourceMetadata = {},
+) {
   return await uploadMediaWithThumbnail(
     fileSrc,
     { scope: 'feedback', feedbackId },
     'Не удалось загрузить вложение feedback',
+    metadata,
   );
 }

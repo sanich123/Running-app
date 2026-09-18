@@ -99,7 +99,7 @@ describe('photo viewer', () => {
           {
             photos: [
               { url: 'https://cdn.example.com/photo.jpg', blurhash: 'blurhash' },
-              { url: 'avi', blurhash: null },
+              { url: 'webm', blurhash: null },
             ],
             hasMore: false,
             nextCursor: null,
@@ -116,7 +116,7 @@ describe('photo viewer', () => {
     expect(screen.getAllByTestId('photo-viewer-image').map((element) => element.props.children)).toContain(
       'https://cdn.example.com/photo.jpg',
     );
-    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain('avi');
+    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain('webm');
   });
 
   it('does not render a pager when a valid activity has no media', async () => {

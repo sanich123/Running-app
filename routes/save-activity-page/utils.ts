@@ -1,6 +1,11 @@
 import { uploadMediaWithThumbnail } from '@U/file-sending/utils';
-import type { MediaSource } from '@U/file-sending';
+import type { MediaSource, MediaSourceMetadata } from '@U/file-sending';
 
-export async function uploadActivityMedia(fileSrc: MediaSource) {
-  return await uploadMediaWithThumbnail(fileSrc, { scope: 'activity' }, 'Не удалось добавить медиа к активности');
+export async function uploadActivityMedia(fileSrc: MediaSource, metadata: MediaSourceMetadata = {}) {
+  return await uploadMediaWithThumbnail(
+    fileSrc,
+    { scope: 'activity' },
+    'Не удалось добавить медиа к активности',
+    metadata,
+  );
 }

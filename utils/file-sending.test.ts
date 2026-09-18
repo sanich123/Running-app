@@ -47,6 +47,7 @@ describe('file sending', () => {
       originalName: 'photo.JPG',
       extension: 'jpg',
       isVideo: false,
+      mimeType: 'image/jpeg',
     });
     expect(ImageCompressor.compress).toHaveBeenCalledWith('photo.JPG?cache=1');
     expect(uploadMedia).not.toHaveBeenCalled();
@@ -58,6 +59,7 @@ describe('file sending', () => {
       originalName: 'feedback.jpg',
       extension: 'jpg',
       isVideo: false,
+      mimeType: 'image/jpeg',
     };
 
     await expect(
@@ -79,6 +81,7 @@ describe('file sending', () => {
       originalName: 'activity.MP4',
       extension: 'mp4',
       isVideo: true,
+      mimeType: 'video/mp4',
     });
     expect(VideoCompressor.compress).toHaveBeenCalledWith('activity.MP4');
 
@@ -98,6 +101,9 @@ describe('file sending', () => {
     await expect(compressMediaFile('document.pdf')).resolves.toBeNull();
     expect(errorToast).toHaveBeenCalledWith('Такое разрешение нельзя использовать для изображения');
 
+    await expect(compressMediaFile('archive.mkv')).resolves.toBeNull();
+    expect(errorToast).toHaveBeenCalledWith('Поддерживаются только видео MP4, MOV и WebM');
+
     (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 15 * 1024 * 1024 + 1 });
     await expect(compressMediaFile('large.mp4')).resolves.toBeNull();
     expect(VideoCompressor.compress).not.toHaveBeenCalled();
@@ -114,7 +120,13 @@ describe('file sending', () => {
     uploadMedia.mockRejectedValue(uploadError);
     await expect(
       uploadMediaFile(
-        { file: 'compressed.jpg', originalName: 'photo.jpg', extension: 'jpg', isVideo: false },
+        {
+          file: 'compressed.jpg',
+          originalName: 'photo.jpg',
+          extension: 'jpg',
+          isVideo: false,
+          mimeType: 'image/jpeg',
+        },
         undefined,
         uploadMedia,
       ),
@@ -138,6 +150,7 @@ describe('file sending', () => {
       originalName: 'photo.png',
       extension: 'png',
       isVideo: false,
+      mimeType: 'image/png',
     });
     expect(ImageCompressor.compress).not.toHaveBeenCalled();
 
@@ -155,6 +168,7 @@ describe('file sending', () => {
       originalName: 'clip.mp4',
       extension: 'mp4',
       isVideo: true,
+      mimeType: 'video/mp4',
     });
     expect(VideoCompressor.compress).not.toHaveBeenCalled();
     expect(getVideoMetaData).not.toHaveBeenCalled();

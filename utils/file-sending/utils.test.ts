@@ -17,7 +17,13 @@ describe('uploadMediaWithThumbnail', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('compresses and uploads an image without creating a thumbnail', async () => {
-    const compressedFile = { file: 'compressed.jpg', originalName: 'photo.jpg', extension: 'jpg', isVideo: false };
+    const compressedFile = {
+      file: 'compressed.jpg',
+      originalName: 'photo.jpg',
+      extension: 'jpg',
+      isVideo: false,
+      mimeType: 'image/jpeg',
+    };
     mockCompressMediaFile.mockResolvedValue(compressedFile);
     mockUploadMediaFile.mockResolvedValue({
       url: 'https://cdn/photo.jpg',
@@ -33,12 +39,19 @@ describe('uploadMediaWithThumbnail', () => {
   });
 
   it('uploads a generated video thumbnail with the same options', async () => {
-    const compressedVideo = { file: 'compressed.mp4', originalName: 'video.mp4', extension: 'mp4', isVideo: true };
+    const compressedVideo = {
+      file: 'compressed.mp4',
+      originalName: 'video.mp4',
+      extension: 'mp4',
+      isVideo: true,
+      mimeType: 'video/mp4',
+    };
     const compressedThumbnail = {
       file: 'compressed-thumbnail.jpg',
       originalName: 'thumbnail.jpg',
       extension: 'jpg',
       isVideo: false,
+      mimeType: 'image/jpeg',
     };
     mockCompressMediaFile.mockResolvedValueOnce(compressedVideo).mockResolvedValueOnce(compressedThumbnail);
     mockUploadMediaFile

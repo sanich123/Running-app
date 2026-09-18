@@ -26,7 +26,7 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
             style={{ display: 'none' }}
             id="image-video-uploader"
             type="file"
-            accept="image/*,video/*"
+            accept="image/*,video/mp4,video/quicktime,video/webm"
             disabled={shouldBeDisabled}
             onChange={async (e) => {
               if (userId && e.target.files) {
@@ -34,7 +34,11 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
                 try {
                   setIsDisabled(true);
                   setIsLoading(true);
-                  const fileWithThumbnail = await uploadActivityMedia(fileSrc);
+                  const fileWithThumbnail = await uploadActivityMedia(fileSrc, {
+                    fileName: fileSrc.name,
+                    mimeType: fileSrc.type,
+                    mediaType: fileSrc.type?.startsWith('video/') ? 'video' : 'image',
+                  });
                   if (fileWithThumbnail) {
                     setImages([...images, fileWithThumbnail]);
                     dispatch(addPhotoUrl(fileWithThumbnail));
@@ -71,10 +75,15 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
             setIsLoading(true);
             try {
               const result = await getAccessToGallery();
-              if (result && !result.canceled) {
-                const fileSrc = result.assets[0].uri;
+              const asset = result?.assets?.[0];
+              if (result && !result.canceled && asset) {
+                const fileSrc = asset.uri;
                 if (userId) {
-                  const fileWithThumbnail = await uploadActivityMedia(fileSrc);
+                  const fileWithThumbnail = await uploadActivityMedia(fileSrc, {
+                    fileName: asset.fileName,
+                    mimeType: asset.mimeType,
+                    mediaType: asset.type === 'video' ? 'video' : 'image',
+                  });
                   if (fileWithThumbnail) {
                     setImages([...images, fileWithThumbnail]);
                     dispatch(addPhotoUrl(fileWithThumbnail));

@@ -1,4 +1,5 @@
-import { Linking, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Checkbox, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
@@ -7,12 +8,15 @@ export default function LocationConsent({
   accepted,
   onChange,
   disabled = false,
+  onDetailsPress,
 }: {
   accepted: boolean;
   onChange: (accepted: boolean) => void;
   disabled?: boolean;
+  onDetailsPress?: () => void;
 }) {
   const { colors } = useTheme();
+  const { push } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
   const isRussian = language === LANGUAGES.russian;
 
@@ -31,11 +35,12 @@ export default function LocationConsent({
           : 'I give separate consent to process location data for workout recording. '}
         <Text
           accessibilityRole="link"
-          onPress={() =>
-            void Linking.openURL(
-              `https://runich.netlify.app/${isRussian ? ROUTES.locationConsent : ROUTES.locationConsentEnglish}`,
-            )
-          }
+          onPress={() => {
+            onDetailsPress?.();
+            push(
+              `/${isRussian ? ROUTES.locationConsent : ROUTES.locationConsentEnglish}` as Parameters<typeof push>[0],
+            );
+          }}
           style={{ color: colors.primary }}>
           {isRussian ? 'Подробнее' : 'Read the consent'}
         </Text>

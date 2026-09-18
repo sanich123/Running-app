@@ -78,14 +78,23 @@ describe('Upload photos btn', () => {
     const setIsDisabled = jest.fn();
     const setImages = jest.fn();
     const uploadedImage = { url: 'https://cdn/photo.jpg', thumbnail: null };
-    (getAccessToGallery as jest.Mock).mockResolvedValue({ canceled: false, assets: [{ uri: 'photo.jpg' }] });
+    (getAccessToGallery as jest.Mock).mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'photo.jpg', fileName: 'photo.jpg', mimeType: 'image/jpeg' }],
+    });
     (uploadActivityMedia as jest.Mock).mockResolvedValue(uploadedImage);
     await renderWithProviders(
       <UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} setImages={setImages} images={[]} />,
     );
 
     await user.press(screen.getByText(UPLOAD_PHOTO_BTN.english.isInitial));
-    await waitFor(() => expect(uploadActivityMedia).toHaveBeenCalledWith('photo.jpg'));
+    await waitFor(() =>
+      expect(uploadActivityMedia).toHaveBeenCalledWith('photo.jpg', {
+        fileName: 'photo.jpg',
+        mimeType: 'image/jpeg',
+        mediaType: 'image',
+      }),
+    );
     expect(setImages).toHaveBeenCalledWith([uploadedImage]);
     expect(setIsDisabled).toHaveBeenNthCalledWith(1, true);
     expect(setIsDisabled).toHaveBeenLastCalledWith(false);
@@ -143,7 +152,12 @@ describe('Upload photos btn', () => {
     await act(async () => {
       await input.props.onChange({ target: { files: [{ name: 'web.jpg' }] } });
     });
-    await waitFor(() => expect(uploadActivityMedia).toHaveBeenCalledWith({ name: 'web.jpg' }));
+    await waitFor(() =>
+      expect(uploadActivityMedia).toHaveBeenCalledWith(
+        { name: 'web.jpg' },
+        { fileName: 'web.jpg', mimeType: undefined, mediaType: 'image' },
+      ),
+    );
     expect(setImages).toHaveBeenCalledWith([uploadedImage]);
   });
 });
