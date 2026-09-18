@@ -26,12 +26,12 @@ export default function SettingsPage() {
       }}>
       <LanguageSwitcher />
       <ChangeTheme />
-      <LegalInformation />
       <MigrationBtn />
       <EmailNotificationsBtn />
       <FeedbackBtn />
       <LogoutBtn />
       <DeleteAccountBtn />
+      <LegalInformation />
     </ScrollView>
   );
 }

@@ -45,9 +45,6 @@ export default function LegalInformationModal({
       backgroundStyle={{ backgroundColor: colors.surface }}
       handleIndicatorStyle={{ backgroundColor: colors.primary }}>
       <BottomSheetView style={[styles.sheet, { backgroundColor: colors.surface }]}>
-        <Text variant="titleLarge" style={styles.title}>
-          {isRussian ? 'Юридическая информация' : 'Legal information'}
-        </Text>
         <View style={styles.items}>
           {DOCUMENTS.map(({ id, route, englishRoute }) => (
             <TouchableRipple
