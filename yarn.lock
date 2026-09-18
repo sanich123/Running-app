@@ -10216,10 +10216,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mapbox-gl@npm:^3.30.0":
-  version: 3.30.0
-  resolution: "mapbox-gl@npm:3.30.0"
-  checksum: 10c0/fd7fd8968f93316904b4eed5c6c9a45515e86a1245278d2c0780bf3d08dabfad9228502b4547b8887b1ffac993b8a79a511e818249e7cd237d7fcdb7367dabf5
+"mapbox-gl@npm:^3.31.0":
+  version: 3.31.0
+  resolution: "mapbox-gl@npm:3.31.0"
+  checksum: 10c0/033a7e2ce9e2fa6be4da0243f65ffae28bb6496347be13052bf5ed1f4e80f535d2fa10ddfbb8176ccfb410f5fa868e0af77357b6a2c003750c6b210ce0d66ec8
   languageName: node
   linkType: hard
 
@@ -11768,12 +11768,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.9.7":
-  version: 3.9.7
-  resolution: "prettier@npm:3.9.7"
+"prettier@npm:^3.9.8":
+  version: 3.9.8
+  resolution: "prettier@npm:3.9.8"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/3bb72e3fd0292695fe1b808a7a3b67a0d68842c780f01ebca7ff1cf2fe05055478dccb513a8d022be59b3494497b4a3b6dc059baee116c1debe69bded535567b
+  checksum: 10c0/257e5ef11ba5006d0b0712271705701c065c8003e07763f996ce185d39633902f3fe1f814839eed76f75c97b6d5376d6157bd9f44db18cacb1dbdcb263cc66ae
   languageName: node
   linkType: hard
 
@@ -12951,11 +12951,11 @@ __metadata:
     jest: "npm:30.5.1"
     jest-expo: "npm:~57.0.5"
     madge: "npm:^8.0.0"
-    mapbox-gl: "npm:^3.30.0"
+    mapbox-gl: "npm:^3.31.0"
     moment: "npm:^2.31.0"
     msw: "npm:^2.15.0"
     npm-check-updates: "npm:^23.1.0"
-    prettier: "npm:^3.9.7"
+    prettier: "npm:^3.9.8"
     react: "npm:19.2.3"
     react-dom: "npm:19.2.3"
     react-hook-form: "npm:^7.88.0"

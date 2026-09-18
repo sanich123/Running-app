@@ -29,11 +29,7 @@ export default function LegalLinks() {
           onPress={() => push(`/${isRussian ? ROUTES.privacyPolicy : ROUTES.privacyPolicyEnglish}`)}
           accessibilityRole="link">
           <Text variant="bodySmall" style={[styles.link, { color: colors.primary }]}>
-            {
-              isRussian
-                ? 'Политикой в отношении обработки персональных данных'
-                : 'Personal Data Processing Policy'
-            }
+            {isRussian ? 'Политикой в отношении обработки персональных данных' : 'Personal Data Processing Policy'}
           </Text>
         </Pressable>
       </View>
