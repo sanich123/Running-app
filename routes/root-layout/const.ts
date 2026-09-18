@@ -11,6 +11,8 @@ export const PUBLIC_ROUTES = new Set([
   `/${ROUTES.changePassword}`,
   `/${ROUTES.privacyPolicy}`,
   `/${ROUTES.privacyPolicyEnglish}`,
+  `/${ROUTES.consents}`,
+  `/${ROUTES.consentsEnglish}`,
   `/${ROUTES.userAgreement}`,
   `/${ROUTES.userAgreementEnglish}`,
   `/${ROUTES.locationConsent}`,

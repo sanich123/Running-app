@@ -25,9 +25,11 @@ const EMAIL_SEND_ERROR = 'Не удалось отправить письмо';
 export default function LoginRegisterBtn({
   handleSubmit,
   authStep = SignInPageStates.login,
+  legalConsentAccepted = true,
 }: {
   handleSubmit: UseFormHandleSubmit<EmailPasswordData>;
   authStep?: SignInPageStates;
+  legalConsentAccepted?: boolean;
 }) {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
@@ -53,7 +55,11 @@ export default function LoginRegisterBtn({
       style={{ borderRadius: 8, marginTop: 8 }}
       accessibilityRole="button"
       loading={isSubmitting}
-      disabled={isDisabledWhenLogining}
+      disabled={
+        isDisabledWhenLogining ||
+        (authStep === SignInPageStates.login && !legalConsentAccepted) ||
+        (authStep === SignInPageStates.register && !legalConsentAccepted)
+      }
       onPress={handleSubmit(async ({ email, password }: EmailPasswordData) => {
         dispatch(setIsDisabledWhenLogining(true));
         dispatch(saveEmail(email));

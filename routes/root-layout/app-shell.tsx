@@ -66,12 +66,26 @@ export default function AppShell() {
                   options={{ title: language === 'russian' ? 'Обратная связь' : 'Feedback' }}
                 />
                 <Stack.Screen name={ROUTES.loginFromUrl} options={{ headerShown: false }} />
-                <Stack.Screen name={ROUTES.privacyPolicy} options={{ title: 'Политика конфиденциальности' }} />
+                <Stack.Screen
+                  name={ROUTES.privacyPolicy}
+                  options={{ title: 'Политика в отношении обработки персональных данных' }}
+                />
                 <Stack.Screen name={ROUTES.legalInformation} options={{ title: 'Юридическая информация' }} />
-                <Stack.Screen name={ROUTES.privacyPolicyEnglish} options={{ title: 'Privacy Policy' }} />
+                <Stack.Screen
+                  name={ROUTES.privacyPolicyEnglish}
+                  options={{ title: 'Personal Data Processing Policy' }}
+                />
+                <Stack.Screen name={ROUTES.consents} options={{ title: 'Согласие на обработку персональных данных' }} />
+                <Stack.Screen
+                  name={ROUTES.consentsEnglish}
+                  options={{ title: 'Consent to Personal Data Processing' }}
+                />
                 <Stack.Screen name={ROUTES.userAgreement} options={{ title: 'Пользовательское соглашение' }} />
                 <Stack.Screen name={ROUTES.userAgreementEnglish} options={{ title: 'User Agreement' }} />
-                <Stack.Screen name={ROUTES.locationConsent} options={{ title: 'Согласие на геолокацию' }} />
+                <Stack.Screen
+                  name={ROUTES.locationConsent}
+                  options={{ title: 'Согласие на обработку  данных геолокации' }}
+                />
                 <Stack.Screen name={ROUTES.locationConsentEnglish} options={{ title: 'Location Consent' }} />
                 <Stack.Screen name={ROUTES.accountDeletion} options={{ title: 'Удаление аккаунта' }} />
                 <Stack.Screen name={ROUTES.accountDeletionEnglish} options={{ title: 'Account Deletion' }} />

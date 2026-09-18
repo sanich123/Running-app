@@ -17,7 +17,7 @@ export const LEGAL_DOCUMENT_VERSION = {
   english: 'September 11, 2026. Version 1.0',
 } as const;
 
-export type LegalDocumentId = 'privacy' | 'agreement' | 'locationConsent' | 'accountDeletion';
+export type LegalDocumentId = 'privacy' | 'consents' | 'agreement' | 'locationConsent' | 'accountDeletion';
 
 export interface LegalSection {
   heading: string;
@@ -73,7 +73,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '5. Геолокация',
         paragraphs: [
-          'Перед системным запросом Android приложение показывает согласие на предоставление геолокации. Доступ к геолокации в фоновом режиме используется только для продолжения записи при заблокированном экране или свернутом приложении и прекращается после остановки тренировки.',
+          'Перед системным запросом Android на предоставление геолокации, приложение показывает согласие на предоставление геолокации. Доступ к геолокации в фоновом режиме используется только для продолжения записи при заблокированном экране или свернутом приложении и прекращается после остановки тренировки.',
           'Пользователь может отказаться или отозвать системное разрешение. Завершенные маршруты и координаты хранятся до удаления аккаунта; временные данные незавершенной тренировки удаляются после завершения, отмены или сброса записи.',
         ],
       },
@@ -94,6 +94,38 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         heading: '8. Подрядчики и передача',
         paragraphs: [
           'Для работы Runich могут привлекаться VK ID и Яндекс ID, почтовый провайдер, провайдеры API, базы данных, файлов и резервных копий, карт и CDN. Каждый получает только необходимый объем данных. Государственным органам данные передаются только по закону.',
+        ],
+      },
+    ],
+  },
+  consents: {
+    title: 'Согласие на обработку персональных данных',
+    intro: [
+      `Я, пользователь сервиса Runich, свободно, своей волей и в своем интересе даю ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}, согласие на обработку моих персональных данных.`,
+    ],
+    sections: [
+      {
+        heading: '1. Цели обработки',
+        paragraphs: [
+          'Согласие нужно для регистрации и авторизации, восстановления доступа, ведения профиля, записи тренировок, построения маршрутов, расчета статистики, публикации пользовательского контента и связи с пользователем по вопросам работы сервиса.',
+        ],
+      },
+      {
+        heading: '2. Состав данных',
+        paragraphs: [
+          'В зависимости от выбранных функций могут обрабатываться email, идентификатор аккаунта, данные профиля, сведения о тренировках и маршрутах, координаты во время записи, фотографии, комментарии, данные устройства и технические журналы. Вес и другие необязательные сведения обрабатываются только если пользователь сам их указал.',
+        ],
+      },
+      {
+        heading: '3. Действия и срок',
+        paragraphs: [
+          'Оператор может собирать, записывать, систематизировать, хранить, уточнять, извлекать, использовать, передавать техническим подрядчикам, обезличивать, блокировать, удалять и уничтожать данные в заявленных целях. Согласие действует до его отзыва или удаления аккаунта, если иной срок не установлен законом.',
+        ],
+      },
+      {
+        heading: '4. Отзыв согласия',
+        paragraphs: [
+          `Согласие можно отозвать, направив обращение на ${LEGAL_OPERATOR.email}. Отзыв может сделать недоступными функции, для которых нужны соответствующие данные; он не влияет на законность обработки, выполненной до отзыва.`,
         ],
       },
     ],
@@ -216,7 +248,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
 
 const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   privacy: {
-    title: 'Privacy Policy',
+    title: 'Personal Data Processing Policy',
     intro: [
       'This policy describes Runich personal-data processing: data categories, purposes, retention periods and user rights.',
     ],
@@ -288,6 +320,38 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       },
     ],
   },
+  consents: {
+    title: 'Consent to Personal Data Processing',
+    intro: [
+      `I freely and voluntarily consent to ${LEGAL_OPERATOR.name}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, processing my personal data for the Runich service.`,
+    ],
+    sections: [
+      {
+        heading: '1. Purposes',
+        paragraphs: [
+          'The consent covers registration and sign-in, account recovery, profile features, workout recording, route building, statistics, user content and service-related communication.',
+        ],
+      },
+      {
+        heading: '2. Data categories',
+        paragraphs: [
+          'Depending on the selected features, Runich may process email, account ID, profile data, workout and route data, coordinates during recording, photos, comments, device data and technical logs. Weight and other optional data are processed only when you provide them.',
+        ],
+      },
+      {
+        heading: '3. Operations and period',
+        paragraphs: [
+          'The controller may collect, record, organize, store, update, retrieve, use, transfer to technical processors, anonymize, restrict, delete and destroy data for the stated purposes. The consent remains valid until withdrawal or account deletion unless a different period is required by law.',
+        ],
+      },
+      {
+        heading: '4. Withdrawal',
+        paragraphs: [
+          `You may withdraw consent by contacting ${LEGAL_OPERATOR.email}. Withdrawal may make features that require the relevant data unavailable and does not affect processing that was lawful before withdrawal.`,
+        ],
+      },
+    ],
+  },
   agreement: {
     title: 'Runich User Agreement',
     intro: [
@@ -309,7 +373,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '3. Data, location and workouts',
         paragraphs: [
-          'Personal-data processing is governed by the separate Privacy Policy. Continuing registration or sign-in after the legal notice and links are shown means acceptance in the service interface. Route recording starts only after separate location consent and the system permission; background access is used only during recording.',
+          'Personal-data processing is governed by the separate Personal Data Processing Policy and consent. Continuing registration or sign-in after the legal notice and links are shown means acceptance in the service interface. Route recording starts only after separate location consent and the system permission; background access is used only during recording.',
           'Workouts and coordinates are kept until you delete the account unless you delete a workout earlier or a longer period is required by law.',
         ],
       },
@@ -413,17 +477,17 @@ export const LEGAL_DOCUMENTS = {
 
 export const LEGAL_DOCUMENT_LABELS = {
   [LANGUAGES.russian]: {
-    privacy: 'Политика конфиденциальности',
+    privacy: 'Политика в отношении обработки персональных данных',
     agreement: 'Пользовательское соглашение',
-    consents: 'Согласия пользователя',
-    locationConsent: 'Согласие на геолокацию',
+    consents: 'Согласие на обработку персональных данных',
+    locationConsent: 'Согласие на обработку данных геолокации',
     accountDeletion: 'Удаление аккаунта',
     legalInformation: 'Юридическая информация',
   },
   [LANGUAGES.english]: {
-    privacy: 'Privacy Policy',
+    privacy: 'Personal Data Processing Policy',
     agreement: 'User Agreement',
-    consents: 'User Consents',
+    consents: 'Consent to Personal Data Processing',
     locationConsent: 'Location Consent',
     accountDeletion: 'Account Deletion',
     legalInformation: 'Legal Information',

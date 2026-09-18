@@ -6,6 +6,7 @@ import DeleteAccountBtn from './delete-account/delete-account';
 import EmailNotificationsBtn from './email-notifications/email-notifications';
 import FeedbackBtn from './feedback-btn/feedback-btn';
 import LanguageSwitcher from './language-switcher/language-switcher';
+import LegalInformation from './legal-information/legal-information';
 import LogoutBtn from './logout/logout-btn';
 import MigrationBtn from './migration-btn/migration-btn';
 
@@ -25,6 +26,7 @@ export default function SettingsPage() {
       }}>
       <LanguageSwitcher />
       <ChangeTheme />
+      <LegalInformation />
       <MigrationBtn />
       <EmailNotificationsBtn />
       <FeedbackBtn />
