@@ -1,6 +1,8 @@
 import type { MediaSourceMetadata, MediaUploadOptions, MediaSource } from './file-sending-types';
+import type { MediaUploadManifestEntry } from '@R/services/photos/photos';
 
 export const MAX_MEDIA_FILE_SIZE = 15 * 1024 * 1024;
+export const MAX_MEDIA_BATCH_SIZE = 100 * 1024 * 1024;
 export const VIDEO_FILE_EXTENSIONS = new Set([
   '3g2',
   '3gp',
@@ -91,19 +93,54 @@ export function createMediaUploadFormData({
   uploadOptions: MediaUploadOptions;
 }) {
   const formData = new FormData();
-  const uploadFile =
-    typeof file === 'string'
-      ? {
-          uri: file,
-          name: originalName || `runich-${Date.now()}.${extension || getExtensionFromMimeType(mimeType, isVideo)}`,
-          type: mimeType,
-        }
-      : file;
-
-  formData.append('file', uploadFile as never);
+  formData.append('file', createUploadFile({ file, originalName, extension, isVideo, mimeType }) as never);
   if (uploadOptions.scope) formData.append('scope', uploadOptions.scope);
   if (uploadOptions.feedbackId) formData.append('feedbackId', uploadOptions.feedbackId);
   return formData;
+}
+
+export function createMediaUploadBatchFormData({
+  files,
+  uploadOptions,
+  manifest,
+}: {
+  files: MediaUploadFile[];
+  uploadOptions: MediaUploadOptions;
+  manifest: readonly MediaUploadManifestEntry[];
+}) {
+  if (files.length !== manifest.length) throw new Error('Manifest медиафайлов не совпадает с количеством файлов');
+  const hasUnknownFileSize = files.some(({ file }) => typeof file === 'string');
+  const totalBytes = files.reduce((total, { file }) => total + (typeof file === 'string' ? 0 : file.size), 0);
+  if (!hasUnknownFileSize && totalBytes >= MAX_MEDIA_BATCH_SIZE) {
+    throw new Error('Суммарный размер файлов должен быть меньше 100 МБ');
+  }
+
+  const formData = new FormData();
+  files.forEach(({ file, originalName, extension, isVideo, mimeType }) => {
+    formData.append('files', createUploadFile({ file, originalName, extension, isVideo, mimeType }) as never);
+  });
+  if (uploadOptions.scope) formData.append('scope', uploadOptions.scope);
+  if (uploadOptions.feedbackId) formData.append('feedbackId', uploadOptions.feedbackId);
+  formData.append('manifest', JSON.stringify(manifest));
+  return formData;
+}
+
+export interface MediaUploadFile {
+  file: MediaSource;
+  originalName: string;
+  extension: string;
+  isVideo: boolean;
+  mimeType: string;
+}
+
+function createUploadFile({ file, originalName, extension, isVideo, mimeType }: MediaUploadFile) {
+  return typeof file === 'string'
+    ? {
+        uri: file,
+        name: originalName || `runich-${Date.now()}.${extension || getExtensionFromMimeType(mimeType, isVideo)}`,
+        type: mimeType,
+      }
+    : file;
 }
 
 function getFileName(fileSrc: MediaSource) {

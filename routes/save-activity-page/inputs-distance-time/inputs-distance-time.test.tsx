@@ -47,6 +47,16 @@ describe('Inputs manual distance duration', () => {
     expect(mockSetParams).toHaveBeenCalledWith({ manualSeconds: '12' });
   });
 
+  it('limits distance to 300 kilometers', async () => {
+    mockStore.dispatch(setSavingDisabled(false));
+    const { getByTestId } = await renderWithProviders(<InputsDistanceTime isDisabled={false} />);
+
+    await fireEvent.changeText(getByTestId(INPUT_DISTANCE_ID), '300.5');
+
+    expect(getByTestId(INPUT_DISTANCE_ID).props.value).toBe('300');
+    expect(mockSetParams).toHaveBeenCalledWith({ manualDistance: '300' });
+  });
+
   it('limits hours to 48 and minutes and seconds to 59', async () => {
     mockStore.dispatch(setSavingDisabled(false));
     const { getByTestId } = await renderWithProviders(<InputsDistanceTime isDisabled={false} />);

@@ -8,6 +8,7 @@ export const CAMERA_SETTINGS = {
 
 export const CAMERA_TEXT = {
   [LANGUAGES.english]: {
+    cancelUpload: 'Cancel photo upload',
     title: 'Take a photo',
     permissionLoading: 'Preparing camera…',
     permissionTitle: 'Camera access is needed',
@@ -15,6 +16,7 @@ export const CAMERA_TEXT = {
     allowCamera: 'Allow camera',
   },
   [LANGUAGES.russian]: {
+    cancelUpload: 'Отменить загрузку фото',
     title: 'Сделать фото',
     permissionLoading: 'Подготавливаем камеру…',
     permissionTitle: 'Нужен доступ к камере',

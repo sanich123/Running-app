@@ -25,6 +25,17 @@ function getFirstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+function getManualDate(value: string | string[] | undefined, mode: string | undefined) {
+  const date = getFirstParam(value);
+  const now = new Date();
+
+  if (!date) return now.toISOString();
+  if (mode !== 'manual') return date;
+
+  const parsedDate = new Date(date);
+  return !Number.isNaN(parsedDate.getTime()) && parsedDate > now ? now.toISOString() : date;
+}
+
 function getManualActivityParams(params: ManualActivitySearchParams) {
   const mode = getFirstParam(params.mode);
 
@@ -34,7 +45,7 @@ function getManualActivityParams(params: ManualActivitySearchParams) {
     isEditingActivity: mode === 'edit',
     isManualAdding: mode === 'manual',
     isCameraVisible: getFirstParam(params.cameraVisible) === 'true',
-    manualDate: getFirstParam(params.manualDate) ?? new Date().toISOString(),
+    manualDate: getManualDate(params.manualDate, mode),
     manualDistance: getFirstParam(params.manualDistance) ?? '0',
     manualHours: getFirstParam(params.manualHours) ?? '0',
     manualMinutes: getFirstParam(params.manualMinutes) ?? '0',

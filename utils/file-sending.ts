@@ -1,12 +1,19 @@
+import { fetch as getNetworkState } from '@react-native-community/netinfo';
 import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 import { Platform } from 'react-native';
-import { photosApi, type UploadedPhotoResponse } from '@R/services/photos/photos';
+import {
+  photosApi,
+  type MediaUploadManifestEntry,
+  type UploadedPhotoBatchResponse,
+  type UploadedPhotoResponse,
+} from '@R/services/photos/photos';
 import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
 import {
   MAX_MEDIA_FILE_SIZE,
+  createMediaUploadBatchFormData,
   createMediaUploadFormData,
   getMediaFileInfo,
   SUPPORTED_VIDEO_FILE_EXTENSIONS,
@@ -17,6 +24,7 @@ import type {
   CompressedMediaFile,
   MediaSource,
   MediaSourceMetadata,
+  MediaUploadControl,
   MediaUploadOptions,
 } from './file-sending/file-sending-types';
 
@@ -24,10 +32,17 @@ export type {
   CompressedMediaFile,
   MediaSource,
   MediaSourceMetadata,
+  MediaUploadControl,
+  MediaUploadItem,
   MediaUploadOptions,
+  UploadedMedia,
 } from './file-sending/file-sending-types';
 
-export type UploadMediaRequest = (body: FormData) => Promise<UploadedPhotoResponse>;
+export type UploadMediaRequest = (body: FormData, control?: MediaUploadControl) => Promise<UploadedPhotoResponse>;
+export type UploadMediaBatchRequest = (
+  body: FormData,
+  control?: MediaUploadControl,
+) => Promise<UploadedPhotoBatchResponse[]>;
 
 export async function compressMediaFile(
   fileSrc: MediaSource,
@@ -66,8 +81,10 @@ export async function uploadMediaFile(
   compressedFile: CompressedMediaFile,
   uploadOptions: MediaUploadOptions = { scope: 'activity' },
   uploadRequest: UploadMediaRequest = uploadMediaToServer,
+  control?: MediaUploadControl,
 ): Promise<UploadedPhotoResponse | null> {
   try {
+    await ensureNetworkConnection(control);
     const formData = createMediaUploadFormData({
       file: compressedFile.file,
       originalName: compressedFile.originalName,
@@ -76,9 +93,35 @@ export async function uploadMediaFile(
       mimeType: compressedFile.mimeType,
       uploadOptions,
     });
-    return (await uploadRequest(formData)) ?? null;
+    return (await uploadRequest(formData, control)) ?? null;
   } catch (error) {
-    errorToast('Не удалось загрузить медиафайл', error);
+    if (!control?.signal?.aborted) errorToast('Не удалось загрузить медиафайл', error);
+    return null;
+  }
+}
+
+export async function uploadMediaFiles(
+  compressedFiles: CompressedMediaFile[],
+  uploadOptions: MediaUploadOptions = { scope: 'activity' },
+  manifest: readonly MediaUploadManifestEntry[] = compressedFiles.map((_, index) => ({
+    mediaId: `media-${index}`,
+    role: 'media',
+  })),
+  uploadRequest: UploadMediaBatchRequest = uploadMediaFilesToServer,
+  control?: MediaUploadControl,
+): Promise<UploadedPhotoBatchResponse[] | null> {
+  if (!compressedFiles.length) return [];
+
+  try {
+    await ensureNetworkConnection(control);
+    const formData = createMediaUploadBatchFormData({
+      files: compressedFiles,
+      uploadOptions,
+      manifest,
+    });
+    return (await uploadRequest(formData, control)) ?? null;
+  } catch (error) {
+    if (!control?.signal?.aborted) errorToast('Не удалось загрузить медиафайлы', error);
     return null;
   }
 }
@@ -93,12 +136,16 @@ export async function createVideoThumbnail(videoUrl: string): Promise<string | n
   }
 }
 
-export async function getAccessToGallery(mediaTypes: ImagePicker.MediaType[] = ['images', 'videos']) {
+export async function getAccessToGallery(
+  mediaTypes: ImagePicker.MediaType[] = ['images', 'videos'],
+  options: Pick<ImagePicker.ImagePickerOptions, 'allowsMultipleSelection' | 'selectionLimit'> = {},
+) {
   try {
     return await ImagePicker.launchImageLibraryAsync({
       mediaTypes,
       aspect: [4, 3],
       quality: 1,
+      ...options,
     });
   } catch (error) {
     errorToast('Не удалось открыть галерею', error);
@@ -144,6 +191,43 @@ async function compressImage(fileSrc: MediaSource): Promise<MediaSource> {
   return await ImageCompressor.compress(String(fileSrc));
 }
 
-async function uploadMediaToServer(body: FormData) {
-  return await store.dispatch(photosApi.endpoints.uploadPhoto.initiate(body)).unwrap();
+async function uploadMediaToServer(body: FormData, control?: MediaUploadControl) {
+  const request = store.dispatch(photosApi.endpoints.uploadPhoto.initiate({ body, onProgress: control?.onProgress }));
+  return await awaitUploadRequest(request, control);
+}
+
+async function uploadMediaFilesToServer(body: FormData, control?: MediaUploadControl) {
+  const request = store.dispatch(photosApi.endpoints.uploadPhotos.initiate({ body, onProgress: control?.onProgress }));
+  return await awaitUploadRequest(request, control);
+}
+
+async function awaitUploadRequest<TResult>(
+  request: { unwrap: () => Promise<TResult>; abort: () => void },
+  control?: MediaUploadControl,
+): Promise<TResult> {
+  const abortRequest = () => request.abort();
+  if (control?.signal) {
+    if (control.signal.aborted) request.abort();
+    else control.signal.addEventListener('abort', abortRequest, { once: true });
+  }
+
+  try {
+    return await request.unwrap();
+  } finally {
+    control?.signal?.removeEventListener('abort', abortRequest);
+  }
+}
+
+async function ensureNetworkConnection(control?: MediaUploadControl) {
+  if (control?.signal?.aborted) return;
+
+  let networkState: Awaited<ReturnType<typeof getNetworkState>> | null = null;
+  try {
+    networkState = await getNetworkState();
+  } catch {
+    return;
+  }
+  if (networkState?.isConnected === false || networkState?.isInternetReachable === false) {
+    errorToast('Отсутствует соединение с Интернет. Попытка загрузки будет продолжена.');
+  }
 }

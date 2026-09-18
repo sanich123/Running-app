@@ -11,12 +11,13 @@ import {
 import { useAppSelector } from '@R/typed-hooks';
 import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
 import CustomImage from '@S/custom-image/custom-image';
-import { getPhotoUrl, isVideoUrl } from './utils';
+import { getPhotoUrl, isDirectMediaUrl, isVideoUrl } from './utils';
 import type { ActivityPhotoResponse } from '@R/runich-api/types';
 
 export default function PhotoViewer() {
   const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();
   const webPhotoUrl = getPhotoUrl(photoUrl);
+  const isDirectMedia = isDirectMediaUrl(webPhotoUrl);
   const { colors } = useTheme();
   const { userId: ownerId } = useAppSelector(({ auth }) => auth);
   const { data: activity } = useGetActivityByActivityIdQuery(`${photoUrl}`, {
@@ -58,7 +59,7 @@ export default function PhotoViewer() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {Platform.OS === 'web' ? (
+      {Platform.OS === 'web' || isDirectMedia ? (
         <>
           {isVideoUrl(webPhotoUrl) ? (
             <VideoViewer url={webPhotoUrl} />

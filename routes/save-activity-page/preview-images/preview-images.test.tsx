@@ -25,6 +25,26 @@ describe('Preview images', () => {
     expect(image).toBeOnTheScreen();
     expect(image.props.source.uri).toEqual('someUrl');
   });
+  it('renders compact camera previews in a horizontal list', async () => {
+    const setImages = jest.fn();
+    await renderWithProviders(
+      <PreviewImages
+        images={[
+          { url: 'someUrl', thumbnail: null },
+          { url: 'someOtherUrl', thumbnail: null },
+          { url: 'thirdUrl', thumbnail: null },
+          { url: 'fourthUrl', thumbnail: null },
+        ]}
+        setImages={setImages}
+        isDisabled={false}
+        compact
+        horizontal
+      />,
+      { store: mockStore },
+    );
+    expect(screen.getByTestId('horizontal-preview-list').props.horizontal).toBe(true);
+    expect(screen.getByTestId('imagePreview-3')).toBeOnTheScreen();
+  });
   it('should correctly delete and image', async () => {
     const setImages = jest.fn();
     await renderWithProviders(

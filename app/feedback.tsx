@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import uuid from 'react-native-uuid';
-import { Linking, Pressable, View, StyleSheet } from 'react-native';
+import { Image, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Card, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
@@ -10,10 +10,13 @@ import { FEEDBACK_TEXT } from '@Routes/feedback/const';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import SwitchRow from '@S/feedback/switch-row';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
+import { uploadFeedbackAttachments } from '@U/feedback-sending';
 import { getAccessToGallery } from '@U/file-sending';
-import { uploadFeedbackAttachment } from './utils';
+import type { FeedbackAttachment } from '@R/services/feedback/feedback';
 import type { FeedbackKind } from '@Routes/feedback/const';
 import type * as ImagePicker from 'expo-image-picker';
+
+const MAX_FEEDBACK_ATTACHMENTS = 10;
 
 export default function FeedbackPage() {
   const { colors } = useTheme();
@@ -24,11 +27,7 @@ export default function FeedbackPage() {
   const [firstConsent, setFirstConsent] = useState(false);
   const [secondConsent, setSecondConsent] = useState(false);
   const [text, setText] = useState('');
-  const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset | null>(null);
-  const [uploadedAttachment, setUploadedAttachment] = useState<{
-    url: string;
-    thumbnail: string | null;
-  } | null>(null);
+  const [attachments, setAttachments] = useState<FeedbackAttachment[]>([]);
   const [feedbackId] = useState(() => String(uuid.v4()));
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
@@ -37,47 +36,66 @@ export default function FeedbackPage() {
   const isBug = kind === 'bug';
   const isFeature = kind === 'feature';
   const canWrite = kind === 'thanks' || (isBug && secondConsent) || (isFeature && secondConsent);
-
   async function choosePhoto() {
+    if (attachments.length >= MAX_FEEDBACK_ATTACHMENTS) return;
+
+    let result: ImagePicker.ImagePickerResult | undefined;
     try {
-      const result = await getAccessToGallery(['images', 'videos']);
-      if (result && !result.canceled && result.assets[0]) {
-        setPhoto(result.assets[0]);
-        setUploadedAttachment(null);
-        setFeedbackError(null);
-      }
+      result = await getAccessToGallery(['images', 'videos'], {
+        allowsMultipleSelection: true,
+        selectionLimit: MAX_FEEDBACK_ATTACHMENTS - attachments.length,
+      });
     } catch (error) {
       errorToast(copy.openGalleryError, error);
       setFeedbackError(`${copy.openGalleryError}: ${getErrorMessageFromError(error)}`);
+      return;
+    }
+
+    if (!result || result.canceled || !result.assets?.length) return;
+
+    const selectedPhotos = result.assets.slice(0, MAX_FEEDBACK_ATTACHMENTS - attachments.length);
+    setFeedbackError(null);
+    setIsUploadingPhoto(true);
+    try {
+      const uploadedAttachments = await uploadFeedbackAttachments(
+        selectedPhotos.map((photo) => ({
+          fileSrc: photo.file ?? photo.uri,
+          metadata: {
+            fileName: photo.fileName,
+            mimeType: photo.mimeType,
+            mediaType: photo.type === 'video' ? 'video' : 'image',
+          },
+          mediaId: String(uuid.v4()),
+        })),
+        feedbackId,
+      );
+      const successfulAttachments = uploadedAttachments.filter(
+        (attachment): attachment is NonNullable<typeof attachment> => attachment !== null,
+      );
+      if (successfulAttachments.length) {
+        setAttachments((currentAttachments) => [...currentAttachments, ...successfulAttachments]);
+      }
+      if (successfulAttachments.length !== selectedPhotos.length) {
+        setFeedbackError(copy.attachmentUploadError);
+      }
+    } catch (error) {
+      errorToast(copy.attachmentUploadError, error);
+      setFeedbackError(`${copy.attachmentUploadError}: ${getErrorMessageFromError(error)}`);
+    } finally {
+      setIsUploadingPhoto(false);
     }
   }
 
   async function submit() {
     if (!kind || !text.trim() || !canWrite) return;
     setFeedbackError(null);
-    let attachment = uploadedAttachment;
     try {
-      if (photo && !attachment) {
-        setIsUploadingPhoto(true);
-        attachment = await uploadFeedbackAttachment(photo.file ?? photo.uri, feedbackId, {
-          fileName: photo.fileName,
-          mimeType: photo.mimeType,
-          mediaType: photo.type === 'video' ? 'video' : 'image',
-        });
-        setIsUploadingPhoto(false);
-        if (!attachment) {
-          setFeedbackError(copy.attachmentUploadError);
-          return;
-        }
-        setUploadedAttachment(attachment);
-      }
-
       await sendFeedback({
         feedbackId,
         kind,
         text: text.trim(),
         deviceInfo: JSON.stringify({ platform, deviceName, ...deviceMetadata }),
-        ...(attachment ? { attachments: [attachment] } : {}),
+        ...(attachments.length ? { attachments } : {}),
       }).unwrap();
       back();
     } catch (error) {
@@ -146,26 +164,27 @@ export default function FeedbackPage() {
             />
             {(isBug || isFeature) && (
               <>
-                <Button icon="image-plus" mode="outlined" onPress={() => void choosePhoto()}>
-                  {uploadedAttachment ? copy.photoUploaded : photo ? copy.photoSelected : copy.addPhoto}
+                <Button
+                  icon="image-plus"
+                  mode="outlined"
+                  disabled={attachments.length >= MAX_FEEDBACK_ATTACHMENTS || isUploadingPhoto}
+                  onPress={() => void choosePhoto()}>
+                  {attachments.length ? copy.photoUploaded : copy.addPhoto}
                 </Button>
-                {photo && (
-                  <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                    {photo.fileName ?? photo.uri.split(/[\\/]/).at(-1) ?? copy.photoSelected}
-                  </Text>
-                )}
-                {uploadedAttachment && (
-                  <View style={[styles.uploadedAttachment, { borderColor: colors.outlineVariant }]}>
-                    <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                      {copy.attachmentLink}
-                    </Text>
-                    <Pressable accessibilityRole="link" onPress={() => void Linking.openURL(uploadedAttachment.url)}>
-                      <Text variant="bodySmall" style={{ color: colors.primary }} numberOfLines={2}>
-                        {uploadedAttachment.url}
-                      </Text>
-                    </Pressable>
-                  </View>
-                )}
+                <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                  {copy.attachmentLimit}
+                </Text>
+                <View style={styles.attachmentPreviews}>
+                  {attachments.map(({ url, thumbnail }, index) => (
+                    <Image
+                      key={`${url}-${index}`}
+                      testID={`feedback-attachment-preview-${index}`}
+                      source={{ uri: thumbnail || url }}
+                      style={[styles.attachmentPreview, { borderColor: colors.outlineVariant }]}
+                      resizeMode="cover"
+                    />
+                  ))}
+                </View>
               </>
             )}
             {feedbackError && (
@@ -192,5 +211,13 @@ const styles = StyleSheet.create({
   cardContent: { gap: 12 },
   switches: { gap: 8 },
   textInput: { minHeight: 140 },
-  uploadedAttachment: { borderRadius: 8, borderWidth: 1, gap: 4, padding: 8 },
+  attachmentPreviews: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  attachmentPreview: {
+    aspectRatio: 1,
+    borderRadius: 8,
+    borderWidth: 1,
+    flexBasis: '30%',
+    flexGrow: 1,
+    maxWidth: '32%',
+  },
 });

@@ -7,7 +7,7 @@ export function getPhotoUrl(value: string | string[] | undefined) {
     return '';
   }
 
-  if (/^(?:https?|data|blob):\/\//i.test(rawValue) || /^data:/i.test(rawValue)) {
+  if (/^(?:https?|blob|file):\/\//i.test(rawValue) || /^data:/i.test(rawValue)) {
     return rawValue;
   }
 
@@ -16,6 +16,10 @@ export function getPhotoUrl(value: string | string[] | undefined) {
   } catch {
     return rawValue;
   }
+}
+
+export function isDirectMediaUrl(url: string) {
+  return /^(?:https?|blob|file):\/\//i.test(url) || /^data:/i.test(url);
 }
 
 export function isVideoUrl(url: string) {

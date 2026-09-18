@@ -14,6 +14,7 @@ interface MockXhr {
   onerror?: () => void;
   ontimeout?: () => void;
   onabort?: () => void;
+  upload: { onprogress?: (event: ProgressEvent) => void };
 }
 
 describe('photos API upload transport', () => {
@@ -28,6 +29,7 @@ describe('photos API upload transport', () => {
       abort: jest.fn(),
       status: 0,
       responseText: '',
+      upload: {},
     };
     Object.defineProperty(globalThis, 'XMLHttpRequest', {
       configurable: true,
@@ -63,7 +65,9 @@ describe('photos API upload transport', () => {
     const store = createStore();
     store.dispatch(setAuthTokens({ accessToken: 'access-token' }));
 
-    await expect(store.dispatch(photosApi.endpoints.uploadPhoto.initiate(formData)).unwrap()).resolves.toEqual({
+    await expect(
+      store.dispatch(photosApi.endpoints.uploadPhoto.initiate({ body: formData })).unwrap(),
+    ).resolves.toEqual({
       url: 'https://cdn.example/photo.jpg',
       key: 'user/photo.jpg',
       contentType: 'image/jpeg',
@@ -86,11 +90,104 @@ describe('photos API upload transport', () => {
       });
     });
 
-    const result = await createStore().dispatch(photosApi.endpoints.uploadPhoto.initiate(new FormData()));
+    const result = await createStore().dispatch(photosApi.endpoints.uploadPhoto.initiate({ body: new FormData() }));
 
     expect(result.error).toEqual({ status: 413, data: { message: 'Файл слишком большой' } });
   });
+
+  it('reports upload progress from XMLHttpRequest', async () => {
+    xhr.send.mockImplementation(() => {
+      xhr.upload.onprogress?.({ loaded: 50, total: 100, lengthComputable: true } as ProgressEvent);
+      void Promise.resolve().then(() => {
+        xhr.status = 201;
+        xhr.responseText = JSON.stringify({
+          url: 'https://cdn.example/photo.jpg',
+          key: 'user/photo.jpg',
+          contentType: 'image/jpeg',
+        });
+        xhr.onload?.();
+      });
+    });
+    const onProgress = jest.fn();
+
+    await expect(
+      createStore()
+        .dispatch(photosApi.endpoints.uploadPhoto.initiate({ body: new FormData(), onProgress }))
+        .unwrap(),
+    ).resolves.toEqual(expect.objectContaining({ url: 'https://cdn.example/photo.jpg' }));
+
+    expect(onProgress).toHaveBeenCalledWith(0.5);
+  });
+
+  it('sends a manifest batch to the batch endpoint', async () => {
+    xhr.send.mockImplementation((body: FormData) => {
+      expect(body.getAll('files')).toHaveLength(2);
+      expect(body.get('manifest')).toBe(
+        JSON.stringify([
+          { mediaId: 'media-1', role: 'media' },
+          { mediaId: 'media-2', role: 'thumbnail' },
+        ]),
+      );
+      void Promise.resolve().then(() => {
+        xhr.status = 201;
+        xhr.responseText = JSON.stringify([
+          {
+            url: 'https://cdn.example/photo.jpg',
+            key: 'photo.jpg',
+            contentType: 'image/jpeg',
+            mediaId: 'media-1',
+            role: 'media',
+          },
+          {
+            url: 'https://cdn.example/thumbnail.jpg',
+            key: 'thumbnail.jpg',
+            contentType: 'image/jpeg',
+            mediaId: 'media-2',
+            role: 'thumbnail',
+          },
+        ]);
+        xhr.onload?.();
+      });
+    });
+
+    const formData = new FormData();
+    formData.append('files', 'native-file-1');
+    formData.append('files', 'native-file-2');
+    formData.append(
+      'manifest',
+      JSON.stringify([
+        { mediaId: 'media-1', role: 'media' },
+        { mediaId: 'media-2', role: 'thumbnail' },
+      ]),
+    );
+
+    await expect(storeDispatchUploadBatch(formData)).resolves.toEqual([
+      {
+        url: 'https://cdn.example/photo.jpg',
+        key: 'photo.jpg',
+        contentType: 'image/jpeg',
+        mediaId: 'media-1',
+        role: 'media',
+      },
+      {
+        url: 'https://cdn.example/thumbnail.jpg',
+        key: 'thumbnail.jpg',
+        contentType: 'image/jpeg',
+        mediaId: 'media-2',
+        role: 'thumbnail',
+      },
+    ]);
+
+    const baseUrl = process.env.EXPO_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+    expect(xhr.open).toHaveBeenCalledWith('POST', `${baseUrl.replace(/\/$/, '')}/photo/batch`);
+  });
 });
+
+async function storeDispatchUploadBatch(formData: FormData) {
+  const store = createStore();
+  store.dispatch(setAuthTokens({ accessToken: 'access-token' }));
+  return await store.dispatch(photosApi.endpoints.uploadPhotos.initiate({ body: formData })).unwrap();
+}
 
 function createStore() {
   return configureStore({

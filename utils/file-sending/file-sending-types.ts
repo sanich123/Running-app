@@ -11,6 +11,22 @@ export interface MediaUploadOptions {
   feedbackId?: string;
 }
 
+export interface MediaUploadControl {
+  onProgress?: (progress: number) => void;
+  signal?: AbortSignal;
+}
+
+export interface MediaUploadItem {
+  fileSrc: MediaSource;
+  metadata?: MediaSourceMetadata;
+  mediaId: string;
+}
+
+export interface UploadedMedia {
+  url: string;
+  thumbnail: string | null;
+}
+
 export interface CompressedMediaFile {
   file: MediaSource;
   originalName: string;

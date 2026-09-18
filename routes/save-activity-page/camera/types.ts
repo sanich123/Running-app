@@ -27,4 +27,11 @@ export interface ShotBtnProps {
   cameraRef: MutableRefObject<CameraView | null>;
   setPhotos: (arg: PhotoVideoType[]) => void;
   photos: PhotoVideoType[];
+  maxPhotos?: number;
+}
+
+export interface CameraLauncherProps {
+  photos?: PhotoVideoType[];
+  setPhotos?: (arg: PhotoVideoType[]) => void;
+  maxPhotos?: number;
 }

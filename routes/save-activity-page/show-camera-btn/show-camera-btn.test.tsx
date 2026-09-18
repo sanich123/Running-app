@@ -3,7 +3,6 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { SHOW_CAMERA_BTN } from './const';
 import ShowCameraBtn from './show-camera-btn';
 
 const mockSetParams = jest.fn();
@@ -15,18 +14,18 @@ jest.mock('expo-router', () => ({
 describe('Show camera btn', () => {
   it('should correctly renders in english', async () => {
     await renderWithProviders(<ShowCameraBtn isDisabled={false} />, { store: mockStore });
-    expect(screen.getByText(new RegExp(`${SHOW_CAMERA_BTN.russian.text}`)));
+    expect(screen.getByTestId('show-camera-button')).toBeOnTheScreen();
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<ShowCameraBtn isDisabled={false} />, { store: mockStore });
-    expect(screen.getByText(new RegExp(`${SHOW_CAMERA_BTN.english.text}`)));
+    expect(screen.getByTestId('show-camera-button')).toBeOnTheScreen();
   });
   it('should correctly change global store', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockSetParams.mockClear();
     await renderWithProviders(<ShowCameraBtn isDisabled={false} />, { store: mockStore });
-    const showCameraBtn = screen.getByText(new RegExp(`${SHOW_CAMERA_BTN.russian.text}`));
+    const showCameraBtn = screen.getByTestId('show-camera-button');
     await userEvent.press(showCameraBtn);
     expect(mockSetParams).toHaveBeenCalledWith({ cameraVisible: 'true' });
   });

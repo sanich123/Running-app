@@ -38,11 +38,11 @@ export default function PreviewImageCloseBtn({
   return (
     <IconButton
       icon={isDeleting ? 'progress-clock' : 'close'}
-      size={compact ? 13 : 15}
-      iconColor={colors.onError}
-      containerColor={colors.error}
-      mode="contained-tonal"
-      style={[styles.closeBtn, compact && styles.compactCloseBtn]}
+      size={14}
+      iconColor={colors.onSurfaceVariant}
+      containerColor={colors.surfaceVariant}
+      mode="contained"
+      style={[styles.closeBtn, { borderColor: colors.surface }, compact && styles.compactCloseBtn]}
       onPress={() => void deleteImage()}
       disabled={shouldBeDisabled}
       testID="deleteIcon"
@@ -52,13 +52,20 @@ export default function PreviewImageCloseBtn({
 
 const styles = StyleSheet.create({
   closeBtn: {
+    alignItems: 'center',
+    borderColor: 'transparent',
+    borderRadius: 16,
+    borderWidth: 2,
     elevation: 8,
-    height: 32,
+    height: 30,
+    justifyContent: 'center',
+    margin: 0,
+    padding: 0,
     position: 'absolute',
-    right: 2,
+    right: -2,
     top: 5,
-    width: 32,
+    width: 30,
     zIndex: 10,
   },
-  compactCloseBtn: { height: 28, right: 2, top: 2, width: 28 },
+  compactCloseBtn: { top: 5 },
 });

@@ -1,3 +1,4 @@
+import { fetch as getNetworkState } from '@react-native-community/netinfo';
 import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
@@ -8,11 +9,15 @@ import {
   createVideoThumbnail,
   getAccessToGallery,
   uploadMediaFile,
+  uploadMediaFiles,
+  type UploadMediaBatchRequest,
   type UploadMediaRequest,
 } from './file-sending';
+import { MAX_MEDIA_BATCH_SIZE } from './file-sending/file-utils';
 
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
 jest.mock('expo-video-thumbnails', () => ({ getThumbnailAsync: jest.fn() }));
+jest.mock('@react-native-community/netinfo', () => ({ fetch: jest.fn() }));
 jest.mock('react-native-compressor', () => ({
   Image: { compress: jest.fn() },
   Video: { compress: jest.fn() },
@@ -21,6 +26,8 @@ jest.mock('react-native-compressor', () => ({
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 const originalPlatform = Platform.OS;
 const uploadMedia = jest.fn() as jest.MockedFunction<UploadMediaRequest>;
+const uploadMediaBatch = jest.fn() as jest.MockedFunction<UploadMediaBatchRequest>;
+const mockGetNetworkState = getNetworkState as jest.MockedFunction<typeof getNetworkState>;
 
 describe('file sending', () => {
   beforeEach(() => {
@@ -29,6 +36,7 @@ describe('file sending', () => {
     (ImageCompressor.compress as jest.Mock).mockResolvedValue('compressed-image.jpg');
     (VideoCompressor.compress as jest.Mock).mockResolvedValue('compressed-video.mp4');
     (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 1_000 });
+    mockGetNetworkState.mockResolvedValue({ isConnected: true, isInternetReachable: true } as never);
     uploadMedia.mockResolvedValue({
       url: 'https://cdn.example/photo.jpg',
       key: 'user/photo.jpg',
@@ -73,6 +81,86 @@ describe('file sending', () => {
     const body = uploadMedia.mock.calls[0]?.[0] as FormData;
     expect(body.get('scope')).toBe('feedback');
     expect(body.get('feedbackId')).toBe('feedback-id');
+  });
+
+  it('warns about an offline network without blocking the upload attempt', async () => {
+    mockGetNetworkState.mockResolvedValue({ isConnected: false, isInternetReachable: false } as never);
+    const compressedFile = {
+      file: 'compressed-image.jpg',
+      originalName: 'photo.jpg',
+      extension: 'jpg',
+      isVideo: false,
+      mimeType: 'image/jpeg',
+    };
+
+    await expect(uploadMediaFile(compressedFile, undefined, uploadMedia)).resolves.toEqual(
+      expect.objectContaining({ url: 'https://cdn.example/photo.jpg' }),
+    );
+    expect(uploadMedia).toHaveBeenCalled();
+    expect(errorToast).toHaveBeenCalledWith('Отсутствует соединение с Интернет. Попытка загрузки будет продолжена.');
+  });
+
+  it('uploads a batch with repeated files and a manifest', async () => {
+    const compressedFile = {
+      file: 'compressed-image.jpg',
+      originalName: 'photo.jpg',
+      extension: 'jpg',
+      isVideo: false,
+      mimeType: 'image/jpeg',
+    };
+    uploadMediaBatch.mockResolvedValue([
+      {
+        url: 'https://cdn.example/photo.jpg',
+        key: 'user/photo.jpg',
+        contentType: 'image/jpeg',
+        mediaId: 'media-1',
+        role: 'media',
+      },
+    ]);
+
+    await expect(
+      uploadMediaFiles(
+        [compressedFile],
+        { scope: 'activity' },
+        [{ mediaId: 'media-1', role: 'media' }],
+        uploadMediaBatch,
+      ),
+    ).resolves.toMatchObject([{ mediaId: 'media-1', role: 'media' }]);
+
+    const body = uploadMediaBatch.mock.calls[0]?.[0] as FormData;
+    expect(body.getAll('files')).toHaveLength(1);
+    expect(body.get('manifest')).toBe(JSON.stringify([{ mediaId: 'media-1', role: 'media' }]));
+    expect(body.get('scope')).toBe('activity');
+  });
+
+  it('rejects a browser batch that is 100 MB or larger before sending it', async () => {
+    const oversizedFile = {
+      name: 'oversized.jpg',
+      size: MAX_MEDIA_BATCH_SIZE,
+      type: 'image/jpeg',
+    } as File;
+
+    await expect(
+      uploadMediaFiles(
+        [
+          {
+            file: oversizedFile,
+            originalName: oversizedFile.name,
+            extension: 'jpg',
+            isVideo: false,
+            mimeType: oversizedFile.type,
+          },
+        ],
+        { scope: 'activity' },
+        [{ mediaId: 'media-1', role: 'media' }],
+        uploadMediaBatch,
+      ),
+    ).resolves.toBeNull();
+    expect(uploadMediaBatch).not.toHaveBeenCalled();
+    expect(errorToast).toHaveBeenCalledWith(
+      'Не удалось загрузить медиафайлы',
+      expect.objectContaining({ message: 'Суммарный размер файлов должен быть меньше 100 МБ' }),
+    );
   });
 
   it('compresses videos independently from uploading them', async () => {
@@ -145,6 +233,10 @@ describe('file sending', () => {
     (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValue({ canceled: false, assets: [] });
 
     await expect(getAccessToGallery()).resolves.toEqual({ canceled: false, assets: [] });
+    await getAccessToGallery(['images', 'videos'], { allowsMultipleSelection: true, selectionLimit: 5 });
+    expect(ImagePicker.launchImageLibraryAsync).toHaveBeenLastCalledWith(
+      expect.objectContaining({ allowsMultipleSelection: true, selectionLimit: 5 }),
+    );
     await expect(compressMediaFile(webFile)).resolves.toEqual({
       file: webFile,
       originalName: 'photo.png',
