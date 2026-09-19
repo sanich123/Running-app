@@ -8,13 +8,14 @@ export const LEGAL_OPERATOR = {
   countryRussian: 'Российская Федерация',
   countryEnglish: 'Russian Federation',
   inn: '343803304189',
-  address: 'г. Москва, ул. Айвазовского, д. 6, к. 1, кв. 233',
+  addressRussian: 'Российская Федерация, г. Москва, ул. Айвазовского, д. 6, к. 1',
+  addressEnglish: 'Russian Federation, Moscow, 6 Ayvazovskogo St., Building 1',
   email: 'aovoronin.piano@gmail.com',
 } as const;
 
 export const LEGAL_DOCUMENT_VERSION = {
-  russian: '11 сентября 2026 г. Версия 1.0',
-  english: 'September 11, 2026. Version 1.0',
+  russian: '19 сентября 2026 г. Версия 1.3',
+  english: 'September 19, 2026. Version 1.3',
 } as const;
 
 export type LegalDocumentId = 'privacy' | 'consents' | 'agreement' | 'locationConsent' | 'accountDeletion';
@@ -42,7 +43,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '1. Оператор',
         paragraphs: [
-          `Оператор: ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich предоставляет функции авторизации, записи тренировок, маршрутов, статистики, профиля и общения пользователей.`,
+          `Оператор: ${LEGAL_OPERATOR.name}, адрес: ${LEGAL_OPERATOR.addressRussian}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich предоставляет функции авторизации, записи тренировок, маршрутов, статистики, профиля и общения пользователей.`,
         ],
       },
       {
@@ -51,7 +52,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         bullets: [
           'аккаунт: внутренний идентификатор, email, подтверждение email и способ авторизации;',
           'OAuth: email и поля базового профиля, полученные от VK ID или Яндекс ID, — имя, фамилия, город и фото, если они предоставлены. Идентификатор OAuth используется для текущей авторизации и сопоставления аккаунта.',
-          'профиль: имя, фамилия, город, пол, дата рождения, вид спорта, описание, фото и опциональный вес;',
+          'профиль: имя, фамилия, город, пол, дата рождения, вид спорта, описание, фото и вес. Все поля являются необязательными и указываются по желанию пользователя;',
           'тренировки и маршруты: вид спорта, дата, дистанция, длительность, темп/скорость, шаги, описание, видимость, фото/видео, временные точки, координаты, высота и другие параметры, переданные устройством;',
           'технические данные: идентификатор сессии и устройства, модель, платформа, версии ОС и приложения, user-agent, IP-адрес, журналы ошибок и геопозиция сессии, если она передана для авторизации или восстановления состояния.',
         ],
@@ -86,14 +87,14 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '7. Обработка, хранение и удаление',
         paragraphs: [
-          'Оператор выполняет сбор, запись, систематизацию, хранение, уточнение, извлечение, использование, передачу подрядчикам, обезличивание, блокирование, удаление и уничтожение только в заявленных целях. Первичная запись и основные операции с данными граждан РФ выполняются в базах данных на территории РФ.',
-          'Данные аккаунта, профиля, тренировок и маршрутов хранятся до удаления пользователем аккаунта, если более длительный срок не нужен по закону. После удаления аккаунта данные удаляются.',
+          'Оператор выполняет сбор, запись, систематизацию, хранение, уточнение, извлечение, использование, передачу подрядчикам, обезличивание, блокирование, удаление и уничтожение только в заявленных целях. Основные серверы приложения и базы данных Runich в рабочей среде размещаются в инфраструктуре Timeweb на территории Российской Федерации. Файлы и медиаматериалы хранятся в S3-совместимом хранилище Timeweb.',
+          'Если иное не указано в документе, данные аккаунта, профиля, тренировок, маршрутов, обращений и технические данные хранятся до удаления пользователем аккаунта. После подтверждения удаления аккаунта данные удаляются.',
         ],
       },
       {
         heading: '8. Подрядчики и передача',
         paragraphs: [
-          'Для работы Runich могут привлекаться VK ID и Яндекс ID, почтовый провайдер, провайдеры API, базы данных, файлов и резервных копий, карт и CDN. Каждый получает только необходимый объем данных. Государственным органам данные передаются только по закону.',
+          `Для работы Runich могут привлекаться VK ID и Яндекс ID, почтовый провайдер, провайдеры API, базы данных, файлов и резервных копий, карт и CDN. Каждый получает только необходимый объем данных. По вопросам обработки данных, удаления аккаунта, доступа, исправления или отзыва согласия можно обратиться на ${LEGAL_OPERATOR.email}. Государственным органам данные передаются только по закону.`,
         ],
       },
     ],
@@ -101,7 +102,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   consents: {
     title: 'Согласие на обработку персональных данных',
     intro: [
-      `Я, пользователь сервиса Runich, свободно, своей волей и в своем интересе даю ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}, согласие на обработку моих персональных данных.`,
+      `Я, пользователь сервиса Runich, свободно, своей волей и в своем интересе даю ${LEGAL_OPERATOR.name}, адрес: ${LEGAL_OPERATOR.addressRussian}, ИНН ${LEGAL_OPERATOR.inn}, согласие на обработку моих персональных данных.`,
     ],
     sections: [
       {
@@ -113,7 +114,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Состав данных',
         paragraphs: [
-          'В зависимости от выбранных функций могут обрабатываться email, идентификатор аккаунта, данные профиля, сведения о тренировках и маршрутах, координаты во время записи, фотографии, комментарии, данные устройства и технические журналы. Вес и другие необязательные сведения обрабатываются только если пользователь сам их указал.',
+          'В зависимости от выбранных функций могут обрабатываться email, идентификатор аккаунта, данные профиля, сведения о тренировках и маршрутах, координаты во время записи, фотографии, комментарии, данные устройства и технические журналы. Необязательные сведения обрабатываются только если пользователь сам их указал.',
         ],
       },
       {
@@ -139,7 +140,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '1. Сервис и оператор',
         paragraphs: [
-          `Сервис предоставляет ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich предоставляет инструменты авторизации, записи тренировок, маршрутов и статистики, профиля и общения пользователей.`,
+          `Сервис предоставляет ${LEGAL_OPERATOR.name}, адрес: ${LEGAL_OPERATOR.addressRussian}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich предоставляет инструменты авторизации, записи тренировок, маршрутов и статистики, профиля и общения пользователей.`,
         ],
       },
       {
@@ -180,13 +181,13 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '7. Ограничение доступа и удаление',
         paragraphs: [
-          'Оператор может ограничить доступ при нарушении соглашения, угрозе безопасности или требовании закона. Пользователь может удалить аккаунт в настройках приложения или по инструкции на странице «Удаление аккаунта». Удаление прекращает доступ и запускает удаление связанных данных с учетом законных исключений и ротации резервных копий.',
+          'Оператор может ограничить доступ при нарушении соглашения, угрозе безопасности или требовании закона. Пользователь может удалить аккаунт в настройках приложения или по инструкции на странице «Удаление аккаунта». Удаление прекращает доступ и удаляет связанные данные с учетом законных исключений.',
         ],
       },
       {
         heading: '8. Изменения и применимое право',
         paragraphs: [
-          `Новая редакция публикуется на этой странице. Продолжение использования означает принятие изменений, если закон не требует отдельного согласия. Применяется право РФ, если обязательные нормы страны пользователя не устанавливают иное.`,
+          `Новая редакция публикуется на этой странице. Продолжение использования означает принятие изменений, если закон не требует отдельного согласия. Вопросы и обращения принимаются по адресу ${LEGAL_OPERATOR.email}. Применяется право РФ, если обязательные нормы страны пользователя не устанавливают иное.`,
         ],
       },
     ],
@@ -194,7 +195,9 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
 
   locationConsent: {
     title: 'Согласие на обработку данных геолокации',
-    intro: [`Оператор: ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}.`],
+    intro: [
+      `Оператор: ${LEGAL_OPERATOR.name}, адрес: ${LEGAL_OPERATOR.addressRussian}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}.`,
+    ],
     sections: [
       {
         heading: '1. Цель и состав данных',
@@ -205,7 +208,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Период и системное разрешение',
         paragraphs: [
-          'Геолокация используется во время активной тренировки. Фоновый доступ нужен только при заблокированном экране или свернутом приложении и прекращается после остановки тренировки. Завершенные маршруты и координаты хранятся до удаления аккаунта, если не удалены вместе с тренировкой или более длительное хранение не требуется законом.',
+          'Системное разрешение может предоставлять доступ к геолокации в фоне в любое время, но Runich обращается к геолокации в фоне только во время активной тренировки — при заблокированном экране или свернутом приложении. Обращение к геолокации прекращается после остановки тренировки. Завершенные маршруты и координаты хранятся до удаления аккаунта, если не удалены вместе с тренировкой или более длительное хранение не требуется законом.',
           'После этого согласия приложение запрашивает системное разрешение. Без него запись маршрута недоступна или может быть неполной.',
         ],
       },
@@ -221,7 +224,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   accountDeletion: {
     title: 'Удаление аккаунта и обращения пользователя',
     intro: [
-      `Удалить аккаунт можно в приложении Runich или по email оператора: ${LEGAL_OPERATOR.email}. Оператор: ${LEGAL_OPERATOR.name}, ИНН ${LEGAL_OPERATOR.inn}.`,
+      `Удалить аккаунт можно в приложении Runich или по email оператора: ${LEGAL_OPERATOR.email}. Оператор: ${LEGAL_OPERATOR.name}, адрес: ${LEGAL_OPERATOR.addressRussian}, ИНН ${LEGAL_OPERATOR.inn}.`,
     ],
     sections: [
       {
@@ -239,7 +242,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '3. Результат и другие обращения',
         paragraphs: [
-          'Удаляются аккаунт, профиль, тренировки, маршруты и координаты, материалы, комментарии, отметки «нравится», связи и активные сессии.',
+          `Удаляются аккаунт, профиль, тренировки, маршруты и координаты, материалы, комментарии, отметки «нравится», связи и активные сессии. По вопросам удаления и другим обращениям можно написать на ${LEGAL_OPERATOR.email}.`,
         ],
       },
     ],
@@ -256,66 +259,58 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '1. Controller',
         paragraphs: [
-          `Controller: ${LEGAL_OPERATOR.name}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, correspondence address: ${LEGAL_OPERATOR.address}, email: ${LEGAL_OPERATOR.email}. Runich provides sign-in, workout and route recording, statistics, profile and user-interaction features.`,
+          `Controller: ${LEGAL_OPERATOR.name}, address: ${LEGAL_OPERATOR.addressEnglish}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich provides sign-in, workout and route recording, statistics, profile and user-interaction features.`,
         ],
       },
       {
         heading: '2. Data we process',
         paragraphs: ['Depending on the selected features:'],
         bullets: [
-          'account: Runich user ID, email, email verification and authentication method;',
-          'OAuth: email and basic-profile fields received from VK ID or Yandex ID — name, surname, city and photo when provided. No separate vkId/yandexId fields are created; the OAuth identifier is used for current authentication and account matching;',
-          'profile: name, surname, city, gender, date of birth, sport, bio, photo and optional weight;',
-          'workouts and routes: sport, date, distance, duration, pace/speed, steps, description, visibility, photos/videos, timestamps, coordinates, altitude and other device parameters;',
-          'technical data: session and device IDs, model, platform, OS and app versions, user-agent, IP address, error logs and session location when sent for authentication or recovery.',
+          'account: internal Runich identifier, email, email verification and authentication method;',
+          'OAuth: email and basic-profile fields received from VK ID or Yandex ID — name, surname, city and photo when provided. The OAuth identifier is used for current authentication and account matching;',
+          'profile: name, surname, city, optional gender, date of birth, sport, bio, photo and optional weight;',
+          'workouts and routes: sport, date, distance, duration, pace/speed, steps, description, visibility, photos/videos, timestamps, coordinates, altitude and other parameters supplied by the device;',
+          'technical data: session and device identifier, model, platform, OS and app versions, user-agent, IP address, error logs and session location when supplied for authentication or state recovery.',
         ],
       },
       {
         heading: '3. Purposes',
         paragraphs: [
-          'Data is used for registration, email/VK ID/Yandex ID sign-in, access recovery and Runich features: workouts, routes, statistics, profiles and user content.',
-          'Location is used only to record an active workout. Weight is voluntary and not required for registration.',
-          'Technical data supports security, abuse prevention, troubleshooting, support and legal compliance.',
+          'Data is needed for registration, sign-in by email, VK ID or Yandex ID, access recovery and Runich features: workout and route recording, statistics, profiles and user content.',
+          'Location is used only to record an active workout; weight is voluntary and is not required for registration.',
+          'Technical data is used for security, abuse prevention, troubleshooting, support and compliance with legal requirements.',
         ],
       },
       {
         heading: '4. OAuth and email',
         paragraphs: [
-          'VK ID and Yandex ID provide email and basic-profile fields to create or find an account and fill its profile. Provider passwords and OAuth tokens are not stored in the profile or used for unrelated purposes. Email registration is available only with an address from a Russian email provider in the .ru or .рф domain zone; addresses with foreign domain names are not accepted for registration.',
+          'When you sign in through VK ID or Yandex ID, email and basic-profile fields are used to create or find an account and fill its profile. Provider passwords and OAuth tokens are not stored in the profile or used for unrelated purposes. Email registration is available only with an address from a Russian email provider in the .ru or .рф domain zone; addresses with foreign domain names are not accepted for registration.',
         ],
       },
       {
         heading: '5. Location data',
         paragraphs: [
-          'Before the Android system request, Runich shows separate location consent. Background access is used only to continue recording while the screen is locked or the app is minimized and stops when the workout stops.',
-          'You may refuse or revoke the system permission. Completed routes and coordinates are kept until you delete the account; temporary unfinished-workout data is removed when recording is completed, cancelled or reset.',
+          'Before the Android system request to grant location access, the app shows location consent. Background location access is used only to continue recording while the screen is locked or the app is minimized and stops when the workout stops.',
+          'You may refuse or revoke the system permission. Completed routes and coordinates are kept until you delete the account; temporary data from an unfinished workout is deleted after recording is completed, cancelled or reset.',
         ],
       },
       {
-        heading: '6. Weight and user content',
+        heading: '6. User content',
         paragraphs: [
-          'Weight is stored only if you enter it in your profile and can be removed by clearing the field or deleting the account. Photos, videos, descriptions, comments and other content are displayed according to your visibility choice; you must have the rights needed to publish it.',
+          'Photos, videos, descriptions, comments and other materials are displayed to the extent selected by the user; the user must have the rights required to publish them.',
         ],
       },
       {
         heading: '7. Processing, storage and deletion',
         paragraphs: [
-          'Runich collects, records, organizes, stores, updates, retrieves, uses, transfers to processors, anonymizes, restricts, deletes and destroys data only for the stated purposes. Primary recording and main operations with Russian citizens’ data use databases located in the Russian Federation.',
-          'Account, profile, workout and route data are kept until you delete the account unless a longer period is required by law. An individual workout may be deleted where available. After deletion, data is deleted or anonymized; backups and technical logs may remain until rotation or for the period needed for security, disputes or legal compliance.',
+          'The controller collects, records, organizes, stores, updates, retrieves, uses, transfers to processors, anonymizes, blocks, deletes and destroys data only for the stated purposes. The main Runich application servers and databases in the production environment are hosted in Timeweb infrastructure in the Russian Federation. Files and media are stored in Timeweb S3-compatible storage.',
+          'Unless this document states otherwise, account, profile, workout, route, support-request and technical data are kept until the user deletes the account. After deletion is confirmed, the data is deleted.',
         ],
       },
       {
-        heading: '8. Processors and disclosures',
+        heading: '8. Processors and transfers',
         paragraphs: [
-          'Runich may use VK ID, Yandex ID, mail, API, database, file and backup, map and CDN providers. Each receives only the data needed for its task and must protect it by contract and applicable law. Disclosures to public authorities are made only when legally required.',
-          'If a processor is outside Russia or a cross-border transfer occurs, the controller completes the legally required steps before the transfer and gives notice or obtains separate consent where required.',
-        ],
-      },
-      {
-        heading: '9. Rights, security and changes',
-        paragraphs: [
-          `You may request access, correction, blocking, deletion, restriction, information about recipients or withdraw consent where consent is the legal basis. Contact ${LEGAL_OPERATOR.email} from the email connected with your account; identity verification may be requested.`,
-          'The controller uses legal, organizational and technical safeguards. New versions are published with a date and version; new consent is obtained when a change of purpose requires it by law.',
+          `Runich may use VK ID and Yandex ID, a mail provider, API, database, file and backup, map and CDN providers. Each receives only the amount of data necessary for its task. For questions about processing, account deletion, access, correction or withdrawal of consent, contact ${LEGAL_OPERATOR.email}. Data is disclosed to public authorities only as required by law.`,
         ],
       },
     ],
@@ -323,31 +318,31 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   consents: {
     title: 'Consent to Personal Data Processing',
     intro: [
-      `I freely and voluntarily consent to ${LEGAL_OPERATOR.name}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, processing my personal data for the Runich service.`,
+      `I, a user of the Runich service, freely, of my own will and in my own interest, give ${LEGAL_OPERATOR.name}, address: ${LEGAL_OPERATOR.addressEnglish}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, my consent to the processing of my personal data.`,
     ],
     sections: [
       {
         heading: '1. Purposes',
         paragraphs: [
-          'The consent covers registration and sign-in, account recovery, profile features, workout recording, route building, statistics, user content and service-related communication.',
+          'The consent is needed for registration and sign-in, access recovery, profile management, workout recording, route building, statistics calculation, publication of user content and communication with the user about the service.',
         ],
       },
       {
         heading: '2. Data categories',
         paragraphs: [
-          'Depending on the selected features, Runich may process email, account ID, profile data, workout and route data, coordinates during recording, photos, comments, device data and technical logs. Weight and other optional data are processed only when you provide them.',
+          'Depending on the selected features, Runich may process email, account identifier, profile data including optional gender and weight, workout and route information, coordinates during recording, photos, comments, device data and technical logs. Optional information is processed only when the user provides it.',
         ],
       },
       {
         heading: '3. Operations and period',
         paragraphs: [
-          'The controller may collect, record, organize, store, update, retrieve, use, transfer to technical processors, anonymize, restrict, delete and destroy data for the stated purposes. The consent remains valid until withdrawal or account deletion unless a different period is required by law.',
+          'The controller may collect, record, organize, store, update, retrieve, use, transfer to technical processors, anonymize, block, delete and destroy data for the stated purposes. The consent remains valid until it is withdrawn or the account is deleted unless a different period is established by law.',
         ],
       },
       {
         heading: '4. Withdrawal',
         paragraphs: [
-          `You may withdraw consent by contacting ${LEGAL_OPERATOR.email}. Withdrawal may make features that require the relevant data unavailable and does not affect processing that was lawful before withdrawal.`,
+          `You may withdraw consent by sending a request to ${LEGAL_OPERATOR.email}. Withdrawal may make features that require the relevant data unavailable; it does not affect the lawfulness of processing carried out before withdrawal.`,
         ],
       },
     ],
@@ -355,88 +350,89 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   agreement: {
     title: 'Runich User Agreement',
     intro: [
-      'This Agreement governs the Runich application and web version. By selecting registration or continuing after reviewing the notice and links, you accept it separately from personal-data consent.',
+      'By pressing the registration button or continuing to use the service after reviewing this document, the user accepts the Agreement.',
     ],
     sections: [
       {
-        heading: '1. Service and controller',
+        heading: '1. Service and operator',
         paragraphs: [
-          `The service is provided by ${LEGAL_OPERATOR.name}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, correspondence address: ${LEGAL_OPERATOR.address}, email: ${LEGAL_OPERATOR.email}. Runich provides sign-in, workout and route recording, statistics, profile and user-interaction tools.`,
+          `The service is provided by ${LEGAL_OPERATOR.name}, address: ${LEGAL_OPERATOR.addressEnglish}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich provides sign-in, workout and route recording, statistics, profile and user-interaction tools.`,
         ],
       },
       {
         heading: '2. Account',
         paragraphs: [
-          'Provide a valid email and keep access to it. You are responsible for activity from your account. Do not create fake accounts, impersonate others, bypass restrictions or access other users’ data. Sign-in is available by email and password or VK ID/Yandex ID.',
+          'The user provides a valid email, keeps access to it and is responsible for activity in the account. Accounts must not be created for fraud, bypassing restrictions, impersonating another person or accessing someone else’s data. Sign-in is available by email and password or through VK ID/Yandex ID.',
         ],
       },
       {
         heading: '3. Data, location and workouts',
         paragraphs: [
-          'Personal-data processing is governed by the separate Personal Data Processing Policy and consent. Continuing registration or sign-in after the legal notice and links are shown means acceptance in the service interface. Route recording starts only after separate location consent and the system permission; background access is used only during recording.',
-          'Workouts and coordinates are kept until you delete the account unless you delete a workout earlier or a longer period is required by law.',
+          'Personal-data processing is governed by the separate Policy. Continuing registration or sign-in after the legal notice with links is displayed means that the user accepts the documents in the service interface. Route recording starts only after separate consent to grant location access and the system permission; background location tracking is used only during workout recording.',
+          'Workouts and coordinates are kept until the account is deleted unless the user deletes a workout earlier or a longer period is required by law.',
         ],
       },
       {
         heading: '4. User content',
         paragraphs: [
-          'You retain rights to uploaded content and grant Runich the right to store, technically process and display it as needed for selected features and visibility. You guarantee that publication does not violate law, copyright, image rights or another person’s privacy.',
+          'The user retains rights to uploaded materials and grants Runich the right to store, technically process and display them to the extent necessary for the selected features and visibility settings. The user guarantees that publication does not violate the law, copyright, image rights or the privacy of other persons.',
         ],
       },
       {
         heading: '5. Prohibited use',
-        paragraphs: ['You must not:'],
+        paragraphs: ['The following is prohibited:'],
         bullets: [
-          'use fake accounts, other people’s data, unlawful activity, threats, harassment, spam or malicious code;',
-          'disrupt infrastructure or collect user data automatically without permission;',
-          'publish content that violates third-party rights or applicable law.',
+          'using fictitious accounts, other people’s data, unlawful activity, threats, harassment, spam or malicious code;',
+          'disrupting the infrastructure or collecting user data by automated means without permission;',
+          'publishing materials that violate third-party rights or applicable law.',
         ],
       },
       {
-        heading: '6. Fitness information and availability',
+        heading: '6. Sports information and availability',
         paragraphs: [
-          'Runich is not a medical provider and does not replace a doctor, coach or emergency service. Metrics are informational; you assess your health and workout safety yourself.',
-          'Runich aims to remain available but does not guarantee uninterrupted service during network, device, app-store, map or other third-party failures, maintenance or force majeure events.',
+          'Runich is not a medical organization and does not replace a doctor, coach or emergency service. The metrics are informational; the user independently assesses their health and workout safety.',
+          'The operator seeks to keep the service available but does not guarantee uninterrupted operation during failures of communications, devices, app stores, map and other external services, maintenance or force majeure.',
         ],
       },
       {
-        heading: '7. Restriction and deletion',
+        heading: '7. Access restriction and deletion',
         paragraphs: [
-          'The controller may restrict access for a breach, security risk or legal requirement. You may delete the account in app settings or via the Account Deletion page. Deletion ends access and starts removal of related data, subject to legal exceptions and backup rotation.',
+          'The operator may restrict access in the event of a breach of the Agreement, a security threat or a legal requirement. The user may delete the account in the app settings or using the instructions on the Account Deletion page. Deletion ends access and deletes related data, subject to legal exceptions.',
         ],
       },
       {
         heading: '8. Changes and governing law',
         paragraphs: [
-          `Updated versions are published on this page. Continued use means acceptance unless separate consent is required. Send questions to ${LEGAL_OPERATOR.email}. Russian law applies unless mandatory rules in the user’s country provide otherwise.`,
+          `A new version is published on this page. Continued use means acceptance of the changes unless the law requires separate consent. Questions and requests are accepted at ${LEGAL_OPERATOR.email}. Russian law applies unless mandatory rules of the user’s country provide otherwise.`,
         ],
       },
     ],
   },
 
   locationConsent: {
-    title: 'Location Data Consent',
+    title: 'Consent to Process Location Data',
     intro: [
-      `This consent is separate from consent to other data processing and from the Android system permission. Controller: ${LEGAL_OPERATOR.name}, INN ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}.`,
+      `Controller: ${LEGAL_OPERATOR.name}, address: ${LEGAL_OPERATOR.addressEnglish}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}.`,
     ],
     sections: [
       {
-        heading: '1. Purpose and data',
+        heading: '1. Purpose and data categories',
         paragraphs: [
-          'I voluntarily consent to receiving and processing device location to record, build and display an active workout route, calculate distance, speed, pace and statistics, and recover a recording after a failure. Data may include latitude, longitude, time, altitude, accuracy, speed and heading when supplied by the device.',
+          'I voluntarily allow the device location to be received and processed for recording, building and displaying an active workout route, calculating distance, speed, pace and statistics, and recovering a recording after a failure. This may include latitude, longitude, time, altitude, accuracy, speed and direction of movement when supplied by the device.',
         ],
       },
       {
         heading: '2. Period and system permission',
         paragraphs: [
-          'Location is used during an active workout. Background access is needed only when the screen is locked or the app is minimized and stops when the workout stops. Completed routes and coordinates are kept until you delete the account unless deleted with the workout or retained longer as required by law.',
-          'After this consent, the app requests the system permission. Without it, route recording is unavailable or may be incomplete.',
+          'The system permission may allow background location access at any time, but Runich accesses location in the background only during an active workout, when the screen is locked or the app is minimized. Location access stops when the workout stops. Completed routes and coordinates are kept until the account is deleted unless they are deleted with the workout or a longer period is required by law.',
+          'After this consent, the app requests system permission. Without it, route recording is unavailable or may be incomplete.',
         ],
       },
       {
-        heading: '3. Refusal, withdrawal and disclosures',
+        heading: '3. Refusal, withdrawal and transfer',
         paragraphs: [
-          'I may refuse, close the request or revoke permission in device settings. Revocation does not automatically delete a saved route; delete the workout or account or contact the controller. Coordinates may be sent to technical processors only for route storage, processing, backup and map display; disclosures to public authorities are made only when legally required.',
+          'I may refuse, close the request or revoke permission in the device settings. Revocation does not delete an already saved route: to delete it, delete the workout or account, or contact the controller.',
+          'Coordinates may be transferred to technical processors only for route storage, route processing, backup and map display. They are disclosed to public authorities only as required by law.',
         ],
       },
     ],
@@ -444,7 +440,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   accountDeletion: {
     title: 'Account Deletion and User Requests',
     intro: [
-      `Delete your Runich account in the app or by emailing ${LEGAL_OPERATOR.email}. Controller: ${LEGAL_OPERATOR.name}, INN ${LEGAL_OPERATOR.inn}, correspondence address: ${LEGAL_OPERATOR.address}.`,
+      `The account can be deleted in the Runich app or by emailing the operator at ${LEGAL_OPERATOR.email}. Controller: ${LEGAL_OPERATOR.name}, address: ${LEGAL_OPERATOR.addressEnglish}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}.`,
     ],
     sections: [
       {
@@ -454,16 +450,15 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         ],
       },
       {
-        heading: '2. Email request',
+        heading: '2. Request by email',
         paragraphs: [
-          `If you cannot sign in, email ${LEGAL_OPERATOR.email} from the account email with the subject “Runich account deletion” and a clear deletion request. Do not send passwords or sign-in codes; identity or email-ownership verification may be requested.`,
+          `If you cannot sign in, email ${LEGAL_OPERATOR.email} from the account email with the subject “Runich account deletion”, include the account email and ask to delete the account and related data. Do not send a password or sign-in codes; the controller may request confirmation of identity or email ownership.`,
         ],
       },
       {
         heading: '3. Result and other requests',
         paragraphs: [
-          'The controller deletes or anonymizes the account, profile, workouts, routes and coordinates, content, comments, likes, connections and active sessions except data retained by law. Backups and technical logs are cleared on rotation or kept for a limited period needed for security, disputes or legal compliance.',
-          `Email ${LEGAL_OPERATOR.email} for access, correction, restriction, consent withdrawal or complaints.`,
+          `The account, profile, workouts, routes and coordinates, materials, comments, likes, connections and active sessions are deleted. For deletion requests and other requests, contact ${LEGAL_OPERATOR.email}.`,
         ],
       },
     ],

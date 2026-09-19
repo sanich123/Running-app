@@ -46,6 +46,10 @@ export default function LegalIndexPage({ language }: { language: LANGUAGES }) {
           {language === LANGUAGES.russian ? LEGAL_OPERATOR.statusRussian : LEGAL_OPERATOR.statusEnglish}
         </Text>
         <Text variant="bodyMedium">
+          <Text style={styles.label}>{language === LANGUAGES.russian ? 'Адрес' : 'Address'}: </Text>
+          {language === LANGUAGES.russian ? LEGAL_OPERATOR.addressRussian : LEGAL_OPERATOR.addressEnglish}
+        </Text>
+        <Text variant="bodyMedium">
           <Text style={styles.label}>{language === LANGUAGES.russian ? 'ИНН' : 'INN'}: </Text>
           {LEGAL_OPERATOR.inn}
         </Text>

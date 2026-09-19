@@ -35,11 +35,11 @@ export default {
           ],
         },
         NSLocationAlwaysAndWhenInUseUsageDescription:
-          'Приложению Runich нужен доступ к данным геолокации в фоне все время для отслеживания тренировок',
+          'Приложению Runich нужен доступ к геолокации в фоне, чтобы продолжать запись активной тренировки при заблокированном экране или свернутом приложении. Вне тренировки геолокация в фоне не используется.',
         NSLocationWhenInUseUsageDescription:
-          'Приложению Runich нужен доступ к данным геолокации для отслеживания тренировок',
+          'Приложению Runich нужен доступ к геолокации во время использования для записи активной тренировки. Вне тренировки геолокация не используется.',
         NSMotionUsageDescription:
-          'Приложение Runich использует даннные о смене типа активности (ходьба, бег) для улучшения отслеживания тренировок',
+          'Приложение Runich использует данные о движении и шагах для определения активности и подсчета шагов во время тренировки',
       },
       bundleIdentifier: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
     },
@@ -129,11 +129,14 @@ export default {
         'expo-sensors',
         {
           motionPermission:
-            'Разрешите приложению Runich доступ к данным движения для подсчёта шагов во время тренировки',
+            'Разрешите приложению Runich доступ к данным движения и шагам для определения активности и подсчёта шагов во время тренировки',
         },
       ],
       '@rnmapbox/maps',
-      ['expo-secure-store', { faceIDPermission: 'Разрешите приложению runich доступ к биометрическим данным FaceId ' }],
+      [
+        'expo-secure-store',
+        { faceIDPermission: 'Разрешите приложению Runich использовать Face ID для защиты данных приложения' },
+      ],
       [
         'expo-build-properties',
         {
@@ -155,7 +158,7 @@ export default {
         'expo-image-picker',
         {
           photosPermission:
-            'Для добавления фото к тренировке необходимо дать разрешение на доступ к галерее устройства',
+            'Для добавления фото и видео к тренировке разрешите приложению Runich доступ к медиатеке устройства',
           microphonePermission: false,
         },
       ],
@@ -166,13 +169,13 @@ export default {
           isAndroidForegroundServiceEnabled: true,
           isIosBackgroundLocationEnabled: true,
           locationAlwaysAndWhenInUsePermission:
-            'Разрешите приложению Runich использовать данные о местоположении в фоне все время. Это необходимо для записи тренировок. ',
+            'Разрешите приложению Runich использовать геолокацию в фоне. Доступ нужен, чтобы продолжать запись активной тренировки при заблокированном экране или свернутом приложении. Вне тренировки геолокация в фоне не используется.',
         },
       ],
       [
         'expo-camera',
         {
-          cameraPermission: 'Приложению необходим доступ к камере для создания отчета по транспортному средству',
+          cameraPermission: 'Приложению Runich нужен доступ к камере, чтобы делать фотографии для тренировок',
           recordAudioAndroid: false,
           barcodeScannerEnabled: false,
         },
@@ -180,8 +183,8 @@ export default {
       [
         'expo-media-library',
         {
-          photosPermission: 'Allow $(PRODUCT_NAME) to access your photos.',
-          savePhotosPermission: 'Allow $(PRODUCT_NAME) to save photos.',
+          photosPermission: 'Разрешите приложению Runich доступ к фотографиям устройства',
+          savePhotosPermission: 'Разрешите приложению Runich сохранять фотографии тренировок в галерею устройства',
           granularPermissions: ['photo'],
           isAccessMediaLocationEnabled: false,
         },
