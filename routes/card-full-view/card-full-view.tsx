@@ -48,6 +48,7 @@ export default function CardFullView() {
               duration={activity.duration}
               distance={activity.distance}
               elevationGain={activity.elevationGain}
+              caloriesActive={activity.caloriesActive}
               steps={activity.steps}
               mapPhotoUrl={activity.mapPhotoUrl}
               profile={activity.profile}

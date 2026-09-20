@@ -1,12 +1,18 @@
 import { View, StyleSheet } from 'react-native';
 import { Icon, Text } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
+import {
+  EMOTIONS_BTNS_ICONS,
+  EMOTIONS_BTNS_VALUES,
+  normalizeEmotion,
+} from '@Routes/save-activity-page/emotion-btns/const';
 
 interface MapMetaOverlayProps {
   locationName?: string | null;
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
   weatherCode?: number | null;
+  emotion?: string | null;
 }
 
 export default function MapMetaOverlay({
@@ -14,37 +20,58 @@ export default function MapMetaOverlay({
   weatherTemperature,
   weatherWindSpeed,
   weatherCode,
+  emotion,
 }: MapMetaOverlayProps) {
   const normalizedLocationName = locationName?.trim();
   const hasTemperature = typeof weatherTemperature === 'number' && Number.isFinite(weatherTemperature);
   const hasWindSpeed = typeof weatherWindSpeed === 'number' && Number.isFinite(weatherWindSpeed);
+  const emotionBadge = getEmotionBadge(emotion);
 
-  if (!normalizedLocationName && !hasTemperature && !hasWindSpeed) return null;
+  if (!normalizedLocationName && !hasTemperature && !hasWindSpeed && !emotionBadge) return null;
 
   return (
     <View pointerEvents="none" style={styles.container}>
       {normalizedLocationName ? (
         <View style={[styles.item, styles.locationItem]}>
-          <Icon source="map-marker" size={16} color={styles.icon.color} />
-          <Text numberOfLines={1} style={styles.text}>
+          <Icon source="map-marker" size={14} color={styles.icon.color} />
+          <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.text, styles.locationText]}>
             {normalizedLocationName}
           </Text>
         </View>
       ) : null}
       {hasTemperature ? (
         <View style={styles.item}>
-          <Icon source={getWeatherIcon(weatherCode)} size={16} color={styles.icon.color} />
+          <Icon source={getWeatherIcon(weatherCode)} size={14} color={styles.icon.color} />
           <Text style={styles.text}>{`${Math.round(weatherTemperature!)}°C`}</Text>
         </View>
       ) : null}
       {hasWindSpeed ? (
         <View style={styles.item}>
-          <Icon source="weather-windy" size={16} color={styles.icon.color} />
+          <Icon source="weather-windy" size={14} color={styles.icon.color} />
           <Text style={styles.text}>{`${Math.round(weatherWindSpeed!)} м/с`}</Text>
+        </View>
+      ) : null}
+      {emotionBadge ? (
+        <View accessible accessibilityLabel="Эмоция тренировки" testID="map-emotion-icon" style={styles.emotionItem}>
+          <Icon source={emotionBadge.icon} size={15} color={emotionBadge.color} />
         </View>
       ) : null}
     </View>
   );
+}
+
+function getEmotionBadge(emotion?: string | null) {
+  const normalizedEmotion = normalizeEmotion(emotion);
+  if (normalizedEmotion === EMOTIONS_BTNS_VALUES.good) {
+    return { color: '#F7C744', icon: EMOTIONS_BTNS_ICONS.iconHappy };
+  }
+  if (normalizedEmotion === EMOTIONS_BTNS_VALUES.fucked) {
+    return { color: '#FF8A65', icon: EMOTIONS_BTNS_ICONS.iconFucked };
+  }
+  if (normalizedEmotion === EMOTIONS_BTNS_VALUES.normal) {
+    return { color: '#AAB4C3', icon: EMOTIONS_BTNS_ICONS.iconNeutral };
+  }
+  return null;
 }
 
 function getWeatherIcon(weatherCode?: number | null) {
@@ -63,22 +90,22 @@ function getWeatherIcon(weatherCode?: number | null) {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    backgroundColor: 'rgba(15, 17, 22, 0.76)',
-    borderColor: 'rgba(255, 255, 255, 0.14)',
-    borderRadius: 18,
-    borderWidth: 1,
+    backgroundColor: 'rgba(15, 17, 22, 0.5)',
+    borderRadius: 14,
     flexDirection: 'row',
-    gap: 10,
-    left: 12,
-    maxWidth: '92%',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    gap: 7,
+    left: 8,
+    maxWidth: '90%',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     position: 'absolute',
-    top: 12,
+    top: 6,
     zIndex: 2,
   },
-  item: { alignItems: 'center', flexDirection: 'row', gap: 4, minWidth: 0 },
-  locationItem: { flexShrink: 1 },
+  item: { alignItems: 'center', flexDirection: 'row', gap: 3, minWidth: 0 },
+  locationItem: { flexShrink: 1, maxWidth: '55%' },
+  emotionItem: { alignItems: 'center', justifyContent: 'center' },
   icon: { color: '#FFFFFF' },
-  text: { color: '#FFFFFF', flexShrink: 1, fontFamily: FONT_FAMILIES.medium, fontSize: 13 },
+  locationText: { flexShrink: 1 },
+  text: { color: '#FFFFFF', flexShrink: 1, fontFamily: FONT_FAMILIES.medium, fontSize: 12 },
 });

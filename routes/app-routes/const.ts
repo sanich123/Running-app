@@ -17,6 +17,9 @@ export const LazyInputsNameSurname = lazy(
 export const LazyInputsWeightCity = lazy(
   () => import('@Routes/profile/profile-settings/inputs-weight-city/inputs-weight-city'),
 );
+export const LazyInputsHeightAge = lazy(
+  () => import('@Routes/profile/profile-settings/inputs-height-age/inputs-height-age'),
+);
 export const LazyLegalInformation = lazy(() => import('@Routes/legal-information/legal-information'));
 export const LazyLikesList = lazy(() => import('@Routes/likes-list/likes-list'));
 export const LazyListOfFollowers = lazy(() => import('@Routes/followers-page/followers-page'));

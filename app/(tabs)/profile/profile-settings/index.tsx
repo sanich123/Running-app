@@ -1,8 +1,8 @@
 import { Suspense, useEffect, useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { Platform, useWindowDimensions, StyleSheet } from 'react-native';
+import { Platform, useWindowDimensions, StyleSheet, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useTheme } from 'react-native-paper';
+import { HelperText, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
@@ -11,15 +11,18 @@ import {
   LazyGenderBtns,
   LazyInputBio,
   LazyInputsNameSurname,
+  LazyInputsHeightAge,
   LazyInputsWeightCity,
 } from '@Routes/app-routes/const';
 import { getInitialProfileSettingsParams } from '@Routes/profile/profile-settings/profile-settings-params';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import type { ProfileSettingsSearchParams } from '@Routes/profile/profile-settings/profile-settings-params';
+import { HEIGHT_AGE } from '@Routes/profile/profile-settings/inputs-height-age/const';
 
 export default function ProfileSettings() {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { profileSettingsInitialized } = useLocalSearchParams() as Partial<ProfileSettingsSearchParams>;
   const { setParams } = useRouter();
   const {
@@ -61,9 +64,18 @@ export default function ProfileSettings() {
       <Suspense fallback={<FullPageActivityLoader />}>
         <LazyAvatarIconEditable setIsDisabled={setIsDisabled} isDisabled={isFormDisabled} />
         <LazyInputsNameSurname isDisabled={isFormDisabled} />
-        <LazyInputsWeightCity isDisabled={isFormDisabled} />
+        <LazyInputsWeightCity isDisabled={isFormDisabled} variant="city" />
         <LazyInputBio isDisabled={isFormDisabled} />
-        <LazyGenderBtns isDisabled={isFormDisabled} />
+        <View style={styles.calorieInputsSection}>
+          <HelperText type="info" style={styles.calorieInputsHint}>
+            {HEIGHT_AGE[language].helper}
+          </HelperText>
+          <View style={styles.calorieMetricsRow}>
+            <LazyInputsWeightCity isDisabled={isFormDisabled} variant="weight" compact />
+            <LazyInputsHeightAge isDisabled={isFormDisabled} compact />
+          </View>
+          <LazyGenderBtns isDisabled={isFormDisabled} />
+        </View>
       </Suspense>
     </KeyboardAwareScrollView>
   );
@@ -78,5 +90,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     padding: 10,
+  },
+  calorieInputsSection: {
+    marginTop: 10,
+    width: '100%',
+    gap: 2,
+  },
+  calorieInputsHint: {
+    alignSelf: 'flex-start',
+    fontSize: 12,
+    lineHeight: 18,
+    marginHorizontal: 0,
+    paddingHorizontal: 12,
+  },
+  calorieMetricsRow: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: 8,
+    width: '100%',
   },
 });

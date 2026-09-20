@@ -18,6 +18,7 @@ export default memo(function MediaList({
   weatherTemperature,
   weatherWindSpeed,
   weatherCode,
+  emotion,
 }: MediaListProps) {
   const { dark } = useTheme();
   const { width } = useWindowDimensions();
@@ -61,6 +62,7 @@ export default memo(function MediaList({
               weatherTemperature={weatherTemperature}
               weatherWindSpeed={weatherWindSpeed}
               weatherCode={weatherCode}
+              emotion={emotion}
             />
           ) : null}
         </View>

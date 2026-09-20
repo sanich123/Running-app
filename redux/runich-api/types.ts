@@ -62,6 +62,7 @@ export interface ActivityResponse {
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
   weatherCode?: number | null;
+  caloriesActive?: number | null;
   duration: number;
   distance: number;
   elevationGain: number;
@@ -91,6 +92,7 @@ export type ActivityListItemResponse = Pick<
   | 'weatherTemperature'
   | 'weatherWindSpeed'
   | 'weatherCode'
+  | 'caloriesActive'
   | 'duration'
   | 'distance'
   | 'elevationGain'
@@ -119,6 +121,7 @@ export interface ActivityMutationResponse {
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
   weatherCode?: number | null;
+  caloriesActive?: number | null;
   duration: number;
   distance: number;
   elevationGain: number;

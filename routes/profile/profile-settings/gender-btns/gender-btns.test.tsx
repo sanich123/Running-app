@@ -3,7 +3,7 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { GENDER_BTNS, GENDER_BTNS_VALUES } from './const';
+import { GENDER_BTNS, GENDER_BTNS_TEST_IDS, GENDER_BTNS_VALUES } from './const';
 import GenderBtns from './gender-btns';
 
 const mockParams = { gender: '' };
@@ -23,18 +23,20 @@ describe('Gender btns', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockParams.gender = GENDER_BTNS_VALUES.male;
     await renderWithProviders(<GenderBtns isDisabled={false} />, { store: mockStore });
-    const maleInput = screen.getByText(GENDER_BTNS.english.maleLabel);
-    const femaleInput = screen.getByText(GENDER_BTNS.english.femaleLabel);
-    await userEvent.press(maleInput);
+    const maleInput = screen.getByTestId(GENDER_BTNS_TEST_IDS.male);
+    const femaleInput = screen.getByTestId(GENDER_BTNS_TEST_IDS.female);
+    await userEvent.press(screen.getByText(GENDER_BTNS.english.maleLabel));
     expect(mockSetParams).toHaveBeenCalledWith({ gender: GENDER_BTNS_VALUES.male });
-    await userEvent.press(femaleInput);
+    await userEvent.press(screen.getByText(GENDER_BTNS.english.femaleLabel));
     expect(mockSetParams).toHaveBeenCalledWith({ gender: GENDER_BTNS_VALUES.female });
+    expect(maleInput.props.accessibilityState.selected).toBe(true);
+    expect(femaleInput.props.accessibilityState.selected).toBe(false);
   });
   it('should correctly handle isDisabled state', async () => {
     await renderWithProviders(<GenderBtns isDisabled />);
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    const maleInput = screen.getByText(GENDER_BTNS.english.maleLabel);
-    const femaleInput = screen.getByText(GENDER_BTNS.english.femaleLabel);
+    const maleInput = screen.getByTestId(GENDER_BTNS_TEST_IDS.male);
+    const femaleInput = screen.getByTestId(GENDER_BTNS_TEST_IDS.female);
     expect(maleInput).toBeDisabled();
     expect(femaleInput).toBeDisabled();
   });

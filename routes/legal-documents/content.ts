@@ -14,8 +14,8 @@ export const LEGAL_OPERATOR = {
 } as const;
 
 export const LEGAL_DOCUMENT_VERSION = {
-  russian: '19 сентября 2026 г. Версия 1.3',
-  english: 'September 19, 2026. Version 1.3',
+  russian: '20 сентября 2026 г. Версия 1.4',
+  english: 'September 20, 2026. Version 1.4',
 } as const;
 
 export type LegalDocumentId = 'privacy' | 'consents' | 'agreement' | 'locationConsent' | 'accountDeletion';
@@ -67,7 +67,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         bullets: [
           'аккаунт: внутренний идентификатор, email, подтверждение email и способ авторизации;',
           'OAuth: email и поля базового профиля, полученные от VK ID или Яндекс ID, — имя, фамилия, город и фото, если они предоставлены. Идентификатор OAuth используется для текущей авторизации и сопоставления аккаунта.',
-          'профиль: имя, фамилия, город, пол, дата рождения, вид спорта, описание, фото и вес. Все поля являются необязательными и указываются по желанию пользователя;',
+          'профиль: имя, фамилия, город, пол, дата рождения, вид спорта, описание, фото, вес, рост и возраст. Все поля являются необязательными и указываются по желанию пользователя;',
           'тренировки и маршруты: вид спорта, дата, дистанция, длительность, темп/скорость, шаги, описание, видимость, фото/видео, временные точки, координаты, высота и другие параметры, переданные устройством;',
           'технические данные: идентификатор сессии и устройства, модель, платформа, версии ОС и приложения, user-agent, IP-адрес, журналы ошибок и геопозиция сессии, если она передана для авторизации или восстановления состояния.',
         ],
@@ -76,7 +76,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         heading: '3. Цели обработки',
         paragraphs: [
           'Данные нужны для регистрации, входа по email, VK ID или Яндекс ID, восстановления доступа и работы функций Runich: записи тренировок, маршрутов, статистики, профиля и пользовательского контента.',
-          'Геолокация используется только для записи активной тренировки; вес заполняется добровольно и не нужен для регистрации.',
+          'Геолокация используется только для записи активной тренировки; вес, рост, возраст и пол заполняются добровольно и могут использоваться для оценки калорийности тренировки, но не нужны для регистрации.',
           'Технические данные используются для безопасности, предотвращения злоупотреблений, устранения ошибок, поддержки и исполнения требований закона.',
         ],
       },
@@ -131,7 +131,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Состав данных',
         paragraphs: [
-          'В зависимости от выбранных функций могут обрабатываться email, идентификатор аккаунта, данные профиля, сведения о тренировках и маршрутах, координаты во время записи, фотографии, комментарии, данные устройства и технические журналы. Необязательные сведения обрабатываются только если пользователь сам их указал.',
+          'В зависимости от выбранных функций могут обрабатываться email, идентификатор аккаунта, данные профиля, включая пол, вес, рост и возраст, сведения о тренировках и маршрутах, координаты во время записи, фотографии, комментарии, данные устройства и технические журналы. Необязательные сведения обрабатываются только если пользователь сам их указал.',
         ],
       },
       {
@@ -171,7 +171,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '3. Данные, геолокация и тренировки',
         paragraphs: [
-          'Обработка данных регулируется отдельной Политикой. Продолжая регистрацию или вход после отображения юридического уведомления со ссылками, пользователь принимает документы в интерфейсе сервиса. Запись маршрута начинается только после отдельного согласия на предоставление геолокации и системного разрешения; отслеживание геолокации в фоновом режиме используется только во время записи тренировки.',
+          'Обработка данных регулируется отдельной Политикой. Продолжая регистрацию или вход после отображения юридического уведомления со ссылками, пользователь принимает документы в интерфейсе сервиса. Для оценки калорийности тренировки пользователь может указать в профиле вес, рост, возраст и пол. Запись маршрута начинается только после отдельного согласия на предоставление геолокации и системного разрешения; отслеживание геолокации в фоновом режиме используется только во время записи тренировки.',
           'Тренировки и координаты хранятся до удаления аккаунта, если пользователь не удалил тренировку раньше или более длительный срок не требуется законом.',
         ],
       },
@@ -288,7 +288,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         bullets: [
           'account: internal Runich identifier, email, email verification and authentication method;',
           'OAuth: email and basic-profile fields received from VK ID or Yandex ID — name, surname, city and photo when provided. The OAuth identifier is used for current authentication and account matching;',
-          'profile: name, surname, city, optional gender, date of birth, sport, bio, photo and optional weight;',
+          'profile: name, surname, city, optional gender, date of birth, sport, bio, photo, weight, height and age;',
           'workouts and routes: sport, date, distance, duration, pace/speed, steps, description, visibility, photos/videos, timestamps, coordinates, altitude and other parameters supplied by the device;',
           'technical data: session and device identifier, model, platform, OS and app versions, user-agent, IP address, error logs and session location when supplied for authentication or state recovery.',
         ],
@@ -297,7 +297,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         heading: '3. Purposes',
         paragraphs: [
           'Data is needed for registration, sign-in by email, VK ID or Yandex ID, access recovery and Runich features: workout and route recording, statistics, profiles and user content.',
-          'Location is used only to record an active workout; weight is voluntary and is not required for registration.',
+          'Location is used only to record an active workout; weight, height, age and gender are voluntary and may be used to estimate workout calories, but they are not required for registration.',
           'Technical data is used for security, abuse prevention, troubleshooting, support and compliance with legal requirements.',
         ],
       },
@@ -352,7 +352,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Data categories',
         paragraphs: [
-          'Depending on the selected features, Runich may process email, account identifier, profile data including optional gender and weight, workout and route information, coordinates during recording, photos, comments, device data and technical logs. Optional information is processed only when the user provides it.',
+          'Depending on the selected features, Runich may process email, account identifier, profile data including optional gender, weight, height and age, workout and route information, coordinates during recording, photos, comments, device data and technical logs. Optional information is processed only when the user provides it.',
         ],
       },
       {
@@ -392,7 +392,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '3. Data, location and workouts',
         paragraphs: [
-          'Personal-data processing is governed by the separate Policy. Continuing registration or sign-in after the legal notice with links is displayed means that the user accepts the documents in the service interface. Route recording starts only after separate consent to grant location access and the system permission; background location tracking is used only during workout recording.',
+          'Personal-data processing is governed by the separate Policy. Continuing registration or sign-in after the legal notice with links is displayed means that the user accepts the documents in the service interface. To estimate workout calories, the user may provide weight, height, age and gender in the profile. Route recording starts only after separate consent to grant location access and the system permission; background location tracking is used only during workout recording.',
           'Workouts and coordinates are kept until the account is deleted unless the user deletes a workout earlier or a longer period is required by law.',
         ],
       },

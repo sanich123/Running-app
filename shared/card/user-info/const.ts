@@ -10,7 +10,6 @@ export interface UserInfoProps {
     profilePhotoBlurhash?: string | null;
   };
   sport?: SPORTS_BTNS_VALUES | string;
-  emotion?: string | null;
   date: string;
   userId: string;
   size: UserInfoSize;

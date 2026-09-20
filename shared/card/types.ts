@@ -44,6 +44,8 @@ export interface ProfileType {
   createdAt?: string | null;
   email?: string | null;
   gender?: string | null;
+  height?: string | null;
+  age?: string | null;
   id?: string;
   language?: string | null;
   name?: string | null;
@@ -75,6 +77,7 @@ export interface ActivityCardProps {
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
   weatherCode?: number | null;
+  caloriesActive?: number | null;
   duration: number;
   distance: number;
   elevationGain: number;
@@ -153,6 +156,7 @@ export interface MetricsProps {
   sport: string;
   steps?: number | null;
   elevationGain: number;
+  caloriesActive?: number | null;
   title?: string | null;
   isShowDescription: boolean;
   description?: string | null;
@@ -177,5 +181,6 @@ export interface MediaListProps {
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
   weatherCode?: number | null;
+  emotion?: string | null;
   id: string;
 }

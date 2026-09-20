@@ -4,11 +4,6 @@ import { Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import {
-  EMOTIONS_BTNS_ICONS,
-  EMOTIONS_BTNS_VALUES,
-  normalizeEmotion,
-} from '@Routes/save-activity-page/emotion-btns/const';
 import UserAvatar from '@S/avatar/avatar';
 import CustomImage from '@S/custom-image/custom-image';
 import { getIconNameByTypeOfSport, MAP_SPORT_TO_TITLE } from '@U/icon-utils';
@@ -31,6 +26,7 @@ type ShareActivityImageProps = Pick<ActivityCardProps, 'distance' | 'duration' |
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
   weatherCode?: number | null;
+  caloriesActive?: number | null;
   cardRef: MutableRefObject<View | null>;
   onReady?: () => void;
 };
@@ -52,6 +48,7 @@ export default function ShareActivityImage({
   weatherTemperature,
   weatherWindSpeed,
   weatherCode,
+  caloriesActive,
 }: ShareActivityImageProps) {
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
@@ -59,15 +56,6 @@ export default function ShareActivityImage({
   const shareMapPhotoUrl = getShareMapPhotoUrl(mapPhotoUrl, SHARE_IMAGE_WIDTH, SHARE_MAP_HEIGHT) ?? mapPhotoUrl;
   const speedMetric = getCardSpeedMetric({ sport, distance, duration, language });
   const sportTitle = MAP_SPORT_TO_TITLE[sport as keyof typeof MAP_SPORT_TO_TITLE]?.[language] ?? sport;
-  const normalizedEmotion = normalizeEmotion(emotion);
-  const emotionBadge =
-    normalizedEmotion === EMOTIONS_BTNS_VALUES.good
-      ? { color: '#F7C744', icon: EMOTIONS_BTNS_ICONS.iconHappy }
-      : normalizedEmotion === EMOTIONS_BTNS_VALUES.fucked
-        ? { color: '#FF8A65', icon: EMOTIONS_BTNS_ICONS.iconFucked }
-        : normalizedEmotion === EMOTIONS_BTNS_VALUES.normal
-          ? { color: '#AAB4C3', icon: EMOTIONS_BTNS_ICONS.iconNeutral }
-          : null;
   const formattedDate = formatShareDate(date, duration, isRussian);
   const activityLabel = title || sportTitle;
   const metrics = [
@@ -78,6 +66,9 @@ export default function ShareActivityImage({
       ? [{ label: CARD_METRICS[language].elevation, value: `${Math.round(elevationGain)} ${CARD_METRICS[language].m}` }]
       : []),
     ...(steps != null && steps > 0 ? [{ label: CARD_METRICS[language].steps, value: `${steps}` }] : []),
+    ...(caloriesActive != null
+      ? [{ label: CARD_METRICS[language].calories, value: `${caloriesActive} ${CARD_METRICS[language].kcal}` }]
+      : []),
   ];
 
   useEffect(() => {
@@ -117,6 +108,7 @@ export default function ShareActivityImage({
             weatherTemperature={weatherTemperature}
             weatherWindSpeed={weatherWindSpeed}
             weatherCode={weatherCode}
+            emotion={emotion}
           />
         ) : null}
       </View>
@@ -143,11 +135,6 @@ export default function ShareActivityImage({
             </View>
             {formattedDate ? <Text style={styles.date}>{formattedDate}</Text> : null}
           </View>
-          {emotionBadge && (
-            <View style={styles.emotionIcon} testID="share-emotion-icon">
-              <Icon source={emotionBadge.icon} size={28} color={emotionBadge.color} />
-            </View>
-          )}
         </View>
 
         <View style={styles.metricsGrid}>
@@ -206,15 +193,6 @@ const styles = StyleSheet.create({
   activityTitleRow: { alignItems: 'center', flexDirection: 'row', gap: 5, marginTop: 8 },
   activityTitle: { color: '#FFFFFF', flex: 1, fontFamily: FONT_FAMILIES.semiBold, fontSize: 18 },
   date: { color: 'rgba(255, 255, 255, 0.68)', fontFamily: FONT_FAMILIES.medium, fontSize: 12, marginTop: 3 },
-  emotionIcon: {
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    borderRadius: 18,
-    height: 36,
-    justifyContent: 'center',
-    marginLeft: 8,
-    width: 36,
-  },
   metricsGrid: {
     borderColor: 'rgba(255, 255, 255, 0.18)',
     borderRadius: 18,

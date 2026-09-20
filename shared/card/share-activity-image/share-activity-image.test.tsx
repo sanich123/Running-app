@@ -23,6 +23,7 @@ describe('share activity image', () => {
         weatherTemperature={18}
         weatherWindSpeed={6}
         weatherCode={0}
+        caloriesActive={742}
         cardRef={createRef<View>()}
       />,
     );
@@ -41,13 +42,16 @@ describe('share activity image', () => {
     expect(screen.getByText('Утренняя пробежка')).toBeOnTheScreen();
     expect(screen.getByText('00:05:00')).toBeOnTheScreen();
     expect(screen.getByText('5.00 км')).toBeOnTheScreen();
-    expect(screen.getByTestId('share-emotion-icon')).toBeOnTheScreen();
+    expect(screen.getByTestId('map-emotion-icon')).toBeOnTheScreen();
+    expect(screen.queryByTestId('share-emotion-icon')).not.toBeOnTheScreen();
     expect(screen.queryByText('Класс')).not.toBeOnTheScreen();
     expect(screen.getByText('208 м')).toBeOnTheScreen();
     expect(screen.getByText('1234')).toBeOnTheScreen();
+    expect(screen.getByText('742 ккал')).toBeOnTheScreen();
     expect(screen.getByText('Время')).toBeOnTheScreen();
     expect(screen.getByText('Дистанция')).toBeOnTheScreen();
     expect(screen.getByText('Набор выс.')).toBeOnTheScreen();
+    expect(screen.getByText('Калории')).toBeOnTheScreen();
     expect(screen.getByText('Москва')).toBeOnTheScreen();
     expect(screen.getByText('18°C')).toBeOnTheScreen();
     expect(screen.getByText('6 м/с')).toBeOnTheScreen();

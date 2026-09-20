@@ -1,4 +1,11 @@
-import { ACTIVITY_INPUT_LIMITS, PROFILE_INPUT_LIMITS, limitText, normalizeWeightInput } from './input-limits';
+import {
+  ACTIVITY_INPUT_LIMITS,
+  PROFILE_INPUT_LIMITS,
+  limitText,
+  normalizeAgeInput,
+  normalizeHeightInput,
+  normalizeWeightInput,
+} from './input-limits';
 
 describe('input limits', () => {
   it('limits text by the configured field length', () => {
@@ -12,5 +19,8 @@ describe('input limits', () => {
     expect(normalizeWeightInput('70kg')).toBe('70');
     expect(normalizeWeightInput('1a2.5')).toBe('125');
     expect(normalizeWeightInput('1234')).toBe('123');
+    expect(normalizeWeightInput('201')).toBe('200');
+    expect(normalizeHeightInput('231')).toBe('230');
+    expect(normalizeAgeInput('101')).toBe('100');
   });
 });

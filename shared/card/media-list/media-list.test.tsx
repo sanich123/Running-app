@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import { ROUTES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import MediaList from './media-list';
@@ -53,16 +54,19 @@ describe('media list', () => {
         id="activity-id"
         mapPhotoUrl={mapUrl}
         photoVideoUrls={[]}
-        locationName="Москва"
+        locationName="Очень длинное название населённого пункта"
         weatherTemperature={18}
         weatherWindSpeed={6}
         weatherCode={0}
+        emotion={EMOTIONS_BTNS_VALUES.good}
       />,
     );
 
-    expect(screen.getByText('Москва')).toBeOnTheScreen();
+    expect(screen.getByText('Очень длинное название населённого пункта')).toHaveProp('numberOfLines', 1);
+    expect(screen.getByText('Очень длинное название населённого пункта')).toHaveProp('ellipsizeMode', 'tail');
     expect(screen.getByText('18°C')).toBeOnTheScreen();
     expect(screen.getByText('6 м/с')).toBeOnTheScreen();
+    expect(screen.getByTestId('map-emotion-icon')).toBeOnTheScreen();
   });
 
   it('continues covering regular photos in the card preview', async () => {

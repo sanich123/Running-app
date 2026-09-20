@@ -16,3 +16,8 @@ export const GENDER_BTNS = {
     femaleLabel: 'Женщина',
   },
 } as const;
+
+export const GENDER_BTNS_TEST_IDS = {
+  male: 'profile-gender-male',
+  female: 'profile-gender-female',
+} as const;

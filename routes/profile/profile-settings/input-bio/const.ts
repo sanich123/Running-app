@@ -7,7 +7,7 @@ export const INPUT_BIO = {
   },
   [LANGUAGES.russian]: {
     placeholder: 'Пару слов о себе',
-    label: 'Биография',
+    label: 'Пару слов о себе',
   },
 };
 

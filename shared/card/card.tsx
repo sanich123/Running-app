@@ -37,6 +37,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     weatherTemperature,
     weatherWindSpeed,
     weatherCode,
+    caloriesActive,
     profile,
     commentsLength,
     likesLength,
@@ -88,6 +89,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           weatherTemperature={weatherTemperature}
           weatherWindSpeed={weatherWindSpeed}
           weatherCode={weatherCode}
+          caloriesActive={caloriesActive}
           onReady={handleShareImageReady}
         />
       )}
@@ -104,14 +106,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           },
           Platform.OS === 'web' && styles.webStyles,
         ]}>
-        <UserInfo
-          profile={profile}
-          sport={sport}
-          date={date}
-          emotion={emotion}
-          userId={userId}
-          size={UserInfoSize.large}
-        />
+        <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
         {(resolvedMapPhotoUrl || Boolean(photoVideoUrls?.length)) && (
           <MediaList
             photoVideoUrls={photoVideoUrls ?? []}
@@ -121,6 +116,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             weatherTemperature={weatherTemperature}
             weatherWindSpeed={weatherWindSpeed}
             weatherCode={weatherCode}
+            emotion={emotion}
             id={id}
           />
         )}
@@ -135,6 +131,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           sport={sport}
           steps={steps}
           elevationGain={elevationGain}
+          caloriesActive={caloriesActive}
           isFullView={isFullView}
         />
         <View style={{ height: 40, paddingHorizontal: 8 }}>
