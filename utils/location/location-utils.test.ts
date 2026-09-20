@@ -168,6 +168,7 @@ describe('getMapBoxImage', () => {
     ]);
 
     expect(imageUrl).toContain('/360x360@2x');
+    expect(imageUrl).toContain('&attribution=false&logo=false');
   });
 
   it('requests a map with the dimensions of the activity card', () => {

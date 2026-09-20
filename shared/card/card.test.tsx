@@ -1,10 +1,12 @@
-import { screen, waitFor } from '@testing-library/react-native';
+import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import * as Sharing from 'expo-sharing';
 import { http, HttpResponse } from 'msw';
+import { captureRef } from 'react-native-view-shot';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import ActivityCard from './card';
-import { getCardMapPhotoUrl } from './utils';
+import { getCardMapPhotoUrl, getShareMapPhotoUrl } from './utils';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { BASE_URL } from '../../tests/utils/handlers';
 import { mockStore, setMockUserId } from '../../tests/utils/mock-store';
@@ -25,7 +27,15 @@ describe('Activity card', () => {
     const mapPhotoUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/360x360@2x?access_token=test';
 
     expect(getCardMapPhotoUrl(mapPhotoUrl, 351)).toBe(
-      'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/351x202@2x?access_token=test',
+      'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/351x202@2x?access_token=test&attribution=false&logo=false',
+    );
+  });
+
+  it('removes Mapbox attribution and logo from the share image URL', () => {
+    const mapPhotoUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/360x360@2x?access_token=test';
+
+    expect(getShareMapPhotoUrl(mapPhotoUrl, 900, 500)).toBe(
+      'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/900x500@2x?access_token=test&attribution=false&logo=false',
     );
   });
 
@@ -81,7 +91,36 @@ describe('Activity card', () => {
       />,
     );
 
-    await waitFor(() => expect(screen.getAllByTestId(mapPhotoUrl)).toHaveLength(2));
+    await waitFor(() => expect(screen.getAllByTestId(mapPhotoUrl)).toHaveLength(1));
+  });
+
+  it('renders the share image only while sharing', async () => {
+    const user = userEvent.setup();
+    (Sharing.isAvailableAsync as jest.Mock).mockResolvedValue(true);
+    (Sharing.shareAsync as jest.Mock).mockResolvedValue(undefined);
+    (captureRef as jest.Mock).mockResolvedValue('snapshot.png');
+
+    await renderWithProviders(
+      <ActivityCard
+        isShowDeleteBtn={false}
+        isShowDescription={false}
+        title="Morning run"
+        date="2026-08-09T10:00:00.000Z"
+        sport="run"
+        id="activity-1"
+        userId="user-1"
+        duration={300000}
+        distance={5000}
+        elevationGain={0}
+        profile={MOCK_PROFILE}
+        commentsLength={0}
+      />,
+    );
+
+    expect(screen.queryByText('runich')).not.toBeOnTheScreen();
+    await user.press(screen.getByTestId('iconShareBtn'));
+    await waitFor(() => expect(Sharing.shareAsync).toHaveBeenCalledWith('snapshot.png'));
+    expect(screen.queryByText('runich')).not.toBeOnTheScreen();
   });
 
   it('should correctly renders', async () => {
@@ -109,9 +148,9 @@ describe('Activity card', () => {
     );
     expect(screen.getByText(new RegExp(`${profile.name}`))).toBeOnTheScreen();
     expect(screen.getByText(new RegExp(`${profile.surname}`))).toBeOnTheScreen();
-    expect(await screen.findAllByText(title)).toHaveLength(2);
+    expect(await screen.findAllByText(title)).toHaveLength(1);
     ['Time', 'Pace', 'Distance'].map(async (word) =>
-      expect(await screen.getAllByText(new RegExp(word))).toHaveLength(2),
+      expect(await screen.getAllByText(new RegExp(word))).toHaveLength(1),
     );
   });
 });

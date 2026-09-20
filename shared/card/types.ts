@@ -71,10 +71,15 @@ export interface ActivityCardProps {
   photoVideoUrls?: PhotoVideoType[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  locationName?: string | null;
+  weatherTemperature?: number | null;
+  weatherWindSpeed?: number | null;
+  weatherCode?: number | null;
   duration: number;
   distance: number;
   elevationGain: number;
   steps?: number | null;
+  emotion?: string | null;
   profile: ProfileType;
   commentsLength: number;
   likesLength?: number;
@@ -95,6 +100,8 @@ export interface CardBtnsProps {
   likesLength?: number;
   profile: ProfileType;
   mapPhotoUrl?: string | null;
+  prepareShareImage?: () => Promise<void>;
+  cleanupShareImage?: () => void;
 }
 
 export interface CommentBtnProps {
@@ -116,6 +123,8 @@ export interface DisplayActivityMapProps {
 
 export interface ShareBtnProps {
   cardRef: MutableRefObject<View | null>;
+  prepareShareImage?: () => Promise<void>;
+  cleanupShareImage?: () => void;
 }
 
 interface Likes {
@@ -164,5 +173,9 @@ export interface MediaListProps {
   photoVideoUrls?: PhotoVideoUrls | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  locationName?: string | null;
+  weatherTemperature?: number | null;
+  weatherWindSpeed?: number | null;
+  weatherCode?: number | null;
   id: string;
 }

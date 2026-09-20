@@ -30,13 +30,13 @@ describe('sports btns', () => {
     expect(screen.getByTestId('manual-activity-sport-picker')).toHaveStyle({ opacity: 0.7 });
   });
 
-  it('uses the outlined activity control style', async () => {
+  it('uses the selected activity control style', async () => {
     await renderWithProviders(<SportsBtns isDisabled={false} />);
 
     expect(screen.getByTestId('manual-activity-sport-picker')).toHaveStyle({
-      borderRadius: 8,
+      borderRadius: 12,
       borderWidth: 1,
-      minHeight: 42,
+      minHeight: 56,
     });
   });
 });

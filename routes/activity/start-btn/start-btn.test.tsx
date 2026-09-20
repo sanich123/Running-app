@@ -72,7 +72,7 @@ describe('Activity start btn', () => {
         cameraVisible: 'false',
         description: '',
         emotion: 'normal',
-        isPublic: 'true',
+        visibility: 'followers',
         mode: 'tracked',
         sport: 'run',
         title: '',

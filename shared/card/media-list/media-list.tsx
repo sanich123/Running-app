@@ -1,14 +1,24 @@
 import { memo, useCallback, useMemo } from 'react';
-import { FlatList, Platform, useWindowDimensions } from 'react-native';
+import { FlatList, Platform, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import CustomImage from '@S/custom-image/custom-image';
 import { ACTIVITY_MEDIA_HEIGHT } from './const';
+import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import type { MediaListProps } from '../types';
 
-export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPhotoUrlBlurhash }: MediaListProps) {
+export default memo(function MediaList({
+  photoVideoUrls,
+  mapPhotoUrl,
+  id,
+  mapPhotoUrlBlurhash,
+  locationName,
+  weatherTemperature,
+  weatherWindSpeed,
+  weatherCode,
+}: MediaListProps) {
   const { dark } = useTheme();
   const { width } = useWindowDimensions();
   const { push } = useRouter();
@@ -22,31 +32,41 @@ export default memo(function MediaList({ photoVideoUrls, mapPhotoUrl, id, mapPho
     ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => {
       const isMap = item.url.includes('api.mapbox.com');
       return (
-        <TouchableRipple
-          rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-          onPress={() => {
-            push(
-              isMap
-                ? `/${ROUTES.map}/${id}`
-                : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
-            );
-          }}
-          borderless>
-          <CustomImage
-            style={{ width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }}
-            source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
-            contentFit={isMap ? 'contain' : 'cover'}
-            placeholderContentFit="cover"
-            priority={index === 0 ? 'high' : 'normal'}
-            cachePolicy="memory-disk"
-            recyclingKey={item.url}
-            testID={item.url}
-            placeholder={item?.blurhash}
-          />
-        </TouchableRipple>
+        <View style={{ width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }}>
+          <TouchableRipple
+            rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
+            onPress={() => {
+              push(
+                isMap
+                  ? `/${ROUTES.map}/${id}`
+                  : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
+              );
+            }}
+            borderless>
+            <CustomImage
+              style={{ width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }}
+              source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
+              contentFit={isMap ? 'contain' : 'cover'}
+              placeholderContentFit="cover"
+              priority={index === 0 ? 'high' : 'normal'}
+              cachePolicy="memory-disk"
+              recyclingKey={item.url}
+              testID={item.url}
+              placeholder={item?.blurhash}
+            />
+          </TouchableRipple>
+          {isMap ? (
+            <MapMetaOverlay
+              locationName={locationName}
+              weatherTemperature={weatherTemperature}
+              weatherWindSpeed={weatherWindSpeed}
+              weatherCode={weatherCode}
+            />
+          ) : null}
+        </View>
       );
     },
-    [dark, id, mediaWidth, push],
+    [dark, id, locationName, mediaWidth, push, weatherCode, weatherTemperature, weatherWindSpeed],
   );
 
   return (

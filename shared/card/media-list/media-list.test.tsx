@@ -46,6 +46,25 @@ describe('media list', () => {
     );
   });
 
+  it('renders location and weather over the map preview', async () => {
+    const mapUrl = 'https://api.mapbox.com/styles/v1/map.png';
+    await renderWithProviders(
+      <MediaList
+        id="activity-id"
+        mapPhotoUrl={mapUrl}
+        photoVideoUrls={[]}
+        locationName="Москва"
+        weatherTemperature={18}
+        weatherWindSpeed={6}
+        weatherCode={0}
+      />,
+    );
+
+    expect(screen.getByText('Москва')).toBeOnTheScreen();
+    expect(screen.getByText('18°C')).toBeOnTheScreen();
+    expect(screen.getByText('6 м/с')).toBeOnTheScreen();
+  });
+
   it('continues covering regular photos in the card preview', async () => {
     const photoUrl = 'https://images.example.test/activity.jpg';
     await renderWithProviders(

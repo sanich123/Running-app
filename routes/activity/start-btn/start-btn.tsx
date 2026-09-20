@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Animated, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
+import { ACTIVITY_VISIBILITY } from '@const/activity-visibility';
 import { ROUTES, STATUSES } from '@const/enums';
 import { resetActivityDraft, resetFinishedActivity, setFinishedActivity } from '@R/slices/activity/activity';
 import {
@@ -199,7 +200,7 @@ export default function StartBtn({
           cameraVisible: 'false',
           description: '',
           emotion: 'normal',
-          isPublic: 'true',
+          visibility: ACTIVITY_VISIBILITY.followers,
           mode: 'tracked',
           sport,
           title: '',

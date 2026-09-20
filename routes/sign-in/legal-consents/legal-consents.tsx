@@ -65,9 +65,9 @@ export default function LegalConsents({ values, onChange }: LegalConsentsProps) 
             style={[styles.link, { color: colors.primary }]}
             accessibilityRole="link"
             onPress={() => push(documentPath(ROUTES.consents, ROUTES.consentsEnglish))}>
-            {isRussian ? 'согласие' : 'consent'}
+            {isRussian ? 'согласие на обработку' : 'consent to the processing'}
           </Text>
-          {isRussian ? ' на обработку моих персональных данных' : ' to the processing of my personal data'}
+          {isRussian ? ' моих персональных данных' : ' of my personal data'}
         </Text>
       </View>
     </View>

@@ -1,4 +1,4 @@
-import { useRef, memo, useMemo } from 'react';
+import { useCallback, useRef, useState, memo, useMemo } from 'react';
 import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
@@ -28,10 +28,15 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     distance,
     elevationGain,
     steps,
+    emotion,
     isShowDescription,
     isShowDeleteBtn,
     mapPhotoUrl,
     mapPhotoUrlBlurhash,
+    locationName,
+    weatherTemperature,
+    weatherWindSpeed,
+    weatherCode,
     profile,
     commentsLength,
     likesLength,
@@ -41,23 +46,51 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const cardRef = useRef<View>(null);
+  const shareImageReadyRef = useRef<(() => void) | null>(null);
+  const [isShareImageVisible, setIsShareImageVisible] = useState(false);
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
   const cardMapPhotoUrl = useMemo(() => getCardMapPhotoUrl(mapPhotoUrl, mediaWidth), [mapPhotoUrl, mediaWidth]);
 
-  const shareMapPhotoUrl = mapPhotoUrl;
   const resolvedMapPhotoUrl = cardMapPhotoUrl;
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
+  const prepareShareImage = useCallback(
+    () =>
+      new Promise<void>((resolve) => {
+        shareImageReadyRef.current = resolve;
+        setIsShareImageVisible(true);
+      }),
+    [],
+  );
+  const handleShareImageReady = useCallback(() => {
+    shareImageReadyRef.current?.();
+    shareImageReadyRef.current = null;
+  }, []);
+  const cleanupShareImage = useCallback(() => {
+    setIsShareImageVisible(false);
+  }, []);
+
   return (
     <>
-      <ShareActivityImage
-        title={title}
-        date={date}
-        duration={duration}
-        distance={distance}
-        sport={sport}
-        cardRef={cardRef}
-        mapPhotoUrl={shareMapPhotoUrl}
-      />
+      {isShareImageVisible && (
+        <ShareActivityImage
+          title={title}
+          date={date}
+          duration={duration}
+          distance={distance}
+          sport={sport}
+          elevationGain={elevationGain}
+          steps={steps}
+          emotion={emotion}
+          cardRef={cardRef}
+          mapPhotoUrl={resolvedMapPhotoUrl}
+          profile={profile}
+          locationName={locationName}
+          weatherTemperature={weatherTemperature}
+          weatherWindSpeed={weatherWindSpeed}
+          weatherCode={weatherCode}
+          onReady={handleShareImageReady}
+        />
+      )}
       <View
         style={[
           {
@@ -71,12 +104,23 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           },
           Platform.OS === 'web' && styles.webStyles,
         ]}>
-        <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
+        <UserInfo
+          profile={profile}
+          sport={sport}
+          date={date}
+          emotion={emotion}
+          userId={userId}
+          size={UserInfoSize.large}
+        />
         {(resolvedMapPhotoUrl || Boolean(photoVideoUrls?.length)) && (
           <MediaList
             photoVideoUrls={photoVideoUrls ?? []}
             mapPhotoUrl={resolvedMapPhotoUrl}
             mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
+            locationName={locationName}
+            weatherTemperature={weatherTemperature}
+            weatherWindSpeed={weatherWindSpeed}
+            weatherCode={weatherCode}
             id={id}
           />
         )}
@@ -106,6 +150,8 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             likesLength={likesLength}
             profile={profile}
             mapPhotoUrl={resolvedMapPhotoUrl}
+            prepareShareImage={prepareShareImage}
+            cleanupShareImage={cleanupShareImage}
           />
         </Card.Actions>
       </View>

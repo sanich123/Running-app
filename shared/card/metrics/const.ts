@@ -14,7 +14,7 @@ export const CARD_METRICS = {
   },
   [LANGUAGES.russian]: {
     distance: 'Дистанция',
-    elevation: 'Набор высоты',
+    elevation: 'Набор выс.',
     pace: 'Темп',
     speed: 'Скорость',
     steps: 'Шаги',

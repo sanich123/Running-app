@@ -1,4 +1,5 @@
 import { useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-router';
+import { ACTIVITY_VISIBILITY, type ActivityVisibility } from '@const/activity-visibility';
 import { ACTIVITY_INPUT_LIMITS, limitText } from '@const/input-limits';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { EMOTIONS_BTNS_VALUES } from './emotion-btns/const';
@@ -18,7 +19,7 @@ interface ManualActivitySearchParams {
   description?: string | string[];
   sport?: string | string[];
   emotion?: string | string[];
-  isPublic?: string | string[];
+  visibility?: string | string[];
 }
 
 function getFirstParam(value: string | string[] | undefined) {
@@ -34,6 +35,15 @@ function getManualDate(value: string | string[] | undefined, mode: string | unde
 
   const parsedDate = new Date(date);
   return !Number.isNaN(parsedDate.getTime()) && parsedDate > now ? now.toISOString() : date;
+}
+
+function getActivityVisibility(value: string | string[] | undefined): ActivityVisibility {
+  const visibility = getFirstParam(value);
+  return visibility === ACTIVITY_VISIBILITY.public ||
+    visibility === ACTIVITY_VISIBILITY.followers ||
+    visibility === ACTIVITY_VISIBILITY.private
+    ? visibility
+    : ACTIVITY_VISIBILITY.followers;
 }
 
 function getManualActivityParams(params: ManualActivitySearchParams) {
@@ -54,7 +64,7 @@ function getManualActivityParams(params: ManualActivitySearchParams) {
     description: limitText(getFirstParam(params.description) ?? '', ACTIVITY_INPUT_LIMITS.description),
     sport: (getFirstParam(params.sport) ?? SPORTS_BTNS_VALUES.run) as SPORTS_BTNS_VALUES,
     emotion: (getFirstParam(params.emotion) ?? EMOTIONS_BTNS_VALUES.normal) as EMOTIONS_BTNS_VALUES,
-    isPublic: getFirstParam(params.isPublic) !== 'false',
+    visibility: getActivityVisibility(params.visibility),
   };
 }
 
@@ -85,6 +95,6 @@ export function useSetManualActivityParams() {
       setParams({ description: limitText(description, ACTIVITY_INPUT_LIMITS.description) }),
     setSport: (sport: string) => setParams({ sport }),
     setEmotion: (emotion: string) => setParams({ emotion }),
-    setIsPublic: (isPublic: boolean) => setParams({ isPublic: String(isPublic) }),
+    setVisibility: (visibility: ActivityVisibility) => setParams({ visibility }),
   };
 }

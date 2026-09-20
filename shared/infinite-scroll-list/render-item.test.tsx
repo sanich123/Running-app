@@ -12,6 +12,7 @@ describe('render item', () => {
       duration: 1000,
       distance: 2000,
       elevationGain: 15,
+      emotion: 'good',
       id: 'activity-1',
       userId: 'user-1',
       profile: {},
@@ -25,6 +26,7 @@ describe('render item', () => {
         id: 'activity-1',
         commentsLength: 3,
         distance: 2000,
+        emotion: 'good',
         mapPhotoUrlBlurhash: 'map-blurhash',
       }),
     );

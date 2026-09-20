@@ -24,16 +24,19 @@ export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
         disabled={isSportPickerDisabled}
         style={[
           styles.button,
-          { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+          { backgroundColor: colors.primaryContainer, borderColor: colors.primary },
           isSportPickerDisabled && styles.disabledButton,
         ]}
         rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
         onPress={() => chooseSportModal.current?.present()}>
         <View style={styles.content}>
-          <Icon source={sport === SPORTS_BTNS_VALUES.hike ? 'hiking' : sport} size={25} color={colors.onSurface} />
-          <Text variant="bodyMedium" style={{ color: colors.onSurface }}>
+          <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
+            <Icon source={sport === SPORTS_BTNS_VALUES.hike ? 'hiking' : sport} size={22} color={colors.onPrimary} />
+          </View>
+          <Text variant="titleSmall" style={{ color: colors.onPrimaryContainer, flex: 1 }}>
             {MAP_SPORT_TO_TITLE[sport][language]}
           </Text>
+          <Icon source="check-circle" size={24} color={colors.primary} />
         </View>
       </TouchableRipple>
       <ChooseSportModal
@@ -48,18 +51,19 @@ export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
     marginTop: 12,
-    minHeight: 42,
+    minHeight: 56,
     overflow: 'hidden',
   },
   content: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: 10,
-    minHeight: 42,
-    paddingHorizontal: 12,
+    minHeight: 56,
+    paddingHorizontal: 10,
   },
+  iconContainer: { alignItems: 'center', borderRadius: 18, height: 36, justifyContent: 'center', width: 36 },
   disabledButton: { opacity: 0.7 },
 });

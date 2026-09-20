@@ -106,7 +106,7 @@ describe('sign in', () => {
   it('opens the personal data consent document from the second checkbox', async () => {
     const user = userEvent.setup();
     await renderWithProviders(<SignIn />);
-    await user.press(screen.getByText('согласие'));
+    await user.press(screen.getByText('согласие на обработку'));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.consents}`);
   });
 

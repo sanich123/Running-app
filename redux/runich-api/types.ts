@@ -1,4 +1,5 @@
 import type { ACTIVITY_MIGRATION_STATUS } from './migration-status';
+import type { ActivityVisibility } from '@const/activity-visibility';
 import type { ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
 
 export type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof typeof ACTIVITY_MIGRATION_STATUS];
@@ -57,12 +58,16 @@ export interface ActivityResponse {
   photoVideoUrls?: ActivityPhotoResponse[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  locationName?: string | null;
+  weatherTemperature?: number | null;
+  weatherWindSpeed?: number | null;
+  weatherCode?: number | null;
   duration: number;
   distance: number;
   elevationGain: number;
   steps?: number | null;
   speed?: number | null;
-  isPublic?: boolean | null;
+  visibility?: ActivityVisibility | null;
   emotion?: string | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
@@ -82,10 +87,16 @@ export type ActivityListItemResponse = Pick<
   | 'photoVideoUrls'
   | 'mapPhotoUrl'
   | 'mapPhotoUrlBlurhash'
+  | 'locationName'
+  | 'weatherTemperature'
+  | 'weatherWindSpeed'
+  | 'weatherCode'
   | 'duration'
   | 'distance'
   | 'elevationGain'
   | 'steps'
+  | 'emotion'
+  | 'visibility'
   | 'profile'
   | '_count'
 >;
@@ -104,12 +115,16 @@ export interface ActivityMutationResponse {
   photoVideoUrls?: ActivityPhotoResponse[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  locationName?: string | null;
+  weatherTemperature?: number | null;
+  weatherWindSpeed?: number | null;
+  weatherCode?: number | null;
   duration: number;
   distance: number;
   elevationGain: number;
   steps?: number | null;
   speed: number;
-  isPublic?: boolean | null;
+  visibility?: ActivityVisibility | null;
   emotion?: string | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;

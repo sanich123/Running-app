@@ -9,7 +9,7 @@ export const MOCK_UNSYNCED_ACTIVITY: PendingActivity = {
     distance: 1000,
     duration: 60000,
     emotion: EMOTIONS_BTNS_VALUES.normal,
-    isPublic: true,
+    visibility: 'public',
     kilometresSplit: [],
     photoVideoUrls: [],
     speed: 10,

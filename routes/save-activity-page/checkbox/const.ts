@@ -1,12 +1,12 @@
-import { LANGUAGES } from '@const/enums';
+import { ACTIVITY_VISIBILITY_LABELS } from '@const/activity-visibility';
 
-export const CHECKBOX = {
-  [LANGUAGES.english]: {
-    public: 'Is this activity visible to your followers?',
-  },
-  [LANGUAGES.russian]: {
-    public: 'Эта активность будет видна вашим друзьям?',
-  },
-} as const;
+export {
+  ACTIVITY_VISIBILITY,
+  ACTIVITY_VISIBILITY_DESCRIPTIONS,
+  ACTIVITY_VISIBILITY_ICONS,
+  ACTIVITY_VISIBILITY_LABELS,
+  ACTIVITY_VISIBILITY_SECTION_LABELS,
+} from '@const/activity-visibility';
 
-export const CHECKBOX_TEST_ID = 'switcher';
+export const CHECKBOX = ACTIVITY_VISIBILITY_LABELS;
+export const CHECKBOX_TEST_ID = 'activity-visibility';

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import DatePicker from 'react-native-date-picker';
-import { Pressable, StyleSheet } from 'react-native';
-import { Icon, useTheme } from 'react-native-paper';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Icon, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 import { DATE_TIME_PICKER_BTN_ID, DATE_TIME_PICKER } from './const';
-import { clampDateToMaximum } from './utils';
+import { clampDateToMaximum, formatSelectedDate } from './utils';
 
 interface DateTimePickerProps {
   isDisabled: boolean;
@@ -20,6 +20,7 @@ export default function DateTimePicker({ isDisabled, maximumDate }: DateTimePick
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const shouldBeDisabled = isDisabled || isSavingDisabled;
+  const displayedDate = clampDateToMaximum(new Date(manualDate), maximumDate);
 
   return (
     <>
@@ -35,7 +36,17 @@ export default function DateTimePicker({ isDisabled, maximumDate }: DateTimePick
           shouldBeDisabled && styles.disabledButton,
           pressed && !shouldBeDisabled && styles.pressedButton,
         ]}>
-        <Icon source="calendar-edit" size={28} color={colors.onSurface} />
+        <View style={styles.content}>
+          <Icon source="calendar-edit" size={24} color={colors.onSurfaceVariant} />
+          <Text
+            variant="bodyMedium"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{ color: colors.onSurface, flex: 1 }}>
+            {formatSelectedDate(displayedDate, language)}
+          </Text>
+          <Icon source="chevron-down" size={22} color={colors.onSurfaceVariant} />
+        </View>
       </Pressable>
       <DatePicker
         modal
@@ -60,11 +71,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     borderWidth: 1,
-    height: 48,
+    minHeight: 56,
     justifyContent: 'center',
     marginTop: 12,
     width: '100%',
   },
+  content: { alignItems: 'center', flexDirection: 'row', gap: 10, paddingHorizontal: 12, width: '100%' },
   disabledButton: { opacity: 0.7 },
   pressedButton: { opacity: 0.7 },
 });

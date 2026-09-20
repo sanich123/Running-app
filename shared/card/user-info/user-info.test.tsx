@@ -1,6 +1,8 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { ROUTES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
+import { changeLanguage } from '@R/slices/settings/settings';
+import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -14,6 +16,22 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('UserInfo', () => {
+  it('shows the activity emotion badge', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    await renderWithProviders(
+      <UserInfo
+        profile={MOCK_PROFILE}
+        sport={SPORTS_BTNS_VALUES.run}
+        emotion={EMOTIONS_BTNS_VALUES.good}
+        date={`${new Date()}`}
+        userId="someUserId"
+        size={UserInfoSize.large}
+      />,
+    );
+    expect(screen.getByTestId('activity-emotion-icon')).toBeOnTheScreen();
+    expect(screen.queryByText('Класс')).not.toBeOnTheScreen();
+  });
+
   it('should correctly renders', async () => {
     await renderWithProviders(
       <UserInfo

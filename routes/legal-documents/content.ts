@@ -33,6 +33,20 @@ export interface LegalDocument {
   footer?: string;
 }
 
+const RUSSIAN_OPERATOR_CONTACT = [
+  `Оператор: ${LEGAL_OPERATOR.name}`,
+  `Адрес: ${LEGAL_OPERATOR.addressRussian}`,
+  `ИНН: ${LEGAL_OPERATOR.inn}`,
+  `Email: ${LEGAL_OPERATOR.email}`,
+];
+
+const ENGLISH_OPERATOR_CONTACT = [
+  `Controller: ${LEGAL_OPERATOR.name}`,
+  `Address: ${LEGAL_OPERATOR.addressEnglish}`,
+  `Russian tax ID (INN): ${LEGAL_OPERATOR.inn}`,
+  `Email: ${LEGAL_OPERATOR.email}`,
+];
+
 const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   privacy: {
     title: 'Политика в отношении обработки персональных данных',
@@ -43,7 +57,8 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '1. Оператор',
         paragraphs: [
-          `Оператор: ${LEGAL_OPERATOR.name}, адрес: ${LEGAL_OPERATOR.addressRussian}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich предоставляет функции авторизации, записи тренировок, маршрутов, статистики, профиля и общения пользователей.`,
+          ...RUSSIAN_OPERATOR_CONTACT,
+          'Runich предоставляет функции авторизации, записи тренировок, маршрутов, статистики, профиля и общения пользователей.',
         ],
       },
       {
@@ -94,7 +109,8 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '8. Подрядчики и передача',
         paragraphs: [
-          `Для работы Runich могут привлекаться VK ID и Яндекс ID, почтовый провайдер, провайдеры API, базы данных, файлов и резервных копий, карт и CDN. Каждый получает только необходимый объем данных. По вопросам обработки данных, удаления аккаунта, доступа, исправления или отзыва согласия можно обратиться на ${LEGAL_OPERATOR.email}. Государственным органам данные передаются только по закону.`,
+          'Для работы Runich могут привлекаться VK ID и Яндекс ID, почтовый провайдер, провайдеры API, базы данных, файлов и резервных копий, карт и CDN. Каждый получает только необходимый объем данных. Государственным органам данные передаются только по закону.',
+          `По вопросам обработки данных, удаления аккаунта, доступа, исправления или отзыва согласия можно обратиться по адресу: ${LEGAL_OPERATOR.email}.`,
         ],
       },
     ],
@@ -102,7 +118,8 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   consents: {
     title: 'Согласие на обработку персональных данных',
     intro: [
-      `Я, пользователь сервиса Runich, свободно, своей волей и в своем интересе даю ${LEGAL_OPERATOR.name}, адрес: ${LEGAL_OPERATOR.addressRussian}, ИНН ${LEGAL_OPERATOR.inn}, согласие на обработку моих персональных данных.`,
+      ...RUSSIAN_OPERATOR_CONTACT,
+      'Я, пользователь сервиса Runich, свободно, своей волей и в своем интересе даю указанному оператору согласие на обработку моих персональных данных.',
     ],
     sections: [
       {
@@ -126,7 +143,8 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '4. Отзыв согласия',
         paragraphs: [
-          `Согласие можно отозвать, направив обращение на ${LEGAL_OPERATOR.email}. Отзыв может сделать недоступными функции, для которых нужны соответствующие данные; он не влияет на законность обработки, выполненной до отзыва.`,
+          'Согласие можно отозвать, направив обращение оператору. Отзыв может сделать недоступными функции, для которых нужны соответствующие данные; он не влияет на законность обработки, выполненной до отзыва.',
+          `Email для отзыва согласия: ${LEGAL_OPERATOR.email}.`,
         ],
       },
     ],
@@ -140,7 +158,8 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '1. Сервис и оператор',
         paragraphs: [
-          `Сервис предоставляет ${LEGAL_OPERATOR.name}, адрес: ${LEGAL_OPERATOR.addressRussian}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich предоставляет инструменты авторизации, записи тренировок, маршрутов и статистики, профиля и общения пользователей.`,
+          ...RUSSIAN_OPERATOR_CONTACT,
+          'Runich предоставляет инструменты авторизации, записи тренировок, маршрутов и статистики, профиля и общения пользователей.',
         ],
       },
       {
@@ -187,7 +206,9 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '8. Изменения и применимое право',
         paragraphs: [
-          `Новая редакция публикуется на этой странице. Продолжение использования означает принятие изменений, если закон не требует отдельного согласия. Вопросы и обращения принимаются по адресу ${LEGAL_OPERATOR.email}. Применяется право РФ, если обязательные нормы страны пользователя не устанавливают иное.`,
+          'Новая редакция публикуется на этой странице. Продолжение использования означает принятие изменений, если закон не требует отдельного согласия.',
+          `Вопросы и обращения принимаются по адресу: ${LEGAL_OPERATOR.email}.`,
+          'Применяется право РФ, если обязательные нормы страны пользователя не устанавливают иное.',
         ],
       },
     ],
@@ -195,9 +216,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
 
   locationConsent: {
     title: 'Согласие на обработку данных геолокации',
-    intro: [
-      `Оператор: ${LEGAL_OPERATOR.name}, адрес: ${LEGAL_OPERATOR.addressRussian}, ИНН ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}.`,
-    ],
+    intro: RUSSIAN_OPERATOR_CONTACT,
     sections: [
       {
         heading: '1. Цель и состав данных',
@@ -223,9 +242,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   },
   accountDeletion: {
     title: 'Удаление аккаунта и обращения пользователя',
-    intro: [
-      `Удалить аккаунт можно в приложении Runich или по email оператора: ${LEGAL_OPERATOR.email}. Оператор: ${LEGAL_OPERATOR.name}, адрес: ${LEGAL_OPERATOR.addressRussian}, ИНН ${LEGAL_OPERATOR.inn}.`,
-    ],
+    intro: ['Удалить аккаунт можно в приложении Runich или направить запрос оператору.', ...RUSSIAN_OPERATOR_CONTACT],
     sections: [
       {
         heading: '1. Удаление в приложении',
@@ -236,13 +253,15 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Запрос по email',
         paragraphs: [
-          `Если войти невозможно, отправьте письмо с адреса аккаунта на ${LEGAL_OPERATOR.email} с темой «Удаление аккаунта Runich», email аккаунта и просьбой удалить аккаунт и связанные данные. Пароль и коды входа отправлять не нужно; оператор может запросить подтверждение личности или владения email.`,
+          'Если войти невозможно, отправьте письмо с адреса аккаунта с темой «Удаление аккаунта Runich», email аккаунта и просьбой удалить аккаунт и связанные данные. Пароль и коды входа отправлять не нужно; оператор может запросить подтверждение личности или владения email.',
+          `Email для запроса: ${LEGAL_OPERATOR.email}.`,
         ],
       },
       {
         heading: '3. Результат и другие обращения',
         paragraphs: [
-          `Удаляются аккаунт, профиль, тренировки, маршруты и координаты, материалы, комментарии, отметки «нравится», связи и активные сессии. По вопросам удаления и другим обращениям можно написать на ${LEGAL_OPERATOR.email}.`,
+          'Удаляются аккаунт, профиль, тренировки, маршруты и координаты, материалы, комментарии, отметки «нравится», связи и активные сессии.',
+          `По вопросам удаления и другим обращениям можно написать на ${LEGAL_OPERATOR.email}.`,
         ],
       },
     ],
@@ -259,7 +278,8 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '1. Controller',
         paragraphs: [
-          `Controller: ${LEGAL_OPERATOR.name}, address: ${LEGAL_OPERATOR.addressEnglish}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich provides sign-in, workout and route recording, statistics, profile and user-interaction features.`,
+          ...ENGLISH_OPERATOR_CONTACT,
+          'Runich provides sign-in, workout and route recording, statistics, profile and user-interaction features.',
         ],
       },
       {
@@ -310,7 +330,8 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '8. Processors and transfers',
         paragraphs: [
-          `Runich may use VK ID and Yandex ID, a mail provider, API, database, file and backup, map and CDN providers. Each receives only the amount of data necessary for its task. For questions about processing, account deletion, access, correction or withdrawal of consent, contact ${LEGAL_OPERATOR.email}. Data is disclosed to public authorities only as required by law.`,
+          'Runich may use VK ID and Yandex ID, a mail provider, API, database, file and backup, map and CDN providers. Each receives only the amount of data necessary for its task. Data is disclosed to public authorities only as required by law.',
+          `For questions about processing, account deletion, access, correction or withdrawal of consent, contact: ${LEGAL_OPERATOR.email}.`,
         ],
       },
     ],
@@ -318,7 +339,8 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   consents: {
     title: 'Consent to Personal Data Processing',
     intro: [
-      `I, a user of the Runich service, freely, of my own will and in my own interest, give ${LEGAL_OPERATOR.name}, address: ${LEGAL_OPERATOR.addressEnglish}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, my consent to the processing of my personal data.`,
+      ...ENGLISH_OPERATOR_CONTACT,
+      'I, a user of the Runich service, freely, of my own will and in my own interest, give the above controller my consent to the processing of my personal data.',
     ],
     sections: [
       {
@@ -342,7 +364,8 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '4. Withdrawal',
         paragraphs: [
-          `You may withdraw consent by sending a request to ${LEGAL_OPERATOR.email}. Withdrawal may make features that require the relevant data unavailable; it does not affect the lawfulness of processing carried out before withdrawal.`,
+          'You may withdraw consent by sending a request to the controller. Withdrawal may make features that require the relevant data unavailable; it does not affect the lawfulness of processing carried out before withdrawal.',
+          `Email for consent withdrawal: ${LEGAL_OPERATOR.email}.`,
         ],
       },
     ],
@@ -356,7 +379,8 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '1. Service and operator',
         paragraphs: [
-          `The service is provided by ${LEGAL_OPERATOR.name}, address: ${LEGAL_OPERATOR.addressEnglish}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}. Runich provides sign-in, workout and route recording, statistics, profile and user-interaction tools.`,
+          ...ENGLISH_OPERATOR_CONTACT,
+          'Runich provides sign-in, workout and route recording, statistics, profile and user-interaction tools.',
         ],
       },
       {
@@ -403,7 +427,9 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '8. Changes and governing law',
         paragraphs: [
-          `A new version is published on this page. Continued use means acceptance of the changes unless the law requires separate consent. Questions and requests are accepted at ${LEGAL_OPERATOR.email}. Russian law applies unless mandatory rules of the user’s country provide otherwise.`,
+          'A new version is published on this page. Continued use means acceptance of the changes unless the law requires separate consent.',
+          `Questions and requests are accepted at: ${LEGAL_OPERATOR.email}.`,
+          'Russian law applies unless mandatory rules of the user’s country provide otherwise.',
         ],
       },
     ],
@@ -411,9 +437,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
 
   locationConsent: {
     title: 'Consent to Process Location Data',
-    intro: [
-      `Controller: ${LEGAL_OPERATOR.name}, address: ${LEGAL_OPERATOR.addressEnglish}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}, email: ${LEGAL_OPERATOR.email}.`,
-    ],
+    intro: ENGLISH_OPERATOR_CONTACT,
     sections: [
       {
         heading: '1. Purpose and data categories',
@@ -440,7 +464,8 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
   accountDeletion: {
     title: 'Account Deletion and User Requests',
     intro: [
-      `The account can be deleted in the Runich app or by emailing the operator at ${LEGAL_OPERATOR.email}. Controller: ${LEGAL_OPERATOR.name}, address: ${LEGAL_OPERATOR.addressEnglish}, Russian tax ID (INN) ${LEGAL_OPERATOR.inn}.`,
+      'The account can be deleted in the Runich app or by sending a request to the controller.',
+      ...ENGLISH_OPERATOR_CONTACT,
     ],
     sections: [
       {
@@ -452,13 +477,15 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Request by email',
         paragraphs: [
-          `If you cannot sign in, email ${LEGAL_OPERATOR.email} from the account email with the subject “Runich account deletion”, include the account email and ask to delete the account and related data. Do not send a password or sign-in codes; the controller may request confirmation of identity or email ownership.`,
+          'If you cannot sign in, send a message from the account email with the subject “Runich account deletion”, include the account email and ask to delete the account and related data. Do not send a password or sign-in codes; the controller may request confirmation of identity or email ownership.',
+          `Email for the request: ${LEGAL_OPERATOR.email}.`,
         ],
       },
       {
         heading: '3. Result and other requests',
         paragraphs: [
-          `The account, profile, workouts, routes and coordinates, materials, comments, likes, connections and active sessions are deleted. For deletion requests and other requests, contact ${LEGAL_OPERATOR.email}.`,
+          'The account, profile, workouts, routes and coordinates, materials, comments, likes, connections and active sessions are deleted.',
+          `For deletion requests and other requests, contact ${LEGAL_OPERATOR.email}.`,
         ],
       },
     ],

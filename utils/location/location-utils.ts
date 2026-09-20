@@ -422,7 +422,7 @@ export function getMapBoxImage(
       const doublePixels = '@2x';
       const overlays = [routeOverlay, startMarker, finishMarker].filter(Boolean).join(',');
 
-      return `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${overlays}/auto/${width}x${height}${doublePixels}?access_token=${process.env.EXPO_PUBLIC_MAPBOX_TOKEN}`;
+      return `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${overlays}/auto/${width}x${height}${doublePixels}?access_token=${process.env.EXPO_PUBLIC_MAPBOX_TOKEN}&attribution=false&logo=false`;
     };
 
     let reducedLocations = getReducedLocations(validLocations, MAX_STATIC_MAP_LOCATIONS);

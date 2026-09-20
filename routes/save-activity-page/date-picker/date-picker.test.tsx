@@ -6,6 +6,7 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { DATE_TIME_PICKER, DATE_TIME_PICKER_BTN_ID } from './const';
 import DateTimePicker from './date-picker';
+import { formatSelectedDate } from './utils';
 
 const mockSetParams = jest.fn();
 jest.mock('expo-router', () => ({
@@ -26,6 +27,9 @@ describe('Date time picker', () => {
       'accessibilityLabel',
       DATE_TIME_PICKER.english.title,
     );
+    expect(
+      screen.getByText(formatSelectedDate(new Date('2026-08-06T10:00:00.000Z'), LANGUAGES.english)),
+    ).toBeOnTheScreen();
   });
   it('should correctly renders open btn in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

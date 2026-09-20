@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { ActivityIndicator } from 'react-native-paper';
+import { ACTIVITY_VISIBILITY } from '@const/activity-visibility';
 import { ROUTES } from '@const/enums';
 import { useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery } from '@R/services/activity/activity';
 import { useGetAppConfigQuery } from '@R/services/authentication/authentication';
@@ -70,7 +71,7 @@ export default function Feed() {
                       description: '',
                       sport: 'run',
                       emotion: 'normal',
-                      isPublic: 'true',
+                      visibility: ACTIVITY_VISIBILITY.followers,
                     },
                   });
                 }}

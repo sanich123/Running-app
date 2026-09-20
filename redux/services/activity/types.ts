@@ -1,3 +1,4 @@
+import type { ActivityVisibility } from '@const/activity-visibility';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 import type { LastKmSplit } from '@R/slices/location/types';
 import type { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
@@ -19,7 +20,7 @@ interface ActivityAdditionalInfo {
   description: string;
   sport: SPORTS_BTNS_VALUES;
   emotion: EMOTIONS_BTNS_VALUES;
-  isPublic: boolean;
+  visibility: ActivityVisibility;
   photoVideoUrls: { url: string; thumbnail: null | string; blurhash?: string | null }[];
   timeZone: string;
 }
@@ -29,7 +30,7 @@ export interface ActivityToSend {
   id: string;
 }
 
-type ActivityEditableInfo = Pick<ActivityAdditionalInfo, 'title' | 'description' | 'sport' | 'emotion' | 'isPublic'>;
+type ActivityEditableInfo = Pick<ActivityAdditionalInfo, 'title' | 'description' | 'sport' | 'emotion' | 'visibility'>;
 type ActivityEditableMetrics = Pick<FinishedActivity, 'date' | 'distance' | 'duration' | 'speed'>;
 
 export interface ActivityUpdateRequest {

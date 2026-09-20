@@ -13,6 +13,8 @@ export default function CustomImage({
   cachePolicy,
   recyclingKey,
   transition,
+  onLoad,
+  onError,
 }: {
   style: any;
   source: { uri: string | null | undefined };
@@ -24,6 +26,8 @@ export default function CustomImage({
   cachePolicy?: ImageProps['cachePolicy'];
   recyclingKey?: string | null;
   transition?: ImageProps['transition'];
+  onLoad?: () => void;
+  onError?: () => void;
 }) {
   const resolvedTransition = transition ?? { duration: 650, timing: 'ease-out' as const };
 
@@ -39,6 +43,8 @@ export default function CustomImage({
       cachePolicy={cachePolicy}
       recyclingKey={Platform.OS !== 'web' ? recyclingKey : undefined}
       transition={resolvedTransition}
+      onLoad={onLoad}
+      onError={onError}
     />
   );
 }

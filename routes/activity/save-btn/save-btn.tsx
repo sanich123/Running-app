@@ -21,7 +21,7 @@ import type { FinishedActivityDraft } from '@R/slices/activity/types';
 
 type ActivityDetails = Pick<
   ActivityToSend['body'],
-  'title' | 'description' | 'sport' | 'emotion' | 'isPublic' | 'photoVideoUrls'
+  'title' | 'description' | 'sport' | 'emotion' | 'visibility' | 'photoVideoUrls'
 >;
 
 function createTrackedActivityBody(
@@ -62,7 +62,7 @@ export default function SaveBtn() {
     description,
     sport,
     emotion,
-    isPublic,
+    visibility,
     manualHours,
     manualMinutes,
     manualSeconds,
@@ -97,7 +97,7 @@ export default function SaveBtn() {
               description,
               sport,
               emotion,
-              isPublic,
+              visibility,
             };
             const activityDetails = { ...editableActivityDetails, photoVideoUrls };
             const timeZone = getDeviceTimeZone();

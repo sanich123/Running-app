@@ -46,7 +46,7 @@ export const MOCK_SERVER_ACTIVITY = {
   duration: 3062,
   distance: 28325,
   elevationGain: 0,
-  isPublic: true,
+  visibility: 'public',
   emotion: 'HAPPY',
   kilometresSplit: [],
   profile: {
