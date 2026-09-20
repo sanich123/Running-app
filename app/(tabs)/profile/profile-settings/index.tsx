@@ -14,10 +14,10 @@ import {
   LazyInputsHeightAge,
   LazyInputsWeightCity,
 } from '@Routes/app-routes/const';
+import { HEIGHT_AGE } from '@Routes/profile/profile-settings/inputs-height-age/const';
 import { getInitialProfileSettingsParams } from '@Routes/profile/profile-settings/profile-settings-params';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import type { ProfileSettingsSearchParams } from '@Routes/profile/profile-settings/profile-settings-params';
-import { HEIGHT_AGE } from '@Routes/profile/profile-settings/inputs-height-age/const';
 
 export default function ProfileSettings() {
   const { colors } = useTheme();

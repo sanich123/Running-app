@@ -1,6 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import { ROUTES } from '@const/enums';
+import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import { renderWithProviders } from '@T/utils/test-utils';
 import MediaList from './media-list';
 
