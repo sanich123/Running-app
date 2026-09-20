@@ -4,7 +4,6 @@ import { useLocalSearchParams } from 'expo-router';
 import { IconButton, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { FONT_FAMILIES } from '@const/fonts';
-import { useGetAllActivityPhotosByUserIdInfiniteQuery } from '@R/services/activity/activity';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import ProfileMediaPhotos from '@Routes/profile/media-photos/media-photos';
@@ -33,12 +32,6 @@ export default function ProfilePage() {
     error,
     refetch,
   } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
-  const { data: photoPreviewPages } = useGetAllActivityPhotosByUserIdInfiniteQuery(
-    { userId: `${whosProfile}`, take: 4 },
-    { skip: !whosProfile },
-  );
-  const photoPreviews = photoPreviewPages?.pages[0];
-
   return (
     <>
       <ScrollView
@@ -53,16 +46,13 @@ export default function ProfilePage() {
           },
           isError && styles.isInCenter,
         ]}>
+        <View style={styles.mediaPhotosWrapper}>
+          <ProfileMediaPhotos userId={`${whosProfile}`} />
+        </View>
         {isLoading ? (
           <ProfileSkeleton />
         ) : isSuccess ? (
           <>
-            {photoPreviews?.photos?.length ? (
-              <View style={styles.mediaPhotosWrapper}>
-                <ProfileMediaPhotos userId={`${whosProfile}`} />
-              </View>
-            ) : null}
-
             <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
               <TouchableRipple
                 testID="profile-avatar-open-button"

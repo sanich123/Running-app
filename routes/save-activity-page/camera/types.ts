@@ -1,5 +1,5 @@
 import type { MutableRefObject } from 'react';
-import type { PhotoVideoType } from '@S/card/types';
+import type { ActivityMediaItem } from '@S/card/types';
 import type { CameraType, CameraView, FlashMode } from 'expo-camera';
 
 export enum CameraTypes {
@@ -25,13 +25,13 @@ export interface FlashBtnProps {
 
 export interface ShotBtnProps {
   cameraRef: MutableRefObject<CameraView | null>;
-  setPhotos: (arg: PhotoVideoType[]) => void;
-  photos: PhotoVideoType[];
+  setPhotos: (arg: ActivityMediaItem[]) => void;
+  photos: ActivityMediaItem[];
   maxPhotos?: number;
 }
 
 export interface CameraLauncherProps {
-  photos?: PhotoVideoType[];
-  setPhotos?: (arg: PhotoVideoType[]) => void;
+  photos?: ActivityMediaItem[];
+  setPhotos?: (arg: ActivityMediaItem[]) => void;
   maxPhotos?: number;
 }

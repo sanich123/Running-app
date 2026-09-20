@@ -16,7 +16,7 @@ jest.mock('./image/image', () => {
 
 describe('MediaGrid', () => {
   it('renders loading state', async () => {
-    server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/photos`, loadingResponse));
+    server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/media`, loadingResponse));
     await renderWithProviders(<MediaGrid />);
     expect(screen.getByTestId('media-grid-loading')).toBeOnTheScreen();
   });
@@ -24,11 +24,11 @@ describe('MediaGrid', () => {
   it('renders server photos and loads more at the end', async () => {
     const cursors: string[] = [];
     server.use(
-      http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/photos`, ({ request }) => {
+      http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/media`, ({ request }) => {
         cursors.push(new URL(request.url).searchParams.get('cursor') ?? '');
         return HttpResponse.json({
           ...MOCK_SERVER_PHOTOS,
-          photos: cursors.length > 1 ? [] : MOCK_SERVER_PHOTOS.photos,
+          media: cursors.length > 1 ? [] : MOCK_SERVER_PHOTOS.media,
           hasMore: cursors.length === 1,
           nextCursor: cursors.length === 1 ? 'next-cursor' : null,
         });
@@ -49,7 +49,7 @@ describe('MediaGrid', () => {
   });
 
   it('renders error state', async () => {
-    server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/photos`, errorResponse));
+    server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/media`, errorResponse));
     await renderWithProviders(<MediaGrid />);
     expect(await screen.findByTestId(ERROR_COMPONENT_TEST_ID)).toBeOnTheScreen();
   });

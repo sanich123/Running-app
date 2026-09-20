@@ -70,7 +70,7 @@ export interface ActivityCardProps {
   sport: SPORTS_BTNS_VALUES | string;
   id: string;
   userId: string;
-  photoVideoUrls?: PhotoVideoType[] | null;
+  media?: ActivityMediaItem[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
   locationName?: string | null;
@@ -88,7 +88,7 @@ export interface ActivityCardProps {
   likesLength?: number;
 }
 
-export interface PhotoVideoType {
+export interface ActivityMediaItem {
   url: string;
   thumbnail: string | null;
   blurhash?: string | null;
@@ -171,10 +171,10 @@ export interface LikesProps {
   likesLength?: number;
 }
 
-type PhotoVideoUrls = PhotoVideoType[];
+type ActivityMediaItems = ActivityMediaItem[];
 
 export interface MediaListProps {
-  photoVideoUrls?: PhotoVideoUrls | null;
+  media?: ActivityMediaItems | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
   locationName?: string | null;

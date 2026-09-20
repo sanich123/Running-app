@@ -222,7 +222,7 @@ describe('activity save flows', () => {
         sport: SPORTS_BTNS_VALUES.bike,
         emotion: EMOTIONS_BTNS_VALUES.good,
         visibility: 'followers',
-        photoVideoUrls: [mockActivityPhoto],
+        media: [mockActivityPhoto],
         date: '2026-08-18T12:30:00.000Z',
         timeZone: getDeviceTimeZone(),
         distance: 12_500,
@@ -298,7 +298,7 @@ describe('activity save flows', () => {
         sport: SPORTS_BTNS_VALUES.bike,
         emotion: EMOTIONS_BTNS_VALUES.good,
         visibility: 'followers',
-        photoVideoUrls: [mockActivityPhoto],
+        media: [mockActivityPhoto],
         mapPhotoUrl: getMapBoxImage(trackedLocations),
       });
       expect(sessionLocationBody).toEqual({

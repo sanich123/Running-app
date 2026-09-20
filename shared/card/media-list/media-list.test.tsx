@@ -18,14 +18,14 @@ describe('media list', () => {
   it('opens the route map when its preview is pressed', async () => {
     const user = userEvent.setup();
     const mapUrl = 'https://api.mapbox.com/styles/v1/map.png';
-    await renderWithProviders(<MediaList id="activity-id" mapPhotoUrl={mapUrl} photoVideoUrls={[]} />);
+    await renderWithProviders(<MediaList id="activity-id" mapPhotoUrl={mapUrl} media={[]} />);
     await user.press(screen.getByTestId(mapUrl));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.map}/activity-id`);
   });
 
   it('keeps the complete map image visible in the card preview', async () => {
     const mapUrl = 'https://api.mapbox.com/styles/v1/map.png';
-    await renderWithProviders(<MediaList id="activity-id" mapPhotoUrl={mapUrl} photoVideoUrls={[]} />);
+    await renderWithProviders(<MediaList id="activity-id" mapPhotoUrl={mapUrl} media={[]} />);
 
     expect(screen.getByTestId(mapUrl).props.contentFit).toBe('contain');
   });
@@ -33,7 +33,7 @@ describe('media list', () => {
   it('uses the map blurhash and prioritized disk cache for fast scrolling', async () => {
     const mapUrl = 'https://api.mapbox.com/styles/v1/map.png';
     await renderWithProviders(
-      <MediaList id="activity-id" mapPhotoUrl={mapUrl} mapPhotoUrlBlurhash="map-blurhash" photoVideoUrls={[]} />,
+      <MediaList id="activity-id" mapPhotoUrl={mapUrl} mapPhotoUrlBlurhash="map-blurhash" media={[]} />,
     );
 
     expect(screen.getByTestId(mapUrl).props).toEqual(
@@ -53,7 +53,7 @@ describe('media list', () => {
       <MediaList
         id="activity-id"
         mapPhotoUrl={mapUrl}
-        photoVideoUrls={[]}
+        media={[]}
         locationName="Очень длинное название населённого пункта"
         weatherTemperature={18}
         weatherWindSpeed={6}
@@ -72,7 +72,7 @@ describe('media list', () => {
   it('continues covering regular photos in the card preview', async () => {
     const photoUrl = 'https://images.example.test/activity.jpg';
     await renderWithProviders(
-      <MediaList id="activity-id" mapPhotoUrl={undefined} photoVideoUrls={[{ url: photoUrl, thumbnail: null }]} />,
+      <MediaList id="activity-id" mapPhotoUrl={undefined} media={[{ url: photoUrl, thumbnail: null }]} />,
     );
 
     expect(screen.getByTestId(photoUrl).props.contentFit).toBe('cover');
@@ -82,7 +82,7 @@ describe('media list', () => {
     const user = userEvent.setup();
     const photoUrl = 'https://images.example.test/activity.jpg';
     await renderWithProviders(
-      <MediaList id="activity-id" mapPhotoUrl={undefined} photoVideoUrls={[{ url: photoUrl, thumbnail: null }]} />,
+      <MediaList id="activity-id" mapPhotoUrl={undefined} media={[{ url: photoUrl, thumbnail: null }]} />,
     );
     await user.press(screen.getByTestId(photoUrl));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/activity-id?indexOfPhoto=0`);

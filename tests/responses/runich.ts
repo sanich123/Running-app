@@ -35,7 +35,7 @@ export const MOCK_SERVER_ACTIVITY = {
   sport: 'walk',
   id: MOCK_SERVER_IDS.activityId,
   userId: MOCK_SERVER_IDS.userId,
-  photoVideoUrls: [
+  media: [
     {
       url: 'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg',
       thumbnail: 'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg',
@@ -175,7 +175,7 @@ export const MOCK_SERVER_FOLLOWERS = [
 ] as const;
 
 export const MOCK_SERVER_PHOTOS = {
-  photos: MOCK_SERVER_ACTIVITY.photoVideoUrls,
+  media: MOCK_SERVER_ACTIVITY.media,
   hasMore: false,
   nextCursor: null,
   isLastPage: true,

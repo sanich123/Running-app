@@ -6,13 +6,13 @@ import { useLocalSearchParams } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import {
   useGetActivityByActivityIdQuery,
-  useGetAllActivityPhotosByUserIdInfiniteQuery,
+  useGetAllActivityMediaByUserIdInfiniteQuery,
 } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
 import CustomImage from '@S/custom-image/custom-image';
 import { getPhotoUrl, isDirectMediaUrl, isVideoUrl } from './utils';
-import type { ActivityPhotoResponse } from '@R/runich-api/types';
+import type { ActivityMediaItemResponse } from '@R/runich-api/types';
 
 export default function PhotoViewer() {
   const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();
@@ -27,15 +27,15 @@ export default function PhotoViewer() {
     data: photoPages,
     fetchNextPage,
     isFetching,
-  } = useGetAllActivityPhotosByUserIdInfiniteQuery(
+  } = useGetAllActivityMediaByUserIdInfiniteQuery(
     {
       userId: userId ? `${userId}` : ownerId,
       take: Number(take),
     },
     { skip: !take },
   );
-  const userPhotos = photoPages?.pages.flatMap(({ photos }) => photos) ?? [];
-  const itemsToRender = uuid.validate(`${photoUrl}`) ? (activity?.photoVideoUrls ?? []) : userPhotos;
+  const userMedia = photoPages?.pages.flatMap(({ media }) => media) ?? [];
+  const itemsToRender = uuid.validate(`${photoUrl}`) ? (activity?.media ?? []) : userMedia;
   const targetIndex = Number(photoUrl);
   const hasMorePhotos = photoPages?.pages.at(-1)?.hasMore ?? false;
   const canRenderPager = uuid.validate(`${photoUrl}`)
@@ -87,7 +87,7 @@ export default function PhotoViewer() {
                 }
               }}
               orientation="vertical">
-              {itemsToRender.map(({ url, blurhash }: ActivityPhotoResponse, index: number) => (
+              {itemsToRender.map(({ url, blurhash }: ActivityMediaItemResponse, index: number) => (
                 <View key={index}>
                   {isVideoUrl(url) ? (
                     <VideoViewer url={url} />

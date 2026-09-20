@@ -21,7 +21,7 @@ interface ActivityAdditionalInfo {
   sport: SPORTS_BTNS_VALUES;
   emotion: EMOTIONS_BTNS_VALUES;
   visibility: ActivityVisibility;
-  photoVideoUrls: { url: string; thumbnail: null | string; blurhash?: string | null }[];
+  media: { url: string; thumbnail: null | string; blurhash?: string | null }[];
   timeZone: string;
 }
 
@@ -38,7 +38,7 @@ export interface ActivityUpdateRequest {
   body: Partial<ActivityEditableInfo & ActivityEditableMetrics>;
 }
 
-export interface GetActivityPhotosRequest {
+export interface GetActivityMediaRequest {
   userId: string;
   take: number;
 }

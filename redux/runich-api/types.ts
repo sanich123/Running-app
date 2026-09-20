@@ -22,7 +22,7 @@ export interface ActivityMigrationJobResponse {
 
 type ActivityLocationResponse = ActivityLocation;
 
-export interface ActivityPhotoResponse {
+export interface ActivityMediaItemResponse {
   url: string;
   thumbnail: string | null;
   blurhash?: string | null;
@@ -55,7 +55,7 @@ export interface ActivityResponse {
   description?: string | null;
   title?: string | null;
   sport: string;
-  photoVideoUrls?: ActivityPhotoResponse[] | null;
+  media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
   locationName?: string | null;
@@ -85,7 +85,7 @@ export type ActivityListItemResponse = Pick<
   | 'timeZone'
   | 'title'
   | 'sport'
-  | 'photoVideoUrls'
+  | 'media'
   | 'mapPhotoUrl'
   | 'mapPhotoUrlBlurhash'
   | 'locationName'
@@ -114,7 +114,7 @@ export interface ActivityMutationResponse {
   description?: string | null;
   title?: string | null;
   sport: string;
-  photoVideoUrls?: ActivityPhotoResponse[] | null;
+  media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
   locationName?: string | null;
@@ -143,7 +143,7 @@ export interface ActivitiesResponse {
 }
 
 export interface ActivityMediaResponse {
-  photos: ActivityPhotoResponse[];
+  media: ActivityMediaItemResponse[];
   hasMore: boolean;
   nextCursor: string | null;
   isLastPage?: boolean;

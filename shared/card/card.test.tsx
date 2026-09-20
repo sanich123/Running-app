@@ -126,7 +126,7 @@ describe('Activity card', () => {
   it('should correctly renders', async () => {
     mockStore.dispatch(setMockUserId('someUserId'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    const { description, title, date, sport, id, photoVideoUrls, profile, duration, distance } = MOCK_ACTIVITY;
+    const { description, title, date, sport, id, media, profile, duration, distance } = MOCK_ACTIVITY;
     await renderWithProviders(
       <ActivityCard
         isShowDeleteBtn
@@ -137,7 +137,7 @@ describe('Activity card', () => {
         sport={sport as SPORTS_BTNS_VALUES}
         id={id}
         userId="someUserId"
-        photoVideoUrls={photoVideoUrls}
+        media={media}
         duration={duration}
         distance={distance}
         elevationGain={MOCK_ACTIVITY.elevationGain}

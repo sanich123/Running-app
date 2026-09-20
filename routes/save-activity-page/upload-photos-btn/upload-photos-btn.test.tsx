@@ -107,7 +107,7 @@ describe('Upload photos btn', () => {
     expect(setImages).toHaveBeenCalledWith([uploadedImage]);
     expect(setIsDisabled).toHaveBeenNthCalledWith(1, true);
     expect(setIsDisabled).toHaveBeenLastCalledWith(false);
-    expect(mockStore.getState().activity.photoVideoUrls).toContainEqual(uploadedImage);
+    expect(mockStore.getState().activity.media).toContainEqual(uploadedImage);
   });
 
   it('shows upload progress and cancels without appending the media', async () => {
@@ -172,7 +172,7 @@ describe('Upload photos btn', () => {
 
     await waitFor(() => expect(uploadActivityMediaBatch).toHaveBeenCalledTimes(1));
     expect(setImages).toHaveBeenCalledWith(uploadedImages);
-    expect(mockStore.getState().activity.photoVideoUrls.slice(0, 3)).toEqual(uploadedImages);
+    expect(mockStore.getState().activity.media.slice(0, 3)).toEqual(uploadedImages);
   });
 
   it('does not select more files than the remaining activity media slots', async () => {

@@ -5,7 +5,7 @@ import { TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import CustomImage from '@S/custom-image/custom-image';
-import type { PhotoVideoType } from '@S/card/types';
+import type { ActivityMediaItem } from '@S/card/types';
 
 export default memo(function MediaGridImage({
   url,
@@ -13,7 +13,7 @@ export default memo(function MediaGridImage({
   blurhash,
   index,
   take,
-}: PhotoVideoType & { index: number; take: number }) {
+}: ActivityMediaItem & { index: number; take: number }) {
   const { push } = useRouter();
   const { dark } = useTheme();
   const { width } = useWindowDimensions();

@@ -10,7 +10,7 @@ import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import type { MediaListProps } from '../types';
 
 export default memo(function MediaList({
-  photoVideoUrls,
+  media,
   mapPhotoUrl,
   id,
   mapPhotoUrlBlurhash,
@@ -26,9 +26,11 @@ export default memo(function MediaList({
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
 
   const displayedData = useMemo(() => {
-    const media = photoVideoUrls ?? [];
-    return mapPhotoUrl ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...media] : media;
-  }, [mapPhotoUrl, mapPhotoUrlBlurhash, photoVideoUrls]);
+    const activityMedia = media ?? [];
+    return mapPhotoUrl
+      ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...activityMedia]
+      : activityMedia;
+  }, [mapPhotoUrl, mapPhotoUrlBlurhash, media]);
   const renderItem = useCallback(
     ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => {
       const isMap = item.url.includes('api.mapbox.com');
@@ -68,7 +70,7 @@ export default memo(function MediaList({
         </View>
       );
     },
-    [dark, id, locationName, mediaWidth, push, weatherCode, weatherTemperature, weatherWindSpeed],
+    [dark, emotion, id, locationName, mediaWidth, push, weatherCode, weatherTemperature, weatherWindSpeed],
   );
 
   return (

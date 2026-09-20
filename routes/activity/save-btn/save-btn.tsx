@@ -21,7 +21,7 @@ import type { FinishedActivityDraft } from '@R/slices/activity/types';
 
 type ActivityDetails = Pick<
   ActivityToSend['body'],
-  'title' | 'description' | 'sport' | 'emotion' | 'visibility' | 'photoVideoUrls'
+  'title' | 'description' | 'sport' | 'emotion' | 'visibility' | 'media'
 >;
 
 function createTrackedActivityBody(
@@ -51,7 +51,7 @@ export default function SaveBtn() {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { back, replace } = useRouter();
-  const { isSavingDisabled, finishedActivity, photoVideoUrls } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled, finishedActivity, media } = useAppSelector(({ activity }) => activity);
   const {
     activityId,
     isManualAdding,
@@ -99,7 +99,7 @@ export default function SaveBtn() {
               emotion,
               visibility,
             };
-            const activityDetails = { ...editableActivityDetails, photoVideoUrls };
+            const activityDetails = { ...editableActivityDetails, media };
             const timeZone = getDeviceTimeZone();
             dispatch(setSavingDisabled(true));
             if (isEditingActivity) {
@@ -126,7 +126,7 @@ export default function SaveBtn() {
                 body: isManualAdding
                   ? {
                       ...editableActivityDetails,
-                      photoVideoUrls,
+                      media,
                       timeZone,
                       date: new Date(manualDate).toISOString(),
                       distance: distance * 1000,

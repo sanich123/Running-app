@@ -57,7 +57,7 @@ describe('shot btn', () => {
       expect.objectContaining({ onProgress: expect.any(Function), signal: expect.any(Object) }),
     );
     expect(setPhotos).toHaveBeenCalledWith([{ url: 'https://cdn.example.com/photo.jpg', thumbnail: 'thumb' }]);
-    expect(mockStore.getState().activity.photoVideoUrls).toContainEqual({
+    expect(mockStore.getState().activity.media).toContainEqual({
       url: 'https://cdn.example.com/photo.jpg',
       thumbnail: 'thumb',
     });

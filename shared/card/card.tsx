@@ -23,7 +23,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     sport,
     id,
     userId,
-    photoVideoUrls,
+    media,
     duration,
     distance,
     elevationGain,
@@ -107,9 +107,9 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           Platform.OS === 'web' && styles.webStyles,
         ]}>
         <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
-        {(resolvedMapPhotoUrl || Boolean(photoVideoUrls?.length)) && (
+        {(resolvedMapPhotoUrl || Boolean(media?.length)) && (
           <MediaList
-            photoVideoUrls={photoVideoUrls ?? []}
+            media={media ?? []}
             mapPhotoUrl={resolvedMapPhotoUrl}
             mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
             locationName={locationName}

@@ -27,8 +27,8 @@ export default function SaveResult() {
   const insets = useSafeAreaInsets();
   const { isCameraVisible, isManualAdding, isEditingActivity } = useManualActivityParams();
   const { language } = useAppSelector(({ settings }) => settings);
-  const { photoVideoUrls } = useAppSelector(({ activity }) => activity);
-  const [images, setImages] = useState<ActivityPhoto[]>(photoVideoUrls);
+  const { media } = useAppSelector(({ activity }) => activity);
+  const [images, setImages] = useState<ActivityPhoto[]>(media);
   const [isMediaUploadDisabled, setIsMediaUploadDisabled] = useState(false);
   const isDisabled = false;
 

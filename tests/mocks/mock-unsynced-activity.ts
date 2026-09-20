@@ -11,7 +11,7 @@ export const MOCK_UNSYNCED_ACTIVITY: PendingActivity = {
     emotion: EMOTIONS_BTNS_VALUES.normal,
     visibility: 'public',
     kilometresSplit: [],
-    photoVideoUrls: [],
+    media: [],
     speed: 10,
     sport: SPORTS_BTNS_VALUES.run,
     title: 'Unsynced activity',

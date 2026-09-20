@@ -6,7 +6,7 @@ describe('render item', () => {
       title: 'Run',
       date: '2026-08-09',
       sport: 'run',
-      photoVideoUrls: [],
+      media: [],
       mapPhotoUrl: 'map',
       mapPhotoUrlBlurhash: 'map-blurhash',
       duration: 1000,

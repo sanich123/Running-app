@@ -31,8 +31,8 @@ export default function UpdateBtn() {
           dispatch(resetFinishedActivity());
           dispatch(resetActivityDraft());
 
-          if (activity?.photoVideoUrls) {
-            dispatch(addPhotoUrls(activity?.photoVideoUrls));
+          if (activity?.media) {
+            dispatch(addPhotoUrls(activity?.media));
           }
           const { hours, minutes, seconds } = getHoursMinutesSecondsFromMilliseconds(activity?.duration);
           push({

@@ -21,6 +21,6 @@ export interface ActivityState {
   isSavingDisabled: boolean;
   finishedActivity: FinishedActivityDraft;
   sport: SPORTS_BTNS_VALUES;
-  photoVideoUrls: ActivityPhoto[];
+  media: ActivityPhoto[];
   unsyncedActivities: PendingActivity[];
 }

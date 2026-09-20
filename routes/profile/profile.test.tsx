@@ -14,14 +14,11 @@ const mockPathname = `/${ROUTES.profile}`;
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.userId }),
   usePathname: () => mockPathname,
+  useRouter: () => ({ push: jest.fn() }),
 }));
 jest.mock('@S/avatar/showable/showable', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="profile-avatar" />;
-});
-jest.mock('@Routes/profile/media-photos/media-photos', () => {
-  const { View } = jest.requireActual('react-native');
-  return () => <View testID="profile-media" />;
 });
 jest.mock('@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn', () => {
   const { View } = jest.requireActual('react-native');
@@ -73,11 +70,11 @@ describe('ProfilePage', () => {
     let requestedUrl = '';
     mockStore.dispatch(setMockUserId(loggedInUserId));
     server.use(
-      http.get(`${BASE_URL}/activity/${viewedUserId}/photos`, ({ request }) => {
+      http.get(`${BASE_URL}/activity/${viewedUserId}/media`, ({ request }) => {
         requestedUrl = request.url;
-        return HttpResponse.json({ photos: [], hasMore: false, nextCursor: null });
+        return HttpResponse.json({ media: [], hasMore: false, nextCursor: null });
       }),
-      http.get(`${BASE_URL}/activity/${loggedInUserId}/photos`, () => {
+      http.get(`${BASE_URL}/activity/${loggedInUserId}/media`, () => {
         throw new Error('The logged-in user id must not be used for the viewed profile media request');
       }),
     );
@@ -85,7 +82,7 @@ describe('ProfilePage', () => {
     await renderWithProviders(<ProfilePage />);
     await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
 
-    expect(requestedUrl).toContain(`/activity/${viewedUserId}/photos?take=4`);
+    expect(requestedUrl).toContain(`/activity/${viewedUserId}/media?take=4`);
   });
 
   it('renders error state', async () => {

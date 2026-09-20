@@ -11,7 +11,7 @@ export const FINISHED_ACTIVITY_INITIAL_STATE: FinishedActivityDraft = {
 
 export const ACTIVITY_DRAFT_INITIAL_STATE = {
   sport: SPORTS_BTNS_VALUES.run,
-  photoVideoUrls: [],
+  media: [],
 };
 
 export const ACTIVITY_INITIAL_STATE: ActivityState = {

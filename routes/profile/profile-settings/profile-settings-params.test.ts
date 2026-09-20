@@ -7,6 +7,8 @@ describe('profile settings params', () => {
         name: ['Alexander'],
         surname: 'Voronin',
         weight: ['90'],
+        height: ['180'],
+        age: '35',
         city: 'Moscow',
         bio: ['Runner'],
         gender: 'male',
@@ -15,6 +17,8 @@ describe('profile settings params', () => {
       name: 'Alexander',
       surname: 'Voronin',
       weight: '90',
+      height: '180',
+      age: '35',
       city: 'Moscow',
       bio: 'Runner',
       gender: 'male',
@@ -26,6 +30,8 @@ describe('profile settings params', () => {
       name: '',
       surname: '',
       weight: '',
+      height: '',
+      age: '',
       city: '',
       bio: '',
       gender: '',
@@ -38,6 +44,8 @@ describe('profile settings params', () => {
         name: null,
         surname: 'Voronin',
         weight: null,
+        height: null,
+        age: null,
         city: 'Moscow',
         bio: null,
         gender: 'male',
@@ -46,6 +54,8 @@ describe('profile settings params', () => {
       name: '',
       surname: 'Voronin',
       weight: '',
+      height: '',
+      age: '',
       city: 'Moscow',
       bio: '',
       gender: 'male',
@@ -65,6 +75,6 @@ describe('profile settings params', () => {
     expect(result.surname).toHaveLength(50);
     expect(result.city).toHaveLength(100);
     expect(result.bio).toHaveLength(500);
-    expect(result.weight).toBe('709');
+    expect(result.weight).toBe('200');
   });
 });

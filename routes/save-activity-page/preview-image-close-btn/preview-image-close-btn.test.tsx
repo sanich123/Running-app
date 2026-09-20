@@ -26,7 +26,7 @@ describe('Preview image close btn', () => {
     const deleteIcon = screen.getByTestId('deleteIcon');
     await userEvent.press(deleteIcon);
     expect(setImages).toHaveBeenCalled();
-    expect(mockStore.getState().activity.photoVideoUrls).toEqual([]);
+    expect(mockStore.getState().activity.media).toEqual([]);
     expect(mockDeleteUploadedMedia).toHaveBeenCalledWith(['someUrl']);
   });
   it('should be disabled, when isDisabled', async () => {

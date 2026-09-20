@@ -36,7 +36,7 @@ describe('Preview uploadable image', () => {
     await renderWithProviders(<PreviewUploadableImage image="file://activity.jpg" index={0} isDisabled={false} />);
     await user.press(screen.getByTestId('previewUploadable'));
     expect(uploadActivityMedia).toHaveBeenCalledWith('file://activity.jpg');
-    expect(mockStore.getState().activity.photoVideoUrls[0]).toEqual({
+    expect(mockStore.getState().activity.media[0]).toEqual({
       url: 'https://images.example.test/activity.jpg',
       thumbnail: 'thumbnail.jpg',
     });

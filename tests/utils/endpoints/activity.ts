@@ -32,6 +32,6 @@ export const getEmptyListActivitiesByUserId = () =>
 export const getAllCtivitiesByUserIdFailure = () => HttpResponse.json(MOCK_BAD_REQUEST, { status: 401 });
 
 export const getPhotosFromActivities = () =>
-  HttpResponse.json({ photos: MOCK_PHOTOS, hasMore: false, nextCursor: null });
+  HttpResponse.json({ media: MOCK_PHOTOS, hasMore: false, nextCursor: null });
 
 export const getPhotosFromActivitiesFailure = () => HttpResponse.json(MOCK_BAD_REQUEST, { status: 400 });

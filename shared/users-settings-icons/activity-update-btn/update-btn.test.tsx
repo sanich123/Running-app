@@ -22,7 +22,7 @@ describe('update btn', () => {
     const state = mockStore.getState();
     expect(state.activity).toEqual(
       expect.objectContaining({
-        photoVideoUrls: MOCK_SERVER_ACTIVITY.photoVideoUrls,
+        media: MOCK_SERVER_ACTIVITY.media,
       }),
     );
     expect(mockPush).toHaveBeenCalledWith({
