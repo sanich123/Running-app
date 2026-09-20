@@ -2,12 +2,12 @@ import { View, StyleSheet } from 'react-native';
 import { Icon, Text } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 
-type MapMetaOverlayProps = {
+interface MapMetaOverlayProps {
   locationName?: string | null;
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
   weatherCode?: number | null;
-};
+}
 
 export default function MapMetaOverlay({
   locationName,

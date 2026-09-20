@@ -11,11 +11,11 @@ import {
 } from '@Routes/save-activity-page/emotion-btns/const';
 import UserAvatar from '@S/avatar/avatar';
 import CustomImage from '@S/custom-image/custom-image';
-import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import { getIconNameByTypeOfSport, MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { formatDuration } from '@U/time-formatter';
 import { SHARE_IMAGE_HEIGHT, SHARE_IMAGE_WIDTH, SHARE_MAP_HEIGHT } from './const';
 import Metric from './metric';
+import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import { CARD_METRICS } from '../metrics/const';
 import { getCardSpeedMetric } from '../metrics/utils';
 import { getShareMapPhotoUrl } from '../utils';
