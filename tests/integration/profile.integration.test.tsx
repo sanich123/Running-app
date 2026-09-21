@@ -6,6 +6,8 @@ import ProfilePage from '@Routes/profile/profile';
 import GenderBtns from '@Routes/profile/profile-settings/gender-btns/gender-btns';
 import { INPUT_BIO_TEST_ID } from '@Routes/profile/profile-settings/input-bio/const';
 import InputBio from '@Routes/profile/profile-settings/input-bio/input-bio';
+import { AGE_TEST_ID, HEIGHT_TEST_ID } from '@Routes/profile/profile-settings/inputs-height-age/const';
+import InputsHeightAge from '@Routes/profile/profile-settings/inputs-height-age/inputs-height-age';
 import { NAME_TEST_ID, SURNAME_TEST_ID } from '@Routes/profile/profile-settings/inputs-name-surname/const';
 import InputsNameSurname from '@Routes/profile/profile-settings/inputs-name-surname/inputs-name-surname';
 import { CITY_TEST_ID, WEIGHT_TEST_ID } from '@Routes/profile/profile-settings/inputs-weight-city/const';
@@ -33,6 +35,8 @@ const mockProfileSettingsParams = {
   weight: MOCK_SERVER_PROFILE.weight,
   bio: MOCK_SERVER_PROFILE.bio,
   gender: MOCK_SERVER_PROFILE.gender,
+  height: '180',
+  age: '30',
 };
 const mockSetParams = jest.fn((params: Record<string, string>) => Object.assign(mockProfileSettingsParams, params));
 
@@ -64,6 +68,8 @@ describe('profile and account integration flows', () => {
       weight: MOCK_SERVER_PROFILE.weight,
       bio: MOCK_SERVER_PROFILE.bio,
       gender: MOCK_SERVER_PROFILE.gender,
+      height: '180',
+      age: '30',
     });
   });
 
@@ -83,6 +89,7 @@ describe('profile and account integration flows', () => {
         <ProfilePage />
         <InputsNameSurname isDisabled={false} />
         <InputsWeightCity isDisabled={false} />
+        <InputsHeightAge isDisabled={false} />
         <InputBio isDisabled={false} />
         <GenderBtns isDisabled={false} />
       </>,
@@ -94,6 +101,8 @@ describe('profile and account integration flows', () => {
     await fireEvent.changeText(screen.getByTestId(SURNAME_TEST_ID), 'New surname');
     await fireEvent.changeText(screen.getByTestId(CITY_TEST_ID), 'New city');
     await fireEvent.changeText(screen.getByTestId(WEIGHT_TEST_ID), '82');
+    await fireEvent.changeText(screen.getByTestId(HEIGHT_TEST_ID), '181');
+    await fireEvent.changeText(screen.getByTestId(AGE_TEST_ID), '31');
     await fireEvent.changeText(screen.getByTestId(INPUT_BIO_TEST_ID), 'Updated bio');
 
     await userEvent.press(screen.getByText('Женщина'));
@@ -107,6 +116,8 @@ describe('profile and account integration flows', () => {
           surname: 'New surname',
           city: 'New city',
           weight: '82',
+          height: '181',
+          age: '31',
           bio: 'Updated bio',
           gender: 'female',
         }),

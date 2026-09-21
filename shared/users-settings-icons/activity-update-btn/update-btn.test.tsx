@@ -22,7 +22,7 @@ describe('update btn', () => {
     const state = mockStore.getState();
     expect(state.activity).toEqual(
       expect.objectContaining({
-        photoVideoUrls: MOCK_SERVER_ACTIVITY.photoVideoUrls,
+        media: MOCK_SERVER_ACTIVITY.media,
       }),
     );
     expect(mockPush).toHaveBeenCalledWith({
@@ -40,7 +40,7 @@ describe('update btn', () => {
         description: MOCK_SERVER_ACTIVITY.description,
         sport: MOCK_SERVER_ACTIVITY.sport,
         emotion: MOCK_SERVER_ACTIVITY.emotion,
-        isPublic: String(MOCK_SERVER_ACTIVITY.isPublic),
+        visibility: MOCK_SERVER_ACTIVITY.visibility,
       },
     });
   });

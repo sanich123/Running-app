@@ -12,6 +12,10 @@ jest.mock('@gorhom/bottom-sheet', () => {
   };
 });
 
+const mockPush = jest.fn();
+
+jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+
 describe('background location modal', () => {
   it('requests access and closes after permission is granted', async () => {
     const user = userEvent.setup();
@@ -28,5 +32,22 @@ describe('background location modal', () => {
     await user.press(screen.getByTestId('background-location-allow'));
     expect(requestBackgroundPermission).toHaveBeenCalledTimes(1);
     expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it('closes the modal before opening the location consent page', async () => {
+    const user = userEvent.setup();
+    const close = jest.fn();
+
+    await renderWithProviders(
+      <BackgroundLocationModal
+        backgroundLocationEnabledModalRef={{ current: { close } } as any}
+        requestBackgroundPermission={jest.fn()}
+      />,
+    );
+
+    await user.press(screen.getByRole('link'));
+
+    expect(close).toHaveBeenCalledTimes(1);
+    expect(mockPush).toHaveBeenCalledWith('/location-consent');
   });
 });

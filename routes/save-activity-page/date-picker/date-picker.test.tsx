@@ -6,6 +6,7 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { DATE_TIME_PICKER, DATE_TIME_PICKER_BTN_ID } from './const';
 import DateTimePicker from './date-picker';
+import { formatSelectedDate } from './utils';
 
 const mockSetParams = jest.fn();
 jest.mock('expo-router', () => ({
@@ -22,23 +23,38 @@ describe('Date time picker', () => {
   it('should correctly renders open btn in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
-    expect(screen.getByText(new RegExp(DATE_TIME_PICKER.english.title))).toBeOnTheScreen();
+    expect(screen.getByTestId(DATE_TIME_PICKER_BTN_ID)).toHaveProp(
+      'accessibilityLabel',
+      DATE_TIME_PICKER.english.title,
+    );
+    expect(
+      screen.getByText(formatSelectedDate(new Date('2026-08-06T10:00:00.000Z'), LANGUAGES.english)),
+    ).toBeOnTheScreen();
   });
   it('should correctly renders open btn in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
-    expect(screen.getByText(new RegExp(DATE_TIME_PICKER.russian.title))).toBeOnTheScreen();
+    expect(screen.getByTestId(DATE_TIME_PICKER_BTN_ID)).toHaveProp(
+      'accessibilityLabel',
+      DATE_TIME_PICKER.russian.title,
+    );
   });
   it('should correctly handle isDisabled state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<DateTimePicker isDisabled />, { store: mockStore });
-    expect(screen.getByText(new RegExp(DATE_TIME_PICKER.russian.title))).toBeOnTheScreen();
+    expect(screen.getByTestId(DATE_TIME_PICKER_BTN_ID)).toHaveProp(
+      'accessibilityLabel',
+      DATE_TIME_PICKER.russian.title,
+    );
   });
   it('should correctly handle isDisabled WhileSending state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(setSavingDisabled(true));
     await renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
-    expect(screen.getByText(new RegExp(DATE_TIME_PICKER.russian.title))).toBeOnTheScreen();
+    expect(screen.getByTestId(DATE_TIME_PICKER_BTN_ID)).toHaveProp(
+      'accessibilityLabel',
+      DATE_TIME_PICKER.russian.title,
+    );
   });
 
   it('opens the picker and stores the confirmed date', async () => {
@@ -50,5 +66,19 @@ describe('Date time picker', () => {
     const selectedDate = new Date('2026-08-06T10:00:00.000Z');
     await act(async () => screen.getByTestId('native-date-picker').props.onConfirm(selectedDate));
     expect(mockSetParams).toHaveBeenCalledWith({ manualDate: selectedDate.toISOString() });
+  });
+
+  it('does not store a future date when a maximum date is provided', async () => {
+    const user = userEvent.setup();
+    const maximumDate = new Date('2026-08-06T12:00:00.000Z');
+    mockSetParams.mockClear();
+    await renderWithProviders(<DateTimePicker isDisabled={false} maximumDate={maximumDate} />);
+    await user.press(screen.getByTestId(DATE_TIME_PICKER_BTN_ID));
+
+    expect(screen.getByTestId('native-date-picker').props.maximumDate).toEqual(maximumDate);
+    const futureDate = new Date('2026-08-07T10:00:00.000Z');
+    await act(async () => screen.getByTestId('native-date-picker').props.onConfirm(futureDate));
+
+    expect(mockSetParams).toHaveBeenLastCalledWith({ manualDate: maximumDate.toISOString() });
   });
 });

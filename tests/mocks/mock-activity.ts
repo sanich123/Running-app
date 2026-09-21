@@ -21,7 +21,7 @@ export const MOCK_ACTIVITY = {
     { kilometerPoint: MOCK_LOCATIONS[35], lastKilometerAltitude: 0, lastKilometerDuration: 353663 },
   ],
   locations: MOCK_LOCATIONS,
-  photoVideoUrls: [
+  media: [
     {
       url: 'https://images.example.test/user-a/activity.jpg',
       thumbnail: null,

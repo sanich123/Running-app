@@ -1,4 +1,4 @@
-import { useRef, memo, useMemo } from 'react';
+import { useCallback, useRef, useState, memo } from 'react';
 import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
@@ -12,7 +12,6 @@ import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
 import ShareActivityImage from './share-activity-image/share-activity-image';
 import { UserInfoSize } from './user-info/const';
-import { getCardMapPhotoUrl } from './utils';
 import type { ActivityCardProps } from './types';
 
 export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
@@ -23,15 +22,21 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
     sport,
     id,
     userId,
-    photoVideoUrls,
+    media,
     duration,
     distance,
     elevationGain,
     steps,
+    emotion,
     isShowDescription,
     isShowDeleteBtn,
     mapPhotoUrl,
     mapPhotoUrlBlurhash,
+    locationName,
+    weatherTemperature,
+    weatherWindSpeed,
+    weatherCode,
+    caloriesActive,
     profile,
     commentsLength,
     likesLength,
@@ -41,23 +46,49 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const cardRef = useRef<View>(null);
+  const shareImageReadyRef = useRef<(() => void) | null>(null);
+  const [isShareImageVisible, setIsShareImageVisible] = useState(false);
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
-  const cardMapPhotoUrl = useMemo(() => getCardMapPhotoUrl(mapPhotoUrl, mediaWidth), [mapPhotoUrl, mediaWidth]);
-
-  const shareMapPhotoUrl = mapPhotoUrl;
-  const resolvedMapPhotoUrl = cardMapPhotoUrl;
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
+  const prepareShareImage = useCallback(
+    () =>
+      new Promise<void>((resolve) => {
+        shareImageReadyRef.current = resolve;
+        setIsShareImageVisible(true);
+      }),
+    [],
+  );
+  const handleShareImageReady = useCallback(() => {
+    shareImageReadyRef.current?.();
+    shareImageReadyRef.current = null;
+  }, []);
+  const cleanupShareImage = useCallback(() => {
+    setIsShareImageVisible(false);
+  }, []);
+
   return (
     <>
-      <ShareActivityImage
-        title={title}
-        date={date}
-        duration={duration}
-        distance={distance}
-        sport={sport}
-        cardRef={cardRef}
-        mapPhotoUrl={shareMapPhotoUrl}
-      />
+      {isShareImageVisible && (
+        <ShareActivityImage
+          title={title}
+          date={date}
+          duration={duration}
+          distance={distance}
+          sport={sport}
+          elevationGain={elevationGain}
+          steps={steps}
+          emotion={emotion}
+          cardRef={cardRef}
+          mapPhotoUrl={mapPhotoUrl}
+          profile={profile}
+          locationName={locationName}
+          weatherTemperature={weatherTemperature}
+          weatherWindSpeed={weatherWindSpeed}
+          weatherCode={weatherCode}
+          caloriesActive={caloriesActive}
+          onReady={handleShareImageReady}
+        />
+      )}
       <View
         style={[
           {
@@ -72,11 +103,16 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           Platform.OS === 'web' && styles.webStyles,
         ]}>
         <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
-        {(resolvedMapPhotoUrl || Boolean(photoVideoUrls?.length)) && (
+        {(mapPhotoUrl || Boolean(media?.length)) && (
           <MediaList
-            photoVideoUrls={photoVideoUrls ?? []}
-            mapPhotoUrl={resolvedMapPhotoUrl}
+            media={media ?? []}
+            mapPhotoUrl={mapPhotoUrl}
             mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
+            locationName={locationName}
+            weatherTemperature={weatherTemperature}
+            weatherWindSpeed={weatherWindSpeed}
+            weatherCode={weatherCode}
+            emotion={emotion}
             id={id}
           />
         )}
@@ -91,6 +127,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           sport={sport}
           steps={steps}
           elevationGain={elevationGain}
+          caloriesActive={caloriesActive}
           isFullView={isFullView}
         />
         <View style={{ height: 40, paddingHorizontal: 8 }}>
@@ -105,7 +142,9 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             commentsLength={commentsLength}
             likesLength={likesLength}
             profile={profile}
-            mapPhotoUrl={resolvedMapPhotoUrl}
+            mapPhotoUrl={mapPhotoUrl}
+            prepareShareImage={prepareShareImage}
+            cleanupShareImage={cleanupShareImage}
           />
         </Card.Actions>
       </View>

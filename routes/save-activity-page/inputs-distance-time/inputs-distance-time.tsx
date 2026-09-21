@@ -10,6 +10,7 @@ import {
   INPUT_HOURS_ID,
   INPUT_MINUTES_ID,
   INPUT_SECONDS_ID,
+  normalizeManualActivityDistanceInput,
   MANUAL_ACTIVITY_TIME_INPUT_MAX_LENGTH,
   MANUAL_ACTIVITY_TIME_LIMITS,
   normalizeManualActivityTimeInput,
@@ -41,8 +42,10 @@ export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean
   };
 
   const handleDistanceChange = (value: string) => {
-    setInputValue('distance', value);
-    setManualDistance(value);
+    const normalizedValue = normalizeManualActivityDistanceInput(value);
+
+    setInputValue('distance', normalizedValue);
+    setManualDistance(normalizedValue);
   };
 
   const handleTimeChange = (

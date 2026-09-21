@@ -2,24 +2,24 @@ import { LANGUAGES } from '@const/enums';
 
 export const INPUTS_DISTANCE_TIME = {
   [LANGUAGES.english]: {
-    distanceLabel: 'Km',
-    hoursLabel: 'Hours',
-    minutesLabel: 'Minutes',
-    secondsLabel: 'Seconds',
-    distancePlaceholder: 'Distance',
-    hoursPlaceholder: 'Hours',
-    minutesPlaceholder: 'Minutes',
-    secondsPlaceholder: 'Seconds',
+    distanceLabel: 'km',
+    hoursLabel: 'hours',
+    minutesLabel: 'min',
+    secondsLabel: 'sec',
+    distancePlaceholder: 'km',
+    hoursPlaceholder: 'hours',
+    minutesPlaceholder: 'min',
+    secondsPlaceholder: 'sec',
   },
   [LANGUAGES.russian]: {
-    distanceLabel: 'Км',
-    hoursLabel: 'Часы',
-    minutesLabel: 'Минуты',
-    secondsLabel: 'Секунды',
-    distancePlaceholder: 'Дистанция',
-    hoursPlaceholder: 'Часы',
-    minutesPlaceholder: 'Минуты',
-    secondsPlaceholder: 'Секунды',
+    distanceLabel: 'км',
+    hoursLabel: 'часы',
+    minutesLabel: 'мин',
+    secondsLabel: 'сек',
+    distancePlaceholder: 'км',
+    hoursPlaceholder: 'часы',
+    minutesPlaceholder: 'мин',
+    secondsPlaceholder: 'сек',
   },
 } as const;
 
@@ -35,6 +35,18 @@ export const MANUAL_ACTIVITY_TIME_LIMITS = {
 } as const;
 
 export const MANUAL_ACTIVITY_TIME_INPUT_MAX_LENGTH = 2;
+export const MANUAL_ACTIVITY_DISTANCE_MAX = 300;
+
+export function normalizeManualActivityDistanceInput(value: string) {
+  if (!value.trim()) {
+    return value;
+  }
+
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) && numericValue > MANUAL_ACTIVITY_DISTANCE_MAX
+    ? String(MANUAL_ACTIVITY_DISTANCE_MAX)
+    : value;
+}
 
 export function normalizeManualActivityTimeInput(value: string, maxValue: number) {
   const digitsOnly = value.replace(/\D/g, '');

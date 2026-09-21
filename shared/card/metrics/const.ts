@@ -11,10 +11,12 @@ export const CARD_METRICS = {
     km: 'km',
     kmh: 'km/h',
     m: 'm',
+    calories: 'Calories',
+    kcal: 'kcal',
   },
   [LANGUAGES.russian]: {
     distance: 'Дистанция',
-    elevation: 'Набор высоты',
+    elevation: 'Набор выс.',
     pace: 'Темп',
     speed: 'Скорость',
     steps: 'Шаги',
@@ -22,5 +24,7 @@ export const CARD_METRICS = {
     km: 'км',
     kmh: 'км/ч',
     m: 'м',
+    calories: 'Калории',
+    kcal: 'ккал',
   },
 } as const;

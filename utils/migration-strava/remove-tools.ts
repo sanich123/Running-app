@@ -1,5 +1,5 @@
 import { Directory, Paths } from 'expo-file-system';
-import { toFileUri } from './uri-tools';
+import { reportMigrationError, toFileUri } from './utils';
 
 export async function removeMedia({
   pathToMedia,
@@ -16,11 +16,11 @@ export async function removeMedia({
     if (mediaDirectory.exists) {
       setIsRemovingMedia(true);
       mediaDirectory.delete();
-      setIsRemovingMedia(false);
     }
   } catch (error) {
-    setIsError(`Ошибка при удалении медиа, ${JSON.stringify(error)}`);
-    throw error;
+    throw reportMigrationError('Ошибка при удалении медиа', error, setIsError);
+  } finally {
+    setIsRemovingMedia(false);
   }
 }
 
@@ -37,10 +37,10 @@ export async function removeCacheFolder({
     if (migrationDirectory.exists) {
       setIsDeletingCacheFolder?.(true);
       migrationDirectory.delete();
-      setIsDeletingCacheFolder?.(false);
     }
   } catch (error) {
-    setIsError?.(`Ошибка при удалении папки кэша, ${JSON.stringify(error)}`);
-    throw error;
+    throw reportMigrationError('Ошибка при удалении папки кэша', error, setIsError ?? (() => undefined));
+  } finally {
+    setIsDeletingCacheFolder?.(false);
   }
 }

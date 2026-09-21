@@ -3,18 +3,18 @@ import { Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import {
   useGetActivityByActivityIdQuery,
-  useGetAllActivityPhotosByUserIdInfiniteQuery,
+  useGetAllActivityMediaByUserIdInfiniteQuery,
 } from '@R/services/activity/activity';
 import { renderWithProviders } from '@T/utils/test-utils';
 import PhotoViewer from './photo-viewer';
 
 const mockUseLocalSearchParams = useLocalSearchParams as jest.Mock;
 const mockUseActivity = useGetActivityByActivityIdQuery as jest.Mock;
-const mockUsePhotos = useGetAllActivityPhotosByUserIdInfiniteQuery as jest.Mock;
+const mockUsePhotos = useGetAllActivityMediaByUserIdInfiniteQuery as jest.Mock;
 jest.mock('expo-router', () => ({ useLocalSearchParams: jest.fn() }));
 jest.mock('@R/services/activity/activity', () => ({
   useGetActivityByActivityIdQuery: jest.fn(() => ({ data: undefined })),
-  useGetAllActivityPhotosByUserIdInfiniteQuery: jest.fn(() => ({
+  useGetAllActivityMediaByUserIdInfiniteQuery: jest.fn(() => ({
     data: undefined,
     fetchNextPage: jest.fn(),
     isFetching: false,
@@ -72,7 +72,7 @@ describe('photo viewer', () => {
     mockUseActivity.mockReturnValue({
       data: {
         mapPhotoUrl: 'https://cdn.example.com/map.jpg',
-        photoVideoUrls: [
+        media: [
           { url: 'https://cdn.example.com/run.jpg', blurhash: 'blurhash' },
           { url: 'mp4', blurhash: null },
         ],
@@ -97,9 +97,9 @@ describe('photo viewer', () => {
       data: {
         pages: [
           {
-            photos: [
+            media: [
               { url: 'https://cdn.example.com/photo.jpg', blurhash: 'blurhash' },
-              { url: 'avi', blurhash: null },
+              { url: 'webm', blurhash: null },
             ],
             hasMore: false,
             nextCursor: null,
@@ -116,7 +116,7 @@ describe('photo viewer', () => {
     expect(screen.getAllByTestId('photo-viewer-image').map((element) => element.props.children)).toContain(
       'https://cdn.example.com/photo.jpg',
     );
-    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain('avi');
+    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain('webm');
   });
 
   it('does not render a pager when a valid activity has no media', async () => {

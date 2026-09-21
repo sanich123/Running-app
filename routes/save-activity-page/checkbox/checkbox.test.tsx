@@ -4,15 +4,20 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import Checkbox from './checkbox';
-import { CHECKBOX, CHECKBOX_TEST_ID } from './const';
+import { CHECKBOX } from './const';
 
 const mockSetParams = jest.fn();
 jest.mock('expo-router', () => ({
-  useLocalSearchParams: () => ({ isPublic: 'true', mode: 'manual' }),
+  useLocalSearchParams: () => ({ mode: 'manual' }),
   useRouter: () => ({ setParams: mockSetParams }),
 }));
 
 describe('Checkbox', () => {
+  it('selects followers by default', async () => {
+    await renderWithProviders(<Checkbox isDisabled={false} />);
+    expect(screen.getByTestId('activity-visibility-followers').props.accessibilityState?.selected).toBe(true);
+  });
+
   it('should correctly renders in russia', async () => {
     await renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
     expect(screen.getByText(CHECKBOX.russian.public)).toBeOnTheScreen();
@@ -24,8 +29,9 @@ describe('Checkbox', () => {
   });
 
   it('changes activity visibility', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<Checkbox isDisabled={false} />);
-    await fireEvent(screen.getByTestId(CHECKBOX_TEST_ID), 'valueChange', false);
-    expect(mockSetParams).toHaveBeenCalledWith({ isPublic: 'false' });
+    await fireEvent.press(screen.getByText(CHECKBOX.russian.followers));
+    expect(mockSetParams).toHaveBeenCalledWith({ visibility: 'followers' });
   });
 });

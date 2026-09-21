@@ -15,8 +15,17 @@ jest.mock('react-native-compressor', () => ({
 }));
 jest.mock('@U/file-sending', () => ({
   getAccessToGallery: jest.fn(() => Promise.resolve({ canceled: false, assets: [{ uri: 'file://avatar.jpg' }] })),
-  compressAndSendFile: jest.fn(() =>
-    Promise.resolve({ url: 'https://images.example.test/avatar.jpg', thumbnail: null }),
+  compressMediaFile: jest.fn(() =>
+    Promise.resolve({
+      file: 'compressed-avatar.jpg',
+      originalName: 'avatar.jpg',
+      extension: 'jpg',
+      isVideo: false,
+      mimeType: 'image/jpeg',
+    }),
+  ),
+  uploadMediaFile: jest.fn(() =>
+    Promise.resolve({ url: 'https://images.example.test/avatar.jpg', key: 'avatar.jpg', contentType: 'image/jpeg' }),
   ),
 }));
 

@@ -10,7 +10,7 @@ const activities = Array.from({ length: 20 }, (_, index) => ({
   title: `Activity ${index}`,
   date: '2026-08-09',
   sport: 'run',
-  photoVideoUrls: [],
+  media: [],
   duration: 1000,
   distance: 2000,
   elevationGain: 15,

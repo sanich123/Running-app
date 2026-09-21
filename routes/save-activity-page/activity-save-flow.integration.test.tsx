@@ -16,9 +16,9 @@ import { mockStore, setMockUserId, resetMockLocation } from '@T/utils/mock-store
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
-import { getMapBoxImage, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
-import { CHECKBOX_TEST_ID } from './checkbox/const';
+import { getDeviceTimeZone } from '@U/time-zone';
 import { DATE_TIME_PICKER_BTN_ID } from './date-picker/const';
 import { EMOTIONS_BTNS_TEST_IDS, EMOTIONS_BTNS_VALUES } from './emotion-btns/const';
 import { INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID, INPUT_SECONDS_ID } from './inputs-distance-time/const';
@@ -140,7 +140,7 @@ async function fillActivityFields(includeManualFields: boolean) {
   await fireEvent.press(screen.getByTestId('manual-activity-sport-picker'));
   await fireEvent.press(screen.getByTestId('integration-sport-bike'));
   await fireEvent.press(screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.goodInput));
-  await fireEvent(screen.getByTestId(CHECKBOX_TEST_ID), 'valueChange', false);
+  await fireEvent.press(screen.getByText(/Подписчики|Followers/));
 
   if (includeManualFields) {
     await fireEvent.changeText(screen.getByTestId(INPUT_DISTANCE_ID), '12.5');
@@ -197,7 +197,7 @@ describe('activity save flows', () => {
       cameraVisible: 'false',
       description: '',
       emotion: EMOTIONS_BTNS_VALUES.normal,
-      isPublic: 'true',
+      visibility: 'public',
       manualDate: '2026-08-17T10:00:00.000Z',
       manualDistance: '0',
       manualHours: '0',
@@ -221,9 +221,10 @@ describe('activity save flows', () => {
         description: 'Felt strong and consistent',
         sport: SPORTS_BTNS_VALUES.bike,
         emotion: EMOTIONS_BTNS_VALUES.good,
-        isPublic: false,
-        photoVideoUrls: [mockActivityPhoto],
+        visibility: 'followers',
+        media: [mockActivityPhoto],
         date: '2026-08-18T12:30:00.000Z',
+        timeZone: getDeviceTimeZone(),
         distance: 12_500,
         duration,
         speed: getSpeedInMinsInKm(12.5, duration).paceAsNumber,
@@ -286,6 +287,8 @@ describe('activity save flows', () => {
     await waitFor(() => {
       expect(activityRequestBody).toEqual({
         locations: trackedLocations,
+        date: expect.any(String),
+        timeZone: getDeviceTimeZone(),
         duration: trackedDuration,
         speed: getSpeedInMinsInKm(trackedDistance, trackedDuration).paceAsNumber,
         distance: trackedDistance,
@@ -294,9 +297,8 @@ describe('activity save flows', () => {
         description: 'Felt strong and consistent',
         sport: SPORTS_BTNS_VALUES.bike,
         emotion: EMOTIONS_BTNS_VALUES.good,
-        isPublic: false,
-        photoVideoUrls: [mockActivityPhoto],
-        mapPhotoUrl: getMapBoxImage(trackedLocations),
+        visibility: 'followers',
+        media: [mockActivityPhoto],
       });
       expect(sessionLocationBody).toEqual({
         latitude: MOCK_LOCATION.coords.latitude,
@@ -342,7 +344,7 @@ describe('activity save flows', () => {
         description: 'Felt strong and consistent',
         sport: SPORTS_BTNS_VALUES.bike,
         emotion: EMOTIONS_BTNS_VALUES.good,
-        isPublic: false,
+        visibility: 'followers',
         date: '2026-08-18T12:30:00.000Z',
         distance: 12_500,
         duration,

@@ -5,6 +5,7 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
+import { getDeviceTimeZone } from '@U/time-zone';
 import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
 import { getDaysOfTheMonthWithNames } from './util';
 import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';
@@ -15,6 +16,7 @@ export default function CalendarActivities({ year, month, userId, selectedType }
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
+  const timeZone = getDeviceTimeZone();
   const {
     data: monthStatistics,
     isLoading,
@@ -23,7 +25,7 @@ export default function CalendarActivities({ year, month, userId, selectedType }
     error,
     refetch,
   } = useGetMonthStatisticsQuery(
-    { userId: `${userId}`, year: `${year}`, month: `${month}` },
+    { userId: `${userId}`, year: `${year}`, month: `${month}`, timeZone },
     { skip: !userId || !year || !month },
   );
   const daysOfTheWeek = getDaysOfTheMonthWithNames(year, month, monthStatistics?.activities ?? [], language);

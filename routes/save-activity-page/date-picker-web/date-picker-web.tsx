@@ -2,17 +2,25 @@ import { View, StyleSheet } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import { DATE_TIME_PICKER } from '../date-picker/const';
-import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 import { toDateTimeInputValue } from './utils';
+import { DATE_TIME_PICKER } from '../date-picker/const';
+import { clampDateToMaximum } from '../date-picker/utils';
+import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 
-export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
+interface DatePickerWebProps {
+  isDisabled: boolean;
+  maximumDate?: Date;
+}
+
+export default function DatePickerWeb({ isDisabled, maximumDate }: DatePickerWebProps) {
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { manualDate } = useManualActivityParams();
   const { setManualDate } = useSetManualActivityParams();
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const shouldBeDisabled = isDisabled || isSavingDisabled;
+  const parsedManualDate = new Date(manualDate);
+  const displayedDate = clampDateToMaximum(parsedManualDate, maximumDate);
 
   return (
     <View style={styles.wrapper}>
@@ -30,15 +38,16 @@ export default function DatePickerWeb({ isDisabled }: { isDisabled: boolean }) {
         }}
         type="datetime-local"
         id="date-picker-date"
-        value={toDateTimeInputValue(manualDate)}
-        placeholder={DATE_TIME_PICKER[language].title}
+        value={toDateTimeInputValue(displayedDate)}
+        max={maximumDate ? toDateTimeInputValue(maximumDate) : undefined}
         aria-label={DATE_TIME_PICKER[language].title}
         onChange={({ target }) => {
-          setManualDate(new Date(Date.parse(target.value)));
+          const selectedDate = new Date(Date.parse(target.value));
+          if (!Number.isNaN(selectedDate.getTime())) setManualDate(clampDateToMaximum(selectedDate, maximumDate));
         }}
       />
       <View pointerEvents="none" style={styles.inputIcon}>
-        <Icon source="calendar-clock" size={20} color={colors.primary} />
+        <Icon source="calendar-edit" size={24} color={colors.onSurface} />
       </View>
     </View>
   );
@@ -56,7 +65,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontFamily: FONT_FAMILIES.regular,
     fontSize: 15,
-    minHeight: 52,
+    height: 48,
     paddingLeft: 48,
     paddingRight: 12,
     width: '100%',
@@ -64,7 +73,7 @@ const styles = StyleSheet.create({
   inputIcon: {
     left: 16,
     position: 'absolute',
-    top: 16,
+    top: 12,
   },
   disabledInput: { opacity: 0.7 },
 });

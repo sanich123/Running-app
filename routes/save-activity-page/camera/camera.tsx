@@ -13,12 +13,18 @@ import PreviewImages from '@Routes/save-activity-page/preview-images/preview-ima
 import { errorToast } from '@S/error-toast/error-toast';
 import { CAMERA_TEXT } from './const';
 import { CameraTypes, FlashModes } from './types';
-import type { PhotoVideoType } from '@S/card/types';
+import type { CameraLauncherProps } from './types';
 import type { CameraType, FlashMode } from 'expo-camera';
 
-export default function CameraLauncher() {
+export default function CameraLauncher({
+  photos: controlledPhotos,
+  setPhotos: controlledSetPhotos,
+  maxPhotos = 10,
+}: CameraLauncherProps = {}) {
   const cameraRef = useRef<CameraView>(null);
-  const [photos, setPhotos] = useState<PhotoVideoType[]>([]);
+  const [localPhotos, setLocalPhotos] = useState<NonNullable<CameraLauncherProps['photos']>>([]);
+  const photos = controlledPhotos ?? localPhotos;
+  const setPhotos = controlledSetPhotos ?? setLocalPhotos;
   const [type, setType] = useState<CameraType>(CameraTypes.back);
   const [flashEnable, setFlashEnable] = useState<FlashMode>(FlashModes.off);
   const [permission, requestPermission] = useCameraPermissions();
@@ -68,7 +74,8 @@ export default function CameraLauncher() {
         </SafeAreaView>
       )}
       {permission?.granted && (
-        <CameraView ref={cameraRef} facing={type} flash={flashEnable} style={StyleSheet.absoluteFill}>
+        <View style={styles.cameraStage}>
+          <CameraView ref={cameraRef} facing={type} flash={flashEnable} style={StyleSheet.absoluteFill} />
           <SafeAreaView style={styles.overlay} edges={['top', 'bottom']}>
             <View style={styles.topBar}>
               <CloseBtn />
@@ -81,17 +88,17 @@ export default function CameraLauncher() {
             <View style={styles.bottomArea}>
               {photos.length > 0 && (
                 <View style={styles.previewPanel}>
-                  <PreviewImages setImages={setPhotos} images={photos} isDisabled={false} compact />
+                  <PreviewImages setImages={setPhotos} images={photos} isDisabled={false} compact horizontal />
                 </View>
               )}
               <View style={styles.controls}>
                 <FlashBtn setFlashEnable={setFlashEnable} flashEnable={flashEnable} />
-                <ShotBtn cameraRef={cameraRef} setPhotos={setPhotos} photos={photos} />
+                <ShotBtn cameraRef={cameraRef} setPhotos={setPhotos} photos={photos} maxPhotos={maxPhotos} />
                 <ChangeView setType={setType} type={type} />
               </View>
             </View>
           </SafeAreaView>
-        </CameraView>
+        </View>
       )}
     </View>
   );
@@ -99,7 +106,16 @@ export default function CameraLauncher() {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: '#050505', flex: 1 },
-  overlay: { flex: 1, justifyContent: 'space-between' },
+  cameraStage: { flex: 1 },
+  overlay: {
+    bottom: 0,
+    flex: 1,
+    justifyContent: 'space-between',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
   topBar: {
     alignItems: 'center',
     flexDirection: 'row',

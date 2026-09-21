@@ -7,6 +7,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { useGetCurrentWeekStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
+import { getDeviceTimeZone } from '@U/time-zone';
 import { WEEK_STATISTICS } from './const';
 import { getCurrentWeekDates } from './util';
 import WeekStatisticsMetric from './week-statistics-metrics';
@@ -16,6 +17,7 @@ export default function WeekStatistics() {
   const { width } = useWindowDimensions();
   const { colors, dark } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const timeZone = getDeviceTimeZone();
   const { week, year, month } = getCurrentWeekDates();
   const {
     data: weekStatistics,
@@ -27,6 +29,7 @@ export default function WeekStatistics() {
       userId,
       firstDay: week[0],
       lastDay: week[week.length - 1],
+      timeZone,
     },
     { skip: !userId },
   );

@@ -4,13 +4,13 @@ import { FlatList, Platform, useWindowDimensions, StyleSheet } from 'react-nativ
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { useGetAllActivityPhotosByUserIdInfiniteQuery } from '@R/services/activity/activity';
+import { useGetAllActivityMediaByUserIdInfiniteQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
 import MediaGridImage from './image/image';
-import type { PhotoVideoType } from '@S/card/types';
+import type { ActivityMediaItem } from '@S/card/types';
 
 export default function MediaGrid() {
   const { width } = useWindowDimensions();
@@ -28,18 +28,18 @@ export default function MediaGrid() {
     refetch,
     isFetching,
     fetchNextPage,
-  } = useGetAllActivityPhotosByUserIdInfiniteQuery({ userId: `${userId}`, take }, { skip: !userId });
+  } = useGetAllActivityMediaByUserIdInfiniteQuery({ userId: `${userId}`, take }, { skip: !userId });
   const data = pages?.pages.at(-1);
-  const photos = pages?.pages.flatMap(({ photos: pagePhotos }) => pagePhotos) ?? [];
+  const media = pages?.pages.flatMap(({ media: pageMedia }) => pageMedia) ?? [];
   const gridItemHeight = (gridWidth - 9) / 4;
 
   const renderItem = useCallback(
-    ({ item, index }: { item: PhotoVideoType; index: number }) => (
+    ({ item, index }: { item: ActivityMediaItem; index: number }) => (
       <MediaGridImage url={item.url} thumbnail={item.thumbnail} blurhash={item.blurhash} index={index} take={take} />
     ),
     [take],
   );
-  const keyExtractor = useCallback((item: PhotoVideoType) => item.url, []);
+  const keyExtractor = useCallback((item: ActivityMediaItem) => item.url, []);
   const loadMore = useCallback(() => {
     if (!data?.hasMore || isFetching) {
       return;
@@ -54,7 +54,7 @@ export default function MediaGrid() {
       {isLoading ? (
         <ActivityIndicator size="large" testID="media-grid-loading" />
       ) : isSuccess ? (
-        photos.length ? (
+        media.length ? (
           <FlatList
             testID="media-grid-list"
             style={[styles.list, { width: gridWidth }]}
@@ -66,7 +66,7 @@ export default function MediaGrid() {
               styles.layout,
               (isLoading || isError) && styles.isInCenter,
             ]}
-            data={photos}
+            data={media}
             renderItem={renderItem}
             initialNumToRender={20}
             maxToRenderPerBatch={20}

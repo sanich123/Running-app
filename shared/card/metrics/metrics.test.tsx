@@ -73,6 +73,44 @@ describe('Card metrics', () => {
     expect(screen.queryByText(/Elevation gain/i)).not.toBeOnTheScreen();
   });
 
+  it('shows calories only in the full activity view', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    await renderWithProviders(
+      <CardMetrics
+        title="Бег"
+        distance={MOCK_DISTANCE}
+        duration={MOCK_DURATION}
+        sport="run"
+        caloriesActive={742}
+        elevationGain={0}
+        isShowDescription={false}
+        description=""
+        userId="someUserId"
+        id="someUUID"
+      />,
+      { store: mockStore },
+    );
+    expect(screen.queryByText('742 ккал')).not.toBeOnTheScreen();
+
+    await renderWithProviders(
+      <CardMetrics
+        title="Бег"
+        distance={MOCK_DISTANCE}
+        duration={MOCK_DURATION}
+        sport="run"
+        caloriesActive={742}
+        elevationGain={0}
+        isShowDescription={false}
+        description=""
+        userId="someUserId"
+        id="someUUID"
+        isFullView
+      />,
+      { store: mockStore },
+    );
+    expect(screen.getByText('742 ккал')).toBeOnTheScreen();
+  });
+
   it.each([
     ['running without elevation gain', 'run', undefined, 0, /Elevation gain/i],
     ['walking without steps', 'walk', undefined, 42, /Steps/i],

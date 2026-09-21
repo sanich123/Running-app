@@ -6,17 +6,18 @@ import { useLocalSearchParams } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import {
   useGetActivityByActivityIdQuery,
-  useGetAllActivityPhotosByUserIdInfiniteQuery,
+  useGetAllActivityMediaByUserIdInfiniteQuery,
 } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
 import CustomImage from '@S/custom-image/custom-image';
-import { getPhotoUrl, isVideoUrl } from './utils';
-import type { ActivityPhotoResponse } from '@R/runich-api/types';
+import { getPhotoUrl, isDirectMediaUrl, isVideoUrl } from './utils';
+import type { ActivityMediaItemResponse } from '@R/runich-api/types';
 
 export default function PhotoViewer() {
   const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();
   const webPhotoUrl = getPhotoUrl(photoUrl);
+  const isDirectMedia = isDirectMediaUrl(webPhotoUrl);
   const { colors } = useTheme();
   const { userId: ownerId } = useAppSelector(({ auth }) => auth);
   const { data: activity } = useGetActivityByActivityIdQuery(`${photoUrl}`, {
@@ -26,15 +27,15 @@ export default function PhotoViewer() {
     data: photoPages,
     fetchNextPage,
     isFetching,
-  } = useGetAllActivityPhotosByUserIdInfiniteQuery(
+  } = useGetAllActivityMediaByUserIdInfiniteQuery(
     {
       userId: userId ? `${userId}` : ownerId,
       take: Number(take),
     },
     { skip: !take },
   );
-  const userPhotos = photoPages?.pages.flatMap(({ photos }) => photos) ?? [];
-  const itemsToRender = uuid.validate(`${photoUrl}`) ? (activity?.photoVideoUrls ?? []) : userPhotos;
+  const userMedia = photoPages?.pages.flatMap(({ media }) => media) ?? [];
+  const itemsToRender = uuid.validate(`${photoUrl}`) ? (activity?.media ?? []) : userMedia;
   const targetIndex = Number(photoUrl);
   const hasMorePhotos = photoPages?.pages.at(-1)?.hasMore ?? false;
   const canRenderPager = uuid.validate(`${photoUrl}`)
@@ -58,7 +59,7 @@ export default function PhotoViewer() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {Platform.OS === 'web' ? (
+      {Platform.OS === 'web' || isDirectMedia ? (
         <>
           {isVideoUrl(webPhotoUrl) ? (
             <VideoViewer url={webPhotoUrl} />
@@ -86,9 +87,9 @@ export default function PhotoViewer() {
                 }
               }}
               orientation="vertical">
-              {itemsToRender.map(({ url, blurhash }: ActivityPhotoResponse, index: number) => (
+              {itemsToRender.map(({ url, blurhash }: ActivityMediaItemResponse, index: number) => (
                 <View key={index}>
-                  {['mp4', 'avi', 'm4v'].includes(url) ? (
+                  {isVideoUrl(url) ? (
                     <VideoViewer url={url} />
                   ) : (
                     <CustomImage

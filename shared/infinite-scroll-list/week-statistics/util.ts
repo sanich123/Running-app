@@ -1,14 +1,18 @@
-export function getCurrentWeekDates() {
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const week = [];
+export function getCurrentWeekDates(now = new Date()) {
+  const currentDate = new Date(now);
+  const daysSinceMonday = (currentDate.getDay() + 6) % 7;
+  const monday = new Date(currentDate);
+  monday.setHours(0, 0, 0, 0);
+  monday.setDate(currentDate.getDate() - daysSinceMonday);
 
-  for (let i = 1; i <= 7; i++) {
-    const first = currentDate.getDate() - currentDate.getDay() + i;
-    const day = new Date(currentDate.setDate(first)).toDateString();
-    week.push(day);
-  }
+  const week = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  });
 
-  return { week, year, month };
+  return { week, year: currentDate.getFullYear(), month: currentDate.getMonth() };
 }

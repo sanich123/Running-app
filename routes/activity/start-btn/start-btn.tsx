@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Animated, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
+import { ACTIVITY_VISIBILITY } from '@const/activity-visibility';
 import { ROUTES, STATUSES } from '@const/enums';
 import { resetActivityDraft, resetFinishedActivity, setFinishedActivity } from '@R/slices/activity/activity';
 import {
   resetLocationsFromBackground,
+  setActivityStartContext,
   setInitialLocation,
   setActivityStatus,
   setEmptyLastArrayWhenPaused,
@@ -15,6 +17,7 @@ import {
 } from '@R/slices/location/location';
 import {
   clearTrackingRecovery,
+  setTrackingRecoveryStartContext,
   setTrackingRecoveryStatus,
   startTrackingRecovery,
 } from '@R/slices/tracking-recovery/tracking-recovery';
@@ -39,6 +42,7 @@ import {
   startPedometerActivity,
   resetPedometerActivity,
 } from '@U/pedometer/pedometer';
+import { getDeviceTimeZone } from '@U/time-zone';
 import { useActivitySportParams } from '../activity-params';
 import { ACTIVITY_START_BTN_TEST_ID, ACTIVITY_START_BTN, STOP_ICON } from './const';
 
@@ -58,6 +62,8 @@ export default function StartBtn({
     duration,
     durationTimerBase,
     durationTimerStartedAt,
+    recordingStartedAt,
+    recordingTimeZone,
     distance,
     locationsFromBackground: locations,
     kilometresSplit,
@@ -117,6 +123,8 @@ export default function StartBtn({
     dispatch(
       setFinishedActivity({
         duration: durationForSave,
+        date: recordingStartedAt ? new Date(recordingStartedAt).toISOString() : undefined,
+        timeZone: recordingTimeZone ?? getDeviceTimeZone(),
         distance,
         ...(hasPedometerData ? { steps: pedometerData.steps } : {}),
         routeJournalId: currentJournalId,
@@ -157,7 +165,11 @@ export default function StartBtn({
         dispatch(startTrackingRecovery(createdJournalId));
         await startPedometerActivity();
         await startLocationTracking();
-        dispatch(startDurationTimer(Date.now()));
+        const startedAt = Date.now();
+        const timeZone = getDeviceTimeZone();
+        dispatch(setActivityStartContext({ startedAt, timeZone }));
+        dispatch(setTrackingRecoveryStartContext({ startedAt, timeZone }));
+        dispatch(startDurationTimer(startedAt));
         dispatch(setActivityStatus(STATUSES.started));
         return;
       }
@@ -188,7 +200,7 @@ export default function StartBtn({
           cameraVisible: 'false',
           description: '',
           emotion: 'normal',
-          isPublic: 'true',
+          visibility: ACTIVITY_VISIBILITY.followers,
           mode: 'tracked',
           sport,
           title: '',

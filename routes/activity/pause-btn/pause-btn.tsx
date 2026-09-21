@@ -18,6 +18,7 @@ import { startLocationTracking, stopLocationTracking } from '@U/location/expo-ta
 import { getActiveLocationJournalId } from '@U/location/location-journal';
 import { getElevationGainByKilometres, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { pausePedometerActivity, resumePedometerActivity } from '@U/pedometer/pedometer';
+import { getDeviceTimeZone } from '@U/time-zone';
 
 export default function PauseBtn() {
   const { dark, colors } = useTheme();
@@ -27,6 +28,8 @@ export default function PauseBtn() {
     duration,
     durationTimerBase,
     durationTimerStartedAt,
+    recordingStartedAt,
+    recordingTimeZone,
     distance,
     locationsFromBackground: locations,
     kilometresSplit,
@@ -57,6 +60,8 @@ export default function PauseBtn() {
         dispatch(
           setFinishedActivity({
             duration: durationForSave,
+            date: recordingStartedAt ? new Date(recordingStartedAt).toISOString() : undefined,
+            timeZone: recordingTimeZone ?? getDeviceTimeZone(),
             distance,
             routeJournalId: getActiveLocationJournalId(),
             kilometresSplit: kilometresSplit.map((split, index) => ({

@@ -1,6 +1,7 @@
 import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN } from '@const/activity-save-btn';
+import { ACTIVITY_VISIBILITY } from '@const/activity-visibility';
 import { ROUTES } from '@const/enums';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { addPhotoUrls, resetActivityDraft, resetFinishedActivity } from '@R/slices/activity/activity';
@@ -30,8 +31,8 @@ export default function UpdateBtn() {
           dispatch(resetFinishedActivity());
           dispatch(resetActivityDraft());
 
-          if (activity?.photoVideoUrls) {
-            dispatch(addPhotoUrls(activity?.photoVideoUrls));
+          if (activity?.media) {
+            dispatch(addPhotoUrls(activity?.media));
           }
           const { hours, minutes, seconds } = getHoursMinutesSecondsFromMilliseconds(activity?.duration);
           push({
@@ -49,7 +50,7 @@ export default function UpdateBtn() {
               description: activity.description ?? '',
               sport: activity.sport,
               emotion: activity.emotion,
-              isPublic: String(activity.isPublic),
+              visibility: activity.visibility ?? ACTIVITY_VISIBILITY.public,
             },
           });
         } else {

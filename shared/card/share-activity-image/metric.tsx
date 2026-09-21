@@ -17,24 +17,26 @@ export default function Metric({ label, value }: { label: string; value: string 
 
 const styles = StyleSheet.create({
   metric: {
-    backgroundColor: 'rgba(74, 78, 88, 0.52)',
-    borderColor: 'rgba(255, 255, 255, 0.28)',
-    borderRadius: 14,
-    borderWidth: 1,
-    flex: 1,
+    borderColor: 'rgba(255, 255, 255, 0.14)',
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
+    flexBasis: '50%',
+    flexGrow: 1,
     minWidth: 0,
-    paddingHorizontal: 10,
-    paddingVertical: 9,
+    minHeight: 70,
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
   metricValue: {
     color: '#FFFFFF',
     fontFamily: FONT_FAMILIES.extraBold,
-    fontSize: 17,
+    fontSize: 18,
   },
   metricLabel: {
     color: 'rgba(255, 255, 255, 0.72)',
     fontFamily: FONT_FAMILIES.medium,
-    fontSize: 10,
+    fontSize: 11,
     marginTop: 3,
   },
 });

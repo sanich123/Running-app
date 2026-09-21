@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import DatePicker from 'react-native-date-picker';
-import { StyleSheet } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Icon, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 import { DATE_TIME_PICKER_BTN_ID, DATE_TIME_PICKER } from './const';
+import { clampDateToMaximum, formatSelectedDate } from './utils';
 
-export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) {
+interface DateTimePickerProps {
+  isDisabled: boolean;
+  maximumDate?: Date;
+}
+
+export default function DateTimePicker({ isDisabled, maximumDate }: DateTimePickerProps) {
   const { manualDate } = useManualActivityParams();
   const { setManualDate } = useSetManualActivityParams();
   const [open, setOpen] = useState(false);
@@ -14,28 +20,42 @@ export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) 
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const shouldBeDisabled = isDisabled || isSavingDisabled;
+  const displayedDate = clampDateToMaximum(new Date(manualDate), maximumDate);
 
   return (
     <>
-      <Button
+      <Pressable
         testID={DATE_TIME_PICKER_BTN_ID}
-        icon="calendar-clock"
-        compact
         onPress={() => setOpen(true)}
-        mode="outlined"
-        style={[styles.button, { borderColor: colors.outlineVariant }, shouldBeDisabled && styles.disabledButton]}
-        contentStyle={styles.content}
-        textColor={colors.onSurface}
-        disabled={shouldBeDisabled}>
-        {DATE_TIME_PICKER[language].title}
-      </Button>
+        accessibilityRole="button"
+        accessibilityLabel={DATE_TIME_PICKER[language].title}
+        disabled={shouldBeDisabled}
+        style={({ pressed }) => [
+          styles.button,
+          { borderColor: colors.outlineVariant },
+          shouldBeDisabled && styles.disabledButton,
+          pressed && !shouldBeDisabled && styles.pressedButton,
+        ]}>
+        <View style={styles.content}>
+          <Icon source="calendar-edit" size={24} color={colors.onSurfaceVariant} />
+          <Text
+            variant="bodyMedium"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{ color: colors.onSurface, flex: 1 }}>
+            {formatSelectedDate(displayedDate, language)}
+          </Text>
+          <Icon source="chevron-down" size={22} color={colors.onSurfaceVariant} />
+        </View>
+      </Pressable>
       <DatePicker
         modal
         open={open}
-        date={new Date(manualDate)}
+        date={clampDateToMaximum(new Date(manualDate), maximumDate)}
+        maximumDate={maximumDate}
         onConfirm={(date) => {
           setOpen(false);
-          setManualDate(date);
+          setManualDate(clampDateToMaximum(date, maximumDate));
         }}
         onCancel={() => setOpen(false)}
         title={DATE_TIME_PICKER[language].title}
@@ -47,7 +67,16 @@ export default function DateTimePicker({ isDisabled }: { isDisabled: boolean }) 
 }
 
 const styles = StyleSheet.create({
-  button: { borderRadius: 8, marginTop: 12 },
-  content: { minHeight: 42 },
+  button: {
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
+    minHeight: 56,
+    justifyContent: 'center',
+    marginTop: 12,
+    width: '100%',
+  },
+  content: { alignItems: 'center', flexDirection: 'row', gap: 10, paddingHorizontal: 12, width: '100%' },
   disabledButton: { opacity: 0.7 },
+  pressedButton: { opacity: 0.7 },
 });

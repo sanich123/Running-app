@@ -11,6 +11,7 @@ import ErrorComponent from '@S/error-component/error-component';
 import { MONTH_STATISTICS } from '@S/month-metric/const';
 import MonthStatisticsMetrics from '@S/month-metric/month-metric';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
+import { getDeviceTimeZone } from '@U/time-zone';
 import CalendarActivities from '../calendar/calendar';
 import MonthTypesChips from '../chips/month-types-chips';
 import YearMonthTitle from '../year-month-title/year-month-title';
@@ -19,6 +20,7 @@ export default function MonthStatistics() {
   const { width } = useWindowDimensions();
   const { userId, year, month } = useLocalSearchParams();
   const [selectedType, setSelectedType] = useState('all');
+  const timeZone = getDeviceTimeZone();
   const {
     data: monthStatistics,
     isSuccess,
@@ -27,7 +29,7 @@ export default function MonthStatistics() {
     isLoading,
     refetch,
   } = useGetMonthStatisticsQuery(
-    { userId: `${userId}`, year: `${year}`, month: `${month}` },
+    { userId: `${userId}`, year: `${year}`, month: `${month}`, timeZone },
     { skip: !userId || !year || !month },
   );
   const { language } = useAppSelector(({ settings }) => settings);

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Constants from 'expo-constants';
 import { View, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -14,7 +15,7 @@ import AuthDivider from './auth-divider/auth-divider';
 import AuthStepIntro from './auth-step-intro';
 import { SIGN_IN_FIELD_LABELS, SIGN_IN_FOOTER_TEXT } from './const';
 import EmailRegistrationRestriction from './email-registration-restriction/email-registration-restriction';
-import LegalLinks from './legal-links/legal-links';
+import LegalConsents, { type LegalConsentValues } from './legal-consents/legal-consents';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
 import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
 import SocialAuthButtons from './social-auth-buttons/social-auth-buttons';
@@ -31,14 +32,23 @@ export default function SignIn() {
     reValidateMode: 'onChange',
   });
   const { push } = useRouter();
+  const [legalConsents, setLegalConsents] = useState<LegalConsentValues>({
+    agreementAndPolicy: true,
+    personalData: true,
+  });
   const isValidAuthStep =
     authStep === SignInPageStates.login ||
     authStep === SignInPageStates.register ||
     authStep === SignInPageStates.reset ||
     authStep === SignInPageStates.emailLink;
   const currentAuthStep = isValidAuthStep ? (authStep as SignInPageStates) : SignInPageStates.login;
-  const setAuthStep = (nextAuthStep: SignInPageStates) =>
+  const requiresLegalConfirmation =
+    currentAuthStep === SignInPageStates.login || currentAuthStep === SignInPageStates.register;
+  const areLegalConsentsAccepted = legalConsents.agreementAndPolicy && legalConsents.personalData;
+
+  const setAuthStep = (nextAuthStep: SignInPageStates) => {
     push({ pathname: `/${ROUTES.signIn}`, params: { authStep: nextAuthStep } });
+  };
 
   return (
     <CrossPlatformLayout edges={['top', 'bottom']} scrollViewEnabled outerStyles={styles.pageContent}>
@@ -77,15 +87,22 @@ export default function SignIn() {
           />
         )}
         {currentAuthStep === SignInPageStates.register && <EmailRegistrationRestriction />}
-        <LoginRegisterBtn handleSubmit={handleSubmit} authStep={currentAuthStep} />
+        {requiresLegalConfirmation && (
+          <LegalConsents
+            values={legalConsents}
+            onChange={(key) => setLegalConsents((current) => ({ ...current, [key]: !current[key] }))}
+          />
+        )}
+        <LoginRegisterBtn
+          handleSubmit={handleSubmit}
+          authStep={currentAuthStep}
+          legalConsentAccepted={!requiresLegalConfirmation || areLegalConsentsAccepted}
+        />
         <LoginRegisterNavigation
           authStep={currentAuthStep}
           onAuthStepChange={setAuthStep}
           showEmailLinkNavigation={false}
         />
-        {(currentAuthStep === SignInPageStates.login || currentAuthStep === SignInPageStates.register) && (
-          <LegalLinks />
-        )}
         <View style={styles.footer}>
           <Text variant="bodySmall" style={styles.version}>
             {SIGN_IN_FOOTER_TEXT[language]} {Constants.expoConfig?.version ?? '—'}

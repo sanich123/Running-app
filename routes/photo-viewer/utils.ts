@@ -7,7 +7,7 @@ export function getPhotoUrl(value: string | string[] | undefined) {
     return '';
   }
 
-  if (/^(?:https?|data|blob):\/\//i.test(rawValue) || /^data:/i.test(rawValue)) {
+  if (/^(?:https?|blob|file):\/\//i.test(rawValue) || /^data:/i.test(rawValue)) {
     return rawValue;
   }
 
@@ -18,7 +18,11 @@ export function getPhotoUrl(value: string | string[] | undefined) {
   }
 }
 
+export function isDirectMediaUrl(url: string) {
+  return /^(?:https?|blob|file):\/\//i.test(url) || /^data:/i.test(url);
+}
+
 export function isVideoUrl(url: string) {
   const pathname = url.split('?')[0].toLowerCase();
-  return VIDEO_EXTENSIONS.some((extension) => pathname.endsWith(`.${extension}`));
+  return VIDEO_EXTENSIONS.some((extension) => pathname === extension || pathname.endsWith(`.${extension}`));
 }

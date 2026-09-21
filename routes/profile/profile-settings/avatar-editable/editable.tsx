@@ -1,11 +1,12 @@
+import { useRef, useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery, useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import ProfileImage from '@Routes/profile/avatar/avatar';
+import UploadProgress from '@Routes/save-activity-page/upload-progress/upload-progress';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
-import { getAccessToGallery, compressAndSendFile } from '@U/file-sending';
+import { compressMediaFile, getAccessToGallery, uploadMediaFile, type MediaSource } from '@U/file-sending';
 import { useProfileFormParams } from '../profile-settings-params';
 import { AvatarEditableTestIds } from './const';
 import type { AvatarIconEditableProps } from './const';
@@ -21,18 +22,39 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
   });
   const [updateProfile, { isLoading: isUpdatingProfile }] = useUpdateProfileByUserIdMutation();
   const { name, surname } = useProfileFormParams();
-  const isUploading = isDisabled || isProfileLoading || isUpdatingProfile;
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const uploadControllerRef = useRef<AbortController | null>(null);
+  const isUploading = isDisabled || isProfileLoading || isUpdatingProfile || isUploadingAvatar;
 
-  async function uploadAvatar(image: Parameters<typeof compressAndSendFile>[0]) {
+  async function uploadAvatar(image: MediaSource) {
     if (!userId) return;
 
-    const fileWithThumbnail = await compressAndSendFile(image, userId);
-    if (!fileWithThumbnail) return;
+    const controller = new AbortController();
+    uploadControllerRef.current = controller;
+    setIsUploadingAvatar(true);
+    setUploadProgress(0);
 
-    const { url } = fileWithThumbnail;
-    await updateProfile({ id: userId, body: { profilePhoto: url } }).unwrap();
-    await refetch();
+    try {
+      const compressedImage = await compressMediaFile(image);
+      if (!compressedImage || compressedImage.isVideo || controller.signal.aborted) return;
+
+      const uploadedImage = await uploadMediaFile(compressedImage, { scope: 'profile' }, undefined, {
+        onProgress: setUploadProgress,
+        signal: controller.signal,
+      });
+      if (!uploadedImage || controller.signal.aborted) return;
+
+      await updateProfile({ id: userId, body: { profilePhoto: uploadedImage.url } }).unwrap();
+      if (!controller.signal.aborted) await refetch();
+    } finally {
+      if (uploadControllerRef.current === controller) uploadControllerRef.current = null;
+      setIsUploadingAvatar(false);
+      setUploadProgress(0);
+    }
   }
+
+  const cancelUpload = () => uploadControllerRef.current?.abort();
 
   const avatar = (
     <View style={styles.avatarContainer}>
@@ -41,9 +63,19 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
         <MaterialCommunityIcons name="camera-plus-outline" size={20} color="#fff" />
       </View>
       {isUploading ? (
-        <View testID={AvatarEditableTestIds.loading} style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#fff" />
-        </View>
+        <Pressable
+          testID={AvatarEditableTestIds.loading}
+          onPress={cancelUpload}
+          style={styles.loadingOverlay}
+          accessibilityRole="button"
+          accessibilityLabel="Отменить загрузку фото">
+          <UploadProgress
+            progress={uploadProgress}
+            size={64}
+            testID={AvatarEditableTestIds.uploadProgress}
+            iconColor="#fff"
+          />
+        </Pressable>
       ) : null}
     </View>
   );
@@ -56,12 +88,13 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
             style={{ display: 'none' }}
             id="image-uploader"
             type="file"
+            accept="image/*"
             disabled={isUploading}
             onChange={async (e) => {
               if (userId && e.target.files) {
                 const file = e.target.files[0];
                 if (!file) return;
-                if (/mp4|avi|m4v/.test(file.name)) {
+                if (file.type.startsWith('video/') || /\.(mp4|mov|avi|m4v|webm|mkv|3gp)$/i.test(file.name)) {
                   errorToast('Нельзя использовать видео файлы для аватары');
                   return;
                 }
@@ -84,7 +117,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
           onPress={async () => {
             setIsDisabled(true);
             try {
-              const result = await getAccessToGallery();
+              const result = await getAccessToGallery(['images']);
               if (result && !result.canceled) {
                 const imgSrc = result.assets?.[0]?.uri;
                 if (imgSrc) await uploadAvatar(imgSrc);

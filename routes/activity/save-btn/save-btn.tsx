@@ -13,14 +13,15 @@ import { useGlobalManualActivityParams } from '@Routes/save-activity-page/manual
 import { errorToast } from '@S/error-toast/error-toast';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
 import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
-import { getMapBoxImage, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
+import { getDeviceTimeZone } from '@U/time-zone';
 import type { ActivityToSend, ActivityUpdateRequest } from '@R/services/activity/types';
 import type { FinishedActivityDraft } from '@R/slices/activity/types';
 
 type ActivityDetails = Pick<
   ActivityToSend['body'],
-  'title' | 'description' | 'sport' | 'emotion' | 'isPublic' | 'photoVideoUrls'
+  'title' | 'description' | 'sport' | 'emotion' | 'visibility' | 'media'
 >;
 
 function createTrackedActivityBody(
@@ -39,8 +40,8 @@ function createTrackedActivityBody(
     ...finishedActivityMetrics,
     locations,
     duration: Math.round(finishedActivity.duration),
+    timeZone: finishedActivity.timeZone ?? getDeviceTimeZone(),
     ...activityDetails,
-    mapPhotoUrl: getMapBoxImage(routeLocations),
   };
 }
 
@@ -49,7 +50,7 @@ export default function SaveBtn() {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { back, replace } = useRouter();
-  const { isSavingDisabled, finishedActivity, photoVideoUrls } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled, finishedActivity, media } = useAppSelector(({ activity }) => activity);
   const {
     activityId,
     isManualAdding,
@@ -60,7 +61,7 @@ export default function SaveBtn() {
     description,
     sport,
     emotion,
-    isPublic,
+    visibility,
     manualHours,
     manualMinutes,
     manualSeconds,
@@ -95,9 +96,10 @@ export default function SaveBtn() {
               description,
               sport,
               emotion,
-              isPublic,
+              visibility,
             };
-            const activityDetails = { ...editableActivityDetails, photoVideoUrls };
+            const activityDetails = { ...editableActivityDetails, media };
+            const timeZone = getDeviceTimeZone();
             dispatch(setSavingDisabled(true));
             if (isEditingActivity) {
               const savedActivity: ActivityUpdateRequest = {
@@ -123,7 +125,8 @@ export default function SaveBtn() {
                 body: isManualAdding
                   ? {
                       ...editableActivityDetails,
-                      photoVideoUrls,
+                      media,
+                      timeZone,
                       date: new Date(manualDate).toISOString(),
                       distance: distance * 1000,
                       duration: Math.round(duration),

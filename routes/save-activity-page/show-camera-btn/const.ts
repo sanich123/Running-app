@@ -2,9 +2,9 @@ import { LANGUAGES } from '@const/enums';
 
 export const SHOW_CAMERA_BTN = {
   [LANGUAGES.english]: {
-    text: 'Take photo',
+    accessibilityLabel: 'Take a photo with camera',
   },
   [LANGUAGES.russian]: {
-    text: 'Сделать фото',
+    accessibilityLabel: 'Сделать фото камерой',
   },
 } as const;

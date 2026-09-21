@@ -2,7 +2,7 @@ import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
 
 export type MigrationCancelHandler = (() => void) | null;
 
-export interface GetMigrationArchiveAndSendToServerProps {
+export interface StartStravaMigrationProps {
   setIsDisabled: (arg: boolean) => void;
   setIsUnzipping: (arg: boolean) => void;
   setIsZipping: (arg: boolean) => void;

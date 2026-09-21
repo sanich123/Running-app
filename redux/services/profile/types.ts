@@ -6,6 +6,8 @@ export interface ProfileSettings {
   surname?: string;
   city?: string;
   weight?: string;
+  height?: string;
+  age?: string;
   bio?: string;
   profilePhoto?: string;
   email?: string;

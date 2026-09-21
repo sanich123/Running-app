@@ -8,5 +8,6 @@ export const enum AvatarEditableTestIds {
   default = 'avatarEditableDefaultIcon',
   successImg = 'avatarEditableImage',
   loading = 'avatarEditableLoading',
+  uploadProgress = 'avatarEditableUploadProgress',
   editIcon = 'avatarEditableEditIcon',
 }

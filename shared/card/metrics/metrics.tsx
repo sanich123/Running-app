@@ -22,6 +22,7 @@ export default memo(function Metrics({
   sport,
   steps,
   elevationGain,
+  caloriesActive,
   isFullView,
 }: MetricsProps) {
   const { colors, dark } = useTheme();
@@ -59,6 +60,12 @@ export default memo(function Metrics({
             metrics={`${(distance / 1000).toFixed(2)} ${CARD_METRICS[language].km}`}
           />
           {additionalMetric && <ShowMetrics title={`${additionalMetric.title}: `} metrics={additionalMetric.metrics} />}
+          {isFullView && caloriesActive != null ? (
+            <ShowMetrics
+              title={`${CARD_METRICS[language].calories}: `}
+              metrics={`${caloriesActive} ${CARD_METRICS[language].kcal}`}
+            />
+          ) : null}
         </View>
         {isShowDescription ? (
           <View
@@ -87,6 +94,7 @@ const styles = StyleSheet.create({
   metricsWrapper: {
     display: 'flex',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     columnGap: 20,
     marginTop: 6,
   },

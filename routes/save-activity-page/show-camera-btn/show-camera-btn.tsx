@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
+import { Pressable, StyleSheet } from 'react-native';
+import { Icon, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { useSetManualActivityParams } from '../manual-activity-params';
 import { SHOW_CAMERA_BTN } from './const';
@@ -12,28 +12,34 @@ export default function ShowCameraBtn({ isDisabled }: { isDisabled: boolean }) {
   const shouldBeDisabled = isDisabled || isSavingDisabled;
 
   return (
-    <Button
-      mode="outlined"
-      icon="camera-outline"
-      compact
-      style={[styles.showCameraBtn, { borderColor: colors.outlineVariant }, shouldBeDisabled && styles.disabledButton]}
-      contentStyle={styles.content}
-      textColor={colors.onSurface}
+    <Pressable
       onPress={() => setCameraIsVisible(true)}
+      style={({ pressed }) => [
+        styles.showCameraBtn,
+        { borderColor: colors.outlineVariant },
+        shouldBeDisabled && styles.disabledButton,
+        pressed && !shouldBeDisabled && styles.pressedButton,
+      ]}
+      accessibilityLabel={SHOW_CAMERA_BTN[language].accessibilityLabel}
+      accessibilityRole="button"
+      testID="show-camera-button"
       disabled={shouldBeDisabled}>
-      {SHOW_CAMERA_BTN[language].text}
-    </Button>
+      <Icon source="camera-outline" size={28} color={colors.onSurface} />
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   showCameraBtn: {
     alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
     borderRadius: 8,
+    borderWidth: 1,
+    flex: 1,
+    height: 48,
+    justifyContent: 'center',
     marginTop: 12,
+    width: '100%',
   },
-  content: { minHeight: 42 },
   disabledButton: { opacity: 0.7 },
+  pressedButton: { opacity: 0.7 },
 });

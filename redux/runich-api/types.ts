@@ -1,4 +1,5 @@
 import type { ACTIVITY_MIGRATION_STATUS } from './migration-status';
+import type { ActivityVisibility } from '@const/activity-visibility';
 import type { ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
 
 export type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof typeof ACTIVITY_MIGRATION_STATUS];
@@ -21,7 +22,7 @@ export interface ActivityMigrationJobResponse {
 
 type ActivityLocationResponse = ActivityLocation;
 
-export interface ActivityPhotoResponse {
+export interface ActivityMediaItemResponse {
   url: string;
   thumbnail: string | null;
   blurhash?: string | null;
@@ -48,20 +49,26 @@ export interface ActivityResponse {
   userId: string;
   profileId?: string;
   date: string;
+  timeZone?: string | null;
   createdAt?: string;
   updatedAt?: string;
   description?: string | null;
   title?: string | null;
   sport: string;
-  photoVideoUrls?: ActivityPhotoResponse[] | null;
+  media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  locationName?: string | null;
+  weatherTemperature?: number | null;
+  weatherWindSpeed?: number | null;
+  weatherCode?: number | null;
+  caloriesActive?: number | null;
   duration: number;
   distance: number;
   elevationGain: number;
   steps?: number | null;
   speed?: number | null;
-  isPublic?: boolean | null;
+  visibility?: ActivityVisibility | null;
   emotion?: string | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
@@ -75,15 +82,23 @@ export type ActivityListItemResponse = Pick<
   | 'id'
   | 'userId'
   | 'date'
+  | 'timeZone'
   | 'title'
   | 'sport'
-  | 'photoVideoUrls'
+  | 'media'
   | 'mapPhotoUrl'
   | 'mapPhotoUrlBlurhash'
+  | 'locationName'
+  | 'weatherTemperature'
+  | 'weatherWindSpeed'
+  | 'weatherCode'
+  | 'caloriesActive'
   | 'duration'
   | 'distance'
   | 'elevationGain'
   | 'steps'
+  | 'emotion'
+  | 'visibility'
   | 'profile'
   | '_count'
 >;
@@ -93,20 +108,26 @@ export interface ActivityMutationResponse {
   userId: string;
   profileId: string;
   date: string;
+  timeZone?: string | null;
   createdAt: string;
   updatedAt: string;
   description?: string | null;
   title?: string | null;
   sport: string;
-  photoVideoUrls?: ActivityPhotoResponse[] | null;
+  media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  locationName?: string | null;
+  weatherTemperature?: number | null;
+  weatherWindSpeed?: number | null;
+  weatherCode?: number | null;
+  caloriesActive?: number | null;
   duration: number;
   distance: number;
   elevationGain: number;
   steps?: number | null;
   speed: number;
-  isPublic?: boolean | null;
+  visibility?: ActivityVisibility | null;
   emotion?: string | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
@@ -122,7 +143,7 @@ export interface ActivitiesResponse {
 }
 
 export interface ActivityMediaResponse {
-  photos: ActivityPhotoResponse[];
+  media: ActivityMediaItemResponse[];
   hasMore: boolean;
   nextCursor: string | null;
   isLastPage?: boolean;

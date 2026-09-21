@@ -44,6 +44,8 @@ export interface ProfileType {
   createdAt?: string | null;
   email?: string | null;
   gender?: string | null;
+  height?: string | null;
+  age?: string | null;
   id?: string;
   language?: string | null;
   name?: string | null;
@@ -68,19 +70,25 @@ export interface ActivityCardProps {
   sport: SPORTS_BTNS_VALUES | string;
   id: string;
   userId: string;
-  photoVideoUrls?: PhotoVideoType[] | null;
+  media?: ActivityMediaItem[] | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  locationName?: string | null;
+  weatherTemperature?: number | null;
+  weatherWindSpeed?: number | null;
+  weatherCode?: number | null;
+  caloriesActive?: number | null;
   duration: number;
   distance: number;
   elevationGain: number;
   steps?: number | null;
+  emotion?: string | null;
   profile: ProfileType;
   commentsLength: number;
   likesLength?: number;
 }
 
-export interface PhotoVideoType {
+export interface ActivityMediaItem {
   url: string;
   thumbnail: string | null;
   blurhash?: string | null;
@@ -95,6 +103,8 @@ export interface CardBtnsProps {
   likesLength?: number;
   profile: ProfileType;
   mapPhotoUrl?: string | null;
+  prepareShareImage?: () => Promise<void>;
+  cleanupShareImage?: () => void;
 }
 
 export interface CommentBtnProps {
@@ -116,6 +126,8 @@ export interface DisplayActivityMapProps {
 
 export interface ShareBtnProps {
   cardRef: MutableRefObject<View | null>;
+  prepareShareImage?: () => Promise<void>;
+  cleanupShareImage?: () => void;
 }
 
 interface Likes {
@@ -144,6 +156,7 @@ export interface MetricsProps {
   sport: string;
   steps?: number | null;
   elevationGain: number;
+  caloriesActive?: number | null;
   title?: string | null;
   isShowDescription: boolean;
   description?: string | null;
@@ -158,11 +171,16 @@ export interface LikesProps {
   likesLength?: number;
 }
 
-type PhotoVideoUrls = PhotoVideoType[];
+type ActivityMediaItems = ActivityMediaItem[];
 
 export interface MediaListProps {
-  photoVideoUrls?: PhotoVideoUrls | null;
+  media?: ActivityMediaItems | null;
   mapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  locationName?: string | null;
+  weatherTemperature?: number | null;
+  weatherWindSpeed?: number | null;
+  weatherCode?: number | null;
+  emotion?: string | null;
   id: string;
 }

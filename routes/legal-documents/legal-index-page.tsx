@@ -5,12 +5,12 @@ import { LANGUAGES, ROUTES } from '@const/enums';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import { LEGAL_DOCUMENT_LABELS, LEGAL_DOCUMENT_VERSION, LEGAL_OPERATOR, type LegalDocumentId } from './content';
 
-const DOCUMENTS: LegalDocumentId[] = ['privacy', 'agreement', 'consents', 'locationConsent', 'accountDeletion'];
+const DOCUMENTS: LegalDocumentId[] = ['agreement', 'consents', 'privacy', 'locationConsent', 'accountDeletion'];
 
 const DOCUMENT_PATHS: Record<LegalDocumentId, { russian: string; english: string }> = {
   privacy: { russian: `/${ROUTES.privacyPolicy}`, english: `/${ROUTES.privacyPolicyEnglish}` },
-  agreement: { russian: `/${ROUTES.userAgreement}`, english: `/${ROUTES.userAgreementEnglish}` },
   consents: { russian: `/${ROUTES.consents}`, english: `/${ROUTES.consentsEnglish}` },
+  agreement: { russian: `/${ROUTES.userAgreement}`, english: `/${ROUTES.userAgreementEnglish}` },
   locationConsent: { russian: `/${ROUTES.locationConsent}`, english: `/${ROUTES.locationConsentEnglish}` },
   accountDeletion: { russian: `/${ROUTES.accountDeletion}`, english: `/${ROUTES.accountDeletionEnglish}` },
 };
@@ -46,10 +46,17 @@ export default function LegalIndexPage({ language }: { language: LANGUAGES }) {
           {language === LANGUAGES.russian ? LEGAL_OPERATOR.statusRussian : LEGAL_OPERATOR.statusEnglish}
         </Text>
         <Text variant="bodyMedium">
+          <Text style={styles.label}>{language === LANGUAGES.russian ? 'Адрес' : 'Address'}: </Text>
+          {language === LANGUAGES.russian ? LEGAL_OPERATOR.addressRussian : LEGAL_OPERATOR.addressEnglish}
+        </Text>
+        <Text variant="bodyMedium">
           <Text style={styles.label}>{language === LANGUAGES.russian ? 'ИНН' : 'INN'}: </Text>
           {LEGAL_OPERATOR.inn}
         </Text>
-        <Text variant="bodyMedium">{LEGAL_OPERATOR.email}</Text>
+        <Text variant="bodyMedium">
+          <Text style={styles.label}>{language === LANGUAGES.russian ? 'Email' : 'Email'}: </Text>
+          {LEGAL_OPERATOR.email}
+        </Text>
       </View>
 
       <Text variant="bodyMedium" style={styles.heading}>

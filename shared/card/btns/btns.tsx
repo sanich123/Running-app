@@ -17,6 +17,8 @@ export default memo(function CardBtns({
   likesLength,
   profile,
   mapPhotoUrl,
+  prepareShareImage,
+  cleanupShareImage,
 }: CardBtnsProps) {
   const { userId: ownerId } = useAppSelector(({ auth }) => auth);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +35,7 @@ export default memo(function CardBtns({
           profile={profile}
           mapPhotoUrl={mapPhotoUrl}
         />
-        <ShareBtn cardRef={cardRef} />
+        <ShareBtn cardRef={cardRef} prepareShareImage={prepareShareImage} cleanupShareImage={cleanupShareImage} />
         {isMineActivity && isShowDeleteBtn && <DeleteBtn activityId={activityId} />}
       </View>
     </ActivityCardBtnsContext.Provider>

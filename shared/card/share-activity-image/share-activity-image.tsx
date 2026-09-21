@@ -1,17 +1,34 @@
-import type { MutableRefObject } from 'react';
+import { useEffect, type MutableRefObject } from 'react';
 import { Image, View, StyleSheet } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
+import UserAvatar from '@S/avatar/avatar';
 import CustomImage from '@S/custom-image/custom-image';
+import { getIconNameByTypeOfSport, MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { formatDuration } from '@U/time-formatter';
-import { SHARE_IMAGE_SIZE } from './const';
+import { SHARE_IMAGE_HEIGHT, SHARE_IMAGE_WIDTH } from './const';
 import Metric from './metric';
+import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import { CARD_METRICS } from '../metrics/const';
 import { getCardSpeedMetric } from '../metrics/utils';
-import { getShareMapPhotoUrl } from '../utils';
 import type { ActivityCardProps } from '../types';
+
+type ShareActivityImageProps = Pick<ActivityCardProps, 'distance' | 'duration' | 'date' | 'title' | 'mapPhotoUrl'> & {
+  profile?: ActivityCardProps['profile'];
+  sport?: string;
+  emotion?: string | null;
+  elevationGain?: number;
+  steps?: number | null;
+  locationName?: string | null;
+  weatherTemperature?: number | null;
+  weatherWindSpeed?: number | null;
+  weatherCode?: number | null;
+  caloriesActive?: number | null;
+  cardRef: MutableRefObject<View | null>;
+  onReady?: () => void;
+};
 
 export default function ShareActivityImage({
   distance,
@@ -21,177 +38,177 @@ export default function ShareActivityImage({
   mapPhotoUrl,
   cardRef,
   sport = 'run',
-}: Pick<ActivityCardProps, 'distance' | 'duration' | 'date' | 'title' | 'mapPhotoUrl'> & {
-  sport?: string;
-  cardRef: MutableRefObject<View | null>;
-}) {
+  onReady,
+  emotion,
+  elevationGain,
+  steps,
+  profile,
+  locationName,
+  weatherTemperature,
+  weatherWindSpeed,
+  weatherCode,
+  caloriesActive,
+}: ShareActivityImageProps) {
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const isRussian = language === LANGUAGES.russian;
-  const shareMapPhotoUrl = getShareMapPhotoUrl(mapPhotoUrl) ?? mapPhotoUrl;
   const speedMetric = getCardSpeedMetric({ sport, distance, duration, language });
-  const formattedDate = Number.isNaN(new Date(date).getTime())
-    ? ''
-    : new Date(date).toLocaleDateString(isRussian ? 'ru-RU' : 'en-US', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      });
+  const sportTitle = MAP_SPORT_TO_TITLE[sport as keyof typeof MAP_SPORT_TO_TITLE]?.[language] ?? sport;
+  const formattedDate = formatShareDate(date, duration, isRussian);
+  const activityLabel = title || sportTitle;
+  const metrics = [
+    { label: CARD_METRICS[language].time, value: formatDuration(duration) },
+    { label: CARD_METRICS[language].distance, value: `${(distance / 1000).toFixed(2)} ${CARD_METRICS[language].km}` },
+    { label: speedMetric.title, value: speedMetric.metrics },
+    ...(elevationGain && elevationGain > 0
+      ? [{ label: CARD_METRICS[language].elevation, value: `${Math.round(elevationGain)} ${CARD_METRICS[language].m}` }]
+      : []),
+    ...(steps != null && steps > 0 ? [{ label: CARD_METRICS[language].steps, value: `${steps}` }] : []),
+    ...(caloriesActive != null
+      ? [{ label: CARD_METRICS[language].calories, value: `${caloriesActive} ${CARD_METRICS[language].kcal}` }]
+      : []),
+  ];
+
+  useEffect(() => {
+    if (!mapPhotoUrl) onReady?.();
+  }, [mapPhotoUrl, onReady]);
 
   return (
-    <View ref={cardRef} collapsable={false} style={styles.captureRoot}>
-      {mapPhotoUrl ? (
-        <CustomImage
-          style={styles.map}
-          source={{ uri: shareMapPhotoUrl }}
-          contentFit="cover"
-          priority="low"
-          cachePolicy="disk"
-          recyclingKey={shareMapPhotoUrl}
-          testID={mapPhotoUrl}
-        />
-      ) : (
-        <View style={[styles.mapFallback, { backgroundColor: colors.primaryContainer }]} />
-      )}
-      <View style={styles.mapTint} />
-
-      <View style={styles.header}>
-        <View style={styles.brand}>
-          <Image source={require('../../../assets/images/runich-logo.png')} style={styles.logo} />
-          <Text style={styles.brandName}>runich</Text>
-        </View>
-        {formattedDate ? <Text style={styles.date}>{formattedDate}</Text> : null}
-      </View>
-
-      <View style={styles.routeLabel}>
-        <Icon source="map-marker-path" size={16} color="#FFFFFF" />
-        <Text numberOfLines={1} style={styles.routeTitle}>
-          {title || (isRussian ? 'Активность' : 'Activity')}
-        </Text>
-      </View>
-
-      <View style={styles.footer}>
-        <View style={styles.metricsWrapper}>
-          <Metric label={speedMetric.title} value={speedMetric.metrics} />
-          <Metric label={CARD_METRICS[language].time} value={formatDuration(duration)} />
-          <Metric
-            label={CARD_METRICS[language].distance}
-            value={`${(distance / 1000).toFixed(2)} ${CARD_METRICS[language].km}`}
+    <View
+      ref={cardRef}
+      collapsable={false}
+      pointerEvents="none"
+      style={styles.captureRoot}
+      testID="share-activity-image">
+      <View style={styles.mapSection} testID="share-map-section">
+        {mapPhotoUrl ? (
+          <CustomImage
+            style={styles.map}
+            source={{ uri: mapPhotoUrl }}
+            contentFit="cover"
+            priority="low"
+            cachePolicy="disk"
+            recyclingKey={mapPhotoUrl}
+            testID={mapPhotoUrl}
+            transition={0}
+            onLoad={onReady}
+            onError={onReady}
           />
+        ) : (
+          <View style={[styles.mapFallback, { backgroundColor: colors.primaryContainer }]}>
+            <Icon source="map-marker-path" size={42} color={colors.onPrimaryContainer} />
+          </View>
+        )}
+        <View style={styles.mapTint} />
+        {mapPhotoUrl ? (
+          <MapMetaOverlay
+            locationName={locationName}
+            weatherTemperature={weatherTemperature}
+            weatherWindSpeed={weatherWindSpeed}
+            weatherCode={weatherCode}
+            emotion={emotion}
+          />
+        ) : null}
+      </View>
+
+      <View style={styles.details}>
+        <View style={styles.identityRow}>
+          <UserAvatar
+            size={42}
+            profilePhoto={profile?.profilePhoto}
+            name={profile?.name}
+            surname={profile?.surname}
+            placeholder={profile?.profilePhotoBlurhash}
+            cachePolicy="disk"
+            recyclingKey={profile?.profilePhoto}
+            transition={0}
+            testID="share-profile-avatar"
+          />
+          <View style={styles.identityCopy}>
+            <View style={styles.activityTitleRow} testID="share-activity-title">
+              <Icon source={getIconNameByTypeOfSport(sport)} size={16} color="rgba(255, 255, 255, 0.72)" />
+              <Text numberOfLines={1} style={styles.activityTitle}>
+                {activityLabel}
+              </Text>
+            </View>
+            {formattedDate ? <Text style={styles.date}>{formattedDate}</Text> : null}
+          </View>
+        </View>
+
+        <View style={styles.metricsGrid}>
+          {metrics.map(({ label, value }) => (
+            <Metric key={label} label={label} value={value} />
+          ))}
+        </View>
+
+        <View style={styles.footer}>
+          <Image source={require('../../../assets/images/runich-logo.png')} style={styles.footerLogo} />
+          <Text style={styles.footerBrand}>runich</Text>
         </View>
       </View>
-      <Text numberOfLines={1} style={styles.attribution}>
-        © Mapbox · © OpenStreetMap · Improve this map
-      </Text>
     </View>
   );
 }
 
+function formatShareDate(date: string, duration: number, isRussian: boolean) {
+  const start = new Date(date);
+  if (Number.isNaN(start.getTime())) return '';
+
+  const end = new Date(start.getTime() + Math.max(0, duration));
+  const locale = isRussian ? 'ru-RU' : 'en-US';
+  const dateLabel = start.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
+  const formatTime = (value: Date) =>
+    value.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
+
+  return `${dateLabel}, ${formatTime(start)}–${formatTime(end)}`;
+}
+
 const styles = StyleSheet.create({
   captureRoot: {
-    height: SHARE_IMAGE_SIZE,
-    opacity: 0,
+    backgroundColor: '#050506',
+    height: SHARE_IMAGE_HEIGHT,
+    left: -10000,
+    overflow: 'hidden',
     position: 'absolute',
-    width: SHARE_IMAGE_SIZE,
+    top: -10000,
+    width: SHARE_IMAGE_WIDTH,
     zIndex: -1,
   },
-  map: {
-    height: '100%',
-    width: '100%',
-  },
-  mapFallback: {
-    height: '100%',
-    width: '100%',
-  },
+  mapSection: { aspectRatio: 16 / 9, position: 'relative', width: '100%' },
+  map: { height: '100%', width: '100%' },
+  mapFallback: { alignItems: 'center', height: '100%', justifyContent: 'center', width: '100%' },
   mapTint: {
-    backgroundColor: 'rgba(38, 38, 38, 0.05)',
+    backgroundColor: 'rgba(0, 0, 0, 0.08)',
     bottom: 0,
     left: 0,
     position: 'absolute',
     right: 0,
     top: 0,
   },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    left: 16,
-    position: 'absolute',
-    right: 16,
-    top: 16,
-  },
-  brand: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 8,
-  },
-  logo: {
-    borderRadius: 10,
-    height: 38,
-    width: 38,
-  },
-  brandName: {
-    color: '#FFFFFF',
-    fontFamily: FONT_FAMILIES.extraBold,
-    fontSize: 20,
-    letterSpacing: 0.4,
-  },
-  date: {
-    backgroundColor: 'rgba(30, 32, 36, 0.32)',
+  details: { backgroundColor: '#050506', flex: 1, paddingHorizontal: 16, paddingTop: 16 },
+  identityRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  identityCopy: { flex: 1, minWidth: 0 },
+  activityTitleRow: { alignItems: 'center', flexDirection: 'row', gap: 5, marginTop: 8 },
+  activityTitle: { color: '#FFFFFF', flex: 1, fontFamily: FONT_FAMILIES.semiBold, fontSize: 18 },
+  date: { color: 'rgba(255, 255, 255, 0.68)', fontFamily: FONT_FAMILIES.medium, fontSize: 12, marginTop: 3 },
+  metricsGrid: {
     borderColor: 'rgba(255, 255, 255, 0.18)',
-    borderRadius: 12,
-    borderWidth: 1,
-    color: '#FFFFFF',
-    fontFamily: FONT_FAMILIES.semiBold,
-    fontSize: 13,
-    overflow: 'hidden',
-    paddingHorizontal: 9,
-    paddingVertical: 6,
-  },
-  routeLabel: {
-    alignItems: 'center',
-    backgroundColor: 'rgba(30, 32, 36, 0.36)',
-    borderColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 18,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 6,
-    left: 16,
-    maxWidth: SHARE_IMAGE_SIZE - 32,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    position: 'absolute',
-    top: 72,
-  },
-  routeTitle: {
-    color: '#FFFFFF',
-    flexShrink: 1,
-    fontFamily: FONT_FAMILIES.semiBold,
-    fontSize: 12,
+    flexWrap: 'wrap',
+    marginTop: 14,
+    overflow: 'hidden',
   },
   footer: {
-    bottom: 14,
-    left: 14,
-    position: 'absolute',
-    right: 14,
-  },
-  metricsWrapper: {
-    alignItems: 'stretch',
+    alignItems: 'center',
     flexDirection: 'row',
-    gap: 8,
-    width: '100%',
+    gap: 7,
+    justifyContent: 'center',
+    marginTop: 'auto',
+    paddingBottom: 14,
+    paddingTop: 14,
   },
-  attribution: {
-    bottom: 3,
-    color: 'rgba(255, 255, 255, 0.78)',
-    fontSize: 6,
-    left: 16,
-    lineHeight: 8,
-    position: 'absolute',
-    right: 16,
-    textAlign: 'right',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
+  footerLogo: { borderRadius: 7, height: 24, width: 24 },
+  footerBrand: { color: '#FFFFFF', fontFamily: FONT_FAMILIES.extraBold, fontSize: 17, letterSpacing: 0.4 },
 });

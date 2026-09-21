@@ -44,7 +44,7 @@ describe('Activity slice', () => {
     const withPhoto = reducer(withSport, addPhotoUrl(photo));
 
     expect(withPhoto.sport).toBe(SPORTS_BTNS_VALUES.bike);
-    expect(withPhoto.photoVideoUrls).toEqual([photo]);
+    expect(withPhoto.media).toEqual([photo]);
   });
 
   it('should queue and clear unsynced activities', () => {

@@ -4,7 +4,7 @@ import type {
   ActivityToSend,
   ActivityUpdateRequest,
   GetActivitiesByIdsRequest,
-  GetActivityPhotosRequest,
+  GetActivityMediaRequest,
 } from './types';
 import type {
   ActivitiesResponse,
@@ -39,13 +39,13 @@ const activityApi = runichApi.injectEndpoints({
         `/activity/${id}/all?take=${ACTIVITY_PAGE_SIZE}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
       providesTags: [Tags.activities],
     }),
-    getAllActivityPhotosByUserId: infiniteQuery<ActivityMediaResponse, GetActivityPhotosRequest, string>({
+    getAllActivityMediaByUserId: infiniteQuery<ActivityMediaResponse, GetActivityMediaRequest, string>({
       infiniteQueryOptions: {
         initialPageParam: '',
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       },
       query: ({ queryArg: { userId, take }, pageParam }) =>
-        `/activity/${userId}/photos?take=${take}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
+        `/activity/${userId}/media?take=${take}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
       providesTags: [Tags.activities],
     }),
     getActivityByActivityId: query<ActivityResponse | null, string>({
@@ -94,7 +94,7 @@ const activityApi = runichApi.injectEndpoints({
 export const {
   useUpdateActivityInfoMutation,
   useGetActivitiesByUserIdInfiniteQuery,
-  useGetAllActivityPhotosByUserIdInfiniteQuery,
+  useGetAllActivityMediaByUserIdInfiniteQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery,
   useGetActivityByActivityIdQuery,
   useGetLocationsByActivityIdQuery,

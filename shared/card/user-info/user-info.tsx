@@ -46,8 +46,12 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
                 fontFamily: FONT_FAMILIES.semiBold,
               }}>{`${profile?.name} ${profile?.surname ?? ''}`}</Text>
           </View>
-          <View>
-            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+          <View style={styles.metaRow}>
+            <Text
+              variant="bodySmall"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={[styles.metaText, { color: colors.onSurfaceVariant }]}>
               {sport ? getIconByTypeOfSport(sport as SPORTS_BTNS_VALUES) : ''}
               {`${size === 'small' ? '' : ' '}${formatDate(date, language)} ${getHoursMinutes(date, language)}`}
             </Text>
@@ -70,6 +74,16 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   nameWrapper: {
+    minWidth: 0,
+  },
+  metaRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 6,
+    minWidth: 0,
+  },
+  metaText: {
+    flex: 1,
     minWidth: 0,
   },
 });

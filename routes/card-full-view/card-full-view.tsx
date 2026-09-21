@@ -44,10 +44,11 @@ export default function CardFullView() {
               date={activity.date}
               sport={activity.sport}
               id={activity.id}
-              photoVideoUrls={activity.photoVideoUrls}
+              media={activity.media}
               duration={activity.duration}
               distance={activity.distance}
               elevationGain={activity.elevationGain}
+              caloriesActive={activity.caloriesActive}
               steps={activity.steps}
               mapPhotoUrl={activity.mapPhotoUrl}
               profile={activity.profile}

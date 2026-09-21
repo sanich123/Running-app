@@ -2,11 +2,11 @@ import { screen, userEvent } from '@testing-library/react-native';
 import { addPhotoUrl, setSavingDisabled } from '@R/slices/activity/activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { deletePhotos } from '@U/file-sending';
+import { deleteUploadedMedia } from '@U/file-sending';
 import PreviewImageCloseBtn from './preview-image-close-btn';
 
-jest.mock('@U/file-sending', () => ({ deletePhotos: jest.fn().mockResolvedValue(true) }));
-const mockDeletePhotos = deletePhotos as jest.MockedFunction<typeof deletePhotos>;
+jest.mock('@U/file-sending', () => ({ deleteUploadedMedia: jest.fn().mockResolvedValue(true) }));
+const mockDeleteUploadedMedia = deleteUploadedMedia as jest.MockedFunction<typeof deleteUploadedMedia>;
 
 describe('Preview image close btn', () => {
   it('should correctly renders and delete image from local and global state', async () => {
@@ -26,8 +26,8 @@ describe('Preview image close btn', () => {
     const deleteIcon = screen.getByTestId('deleteIcon');
     await userEvent.press(deleteIcon);
     expect(setImages).toHaveBeenCalled();
-    expect(mockStore.getState().activity.photoVideoUrls).toEqual([]);
-    expect(mockDeletePhotos).toHaveBeenCalledWith(['someUrl']);
+    expect(mockStore.getState().activity.media).toEqual([]);
+    expect(mockDeleteUploadedMedia).toHaveBeenCalledWith(['someUrl']);
   });
   it('should be disabled, when isDisabled', async () => {
     const setImages = jest.fn();

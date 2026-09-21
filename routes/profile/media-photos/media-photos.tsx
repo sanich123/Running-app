@@ -4,12 +4,12 @@ import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
-import { useGetAllActivityPhotosByUserIdInfiniteQuery } from '@R/services/activity/activity';
+import { useGetAllActivityMediaByUserIdInfiniteQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import CustomImage from '@S/custom-image/custom-image';
 import { getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { PROFILE_MEDIA } from './const';
-import type { PhotoVideoType } from '@S/card/types';
+import type { ActivityMediaItem } from '@S/card/types';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const {
@@ -17,16 +17,16 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
     isError,
     data: pages,
     error,
-  } = useGetAllActivityPhotosByUserIdInfiniteQuery({ userId, take: 4 }, { skip: !userId });
+  } = useGetAllActivityMediaByUserIdInfiniteQuery({ userId, take: 4 }, { skip: !userId });
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   const data = pages?.pages[0];
-  const photos = data?.photos ?? [];
+  const media = data?.media ?? [];
 
-  if (!isLoading && !isError && !data?.photos?.length) {
+  if (!isLoading && !isError && !data?.media?.length) {
     return null;
   }
 
@@ -49,8 +49,8 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
         {isError && (
           <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${getErrorMessageFromError(error)}`}</Text>
         )}
-        {photos.length > 0 &&
-          photos.map(({ url, thumbnail, blurhash }: PhotoVideoType, index: number) => {
+        {media.length > 0 &&
+          media.map(({ url, thumbnail, blurhash }: ActivityMediaItem, index: number) => {
             if (index === 3) {
               return (
                 <Fragment key={`${url}+${index}`}>

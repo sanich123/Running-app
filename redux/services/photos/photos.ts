@@ -9,6 +9,23 @@ export interface UploadedPhotoResponse {
   contentType: string;
 }
 
+export type MediaUploadRole = 'media' | 'thumbnail';
+
+export interface MediaUploadManifestEntry {
+  mediaId: string;
+  role: MediaUploadRole;
+}
+
+export interface UploadedPhotoBatchResponse extends UploadedPhotoResponse {
+  mediaId: string;
+  role: MediaUploadRole;
+}
+
+export interface PhotoUploadRequest {
+  body: FormData;
+  onProgress?: (progress: number) => void;
+}
+
 export interface DeletePhotoRequest {
   url: string;
 }
@@ -32,12 +49,17 @@ function parseResponseBody(responseText: string) {
   }
 }
 
-function uploadPhotoWithXhr(body: FormData, api: BaseQueryApi): Promise<XhrResult<UploadedPhotoResponse>> {
+function uploadWithXhr<T>(
+  body: FormData,
+  api: BaseQueryApi,
+  path: string,
+  onProgress?: (progress: number) => void,
+): Promise<XhrResult<T>> {
   return new Promise((resolve) => {
     const request = new XMLHttpRequest();
     let settled = false;
 
-    const finish = (result: XhrResult<UploadedPhotoResponse>) => {
+    const finish = (result: XhrResult<T>) => {
       if (settled) return;
       settled = true;
       api.signal.removeEventListener('abort', abortRequest);
@@ -49,7 +71,7 @@ function uploadPhotoWithXhr(body: FormData, api: BaseQueryApi): Promise<XhrResul
       finish({ error: { status: 'FETCH_ERROR', error: 'Запрос отправки фотографии отменён' } });
     };
 
-    request.open('POST', `${API_BASE_URL.replace(/\/$/, '')}/photo`);
+    request.open('POST', `${API_BASE_URL.replace(/\/$/, '')}${path}`);
     request.timeout = LIMIT_OF_REQUEST;
 
     const { accessToken } = (api.getState() as AuthState).auth;
@@ -74,15 +96,20 @@ function uploadPhotoWithXhr(body: FormData, api: BaseQueryApi): Promise<XhrResul
     request.onload = () => {
       const data = parseResponseBody(request.responseText);
       if (request.status >= 200 && request.status < 300) {
-        finish({ data: data as UploadedPhotoResponse });
+        finish({ data: data as T });
       } else {
         finish({ error: { status: request.status, data } });
       }
     };
-    request.onerror = () => finish({ error: { status: 'FETCH_ERROR', error: 'Не удалось отправить фотографию' } });
+    request.onerror = () => finish({ error: { status: 'FETCH_ERROR', error: 'Не удалось отправить медиафайлы' } });
     request.ontimeout = () =>
-      finish({ error: { status: 'TIMEOUT_ERROR', error: 'Истекло время ожидания отправки фотографии' } });
-    request.onabort = () => finish({ error: { status: 'FETCH_ERROR', error: 'Отправка фотографии отменена' } });
+      finish({ error: { status: 'TIMEOUT_ERROR', error: 'Истекло время ожидания отправки медиафайлов' } });
+    request.onabort = () => finish({ error: { status: 'FETCH_ERROR', error: 'Отправка медиафайлов отменена' } });
+    if (request.upload && onProgress) {
+      request.upload.onprogress = ({ loaded, total, lengthComputable }) => {
+        if (lengthComputable && total > 0) onProgress(Math.min(loaded / total, 1));
+      };
+    }
 
     api.signal.addEventListener('abort', abortRequest, { once: true });
 
@@ -92,11 +119,23 @@ function uploadPhotoWithXhr(body: FormData, api: BaseQueryApi): Promise<XhrResul
   });
 }
 
+function uploadPhotoWithXhr({ body, onProgress }: PhotoUploadRequest, api: BaseQueryApi) {
+  return uploadWithXhr<UploadedPhotoResponse>(body, api, '/photo', onProgress);
+}
+
+function uploadPhotosWithXhr({ body, onProgress }: PhotoUploadRequest, api: BaseQueryApi) {
+  return uploadWithXhr<UploadedPhotoBatchResponse[]>(body, api, '/photo/batch', onProgress);
+}
+
 export const photosApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ mutation }) => ({
-    uploadPhoto: mutation<UploadedPhotoResponse, FormData>({
+    uploadPhoto: mutation<UploadedPhotoResponse, PhotoUploadRequest>({
       queryFn: (body, api) => uploadPhotoWithXhr(body, api),
+      invalidatesTags: [Tags.profile, Tags.activities],
+    }),
+    uploadPhotos: mutation<UploadedPhotoBatchResponse[], PhotoUploadRequest>({
+      queryFn: (body, api) => uploadPhotosWithXhr(body, api),
       invalidatesTags: [Tags.profile, Tags.activities],
     }),
     deletePhoto: mutation<void, DeletePhotoRequest>({

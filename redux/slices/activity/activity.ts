@@ -19,17 +19,17 @@ const activity = createSlice({
       state.sport = action.payload;
     },
     addPhotoUrl: (state, action: PayloadAction<ActivityPhoto>) => {
-      state.photoVideoUrls = [action.payload, ...state.photoVideoUrls];
+      state.media = [action.payload, ...state.media];
     },
     addPhotoUrls: (state, action: PayloadAction<ActivityPhoto[]>) => {
-      state.photoVideoUrls = [...action.payload, ...state.photoVideoUrls];
+      state.media = [...action.payload, ...state.media];
     },
     removePhotoUrl: (state, action: PayloadAction<string>) => {
-      state.photoVideoUrls = state.photoVideoUrls.filter(({ url }) => url !== action.payload);
+      state.media = state.media.filter(({ url }) => url !== action.payload);
     },
     resetActivityDraft: (state) => {
       state.sport = ACTIVITY_DRAFT_INITIAL_STATE.sport;
-      state.photoVideoUrls = [];
+      state.media = [];
     },
     queueUnsyncedActivity: (state, action: PayloadAction<PendingActivity>) => {
       state.unsyncedActivities.push(action.payload);

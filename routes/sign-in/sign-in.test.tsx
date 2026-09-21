@@ -53,17 +53,17 @@ describe('sign in', () => {
     expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
   });
 
-  it('opens the user agreement and privacy policy from the footer', async () => {
+  it('opens the linked legal documents from the consent text', async () => {
     const user = userEvent.setup();
     mockPush.mockClear();
     await renderWithProviders(<SignIn />);
-    await user.press(screen.getByText('Пользовательским соглашением'));
-    await user.press(screen.getAllByText('Политикой конфиденциальности').at(-1)!);
+    await user.press(screen.getByText('Пользовательского соглашения'));
+    await user.press(screen.getByText('Политикой в отношении обработки персональных данных'));
     expect(mockPush).toHaveBeenNthCalledWith(1, `/${ROUTES.userAgreement}`);
     expect(mockPush).toHaveBeenNthCalledWith(2, `/${ROUTES.privacyPolicy}`);
   });
 
-  it('allows email registration without inline consent checkboxes', async () => {
+  it('starts with legal consents selected and disables auth when either is unchecked', async () => {
     const user = userEvent.setup();
     let requestBody: unknown;
     mockAuthParams = { authStep: SignInPageStates.register };
@@ -78,9 +78,12 @@ describe('sign in', () => {
     await renderWithProviders(<SignIn />);
     const submit = screen.getByTestId('auth-submit');
     expect(submit).not.toBeDisabled();
-    expect(screen.queryByTestId('legal-consent-privacy')).not.toBeOnTheScreen();
-    expect(screen.queryByTestId('legal-consent-agreement')).not.toBeOnTheScreen();
-    expect(screen.getByText('Продолжая, вы соглашаетесь с')).toBeOnTheScreen();
+    expect(screen.getByTestId('legal-consent-agreement').props.accessibilityState.checked).toBe(true);
+    expect(screen.getByTestId('legal-consent-personal-data').props.accessibilityState.checked).toBe(true);
+    await user.press(screen.getByTestId('legal-consent-agreement'));
+    expect(submit).toBeDisabled();
+    await user.press(screen.getByTestId('legal-consent-agreement'));
+    expect(submit).not.toBeDisabled();
     expect(
       screen.getByText(/\* Регистрация по email — только с адресом российского почтового оператора/),
     ).toBeOnTheScreen();
@@ -98,6 +101,13 @@ describe('sign in', () => {
     await user.press(screen.getByTestId('auth-submit'));
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@yandex.ru', password: 'strong-password' }));
+  });
+
+  it('opens the personal data consent document from the second checkbox', async () => {
+    const user = userEvent.setup();
+    await renderWithProviders(<SignIn />);
+    await user.press(screen.getByText('согласие на обработку'));
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.consents}`);
   });
 
   it('hides email link login from the compact login form', async () => {

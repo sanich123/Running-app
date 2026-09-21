@@ -17,9 +17,14 @@ export function getDaysOfTheMonthWithNames(
       const dateFromDay = new Date(+year, +month, day + 1);
       const dayFromDate = dateFromDay.getDay();
       const incrementedDay = day + 1;
-      const activitiesInThatDay = safeActivities.filter(
-        ({ date }) => new Date(date).getDate() === dateFromDay.getDate(),
-      );
+      const activitiesInThatDay = safeActivities.filter(({ date }) => {
+        const activityDate = new Date(date);
+        return (
+          activityDate.getFullYear() === dateFromDay.getFullYear() &&
+          activityDate.getMonth() === dateFromDay.getMonth() &&
+          activityDate.getDate() === dateFromDay.getDate()
+        );
+      });
       acc[
         mapIndexToDayOfWeek[dayFromDate as keyof typeof mapIndexToDayOfWeek] as keyof ReducedDatesByDayOfTheWeek
       ].push({

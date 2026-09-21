@@ -5,6 +5,7 @@ import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { resetMigration, setMigrationError, setMigrationJob } from '@R/slices/migration/migration';
 import { changeLanguage } from '@R/slices/settings/settings';
+import * as errorToastModule from '@S/error-toast/error-toast';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -36,7 +37,7 @@ const mockMigrate = jest.fn().mockImplementation((args: MigrationArgs) => {
 const mockExternalNavigate = jest.fn();
 const mockReplace = jest.fn();
 jest.mock('@U/migration-strava/migration-archive', () => ({
-  getMigrationArchiveAndSendToServer: (args: unknown) => mockMigrate(args),
+  startStravaMigration: (args: unknown) => mockMigrate(args),
 }));
 jest.mock('expo-router', () => {
   const { Pressable, Text } = jest.requireActual('react-native');
@@ -77,6 +78,19 @@ describe('migration from strava', () => {
     await renderMigrationPage();
     await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
     expect(mockMigrate).toHaveBeenCalledWith(expect.objectContaining({ userId: 'migration-user' }));
+  });
+
+  it('shows an unexpected migration error to the user', async () => {
+    const user = userEvent.setup();
+    const error = new Error('unexpected migration failure');
+    const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
+    mockMigrate.mockRejectedValueOnce(error);
+    await renderMigrationPage();
+
+    await user.press(screen.getByText(MIGRATION_STATES.english.chooseArchive));
+
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Ошибка миграции из Strava', error));
+    errorToast.mockRestore();
   });
 
   it('opens Strava export instructions', async () => {
