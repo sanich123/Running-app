@@ -16,7 +16,7 @@ import { mockStore, setMockUserId, resetMockLocation } from '@T/utils/mock-store
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
-import { getMapBoxImage, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
 import { getDeviceTimeZone } from '@U/time-zone';
 import { DATE_TIME_PICKER_BTN_ID } from './date-picker/const';
@@ -299,7 +299,6 @@ describe('activity save flows', () => {
         emotion: EMOTIONS_BTNS_VALUES.good,
         visibility: 'followers',
         media: [mockActivityPhoto],
-        mapPhotoUrl: getMapBoxImage(trackedLocations),
       });
       expect(sessionLocationBody).toEqual({
         latitude: MOCK_LOCATION.coords.latitude,

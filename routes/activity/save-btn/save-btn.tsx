@@ -13,7 +13,7 @@ import { useGlobalManualActivityParams } from '@Routes/save-activity-page/manual
 import { errorToast } from '@S/error-toast/error-toast';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
 import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
-import { getMapBoxImage, getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
 import { getDeviceTimeZone } from '@U/time-zone';
 import type { ActivityToSend, ActivityUpdateRequest } from '@R/services/activity/types';
@@ -42,7 +42,6 @@ function createTrackedActivityBody(
     duration: Math.round(finishedActivity.duration),
     timeZone: finishedActivity.timeZone ?? getDeviceTimeZone(),
     ...activityDetails,
-    mapPhotoUrl: getMapBoxImage(routeLocations),
   };
 }
 

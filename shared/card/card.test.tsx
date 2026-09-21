@@ -6,7 +6,6 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import ActivityCard from './card';
-import { getCardMapPhotoUrl, getShareMapPhotoUrl } from './utils';
 import { MOCK_ACTIVITY } from '../../tests/mocks/mock-activity';
 import { BASE_URL } from '../../tests/utils/handlers';
 import { mockStore, setMockUserId } from '../../tests/utils/mock-store';
@@ -23,22 +22,6 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Activity card', () => {
-  it('resizes the saved square Mapbox image for card dimensions', () => {
-    const mapPhotoUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/360x360@2x?access_token=test';
-
-    expect(getCardMapPhotoUrl(mapPhotoUrl, 351)).toBe(
-      'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/351x202@2x?access_token=test&attribution=false&logo=false',
-    );
-  });
-
-  it('removes Mapbox attribution and logo from the share image URL', () => {
-    const mapPhotoUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/360x360@2x?access_token=test';
-
-    expect(getShareMapPhotoUrl(mapPhotoUrl, 900, 500)).toBe(
-      'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/900x500@2x?access_token=test&attribution=false&logo=false',
-    );
-  });
-
   it('does not load full route locations for a feed card', async () => {
     let requests = 0;
     server.use(

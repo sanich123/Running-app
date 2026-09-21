@@ -8,12 +8,11 @@ import UserAvatar from '@S/avatar/avatar';
 import CustomImage from '@S/custom-image/custom-image';
 import { getIconNameByTypeOfSport, MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { formatDuration } from '@U/time-formatter';
-import { SHARE_IMAGE_HEIGHT, SHARE_IMAGE_WIDTH, SHARE_MAP_HEIGHT } from './const';
+import { SHARE_IMAGE_HEIGHT, SHARE_IMAGE_WIDTH } from './const';
 import Metric from './metric';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import { CARD_METRICS } from '../metrics/const';
 import { getCardSpeedMetric } from '../metrics/utils';
-import { getShareMapPhotoUrl } from '../utils';
 import type { ActivityCardProps } from '../types';
 
 type ShareActivityImageProps = Pick<ActivityCardProps, 'distance' | 'duration' | 'date' | 'title' | 'mapPhotoUrl'> & {
@@ -53,7 +52,6 @@ export default function ShareActivityImage({
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const isRussian = language === LANGUAGES.russian;
-  const shareMapPhotoUrl = getShareMapPhotoUrl(mapPhotoUrl, SHARE_IMAGE_WIDTH, SHARE_MAP_HEIGHT) ?? mapPhotoUrl;
   const speedMetric = getCardSpeedMetric({ sport, distance, duration, language });
   const sportTitle = MAP_SPORT_TO_TITLE[sport as keyof typeof MAP_SPORT_TO_TITLE]?.[language] ?? sport;
   const formattedDate = formatShareDate(date, duration, isRussian);
@@ -82,15 +80,15 @@ export default function ShareActivityImage({
       pointerEvents="none"
       style={styles.captureRoot}
       testID="share-activity-image">
-      <View style={styles.mapSection}>
+      <View style={styles.mapSection} testID="share-map-section">
         {mapPhotoUrl ? (
           <CustomImage
             style={styles.map}
-            source={{ uri: shareMapPhotoUrl }}
+            source={{ uri: mapPhotoUrl }}
             contentFit="cover"
             priority="low"
             cachePolicy="disk"
-            recyclingKey={shareMapPhotoUrl}
+            recyclingKey={mapPhotoUrl}
             testID={mapPhotoUrl}
             transition={0}
             onLoad={onReady}
@@ -176,7 +174,7 @@ const styles = StyleSheet.create({
     width: SHARE_IMAGE_WIDTH,
     zIndex: -1,
   },
-  mapSection: { height: SHARE_MAP_HEIGHT, position: 'relative', width: '100%' },
+  mapSection: { aspectRatio: 16 / 9, position: 'relative', width: '100%' },
   map: { height: '100%', width: '100%' },
   mapFallback: { alignItems: 'center', height: '100%', justifyContent: 'center', width: '100%' },
   mapTint: {

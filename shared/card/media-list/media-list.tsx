@@ -5,9 +5,11 @@ import { TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import CustomImage from '@S/custom-image/custom-image';
-import { ACTIVITY_MEDIA_HEIGHT } from './const';
+import { ACTIVITY_MEDIA_ASPECT_RATIO } from './const';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
-import type { MediaListProps } from '../types';
+import type { ActivityMediaItem, MediaListProps } from '../types';
+
+type DisplayedMediaItem = ActivityMediaItem & { isMap?: boolean };
 
 export default memo(function MediaList({
   media,
@@ -26,16 +28,16 @@ export default memo(function MediaList({
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
 
   const displayedData = useMemo(() => {
-    const activityMedia = media ?? [];
+    const activityMedia: DisplayedMediaItem[] = (media ?? []).map((item) => ({ ...item, isMap: false }));
     return mapPhotoUrl
-      ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash }, ...activityMedia]
+      ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash, isMap: true }, ...activityMedia]
       : activityMedia;
   }, [mapPhotoUrl, mapPhotoUrlBlurhash, media]);
   const renderItem = useCallback(
     ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => {
-      const isMap = item.url.includes('api.mapbox.com');
+      const isMap = item.isMap === true;
       return (
-        <View style={{ width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }}>
+        <View style={{ width: mediaWidth, aspectRatio: ACTIVITY_MEDIA_ASPECT_RATIO }}>
           <TouchableRipple
             rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
             onPress={() => {
@@ -47,9 +49,9 @@ export default memo(function MediaList({
             }}
             borderless>
             <CustomImage
-              style={{ width: mediaWidth, height: ACTIVITY_MEDIA_HEIGHT }}
+              style={{ width: mediaWidth, aspectRatio: ACTIVITY_MEDIA_ASPECT_RATIO }}
               source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
-              contentFit={isMap ? 'contain' : 'cover'}
+              contentFit="cover"
               placeholderContentFit="cover"
               priority={index === 0 ? 'high' : 'normal'}
               cachePolicy="memory-disk"

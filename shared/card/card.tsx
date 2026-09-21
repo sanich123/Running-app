@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, memo, useMemo } from 'react';
+import { useCallback, useRef, useState, memo } from 'react';
 import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
@@ -12,7 +12,6 @@ import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
 import ShareActivityImage from './share-activity-image/share-activity-image';
 import { UserInfoSize } from './user-info/const';
-import { getCardMapPhotoUrl } from './utils';
 import type { ActivityCardProps } from './types';
 
 export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
@@ -50,9 +49,6 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const shareImageReadyRef = useRef<(() => void) | null>(null);
   const [isShareImageVisible, setIsShareImageVisible] = useState(false);
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
-  const cardMapPhotoUrl = useMemo(() => getCardMapPhotoUrl(mapPhotoUrl, mediaWidth), [mapPhotoUrl, mediaWidth]);
-
-  const resolvedMapPhotoUrl = cardMapPhotoUrl;
   const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
   const prepareShareImage = useCallback(
     () =>
@@ -83,7 +79,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           steps={steps}
           emotion={emotion}
           cardRef={cardRef}
-          mapPhotoUrl={resolvedMapPhotoUrl}
+          mapPhotoUrl={mapPhotoUrl}
           profile={profile}
           locationName={locationName}
           weatherTemperature={weatherTemperature}
@@ -107,10 +103,10 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
           Platform.OS === 'web' && styles.webStyles,
         ]}>
         <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
-        {(resolvedMapPhotoUrl || Boolean(media?.length)) && (
+        {(mapPhotoUrl || Boolean(media?.length)) && (
           <MediaList
             media={media ?? []}
-            mapPhotoUrl={resolvedMapPhotoUrl}
+            mapPhotoUrl={mapPhotoUrl}
             mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
             locationName={locationName}
             weatherTemperature={weatherTemperature}
@@ -146,7 +142,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
             commentsLength={commentsLength}
             likesLength={likesLength}
             profile={profile}
-            mapPhotoUrl={resolvedMapPhotoUrl}
+            mapPhotoUrl={mapPhotoUrl}
             prepareShareImage={prepareShareImage}
             cleanupShareImage={cleanupShareImage}
           />

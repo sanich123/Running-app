@@ -26,7 +26,7 @@ interface ActivityAdditionalInfo {
 }
 
 export interface ActivityToSend {
-  body: FinishedActivity & ActivityAdditionalInfo & { mapPhotoUrl?: string | null };
+  body: FinishedActivity & ActivityAdditionalInfo;
   id: string;
 }
 

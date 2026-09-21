@@ -6,7 +6,6 @@ import {
   getElevationGainByKilometres,
   getElevationGainBetweenLocations,
   getKilometerSplitCalculation,
-  getMapBoxImage,
   getReducedLocations,
   getSpeedInMinsInKm,
   getSpeedInKmPerHour,
@@ -157,46 +156,6 @@ describe('kilometre split edge cases', () => {
     expect(result.remainingDistance).toBe(0);
     expect(result.remainingDuration).toBe(0);
     expect(result.remainingAltitude).toBe(0);
-  });
-});
-
-describe('getMapBoxImage', () => {
-  it('requests a square map for the square share image', () => {
-    const imageUrl = getMapBoxImage([
-      { coords: { latitude: 55.75, longitude: 37.61 } },
-      { coords: { latitude: 55.76, longitude: 37.62 } },
-    ]);
-
-    expect(imageUrl).toContain('/360x360@2x');
-    expect(imageUrl).toContain('&attribution=false&logo=false');
-  });
-
-  it('requests a map with the dimensions of the activity card', () => {
-    const imageUrl = getMapBoxImage(
-      [{ coords: { latitude: 55.75, longitude: 37.61 } }, { coords: { latitude: 55.76, longitude: 37.62 } }],
-      { width: 351, height: 202 },
-    );
-
-    expect(imageUrl).toContain('/351x202@2x');
-  });
-
-  it('returns an empty URL for invalid locations and draws markers for a single point', () => {
-    expect(getMapBoxImage([{ coords: { latitude: Number.NaN, longitude: 37 } }])).toBe('');
-    const imageUrl = getMapBoxImage([{ coords: { latitude: 55.75, longitude: 37.61 } }]);
-    expect(imageUrl).toContain('pin-s');
-    expect(imageUrl).not.toContain('path-2');
-  });
-
-  it('reduces an oversized static map route before returning it', () => {
-    const previousToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN;
-    process.env.EXPO_PUBLIC_MAPBOX_TOKEN = 'token'.repeat(2_000);
-    const imageUrl = getMapBoxImage(
-      Array.from({ length: 4 }, (_, index) => ({
-        coords: { latitude: 55 + index / 100, longitude: 37 + index / 100 },
-      })),
-    );
-    expect(imageUrl).toContain('/360x360@2x');
-    process.env.EXPO_PUBLIC_MAPBOX_TOKEN = previousToken;
   });
 });
 

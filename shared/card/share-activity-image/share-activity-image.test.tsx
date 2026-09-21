@@ -30,6 +30,7 @@ describe('share activity image', () => {
 
     const map = screen.getByTestId('https://example.com/map.jpg');
     expect(map).toBeOnTheScreen();
+    expect(screen.getByTestId('share-map-section')).toHaveStyle({ aspectRatio: 16 / 9, width: '100%' });
     expect(map.props.priority).toBe('low');
     expect(map.props.cachePolicy).toBe('disk');
     expect(map.props.transition).toBe(0);

@@ -1,1 +1,1 @@
-export const ACTIVITY_MEDIA_HEIGHT = 202;
+export const ACTIVITY_MEDIA_ASPECT_RATIO = 16 / 9;
