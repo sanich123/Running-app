@@ -9,8 +9,8 @@
       "environment": "production",
       "env": {
         "EXPO_PUBLIC_BASE_URL": "https://api.runich-app.ru",
-        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtc3Z0MnV5ZDA1ZW4yd3M3d212NTg1dGsifQ.ETJENZqd5m-yPfVbnCf4pg",
-        "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtdGEzdmMzZzBlZ2QyeHNiYjJ0c2o1YWYifQ.xvfqxpVE_UGeWtNXPrfKqw"
+        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1IjoiYW92b3JvbmluIiwiYSI6ImNtdWJuZDg3bjA1cTQyd3M1OTEwcXlxbHMifQ.9GfcUwwLR9LrgLLJAhRb9Q",
+        "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "sk.eyJ1IjoiYW92b3JvbmluIiwiYSI6ImNtdWJudWF6cjFtcnIyeHNjbG1qOWNwaXgifQ.2qhJieLY_5oy9Bo0pYaKNw"
       }
     },
     "preview-internal": {
@@ -21,8 +21,8 @@
       },
       "env": {
         "EXPO_PUBLIC_BASE_URL": "https://runich-backend-stage.up.railway.app",
-        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtc3Z0MnV5ZDA1ZW4yd3M3d212NTg1dGsifQ.ETJENZqd5m-yPfVbnCf4pg",
-        "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtdGEzdmMzZzBlZ2QyeHNiYjJ0c2o1YWYifQ.xvfqxpVE_UGeWtNXPrfKqw"
+        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1IjoiYW92b3JvbmluIiwiYSI6ImNtdWJuZDg3bjA1cTQyd3M1OTEwcXlxbHMifQ.9GfcUwwLR9LrgLLJAhRb9Q",
+        "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "sk.eyJ1IjoiYW92b3JvbmluIiwiYSI6ImNtdWJudWF6cjFtcnIyeHNjbG1qOWNwaXgifQ.2qhJieLY_5oy9Bo0pYaKNw"
       },
       "channel": "preview-internal"
     },
@@ -34,8 +34,8 @@
       },
       "env": {
         "EXPO_PUBLIC_BASE_URL": "https://api.runich-app.ru",
-        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtc3Z0MnV5ZDA1ZW4yd3M3d212NTg1dGsifQ.ETJENZqd5m-yPfVbnCf4pg",
-        "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "sk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtdGEzdmMzZzBlZ2QyeHNiYjJ0c2o1YWYifQ.xvfqxpVE_UGeWtNXPrfKqw"
+        "EXPO_PUBLIC_MAPBOX_TOKEN": "pk.eyJ1IjoiYW92b3JvbmluIiwiYSI6ImNtdWJuZDg3bjA1cTQyd3M1OTEwcXlxbHMifQ.9GfcUwwLR9LrgLLJAhRb9Q",
+        "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "sk.eyJ1IjoiYW92b3JvbmluIiwiYSI6ImNtdWJudWF6cjFtcnIyeHNjbG1qOWNwaXgifQ.2qhJieLY_5oy9Bo0pYaKNw"
       },
       "channel": "preview-production"
     },
