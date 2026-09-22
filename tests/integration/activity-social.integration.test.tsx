@@ -35,7 +35,7 @@ const cardProps = {
   id: MOCK_SERVER_ACTIVITY.id,
   userId: MOCK_SERVER_ACTIVITY.userId,
   media: [...MOCK_SERVER_ACTIVITY.media],
-  mapPhotoUrl: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/896x504@2x?access_token=test',
+  mapPhotoUrl: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/896x538@2x?access_token=test',
   duration: MOCK_SERVER_ACTIVITY.duration,
   distance: MOCK_SERVER_ACTIVITY.distance,
   elevationGain: MOCK_SERVER_ACTIVITY.elevationGain,
