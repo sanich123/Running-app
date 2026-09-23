@@ -8,7 +8,6 @@ import {
   useVerifyPasswordChangeCodeMutation,
 } from '@R/services/authentication/authentication';
 import { setAuthSession } from '@R/slices/auth/auth';
-import { flushAuthPersistence } from '@R/slices/auth/persistence';
 import { useAppDispatch } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { CONFIRM_EMAIL_CODE_TEST_ID, CONFIRM_EMAIL_CODE_TEXT } from './const';
@@ -43,7 +42,6 @@ export default function ConfirmEmailCode({ email, type = 'registration' }: Confi
         .unwrap()
         .then(async (session) => {
           dispatch(setAuthSession(session));
-          await flushAuthPersistence();
           replace(ROUTES.root);
         })
         .catch((error) => errorToast(CONFIRM_EMAIL_CODE_TEXT.error, error));
