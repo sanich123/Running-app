@@ -3,6 +3,7 @@ import { View, Platform, TouchableOpacity, StyleSheet } from 'react-native';
 import { usePathname } from 'expo-router';
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import AvatarShowable from '@S/avatar/showable/showable';
 
@@ -17,11 +18,17 @@ export default function CustomTabBar({
 }) {
   const { colors, dark } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId || Platform.OS === 'ios' });
   const pathname = usePathname();
   const icons = {
     home: (props: { color: string }) => <Icon source="home-outline" color={props.color} size={30} />,
     activity: (props: { color: string }) => <Icon source="run" size={30} color={props.color} />,
-    profile: (props: { color: string }) => <AvatarShowable size={45} id={userId} {...props} />,
+    profile: (props: { color: string }) =>
+      Platform.OS === 'ios' ? (
+        <Icon source="account-circle-outline" color={props.color} size={30} />
+      ) : (
+        <AvatarShowable size={45} id={userId} profile={profile ?? undefined} {...props} />
+      ),
     statistic: (props: { color: string }) => <Icon source="chart-donut" size={30} color={props.color} />,
   };
 

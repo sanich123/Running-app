@@ -4,12 +4,14 @@ import { Platform, View } from 'react-native';
 import { Tabs, usePathname, useRouter } from 'expo-router';
 import { Icon, useTheme } from 'react-native-paper';
 import { LABELS, ROUTES, STATUSES } from '@const/enums';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import { LazyAvatarShowable, HOME_TAB_ROUTE } from '@Routes/app-routes/const';
 
 export default function TabLayout() {
   const { replace } = useRouter();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const { language } = useAppSelector(({ settings }) => settings);
   const labels = LABELS[language];
   const { colors } = useTheme();
@@ -151,7 +153,7 @@ export default function TabLayout() {
                 backgroundColor: focused ? colors.primaryContainer : 'transparent',
               }}>
               <Suspense fallback={null}>
-                <LazyAvatarShowable size={34} id={userId} focused={focused} />
+                <LazyAvatarShowable size={34} id={userId} focused={focused} profile={profile ?? undefined} />
               </Suspense>
             </View>
           ),
