@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     width: SHARE_IMAGE_WIDTH,
     zIndex: -1,
   },
-  mapSection: { aspectRatio: 16 / 9, position: 'relative', width: '100%' },
+  mapSection: { aspectRatio: 5 / 3, position: 'relative', width: '100%' },
   map: { height: '100%', width: '100%' },
   mapFallback: { alignItems: 'center', height: '100%', justifyContent: 'center', width: '100%' },
   mapTint: {

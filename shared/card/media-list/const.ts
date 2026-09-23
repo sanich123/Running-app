@@ -1,1 +1,1 @@
-export const ACTIVITY_MEDIA_ASPECT_RATIO = 16 / 9;
+export const ACTIVITY_MEDIA_ASPECT_RATIO = 5 / 3;

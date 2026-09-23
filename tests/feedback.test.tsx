@@ -5,16 +5,20 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { uploadFeedbackAttachments } from '@U/feedback-sending';
-import { getAccessToGallery } from '@U/file-sending';
+import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
 import FeedbackPage from '../app/feedback';
 
 jest.mock('@R/services/feedback/feedback', () => ({ useSendFeedbackMutation: jest.fn() }));
-jest.mock('@U/file-sending', () => ({ getAccessToGallery: jest.fn() }));
+jest.mock('@U/file-sending', () => ({
+  deleteUploadedMedia: jest.fn().mockResolvedValue(true),
+  getAccessToGallery: jest.fn(),
+}));
 jest.mock('@U/feedback-sending', () => ({ uploadFeedbackAttachments: jest.fn() }));
 
 const mockUseSendFeedbackMutation = useSendFeedbackMutation as jest.Mock;
 const mockGetAccessToGallery = getAccessToGallery as jest.Mock;
 const mockUploadFeedbackAttachments = uploadFeedbackAttachments as jest.Mock;
+const mockDeleteUploadedMedia = deleteUploadedMedia as jest.Mock;
 
 describe('feedback attachments', () => {
   beforeEach(() => {
@@ -79,6 +83,11 @@ describe('feedback attachments', () => {
     expect(screen.getByTestId('feedback-attachment-preview-1').props.source).toEqual({
       uri: secondAttachment.url,
     });
+    expect(screen.getByTestId('feedback-attachment-preview-0').props.style[0]).toMatchObject({
+      width: 96,
+      height: 96,
+    });
+    expect(screen.getByTestId('feedback-remove-attachment-0')).toBeOnTheScreen();
     await user.press(screen.getByText('Send'));
 
     await waitFor(() =>
@@ -89,6 +98,10 @@ describe('feedback attachments', () => {
     expect(screen.queryByText(firstAttachment.url)).not.toBeOnTheScreen();
     expect(screen.queryByText(secondAttachment.url)).not.toBeOnTheScreen();
     expect(screen.getByTestId('feedback-error')).toHaveTextContent('Could not send feedback: SMTP unavailable');
+    await user.press(screen.getByTestId('feedback-remove-attachment-0'));
+    await waitFor(() => expect(mockDeleteUploadedMedia).toHaveBeenCalledWith([firstAttachment.url]));
+    await waitFor(() => expect(screen.queryByTestId('feedback-attachment-preview-1')).not.toBeOnTheScreen());
+    expect(screen.getByTestId('feedback-attachment-preview-0').props.source).toEqual({ uri: secondAttachment.url });
     expect(mockUploadFeedbackAttachments).toHaveBeenCalledWith(
       [
         {
@@ -104,5 +117,44 @@ describe('feedback attachments', () => {
       ],
       expect.any(String),
     );
+  });
+
+  it('shows local previews while files are uploading', async () => {
+    const user = userEvent.setup();
+    let resolveUpload: (attachments: { url: string; thumbnail: string | null }[]) => void = () => undefined;
+    const uploadPromise = new Promise<{ url: string; thumbnail: string | null }[]>((resolve) => {
+      resolveUpload = resolve;
+    });
+    mockGetAccessToGallery.mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'file://photo.webp', type: 'image' }],
+    });
+    mockUploadFeedbackAttachments.mockReturnValue(uploadPromise);
+
+    await renderWithProviders(<FeedbackPage />);
+    await user.press(screen.getByText('Report a bug'));
+    await act(async () => {
+      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
+    });
+    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
+    await act(async () => {
+      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
+    });
+    await user.type(
+      screen.getByPlaceholderText('Describe as precisely as possible how to reproduce the bug'),
+      'A message',
+    );
+    await user.press(screen.getByText('Add a photo or video'));
+
+    await waitFor(() => expect(screen.getByTestId('feedback-pending-attachment-preview-0')).toBeOnTheScreen());
+    expect(screen.getByTestId('feedback-pending-attachment-preview-0').props.source).toEqual({
+      uri: 'file://photo.webp',
+    });
+
+    await act(async () => {
+      resolveUpload([{ url: 'https://stage-cdn.example/feedback/photo.webp', thumbnail: null }]);
+    });
+    await waitFor(() => expect(screen.getByTestId('feedback-attachment-preview-0')).toBeOnTheScreen());
+    expect(screen.queryByTestId('feedback-pending-attachment-preview-0')).not.toBeOnTheScreen();
   });
 });

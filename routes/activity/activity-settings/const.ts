@@ -16,6 +16,11 @@ export const ACTIVITY_SETTINGS = {
     elevation: 'Elevation gain',
     remindersDescription: 'Read your saved reminders during the activity',
     remindersEnabled: 'Enable reminders',
+    locationTrackingTitle: 'Location and workout tracking',
+    locationTrackingInfoTitle: 'Location and workout tracking information',
+    locationTrackingInfoDescription: 'Permissions, metric recording, and Android limitations',
+    locationTrackingDetails:
+      'Location is used to record your route and workout metrics. Background location is needed only while an active workout is being tracked, so tracking can continue when the screen is locked or the app is minimized.\n\nDuring a workout, the app calculates distance, pace, moving time, and elevation from a sequence of location points. Points with an unrealistically high speed are not recorded; this filters GPS jumps. The limit depends on the activity: walking up to 15 km/h, running up to 30 km/h, cycling up to 60 km/h, and hiking up to 20 km/h.\n\nAndroid cannot guarantee that a background process will never be stopped: manufacturers ship different system versions, shells, and background restrictions. We tested recording on a Xiaomi phone, and workouts lasting up to 3 hours were recorded normally. For better reliability, turn off battery optimization and background activity restrictions for Runich.',
     reminderInterval: 'Interval',
     reminderIntervalPlaceholder: 'Minutes',
     reminderText: 'Reminder text',
@@ -40,6 +45,11 @@ export const ACTIVITY_SETTINGS = {
     elevation: 'Набор высоты',
     remindersDescription: 'Озвучивать сохранённые напоминания во время активности',
     remindersEnabled: 'Включить напоминания',
+    locationTrackingTitle: 'Геопозиция и отслеживание тренировки',
+    locationTrackingInfoTitle: 'Информация о геопозиции и отслеживании тренировок',
+    locationTrackingInfoDescription: 'Разрешения, запись метрик и ограничения Android',
+    locationTrackingDetails:
+      'Геопозиция нужна для записи маршрута и метрик тренировки. Доступ к геопозиции в фоне нужен только во время активной тренировки — чтобы отслеживание продолжалось, когда экран заблокирован или приложение свернуто.\n\nВо время тренировки приложение рассчитывает расстояние, темп, время движения и набор высоты по последовательности точек геопозиции. Точки с нереалистично высокой скоростью не записываются — это фильтрация скачков GPS. Порог зависит от вида активности: ходьба — до 15 км/ч, бег — до 30 км/ч, велосипед — до 60 км/ч, поход — до 20 км/ч.\n\nНа Android нельзя гарантировать, что фоновый процесс не будет завершён: производители используют разные версии системы, оболочки и ограничения фоновой работы. Мы тестировали запись на телефоне Xiaomi — тренировки длительностью до 3 часов записывались нормально. Для более стабильной записи отключите оптимизацию батареи и ограничения фоновой активности для Runich.',
     reminderInterval: 'Интервал',
     reminderIntervalPlaceholder: 'Минуты',
     reminderText: 'Текст напоминания',

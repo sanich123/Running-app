@@ -30,7 +30,7 @@ export default function EmailRegistrationRestriction() {
         <Dialog visible={visible} onDismiss={() => setVisible(false)} style={{ backgroundColor: colors.surface }}>
           <Dialog.Title>{isRussian ? 'Ограничение регистрации' : 'Email registration restriction'}</Dialog.Title>
           <Dialog.Content>
-            <Text variant="bodyMedium">
+            <Text variant="bodyMedium" style={styles.modalText}>
               {isRussian
                 ? 'С 1 декабря 2023 года Федеральный закон от 31 июля 2023 г. № 406-ФЗ запретил российским сайтам регистрировать пользователей, находящихся в РФ, с использованием иностранной электронной почты. Поэтому Runich принимает email для регистрации только в российских доменных зонах .ru и .рф. Правило применяется ко всей регистрации по email; вход и восстановление доступа к ранее созданным аккаунтам не ограничиваются.'
                 : 'From 1 December 2023, Federal Law No. 406-FZ of 31 July 2023 prohibited Russian websites from registering users located in Russia with foreign email. Therefore Runich accepts only .ru and .рф addresses for email registration. The rule applies to all email registrations; sign-in and recovery for existing accounts are not restricted.'}
@@ -54,5 +54,8 @@ const styles = StyleSheet.create({
   },
   triggerText: {
     textAlign: 'left',
+  },
+  modalText: {
+    textAlign: 'justify',
   },
 });

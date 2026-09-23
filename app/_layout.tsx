@@ -54,8 +54,8 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={<FullPageActivityLoader />} persistor={persistor}>
-        <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
         <AppShell />
+        <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
       </PersistGate>
     </Provider>
   );

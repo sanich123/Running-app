@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { useDeleteUserMutation } from '@R/services/authentication/authentication';
-import { purgeAuthPersistence } from '@R/slices/auth/persistence';
 import { persistor, resetStore } from '@R/store';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
@@ -26,9 +25,6 @@ export default function DeleteAccountBtn() {
       await deleteAccount({ userId }).unwrap();
       await persistor.purge();
       dispatch(resetStore());
-      await purgeAuthPersistence();
-      await persistor.flush();
-
       replace(`/${ROUTES.signIn}`);
     } catch (error) {
       errorToast('Не удалось удалить аккаунт', error);

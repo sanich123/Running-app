@@ -17,21 +17,21 @@ jest.mock('@S/custom-image/custom-image', () => ({
 describe('media list', () => {
   it('opens the route map when its preview is pressed', async () => {
     const user = userEvent.setup();
-    const mapUrl = 'https://cdn.example.test/activity-map-896x504.jpg';
+    const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
     await renderWithProviders(<MediaList id="activity-id" mapPhotoUrl={mapUrl} media={[]} />);
     await user.press(screen.getByTestId(mapUrl));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.map}/activity-id`);
   });
 
   it('keeps the complete map image visible in the card preview', async () => {
-    const mapUrl = 'https://cdn.example.test/activity-map-896x504.jpg';
+    const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
     await renderWithProviders(<MediaList id="activity-id" mapPhotoUrl={mapUrl} media={[]} />);
 
     expect(screen.getByTestId(mapUrl).props.contentFit).toBe('cover');
   });
 
   it('uses the map blurhash and prioritized disk cache for fast scrolling', async () => {
-    const mapUrl = 'https://cdn.example.test/activity-map-896x504.jpg';
+    const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
     await renderWithProviders(
       <MediaList id="activity-id" mapPhotoUrl={mapUrl} mapPhotoUrlBlurhash="map-blurhash" media={[]} />,
     );
@@ -48,7 +48,7 @@ describe('media list', () => {
   });
 
   it('renders location and weather over the map preview', async () => {
-    const mapUrl = 'https://cdn.example.test/activity-map-896x504.jpg';
+    const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
     await renderWithProviders(
       <MediaList
         id="activity-id"
