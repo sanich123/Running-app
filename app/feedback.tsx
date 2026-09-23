@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import uuid from 'react-native-uuid';
 import { Image, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button, Card, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
+import { Button, Card, IconButton, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
 import { useAppSelector } from '@R/typed-hooks';
 import { FEEDBACK_TEXT } from '@Routes/feedback/const';
@@ -11,12 +11,18 @@ import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast
 import SwitchRow from '@S/feedback/switch-row';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
 import { uploadFeedbackAttachments } from '@U/feedback-sending';
-import { getAccessToGallery } from '@U/file-sending';
+import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
 import type { FeedbackAttachment } from '@R/services/feedback/feedback';
 import type { FeedbackKind } from '@Routes/feedback/const';
+import type { MediaUploadItem } from '@U/file-sending';
 import type * as ImagePicker from 'expo-image-picker';
 
 const MAX_FEEDBACK_ATTACHMENTS = 10;
+
+interface PendingAttachmentPreview {
+  mediaId: string;
+  uri: string;
+}
 
 export default function FeedbackPage() {
   const { colors } = useTheme();
@@ -28,6 +34,9 @@ export default function FeedbackPage() {
   const [secondConsent, setSecondConsent] = useState(false);
   const [text, setText] = useState('');
   const [attachments, setAttachments] = useState<FeedbackAttachment[]>([]);
+  const [pendingAttachmentPreviews, setPendingAttachmentPreviews] = useState<PendingAttachmentPreview[]>([]);
+  const [deletingAttachments, setDeletingAttachments] = useState<string[]>([]);
+  const removedPendingMediaIds = useRef(new Set<string>());
   const [feedbackId] = useState(() => String(uuid.v4()));
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
@@ -54,36 +63,56 @@ export default function FeedbackPage() {
     if (!result || result.canceled || !result.assets?.length) return;
 
     const selectedPhotos = result.assets.slice(0, MAX_FEEDBACK_ATTACHMENTS - attachments.length);
+    const mediaItems: MediaUploadItem[] = selectedPhotos.map((photo) => ({
+      fileSrc: photo.file ?? photo.uri,
+      metadata: {
+        fileName: photo.fileName,
+        mimeType: photo.mimeType,
+        mediaType: photo.type === 'video' ? 'video' : 'image',
+      },
+      mediaId: String(uuid.v4()),
+    }));
+    removedPendingMediaIds.current.clear();
     setFeedbackError(null);
+    setPendingAttachmentPreviews(selectedPhotos.map(({ uri }, index) => ({ mediaId: mediaItems[index].mediaId, uri })));
     setIsUploadingPhoto(true);
     try {
-      const uploadedAttachments = await uploadFeedbackAttachments(
-        selectedPhotos.map((photo) => ({
-          fileSrc: photo.file ?? photo.uri,
-          metadata: {
-            fileName: photo.fileName,
-            mimeType: photo.mimeType,
-            mediaType: photo.type === 'video' ? 'video' : 'image',
-          },
-          mediaId: String(uuid.v4()),
-        })),
-        feedbackId,
-      );
-      const successfulAttachments = uploadedAttachments.filter(
-        (attachment): attachment is NonNullable<typeof attachment> => attachment !== null,
+      const uploadedAttachments = await uploadFeedbackAttachments(mediaItems, feedbackId);
+      const successfulUploadCount = uploadedAttachments.filter(Boolean).length;
+      const successfulAttachments = uploadedAttachments.flatMap((attachment, index) =>
+        attachment && !removedPendingMediaIds.current.has(mediaItems[index].mediaId) ? [attachment] : [],
       );
       if (successfulAttachments.length) {
         setAttachments((currentAttachments) => [...currentAttachments, ...successfulAttachments]);
       }
-      if (successfulAttachments.length !== selectedPhotos.length) {
+      if (successfulUploadCount !== selectedPhotos.length) {
         setFeedbackError(copy.attachmentUploadError);
       }
     } catch (error) {
       errorToast(copy.attachmentUploadError, error);
       setFeedbackError(`${copy.attachmentUploadError}: ${getErrorMessageFromError(error)}`);
     } finally {
+      setPendingAttachmentPreviews([]);
+      removedPendingMediaIds.current.clear();
       setIsUploadingPhoto(false);
     }
+  }
+
+  async function removeAttachment(attachment: FeedbackAttachment) {
+    if (deletingAttachments.includes(attachment.url)) return;
+
+    setDeletingAttachments((current) => [...current, attachment.url]);
+    setAttachments((current) => current.filter(({ url }) => url !== attachment.url));
+    try {
+      await deleteUploadedMedia([attachment.url, attachment.thumbnail].filter((url): url is string => Boolean(url)));
+    } finally {
+      setDeletingAttachments((current) => current.filter((url) => url !== attachment.url));
+    }
+  }
+
+  function removePendingAttachment(mediaId: string) {
+    removedPendingMediaIds.current.add(mediaId);
+    setPendingAttachmentPreviews((current) => current.filter((preview) => preview.mediaId !== mediaId));
   }
 
   async function submit() {
@@ -175,14 +204,48 @@ export default function FeedbackPage() {
                   {copy.attachmentLimit}
                 </Text>
                 <View style={styles.attachmentPreviews}>
-                  {attachments.map(({ url, thumbnail }, index) => (
-                    <Image
-                      key={`${url}-${index}`}
-                      testID={`feedback-attachment-preview-${index}`}
-                      source={{ uri: thumbnail || url }}
-                      style={[styles.attachmentPreview, { borderColor: colors.outlineVariant }]}
-                      resizeMode="cover"
-                    />
+                  {attachments.map((attachment, index) => (
+                    <View key={`${attachment.url}-${index}`} style={styles.attachmentPreviewContainer}>
+                      <Image
+                        testID={`feedback-attachment-preview-${index}`}
+                        source={{ uri: attachment.thumbnail || attachment.url }}
+                        style={[styles.attachmentPreview, { borderColor: colors.outlineVariant }]}
+                        resizeMode="cover"
+                      />
+                      <IconButton
+                        testID={`feedback-remove-attachment-${index}`}
+                        accessibilityLabel={copy.removeAttachment}
+                        icon={deletingAttachments.includes(attachment.url) ? 'progress-clock' : 'close'}
+                        size={14}
+                        iconColor={colors.onSurfaceVariant}
+                        containerColor={colors.surfaceVariant}
+                        mode="contained"
+                        style={styles.removeAttachmentButton}
+                        onPress={() => void removeAttachment(attachment)}
+                        disabled={deletingAttachments.includes(attachment.url)}
+                      />
+                    </View>
+                  ))}
+                  {pendingAttachmentPreviews.map(({ mediaId, uri }, index) => (
+                    <View key={`pending-${mediaId}`} style={styles.attachmentPreviewContainer}>
+                      <Image
+                        testID={`feedback-pending-attachment-preview-${index}`}
+                        source={{ uri }}
+                        style={[styles.attachmentPreview, { borderColor: colors.outlineVariant }]}
+                        resizeMode="cover"
+                      />
+                      <IconButton
+                        testID={`feedback-remove-pending-attachment-${index}`}
+                        accessibilityLabel={copy.removeAttachment}
+                        icon="close"
+                        size={14}
+                        iconColor={colors.onSurfaceVariant}
+                        containerColor={colors.surfaceVariant}
+                        mode="contained"
+                        style={styles.removeAttachmentButton}
+                        onPress={() => removePendingAttachment(mediaId)}
+                      />
+                    </View>
                   ))}
                 </View>
               </>
@@ -212,12 +275,25 @@ const styles = StyleSheet.create({
   switches: { gap: 8 },
   textInput: { minHeight: 140 },
   attachmentPreviews: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  attachmentPreviewContainer: { position: 'relative' },
   attachmentPreview: {
-    aspectRatio: 1,
+    width: 96,
+    height: 96,
     borderRadius: 8,
     borderWidth: 1,
-    flexBasis: '30%',
-    flexGrow: 1,
-    maxWidth: '32%',
+  },
+  removeAttachmentButton: {
+    borderColor: 'transparent',
+    borderRadius: 16,
+    borderWidth: 2,
+    elevation: 8,
+    height: 30,
+    margin: 0,
+    padding: 0,
+    position: 'absolute',
+    right: -7,
+    top: -7,
+    width: 30,
+    zIndex: 10,
   },
 });

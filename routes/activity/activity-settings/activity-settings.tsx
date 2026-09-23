@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ComponentRef } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -26,7 +27,10 @@ import type { ActivitySettingsProps } from './types';
 import type { ActivityVoiceMetric } from '@R/slices/settings/types';
 import type { Voice } from 'expo-speech';
 
-export default function ActivitySettings({ settingsModalRef }: ActivitySettingsProps) {
+export default function ActivitySettings({
+  settingsModalRef,
+  locationInfoModalRef: providedLocationInfoModalRef,
+}: ActivitySettingsProps) {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const settings = useAppSelector(({ settings: state }) => state);
@@ -42,6 +46,8 @@ export default function ActivitySettings({ settingsModalRef }: ActivitySettingsP
   const [reminderTextInput, setReminderTextInput] = useState('');
   const reminderTextInputRef = useRef<ComponentRef<typeof BottomSheetTextInput>>(null);
   const settingsScrollViewRef = useRef<KeyboardAwareScrollViewRef>(null);
+  const fallbackLocationInfoModalRef = useRef<BottomSheetModal>(null);
+  const locationInfoModalRef = providedLocationInfoModalRef ?? fallbackLocationInfoModalRef;
   const [voices, setVoices] = useState<Voice[]>([]);
   const [isLoadingVoices, setIsLoadingVoices] = useState(true);
   const labels = ACTIVITY_SETTINGS[language];
@@ -360,6 +366,26 @@ export default function ActivitySettings({ settingsModalRef }: ActivitySettingsP
             )}
           </View>
         )}
+
+        <Divider />
+        <TouchableRipple
+          testID="activity-location-info-button"
+          borderless
+          onPress={() => locationInfoModalRef.current?.present()}
+          rippleColor={colors.primaryContainer}
+          style={styles.locationInfoRow}>
+          <View style={styles.locationInfoRowContent}>
+            <View style={styles.rowCopy}>
+              <Text variant="titleSmall" style={{ color: colors.onSurface }}>
+                {labels.locationTrackingInfoTitle}
+              </Text>
+              <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                {labels.locationTrackingInfoDescription}
+              </Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={24} color={colors.onSurfaceVariant} />
+          </View>
+        </TouchableRipple>
       </KeyboardAwareScrollView>
     </BottomSheetModal>
   );
@@ -369,6 +395,8 @@ const styles = StyleSheet.create({
   content: { gap: 12, padding: 20, paddingBottom: 36 },
   sectionContent: { gap: 12 },
   sectionTitle: { marginTop: 4 },
+  locationInfoRow: { borderRadius: 12, overflow: 'hidden' },
+  locationInfoRowContent: { alignItems: 'center', flexDirection: 'row', gap: 8, paddingVertical: 8 },
   switchRow: { alignItems: 'center', flexDirection: 'row', gap: 12, minHeight: 58 },
   rowCopy: { flex: 1, gap: 2 },
   radioRow: {

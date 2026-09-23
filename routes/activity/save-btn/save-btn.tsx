@@ -24,6 +24,20 @@ type ActivityDetails = Pick<
   'title' | 'description' | 'sport' | 'emotion' | 'visibility' | 'media'
 >;
 
+export function isServerUnavailableError(error: unknown) {
+  if (!error || typeof error !== 'object') return false;
+
+  const { status, originalStatus } = error as { status?: unknown; originalStatus?: unknown };
+
+  return (
+    status === 'FETCH_ERROR' ||
+    status === 'TIMEOUT_ERROR' ||
+    status === 502 ||
+    status === 503 ||
+    (status === 'PARSING_ERROR' && (originalStatus === 502 || originalStatus === 503))
+  );
+}
+
 function createTrackedActivityBody(
   finishedActivity: FinishedActivityDraft,
   activityDetails: ActivityDetails,
@@ -91,6 +105,10 @@ export default function SaveBtn() {
             const minutes = Number(manualMinutes) || 0;
             const seconds = Number(manualSeconds) || 0;
             const duration = getMillisecondsFromHoursMinutesSeconds(hours, minutes, seconds);
+
+            if ((isManualAdding || isEditingActivity) && distance <= 0 && duration <= 0) {
+              return errorToast(ACTIVITY_SAVE_BTN[language].noDistanceAndTime);
+            }
             const editableActivityDetails = {
               title,
               description,
@@ -156,7 +174,7 @@ export default function SaveBtn() {
                   return isManualAdding ? back() : replace(ROUTES.root);
                 })
                 .catch((error) => {
-                  if (!isEditingActivity) {
+                  if (!isEditingActivity && isServerUnavailableError(error)) {
                     const { locations: _locations, ...pendingBody } = savedActivity.body;
                     void _locations;
                     dispatch(
@@ -171,6 +189,7 @@ export default function SaveBtn() {
                       dispatch(clearTrackingRecovery());
                     }
                     replace(ROUTES.root);
+                    return;
                   }
                   errorToast('', error);
                 })

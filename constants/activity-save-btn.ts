@@ -10,6 +10,7 @@ export const ACTIVITY_SAVE_BTN = {
     errorMsg: 'An error occured during sending activity! Try again.',
     errorMsgTimeout: 'Reached limit of time to connect with server',
     fetchError: 'You have no internet connection',
+    noDistanceAndTime: 'An activity without distance and time cannot be saved.',
   },
 
   [LANGUAGES.russian]: {
@@ -21,6 +22,7 @@ export const ACTIVITY_SAVE_BTN = {
     errorMsg: 'Произошла ошибка во время отправки активности. Попробуйте еще раз!',
     errorMsgTimeout: 'Достигнут лимит времени соединения с сервером',
     fetchError: 'Отсутствует соединение с сетью интернет',
+    noDistanceAndTime: 'Нельзя сохранить активность, у которой нет дистанции и времени.',
   },
 } as const;
 

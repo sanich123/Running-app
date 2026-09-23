@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react-native';
+import { Image } from 'expo-image';
 import CustomImage from './custom-image';
 
 describe('custom image', () => {
@@ -23,7 +24,7 @@ describe('custom image', () => {
     expect(image.props.priority).toBe('high');
     expect(image.props.cachePolicy).toBe('memory-disk');
     expect(image.props.recyclingKey).toBe('photo');
-    expect(image.props.transition).toEqual({ duration: 650, timing: 'ease-out' });
+    expect(image.props.transition).toEqual({ duration: 180, timing: 'ease-out' });
   });
 
   it('keeps an explicit placeholder fit and transition', async () => {
@@ -42,5 +43,27 @@ describe('custom image', () => {
 
     expect(image.props.placeholderContentFit).toBe('contain');
     expect(image.props.transition).toBe(0);
+  });
+
+  it('skips the transition when the image is already in the disk cache', async () => {
+    const originalGetCachePathAsync = (Image as any).getCachePathAsync;
+    (Image as any).getCachePathAsync = jest.fn().mockResolvedValue('/cache/photo.jpg');
+
+    try {
+      const result = await render(
+        <CustomImage
+          testID="custom-image-cached"
+          source={{ uri: 'https://example.com/cached-photo.jpg' }}
+          placeholder="blurhash"
+          cachePolicy="memory-disk"
+          style={{ width: 100, height: 100 }}
+        />,
+      );
+
+      const image = result.getByTestId('custom-image-cached');
+      expect(image.props.transition).toBe(0);
+    } finally {
+      (Image as any).getCachePathAsync = originalGetCachePathAsync;
+    }
   });
 });

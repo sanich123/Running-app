@@ -20,6 +20,7 @@ export const FEEDBACK_TEXT = {
     attachmentLimit:
       'You can add up to 10 photos or videos under 100 MB total. Uploading 10 files may take a while — check your connection speed.',
     addPhoto: 'Add a photo or video',
+    removeAttachment: 'Remove attachment',
     send: 'Send',
     openGalleryError: 'Could not open the gallery',
     attachmentUploadError: 'Could not upload the attachment',
@@ -42,6 +43,7 @@ export const FEEDBACK_TEXT = {
     attachmentLimit:
       'Можно добавить до 10 фото или видео общим размером менее 100 МБ. Загрузка 10 файлов может занять время — обрати внимание на скорость соединения.',
     addPhoto: 'Добавить фото или видео',
+    removeAttachment: 'Удалить вложение',
     send: 'Послать',
     openGalleryError: 'Не удалось открыть галерею',
     attachmentUploadError: 'Не удалось загрузить вложение',

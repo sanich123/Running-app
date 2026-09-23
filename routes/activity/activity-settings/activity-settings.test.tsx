@@ -9,6 +9,7 @@ import {
 } from '@R/slices/settings/settings';
 import { mockStore, resetMockActivityReminders } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import ActivityLocationInfoModal from './activity-location-info-modal';
 import ActivitySettings from './activity-settings';
 
 describe('ActivitySettings', () => {
@@ -23,6 +24,9 @@ describe('ActivitySettings', () => {
     await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
 
     expect(screen.getByText('Настройки активности')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-location-info-button')).toBeOnTheScreen();
+    expect(screen.getByText('Информация о геопозиции и отслеживании тренировок')).toBeOnTheScreen();
+    expect(screen.getByText('Разрешения, запись метрик и ограничения Android')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-voice-enabled')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-voice-metric-pace')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-reminders-enabled')).toBeOnTheScreen();
@@ -41,6 +45,28 @@ describe('ActivitySettings', () => {
     expect(screen.getByTestId('activity-reminder-text-input')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-reminder-install')).toBeOnTheScreen();
     expect(screen.getByText('Напоминания не установлены')).toBeOnTheScreen();
+  });
+
+  it('opens the location information modal from its settings row', async () => {
+    const present = jest.fn();
+    await renderWithProviders(
+      <ActivitySettings settingsModalRef={{ current: null }} locationInfoModalRef={{ current: { present } } as any} />,
+    );
+
+    fireEvent.press(screen.getByTestId('activity-location-info-button'));
+
+    expect(present).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the detailed location guidance in a separate modal', async () => {
+    await renderWithProviders(<ActivityLocationInfoModal modalRef={{ current: null }} />);
+
+    expect(screen.getByTestId('activity-location-info-details')).toBeOnTheScreen();
+    expect(screen.getByText(/Доступ к геопозиции в фоне нужен только во время активной тренировки/)).toBeOnTheScreen();
+    expect(screen.getByText(/Точки с нереалистично высокой скоростью не записываются/)).toBeOnTheScreen();
+    expect(
+      screen.getByText(/На Android нельзя гарантировать, что фоновый процесс не будет завершён/),
+    ).toBeOnTheScreen();
   });
 
   it('updates voice announcements and reminders from native switch events', async () => {
