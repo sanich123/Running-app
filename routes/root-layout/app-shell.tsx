@@ -59,13 +59,16 @@ export default function AppShell() {
                     fontSize: 16,
                   },
                 }}>
-                <Stack.Screen name={ROUTES.tabs} options={{ headerShown: false, title: 'Главная' }} />
-                <Stack.Screen name={ROUTES.signIn} options={{ headerShown: false }} />
+                <Stack.Screen
+                  name={ROUTES.tabs}
+                  options={{ headerShown: false, title: 'Главная', animation: 'none' }}
+                />
+                <Stack.Screen name={ROUTES.signIn} options={{ headerShown: false, animation: 'none' }} />
                 <Stack.Screen
                   name={ROUTES.feedback}
                   options={{ title: language === 'russian' ? 'Обратная связь' : 'Feedback' }}
                 />
-                <Stack.Screen name={ROUTES.loginFromUrl} options={{ headerShown: false }} />
+                <Stack.Screen name={ROUTES.loginFromUrl} options={{ headerShown: false, animation: 'none' }} />
                 <Stack.Screen
                   name={ROUTES.privacyPolicy}
                   options={{ title: 'Политика в отношении обработки персональных данных' }}

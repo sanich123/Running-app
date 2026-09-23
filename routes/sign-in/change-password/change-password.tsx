@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form';
 import { ROUTES } from '@const/enums';
 import { useChangePasswordMutation } from '@R/services/authentication/authentication';
 import { setAuthSession } from '@R/slices/auth/auth';
-import { flushAuthPersistence } from '@R/slices/auth/persistence';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { HOME_TAB_ROUTE } from '@Routes/app-routes/const';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import CustomPasswordInput from '@S/custom-password-input/custom-password-input';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -15,7 +15,7 @@ import type { ChangePasswordForm } from './types';
 
 export default function ChangePassword() {
   const dispatch = useAppDispatch();
-  const { replace } = useRouter();
+  const { dismissTo } = useRouter();
   const { email: queryEmail } = useLocalSearchParams<{ email?: string }>();
   const email = typeof queryEmail === 'string' ? queryEmail : '';
   const { colors } = useTheme();
@@ -37,17 +37,18 @@ export default function ChangePassword() {
 
     changePassword({ password1, password2, email })
       .unwrap()
-      .then(async (session) => {
+      .then((session) => {
         dispatch(setAuthSession(session));
-        await flushAuthPersistence();
-        replace(ROUTES.root);
+        requestAnimationFrame(() => {
+          dismissTo(`/${ROUTES.tabs}/${HOME_TAB_ROUTE}`);
+        });
       })
       .catch((error) => errorToast('', error));
   };
 
   return (
     <>
-      <Stack.Screen options={{ title: ROUTES.changePassword, headerShown: false }} />
+      <Stack.Screen options={{ title: ROUTES.changePassword, headerShown: false, animation: 'none' }} />
       <CrossPlatformLayout edges={['top', 'bottom']} scrollViewEnabled>
         <View style={styles.container}>
           <Text variant="headlineSmall" style={styles.title}>

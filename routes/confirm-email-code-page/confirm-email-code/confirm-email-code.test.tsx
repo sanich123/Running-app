@@ -8,12 +8,17 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ConfirmEmailCode from './confirm-email-code';
 
-const mockReplace = jest.fn();
 const mockPush = jest.fn();
+const mockDismissTo = jest.fn();
 let mockConfirmationInputProps: { disabled: boolean; onChangeText: (value: string) => void };
 let mockConfirmationSubmitProps: { disabled: boolean; onPress: () => Promise<void> };
 
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: mockReplace }) }));
+jest.mock('expo-router', () => ({
+  useRouter: () => ({
+    push: mockPush,
+    dismissTo: mockDismissTo,
+  }),
+}));
 jest.mock('react-native-paper', () => {
   const actual = jest.requireActual('react-native-paper');
   const { View } = jest.requireActual('react-native');
@@ -39,7 +44,10 @@ describe('ConfirmEmailCode', () => {
     await act(async () => mockConfirmationInputProps.onChangeText('123456'));
     await waitFor(() => expect(mockConfirmationSubmitProps.disabled).toBe(false));
     await act(async () => mockConfirmationSubmitProps.onPress());
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
+    await act(async () => {
+      jest.runOnlyPendingTimers();
+    });
+    await waitFor(() => expect(mockDismissTo).toHaveBeenCalledWith(`/${ROUTES.tabs}/(home)`));
     expect(mockStore.getState().auth.accessToken).toBe('test-access-token');
   });
 
