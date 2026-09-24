@@ -12,7 +12,7 @@ jest.mock('expo-router', () => ({
 describe('date picker web', () => {
   it('stores the date chosen by the user', async () => {
     const maximumDate = new Date('2026-08-06T15:00:00.000Z');
-    const { container } = await renderWithProviders(<DatePickerWeb isDisabled={false} maximumDate={maximumDate} />);
+    const { container } = await renderWithProviders(<DatePickerWeb maximumDate={maximumDate} />);
     const input = container.queryAll(({ type }) => type === 'input')[0];
     expect(input.props.style).toEqual(
       expect.objectContaining({ boxSizing: 'border-box', maxWidth: '100%', width: '100%' }),
@@ -27,7 +27,7 @@ describe('date picker web', () => {
   it('clamps a future browser selection to the maximum date', async () => {
     const maximumDate = new Date('2026-08-06T12:00:00.000Z');
     mockSetParams.mockClear();
-    const { container } = await renderWithProviders(<DatePickerWeb isDisabled={false} maximumDate={maximumDate} />);
+    const { container } = await renderWithProviders(<DatePickerWeb maximumDate={maximumDate} />);
     const input = container.queryAll(({ type }) => type === 'input')[0];
 
     await act(async () => {

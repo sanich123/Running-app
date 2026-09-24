@@ -8,14 +8,14 @@ import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-export default function SportsBtns({ isDisabled }: { isDisabled: boolean }) {
+export default function SportsBtns() {
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ settings }) => settings);
   const { sport } = useManualActivityParams();
   const { setSport } = useSetManualActivityParams();
   const { dark, colors } = useTheme();
   const chooseSportModal = useRef<BottomSheetModal>(null);
-  const isSportPickerDisabled = isSavingDisabled || isDisabled;
+  const isSportPickerDisabled = isSavingDisabled;
 
   return (
     <>

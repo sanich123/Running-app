@@ -8,17 +8,16 @@ import { clampDateToMaximum } from '../date-picker/utils';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 
 interface DatePickerWebProps {
-  isDisabled: boolean;
   maximumDate?: Date;
 }
 
-export default function DatePickerWeb({ isDisabled, maximumDate }: DatePickerWebProps) {
+export default function DatePickerWeb({ maximumDate }: DatePickerWebProps) {
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { manualDate } = useManualActivityParams();
   const { setManualDate } = useSetManualActivityParams();
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const shouldBeDisabled = isDisabled || isSavingDisabled;
+  const shouldBeDisabled = isSavingDisabled;
   const parsedManualDate = new Date(manualDate);
   const displayedDate = clampDateToMaximum(parsedManualDate, maximumDate);
 

@@ -4,13 +4,13 @@ import { useAppSelector } from '@R/typed-hooks';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS } from './const';
 
-export default function EmotionBtns({ isDisabled }: { isDisabled: boolean }) {
+export default function EmotionBtns() {
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ settings }) => settings);
   const { emotion } = useManualActivityParams();
   const { setEmotion } = useSetManualActivityParams();
   const { colors, dark } = useTheme();
-  const disabled = isDisabled || isSavingDisabled;
+  const disabled = isSavingDisabled;
   const options = [
     {
       value: EMOTIONS_BTNS_VALUES.good,

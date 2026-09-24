@@ -22,7 +22,7 @@ jest.mock('react-native-date-picker', () => {
 describe('Date time picker', () => {
   it('should correctly renders open btn in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    await renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<DateTimePicker />, { store: mockStore });
     expect(screen.getByTestId(DATE_TIME_PICKER_BTN_ID)).toHaveProp(
       'accessibilityLabel',
       DATE_TIME_PICKER.english.title,
@@ -33,24 +33,16 @@ describe('Date time picker', () => {
   });
   it('should correctly renders open btn in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    await renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<DateTimePicker />, { store: mockStore });
     expect(screen.getByTestId(DATE_TIME_PICKER_BTN_ID)).toHaveProp(
       'accessibilityLabel',
       DATE_TIME_PICKER.russian.title,
     );
   });
-  it('should correctly handle isDisabled state', async () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    await renderWithProviders(<DateTimePicker isDisabled />, { store: mockStore });
-    expect(screen.getByTestId(DATE_TIME_PICKER_BTN_ID)).toHaveProp(
-      'accessibilityLabel',
-      DATE_TIME_PICKER.russian.title,
-    );
-  });
-  it('should correctly handle isDisabled WhileSending state', async () => {
+  it('should correctly handle isSavingDisabled state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(setSavingDisabled(true));
-    await renderWithProviders(<DateTimePicker isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<DateTimePicker />, { store: mockStore });
     expect(screen.getByTestId(DATE_TIME_PICKER_BTN_ID)).toHaveProp(
       'accessibilityLabel',
       DATE_TIME_PICKER.russian.title,
@@ -60,7 +52,7 @@ describe('Date time picker', () => {
   it('opens the picker and stores the confirmed date', async () => {
     const user = userEvent.setup();
     mockStore.dispatch(setSavingDisabled(false));
-    await renderWithProviders(<DateTimePicker isDisabled={false} />);
+    await renderWithProviders(<DateTimePicker />);
     await user.press(screen.getByTestId(DATE_TIME_PICKER_BTN_ID));
     expect(screen.getByTestId('native-date-picker').props.open).toBe(true);
     const selectedDate = new Date('2026-08-06T10:00:00.000Z');
@@ -72,7 +64,7 @@ describe('Date time picker', () => {
     const user = userEvent.setup();
     const maximumDate = new Date('2026-08-06T12:00:00.000Z');
     mockSetParams.mockClear();
-    await renderWithProviders(<DateTimePicker isDisabled={false} maximumDate={maximumDate} />);
+    await renderWithProviders(<DateTimePicker maximumDate={maximumDate} />);
     await user.press(screen.getByTestId(DATE_TIME_PICKER_BTN_ID));
 
     expect(screen.getByTestId('native-date-picker').props.maximumDate).toEqual(maximumDate);

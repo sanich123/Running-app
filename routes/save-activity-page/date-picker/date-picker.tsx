@@ -8,18 +8,17 @@ import { DATE_TIME_PICKER_BTN_ID, DATE_TIME_PICKER } from './const';
 import { clampDateToMaximum, formatSelectedDate } from './utils';
 
 interface DateTimePickerProps {
-  isDisabled: boolean;
   maximumDate?: Date;
 }
 
-export default function DateTimePicker({ isDisabled, maximumDate }: DateTimePickerProps) {
+export default function DateTimePicker({ maximumDate }: DateTimePickerProps) {
   const { manualDate } = useManualActivityParams();
   const { setManualDate } = useSetManualActivityParams();
   const [open, setOpen] = useState(false);
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const shouldBeDisabled = isDisabled || isSavingDisabled;
+  const shouldBeDisabled = isSavingDisabled;
   const displayedDate = clampDateToMaximum(new Date(manualDate), maximumDate);
 
   return (

@@ -56,8 +56,7 @@ export default function LocationSettingsSwitcher({
             errorToast('Не удалось открыть настройки геолокации', error);
           }
         }}>
-        {' '}
-        {language === LANGUAGES.russian ? 'Открыть' : 'Open'}{' '}
+        {language === LANGUAGES.russian ? 'Открыть' : 'Open'}
       </Button>
     </View>
   );

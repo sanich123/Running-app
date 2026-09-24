@@ -14,23 +14,23 @@ jest.mock('expo-router', () => ({
 
 describe('Checkbox', () => {
   it('selects followers by default', async () => {
-    await renderWithProviders(<Checkbox isDisabled={false} />);
+    await renderWithProviders(<Checkbox />);
     expect(screen.getByTestId('activity-visibility-followers').props.accessibilityState?.selected).toBe(true);
   });
 
   it('should correctly renders in russia', async () => {
-    await renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<Checkbox />, { store: mockStore });
     expect(screen.getByText(CHECKBOX.russian.public)).toBeOnTheScreen();
   });
   it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    await renderWithProviders(<Checkbox isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<Checkbox />, { store: mockStore });
     expect(screen.getByText(CHECKBOX.english.public)).toBeOnTheScreen();
   });
 
   it('changes activity visibility', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    await renderWithProviders(<Checkbox isDisabled={false} />);
+    await renderWithProviders(<Checkbox />);
     await fireEvent.press(screen.getByText(CHECKBOX.russian.followers));
     expect(mockSetParams).toHaveBeenCalledWith({ visibility: 'followers' });
   });
