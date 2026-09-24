@@ -12,13 +12,17 @@ import ConfirmEmailCodePage from './confirm-email-code-page';
 import { CONFIRM_EMAIL_PAGE_TEXT } from './const';
 
 const mockReplace = jest.fn();
+const mockDismissTo = jest.fn();
 const mockSearchParams: { email?: string; type?: string } = {};
 let mockConfirmationInputProps: { onChangeText: (value: string) => void };
 let mockConfirmationSubmitProps: { onPress: () => Promise<void>; disabled?: boolean };
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },
-  useRouter: () => ({ replace: mockReplace }),
+  useRouter: () => ({
+    replace: mockReplace,
+    dismissTo: mockDismissTo,
+  }),
   useLocalSearchParams: () => mockSearchParams,
 }));
 jest.mock('react-native-paper', () => {
@@ -41,6 +45,7 @@ jest.mock('react-native-paper', () => {
 describe('ConfirmEmailCodePage', () => {
   beforeEach(() => {
     mockReplace.mockClear();
+    mockDismissTo.mockClear();
     mockSearchParams.email = 'runner@example.test';
     mockSearchParams.type = 'registration';
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
@@ -70,7 +75,10 @@ describe('ConfirmEmailCodePage', () => {
 
     await waitFor(() => expect(requestBody).toEqual({ email: 'runner@example.test', confirmationCode: '123456' }));
     expect(mockStore.getState().auth.accessToken).toBe('access-token');
-    expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
+    await act(async () => {
+      jest.runOnlyPendingTimers();
+    });
+    expect(mockDismissTo).toHaveBeenCalledWith(`/${ROUTES.tabs}/(home)`);
   });
 
   it('does not navigate when the code confirmation fails', async () => {

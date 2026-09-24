@@ -1,10 +1,12 @@
 import type { ReactNode } from 'react';
-import { waitFor } from '@testing-library/react-native';
+import { screen, waitFor } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import { ROUTES, STATUSES } from '@const/enums';
+import { runichApi } from '@R/runich-api/runich-api';
 import { setActivityStatus } from '@R/slices/location/location';
 import { clearTrackingRecovery, startTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
-import { mockStore, resetMockLocation } from '@T/utils/mock-store';
+import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
+import { mockStore, resetMockLocation, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import TabLayout from '../../app/(tabs)/_layout';
 
@@ -50,13 +52,20 @@ jest.mock('expo-router/unstable-native-tabs', () => {
 });
 jest.mock('@Routes/app-routes/const', () => {
   const { View } = jest.requireActual('react-native');
-  return { HOME_TAB_ROUTE: 'home', LazyAvatarShowable: () => <View testID="tab-avatar" /> };
+  return {
+    HOME_TAB_ROUTE: 'home',
+    LazyAvatarShowable: ({ profile }: { profile?: { profilePhoto?: string | null } }) => (
+      <View testID="tab-avatar" accessibilityLabel={profile?.profilePhoto ?? ''} />
+    ),
+  };
 });
 
 describe('TabLayout', () => {
   beforeEach(() => {
     mockTabsScreenOptions = undefined;
     mockNativeTriggerContentStyles.length = 0;
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(resetMockLocation());
     mockStore.dispatch(clearTrackingRecovery());
   });
@@ -126,6 +135,22 @@ describe('TabLayout', () => {
     expect(result.toJSON()).toBeTruthy();
     expect(mockReplace).not.toHaveBeenCalled();
     expect(mockTabsScreenOptions?.sceneStyle).toEqual({ backgroundColor: expect.any(String) });
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
+  });
+
+  it('uses the profile avatar instead of activity-list data', async () => {
+    const originalOS = Platform.OS;
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+
+    await renderWithProviders(<TabLayout />);
+
+    await waitFor(() =>
+      expect(
+        screen
+          .getAllByTestId('tab-avatar')
+          .some(({ props }) => props.accessibilityLabel === MOCK_SERVER_PROFILE.profilePhoto),
+      ).toBe(true),
+    );
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 });

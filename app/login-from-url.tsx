@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { useLazyVerifyConfigQuery } from '@R/services/authentication/authentication';
 import { setAuthSession } from '@R/slices/auth/auth';
-import { flushAuthPersistence } from '@R/slices/auth/persistence';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
@@ -42,7 +41,6 @@ export default function LoginFromUrlRoute() {
         .unwrap()
         .then(async (session) => {
           dispatch(setAuthSession(session));
-          await flushAuthPersistence();
           leaveRoute(true);
         })
         .catch((error) => {

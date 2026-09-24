@@ -12,13 +12,13 @@ import {
   TEXT_INPUTS_DESCRIPTION_TEST_ID,
 } from './const';
 
-export default function TextInputs({ isDisabled }: { isDisabled: boolean }) {
+export default function TextInputs() {
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const { title, description } = useManualActivityParams();
   const { setTitle, setDescription } = useSetManualActivityParams();
-  const shouldBeDisabled = isDisabled || isSavingDisabled;
+  const shouldBeDisabled = isSavingDisabled;
 
   return (
     <>

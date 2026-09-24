@@ -1,5 +1,5 @@
 import { useEffect, type MutableRefObject } from 'react';
-import { Image, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
@@ -8,7 +8,7 @@ import UserAvatar from '@S/avatar/avatar';
 import CustomImage from '@S/custom-image/custom-image';
 import { getIconNameByTypeOfSport, MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { formatDuration } from '@U/time-formatter';
-import { SHARE_IMAGE_HEIGHT, SHARE_IMAGE_WIDTH } from './const';
+import { SHARE_IMAGE_WIDTH } from './const';
 import Metric from './metric';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import { CARD_METRICS } from '../metrics/const';
@@ -135,15 +135,10 @@ export default function ShareActivityImage({
           </View>
         </View>
 
-        <View style={styles.metricsGrid}>
+        <View style={styles.metricsGrid} testID="share-metrics-grid">
           {metrics.map(({ label, value }) => (
             <Metric key={label} label={label} value={value} />
           ))}
-        </View>
-
-        <View style={styles.footer}>
-          <Image source={require('../../../assets/images/runich-logo.png')} style={styles.footerLogo} />
-          <Text style={styles.footerBrand}>runich</Text>
         </View>
       </View>
     </View>
@@ -166,7 +161,6 @@ function formatShareDate(date: string, duration: number, isRussian: boolean) {
 const styles = StyleSheet.create({
   captureRoot: {
     backgroundColor: '#050506',
-    height: SHARE_IMAGE_HEIGHT,
     left: -10000,
     overflow: 'hidden',
     position: 'absolute',
@@ -185,10 +179,10 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
   },
-  details: { backgroundColor: '#050506', flex: 1, paddingHorizontal: 16, paddingTop: 16 },
-  identityRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  details: { backgroundColor: '#050506', paddingBottom: 16, paddingHorizontal: 16, paddingTop: 16 },
+  identityRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 10 },
   identityCopy: { flex: 1, minWidth: 0 },
-  activityTitleRow: { alignItems: 'center', flexDirection: 'row', gap: 5, marginTop: 8 },
+  activityTitleRow: { alignItems: 'center', flexDirection: 'row', gap: 5, minHeight: 22 },
   activityTitle: { color: '#FFFFFF', flex: 1, fontFamily: FONT_FAMILIES.semiBold, fontSize: 18 },
   date: { color: 'rgba(255, 255, 255, 0.68)', fontFamily: FONT_FAMILIES.medium, fontSize: 12, marginTop: 3 },
   metricsGrid: {
@@ -200,15 +194,4 @@ const styles = StyleSheet.create({
     marginTop: 14,
     overflow: 'hidden',
   },
-  footer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 7,
-    justifyContent: 'center',
-    marginTop: 'auto',
-    paddingBottom: 14,
-    paddingTop: 14,
-  },
-  footerLogo: { borderRadius: 7, height: 24, width: 24 },
-  footerBrand: { color: '#FFFFFF', fontFamily: FONT_FAMILIES.extraBold, fontSize: 17, letterSpacing: 0.4 },
 });

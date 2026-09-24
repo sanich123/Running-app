@@ -10,14 +10,14 @@ import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { getActiveLocationJournalId, removeLocationJournal } from '@U/location/location-journal';
 import { DECLINE_BTN } from './const';
 
-export default function DeclineBtn({ isDisabled }: { isDisabled: boolean }) {
+export default function DeclineBtn() {
   const dispatch = useAppDispatch();
   const { replace } = useRouter();
   const { isSavingDisabled, finishedActivity } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
-  const shouldBeDisabled = isDisabled || isSavingDisabled;
+  const shouldBeDisabled = isSavingDisabled;
 
   function declineActivity() {
     const journalId = finishedActivity.routeJournalId ?? getActiveLocationJournalId();

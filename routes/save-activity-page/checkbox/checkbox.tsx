@@ -11,13 +11,13 @@ import {
   ACTIVITY_VISIBILITY_SECTION_LABELS,
 } from './const';
 
-export default function Checkbox({ isDisabled }: { isDisabled: boolean }) {
+export default function Checkbox() {
   const { language } = useAppSelector(({ settings }) => settings);
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { visibility } = useManualActivityParams();
   const { setVisibility } = useSetManualActivityParams();
   const { colors, dark } = useTheme();
-  const disabled = isDisabled || isSavingDisabled;
+  const disabled = isSavingDisabled;
   const options = [ACTIVITY_VISIBILITY.public, ACTIVITY_VISIBILITY.followers, ACTIVITY_VISIBILITY.private] as const;
 
   return (

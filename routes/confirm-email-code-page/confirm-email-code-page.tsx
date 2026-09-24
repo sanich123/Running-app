@@ -19,7 +19,7 @@ export default function ConfirmEmailCodePage() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen options={{ headerShown: false, animation: 'none' }} />
       <CrossPlatformLayout edges={['top', 'bottom']} scrollViewEnabled>
         <View style={styles.container}>
           <View style={[styles.iconContainer, { backgroundColor: colors.primaryContainer }]}>

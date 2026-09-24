@@ -67,6 +67,10 @@ describe('ActivitySettings', () => {
     expect(
       screen.getByText(/На Android нельзя гарантировать, что фоновый процесс не будет завершён/),
     ).toBeOnTheScreen();
+    expect(screen.getByText(/Важно: иногда возникает редкий сбой/)).toBeOnTheScreen();
+    expect(screen.getByText(/Это известный баг библиотеки, которая отвечает за запуск отслеживания/)).toBeOnTheScreen();
+    expect(screen.getByText(/Карта продолжает получать геопозицию и менять своё положение/)).toBeOnTheScreen();
+    expect(screen.getByText(/Что делать: на практике срабатывал только такой способ/)).toBeOnTheScreen();
   });
 
   it('updates voice announcements and reminders from native switch events', async () => {

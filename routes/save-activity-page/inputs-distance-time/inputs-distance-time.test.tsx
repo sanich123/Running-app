@@ -13,20 +13,14 @@ jest.mock('expo-router', () => ({
 
 describe('Inputs manual distance duration', () => {
   it('shoudl correctly renders', async () => {
-    await renderWithProviders(<InputsDistanceTime isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<InputsDistanceTime />, { store: mockStore });
     [INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID, INPUT_SECONDS_ID].map((testId) =>
       expect(screen.getByTestId(testId)).toBeOnTheScreen(),
     );
   });
-  it('shoudl correctly handle isDisabled state', async () => {
-    await renderWithProviders(<InputsDistanceTime isDisabled />, { store: mockStore });
-    [INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID, INPUT_SECONDS_ID].map((testId) =>
-      expect(screen.getByTestId(testId)).toBeDisabled(),
-    );
-  });
   it('should correctly handle isSavingDisabled state', async () => {
     mockStore.dispatch(setSavingDisabled(true));
-    await renderWithProviders(<InputsDistanceTime isDisabled={false} />, { store: mockStore });
+    await renderWithProviders(<InputsDistanceTime />, { store: mockStore });
     [INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID, INPUT_SECONDS_ID].map((testId) =>
       expect(screen.getByTestId(testId)).toBeDisabled(),
     );
@@ -34,7 +28,7 @@ describe('Inputs manual distance duration', () => {
 
   it('stores distance, hours and minutes entered by the user', async () => {
     mockStore.dispatch(setSavingDisabled(false));
-    await renderWithProviders(<InputsDistanceTime isDisabled={false} />);
+    await renderWithProviders(<InputsDistanceTime />);
     await act(async () => {
       screen.getByTestId(INPUT_DISTANCE_ID).props.onChangeText('12.5');
       screen.getByTestId(INPUT_HOURS_ID).props.onChangeText('1');
@@ -49,7 +43,7 @@ describe('Inputs manual distance duration', () => {
 
   it('limits distance to 300 kilometers', async () => {
     mockStore.dispatch(setSavingDisabled(false));
-    const { getByTestId } = await renderWithProviders(<InputsDistanceTime isDisabled={false} />);
+    const { getByTestId } = await renderWithProviders(<InputsDistanceTime />);
 
     await fireEvent.changeText(getByTestId(INPUT_DISTANCE_ID), '300.5');
 
@@ -59,7 +53,7 @@ describe('Inputs manual distance duration', () => {
 
   it('limits hours to 48 and minutes and seconds to 59', async () => {
     mockStore.dispatch(setSavingDisabled(false));
-    const { getByTestId } = await renderWithProviders(<InputsDistanceTime isDisabled={false} />);
+    const { getByTestId } = await renderWithProviders(<InputsDistanceTime />);
 
     await fireEvent.changeText(getByTestId(INPUT_HOURS_ID), '49');
     await fireEvent.changeText(getByTestId(INPUT_MINUTES_ID), '65');
@@ -75,7 +69,7 @@ describe('Inputs manual distance duration', () => {
 
   it('clears a zero value immediately on focus', async () => {
     mockStore.dispatch(setSavingDisabled(false));
-    const { getByTestId } = await renderWithProviders(<InputsDistanceTime isDisabled={false} />);
+    const { getByTestId } = await renderWithProviders(<InputsDistanceTime />);
 
     await fireEvent(getByTestId(INPUT_HOURS_ID), 'focus');
 

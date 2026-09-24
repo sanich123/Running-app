@@ -38,8 +38,9 @@ describe('share activity image', () => {
     expect(screen.getByTestId('share-profile-avatar')).toBeOnTheScreen();
     expect(screen.getByTestId('share-profile-avatar').props.source).toEqual({ uri: MOCK_PROFILE.profilePhoto });
     expect(screen.getByTestId('share-activity-title')).toBeOnTheScreen();
+    expect(screen.getByTestId('share-metrics-grid')).toBeOnTheScreen();
     expect(screen.queryByText('© Mapbox · © OpenStreetMap · Improve this map')).not.toBeOnTheScreen();
-    expect(screen.getByText('runich')).toBeOnTheScreen();
+    expect(screen.queryByText('runich')).not.toBeOnTheScreen();
     expect(screen.getByText('Утренняя пробежка')).toBeOnTheScreen();
     expect(screen.getByText('00:05:00')).toBeOnTheScreen();
     expect(screen.getByText('5.00 км')).toBeOnTheScreen();

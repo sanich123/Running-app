@@ -8,18 +8,18 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import ChangePassword from './change-password';
 import { CHANGE_PASSWORD_TEST_ID, CHANGE_PASSWORD_TEXT } from './const';
 
-const mockReplace = jest.fn();
+const mockDismissTo = jest.fn();
 const mockSearchParams: { email?: string } = { email: 'runner@example.test' };
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },
-  useRouter: () => ({ replace: mockReplace }),
+  useRouter: () => ({ dismissTo: mockDismissTo }),
   useLocalSearchParams: () => mockSearchParams,
 }));
 
 describe('change password', () => {
   beforeEach(() => {
-    mockReplace.mockClear();
+    mockDismissTo.mockClear();
     mockStore.dispatch({ type: 'auth/resetAuthSlice' });
   });
 
@@ -55,7 +55,8 @@ describe('change password', () => {
     );
     expect(mockStore.getState().auth.accessToken).toBe('new-access-token');
     expect(mockStore.getState().auth.userId).toBe('new-user-id');
-    expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
+    jest.runOnlyPendingTimers();
+    expect(mockDismissTo).toHaveBeenCalledWith(`/${ROUTES.tabs}/(home)`);
   });
 
   it('does not send different passwords', async () => {
@@ -66,6 +67,6 @@ describe('change password', () => {
     await user.press(screen.getByTestId(CHANGE_PASSWORD_TEST_ID.submit));
 
     expect(await screen.findByText(CHANGE_PASSWORD_TEXT.mismatch)).toBeOnTheScreen();
-    expect(mockReplace).not.toHaveBeenCalledWith(ROUTES.root);
+    expect(mockDismissTo).not.toHaveBeenCalledWith(`/${ROUTES.tabs}/(home)`);
   });
 });

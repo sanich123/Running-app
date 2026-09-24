@@ -23,13 +23,13 @@ interface InputValues {
   seconds: string;
 }
 
-export default function InputsDistanceTime({ isDisabled }: { isDisabled: boolean }) {
+export default function InputsDistanceTime() {
   const { manualDistance, manualHours, manualMinutes, manualSeconds } = useManualActivityParams();
   const { setManualDistance, setManualHours, setManualMinutes, setManualSeconds } = useSetManualActivityParams();
   const { language } = useAppSelector(({ settings }) => settings);
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { colors } = useTheme();
-  const shouldBeDisabled = isDisabled || isSavingDisabled;
+  const shouldBeDisabled = isSavingDisabled;
   const [inputValues, setInputValues] = useState<InputValues>(() => ({
     distance: manualDistance,
     hours: manualHours,

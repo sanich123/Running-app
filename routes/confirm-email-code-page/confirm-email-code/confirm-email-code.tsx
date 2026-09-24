@@ -8,8 +8,8 @@ import {
   useVerifyPasswordChangeCodeMutation,
 } from '@R/services/authentication/authentication';
 import { setAuthSession } from '@R/slices/auth/auth';
-import { flushAuthPersistence } from '@R/slices/auth/persistence';
 import { useAppDispatch } from '@R/typed-hooks';
+import { HOME_TAB_ROUTE } from '@Routes/app-routes/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import { CONFIRM_EMAIL_CODE_TEST_ID, CONFIRM_EMAIL_CODE_TEXT } from './const';
 import type { ConfirmEmailCodeProps } from './types';
@@ -20,7 +20,7 @@ export default function ConfirmEmailCode({ email, type = 'registration' }: Confi
   const [confirmEmailByCode, { isLoading: isConfirmingRegistration }] = useConfirmSignUpCodeByEmailMutation();
   const [verifyPasswordChangeCode, { isLoading: isVerifyingPasswordChangeCode }] =
     useVerifyPasswordChangeCodeMutation();
-  const { push, replace } = useRouter();
+  const { push, dismissTo } = useRouter();
   const isLoading = isConfirmingRegistration || isVerifyingPasswordChangeCode;
   const {
     colors: { primary, onBackground },
@@ -41,10 +41,11 @@ export default function ConfirmEmailCode({ email, type = 'registration' }: Confi
     } else {
       confirmEmailByCode({ email, confirmationCode: code })
         .unwrap()
-        .then(async (session) => {
+        .then((session) => {
           dispatch(setAuthSession(session));
-          await flushAuthPersistence();
-          replace(ROUTES.root);
+          requestAnimationFrame(() => {
+            dismissTo(`/${ROUTES.tabs}/${HOME_TAB_ROUTE}`);
+          });
         })
         .catch((error) => errorToast(CONFIRM_EMAIL_CODE_TEXT.error, error));
     }

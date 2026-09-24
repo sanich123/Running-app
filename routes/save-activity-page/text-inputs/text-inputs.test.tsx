@@ -12,7 +12,7 @@ jest.mock('expo-router', () => ({
 
 describe('text inputs', () => {
   it('stores the entered activity title and description', async () => {
-    await renderWithProviders(<TextInputs isDisabled={false} />);
+    await renderWithProviders(<TextInputs />);
     const titleInput = screen.getByTestId(TEXT_INPUTS_TITLE_TEST_ID);
     const descriptionInput = screen.getByTestId(TEXT_INPUTS_DESCRIPTION_TEST_ID);
 
