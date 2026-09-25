@@ -1,4 +1,4 @@
-import { FontAwesome5 } from '@expo/vector-icons';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons/static';
 import { Linking, View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
@@ -17,7 +17,7 @@ export default function SocialAuthButtons() {
         style={[styles.button, styles.yandexButton]}
         onPress={() => void Linking.openURL(YANDEX_AUTH_URL)}>
         <View style={styles.label}>
-          <FontAwesome5 name="yandex" size={17} color="#FFFFFF" style={styles.yandexIcon} />
+          <MaterialDesignIcons name="alpha-y-circle" size={17} color="#FFFFFF" style={styles.yandexIcon} />
           <Text style={styles.buttonText}>{copy.yandex}</Text>
         </View>
       </Button>
@@ -28,7 +28,7 @@ export default function SocialAuthButtons() {
         style={[styles.button, styles.vkButton]}
         onPress={() => void Linking.openURL(VK_AUTH_URL)}>
         <View style={styles.label}>
-          <FontAwesome5 name="vk" size={22} color="#FFFFFF" />
+          <MaterialDesignIcons name="alpha-v-circle" size={22} color="#FFFFFF" />
           <Text style={styles.buttonText}>{copy.vk}</Text>
         </View>
       </Button>

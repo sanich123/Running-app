@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ComponentRef } from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import type { ComponentPropsWithRef } from 'react';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
+import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vector-icons/material-design-icons/static';
 import * as Speech from 'expo-speech';
 import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { ActivityIndicator, Keyboard, StyleSheet, View } from 'react-native';
@@ -44,7 +44,7 @@ export default function ActivitySettings({
   } = getActivitySettings(settings);
   const [intervalInput, setIntervalInput] = useState('');
   const [reminderTextInput, setReminderTextInput] = useState('');
-  const reminderTextInputRef = useRef<ComponentRef<typeof BottomSheetTextInput>>(null);
+  const reminderTextInputRef = useRef<{ focus: () => void }>(null);
   const settingsScrollViewRef = useRef<KeyboardAwareScrollViewRef>(null);
   const fallbackLocationInfoModalRef = useRef<BottomSheetModal>(null);
   const locationInfoModalRef = providedLocationInfoModalRef ?? fallbackLocationInfoModalRef;
@@ -307,7 +307,7 @@ export default function ActivitySettings({
               {labels.reminderText}
             </Text>
             <BottomSheetTextInput
-              ref={reminderTextInputRef}
+              ref={reminderTextInputRef as unknown as ComponentPropsWithRef<typeof BottomSheetTextInput>['ref']}
               testID="activity-reminder-text-input"
               placeholder={labels.reminderTextPlaceholder}
               value={reminderTextInput}

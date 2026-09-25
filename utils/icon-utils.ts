@@ -1,9 +1,13 @@
-import { createElement } from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { createElement, type ComponentProps } from 'react';
+import {
+  MaterialDesignIcons,
+  type MaterialDesignIconsIconName,
+} from '@react-native-vector-icons/material-design-icons/static';
 import { LANGUAGES } from '@const/enums';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 
-type MaterialCommunityIconName = keyof typeof MaterialCommunityIcons.glyphMap;
+type MaterialCommunityIconName = MaterialDesignIconsIconName;
+type MaterialDesignIconColor = ComponentProps<typeof MaterialDesignIcons>['color'];
 
 function getSportIconName(sport: string): MaterialCommunityIconName {
   switch (sport.toLowerCase()) {
@@ -34,8 +38,8 @@ function getSportIconName(sport: string): MaterialCommunityIconName {
   }
 }
 
-export function getIconByTypeOfSport(sport: SPORTS_BTNS_VALUES, size = 15) {
-  return createElement(MaterialCommunityIcons, { name: getSportIconName(`${sport}`), size });
+export function getIconByTypeOfSport(sport: SPORTS_BTNS_VALUES, size = 15, color?: MaterialDesignIconColor) {
+  return createElement(MaterialDesignIcons, { name: getSportIconName(`${sport}`), size, color });
 }
 
 export function getIconNameByTypeOfSport(sport: string) {

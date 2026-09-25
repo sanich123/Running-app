@@ -2,20 +2,18 @@ import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
-import { FONT_FAMILIES } from '@const/fonts';
-import { CALENDAR_SPORT_ICONS } from '../calendar/const';
+import { getIconNameByTypeOfSport } from '@U/icon-utils';
 import type { CalendarDateProps, CalendarDateWithActivityProps } from '../calendar/types';
 
 export default function CalendarDateWithActivity({
   isWeekend,
   isTitle,
-  isEmptyCell,
   dateValue,
   activities,
-}: CalendarDateWithActivityProps & CalendarDateProps) {
+}: CalendarDateWithActivityProps & Omit<CalendarDateProps, 'isEmptyCell'>) {
   const { colors, dark } = useTheme();
   const { push } = useRouter();
-  const activityIcon = CALENDAR_SPORT_ICONS[activities[0]?.sport] ?? 'run-fast';
+  const activityIcon = getIconNameByTypeOfSport(activities[0]?.sport ?? 'unknown');
   return (
     <>
       {!isTitle ? (
@@ -28,7 +26,7 @@ export default function CalendarDateWithActivity({
             {
               backgroundColor: colors.primaryContainer,
               borderColor: colors.primary,
-              borderWidth: isEmptyCell ? 0 : 1,
+              borderWidth: 1,
             },
           ]}
           onPress={() => {
@@ -40,23 +38,20 @@ export default function CalendarDateWithActivity({
               }
             }
           }}>
-          {activities.length > 1 ? (
-            <Text style={[styles.activityCountValue, { color: colors.onPrimaryContainer }]}>{activities.length}</Text>
-          ) : (
-            <View testID={`calendar-activity-icon-${activities[0]?.id}`}>
-              <Icon source={activityIcon} size={23} color={colors.primary} />
-            </View>
-          )}
+          <View style={styles.touchableContent}>
+            {activities.length > 1 ? (
+              <Text style={[styles.activityCountValue, { color: colors.onPrimaryContainer }]}>
+                ×{activities.length}
+              </Text>
+            ) : (
+              <View testID={`calendar-activity-icon-${activities[0]?.id}`}>
+                <Icon source={activityIcon} size={20} color={colors.primary} />
+              </View>
+            )}
+          </View>
         </TouchableRipple>
       ) : (
-        <View
-          style={[
-            styles.dateItem,
-            {
-              borderWidth: isEmptyCell ? 0 : 1,
-              borderColor: colors.outlineVariant,
-            },
-          ]}>
+        <View style={[styles.dateItem, { backgroundColor: colors.surfaceVariant, borderColor: colors.outlineVariant }]}>
           <Text
             style={{
               color: isWeekend ? colors.error : colors.onBackground,
@@ -71,27 +66,15 @@ export default function CalendarDateWithActivity({
 }
 
 const styles = StyleSheet.create({
-  dayColumn: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    width: '100%',
-    gap: 5,
-  },
-  calendarContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    margin: 10,
-    padding: 5,
-  },
   dateItem: {
-    height: 40,
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    display: 'flex',
+    height: 54,
+    justifyContent: 'center',
+    width: '100%',
   },
-  activityCountValue: { fontFamily: FONT_FAMILIES.extraBold, fontSize: 16 },
+  touchableContent: { alignItems: 'center', height: '100%', justifyContent: 'center', width: '100%' },
+  activityCountValue: { fontSize: 16, fontWeight: '800' },
 });

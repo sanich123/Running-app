@@ -1,4 +1,4 @@
-import { useEffect, type MutableRefObject } from 'react';
+import { useEffect, type ComponentRef, type MutableRefObject } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
@@ -26,7 +26,7 @@ type ShareActivityImageProps = Pick<ActivityCardProps, 'distance' | 'duration' |
   weatherWindSpeed?: number | null;
   weatherCode?: number | null;
   caloriesActive?: number | null;
-  cardRef: MutableRefObject<View | null>;
+  cardRef: MutableRefObject<ComponentRef<typeof View> | null>;
   onReady?: () => void;
 };
 

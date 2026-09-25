@@ -10,6 +10,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { Platform } from 'react-native';
 import { toastConfig } from '@const/toast-config';
 import { subscribeToPersistenceErrors } from '@R/persistence-errors';
 import { persistor, store } from '@R/store';
@@ -29,6 +30,11 @@ export default function RootLayout() {
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_800ExtraBold,
+    ...(Platform.OS === 'web'
+      ? {
+          MaterialDesignIcons: require('@react-native-vector-icons/material-design-icons/fonts/MaterialDesignIcons.ttf'),
+        }
+      : {}),
   });
 
   useEffect(() => {

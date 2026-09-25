@@ -125,6 +125,7 @@ export default {
       'expo-font',
       'expo-video',
       'expo-secure-store',
+      '@react-native-vector-icons/material-design-icons',
       [
         'expo-sensors',
         {
@@ -151,7 +152,7 @@ export default {
               '-dontwarn com.google.mlkit.vision.common.**',
             ].join('\n'),
           },
-          ios: { ccacheEnabled: true, enableSceneSupport: true },
+          ios: { ccacheEnabled: true, usePrecompiledModules: false },
         },
       ],
       [

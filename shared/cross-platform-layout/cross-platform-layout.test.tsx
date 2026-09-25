@@ -27,4 +27,18 @@ describe('CrossPlatformLayout', () => {
     await act(async () => screen.getByTestId('cross-platform-scroll-view').props.refreshControl.props.onRefresh());
     expect(refetch).toHaveBeenCalledTimes(1);
   });
+
+  it('keeps pull-to-refresh available for an empty or error state', async () => {
+    const refetch = jest.fn();
+    await renderWithProviders(
+      <CrossPlatformLayout scrollViewEnabled isError refetch={refetch}>
+        <Text testID="refreshable-status-content" />
+      </CrossPlatformLayout>,
+    );
+
+    const refreshControl = screen.getByTestId('cross-platform-scroll-view').props.refreshControl;
+    await act(async () => refreshControl.props.onRefresh());
+
+    expect(refetch).toHaveBeenCalledTimes(1);
+  });
 });

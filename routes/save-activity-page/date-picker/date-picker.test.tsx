@@ -6,7 +6,7 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { DATE_TIME_PICKER, DATE_TIME_PICKER_BTN_ID } from './const';
 import DateTimePicker from './date-picker';
-import { formatSelectedDate } from './utils';
+import { formatSelectedDate, setTimeOnDate } from './utils';
 
 const mockSetParams = jest.fn();
 jest.mock('expo-router', () => ({
@@ -14,9 +14,15 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ setParams: mockSetParams }),
 }));
 
-jest.mock('react-native-date-picker', () => {
+jest.mock('react-native-paper-dates', () => {
   const { View } = jest.requireActual('react-native');
-  return (props: any) => <View testID="native-date-picker" {...props} />;
+  return {
+    DatePickerModal: (props: any) => <View testID="date-picker-modal" {...props} />,
+    TimePickerModal: (props: any) => <View testID="time-picker-modal" {...props} />,
+    en: {},
+    registerTranslation: jest.fn(),
+    ru: {},
+  };
 });
 
 describe('Date time picker', () => {
@@ -54,10 +60,11 @@ describe('Date time picker', () => {
     mockStore.dispatch(setSavingDisabled(false));
     await renderWithProviders(<DateTimePicker />);
     await user.press(screen.getByTestId(DATE_TIME_PICKER_BTN_ID));
-    expect(screen.getByTestId('native-date-picker').props.open).toBe(true);
     const selectedDate = new Date('2026-08-06T10:00:00.000Z');
-    await act(async () => screen.getByTestId('native-date-picker').props.onConfirm(selectedDate));
-    expect(mockSetParams).toHaveBeenCalledWith({ manualDate: selectedDate.toISOString() });
+    await act(async () => screen.getByTestId('date-picker-modal').props.onConfirm({ date: selectedDate }));
+    expect(screen.getByTestId('time-picker-modal')).toHaveProp('visible', true);
+    await act(async () => screen.getByTestId('time-picker-modal').props.onConfirm({ hours: 14, minutes: 30 }));
+    expect(mockSetParams).toHaveBeenCalledWith({ manualDate: setTimeOnDate(selectedDate, 14, 30).toISOString() });
   });
 
   it('does not store a future date when a maximum date is provided', async () => {
@@ -67,9 +74,10 @@ describe('Date time picker', () => {
     await renderWithProviders(<DateTimePicker maximumDate={maximumDate} />);
     await user.press(screen.getByTestId(DATE_TIME_PICKER_BTN_ID));
 
-    expect(screen.getByTestId('native-date-picker').props.maximumDate).toEqual(maximumDate);
+    expect(screen.getByTestId('date-picker-modal').props.validRange).toEqual({ endDate: maximumDate });
     const futureDate = new Date('2026-08-07T10:00:00.000Z');
-    await act(async () => screen.getByTestId('native-date-picker').props.onConfirm(futureDate));
+    await act(async () => screen.getByTestId('date-picker-modal').props.onConfirm({ date: futureDate }));
+    await act(async () => screen.getByTestId('time-picker-modal').props.onConfirm({ hours: 15, minutes: 0 }));
 
     expect(mockSetParams).toHaveBeenLastCalledWith({ manualDate: maximumDate.toISOString() });
   });

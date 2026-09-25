@@ -28,7 +28,10 @@ export default memo(function ShareBtn({ cardRef, prepareShareImage, cleanupShare
           if (isAvailable) {
             await prepareShareImage?.();
             await waitForShareImageRender();
-            const snapshot = await captureRef(cardRef, Platform.OS === 'web' ? { result: 'base64' } : {});
+            const snapshot = await captureRef(
+              cardRef as unknown as Parameters<typeof captureRef>[0],
+              Platform.OS === 'web' ? { result: 'base64' } : {},
+            );
             cleanupShareImage?.();
             await Sharing.shareAsync(snapshot);
           } else {

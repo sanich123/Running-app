@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
-import type { MaterialCommunityIcons } from '@expo/vector-icons';
+import type { MaterialDesignIconsIconName } from '@react-native-vector-icons/material-design-icons/static';
 
 export interface SettingsRowProps {
   testID?: string;
-  icon?: keyof typeof MaterialCommunityIcons.glyphMap;
+  icon?: MaterialDesignIconsIconName;
   title: string;
   description?: string;
   onPress?: () => void;

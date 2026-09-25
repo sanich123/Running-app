@@ -7,6 +7,7 @@ import useAppInitializationBase from './use-app-initialization-base';
 
 const THEME_ATTRIBUTE = 'data-theme';
 const DARK_MODE_QUERY = '(prefers-color-scheme: dark)';
+type ColorSchemeOverride = ColorSchemeName | 'auto' | 'unspecified';
 
 function getSystemColorScheme(): 'light' | 'dark' {
   return window.matchMedia(DARK_MODE_QUERY).matches ? 'dark' : 'light';
@@ -23,7 +24,8 @@ export default function useAppInitialization() {
   const [isCustomAppearanceLoaded, setIsCustomAppearanceLoaded] = useState(false);
 
   useEffect(() => {
-    Appearance.setColorScheme = (scheme: ColorSchemeName) => {
+    // eslint-disable-next-line import-x/namespace
+    Appearance.setColorScheme = (scheme: ColorSchemeOverride) => {
       if (scheme === 'light' || scheme === 'dark') {
         document.documentElement.setAttribute(THEME_ATTRIBUTE, scheme);
       } else {
@@ -31,8 +33,10 @@ export default function useAppInitialization() {
       }
     };
 
+    // eslint-disable-next-line import-x/namespace
     Appearance.getColorScheme = getWebColorScheme;
 
+    // eslint-disable-next-line import-x/namespace
     Appearance.addChangeListener = (listener) => {
       const systemTheme = window.matchMedia(DARK_MODE_QUERY);
       const systemThemeListener = () => listener({ colorScheme: getWebColorScheme() });

@@ -248,6 +248,15 @@ export interface StatisticMetricResponse {
   totalItems: number;
 }
 
+export interface DailyActivityStatisticsResponse {
+  duration: number;
+  distance: number;
+  date: string;
+  sport: string;
+}
+
+export type DailyActivitiesStatisticsResponse = Record<string, DailyActivityStatisticsResponse[]>;
+
 interface MonthActivityResponse {
   duration: number;
   distance: number;
@@ -264,7 +273,13 @@ export interface MonthStatisticsResponse {
 
 export type YearStatisticsResponse = {
   isUserHasActivities: boolean;
-} & Record<string, boolean | Record<string, YearCategoryStatistics>>;
+} & Record<
+  string,
+  | boolean
+  | (Record<string, YearCategoryStatistics | DailyActivitiesStatisticsResponse> & {
+      dailyActivities?: DailyActivitiesStatisticsResponse;
+    })
+>;
 
 export type YearCategoryStatistics = StatisticMetricResponse & Record<string, number | StatisticMetricResponse>;
 

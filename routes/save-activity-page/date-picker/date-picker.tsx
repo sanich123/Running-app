@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import DatePicker from 'react-native-date-picker';
+import { DatePickerModal, en, registerTranslation, ru, TimePickerModal } from 'react-native-paper-dates';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
 import { DATE_TIME_PICKER_BTN_ID, DATE_TIME_PICKER } from './const';
-import { clampDateToMaximum, formatSelectedDate } from './utils';
+import { clampDateToMaximum, formatSelectedDate, setTimeOnDate } from './utils';
+
+registerTranslation('en', en);
+registerTranslation('ru', ru);
 
 interface DateTimePickerProps {
   maximumDate?: Date;
@@ -14,18 +17,24 @@ interface DateTimePickerProps {
 export default function DateTimePicker({ maximumDate }: DateTimePickerProps) {
   const { manualDate } = useManualActivityParams();
   const { setManualDate } = useSetManualActivityParams();
-  const [open, setOpen] = useState(false);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [timePickerOpen, setTimePickerOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>();
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const shouldBeDisabled = isSavingDisabled;
   const displayedDate = clampDateToMaximum(new Date(manualDate), maximumDate);
+  const locale = language === 'russian' ? 'ru' : 'en';
 
   return (
     <>
       <Pressable
         testID={DATE_TIME_PICKER_BTN_ID}
-        onPress={() => setOpen(true)}
+        onPress={() => {
+          setSelectedDate(displayedDate);
+          setDatePickerOpen(true);
+        }}
         accessibilityRole="button"
         accessibilityLabel={DATE_TIME_PICKER[language].title}
         disabled={shouldBeDisabled}
@@ -47,19 +56,39 @@ export default function DateTimePicker({ maximumDate }: DateTimePickerProps) {
           <Icon source="chevron-down" size={22} color={colors.onSurfaceVariant} />
         </View>
       </Pressable>
-      <DatePicker
-        modal
-        open={open}
-        date={clampDateToMaximum(new Date(manualDate), maximumDate)}
-        maximumDate={maximumDate}
-        onConfirm={(date) => {
-          setOpen(false);
-          setManualDate(clampDateToMaximum(date, maximumDate));
+      <DatePickerModal
+        mode="single"
+        visible={datePickerOpen}
+        date={displayedDate}
+        locale={locale}
+        label={DATE_TIME_PICKER[language].title}
+        saveLabel={DATE_TIME_PICKER[language].confirm}
+        startWeekOnMonday
+        validRange={maximumDate ? { endDate: maximumDate } : undefined}
+        onDismiss={() => setDatePickerOpen(false)}
+        onConfirm={({ date }) => {
+          if (!date) return;
+          const nextDate = clampDateToMaximum(date, maximumDate);
+          setDatePickerOpen(false);
+          setSelectedDate(nextDate);
+          setTimePickerOpen(true);
         }}
-        onCancel={() => setOpen(false)}
-        title={DATE_TIME_PICKER[language].title}
-        confirmText={DATE_TIME_PICKER[language].confirm}
-        cancelText={DATE_TIME_PICKER[language].cancel}
+      />
+      <TimePickerModal
+        visible={timePickerOpen}
+        locale={locale}
+        label={DATE_TIME_PICKER[language].timeTitle}
+        cancelLabel={DATE_TIME_PICKER[language].cancel}
+        confirmLabel={DATE_TIME_PICKER[language].confirm}
+        use24HourClock
+        hours={(selectedDate ?? displayedDate).getHours()}
+        minutes={(selectedDate ?? displayedDate).getMinutes()}
+        onDismiss={() => setTimePickerOpen(false)}
+        onConfirm={({ hours, minutes }) => {
+          const dateWithTime = setTimeOnDate(selectedDate ?? displayedDate, hours, minutes);
+          setTimePickerOpen(false);
+          setManualDate(clampDateToMaximum(dateWithTime, maximumDate));
+        }}
       />
     </>
   );

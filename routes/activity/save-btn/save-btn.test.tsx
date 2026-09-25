@@ -46,6 +46,7 @@ let mockManualActivityParams = {
   mode: mockManualActivityMode,
 };
 jest.mock('expo-router', () => ({
+  router: { replace: jest.fn() },
   useRouter: () => ({ back: mockBack, replace: mockReplace }),
   useLocalSearchParams: () => mockManualActivityParams,
   useGlobalSearchParams: () => mockManualActivityParams,

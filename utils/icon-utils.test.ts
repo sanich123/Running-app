@@ -23,9 +23,9 @@ describe('sport icons', () => {
     expect(getIconNameByTypeOfSport(sport)).toBe(iconName);
   });
 
-  it('creates a material icon with the requested size', () => {
-    const icon = getIconByTypeOfSport(SPORTS_BTNS_VALUES.run, 24);
+  it('creates a themed material icon with the requested size', () => {
+    const icon = getIconByTypeOfSport(SPORTS_BTNS_VALUES.run, 24, '#AAB4C3');
 
-    expect(icon.props).toEqual(expect.objectContaining({ name: 'run', size: 24 }));
+    expect(icon.props).toEqual(expect.objectContaining({ name: 'run', size: 24, color: '#AAB4C3' }));
   });
 });

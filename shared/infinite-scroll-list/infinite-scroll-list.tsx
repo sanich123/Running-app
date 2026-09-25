@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { FlatList, Platform, type ViewToken } from 'react-native';
+import { FlatList, Platform } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import UnsendedActivitiesIndicator from '@S/infinite-scroll-list/unsended-activities/unsended-activities-indicator';
@@ -10,6 +10,9 @@ import type { InfiniteScrollListProps } from './type';
 
 const PREFETCH_REMAINING_ITEMS = 10;
 const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 50 };
+interface ViewToken {
+  index: number | undefined;
+}
 
 export default function InfiniteScrollList({
   dataToRender,
@@ -42,14 +45,17 @@ export default function InfiniteScrollList({
     loadNextPageRef.current = loadNextPage;
   }, [loadNextPage]);
 
-  const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken[]; changed: ViewToken[] }) => {
     const lastVisibleIndex = viewableItems.reduce((maxIndex, item) => Math.max(maxIndex, item.index ?? -1), -1);
     const remainingItems = dataLength.current - lastVisibleIndex - 1;
 
     if (lastVisibleIndex >= 0 && remainingItems <= PREFETCH_REMAINING_ITEMS) {
       void loadNextPageRef.current();
     }
-  }, []);
+    },
+    [],
+  );
 
   return (
     <FlatList
@@ -67,7 +73,7 @@ export default function InfiniteScrollList({
       onViewableItemsChanged={onViewableItemsChanged}
       onEndReachedThreshold={0.8}
       onEndReached={loadNextPage}
-      ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" /> : null}
+      ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" /> : undefined}
       ListHeaderComponent={() =>
         unsyncedActivities?.length ? <UnsendedActivitiesIndicator /> : dataToRender?.length ? <WeekStatistics /> : null
       }

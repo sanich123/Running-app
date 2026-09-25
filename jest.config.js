@@ -16,6 +16,7 @@ const config = {
     'node_modules/(?!(jest-)?react-native|@react-native|expo|@expo|@expo-google-fonts|standard-navigation|react-navigation|@react-navigation|@unimodules|unimodules|sentry-expo|native-base|react-native-svg|@rnmapbox|react-redux|immer|msw|@mswjs|@open-draft|until-async|rettime|strict-event-emitter|headers-polyfill)',
   ],
   moduleNameMapper: {
+    '^react-native/asset-registry$': '<rootDir>/node_modules/react-native/src/asset-registry.js',
     '\\.(css)$': '<rootDir>/tests/utils/style-mock.ts',
     '^@Routes/(.*)$': '<rootDir>/routes/$1',
     '^@S/(.*)$': '<rootDir>/shared/$1',

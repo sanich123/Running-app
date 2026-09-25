@@ -84,7 +84,9 @@ export default function ChangePassword() {
             <Button
               testID={CHANGE_PASSWORD_TEST_ID.submit}
               mode="contained"
-              onPress={handleSubmit(submit)}
+              onPress={() => {
+                void handleSubmit(submit)();
+              }}
               loading={isLoading}
               disabled={isLoading}
               contentStyle={styles.submitContent}

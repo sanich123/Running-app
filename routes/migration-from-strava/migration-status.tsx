@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vector-icons/material-design-icons/static';
 import { View, StyleSheet } from 'react-native';
 import { ActivityIndicator, IconButton, ProgressBar, Text, useTheme } from 'react-native-paper';
 import type { MigrationCopy } from './const';

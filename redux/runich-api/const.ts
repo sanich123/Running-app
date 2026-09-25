@@ -159,7 +159,11 @@ export async function baseQueryWithReauth(args: string | FetchArgs, api: BaseQue
       (result.error.originalStatus === 502 || result.error.originalStatus === 503));
 
   if (isGatewayFailure) {
-    router.replace(`/${ROUTES.maintenance}`);
+    try {
+      router.replace(`/${ROUTES.maintenance}`);
+    } catch {
+      // The imperative router can be unavailable before the first render. Keep the API error intact.
+    }
   }
 
   return result;

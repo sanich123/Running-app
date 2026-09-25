@@ -64,7 +64,7 @@ export default function ListOfUsers() {
           removeClippedSubviews={Platform.OS === 'android'}
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={lastPage?.hasMore ? <ActivityIndicator size="small" /> : null}
+          ListFooterComponent={lastPage?.hasMore ? <ActivityIndicator size="small" /> : undefined}
         />
       ) : isError ? (
         <View style={styles.stateOverlay}>

@@ -39,7 +39,12 @@ export default function Feed() {
   }, [appConfig?.appVersion, replace]);
 
   return (
-    <CrossPlatformLayout edges={[]} isLoading={isLoading} isError={isError}>
+    <CrossPlatformLayout
+      edges={[]}
+      isLoading={isLoading}
+      isError={isError}
+      scrollViewEnabled={activities.length === 0}
+      refetch={refetch}>
       {isLoading ? (
         <ActivityIndicator size="large" testID="homeActivityIndicator" />
       ) : isSuccess ? (

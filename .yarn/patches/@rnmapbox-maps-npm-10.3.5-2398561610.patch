@@ -1,0 +1,79 @@
+diff --git a/android/build.gradle b/android/build.gradle
+index 7de0f2f4b785131820411cefef9216287a54d784..b78b6b2764ef02f715991f093c2b2df63fba3a4e 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -245,7 +245,7 @@ Please upgrade to Mapbox v11.x or use @rnmapbox/maps 10.2.x
+     buildTypes {
+         release {
+             minifyEnabled false
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
++            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+         }
+     }
+ }
+diff --git a/android/src/main/java/com/rnmapbox/rnmbx/utils/DownloadMapImageTask.kt b/android/src/main/java/com/rnmapbox/rnmbx/utils/DownloadMapImageTask.kt
+index 2638b1176ae4d8b28647f781a3bf39433780a73c..1ae328eb38afe1936fe36bd6410224b7b59140a6 100644
+--- a/android/src/main/java/com/rnmapbox/rnmbx/utils/DownloadMapImageTask.kt
++++ b/android/src/main/java/com/rnmapbox/rnmbx/utils/DownloadMapImageTask.kt
+@@ -77,20 +77,21 @@ class DownloadMapImageTask(context: Context, map: MapboxMap, imageManager: Image
+             result = DataSources.waitForFinalResult(dataSource)
+             result?.get()?.let { image ->
+                 if (image is CloseableStaticBitmap) {
+-                    val bitmap = image.underlyingBitmap.copy(Bitmap.Config.ARGB_8888, true)
+-                    bitmap.density = DisplayMetrics.DENSITY_DEFAULT
++                    image.underlyingBitmap?.copy(Bitmap.Config.ARGB_8888, true)?.let { bitmap ->
++                        bitmap.density = DisplayMetrics.DENSITY_DEFAULT
+ 
+-                    CoroutineScope(Dispatchers.Main).launch {
+-                        val style = mMap.get()?.getStyle()
+-                        if (style != null) {
+-                            mImageManager.get()?.resolve(key, bitmap)
+-                            style.addBitmapImage(key, bitmap, imageEntry.info)
+-                        } else {
+-                            Log.e(LOG_TAG, "Failed to get map style to add bitmap: $uri")
++                        CoroutineScope(Dispatchers.Main).launch {
++                            val style = mMap.get()?.getStyle()
++                            if (style != null) {
++                                mImageManager.get()?.resolve(key, bitmap)
++                                style.addBitmapImage(key, bitmap, imageEntry.info)
++                            } else {
++                                Log.e(LOG_TAG, "Failed to get map style to add bitmap: $uri")
++                            }
+                         }
+-                    }
+ 
+-                    DownloadedImage(key, bitmap, imageEntry.info)
++                        DownloadedImage(key, bitmap, imageEntry.info)
++                    }
+                 } else null
+             }
+         } catch (e: Throwable) {
+diff --git a/ios/RNMBX/RNMBXMarkerViewComponentView.mm b/ios/RNMBX/RNMBXMarkerViewComponentView.mm
+index 871bbe4f6552bd57cd8336fcde593a342a6480c2..c6a6aed203e267f668e09581094426ff0e5222fa 100644
+--- a/ios/RNMBX/RNMBXMarkerViewComponentView.mm
++++ b/ios/RNMBX/RNMBXMarkerViewComponentView.mm
+@@ -99,17 +99,8 @@ using namespace facebook::react;
+       next = CGRectMake(0, 0, next.size.width, next.size.height);
+     }
+     
+-    LayoutMetrics newLayoutMetrics = LayoutMetrics{
+-        RCTRectFromCGRect(next),
+-        layoutMetrics.contentInsets,
+-        layoutMetrics.borderWidth,
+-        layoutMetrics.displayType,
+-        layoutMetrics.positionType, // RN074
+-        layoutMetrics.layoutDirection,
+-        layoutMetrics.wasLeftAndRightSwapped,
+-        layoutMetrics.pointScaleFactor,
+-        layoutMetrics.overflowInset
+-    };
++    LayoutMetrics newLayoutMetrics = layoutMetrics;
++    newLayoutMetrics.frame = RCTRectFromCGRect(next);
+ 
+     [super updateLayoutMetrics:newLayoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+     if (frameDidChange) {
+@@ -124,4 +115,3 @@ Class<RCTComponentViewProtocol> RNMBXMarkerViewCls(void)
+ {
+   return RNMBXMarkerViewComponentView.class;
+ }
+-

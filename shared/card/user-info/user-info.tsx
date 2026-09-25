@@ -52,7 +52,7 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.metaText, { color: colors.onSurfaceVariant }]}>
-              {sport ? getIconByTypeOfSport(sport as SPORTS_BTNS_VALUES) : ''}
+              {sport ? getIconByTypeOfSport(sport as SPORTS_BTNS_VALUES, 15, colors.onSurfaceVariant) : ''}
               {`${size === 'small' ? '' : ' '}${formatDate(date, language)} ${getHoursMinutes(date, language)}`}
             </Text>
           </View>

@@ -9,14 +9,14 @@ export default function CalendarDateEmpty({ isTitle, isEmptyCell, dateValue }: C
       style={[
         styles.dateItem,
         {
-          borderWidth: isEmptyCell || !isTitle ? 0 : 1,
-          borderColor: colors.onBackground,
+          backgroundColor: isEmptyCell ? 'transparent' : colors.surfaceVariant,
+          borderColor: colors.outlineVariant,
         },
       ]}>
       {!isEmptyCell && (
         <Text
           variant={isTitle ? 'labelSmall' : 'bodySmall'}
-          style={{ color: isTitle ? colors.onSurfaceVariant : colors.onSurface }}>
+          style={[styles.dateValue, { color: isTitle ? colors.onSurfaceVariant : colors.onSurface }]}>
           {dateValue}
         </Text>
       )}
@@ -26,11 +26,12 @@ export default function CalendarDateEmpty({ isTitle, isEmptyCell, dateValue }: C
 
 const styles = StyleSheet.create({
   dateItem: {
-    height: 40,
+    height: 54,
     width: '100%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 14,
   },
+  dateValue: { fontWeight: '600' },
 });

@@ -1,10 +1,11 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": "expo/tsconfig.base.json",
   "compilerOptions": {
     "lib": ["dom", "esnext", "dom.iterable"],
     "jsx": "react-jsx",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "customConditions": ["types"],
     "noEmit": true,
     "target": "es6",
     "skipLibCheck": true,

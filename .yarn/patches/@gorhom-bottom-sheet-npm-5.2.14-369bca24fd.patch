@@ -1,0 +1,83 @@
+diff --git a/lib/commonjs/hooks/useScrollHandler.js b/lib/commonjs/hooks/useScrollHandler.js
+index 5a07ca96b44c6a9afafe14e61548ef38e6363802..6e959ea64d6bbe476c6e994a83a7b691704cec27 100644
+--- a/lib/commonjs/hooks/useScrollHandler.js
++++ b/lib/commonjs/hooks/useScrollHandler.js
+@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
+ });
+ exports.useScrollHandler = void 0;
+ var _reactNativeReanimated = require("react-native-reanimated");
++var _reactNative = require("react-native");
+ var _utilities = require("../utilities");
+ var _useScrollEventsHandlersDefault = require("./useScrollEventsHandlersDefault");
+ const useScrollHandler = (useScrollEventsHandlers = _useScrollEventsHandlersDefault.useScrollEventsHandlersDefault, onScroll, onScrollBeginDrag, onScrollEndDrag) => {
+@@ -51,7 +52,7 @@ const useScrollHandler = (useScrollEventsHandlers = _useScrollEventsHandlersDefa
+     },
+     onMomentumBegin: handleOnMomentumBegin,
+     onMomentumEnd: handleOnMomentumEnd
+-  }, [handleOnScroll, handleOnBeginDrag, handleOnEndDrag, handleOnMomentumBegin, handleOnMomentumEnd, onScroll, onScrollBeginDrag, onScrollEndDrag]);
++  }, _reactNative.Platform.OS === 'web' ? [handleOnScroll, handleOnBeginDrag, handleOnEndDrag, handleOnMomentumBegin, handleOnMomentumEnd, onScroll, onScrollBeginDrag, onScrollEndDrag] : undefined);
+   return {
+     scrollHandler,
+     scrollableRef,
+diff --git a/lib/module/hooks/useScrollHandler.js b/lib/module/hooks/useScrollHandler.js
+index 6ed8293b72406cbd22f5935b64ba86e2350ea368..44d8e45d1c8bb43bd00f6e52d66d31069de71cb7 100644
+--- a/lib/module/hooks/useScrollHandler.js
++++ b/lib/module/hooks/useScrollHandler.js
+@@ -1,6 +1,7 @@
+ "use strict";
+ 
+ import { runOnJS, useAnimatedRef, useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
++import { Platform } from 'react-native';
+ import { workletNoop as noop } from '../utilities';
+ import { useScrollEventsHandlersDefault } from './useScrollEventsHandlersDefault';
+ export const useScrollHandler = (useScrollEventsHandlers = useScrollEventsHandlersDefault, onScroll, onScrollBeginDrag, onScrollEndDrag) => {
+@@ -47,7 +48,7 @@ export const useScrollHandler = (useScrollEventsHandlers = useScrollEventsHandle
+     },
+     onMomentumBegin: handleOnMomentumBegin,
+     onMomentumEnd: handleOnMomentumEnd
+-  }, [handleOnScroll, handleOnBeginDrag, handleOnEndDrag, handleOnMomentumBegin, handleOnMomentumEnd, onScroll, onScrollBeginDrag, onScrollEndDrag]);
++  }, Platform.OS === 'web' ? [handleOnScroll, handleOnBeginDrag, handleOnEndDrag, handleOnMomentumBegin, handleOnMomentumEnd, onScroll, onScrollBeginDrag, onScrollEndDrag] : undefined);
+   return {
+     scrollHandler,
+     scrollableRef,
+diff --git a/src/hooks/useScrollHandler.ts b/src/hooks/useScrollHandler.ts
+index a7910834920a83cfc49cb52b338a656c2aef4e07..69a9244fcff3b7d5e2b5d616a1bf65dbe4b5be73 100644
+--- a/src/hooks/useScrollHandler.ts
++++ b/src/hooks/useScrollHandler.ts
+@@ -4,6 +4,7 @@ import {
+   useAnimatedScrollHandler,
+   useSharedValue,
+ } from 'react-native-reanimated';
++import { Platform } from 'react-native';
+ import type { Scrollable, ScrollableEvent } from '../types';
+ import { workletNoop as noop } from '../utilities';
+ import { useScrollEventsHandlersDefault } from './useScrollEventsHandlersDefault';
+@@ -56,16 +57,18 @@ export const useScrollHandler = (
+       onMomentumBegin: handleOnMomentumBegin,
+       onMomentumEnd: handleOnMomentumEnd,
+     },
+-    [
+-      handleOnScroll,
+-      handleOnBeginDrag,
+-      handleOnEndDrag,
+-      handleOnMomentumBegin,
+-      handleOnMomentumEnd,
+-      onScroll,
+-      onScrollBeginDrag,
+-      onScrollEndDrag,
+-    ]
++    Platform.OS === 'web'
++      ? [
++          handleOnScroll,
++          handleOnBeginDrag,
++          handleOnEndDrag,
++          handleOnMomentumBegin,
++          handleOnMomentumEnd,
++          onScroll,
++          onScrollBeginDrag,
++          onScrollEndDrag,
++        ]
++      : undefined
+   );
+ 
+   return { scrollHandler, scrollableRef, scrollableContentOffsetY };

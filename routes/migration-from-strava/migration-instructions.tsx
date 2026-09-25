@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vector-icons/material-design-icons/static';
 import { View, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import type { Href } from 'expo-router';

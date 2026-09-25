@@ -1,5 +1,5 @@
 import { Suspense, useEffect } from 'react';
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from 'expo-router/native-tabs';
 import { Platform, View } from 'react-native';
 import { Tabs, usePathname, useRouter } from 'expo-router';
 import { Icon, useTheme } from 'react-native-paper';

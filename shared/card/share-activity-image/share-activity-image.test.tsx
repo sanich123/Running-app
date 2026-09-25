@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createRef, type ComponentRef } from 'react';
 import { screen } from '@testing-library/react-native';
 import type { View } from 'react-native';
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
@@ -24,7 +24,7 @@ describe('share activity image', () => {
         weatherWindSpeed={6}
         weatherCode={0}
         caloriesActive={742}
-        cardRef={createRef<View>()}
+        cardRef={createRef<ComponentRef<typeof View>>()}
       />,
     );
 
@@ -61,7 +61,13 @@ describe('share activity image', () => {
 
   it('uses the themed fallback when the activity has no map image', async () => {
     await renderWithProviders(
-      <ShareActivityImage distance={0} duration={0} date="not-a-date" title="" cardRef={createRef<View>()} />,
+      <ShareActivityImage
+        distance={0}
+        duration={0}
+        date="not-a-date"
+        title=""
+        cardRef={createRef<ComponentRef<typeof View>>()}
+      />,
     );
     expect(screen.getByText('бег')).toBeOnTheScreen();
     expect(screen.queryByText('not-a-date')).not.toBeOnTheScreen();
@@ -75,7 +81,7 @@ describe('share activity image', () => {
         date="2026-08-09T10:00:00.000Z"
         title="Велопрогулка"
         sport="bike"
-        cardRef={createRef<View>()}
+        cardRef={createRef<ComponentRef<typeof View>>()}
       />,
     );
 

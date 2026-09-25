@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vector-icons/material-design-icons/static';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import type { SettingsRowProps } from './types';

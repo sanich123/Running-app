@@ -100,7 +100,7 @@ describe('infinite scroll list', () => {
       />,
     );
 
-    expect(screen.getByTestId('infinite-scroll-list').props.ListFooterComponent).toBeNull();
+    expect(screen.getByTestId('infinite-scroll-list').props.ListFooterComponent).toBeUndefined();
   });
 
   it('shows a small footer loader only while the next page is fetching', async () => {

@@ -8,6 +8,7 @@ import MonthStatistics from '@Routes/statistic/month-statistics/month-statistics
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import type { MonthMetrics } from '@Routes/statistic/charts/types';
 
 const mockPush = jest.fn();
 let mockParams = { userId: MOCK_SERVER_IDS.userId, year: '2026', month: '7' };
@@ -26,7 +27,7 @@ function AnnualStatisticsPage() {
   const { data, isLoading } = useGetAnnualStatisticsByUserIdQuery({ userId: MOCK_SERVER_IDS.userId });
   if (isLoading || !data) return <ActivityIndicator testID="statistics-loading" />;
   const yearStatistics = data['2026'];
-  const monthMetrics = typeof yearStatistics === 'object' && yearStatistics ? yearStatistics.all : {};
+  const monthMetrics = typeof yearStatistics === 'object' && yearStatistics ? (yearStatistics.all as MonthMetrics) : {};
 
   return (
     <>

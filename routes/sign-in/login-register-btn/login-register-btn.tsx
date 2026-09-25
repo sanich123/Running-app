@@ -60,43 +60,45 @@ export default function LoginRegisterBtn({
         (authStep === SignInPageStates.login && !legalConsentAccepted) ||
         (authStep === SignInPageStates.register && !legalConsentAccepted)
       }
-      onPress={handleSubmit(async ({ email, password }: EmailPasswordData) => {
-        dispatch(setIsDisabledWhenLogining(true));
-        dispatch(saveEmail(email));
-        dispatch(savePassword(password));
-        if (authStep === SignInPageStates.emailLink) {
-          return requestEmailLink({ email })
-            .unwrap()
-            .then(({ message }) => successToast(`${message}. ${EMAIL_DELIVERY_NOTICE[language]}`))
-            .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
-            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
-        }
-        if (authStep === SignInPageStates.register) {
-          return registerUser({ email, password })
-            .unwrap()
-            .then(() => push(confirmEmailPage(email, 'registration')))
-            .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
-            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
-        }
-        if (authStep === SignInPageStates.reset) {
-          return getEmailCodeForPassword({ email })
-            .unwrap()
-            .then(() => push(confirmEmailPage(email, 'change-password')))
-            .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
-            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
-        }
-        if (authStep === SignInPageStates.login) {
-          return await loginUser({ email, password })
-            .unwrap()
-            .then(async (session) => {
-              dispatch(setAuthSession(session));
-              await flushAuthPersistence();
-              replace(ROUTES.root);
-            })
-            .catch((error) => errorToast('', error))
-            .finally(() => dispatch(setIsDisabledWhenLogining(false)));
-        }
-      })}>
+      onPress={() => {
+        void handleSubmit(async ({ email, password }: EmailPasswordData) => {
+          dispatch(setIsDisabledWhenLogining(true));
+          dispatch(saveEmail(email));
+          dispatch(savePassword(password));
+          if (authStep === SignInPageStates.emailLink) {
+            return requestEmailLink({ email })
+              .unwrap()
+              .then(({ message }) => successToast(`${message}. ${EMAIL_DELIVERY_NOTICE[language]}`))
+              .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
+              .finally(() => dispatch(setIsDisabledWhenLogining(false)));
+          }
+          if (authStep === SignInPageStates.register) {
+            return registerUser({ email, password })
+              .unwrap()
+              .then(() => push(confirmEmailPage(email, 'registration')))
+              .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
+              .finally(() => dispatch(setIsDisabledWhenLogining(false)));
+          }
+          if (authStep === SignInPageStates.reset) {
+            return getEmailCodeForPassword({ email })
+              .unwrap()
+              .then(() => push(confirmEmailPage(email, 'change-password')))
+              .catch((error) => errorToast(EMAIL_SEND_ERROR, error))
+              .finally(() => dispatch(setIsDisabledWhenLogining(false)));
+          }
+          if (authStep === SignInPageStates.login) {
+            return await loginUser({ email, password })
+              .unwrap()
+              .then(async (session) => {
+                dispatch(setAuthSession(session));
+                await flushAuthPersistence();
+                replace(ROUTES.root);
+              })
+              .catch((error) => errorToast('', error))
+              .finally(() => dispatch(setIsDisabledWhenLogining(false)));
+          }
+        })();
+      }}>
       {!isSubmitting && authStep === SignInPageStates.register && REGISTER_BTN[language].register}
       {!isSubmitting && authStep === SignInPageStates.login && LOGIN_BTN[language].login}
       {!isSubmitting && authStep === SignInPageStates.reset && RESET_BTN[language].login}

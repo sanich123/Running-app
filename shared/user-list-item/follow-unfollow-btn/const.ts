@@ -7,8 +7,8 @@ export const FOLLOW_UNFOLLOW_BTN = {
     errorMsg: 'An error',
   },
   [LANGUAGES.russian]: {
-    follow: 'Отслеживать',
-    unfollow: 'Не отслеживать',
+    follow: 'Подписаться',
+    unfollow: 'Отписаться',
     errorMsg: 'Ошибка',
   },
 };

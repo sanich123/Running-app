@@ -1,4 +1,8 @@
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import {
+  MaterialDesignIcons,
+  type MaterialDesignIconsIconName,
+} from '@react-native-vector-icons/material-design-icons/static';
 import { SystemBars } from 'react-native-edge-to-edge';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
@@ -42,7 +46,22 @@ export default function AppShell() {
       <SafeAreaProvider>
         <KeyboardProvider>
           <SystemBars style="auto" />
-          <PaperProvider theme={paperTheme}>
+          <PaperProvider
+            theme={paperTheme}
+            settings={{
+              icon: ({ name, color, size, direction, testID }) => (
+                <MaterialDesignIcons
+                  name={name as MaterialDesignIconsIconName}
+                  color={color}
+                  size={size}
+                  testID={testID}
+                  style={{
+                    transform: [{ scaleX: direction === 'rtl' ? -1 : 1 }],
+                    lineHeight: size,
+                  }}
+                />
+              ),
+            }}>
             <BottomSheetModalProvider>
               <MigrationStatusSync />
               <Stack
