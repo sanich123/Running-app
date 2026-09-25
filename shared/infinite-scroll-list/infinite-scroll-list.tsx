@@ -47,12 +47,12 @@ export default function InfiniteScrollList({
 
   const onViewableItemsChanged = useCallback(
     ({ viewableItems }: { viewableItems: ViewToken[]; changed: ViewToken[] }) => {
-    const lastVisibleIndex = viewableItems.reduce((maxIndex, item) => Math.max(maxIndex, item.index ?? -1), -1);
-    const remainingItems = dataLength.current - lastVisibleIndex - 1;
+      const lastVisibleIndex = viewableItems.reduce((maxIndex, item) => Math.max(maxIndex, item.index ?? -1), -1);
+      const remainingItems = dataLength.current - lastVisibleIndex - 1;
 
-    if (lastVisibleIndex >= 0 && remainingItems <= PREFETCH_REMAINING_ITEMS) {
-      void loadNextPageRef.current();
-    }
+      if (lastVisibleIndex >= 0 && remainingItems <= PREFETCH_REMAINING_ITEMS) {
+        void loadNextPageRef.current();
+      }
     },
     [],
   );

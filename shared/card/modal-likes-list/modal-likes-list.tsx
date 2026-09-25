@@ -43,13 +43,13 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength }: Mod
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) }}
         data={likes}
         ListEmptyComponent={
-            isSuccess ? (
-              <EmptyState
+          isSuccess ? (
+            <EmptyState
               icon="heart-outline"
               title={EMPTY_STATE_COPY[language].likes.title}
               message={EMPTY_STATE_COPY[language].likes.message}
             />
-            ) : undefined
+          ) : undefined
         }
         renderItem={({ item: { profile } }: { item: LikeListResponse }) => (
           <UserListItem
