@@ -12,12 +12,7 @@ import ErrorComponent from '@S/error-component/error-component';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
 import ActivityHeatmap from './activity-heatmap';
 import AnnualActivityChart from './annual-activity-chart';
-import {
-  DASHBOARD_LABELS,
-  DASHBOARD_MONTHS,
-  DASHBOARD_SPORTS,
-  EMPTY_DASHBOARD_YEAR_DATA,
-} from './const';
+import { DASHBOARD_LABELS, DASHBOARD_MONTHS, DASHBOARD_SPORTS, EMPTY_DASHBOARD_YEAR_DATA } from './const';
 import DashboardHero from './dashboard-hero';
 import DashboardSkeleton from './dashboard-skeleton';
 import { buildDashboardYears } from './data';
@@ -131,11 +126,7 @@ export default function Dashboard() {
 
   if (shouldShowSkeleton) {
     return (
-      <CrossPlatformLayout
-        edges={[]}
-        scrollViewEnabled
-        refetch={refetch}
-        outerStyles={styles.outer}>
+      <CrossPlatformLayout edges={[]} scrollViewEnabled refetch={refetch} outerStyles={styles.outer}>
         <DashboardSkeleton />
       </CrossPlatformLayout>
     );

@@ -124,7 +124,15 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   hintText: { flexShrink: 1 },
-  summary: { alignItems: 'center', borderRadius: 12, flexDirection: 'row', gap: 5, marginLeft: 8, paddingHorizontal: 10, paddingVertical: 7 },
+  summary: {
+    alignItems: 'center',
+    borderRadius: 12,
+    flexDirection: 'row',
+    gap: 5,
+    marginLeft: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
   calendarContainer: {
     marginTop: 18,
   },
