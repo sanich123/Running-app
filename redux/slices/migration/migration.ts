@@ -43,6 +43,10 @@ const migration = createSlice({
       state.dismissedError = state.error;
       state.error = null;
     },
+    clearMigrationErrorOnServerConfirmation: (state) => {
+      state.error = null;
+      state.dismissedError = null;
+    },
     acceptMigrationJob: (state, action: PayloadAction<ActivityMigrationJobResponse>) => {
       state.jobId = action.payload.jobId;
       state.job = action.payload;
@@ -80,6 +84,7 @@ export const {
   setUploadProgress,
   setMigrationError,
   clearMigrationError,
+  clearMigrationErrorOnServerConfirmation,
   acceptMigrationJob,
   setMigrationJob,
   resetMigration,

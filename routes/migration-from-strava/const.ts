@@ -7,7 +7,7 @@ export const MIGRATION_STATES = {
   [LANGUAGES.russian]: {
     title: 'Миграция из Strava',
     howItWorks: 'Как это работает',
-    ableToTransfer: 'Перенесите все свои активности из Strava в наш сервис.',
+    ableToTransfer: 'Перенесите все свои тренировки из Strava в наш сервис.',
     moreInfo: '1. Подробная инструкция по экспорту данных',
     archiveToEmail: '2. На электронную почту придёт письмо со ссылкой на ZIP-архив',
     whereToUpload: '3. Загрузите архив с помощью кнопки ниже',
@@ -15,7 +15,9 @@ export const MIGRATION_STATES = {
     processUnZipping: 'Распаковка и повторная упаковка архива могут занять некоторое время.',
     wifiConnection: 'Для загрузки нужен стабильный интернет, желательно быстрый Wi‑Fi.',
     serverResponseTime:
-      'После загрузки архив обрабатывается в фоне. Оставайтесь на этой странице, чтобы видеть прогресс.',
+      'После подготовки архив загружается в фоновом режиме. Можно свернуть приложение, перейти к тренировке или вернуться на эту страницу позже — здесь будет актуальный прогресс.',
+    backgroundUploadLimitations:
+      'Продолжение после перезагрузки телефона и после принудительного закрытия приложения пока не поддерживается. На Android система может остановить фоновую передачу; при сбое загрузку можно повторить.',
     archiveLimit: 'Размер архива не должен превышать 100 МБ. Если нужно загрузить архив большего размера, ',
     feedbackLink: 'напишите в обратную связь',
     unzipping: 'Распаковываем архив',
@@ -23,6 +25,7 @@ export const MIGRATION_STATES = {
     zipping: 'Собираем архив',
     transfer: 'Загружаем архив на сервер',
     waitingForServer: 'Ожидаем ответа сервера',
+    uploading: 'Загружаем архив в фоне',
     queued: 'Архив принят в обработку',
     queueAhead: (count: number, position: number, total: number) =>
       `Ваша задача в очереди: ${position} из ${total}. Перед вами: ${count}.`,
@@ -32,6 +35,7 @@ export const MIGRATION_STATES = {
     cleaning: 'Удаляем временные файлы',
     successSending: 'Архив обработан, активности добавлены.',
     failed: 'Не удалось обработать архив',
+    cancelled: 'Загрузка архива отменена',
     statusError: 'Не удалось получить статус обработки. Повторяем попытку...',
     progress: 'Обработано активностей',
     processed: 'Обработано',
@@ -62,14 +66,17 @@ export const MIGRATION_STATES = {
     processUnZipping: 'Unpacking and repacking the archive may take some time.',
     wifiConnection: 'A stable internet connection is required, preferably fast Wi‑Fi.',
     serverResponseTime:
-      'After uploading, the archive is processed in the background. Stay on this page to see the progress.',
-    archiveLimit: 'The archive size must not exceed 100 MB. If you need to upload a larger archive, ',
+      'After preparation, the archive uploads in the background. You can minimize the app, record a workout, or return to this page later to see the current progress.',
+    backgroundUploadLimitations:
+      'Resuming after a phone restart or force-closing the app is not supported yet. Android may stop a background transfer; if it fails, you can upload the archive again.',
+    archiveLimit: 'The archive size must not exceed 150 MB. If you need to upload a larger archive, ',
     feedbackLink: 'contact us through feedback',
     unzipping: 'Unzipping',
     remove: 'Remove media',
     zipping: 'Repacking the archive',
     transfer: 'Uploading archive to the server',
     waitingForServer: 'Waiting for the server response',
+    uploading: 'Uploading the archive in the background',
     queued: 'Archive accepted for processing',
     queueAhead: (count: number, position: number, total: number) =>
       `Your task is ${position} of ${total} in the queue. There are ${count} tasks ahead of yours.`,
@@ -79,6 +86,7 @@ export const MIGRATION_STATES = {
     cleaning: 'Removing temporary files',
     successSending: 'Archive processed and activities imported.',
     failed: 'The archive could not be processed',
+    cancelled: 'Archive upload cancelled',
     statusError: 'Could not load the processing status. Retrying...',
     progress: 'Activities processed',
     processed: 'Processed',

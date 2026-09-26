@@ -1,5 +1,5 @@
 import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vector-icons/material-design-icons/static';
-import { View, StyleSheet } from 'react-native';
+import { Pressable, View, StyleSheet } from 'react-native';
 import { ActivityIndicator, IconButton, ProgressBar, Text, useTheme } from 'react-native-paper';
 import type { MigrationCopy } from './const';
 import type { MigrationViewState } from './hooks';
@@ -7,18 +7,44 @@ import type { MigrationViewState } from './hooks';
 export default function MigrationStatus({
   state,
   copy,
+  isProcessing,
+  isCancelAvailable,
+  onChooseArchive,
+  onCancel,
   onDismissError,
 }: {
   state: MigrationViewState;
   copy: MigrationCopy;
+  isProcessing: boolean;
+  isCancelAvailable: boolean;
+  onChooseArchive: () => void;
+  onCancel: () => void;
   onDismissError: () => void;
 }) {
   const { colors } = useTheme();
-  const shouldRender = state.isProcessing || Boolean(state.jobId) || Boolean(state.error);
-  const hasStatusError = Boolean(state.error) || state.isServerFailed;
-  const statusText = getStatusText(state, copy);
+  if (state.isInitial) {
+    return (
+      <View
+        style={[styles.uploadAction, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}
+        testID="migration-upload-action">
+        <Pressable
+          onPress={onChooseArchive}
+          testID="migration-choose"
+          accessibilityRole="button"
+          accessibilityLabel={copy.chooseArchive}
+          style={({ pressed }) => [
+            styles.uploadButton,
+            { backgroundColor: colors.primary, opacity: pressed ? 0.82 : 1 },
+          ]}>
+          <MaterialCommunityIcons name="file-upload-outline" size={42} color={colors.onPrimary} />
+        </Pressable>
+      </View>
+    );
+  }
 
-  if (!shouldRender) return null;
+  const hasStatusError = Boolean(state.error) || state.isServerFailed;
+  const canCancel = isCancelAvailable || state.job?.status === 'uploading';
+  const statusText = getStatusText(state, copy);
 
   return (
     <View
@@ -32,6 +58,16 @@ export default function MigrationStatus({
               : colors.surface,
         },
       ]}>
+      {isProcessing && canCancel && (
+        <IconButton
+          icon="close"
+          iconColor={hasStatusError ? colors.onErrorContainer : colors.onSurfaceVariant}
+          onPress={onCancel}
+          accessibilityLabel={copy.cancel}
+          testID="migration-cancel"
+          style={styles.cancelButton}
+        />
+      )}
       <View style={styles.statusHeader}>
         {state.isProcessing && <ActivityIndicator size="small" color={colors.primary} />}
         {!state.isProcessing && state.isServerCompleted && (
@@ -116,7 +152,7 @@ function QueueStatus({ state, copy }: { state: MigrationViewState; copy: Migrati
 function ServerProgress({ state, copy }: { state: MigrationViewState; copy: MigrationCopy }) {
   const { colors } = useTheme();
   const { job } = state;
-  if (!job) return null;
+  if (!job || job.status === 'uploading') return null;
 
   return (
     <View style={styles.progressDetails}>
@@ -140,6 +176,12 @@ function ServerProgress({ state, copy }: { state: MigrationViewState; copy: Migr
 
 function UploadProgress({ state, copy }: { state: MigrationViewState; copy: MigrationCopy }) {
   const { colors } = useTheme();
+  const serverProgress =
+    state.job && state.job.uploadBytesTotal > 0
+      ? Math.min(1, state.job.uploadBytesReceived / state.job.uploadBytesTotal)
+      : state.uploadProgress;
+  const received = state.job?.uploadBytesReceived ?? 0;
+  const total = state.job?.uploadBytesTotal ?? 0;
 
   return (
     <View style={styles.progressDetails} testID="migration-upload-progress">
@@ -148,10 +190,15 @@ function UploadProgress({ state, copy }: { state: MigrationViewState; copy: Migr
           {copy.uploadProgress}
         </Text>
         <Text variant="titleMedium" style={{ color: colors.primary }}>
-          {state.uploadProgressPercent}%
+          {Math.round(serverProgress * 100)}%
         </Text>
       </View>
-      <ProgressBar progress={state.uploadProgress} color={colors.primary} style={styles.progressBar} />
+      <ProgressBar progress={serverProgress} color={colors.primary} style={styles.progressBar} />
+      {total > 0 && (
+        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+          {formatBytes(received)} / {formatBytes(total)}
+        </Text>
+      )}
     </View>
   );
 }
@@ -180,9 +227,20 @@ function getStatusText(state: MigrationViewState, copy: MigrationCopy) {
   if (state.error && !state.job) return copy.error;
   if (state.isServerCompleted) return copy.successSending;
   if (state.isServerFailed) return state.job?.errorMessage || copy.failed;
+  if (state.isServerCancelled) return copy.cancelled;
+  if (state.job?.status === 'uploading') {
+    const archiveFullyReceived =
+      state.job.uploadBytesTotal > 0 && state.job.uploadBytesReceived >= state.job.uploadBytesTotal;
+    return archiveFullyReceived ? copy.waitingForServer : copy.uploading;
+  }
   if (state.job?.status === 'queued') return copy.queued;
   if (state.job?.status === 'processing') return copy.processing;
   return '';
+}
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} КБ`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
 }
 
 const styles = StyleSheet.create({
@@ -192,11 +250,13 @@ const styles = StyleSheet.create({
     minHeight: 56,
     paddingHorizontal: 14,
     paddingVertical: 12,
+    position: 'relative',
   },
   statusHeader: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: 10,
+    paddingRight: 38,
   },
   statusText: {
     flex: 1,
@@ -245,5 +305,31 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 7,
+  },
+  uploadAction: {
+    alignItems: 'center',
+    borderRadius: 22,
+    borderWidth: 1,
+    height: 128,
+    justifyContent: 'center',
+    padding: 16,
+  },
+  uploadButton: {
+    alignItems: 'center',
+    borderRadius: 38,
+    elevation: 3,
+    height: 76,
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { height: 2, width: 0 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    width: 76,
+  },
+  cancelButton: {
+    margin: 0,
+    position: 'absolute',
+    right: 4,
+    top: 2,
   },
 });
