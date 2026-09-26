@@ -1,5 +1,5 @@
 import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
-import { ActivityIndicator, Card, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Card, Icon, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES } from '@const/enums';
 import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
@@ -51,26 +51,20 @@ export default function CalendarActivities({ year, month, userId, selectedType }
       <Card.Content style={styles.content}>
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text variant="titleLarge" style={styles.title}>
-              {language === 'russian' ? 'Календарь тренировок' : 'Training calendar'}
-            </Text>
-            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-              {language === 'russian' ? 'Нажмите на день, чтобы открыть тренировку' : 'Tap a day to open a workout'}
-            </Text>
+            <View style={[styles.hint, { backgroundColor: colors.primaryContainer }]}>
+              <Icon source="gesture-tap" size={17} color={colors.onPrimaryContainer} />
+              <Text variant="bodySmall" style={[styles.hintText, { color: colors.onPrimaryContainer }]}>
+                {language === 'russian' ? 'Нажмите на день, чтобы открыть тренировку' : 'Tap a day to open a workout'}
+              </Text>
+            </View>
           </View>
           {isSuccess && (
-            <View style={styles.summary}>
-              <Text variant="labelLarge" style={{ color: colors.primary }}>
-                {visibleActivities.length}
-              </Text>
-              <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
-                {language === LANGUAGES.russian ? 'трен.' : 'workouts'}
-              </Text>
-              <Text variant="labelLarge" style={{ color: colors.primary, marginLeft: 8 }}>
+            <View style={[styles.summary, { backgroundColor: colors.surfaceVariant }]}>
+              <Text variant="titleMedium" style={{ color: colors.primary }}>
                 {activeDays}
               </Text>
               <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
-                {language === LANGUAGES.russian ? 'активн.' : 'active'}
+                {language === LANGUAGES.russian ? 'активных дней' : 'active days'}
               </Text>
             </View>
           )}
@@ -118,16 +112,25 @@ export default function CalendarActivities({ year, month, userId, selectedType }
 const styles = StyleSheet.create({
   card: { borderRadius: 18, borderWidth: 1, marginBottom: 24 },
   content: { paddingHorizontal: 12, paddingVertical: 16 },
-  header: { alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 },
+  header: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 },
   headerText: { flex: 1, minWidth: 0 },
-  title: { fontWeight: '800' },
-  summary: { alignItems: 'center', flexDirection: 'row', paddingTop: 3 },
+  hint: {
+    alignItems: 'center',
+    borderRadius: 12,
+    flexDirection: 'row',
+    flexShrink: 1,
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  hintText: { flexShrink: 1 },
+  summary: { alignItems: 'center', borderRadius: 12, flexDirection: 'row', gap: 5, marginLeft: 8, paddingHorizontal: 10, paddingVertical: 7 },
   calendarContainer: {
     marginTop: 18,
   },
   weekdayRow: { flexDirection: 'row', marginBottom: 6 },
   weekday: { textAlign: 'center' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 6 },
   gridCell: {
     paddingHorizontal: 2,
     width: '14.2857%',

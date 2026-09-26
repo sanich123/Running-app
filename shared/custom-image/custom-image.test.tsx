@@ -66,4 +66,27 @@ describe('custom image', () => {
       (Image as any).getCachePathAsync = originalGetCachePathAsync;
     }
   });
+
+  it('keeps the image source available while the cache is being checked so the blurhash can render', async () => {
+    const originalGetCachePathAsync = (Image as any).getCachePathAsync;
+    (Image as any).getCachePathAsync = jest.fn().mockResolvedValue(null);
+
+    try {
+      const result = await render(
+        <CustomImage
+          testID="custom-image-loading"
+          source={{ uri: 'https://example.com/slow-photo.jpg' }}
+          placeholder="blurhash"
+          cachePolicy="memory-disk"
+          style={{ width: 100, height: 100 }}
+        />,
+      );
+
+      const image = result.getByTestId('custom-image-loading');
+      expect(image.props.source).toEqual({ uri: 'https://example.com/slow-photo.jpg' });
+      expect(image.props.placeholder).toBe('blurhash');
+    } finally {
+      (Image as any).getCachePathAsync = originalGetCachePathAsync;
+    }
+  });
 });

@@ -13,7 +13,6 @@ import { getIconNameByTypeOfSport } from '@U/icon-utils';
 import ActivityHeatmap from './activity-heatmap';
 import AnnualActivityChart from './annual-activity-chart';
 import {
-  DASHBOARD_HEATMAP,
   DASHBOARD_LABELS,
   DASHBOARD_MONTHS,
   DASHBOARD_SPORTS,
@@ -23,7 +22,14 @@ import DashboardHero from './dashboard-hero';
 import DashboardSkeleton from './dashboard-skeleton';
 import { buildDashboardYears } from './data';
 import SportDistribution from './sport-distribution';
-import { getDateKey, getDayIntensity, groupActivitiesBySport, parseDateKey } from './utils';
+import {
+  buildHeatmapColumns,
+  getDateKey,
+  getHeatmapMonthSpans,
+  getDayIntensity,
+  groupActivitiesBySport,
+  parseDateKey,
+} from './utils';
 import type { DashboardDailyActivities, DashboardHeatmapCell, DashboardMetric, DashboardSport } from './types';
 
 export default function Dashboard() {
@@ -38,7 +44,7 @@ export default function Dashboard() {
   const [metric, setMetric] = useState<DashboardMetric>('distance');
   const [sport, setSport] = useState<DashboardSport>('all');
   const [selectedDay, setSelectedDay] = useState<Date>();
-  const [selectedMonth, setSelectedMonth] = useState(0);
+  const [selectedMonth, setSelectedMonth] = useState<number>();
   const {
     data: annualStatistics,
     isLoading,
@@ -75,21 +81,19 @@ export default function Dashboard() {
   const latestActivityDate = Object.keys(dailyActivities).sort().at(-1);
   const latestActivityDay = latestActivityDate ? parseDateKey(latestActivityDate) : undefined;
   const displayedSelectedDay = selectedDay ?? latestActivityDay ?? new Date(displayedYear ?? year, 0, 1);
-  const displayedSelectedMonth = selectedDay ? selectedMonth : (latestActivityDay?.getMonth() ?? selectedMonth);
+  const displayedSelectedMonth = selectedMonth ?? latestActivityDay?.getMonth() ?? 0;
   const selectedDayActivities = dailyActivities[getDateKey(displayedSelectedDay)] ?? [];
   const selectedDayGroups = groupActivitiesBySport(selectedDayActivities);
   const selectedDayIntensity = getDayIntensity(displayedSelectedDay, displayedSport, metric, dailyActivities);
   const chartWidth = Math.max(260, Math.min(width - 72, 520));
 
   const heatmapColumns = useMemo<DashboardHeatmapCell[][]>(
-    () =>
-      Array.from({ length: DASHBOARD_HEATMAP.columns }, (_, column) =>
-        Array.from({ length: DASHBOARD_HEATMAP.rows }, (_, row) => {
-          const date = new Date(displayedYear ?? year, 0, 1 + column * DASHBOARD_HEATMAP.rows + row);
-          return { date, intensity: getDayIntensity(date, displayedSport, metric, dailyActivities) };
-        }),
-      ),
+    () => buildHeatmapColumns(displayedYear ?? year, displayedSport, metric, dailyActivities),
     [dailyActivities, displayedSport, displayedYear, metric, year],
+  );
+  const heatmapMonths = useMemo(
+    () => getHeatmapMonthSpans(displayedYear ?? year, months, heatmapColumns),
+    [displayedYear, heatmapColumns, months, year],
   );
 
   const openMonth = (month: number) => {
@@ -100,10 +104,7 @@ export default function Dashboard() {
   const chartData = yearData.monthly[metric].map((value, index) => ({
     value,
     label: index % 2 === 0 ? months[index] : '',
-    onPress: () => {
-      setSelectedMonth(index);
-      openMonth(index);
-    },
+    onPress: () => setSelectedMonth(index),
   }));
 
   const changeYear = (direction: -1 | 1) => {
@@ -133,7 +134,6 @@ export default function Dashboard() {
       <CrossPlatformLayout
         edges={[]}
         scrollViewEnabled
-        isLoading={isLoading}
         refetch={refetch}
         outerStyles={styles.outer}>
         <DashboardSkeleton />
@@ -198,6 +198,7 @@ export default function Dashboard() {
         workoutCount={yearData.monthly.activities[displayedSelectedMonth]}
         labels={labels}
         onFocusMonth={setSelectedMonth}
+        onOpenMonth={openMonth}
       />
       <SportDistribution
         sports={yearData.sports}
@@ -211,7 +212,7 @@ export default function Dashboard() {
       />
       <ActivityHeatmap
         heatmapColumns={heatmapColumns}
-        months={months}
+        monthSpans={heatmapMonths}
         selectedDay={displayedSelectedDay}
         selectedDayGroups={selectedDayGroups}
         selectedDayIntensity={selectedDayIntensity}

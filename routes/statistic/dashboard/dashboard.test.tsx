@@ -47,12 +47,16 @@ describe('statistics dashboard', () => {
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/month-statistic')));
   });
 
-  it('opens a month calendar when a chart point is pressed', async () => {
+  it('shows the selected month when a chart point is pressed and navigates from its summary', async () => {
     await renderWithProviders(<Dashboard />);
 
     const chart = await screen.findByTestId('dashboard-line-chart');
     await act(async () => chart.props.data[4].onPress());
 
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(screen.getByTestId('dashboard-selected-month').props.accessibilityLabel).toBe('Май, Открыть месяц');
+
+    fireEvent.press(screen.getByTestId('dashboard-selected-month'));
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('month=4'));
   });
 });

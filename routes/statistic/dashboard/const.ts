@@ -10,7 +10,7 @@ export const DASHBOARD_LABELS = {
   [LANGUAGES.russian]: {
     yearActivity: 'Годовая активность',
     byMonths: 'по месяцам',
-    chartHint: 'Нажмите на точку месяца, чтобы открыть календарь',
+    chartHint: 'Нажмите на точку месяца, чтобы увидеть информацию',
     byWorkouts: 'по тренировкам',
     distance: 'Дистанция',
     duration: 'Время',
@@ -35,7 +35,7 @@ export const DASHBOARD_LABELS = {
   [LANGUAGES.english]: {
     yearActivity: 'Year activity',
     byMonths: 'by month',
-    chartHint: 'Tap a month point to open its calendar',
+    chartHint: 'Tap a month point to see its details',
     byWorkouts: 'by workouts',
     distance: 'Distance',
     duration: 'Time',
@@ -60,7 +60,6 @@ export const DASHBOARD_LABELS = {
 } as const;
 
 export const DASHBOARD_HEATMAP = {
-  columns: 52,
   rows: 7,
   cellSize: 12,
   gap: 3,

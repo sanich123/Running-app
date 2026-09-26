@@ -62,6 +62,12 @@ export interface DashboardSportOption {
 export interface DashboardHeatmapCell {
   date: Date;
   intensity: number;
+  isOutsideYear: boolean;
+}
+
+export interface DashboardHeatmapMonth {
+  label: string;
+  columnSpan: number;
 }
 
 export interface DashboardActivityGroup {

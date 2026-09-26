@@ -104,7 +104,7 @@ export default function CustomImage({
   return (
     <Image
       style={style}
-      source={{ uri: cacheStatus === 'checking' ? '' : sourceUri }}
+      source={{ uri: sourceUri }}
       contentFit={contentFit}
       testID={Platform.OS !== 'web' ? testID : undefined}
       placeholder={placeholder}

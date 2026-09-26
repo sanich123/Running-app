@@ -1,10 +1,13 @@
 import { LANGUAGES } from '@const/enums';
+import { DASHBOARD_HEATMAP } from './const';
 import type {
   DashboardDailyActivities,
   DashboardLabels,
   DashboardMetric,
   DashboardSport,
   DashboardThemeColors,
+  DashboardHeatmapCell,
+  DashboardHeatmapMonth,
 } from './types';
 
 export function formatMetricValue(
@@ -63,6 +66,67 @@ export function getDayIntensity(
   if (metric === 'activities') return Math.min(4, Math.max(1, Math.ceil(total)));
   const thresholds = metric === 'distance' ? [3, 8, 15] : [0.5, 1, 2];
   return total < thresholds[0] ? 1 : total < thresholds[1] ? 2 : total < thresholds[2] ? 3 : 4;
+}
+
+export function buildHeatmapColumns(
+  year: number,
+  sport: DashboardSport,
+  metric: DashboardMetric,
+  dailyActivities: DashboardDailyActivities,
+): DashboardHeatmapCell[][] {
+  const firstDay = new Date(year, 0, 1);
+  const firstDayOffset = (firstDay.getDay() + 6) % 7;
+  const gridStart = new Date(year, 0, 1 - firstDayOffset);
+  const lastDay = new Date(year, 11, 31);
+  const lastDayOffset = (lastDay.getDay() + 6) % 7;
+  const gridEnd = new Date(year, 11, 31 + (6 - lastDayOffset));
+  const columns: DashboardHeatmapCell[][] = [];
+
+  for (let columnStart = new Date(gridStart); columnStart <= gridEnd; columnStart.setDate(columnStart.getDate() + 7)) {
+    columns.push(
+      Array.from({ length: DASHBOARD_HEATMAP.rows }, (_, row) => {
+        const date = new Date(columnStart);
+        date.setDate(columnStart.getDate() + row);
+        const isOutsideYear = date.getFullYear() !== year;
+        return {
+          date,
+          intensity: isOutsideYear ? 0 : getDayIntensity(date, sport, metric, dailyActivities),
+          isOutsideYear,
+        };
+      }),
+    );
+  }
+
+  return columns;
+}
+
+export function getHeatmapMonthSpans(
+  year: number,
+  months: readonly string[],
+  heatmapColumns: DashboardHeatmapCell[][],
+): DashboardHeatmapMonth[] {
+  return months.map((label, month) => {
+    const startColumn = heatmapColumns.findIndex((column) =>
+      column.some(({ date }) => date.getFullYear() === year && date.getMonth() === month && date.getDate() === 1),
+    );
+    const nextStartColumn = months
+      .slice(month + 1)
+      .map((_, nextMonth) =>
+        heatmapColumns.findIndex((column) =>
+          column.some(
+            ({ date }) =>
+              date.getFullYear() === year && date.getMonth() === month + nextMonth + 1 && date.getDate() === 1,
+          ),
+        ),
+      )
+      .find((column) => column >= 0);
+    const endColumn = nextStartColumn ?? heatmapColumns.length;
+
+    return {
+      label,
+      columnSpan: Math.max(1, endColumn - Math.max(0, startColumn)),
+    };
+  });
 }
 
 export function getHeatmapColor(level: number, colors: DashboardThemeColors) {

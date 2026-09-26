@@ -22,6 +22,7 @@ interface AnnualActivityChartProps {
   workoutCount: number;
   labels: DashboardLabels;
   onFocusMonth: (index: number) => void;
+  onOpenMonth: (index: number) => void;
 }
 
 export default function AnnualActivityChart({
@@ -34,6 +35,7 @@ export default function AnnualActivityChart({
   workoutCount,
   labels,
   onFocusMonth,
+  onOpenMonth,
 }: AnnualActivityChartProps) {
   const { colors } = useTheme();
   return (
@@ -61,8 +63,8 @@ export default function AnnualActivityChart({
           dataPointsColor={colors.primary}
           dataPointsRadius={7}
           focusedDataPointRadius={9}
+          focusedDataPointColor={colors.primary}
           focusEnabled
-          showDataPointOnFocus
           xAxisColor={colors.outlineVariant}
           yAxisColor="transparent"
           xAxisLabelTextStyle={{ color: colors.onSurfaceVariant, fontSize: 10 }}
@@ -72,9 +74,10 @@ export default function AnnualActivityChart({
           {labels.chartHint}
         </Text>
         <Pressable
+          testID="dashboard-selected-month"
           accessibilityRole="button"
           accessibilityLabel={`${months[selectedMonth]}, ${labels.openMonth}`}
-          onPress={() => data[selectedMonth]?.onPress()}
+          onPress={() => onOpenMonth(selectedMonth)}
           style={[styles.monthSummary, { backgroundColor: colors.primaryContainer, borderColor: colors.primary }]}>
           <View style={styles.monthSummaryText}>
             <Text variant="labelSmall" style={{ color: colors.onPrimaryContainer }}>

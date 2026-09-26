@@ -3,13 +3,20 @@ import { Button, Card, Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
+import { DASHBOARD_HEATMAP } from './const';
 import DashboardSectionHeader from './section-header';
 import { formatDayActivityValue, formatLongDate, getDateKey, getHeatmapColor, getSportLabel, withAlpha } from './utils';
-import type { DashboardActivityGroup, DashboardHeatmapCell, DashboardLabels, DashboardMetric } from './types';
+import type {
+  DashboardActivityGroup,
+  DashboardHeatmapCell,
+  DashboardHeatmapMonth,
+  DashboardLabels,
+  DashboardMetric,
+} from './types';
 
 interface ActivityHeatmapProps {
   heatmapColumns: DashboardHeatmapCell[][];
-  months: readonly string[];
+  monthSpans: DashboardHeatmapMonth[];
   selectedDay: Date;
   selectedDayGroups: DashboardActivityGroup[];
   selectedDayIntensity: number;
@@ -22,7 +29,7 @@ interface ActivityHeatmapProps {
 
 export default function ActivityHeatmap({
   heatmapColumns,
-  months,
+  monthSpans,
   selectedDay,
   selectedDayGroups,
   selectedDayIntensity,
@@ -44,15 +51,17 @@ export default function ActivityHeatmap({
             <View>
               <View style={styles.monthLabelsRow}>
                 <View style={styles.labelSpacer} />
-                {months.map((month) => (
-                  <Text
-                    key={month}
-                    variant="labelSmall"
-                    style={[styles.monthLabel, { color: colors.onSurfaceVariant }]}>
-                    {month}
-                  </Text>
-                ))}
-                <View style={styles.monthLabelTail} />
+                <View style={styles.monthLabelsTrack}>
+                  {monthSpans.map(({ label, columnSpan }) => (
+                    <View
+                      key={label}
+                      style={{ width: columnSpan * (DASHBOARD_HEATMAP.cellSize + DASHBOARD_HEATMAP.gap) }}>
+                      <Text variant="labelSmall" style={[styles.monthLabel, { color: colors.onSurfaceVariant }]}>
+                        {label}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
               </View>
               <View style={styles.heatmapBody}>
                 <View style={styles.weekdayLabels}>
@@ -68,9 +77,11 @@ export default function ActivityHeatmap({
                 <View style={styles.heatmapGrid}>
                   {heatmapColumns.map((column, columnIndex) => (
                     <View key={columnIndex} style={styles.heatmapColumn}>
-                      {column.map(({ date, intensity }) => {
+                      {column.map(({ date, intensity, isOutsideYear }) => {
                         const isSelected = getDateKey(date) === getDateKey(selectedDay);
-                        return (
+                        return isOutsideYear ? (
+                          <View key={date.toISOString()} style={styles.emptyHeatmapCell} />
+                        ) : (
                           <Pressable
                             key={date.toISOString()}
                             testID={`dashboard-day-${getDateKey(date)}`}
@@ -161,14 +172,20 @@ const styles = StyleSheet.create({
   scrollContent: { paddingBottom: 5 },
   monthLabelsRow: { flexDirection: 'row', marginBottom: 7 },
   labelSpacer: { width: 27 },
-  monthLabel: { textAlign: 'left', width: 60 },
-  monthLabelTail: { width: 60 },
+  monthLabelsTrack: { flexDirection: 'row' },
+  monthLabel: { textAlign: 'left' },
   heatmapBody: { flexDirection: 'row' },
   weekdayLabels: { justifyContent: 'space-between', marginRight: 6, paddingVertical: 1 },
   weekdayLabel: { height: 15, textAlign: 'right', width: 21 },
-  heatmapGrid: { flexDirection: 'row', gap: 3 },
-  heatmapColumn: { gap: 3 },
-  heatmapCell: { borderColor: 'transparent', borderRadius: 3, height: 12, width: 12 },
+  heatmapGrid: { flexDirection: 'row', gap: DASHBOARD_HEATMAP.gap },
+  heatmapColumn: { gap: DASHBOARD_HEATMAP.gap },
+  heatmapCell: {
+    borderColor: 'transparent',
+    borderRadius: 3,
+    height: DASHBOARD_HEATMAP.cellSize,
+    width: DASHBOARD_HEATMAP.cellSize,
+  },
+  emptyHeatmapCell: { height: DASHBOARD_HEATMAP.cellSize, width: DASHBOARD_HEATMAP.cellSize },
   legendRow: { alignItems: 'center', flexDirection: 'row', gap: 5, justifyContent: 'flex-end', marginTop: 13 },
   legendCell: { borderRadius: 3, height: 12, width: 12 },
   selectedCard: { borderRadius: 20, borderWidth: 1, marginBottom: 24 },

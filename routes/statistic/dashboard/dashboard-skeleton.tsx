@@ -35,7 +35,7 @@ export default function DashboardSkeleton() {
 }
 
 const styles = StyleSheet.create({
-  container: { width: '100%' },
+  container: { alignSelf: 'stretch', width: '100%' },
   yearSkeletonRow: { alignItems: 'flex-end', flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 12 },
   yearSkeleton: { height: 26, width: 104 },
   card: { borderRadius: 20, borderWidth: 1, marginBottom: 12 },
