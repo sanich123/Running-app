@@ -1,10 +1,12 @@
-import type { MutableRefObject, RefObject } from 'react';
+import type { ComponentRef, MutableRefObject, RefObject } from 'react';
 import type { View } from 'react-native';
 import type { LikesSize } from './likes/const';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+
+type ViewRef = ComponentRef<typeof View>;
 
 export interface ActivityLocation {
   coords: {
@@ -97,7 +99,7 @@ export interface ActivityMediaItem {
 export interface CardBtnsProps {
   activityId: string;
   userId: string;
-  cardRef: MutableRefObject<View | null>;
+  cardRef: MutableRefObject<ViewRef | null>;
   isShowDeleteBtn: boolean;
   commentsLength: number;
   likesLength?: number;
@@ -125,7 +127,7 @@ export interface DisplayActivityMapProps {
 }
 
 export interface ShareBtnProps {
-  cardRef: MutableRefObject<View | null>;
+  cardRef: MutableRefObject<ViewRef | null>;
   prepareShareImage?: () => Promise<void>;
   cleanupShareImage?: () => void;
 }

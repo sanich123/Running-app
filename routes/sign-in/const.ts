@@ -50,12 +50,12 @@ export const AUTH_DIVIDER_TEXT = {
 
 export const SOCIAL_AUTH_TEXT = {
   [LANGUAGES.english]: {
-    yandex: 'Sign in with Yandex ID',
-    vk: 'Sign in with VK ID',
+    yandex: 'Yandex',
+    vk: 'VK',
   },
   [LANGUAGES.russian]: {
-    yandex: 'Войти с Яндекс ID',
-    vk: 'Войти с VK ID',
+    yandex: 'Яндекс',
+    vk: 'VK',
   },
 } as const;
 

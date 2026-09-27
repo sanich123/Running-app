@@ -1,7 +1,7 @@
 import { LANGUAGES } from '@const/enums';
 import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
 import { mapIndexToDayOfWeek } from './types';
-import type { ReducedDatesByDayOfTheWeek, StatisticActivities } from './types';
+import type { CalendarGridDay, ReducedDatesByDayOfTheWeek, StatisticActivities } from './types';
 
 export function getDaysOfTheMonthWithNames(
   year: string,
@@ -73,4 +73,43 @@ export function getDaysOfTheMonthWithNames(
   }
 
   return daysOfTheWeek;
+}
+
+export function getCalendarGridDays(year: string, month: string, activities: StatisticActivities): CalendarGridDay[] {
+  const numericYear = Number(year);
+  const numericMonth = Number(month);
+  const safeActivities = activities ?? [];
+  const daysInMonth = new Date(numericYear, numericMonth + 1, 0).getDate();
+  const firstDayOffset = (new Date(numericYear, numericMonth, 1).getDay() + 6) % 7;
+  const cells: CalendarGridDay[] = Array.from({ length: firstDayOffset }, () => ({
+    dateValue: '',
+    activities: [],
+    isEmptyCell: true,
+    isWeekend: false,
+  }));
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const date = new Date(numericYear, numericMonth, day);
+    const dayActivities = safeActivities.filter((activity) => {
+      const activityDate = new Date(activity.date);
+      return (
+        activityDate.getFullYear() === numericYear &&
+        activityDate.getMonth() === numericMonth &&
+        activityDate.getDate() === day
+      );
+    });
+
+    cells.push({
+      dateValue: `${day}`,
+      activities: dayActivities,
+      isEmptyCell: false,
+      isWeekend: date.getDay() === 0 || date.getDay() === 6,
+    });
+  }
+
+  while (cells.length % 7 !== 0) {
+    cells.push({ dateValue: '', activities: [], isEmptyCell: true, isWeekend: false });
+  }
+
+  return cells;
 }

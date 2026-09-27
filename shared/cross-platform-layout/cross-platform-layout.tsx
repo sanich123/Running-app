@@ -18,13 +18,14 @@ export default function CrossPlatformLayout({
   const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
   const isStatusState = Boolean(isError || isLoading);
+  const canUseScrollView = Boolean(scrollViewEnabled && (!isStatusState || (refetch && !isLoading)));
   const content = children;
 
   return (
     <SafeAreaView
       style={[{ flex: 1, backgroundColor: colors.background }, (isError || isLoading) && styles.centered]}
       edges={edges}>
-      {scrollViewEnabled && !isStatusState ? (
+      {canUseScrollView ? (
         <KeyboardAwareScrollView
           testID="cross-platform-scroll-view"
           style={styles.flex}
@@ -42,7 +43,7 @@ export default function CrossPlatformLayout({
             { ...outerStyles },
           ]}
           refreshControl={
-            refetch && (
+            refetch && !isLoading ? (
               <RefreshControl
                 testID="cross-platform-refresh-control"
                 refreshing={refreshing}
@@ -54,7 +55,7 @@ export default function CrossPlatformLayout({
                   }, 2000);
                 }}
               />
-            )
+            ) : undefined
           }>
           {content}
         </KeyboardAwareScrollView>

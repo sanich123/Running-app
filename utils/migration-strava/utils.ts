@@ -20,7 +20,11 @@ export function isMigrationArchiveOperationError(error: unknown): error is Migra
 }
 
 export function getMigrationErrorMessage(error: unknown) {
-  if (error instanceof Error) return error.message;
+  const message = error instanceof Error ? error.message : typeof error === 'string' ? error : getSerializedError(error);
+  return normalizeMigrationErrorMessage(message);
+}
+
+function getSerializedError(error: unknown) {
   if (typeof error === 'string') return error;
 
   try {
@@ -28,6 +32,32 @@ export function getMigrationErrorMessage(error: unknown) {
   } catch {
     return 'Неизвестная ошибка';
   }
+}
+
+function normalizeMigrationErrorMessage(message: string) {
+  const normalizedMessage = message.toLowerCase();
+
+  if (normalizedMessage.includes('read timed out') || normalizedMessage.includes('timeout')) {
+    return 'Время ожидания загрузки истекло. Проверьте интернет-соединение и попробуйте снова.';
+  }
+
+  if (
+    normalizedMessage.includes('unable to resolve host') ||
+    normalizedMessage.includes('failed to connect') ||
+    normalizedMessage.includes('network is unreachable')
+  ) {
+    return 'Не удалось подключиться к серверу. Проверьте интернет-соединение и попробуйте снова.';
+  }
+
+  if (normalizedMessage.includes('connection reset') || normalizedMessage.includes('connection aborted')) {
+    return 'Соединение с сервером прервано. Проверьте интернет-соединение и попробуйте снова.';
+  }
+
+  if (message.includes('\n') && normalizedMessage.startsWith('java.')) {
+    return 'Не удалось передать архив. Попробуйте снова.';
+  }
+
+  return message;
 }
 
 export function reportMigrationError(message: string, error: unknown, setIsError: (value: string) => void) {

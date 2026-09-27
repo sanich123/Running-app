@@ -1,4 +1,5 @@
-import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import type { ComponentProps } from 'react';
+import { StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import CustomImage from '@S/custom-image/custom-image';
@@ -10,7 +11,7 @@ interface UserAvatarProps {
   name?: string | null;
   surname?: string | null;
   placeholder?: string | null;
-  style?: StyleProp<ViewStyle>;
+  style?: ComponentProps<typeof Avatar.Text>['style'];
   testID?: string;
   cachePolicy?: ImageProps['cachePolicy'];
   recyclingKey?: string | null;

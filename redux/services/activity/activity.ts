@@ -59,6 +59,9 @@ const activityApi = runichApi.injectEndpoints({
     getStravaMigrationStatus: query<ActivityMigrationJobResponse, string>({
       query: (jobId: string) => `/activity/migration-strava/jobs/${jobId}`,
     }),
+    getCurrentStravaMigrationStatus: query<ActivityMigrationJobResponse | null, void>({
+      query: () => '/activity/migration-strava/current',
+    }),
     updateActivityInfo: mutation<ActivityMutationResponse, ActivityUpdateRequest>({
       query: ({ body, id }) => ({
         url: `/activity/${id}`,
@@ -99,6 +102,7 @@ export const {
   useGetActivityByActivityIdQuery,
   useGetLocationsByActivityIdQuery,
   useGetStravaMigrationStatusQuery,
+  useGetCurrentStravaMigrationStatusQuery,
   useAddActivityByUserIdMutation,
   useDeleteActivityByIdMutation,
   useGetSeveralActivitiesByTheirIdsQuery,

@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState, memo } from 'react';
+import type { ComponentRef } from 'react';
 import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
@@ -45,7 +46,7 @@ export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
   const pathname = usePathname();
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
-  const cardRef = useRef<View>(null);
+  const cardRef = useRef<ComponentRef<typeof View>>(null);
   const shareImageReadyRef = useRef<(() => void) | null>(null);
   const [isShareImageVisible, setIsShareImageVisible] = useState(false);
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;

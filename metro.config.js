@@ -12,7 +12,6 @@ defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
         'react-native-zip-archive',
         'react-native-compressor',
         'react-native-battery-optimization-check',
-        'react-native-date-picker',
         'react-native-nitro-modules',
         'expo-media-library',
         'expo-vpn-checker',

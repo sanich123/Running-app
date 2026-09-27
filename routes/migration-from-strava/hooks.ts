@@ -6,6 +6,7 @@ export type MigrationViewState = MigrationState & {
   isProcessing: boolean;
   isServerCompleted: boolean;
   isServerFailed: boolean;
+  isServerCancelled: boolean;
   isArchiveTransferActive: boolean;
   progress: number;
   progressPercent: number;
@@ -15,10 +16,11 @@ export type MigrationViewState = MigrationState & {
 export default function useMigrationState(): MigrationViewState {
   const migration = useAppSelector(({ migration: state }) => state);
   const isServerProcessing = Boolean(
-    migration.jobId && migration.job?.status !== 'completed' && migration.job?.status !== 'failed',
+    migration.jobId && !['completed', 'failed', 'cancelled'].includes(migration.job?.status ?? ''),
   );
   const isServerCompleted = migration.job?.status === 'completed';
   const isServerFailed = migration.job?.status === 'failed';
+  const isServerCancelled = migration.job?.status === 'cancelled';
   const isProcessing = (migration.isDisabled && !migration.error) || isServerProcessing;
   const progress = migration.job?.totalActivities
     ? Math.min(1, migration.job.processedActivities / migration.job.totalActivities)
@@ -39,7 +41,9 @@ export default function useMigrationState(): MigrationViewState {
     isProcessing,
     isServerCompleted,
     isServerFailed,
-    isArchiveTransferActive: migration.isSendingArchive || migration.isWaitingForServer,
+    isServerCancelled,
+    isArchiveTransferActive:
+      migration.isSendingArchive || migration.isWaitingForServer || migration.job?.status === 'uploading',
     progress,
     progressPercent: Math.round(progress * 100),
     uploadProgressPercent: Math.round(migration.uploadProgress * 100),

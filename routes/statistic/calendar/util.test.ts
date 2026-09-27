@@ -1,5 +1,5 @@
 import { LANGUAGES } from '@const/enums';
-import { getDaysOfTheMonthWithNames } from './util';
+import { getCalendarGridDays, getDaysOfTheMonthWithNames } from './util';
 import type { StatisticActivities } from './types';
 
 describe('getDaysOfTheMonthWithNames', () => {
@@ -28,5 +28,20 @@ describe('getDaysOfTheMonthWithNames', () => {
 
       expect(dates.filter((dateValue) => /^\d+$/.test(dateValue))).toHaveLength(new Date(2026, month + 1, 0).getDate());
     }
+  });
+});
+
+describe('getCalendarGridDays', () => {
+  it('creates a Monday-first seven-column grid and keeps activity dates clickable', () => {
+    const activities: StatisticActivities = [
+      { id: 'run-1', date: '2026-07-15T09:00:00.000Z', distance: 5000, duration: 1800000, sport: 'run' },
+    ];
+
+    const grid = getCalendarGridDays('2026', '6', activities);
+
+    expect(grid).toHaveLength(35);
+    expect(grid[0]).toEqual(expect.objectContaining({ dateValue: '', isEmptyCell: true }));
+    expect(grid[16]).toEqual(expect.objectContaining({ dateValue: '15', activities }));
+    expect(grid[16].isWeekend).toBe(false);
   });
 });

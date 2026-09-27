@@ -162,7 +162,7 @@ export default function SaveBtn() {
                 });
               }
               if (!savedActivity.body.speed || !savedActivity.body.duration) {
-                return errorToast('Активность не имеет скорости или продолжительности');
+                return errorToast('Тренировка не имеет скорости или продолжительности');
               }
               await sendActivity(savedActivity)
                 .unwrap()

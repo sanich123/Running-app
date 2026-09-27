@@ -13,7 +13,6 @@ describe('calendar date with activity', () => {
       <CalendarDateWithActivity
         isWeekend={false}
         isTitle={false}
-        isEmptyCell={false}
         dateValue="1"
         activities={[{ id: 'activity-one', sport: 'run' }]}
       />,
@@ -29,7 +28,6 @@ describe('calendar date with activity', () => {
       <CalendarDateWithActivity
         isWeekend={false}
         isTitle={false}
-        isEmptyCell={false}
         dateValue="2"
         activities={[
           { id: 'first', sport: 'run' },
@@ -37,7 +35,7 @@ describe('calendar date with activity', () => {
         ]}
       />,
     );
-    expect(screen.getByText('2')).toBeOnTheScreen();
+    expect(screen.getByText('×2')).toBeOnTheScreen();
     expect(screen.queryByTestId('calendar-activity-icon-first')).not.toBeOnTheScreen();
     await user.press(screen.getByTestId('calendar-activities-first-second'));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activitiesList}/ids=first&ids=second`);

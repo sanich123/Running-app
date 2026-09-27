@@ -1,13 +1,13 @@
-import { Fragment } from 'react';
 import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
-import { ActivityIndicator, Card, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Card, Icon, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { LANGUAGES } from '@const/enums';
 import { useGetMonthStatisticsQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
 import { getDeviceTimeZone } from '@U/time-zone';
 import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from './const';
-import { getDaysOfTheMonthWithNames } from './util';
+import { getCalendarGridDays } from './util';
 import CalendarDateEmpty from '../calendar-date-empty/calendar-date-empty';
 import CalendarDateWithActivity from '../calendar-date-with-activity/calendar-date-with-activity';
 import type { CalendarStatisticsProps } from './types';
@@ -28,7 +28,13 @@ export default function CalendarActivities({ year, month, userId, selectedType }
     { userId: `${userId}`, year: `${year}`, month: `${month}`, timeZone },
     { skip: !userId || !year || !month },
   );
-  const daysOfTheWeek = getDaysOfTheMonthWithNames(year, month, monthStatistics?.activities ?? [], language);
+  const activities = monthStatistics?.activities ?? [];
+  const visibleActivities =
+    selectedType === 'all' ? activities : activities.filter(({ sport }) => sport === selectedType);
+  const calendarDays = getCalendarGridDays(year, month, visibleActivities);
+  const activeDays = calendarDays.filter(({ activities: dayActivities }) => dayActivities.length > 0).length;
+  const weekdays =
+    language === LANGUAGES.russian ? Object.values(REDUCED_DAY_NAME_RU) : Object.values(REDUCED_DAY_NAME_EN);
 
   return (
     <Card
@@ -44,52 +50,55 @@ export default function CalendarActivities({ year, month, userId, selectedType }
       ]}>
       <Card.Content style={styles.content}>
         <View style={styles.header}>
-          <View>
-            <Text variant="titleLarge" style={styles.title}>
-              {language === 'russian' ? 'Календарь тренировок' : 'Training calendar'}
-            </Text>
-            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-              {language === 'russian' ? 'Нажмите на день, чтобы открыть тренировку' : 'Tap a day to open a workout'}
-            </Text>
+          <View style={styles.headerText}>
+            <View style={[styles.hint, { backgroundColor: colors.primaryContainer }]}>
+              <Icon source="gesture-tap" size={17} color={colors.onPrimaryContainer} />
+              <Text variant="bodySmall" style={[styles.hintText, { color: colors.onPrimaryContainer }]}>
+                {language === 'russian' ? 'Нажмите на день, чтобы открыть тренировку' : 'Tap a day to open a workout'}
+              </Text>
+            </View>
           </View>
-          <View style={[styles.legendDot, { backgroundColor: colors.primary }]} />
+          {isSuccess && (
+            <View style={[styles.summary, { backgroundColor: colors.surfaceVariant }]}>
+              <Text variant="titleMedium" style={{ color: colors.primary }}>
+                {activeDays}
+              </Text>
+              <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+                {language === LANGUAGES.russian ? 'активных дней' : 'active days'}
+              </Text>
+            </View>
+          )}
         </View>
         <View style={styles.calendarContainer}>
           {isLoading ? (
             <ActivityIndicator size="large" testID="calendar-loading" />
           ) : isSuccess ? (
             <>
-              {Object.keys(daysOfTheWeek).map((day: string, i: number) => (
-                <View style={styles.dayColumn} key={`${day}${i}`}>
-                  {daysOfTheWeek[day as keyof typeof daysOfTheWeek].map(({ dateValue, activities }, i) => {
-                    const isWeekend =
-                      dateValue === REDUCED_DAY_NAME_RU.saturday ||
-                      dateValue === REDUCED_DAY_NAME_RU.sunday ||
-                      dateValue === REDUCED_DAY_NAME_EN.saturday ||
-                      dateValue === REDUCED_DAY_NAME_EN.sunday;
-                    const isEmptyCell = dateValue === ' ';
-                    const isTitle = isNaN(Number(dateValue));
-                    const filteredActivities = activities.filter(({ sport }) => sport === selectedType);
-                    const whatActivitiesToRender = selectedType === 'all' ? activities : filteredActivities;
-
-                    return (
-                      <Fragment key={`${dateValue}${i}`}>
-                        {whatActivitiesToRender?.length || !i ? (
-                          <CalendarDateWithActivity
-                            isWeekend={isWeekend}
-                            isTitle={isTitle}
-                            isEmptyCell={isEmptyCell}
-                            dateValue={dateValue}
-                            activities={whatActivitiesToRender}
-                          />
-                        ) : (
-                          <CalendarDateEmpty isTitle={isTitle} isEmptyCell={isEmptyCell} dateValue={dateValue} />
-                        )}
-                      </Fragment>
-                    );
-                  })}
-                </View>
-              ))}
+              <View style={styles.weekdayRow}>
+                {weekdays.map((weekday) => (
+                  <View key={weekday} style={styles.gridCell}>
+                    <Text variant="labelSmall" style={[styles.weekday, { color: colors.onSurfaceVariant }]}>
+                      {weekday}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+              <View style={styles.grid}>
+                {calendarDays.map((day, index) => (
+                  <View key={`${day.dateValue || 'empty'}-${index}`} style={styles.gridCell}>
+                    {day.activities.length > 0 ? (
+                      <CalendarDateWithActivity
+                        isWeekend={day.isWeekend}
+                        isTitle={false}
+                        dateValue={day.dateValue}
+                        activities={day.activities}
+                      />
+                    ) : (
+                      <CalendarDateEmpty isTitle={false} isEmptyCell={day.isEmptyCell} dateValue={day.dateValue} />
+                    )}
+                  </View>
+                ))}
+              </View>
             </>
           ) : isError ? (
             <ErrorComponent error={error} refetch={refetch} />
@@ -104,30 +113,34 @@ const styles = StyleSheet.create({
   card: { borderRadius: 18, borderWidth: 1, marginBottom: 24 },
   content: { paddingHorizontal: 12, paddingVertical: 16 },
   header: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 },
-  title: { fontWeight: '800' },
-  legendDot: { borderRadius: 6, height: 12, width: 12 },
-  dayColumn: {
-    display: 'flex',
-    justifyContent: 'flex-start',
+  headerText: { flex: 1, minWidth: 0 },
+  hint: {
     alignItems: 'center',
+    borderRadius: 12,
+    flexDirection: 'row',
+    flexShrink: 1,
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  hintText: { flexShrink: 1 },
+  summary: {
+    alignItems: 'center',
+    borderRadius: 12,
+    flexDirection: 'row',
     gap: 5,
-    flex: 1,
+    marginLeft: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
   },
   calendarContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    columnGap: 4,
-    justifyContent: 'flex-start',
     marginTop: 18,
-    paddingHorizontal: 0,
   },
-  dateItem: {
-    height: 45,
-    width: 45,
-    borderWidth: 1,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
+  weekdayRow: { flexDirection: 'row', marginBottom: 6 },
+  weekday: { textAlign: 'center' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 6 },
+  gridCell: {
+    paddingHorizontal: 2,
+    width: '14.2857%',
   },
 });

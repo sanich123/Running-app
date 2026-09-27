@@ -49,7 +49,7 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength }: Mod
               title={EMPTY_STATE_COPY[language].likes.title}
               message={EMPTY_STATE_COPY[language].likes.message}
             />
-          ) : null
+          ) : undefined
         }
         renderItem={({ item: { profile } }: { item: LikeListResponse }) => (
           <UserListItem

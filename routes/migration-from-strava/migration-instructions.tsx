@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vector-icons/material-design-icons/static';
 import { View, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import type { Href } from 'expo-router';
@@ -40,7 +40,8 @@ export default function MigrationInstructions({ copy }: { copy: MigrationCopy })
 
       <Notice icon="information-outline" color={colors.tertiary} backgroundColor={colors.tertiaryContainer}>
         <Text variant="bodyMedium" style={{ color: colors.onTertiaryContainer, flex: 1 }}>
-          {copy.removeMedia} {copy.processUnZipping} {copy.wifiConnection} {copy.serverResponseTime}
+          {copy.removeMedia} {copy.processUnZipping} {copy.wifiConnection} {copy.serverResponseTime}{' '}
+          {copy.backgroundUploadLimitations}
         </Text>
       </Notice>
 

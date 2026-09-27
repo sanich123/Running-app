@@ -13,6 +13,7 @@ import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
 import CustomImage from '@S/custom-image/custom-image';
 import { getPhotoUrl, isDirectMediaUrl, isVideoUrl } from './utils';
 import type { ActivityMediaItemResponse } from '@R/runich-api/types';
+import type { PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
 
 export default function PhotoViewer() {
   const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();
@@ -77,7 +78,7 @@ export default function PhotoViewer() {
             <PagerView
               style={styles.viewPager}
               initialPage={uuid.validate(`${photoUrl}`) ? isMapUrlExist : +`${photoUrl}`}
-              onPageSelected={(event) => {
+              onPageSelected={(event: PagerViewOnPageSelectedEvent) => {
                 if (
                   !uuid.validate(`${photoUrl}`) &&
                   event.nativeEvent.position >= itemsToRender.length - 2 &&

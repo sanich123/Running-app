@@ -80,9 +80,15 @@ function setMockRouteParams(params: RouteParams) {
   mockExpoRouter.__setRouteParams(params);
 }
 
-jest.mock('react-native-date-picker', () => {
+jest.mock('react-native-paper-dates', () => {
   const { View } = jest.requireActual('react-native');
-  return (props: Record<string, unknown>) => <View testID="integration-date-picker" {...props} />;
+  return {
+    DatePickerModal: (props: Record<string, unknown>) => <View testID="integration-date-picker" {...props} />,
+    TimePickerModal: (props: Record<string, unknown>) => <View testID="integration-time-picker" {...props} />,
+    en: {},
+    registerTranslation: jest.fn(),
+    ru: {},
+  };
 });
 
 jest.mock('@S/choose-sport-modal/choose-sport-modal', () => {
@@ -150,7 +156,13 @@ async function fillActivityFields(includeManualFields: boolean) {
 
     const selectedDate = new Date('2026-08-18T12:30:00.000Z');
     await fireEvent.press(screen.getByTestId(DATE_TIME_PICKER_BTN_ID));
-    await act(async () => screen.getByTestId('integration-date-picker').props.onConfirm(selectedDate));
+    await act(async () => screen.getByTestId('integration-date-picker').props.onConfirm({ date: selectedDate }));
+    await act(async () =>
+      screen.getByTestId('integration-time-picker').props.onConfirm({
+        hours: selectedDate.getHours(),
+        minutes: selectedDate.getMinutes(),
+      }),
+    );
   }
 }
 

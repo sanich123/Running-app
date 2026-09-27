@@ -92,14 +92,13 @@ async function uploadWebArchive(
       throwMigrationError('Выбранный файл недоступен в браузере', migration.setIsError);
     }
 
-    const job = await sendArchiveToServerWeb({
+    await sendArchiveToServerWeb({
       archiveFile: selectedArchive.file,
       ...getUploadState(migration, setCancelRequest),
       userId: migration.userId,
       accessToken: migration.accessToken,
     });
     throwIfCancelled();
-    migration.onArchiveUploadAccepted(job);
   } catch (error) {
     rethrowReportedMigrationError(error, migration.setIsError, 'Не удалось отправить архив Strava');
   }
@@ -162,14 +161,13 @@ async function uploadNativeArchive(
   throwIfCancelled: () => void,
 ) {
   try {
-    const job = await sendArchiveToServer({
+    await sendArchiveToServer({
       pathToArchive,
       ...getUploadState(migration, setCancelRequest),
       userId: migration.userId,
       accessToken: migration.accessToken,
     });
     throwIfCancelled();
-    migration.onArchiveUploadAccepted(job);
   } catch (error) {
     rethrowReportedMigrationError(error, migration.setIsError, 'Не удалось отправить архив Strava');
   }
@@ -184,6 +182,7 @@ function getUploadState(
     setIsWaitingForServer: migration.setIsWaitingForServer,
     setUploadProgress: migration.setUploadProgress,
     onCancelReady: setCancelRequest,
+    onArchiveUploadAccepted: migration.onArchiveUploadAccepted,
     setIsError: migration.setIsError,
   };
 }

@@ -41,3 +41,10 @@ export interface CalendarDateWithActivityProps {
   isWeekend: boolean;
   activities: { sport: string; id: string }[];
 }
+
+export interface CalendarGridDay {
+  dateValue: string;
+  activities: StatisticActivities;
+  isEmptyCell: boolean;
+  isWeekend: boolean;
+}

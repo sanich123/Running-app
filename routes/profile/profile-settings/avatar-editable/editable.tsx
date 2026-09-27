@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vector-icons/material-design-icons/static';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useGetUserProfileByUserIdQuery, useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';

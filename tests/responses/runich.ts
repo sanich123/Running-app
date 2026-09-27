@@ -211,6 +211,16 @@ export const MOCK_SERVER_STATISTICS = {
   year: {
     2026: {
       all: { 7: { totalDuration: 0.008379166666666667, totalDistance: 73.478, totalItems: 5 } },
+      dailyActivities: {
+        '2026-08-04': [
+          {
+            duration: 3062,
+            distance: 28325,
+            date: '2026-08-04T13:08:22.785Z',
+            sport: 'walk',
+          },
+        ],
+      },
     },
     isUserHasActivities: true,
   },

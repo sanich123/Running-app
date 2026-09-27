@@ -3,11 +3,13 @@ import { LANGUAGES } from '@const/enums';
 export const DATE_TIME_PICKER = {
   [LANGUAGES.english]: {
     title: 'Choose date and time',
+    timeTitle: 'Choose time',
     confirm: 'Accept',
     cancel: 'Cancel',
   },
   [LANGUAGES.russian]: {
     title: 'Выберите дату и время',
+    timeTitle: 'Выберите время',
     confirm: 'Выбрать',
     cancel: 'Отменить',
   },
