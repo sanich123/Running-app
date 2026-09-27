@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Platform } from 'react-native';
 import { HelperText, TextInput, useTheme } from 'react-native-paper';
 import { Controller } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
@@ -36,8 +37,8 @@ export default function CustomPasswordInput<T extends FieldValues>({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
           <TextInput
-            label={label}
-            placeholder={placeholder}
+            label={compact ? undefined : label}
+            placeholder={placeholder ?? (compact ? label : undefined)}
             autoCapitalize={autoCapitalize}
             autoCorrect={false}
             autoComplete="current-password"
@@ -50,7 +51,12 @@ export default function CustomPasswordInput<T extends FieldValues>({
               marginTop: compact ? 4 : 12,
               opacity: shouldBeDisabled ? 0.7 : 1,
             }}
-            contentStyle={{ fontFamily: FONT_FAMILIES.regular }}
+            contentStyle={{
+              fontFamily: FONT_FAMILIES.regular,
+              includeFontPadding: compact ? false : undefined,
+              paddingBottom: compact && Platform.OS === 'android' ? 3 : undefined,
+              textAlignVertical: 'center',
+            }}
             outlineStyle={{ borderRadius: 8 }}
             onChangeText={(text) => {
               onChange(text);

@@ -2,8 +2,9 @@ import { LineChart } from 'react-native-gifted-charts';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Card, Icon, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
+import { DASHBOARD_LAYOUT } from './const';
 import DashboardSectionHeader from './section-header';
-import { formatMetricValue } from './utils';
+import { formatChartAxisValue, formatMetricValue } from './utils';
 import type { DashboardLabels, DashboardMetric } from './types';
 
 export interface DashboardChartPoint {
@@ -19,6 +20,10 @@ interface AnnualActivityChartProps {
   selectedMonth: number;
   metric: DashboardMetric;
   selectedValue: number;
+  averageValue: number;
+  maxValue: number;
+  noOfSections: number;
+  stepValue: number;
   workoutCount: number;
   labels: DashboardLabels;
   onFocusMonth: (index: number) => void;
@@ -32,6 +37,10 @@ export default function AnnualActivityChart({
   selectedMonth,
   metric,
   selectedValue,
+  averageValue,
+  maxValue,
+  noOfSections,
+  stepValue,
   workoutCount,
   labels,
   onFocusMonth,
@@ -42,18 +51,32 @@ export default function AnnualActivityChart({
     <Card
       mode="contained"
       style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
-      <Card.Content>
+      <Card.Content style={styles.cardContent}>
         <DashboardSectionHeader title={labels.yearActivity} subtitle={labels.byMonths} />
         <LineChart
           data={data}
           width={width}
-          endSpacing={18}
+          endSpacing={DASHBOARD_LAYOUT.chartEndSpacing}
           height={190}
           areaChart
-          curved
+          curved={false}
           adjustToWidth
-          hideRules
-          hideYAxisText
+          maxValue={maxValue}
+          noOfSections={noOfSections}
+          stepValue={stepValue}
+          yAxisOffset={0}
+          onlyPositive
+          yAxisLabelWidth={DASHBOARD_LAYOUT.chartYAxisLabelWidth}
+          yAxisLabelSuffix={
+            metric === 'distance' ? ` ${labels.kilometres}` : metric === 'duration' ? ` ${labels.hours}` : ''
+          }
+          formatYLabel={(value: string) => formatChartAxisValue(value, metric)}
+          yAxisTextStyle={{ color: colors.onSurfaceVariant, fontSize: 9 }}
+          showFractionalValues={metric !== 'activities'}
+          hideRules={false}
+          rulesColor={colors.outlineVariant}
+          rulesType="dashed"
+          rulesThickness={1}
           color={colors.primary}
           thickness={3}
           startFillColor={colors.primary}
@@ -68,8 +91,26 @@ export default function AnnualActivityChart({
           xAxisColor={colors.outlineVariant}
           yAxisColor="transparent"
           xAxisLabelTextStyle={{ color: colors.onSurfaceVariant, fontSize: 10 }}
+          showReferenceLine1={averageValue > 0}
+          referenceLine1Position={averageValue}
+          referenceLine1Config={{
+            thickness: 1,
+            color: colors.primary,
+            type: 'dashed',
+            dashWidth: 4,
+            dashGap: 4,
+          }}
           onFocus={(_item: unknown, index: number) => onFocusMonth(index)}
         />
+        <View style={styles.averageRow}>
+          <View style={[styles.averageMarker, { borderColor: colors.primary }]} />
+          <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+            {labels.yearAverage}:{' '}
+            {metric === 'activities' && !Number.isInteger(averageValue)
+              ? averageValue.toFixed(1)
+              : formatMetricValue(averageValue, metric, labels)}
+          </Text>
+        </View>
         <Text variant="labelSmall" style={[styles.chartHint, { color: colors.onSurfaceVariant }]}>
           {labels.chartHint}
         </Text>
@@ -99,7 +140,10 @@ export default function AnnualActivityChart({
 
 const styles = StyleSheet.create({
   card: { borderRadius: 20, borderWidth: 1, marginBottom: 12 },
-  chartHint: { marginBottom: 10, marginTop: -6, textAlign: 'center' },
+  cardContent: { paddingHorizontal: DASHBOARD_LAYOUT.cardContentHorizontalPadding },
+  averageRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginBottom: 8, marginTop: -2 },
+  averageMarker: { borderStyle: 'dashed', borderTopWidth: 1, marginRight: 7, width: 16 },
+  chartHint: { marginBottom: 10, textAlign: 'center' },
   monthSummary: {
     alignItems: 'center',
     borderRadius: 16,

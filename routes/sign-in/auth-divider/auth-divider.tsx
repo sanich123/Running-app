@@ -17,6 +17,6 @@ export default function AuthDivider() {
 
 const styles = StyleSheet.create({
   layout: { alignItems: 'center', flexDirection: 'row', gap: 8, marginBottom: 4, marginTop: 0 },
-  line: { flex: 1, height: 1 },
+  line: { flex: 1, height: 1, transform: [{ translateY: 3 }] },
   label: { fontWeight: '600' },
 });

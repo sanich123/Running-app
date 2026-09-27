@@ -117,6 +117,28 @@ export default function MigrationStatus({
 
       {state.job && <ServerProgress state={state} copy={copy} />}
 
+      {state.isServerCompleted && (
+        <>
+          <Text variant="bodySmall" style={[styles.duplicateHint, { color: colors.onTertiaryContainer }]}>
+            {copy.duplicatesSkipped}
+          </Text>
+          <Pressable
+            testID="migration-choose"
+            accessibilityRole="button"
+            accessibilityLabel={copy.chooseArchive}
+            onPress={onChooseArchive}
+            style={({ pressed }) => [
+              styles.chooseAgainButton,
+              { backgroundColor: colors.primary, opacity: pressed ? 0.82 : 1 },
+            ]}>
+            <MaterialCommunityIcons name="file-upload-outline" size={20} color={colors.onPrimary} />
+            <Text variant="labelLarge" style={{ color: colors.onPrimary }}>
+              {copy.chooseArchive}
+            </Text>
+          </Pressable>
+        </>
+      )}
+
       {state.isArchiveTransferActive && <UploadProgress state={state} copy={copy} />}
     </View>
   );
@@ -257,6 +279,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     paddingRight: 38,
+  },
+  duplicateHint: { marginTop: 12 },
+  chooseAgainButton: {
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    borderRadius: 12,
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
   statusText: {
     flex: 1,

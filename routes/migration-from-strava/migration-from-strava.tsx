@@ -1,8 +1,5 @@
-import { useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useTheme } from 'react-native-paper';
-import { ROUTES } from '@const/enums';
 import { resetMigration } from '@R/slices/migration/migration';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { MIGRATION_STATES } from './const';
@@ -10,20 +7,12 @@ import MigrationInstructions from './migration-instructions';
 import MigrationStatus from './migration-status';
 import useMigrationController from './use-migration-controller';
 
-const HOME_TAB_ROUTE = '(home)';
-
 export default function MigrationFromStrava() {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const { replace } = useRouter();
   const { handleCancel, handleChooseArchive, isCancelAvailable, state } = useMigrationController();
   const copy = MIGRATION_STATES[language];
-
-  useEffect(() => {
-    if (!state.isServerCompleted || state.progress < 1) return;
-    replace(`/${ROUTES.tabs}/${HOME_TAB_ROUTE}`);
-  }, [replace, state.isServerCompleted, state.progress]);
 
   return (
     <ScrollView

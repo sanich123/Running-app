@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { LANGUAGES, ROUTES } from '@const/enums';
+import { LANGUAGES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { resetMigration, setMigrationError, setMigrationJob } from '@R/slices/migration/migration';
 import { changeLanguage } from '@R/slices/settings/settings';
@@ -348,7 +348,7 @@ describe('migration from strava', () => {
     expect(await screen.findByText(MIGRATION_STATES.english.queueAhead(2, 3, 4))).toBeOnTheScreen();
   });
 
-  it('returns to the home page after all activities are processed', async () => {
+  it('stays on the migration page and allows another archive after processing completes', async () => {
     const user = userEvent.setup();
     server.use(
       http.get(`${BASE_URL}/activity/migration-strava/jobs/job-id`, () =>
@@ -391,7 +391,10 @@ describe('migration from strava', () => {
       });
     });
 
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(`/${ROUTES.tabs}/(home)`));
+    const chooseAnotherArchive = await screen.findByTestId('migration-choose');
+    expect(mockReplace).not.toHaveBeenCalled();
+    await user.press(chooseAnotherArchive);
+    expect(mockMigrate).toHaveBeenCalledTimes(2);
   });
 
   it('renders each local archive-processing stage and an error state', async () => {

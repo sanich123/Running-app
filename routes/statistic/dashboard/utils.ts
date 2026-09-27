@@ -27,6 +27,35 @@ export function formatMetricNumber(value: number, metric: DashboardMetric) {
   return metric === 'activities' ? Math.round(value) : Number(value.toFixed(1));
 }
 
+export function getAnnualChartScale(values: number[], metric: DashboardMetric) {
+  const safeValues = values.map((value) => (Number.isFinite(value) ? Math.max(0, value) : 0));
+  const average = safeValues.length ? safeValues.reduce((total, value) => total + value, 0) / safeValues.length : 0;
+  const peak = Math.max(0, ...safeValues);
+  if (metric === 'activities') {
+    const stepValue = Math.max(1, Math.ceil(peak / 4));
+    let noOfSections = peak > 0 ? Math.max(1, Math.ceil(peak / stepValue)) : 4;
+    if (peak > 0 && peak === noOfSections * stepValue) noOfSections += 1;
+    return { average, maxValue: stepValue * noOfSections, noOfSections, stepValue };
+  }
+
+  const targetStep = peak > 0 ? peak / 4 : 1;
+  const magnitude = 10 ** Math.floor(Math.log10(targetStep));
+  const normalizedStep = targetStep / magnitude;
+  const stepFactor =
+    normalizedStep <= 1 ? 1 : normalizedStep <= 2 ? 2 : normalizedStep <= 2.5 ? 2.5 : normalizedStep <= 5 ? 5 : 10;
+  const stepValue = stepFactor * magnitude;
+  let noOfSections = peak > 0 ? Math.max(1, Math.ceil(peak / stepValue)) : 4;
+  if (peak > 0 && peak === noOfSections * stepValue) noOfSections += 1;
+
+  return { average, maxValue: stepValue * noOfSections, noOfSections, stepValue };
+}
+
+export function formatChartAxisValue(value: string, metric: DashboardMetric) {
+  const numericValue = Number(value);
+  if (!Number.isFinite(numericValue)) return value;
+  return metric === 'activities' ? String(Math.round(numericValue)) : String(Number(numericValue.toFixed(1)));
+}
+
 export function getSportLabel(sport: string, labels: DashboardLabels, language: LANGUAGES) {
   const normalizedSport = sport.toLowerCase().replace(/[_-]/g, '');
   const knownLabels: Record<string, string> = {

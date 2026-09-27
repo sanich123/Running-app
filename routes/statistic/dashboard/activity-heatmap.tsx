@@ -3,7 +3,7 @@ import { Button, Card, Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
-import { DASHBOARD_HEATMAP } from './const';
+import { DASHBOARD_HEATMAP, DASHBOARD_LAYOUT } from './const';
 import DashboardSectionHeader from './section-header';
 import { formatDayActivityValue, formatLongDate, getDateKey, getHeatmapColor, getSportLabel, withAlpha } from './utils';
 import type {
@@ -45,7 +45,7 @@ export default function ActivityHeatmap({
       <Card
         mode="contained"
         style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
-        <Card.Content>
+        <Card.Content style={styles.cardContent}>
           <DashboardSectionHeader title="Heatmap" subtitle={labels.heatmapHint} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
             <View>
@@ -87,6 +87,7 @@ export default function ActivityHeatmap({
                             testID={`dashboard-day-${getDateKey(date)}`}
                             accessibilityRole="button"
                             accessibilityLabel={formatLongDate(date, language)}
+                            hitSlop={2}
                             onPress={() => onDayPress(date)}
                             style={[
                               styles.heatmapCell,
@@ -118,7 +119,7 @@ export default function ActivityHeatmap({
       <Card
         mode="contained"
         style={[styles.selectedCard, { backgroundColor: colors.elevation.level2, borderColor: colors.outlineVariant }]}>
-        <Card.Content>
+        <Card.Content style={styles.cardContent}>
           <Text variant="labelLarge" style={{ color: colors.onSurfaceVariant }}>
             {labels.selectedDay}
           </Text>
@@ -169,6 +170,7 @@ function ActivityRow({ icon, label, value }: { icon: string; label: string; valu
 
 const styles = StyleSheet.create({
   card: { borderRadius: 20, borderWidth: 1, marginBottom: 12 },
+  cardContent: { paddingHorizontal: DASHBOARD_LAYOUT.cardContentHorizontalPadding },
   scrollContent: { paddingBottom: 5 },
   monthLabelsRow: { flexDirection: 'row', marginBottom: 7 },
   labelSpacer: { width: 27 },

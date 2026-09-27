@@ -12,7 +12,13 @@ import ErrorComponent from '@S/error-component/error-component';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
 import ActivityHeatmap from './activity-heatmap';
 import AnnualActivityChart from './annual-activity-chart';
-import { DASHBOARD_LABELS, DASHBOARD_MONTHS, DASHBOARD_SPORTS, EMPTY_DASHBOARD_YEAR_DATA } from './const';
+import {
+  DASHBOARD_LABELS,
+  DASHBOARD_LAYOUT,
+  DASHBOARD_MONTHS,
+  DASHBOARD_SPORTS,
+  EMPTY_DASHBOARD_YEAR_DATA,
+} from './const';
 import DashboardHero from './dashboard-hero';
 import DashboardSkeleton from './dashboard-skeleton';
 import { buildDashboardYears } from './data';
@@ -20,6 +26,7 @@ import SportDistribution from './sport-distribution';
 import {
   buildHeatmapColumns,
   getDateKey,
+  getAnnualChartScale,
   getHeatmapMonthSpans,
   getDayIntensity,
   groupActivitiesBySport,
@@ -80,7 +87,18 @@ export default function Dashboard() {
   const selectedDayActivities = dailyActivities[getDateKey(displayedSelectedDay)] ?? [];
   const selectedDayGroups = groupActivitiesBySport(selectedDayActivities);
   const selectedDayIntensity = getDayIntensity(displayedSelectedDay, displayedSport, metric, dailyActivities);
-  const chartWidth = Math.max(260, Math.min(width - 72, 520));
+  const chartWidth = Math.max(
+    0,
+    Math.min(
+      width -
+        DASHBOARD_LAYOUT.outerHorizontalPadding * 2 -
+        DASHBOARD_LAYOUT.cardBorderWidth * 2 -
+        DASHBOARD_LAYOUT.cardContentHorizontalPadding * 2 -
+        DASHBOARD_LAYOUT.chartYAxisLabelWidth -
+        DASHBOARD_LAYOUT.chartEndSpacing,
+      DASHBOARD_LAYOUT.maxChartWidth - DASHBOARD_LAYOUT.chartYAxisLabelWidth - DASHBOARD_LAYOUT.chartEndSpacing,
+    ),
+  );
 
   const heatmapColumns = useMemo<DashboardHeatmapCell[][]>(
     () => buildHeatmapColumns(displayedYear ?? year, displayedSport, metric, dailyActivities),
@@ -97,10 +115,14 @@ export default function Dashboard() {
   };
 
   const chartData = yearData.monthly[metric].map((value, index) => ({
-    value,
+    value: Math.max(0, value),
     label: index % 2 === 0 ? months[index] : '',
     onPress: () => setSelectedMonth(index),
   }));
+  const chartScale = getAnnualChartScale(
+    chartData.map(({ value }) => value),
+    metric,
+  );
 
   const changeYear = (direction: -1 | 1) => {
     const currentYearIndex = displayedYear === undefined ? -1 : availableYears.indexOf(displayedYear);
@@ -116,112 +138,102 @@ export default function Dashboard() {
   const isEmptyResponse = annualStatistics?.isUserHasActivities === false;
   const shouldShowSkeleton = isLoading || (!isError && !annualStatistics) || (!!annualStatistics && !hasYearData);
 
-  if (isError) {
-    return (
-      <CrossPlatformLayout edges={[]} scrollViewEnabled isError refetch={refetch} outerStyles={styles.outer}>
+  return (
+    <CrossPlatformLayout edges={[]} scrollViewEnabled isError={isError} refetch={refetch} outerStyles={styles.outer}>
+      {isError ? (
         <ErrorComponent error={error} refetch={refetch} />
-      </CrossPlatformLayout>
-    );
-  }
-
-  if (shouldShowSkeleton) {
-    return (
-      <CrossPlatformLayout edges={[]} scrollViewEnabled refetch={refetch} outerStyles={styles.outer}>
+      ) : shouldShowSkeleton ? (
         <DashboardSkeleton />
-      </CrossPlatformLayout>
-    );
-  }
-
-  if (isEmptyResponse || !displayedYear) {
-    return (
-      <CrossPlatformLayout edges={[]} scrollViewEnabled refetch={refetch} outerStyles={styles.outer}>
+      ) : isEmptyResponse || !displayedYear ? (
         <EmptyState
           icon="chart-line-variant"
           title={EMPTY_STATE_COPY[language].activities.title}
           message={EMPTY_STATE_COPY[language].activities.message}
         />
-      </CrossPlatformLayout>
-    );
-  }
+      ) : (
+        <>
+          <View style={styles.headerRow}>
+            <View style={styles.yearPicker}>
+              <IconButton
+                icon="chevron-left"
+                size={20}
+                iconColor={colors.onSurfaceVariant}
+                onPress={() => changeYear(-1)}
+                disabled={availableYears.indexOf(displayedYear) <= 0}
+                accessibilityLabel={language === LANGUAGES.russian ? 'Предыдущий год' : 'Previous year'}
+              />
+              <Text variant="titleMedium" style={styles.yearValue}>
+                {displayedYear}
+              </Text>
+              <IconButton
+                icon="chevron-right"
+                size={20}
+                iconColor={colors.onSurfaceVariant}
+                onPress={() => changeYear(1)}
+                disabled={availableYears.indexOf(displayedYear) === availableYears.length - 1}
+                accessibilityLabel={language === LANGUAGES.russian ? 'Следующий год' : 'Next year'}
+              />
+            </View>
+          </View>
 
-  return (
-    <CrossPlatformLayout edges={[]} scrollViewEnabled refetch={refetch} outerStyles={styles.outer}>
-      <View style={styles.headerRow}>
-        <View style={styles.yearPicker}>
-          <IconButton
-            icon="chevron-left"
-            size={20}
-            iconColor={colors.onSurfaceVariant}
-            onPress={() => changeYear(-1)}
-            disabled={availableYears.indexOf(displayedYear) <= 0}
-            accessibilityLabel={language === LANGUAGES.russian ? 'Предыдущий год' : 'Previous year'}
+          <DashboardHero
+            metric={metric}
+            metricTotals={selectedSportMetrics}
+            activeDays={activeDays}
+            peakMonth={months[yearData.bestMonth]}
+            labels={labels}
+            onMetricChange={setMetric}
+            isRefreshing={isFetching}
           />
-          <Text variant="titleMedium" style={styles.yearValue}>
-            {displayedYear}
-          </Text>
-          <IconButton
-            icon="chevron-right"
-            size={20}
-            iconColor={colors.onSurfaceVariant}
-            onPress={() => changeYear(1)}
-            disabled={availableYears.indexOf(displayedYear) === availableYears.length - 1}
-            accessibilityLabel={language === LANGUAGES.russian ? 'Следующий год' : 'Next year'}
+          <AnnualActivityChart
+            data={chartData}
+            width={chartWidth}
+            months={months}
+            selectedMonth={displayedSelectedMonth}
+            metric={metric}
+            selectedValue={yearData.monthly[metric][displayedSelectedMonth]}
+            averageValue={chartScale.average}
+            maxValue={chartScale.maxValue}
+            noOfSections={chartScale.noOfSections}
+            stepValue={chartScale.stepValue}
+            workoutCount={yearData.monthly.activities[displayedSelectedMonth]}
+            labels={labels}
+            onFocusMonth={setSelectedMonth}
+            onOpenMonth={openMonth}
           />
-        </View>
-      </View>
-
-      <DashboardHero
-        metric={metric}
-        metricTotals={selectedSportMetrics}
-        activeDays={activeDays}
-        peakMonth={months[yearData.bestMonth]}
-        labels={labels}
-        onMetricChange={setMetric}
-        isRefreshing={isFetching}
-      />
-      <AnnualActivityChart
-        data={chartData}
-        width={chartWidth}
-        months={months}
-        selectedMonth={displayedSelectedMonth}
-        metric={metric}
-        selectedValue={yearData.monthly[metric][displayedSelectedMonth]}
-        workoutCount={yearData.monthly.activities[displayedSelectedMonth]}
-        labels={labels}
-        onFocusMonth={setSelectedMonth}
-        onOpenMonth={openMonth}
-      />
-      <SportDistribution
-        sports={yearData.sports}
-        totals={yearData.totals}
-        sportOptions={sportOptions}
-        selectedSport={displayedSport}
-        metric={metric}
-        labels={labels}
-        language={language}
-        onSportChange={setSport}
-      />
-      <ActivityHeatmap
-        heatmapColumns={heatmapColumns}
-        monthSpans={heatmapMonths}
-        selectedDay={displayedSelectedDay}
-        selectedDayGroups={selectedDayGroups}
-        selectedDayIntensity={selectedDayIntensity}
-        metric={metric}
-        labels={labels}
-        language={language}
-        onDayPress={(date) => {
-          setSelectedDay(date);
-          setSelectedMonth(date.getMonth());
-        }}
-        onOpenMonth={() => openMonth(displayedSelectedDay.getMonth())}
-      />
+          <SportDistribution
+            sports={yearData.sports}
+            totals={yearData.totals}
+            sportOptions={sportOptions}
+            selectedSport={displayedSport}
+            metric={metric}
+            labels={labels}
+            language={language}
+            onSportChange={setSport}
+          />
+          <ActivityHeatmap
+            heatmapColumns={heatmapColumns}
+            monthSpans={heatmapMonths}
+            selectedDay={displayedSelectedDay}
+            selectedDayGroups={selectedDayGroups}
+            selectedDayIntensity={selectedDayIntensity}
+            metric={metric}
+            labels={labels}
+            language={language}
+            onDayPress={(date) => {
+              setSelectedDay(date);
+              setSelectedMonth(date.getMonth());
+            }}
+            onOpenMonth={() => openMonth(displayedSelectedDay.getMonth())}
+          />
+        </>
+      )}
     </CrossPlatformLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  outer: { padding: 12 },
+  outer: { paddingHorizontal: DASHBOARD_LAYOUT.outerHorizontalPadding, paddingVertical: 12 },
   headerRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 12 },
   yearPicker: { alignItems: 'center', flexDirection: 'row' },
   yearValue: { fontWeight: '800' },

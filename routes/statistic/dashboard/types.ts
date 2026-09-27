@@ -31,6 +31,7 @@ export interface DashboardYearData {
 export interface DashboardLabels {
   yearActivity: string;
   byMonths: string;
+  yearAverage: string;
   chartHint: string;
   byWorkouts: string;
   distance: string;

@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Card, Icon, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import Skeleton from '@S/skeleton/skeleton';
+import { DASHBOARD_LAYOUT } from './const';
 import { formatMetricNumber, withAlpha } from './utils';
 import type { DashboardLabels, DashboardMetric, DashboardMetricTotals } from './types';
 
@@ -51,7 +52,7 @@ export default function DashboardHero({
       <Card
         mode="contained"
         style={[styles.heroCard, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}>
-        <Card.Content>
+        <Card.Content style={styles.cardContent}>
           <View style={styles.heroTopRow}>
             <View style={styles.heroMainMetric}>
               <Text variant="labelLarge" style={{ color: colors.onPrimaryContainer }}>
@@ -107,7 +108,7 @@ export function DashboardHeroSkeleton() {
   const { colors } = useTheme();
   return (
     <Card mode="contained" style={[styles.heroCard, { backgroundColor: colors.primaryContainer }]}>
-      <Card.Content>
+      <Card.Content style={styles.cardContent}>
         <View style={styles.heroTopRow}>
           <View style={styles.heroMainMetric}>
             <Skeleton style={styles.labelSkeleton} />
@@ -163,6 +164,7 @@ function SummaryMetric({
 }
 
 const styles = StyleSheet.create({
+  cardContent: { paddingHorizontal: DASHBOARD_LAYOUT.cardContentHorizontalPadding },
   metricSelector: { borderRadius: 16, flexDirection: 'row', gap: 4, marginBottom: 10, padding: 4 },
   metricOption: { alignItems: 'center', borderRadius: 12, flex: 1, paddingHorizontal: 8, paddingVertical: 9 },
   heroCard: { borderRadius: 24, borderWidth: 1, marginBottom: 12 },

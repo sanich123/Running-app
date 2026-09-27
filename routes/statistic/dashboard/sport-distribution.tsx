@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Card, Chip, Icon, ProgressBar, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
+import { DASHBOARD_LAYOUT } from './const';
 import DashboardSectionHeader from './section-header';
 import { formatMetricValue, getSportLabel, withAlpha } from './utils';
 import type {
@@ -39,7 +40,7 @@ export default function SportDistribution({
     <Card
       mode="contained"
       style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
-      <Card.Content>
+      <Card.Content style={styles.cardContent}>
         <DashboardSectionHeader title={labels.sportDistribution} subtitle={labels.byWorkouts} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
           {sportOptions.map(({ key, icon }) => (
@@ -91,6 +92,7 @@ export default function SportDistribution({
 
 const styles = StyleSheet.create({
   card: { borderRadius: 20, borderWidth: 1, marginBottom: 12 },
+  cardContent: { paddingHorizontal: DASHBOARD_LAYOUT.cardContentHorizontalPadding },
   chipRow: { gap: 8, paddingBottom: 12 },
   chip: { borderRadius: 12 },
   sportRow: { alignItems: 'center', flexDirection: 'row', marginBottom: 13 },

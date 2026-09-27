@@ -10,6 +10,7 @@ export const DASHBOARD_LABELS = {
   [LANGUAGES.russian]: {
     yearActivity: 'Годовая активность',
     byMonths: 'по месяцам',
+    yearAverage: 'В среднем',
     chartHint: 'Нажмите на точку месяца, чтобы увидеть информацию',
     byWorkouts: 'по тренировкам',
     distance: 'Дистанция',
@@ -35,6 +36,7 @@ export const DASHBOARD_LABELS = {
   [LANGUAGES.english]: {
     yearActivity: 'Year activity',
     byMonths: 'by month',
+    yearAverage: 'Average',
     chartHint: 'Tap a month point to see its details',
     byWorkouts: 'by workouts',
     distance: 'Distance',
@@ -59,10 +61,19 @@ export const DASHBOARD_LABELS = {
   },
 } as const;
 
+export const DASHBOARD_LAYOUT = {
+  outerHorizontalPadding: 8,
+  cardContentHorizontalPadding: 12,
+  cardBorderWidth: 1,
+  chartYAxisLabelWidth: 48,
+  chartEndSpacing: 8,
+  maxChartWidth: 520,
+} as const;
+
 export const DASHBOARD_HEATMAP = {
   rows: 7,
-  cellSize: 12,
-  gap: 3,
+  cellSize: 14,
+  gap: 4,
 } as const;
 
 export const EMPTY_DASHBOARD_YEAR_DATA: DashboardYearData = {
