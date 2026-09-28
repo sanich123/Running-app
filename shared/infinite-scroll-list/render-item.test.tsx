@@ -19,7 +19,7 @@ describe('render item', () => {
       _count: { comments: 3 },
     };
     const element = renderCardsFunction({ item });
-    expect(element.props).toEqual(
+    expect(element.props.activity).toEqual(
       expect.objectContaining({
         title: 'Run',
         userId: 'user-1',
@@ -30,7 +30,7 @@ describe('render item', () => {
         mapPhotoUrlBlurhash: 'map-blurhash',
       }),
     );
-    expect(element.props.elevationGain).toBe(15);
+    expect(element.props.activity.elevationGain).toBe(15);
     expect(keyExtractor(item)).toBe('activity-1');
   });
 
@@ -50,6 +50,6 @@ describe('render item', () => {
 
     const element = renderCardsFunction({ item });
 
-    expect(element.props.userId).toBe('user-2');
+    expect(element.props.activity.userId).toBe('user-2');
   });
 });

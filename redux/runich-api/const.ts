@@ -21,6 +21,7 @@ export enum Tags {
   likes = 'likes',
   friends = 'friends',
   users = 'users',
+  subscription = 'subscription',
 }
 
 export enum Methods {

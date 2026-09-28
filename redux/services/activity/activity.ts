@@ -3,6 +3,8 @@ import { runichApi } from '@R/runich-api/runich-api';
 import type {
   ActivityToSend,
   ActivityUpdateRequest,
+  AppendActivityMediaRequest,
+  GetActivityLocationsRequest,
   GetActivitiesByIdsRequest,
   GetActivityMediaRequest,
 } from './types';
@@ -10,6 +12,7 @@ import type {
   ActivitiesResponse,
   ActivityListItemResponse,
   ActivityMutationResponse,
+  ActivityMediaMutationResponse,
   ActivityLocationsResponse,
   ActivityMediaResponse,
   ActivityMigrationJobResponse,
@@ -52,8 +55,9 @@ const activityApi = runichApi.injectEndpoints({
       query: (id: string) => `/activity/activityId/${id}`,
       providesTags: (result, error, arg) => [Tags.activities, { type: Tags.activities, id: arg }],
     }),
-    getLocationsByActivityId: query<ActivityLocationsResponse | null, string>({
-      query: (activityId: string) => `/activity/${activityId}/locations`,
+    getLocationsByActivityId: query<ActivityLocationsResponse | null, GetActivityLocationsRequest>({
+      query: ({ activityId, replay }: GetActivityLocationsRequest) =>
+        `/activity/${activityId}/locations${replay ? '?replay=true' : ''}`,
       providesTags: [Tags.activities],
     }),
     getStravaMigrationStatus: query<ActivityMigrationJobResponse, string>({
@@ -69,6 +73,14 @@ const activityApi = runichApi.injectEndpoints({
         body,
       }),
       invalidatesTags: [Tags.activities, Tags.statistics],
+    }),
+    appendActivityMedia: mutation<ActivityMediaMutationResponse, AppendActivityMediaRequest>({
+      query: ({ id, media }) => ({
+        url: `/activity/${id}/media`,
+        method: Methods.post,
+        body: { media },
+      }),
+      invalidatesTags: [Tags.activities],
     }),
     addActivityByUserId: mutation<ActivityMutationResponse, ActivityToSend>({
       query: ({ body, id }: ActivityToSend) => ({
@@ -96,6 +108,7 @@ const activityApi = runichApi.injectEndpoints({
 
 export const {
   useUpdateActivityInfoMutation,
+  useAppendActivityMediaMutation,
   useGetActivitiesByUserIdInfiniteQuery,
   useGetAllActivityMediaByUserIdInfiniteQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery,

@@ -15,7 +15,7 @@ export default function FullViewMap() {
     data: activity,
     error,
     refetch,
-  } = useGetLocationsByActivityIdQuery(`${activityId}`);
+  } = useGetLocationsByActivityIdQuery({ activityId: `${activityId}` });
 
   return (
     <SafeAreaView edges={['left', 'right']} style={[{ flex: 1 }, (isLoading || error) && styles.isInCenter]}>

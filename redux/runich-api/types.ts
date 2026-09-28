@@ -136,6 +136,11 @@ export interface ActivityMutationResponse {
   sourceActivityId?: string | null;
 }
 
+export interface ActivityMediaMutationResponse {
+  success: true;
+  media: ActivityMediaItemResponse[];
+}
+
 export interface ActivitiesResponse {
   activities: ActivityListItemResponse[];
   currentUserProfile?: ActivityProfileResponse | null;

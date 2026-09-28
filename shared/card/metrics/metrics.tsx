@@ -7,24 +7,13 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import ShowMetrics from '@S/card/show-metrics/show-metrics';
 import { formatDuration } from '@U/time-formatter';
+import { useActivityCard } from '../context';
 import { CARD_METRICS } from './const';
 import { getCardAdditionalMetric, getCardSpeedMetric } from './utils';
-import type { MetricsProps } from '../types';
 
-export default memo(function Metrics({
-  distance,
-  duration,
-  title,
-  isShowDescription,
-  description,
-  userId,
-  id,
-  sport,
-  steps,
-  elevationGain,
-  caloriesActive,
-  isFullView,
-}: MetricsProps) {
+export default memo(function Metrics() {
+  const { activity, isFullView, isShowDescription } = useActivityCard();
+  const { distance, duration, title, description, userId, id, sport, steps, elevationGain, caloriesActive } = activity;
   const { colors, dark } = useTheme();
   const { push } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
@@ -59,7 +48,9 @@ export default memo(function Metrics({
             title={`${CARD_METRICS[language].distance}: `}
             metrics={`${(distance / 1000).toFixed(2)} ${CARD_METRICS[language].km}`}
           />
-          {additionalMetric && <ShowMetrics title={`${additionalMetric.title}: `} metrics={additionalMetric.metrics} />}
+          {additionalMetric ? (
+            <ShowMetrics title={`${additionalMetric.title}: `} metrics={additionalMetric.metrics} />
+          ) : null}
           {isFullView && caloriesActive != null ? (
             <ShowMetrics
               title={`${CARD_METRICS[language].calories}: `}

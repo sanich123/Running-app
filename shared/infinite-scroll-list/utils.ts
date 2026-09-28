@@ -5,54 +5,18 @@ import type { ActivityListItemResponse } from '@R/runich-api/types';
 type ActivityListItem = ActivityListItemResponse;
 
 export function renderCardsFunction({ item }: { item: ActivityListItem }) {
-  const {
-    title,
-    date,
-    sport,
-    media,
-    mapPhotoUrl,
-    mapPhotoUrlBlurhash,
-    locationName,
-    weatherTemperature,
-    weatherWindSpeed,
-    weatherCode,
-    caloriesActive,
-    duration,
-    distance,
-    elevationGain,
-    steps,
-    emotion,
-    id,
-    userId,
-    profile,
-    _count: { comments: commentsLength, likes: likesLength },
-  } = item;
+  const { _count, ...activity } = item;
 
   return createElement(Card, {
     isShowDeleteBtn: false,
     isShowDescription: false,
-    title: title ?? '',
-    date,
-    sport,
-    userId,
-    id,
-    key: id,
-    mapPhotoUrl,
-    mapPhotoUrlBlurhash,
-    locationName,
-    weatherTemperature,
-    weatherWindSpeed,
-    weatherCode,
-    caloriesActive,
-    media,
-    duration,
-    distance,
-    elevationGain,
-    steps,
-    emotion,
-    profile,
-    commentsLength,
-    likesLength,
+    activity: {
+      ...activity,
+      title: activity.title ?? '',
+      commentsLength: _count.comments,
+      likesLength: _count.likes,
+    },
+    key: activity.id,
   });
 }
 

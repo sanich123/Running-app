@@ -1,34 +1,40 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Platform, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconButton, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useDeleteActivityByIdMutation } from '@R/services/activity/activity';
-import { useAppSelector } from '@R/typed-hooks';
+import { finishLoading, startLoading } from '@R/slices/loading/loading';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { errorToast } from '@S/error-toast/error-toast';
-import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { CARD_DELETE_BTN_TEST_ID, CARD_DELETE_BTN_ICON, CARD_DELETE_BTN } from './const';
+import { useActivityCard } from '../context';
 
-export default function CardDeleteBtn({ activityId }: { activityId: string }) {
-  const [deleteActivityById] = useDeleteActivityByIdMutation();
-  const { isLoading, isDisabled, setIsLoading, setIsDisabled } = useContext(ActivityCardBtnsContext);
+export default function CardDeleteBtn() {
+  const { activity, isShowDeleteBtn } = useActivityCard();
+  const { userId: ownerId, id: activityId } = activity;
+  const [deleteActivityById, { isLoading: isDeleteRequestLoading }] = useDeleteActivityByIdMutation();
+  const dispatch = useAppDispatch();
   const { replace } = useRouter();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
+  const { isLoading } = useAppSelector(({ loading }) => loading);
   const { colors } = useTheme();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
 
+  if (userId !== ownerId || !isShowDeleteBtn) return null;
+
   async function successHandler() {
-    setIsLoading(true);
-    setIsDisabled(true);
-    await deleteActivityById(activityId)
-      .unwrap()
-      .then(() => replace(ROUTES.root))
-      .catch((error) => errorToast('', error))
-      .finally(() => {
-        setIsLoading(false);
-        setIsDisabled(false);
-      });
+    dispatch(startLoading());
+    try {
+      await deleteActivityById(activityId).unwrap();
+      replace(ROUTES.root);
+    } catch (error) {
+      errorToast('', error);
+    } finally {
+      dispatch(finishLoading());
+    }
   }
 
   return (
@@ -42,7 +48,7 @@ export default function CardDeleteBtn({ activityId }: { activityId: string }) {
           if (Platform.OS === 'web') await successHandler();
           else setIsConfirmDialogVisible(true);
         }}
-        disabled={isLoading || isDisabled}
+        disabled={isLoading || isDeleteRequestLoading}
       />
       <ConfirmDialog
         visible={isConfirmDialogVisible}

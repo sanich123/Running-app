@@ -8,12 +8,14 @@ import activity from './slices/activity/activity';
 import auth from './slices/auth/auth';
 import { configureAuthPersistence, readPersistedAuth } from './slices/auth/persistence';
 import comment from './slices/comment/comment';
+import loading from './slices/loading/loading';
 import location from './slices/location/location';
 import logining from './slices/logining/logining';
 import mainFeed from './slices/main-feed/main-feed';
 import migration from './slices/migration/migration';
 import network from './slices/network/network';
 import settings from './slices/settings/settings';
+import subscription from './slices/subscription/subscription';
 import trackingRecovery from './slices/tracking-recovery/tracking-recovery';
 import type { Action, Reducer } from '@reduxjs/toolkit';
 import type { PersistedState } from 'redux-persist';
@@ -29,13 +31,14 @@ const getStoredStateWithAuth = async (
 const persistConfig = {
   key: 'root',
   storage: appStorage,
-  whitelist: ['settings', 'activity', 'trackingRecovery', 'auth'],
+  whitelist: ['settings', 'activity', 'trackingRecovery', 'auth', 'subscription'],
   getStoredState: getStoredStateWithAuth,
 };
 
 const appReducer = combineReducers({
   network,
   settings,
+  subscription,
   location,
   activity,
   trackingRecovery,
@@ -43,6 +46,7 @@ const appReducer = combineReducers({
   migration,
   auth,
   logining,
+  loading,
   comment,
   [runichApi.reducerPath]: runichApi.reducer,
 });

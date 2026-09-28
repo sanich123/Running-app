@@ -6,6 +6,7 @@ import LikesList from '@Routes/likes-list/likes-list';
 import MapPage from '@Routes/map-page/map-page';
 import ActivityCard from '@S/card/card';
 import CommentBtn from '@S/card/comment-btn/comment-btn';
+import { ActivityCardContext } from '@S/card/context';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '@S/card/like-btn/const';
 import LikeBtn from '@S/card/like-btn/like-btn';
 import { COMMENT_INPUT_TEST_ID, COMMENT_ICON_TEST_ID } from '@S/comments/comment-input/const';
@@ -28,19 +29,13 @@ jest.mock('expo-router', () => ({
 const cardProps = {
   isShowDeleteBtn: false,
   isShowDescription: true,
-  description: MOCK_SERVER_ACTIVITY.description,
-  title: MOCK_SERVER_ACTIVITY.title,
-  date: MOCK_SERVER_ACTIVITY.date,
-  sport: MOCK_SERVER_ACTIVITY.sport,
-  id: MOCK_SERVER_ACTIVITY.id,
-  userId: MOCK_SERVER_ACTIVITY.userId,
-  media: [...MOCK_SERVER_ACTIVITY.media],
-  mapPhotoUrl: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/896x538@2x?access_token=test',
-  duration: MOCK_SERVER_ACTIVITY.duration,
-  distance: MOCK_SERVER_ACTIVITY.distance,
-  elevationGain: MOCK_SERVER_ACTIVITY.elevationGain,
-  profile: MOCK_SERVER_ACTIVITY.profile,
-  commentsLength: MOCK_SERVER_ACTIVITY._count.comments,
+  activity: {
+    ...MOCK_SERVER_ACTIVITY,
+    media: [...MOCK_SERVER_ACTIVITY.media],
+    mapPhotoUrl: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/auto/896x538@2x?access_token=test',
+    commentsLength: MOCK_SERVER_ACTIVITY._count.comments,
+    likesLength: MOCK_SERVER_ACTIVITY._count.likes,
+  },
 };
 
 describe('activity and social integration flows', () => {
@@ -98,7 +93,17 @@ describe('activity and social integration flows', () => {
     );
 
     const user = userEvent.setup();
-    await renderWithProviders(<LikeBtn activityId={MOCK_SERVER_IDS.activityId} profile={cardProps.profile} />);
+    await renderWithProviders(
+      <ActivityCardContext.Provider
+        value={{
+          activity: cardProps.activity,
+          isFullView: false,
+          isShowDeleteBtn: false,
+          isShowDescription: true,
+        }}>
+        <LikeBtn />
+      </ActivityCardContext.Provider>,
+    );
     const likeButton = await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED);
     await waitFor(() => expect(likeButton.props.accessibilityState?.disabled).toBe(false));
     await user.press(likeButton);
@@ -135,11 +140,15 @@ describe('activity and social integration flows', () => {
 
     const user = userEvent.setup();
     await renderWithProviders(
-      <CommentBtn
-        activityId={MOCK_SERVER_IDS.activityId}
-        commentsLength={MOCK_SERVER_ACTIVITY._count.comments}
-        profile={MOCK_SERVER_ACTIVITY.profile}
-      />,
+      <ActivityCardContext.Provider
+        value={{
+          activity: cardProps.activity,
+          isFullView: false,
+          isShowDeleteBtn: false,
+          isShowDescription: true,
+        }}>
+        <CommentBtn />
+      </ActivityCardContext.Provider>,
     );
     expect(await screen.findByText('Вдохновляет на свою пробежку.')).toBeOnTheScreen();
 

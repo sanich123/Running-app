@@ -4,12 +4,39 @@ import { Platform } from 'react-native';
 import * as router from 'expo-router';
 import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { AvatarShowableTestIds } from '@S/avatar/showable/const';
+import { ActivityCardContext } from '@S/card/context';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LIKE_BTN, LikesSize } from './const';
+import { LIKE_BTN } from './const';
 import Likes from './likes';
+
+function renderLikes(activityId: string, isFullView = false, likesLength?: number) {
+  return renderWithProviders(
+    <ActivityCardContext.Provider
+      value={{
+        activity: {
+          date: '2026-08-09T10:00:00.000Z',
+          sport: 'run',
+          id: activityId,
+          userId: 'activity-owner',
+          duration: 0,
+          distance: 0,
+          elevationGain: 0,
+          profile: {},
+          commentsLength: 0,
+          likesLength,
+        },
+        isFullView,
+        isShowDeleteBtn: false,
+        isShowDescription: false,
+      }}>
+      <Likes />
+    </ActivityCardContext.Provider>,
+    { store: mockStore },
+  );
+}
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
@@ -43,9 +70,7 @@ describe('Card likes', () => {
         ]),
       ),
     );
-    await renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />, {
-      store: mockStore,
-    });
+    await renderLikes('617dddae-05b3-418a-9a8e-5d408a1b897a', true);
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
     const avatar = await screen.findByTestId(AvatarShowableTestIds.success);
     expect(avatar).toBeOnTheScreen();
@@ -55,13 +80,13 @@ describe('Card likes', () => {
   });
 
   it('renders the compact likes count', async () => {
-    await renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.small} />);
+    await renderLikes('617dddae-05b3-418a-9a8e-5d408a1b897a');
 
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
   });
 
   it('renders an empty state when likes are skipped', async () => {
-    await renderWithProviders(<Likes activityId="" size={LikesSize.big} />);
+    await renderLikes('', true);
 
     expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
   });
@@ -76,7 +101,7 @@ describe('Card likes', () => {
       }),
     );
 
-    await renderWithProviders(<Likes activityId={activityId} size={LikesSize.small} likesLength={0} />);
+    await renderLikes(activityId, false, 0);
 
     expect(requests).toBe(0);
     expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
@@ -100,7 +125,7 @@ describe('Card likes', () => {
       }),
     );
 
-    await renderWithProviders(<Likes activityId={activityId} size={LikesSize.small} likesLength={0} />);
+    await renderLikes(activityId, false, 0);
     expect(requests).toBe(0);
 
     await act(async () => {
@@ -115,7 +140,7 @@ describe('Card likes', () => {
     const user = userEvent.setup();
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
-    await renderWithProviders(<Likes activityId="617dddae-05b3-418a-9a8e-5d408a1b897a" size={LikesSize.big} />);
+    await renderLikes('617dddae-05b3-418a-9a8e-5d408a1b897a', true);
     await user.press(await screen.findByTestId('pushToActivityLikes'));
     expect(mockPush).not.toHaveBeenCalled();
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });

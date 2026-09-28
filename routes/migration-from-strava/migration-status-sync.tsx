@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useIsFocused } from 'expo-router';
 import { Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
 import {
@@ -16,16 +17,17 @@ import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast
 
 export default function MigrationStatusSync() {
   const dispatch = useAppDispatch();
+  const isFocused = useIsFocused();
   const { jobId, job } = useAppSelector(({ migration }) => migration);
   const lastStatusError = useRef<string | null>(null);
   const lastCompletedJob = useRef<string | null>(null);
   const isTerminal = ['completed', 'failed', 'cancelled'].includes(job?.status ?? '');
   const { data: currentJob, error: currentJobError } = useGetCurrentStravaMigrationStatusQuery(undefined, {
-    skip: Boolean(jobId),
+    skip: !isFocused || Boolean(jobId),
     refetchOnMountOrArgChange: true,
   });
   const { data: jobStatus, error: jobStatusError } = useGetStravaMigrationStatusQuery(jobId ?? '', {
-    skip: !jobId,
+    skip: !isFocused || !jobId,
     pollingInterval: jobId && !isTerminal ? 2000 : 0,
     refetchOnMountOrArgChange: true,
   });

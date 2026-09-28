@@ -2,12 +2,14 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import activity from '@R/slices/activity/activity';
 import auth, { setAuthSession } from '@R/slices/auth/auth';
 import comment from '@R/slices/comment/comment';
+import loading from '@R/slices/loading/loading';
 import location from '@R/slices/location/location';
 import logining from '@R/slices/logining/logining';
 import mainFeed from '@R/slices/main-feed/main-feed';
 import migration from '@R/slices/migration/migration';
 import network from '@R/slices/network/network';
 import settings from '@R/slices/settings/settings';
+import subscription from '@R/slices/subscription/subscription';
 import trackingRecovery from '@R/slices/tracking-recovery/tracking-recovery';
 import { createProfileListenerMiddleware } from '../../redux/middleware/profile-listener';
 import { runichApi } from '../../redux/runich-api/runich-api';
@@ -15,6 +17,7 @@ import { runichApi } from '../../redux/runich-api/runich-api';
 const rootReducer = combineReducers({
   network,
   settings,
+  subscription,
   location,
   activity,
   trackingRecovery,
@@ -22,6 +25,7 @@ const rootReducer = combineReducers({
   migration,
   auth,
   logining,
+  loading,
   comment,
   [runichApi.reducerPath]: runichApi.reducer,
 });

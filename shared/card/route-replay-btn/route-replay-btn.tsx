@@ -1,0 +1,37 @@
+import { StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { IconButton, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
+import useHasPremiumSubscription from '@R/slices/subscription/use-has-premium-subscription';
+import { useAppSelector } from '@R/typed-hooks';
+import { ROUTE_REPLAY_BUTTON_COPY } from './const';
+
+export default function RouteReplayBtn({ activityId }: { activityId: string }) {
+  const { push } = useRouter();
+  const { colors } = useTheme();
+  const { language } = useAppSelector(({ settings }) => settings);
+  const { isLoading } = useAppSelector(({ loading }) => loading);
+  const hasPremium = useHasPremiumSubscription();
+  const copy = ROUTE_REPLAY_BUTTON_COPY[language];
+
+  if (!hasPremium) return null;
+
+  return (
+    <IconButton
+      mode="contained-tonal"
+      icon="play-circle-outline"
+      iconColor={colors.primary}
+      size={23}
+      style={styles.iconButton}
+      onPress={() => push(`/${ROUTES.map}/${activityId}?replay=1`)}
+      disabled={isLoading}
+      accessibilityRole="button"
+      accessibilityLabel={copy.open}
+      testID="activity-card-route-replay-button"
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  iconButton: { height: 40, marginHorizontal: 0, width: 40 },
+});

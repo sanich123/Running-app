@@ -5,6 +5,32 @@ import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityCardCommentBtn from './comment-btn';
+import { ActivityCardContext } from '../context';
+
+function renderCommentBtn(activityId = 'someActivityId', commentsLength = 6) {
+  return renderWithProviders(
+    <ActivityCardContext.Provider
+      value={{
+        activity: {
+          date: '2026-08-09T10:00:00.000Z',
+          sport: 'run',
+          id: activityId,
+          userId: 'activity-owner',
+          duration: 0,
+          distance: 0,
+          elevationGain: 0,
+          profile: MOCK_PROFILE,
+          commentsLength,
+        },
+        isFullView: false,
+        isShowDeleteBtn: false,
+        isShowDescription: false,
+      }}>
+      <ActivityCardCommentBtn />
+    </ActivityCardContext.Provider>,
+    { store: mockStore },
+  );
+}
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
@@ -14,12 +40,7 @@ jest.mock('expo-router', () => ({
 
 describe('Activity card comment btn', () => {
   it('should correctly renders', async () => {
-    await renderWithProviders(
-      <ActivityCardCommentBtn activityId="someActivityId" commentsLength={6} profile={MOCK_PROFILE} />,
-      {
-        store: mockStore,
-      },
-    );
+    await renderCommentBtn();
     expect(screen.getByTestId('activityCardCommentBtnIcon')).toBeOnTheScreen();
   });
 
@@ -27,9 +48,7 @@ describe('Activity card comment btn', () => {
     const user = userEvent.setup();
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
-    await renderWithProviders(
-      <ActivityCardCommentBtn activityId="someActivityId" commentsLength={6} profile={MOCK_PROFILE} />,
-    );
+    await renderCommentBtn();
     await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
     expect(mockPush).not.toHaveBeenCalled();
     expect(mockStore.getState().comment).toEqual(
@@ -43,9 +62,7 @@ describe('Activity card comment btn', () => {
     mockStore.dispatch(setCommentToUpdate('Comment from another activity'));
     mockStore.dispatch(setIdOfUpdatingComment('comment-id'));
 
-    await renderWithProviders(
-      <ActivityCardCommentBtn activityId="newActivityId" commentsLength={0} profile={MOCK_PROFILE} />,
-    );
+    await renderCommentBtn('newActivityId', 0);
     await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
 
     expect(mockStore.getState().comment).toEqual(

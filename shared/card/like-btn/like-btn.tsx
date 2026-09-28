@@ -1,13 +1,14 @@
-import { useCallback, useContext, useEffect, memo, useState } from 'react';
+import { useCallback, useEffect, memo, useState } from 'react';
 import { Animated } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
 import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/services/likes/likes';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
+import { finishLoading, startLoading } from '@R/slices/loading/loading';
 import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
+import { useActivityCard } from '../context';
 import {
   CARD_LIKE_BTN_TEST_ID_LIKED,
   CARD_LIKE_BTN_TEST_ID_NOT_LIKED,
@@ -15,14 +16,15 @@ import {
   CARD_LIKE_BTN_ICON_NOT_LIKED,
 } from './const';
 import { LIKE_BTN } from '../likes/const';
-import type { LikeBtnProps } from '../types';
 
-export default memo(function LikeBtn({ activityId, likesLength, profile, mapPhotoUrl }: LikeBtnProps) {
+export default memo(function LikeBtn() {
+  const { activity } = useActivityCard();
+  const { id: activityId, likesLength, profile, mapPhotoUrl } = activity;
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { isLoading } = useAppSelector(({ loading }) => loading);
   const { data: currentUserProfile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
-  const { isDisabled, isLoading } = useContext(ActivityCardBtnsContext);
   const { language } = useAppSelector(({ settings }) => settings);
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const { profilePhoto, name, surname } = currentUserProfile ?? {};
@@ -102,6 +104,7 @@ export default memo(function LikeBtn({ activityId, likesLength, profile, mapPhot
         size={isLikedByYou.length ? 29 : 25}
         onPress={async () => {
           if (userId) {
+            dispatch(startLoading());
             animateLike();
             try {
               if (isLikedByYou.length > 0) {
@@ -112,12 +115,12 @@ export default memo(function LikeBtn({ activityId, likesLength, profile, mapPhot
               dispatch(setActivityIdWhichLikesToUpdate(activityId));
             } catch (error) {
               errorToast(LIKE_BTN[language].errorAction(isLikedByYou.length ? 'delete' : 'send'), error);
+            } finally {
+              dispatch(finishLoading());
             }
           }
         }}
-        disabled={
-          isLoading || isDisabled || isError || isLikesLoading || isLikesFetching || isSendingLike || isDeletingLike
-        }
+        disabled={isLoading || isError || isLikesLoading || isLikesFetching || isSendingLike || isDeletingLike}
       />
     </Animated.View>
   );

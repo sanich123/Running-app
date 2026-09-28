@@ -1,4 +1,4 @@
-import { useContext, memo, useState, useEffect, useRef } from 'react';
+import { memo, useState, useEffect, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
 import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
@@ -12,15 +12,16 @@ import {
 } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CommentsListModal from '@S/comments/comments-list-modal/comments-list-modal';
-import { ActivityCardBtnsContext } from '@U/context/activity-card-btns';
 import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
-import type { CommentBtnProps } from '../types';
+import { useActivityCard } from '../context';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-export default memo(function CommentBtn({ activityId, commentsLength, profile, mapPhotoUrl }: CommentBtnProps) {
+export default memo(function CommentBtn() {
+  const { activity } = useActivityCard();
+  const { id: activityId, commentsLength, profile, mapPhotoUrl } = activity;
   const dispatch = useAppDispatch();
   const { dark, colors } = useTheme();
-  const { isLoading, isDisabled } = useContext(ActivityCardBtnsContext);
+  const { isLoading } = useAppSelector(({ loading }) => loading);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(false);
   const {
@@ -42,6 +43,7 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
       style={styles.container}
       rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
+      disabled={isLoading || isErrorLoadingComments || isLoadingComments}
       onPress={() => {
         dispatch(setCommentToUpdate(''));
         dispatch(setIdOfUpdatingComment(''));
@@ -60,7 +62,7 @@ export default memo(function CommentBtn({ activityId, commentsLength, profile, m
           icon={COMMENT_BTN_ICON}
           iconColor={colors.primary}
           size={25}
-          disabled={isLoading || isDisabled || isErrorLoadingComments || isLoadingComments}
+          disabled={isLoading || isErrorLoadingComments || isLoadingComments}
         />
         <CommentsListModal commentsModalRef={commentsModalRef} commentsLength={commentsLength} />
       </>

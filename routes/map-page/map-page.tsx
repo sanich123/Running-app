@@ -3,12 +3,16 @@ import { StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
+import ActivityRouteReplay from '@S/activity-route-replay/activity-route-replay';
 import DisplayActivityMap from '@S/display-activity-map/display-activity-map';
 import ErrorComponent from '@S/error-component/error-component';
 
 export default function MapPage() {
   const { colors } = useTheme();
-  const { id: activityId } = useLocalSearchParams();
+  const { id: routeId, replay } = useLocalSearchParams<{ id?: string | string[]; replay?: string | string[] }>();
+  const activityId = Array.isArray(routeId) ? routeId[0] : routeId;
+  const replayValue = Array.isArray(replay) ? replay[0] : replay;
+  const isReplay = replayValue === '1';
   const {
     isLoading,
     isSuccess,
@@ -16,7 +20,7 @@ export default function MapPage() {
     data: activity,
     error,
     refetch,
-  } = useGetLocationsByActivityIdQuery(`${activityId}`);
+  } = useGetLocationsByActivityIdQuery({ activityId: activityId ?? '', replay: isReplay }, { skip: !activityId });
 
   return (
     <SafeAreaView
@@ -25,7 +29,11 @@ export default function MapPage() {
       {isLoading ? (
         <ActivityIndicator size="large" testID="map-page-loading" />
       ) : isSuccess ? (
-        <DisplayActivityMap locations={activity?.locations ?? []} kilometresSplit={activity?.kilometresSplit ?? []} />
+        isReplay ? (
+          <ActivityRouteReplay locations={activity?.locations ?? []} />
+        ) : (
+          <DisplayActivityMap locations={activity?.locations ?? []} kilometresSplit={activity?.kilometresSplit ?? []} />
+        )
       ) : isError ? (
         <ErrorComponent error={error} refetch={refetch} />
       ) : null}

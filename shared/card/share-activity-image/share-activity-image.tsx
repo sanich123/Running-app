@@ -13,10 +13,10 @@ import Metric from './metric';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import { CARD_METRICS } from '../metrics/const';
 import { getCardSpeedMetric } from '../metrics/utils';
-import type { ActivityCardProps } from '../types';
+import type { ActivityCardData } from '../types';
 
-type ShareActivityImageProps = Pick<ActivityCardProps, 'distance' | 'duration' | 'date' | 'title' | 'mapPhotoUrl'> & {
-  profile?: ActivityCardProps['profile'];
+type ShareActivityImageProps = Pick<ActivityCardData, 'distance' | 'duration' | 'date' | 'title' | 'mapPhotoUrl'> & {
+  profile?: ActivityCardData['profile'];
   sport?: string;
   emotion?: string | null;
   elevationGain?: number;

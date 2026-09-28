@@ -5,6 +5,7 @@ const mockMap = {
   addControl: jest.fn(),
   addLayer: jest.fn(),
   addSource: jest.fn(),
+  getSource: jest.fn(),
   remove: jest.fn(),
   on: jest.fn(),
 };
@@ -61,6 +62,49 @@ describe('mapbox web', () => {
     ]);
     expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'route-marker-background' }));
     expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'route-marker-icon' }));
+  });
+
+  it('creates and updates the moving route replay marker', async () => {
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
+    const playbackSource = { setData: jest.fn() };
+    const routeCoordinates = [
+      [37.6, 55.7],
+      [37.8, 55.9],
+    ];
+    mockMap.addSource.mockClear();
+    mockMap.addLayer.mockClear();
+    mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
+    mockMap.getSource.mockReturnValue(playbackSource);
+
+    const result = await render(
+      <MapboxWeb
+        boundBox={[37.6, 55.7, 37.8, 55.9]}
+        routeCoordinates={routeCoordinates}
+        kilometresSplit={[]}
+        showPlaybackMarker
+        playbackCoordinate={[37.65, 55.75]}
+      />,
+    );
+
+    const playbackMarker = mockMap.addSource.mock.calls.find(([id]) => id === 'route-playback-marker');
+    expect(playbackMarker?.[1].data.geometry.coordinates).toEqual([37.65, 55.75]);
+    expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'route-playback-marker' }));
+
+    await result.rerender(
+      <MapboxWeb
+        boundBox={[37.6, 55.7, 37.8, 55.9]}
+        routeCoordinates={routeCoordinates}
+        kilometresSplit={[]}
+        showPlaybackMarker
+        playbackCoordinate={[37.7, 55.8]}
+      />,
+    );
+
+    expect(playbackSource.setData).toHaveBeenLastCalledWith({
+      type: 'Feature',
+      properties: {},
+      geometry: { type: 'Point', coordinates: [37.7, 55.8] },
+    });
   });
 
   it('filters invalid kilometre points and adds valid split layers', async () => {
