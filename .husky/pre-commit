@@ -4,25 +4,16 @@ set -e
 # 1. Проверка TypeScript
 yarn tsc
 
-# 2. Линтинг и автофикс
-yarn eslint --fix
+# 2. Линтинг и форматирование staged-файлов
+yarn lint-staged
 
-# 3. Применяем Prettier к исходному коду проекта
-yarn prettier --write \
-  './app/**/*.{ts,tsx}' \
-  './routes/**/*.{ts,tsx}' \
-  './shared/**/*.{ts,tsx}' \
-  './redux/**/*.{ts,tsx}' \
-  './tests/**/*.{ts,tsx}' \
-  './*.{ts,tsx,js,json}'
-
-# 4. Проверка состояния Expo
+# 3. Проверка состояния Expo
 npx expo-doctor@latest || true
 
-# 5. Тесты
+# 4. Тесты
 # yarn test
 
-# 6. Проверка circular dependencies
+# 5. Проверка circular dependencies
 yarn madge \
   --ts-config ./tsconfig.json \
   --warning \
@@ -30,11 +21,11 @@ yarn madge \
   --extensions ts,tsx \
   ./app ./routes ./shared ./constants ./redux ./utils
 
-# 7. Проверка неиспользуемых импортов ts-prune
+# 6. Проверка неиспользуемых импортов ts-prune
 yarn ts-prune --ignore 'app|jest.config.js|.*\.test\.(ts|tsx)$'
 
-# 8. Обновление зависимостей
+# 7. Обновление зависимостей
 yarn npm-check-updates || true
 
-# 9. Проверка неиспользуемых зависимостей опционально
+# 8. Проверка неиспользуемых зависимостей опционально
 yarn depcheck || true
