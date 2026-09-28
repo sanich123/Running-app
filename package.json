@@ -1,6 +1,6 @@
 {
   "name": "runich-running-app",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -107,7 +107,7 @@
     "react-native-view-shot": "5.1.1",
     "react-native-web": "^0.21.0",
     "react-native-worklets": "0.13.0",
-    "react-native-zip-archive": "^9.5.1",
+    "react-native-zip-archive": "^9.5.2",
     "react-redux": "^9.3.0",
     "turf-linestring": "^1.0.2",
     "turf-point": "^2.0.1",
