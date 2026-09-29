@@ -6,9 +6,9 @@ import useHasPremiumSubscription from '@R/slices/subscription/use-has-premium-su
 import { useAppSelector } from '@R/typed-hooks';
 import { ROUTE_REPLAY_BUTTON_COPY } from './const';
 
-export default function RouteReplayBtn({ activityId }: { activityId: string }) {
+export default function RouteReplayBtn({ activityId, userId }: { activityId: string; userId: string }) {
   const { push } = useRouter();
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { isLoading } = useAppSelector(({ loading }) => loading);
   const hasPremium = useHasPremiumSubscription();
@@ -21,9 +21,10 @@ export default function RouteReplayBtn({ activityId }: { activityId: string }) {
       mode="contained-tonal"
       icon="play-circle-outline"
       iconColor={colors.primary}
+      containerColor={dark ? 'rgba(38, 38, 38, 0.68)' : 'rgba(255, 255, 255, 0.68)'}
       size={23}
       style={styles.iconButton}
-      onPress={() => push(`/${ROUTES.map}/${activityId}?replay=1`)}
+      onPress={() => push(`/${ROUTES.map}/${activityId}?replay=1&userId=${encodeURIComponent(userId)}`)}
       disabled={isLoading}
       accessibilityRole="button"
       accessibilityLabel={copy.open}

@@ -111,7 +111,7 @@ export default memo(function MediaList() {
               />
               <View pointerEvents="box-none" style={styles.mapActions}>
                 {isOwnActivity ? <AddActivityMediaBtn activityId={id} media={media ?? []} /> : null}
-                <RouteReplayBtn activityId={id} />
+                <RouteReplayBtn activityId={id} userId={activityOwnerId} />
               </View>
             </>
           ) : null}
@@ -122,6 +122,7 @@ export default memo(function MediaList() {
       dark,
       emotion,
       id,
+      activityOwnerId,
       isMapPressed,
       isOwnActivity,
       language,

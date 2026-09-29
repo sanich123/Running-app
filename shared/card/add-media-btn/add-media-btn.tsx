@@ -15,7 +15,7 @@ import type { ActivityMediaItem } from '../types';
 import type { MediaUploadItem } from '@U/file-sending';
 
 export default function AddActivityMediaBtn({ activityId, media }: { activityId: string; media: ActivityMediaItem[] }) {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
@@ -75,6 +75,7 @@ export default function AddActivityMediaBtn({ activityId, media }: { activityId:
       mode="contained-tonal"
       icon={icon}
       iconColor={colors.primary}
+      containerColor={dark ? 'rgba(38, 38, 38, 0.68)' : 'rgba(255, 255, 255, 0.68)'}
       size={23}
       style={styles.iconButton}
       onPress={handlePress}

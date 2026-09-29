@@ -6,12 +6,41 @@ const mockMap = {
   addLayer: jest.fn(),
   addSource: jest.fn(),
   getSource: jest.fn(),
+  jumpTo: jest.fn(),
   remove: jest.fn(),
   on: jest.fn(),
 };
 const mapConstructor = jest.fn(() => mockMap);
-jest.setMock('mapbox-gl', { Map: mapConstructor });
+const mockPlaybackMarker = {
+  addTo: jest.fn(),
+  remove: jest.fn(),
+  setLngLat: jest.fn(),
+};
+mockPlaybackMarker.addTo.mockReturnValue(mockPlaybackMarker);
+mockPlaybackMarker.setLngLat.mockReturnValue(mockPlaybackMarker);
+const markerConstructor = jest.fn((options: { element: HTMLDivElement; anchor: 'center' }) => {
+  void options;
+  return mockPlaybackMarker;
+});
+jest.setMock('mapbox-gl', { Map: mapConstructor, Marker: markerConstructor });
 const MapboxWeb = require('./mapbox-web').default;
+
+function setMockDocument() {
+  const createElement = jest.fn((tagName: string) => {
+    const children: HTMLElement[] = [];
+    return {
+      tagName: tagName.toUpperCase(),
+      style: {},
+      setAttribute: jest.fn(),
+      append: jest.fn((child: HTMLElement) => children.push(child)),
+      replaceChildren: jest.fn(() => children.splice(0)),
+      querySelector: jest.fn(
+        (selector: string) => children.find((child) => child.tagName.toLowerCase() === selector) ?? null,
+      ),
+    } as unknown as HTMLElement;
+  });
+  Object.defineProperty(globalThis, 'document', { configurable: true, value: { createElement } });
+}
 
 describe('mapbox web', () => {
   it('creates a bounded map and removes it on unmount', async () => {
@@ -66,45 +95,64 @@ describe('mapbox web', () => {
 
   it('creates and updates the moving route replay marker', async () => {
     Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
-    const playbackSource = { setData: jest.fn() };
+    setMockDocument();
     const routeCoordinates = [
       [37.6, 55.7],
       [37.8, 55.9],
     ];
+    const boundBox: [number, number, number, number] = [37.6, 55.7, 37.8, 55.9];
     mockMap.addSource.mockClear();
     mockMap.addLayer.mockClear();
+    mockPlaybackMarker.setLngLat.mockClear();
+    markerConstructor.mockClear();
     mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
-    mockMap.getSource.mockReturnValue(playbackSource);
 
-    const result = await render(
+    await render(
       <MapboxWeb
-        boundBox={[37.6, 55.7, 37.8, 55.9]}
+        boundBox={boundBox}
         routeCoordinates={routeCoordinates}
         kilometresSplit={[]}
         showPlaybackMarker
         playbackCoordinate={[37.65, 55.75]}
+        playbackProfile={{ name: 'Run', surname: 'User', profilePhoto: 'https://example.test/avatar.jpg' }}
       />,
     );
 
-    const playbackMarker = mockMap.addSource.mock.calls.find(([id]) => id === 'route-playback-marker');
-    expect(playbackMarker?.[1].data.geometry.coordinates).toEqual([37.65, 55.75]);
-    expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'route-playback-marker' }));
+    expect(markerConstructor).toHaveBeenCalledWith(expect.objectContaining({ anchor: 'center' }));
+    const markerElement = markerConstructor.mock.calls[0]?.[0].element;
+    expect(markerElement.querySelector('img')?.src).toBe('https://example.test/avatar.jpg');
+    expect(mockPlaybackMarker.setLngLat).toHaveBeenLastCalledWith([37.65, 55.75]);
+  });
 
-    await result.rerender(
+  it('updates the replay camera directly on each animation frame', async () => {
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
+    setMockDocument();
+    mockMap.jumpTo.mockClear();
+    mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
+    const playbackCameraUpdateRef: { current: ((coordinate: [number, number], heading: number) => void) | null } = {
+      current: null,
+    };
+    mockPlaybackMarker.setLngLat.mockClear();
+
+    await render(
       <MapboxWeb
         boundBox={[37.6, 55.7, 37.8, 55.9]}
-        routeCoordinates={routeCoordinates}
+        routeCoordinates={[
+          [37.6, 55.7],
+          [37.8, 55.9],
+        ]}
         kilometresSplit={[]}
         showPlaybackMarker
-        playbackCoordinate={[37.7, 55.8]}
+        playbackCoordinate={[37.65, 55.75]}
+        followPlaybackCamera
+        playbackCameraUpdateRef={playbackCameraUpdateRef}
       />,
     );
 
-    expect(playbackSource.setData).toHaveBeenLastCalledWith({
-      type: 'Feature',
-      properties: {},
-      geometry: { type: 'Point', coordinates: [37.7, 55.8] },
-    });
+    playbackCameraUpdateRef.current?.([37.7, 55.8], 125);
+
+    expect(mockMap.jumpTo).toHaveBeenLastCalledWith({ center: [37.7, 55.8], bearing: 125, pitch: 0, zoom: 14.5 });
+    expect(mockPlaybackMarker.setLngLat).toHaveBeenLastCalledWith([37.7, 55.8]);
   });
 
   it('filters invalid kilometre points and adds valid split layers', async () => {

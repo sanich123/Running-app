@@ -1,7 +1,8 @@
 import { screen } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import DisplayActivityMap from './display-activity-map';
-import { getActivityMapBounds } from './utils';
+import { getActivityMapBounds, getRouteSpeedColors } from './utils';
+import type { ActivityLocation } from '@S/card/types';
 import type { LocationObject } from 'expo-location';
 
 jest.mock('@rnmapbox/maps', () => {
@@ -26,7 +27,7 @@ describe('display activity map', () => {
     const locations = [
       { coords: { longitude: 37.6, latitude: 55.7 } },
       { coords: { longitude: 37.8, latitude: 55.9 } },
-    ] as LocationObject[];
+    ] as ActivityLocation[];
 
     expect(getActivityMapBounds(locations)).toEqual({
       boundBox: [37.6, 55.7, 37.8, 55.9],
@@ -36,6 +37,19 @@ describe('display activity map', () => {
         [37.8, 55.9],
       ],
     });
+  });
+
+  it('creates a heatmap color for each route segment', () => {
+    const locations = [
+      { coords: { longitude: 37.6, latitude: 55.7, timestamp: 0 } },
+      { coords: { longitude: 37.61, latitude: 55.7, timestamp: 1_000 } },
+      { coords: { longitude: 37.63, latitude: 55.7, timestamp: 2_000 } },
+    ] as ActivityLocation[];
+
+    const colors = getRouteSpeedColors(locations);
+
+    expect(colors).toHaveLength(2);
+    expect(colors.every((color) => /^#[0-9a-f]{6}$/i.test(color))).toBe(true);
   });
 
   it('shows a useful empty state when there are not enough valid locations', async () => {
@@ -64,9 +78,9 @@ describe('display activity map', () => {
     ] as LocationObject[];
     await renderWithProviders(<DisplayActivityMap locations={locations} kilometresSplit={[]} />);
 
-    expect(screen.getByTestId('activity-map-increase-zoom')).toBeOnTheScreen();
-    expect(screen.getByTestId('activity-map-decrease-zoom')).toBeOnTheScreen();
-    expect(screen.getByTestId('activity-map-increase-zoom')).toBeEnabled();
-    expect(screen.getByTestId('activity-map-decrease-zoom')).toBeEnabled();
+    expect(screen.getByTestId('activity-map-zoom-in')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-map-zoom-out')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-map-zoom-in')).toBeEnabled();
+    expect(screen.getByTestId('activity-map-zoom-out')).toBeEnabled();
   });
 });

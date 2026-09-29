@@ -149,7 +149,7 @@ describe('Activity card', () => {
     expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
 
     await user.press(mapImage.getByTestId('activity-card-route-replay-button'));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.map}/${MOCK_ACTIVITY.id}?replay=1`);
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.map}/${MOCK_ACTIVITY.id}?replay=1&userId=premium-card-owner`);
   });
 
   it('hides map actions when the user has no active subscription', async () => {

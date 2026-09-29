@@ -1,0 +1,22 @@
+diff --git a/android/src/main/java/com/reactnativeviewrecorder/ViewRecorderModule.kt b/android/src/main/java/com/reactnativeviewrecorder/ViewRecorderModule.kt
+index 911aa0aaa18354acecac5b5d7267d38126d778ec..c424ecec6efbc0dab9c95591c6728d90846535ed 100644
+--- a/android/src/main/java/com/reactnativeviewrecorder/ViewRecorderModule.kt
++++ b/android/src/main/java/com/reactnativeviewrecorder/ViewRecorderModule.kt
+@@ -359,7 +359,7 @@ class ViewRecorderModule(
+       return
+     }
+ 
+-    val activity = currentActivity
++    val activity = getReactApplicationContext().getCurrentActivity()
+     if (activity == null) {
+       promise.reject("NO_ACTIVITY", "No current activity available")
+       return
+@@ -462,7 +462,7 @@ class ViewRecorderModule(
+       return
+     }
+ 
+-    val activity = currentActivity
++    val activity = getReactApplicationContext().getCurrentActivity()
+     if (activity == null) {
+       promise.reject("NO_ACTIVITY", "No current activity available")
+       return

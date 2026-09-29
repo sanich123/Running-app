@@ -1,4 +1,4 @@
-import { createRouteTimeline, getRouteCoordinateAtProgress } from './utils';
+import { createRouteTimeline, getRouteCoordinateAtProgress, smoothRouteHeading } from './utils';
 import type { ActivityLocation } from '@S/card/types';
 
 const location = (longitude: number, latitude: number): ActivityLocation => ({
@@ -33,5 +33,12 @@ describe('activity route replay timeline', () => {
 
     expect(timeline.totalDistance).toBe(0);
     expect(getRouteCoordinateAtProgress(timeline, 0.8)).toEqual([37.6, 55.7]);
+  });
+
+  it('smooths camera turns across north using the short angle path', () => {
+    const nextHeading = smoothRouteHeading(359, 1, 16);
+
+    expect(nextHeading).toBeGreaterThan(359);
+    expect(nextHeading).toBeLessThan(360);
   });
 });
