@@ -28,8 +28,12 @@ describe('activity map controls', () => {
       </SafeAreaProvider>,
     );
 
-    expect(screen.getByTestId('activity-route-style-satellite').props.accessibilityState).toEqual({ selected: true });
-    expect(screen.getByTestId('activity-route-style-map').props.accessibilityState).toEqual({ selected: false });
+    expect(screen.getByTestId('activity-route-style-satellite').props.accessibilityState).toMatchObject({
+      selected: true,
+    });
+    expect(screen.getByTestId('activity-route-style-map').props.accessibilityState).toMatchObject({
+      selected: false,
+    });
 
     await user.press(screen.getByTestId('activity-route-style-map'));
     await user.press(screen.getByTestId('activity-route-zoom-in'));

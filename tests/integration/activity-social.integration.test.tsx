@@ -163,6 +163,6 @@ describe('activity and social integration flows', () => {
 
   it('loads the activity route map after opening it from the card destination', async () => {
     await renderWithProviders(<MapPage />);
-    expect(await screen.findByTestId('activity-map-increase-zoom')).toBeOnTheScreen();
+    expect(await screen.findByTestId('activity-map-zoom-in')).toBeOnTheScreen();
   });
 });

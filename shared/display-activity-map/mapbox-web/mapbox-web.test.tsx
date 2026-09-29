@@ -7,6 +7,9 @@ const mockMap = {
   addSource: jest.fn(),
   getSource: jest.fn(),
   jumpTo: jest.fn(),
+  easeTo: jest.fn(),
+  zoomTo: jest.fn(),
+  setTerrain: jest.fn(),
   remove: jest.fn(),
   on: jest.fn(),
 };
@@ -189,5 +192,79 @@ describe('mapbox web', () => {
     expect(splitLabelLayer.layout['text-padding']).toBe(12);
     const markerSource = mockMap.addSource.mock.calls.find(([id]) => id === 'route-markers');
     expect(markerSource?.[1].data.features).toEqual([]);
+  });
+
+  it('adds terrain, heat-colored route segments, fallback avatar, and animated playback camera controls', async () => {
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
+    setMockDocument();
+    mockMap.addSource.mockClear();
+    mockMap.addLayer.mockClear();
+    mockMap.setTerrain.mockClear();
+    mockMap.easeTo.mockClear();
+    mockMap.zoomTo.mockClear();
+    mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
+    const playbackCameraUpdateRef: {
+      current:
+        ((coordinate: [number, number], heading: number, zoomLevel?: number, durationMs?: number) => void) | null;
+    } = { current: null };
+    const mapControlsRef: { current: { zoomTo: (zoomLevel: number, durationMs?: number) => void } | null } = {
+      current: null,
+    };
+    const result = await render(
+      <MapboxWeb
+        boundBox={[37.6, 55.7, 37.8, 55.9]}
+        routeCoordinates={[
+          [37.6, 55.7],
+          [37.8, 55.9],
+        ]}
+        routeSegmentColors={['green', 'red']}
+        kilometresSplit={[]}
+        showPlaybackMarker
+        followPlaybackCamera
+        playbackProfile={{ name: 'Run', surname: 'User' }}
+        enable3DTerrain
+        playbackCameraUpdateRef={playbackCameraUpdateRef}
+        mapControlsRef={mapControlsRef}
+      />,
+    );
+
+    expect(mockMap.addSource).toHaveBeenCalledWith('activity-route-replay-terrain', expect.any(Object));
+    expect(mockMap.setTerrain).toHaveBeenCalledWith({
+      source: 'activity-route-replay-terrain',
+      exaggeration: expect.any(Number),
+    });
+    const routeSource = mockMap.addSource.mock.calls.find(([id]) => id === 'route');
+    expect(routeSource?.[1].data.features).toEqual([expect.objectContaining({ properties: { color: 'green' } })]);
+    const markerElement = markerConstructor.mock.calls.at(-1)?.[0].element;
+    expect(markerElement?.querySelector('span')?.textContent).toBe('RU');
+
+    mapControlsRef.current?.zoomTo(17, 300);
+    expect(mockMap.zoomTo).toHaveBeenCalledWith(17, { duration: 300 });
+    playbackCameraUpdateRef.current?.([37.7, 55.8], 245, 16, 500);
+    expect(mockMap.easeTo).toHaveBeenCalledWith({
+      center: [37.7, 55.8],
+      bearing: 245,
+      pitch: 0,
+      zoom: 16,
+      duration: 500,
+    });
+
+    await result.unmount();
+    expect(playbackCameraUpdateRef.current).toBeNull();
+    expect(mapControlsRef.current).toBeNull();
+    expect(mockPlaybackMarker.remove).toHaveBeenCalled();
+  });
+
+  it('keeps rendering when browser map globals are unavailable', async () => {
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: undefined });
+    jest
+      .spyOn(React, 'useRef')
+      .mockImplementationOnce(() => ({ current: null }) as any)
+      .mockImplementationOnce(() => ({ current: {} }) as any);
+    mapConstructor.mockClear();
+
+    await render(<MapboxWeb boundBox={[0, 0, 1, 1]} routeCoordinates={[]} kilometresSplit={[]} />);
+
+    expect(mapConstructor).not.toHaveBeenCalled();
   });
 });

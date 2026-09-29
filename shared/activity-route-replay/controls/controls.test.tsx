@@ -1,6 +1,32 @@
 import { act, screen, userEvent } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import Controls from './controls';
+import type { ControlsProps } from '../types';
+
+const copy: ControlsProps['copy'] = {
+  play: 'Play',
+  pause: 'Pause',
+  resume: 'Resume',
+  replay: 'Replay',
+  position: 'Route position',
+  zoomIn: 'Zoom in',
+  zoomOut: 'Zoom out',
+  speed: 'Playback speed',
+  duration: 'Replay duration at 1X',
+  playbackTime: 'Playback',
+  workoutTime: 'Workout',
+  currentSpeed: 'Speed',
+  shareVideo: 'Share workout video',
+  shareUnavailable: 'Sharing unavailable',
+  exportProgress: 'Preparing video',
+  videoReady: 'Video ready',
+  videoSize: 'File size',
+  cancel: 'Cancel',
+  share: 'Share',
+  kmh: 'km/h',
+  satellite: 'Satellite',
+  map: 'Map',
+};
 
 describe('route replay controls', () => {
   it('toggles playback and seeks from the progress bar', async () => {
@@ -18,30 +44,7 @@ describe('route replay controls', () => {
         playbackDuration={60_000}
         workoutTime={900_000}
         currentSpeed={2.5}
-        copy={{
-          play: 'Play',
-          pause: 'Pause',
-          resume: 'Resume',
-          replay: 'Replay',
-          position: 'Route position',
-          zoomIn: 'Zoom in',
-          zoomOut: 'Zoom out',
-          speed: 'Playback speed',
-          duration: 'Replay duration at 1X',
-          playbackTime: 'Playback',
-          workoutTime: 'Workout',
-          currentSpeed: 'Speed',
-          shareVideo: 'Share workout video',
-          shareUnavailable: 'Sharing unavailable',
-          exportProgress: 'Preparing video',
-          videoReady: 'Video ready',
-          videoSize: 'File size',
-          cancel: 'Cancel',
-          share: 'Share',
-          kmh: 'km/h',
-          satellite: 'Satellite',
-          map: 'Map',
-        }}
+        copy={copy}
         onTogglePlayback={onTogglePlayback}
         onSeekStart={onSeekStart}
         onSeek={onSeek}
@@ -62,11 +65,23 @@ describe('route replay controls', () => {
 
     const seekbar = screen.getByTestId('activity-route-replay-seekbar');
     act(() => {
+      seekbar.props.onResponderMove({ nativeEvent: { locationX: 120 } });
+    });
+    expect(onSeek).not.toHaveBeenCalled();
+
+    act(() => {
+      seekbar.props.onAccessibilityAction({ nativeEvent: { actionName: 'increment' } });
+      seekbar.props.onAccessibilityAction({ nativeEvent: { actionName: 'decrement' } });
+      seekbar.props.onAccessibilityAction({ nativeEvent: { actionName: 'unknown' } });
+    });
+    expect(onSeek).toHaveBeenLastCalledWith(0.25);
+
+    act(() => {
       seekbar.props.onLayout({ nativeEvent: { layout: { width: 200 } } });
       seekbar.props.onResponderGrant({ nativeEvent: { locationX: 120 } });
     });
     expect(onSeekStart).toHaveBeenCalledTimes(1);
-    expect(onSeek).toHaveBeenCalledWith(0.6);
+    expect(onSeek).toHaveBeenLastCalledWith(0.6);
     act(() => {
       seekbar.props.onResponderRelease({ nativeEvent: { locationX: 160 } });
     });

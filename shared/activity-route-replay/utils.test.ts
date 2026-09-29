@@ -1,4 +1,11 @@
-import { createRouteTimeline, getRouteCoordinateAtProgress, smoothRouteHeading } from './utils';
+import {
+  createRouteTimeline,
+  getRouteCoordinateAtPlaybackProgress,
+  getRouteCoordinateAtProgress,
+  getRouteHeadingAtProgress,
+  getRouteSpeedAtPlaybackProgress,
+  smoothRouteHeading,
+} from './utils';
 import type { ActivityLocation } from '@S/card/types';
 
 const location = (longitude: number, latitude: number): ActivityLocation => ({
@@ -40,5 +47,51 @@ describe('activity route replay timeline', () => {
 
     expect(nextHeading).toBeGreaterThan(359);
     expect(nextHeading).toBeLessThan(360);
+  });
+
+  it('builds playback time from timestamps, recorded speeds, and distance fallbacks', () => {
+    const timestampTimeline = createRouteTimeline([
+      { timestamp: 1_000, ...location(0, 0) },
+      { timestamp: 2_000, ...location(0.001, 0) },
+    ]);
+    expect(timestampTimeline.totalPlaybackTime).toBe(1);
+
+    const speedTimeline = createRouteTimeline([
+      { coords: { longitude: 0, latitude: 0, speed: 2 } },
+      { coords: { longitude: 0.001, latitude: 0, speed: 4 } },
+    ]);
+    expect(speedTimeline.segmentSpeeds).toEqual([3]);
+    expect(speedTimeline.totalPlaybackTime).toBeGreaterThan(0);
+
+    const distanceTimeline = createRouteTimeline([location(0, 0), location(0.001, 0)]);
+    expect(distanceTimeline.segmentSpeeds).toEqual([null]);
+    expect(distanceTimeline.totalPlaybackTime).toBeGreaterThan(0);
+  });
+
+  it('interpolates playback positions and speeds across recorded route segments', () => {
+    const timeline = createRouteTimeline([
+      { timestamp: 0, ...location(0, 0) },
+      { timestamp: 1_000, ...location(0.001, 0) },
+      { timestamp: 3_000, ...location(0.001, 0.002) },
+    ]);
+
+    expect(getRouteCoordinateAtPlaybackProgress(timeline, 0.25)?.[0]).toBeCloseTo(0.00075, 6);
+    expect(getRouteCoordinateAtPlaybackProgress(timeline, 0.5)?.[1]).toBeCloseTo(0.0005, 6);
+    expect(getRouteSpeedAtPlaybackProgress(timeline, 0.25)).not.toBeNull();
+    expect(getRouteSpeedAtPlaybackProgress(timeline, 0.75)).not.toBeNull();
+    expect(getRouteSpeedAtPlaybackProgress(createRouteTimeline([]), 0.5)).toBeNull();
+  });
+
+  it('handles empty, stationary, and clamped routes when calculating heading and playback speed', () => {
+    const stationaryRoute = createRouteTimeline([location(1, 1), location(1, 1)]);
+    const emptyRoute = createRouteTimeline([]);
+
+    expect(getRouteCoordinateAtPlaybackProgress(emptyRoute, 0.5)).toBeNull();
+    expect(getRouteCoordinateAtPlaybackProgress(stationaryRoute, 0.5)).toEqual([1, 1]);
+    expect(getRouteSpeedAtPlaybackProgress(stationaryRoute, 0.5)).toBeNull();
+    expect(getRouteHeadingAtProgress(emptyRoute, 0.5)).toBe(0);
+    expect(getRouteHeadingAtProgress(stationaryRoute, 0.5)).toBe(0);
+    expect(getRouteHeadingAtProgress(createRouteTimeline([location(0, 0), location(0, 0.01)]), -1)).toBe(0);
+    expect(smoothRouteHeading(10, 350, -10)).toBeCloseTo(10, 1);
   });
 });

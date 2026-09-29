@@ -119,6 +119,7 @@ export default {
     plugins: [
       './custom.plugin',
       'react-native-compressor',
+      'expo-status-bar',
       'expo-image',
       'expo-sharing',
       'expo-router',

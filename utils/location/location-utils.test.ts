@@ -6,6 +6,7 @@ import {
   getElevationGainByKilometres,
   getElevationGainBetweenLocations,
   getKilometerSplitCalculation,
+  getDistance,
   getReducedLocations,
   getSpeedInMinsInKm,
   getSpeedInKmPerHour,
@@ -48,7 +49,21 @@ describe('activity metrics', () => {
     expect(isWalkingOrHikingActivity('run')).toBe(false);
     expect(isCyclingActivity('run')).toBe(false);
     expect(getMaxTrackingSpeedForSport('walk')).toBe(15);
+    expect(getMaxTrackingSpeedForSport('run')).toBe(30);
+    expect(getMaxTrackingSpeedForSport('bike')).toBe(60);
+    expect(getMaxTrackingSpeedForSport('hike')).toBe(20);
     expect(getMaxTrackingSpeedForSport('unknown')).toBe(30);
+    expect(isCyclingActivity('bike')).toBe(true);
+    expect(isHikingActivity('hike')).toBe(true);
+    expect(isWalkingOrHikingActivity('walk')).toBe(true);
+  });
+
+  it('handles zero cadence and formats paces with and without a leading zero in seconds', () => {
+    expect(getAverageCadence(undefined, 60_000)).toBe(0);
+    expect(getAverageCadence(120, -1)).toBe(0);
+    expect(getSpeedInMinsInKm(1_000, 30_000)).toEqual({ paceAsNumber: 0.3, paceAsString: '0.30' });
+    expect(getSpeedInMinsInKm(1_000, 90_000)).toEqual({ paceAsNumber: 1.3, paceAsString: '1.30' });
+    expect(getSpeedInKmPerHour(2_000, 60_000)).toBe(120);
   });
 });
 
@@ -97,6 +112,25 @@ describe('elevation validation', () => {
         createLocation(111, { coords: { timestamp: 10_000 } }),
       ),
     ).toBe(11);
+    expect(
+      getElevationGainBetweenLocations(createLocation(100, { coords: { altitudeAccuracy: -1 } }), createLocation(120)),
+    ).toBe(0);
+    expect(
+      getElevationGainBetweenLocations(
+        createLocation(100, { coords: { altitudeAccuracy: Number.POSITIVE_INFINITY } }),
+        createLocation(120),
+      ),
+    ).toBe(20);
+    expect(getElevationGainBetweenLocations(createLocation(100), createLocation(110))).toBe(0);
+    expect(
+      getElevationGainBetweenLocations(createLocation(100, { timestamp: 0 }), createLocation(120, { timestamp: 0 })),
+    ).toBe(20);
+    expect(
+      getElevationGainBetweenLocations(
+        createLocation(100, { timestamp: Number.NaN }),
+        createLocation(120, { timestamp: 10_000 }),
+      ),
+    ).toBe(0);
   });
 
   it('returns no gain for empty or single-sample tracks and keeps kilometre buckets bounded', () => {
@@ -130,6 +164,20 @@ describe('elevation validation', () => {
     expect(elevationChangeByKilometre[0]).toBeCloseTo(36, 3);
     expect(elevationChangeByKilometre[1]).toBeCloseTo(-12, 3);
   });
+
+  it('smooths sustained climbs, ignores noisy altitude spikes, and handles zero-distance segments', () => {
+    const locations = [100, 100, 100, 120, 120, 120, 100, 100, 100].map((altitude, index) =>
+      createLocation(altitude, {
+        timestamp: index * 10_000,
+        coords: { latitude: 55, longitude: 37 + index * 0.001 },
+      }),
+    );
+    expect(getElevationGain(locations)).toBeGreaterThan(0);
+    expect(getElevationGainByKilometres(locations, 2)).toHaveLength(2);
+    expect(getElevationGainByKilometres([createLocation(100), createLocation(130)], 1)).toEqual([0]);
+    expect(getElevationGainByKilometres([createLocation(100), createLocation(120)], -1)).toEqual([]);
+    expect(getElevationGainByKilometres([createLocation(100)], 1)).toEqual([null]);
+  });
 });
 
 describe('kilometre split edge cases', () => {
@@ -156,6 +204,65 @@ describe('kilometre split edge cases', () => {
     expect(result.remainingDistance).toBe(0);
     expect(result.remainingDuration).toBe(0);
     expect(result.remainingAltitude).toBe(0);
+  });
+
+  it('splits long GPS gaps at each kilometre and interpolates the GPS sample at split points', () => {
+    const result = getKilometerSplitCalculation({
+      previousPosition: {
+        timestamp: 1_000,
+        coords: { latitude: 55, longitude: 37, altitude: 50 },
+      } as never,
+      currentPosition: {
+        timestamp: 11_000,
+        coords: { latitude: 55.025, longitude: 37.025, altitude: 75 },
+      } as never,
+      distance: 2_500,
+      duration: 10_000,
+      altitude: 25,
+      previousKilometerDistance: 250,
+      previousKilometerDuration: 1_000,
+      previousKilometerAltitude: 5,
+    });
+
+    expect(result.splits).toHaveLength(2);
+    expect(result.splits[0].kilometerPoint).toMatchObject({
+      timestamp: 4_000,
+      coords: { latitude: 55.0075, longitude: 37.0075, altitude: 57.5 },
+    });
+    expect(result.splits[1].kilometerPoint).toMatchObject({
+      timestamp: 8_000,
+      coords: { latitude: 55.0175, longitude: 37.0175, altitude: 67.5 },
+    });
+    expect(result.remainingDistance).toBe(750);
+    expect(result.remainingDuration).toBe(3_000);
+    expect(result.remainingAltitude).toBe(7.5);
+  });
+
+  it('uses the latest location if a split has no previous GPS sample', () => {
+    const currentPosition = { timestamp: 1_000, coords: { latitude: 55, longitude: 37 } } as never;
+    const result = getKilometerSplitCalculation({
+      previousPosition: null,
+      currentPosition,
+      distance: 1_200,
+      duration: 12_000,
+      altitude: 6,
+      previousKilometerDistance: 0,
+      previousKilometerDuration: 0,
+      previousKilometerAltitude: 0,
+    });
+
+    expect(result.splits).toHaveLength(1);
+    expect(result.splits[0].kilometerPoint).toBe(currentPosition);
+    expect(result.remainingDistance).toBe(200);
+  });
+});
+
+describe('getDistance', () => {
+  it('measures the distance between GPS coordinates in metres', () => {
+    const origin = { coords: { latitude: 0, longitude: 0 } } as ActivityLocation;
+    const destination = { coords: { latitude: 0, longitude: 1 } } as ActivityLocation;
+
+    expect(getDistance(origin, destination)).toBeCloseTo(111_195, -2);
   });
 });
 

@@ -58,7 +58,7 @@ describe('statistics integration flows', () => {
   it('opens monthly statistics and displays the activity calendar', async () => {
     await renderWithProviders(<MonthStatistics />);
     expect(await screen.findByText(/август 2026|August 2026/i)).toBeOnTheScreen();
-    expect(await screen.findByText('Календарь тренировок')).toBeOnTheScreen();
+    expect(await screen.findByText('Нажмите на день, чтобы открыть тренировку')).toBeOnTheScreen();
     expect(screen.getByTestId(`calendar-activities-${MOCK_SERVER_IDS.activityId}`)).toBeOnTheScreen();
   });
 

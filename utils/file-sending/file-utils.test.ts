@@ -1,5 +1,6 @@
 import {
   createMediaUploadFormData,
+  createMediaUploadBatchFormData,
   getMediaFileInfo,
   isSupportedImageExtension,
   SUPPORTED_VIDEO_FILE_EXTENSIONS,
@@ -68,5 +69,101 @@ describe('media file metadata', () => {
     });
     expect(body.get('scope')).toBe('activity');
     appendSpy.mockRestore();
+  });
+
+  it('detects metadata from URLs and browser files with explicit names and media types', () => {
+    expect(getMediaFileInfo('https://cdn.example/path/route.MP4?token=one#frame')).toEqual({
+      fileName: 'route.MP4',
+      extension: 'mp4',
+      isVideo: true,
+      mimeType: 'video/mp4',
+    });
+    expect(
+      getMediaFileInfo('content://asset-id', {
+        fileName: 'recording',
+        mimeType: 'application/octet-stream',
+        mediaType: 'video',
+      }),
+    ).toEqual({ fileName: 'recording', extension: '', isVideo: true, mimeType: 'video/mp4' });
+    expect(
+      getMediaFileInfo('content://asset-id', {
+        fileName: 'picture',
+        mimeType: 'application/octet-stream',
+        mediaType: 'image',
+      }),
+    ).toEqual({ fileName: 'picture', extension: '', isVideo: false, mimeType: 'image/jpeg' });
+    expect(getMediaFileInfo({ name: 'photo.png', size: 3, type: 'image/custom' } as File)).toEqual({
+      fileName: 'photo.png',
+      extension: 'png',
+      isVideo: false,
+      mimeType: 'image/custom',
+    });
+    expect(isSupportedImageExtension('jpg')).toBe(true);
+    expect(isSupportedImageExtension('exe')).toBe(false);
+  });
+
+  it.each([
+    ['video/3gpp', '3gp'],
+    ['video/3gpp2', '3g2'],
+    ['video/quicktime', 'mov'],
+    ['video/x-m4v', 'm4v'],
+    ['video/x-matroska', 'mkv'],
+    ['video/x-msvideo', 'avi'],
+    ['video/x-ms-wmv', 'wmv'],
+    ['image/x-icon', 'ico'],
+    ['image/svg+xml', 'svg'],
+    ['image/png', 'png'],
+    ['video/', 'mp4'],
+  ])('derives the fallback upload extension for %s', (mimeType, extension) => {
+    const appendSpy = jest.spyOn(FormData.prototype, 'append');
+    createMediaUploadFormData({
+      file: 'file://asset-id',
+      originalName: '',
+      extension: '',
+      isVideo: mimeType.startsWith('video/'),
+      mimeType,
+      uploadOptions: {},
+    });
+
+    expect(appendSpy).toHaveBeenCalledWith(
+      'file',
+      expect.objectContaining({ name: expect.stringMatching(new RegExp(`\\.${extension}$`)), type: mimeType }),
+    );
+    appendSpy.mockRestore();
+  });
+
+  it('builds batch form data for unknown-size files and optional metadata', () => {
+    const appendSpy = jest.spyOn(FormData.prototype, 'append');
+    const manifest = [{ mediaId: 'route-video', role: 'media' as const }];
+    const formData = createMediaUploadBatchFormData({
+      files: [
+        {
+          file: 'content://route-video',
+          originalName: 'route.mp4',
+          extension: 'mp4',
+          isVideo: true,
+          mimeType: 'video/mp4',
+        },
+      ],
+      uploadOptions: {},
+      manifest,
+    });
+
+    expect(formData.get('manifest')).toBe(JSON.stringify(manifest));
+    expect(formData.get('scope')).toBeNull();
+    expect(appendSpy).toHaveBeenCalledWith('files', {
+      uri: 'content://route-video',
+      name: 'route.mp4',
+      type: 'video/mp4',
+    });
+    appendSpy.mockRestore();
+
+    expect(() =>
+      createMediaUploadBatchFormData({
+        files: [],
+        uploadOptions: {},
+        manifest,
+      }),
+    ).toThrow('Manifest медиафайлов не совпадает с количеством файлов');
   });
 });

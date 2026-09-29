@@ -136,7 +136,8 @@ export default function Dashboard() {
   };
 
   const isEmptyResponse = annualStatistics?.isUserHasActivities === false;
-  const shouldShowSkeleton = isLoading || (!isError && !annualStatistics) || (!!annualStatistics && !hasYearData);
+  const shouldShowSkeleton =
+    !isEmptyResponse && (isLoading || (!isError && !annualStatistics) || (!!annualStatistics && !hasYearData));
 
   return (
     <CrossPlatformLayout edges={[]} scrollViewEnabled isError={isError} refetch={refetch} outerStyles={styles.outer}>

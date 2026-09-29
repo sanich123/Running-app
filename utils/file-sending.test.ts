@@ -3,17 +3,19 @@ import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 import { Platform } from 'react-native';
+import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
 import {
   compressMediaFile,
   createVideoThumbnail,
+  deleteUploadedMedia,
   getAccessToGallery,
   uploadMediaFile,
   uploadMediaFiles,
   type UploadMediaBatchRequest,
   type UploadMediaRequest,
 } from './file-sending';
-import { MAX_MEDIA_BATCH_SIZE } from './file-sending/file-utils';
+import { MAX_MEDIA_BATCH_SIZE, MAX_MEDIA_FILE_SIZE } from './file-sending/file-utils';
 
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
 jest.mock('expo-video-thumbnails', () => ({ getThumbnailAsync: jest.fn() }));
@@ -264,5 +266,167 @@ describe('file sending', () => {
     });
     expect(VideoCompressor.compress).not.toHaveBeenCalled();
     expect(getVideoMetaData).not.toHaveBeenCalled();
+  });
+
+  it('returns no compressed media when a compressor produces no output', async () => {
+    (ImageCompressor.compress as jest.Mock).mockResolvedValue(null);
+
+    await expect(compressMediaFile('photo.jpg')).resolves.toBeNull();
+    expect(errorToast).not.toHaveBeenCalled();
+  });
+
+  it('rejects oversized browser videos without calling native video services', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+    const webFile = { name: 'clip.mp4', size: MAX_MEDIA_FILE_SIZE + 1, type: 'video/mp4' } as unknown as File;
+
+    await expect(compressMediaFile(webFile)).resolves.toBeNull();
+    expect(errorToast).toHaveBeenCalledWith('Файл слишком большой, размер файла не более 15 МБ');
+    expect(getVideoMetaData).not.toHaveBeenCalled();
+    expect(VideoCompressor.compress).not.toHaveBeenCalled();
+  });
+
+  it('allows upload to proceed when network state lookup fails or is unknown', async () => {
+    mockGetNetworkState.mockRejectedValueOnce(new Error('network state unavailable'));
+    const compressedFile = {
+      file: 'compressed-image.jpg',
+      originalName: 'photo.jpg',
+      extension: 'jpg',
+      isVideo: false,
+      mimeType: 'image/jpeg',
+    };
+
+    await expect(uploadMediaFile(compressedFile, undefined, uploadMedia)).resolves.toEqual(
+      expect.objectContaining({ url: 'https://cdn.example/photo.jpg' }),
+    );
+    mockGetNetworkState.mockResolvedValueOnce({ isConnected: null, isInternetReachable: null } as never);
+    await expect(uploadMediaFile(compressedFile, undefined, uploadMedia)).resolves.toEqual(
+      expect.objectContaining({ url: 'https://cdn.example/photo.jpg' }),
+    );
+    expect(errorToast).not.toHaveBeenCalled();
+  });
+
+  it('returns null for empty batches and null server results', async () => {
+    await expect(uploadMediaFiles([], undefined, [], uploadMediaBatch)).resolves.toEqual([]);
+    expect(mockGetNetworkState).not.toHaveBeenCalled();
+    expect(uploadMediaBatch).not.toHaveBeenCalled();
+
+    uploadMediaBatch.mockResolvedValueOnce(null as never);
+    await expect(
+      uploadMediaFiles(
+        [
+          {
+            file: 'compressed-image.jpg',
+            originalName: 'photo.jpg',
+            extension: 'jpg',
+            isVideo: false,
+            mimeType: 'image/jpeg',
+          },
+        ],
+        undefined,
+        [{ mediaId: 'media-1', role: 'media' }],
+        uploadMediaBatch,
+      ),
+    ).resolves.toBeNull();
+    expect(errorToast).not.toHaveBeenCalled();
+  });
+
+  it('does not show an upload error after cancellation', async () => {
+    const controller = new AbortController();
+    controller.abort();
+    uploadMedia.mockRejectedValueOnce(new Error('aborted'));
+
+    await expect(
+      uploadMediaFile(
+        {
+          file: 'compressed-image.jpg',
+          originalName: 'photo.jpg',
+          extension: 'jpg',
+          isVideo: false,
+          mimeType: 'image/jpeg',
+        },
+        undefined,
+        uploadMedia,
+        { signal: controller.signal },
+      ),
+    ).resolves.toBeNull();
+    expect(errorToast).not.toHaveBeenCalled();
+  });
+
+  it('uses the store-backed single and batch upload requests when no request override is supplied', async () => {
+    const singleResponse = {
+      url: 'https://cdn.example/single.jpg',
+      key: 'single.jpg',
+      contentType: 'image/jpeg',
+    };
+    const batchResponse = [{ ...singleResponse, mediaId: 'media-0', role: 'media' as const }];
+    const singleRequest = { unwrap: jest.fn().mockResolvedValue(singleResponse), abort: jest.fn() };
+    const batchRequest = { unwrap: jest.fn().mockResolvedValue(batchResponse), abort: jest.fn() };
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
+    dispatchSpy.mockReturnValueOnce(singleRequest as never).mockReturnValueOnce(batchRequest as never);
+    const compressedFile = {
+      file: 'compressed.jpg',
+      originalName: 'photo.jpg',
+      extension: 'jpg',
+      isVideo: false,
+      mimeType: 'image/jpeg',
+    };
+
+    await expect(uploadMediaFile(compressedFile)).resolves.toEqual(singleResponse);
+    await expect(uploadMediaFiles([compressedFile])).resolves.toEqual(batchResponse);
+    expect(singleRequest.abort).not.toHaveBeenCalled();
+    expect(batchRequest.abort).not.toHaveBeenCalled();
+  });
+
+  it('attaches and removes abort listeners around store-backed requests', async () => {
+    const controller = new AbortController();
+    const response = { url: 'https://cdn.example/photo.jpg', key: 'photo.jpg', contentType: 'image/jpeg' };
+    const request = { unwrap: jest.fn().mockResolvedValue(response), abort: jest.fn() };
+    jest.spyOn(store, 'dispatch').mockReturnValue(request as never);
+    const addListener = jest.spyOn(controller.signal, 'addEventListener');
+    const removeListener = jest.spyOn(controller.signal, 'removeEventListener');
+
+    await expect(
+      uploadMediaFile(
+        {
+          file: 'compressed.jpg',
+          originalName: 'photo.jpg',
+          extension: 'jpg',
+          isVideo: false,
+          mimeType: 'image/jpeg',
+        },
+        undefined,
+        undefined,
+        { signal: controller.signal },
+      ),
+    ).resolves.toEqual(response);
+    expect(addListener).toHaveBeenCalledWith('abort', expect.any(Function), { once: true });
+    expect(removeListener).toHaveBeenCalledWith('abort', expect.any(Function));
+  });
+
+  it('aborts a store-backed request immediately when its signal is already aborted', async () => {
+    const controller = new AbortController();
+    controller.abort();
+    const request = { unwrap: jest.fn().mockResolvedValue(null), abort: jest.fn() };
+    jest.spyOn(store, 'dispatch').mockReturnValue(request as never);
+
+    await expect(
+      uploadMediaFile(
+        {
+          file: 'compressed.jpg',
+          originalName: 'photo.jpg',
+          extension: 'jpg',
+          isVideo: false,
+          mimeType: 'image/jpeg',
+        },
+        undefined,
+        undefined,
+        { signal: controller.signal },
+      ),
+    ).resolves.toBeNull();
+    expect(request.abort).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns a successful result when deleting an empty media list', async () => {
+    await expect(deleteUploadedMedia([])).resolves.toBe(true);
   });
 });
