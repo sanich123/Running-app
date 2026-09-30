@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react-native';
+import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { errorToast } from '@S/error-toast/error-toast';
 import { useReplayVideoRecorder } from './recording-view';
@@ -37,7 +37,6 @@ function createPlayback(): ReplayExportPlayback {
     progress: 0.35,
     hasStarted: true,
     isPlaying: true,
-    playbackSpeed: 1.5,
     playbackDuration: 30_000,
     prepareVideoRecording: jest.fn(),
     setVideoFrameProgress: jest.fn(),
@@ -47,6 +46,10 @@ function createPlayback(): ReplayExportPlayback {
 
 function layoutEvent(width: number, height: number) {
   return { nativeEvent: { layout: { x: 0, y: 0, width, height } } } as never;
+}
+
+async function waitForExportDelay() {
+  await jest.advanceTimersByTimeAsync(200);
 }
 
 describe('route video export hook', () => {
@@ -89,7 +92,7 @@ describe('route video export hook', () => {
     expect(result.current.isExporting).toBe(false);
   });
 
-  it('records frames with current playback settings and leaves playback paused for sharing', async () => {
+  it('records the selected replay duration and leaves playback paused', async () => {
     const playback = createPlayback();
     const record = jest.fn(async (options: ReplayRecordOptions) => {
       options.onFrame({ frameIndex: 0, totalFrames: 10 });
@@ -98,26 +101,31 @@ describe('route video export hook', () => {
     });
     mockRecorder.mockReturnValue({ sessionId: 'recording', isAvailable: true, record } as ReplayVideoRecorder);
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined);
+    playback.playbackDuration = 90_000;
     const { result } = await renderHook(() => useVideoExport({ playback, copy, workoutDate: '2026-09-28T17:09:23Z' }));
+    await waitFor(() => expect(result.current).not.toBeNull());
 
     await act(async () => result.current.onLayout(layoutEvent(400, 600)));
-    await act(async () => result.current.shareVideo());
+    await act(async () => {
+      const exportPromise = result.current.shareVideo();
+      await waitForExportDelay();
+      await exportPromise;
+    });
 
     expect(playback.prepareVideoRecording).toHaveBeenCalledTimes(1);
     expect(record).toHaveBeenCalledWith(
       expect.objectContaining({
         fps: 24,
-        totalFrames: 480,
+        totalFrames: 2160,
         codec: 'h264',
         optimizeForNetwork: true,
         bitrate: expect.any(Number),
         output: expect.stringContaining('2026-09-28'),
       }),
     );
-    expect(playback.setVideoFrameProgress).toHaveBeenNthCalledWith(1, 0, (1000 / 24) * 1.5);
-    expect(playback.setVideoFrameProgress).toHaveBeenNthCalledWith(2, 1, (1000 / 24) * 1.5);
+    expect(playback.setVideoFrameProgress).toHaveBeenNthCalledWith(1, 0, 1000 / 24);
+    expect(playback.setVideoFrameProgress).toHaveBeenNthCalledWith(2, 1, 1000 / 24);
     expect(playback.restoreAfterVideoRecording).toHaveBeenCalledWith(0.35, true, false);
-    expect(result.current.progress).toBe(1);
     expect(result.current.isExporting).toBe(false);
     expect(alertSpy).toHaveBeenCalledWith(
       copy.videoReady,
@@ -142,10 +150,15 @@ describe('route video export hook', () => {
     const error = new Error('recording failed');
     const record = jest.fn().mockRejectedValue(error);
     mockRecorder.mockReturnValue({ sessionId: 'recording', isAvailable: true, record } as ReplayVideoRecorder);
-    const { result } = await renderHook(() => useVideoExport({ playback, copy }));
+    const { result } = await renderHook(() => useVideoExport({ playback, copy, workoutDate: '2026-09-28T17:09:23Z' }));
+    await waitFor(() => expect(result.current).not.toBeNull());
 
     await act(async () => result.current.onLayout(layoutEvent(500, 300)));
-    await act(async () => result.current.shareVideo());
+    await act(async () => {
+      const exportPromise = result.current.shareVideo();
+      await waitForExportDelay();
+      await exportPromise;
+    });
 
     expect(errorToast).toHaveBeenCalledWith('', error);
     expect(playback.restoreAfterVideoRecording).toHaveBeenCalledWith(0.35, true, true);
@@ -160,7 +173,10 @@ describe('route video export hook', () => {
       }),
     );
     mockRecorder.mockReturnValue({ sessionId: 'recording', isAvailable: true, record: jest.fn() });
-    const { result } = await renderHook(() => useVideoExport({ playback: createPlayback(), copy }));
+    const { result } = await renderHook(() =>
+      useVideoExport({ playback: createPlayback(), copy, workoutDate: '2026-09-28T17:09:23Z' }),
+    );
+    await waitFor(() => expect(result.current).not.toBeNull());
 
     await act(async () => result.current.onLayout(layoutEvent(500, 300)));
     let firstExport: Promise<void> | undefined;

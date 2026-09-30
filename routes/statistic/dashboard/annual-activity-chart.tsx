@@ -72,7 +72,7 @@ export default function AnnualActivityChart({
           }
           formatYLabel={(value: string) => formatChartAxisValue(value, metric)}
           yAxisTextStyle={{ color: colors.onSurfaceVariant, fontSize: 9 }}
-          showFractionalValues={metric !== 'activities'}
+          showFractionalValues={metric === 'distance' || metric === 'duration'}
           hideRules={false}
           rulesColor={colors.outlineVariant}
           rulesType="dashed"

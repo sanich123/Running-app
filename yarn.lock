@@ -12814,6 +12814,7 @@ __metadata:
     expo-image: "npm:~58.0.8"
     expo-image-picker: "npm:~58.0.9"
     expo-intent-launcher: "npm:~58.0.1"
+    expo-keep-awake: "npm:~58.0.2"
     expo-linear-gradient: "npm:~58.0.2"
     expo-linking: "npm:~58.0.9"
     expo-location: "npm:~58.0.9"

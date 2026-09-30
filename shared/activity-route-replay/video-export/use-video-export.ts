@@ -8,6 +8,7 @@ import {
   ACTIVITY_ROUTE_REPLAY_EXPORT_FPS,
   ACTIVITY_ROUTE_REPLAY_EXPORT_MAX_BITRATE,
   ACTIVITY_ROUTE_REPLAY_EXPORT_MAX_SIZE_BYTES,
+  ACTIVITY_ROUTE_REPLAY_MAX_DURATION_MS,
 } from '../const';
 import { useReplayVideoRecorder } from './recording-view';
 import {
@@ -27,7 +28,6 @@ export default function useVideoExport({
   const recorder = useReplayVideoRecorder();
   const isExportingRef = useRef(false);
   const [isExporting, setIsExporting] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [mapSize, setMapSize] = useState({ width: 0, height: 0 });
 
   const onLayout = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
@@ -43,7 +43,6 @@ export default function useVideoExport({
 
     isExportingRef.current = true;
     setIsExporting(true);
-    setProgress(0);
     const previousProgress = playback.progress;
     const wasStarted = playback.hasStarted;
     const wasPlaying = playback.isPlaying;
@@ -58,9 +57,8 @@ export default function useVideoExport({
       }
 
       const outputSize = getReplayVideoSize(mapSize.width, mapSize.height, PixelRatio.get());
-      const totalFrames = Math.ceil(
-        (playback.playbackDuration * ACTIVITY_ROUTE_REPLAY_EXPORT_FPS) / (1000 * playback.playbackSpeed),
-      );
+      const boundedVideoDuration = Math.min(playback.playbackDuration, ACTIVITY_ROUTE_REPLAY_MAX_DURATION_MS);
+      const totalFrames = Math.ceil((boundedVideoDuration * ACTIVITY_ROUTE_REPLAY_EXPORT_FPS) / 1000);
       const outputDurationSeconds = totalFrames / ACTIVITY_ROUTE_REPLAY_EXPORT_FPS;
       const bitrate = Math.min(
         ACTIVITY_ROUTE_REPLAY_EXPORT_MAX_BITRATE,
@@ -71,7 +69,11 @@ export default function useVideoExport({
       playback.prepareVideoRecording();
       shouldRestorePlayback = true;
       await new Promise<void>((resolve) => {
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            setTimeout(resolve, 200);
+          }),
+        );
       });
 
       const videoPath = await recorder.record({
@@ -85,12 +87,7 @@ export default function useVideoExport({
         optimizeForNetwork: true,
         onFrame: ({ frameIndex, totalFrames: frameCount }) => {
           const frameProgress = frameIndex >= frameCount - 1 ? 1 : frameIndex / (frameCount - 1);
-          const progressPercent = Math.floor(((frameIndex + 1) / frameCount) * 100) / 100;
-          setProgress((previous) => (previous === progressPercent ? previous : progressPercent));
-          playback.setVideoFrameProgress(
-            frameProgress,
-            (1000 / ACTIVITY_ROUTE_REPLAY_EXPORT_FPS) * playback.playbackSpeed,
-          );
+          playback.setVideoFrameProgress(frameProgress, 1000 / ACTIVITY_ROUTE_REPLAY_EXPORT_FPS);
         },
       });
       keepPlaybackPaused = true;
@@ -121,5 +118,5 @@ export default function useVideoExport({
     }
   }, [copy, mapSize.height, mapSize.width, playback, recorder, workoutDate]);
 
-  return { isExporting, progress, recorder, onLayout, shareVideo };
+  return { isExporting, recorder, onLayout, shareVideo };
 }

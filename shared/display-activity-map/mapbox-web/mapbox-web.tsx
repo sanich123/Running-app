@@ -1,7 +1,6 @@
 import { useMemo, useRef, useEffect } from 'react';
-import { Map as MapboxMap, Marker as MapboxMarker } from 'mapbox-gl';
+import { Map as MapboxMap, Marker as MapboxMarker, Popup as MapboxPopup } from 'mapbox-gl';
 import { useTheme } from 'react-native-paper';
-import { COLORS } from '@const/theme-colors';
 import {
   ACTIVITY_ROUTE_REPLAY_TERRAIN_EXAGGERATION,
   ACTIVITY_ROUTE_REPLAY_TERRAIN_SOURCE_URL,
@@ -16,6 +15,7 @@ export default function MapboxWeb({
   routeCoordinates,
   routeSegmentColors,
   kilometresSplit,
+  kilometreUnit = 'km',
   showPlaybackMarker = false,
   playbackCoordinate,
   playbackHeading = 0,
@@ -32,6 +32,7 @@ export default function MapboxWeb({
   routeCoordinates: number[][];
   routeSegmentColors?: string[];
   kilometresSplit: ActivityKilometreSplit[];
+  kilometreUnit?: string;
   showPlaybackMarker?: boolean;
   playbackCoordinate?: [number, number] | null;
   playbackHeading?: number;
@@ -56,6 +57,7 @@ export default function MapboxWeb({
   const playbackProfileRef = useRef(playbackProfile);
   const playbackMarkerRef = useRef<MapboxMarker | null>(null);
   const playbackMarkerElementRef = useRef<HTMLDivElement | null>(null);
+  const kilometrePopupRef = useRef<MapboxPopup | null>(null);
   const kilometreSplitFeatures = useMemo(() => {
     const validKilometreSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
       ({ kilometerPoint }) => {
@@ -225,6 +227,19 @@ export default function MapboxWeb({
           },
         });
         mapboxMap.addLayer({
+          id: 'kilometre-split-hit-area',
+          type: 'circle',
+          source: 'kilometre-splits',
+          layout: {
+            'circle-sort-key': ['get', 'sortKey'],
+          },
+          paint: {
+            'circle-color': colors.primary,
+            'circle-opacity': 0.01,
+            'circle-radius': 14,
+          },
+        });
+        mapboxMap.addLayer({
           id: 'kilometre-split-background',
           type: 'circle',
           source: 'kilometre-splits',
@@ -232,27 +247,35 @@ export default function MapboxWeb({
             'circle-sort-key': ['get', 'sortKey'],
           },
           paint: {
-            'circle-color': COLORS.light.surface,
-            'circle-radius': 15,
+            'circle-color': colors.primary,
+            'circle-radius': 5.5,
             'circle-stroke-color': colors.primary,
-            'circle-stroke-width': 2,
+            'circle-stroke-width': 1,
           },
         });
-        mapboxMap.addLayer({
-          id: 'kilometre-split-label',
-          type: 'symbol',
-          source: 'kilometre-splits',
-          layout: {
-            'text-allow-overlap': true,
-            'text-field': ['get', 'label'],
-            'text-ignore-placement': true,
-            'text-padding': 12,
-            'text-size': 12,
-            'symbol-sort-key': ['get', 'sortKey'],
-          },
-          paint: {
-            'text-color': colors.primary,
-          },
+
+        mapboxMap.on('click', 'kilometre-split-hit-area', (event) => {
+          const feature = event.features?.find(({ properties }) => properties?.label !== undefined);
+          const kilometreNumber = Number(feature?.properties?.label);
+          if (!feature || !Number.isFinite(kilometreNumber)) return;
+
+          kilometrePopupRef.current?.remove();
+          const popup = new MapboxPopup({ closeButton: false, closeOnClick: false, maxWidth: 'none', offset: 8 })
+            .setLngLat(event.lngLat)
+            .setText(`${kilometreNumber} ${kilometreUnit}`)
+            .addTo(mapboxMap);
+          kilometrePopupRef.current = popup;
+          styleKilometrePopup(popup, colors.surface, colors.onSurface, colors.outlineVariant);
+        });
+
+        mapboxMap.on('click', (event) => {
+          const tappedKilometre = mapboxMap.queryRenderedFeatures(event.point, {
+            layers: ['kilometre-split-hit-area'],
+          });
+          if (tappedKilometre.length) return;
+
+          kilometrePopupRef.current?.remove();
+          kilometrePopupRef.current = null;
         });
       }
 
@@ -269,9 +292,9 @@ export default function MapboxWeb({
         source: 'route-markers',
         paint: {
           'circle-color': colors.surface,
-          'circle-radius': 18,
+          'circle-radius': 9,
           'circle-stroke-color': ['match', ['get', 'markerType'], 'start', colors.tertiary, colors.error],
-          'circle-stroke-width': 2,
+          'circle-stroke-width': 1,
         },
       });
       mapboxMap.addLayer({
@@ -283,7 +306,7 @@ export default function MapboxWeb({
           'text-anchor': 'center',
           'text-field': ['get', 'icon'],
           'text-ignore-placement': true,
-          'text-size': 18,
+          'text-size': 9,
         },
         paint: {
           'text-color': ['match', ['get', 'markerType'], 'start', colors.tertiary, colors.error],
@@ -321,6 +344,8 @@ export default function MapboxWeb({
         playbackCameraUpdateRef.current = null;
       }
       if (mapControlsRef?.current === mapControls) mapControlsRef.current = null;
+      kilometrePopupRef.current?.remove();
+      kilometrePopupRef.current = null;
       playbackMarkerRef.current?.remove();
       playbackMarkerRef.current = null;
       playbackMarkerElementRef.current = null;
@@ -330,6 +355,8 @@ export default function MapboxWeb({
   }, [
     boundBox,
     colors.error,
+    colors.onSurface,
+    colors.outlineVariant,
     colors.primary,
     colors.surface,
     colors.tertiary,
@@ -340,6 +367,7 @@ export default function MapboxWeb({
     enable3DTerrain,
     followPlaybackCamera,
     kilometreSplitFeatures,
+    kilometreUnit,
     mapControlsRef,
     playbackCameraUpdateRef,
     routeCoordinates,
@@ -355,6 +383,31 @@ export default function MapboxWeb({
   }, [playbackCoordinate, showPlaybackMarker]);
 
   return <div ref={mapNode} style={{ flex: 1, width: '100%', minHeight: 0 }} />;
+}
+
+function styleKilometrePopup(popup: MapboxPopup, backgroundColor: string, textColor: string, borderColor: string) {
+  const element = popup.getElement();
+  if (!element) return;
+  const content = element.querySelector<HTMLElement>('.mapboxgl-popup-content');
+  const tip = element.querySelector<HTMLElement>('.mapboxgl-popup-tip');
+
+  if (content) {
+    content.style.backgroundColor = backgroundColor;
+    content.style.border = `1px solid ${borderColor}`;
+    content.style.borderRadius = '8px';
+    content.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.2)';
+    content.style.color = textColor;
+    content.style.fontSize = '13px';
+    content.style.fontWeight = '600';
+    content.style.padding = '5px 9px';
+    content.style.whiteSpace = 'nowrap';
+  }
+
+  if (!tip) return;
+  if (element.classList.contains('mapboxgl-popup-anchor-bottom')) tip.style.borderTopColor = backgroundColor;
+  if (element.classList.contains('mapboxgl-popup-anchor-top')) tip.style.borderBottomColor = backgroundColor;
+  if (element.classList.contains('mapboxgl-popup-anchor-left')) tip.style.borderRightColor = backgroundColor;
+  if (element.classList.contains('mapboxgl-popup-anchor-right')) tip.style.borderLeftColor = backgroundColor;
 }
 
 function updateWebAvatarMarker(

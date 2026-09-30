@@ -4,8 +4,8 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import MapTools from './map-tools';
 
 describe('route replay map tools', () => {
-  it('shows vertical playback speed buttons and changes the selected speed', async () => {
-    const onSetPlaybackSpeed = jest.fn();
+  it('uses the same replay duration up to five minutes for playback and video', async () => {
+    const onSetPlaybackDuration = jest.fn();
     const user = userEvent.setup();
 
     await renderWithProviders(
@@ -16,7 +16,6 @@ describe('route replay map tools', () => {
         }}>
         <MapTools
           mapStyle="satellite"
-          playbackSpeed={1}
           playbackDuration={60_000}
           copy={{
             play: 'Play',
@@ -26,8 +25,9 @@ describe('route replay map tools', () => {
             position: 'Route position',
             zoomIn: 'Zoom in',
             zoomOut: 'Zoom out',
-            speed: 'Playback speed',
-            duration: 'Replay duration at 1X',
+            duration: 'Replay and video length',
+            durationSecondsUnit: 's',
+            durationMinutesUnit: 'm',
             playbackTime: 'Playback',
             workoutTime: 'Workout',
             currentSpeed: 'Speed',
@@ -45,20 +45,20 @@ describe('route replay map tools', () => {
           onZoomIn={jest.fn()}
           onZoomOut={jest.fn()}
           onMapStyleChange={jest.fn()}
-          onSetPlaybackSpeed={onSetPlaybackSpeed}
-          onSetPlaybackDuration={jest.fn()}
+          onSetPlaybackDuration={onSetPlaybackDuration}
           canZoomIn
           canZoomOut
         />
       </SafeAreaProvider>,
     );
 
-    expect(screen.getByTestId('activity-route-replay-map-speed-buttons').props.style[0].flexDirection).toBe('column');
-    expect(screen.getByTestId('activity-route-replay-speed-0-25')).toBeOnTheScreen();
-    expect(screen.getByTestId('activity-route-replay-speed-2')).toBeOnTheScreen();
+    const durationSelector = screen.getByTestId('activity-route-replay-duration-selector');
+    expect(screen.getByText('1m')).toBeOnTheScreen();
+    await user.press(durationSelector);
 
-    await user.press(screen.getByTestId('activity-route-replay-speed-0-5'));
-
-    expect(onSetPlaybackSpeed).toHaveBeenCalledWith(0.5);
+    const selectedDuration = screen.getByTestId('activity-route-replay-duration-60000');
+    expect(selectedDuration.props.accessibilityState).toMatchObject({ selected: true });
+    await user.press(screen.getByTestId('activity-route-replay-duration-300000'));
+    expect(onSetPlaybackDuration).toHaveBeenCalledWith(300_000);
   });
 });

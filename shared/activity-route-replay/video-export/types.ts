@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
-import type { ReplayCopy, ReplaySpeed } from '../types';
+import type { ReplayCopy } from '../types';
 
 export interface ReplayRecordFrame {
   frameIndex: number;
@@ -29,7 +29,6 @@ export interface ReplayExportPlayback {
   progress: number;
   hasStarted: boolean;
   isPlaying: boolean;
-  playbackSpeed: ReplaySpeed;
   playbackDuration: number;
   prepareVideoRecording: () => void;
   setVideoFrameProgress: (progress: number, frameDurationMs: number) => void;
@@ -44,7 +43,6 @@ export interface ReplayVideoExportOptions {
 
 export interface ReplayVideoExportState {
   isExporting: boolean;
-  progress: number;
   recorder: ReplayVideoRecorder;
   onLayout: (event: LayoutChangeEvent) => void;
   shareVideo: () => Promise<void>;

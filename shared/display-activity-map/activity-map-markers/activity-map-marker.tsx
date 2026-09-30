@@ -30,7 +30,7 @@ export default function ActivityMapMarker({
         accessibilityLabel={
           type === 'start' ? DISPLAY_ACTIVITY_MAP_TEXT[language].start : DISPLAY_ACTIVITY_MAP_TEXT[language].end
         }>
-        <Icon source={icon} size={22} color={markerColor} />
+        <Icon source={icon} size={11} color={markerColor} />
       </View>
     </MarkerView>
   );
@@ -39,14 +39,14 @@ export default function ActivityMapMarker({
 const styles = StyleSheet.create({
   marker: {
     alignItems: 'center',
-    borderRadius: 24,
-    borderWidth: 2,
+    borderRadius: 12,
+    borderWidth: 1,
     elevation: 5,
-    height: 44,
+    height: 22,
     justifyContent: 'center',
     shadowOffset: { height: 2, width: 0 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    width: 44,
+    width: 22,
   },
 });

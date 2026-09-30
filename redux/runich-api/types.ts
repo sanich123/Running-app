@@ -255,9 +255,16 @@ export interface StatisticMetricResponse {
   totalItems: number;
 }
 
+export interface YearCategoryMetricResponse extends StatisticMetricResponse {
+  totalSteps: number;
+  totalCaloriesActive: number;
+}
+
 export interface DailyActivityStatisticsResponse {
   duration: number;
   distance: number;
+  steps?: number | null;
+  caloriesActive?: number | null;
   date: string;
   sport: string;
 }
@@ -288,7 +295,7 @@ export type YearStatisticsResponse = {
     })
 >;
 
-export type YearCategoryStatistics = StatisticMetricResponse & Record<string, number | StatisticMetricResponse>;
+export type YearCategoryStatistics = YearCategoryMetricResponse & Record<string, number | YearCategoryMetricResponse>;
 
 export interface MessageResponse {
   message: string;

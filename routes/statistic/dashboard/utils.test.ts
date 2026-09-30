@@ -43,6 +43,10 @@ const labels: DashboardLabels = {
   hours: 'h',
   minutes: 'min',
   kilometres: 'km',
+  steps: 'Steps',
+  stepsUnit: 'steps',
+  calories: 'Calories',
+  kilocalories: 'kcal',
 };
 
 describe('dashboard heatmap layout', () => {
@@ -82,6 +86,8 @@ describe('dashboard heatmap layout', () => {
     expect(formatMetricNumber(3.64, 'distance')).toBe(3.6);
     expect(formatMetricValue(2.25, 'distance', labels)).toBe('2.3 km');
     expect(formatMetricValue(1.25, 'duration', labels)).toBe('1.3 h');
+    expect(formatMetricValue(12_345, 'steps', labels)).toBe('12345 steps');
+    expect(formatMetricValue(875, 'caloriesActive', labels)).toBe('875 kcal');
     expect(formatMetricValue(2.4, 'activities', labels)).toBe('2');
     expect(formatChartAxisValue('2.7', 'activities')).toBe('3');
     expect(formatChartAxisValue('2.75', 'distance')).toBe('2.8');
@@ -149,19 +155,40 @@ describe('dashboard heatmap layout', () => {
     expect(getDayIntensity(date, 'run', 'duration', activityData('duration', 7_200_000))).toBe(4);
   });
 
+  it('calculates step and calorie heatmap intensity and treats missing values as zero', () => {
+    const date = new Date(2026, 0, 5);
+    const key = getDateKey(date);
+    const dailyActivities: DashboardDailyActivities = {
+      [key]: [
+        { date: '', sport: 'run', distance: 0, duration: 0, steps: 10_000, caloriesActive: 700 },
+        { date: '', sport: 'bike', distance: 0, duration: 0, steps: 2_000, caloriesActive: 150 },
+        { date: '', sport: 'run', distance: 0, duration: 0 },
+      ],
+    };
+
+    expect(getDayIntensity(date, 'all', 'steps', dailyActivities)).toBe(4);
+    expect(getDayIntensity(date, 'run', 'steps', dailyActivities)).toBe(4);
+    expect(getDayIntensity(date, 'all', 'caloriesActive', dailyActivities)).toBe(4);
+    expect(getDayIntensity(date, 'bike', 'caloriesActive', dailyActivities)).toBe(2);
+    expect(getDayIntensity(date, 'run', 'steps', {})).toBe(0);
+    expect(getDayIntensity(date, 'run', 'caloriesActive', {})).toBe(0);
+  });
+
   it('formats grouped activity summaries for every metric', () => {
     const grouped = groupActivitiesBySport([
-      { date: '', sport: 'run', distance: 1_500, duration: 60_000 },
+      { date: '', sport: 'run', distance: 1_500, duration: 60_000, steps: 100, caloriesActive: 50 },
       { date: '', sport: 'run', distance: 2_500, duration: 120_000 },
       { date: '', sport: 'bike', distance: 10_000, duration: 600_000 },
     ]);
 
     expect(grouped).toEqual([
-      { sport: 'run', distance: 4_000, duration: 180_000, activities: 2 },
-      { sport: 'bike', distance: 10_000, duration: 600_000, activities: 1 },
+      { sport: 'run', distance: 4_000, duration: 180_000, steps: 100, caloriesActive: 50, activities: 2 },
+      { sport: 'bike', distance: 10_000, duration: 600_000, steps: 0, caloriesActive: 0, activities: 1 },
     ]);
     expect(formatDayActivityValue(grouped[0], 'distance', labels)).toBe('4 km · 3 min');
     expect(formatDayActivityValue(grouped[0], 'duration', labels)).toBe('3 min · 4 km');
+    expect(formatDayActivityValue(grouped[0], 'steps', labels)).toBe('100 steps');
+    expect(formatDayActivityValue(grouped[0], 'caloriesActive', labels)).toBe('50 kcal');
     expect(formatDayActivityValue(grouped[0], 'activities', labels)).toBe('2 workouts');
   });
 

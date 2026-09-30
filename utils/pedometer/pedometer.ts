@@ -20,6 +20,9 @@ let activityStartTimestamp: number | null = null;
 let activeSegmentStartTimestamp: number | null = null;
 let subscriptionBaseSteps = 0;
 let totalSteps = 0;
+let androidLatestSubscriptionSteps = 0;
+let androidSegmentStartSteps = 0;
+let androidSegmentBaseSteps = 0;
 let samples: PedometerSample[] = [];
 const listeners = new Set<StepsListener>();
 
@@ -46,10 +49,11 @@ function removeSubscription() {
   subscription = null;
 }
 
-async function stopActiveSegment() {
+async function stopActiveSegment(keepAndroidSubscription = false) {
   const segmentStart = activeSegmentStartTimestamp;
   activeSegmentStartTimestamp = null;
-  removeSubscription();
+  const shouldKeepAndroidSubscription = keepAndroidSubscription && Platform.OS === 'android';
+  if (!shouldKeepAndroidSubscription) removeSubscription();
 
   if (!segmentStart) return;
 
@@ -68,8 +72,22 @@ async function stopActiveSegment() {
 }
 
 async function startSegment() {
-  if (subscription) return true;
   if (Platform.OS === 'web') return false;
+
+  if (subscription) {
+    const now = Date.now();
+    activityStartTimestamp ??= now;
+    activeSegmentStartTimestamp = now;
+    if (Platform.OS === 'android') {
+      // Expo's Android sensor reports a cumulative count for the lifetime of
+      // this subscription. Keep it alive across pauses and offset paused steps
+      // when recording resumes, instead of creating a fresh count starting at 1.
+      androidSegmentBaseSteps = totalSteps;
+      androidSegmentStartSteps = androidLatestSubscriptionSteps;
+    }
+    addSample(now, totalSteps);
+    return true;
+  }
 
   try {
     if (!(await Pedometer.isAvailableAsync())) return false;
@@ -82,8 +100,20 @@ async function startSegment() {
     activityStartTimestamp ??= now;
     activeSegmentStartTimestamp = now;
     subscriptionBaseSteps = totalSteps;
+    androidLatestSubscriptionSteps = 0;
+    androidSegmentStartSteps = 0;
+    androidSegmentBaseSteps = totalSteps;
     addSample(now, totalSteps);
     subscription = Pedometer.watchStepCount(({ steps }) => {
+      if (Platform.OS === 'android') {
+        androidLatestSubscriptionSteps = Math.max(androidLatestSubscriptionSteps, Math.max(0, Math.round(steps)));
+        if (activeSegmentStartTimestamp === null) return;
+
+        const activeSegmentSteps = Math.max(0, androidLatestSubscriptionSteps - androidSegmentStartSteps);
+        addSample(Date.now(), androidSegmentBaseSteps + activeSegmentSteps);
+        return;
+      }
+
       const currentSteps = subscriptionBaseSteps + Math.max(0, Math.round(steps));
       addSample(Date.now(), currentSteps);
     });
@@ -103,7 +133,7 @@ export async function resumePedometerActivity() {
 }
 
 export async function pausePedometerActivity(): Promise<PedometerActivityData> {
-  await stopActiveSegment();
+  await stopActiveSegment(true);
   return getPedometerActivityData();
 }
 
@@ -124,6 +154,9 @@ export function resetPedometerActivity() {
   activeSegmentStartTimestamp = null;
   subscriptionBaseSteps = 0;
   totalSteps = 0;
+  androidLatestSubscriptionSteps = 0;
+  androidSegmentStartSteps = 0;
+  androidSegmentBaseSteps = 0;
   samples = [];
   notifySteps();
 }

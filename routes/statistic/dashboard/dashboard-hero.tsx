@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { Card, Icon, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import Skeleton from '@S/skeleton/skeleton';
@@ -30,24 +30,35 @@ export default function DashboardHero({
     { key: 'distance', label: labels.distance },
     { key: 'duration', label: labels.duration },
     { key: 'activities', label: labels.activities },
+    { key: 'steps', label: labels.steps },
+    { key: 'caloriesActive', label: labels.calories },
   ];
   const activeMetricLabel = metricItems.find(({ key }) => key === metric)?.label ?? labels.distance;
 
   return (
     <>
       <View style={[styles.metricSelector, { backgroundColor: colors.surfaceVariant }]}>
-        {metricItems.map(({ key, label }) => (
-          <Pressable
-            key={key}
-            accessibilityRole="button"
-            accessibilityState={{ selected: metric === key }}
-            onPress={() => onMetricChange(key)}
-            style={[styles.metricOption, metric === key && { backgroundColor: colors.surface }]}>
-            <Text variant="labelLarge" style={{ color: metric === key ? colors.primary : colors.onSurfaceVariant }}>
-              {label}
-            </Text>
-          </Pressable>
-        ))}
+        <FlatList
+          horizontal
+          data={metricItems}
+          keyExtractor={({ key }) => key}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.metricSelectorContent}
+          renderItem={({ item: { key, label } }) => (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ selected: metric === key }}
+              onPress={() => onMetricChange(key)}
+              style={[styles.metricOption, metric === key && { backgroundColor: colors.surface }]}>
+              <Text
+                variant="labelMedium"
+                numberOfLines={1}
+                style={{ color: metric === key ? colors.primary : colors.onSurfaceVariant }}>
+                {label}
+              </Text>
+            </Pressable>
+          )}
+        />
       </View>
       <Card
         mode="contained"
@@ -68,7 +79,15 @@ export default function DashboardHero({
                   style={[styles.heroValue, { color: colors.onPrimaryContainer }]}>
                   {formatMetricNumber(metricTotals[metric], metric)}
                   <Text variant="titleMedium" style={{ color: colors.onPrimaryContainer }}>
-                    {metric === 'distance' ? ` ${labels.kilometres}` : metric === 'duration' ? ` ${labels.hours}` : ''}
+                    {metric === 'distance'
+                      ? ` ${labels.kilometres}`
+                      : metric === 'duration'
+                        ? ` ${labels.hours}`
+                        : metric === 'steps'
+                          ? ` ${labels.stepsUnit}`
+                          : metric === 'caloriesActive'
+                            ? ` ${labels.kilocalories}`
+                            : ''}
                   </Text>
                 </Text>
               )}
@@ -76,7 +95,15 @@ export default function DashboardHero({
             <View style={[styles.heroIcon, { backgroundColor: colors.primary }]}>
               <Icon
                 source={
-                  metric === 'distance' ? 'map-marker-distance' : metric === 'duration' ? 'timer-outline' : 'run-fast'
+                  metric === 'distance'
+                    ? 'map-marker-distance'
+                    : metric === 'duration'
+                      ? 'timer-outline'
+                      : metric === 'activities'
+                        ? 'run-fast'
+                        : metric === 'steps'
+                          ? 'shoe-print'
+                          : 'fire'
                 }
                 color={colors.onPrimary}
                 size={25}
@@ -165,8 +192,14 @@ function SummaryMetric({
 
 const styles = StyleSheet.create({
   cardContent: { paddingHorizontal: DASHBOARD_LAYOUT.cardContentHorizontalPadding },
-  metricSelector: { borderRadius: 16, flexDirection: 'row', gap: 4, marginBottom: 10, padding: 4 },
-  metricOption: { alignItems: 'center', borderRadius: 12, flex: 1, paddingHorizontal: 8, paddingVertical: 9 },
+  metricSelector: { borderRadius: 16, marginBottom: 10, overflow: 'hidden', padding: 4 },
+  metricSelectorContent: { alignItems: 'center', gap: 4 },
+  metricOption: {
+    alignItems: 'center',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+  },
   heroCard: { borderRadius: 24, borderWidth: 1, marginBottom: 12 },
   heroTopRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   heroMainMetric: { flex: 1, minWidth: 0 },

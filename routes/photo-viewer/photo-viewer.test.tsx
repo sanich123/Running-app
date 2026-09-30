@@ -11,7 +11,10 @@ import PhotoViewer from './photo-viewer';
 const mockUseLocalSearchParams = useLocalSearchParams as jest.Mock;
 const mockUseActivity = useGetActivityByActivityIdQuery as jest.Mock;
 const mockUsePhotos = useGetAllActivityMediaByUserIdInfiniteQuery as jest.Mock;
-jest.mock('expo-router', () => ({ useLocalSearchParams: jest.fn() }));
+jest.mock('expo-router', () => ({
+  useLocalSearchParams: jest.fn(),
+  useRouter: jest.fn(() => ({ back: jest.fn() })),
+}));
 jest.mock('@R/services/activity/activity', () => ({
   useGetActivityByActivityIdQuery: jest.fn(() => ({ data: undefined })),
   useGetAllActivityMediaByUserIdInfiniteQuery: jest.fn(() => ({

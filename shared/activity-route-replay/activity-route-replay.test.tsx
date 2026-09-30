@@ -46,14 +46,14 @@ describe('activity route replay controls', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
   });
 
-  it('shows only the centered play button before playback starts', async () => {
+  it('shows the bottom playback panel before playback starts', async () => {
     await renderWithProviders(<ActivityRouteReplay locations={locations} />);
 
     const toggleButton = screen.getByTestId('activity-route-replay-toggle');
 
     expect(screen.queryByText('Поставить воспроизведение на паузу')).not.toBeOnTheScreen();
     expect(toggleButton.props.accessibilityLabel).toBe('Начать воспроизведение маршрута');
-    expect(screen.queryByTestId('activity-route-replay-seekbar')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('activity-route-replay-seekbar')).toBeOnTheScreen();
   });
 
   it('renders the activity owner avatar at the moving route marker', async () => {

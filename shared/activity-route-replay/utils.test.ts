@@ -6,6 +6,7 @@ import {
   getRouteSpeedAtPlaybackProgress,
   smoothRouteHeading,
 } from './utils';
+import type { RouteTimeline } from './types';
 import type { ActivityLocation } from '@S/card/types';
 
 const location = (longitude: number, latitude: number): ActivityLocation => ({
@@ -42,6 +43,28 @@ describe('activity route replay timeline', () => {
     expect(getRouteCoordinateAtProgress(timeline, 0.8)).toEqual([37.6, 55.7]);
   });
 
+  it('keeps camera heading safe for routes that close back at their start', () => {
+    const closedRoute: RouteTimeline = {
+      coordinates: [
+        [0, 0],
+        [1, 1],
+        [0, 0],
+      ],
+      cumulativeDistances: [0, 1, 2],
+      totalDistance: 2,
+      cumulativePlaybackTimes: [],
+      totalPlaybackTime: 0,
+      segmentSpeeds: [null, null],
+      segmentColors: [],
+    };
+    const missingPlaybackSamples = { ...closedRoute, totalPlaybackTime: 1 };
+
+    expect(getRouteCoordinateAtPlaybackProgress(missingPlaybackSamples, 0.5)).toEqual([0, 0]);
+    expect(getRouteSpeedAtPlaybackProgress(missingPlaybackSamples, 0.5)).toBeNull();
+    expect(getRouteHeadingAtProgress(closedRoute, 1)).toBe(0);
+    expect(getRouteHeadingAtProgress(missingPlaybackSamples, 0.5)).toBe(0);
+  });
+
   it('smooths camera turns across north using the short angle path', () => {
     const nextHeading = smoothRouteHeading(359, 1, 16);
 
@@ -66,6 +89,32 @@ describe('activity route replay timeline', () => {
     const distanceTimeline = createRouteTimeline([location(0, 0), location(0.001, 0)]);
     expect(distanceTimeline.segmentSpeeds).toEqual([null]);
     expect(distanceTimeline.totalPlaybackTime).toBeGreaterThan(0);
+  });
+
+  it('uses coordinate timestamps and valid recorded speeds when timestamps cannot define playback time', () => {
+    const coordinateTimestampTimeline = createRouteTimeline([
+      { coords: { longitude: 0, latitude: 0, timestamp: 1_000, speed: 2 } },
+      { coords: { longitude: 0.001, latitude: 0, timestamp: 1_000 } },
+    ]);
+    expect(coordinateTimestampTimeline.totalPlaybackTime).toBeGreaterThan(0);
+
+    const invalidTimestampTimeline = createRouteTimeline([
+      { timestamp: Number.NaN, ...location(0, 0) },
+      { timestamp: 500, ...location(0.001, 0) },
+    ]);
+    expect(invalidTimestampTimeline.totalPlaybackTime).toBeCloseTo(invalidTimestampTimeline.totalDistance);
+  });
+
+  it('handles zero-length segments and missing speed values at playback boundaries', () => {
+    const timeline = createRouteTimeline([location(0, 0), location(0, 0), location(0.001, 0)]);
+    expect(getRouteCoordinateAtProgress(timeline, 0)).toEqual([0, 0]);
+    expect(getRouteCoordinateAtPlaybackProgress(timeline, 0)).toEqual([0, 0]);
+    expect(getRouteSpeedAtPlaybackProgress(timeline, 0)).toBeNull();
+
+    timeline.segmentSpeeds = [null, 4];
+    expect(getRouteSpeedAtPlaybackProgress(timeline, 0)).toBe(4);
+    timeline.segmentSpeeds = [2, 4];
+    expect(getRouteSpeedAtPlaybackProgress(timeline, 1)).toBe(4);
   });
 
   it('interpolates playback positions and speeds across recorded route segments', () => {

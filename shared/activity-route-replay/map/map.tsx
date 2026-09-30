@@ -26,6 +26,7 @@ const ReplayMap = forwardRef<ReplayMapHandle, ReplayMapProps>(function ReplayMap
     playbackHeading,
     profile,
     recordingSessionId,
+    showRouteEndpointMarkers = true,
   },
   ref,
 ) {
@@ -120,7 +121,7 @@ const ReplayMap = forwardRef<ReplayMapHandle, ReplayMapProps>(function ReplayMap
           <Terrain style={{ exaggeration: ACTIVITY_ROUTE_REPLAY_TERRAIN_EXAGGERATION }} />
         </RasterDemSource>
         <MapRouteLine locations={locations} segmentColors={routeSegmentColors} />
-        <ActivityMapMarkers locations={locations} />
+        {showRouteEndpointMarkers ? <ActivityMapMarkers locations={locations} /> : null}
         <UserAvatarMarker
           coordinate={playbackCoordinate}
           profilePhoto={profile?.profilePhoto}

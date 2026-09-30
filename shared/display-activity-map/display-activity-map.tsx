@@ -70,11 +70,12 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
               routeCoordinates={mapData.routeCoordinates}
               routeSegmentColors={routeSegmentColors}
               kilometresSplit={kilometresSplit}
+              kilometreUnit={copy.kilometreUnit}
               mapStyleURL={DISPLAY_ACTIVITY_MAP_STYLES[mapStyle]}
               mapControlsRef={webMapControlsRef}
             />
           ) : (
-            <MapView style={styles.map} styleURL={DISPLAY_ACTIVITY_MAP_STYLES[mapStyle]}>
+            <MapView style={styles.map} styleURL={DISPLAY_ACTIVITY_MAP_STYLES[mapStyle]} scaleBarEnabled={false}>
               <Camera
                 ref={cameraRef}
                 animationMode="flyTo"
@@ -83,7 +84,7 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
                 padding={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20, paddingTop: 20 }}
               />
               <RouteLine locations={validLocations} segmentColors={routeSegmentColors} />
-              <MapKmSplit kilometresSplit={kilometresSplit} />
+              <MapKmSplit kilometresSplit={kilometresSplit} kilometreUnit={copy.kilometreUnit} />
               <ActivityMapMarkers locations={validLocations} />
             </MapView>
           )}

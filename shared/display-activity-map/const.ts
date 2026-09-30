@@ -9,6 +9,7 @@ export const DISPLAY_ACTIVITY_MAP_TEXT = {
     map: 'Map',
     start: 'Workout start',
     end: 'Workout finish',
+    kilometreUnit: 'km',
   },
   [LANGUAGES.russian]: {
     insufficientData: 'Недостаточно данных для отображения маршрута',
@@ -18,6 +19,7 @@ export const DISPLAY_ACTIVITY_MAP_TEXT = {
     map: 'Карта',
     start: 'Начало тренировки',
     end: 'Конец тренировки',
+    kilometreUnit: 'км',
   },
 } as const;
 

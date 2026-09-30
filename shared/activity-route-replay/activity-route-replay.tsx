@@ -1,6 +1,7 @@
 import { useRef } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Surface, Text, useTheme } from 'react-native-paper';
+import { useKeepAwake } from 'expo-keep-awake';
+import { SystemBars } from 'react-native-edge-to-edge';
+import { Platform, StyleSheet, View } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
 import { ACTIVITY_ROUTE_REPLAY_TEXT } from './const';
 import Controls from './controls/controls';
@@ -11,11 +12,11 @@ import useMapControls from './use-map-controls';
 import useRouteData from './use-route-data';
 import useRoutePlayback from './use-route-playback';
 import useVideoExport from './video-export/use-video-export';
+import VideoBrandOverlay from './video-export/video-brand-overlay';
 import type { ActivityRouteReplayProps, ReplayMapHandle } from './types';
 
 export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
   const { language } = useAppSelector(({ settings }) => settings);
-  const { colors } = useTheme();
   const activityMapRef = useRef<ReplayMapHandle>(null);
   const route = useRouteData(props);
   const playback = useRoutePlayback(route.timeline, activityMapRef);
@@ -24,7 +25,14 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
   const videoExport = useVideoExport({ playback, copy, workoutDate: props.workoutDate });
 
   return (
-    <View style={styles.container} onLayout={videoExport.onLayout}>
+    <View
+      pointerEvents={videoExport.isExporting ? 'none' : 'auto'}
+      style={styles.container}
+      onLayout={videoExport.onLayout}>
+      {videoExport.isExporting ? <KeepAwakeDuringVideoExport /> : null}
+      {videoExport.isExporting && Platform.OS !== 'web' ? (
+        <SystemBars hidden={{ statusBar: true, navigationBar: true }} />
+      ) : null}
       {route.mapData && playback.playbackCoordinate ? (
         <>
           <ReplayMap
@@ -38,57 +46,51 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
             playbackHeading={playback.playbackHeading}
             profile={props.profile}
             recordingSessionId={videoExport.recorder.sessionId}
+            showRouteEndpointMarkers={!videoExport.isExporting}
           />
           {videoExport.isExporting ? (
-            <Pressable onPress={() => undefined} style={styles.exportBlocker}>
-              <Surface style={styles.exportStatus}>
-                <ActivityIndicator size="small" color={colors.primary} />
-                <Text variant="bodyMedium" style={[styles.exportMessage, { color: colors.onSurface }]}>
-                  {copy.exportProgress}
-                </Text>
-                {copy.exportStayOnPage ? (
-                  <Text variant="bodySmall" style={[styles.exportMessage, { color: colors.onSurfaceVariant }]}>
-                    {copy.exportStayOnPage}
-                  </Text>
-                ) : null}
-                <Text variant="titleMedium" style={{ color: colors.onSurface }}>
-                  {Math.round(videoExport.progress * 100)}%
-                </Text>
-              </Surface>
-            </Pressable>
-          ) : null}
-          <MapTools
-            mapStyle={mapControls.mapStyle}
-            playbackSpeed={playback.playbackSpeed}
-            playbackDuration={playback.playbackDuration}
-            copy={copy}
-            onZoomIn={mapControls.zoomIn}
-            onZoomOut={mapControls.zoomOut}
-            onMapStyleChange={mapControls.setMapStyle}
-            onSetPlaybackSpeed={playback.setPlaybackSpeed}
-            onSetPlaybackDuration={playback.setPlaybackDuration}
-            canZoomIn={mapControls.canZoomIn}
-            canZoomOut={mapControls.canZoomOut}
-            isDisabled={videoExport.isExporting}
-          />
-          <Controls
-            progress={playback.progress}
-            hasStarted={playback.hasStarted}
-            isPlaying={playback.isPlaying}
-            playbackTime={playback.playbackWallDuration * playback.progress}
-            playbackDuration={playback.playbackWallDuration}
-            workoutTime={route.workoutDuration * playback.progress}
-            currentSpeed={playback.currentSpeed}
-            isDisabled={videoExport.isExporting}
-            isVideoExportAvailable={videoExport.recorder.isAvailable && Boolean(props.workoutDate)}
-            isExporting={videoExport.isExporting}
-            copy={copy}
-            onTogglePlayback={playback.togglePlayback}
-            onShareVideo={videoExport.shareVideo}
-            onSeekStart={playback.startSeeking}
-            onSeek={playback.seekToProgress}
-            onSeekEnd={playback.finishSeeking}
-          />
+            <VideoBrandOverlay
+              sport={props.sport}
+              workoutDate={props.workoutDate}
+              workoutDuration={route.workoutDuration}
+              distance={route.timeline.totalDistance}
+              progress={playback.progress}
+              currentSpeed={playback.currentSpeed}
+              language={language}
+              copy={copy}
+            />
+          ) : (
+            <>
+              <MapTools
+                mapStyle={mapControls.mapStyle}
+                playbackDuration={playback.playbackDuration}
+                copy={copy}
+                onZoomIn={mapControls.zoomIn}
+                onZoomOut={mapControls.zoomOut}
+                onMapStyleChange={mapControls.setMapStyle}
+                onSetPlaybackDuration={playback.setPlaybackDuration}
+                canZoomIn={mapControls.canZoomIn}
+                canZoomOut={mapControls.canZoomOut}
+              />
+              <Controls
+                progress={playback.progress}
+                hasStarted={playback.hasStarted}
+                isPlaying={playback.isPlaying}
+                playbackTime={playback.playbackDuration * playback.progress}
+                playbackDuration={playback.playbackDuration}
+                workoutTime={route.workoutDuration * playback.progress}
+                currentSpeed={playback.currentSpeed}
+                isVideoExportAvailable={videoExport.recorder.isAvailable && Boolean(props.workoutDate)}
+                isExporting={videoExport.isExporting}
+                copy={copy}
+                onTogglePlayback={playback.togglePlayback}
+                onShareVideo={videoExport.shareVideo}
+                onSeekStart={playback.startSeeking}
+                onSeek={playback.seekToProgress}
+                onSeekEnd={playback.finishSeeking}
+              />
+            </>
+          )}
         </>
       ) : (
         <EmptyState message={copy.insufficientData} />
@@ -97,27 +99,11 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
   );
 }
 
+function KeepAwakeDuringVideoExport() {
+  useKeepAwake('activity-route-replay-video-export', { suppressDeactivateWarnings: true });
+  return null;
+}
+
 const styles = StyleSheet.create({
   container: { flex: 1, position: 'relative' },
-  exportBlocker: {
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.15)',
-    bottom: 0,
-    justifyContent: 'center',
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    zIndex: 1,
-  },
-  exportStatus: {
-    alignItems: 'center',
-    borderRadius: 14,
-    elevation: 5,
-    maxWidth: '90%',
-    gap: 10,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-  },
-  exportMessage: { maxWidth: 280, textAlign: 'center' },
 });

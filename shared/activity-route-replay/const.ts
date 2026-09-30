@@ -1,7 +1,10 @@
 import { LANGUAGES } from '@const/enums';
 
 export const ACTIVITY_ROUTE_REPLAY_DEFAULT_DURATION_MS = 60_000;
-export const ACTIVITY_ROUTE_REPLAY_DURATIONS_MS = [15_000, 30_000, 45_000, 60_000] as const;
+export const ACTIVITY_ROUTE_REPLAY_DURATIONS_MS = [
+  15_000, 30_000, 45_000, 60_000, 90_000, 120_000, 180_000, 240_000, 300_000,
+] as const;
+export const ACTIVITY_ROUTE_REPLAY_MAX_DURATION_MS = 300_000;
 export const ACTIVITY_ROUTE_REPLAY_CAMERA_HEADING_LOOKAHEAD_METERS = 250;
 export const ACTIVITY_ROUTE_REPLAY_CAMERA_HEADING_SMOOTHING_MS = 350;
 export const ACTIVITY_ROUTE_REPLAY_CAMERA_PITCH = 60;
@@ -12,12 +15,10 @@ export const ACTIVITY_ROUTE_REPLAY_CAMERA_ZOOM_STEP = 1;
 export const ACTIVITY_ROUTE_REPLAY_SEEK_CAMERA_INTERVAL_MS = 64;
 export const ACTIVITY_ROUTE_REPLAY_SEEK_CAMERA_ANIMATION_MS = 110;
 export const ACTIVITY_ROUTE_REPLAY_SEEK_CAMERA_SETTLE_MS = 240;
-export const ACTIVITY_ROUTE_REPLAY_PROGRESS_APPEAR_MS = 300;
 export const ACTIVITY_ROUTE_REPLAY_EXPORT_FPS = 24;
 export const ACTIVITY_ROUTE_REPLAY_EXPORT_MAX_DIMENSION_PX = 1280;
 export const ACTIVITY_ROUTE_REPLAY_EXPORT_MAX_SIZE_BYTES = 25 * 1024 * 1024;
 export const ACTIVITY_ROUTE_REPLAY_EXPORT_MAX_BITRATE = 1_800_000;
-export const ACTIVITY_ROUTE_REPLAY_SPEEDS = [0.25, 0.5, 1, 1.5, 2] as const;
 export const ACTIVITY_ROUTE_REPLAY_TERRAIN_EXAGGERATION = 1.5;
 export const ACTIVITY_ROUTE_REPLAY_MAP_STYLES = {
   satellite: 'mapbox://styles/mapbox/standard-satellite',
@@ -35,10 +36,11 @@ export const ACTIVITY_ROUTE_REPLAY_TEXT = {
     position: 'Route playback position',
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out',
-    speed: 'Playback speed',
-    duration: 'Replay duration at 1X',
+    duration: 'Replay and video length',
     durationSecondsUnit: 's',
     durationMinutesUnit: 'm',
+    videoExportHint: 'Replay and exported video use the selected map style, zoom and duration.',
+    paceUnit: 'min/km',
     playbackTime: 'Playback',
     workoutTime: 'Workout',
     currentSpeed: 'Speed',
@@ -63,10 +65,11 @@ export const ACTIVITY_ROUTE_REPLAY_TEXT = {
     position: 'Позиция воспроизведения маршрута',
     zoomIn: 'Приблизить карту',
     zoomOut: 'Отдалить карту',
-    speed: 'Скорость воспроизведения',
-    duration: 'Длительность повтора при 1X',
+    duration: 'Длительность повтора и видео',
     durationSecondsUnit: 'с',
     durationMinutesUnit: 'м',
+    videoExportHint: 'Для повтора и видео будут использоваться выбранный тип карты, зум и длительность.',
+    paceUnit: 'мин/км',
     playbackTime: 'Повтор',
     workoutTime: 'Тренировка',
     currentSpeed: 'Скорость',

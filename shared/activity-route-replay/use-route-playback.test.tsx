@@ -66,7 +66,6 @@ describe('route playback hook', () => {
     globalThis.cancelAnimationFrame = jest.fn();
 
     await act(async () => {
-      result.current.setPlaybackSpeed(2);
       result.current.setPlaybackDuration(15_000);
       result.current.togglePlayback();
     });
@@ -74,7 +73,7 @@ describe('route playback hook', () => {
     expect(result.current.isPlaying).toBe(true);
 
     await act(async () => frameCallbacks.shift()?.(0));
-    await act(async () => frameCallbacks.shift()?.(10_000));
+    await act(async () => frameCallbacks.shift()?.(15_000));
     expect(result.current.progress).toBe(1);
     expect(result.current.isPlaying).toBe(false);
     expect(updateCamera).toHaveBeenCalled();
@@ -82,6 +81,43 @@ describe('route playback hook', () => {
     await act(async () => result.current.togglePlayback());
     expect(result.current.progress).toBe(0);
     expect(result.current.isPlaying).toBe(true);
+  });
+
+  it('pauses a started playback without losing the current route position', async () => {
+    const updateCamera = jest.fn();
+    const { result } = await renderHook(() =>
+      useRoutePlayback(createRouteTimeline(locations), {
+        current: { updateCamera, setZoomLevel: jest.fn() },
+      }),
+    );
+    await waitFor(() => expect(result.current).not.toBeNull());
+    globalThis.requestAnimationFrame = jest.fn(() => 1);
+    globalThis.cancelAnimationFrame = jest.fn();
+
+    await act(async () => result.current.setVideoFrameProgress(0.25, 33));
+    await act(async () => result.current.togglePlayback());
+    expect(result.current.isPlaying).toBe(true);
+    await act(async () => result.current.togglePlayback());
+
+    expect(result.current.isPlaying).toBe(false);
+    expect(result.current.progress).toBe(0.25);
+    await act(async () => result.current.togglePlayback());
+    expect(result.current.isPlaying).toBe(true);
+    await act(async () => result.current.togglePlayback());
+    expect(result.current.isPlaying).toBe(false);
+  });
+
+  it('seeks smoothly from the initial camera state', async () => {
+    const updateCamera = jest.fn();
+    const mapRef: ReplayMapRef = { current: { updateCamera, setZoomLevel: jest.fn() } };
+    const { result } = await renderHook(() => useRoutePlayback(createRouteTimeline(locations), mapRef));
+    await waitFor(() => expect(result.current).not.toBeNull());
+    nowSpy.mockReturnValue(1_000);
+
+    await act(async () => result.current.startSeeking());
+    await act(async () => result.current.seekToProgress(0.5));
+
+    expect(updateCamera).toHaveBeenCalledWith(expect.any(Array), expect.any(Number), undefined, expect.any(Number));
   });
 
   it('keeps empty routes safe and restores route state after video recording', async () => {

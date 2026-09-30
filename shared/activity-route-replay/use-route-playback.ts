@@ -11,16 +11,14 @@ import {
   getRouteSpeedAtPlaybackProgress,
   smoothRouteHeading,
 } from './utils';
-import type { ReplayDuration, ReplayMapRef, ReplaySpeed, RouteTimeline } from './types';
+import type { ReplayDuration, ReplayMapRef, RouteTimeline } from './types';
 
 export default function useRoutePlayback(timeline: RouteTimeline, activityMapRef: ReplayMapRef) {
   const [progress, setProgress] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playbackSpeed, setPlaybackSpeedState] = useState<ReplaySpeed>(1);
   const [playbackDuration, setPlaybackDuration] = useState<ReplayDuration>(ACTIVITY_ROUTE_REPLAY_DEFAULT_DURATION_MS);
   const progressRef = useRef(0);
-  const playbackSpeedRef = useRef<ReplaySpeed>(1);
   const smoothedCameraHeadingRef = useRef<number | null>(null);
   const lastCameraFrameAtRef = useRef<number | null>(null);
   const isSeekingRef = useRef(false);
@@ -49,10 +47,7 @@ export default function useRoutePlayback(timeline: RouteTimeline, activityMapRef
     const updatePlaybackFrame = (timestamp: number) => {
       const elapsedSinceLastFrame = lastFrameAt === null ? 0 : timestamp - lastFrameAt;
       lastFrameAt = timestamp;
-      const nextProgress = Math.min(
-        progressRef.current + (elapsedSinceLastFrame * playbackSpeedRef.current) / playbackDuration,
-        1,
-      );
+      const nextProgress = Math.min(progressRef.current + elapsedSinceLastFrame / playbackDuration, 1);
       progressRef.current = nextProgress;
 
       const coordinate = getRouteCoordinateAtPlaybackProgress(timeline, nextProgress);
@@ -148,11 +143,6 @@ export default function useRoutePlayback(timeline: RouteTimeline, activityMapRef
     updateCamera(coordinate, heading, undefined, ACTIVITY_ROUTE_REPLAY_SEEK_CAMERA_SETTLE_MS);
   };
 
-  const setPlaybackSpeed = (speed: ReplaySpeed) => {
-    playbackSpeedRef.current = speed;
-    setPlaybackSpeedState(speed);
-  };
-
   const prepareVideoRecording = () => {
     isSeekingRef.current = false;
     smoothedCameraHeadingRef.current = null;
@@ -208,9 +198,7 @@ export default function useRoutePlayback(timeline: RouteTimeline, activityMapRef
     progress,
     hasStarted,
     isPlaying,
-    playbackSpeed,
     playbackDuration,
-    playbackWallDuration: playbackDuration / playbackSpeed,
     playbackCoordinate,
     playbackHeading,
     currentSpeed,
@@ -218,7 +206,6 @@ export default function useRoutePlayback(timeline: RouteTimeline, activityMapRef
     startSeeking,
     seekToProgress,
     finishSeeking,
-    setPlaybackSpeed,
     setPlaybackDuration,
     prepareVideoRecording,
     setVideoFrameProgress,

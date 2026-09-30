@@ -42,6 +42,7 @@ export default function MapPage() {
           <ActivityRouteReplay
             locations={activity?.locations ?? []}
             profile={replayProfile ?? undefined}
+            sport={activityDetails?.sport}
             workoutDate={activityDetails?.date}
             workoutDuration={activityDetails?.duration}
           />

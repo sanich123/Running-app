@@ -58,8 +58,37 @@ describe('pedometer activity metrics', () => {
         { timestamp: 3_000, steps: 12 },
       ],
     });
+    expect(remove).not.toHaveBeenCalled();
+    await finishPedometerActivity();
     expect(remove).toHaveBeenCalledTimes(1);
     unsubscribe();
+  });
+
+  it('keeps the Android subscription through a pause and excludes paused steps after resume', async () => {
+    setPlatform('android');
+    let onStep: StepCallback | undefined;
+    const remove = jest.fn();
+    jest.spyOn(Pedometer, 'isAvailableAsync').mockResolvedValue(true);
+    jest.spyOn(Pedometer, 'getPermissionsAsync').mockResolvedValue({ granted: true } as never);
+    jest.spyOn(Pedometer, 'watchStepCount').mockImplementation((callback) => {
+      onStep = callback;
+      return { remove } as ReturnType<typeof Pedometer.watchStepCount>;
+    });
+    jest.spyOn(Date, 'now').mockReturnValue(1_000);
+
+    expect(await startPedometerActivity()).toBe(true);
+    onStep?.({ steps: 1 });
+    await pausePedometerActivity();
+    onStep?.({ steps: 2 }); // A step while paused updates the native baseline only.
+    expect(getPedometerActivityData().steps).toBe(1);
+
+    expect(await resumePedometerActivity()).toBe(true);
+    onStep?.({ steps: 3 });
+    expect(getPedometerActivityData().steps).toBe(2);
+    expect(Pedometer.watchStepCount).toHaveBeenCalledTimes(1);
+
+    await finishPedometerActivity();
+    expect(remove).toHaveBeenCalledTimes(1);
   });
 
   it('requests permission when needed and resumes an existing activity without resetting steps', async () => {
@@ -102,13 +131,18 @@ describe('pedometer activity metrics', () => {
 
   it('uses the iOS date-range query and falls back to the observed total when it fails', async () => {
     setPlatform('ios');
+    let onStep: StepCallback | undefined;
     jest.spyOn(Pedometer, 'isAvailableAsync').mockResolvedValue(true);
     jest.spyOn(Pedometer, 'getPermissionsAsync').mockResolvedValue({ granted: true } as never);
-    jest.spyOn(Pedometer, 'watchStepCount').mockReturnValue({ remove: jest.fn() } as ReturnType<typeof Pedometer.watchStepCount>);
-    jest.spyOn(Date, 'now').mockReturnValueOnce(1_000).mockReturnValueOnce(2_000);
+    jest.spyOn(Pedometer, 'watchStepCount').mockImplementation((callback) => {
+      onStep = callback;
+      return { remove: jest.fn() } as ReturnType<typeof Pedometer.watchStepCount>;
+    });
+    jest.spyOn(Date, 'now').mockReturnValueOnce(1_000).mockReturnValueOnce(1_500).mockReturnValueOnce(2_000);
     jest.spyOn(Pedometer, 'getStepCountAsync').mockResolvedValue({ steps: 42 });
 
     await startPedometerActivity();
+    onStep?.({ steps: 10 });
     const queriedData = await finishPedometerActivity();
 
     expect(queriedData.steps).toBe(42);
@@ -120,6 +154,11 @@ describe('pedometer activity metrics', () => {
     await startPedometerActivity();
     const fallbackData = await finishPedometerActivity();
     expect(fallbackData.steps).toBe(0);
+
+    jest.spyOn(Pedometer, 'getStepCountAsync').mockResolvedValue({ steps: Number.NaN });
+    jest.spyOn(Date, 'now').mockReturnValueOnce(5_000).mockReturnValueOnce(6_000);
+    await startPedometerActivity();
+    expect(await finishPedometerActivity()).toEqual({ steps: 0, samples: [{ timestamp: 5_000, steps: 0 }] });
   });
 
   it('assigns cumulative steps to kilometre splits using their timestamps', () => {
@@ -160,19 +199,47 @@ describe('pedometer activity metrics', () => {
     expect(
       getStepsForKilometreSplits(
         [
-          { lastKilometerDuration: 0, lastKilometerAltitude: 0, kilometerPoint: { timestamp: 500, coords: {} } as never },
-          { lastKilometerDuration: 0, lastKilometerAltitude: 0, kilometerPoint: { timestamp: 1_500, coords: {} } as never },
-          { lastKilometerDuration: 0, lastKilometerAltitude: 0, kilometerPoint: { coords: { timestamp: 2_500 } } as never },
+          {
+            lastKilometerDuration: 0,
+            lastKilometerAltitude: 0,
+            kilometerPoint: { timestamp: 500, coords: {} } as never,
+          },
+          {
+            lastKilometerDuration: 0,
+            lastKilometerAltitude: 0,
+            kilometerPoint: { timestamp: 1_500, coords: {} } as never,
+          },
+          {
+            lastKilometerDuration: 0,
+            lastKilometerAltitude: 0,
+            kilometerPoint: { coords: { timestamp: 2_500 } } as never,
+          },
           {
             lastKilometerDuration: 0,
             lastKilometerAltitude: 0,
             kilometerPoint: { timestamp: Number.NaN, coords: { timestamp: 2_500 } } as never,
           },
-          { lastKilometerDuration: 0, lastKilometerAltitude: 0, kilometerPoint: { timestamp: 4_000, coords: {} } as never },
+          {
+            lastKilometerDuration: 0,
+            lastKilometerAltitude: 0,
+            kilometerPoint: { timestamp: 4_000, coords: {} } as never,
+          },
         ],
         data,
       ),
     ).toEqual([0, 10, 20, 0, 10]);
+    expect(
+      getStepsForKilometreSplits(
+        [
+          {
+            lastKilometerDuration: 0,
+            lastKilometerAltitude: 0,
+            kilometerPoint: { timestamp: 1_500, coords: {} } as never,
+          },
+        ],
+        { steps: 0, samples: [] },
+      ),
+    ).toEqual([0]);
     expect(getStepsForKilometreSplits([], { steps: 0, samples: [] })).toEqual([]);
   });
 
