@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import type { ReplayCopy } from '../types';
 
-export interface ReplayRecordFrame {
+interface ReplayRecordFrame {
   frameIndex: number;
   totalFrames: number;
 }

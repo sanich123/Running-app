@@ -13,7 +13,7 @@ export function buildDashboardYears(statistics?: YearStatisticsResponse) {
   }, {});
 }
 
-export function buildDashboardYearData(yearStatistics: StatisticsNode): DashboardYearData {
+function buildDashboardYearData(yearStatistics: StatisticsNode): DashboardYearData {
   const allStatistics = asStatisticsNode(yearStatistics.all) ?? {};
   const monthly = Array.from({ length: 12 }, (_, month) => getMetric(allStatistics[String(month)]));
   const sports = Object.entries(yearStatistics).reduce<Record<string, DashboardMetricTotals>>(

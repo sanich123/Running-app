@@ -13,7 +13,7 @@ export const PROFILE_INPUT_LIMITS = {
   age: 3,
 } as const;
 
-export const PROFILE_VALUE_LIMITS = {
+const PROFILE_VALUE_LIMITS = {
   weight: 200,
   height: 230,
   age: 100,

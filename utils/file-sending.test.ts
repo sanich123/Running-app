@@ -93,6 +93,13 @@ describe('file sending', () => {
     expect(uploadMedia).not.toHaveBeenCalled();
   });
 
+  it('keeps browser images without passing them through the native compressor', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+
+    await expect(compressMediaFile('photo.jpg')).resolves.toMatchObject({ file: 'photo.jpg', isVideo: false });
+    expect(ImageCompressor.compress).not.toHaveBeenCalled();
+  });
+
   it('uploads a compressed file and adds scope metadata', async () => {
     const compressedFile = {
       file: 'compressed-image.jpg',

@@ -260,6 +260,33 @@ describe('route video export hook', () => {
     expect(result.current.isExporting).toBe(false);
   });
 
+  it('settles the paint wait when cancellation happens while registering its frame', async () => {
+    const playback = createPlayback();
+    const record = jest.fn();
+    let cancelExport = () => {};
+    globalThis.requestAnimationFrame = ((callback: FrameRequestCallback) => {
+      cancelExport();
+      callback(0);
+      return 1;
+    }) as typeof requestAnimationFrame;
+    mockRecorder.mockReturnValue({ sessionId: 'recording', isAvailable: true, record } as ReplayVideoRecorder);
+    const { result } = await renderHook(() => useVideoExport({ playback, copy, workoutDate: '2026-09-28T17:09:23Z' }));
+    cancelExport = result.current.cancelVideoExport;
+    await act(async () => result.current.onLayout(layoutEvent(500, 300)));
+
+    await act(async () => {
+      const exportPromise = result.current.shareVideo();
+      await Promise.resolve();
+      await Promise.resolve();
+      result.current.onCoverReady();
+      await exportPromise;
+    });
+
+    expect(record).not.toHaveBeenCalled();
+    expect(playback.restoreAfterVideoRecording).toHaveBeenCalledWith(0.35, true, true);
+    expect(result.current.isExporting).toBe(false);
+  });
+
   it('skips waiting for the cover after cancellation during preparation', async () => {
     const playback = createPlayback();
     let cancelExport = () => {};

@@ -8,8 +8,6 @@ import { deviceId, deviceName, deviceMetadata, platform } from '@U/device/device
 import type { ApiState, AuthResponse } from './types';
 import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';
 
-export { ACTIVITY_MIGRATION_STATUS } from './migration-status';
-
 export const headers = { 'Content-type': 'application/json' };
 
 export enum Tags {

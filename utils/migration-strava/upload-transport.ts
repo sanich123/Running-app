@@ -1,7 +1,7 @@
 import { backgroundUpload, cancelUpload, UploadType } from 'react-native-compressor';
 import { MigrationArchiveCancelledError } from './utils';
 
-export interface ArchiveUploadResponse {
+interface ArchiveUploadResponse {
   status: number;
   body: string;
 }

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 export type DisplayMapStyle = 'map' | 'satellite';
 
-export interface MapControlsCopy {
+interface MapControlsCopy {
   satellite: string;
   map: string;
   zoomIn: string;

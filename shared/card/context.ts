@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import type { ActivityCardData } from './types';
 
-export interface ActivityCardContextValue {
+interface ActivityCardContextValue {
   activity: ActivityCardData;
   isFullView: boolean;
   isShowDeleteBtn: boolean;

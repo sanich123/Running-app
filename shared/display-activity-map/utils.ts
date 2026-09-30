@@ -71,7 +71,7 @@ export function getRouteSpeedValues(locations: ActivityLocation[]) {
   return smoothedSpeeds;
 }
 
-export function getSpeedHeatmapColor(factor: number) {
+function getSpeedHeatmapColor(factor: number) {
   const green = getColorChannels(DISPLAY_ACTIVITY_MAP_SPEED_COLORS[0]);
   const yellow = getColorChannels(DISPLAY_ACTIVITY_MAP_SPEED_COLORS[1]);
   const red = getColorChannels(DISPLAY_ACTIVITY_MAP_SPEED_COLORS[2]);

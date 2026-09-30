@@ -20,13 +20,13 @@ export const LEGAL_DOCUMENT_VERSION = {
 
 export type LegalDocumentId = 'privacy' | 'consents' | 'agreement' | 'locationConsent' | 'accountDeletion';
 
-export interface LegalSection {
+interface LegalSection {
   heading: string;
   paragraphs: string[];
   bullets?: string[];
 }
 
-export interface LegalDocument {
+interface LegalDocument {
   title: string;
   intro: string[];
   sections: LegalSection[];

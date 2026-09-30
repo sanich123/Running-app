@@ -7,7 +7,7 @@ import DashboardSectionHeader from './section-header';
 import { formatChartAxisValue, formatMetricValue } from './utils';
 import type { DashboardLabels, DashboardMetric } from './types';
 
-export interface DashboardChartPoint {
+interface DashboardChartPoint {
   value: number;
   label: string;
   onPress: () => void;

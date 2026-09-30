@@ -27,13 +27,13 @@ interface LocationJournalMeta {
   segmentStarts: number[];
 }
 
-export interface LocationJournalSnapshot {
+interface LocationJournalSnapshot {
   locations: LocationObject[];
   segments: LocationObject[][];
   pointCount: number;
 }
 
-export interface LocationJournalProgress {
+interface LocationJournalProgress {
   pointCount: number;
   lastTimestamp: number | null;
 }

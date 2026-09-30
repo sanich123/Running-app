@@ -35,7 +35,7 @@ export const MANUAL_ACTIVITY_TIME_LIMITS = {
 } as const;
 
 export const MANUAL_ACTIVITY_TIME_INPUT_MAX_LENGTH = 2;
-export const MANUAL_ACTIVITY_DISTANCE_MAX = 300;
+const MANUAL_ACTIVITY_DISTANCE_MAX = 300;
 
 export function normalizeManualActivityDistanceInput(value: string) {
   if (!value.trim()) {

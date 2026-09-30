@@ -12,7 +12,7 @@ export interface DashboardMetricTotals {
   caloriesActive: number;
 }
 
-export interface DashboardDailyActivity {
+interface DashboardDailyActivity {
   duration: number;
   distance: number;
   steps?: number;

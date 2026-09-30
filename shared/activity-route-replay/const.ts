@@ -25,7 +25,6 @@ export const ACTIVITY_ROUTE_REPLAY_MAP_STYLES = {
   satellite: 'mapbox://styles/mapbox/standard-satellite',
   map: 'mapbox://styles/mapbox/standard',
 } as const;
-export const ACTIVITY_ROUTE_REPLAY_MAP_STYLE_URL = ACTIVITY_ROUTE_REPLAY_MAP_STYLES.satellite;
 export const ACTIVITY_ROUTE_REPLAY_TERRAIN_SOURCE_URL = 'mapbox://mapbox.mapbox-terrain-dem-v1';
 
 export const ACTIVITY_ROUTE_REPLAY_TEXT = {

@@ -7,8 +7,6 @@ export const LazyActivityCloseBtn = lazy(() => import('@Routes/activity/close-bt
 export const LazyActivityFullViewPage = lazy(() => import('@Routes/card-full-view/card-full-view'));
 export const LazyAvatarIconEditable = lazy(() => import('@Routes/profile/profile-settings/avatar-editable/editable'));
 export const LazyAvatarShowable = lazy(() => import('@S/avatar/showable/showable'));
-export const LazyCharts = lazy(() => import('@Routes/statistic/charts/charts'));
-export const LazyErrorComponent = lazy(() => import('@S/error-component/error-component'));
 export const LazyGenderBtns = lazy(() => import('@Routes/profile/profile-settings/gender-btns/gender-btns'));
 export const LazyInputBio = lazy(() => import('@Routes/profile/profile-settings/input-bio/input-bio'));
 export const LazyInputsNameSurname = lazy(
@@ -30,7 +28,6 @@ export const LazyMapPage = lazy(() => import('@Routes/map-page/map-page'));
 export const LazyMediaGrid = lazy(() => import('@Routes/media-grid/media-grid'));
 export const LazyMigrationFromStrava = lazy(() => import('@Routes/migration-from-strava/migration-from-strava'));
 export const LazyMonthStatistics = lazy(() => import('@Routes/statistic/month-statistics/month-statistics'));
-export const LazyMonthStatisticsMetrics = lazy(() => import('@S/month-metric/month-metric'));
 export const LazyPhotoViewer = lazy(() => import('@Routes/photo-viewer/photo-viewer'));
 export const LazyPrivacyPolicy = lazy(() => import('@Routes/privacy-policy/privacy-policy'));
 export const LazyProfileEditBtn = lazy(() => import('@Routes/profile/edit-btn/edit-btn'));
@@ -39,6 +36,5 @@ export const LazyProfileUpdateBtn = lazy(() => import('@Routes/profile/update-bt
 export const LazySaveResult = lazy(() => import('@Routes/save-activity-page/save-activity-page'));
 export const LazySettingsPage = lazy(() => import('@Routes/settings-page/settings-page'));
 export const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-settings-icons'));
-export const LazyYearTypePicker = lazy(() => import('@Routes/statistic/year-type-picker/year-type-picker'));
 
 export const HOME_TAB_ROUTE = '(home)';

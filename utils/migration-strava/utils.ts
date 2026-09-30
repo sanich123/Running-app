@@ -8,7 +8,7 @@ export class MigrationArchiveCancelledError extends Error {
   }
 }
 
-export class MigrationArchiveOperationError extends Error {
+class MigrationArchiveOperationError extends Error {
   constructor(message: string) {
     super(message);
     this.name = 'MigrationArchiveOperationError';
@@ -20,7 +20,8 @@ export function isMigrationArchiveOperationError(error: unknown): error is Migra
 }
 
 export function getMigrationErrorMessage(error: unknown) {
-  const message = error instanceof Error ? error.message : typeof error === 'string' ? error : getSerializedError(error);
+  const message =
+    error instanceof Error ? error.message : typeof error === 'string' ? error : getSerializedError(error);
   return normalizeMigrationErrorMessage(message);
 }
 

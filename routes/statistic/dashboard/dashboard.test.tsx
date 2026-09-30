@@ -39,6 +39,14 @@ describe('statistics dashboard', () => {
     expect(screen.getByText('Открыть месяц')).toBeOnTheScreen();
   });
 
+  it('shows English labels for the year controls', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await renderWithProviders(<Dashboard />);
+
+    expect(await screen.findByLabelText('Previous year')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Next year')).toBeOnTheScreen();
+  });
+
   it('changes the metric and navigates to the selected month', async () => {
     await renderWithProviders(<Dashboard />);
 

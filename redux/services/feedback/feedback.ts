@@ -5,7 +5,7 @@ export interface FeedbackAttachment {
   thumbnail: string | null;
 }
 
-export interface FeedbackRequest {
+interface FeedbackRequest {
   feedbackId: string;
   kind: string;
   text: string;

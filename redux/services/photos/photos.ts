@@ -9,7 +9,7 @@ export interface UploadedPhotoResponse {
   contentType: string;
 }
 
-export type MediaUploadRole = 'media' | 'thumbnail';
+type MediaUploadRole = 'media' | 'thumbnail';
 
 export interface MediaUploadManifestEntry {
   mediaId: string;
@@ -21,12 +21,12 @@ export interface UploadedPhotoBatchResponse extends UploadedPhotoResponse {
   role: MediaUploadRole;
 }
 
-export interface PhotoUploadRequest {
+interface PhotoUploadRequest {
   body: FormData;
   onProgress?: (progress: number) => void;
 }
 
-export interface DeletePhotoRequest {
+interface DeletePhotoRequest {
   url: string;
 }
 
