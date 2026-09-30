@@ -5,8 +5,7 @@ import { Button, Icon, Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
-import { MOCK_MARKET_URLS, UPDATE_APP_TEXT } from './const';
-import { getMarketUrl } from './utils';
+import { UPDATE_APP_TEXT } from './const';
 
 export default function UpdateAppPage() {
   const { colors } = useTheme();
@@ -15,7 +14,7 @@ export default function UpdateAppPage() {
 
   const openMarket = async () => {
     try {
-      await Linking.openURL(getMarketUrl() ?? MOCK_MARKET_URLS.default);
+      await Linking.openURL('https://rustore.ru/');
     } catch {
       // The market URL is mocked until the application stores are configured.
     }

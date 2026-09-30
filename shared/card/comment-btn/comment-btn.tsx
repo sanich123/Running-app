@@ -1,4 +1,4 @@
-import { memo, useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
 import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
@@ -16,7 +16,7 @@ import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
 import { useActivityCard } from '../context';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-export default memo(function CommentBtn() {
+export default function CommentBtn() {
   const { activity } = useActivityCard();
   const { id: activityId, commentsLength, profile, mapPhotoUrl } = activity;
   const dispatch = useAppDispatch();
@@ -68,7 +68,7 @@ export default memo(function CommentBtn() {
       </>
     </TouchableRipple>
   );
-});
+}
 
 const styles = StyleSheet.create({
   badge: {

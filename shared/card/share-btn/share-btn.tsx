@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, memo } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { ComponentRef } from 'react';
 import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
@@ -18,7 +18,7 @@ function waitForShareImageRender() {
   });
 }
 
-export default memo(function ShareBtn() {
+export default function ShareBtn() {
   const { activity } = useActivityCard();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
@@ -103,4 +103,4 @@ export default memo(function ShareBtn() {
       />
     </>
   );
-});
+}

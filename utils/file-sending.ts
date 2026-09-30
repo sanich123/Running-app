@@ -13,6 +13,7 @@ import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
 import {
   MAX_MEDIA_FILE_SIZE,
+  MAX_VIDEO_DURATION_SECONDS,
   createMediaUploadBatchFormData,
   createMediaUploadFormData,
   getMediaFileInfo,
@@ -138,13 +139,14 @@ export async function createVideoThumbnail(videoUrl: string): Promise<string | n
 
 export async function getAccessToGallery(
   mediaTypes: ImagePicker.MediaType[] = ['images', 'videos'],
-  options: Pick<ImagePicker.ImagePickerOptions, 'allowsMultipleSelection' | 'selectionLimit'> = {},
+  options: Pick<ImagePicker.ImagePickerOptions, 'allowsMultipleSelection' | 'selectionLimit' | 'videoMaxDuration'> = {},
 ) {
   try {
     return await ImagePicker.launchImageLibraryAsync({
       mediaTypes,
       aspect: [4, 3],
       quality: 1,
+      videoMaxDuration: mediaTypes.includes('videos') ? MAX_VIDEO_DURATION_SECONDS : undefined,
       ...options,
     });
   } catch (error) {
@@ -166,20 +168,74 @@ export async function deleteUploadedMedia(publicUrls: string[]) {
 
 async function compressVideo(fileSrc: MediaSource): Promise<MediaSource | null> {
   if (Platform.OS === 'web') {
-    if (typeof fileSrc !== 'string' && fileSrc.size > MAX_MEDIA_FILE_SIZE) {
-      errorToast('Файл слишком большой, размер файла не более 15 МБ');
+    const videoInfo = await getWebVideoInfo(fileSrc);
+    if (!Number.isFinite(videoInfo.duration)) {
+      errorToast('Не удалось определить длительность видео');
       return null;
     }
+    if (videoInfo.duration > MAX_VIDEO_DURATION_SECONDS) {
+      errorToast('Длительность видео должна быть не более 1 минуты');
+      return null;
+    }
+    if (videoInfo.size > MAX_MEDIA_FILE_SIZE) {
+      errorToast('Размер видео должен быть не более 50 МБ');
+      return null;
+    }
+
     return fileSrc;
   }
 
-  const metaData = await getVideoMetaData(String(fileSrc));
-  if (metaData.size > MAX_MEDIA_FILE_SIZE) {
-    errorToast('Файл слишком большой, размер файла не более 15 МБ');
+  const sourceMetadata = await getVideoMetaData(String(fileSrc));
+  if (!Number.isFinite(sourceMetadata.duration)) {
+    errorToast('Не удалось определить длительность видео');
+    return null;
+  }
+  if (sourceMetadata.duration > MAX_VIDEO_DURATION_SECONDS) {
+    errorToast('Длительность видео должна быть не более 1 минуты');
     return null;
   }
 
-  return await VideoCompressor.compress(String(fileSrc));
+  const compressedFile = await VideoCompressor.compress(String(fileSrc));
+  if (!compressedFile) return null;
+
+  const compressedMetadata = await getVideoMetaData(String(compressedFile));
+  if (compressedMetadata.size > MAX_MEDIA_FILE_SIZE) {
+    errorToast('Размер видео должен быть не более 50 МБ');
+    return null;
+  }
+
+  return compressedFile;
+}
+
+async function getWebVideoInfo(fileSrc: MediaSource): Promise<{ duration: number; size: number }> {
+  if (typeof document === 'undefined') throw new Error('Невозможно определить параметры видео в этом окружении');
+
+  const file = typeof fileSrc === 'string' ? await (await fetch(fileSrc)).blob() : fileSrc;
+  const url = URL.createObjectURL(file);
+
+  return await new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+
+    const cleanup = () => {
+      video.onloadedmetadata = null;
+      video.onerror = null;
+      video.removeAttribute('src');
+      video.load();
+      URL.revokeObjectURL(url);
+    };
+
+    video.onloadedmetadata = () => {
+      const duration = video.duration;
+      cleanup();
+      resolve({ duration, size: file.size });
+    };
+    video.onerror = () => {
+      cleanup();
+      reject(new Error('Не удалось прочитать метаданные видео'));
+    };
+    video.src = url;
+  });
 }
 
 function isSupportedVideoFormat(extension: string, mimeType: string) {

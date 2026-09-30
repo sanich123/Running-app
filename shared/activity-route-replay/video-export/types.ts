@@ -16,6 +16,7 @@ export interface ReplayRecordOptions {
   codec: 'h264';
   bitrate: number;
   optimizeForNetwork: true;
+  signal?: AbortSignal;
   onFrame: (frame: ReplayRecordFrame) => void;
 }
 
@@ -37,12 +38,18 @@ export interface ReplayExportPlayback {
 
 export interface ReplayVideoExportOptions {
   playback: ReplayExportPlayback;
-  copy: Pick<ReplayCopy, 'cancel' | 'share' | 'shareUnavailable' | 'shareVideo' | 'videoReady' | 'videoSize'>;
+  copy: Pick<ReplayCopy, 'shareUnavailable' | 'shareVideo'>;
   workoutDate?: string;
 }
 
 export interface ReplayVideoExportState {
   isExporting: boolean;
+  isCoverFrame: boolean;
+  readyVideo: { uri: string; size: string } | null;
+  onCoverReady: () => void;
+  cancelVideoExport: () => void;
+  dismissReadyVideo: () => void;
+  shareReadyVideo: () => Promise<void>;
   recorder: ReplayVideoRecorder;
   onLayout: (event: LayoutChangeEvent) => void;
   shareVideo: () => Promise<void>;
@@ -51,4 +58,12 @@ export interface ReplayVideoExportState {
 export interface ReplayRecordingViewProps {
   children: ReactNode;
   sessionId: string;
+}
+
+export interface VideoExportLoaderProps {
+  visible: boolean;
+  title: string;
+  message: string;
+  cancelLabel: string;
+  onCancel: () => void;
 }

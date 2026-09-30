@@ -1,20 +1,27 @@
+import { useEffect } from 'react';
+import { Image as ExpoImage } from 'expo-image';
 import { Image, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
+import UserAvatar from '@S/avatar/avatar';
 import { CARD_METRICS } from '@S/card/metrics/const';
 import { isRunningActivity } from '@U/location/location-utils';
 import type { ReplayCopy } from '../types';
+import type { ProfileType } from '@S/card/types';
 
 interface VideoBrandOverlayProps {
   sport?: string;
   workoutDate?: string;
+  profile?: ProfileType;
   workoutDuration: number;
   distance: number;
   progress: number;
   currentSpeed: number | null;
   language: LANGUAGES;
   copy: ReplayCopy;
+  isCoverFrame?: boolean;
+  onCoverReady?: () => void;
 }
 
 const ACTIVITY_LABELS = {
@@ -60,13 +67,28 @@ function formatRunningPace(speedMetersPerSecond: number, paceUnit: string) {
 export default function VideoBrandOverlay({
   sport,
   workoutDate,
+  profile,
   workoutDuration,
   distance,
   progress,
   currentSpeed,
   language,
   copy,
+  isCoverFrame = false,
+  onCoverReady,
 }: VideoBrandOverlayProps) {
+  useEffect(() => {
+    if (!isCoverFrame) return;
+    if (!profile?.profilePhoto) {
+      onCoverReady?.();
+      return;
+    }
+
+    void ExpoImage.prefetch(profile.profilePhoto, { cachePolicy: 'disk' })
+      .catch(() => false)
+      .finally(() => onCoverReady?.());
+  }, [isCoverFrame, onCoverReady, profile?.profilePhoto]);
+
   const metrics = CARD_METRICS[language];
   const normalizedSport = sport?.toLowerCase() ?? '';
   const activityLabel =
@@ -84,18 +106,22 @@ export default function VideoBrandOverlay({
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })} ${metrics.km}`;
+  const displaySpeed = isCoverFrame && workoutDuration > 0 ? (distance * 1000) / workoutDuration : currentSpeed;
   const speedLabel =
-    currentSpeed === null || currentSpeed <= 0
+    displaySpeed === null || displaySpeed <= 0
       ? '—'
       : isRunningActivity(sport ?? '')
-        ? formatRunningPace(currentSpeed, copy.paceUnit ?? (language === LANGUAGES.english ? 'min/km' : 'мин/км'))
-        : `${(currentSpeed * 3.6).toLocaleString(language === LANGUAGES.english ? 'en-US' : 'ru-RU', {
+        ? formatRunningPace(displaySpeed, copy.paceUnit ?? (language === LANGUAGES.english ? 'min/km' : 'мин/км'))
+        : `${(displaySpeed * 3.6).toLocaleString(language === LANGUAGES.english ? 'en-US' : 'ru-RU', {
             minimumFractionDigits: 1,
             maximumFractionDigits: 1,
           })} ${metrics.kmh}`;
+  const athleteName =
+    [profile?.name, profile?.surname].filter(Boolean).join(' ') ||
+    (language === LANGUAGES.english ? 'Athlete' : 'Спортсмен');
 
   return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+    <View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.overlay, isCoverFrame && styles.coverOverlay]}>
       <View style={styles.brandHeader}>
         <Image
           source={require('../../../assets/images/runich-logo.png')}
@@ -103,6 +129,23 @@ export default function VideoBrandOverlay({
           style={styles.brandIcon}
         />
         <Text style={styles.brandName}>RUNICH</Text>
+        {isCoverFrame ? (
+          <View style={styles.identity}>
+            <UserAvatar
+              size={34}
+              profilePhoto={profile?.profilePhoto}
+              name={profile?.name}
+              surname={profile?.surname}
+              placeholder={profile?.profilePhotoBlurhash}
+              cachePolicy="disk"
+              recyclingKey={profile?.profilePhoto}
+              transition={0}
+            />
+            <Text numberOfLines={1} style={styles.athleteName}>
+              {athleteName}
+            </Text>
+          </View>
+        ) : null}
       </View>
       <View style={styles.bottomCard}>
         <View style={styles.activityRow}>
@@ -128,7 +171,7 @@ export default function VideoBrandOverlay({
               {metrics.time}
             </Text>
             <Text adjustsFontSizeToFit minimumFontScale={0.72} numberOfLines={1} style={styles.metricValue}>
-              {formatWorkoutTime(workoutDuration * progress)}
+              {formatWorkoutTime(workoutDuration * (isCoverFrame ? 1 : progress))}
             </Text>
           </View>
           <View style={styles.metricDivider} />
@@ -147,22 +190,27 @@ export default function VideoBrandOverlay({
 }
 
 const styles = StyleSheet.create({
+  overlay: { elevation: 2, zIndex: 2 },
+  coverOverlay: { backgroundColor: '#141618' },
   brandHeader: {
     alignItems: 'center',
     backgroundColor: 'rgba(20,22,24,0.84)',
-    borderRadius: 13,
+    borderRadius: 12,
     flexDirection: 'row',
-    height: 44,
+    height: 48,
     left: 16,
     paddingHorizontal: 8,
     position: 'absolute',
     top: 16,
+    right: 16,
   },
   brandIcon: { height: 32, width: 32 },
-  brandName: { color: '#FFFFFF', fontSize: 13, fontWeight: '800', letterSpacing: 1.4, marginLeft: 3, marginRight: 6 },
+  brandName: { color: '#FFFFFF', fontSize: 13, fontWeight: '800', marginLeft: 3, marginRight: 'auto' },
+  identity: { alignItems: 'center', flexDirection: 'row', gap: 8, maxWidth: '62%', minWidth: 0 },
+  athleteName: { color: '#FFFFFF', flexShrink: 1, fontSize: 12, fontWeight: '700' },
   bottomCard: {
     backgroundColor: 'rgba(20,22,24,0.92)',
-    borderRadius: 18,
+    borderRadius: 12,
     bottom: 20,
     left: 16,
     paddingHorizontal: 13,

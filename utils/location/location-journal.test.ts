@@ -1,3 +1,4 @@
+import { createMMKV } from 'react-native-mmkv';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import {
   appendLocationToJournal,
@@ -9,6 +10,8 @@ import {
   readLocationJournal,
   removeLocationJournal,
 } from './location-journal';
+
+const journalStorage = createMMKV({ id: 'runich-location-journal' });
 
 describe('location journal', () => {
   it('stores points, preserves pause segments, and can be deactivated without deleting data', () => {
@@ -93,5 +96,106 @@ describe('location journal', () => {
 
     expect(getActiveLocationJournalId()).toBe(activeJournalId);
     removeLocationJournal(activeJournalId);
+  });
+
+  it('ignores corrupt metadata and chunks instead of exposing partial journal data', () => {
+    const journalId = 'corrupt-journal';
+    const metadataKey = `${journalId}:meta`;
+    const chunkKey = `${journalId}:chunk:0`;
+
+    journalStorage.set(metadataKey, '{broken json');
+    expect(readLocationJournal(journalId)).toBeNull();
+
+    for (const invalidMeta of [
+      { version: 2, pointCount: 0, chunkCount: 0, segmentStarts: [0] },
+      { version: 1, pointCount: 0.5, chunkCount: 0, segmentStarts: [0] },
+      { version: 1, pointCount: 0, chunkCount: Number.NaN, segmentStarts: [0] },
+      { version: 1, pointCount: 0, chunkCount: 0, segmentStarts: 'invalid' },
+    ]) {
+      journalStorage.set(metadataKey, JSON.stringify(invalidMeta));
+      expect(readLocationJournal(journalId)).toBeNull();
+    }
+
+    journalStorage.set(metadataKey, JSON.stringify({ version: 1, pointCount: 1, chunkCount: 1, segmentStarts: [0] }));
+    journalStorage.set(chunkKey, '{broken json');
+    expect(readLocationJournal(journalId)).toEqual({ locations: [], segments: [[]], pointCount: 1 });
+
+    journalStorage.set(chunkKey, JSON.stringify({ not: 'an array' }));
+    expect(readLocationJournal(journalId)).toEqual({ locations: [], segments: [[]], pointCount: 1 });
+    removeLocationJournal(journalId);
+  });
+
+  it('round-trips available coordinate fields and falls back to the current timestamp', () => {
+    const journalId = createLocationJournal();
+    const now = jest.spyOn(Date, 'now').mockReturnValue(50_000);
+    const locationWithoutTimestamp = {
+      ...MOCK_LOCATION,
+      timestamp: undefined,
+      coords: { ...MOCK_LOCATION.coords, timestamp: undefined },
+    } as unknown as typeof MOCK_LOCATION;
+    expect(appendLocationToJournal(journalId, locationWithoutTimestamp)).toBe(true);
+
+    const detailedLocation = {
+      ...MOCK_LOCATION,
+      timestamp: 51_000,
+      coords: {
+        ...MOCK_LOCATION.coords,
+        latitude: 55.75,
+        longitude: 37.62,
+        altitude: 156,
+        altitudeAccuracy: 2,
+        accuracy: 3,
+        heading: 90,
+        speed: 4,
+      },
+    };
+    expect(appendLocationToJournal(journalId, detailedLocation)).toBe(true);
+
+    const snapshot = readLocationJournal(journalId);
+    expect(snapshot?.locations[0]?.timestamp).toBe(50_000);
+    expect(snapshot?.locations[1]).toMatchObject({
+      timestamp: 51_000,
+      coords: {
+        latitude: 55.75,
+        longitude: 37.62,
+        altitude: 156,
+        altitudeAccuracy: 2,
+        accuracy: 3,
+        heading: 90,
+        speed: 4,
+      },
+    });
+
+    now.mockRestore();
+    removeLocationJournal(journalId);
+  });
+
+  it('omits unavailable coordinate fields and keeps the empty-segment fallback', () => {
+    const journalId = createLocationJournal();
+    const sparseLocation = {
+      ...MOCK_LOCATION,
+      timestamp: 60_000,
+      coords: {
+        ...MOCK_LOCATION.coords,
+        altitude: null,
+        altitudeAccuracy: null,
+        accuracy: null,
+        heading: null,
+        speed: null,
+      },
+    } as unknown as typeof MOCK_LOCATION;
+    expect(appendLocationToJournal(journalId, sparseLocation)).toBe(true);
+    expect(readLocationJournal(journalId)?.locations[0]?.coords).not.toHaveProperty('accuracy');
+    expect(readLocationJournal(journalId)?.locations[0]?.coords).not.toHaveProperty('heading');
+    expect(readLocationJournal(journalId)?.locations[0]?.coords).not.toHaveProperty('speed');
+    removeLocationJournal(journalId);
+
+    const emptySegmentsId = 'empty-segments-journal';
+    journalStorage.set(
+      `${emptySegmentsId}:meta`,
+      JSON.stringify({ version: 1, pointCount: 0, chunkCount: 0, segmentStarts: [] }),
+    );
+    expect(readLocationJournal(emptySegmentsId)).toEqual({ locations: [], segments: [[]], pointCount: 0 });
+    removeLocationJournal(emptySegmentsId);
   });
 });

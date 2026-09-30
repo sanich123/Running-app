@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { ACTIVITY_ROUTE_REPLAY_DURATIONS_MS, ACTIVITY_ROUTE_REPLAY_MAP_STYLES } from './const';
 import type { ActivityLocation, ProfileType } from '@S/card/types';
 
@@ -19,6 +20,7 @@ export interface ActivityRouteReplayProps {
   sport?: string;
   workoutDate?: string;
   workoutDuration?: number;
+  onVideoExportStateChange?: (isExporting: boolean) => void;
 }
 
 export interface ReplayCopy {
@@ -111,6 +113,7 @@ export interface ReplayMapProps {
   playbackHeading: number;
   profile?: ProfileType;
   recordingSessionId?: string;
+  recordingOverlay?: ReactNode;
   showRouteEndpointMarkers?: boolean;
 }
 

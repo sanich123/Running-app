@@ -6,6 +6,7 @@ export default function ConfirmDialog({
   title,
   message,
   confirmText,
+  cancelText,
   loading = false,
   onConfirm,
   onDismiss,
@@ -28,6 +29,16 @@ export default function ConfirmDialog({
           {loading && <ActivityIndicator testID="confirm-dialog-loading" size="small" style={{ marginTop: 16 }} />}
         </Dialog.Content>
         <Dialog.Actions>
+          {cancelText ? (
+            <Button
+              testID="confirm-dialog-cancel-button"
+              mode="text"
+              textColor={colors.onSurfaceVariant}
+              onPress={onDismiss}
+              disabled={loading}>
+              {cancelText}
+            </Button>
+          ) : null}
           <Button
             testID="confirm-dialog-confirm-button"
             mode="text"

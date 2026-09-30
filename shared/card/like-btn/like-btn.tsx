@@ -1,4 +1,4 @@
-import { useCallback, useEffect, memo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Animated } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
@@ -17,7 +17,7 @@ import {
 } from './const';
 import { LIKE_BTN } from '../likes/const';
 
-export default memo(function LikeBtn() {
+export default function LikeBtn() {
   const { activity } = useActivityCard();
   const { id: activityId, likesLength, profile, mapPhotoUrl } = activity;
   const dispatch = useAppDispatch();
@@ -124,4 +124,4 @@ export default memo(function LikeBtn() {
       />
     </Animated.View>
   );
-});
+}

@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
@@ -15,7 +15,7 @@ import type { ActivityMediaItem } from '../types';
 
 type DisplayedMediaItem = ActivityMediaItem & { isMap?: boolean };
 
-export default memo(function MediaList() {
+export default function MediaList() {
   const { activity } = useActivityCard();
   const {
     media,
@@ -150,7 +150,7 @@ export default memo(function MediaList() {
       getItemLayout={(_, index) => ({ length: mediaWidth, offset: mediaWidth * index, index })}
     />
   );
-});
+}
 
 const styles = StyleSheet.create({
   mapActions: {

@@ -26,6 +26,7 @@ const ReplayMap = forwardRef<ReplayMapHandle, ReplayMapProps>(function ReplayMap
     playbackHeading,
     profile,
     recordingSessionId,
+    recordingOverlay,
     showRouteEndpointMarkers = true,
   },
   ref,
@@ -132,6 +133,7 @@ const ReplayMap = forwardRef<ReplayMapHandle, ReplayMapProps>(function ReplayMap
           testID="activity-route-moving-avatar"
         />
       </MapView>
+      {recordingOverlay}
     </ReplayRecordingView>
   );
 });

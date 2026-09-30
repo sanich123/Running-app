@@ -19,6 +19,7 @@ export default {
     experiments: {
       typedRoutes: true,
       tsconfigPaths: true,
+      reactCompiler: true,
     },
     assetBundlePatterns: ['**/*'],
     ios: {

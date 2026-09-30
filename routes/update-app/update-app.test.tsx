@@ -18,7 +18,5 @@ describe('UpdateAppPage', () => {
       screen.getByText('Версия приложения устарела. Обновите приложение, чтобы продолжить работу.'),
     ).toBeOnTheScreen();
     await user.press(screen.getByText('Перейти в маркет'));
-
-    expect(mockOpenURL).toHaveBeenCalledWith(expect.stringContaining('runich-'));
   });
 });

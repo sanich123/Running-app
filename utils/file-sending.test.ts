@@ -30,6 +30,33 @@ const originalPlatform = Platform.OS;
 const uploadMedia = jest.fn() as jest.MockedFunction<UploadMediaRequest>;
 const uploadMediaBatch = jest.fn() as jest.MockedFunction<UploadMediaBatchRequest>;
 const mockGetNetworkState = getNetworkState as jest.MockedFunction<typeof getNetworkState>;
+const mockErrorToast = errorToast as jest.MockedFunction<typeof errorToast>;
+const originalDocumentDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'document');
+const originalCreateObjectURLDescriptor = Object.getOwnPropertyDescriptor(URL, 'createObjectURL');
+const originalRevokeObjectURLDescriptor = Object.getOwnPropertyDescriptor(URL, 'revokeObjectURL');
+
+function mockBrowserVideoMetadata(duration = 20) {
+  const video = {
+    duration,
+    preload: 'none',
+    onloadedmetadata: null as (() => void) | null,
+    onerror: null as ((event: Event) => void) | null,
+    removeAttribute: jest.fn(),
+    load: jest.fn(),
+  };
+  Object.defineProperty(video, 'src', { set: () => video.onloadedmetadata?.() });
+  Object.defineProperty(globalThis, 'document', {
+    configurable: true,
+    value: { createElement: jest.fn(() => video) },
+  });
+  Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: jest.fn(() => 'blob:video') });
+  Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: jest.fn() });
+}
+
+function restoreGlobalProperty(target: object, key: string, descriptor?: PropertyDescriptor) {
+  if (descriptor) Object.defineProperty(target, key, descriptor);
+  else Reflect.deleteProperty(target, key);
+}
 
 describe('file sending', () => {
   beforeEach(() => {
@@ -37,7 +64,7 @@ describe('file sending', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     (ImageCompressor.compress as jest.Mock).mockResolvedValue('compressed-image.jpg');
     (VideoCompressor.compress as jest.Mock).mockResolvedValue('compressed-video.mp4');
-    (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 1_000 });
+    (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 1_000, duration: 10 });
     mockGetNetworkState.mockResolvedValue({ isConnected: true, isInternetReachable: true } as never);
     uploadMedia.mockResolvedValue({
       url: 'https://cdn.example/photo.jpg',
@@ -49,6 +76,9 @@ describe('file sending', () => {
   afterEach(() => {
     jest.restoreAllMocks();
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatform });
+    restoreGlobalProperty(globalThis, 'document', originalDocumentDescriptor);
+    restoreGlobalProperty(URL, 'createObjectURL', originalCreateObjectURLDescriptor);
+    restoreGlobalProperty(URL, 'revokeObjectURL', originalRevokeObjectURLDescriptor);
   });
 
   it('compresses an image without uploading it', async () => {
@@ -194,10 +224,17 @@ describe('file sending', () => {
     await expect(compressMediaFile('archive.mkv')).resolves.toBeNull();
     expect(errorToast).toHaveBeenCalledWith('Поддерживаются только видео MP4, MOV и WebM');
 
-    (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 15 * 1024 * 1024 + 1 });
-    await expect(compressMediaFile('large.mp4')).resolves.toBeNull();
+    (getVideoMetaData as jest.Mock)
+      .mockResolvedValueOnce({ size: 1_000, duration: 61 })
+      .mockResolvedValueOnce({ size: MAX_MEDIA_FILE_SIZE + 1, duration: 10 })
+      .mockResolvedValueOnce({ size: MAX_MEDIA_FILE_SIZE + 1, duration: 10 });
+    await expect(compressMediaFile('long.mp4')).resolves.toBeNull();
     expect(VideoCompressor.compress).not.toHaveBeenCalled();
-    expect(errorToast).toHaveBeenCalledWith('Файл слишком большой, размер файла не более 15 МБ');
+    expect(errorToast).toHaveBeenCalledWith('Длительность видео должна быть не более 1 минуты');
+
+    await expect(compressMediaFile('large.mp4')).resolves.toBeNull();
+    expect(VideoCompressor.compress).toHaveBeenCalledTimes(1);
+    expect(errorToast).toHaveBeenCalledWith('Размер видео должен быть не более 50 МБ');
   });
 
   it('reports compression, upload and thumbnail errors independently', async () => {
@@ -239,6 +276,10 @@ describe('file sending', () => {
     expect(ImagePicker.launchImageLibraryAsync).toHaveBeenLastCalledWith(
       expect.objectContaining({ allowsMultipleSelection: true, selectionLimit: 5 }),
     );
+    await getAccessToGallery(['images']);
+    expect(ImagePicker.launchImageLibraryAsync).toHaveBeenLastCalledWith(
+      expect.objectContaining({ mediaTypes: ['images'], videoMaxDuration: undefined }),
+    );
     await expect(compressMediaFile(webFile)).resolves.toEqual({
       file: webFile,
       originalName: 'photo.png',
@@ -256,6 +297,7 @@ describe('file sending', () => {
   it('passes browser videos through without using the native compressor', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     const webFile = { name: 'clip.mp4', size: 1_000, type: 'video/mp4' } as unknown as File;
+    mockBrowserVideoMetadata(60);
 
     await expect(compressMediaFile(webFile)).resolves.toEqual({
       file: webFile,
@@ -278,11 +320,53 @@ describe('file sending', () => {
   it('rejects oversized browser videos without calling native video services', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     const webFile = { name: 'clip.mp4', size: MAX_MEDIA_FILE_SIZE + 1, type: 'video/mp4' } as unknown as File;
+    mockBrowserVideoMetadata();
 
     await expect(compressMediaFile(webFile)).resolves.toBeNull();
-    expect(errorToast).toHaveBeenCalledWith('Файл слишком большой, размер файла не более 15 МБ');
+    expect(errorToast).toHaveBeenCalledWith('Размер видео должен быть не более 50 МБ');
     expect(getVideoMetaData).not.toHaveBeenCalled();
     expect(VideoCompressor.compress).not.toHaveBeenCalled();
+  });
+
+  it('rejects browser and native videos when their duration cannot be read or exceeds one minute', async () => {
+    const webFile = { name: 'clip.mp4', size: 1_000, type: 'video/mp4' } as unknown as File;
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+    mockBrowserVideoMetadata(Number.POSITIVE_INFINITY);
+    await expect(compressMediaFile(webFile)).resolves.toBeNull();
+    expect(errorToast).toHaveBeenLastCalledWith('Не удалось определить длительность видео');
+
+    mockBrowserVideoMetadata(61);
+    await expect(compressMediaFile(webFile)).resolves.toBeNull();
+    expect(errorToast).toHaveBeenLastCalledWith('Длительность видео должна быть не более 1 минуты');
+
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    (getVideoMetaData as jest.Mock).mockResolvedValueOnce({ size: 1_000, duration: Number.NaN });
+    await expect(compressMediaFile('unknown-duration.mp4')).resolves.toBeNull();
+    expect(VideoCompressor.compress).not.toHaveBeenCalled();
+    expect(errorToast).toHaveBeenLastCalledWith('Не удалось определить длительность видео');
+
+    mockErrorToast.mockClear();
+    (VideoCompressor.compress as jest.Mock).mockResolvedValueOnce(null);
+    await expect(compressMediaFile('empty-compression.mp4')).resolves.toBeNull();
+    expect(errorToast).not.toHaveBeenCalled();
+  });
+
+  it('reads browser video URLs as blobs and reports when browser metadata is unavailable', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+    const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
+      blob: async () => new Blob(['video']),
+    } as Response);
+    mockBrowserVideoMetadata(30);
+
+    await expect(compressMediaFile('https://cdn.example/clip.mp4')).resolves.toMatchObject({
+      originalName: 'clip.mp4',
+      isVideo: true,
+    });
+    expect(fetchSpy).toHaveBeenCalledWith('https://cdn.example/clip.mp4');
+
+    restoreGlobalProperty(globalThis, 'document', undefined);
+    await expect(compressMediaFile('https://cdn.example/clip.mp4')).resolves.toBeNull();
+    expect(errorToast).toHaveBeenLastCalledWith('Ошибка во время сжатия видео', expect.any(Error));
   });
 
   it('allows upload to proceed when network state lookup fails or is unknown', async () => {
@@ -346,6 +430,31 @@ describe('file sending', () => {
         },
         undefined,
         uploadMedia,
+        { signal: controller.signal },
+      ),
+    ).resolves.toBeNull();
+    expect(errorToast).not.toHaveBeenCalled();
+  });
+
+  it('does not show a batch upload error after cancellation', async () => {
+    const controller = new AbortController();
+    controller.abort();
+    uploadMediaBatch.mockRejectedValueOnce(new Error('aborted'));
+
+    await expect(
+      uploadMediaFiles(
+        [
+          {
+            file: 'compressed-image.jpg',
+            originalName: 'photo.jpg',
+            extension: 'jpg',
+            isVideo: false,
+            mimeType: 'image/jpeg',
+          },
+        ],
+        undefined,
+        [{ mediaId: 'media-1', role: 'media' }],
+        uploadMediaBatch,
         { signal: controller.signal },
       ),
     ).resolves.toBeNull();

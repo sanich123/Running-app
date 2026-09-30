@@ -1,9 +1,11 @@
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { Stack } from 'expo-router';
 import { LazyMapPage } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 export default function ActivityMapRoute() {
+  const [isVideoExporting, setIsVideoExporting] = useState(false);
+
   return (
     <>
       <Stack.Screen
@@ -13,12 +15,12 @@ export default function ActivityMapRoute() {
           headerShadowVisible: false,
           headerTitle: '',
           headerRight: () => null,
-          headerBackVisible: true,
+          headerBackVisible: !isVideoExporting,
           headerBackTitle: '',
         }}
       />
       <Suspense fallback={<FullPageActivityLoader />}>
-        <LazyMapPage />
+        <LazyMapPage onVideoExportStateChange={setIsVideoExporting} />
       </Suspense>
     </>
   );

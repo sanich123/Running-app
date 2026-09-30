@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -8,7 +7,7 @@ import UserAvatar from '@S/avatar/avatar';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
 import type { UserListItemType } from './const';
 
-export default memo(function UserListItem({
+export default function UserListItem({
   name,
   surname,
   profilePhoto,
@@ -50,7 +49,7 @@ export default memo(function UserListItem({
       </View>
     </TouchableRipple>
   );
-});
+}
 
 const styles = StyleSheet.create({
   userItemWrapper: {

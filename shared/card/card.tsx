@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { Card, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -14,7 +13,7 @@ import Metrics from './metrics/metrics';
 import { UserInfoSize } from './user-info/const';
 import type { ActivityCardProps } from './types';
 
-export default memo(function ActivityCard({
+export default function ActivityCard({
   activity,
   isFullView = false,
   isShowDeleteBtn,
@@ -54,7 +53,7 @@ export default memo(function ActivityCard({
       </View>
     </ActivityCardContext.Provider>
   );
-});
+}
 
 const styles = StyleSheet.create({
   webStyles: {

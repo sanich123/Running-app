@@ -8,9 +8,9 @@ import { useAppSelector } from '@R/typed-hooks';
 import ActivityRouteReplay from '@S/activity-route-replay/activity-route-replay';
 import DisplayActivityMap from '@S/display-activity-map/display-activity-map';
 import ErrorComponent from '@S/error-component/error-component';
-import type { MapPageSearchParams } from './types';
+import type { MapPageProps, MapPageSearchParams } from './types';
 
-export default function MapPage() {
+export default function MapPage({ onVideoExportStateChange }: MapPageProps) {
   const { colors } = useTheme();
   const { id: activityId, replay, userId: profileId } = useLocalSearchParams<MapPageSearchParams>();
   const isReplay = replay === '1';
@@ -45,6 +45,7 @@ export default function MapPage() {
             sport={activityDetails?.sport}
             workoutDate={activityDetails?.date}
             workoutDuration={activityDetails?.duration}
+            onVideoExportStateChange={onVideoExportStateChange}
           />
         ) : (
           <DisplayActivityMap locations={activity?.locations ?? []} kilometresSplit={activity?.kilometresSplit ?? []} />

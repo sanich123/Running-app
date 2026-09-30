@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { usePathname, useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -11,7 +10,7 @@ import { useActivityCard } from '../context';
 import { CARD_METRICS } from './const';
 import { getCardAdditionalMetric, getCardSpeedMetric } from './utils';
 
-export default memo(function Metrics() {
+export default function Metrics() {
   const { activity, isFullView, isShowDescription } = useActivityCard();
   const { distance, duration, title, description, userId, id, sport, steps, elevationGain, caloriesActive } = activity;
   const { colors, dark } = useTheme();
@@ -79,7 +78,7 @@ export default memo(function Metrics() {
       </>
     </TouchableRipple>
   );
-});
+}
 
 const styles = StyleSheet.create({
   metricsWrapper: {

@@ -1,8 +1,9 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useKeepAwake } from 'expo-keep-awake';
 import { SystemBars } from 'react-native-edge-to-edge';
 import { Platform, StyleSheet, View } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
+import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { ACTIVITY_ROUTE_REPLAY_TEXT } from './const';
 import Controls from './controls/controls';
 import EmptyState from './empty-state/empty-state';
@@ -13,9 +14,11 @@ import useRouteData from './use-route-data';
 import useRoutePlayback from './use-route-playback';
 import useVideoExport from './video-export/use-video-export';
 import VideoBrandOverlay from './video-export/video-brand-overlay';
+import VideoExportLoader from './video-export/video-export-loader';
 import type { ActivityRouteReplayProps, ReplayMapHandle } from './types';
 
 export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
+  const { onVideoExportStateChange } = props;
   const { language } = useAppSelector(({ settings }) => settings);
   const activityMapRef = useRef<ReplayMapHandle>(null);
   const route = useRouteData(props);
@@ -23,6 +26,10 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
   const mapControls = useMapControls(activityMapRef);
   const copy = ACTIVITY_ROUTE_REPLAY_TEXT[language];
   const videoExport = useVideoExport({ playback, copy, workoutDate: props.workoutDate });
+
+  useEffect(() => {
+    onVideoExportStateChange?.(videoExport.isExporting);
+  }, [onVideoExportStateChange, videoExport.isExporting]);
 
   return (
     <View
@@ -33,6 +40,22 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
       {videoExport.isExporting && Platform.OS !== 'web' ? (
         <SystemBars hidden={{ statusBar: true, navigationBar: true }} />
       ) : null}
+      <ConfirmDialog
+        visible={Boolean(videoExport.readyVideo)}
+        title={copy.videoReady}
+        message={`${copy.videoSize}: ${videoExport.readyVideo?.size ?? ''}`}
+        confirmText={copy.share}
+        cancelText={copy.cancel}
+        onConfirm={videoExport.shareReadyVideo}
+        onDismiss={videoExport.dismissReadyVideo}
+      />
+      <VideoExportLoader
+        visible={videoExport.isExporting}
+        title={copy.exportProgress}
+        message={copy.exportStayOnPage ?? ''}
+        cancelLabel={copy.cancel}
+        onCancel={videoExport.cancelVideoExport}
+      />
       {route.mapData && playback.playbackCoordinate ? (
         <>
           <ReplayMap
@@ -46,20 +69,26 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
             playbackHeading={playback.playbackHeading}
             profile={props.profile}
             recordingSessionId={videoExport.recorder.sessionId}
+            recordingOverlay={
+              videoExport.isExporting ? (
+                <VideoBrandOverlay
+                  sport={props.sport}
+                  workoutDate={props.workoutDate}
+                  profile={props.profile}
+                  workoutDuration={route.workoutDuration}
+                  distance={route.timeline.totalDistance}
+                  progress={playback.progress}
+                  currentSpeed={playback.currentSpeed}
+                  language={language}
+                  copy={copy}
+                  isCoverFrame={videoExport.isCoverFrame}
+                  onCoverReady={videoExport.onCoverReady}
+                />
+              ) : null
+            }
             showRouteEndpointMarkers={!videoExport.isExporting}
           />
-          {videoExport.isExporting ? (
-            <VideoBrandOverlay
-              sport={props.sport}
-              workoutDate={props.workoutDate}
-              workoutDuration={route.workoutDuration}
-              distance={route.timeline.totalDistance}
-              progress={playback.progress}
-              currentSpeed={playback.currentSpeed}
-              language={language}
-              copy={copy}
-            />
-          ) : (
+          {videoExport.isExporting ? null : (
             <>
               <MapTools
                 mapStyle={mapControls.mapStyle}
