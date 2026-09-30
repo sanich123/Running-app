@@ -10290,10 +10290,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mapbox-gl@npm:^3.31.0":
-  version: 3.31.0
-  resolution: "mapbox-gl@npm:3.31.0"
-  checksum: 10c0/033a7e2ce9e2fa6be4da0243f65ffae28bb6496347be13052bf5ed1f4e80f535d2fa10ddfbb8176ccfb410f5fa868e0af77357b6a2c003750c6b210ce0d66ec8
+"mapbox-gl@npm:^3.32.0":
+  version: 3.32.0
+  resolution: "mapbox-gl@npm:3.32.0"
+  checksum: 10c0/ad7bdc9d6c42b4febc3fb16b86e788f55f3fe552733b0a56723a8be41e27bde282da9235fafec7bd9f427cef2c5ae59c46954157bdc696d453c2ae4b65a5318e
   languageName: node
   linkType: hard
 
@@ -12164,16 +12164,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-tab-view@npm:^4.3.2":
-  version: 4.3.2
-  resolution: "react-native-tab-view@npm:4.3.2"
+"react-native-tab-view@npm:^4.3.3":
+  version: 4.3.3
+  resolution: "react-native-tab-view@npm:4.3.3"
   dependencies:
     use-latest-callback: "npm:^0.2.4"
   peerDependencies:
     react: ">= 18.2.0"
     react-native: "*"
     react-native-pager-view: ">= 6.0.0"
-  checksum: 10c0/1ed1332775ed05baf92655cb4d2054b6657ec23786b8ed46afdc2889e6182316379106dfc46e960a37635edf785d37f28da05a52ef232e6e39e00249359e6d70
+  checksum: 10c0/961021b69caaa110dff9d12f89270bb9b95053a00bf9932679264a6555e856f9fa5e3e3b04376823da9f71c351d31bdc925146d092cb7e721b245759f11177fb
   languageName: node
   linkType: hard
 
@@ -12839,7 +12839,7 @@ __metadata:
     jest-expo: "npm:~58.0.5"
     lint-staged: "npm:^17.6.0"
     madge: "npm:^8.0.0"
-    mapbox-gl: "npm:^3.31.0"
+    mapbox-gl: "npm:^3.32.0"
     moment: "npm:^2.31.0"
     msw: "npm:^2.15.0"
     npm-check-updates: "npm:^23.1.0"
@@ -12863,7 +12863,7 @@ __metadata:
     react-native-safe-area-context: "npm:~5.9.1"
     react-native-screens: "npm:~4.28.0"
     react-native-svg: "npm:15.15.5"
-    react-native-tab-view: "npm:^4.3.2"
+    react-native-tab-view: "npm:^4.3.3"
     react-native-toast-message: "npm:2.5.2"
     react-native-url-polyfill: "npm:^4.0.0"
     react-native-uuid: "npm:^2.0.4"
