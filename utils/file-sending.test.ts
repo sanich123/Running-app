@@ -285,7 +285,7 @@ describe('file sending', () => {
     );
     await getAccessToGallery(['images']);
     expect(ImagePicker.launchImageLibraryAsync).toHaveBeenLastCalledWith(
-      expect.objectContaining({ mediaTypes: ['images'], videoMaxDuration: undefined }),
+      expect.objectContaining({ mediaTypes: ['images'], quality: 1, videoMaxDuration: undefined }),
     );
     await expect(compressMediaFile(webFile)).resolves.toEqual({
       file: webFile,

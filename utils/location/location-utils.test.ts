@@ -65,6 +65,16 @@ describe('activity metrics', () => {
     expect(getSpeedInMinsInKm(1_000, 90_000)).toEqual({ paceAsNumber: 1.3, paceAsString: '1.30' });
     expect(getSpeedInKmPerHour(2_000, 60_000)).toBe(120);
   });
+
+  it('carries rounded seconds into the next minute and rejects invalid inputs', () => {
+    expect(getSpeedInMinsInKm(14_450, 4_331_000)).toEqual({ paceAsNumber: 5, paceAsString: '5.00' });
+    expect(getSpeedInMinsInKm(1_000, 59_400)).toEqual({ paceAsNumber: 0.59, paceAsString: '0.59' });
+    expect(getSpeedInMinsInKm(1_000, 59_500)).toEqual({ paceAsNumber: 1, paceAsString: '1.00' });
+    expect(getSpeedInMinsInKm(Number.NaN, 60_000)).toEqual({ paceAsNumber: 0, paceAsString: '0.00' });
+    expect(getSpeedInMinsInKm(1_000, Number.POSITIVE_INFINITY)).toEqual({ paceAsNumber: 0, paceAsString: '0.00' });
+    expect(getSpeedInMinsInKm(-1_000, 60_000)).toEqual({ paceAsNumber: 0, paceAsString: '0.00' });
+    expect(getSpeedInMinsInKm(1_000, -60_000)).toEqual({ paceAsNumber: 0, paceAsString: '0.00' });
+  });
 });
 
 describe('elevation validation', () => {

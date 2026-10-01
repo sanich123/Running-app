@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react-native';
+import { act, screen } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import {
@@ -32,9 +32,13 @@ jest.mock('@S/custom-image/custom-image', () => ({
 }));
 jest.mock('./video-viewer/video-viewer', () => ({
   __esModule: true,
-  default: ({ url }: { url: string }) => {
+  default: ({ url, isActive }: { url: string; isActive: boolean }) => {
     const { Text } = require('react-native');
-    return <Text testID="photo-viewer-video">{url}</Text>;
+    return (
+      <Text testID="photo-viewer-video" accessibilityHint={isActive ? 'active' : 'inactive'}>
+        {url}
+      </Text>
+    );
   },
 }));
 jest.mock('react-native-pager-view', () => {
@@ -89,7 +93,18 @@ describe('photo viewer', () => {
     expect(screen.getAllByTestId('photo-viewer-image').map((element) => element.props.children)).toContain(
       'https://cdn.example.com/run.jpg',
     );
-    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain('mp4');
+    const video = screen.getByTestId('photo-viewer-video');
+    expect(video.props.children).toBe('mp4');
+    expect(video.props.accessibilityHint).toBe('active');
+
+    const pager = screen.getByTestId('photo-viewer-pager');
+    await act(async () => pager.props.onPageScrollStateChanged({ nativeEvent: { pageScrollState: 'dragging' } }));
+    expect(screen.getByTestId('photo-viewer-video').props.accessibilityHint).toBe('inactive');
+    await act(async () => pager.props.onPageScrollStateChanged({ nativeEvent: { pageScrollState: 'idle' } }));
+    expect(screen.getByTestId('photo-viewer-video').props.accessibilityHint).toBe('active');
+
+    await act(async () => pager.props.onPageSelected({ nativeEvent: { position: 0 } }));
+    expect(screen.getByTestId('photo-viewer-video').props.accessibilityHint).toBe('inactive');
   });
 
   it('renders native user photos without an activity map offset', async () => {

@@ -153,8 +153,12 @@ export default function AppShell() {
                 <Stack.Screen
                   name={`${ROUTES.mediaGrid}/${ROUTES.routeId}`}
                   options={{
-                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
-                    title: LABELS[language].photos,
+                    headerBackButtonDisplayMode: 'minimal',
+                    headerShadowVisible: false,
+                    headerStyle: { backgroundColor: 'transparent' },
+                    headerTintColor: '#fff',
+                    headerTitle: '',
+                    headerTransparent: true,
                   }}
                 />
                 <Stack.Screen

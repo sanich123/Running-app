@@ -145,7 +145,7 @@ export async function getAccessToGallery(
     return await ImagePicker.launchImageLibraryAsync({
       mediaTypes,
       aspect: [4, 3],
-      quality: 0.9,
+      quality: 1,
       videoMaxDuration: mediaTypes.includes('videos') ? MAX_VIDEO_DURATION_SECONDS : undefined,
       ...options,
     });

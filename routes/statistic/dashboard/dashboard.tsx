@@ -66,6 +66,11 @@ export default function Dashboard() {
   const displayedYear = liveYearData[year] ? year : availableYears.at(-1);
   const yearData = (displayedYear ? liveYearData[displayedYear] : undefined) ?? EMPTY_DASHBOARD_YEAR_DATA;
   const hasYearData = Boolean(displayedYear && liveYearData[displayedYear]);
+  const hasSteps = yearData.totals.steps > 0;
+  const hasCalories = yearData.totals.caloriesActive > 0;
+  const displayedMetric =
+    (metric === 'steps' && !hasSteps) || (metric === 'caloriesActive' && !hasCalories) ? 'distance' : metric;
+
   const dailyActivities: DashboardDailyActivities = yearData.dailyActivities;
   const activeDays = Object.keys(dailyActivities).length;
   const displayedSport = sport === 'all' || yearData.sports[sport] ? sport : 'all';
@@ -86,7 +91,7 @@ export default function Dashboard() {
   const displayedSelectedMonth = selectedMonth ?? latestActivityDay?.getMonth() ?? 0;
   const selectedDayActivities = dailyActivities[getDateKey(displayedSelectedDay)] ?? [];
   const selectedDayGroups = groupActivitiesBySport(selectedDayActivities);
-  const selectedDayIntensity = getDayIntensity(displayedSelectedDay, displayedSport, metric, dailyActivities);
+  const selectedDayIntensity = getDayIntensity(displayedSelectedDay, displayedSport, displayedMetric, dailyActivities);
   const chartWidth = Math.max(
     0,
     Math.min(
@@ -101,8 +106,8 @@ export default function Dashboard() {
   );
 
   const heatmapColumns = useMemo<DashboardHeatmapCell[][]>(
-    () => buildHeatmapColumns(displayedYear ?? year, displayedSport, metric, dailyActivities),
-    [dailyActivities, displayedSport, displayedYear, metric, year],
+    () => buildHeatmapColumns(displayedYear ?? year, displayedSport, displayedMetric, dailyActivities),
+    [dailyActivities, displayedSport, displayedYear, displayedMetric, year],
   );
   const heatmapMonths = useMemo(
     () => getHeatmapMonthSpans(displayedYear ?? year, months, heatmapColumns),
@@ -114,22 +119,31 @@ export default function Dashboard() {
     push(`/${ROUTES.monthStatistics}?userId=${userId}&year=${displayedYear}&month=${month}`);
   };
 
-  const chartData = yearData.monthly[metric].map((value, index) => ({
+  const chartData = yearData.monthly[displayedMetric].map((value, index) => ({
     value: Math.max(0, value),
     label: index % 2 === 0 ? months[index] : '',
+    dataPointRadius: index === displayedSelectedMonth ? 10 : undefined,
+    dataPointColor: index === displayedSelectedMonth ? colors.onPrimaryContainer : undefined,
     onPress: () => setSelectedMonth(index),
   }));
   const chartScale = getAnnualChartScale(
     chartData.map(({ value }) => value),
-    metric,
+    displayedMetric,
   );
 
   const changeYear = (direction: -1 | 1) => {
     const currentYearIndex = displayedYear === undefined ? -1 : availableYears.indexOf(displayedYear);
     const nextYear = availableYears[currentYearIndex + direction];
     if (nextYear === undefined) return;
-    const nextYearActivityDate = Object.keys(liveYearData[nextYear].dailyActivities).sort().at(-1);
+    const nextYearData = liveYearData[nextYear];
+    const nextYearActivityDate = Object.keys(nextYearData.dailyActivities).sort().at(-1);
     const nextYearSelectedDay = nextYearActivityDate ? parseDateKey(nextYearActivityDate) : new Date(nextYear, 0, 1);
+    if (
+      (metric === 'steps' && nextYearData.totals.steps === 0) ||
+      (metric === 'caloriesActive' && nextYearData.totals.caloriesActive === 0)
+    ) {
+      setMetric('distance');
+    }
     setYear(nextYear);
     setSelectedDay(nextYearSelectedDay);
     setSelectedMonth(nextYearSelectedDay.getMonth());
@@ -178,8 +192,10 @@ export default function Dashboard() {
           </View>
 
           <DashboardHero
-            metric={metric}
+            metric={displayedMetric}
             metricTotals={selectedSportMetrics}
+            hasSteps={hasSteps}
+            hasCalories={hasCalories}
             activeDays={activeDays}
             peakMonth={months[yearData.bestMonth]}
             labels={labels}
@@ -191,15 +207,14 @@ export default function Dashboard() {
             width={chartWidth}
             months={months}
             selectedMonth={displayedSelectedMonth}
-            metric={metric}
-            selectedValue={yearData.monthly[metric][displayedSelectedMonth]}
+            metric={displayedMetric}
+            selectedValue={yearData.monthly[displayedMetric][displayedSelectedMonth]}
             averageValue={chartScale.average}
             maxValue={chartScale.maxValue}
             noOfSections={chartScale.noOfSections}
             stepValue={chartScale.stepValue}
             workoutCount={yearData.monthly.activities[displayedSelectedMonth]}
             labels={labels}
-            onFocusMonth={setSelectedMonth}
             onOpenMonth={openMonth}
           />
           <SportDistribution
@@ -207,7 +222,7 @@ export default function Dashboard() {
             totals={yearData.totals}
             sportOptions={sportOptions}
             selectedSport={displayedSport}
-            metric={metric}
+            metric={displayedMetric}
             labels={labels}
             language={language}
             onSportChange={setSport}
@@ -218,7 +233,7 @@ export default function Dashboard() {
             selectedDay={displayedSelectedDay}
             selectedDayGroups={selectedDayGroups}
             selectedDayIntensity={selectedDayIntensity}
-            metric={metric}
+            metric={displayedMetric}
             labels={labels}
             language={language}
             onDayPress={(date) => {

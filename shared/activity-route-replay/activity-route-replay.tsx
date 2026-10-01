@@ -37,6 +37,7 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
       style={styles.container}
       onLayout={videoExport.onLayout}>
       {videoExport.isExporting ? <KeepAwakeDuringVideoExport /> : null}
+      {playback.isPlaying && !videoExport.isExporting ? <KeepAwakeDuringReplay /> : null}
       {videoExport.isExporting && Platform.OS !== 'web' ? (
         <SystemBars hidden={{ statusBar: true, navigationBar: true }} />
       ) : null}
@@ -130,6 +131,11 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
 
 function KeepAwakeDuringVideoExport() {
   useKeepAwake('activity-route-replay-video-export', { suppressDeactivateWarnings: true });
+  return null;
+}
+
+function KeepAwakeDuringReplay() {
+  useKeepAwake('activity-route-replay-playback', { suppressDeactivateWarnings: true });
   return null;
 }
 

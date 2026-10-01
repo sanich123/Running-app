@@ -318,22 +318,17 @@ export function getDistance(origin: ActivityLocation, destination: ActivityLocat
 }
 
 export function getSpeedInMinsInKm(distance: number, time: number) {
-  let paceAsString, paceAsNumber;
-  if (distance && time) {
-    const millisecondsInSecond = 1000;
-    const metersInKilometer = 1000;
-    const totalSeconds = time / millisecondsInSecond;
-    const totalKilometres = distance / metersInKilometer;
-    const paceInSecs = totalSeconds / totalKilometres;
-    const wholeMinutes = Math.trunc(paceInSecs / 60);
-    const restSeconds = Math.round(paceInSecs - wholeMinutes * 60);
-    const modifiedSeconds = restSeconds < 10 ? `0${restSeconds}` : `${restSeconds}`;
-    paceAsString = `${wholeMinutes}.${modifiedSeconds}`;
-    paceAsNumber = Number(paceAsString);
-  } else {
-    paceAsString = '0.00';
-    paceAsNumber = 0;
+  if (!Number.isFinite(distance) || distance <= 0 || !Number.isFinite(time) || time <= 0) {
+    return { paceAsNumber: 0, paceAsString: '0.00' };
   }
+
+  const secondsPerKilometer = Math.round(time / 1000 / (distance / 1000));
+  const wholeMinutes = Math.floor(secondsPerKilometer / 60);
+  const restSeconds = secondsPerKilometer % 60;
+  const modifiedSeconds = restSeconds.toString().padStart(2, '0');
+  const paceAsString = `${wholeMinutes}.${modifiedSeconds}`;
+  const paceAsNumber = Number(paceAsString);
+
   return { paceAsNumber, paceAsString };
 }
 

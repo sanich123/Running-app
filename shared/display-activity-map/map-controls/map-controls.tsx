@@ -19,7 +19,7 @@ export default function MapControls({
   const { top } = useSafeAreaInsets();
 
   return (
-    <View pointerEvents="box-none" style={[styles.container, { top: top + 64 }]}>
+    <View pointerEvents="box-none" style={[styles.container, { top: top + 112 }]}>
       <View style={styles.layerButtons}>
         <IconButton
           icon="map-outline"

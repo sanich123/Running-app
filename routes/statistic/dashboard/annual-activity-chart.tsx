@@ -10,6 +10,8 @@ import type { DashboardLabels, DashboardMetric } from './types';
 interface DashboardChartPoint {
   value: number;
   label: string;
+  dataPointRadius?: number;
+  dataPointColor?: string;
   onPress: () => void;
 }
 
@@ -26,7 +28,6 @@ interface AnnualActivityChartProps {
   stepValue: number;
   workoutCount: number;
   labels: DashboardLabels;
-  onFocusMonth: (index: number) => void;
   onOpenMonth: (index: number) => void;
 }
 
@@ -43,7 +44,6 @@ export default function AnnualActivityChart({
   stepValue,
   workoutCount,
   labels,
-  onFocusMonth,
   onOpenMonth,
 }: AnnualActivityChartProps) {
   const { colors } = useTheme();
@@ -85,9 +85,7 @@ export default function AnnualActivityChart({
           endOpacity={0.03}
           dataPointsColor={colors.primary}
           dataPointsRadius={7}
-          focusedDataPointRadius={9}
-          focusedDataPointColor={colors.primary}
-          focusEnabled
+          focusEnabled={false}
           xAxisColor={colors.outlineVariant}
           yAxisColor="transparent"
           xAxisLabelTextStyle={{ color: colors.onSurfaceVariant, fontSize: 10 }}
@@ -100,7 +98,6 @@ export default function AnnualActivityChart({
             dashWidth: 4,
             dashGap: 4,
           }}
-          onFocus={(_item: unknown, index: number) => onFocusMonth(index)}
         />
         <View style={styles.averageRow}>
           <View style={[styles.averageMarker, { borderColor: colors.primary }]} />

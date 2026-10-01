@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import PagerView from 'react-native-pager-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import uuid from 'react-native-uuid';
@@ -15,7 +15,7 @@ import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
 import CustomImage from '@S/custom-image/custom-image';
 import { getPhotoUrl, isDirectMediaUrl, isVideoUrl } from './utils';
 import type { ActivityMediaItemResponse } from '@R/runich-api/types';
-import type { PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
+import type { PageScrollStateChangedNativeEvent, PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
 
 export default function PhotoViewer() {
   const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();
@@ -41,17 +41,18 @@ export default function PhotoViewer() {
     { skip: !take },
   );
   const userMedia = photoPages?.pages.flatMap(({ media }) => media) ?? [];
-  const itemsToRender = uuid.validate(`${photoUrl}`) ? (activity?.media ?? []) : userMedia;
+  const isActivityMedia = uuid.validate(`${photoUrl}`);
+  const itemsToRender = isActivityMedia ? (activity?.media ?? []) : userMedia;
   const targetIndex = Number(photoUrl);
   const hasMorePhotos = photoPages?.pages.at(-1)?.hasMore ?? false;
-  const canRenderPager = uuid.validate(`${photoUrl}`)
+  const canRenderPager = isActivityMedia
     ? itemsToRender.length > 0
     : Number.isSafeInteger(targetIndex) && targetIndex >= 0 && targetIndex < itemsToRender.length;
 
   useEffect(() => {
     if (
       Platform.OS !== 'web' &&
-      !uuid.validate(`${photoUrl}`) &&
+      !isActivityMedia &&
       Number.isSafeInteger(targetIndex) &&
       targetIndex >= itemsToRender.length &&
       hasMorePhotos &&
@@ -59,9 +60,16 @@ export default function PhotoViewer() {
     ) {
       void fetchNextPage();
     }
-  }, [fetchNextPage, hasMorePhotos, isFetching, itemsToRender.length, photoUrl, targetIndex]);
+  }, [fetchNextPage, hasMorePhotos, isActivityMedia, isFetching, itemsToRender.length, photoUrl, targetIndex]);
 
   const isMapUrlExist = activity?.mapPhotoUrl ? +`${indexOfPhoto}` - 1 : +`${indexOfPhoto}`;
+  const requestedInitialPage = isActivityMedia ? isMapUrlExist : targetIndex;
+  const initialPage =
+    Number.isSafeInteger(requestedInitialPage) && requestedInitialPage >= 0 ? requestedInitialPage : 0;
+  const mediaKey = `${photoUrl}:${indexOfPhoto ?? ''}:${userId ?? ''}`;
+  const [pageSelection, setPageSelection] = useState<{ mediaKey: string; index: number } | null>(null);
+  const [isPagerMoving, setIsPagerMoving] = useState(false);
+  const selectedPage = pageSelection?.mediaKey === mediaKey ? pageSelection.index : initialPage;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -82,21 +90,21 @@ export default function PhotoViewer() {
           {canRenderPager && (
             <PagerView
               style={styles.viewPager}
-              initialPage={uuid.validate(`${photoUrl}`) ? isMapUrlExist : +`${photoUrl}`}
+              initialPage={initialPage}
               onPageSelected={(event: PagerViewOnPageSelectedEvent) => {
-                if (
-                  !uuid.validate(`${photoUrl}`) &&
-                  event.nativeEvent.position >= itemsToRender.length - 2 &&
-                  hasMorePhotos
-                ) {
+                setPageSelection({ mediaKey, index: event.nativeEvent.position });
+                if (!isActivityMedia && event.nativeEvent.position >= itemsToRender.length - 2 && hasMorePhotos) {
                   void fetchNextPage();
                 }
               }}
+              onPageScrollStateChanged={(event: PageScrollStateChangedNativeEvent) =>
+                setIsPagerMoving(event.nativeEvent.pageScrollState !== 'idle')
+              }
               orientation="vertical">
               {itemsToRender.map(({ url, blurhash }: ActivityMediaItemResponse, index: number) => (
                 <View key={index}>
                   {isVideoUrl(url) ? (
-                    <VideoViewer url={url} />
+                    <VideoViewer url={url} isActive={!isPagerMoving && selectedPage === index} />
                   ) : (
                     <CustomImage
                       source={{ uri: url }}

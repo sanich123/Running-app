@@ -31,7 +31,6 @@ describe('statistics dashboard', () => {
     await renderWithProviders(<Dashboard />);
 
     expect(await screen.findByTestId('dashboard-line-chart')).toBeOnTheScreen();
-
     await waitFor(() => expect(screen.getByText('Открыть месяц')).toBeOnTheScreen());
     fireEvent.press(screen.getByTestId('dashboard-day-2026-08-04'));
 
@@ -62,10 +61,15 @@ describe('statistics dashboard', () => {
     await renderWithProviders(<Dashboard />);
 
     const chart = await screen.findByTestId('dashboard-line-chart');
+    expect(chart.props.focusEnabled).toBe(false);
+    expect(chart.props.data[7].dataPointRadius).toBe(10);
     await act(async () => chart.props.data[4].onPress());
 
     expect(mockPush).not.toHaveBeenCalled();
     expect(screen.getByTestId('dashboard-selected-month').props.accessibilityLabel).toBe('Май, Открыть месяц');
+    const updatedChart = screen.getByTestId('dashboard-line-chart');
+    expect(updatedChart.props.data[4].dataPointRadius).toBe(10);
+    expect(updatedChart.props.data[7].dataPointRadius).toBeUndefined();
 
     fireEvent.press(screen.getByTestId('dashboard-selected-month'));
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('month=4'));
@@ -121,5 +125,44 @@ describe('statistics dashboard', () => {
     await waitFor(() => expect(screen.getAllByText('Бег').length).toBeGreaterThan(0));
     fireEvent.press(screen.getAllByText('Бег')[0]);
     expect(screen.getAllByText('Бег').length).toBeGreaterThan(0);
+  });
+
+  it('shows step and calorie metrics when annual totals are non-zero', async () => {
+    const yearData = MOCK_SERVER_STATISTICS.year[2026];
+    server.use(
+      http.get(`${BASE_URL}/statistics/${MOCK_SERVER_IDS.userId}/year-category`, () =>
+        HttpResponse.json({
+          isUserHasActivities: true,
+          2026: {
+            ...yearData,
+            all: { ...yearData.all, totalSteps: 2_400, totalCaloriesActive: 850 },
+          },
+        }),
+      ),
+    );
+    await renderWithProviders(<Dashboard />);
+
+    expect(await screen.findByText('Шаги', { exact: true })).toBeOnTheScreen();
+    expect(screen.getByText('Калории', { exact: true })).toBeOnTheScreen();
+  });
+
+  it('hides step and calorie metrics when annual totals are zero', async () => {
+    const yearData = MOCK_SERVER_STATISTICS.year[2026];
+    server.use(
+      http.get(`${BASE_URL}/statistics/${MOCK_SERVER_IDS.userId}/year-category`, () =>
+        HttpResponse.json({
+          isUserHasActivities: true,
+          2026: {
+            ...yearData,
+            all: { ...yearData.all, totalSteps: 0, totalCaloriesActive: 0 },
+          },
+        }),
+      ),
+    );
+    await renderWithProviders(<Dashboard />);
+
+    expect(await screen.findByTestId('dashboard-line-chart')).toBeOnTheScreen();
+    expect(screen.queryByText('Шаги', { exact: true })).toBeNull();
+    expect(screen.queryByText('Калории', { exact: true })).toBeNull();
   });
 });

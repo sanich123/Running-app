@@ -9,6 +9,8 @@ import type { DashboardLabels, DashboardMetric, DashboardMetricTotals } from './
 interface DashboardHeroProps {
   metric: DashboardMetric;
   metricTotals: DashboardMetricTotals;
+  hasSteps: boolean;
+  hasCalories: boolean;
   activeDays: number;
   peakMonth: string;
   labels: DashboardLabels;
@@ -19,6 +21,8 @@ interface DashboardHeroProps {
 export default function DashboardHero({
   metric,
   metricTotals,
+  hasSteps,
+  hasCalories,
   activeDays,
   peakMonth,
   labels,
@@ -30,8 +34,8 @@ export default function DashboardHero({
     { key: 'distance', label: labels.distance },
     { key: 'duration', label: labels.duration },
     { key: 'activities', label: labels.activities },
-    { key: 'steps', label: labels.steps },
-    { key: 'caloriesActive', label: labels.calories },
+    ...(hasSteps ? [{ key: 'steps' as const, label: labels.steps }] : []),
+    ...(hasCalories ? [{ key: 'caloriesActive' as const, label: labels.calories }] : []),
   ];
   const activeMetricLabel = metricItems.find(({ key }) => key === metric)?.label ?? labels.distance;
 

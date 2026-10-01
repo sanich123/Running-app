@@ -26,6 +26,8 @@ describe('dashboard hero', () => {
       <DashboardHero
         metric={metric}
         metricTotals={metricTotals}
+        hasSteps
+        hasCalories
         activeDays={4}
         peakMonth="Май"
         labels={labels}
@@ -42,6 +44,8 @@ describe('dashboard hero', () => {
       <DashboardHero
         metric={'unknown' as DashboardMetric}
         metricTotals={EMPTY_DASHBOARD_YEAR_DATA.totals}
+        hasSteps={false}
+        hasCalories={false}
         activeDays={0}
         peakMonth="—"
         labels={labels}
@@ -52,5 +56,23 @@ describe('dashboard hero', () => {
 
     expect(screen.getAllByText(labels.distance).length).toBeGreaterThan(0);
     expect(screen.queryByText(labels.kilometres)).toBeNull();
+  });
+
+  it('hides step and calorie metrics when the year has no recorded totals', async () => {
+    await renderWithProviders(
+      <DashboardHero
+        metric="distance"
+        metricTotals={EMPTY_DASHBOARD_YEAR_DATA.totals}
+        hasSteps={false}
+        hasCalories={false}
+        activeDays={0}
+        peakMonth="—"
+        labels={labels}
+        onMetricChange={jest.fn()}
+      />,
+    );
+
+    expect(screen.queryByText(labels.steps, { exact: true })).toBeNull();
+    expect(screen.queryByText(labels.calories, { exact: true })).toBeNull();
   });
 });
