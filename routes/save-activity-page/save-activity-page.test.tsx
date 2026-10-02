@@ -31,11 +31,11 @@ describe('save activity page', () => {
     expect(screen.getByTestId('activity-title-input')).toBeOnTheScreen();
   });
 
-  it('hides the media picker without a subscription', async () => {
+  it('shows the media picker without a subscription', async () => {
     await renderWithProviders(<SaveResult />);
 
     expect(screen.queryByText('Фото и видео доступны по подписке Runich Plus')).not.toBeOnTheScreen();
-    expect(screen.queryByTestId('upload-gallery-button')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('upload-gallery-button')).toBeOnTheScreen();
   });
 
   it('shows the media picker for an active subscription', async () => {

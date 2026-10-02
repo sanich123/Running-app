@@ -172,10 +172,10 @@ describe('file sending', () => {
     expect(body.get('scope')).toBe('activity');
   });
 
-  it('rejects a browser batch that is 100 MB or larger before sending it', async () => {
+  it('rejects a browser batch that exceeds 250 MB before sending it', async () => {
     const oversizedFile = {
       name: 'oversized.jpg',
-      size: MAX_MEDIA_BATCH_SIZE,
+      size: MAX_MEDIA_BATCH_SIZE + 1,
       type: 'image/jpeg',
     } as File;
 
@@ -198,7 +198,7 @@ describe('file sending', () => {
     expect(uploadMediaBatch).not.toHaveBeenCalled();
     expect(errorToast).toHaveBeenCalledWith(
       'Не удалось загрузить медиафайлы',
-      expect.objectContaining({ message: 'Суммарный размер файлов должен быть меньше 100 МБ' }),
+      expect.objectContaining({ message: 'Суммарный размер файлов не должен превышать 250 МБ' }),
     );
   });
 

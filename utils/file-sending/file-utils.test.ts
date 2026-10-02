@@ -1,6 +1,7 @@
 import {
   createMediaUploadFormData,
   createMediaUploadBatchFormData,
+  MAX_MEDIA_BATCH_SIZE,
   getMediaFileInfo,
   isSupportedImageExtension,
   SUPPORTED_VIDEO_FILE_EXTENSIONS,
@@ -165,5 +166,27 @@ describe('media file metadata', () => {
         manifest,
       }),
     ).toThrow('Manifest медиафайлов не совпадает с количеством файлов');
+  });
+
+  it('accepts a 250 MB batch and rejects a larger batch', () => {
+    const appendSpy = jest.spyOn(FormData.prototype, 'append').mockImplementation(() => undefined);
+    const createBatch = (size: number) =>
+      createMediaUploadBatchFormData({
+        files: [
+          {
+            file: { name: 'route.mp4', size, type: 'video/mp4' } as File,
+            originalName: 'route.mp4',
+            extension: 'mp4',
+            isVideo: true,
+            mimeType: 'video/mp4',
+          },
+        ],
+        uploadOptions: { scope: 'activity' },
+        manifest: [{ mediaId: 'route-video', role: 'media' }],
+      });
+
+    expect(() => createBatch(MAX_MEDIA_BATCH_SIZE)).not.toThrow();
+    expect(() => createBatch(MAX_MEDIA_BATCH_SIZE + 1)).toThrow('Суммарный размер файлов не должен превышать 250 МБ');
+    appendSpy.mockRestore();
   });
 });

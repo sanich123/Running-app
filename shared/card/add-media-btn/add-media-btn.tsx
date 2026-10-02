@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native';
 import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
 import { useAppendActivityMediaMutation } from '@R/services/activity/activity';
 import { finishLoading, startLoading } from '@R/slices/loading/loading';
-import useHasPremiumSubscription from '@R/slices/subscription/use-has-premium-subscription';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { MAX_ACTIVITY_MEDIA } from '@Routes/save-activity-page/upload-photos-btn/ const';
 import { uploadActivityMediaBatch } from '@Routes/save-activity-page/utils';
@@ -22,7 +21,6 @@ export default function AddActivityMediaBtn({ activityId, media }: { activityId:
   const { isLoading } = useAppSelector(({ loading }) => loading);
   const [appendActivityMedia] = useAppendActivityMediaMutation();
   const [isUploading, setIsUploading] = useState(false);
-  const hasPremium = useHasPremiumSubscription();
   const isDisabled = isLoading || isUploading || media.length >= MAX_ACTIVITY_MEDIA;
   const copy = ADD_ACTIVITY_MEDIA_COPY[language];
   const icon = isUploading ? () => <ActivityIndicator size={18} color={colors.primary} /> : 'image-plus-outline';
@@ -67,8 +65,6 @@ export default function AddActivityMediaBtn({ activityId, media }: { activityId:
       dispatch(finishLoading());
     }
   };
-
-  if (!hasPremium) return null;
 
   return (
     <IconButton

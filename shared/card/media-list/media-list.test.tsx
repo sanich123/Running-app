@@ -111,7 +111,7 @@ describe('media list', () => {
     expect(screen.getByTestId('map-emotion-icon')).toBeOnTheScreen();
   });
 
-  it('renders premium actions over the bottom-right corner of the map image', async () => {
+  it('renders map actions over the bottom-right corner of the map image', async () => {
     mockStore.dispatch(
       setSubscriptionSnapshot({
         userId: 'activity-owner',
@@ -131,12 +131,12 @@ describe('media list', () => {
     expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
-  it('hides map actions for users without an active subscription', async () => {
+  it('shows map actions for users without an active subscription', async () => {
     await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg', media: [] });
 
     const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.queryByTestId('activity-card-add-media-button')).not.toBeOnTheScreen();
-    expect(mapImage.queryByTestId('activity-card-route-replay-button')).not.toBeOnTheScreen();
+    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
   it('only shows the upload action to the activity owner', async () => {

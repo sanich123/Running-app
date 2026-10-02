@@ -2,7 +2,6 @@ import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconButton, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
-import useHasPremiumSubscription from '@R/slices/subscription/use-has-premium-subscription';
 import { useAppSelector } from '@R/typed-hooks';
 import { ROUTE_REPLAY_BUTTON_COPY } from './const';
 
@@ -11,10 +10,7 @@ export default function RouteReplayBtn({ activityId, userId }: { activityId: str
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { isLoading } = useAppSelector(({ loading }) => loading);
-  const hasPremium = useHasPremiumSubscription();
   const copy = ROUTE_REPLAY_BUTTON_COPY[language];
-
-  if (!hasPremium) return null;
 
   return (
     <IconButton

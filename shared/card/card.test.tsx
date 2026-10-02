@@ -126,7 +126,7 @@ describe('Activity card', () => {
     await waitFor(() => expect(screen.getAllByTestId(mapPhotoUrl)).toHaveLength(1));
   });
 
-  it('renders the premium map actions on the activity map image', async () => {
+  it('renders the map actions on the activity map image', async () => {
     const user = userEvent.setup();
     mockStore.dispatch(setMockUserId('premium-card-owner'));
     mockStore.dispatch(
@@ -152,16 +152,16 @@ describe('Activity card', () => {
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.map}/${MOCK_ACTIVITY.id}?replay=1&userId=premium-card-owner`);
   });
 
-  it('hides map actions when the user has no active subscription', async () => {
+  it('shows map actions when the user has no active subscription', async () => {
     mockStore.dispatch(setMockUserId('premium-card-owner'));
     await renderCard({ userId: 'premium-card-owner', mapPhotoUrl: 'https://cdn.example.test/no-premium-map.jpg' });
 
     const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.queryByTestId('activity-card-add-media-button')).not.toBeOnTheScreen();
-    expect(mapImage.queryByTestId('activity-card-route-replay-button')).not.toBeOnTheScreen();
+    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
-  it('hides map actions for an expired subscription snapshot', async () => {
+  it('shows map actions for an expired subscription snapshot', async () => {
     mockStore.dispatch(setMockUserId('premium-card-owner'));
     mockStore.dispatch(
       setSubscriptionSnapshot({
@@ -178,8 +178,8 @@ describe('Activity card', () => {
     await renderCard({ userId: 'premium-card-owner', mapPhotoUrl: 'https://cdn.example.test/expired-map.jpg' });
 
     const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.queryByTestId('activity-card-add-media-button')).not.toBeOnTheScreen();
-    expect(mapImage.queryByTestId('activity-card-route-replay-button')).not.toBeOnTheScreen();
+    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
   it('routes to the activity map when its map preview is pressed', async () => {
@@ -491,7 +491,7 @@ describe('Activity card', () => {
     }
   });
 
-  it('uploads a selected photo to a premium activity through MSW', async () => {
+  it('uploads a selected photo without a premium subscription through MSW', async () => {
     const user = userEvent.setup();
     const activityId = 'card-photo-upload';
     const ownerId = 'card-photo-owner';
@@ -515,19 +515,6 @@ describe('Activity card', () => {
       }),
     );
     mockStore.dispatch(setMockUserId(ownerId));
-    mockStore.dispatch(
-      setSubscriptionSnapshot({
-        userId: ownerId,
-        isPremium: true,
-        status: 'active',
-        provider: 'manual',
-        productId: 'annual',
-        startsAt: '2026-01-01T00:00:00.000Z',
-        expiresAt: '2027-01-01T00:00:00.000Z',
-        cancelAtPeriodEnd: false,
-      }),
-    );
-
     await renderCard({ id: activityId, userId: ownerId, mapPhotoUrl: 'https://cdn.example.test/upload-map.jpg' });
     await user.press(screen.getByTestId('activity-card-add-media-button'));
 
