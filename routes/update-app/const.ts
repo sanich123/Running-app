@@ -1,5 +1,7 @@
 import { LANGUAGES } from '@const/enums';
 
+export const RUSTORE_APP_URL = 'https://www.rustore.ru/catalog/app/com.sanich123.runningapp';
+
 export const UPDATE_APP_TEXT = {
   [LANGUAGES.english]: {
     title: 'Update required',
