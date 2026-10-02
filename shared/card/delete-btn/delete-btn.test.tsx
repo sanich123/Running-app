@@ -3,22 +3,51 @@ import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import { ROUTES } from '@const/enums';
 import * as errorToastModule from '@S/error-toast/error-toast';
+import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { CARD_DELETE_BTN, CARD_DELETE_BTN_TEST_ID } from './const';
 import ActivityCardDeleteBtn from './delete-btn';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
+import { ActivityCardContext } from '../context';
 
 const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) }));
 
+function renderDeleteBtn() {
+  mockStore.dispatch(setMockUserId('activity-owner'));
+
+  return renderWithProviders(
+    <ActivityCardContext.Provider
+      value={{
+        activity: {
+          date: '2026-08-09T10:00:00.000Z',
+          sport: 'run',
+          id: 'someActivityId',
+          userId: 'activity-owner',
+          duration: 0,
+          distance: 0,
+          elevationGain: 0,
+          profile: MOCK_PROFILE,
+          commentsLength: 0,
+        },
+        isFullView: false,
+        isShowDeleteBtn: true,
+        isShowDescription: false,
+      }}>
+      <ActivityCardDeleteBtn />
+    </ActivityCardContext.Provider>,
+  );
+}
+
 describe('Activity card delete btn', () => {
   it('should correctly renders', async () => {
-    await renderWithProviders(<ActivityCardDeleteBtn activityId="someActivityId" />);
+    await renderDeleteBtn();
     expect(screen.getByTestId(CARD_DELETE_BTN_TEST_ID)).toBeOnTheScreen();
   });
   it('should correctly interracts with the user', async () => {
-    await renderWithProviders(<ActivityCardDeleteBtn activityId="someActivityId" />);
+    await renderDeleteBtn();
     const deleteBtn = screen.getByTestId(CARD_DELETE_BTN_TEST_ID);
     await userEvent.press(deleteBtn);
     expect(await screen.findByText(CARD_DELETE_BTN.russian.accept)).toBeOnTheScreen();
@@ -35,7 +64,7 @@ describe('Activity card delete btn', () => {
         return new HttpResponse(null, { status: 204 });
       }),
     );
-    await renderWithProviders(<ActivityCardDeleteBtn activityId="someActivityId" />);
+    await renderDeleteBtn();
     await userEvent.press(screen.getByTestId(CARD_DELETE_BTN_TEST_ID));
     await waitFor(() => expect(deletedUrl).toContain('/activity/someActivityId'));
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
@@ -52,7 +81,7 @@ describe('Activity card delete btn', () => {
       ),
     );
 
-    await renderWithProviders(<ActivityCardDeleteBtn activityId="someActivityId" />);
+    await renderDeleteBtn();
     await userEvent.press(screen.getByTestId(CARD_DELETE_BTN_TEST_ID));
 
     await waitFor(() => expect(errorToast).toHaveBeenCalled());

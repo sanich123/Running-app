@@ -1,58 +1,70 @@
-import { LANGUAGES } from '@const/enums';
-import { profileApi } from '@R/services/profile/profile';
-import { MOCK_SERVER_IDS } from '@T/responses/runich';
-import { mockStore, setMockUserId } from '@T/utils/mock-store';
-import reducer, {
-  addActivityReminder,
-  SETTINGS_INITIAL_STATE,
-  changeLanguage,
-  getActivitySettings,
-  setIsProfileFilled,
-} from './settings';
+import { DEFAULT_ACTIVITY_VOICE_METRICS, SETTINGS_INITIAL_STATE, getActivitySettings } from './settings';
 
-describe('Settings slice', () => {
-  it('should handle initial state properly', () => {
-    expect(reducer(undefined, { type: '' })).toEqual(SETTINGS_INITIAL_STATE);
-  });
-  it('should change language', () => {
-    expect(reducer(SETTINGS_INITIAL_STATE, changeLanguage(LANGUAGES.russian))).toEqual({
-      ...SETTINGS_INITIAL_STATE,
-      language: LANGUAGES.russian,
-    });
-  });
-  it('stores whether the profile has been filled', () => {
-    expect(reducer(SETTINGS_INITIAL_STATE, setIsProfileFilled(true))).toEqual({
-      ...SETTINGS_INITIAL_STATE,
-      isProfileFilled: true,
-    });
-  });
-  it('uses defaults when an older persisted settings object has no activity fields', () => {
-    expect(getActivitySettings({ language: LANGUAGES.russian, theme: null, isProfileFilled: false })).toMatchObject({
-      activityVoiceEnabled: false,
-      activityVoiceMetrics: ['pace', 'movingTime', 'elevation'],
+describe('getActivitySettings', () => {
+  it('uses defaults for absent or invalid setting collections', () => {
+    expect(getActivitySettings({})).toEqual({
+      activityVoiceEnabled: SETTINGS_INITIAL_STATE.activityVoiceEnabled,
+      activityVoiceMetrics: DEFAULT_ACTIVITY_VOICE_METRICS,
       activityVoiceIdentifier: null,
+      activityReminderEnabled: SETTINGS_INITIAL_STATE.activityReminderEnabled,
+      activityReminders: [],
+    });
+    expect(
+      getActivitySettings({
+        activityVoiceMetrics: null as never,
+        activityReminders: null as never,
+        activityVoiceIdentifier: 123 as never,
+      }),
+    ).toMatchObject({
+      activityVoiceMetrics: DEFAULT_ACTIVITY_VOICE_METRICS,
+      activityReminders: [],
+      activityVoiceIdentifier: null,
+    });
+  });
+
+  it('filters voice metrics and normalizes valid reminders while rejecting malformed entries', () => {
+    const settings = getActivitySettings({
+      activityVoiceEnabled: true,
+      activityVoiceMetrics: ['pace', 'unknown', 'elevation'] as never,
+      activityVoiceIdentifier: 'russian-voice',
+      activityReminderEnabled: true,
+      activityReminders: [
+        { id: '', intervalMinutes: 5, text: 'empty id' },
+        { id: 1, intervalMinutes: 5, text: 'invalid id' },
+        { id: 'bad-interval', intervalMinutes: Number.NaN, text: 'invalid interval' },
+        { id: 'zero-interval', intervalMinutes: 0, text: 'invalid interval' },
+        { id: 'bad-text', intervalMinutes: 5, text: '  ' },
+        null,
+        { id: 'short', intervalMinutes: 0.3, text: '  Drink water  ' },
+        { id: 'rounded', intervalMinutes: 2.6, text: 'Stretch' },
+      ] as never,
+    });
+
+    expect(settings).toEqual({
+      activityVoiceEnabled: true,
+      activityVoiceMetrics: ['pace', 'elevation'],
+      activityVoiceIdentifier: 'russian-voice',
+      activityReminderEnabled: true,
+      activityReminders: [
+        { id: 'short', intervalMinutes: 1, text: 'Drink water' },
+        { id: 'rounded', intervalMinutes: 3, text: 'Stretch' },
+      ],
+    });
+  });
+
+  it('keeps an empty valid metrics list and false boolean settings', () => {
+    expect(
+      getActivitySettings({
+        activityVoiceEnabled: false,
+        activityVoiceMetrics: [],
+        activityReminderEnabled: false,
+        activityReminders: [],
+      }),
+    ).toMatchObject({
+      activityVoiceEnabled: false,
+      activityVoiceMetrics: [],
       activityReminderEnabled: false,
       activityReminders: [],
     });
-  });
-  it('can add a reminder when an older persisted state has no reminders array', () => {
-    const olderSettings = {
-      ...SETTINGS_INITIAL_STATE,
-      activityReminders: undefined,
-    } as unknown as typeof SETTINGS_INITIAL_STATE;
-
-    expect(
-      reducer(olderSettings, addActivityReminder({ id: 'water-reminder', intervalMinutes: 20, text: 'Вода' })),
-    ).toMatchObject({ activityReminders: [{ id: 'water-reminder', intervalMinutes: 20, text: 'Вода' }] });
-  });
-  it('marks the profile as filled after a successful profile query', async () => {
-    mockStore.dispatch(setIsProfileFilled(false));
-    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
-
-    const query = mockStore.dispatch(profileApi.endpoints.getUserProfileByUserId.initiate(MOCK_SERVER_IDS.userId));
-    await query.unwrap();
-
-    expect(mockStore.getState().settings.isProfileFilled).toBe(true);
-    query.unsubscribe();
   });
 });

@@ -6,7 +6,7 @@ export default {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
     scheme: IS_DEV ? 'runich-dev' : 'runich',
-    version: '1.1.0',
+    version: '1.1.1',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
@@ -19,6 +19,7 @@ export default {
     experiments: {
       typedRoutes: true,
       tsconfigPaths: true,
+      reactCompiler: true,
     },
     assetBundlePatterns: ['**/*'],
     ios: {
@@ -119,6 +120,7 @@ export default {
     plugins: [
       './custom.plugin',
       'react-native-compressor',
+      'expo-status-bar',
       'expo-image',
       'expo-sharing',
       'expo-router',

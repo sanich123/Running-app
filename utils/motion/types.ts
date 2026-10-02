@@ -1,6 +1,6 @@
 import type { LocationObject } from 'expo-location';
 
-export interface AccelerationSample {
+interface AccelerationSample {
   x: number;
   y: number;
   z: number;
@@ -14,7 +14,7 @@ export interface MotionDetectionInput {
   pedometerAvailable: boolean;
 }
 
-export type MotionStatus = 'moving' | 'resting';
+type MotionStatus = 'moving' | 'resting';
 
 export type MotionSource = 'accelerometer' | 'gps' | 'pedometer';
 

@@ -1,14 +1,22 @@
 import { useMemo, useRef, useState } from 'react';
-import { MapView, Camera } from '@rnmapbox/maps';
-import { Platform, View, StyleSheet } from 'react-native';
-import { IconButton, Text, useTheme } from 'react-native-paper';
+import { Camera, MapView } from '@rnmapbox/maps';
+import { Platform, StyleSheet, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import ActivityMapMarkers from './activity-map-markers/activity-map-markers';
-import { DISPLAY_ACTIVITY_MAP_TEXT } from './const';
+import {
+  DISPLAY_ACTIVITY_MAP_INITIAL_ZOOM,
+  DISPLAY_ACTIVITY_MAP_MAX_ZOOM,
+  DISPLAY_ACTIVITY_MAP_MIN_ZOOM,
+  DISPLAY_ACTIVITY_MAP_STYLES,
+  DISPLAY_ACTIVITY_MAP_TEXT,
+} from './const';
+import MapControls from './map-controls/map-controls';
 import MapKmSplit from './map-km-split/map-km-split';
 import RouteLine from './map-route-line/map-route-line';
 import MapboxWeb from './mapbox-web/mapbox-web';
-import { getActivityMapBounds } from './utils';
+import { getActivityMapBounds, getRouteSpeedColors } from './utils';
+import type { DisplayMapStyle, WebMapControlsHandle } from './map-controls/types';
 import type { DisplayActivityMapProps } from '@S/card/types';
 
 export default function DisplayActivityMap({ locations, kilometresSplit }: DisplayActivityMapProps) {
@@ -16,7 +24,9 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
   const { language } = useAppSelector(({ settings }) => settings);
   const copy = DISPLAY_ACTIVITY_MAP_TEXT[language];
   const cameraRef = useRef<Camera>(null);
-  const [zoomLevel, setZoomLevel] = useState(14);
+  const webMapControlsRef = useRef<WebMapControlsHandle>(null);
+  const [zoomLevel, setZoomLevel] = useState(DISPLAY_ACTIVITY_MAP_INITIAL_ZOOM);
+  const [mapStyle, setMapStyle] = useState<DisplayMapStyle>('map');
   const validLocations = useMemo(
     () =>
       (Array.isArray(locations) ? locations : []).filter((location) => {
@@ -25,78 +35,83 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
       }),
     [locations],
   );
-
   const mapData = useMemo(
     () => (validLocations.length >= 2 ? getActivityMapBounds(validLocations) : null),
     [validLocations],
   );
+  const routeSegmentColors = useMemo(() => getRouteSpeedColors(validLocations), [validLocations]);
 
-  if (!mapData) {
-    return (
-      <View style={styles.emptyState}>
-        <Text variant="bodyLarge">{copy.insufficientData}</Text>
-      </View>
-    );
-  }
-
-  const { boundBox, bounds, routeCoordinates } = mapData;
+  const zoomIn = () => {
+    const nextZoomLevel = Math.min(DISPLAY_ACTIVITY_MAP_MAX_ZOOM, zoomLevel + 1);
+    setZoomLevel(nextZoomLevel);
+    if (Platform.OS === 'web') {
+      webMapControlsRef.current?.zoomTo(nextZoomLevel, 250);
+    } else {
+      cameraRef.current?.zoomTo(nextZoomLevel, 250);
+    }
+  };
+  const zoomOut = () => {
+    const nextZoomLevel = Math.max(DISPLAY_ACTIVITY_MAP_MIN_ZOOM, zoomLevel - 1);
+    setZoomLevel(nextZoomLevel);
+    if (Platform.OS === 'web') {
+      webMapControlsRef.current?.zoomTo(nextZoomLevel, 250);
+    } else {
+      cameraRef.current?.zoomTo(nextZoomLevel, 250);
+    }
+  };
 
   return (
-    <>
-      {Platform.OS === 'web' ? (
-        <MapboxWeb kilometresSplit={kilometresSplit} boundBox={boundBox} routeCoordinates={routeCoordinates} />
+    <View style={styles.mapWrapper}>
+      {mapData ? (
+        <>
+          {Platform.OS === 'web' ? (
+            <MapboxWeb
+              boundBox={mapData.boundBox}
+              routeCoordinates={mapData.routeCoordinates}
+              routeSegmentColors={routeSegmentColors}
+              kilometresSplit={kilometresSplit}
+              kilometreUnit={copy.kilometreUnit}
+              mapStyleURL={DISPLAY_ACTIVITY_MAP_STYLES[mapStyle]}
+              mapControlsRef={webMapControlsRef}
+            />
+          ) : (
+            <MapView style={styles.map} styleURL={DISPLAY_ACTIVITY_MAP_STYLES[mapStyle]} scaleBarEnabled={false}>
+              <Camera
+                ref={cameraRef}
+                animationMode="flyTo"
+                animationDuration={1000}
+                bounds={mapData.bounds}
+                padding={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20, paddingTop: 20 }}
+              />
+              <RouteLine locations={validLocations} segmentColors={routeSegmentColors} />
+              <MapKmSplit kilometresSplit={kilometresSplit} kilometreUnit={copy.kilometreUnit} />
+              <ActivityMapMarkers locations={validLocations} />
+            </MapView>
+          )}
+          <MapControls
+            mapStyle={mapStyle}
+            copy={copy}
+            onZoomIn={zoomIn}
+            onZoomOut={zoomOut}
+            onMapStyleChange={setMapStyle}
+            canZoomIn={zoomLevel < DISPLAY_ACTIVITY_MAP_MAX_ZOOM}
+            canZoomOut={zoomLevel > DISPLAY_ACTIVITY_MAP_MIN_ZOOM}
+            testIdPrefix="activity-map"
+          />
+        </>
       ) : (
-        <View style={styles.mapWrapper}>
-          <MapView style={[{ flex: 1 }]}>
-            <Camera
-              ref={cameraRef}
-              animationMode="flyTo"
-              animationDuration={1000}
-              bounds={bounds}
-              padding={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20, paddingTop: 20 }}
-            />
-            <RouteLine locations={validLocations} />
-            <MapKmSplit kilometresSplit={kilometresSplit} />
-            <ActivityMapMarkers locations={validLocations} />
-          </MapView>
-          <View style={styles.zoomControls}>
-            <IconButton
-              testID="activity-map-increase-zoom"
-              mode="contained-tonal"
-              icon="plus"
-              iconColor={colors.primary}
-              containerColor={colors.surface}
-              onPress={() => {
-                const nextZoomLevel = Math.min(20, zoomLevel + 1);
-                setZoomLevel(nextZoomLevel);
-                cameraRef.current?.zoomTo(nextZoomLevel, 250);
-              }}
-              disabled={zoomLevel >= 20}
-              accessibilityLabel={copy.zoomIn}
-            />
-            <IconButton
-              testID="activity-map-decrease-zoom"
-              mode="contained-tonal"
-              icon="minus"
-              iconColor={colors.primary}
-              containerColor={colors.surface}
-              onPress={() => {
-                const nextZoomLevel = Math.max(3, zoomLevel - 1);
-                setZoomLevel(nextZoomLevel);
-                cameraRef.current?.zoomTo(nextZoomLevel, 250);
-              }}
-              disabled={zoomLevel <= 3}
-              accessibilityLabel={copy.zoomOut}
-            />
-          </View>
+        <View style={[styles.emptyState, { backgroundColor: colors.background }]}>
+          <Text variant="bodyLarge" style={{ color: colors.onSurfaceVariant }}>
+            {copy.insufficientData}
+          </Text>
         </View>
       )}
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   emptyState: { alignItems: 'center', flex: 1, justifyContent: 'center', padding: 24 },
+  map: { flex: 1 },
   mapWrapper: { flex: 1, position: 'relative' },
-  zoomControls: { position: 'absolute', right: 12, bottom: 24, gap: 4 },
 });

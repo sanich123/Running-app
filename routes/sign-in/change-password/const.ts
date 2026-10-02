@@ -56,5 +56,3 @@ export const getChangePasswordValidation = (language: LANGUAGES) =>
       return true;
     },
   }) as const;
-
-export const changePasswordValidation = getChangePasswordValidation(LANGUAGES.russian);

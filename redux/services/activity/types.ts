@@ -38,6 +38,16 @@ export interface ActivityUpdateRequest {
   body: Partial<ActivityEditableInfo & ActivityEditableMetrics>;
 }
 
+export interface AppendActivityMediaRequest {
+  id: string;
+  media: ActivityAdditionalInfo['media'];
+}
+
+export interface GetActivityLocationsRequest {
+  activityId: string;
+  replay?: boolean;
+}
+
 export interface GetActivityMediaRequest {
   userId: string;
   take: number;

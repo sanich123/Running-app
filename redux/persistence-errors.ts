@@ -1,4 +1,4 @@
-export interface PersistenceError {
+interface PersistenceError {
   message: string;
   error: unknown;
 }

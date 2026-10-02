@@ -1,12 +1,8 @@
-import type { ComponentRef, MutableRefObject, RefObject } from 'react';
-import type { View } from 'react-native';
-import type { LikesSize } from './likes/const';
+import type { RefObject } from 'react';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-
-type ViewRef = ComponentRef<typeof View>;
 
 export interface ActivityLocation {
   coords: {
@@ -62,10 +58,7 @@ export interface ProfileType {
   user?: { email?: string | null } | null;
 }
 
-export interface ActivityCardProps {
-  isFullView?: boolean;
-  isShowDeleteBtn: boolean;
-  isShowDescription: boolean;
+export interface ActivityCardData {
   description?: string | null;
   title?: string | null;
   date: string;
@@ -90,30 +83,17 @@ export interface ActivityCardProps {
   likesLength?: number;
 }
 
+export interface ActivityCardProps {
+  activity: ActivityCardData;
+  isFullView?: boolean;
+  isShowDeleteBtn: boolean;
+  isShowDescription: boolean;
+}
+
 export interface ActivityMediaItem {
   url: string;
   thumbnail: string | null;
   blurhash?: string | null;
-}
-
-export interface CardBtnsProps {
-  activityId: string;
-  userId: string;
-  cardRef: MutableRefObject<ViewRef | null>;
-  isShowDeleteBtn: boolean;
-  commentsLength: number;
-  likesLength?: number;
-  profile: ProfileType;
-  mapPhotoUrl?: string | null;
-  prepareShareImage?: () => Promise<void>;
-  cleanupShareImage?: () => void;
-}
-
-export interface CommentBtnProps {
-  activityId: string;
-  commentsLength: number;
-  profile: ProfileType;
-  mapPhotoUrl?: string | null;
 }
 
 export interface ModalLikesListProps {
@@ -126,12 +106,6 @@ export interface DisplayActivityMapProps {
   kilometresSplit: ActivityKilometreSplit[];
 }
 
-export interface ShareBtnProps {
-  cardRef: MutableRefObject<ViewRef | null>;
-  prepareShareImage?: () => Promise<void>;
-  cleanupShareImage?: () => void;
-}
-
 interface Likes {
   authorId: string;
   activityId: string;
@@ -139,50 +113,8 @@ interface Likes {
   id: string;
 }
 
-export interface LikeBtnProps {
-  activityId: string;
-  profile: ProfileType;
-  likesLength?: number;
-  mapPhotoUrl?: string | null;
-}
-
 export interface NumberOfLikesProps {
   likes: Likes[];
   likesLength?: number;
   error?: FetchBaseQueryError | SerializedError;
-}
-
-export interface MetricsProps {
-  distance: number;
-  duration: number;
-  sport: string;
-  steps?: number | null;
-  elevationGain: number;
-  caloriesActive?: number | null;
-  title?: string | null;
-  isShowDescription: boolean;
-  description?: string | null;
-  userId: string;
-  id: string;
-  isFullView?: boolean;
-}
-
-export interface LikesProps {
-  activityId: string;
-  size: LikesSize;
-  likesLength?: number;
-}
-
-type ActivityMediaItems = ActivityMediaItem[];
-
-export interface MediaListProps {
-  media?: ActivityMediaItems | null;
-  mapPhotoUrl?: string | null;
-  mapPhotoUrlBlurhash?: string | null;
-  locationName?: string | null;
-  weatherTemperature?: number | null;
-  weatherWindSpeed?: number | null;
-  weatherCode?: number | null;
-  emotion?: string | null;
-  id: string;
 }

@@ -1,8 +1,7 @@
 import { appStorage } from '@U/storage/storage';
-import { AUTH_INITIAL_STATE } from './const';
 import type { Persistor } from 'redux-persist';
 
-export const AUTH_PERSIST_KEY = 'persist:auth';
+const AUTH_PERSIST_KEY = 'persist:auth';
 
 interface AuthStore {
   getState(): { auth: unknown };
@@ -38,15 +37,6 @@ export function configureAuthPersistence(persistor: Persistor, store: AuthStore)
 export async function readPersistedAuth() {
   const serializedAuthState = await appStorage.getItem(AUTH_PERSIST_KEY);
   return serializedAuthState ? JSON.parse(serializedAuthState) : undefined;
-}
-
-export async function purgeAuthPersistence() {
-  pendingAuthWrite = pendingAuthWrite
-    .catch(() => undefined)
-    // Keep an empty auth tombstone. It prevents a stale legacy auth value in
-    // persist:root from restoring a session after logout.
-    .then(() => appStorage.setItem(AUTH_PERSIST_KEY, JSON.stringify(AUTH_INITIAL_STATE)));
-  await pendingAuthWrite;
 }
 
 export async function flushAuthPersistence() {

@@ -110,6 +110,36 @@ describe('Upload photos btn', () => {
     expect(mockStore.getState().activity.media).toContainEqual(uploadedImage);
   });
 
+  it('preserves a selected video as video media during upload', async () => {
+    const user = userEvent.setup();
+    const setIsDisabled = jest.fn();
+    const setImages = jest.fn();
+    const uploadedVideo = { url: 'https://cdn/workout.mp4', thumbnail: 'https://cdn/workout.jpg' };
+    (getAccessToGallery as jest.Mock).mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'workout.mp4', fileName: 'workout.mp4', mimeType: 'video/mp4', type: 'video' }],
+    });
+    (uploadActivityMediaBatch as jest.Mock).mockResolvedValue([uploadedVideo]);
+    await renderWithProviders(
+      <UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} setImages={setImages} images={[]} />,
+    );
+
+    await user.press(screen.getByTestId('upload-gallery-button'));
+
+    await waitFor(() => expect(uploadActivityMediaBatch).toHaveBeenCalledTimes(1));
+    expect(uploadActivityMediaBatch).toHaveBeenCalledWith(
+      [
+        {
+          fileSrc: 'workout.mp4',
+          metadata: { fileName: 'workout.mp4', mimeType: 'video/mp4', mediaType: 'video' },
+          mediaId: expect.any(String),
+        },
+      ],
+      expect.objectContaining({ onProgress: expect.any(Function), signal: expect.any(Object) }),
+    );
+    expect(setImages).toHaveBeenCalledWith([uploadedVideo]);
+  });
+
   it('shows upload progress and cancels without appending the media', async () => {
     const user = userEvent.setup();
     const setIsDisabled = jest.fn();

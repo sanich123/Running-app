@@ -12,7 +12,7 @@ type ActivityVoiceSettings = Pick<
   'activityVoiceEnabled' | 'activityVoiceMetrics' | 'activityVoiceIdentifier'
 >;
 
-export interface KilometerVoiceAnnouncement {
+interface KilometerVoiceAnnouncement {
   kilometer: number;
   paceDuration: number;
   movingDuration: number;

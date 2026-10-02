@@ -110,8 +110,6 @@ export const getPasswordValidation = (language: LANGUAGES) => ({
   },
 });
 
-export const passwordValidation = getPasswordValidation(LANGUAGES.russian);
-
 const RUSSIAN_EMAIL_DOMAIN_SUFFIXES = ['.ru', '.рф', '.xn--p1ai'] as const;
 
 export function isRussianEmailAddress(email: string) {
@@ -135,8 +133,6 @@ export const getEmailValidation = (language: LANGUAGES) => ({
   },
 });
 
-export const emailValidation = getEmailValidation(LANGUAGES.russian);
-
 export const getRegistrationEmailValidation = (language: LANGUAGES) => {
   const validation = getEmailValidation(language);
   return {
@@ -153,5 +149,3 @@ export const getRegistrationEmailValidation = (language: LANGUAGES) => {
     },
   };
 };
-
-export const registrationEmailValidation = getRegistrationEmailValidation(LANGUAGES.russian);

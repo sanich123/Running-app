@@ -12,7 +12,6 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MIGRATION_STATES } from './const';
 import MigrationFromStrava from './migration-from-strava';
-import MigrationStatusSync from './migration-status-sync';
 import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
 
 interface MigrationArgs {
@@ -50,6 +49,7 @@ jest.mock('expo-router', () => {
       </Pressable>
     ),
     useRouter: () => ({ replace: mockReplace }),
+    useIsFocused: () => true,
   };
 });
 
@@ -64,13 +64,7 @@ describe('migration from strava', () => {
     server.use(http.get(`${BASE_URL}/activity/migration-strava/current`, () => HttpResponse.json(null)));
   });
 
-  const renderMigrationPage = () =>
-    renderWithProviders(
-      <>
-        <MigrationStatusSync />
-        <MigrationFromStrava />
-      </>,
-    );
+  const renderMigrationPage = () => renderWithProviders(<MigrationFromStrava />);
 
   it('starts importing the archive selected by the user', async () => {
     const user = userEvent.setup();

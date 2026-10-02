@@ -17,13 +17,3 @@ export enum REDUCED_DAY_NAME_EN {
   saturday = 'SA',
   sunday = 'SU',
 }
-
-export const CALENDAR_SPORT_ICONS: Record<string, string> = {
-  run: 'run-fast',
-  swim: 'waves',
-  bike: 'bike-fast',
-  ride: 'bike-fast',
-  workout: 'weight-lifter',
-  hike: 'terrain',
-  walk: 'shoe-print',
-};

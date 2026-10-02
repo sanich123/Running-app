@@ -38,22 +38,11 @@ export default function CardFullView() {
               isFullView
               isShowDeleteBtn
               isShowDescription={!!activity.description}
-              userId={activity.userId}
-              description={activity.description}
-              title={activity.title}
-              date={activity.date}
-              sport={activity.sport}
-              id={activity.id}
-              media={activity.media}
-              duration={activity.duration}
-              distance={activity.distance}
-              elevationGain={activity.elevationGain}
-              caloriesActive={activity.caloriesActive}
-              steps={activity.steps}
-              mapPhotoUrl={activity.mapPhotoUrl}
-              profile={activity.profile}
-              commentsLength={activity._count.comments}
-              likesLength={activity._count.likes}
+              activity={{
+                ...activity,
+                commentsLength: activity._count.comments,
+                likesLength: activity._count.likes,
+              }}
             />
             <Metrics />
             {Boolean(activity.kilometresSplit?.length) && (

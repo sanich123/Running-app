@@ -39,10 +39,6 @@ const migration = createSlice({
       state.error = action.payload;
       state.dismissedError = null;
     },
-    clearMigrationError: (state) => {
-      state.dismissedError = state.error;
-      state.error = null;
-    },
     clearMigrationErrorOnServerConfirmation: (state) => {
       state.error = null;
       state.dismissedError = null;
@@ -83,7 +79,6 @@ export const {
   setIsDeletingCacheFolder,
   setUploadProgress,
   setMigrationError,
-  clearMigrationError,
   clearMigrationErrorOnServerConfirmation,
   acceptMigrationJob,
   setMigrationJob,

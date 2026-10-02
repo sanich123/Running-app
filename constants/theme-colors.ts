@@ -85,15 +85,3 @@ export const COLORS = {
     backdrop: 'rgba(0, 0, 0, 0.6)',
   },
 };
-
-export const POWERHOURS_COLORS = {
-  black: '#262626',
-  muted: '#7A7A7A',
-  subtle: '#B8B8B8',
-  border: '#E8E8E8',
-  canvas: '#F7F7F7',
-  white: '#FFFFFF',
-  orange: '#EC653C',
-  success: '#2ACB37',
-  warning: '#FFC13F',
-};

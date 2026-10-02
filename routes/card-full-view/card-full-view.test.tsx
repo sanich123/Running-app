@@ -11,8 +11,16 @@ import CardFullView from './card-full-view';
 jest.mock('expo-router', () => ({ useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }) }));
 jest.mock('@S/card/card', () => {
   const { Text, View } = jest.requireActual('react-native');
-  return ({ description, isShowDescription }: { description?: string | null; isShowDescription?: boolean }) => (
-    <View testID="full-view-card">{isShowDescription && description ? <Text>{description}</Text> : null}</View>
+  return ({
+    activity,
+    isShowDescription,
+  }: {
+    activity?: { description?: string | null };
+    isShowDescription?: boolean;
+  }) => (
+    <View testID="full-view-card">
+      {isShowDescription && activity?.description ? <Text>{activity.description}</Text> : null}
+    </View>
   );
 });
 jest.mock('./metrics/metrics', () => {

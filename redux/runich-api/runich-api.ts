@@ -12,6 +12,7 @@ export const runichApi = createApi({
     Tags.friends,
     Tags.users,
     Tags.commentLikes,
+    Tags.subscription,
   ],
   baseQuery: baseQueryWithReauth,
   endpoints: () => ({}),

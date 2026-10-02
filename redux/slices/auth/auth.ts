@@ -2,12 +2,12 @@ import { createSlice } from '@reduxjs/toolkit';
 import { AUTH_INITIAL_STATE } from './const';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-export interface AuthTokens {
+interface AuthTokens {
   accessToken: string;
   refreshToken?: string;
 }
 
-export interface AuthSession {
+interface AuthSession {
   userId: string;
   accessToken: string;
   refreshToken: string;

@@ -13,7 +13,7 @@ export function buildDashboardYears(statistics?: YearStatisticsResponse) {
   }, {});
 }
 
-export function buildDashboardYearData(yearStatistics: StatisticsNode): DashboardYearData {
+function buildDashboardYearData(yearStatistics: StatisticsNode): DashboardYearData {
   const allStatistics = asStatisticsNode(yearStatistics.all) ?? {};
   const monthly = Array.from({ length: 12 }, (_, month) => getMetric(allStatistics[String(month)]));
   const sports = Object.entries(yearStatistics).reduce<Record<string, DashboardMetricTotals>>(
@@ -30,6 +30,8 @@ export function buildDashboardYearData(yearStatistics: StatisticsNode): Dashboar
       distance: monthly.map(({ distance }) => distance),
       duration: monthly.map(({ duration }) => duration),
       activities: monthly.map(({ activities }) => activities),
+      steps: monthly.map(({ steps }) => steps),
+      caloriesActive: monthly.map(({ caloriesActive }) => caloriesActive),
     },
     sports,
     dailyActivities: parseDailyActivities(yearStatistics.dailyActivities),
@@ -44,6 +46,8 @@ function getMetric(value: unknown): DashboardMetricTotals {
     distance: getNumber(node?.totalDistance),
     duration: getNumber(node?.totalDuration),
     activities: getNumber(node?.totalItems),
+    steps: getNumber(node?.totalSteps),
+    caloriesActive: getNumber(node?.totalCaloriesActive),
   };
 }
 
@@ -61,7 +65,16 @@ function parseDailyActivities(value: unknown): DashboardDailyActivities {
     if (!Array.isArray(activities)) return result;
     result[date] = activities.flatMap((activity) => {
       if (!isDailyActivity(activity)) return [];
-      return [{ duration: activity.duration, distance: activity.distance, date: activity.date, sport: activity.sport }];
+      return [
+        {
+          duration: activity.duration,
+          distance: activity.distance,
+          steps: getNumber(activity.steps),
+          caloriesActive: getNumber(activity.caloriesActive),
+          date: activity.date,
+          sport: activity.sport,
+        },
+      ];
     });
     return result;
   }, {});

@@ -32,6 +32,10 @@ export const DASHBOARD_LABELS = {
     hours: 'ч',
     minutes: 'мин',
     kilometres: 'км',
+    steps: 'Шаги',
+    stepsUnit: 'шагов',
+    calories: 'Калории',
+    kilocalories: 'ккал',
   },
   [LANGUAGES.english]: {
     yearActivity: 'Year activity',
@@ -58,6 +62,10 @@ export const DASHBOARD_LABELS = {
     hours: 'h',
     minutes: 'min',
     kilometres: 'km',
+    steps: 'Steps',
+    stepsUnit: 'steps',
+    calories: 'Calories',
+    kilocalories: 'kcal',
   },
 } as const;
 
@@ -77,8 +85,14 @@ export const DASHBOARD_HEATMAP = {
 } as const;
 
 export const EMPTY_DASHBOARD_YEAR_DATA: DashboardYearData = {
-  totals: { distance: 0, duration: 0, activities: 0 },
-  monthly: { distance: Array(12).fill(0), duration: Array(12).fill(0), activities: Array(12).fill(0) },
+  totals: { distance: 0, duration: 0, activities: 0, steps: 0, caloriesActive: 0 },
+  monthly: {
+    distance: Array(12).fill(0),
+    duration: Array(12).fill(0),
+    activities: Array(12).fill(0),
+    steps: Array(12).fill(0),
+    caloriesActive: Array(12).fill(0),
+  },
   sports: {},
   dailyActivities: {},
   activeDays: 0,

@@ -1,9 +1,11 @@
 import type { MediaSourceMetadata, MediaUploadOptions, MediaSource } from './file-sending-types';
 import type { MediaUploadManifestEntry } from '@R/services/photos/photos';
 
-export const MAX_MEDIA_FILE_SIZE = 15 * 1024 * 1024;
-export const MAX_MEDIA_BATCH_SIZE = 100 * 1024 * 1024;
-export const VIDEO_FILE_EXTENSIONS = new Set([
+const MAX_VIDEO_FILE_SIZE = 50 * 1024 * 1024;
+export const MAX_VIDEO_DURATION_SECONDS = 60;
+export const MAX_MEDIA_FILE_SIZE = MAX_VIDEO_FILE_SIZE;
+export const MAX_MEDIA_BATCH_SIZE = 250 * 1024 * 1024;
+const VIDEO_FILE_EXTENSIONS = new Set([
   '3g2',
   '3gp',
   'avi',
@@ -111,8 +113,8 @@ export function createMediaUploadBatchFormData({
   if (files.length !== manifest.length) throw new Error('Manifest медиафайлов не совпадает с количеством файлов');
   const hasUnknownFileSize = files.some(({ file }) => typeof file === 'string');
   const totalBytes = files.reduce((total, { file }) => total + (typeof file === 'string' ? 0 : file.size), 0);
-  if (!hasUnknownFileSize && totalBytes >= MAX_MEDIA_BATCH_SIZE) {
-    throw new Error('Суммарный размер файлов должен быть меньше 100 МБ');
+  if (!hasUnknownFileSize && totalBytes > MAX_MEDIA_BATCH_SIZE) {
+    throw new Error('Суммарный размер файлов не должен превышать 250 МБ');
   }
 
   const formData = new FormData();
@@ -125,7 +127,7 @@ export function createMediaUploadBatchFormData({
   return formData;
 }
 
-export interface MediaUploadFile {
+interface MediaUploadFile {
   file: MediaSource;
   originalName: string;
   extension: string;

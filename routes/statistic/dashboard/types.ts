@@ -1,6 +1,6 @@
 import type { MD3Theme } from 'react-native-paper';
 
-export type DashboardMetric = 'distance' | 'duration' | 'activities';
+export type DashboardMetric = 'distance' | 'duration' | 'activities' | 'steps' | 'caloriesActive';
 export type DashboardSport = string;
 export type DashboardThemeColors = MD3Theme['colors'];
 
@@ -8,11 +8,15 @@ export interface DashboardMetricTotals {
   distance: number;
   duration: number;
   activities: number;
+  steps: number;
+  caloriesActive: number;
 }
 
-export interface DashboardDailyActivity {
+interface DashboardDailyActivity {
   duration: number;
   distance: number;
+  steps?: number;
+  caloriesActive?: number;
   date: string;
   sport: string;
 }
@@ -53,6 +57,10 @@ export interface DashboardLabels {
   hours: string;
   minutes: string;
   kilometres: string;
+  steps: string;
+  stepsUnit: string;
+  calories: string;
+  kilocalories: string;
 }
 
 export interface DashboardSportOption {
@@ -75,5 +83,7 @@ export interface DashboardActivityGroup {
   sport: string;
   distance: number;
   duration: number;
+  steps: number;
+  caloriesActive: number;
   activities: number;
 }

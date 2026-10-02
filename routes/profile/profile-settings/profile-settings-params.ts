@@ -8,7 +8,7 @@ import {
 } from '@const/input-limits';
 import type { ProfileType } from '@S/card/types';
 
-export interface ProfileFormValues {
+interface ProfileFormValues {
   name: string;
   surname: string;
   weight: string;

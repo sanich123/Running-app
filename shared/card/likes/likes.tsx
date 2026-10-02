@@ -1,4 +1,4 @@
-import { Fragment, memo, useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
@@ -8,14 +8,19 @@ import UserAvatar from '@S/avatar/avatar';
 import { AvatarShowableTestIds } from '@S/avatar/showable/const';
 import ModalLikesList from '@S/card/modal-likes-list/modal-likes-list';
 import NumberOfLikes from '@S/card/number-of-likes/number-of-likes';
+import { useActivityCard } from '../context';
 import { LikesSize, MAX_IN_ROW, MAX_NUMBER_IN_ROW_OTHER_PAGE, SHIFT_RIGHT } from './const';
-import type { LikesProps, LikeType } from '../types';
+import type { LikeType } from '../types';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-export default memo(function Likes({ activityId, size, likesLength }: LikesProps) {
+export default function Likes() {
+  const { activity, isFullView } = useActivityCard();
+  const { id: activityId, likesLength } = activity;
+  const size = isFullView ? LikesSize.big : LikesSize.small;
   const dispatch = useAppDispatch();
   const { dark } = useTheme();
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
+  const { isLoading: isAppLoading } = useAppSelector(({ loading }) => loading);
   const isLikesMarkedForUpdate = activityIdWhichLikesToUpdate === activityId;
   const shouldLoadLikes = likesLength !== 0 || isLikesMarkedForUpdate;
   const {
@@ -43,7 +48,7 @@ export default memo(function Likes({ activityId, size, likesLength }: LikesProps
             likesListModal.current?.present?.();
           }}
           borderless
-          disabled={isLoading || isError}
+          disabled={isAppLoading || isLoading || isError}
           style={{ borderRadius: 10 }}>
           <View style={styles.likesWrapper}>
             <View
@@ -98,7 +103,7 @@ export default memo(function Likes({ activityId, size, likesLength }: LikesProps
       <ModalLikesList bottomSheetModalRef={likesListModal} likesLength={likesCount} />
     </>
   );
-});
+}
 
 const styles = StyleSheet.create({
   likesWrapper: {

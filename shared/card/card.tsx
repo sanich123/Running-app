@@ -1,166 +1,69 @@
-import { useCallback, useRef, useState, memo } from 'react';
-import type { ComponentRef } from 'react';
 import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
-import { usePathname } from 'expo-router';
 import { Card, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { ROUTES } from '@const/enums';
+import CommentBtn from '@S/card/comment-btn/comment-btn';
+import DeleteBtn from '@S/card/delete-btn/delete-btn';
+import LikeBtn from '@S/card/like-btn/like-btn';
+import ShareBtn from '@S/card/share-btn/share-btn';
 import UserInfo from '@S/card/user-info/user-info';
-import Btns from './btns/btns';
-import { LikesSize } from './likes/const';
+import { ActivityCardContext } from './context';
 import Likes from './likes/likes';
 import MediaList from './media-list/media-list';
 import Metrics from './metrics/metrics';
-import ShareActivityImage from './share-activity-image/share-activity-image';
 import { UserInfoSize } from './user-info/const';
 import type { ActivityCardProps } from './types';
 
-export default memo(function ActivityCard({ ...rest }: ActivityCardProps) {
-  const {
-    description,
-    title,
-    date,
-    sport,
-    id,
-    userId,
-    media,
-    duration,
-    distance,
-    elevationGain,
-    steps,
-    emotion,
-    isShowDescription,
-    isShowDeleteBtn,
-    mapPhotoUrl,
-    mapPhotoUrlBlurhash,
-    locationName,
-    weatherTemperature,
-    weatherWindSpeed,
-    weatherCode,
-    caloriesActive,
-    profile,
-    commentsLength,
-    likesLength,
-    isFullView,
-  } = rest;
-  const pathname = usePathname();
+export default function ActivityCard({
+  activity,
+  isFullView = false,
+  isShowDeleteBtn,
+  isShowDescription,
+}: ActivityCardProps) {
+  const { media, mapPhotoUrl, profile, sport, date, userId } = activity;
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
-  const cardRef = useRef<ComponentRef<typeof View>>(null);
-  const shareImageReadyRef = useRef<(() => void) | null>(null);
-  const [isShareImageVisible, setIsShareImageVisible] = useState(false);
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
-  const likesSize = pathname.includes(ROUTES.activity) ? LikesSize.big : LikesSize.small;
-  const prepareShareImage = useCallback(
-    () =>
-      new Promise<void>((resolve) => {
-        shareImageReadyRef.current = resolve;
-        setIsShareImageVisible(true);
-      }),
-    [],
-  );
-  const handleShareImageReady = useCallback(() => {
-    shareImageReadyRef.current?.();
-    shareImageReadyRef.current = null;
-  }, []);
-  const cleanupShareImage = useCallback(() => {
-    setIsShareImageVisible(false);
-  }, []);
+  const contextValue = { activity, isFullView, isShowDeleteBtn, isShowDescription };
 
   return (
-    <>
-      {isShareImageVisible && (
-        <ShareActivityImage
-          title={title}
-          date={date}
-          duration={duration}
-          distance={distance}
-          sport={sport}
-          elevationGain={elevationGain}
-          steps={steps}
-          emotion={emotion}
-          cardRef={cardRef}
-          mapPhotoUrl={mapPhotoUrl}
-          profile={profile}
-          locationName={locationName}
-          weatherTemperature={weatherTemperature}
-          weatherWindSpeed={weatherWindSpeed}
-          weatherCode={weatherCode}
-          caloriesActive={caloriesActive}
-          onReady={handleShareImageReady}
-        />
-      )}
+    <ActivityCardContext.Provider value={contextValue}>
       <View
         style={[
+          styles.card,
           {
-            ...styles.cardStyles,
             backgroundColor: colors.surface,
             borderColor: colors.outlineVariant,
-            borderWidth: 1,
-            zIndex: 10,
             width: mediaWidth,
             marginBottom: isFullView ? 0 : 16,
           },
-          Platform.OS === 'web' && styles.webStyles,
+          Platform.OS === 'web' ? styles.webStyles : null,
         ]}>
         <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
-        {(mapPhotoUrl || Boolean(media?.length)) && (
-          <MediaList
-            media={media ?? []}
-            mapPhotoUrl={mapPhotoUrl}
-            mapPhotoUrlBlurhash={mapPhotoUrlBlurhash}
-            locationName={locationName}
-            weatherTemperature={weatherTemperature}
-            weatherWindSpeed={weatherWindSpeed}
-            weatherCode={weatherCode}
-            emotion={emotion}
-            id={id}
-          />
-        )}
-        <Metrics
-          distance={distance}
-          duration={duration}
-          title={title}
-          isShowDescription={isShowDescription}
-          description={description}
-          userId={userId}
-          id={id}
-          sport={sport}
-          steps={steps}
-          elevationGain={elevationGain}
-          caloriesActive={caloriesActive}
-          isFullView={isFullView}
-        />
-        <View style={{ height: 40, paddingHorizontal: 8 }}>
-          <Likes activityId={id} size={likesSize} likesLength={likesLength} />
+        {mapPhotoUrl || Boolean(media?.length) ? <MediaList /> : null}
+        <Metrics />
+        <View style={styles.likes}>
+          <Likes />
         </View>
         <Card.Actions style={styles.actions}>
-          <Btns
-            activityId={id}
-            userId={userId}
-            cardRef={cardRef}
-            isShowDeleteBtn={isShowDeleteBtn}
-            commentsLength={commentsLength}
-            likesLength={likesLength}
-            profile={profile}
-            mapPhotoUrl={mapPhotoUrl}
-            prepareShareImage={prepareShareImage}
-            cleanupShareImage={cleanupShareImage}
-          />
+          <LikeBtn />
+          <CommentBtn />
+          <ShareBtn />
+          <DeleteBtn />
         </Card.Actions>
       </View>
-    </>
+    </ActivityCardContext.Provider>
   );
-});
+}
 
 const styles = StyleSheet.create({
   webStyles: {
     maxWidth: 550,
     marginHorizontal: 'auto',
   },
-  cardStyles: {
+  card: {
     borderCurve: 'continuous',
     borderRadius: 8,
+    borderWidth: 1,
     elevation: 2,
     marginHorizontal: 'auto',
     overflow: 'hidden',
@@ -168,8 +71,17 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
+    zIndex: 10,
+  },
+  likes: {
+    height: 40,
+    paddingHorizontal: 8,
   },
   actions: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: -6,
     paddingTop: 0,
   },

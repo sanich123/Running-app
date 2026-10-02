@@ -1,4 +1,4 @@
-import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
@@ -8,6 +8,36 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from './const';
 import ActivityCardLikeBtn from './like-btn';
+import { ActivityCardContext } from '../context';
+
+function renderLikeBtn({
+  activityId = 'someActivityId',
+  likesLength,
+  profile = MOCK_PROFILE,
+}: { activityId?: string; likesLength?: number; profile?: typeof MOCK_PROFILE } = {}) {
+  return renderWithProviders(
+    <ActivityCardContext.Provider
+      value={{
+        activity: {
+          date: '2026-08-09T10:00:00.000Z',
+          sport: 'run',
+          id: activityId,
+          userId: 'activity-owner',
+          duration: 0,
+          distance: 0,
+          elevationGain: 0,
+          profile,
+          commentsLength: 0,
+          likesLength,
+        },
+        isFullView: false,
+        isShowDeleteBtn: false,
+        isShowDescription: false,
+      }}>
+      <ActivityCardLikeBtn />
+    </ActivityCardContext.Provider>,
+  );
+}
 
 describe('Activity card like btn', () => {
   beforeEach(() => {
@@ -16,17 +46,13 @@ describe('Activity card like btn', () => {
 
   it('should correctly renders when activity was liked by you', async () => {
     mockStore.dispatch(setMockUserId('someUserId'));
-    await renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" profile={MOCK_PROFILE} />, {
-      store: mockStore,
-    });
+    await renderLikeBtn();
     const likesBtn = await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED);
     expect(likesBtn).toBeOnTheScreen();
   });
   it('should correctly renders, when you didnt liked activity', async () => {
     mockStore.dispatch(setMockUserId('wrongUserId'));
-    await renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" profile={MOCK_PROFILE} />, {
-      store: mockStore,
-    });
+    await renderLikeBtn();
     expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();
   });
 
@@ -52,13 +78,7 @@ describe('Activity card like btn', () => {
       }),
     );
 
-    await renderWithProviders(
-      <ActivityCardLikeBtn
-        activityId={activityId}
-        likesLength={0}
-        profile={{ ...MOCK_PROFILE, emailNotifications: false }}
-      />,
-    );
+    await renderLikeBtn({ activityId, likesLength: 0, profile: { ...MOCK_PROFILE, emailNotifications: false } });
 
     expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();
     expect(requests).toBe(0);
@@ -109,19 +129,17 @@ describe('Activity card like btn', () => {
       }),
     );
 
-    await renderWithProviders(
-      <ActivityCardLikeBtn
-        activityId={activityId}
-        likesLength={1}
-        profile={{ ...MOCK_PROFILE, emailNotifications: false }}
-      />,
-    );
+    await renderLikeBtn({ activityId, likesLength: 1, profile: { ...MOCK_PROFILE, emailNotifications: false } });
 
     await user.press(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED));
     await waitFor(() => expect(requestStarted).toBe(true));
     expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED)).toBeOnTheScreen();
 
-    releasePost();
+    await act(async () => {
+      releasePost();
+      await postReleased;
+      await waitFor(() => expect(mockStore.getState().loading.isLoading).toBe(false));
+    });
   });
 
   it('sends a like after the user presses the heart', async () => {
@@ -134,7 +152,7 @@ describe('Activity card like btn', () => {
         return HttpResponse.json({ id: 'new-like-id' }, { status: 201 });
       }),
     );
-    await renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" profile={MOCK_PROFILE} />);
+    await renderLikeBtn();
     const likeButton = await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED);
     await waitFor(() => expect(likeButton.props.accessibilityState?.disabled).toBe(false));
     await user.press(likeButton);
@@ -151,7 +169,7 @@ describe('Activity card like btn', () => {
         return new HttpResponse(null, { status: 204 });
       }),
     );
-    await renderWithProviders(<ActivityCardLikeBtn activityId="someActivityId" profile={MOCK_PROFILE} />);
+    await renderLikeBtn();
     await user.press(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED));
     await waitFor(() => expect(deletedUrl).toContain('/someActivityId'));
   });

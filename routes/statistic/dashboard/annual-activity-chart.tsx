@@ -7,9 +7,11 @@ import DashboardSectionHeader from './section-header';
 import { formatChartAxisValue, formatMetricValue } from './utils';
 import type { DashboardLabels, DashboardMetric } from './types';
 
-export interface DashboardChartPoint {
+interface DashboardChartPoint {
   value: number;
   label: string;
+  dataPointRadius?: number;
+  dataPointColor?: string;
   onPress: () => void;
 }
 
@@ -26,7 +28,6 @@ interface AnnualActivityChartProps {
   stepValue: number;
   workoutCount: number;
   labels: DashboardLabels;
-  onFocusMonth: (index: number) => void;
   onOpenMonth: (index: number) => void;
 }
 
@@ -43,7 +44,6 @@ export default function AnnualActivityChart({
   stepValue,
   workoutCount,
   labels,
-  onFocusMonth,
   onOpenMonth,
 }: AnnualActivityChartProps) {
   const { colors } = useTheme();
@@ -72,7 +72,7 @@ export default function AnnualActivityChart({
           }
           formatYLabel={(value: string) => formatChartAxisValue(value, metric)}
           yAxisTextStyle={{ color: colors.onSurfaceVariant, fontSize: 9 }}
-          showFractionalValues={metric !== 'activities'}
+          showFractionalValues={metric === 'distance' || metric === 'duration'}
           hideRules={false}
           rulesColor={colors.outlineVariant}
           rulesType="dashed"
@@ -85,9 +85,7 @@ export default function AnnualActivityChart({
           endOpacity={0.03}
           dataPointsColor={colors.primary}
           dataPointsRadius={7}
-          focusedDataPointRadius={9}
-          focusedDataPointColor={colors.primary}
-          focusEnabled
+          focusEnabled={false}
           xAxisColor={colors.outlineVariant}
           yAxisColor="transparent"
           xAxisLabelTextStyle={{ color: colors.onSurfaceVariant, fontSize: 10 }}
@@ -100,7 +98,6 @@ export default function AnnualActivityChart({
             dashWidth: 4,
             dashGap: 4,
           }}
-          onFocus={(_item: unknown, index: number) => onFocusMonth(index)}
         />
         <View style={styles.averageRow}>
           <View style={[styles.averageMarker, { borderColor: colors.primary }]} />

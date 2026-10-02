@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react-native';
+import { act, render, screen } from '@testing-library/react-native';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import MapKmSplit from './map-km-split';
 
@@ -12,6 +12,11 @@ jest.mock('@rnmapbox/maps', () => {
     ),
     CircleLayer: (props: any) => <View testID="km-circle-layer" {...props} />,
     SymbolLayer: (props: any) => <View testID="km-symbol-layer" {...props} />,
+    MarkerView: ({ children, ...props }: any) => (
+      <View testID="km-callout-marker" {...props}>
+        {children}
+      </View>
+    ),
   };
 });
 
@@ -21,7 +26,7 @@ describe('map km split', () => {
     expect(queryByText('1')).toBeNull();
   });
 
-  it('creates a numbered feature for every valid kilometre point', async () => {
+  it('renders small points without labels and shows the kilometre after a tap', async () => {
     await render(
       <MapKmSplit
         kilometresSplit={[{ kilometerPoint: MOCK_LOCATION } as any, { kilometerPoint: MOCK_LOCATION } as any]}
@@ -32,13 +37,20 @@ describe('map km split', () => {
       expect.objectContaining({ properties: { label: '1', sortKey: 0 } }),
       expect.objectContaining({ properties: { label: '2', sortKey: 1 } }),
     ]);
-    expect(screen.getByTestId('km-symbol-layer').props.style).toEqual(
-      expect.objectContaining({
-        symbolSortKey: ['get', 'sortKey'],
-        textAllowOverlap: true,
-        textIgnorePlacement: true,
-        textPadding: 12,
+    expect(shapeSource.props.hitbox).toEqual({ width: 44, height: 44 });
+    expect(screen.getByTestId('km-circle-layer').props.style).toEqual(
+      expect.objectContaining({ circleColor: expect.any(String), circleRadius: 5.5, circleStrokeWidth: 1 }),
+    );
+    expect(screen.queryByTestId('km-symbol-layer')).toBeNull();
+    expect(screen.queryByText('1 km')).toBeNull();
+
+    await act(async () =>
+      shapeSource.props.onPress({
+        features: [shapeSource.props.shape.features[0]],
+        coordinates: { longitude: 37.6, latitude: 55.7 },
+        point: { x: 100, y: 100 },
       }),
     );
+    expect(screen.getByText('1 km')).toBeOnTheScreen();
   });
 });

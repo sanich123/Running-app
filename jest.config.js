@@ -3,7 +3,7 @@ const config = {
   coverageReporters: ['text', 'json', 'html'],
   coverageThreshold: {
     global: {
-      branches: 80,
+      branches: 85,
     },
   },
   preset: 'jest-expo',

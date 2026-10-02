@@ -35,7 +35,7 @@ export interface CommentLikesLengthProps {
   }[];
 }
 
-export interface CommentModalProps {
+interface CommentModalProps {
   commentsModalRef: RefObject<BottomSheetModal | null>;
 }
 

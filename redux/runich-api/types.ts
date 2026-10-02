@@ -2,7 +2,7 @@ import type { ACTIVITY_MIGRATION_STATUS } from './migration-status';
 import type { ActivityVisibility } from '@const/activity-visibility';
 import type { ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
 
-export type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof typeof ACTIVITY_MIGRATION_STATUS];
+type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof typeof ACTIVITY_MIGRATION_STATUS];
 
 export interface ActivityMigrationJobResponse {
   jobId: string;
@@ -136,6 +136,11 @@ export interface ActivityMutationResponse {
   sourceActivityId?: string | null;
 }
 
+export interface ActivityMediaMutationResponse {
+  success: true;
+  media: ActivityMediaItemResponse[];
+}
+
 export interface ActivitiesResponse {
   activities: ActivityListItemResponse[];
   currentUserProfile?: ActivityProfileResponse | null;
@@ -250,14 +255,21 @@ export interface StatisticMetricResponse {
   totalItems: number;
 }
 
+interface YearCategoryMetricResponse extends StatisticMetricResponse {
+  totalSteps: number;
+  totalCaloriesActive: number;
+}
+
 export interface DailyActivityStatisticsResponse {
   duration: number;
   distance: number;
+  steps?: number | null;
+  caloriesActive?: number | null;
   date: string;
   sport: string;
 }
 
-export type DailyActivitiesStatisticsResponse = Record<string, DailyActivityStatisticsResponse[]>;
+type DailyActivitiesStatisticsResponse = Record<string, DailyActivityStatisticsResponse[]>;
 
 interface MonthActivityResponse {
   duration: number;
@@ -283,7 +295,7 @@ export type YearStatisticsResponse = {
     })
 >;
 
-export type YearCategoryStatistics = StatisticMetricResponse & Record<string, number | StatisticMetricResponse>;
+type YearCategoryStatistics = YearCategoryMetricResponse & Record<string, number | YearCategoryMetricResponse>;
 
 export interface MessageResponse {
   message: string;

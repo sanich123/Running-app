@@ -1,10 +1,23 @@
-import { CircleLayer, ShapeSource, SymbolLayer } from '@rnmapbox/maps';
-import { useTheme } from 'react-native-paper';
-import { COLORS } from '@const/theme-colors';
+import { useState } from 'react';
+import { CircleLayer, MarkerView, ShapeSource } from '@rnmapbox/maps';
+import { StyleSheet, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import type { ActivityKilometreSplit } from '@S/card/types';
 
-export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: ActivityKilometreSplit[] }) {
+interface SelectedKilometre {
+  coordinate: [number, number];
+  number: number;
+}
+
+export default function MapKmSplit({
+  kilometresSplit,
+  kilometreUnit = 'km',
+}: {
+  kilometresSplit: ActivityKilometreSplit[];
+  kilometreUnit?: string;
+}) {
   const { colors } = useTheme();
+  const [selectedKilometre, setSelectedKilometre] = useState<SelectedKilometre | null>(null);
   const validKilometreSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(({ kilometerPoint }) => {
     const { longitude, latitude } = kilometerPoint?.coords ?? {};
     return Number.isFinite(longitude) && Number.isFinite(latitude);
@@ -22,37 +35,66 @@ export default function MapKmSplit({ kilometresSplit }: { kilometresSplit: Activ
     return null;
   }
 
+  const handleSplitPress = (event: Parameters<NonNullable<React.ComponentProps<typeof ShapeSource>['onPress']>>[0]) => {
+    const feature = event.features.find(({ properties }) => properties?.label !== undefined);
+    if (!feature || feature.geometry.type !== 'Point') return;
+
+    const number = Number(feature.properties?.label);
+    if (!Number.isFinite(number)) return;
+
+    const [longitude, latitude] = feature.geometry.coordinates;
+    setSelectedKilometre((current) =>
+      current?.number === number ? null : { coordinate: [longitude, latitude], number },
+    );
+  };
+
   return (
-    <ShapeSource
-      id="kilometre-splits"
-      shape={{
-        type: 'FeatureCollection',
-        features,
-      }}>
-      <CircleLayer
-        id="kilometre-split-background"
-        aboveLayerID="activity-route-line"
-        style={{
-          circleColor: COLORS.light.surface,
-          circleRadius: 15,
-          circleStrokeColor: colors.primary,
-          circleStrokeWidth: 2,
-          circleSortKey: ['get', 'sortKey'],
-        }}
-      />
-      <SymbolLayer
-        id="kilometre-split-label"
-        aboveLayerID="kilometre-split-background"
-        style={{
-          textAllowOverlap: true,
-          textColor: colors.primary,
-          textField: ['get', 'label'],
-          textIgnorePlacement: true,
-          textPadding: 12,
-          textSize: 12,
-          symbolSortKey: ['get', 'sortKey'],
-        }}
-      />
-    </ShapeSource>
+    <>
+      <ShapeSource
+        id="kilometre-splits"
+        hitbox={{ width: 44, height: 44 }}
+        onPress={handleSplitPress}
+        shape={{
+          type: 'FeatureCollection',
+          features,
+        }}>
+        <CircleLayer
+          id="kilometre-split-background"
+          aboveLayerID="activity-route-line"
+          style={{
+            circleColor: colors.primary,
+            circleRadius: 5.5,
+            circleStrokeColor: colors.primary,
+            circleStrokeWidth: 1,
+            circleSortKey: ['get', 'sortKey'],
+          }}
+        />
+      </ShapeSource>
+      {selectedKilometre ? (
+        <MarkerView coordinate={selectedKilometre.coordinate} anchor={{ x: 0.5, y: 1 }} allowOverlap>
+          <View
+            pointerEvents="none"
+            style={[styles.kilometreCallout, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
+            <Text variant="labelSmall" style={{ color: colors.onSurface, fontWeight: '700' }}>
+              {selectedKilometre.number} {kilometreUnit}
+            </Text>
+          </View>
+        </MarkerView>
+      ) : null}
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  kilometreCallout: {
+    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    elevation: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    shadowColor: '#000',
+    shadowOffset: { height: 2, width: 0 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+  },
+});

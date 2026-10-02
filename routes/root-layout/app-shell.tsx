@@ -14,7 +14,7 @@ import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { useAppSelector } from '@R/typed-hooks';
-import MigrationStatusSync from '@Routes/migration-from-strava/migration-status-sync';
+import SubscriptionStatusSync from '@Routes/subscription/subscription-status-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 import useAppInitialization from '@U/hooks/use-app-initialization';
 import { LazySaveBtn, LazyUsersSettingsIcons, PUBLIC_ROUTES } from './const';
@@ -63,7 +63,7 @@ export default function AppShell() {
               ),
             }}>
             <BottomSheetModalProvider>
-              <MigrationStatusSync />
+              <SubscriptionStatusSync />
               <Stack
                 screenOptions={{
                   gestureEnabled: false,
@@ -149,18 +149,16 @@ export default function AppShell() {
                     title: LABELS[language].map,
                   }}
                 />
-                <Stack.Screen
-                  name={`${ROUTES.media}/${ROUTES.photoUrl}`}
-                  options={{
-                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
-                    title: LABELS[language].photo,
-                  }}
-                />
+                <Stack.Screen name={`${ROUTES.media}/${ROUTES.photoUrl}`} options={{ headerShown: false }} />
                 <Stack.Screen
                   name={`${ROUTES.mediaGrid}/${ROUTES.routeId}`}
                   options={{
-                    headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
-                    title: LABELS[language].photos,
+                    headerBackButtonDisplayMode: 'minimal',
+                    headerShadowVisible: false,
+                    headerStyle: { backgroundColor: 'transparent' },
+                    headerTintColor: '#fff',
+                    headerTitle: '',
+                    headerTransparent: true,
                   }}
                 />
                 <Stack.Screen

@@ -13,7 +13,7 @@ export { MigrationArchiveCancelledError } from './utils';
 
 const activeUploadCancellers = new Map<string, () => void>();
 
-export class MigrationArchiveTransferError extends Error {
+class MigrationArchiveTransferError extends Error {
   constructor(message: string) {
     super(`Ошибка передачи архива: ${message}`);
     this.name = 'MigrationArchiveTransferError';

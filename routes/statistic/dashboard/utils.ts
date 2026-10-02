@@ -13,25 +13,29 @@ import type {
 export function formatMetricValue(
   value: number,
   metric: DashboardMetric,
-  labels: Pick<DashboardLabels, 'kilometres' | 'hours'>,
+  labels: Pick<DashboardLabels, 'kilometres' | 'hours' | 'stepsUnit' | 'kilocalories'>,
 ) {
   const formattedValue = formatMetricNumber(value, metric);
   return metric === 'distance'
     ? `${formattedValue} ${labels.kilometres}`
     : metric === 'duration'
       ? `${formattedValue} ${labels.hours}`
-      : `${formattedValue}`;
+      : metric === 'steps'
+        ? `${formattedValue} ${labels.stepsUnit}`
+        : metric === 'caloriesActive'
+          ? `${formattedValue} ${labels.kilocalories}`
+          : `${formattedValue}`;
 }
 
 export function formatMetricNumber(value: number, metric: DashboardMetric) {
-  return metric === 'activities' ? Math.round(value) : Number(value.toFixed(1));
+  return metric === 'distance' || metric === 'duration' ? Number(value.toFixed(1)) : Math.round(value);
 }
 
 export function getAnnualChartScale(values: number[], metric: DashboardMetric) {
   const safeValues = values.map((value) => (Number.isFinite(value) ? Math.max(0, value) : 0));
   const average = safeValues.length ? safeValues.reduce((total, value) => total + value, 0) / safeValues.length : 0;
   const peak = Math.max(0, ...safeValues);
-  if (metric === 'activities') {
+  if (metric !== 'distance' && metric !== 'duration') {
     const stepValue = Math.max(1, Math.ceil(peak / 4));
     let noOfSections = peak > 0 ? Math.max(1, Math.ceil(peak / stepValue)) : 4;
     if (peak > 0 && peak === noOfSections * stepValue) noOfSections += 1;
@@ -53,7 +57,9 @@ export function getAnnualChartScale(values: number[], metric: DashboardMetric) {
 export function formatChartAxisValue(value: string, metric: DashboardMetric) {
   const numericValue = Number(value);
   if (!Number.isFinite(numericValue)) return value;
-  return metric === 'activities' ? String(Math.round(numericValue)) : String(Number(numericValue.toFixed(1)));
+  return metric === 'distance' || metric === 'duration'
+    ? String(Number(numericValue.toFixed(1)))
+    : String(Math.round(numericValue));
 }
 
 export function getSportLabel(sport: string, labels: DashboardLabels, language: LANGUAGES) {
@@ -89,11 +95,20 @@ export function getDayIntensity(
   const total = activities.reduce((sum, activity) => {
     if (metric === 'activities') return sum + 1;
     if (metric === 'distance') return sum + activity.distance / 1000;
-    return sum + activity.duration / 3_600_000;
+    if (metric === 'duration') return sum + activity.duration / 3_600_000;
+    if (metric === 'steps') return sum + (activity.steps ?? 0);
+    return sum + (activity.caloriesActive ?? 0);
   }, 0);
   if (total <= 0) return 0;
   if (metric === 'activities') return Math.min(4, Math.max(1, Math.ceil(total)));
-  const thresholds = metric === 'distance' ? [3, 8, 15] : [0.5, 1, 2];
+  const thresholds =
+    metric === 'distance'
+      ? [3, 8, 15]
+      : metric === 'duration'
+        ? [0.5, 1, 2]
+        : metric === 'steps'
+          ? [2_500, 6_000, 10_000]
+          : [150, 350, 700];
   return total < thresholds[0] ? 1 : total < thresholds[1] ? 2 : total < thresholds[2] ? 3 : 4;
 }
 
@@ -173,32 +188,43 @@ export function formatLongDate(date: Date, language: LANGUAGES) {
 
 export function groupActivitiesBySport(activities: DashboardDailyActivities[string]) {
   return Object.values(
-    activities.reduce<Record<string, { sport: string; distance: number; duration: number; activities: number }>>(
-      (result, activity) => {
-        const group = result[activity.sport] ?? { sport: activity.sport, distance: 0, duration: 0, activities: 0 };
-        group.distance += activity.distance;
-        group.duration += activity.duration;
-        group.activities += 1;
-        result[activity.sport] = group;
-        return result;
-      },
-      {},
-    ),
+    activities.reduce<
+      Record<
+        string,
+        { sport: string; distance: number; duration: number; steps: number; caloriesActive: number; activities: number }
+      >
+    >((result, activity) => {
+      const group = result[activity.sport] ?? {
+        sport: activity.sport,
+        distance: 0,
+        duration: 0,
+        steps: 0,
+        caloriesActive: 0,
+        activities: 0,
+      };
+      group.distance += activity.distance;
+      group.duration += activity.duration;
+      group.steps += activity.steps ?? 0;
+      group.caloriesActive += activity.caloriesActive ?? 0;
+      group.activities += 1;
+      result[activity.sport] = group;
+      return result;
+    }, {}),
   );
 }
 
 export function formatDayActivityValue(
-  group: { distance: number; duration: number; activities: number },
+  group: { distance: number; duration: number; steps: number; caloriesActive: number; activities: number },
   metric: DashboardMetric,
-  labels: Pick<DashboardLabels, 'kilometres' | 'minutes' | 'activities'>,
+  labels: Pick<DashboardLabels, 'kilometres' | 'minutes' | 'activities' | 'stepsUnit' | 'kilocalories'>,
 ) {
   const distance = `${Number((group.distance / 1000).toFixed(1))} ${labels.kilometres}`;
   const duration = `${Math.round(group.duration / 60_000)} ${labels.minutes}`;
-  return metric === 'distance'
-    ? `${distance} · ${duration}`
-    : metric === 'duration'
-      ? `${duration} · ${distance}`
-      : `${group.activities} ${labels.activities.toLowerCase()}`;
+  if (metric === 'distance') return `${distance} · ${duration}`;
+  if (metric === 'duration') return `${duration} · ${distance}`;
+  if (metric === 'steps') return `${Math.round(group.steps)} ${labels.stepsUnit}`;
+  if (metric === 'caloriesActive') return `${Math.round(group.caloriesActive)} ${labels.kilocalories}`;
+  return `${group.activities} ${labels.activities.toLowerCase()}`;
 }
 
 export function parseDateKey(key: string) {

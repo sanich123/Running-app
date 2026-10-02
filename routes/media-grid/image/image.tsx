@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { Platform, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
@@ -7,7 +6,7 @@ import { ROUTES } from '@const/enums';
 import CustomImage from '@S/custom-image/custom-image';
 import type { ActivityMediaItem } from '@S/card/types';
 
-export default memo(function MediaGridImage({
+export default function MediaGridImage({
   url,
   thumbnail,
   blurhash,
@@ -41,4 +40,4 @@ export default memo(function MediaGridImage({
       />
     </TouchableRipple>
   );
-});
+}

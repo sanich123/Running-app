@@ -13,7 +13,7 @@ import DeclineBtn from './decline-btn/decline-btn';
 import EmotionBtns from './emotion-btns/emotion-btns';
 import InputsDistanceTime from './inputs-distance-time/inputs-distance-time';
 import { useManualActivityParams } from './manual-activity-params';
-// import MediaSection from './media-section/media-section';
+import MediaSection from './media-section/media-section';
 import SportsBtns from './sports-btns/sports-btns';
 import TextInputs from './text-inputs/text-inputs';
 import { MAX_ACTIVITY_MEDIA } from './upload-photos-btn/ const';
@@ -40,7 +40,7 @@ export default function SaveResult() {
           <SportsBtns />
           <EmotionBtns />
           <Checkbox />
-          {/* <MediaSection images={images} isEditingActivity={isEditingActivity} setImages={setImages} /> */}
+          <MediaSection images={images} isEditingActivity={isEditingActivity} setImages={setImages} />
           {shouldShowActivityDetails && (
             <>
               {Platform.OS === 'web' ? (

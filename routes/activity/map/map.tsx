@@ -89,7 +89,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
         </View>
       ) : canRenderMap ? (
         <View style={styles.mapWrapper}>
-          <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]}>
+          <MapView style={[{ flex: 1 }, isMapVisible && { height: '60%' }]} scaleBarEnabled={false}>
             <UserLocation
               visible={!currentPosition}
               animated

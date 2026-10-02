@@ -14,6 +14,7 @@ jest.mock('@U/file-sending', () => ({
   getAccessToGallery: jest.fn(),
 }));
 jest.mock('@U/feedback-sending', () => ({ uploadFeedbackAttachments: jest.fn() }));
+jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn() }) }));
 
 const mockUseSendFeedbackMutation = useSendFeedbackMutation as jest.Mock;
 const mockGetAccessToGallery = getAccessToGallery as jest.Mock;
@@ -156,5 +157,121 @@ describe('feedback attachments', () => {
     });
     await waitFor(() => expect(screen.getByTestId('feedback-attachment-preview-0')).toBeOnTheScreen());
     expect(screen.queryByTestId('feedback-pending-attachment-preview-0')).not.toBeOnTheScreen();
+  });
+
+  it('submits a thank-you without consent or attachment fields', async () => {
+    const user = userEvent.setup();
+    let submittedFeedback: unknown;
+    const mockSendFeedback = jest.fn((args: unknown) => {
+      submittedFeedback = args;
+      return { unwrap: jest.fn().mockResolvedValue({}) };
+    });
+    mockUseSendFeedbackMutation.mockReturnValue([mockSendFeedback, { isLoading: false }]);
+
+    await renderWithProviders(<FeedbackPage />);
+    await user.press(screen.getByText('Thank the developer'));
+    await user.type(screen.getByPlaceholderText('Write a message to the developer'), 'Thanks!');
+    await user.press(screen.getByText('Send'));
+
+    await waitFor(() => expect(mockSendFeedback).toHaveBeenCalled());
+    expect(submittedFeedback).toMatchObject({ kind: 'thanks', text: 'Thanks!' });
+    expect(submittedFeedback).not.toHaveProperty('attachments');
+    expect(screen.queryByTestId('feedback-error')).toBeNull();
+  });
+
+  it.each([
+    ['cancelled', { canceled: true, assets: [] }],
+    ['empty', { canceled: false, assets: [] }],
+    ['missing', undefined],
+  ])('does not start an upload when the gallery result is %s', async (_description, result) => {
+    const user = userEvent.setup();
+    mockGetAccessToGallery.mockResolvedValueOnce(result);
+    await renderWithProviders(<FeedbackPage />);
+    await user.press(screen.getByText('Report a bug'));
+    await act(async () => {
+      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
+    });
+    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
+    await act(async () => {
+      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
+    });
+    await user.press(screen.getByText('Add a photo or video'));
+
+    expect(mockUploadFeedbackAttachments).not.toHaveBeenCalled();
+  });
+
+  it('shows an error when the gallery cannot be opened', async () => {
+    const user = userEvent.setup();
+    mockGetAccessToGallery.mockRejectedValueOnce(new Error('permission denied'));
+    await renderWithProviders(<FeedbackPage />);
+    await user.press(screen.getByText('Report a bug'));
+    await act(async () => {
+      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
+    });
+    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
+    await act(async () => {
+      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
+    });
+    await user.press(screen.getByText('Add a photo or video'));
+
+    expect(await screen.findByTestId('feedback-error')).toHaveTextContent(
+      'Could not open the gallery: permission denied',
+    );
+    expect(mockUploadFeedbackAttachments).not.toHaveBeenCalled();
+  });
+
+  it('removes an in-flight preview and skips attaching the removed media', async () => {
+    const user = userEvent.setup();
+    let resolveUpload: (attachments: ({ url: string; thumbnail: string | null } | null)[]) => void = () => undefined;
+    mockGetAccessToGallery.mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'file://photo.webp', type: 'image' }],
+    });
+    mockUploadFeedbackAttachments.mockReturnValue(
+      new Promise((resolve) => {
+        resolveUpload = resolve;
+      }),
+    );
+
+    await renderWithProviders(<FeedbackPage />);
+    await user.press(screen.getByText('Report a bug'));
+    await act(async () => {
+      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
+    });
+    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
+    await act(async () => {
+      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
+    });
+    await user.press(screen.getByText('Add a photo or video'));
+    await waitFor(() => expect(screen.getByTestId('feedback-pending-attachment-preview-0')).toBeOnTheScreen());
+    await user.press(screen.getByTestId('feedback-remove-pending-attachment-0'));
+    await act(async () => resolveUpload([{ url: 'https://cdn.example/photo.webp', thumbnail: null }]));
+
+    expect(screen.queryByTestId('feedback-error')).toBeNull();
+    expect(screen.queryByTestId('feedback-attachment-preview-0')).toBeNull();
+    expect(screen.queryByTestId('feedback-pending-attachment-preview-0')).toBeNull();
+  });
+
+  it('shows an attachment error when an upload returns no attachment', async () => {
+    const user = userEvent.setup();
+    mockGetAccessToGallery.mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'file://photo.webp', type: 'image' }],
+    });
+    mockUploadFeedbackAttachments.mockResolvedValue([null]);
+
+    await renderWithProviders(<FeedbackPage />);
+    await user.press(screen.getByText('Report a bug'));
+    await act(async () => {
+      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
+    });
+    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
+    await act(async () => {
+      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
+    });
+    await user.press(screen.getByText('Add a photo or video'));
+
+    expect(await screen.findByTestId('feedback-error')).toHaveTextContent('Could not upload the attachment');
+    expect(screen.queryByTestId('feedback-attachment-preview-0')).toBeNull();
   });
 });

@@ -2,13 +2,26 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
-import { useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
+import { useGetActivityByActivityIdQuery, useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
+import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
+import { useAppSelector } from '@R/typed-hooks';
+import ActivityRouteReplay from '@S/activity-route-replay/activity-route-replay';
 import DisplayActivityMap from '@S/display-activity-map/display-activity-map';
 import ErrorComponent from '@S/error-component/error-component';
+import type { MapPageProps, MapPageSearchParams } from './types';
 
-export default function MapPage() {
+export default function MapPage({ onVideoExportStateChange }: MapPageProps) {
   const { colors } = useTheme();
-  const { id: activityId } = useLocalSearchParams();
+  const { id: activityId, replay, userId: profileId } = useLocalSearchParams<MapPageSearchParams>();
+  const isReplay = replay === '1';
+  const { data: activityDetails } = useGetActivityByActivityIdQuery(activityId ?? '', {
+    skip: !isReplay || !activityId,
+  });
+  const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
+  const replayProfileId = profileId ?? currentUserId;
+  const { data: replayProfile } = useGetUserProfileByUserIdQuery(replayProfileId ?? '', {
+    skip: !isReplay || !replayProfileId,
+  });
   const {
     isLoading,
     isSuccess,
@@ -16,7 +29,7 @@ export default function MapPage() {
     data: activity,
     error,
     refetch,
-  } = useGetLocationsByActivityIdQuery(`${activityId}`);
+  } = useGetLocationsByActivityIdQuery({ activityId: activityId ?? '', replay: isReplay }, { skip: !activityId });
 
   return (
     <SafeAreaView
@@ -25,7 +38,18 @@ export default function MapPage() {
       {isLoading ? (
         <ActivityIndicator size="large" testID="map-page-loading" />
       ) : isSuccess ? (
-        <DisplayActivityMap locations={activity?.locations ?? []} kilometresSplit={activity?.kilometresSplit ?? []} />
+        isReplay ? (
+          <ActivityRouteReplay
+            locations={activity?.locations ?? []}
+            profile={replayProfile ?? undefined}
+            sport={activityDetails?.sport}
+            workoutDate={activityDetails?.date}
+            workoutDuration={activityDetails?.duration}
+            onVideoExportStateChange={onVideoExportStateChange}
+          />
+        ) : (
+          <DisplayActivityMap locations={activity?.locations ?? []} kilometresSplit={activity?.kilometresSplit ?? []} />
+        )
       ) : isError ? (
         <ErrorComponent error={error} refetch={refetch} />
       ) : null}
