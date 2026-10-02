@@ -1,5 +1,6 @@
 import { Suspense, useEffect } from 'react';
 import { NativeTabs } from 'expo-router/native-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, View } from 'react-native';
 import { Tabs, usePathname, useRouter } from 'expo-router';
 import { Icon, useTheme } from 'react-native-paper';
@@ -15,6 +16,7 @@ export default function TabLayout() {
   const { language } = useAppSelector(({ settings }) => settings);
   const labels = LABELS[language];
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const pathname = usePathname();
   const { status: trackingRecoveryStatus } = useAppSelector(({ trackingRecovery }) => trackingRecovery);
   const hideTabBar =
@@ -104,8 +106,8 @@ export default function TabLayout() {
           borderTopColor: colors.outlineVariant,
           borderTopWidth: 1,
           elevation: 3,
-          height: 64,
-          paddingBottom: 6,
+          height: 64 + insets.bottom,
+          paddingBottom: 6 + insets.bottom,
           paddingTop: 6,
           display: hideTabBar ? 'none' : 'flex',
         },
