@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigation } from 'expo-router';
 import {
   acceptMigrationJob,
   resetMigration,
@@ -23,8 +24,27 @@ export default function useMigrationController() {
   const dispatch = useAppDispatch();
   const { userId, accessToken } = useAppSelector(({ auth }) => auth);
   const state = useMigrationState();
+  const navigation = useNavigation();
+  const isFocusedRef = useRef(false);
   const cancelMigrationRef = useRef<MigrationCancelHandler>(null);
   const [isCancelAvailable, setIsCancelAvailable] = useState(false);
+  const [isForegroundUploadSession, setIsForegroundUploadSession] = useState(false);
+
+  useEffect(() => {
+    const unsubscribeFocus = navigation.addListener('focus', () => {
+      isFocusedRef.current = true;
+    });
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      isFocusedRef.current = false;
+      setIsForegroundUploadSession(false);
+    });
+    isFocusedRef.current = navigation.isFocused();
+
+    return () => {
+      unsubscribeFocus();
+      unsubscribeBlur();
+    };
+  }, [navigation]);
 
   const handleCancelReady = useCallback((cancel: MigrationCancelHandler) => {
     cancelMigrationRef.current = cancel;
@@ -51,7 +71,10 @@ export default function useMigrationController() {
         setIsUnzipping: (value) => dispatch(setIsUnzipping(value)),
         setIsRemovingMedia: (value) => dispatch(setIsRemovingMedia(value)),
         setIsZipping: (value) => dispatch(setIsZipping(value)),
-        setIsSendingArchive: (value) => dispatch(setIsSendingArchive(value)),
+        setIsSendingArchive: (value) => {
+          if (value) setIsForegroundUploadSession(isFocusedRef.current);
+          dispatch(setIsSendingArchive(value));
+        },
         setIsWaitingForServer: (value) => dispatch(setIsWaitingForServer(value)),
         setIsDeletingCacheFolder: (value) => dispatch(setIsDeletingCacheFolder(value)),
         setUploadProgress: (value) => dispatch(setUploadProgress(value)),
@@ -70,6 +93,7 @@ export default function useMigrationController() {
     handleCancel,
     handleChooseArchive,
     isCancelAvailable,
+    isForegroundUploadSession,
     state,
   };
 }

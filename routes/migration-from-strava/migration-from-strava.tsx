@@ -12,7 +12,8 @@ export default function MigrationFromStrava() {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
-  const { handleCancel, handleChooseArchive, isCancelAvailable, state } = useMigrationController();
+  const { handleCancel, handleChooseArchive, isCancelAvailable, isForegroundUploadSession, state } =
+    useMigrationController();
   const copy = MIGRATION_STATES[language];
 
   return (
@@ -32,6 +33,7 @@ export default function MigrationFromStrava() {
               copy={copy}
               isProcessing={state.isProcessing}
               isCancelAvailable={isCancelAvailable || state.job?.status === 'uploading'}
+              isForegroundUploadSession={isForegroundUploadSession}
               onChooseArchive={handleChooseArchive}
               onCancel={handleCancel}
               onDismissError={() => dispatch(resetMigration())}
