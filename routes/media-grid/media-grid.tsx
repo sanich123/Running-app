@@ -49,7 +49,7 @@ export default function MediaGrid() {
 
   return (
     <SafeAreaView
-      edges={['top', 'left', 'right']}
+      edges={['left', 'right']}
       style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
       {isLoading ? (
         <ActivityIndicator size="large" testID="media-grid-loading" />

@@ -4,6 +4,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Platform, RefreshControl, View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { getCrossPlatformLayoutEdges } from './const';
 import type { CrossPlatformLayoutProps } from './types';
 
 export default function CrossPlatformLayout({
@@ -20,11 +21,13 @@ export default function CrossPlatformLayout({
   const isStatusState = Boolean(isError || isLoading);
   const canUseScrollView = Boolean(scrollViewEnabled && (!isStatusState || (refetch && !isLoading)));
   const content = children;
+  // The Android root stack applies the navigation-bar inset to each screen's content container.
+  const safeAreaEdges = getCrossPlatformLayoutEdges(edges, Platform.OS);
 
   return (
     <SafeAreaView
       style={[{ flex: 1, backgroundColor: colors.background }, (isError || isLoading) && styles.centered]}
-      edges={edges}>
+      edges={safeAreaEdges}>
       {canUseScrollView ? (
         <KeyboardAwareScrollView
           testID="cross-platform-scroll-view"

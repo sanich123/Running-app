@@ -210,7 +210,11 @@ describe('file sending', () => {
       isVideo: true,
       mimeType: 'video/mp4',
     });
-    expect(VideoCompressor.compress).toHaveBeenCalledWith('activity.MP4');
+    expect(VideoCompressor.compress).toHaveBeenCalledWith('activity.MP4', {
+      compressionMethod: 'manual',
+      maxSize: 640,
+      bitrate: 7_200_000,
+    });
 
     const thumbnail = await createVideoThumbnail('https://cdn.example/video.mp4');
     expect(thumbnail).toBeNull();

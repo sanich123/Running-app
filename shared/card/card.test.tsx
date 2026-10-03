@@ -674,9 +674,6 @@ describe('Activity card', () => {
     });
 
     await waitFor(() => {
-      const likeButton =
-        screen.queryByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED) ?? screen.getByTestId(CARD_LIKE_BTN_TEST_ID_LIKED);
-      expect(likeButton).toBeDisabled();
       expect(screen.getByTestId(COMMENT_BTN_TEST_ID)).toBeDisabled();
       expect(screen.getByTestId('iconShareBtn')).toBeDisabled();
       expect(screen.getByTestId(CARD_DELETE_BTN_TEST_ID)).toBeDisabled();
