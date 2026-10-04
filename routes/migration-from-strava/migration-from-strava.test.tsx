@@ -50,6 +50,10 @@ jest.mock('expo-router', () => {
     ),
     useRouter: () => ({ replace: mockReplace }),
     useIsFocused: () => true,
+    useNavigation: () => ({
+      addListener: () => () => undefined,
+      isFocused: () => true,
+    }),
   };
 });
 
@@ -129,6 +133,42 @@ describe('migration from strava', () => {
 
     await user.press(screen.getByTestId('migration-cancel'));
     expect(cancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps foreground upload progress visible after the server accepts the upload job', async () => {
+    const uploadingJob: ActivityMigrationJobResponse = {
+      jobId: 'uploading-job',
+      status: 'uploading',
+      uploadBytesReceived: 0,
+      uploadBytesTotal: 100,
+      queuePosition: null,
+      queueAhead: 0,
+      queueSize: 0,
+      totalActivities: 0,
+      processedActivities: 0,
+      importedActivities: 0,
+      skippedActivities: 0,
+      errorMessage: null,
+      createdAt: new Date().toISOString(),
+      startedAt: null,
+      finishedAt: null,
+    };
+    server.use(
+      http.get(`${BASE_URL}/activity/migration-strava/jobs/uploading-job`, () => HttpResponse.json(uploadingJob)),
+    );
+    const user = userEvent.setup();
+    await renderMigrationPage();
+    await user.press(screen.getByTestId('migration-choose'));
+
+    await act(async () => {
+      latestMigrationArgs?.setIsDisabled(true);
+      latestMigrationArgs?.setIsSendingArchive(true);
+      latestMigrationArgs?.onArchiveUploadAccepted(uploadingJob);
+      latestMigrationArgs?.setUploadProgress(0.42);
+    });
+
+    expect(screen.getByTestId('migration-upload-progress')).toBeOnTheScreen();
+    expect(screen.getByText('42%')).toBeOnTheScreen();
   });
 
   it('keeps the migration page open while the server processes the archive', async () => {

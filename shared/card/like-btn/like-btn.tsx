@@ -4,7 +4,6 @@ import { IconButton, useTheme } from 'react-native-paper';
 import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
 import { useDeleteLikeMutation, useGetLikesByActivityIdQuery, useSendLikeMutation } from '@R/services/likes/likes';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
-import { finishLoading, startLoading } from '@R/slices/loading/loading';
 import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -23,7 +22,6 @@ export default function LikeBtn() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { isLoading } = useAppSelector(({ loading }) => loading);
   const { data: currentUserProfile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const { language } = useAppSelector(({ settings }) => settings);
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
@@ -36,7 +34,6 @@ export default function LikeBtn() {
     data: likes,
     isError,
     isLoading: isLikesLoading,
-    isFetching: isLikesFetching,
   } = useGetLikesByActivityIdQuery(activityId, {
     skip: !activityId || !shouldLoadLikes,
   });
@@ -104,7 +101,6 @@ export default function LikeBtn() {
         size={isLikedByYou.length ? 29 : 25}
         onPress={async () => {
           if (userId) {
-            dispatch(startLoading());
             animateLike();
             try {
               if (isLikedByYou.length > 0) {
@@ -115,12 +111,10 @@ export default function LikeBtn() {
               dispatch(setActivityIdWhichLikesToUpdate(activityId));
             } catch (error) {
               errorToast(LIKE_BTN[language].errorAction(isLikedByYou.length ? 'delete' : 'send'), error);
-            } finally {
-              dispatch(finishLoading());
             }
           }
         }}
-        disabled={isLoading || isError || isLikesLoading || isLikesFetching || isSendingLike || isDeletingLike}
+        disabled={isError || isLikesLoading || isSendingLike || isDeletingLike}
       />
     </Animated.View>
   );

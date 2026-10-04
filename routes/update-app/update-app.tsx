@@ -5,18 +5,18 @@ import { Button, Icon, Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
-import { UPDATE_APP_TEXT } from './const';
+import { RUSTORE_APP_URL, UPDATE_APP_TEXT } from './const';
 
 export default function UpdateAppPage() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const copy = UPDATE_APP_TEXT[language];
 
-  const openMarket = async () => {
+  const openRuStore = async () => {
     try {
-      await Linking.openURL('https://rustore.ru/');
+      await Linking.openURL(RUSTORE_APP_URL);
     } catch {
-      // The market URL is mocked until the application stores are configured.
+      // Ignore the error when this device cannot open the store link.
     }
   };
 
@@ -36,7 +36,7 @@ export default function UpdateAppPage() {
           </Text>
           <Button
             mode="contained"
-            onPress={() => void openMarket()}
+            onPress={() => void openRuStore()}
             style={styles.button}
             contentStyle={styles.buttonContent}>
             {copy.action}

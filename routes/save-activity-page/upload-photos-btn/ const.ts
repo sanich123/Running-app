@@ -13,11 +13,11 @@ export const UPLOAD_PHOTO_BTN = {
   [LANGUAGES.english]: {
     accessibilityLabel: 'Upload photos or videos from gallery',
     cancelUpload: 'Cancel media upload',
-    uploadHint: 'Up to 5 photos or videos. Videos can be up to 1 minute and 50 MB after compression.',
+    uploadHint: 'Up to 5 photos or videos. Videos can be up to 1 minute',
   },
   [LANGUAGES.russian]: {
     accessibilityLabel: 'Загрузить фото или видео из галереи',
     cancelUpload: 'Отменить загрузку медиа',
-    uploadHint: 'Можно добавить до 5 фото или видео. Видео — до 1 минуты и 50 МБ после сжатия.',
+    uploadHint: 'Можно добавить до 5 фото или видео. Видео — до 1 минуты',
   },
 } as const;

@@ -1,7 +1,23 @@
 import { act, screen } from '@testing-library/react-native';
 import { Text } from 'react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { getCrossPlatformLayoutEdges } from './const';
 import CrossPlatformLayout from './cross-platform-layout';
+
+describe('getCrossPlatformLayoutEdges', () => {
+  it('leaves the Android navigation inset to the root stack', () => {
+    expect(getCrossPlatformLayoutEdges(['top', 'bottom', 'left'], 'android')).toEqual(['top', 'left']);
+    expect(getCrossPlatformLayoutEdges({ top: 'maximum', bottom: 'additive' }, 'android')).toEqual({
+      top: 'maximum',
+      bottom: 'off',
+    });
+  });
+
+  it('preserves the requested edges on other platforms', () => {
+    const edges = ['top', 'bottom'] as const;
+    expect(getCrossPlatformLayoutEdges(edges, 'ios')).toBe(edges);
+  });
+});
 
 describe('CrossPlatformLayout', () => {
   it.each([

@@ -50,7 +50,7 @@ const migration = createSlice({
       state.isUnzipping = false;
       state.isRemovingMedia = false;
       state.isZipping = false;
-      state.isSendingArchive = false;
+      state.isSendingArchive = action.payload.status === 'uploading' ? state.isSendingArchive : false;
       state.isWaitingForServer = false;
       state.isDeletingCacheFolder = false;
       state.uploadProgress = 0;

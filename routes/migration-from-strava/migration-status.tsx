@@ -9,6 +9,7 @@ export default function MigrationStatus({
   copy,
   isProcessing,
   isCancelAvailable,
+  isForegroundUploadSession,
   onChooseArchive,
   onCancel,
   onDismissError,
@@ -17,6 +18,7 @@ export default function MigrationStatus({
   copy: MigrationCopy;
   isProcessing: boolean;
   isCancelAvailable: boolean;
+  isForegroundUploadSession: boolean;
   onChooseArchive: () => void;
   onCancel: () => void;
   onDismissError: () => void;
@@ -139,7 +141,9 @@ export default function MigrationStatus({
         </>
       )}
 
-      {state.isArchiveTransferActive && <UploadProgress state={state} copy={copy} />}
+      {state.isArchiveTransferActive && (
+        <UploadProgress state={state} copy={copy} isForegroundUploadSession={isForegroundUploadSession} />
+      )}
     </View>
   );
 }
@@ -196,14 +200,25 @@ function ServerProgress({ state, copy }: { state: MigrationViewState; copy: Migr
   );
 }
 
-function UploadProgress({ state, copy }: { state: MigrationViewState; copy: MigrationCopy }) {
+function UploadProgress({
+  state,
+  copy,
+  isForegroundUploadSession,
+}: {
+  state: MigrationViewState;
+  copy: MigrationCopy;
+  isForegroundUploadSession: boolean;
+}) {
   const { colors } = useTheme();
-  const serverProgress =
-    state.job && state.job.uploadBytesTotal > 0
-      ? Math.min(1, state.job.uploadBytesReceived / state.job.uploadBytesTotal)
-      : state.uploadProgress;
-  const received = state.job?.uploadBytesReceived ?? 0;
+  const useLocalProgress = isForegroundUploadSession && state.isSendingArchive;
   const total = state.job?.uploadBytesTotal ?? 0;
+  const progress = useLocalProgress
+    ? state.uploadProgress
+    : state.job && total > 0
+      ? Math.min(1, (state.job.uploadBytesReceived ?? 0) / total)
+      : state.uploadProgress;
+  const serverReceived = state.job?.uploadBytesReceived ?? 0;
+  const received = useLocalProgress && total > 0 ? Math.round(progress * total) : serverReceived;
 
   return (
     <View style={styles.progressDetails} testID="migration-upload-progress">
@@ -212,10 +227,10 @@ function UploadProgress({ state, copy }: { state: MigrationViewState; copy: Migr
           {copy.uploadProgress}
         </Text>
         <Text variant="titleMedium" style={{ color: colors.primary }}>
-          {Math.round(serverProgress * 100)}%
+          {Math.round(progress * 100)}%
         </Text>
       </View>
-      <ProgressBar progress={serverProgress} color={colors.primary} style={styles.progressBar} />
+      <ProgressBar progress={progress} color={colors.primary} style={styles.progressBar} />
       {total > 0 && (
         <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
           {formatBytes(received)} / {formatBytes(total)}
