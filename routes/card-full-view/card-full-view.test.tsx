@@ -8,7 +8,10 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CardFullView from './card-full-view';
 
-jest.mock('expo-router', () => ({ useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }) }));
+jest.mock('expo-router', () => ({
+  Stack: { Screen: () => null },
+  useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }),
+}));
 jest.mock('@S/card/card', () => {
   const { Text, View } = jest.requireActual('react-native');
   return ({

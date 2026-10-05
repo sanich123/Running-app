@@ -55,6 +55,11 @@ export interface ProfileType {
   userId?: string;
   weight?: string | null;
   emailNotifications?: boolean | null;
+  profileSearchVisible?: boolean;
+  allowActivityInteractions?: boolean;
+  hideActivityStatistics?: boolean;
+  hideFollowingList?: boolean;
+  hideProfilePhotos?: boolean;
   user?: { email?: string | null } | null;
 }
 
@@ -91,6 +96,8 @@ export interface ActivityCardProps {
 }
 
 export interface ActivityMediaItem {
+  id?: string;
+  activityId?: string;
   url: string;
   thumbnail: string | null;
   blurhash?: string | null;

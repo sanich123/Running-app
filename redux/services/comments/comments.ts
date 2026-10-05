@@ -1,4 +1,5 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
+import { createSearchParams } from '@R/runich-api/create-search-params';
 import { runichApi } from '@R/runich-api/runich-api';
 import type { DeleteCommentLike, SendComment, SendCommentLike, UpdateComment } from './types';
 import type {
@@ -19,7 +20,7 @@ const commentsApi = runichApi.injectEndpoints({
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       },
       query: ({ queryArg: { activityId }, pageParam }) =>
-        `/${comment}/${activityId}?limit=10${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
+        `/${comment}/${activityId}${createSearchParams({ limit: 10, cursor: pageParam || undefined })}`,
       providesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.activityId }],
     }),
     getCommentsLengthByActivityId: query<number, string>({

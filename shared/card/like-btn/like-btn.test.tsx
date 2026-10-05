@@ -9,12 +9,13 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from './const';
 import ActivityCardLikeBtn from './like-btn';
 import { ActivityCardContext } from '../context';
+import type { ActivityCardData } from '../types';
 
 function renderLikeBtn({
   activityId = 'someActivityId',
   likesLength,
   profile = MOCK_PROFILE,
-}: { activityId?: string; likesLength?: number; profile?: typeof MOCK_PROFILE } = {}) {
+}: { activityId?: string; likesLength?: number; profile?: ActivityCardData['profile'] } = {}) {
   return renderWithProviders(
     <ActivityCardContext.Provider
       value={{
@@ -39,19 +40,23 @@ function renderLikeBtn({
   );
 }
 
+async function setCurrentUser(userId: string) {
+  await act(async () => mockStore.dispatch(setMockUserId(userId)));
+}
+
 describe('Activity card like btn', () => {
-  beforeEach(() => {
-    mockStore.dispatch(setActivityIdWhichLikesToUpdate(''));
+  beforeEach(async () => {
+    await act(async () => mockStore.dispatch(setActivityIdWhichLikesToUpdate('')));
   });
 
   it('should correctly renders when activity was liked by you', async () => {
-    mockStore.dispatch(setMockUserId('someUserId'));
+    await setCurrentUser('someUserId');
     await renderLikeBtn();
     const likesBtn = await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED);
     expect(likesBtn).toBeOnTheScreen();
   });
   it('should correctly renders, when you didnt liked activity', async () => {
-    mockStore.dispatch(setMockUserId('wrongUserId'));
+    await setCurrentUser('wrongUserId');
     await renderLikeBtn();
     expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();
   });
@@ -63,7 +68,7 @@ describe('Activity card like btn', () => {
     const activityId = 'activity-without-likes';
     const userId = 'zero-likes-user';
     const ownLike = { id: 'own-like-id', activityId, authorId: userId, date: new Date().toISOString() };
-    mockStore.dispatch(setMockUserId(userId));
+    await setCurrentUser(userId);
     server.use(
       http.get(`${BASE_URL}/user/${userId}/profile`, () =>
         HttpResponse.json({ ...MOCK_PROFILE, userId, emailNotifications: false }),
@@ -97,7 +102,7 @@ describe('Activity card like btn', () => {
     const postReleased = new Promise<void>((resolve) => {
       releasePost = resolve;
     });
-    mockStore.dispatch(setMockUserId(userId));
+    await setCurrentUser(userId);
     server.use(
       http.get(`${BASE_URL}/user/${userId}/profile`, () =>
         HttpResponse.json({ ...MOCK_PROFILE, userId, emailNotifications: false }),
@@ -142,10 +147,39 @@ describe('Activity card like btn', () => {
     });
   });
 
+  it('recognizes the current user like even when it is outside the first page', async () => {
+    const userId = 'older-like-owner';
+    const activityId = 'activity-with-many-likes';
+    await setCurrentUser(userId);
+    server.use(
+      http.get(`${BASE_URL}/user/${userId}/profile`, () =>
+        HttpResponse.json({ ...MOCK_PROFILE, userId, emailNotifications: false }),
+      ),
+      http.get(`${BASE_URL}/like/${activityId}`, () =>
+        HttpResponse.json({
+          likes: Array.from({ length: 30 }, (_, index) => ({
+            id: `other-like-${index}`,
+            activityId,
+            authorId: `other-user-${index}`,
+            date: new Date(Date.now() - index * 1000).toISOString(),
+            profile: { name: 'Other' },
+          })),
+          hasMore: true,
+          nextCursor: 'older-likes-cursor',
+          currentUserLike: { id: 'own-older-like', authorId: userId },
+        }),
+      ),
+    );
+
+    await renderLikeBtn({ activityId, likesLength: 31, profile: { ...MOCK_PROFILE, emailNotifications: false } });
+
+    expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED)).toBeOnTheScreen();
+  });
+
   it('sends a like after the user presses the heart', async () => {
     const user = userEvent.setup();
     let requestBody: unknown;
-    mockStore.dispatch(setMockUserId('new-user-id'));
+    await setCurrentUser('new-user-id');
     server.use(
       http.post(`${BASE_URL}/like`, async ({ request }) => {
         requestBody = await request.json();
@@ -162,7 +196,7 @@ describe('Activity card like btn', () => {
   it('deletes the current user like after a second heart action', async () => {
     const user = userEvent.setup();
     let deletedUrl = '';
-    mockStore.dispatch(setMockUserId('someUserId'));
+    await setCurrentUser('someUserId');
     server.use(
       http.delete(`${BASE_URL}/like/:likeId/:activityId`, ({ request }) => {
         deletedUrl = request.url;
@@ -172,5 +206,22 @@ describe('Activity card like btn', () => {
     await renderLikeBtn();
     await user.press(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_LIKED));
     await waitFor(() => expect(deletedUrl).toContain('/someActivityId'));
+  });
+
+  it('disables likes for external viewers when the activity owner opts out', async () => {
+    await setCurrentUser('viewer-id');
+    await renderLikeBtn({ profile: { ...MOCK_PROFILE, allowActivityInteractions: false } });
+
+    const likeButton = await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED);
+    expect(likeButton.props.accessibilityState?.disabled).toBe(true);
+  });
+
+  it('keeps likes enabled for the activity owner when external interactions are disabled', async () => {
+    await setCurrentUser('activity-owner');
+    await renderLikeBtn({ profile: { ...MOCK_PROFILE, allowActivityInteractions: false } });
+
+    await waitFor(() =>
+      expect(screen.getByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED).props.accessibilityState?.disabled).toBe(false),
+    );
   });
 });

@@ -1,9 +1,12 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { BAD_REQUEST } from '@T/mocks/mock-requests';
-import { mockStore } from '@T/utils/mock-store';
+import { BASE_URL } from '@T/utils/handlers';
+import { setMockUserId, mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { PROFILE_MEDIA } from './const';
 import ProfileMediaPhotos from './media-photos';
@@ -14,18 +17,23 @@ jest.mock('expo-router', () => ({
   usePathname: () => 'somePathname',
 }));
 describe('Profile media photos', () => {
+  beforeEach(() => mockPush.mockClear());
+  afterEach(async () => {
+    await act(async () => mockStore.dispatch(setMockUserId('')));
+  });
+
   it('should correctly renders data in english', async () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await act(async () => mockStore.dispatch(changeLanguage(LANGUAGES.english)));
     await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />, { store: mockStore });
     expect(await screen.findByText(new RegExp(`${PROFILE_MEDIA.english.label}`))).toBeOnTheScreen();
   });
   it('should correctly renders data in russian', async () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    await act(async () => mockStore.dispatch(changeLanguage(LANGUAGES.russian)));
     await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />, { store: mockStore });
     expect(await screen.findByText(new RegExp(`${PROFILE_MEDIA.russian.label}`))).toBeOnTheScreen();
   });
   it('should correctly handle an error in russian', async () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    await act(async () => mockStore.dispatch(changeLanguage(LANGUAGES.russian)));
     await renderWithProviders(<ProfileMediaPhotos userId="someWrongUserId" />, { store: mockStore });
     expect(
       await screen.findByText(
@@ -34,7 +42,7 @@ describe('Profile media photos', () => {
     ).toBeOnTheScreen();
   });
   it('should correctly handle an error in english', async () => {
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await act(async () => mockStore.dispatch(changeLanguage(LANGUAGES.english)));
     await renderWithProviders(<ProfileMediaPhotos userId="someWrongUserId" />, { store: mockStore });
     expect(
       await screen.findByText(
@@ -44,10 +52,59 @@ describe('Profile media photos', () => {
   });
 
   it('opens the complete media grid', async () => {
-    const user = userEvent.setup();
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await act(async () => mockStore.dispatch(changeLanguage(LANGUAGES.english)));
     await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />);
-    await user.press(await screen.findByText(new RegExp(PROFILE_MEDIA.english.label)));
+    await fireEvent.press(await screen.findByTestId('profile-activity-media-0'));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.mediaGrid}/someUserId`);
+  });
+
+  it('offers media deletion after a long press only to the profile owner', async () => {
+    const mediaId = 'media-id';
+    const activityId = 'activity-id';
+    const mediaUrl = 'https://images.example.test/profile-photo.jpg';
+    let deleteCalls = 0;
+    server.use(
+      http.get(`${BASE_URL}/activity/someUserId/media`, () =>
+        HttpResponse.json({
+          media: [{ id: mediaId, activityId, url: mediaUrl, thumbnail: null, blurhash: null }],
+          hasMore: false,
+          nextCursor: null,
+          isLastPage: true,
+        }),
+      ),
+      http.delete(`${BASE_URL}/activity/${activityId}/media/${mediaId}`, () => {
+        deleteCalls += 1;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    await act(async () => mockStore.dispatch(setMockUserId('someUserId')));
+
+    await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />);
+    await fireEvent(await screen.findByTestId(`profile-activity-media-${mediaId}`), 'longPress');
+
+    expect(screen.getByTestId('activity-media-delete-button')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByTestId('activity-media-delete-button'));
+
+    await waitFor(() => expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen());
+    expect(deleteCalls).toBe(1);
+  });
+
+  it('does not offer deletion on someone else profile', async () => {
+    const mediaId = 'media-id';
+    server.use(
+      http.get(`${BASE_URL}/activity/someUserId/media`, () =>
+        HttpResponse.json({
+          media: [{ id: mediaId, activityId: 'activity-id', url: 'https://images.example.test/profile-photo.jpg' }],
+          hasMore: false,
+          nextCursor: null,
+          isLastPage: true,
+        }),
+      ),
+    );
+    await act(async () => mockStore.dispatch(setMockUserId('viewer-id')));
+
+    await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />);
+    await fireEvent(await screen.findByTestId(`profile-activity-media-${mediaId}`), 'longPress');
+    expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen();
   });
 });

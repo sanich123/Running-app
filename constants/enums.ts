@@ -36,6 +36,7 @@ export enum ROUTES {
   profile = 'profile',
   manualActivity = 'manual-activity',
   profileSettings = 'profile-settings',
+  profilePrivacySettings = 'privacy-settings',
   changePassword = 'change-password',
   statistic = 'statistic',
   monthStatistics = 'month-statistic',
@@ -83,6 +84,7 @@ export const LABELS = {
     photo: 'Photo',
     photos: 'Photos',
     profileSettings: 'Profile settings',
+    profilePrivacySettings: 'Privacy settings',
     migration: 'Migration',
   },
   [LANGUAGES.russian]: {
@@ -101,6 +103,7 @@ export const LABELS = {
     photo: 'Фотография',
     photos: 'Фотографии',
     profileSettings: 'Настройки профиля',
+    profilePrivacySettings: 'Настройки конфиденциальности',
     migration: 'Миграция',
   },
 };

@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Divider, useTheme } from 'react-native-paper';
-import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
+import { ActivityIndicator, Divider, useTheme } from 'react-native-paper';
+import { useGetLikesByActivityIdInfiniteQuery } from '@R/services/likes/likes';
 import { useAppSelector } from '@R/typed-hooks';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
@@ -15,9 +15,17 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength }: Mod
   const insets = useSafeAreaInsets();
   const { activityIdWhichLikesToDownload } = useAppSelector(({ mainFeed }) => mainFeed);
   const { language } = useAppSelector(({ settings }) => settings);
-  const { data: likes, isSuccess } = useGetLikesByActivityIdQuery(`${activityIdWhichLikesToDownload}`, {
-    skip: !activityIdWhichLikesToDownload,
-  });
+  const {
+    data: likesPages,
+    isSuccess,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useGetLikesByActivityIdInfiniteQuery(
+    { activityId: `${activityIdWhichLikesToDownload}` },
+    { skip: !activityIdWhichLikesToDownload },
+  );
+  const likes = likesPages?.pages.flatMap(({ likes: pageLikes }) => pageLikes) ?? [];
   const renderBackdrop = useCallback(
     (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
@@ -39,9 +47,15 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength }: Mod
       backgroundStyle={{ backgroundColor: colors.surface }}
       handleIndicatorStyle={{ backgroundColor: colors.primary }}>
       <BottomSheetFlatList
+        testID="likes-modal-list"
         style={{ backgroundColor: colors.surface }}
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) }}
         data={likes}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={isFetchingNextPage ? <ActivityIndicator style={{ padding: 16 }} /> : undefined}
         ListEmptyComponent={
           isSuccess ? (
             <EmptyState

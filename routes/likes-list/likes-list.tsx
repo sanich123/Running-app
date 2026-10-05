@@ -3,7 +3,7 @@ import { View, FlatList, useWindowDimensions, Platform, StyleSheet } from 'react
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
+import { useGetLikesByActivityIdInfiniteQuery } from '@R/services/likes/likes';
 import { useAppSelector } from '@R/typed-hooks';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
@@ -21,9 +21,13 @@ export default function LikesList() {
     error,
     isError,
     isSuccess,
-    data: likes,
+    data: likesPages,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
     refetch,
-  } = useGetLikesByActivityIdQuery(`${activityId}`, { skip: !activityId });
+  } = useGetLikesByActivityIdInfiniteQuery({ activityId: `${activityId}` }, { skip: !activityId });
+  const likes = likesPages?.pages.flatMap(({ likes: pageLikes }) => pageLikes) ?? [];
   const { refreshing, onRefresh } = useRefresh(refetch);
 
   return (
@@ -47,6 +51,11 @@ export default function LikesList() {
               onRefresh={onRefresh}
               refreshing={refreshing}
               data={likes}
+              onEndReached={() => {
+                if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
+              }}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={isFetchingNextPage ? <ActivityIndicator style={{ padding: 16 }} /> : undefined}
               renderItem={renderLikeItem}
               keyExtractor={likeKeyExtractor}
               ItemSeparatorComponent={renderDivider}
