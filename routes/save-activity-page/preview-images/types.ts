@@ -1,7 +1,11 @@
+import type { ActivityPhoto } from '@R/slices/activity/types';
+
 export interface PreviewImagesProps {
-  images: { url: string; thumbnail: string | null }[];
+  images: ActivityPhoto[];
   isDisabled: boolean;
   compact?: boolean;
   horizontal?: boolean;
-  setImages: (arg: { url: string; thumbnail: string | null }[]) => void;
+  activityId?: string;
+  isPersistedActivityMedia?: boolean;
+  setImages: (arg: ActivityPhoto[]) => void;
 }

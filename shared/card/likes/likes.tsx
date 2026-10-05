@@ -1,7 +1,7 @@
 import { Fragment, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
+import { useGetLikesByActivityIdInfiniteQuery } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToDownload } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import UserAvatar from '@S/avatar/avatar';
@@ -24,13 +24,16 @@ export default function Likes() {
   const isLikesMarkedForUpdate = activityIdWhichLikesToUpdate === activityId;
   const shouldLoadLikes = likesLength !== 0 || isLikesMarkedForUpdate;
   const {
-    data: likes,
+    data: likesPages,
     isLoading,
     isError,
-  } = useGetLikesByActivityIdQuery(activityId, {
-    skip: !activityId || !shouldLoadLikes,
-  });
-  const likesList = likes ?? [];
+  } = useGetLikesByActivityIdInfiniteQuery(
+    { activityId },
+    {
+      skip: !activityId || !shouldLoadLikes,
+    },
+  );
+  const likesList = likesPages?.pages.flatMap(({ likes }) => likes) ?? [];
   const likesCount = isLikesMarkedForUpdate ? likesList.length : (likesLength ?? likesList.length);
   const hasLikes = likesCount > 0;
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;

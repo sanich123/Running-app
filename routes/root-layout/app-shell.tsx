@@ -8,7 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, useColorScheme } from 'react-native';
-import { Redirect, Stack, useGlobalSearchParams, usePathname } from 'expo-router';
+import { Redirect, Stack, usePathname } from 'expo-router';
 import { configureFonts, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
@@ -17,7 +17,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import SubscriptionStatusSync from '@Routes/subscription/subscription-status-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 import useAppInitialization from '@U/hooks/use-app-initialization';
-import { LazySaveBtn, LazyUsersSettingsIcons, PUBLIC_ROUTES } from './const';
+import { LazyUsersSettingsIcons, PUBLIC_ROUTES } from './const';
 import LazyHeader from './lazy-header';
 import { getRootScreenContentStyle } from './screen-content-style';
 
@@ -27,8 +27,6 @@ export default function AppShell() {
   const { theme } = useAppSelector(({ settings }) => settings);
   const { accessToken, refreshToken } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
-  const { cameraVisible } = useGlobalSearchParams<{ cameraVisible?: string | string[] }>();
-  const isCameraVisible = Array.isArray(cameraVisible) ? cameraVisible[0] === 'true' : cameraVisible === 'true';
   const pathname = usePathname();
   const colorScheme = theme ?? systemColorScheme;
   const appColors = colorScheme === 'dark' ? COLORS.dark : COLORS.light;
@@ -114,7 +112,6 @@ export default function AppShell() {
               <Stack.Screen
                 name={`${ROUTES.activity}/${ROUTES.routeId}`}
                 options={{
-                  headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].activity,
                 }}
               />
@@ -161,14 +158,7 @@ export default function AppShell() {
                   title: LABELS[language].profile,
                 }}
               />
-              <Stack.Screen
-                name={`${ROUTES.manualActivity}/${ROUTES.index}`}
-                options={{
-                  headerRight: () => <LazyHeader component={LazySaveBtn} />,
-                  title: '',
-                  headerShown: !isCameraVisible,
-                }}
-              />
+              <Stack.Screen name={`${ROUTES.manualActivity}/${ROUTES.index}`} options={{ title: '' }} />
               <Stack.Screen
                 name={`${ROUTES.settings}/${ROUTES.index}`}
                 options={{

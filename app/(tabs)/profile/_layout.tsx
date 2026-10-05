@@ -1,17 +1,14 @@
-import { Suspense } from 'react';
 import { Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import { LazyProfileEditBtn, LazyProfileUpdateBtn } from '@Routes/app-routes/const';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 
 export default function ProfileStack() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
-  const { userId } = useAppSelector(({ auth }) => auth);
 
   return (
     <Stack
@@ -29,27 +26,12 @@ export default function ProfileStack() {
           Platform.OS === 'web' ? ({ children }) => <FeedHeaderTitle>{children}</FeedHeaderTitle> : undefined,
       }}>
       <Stack.Screen
-        name={`${ROUTES.index}`}
-        options={{
-          headerRight: () =>
-            userId && (
-              <Suspense fallback={null}>
-                <LazyProfileEditBtn />
-              </Suspense>
-            ),
-        }}
+        name={`${ROUTES.profileSettings}/${ROUTES.index}`}
+        options={{ title: LABELS[language].profileSettings }}
       />
       <Stack.Screen
-        name={`${ROUTES.profileSettings}/${ROUTES.index}`}
-        options={{
-          title: LABELS[language].profileSettings,
-          headerRight: () =>
-            userId && (
-              <Suspense fallback={null}>
-                <LazyProfileUpdateBtn />
-              </Suspense>
-            ),
-        }}
+        name={`${ROUTES.profilePrivacySettings}/${ROUTES.index}`}
+        options={{ title: LABELS[language].profilePrivacySettings }}
       />
     </Stack>
   );

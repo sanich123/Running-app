@@ -13,6 +13,8 @@ import * as backgroundLocation from '@U/location/expo-task-manager/background-lo
 import { createLocationJournal } from '@U/location/location-journal';
 import Activity from './activity';
 
+jest.mock('expo-router', () => ({ Stack: { Screen: () => null } }));
+
 jest.mock('@Routes/activity/icon-choose-sport/icon-choose-sport', () => ({
   __esModule: true,
   default: () => {

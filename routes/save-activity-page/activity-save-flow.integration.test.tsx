@@ -43,6 +43,7 @@ jest.mock('expo-router', () => {
   });
 
   return {
+    Stack: { Screen: () => null },
     useLocalSearchParams: () => routeParams,
     useGlobalSearchParams: () => routeParams,
     usePathname: () => `/activity/${routeParams.id ?? 'bad3520c-c795-439c-ae9b-474625b4b200'}`,

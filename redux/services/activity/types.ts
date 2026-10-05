@@ -43,6 +43,11 @@ export interface AppendActivityMediaRequest {
   media: ActivityAdditionalInfo['media'];
 }
 
+export interface DeleteActivityMediaRequest {
+  activityId: string;
+  mediaId: string;
+}
+
 export interface GetActivityLocationsRequest {
   activityId: string;
   replay?: boolean;

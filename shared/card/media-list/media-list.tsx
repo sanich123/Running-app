@@ -4,9 +4,13 @@ import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
+import { useDeleteActivityMediaMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
+import ActivityMediaDeleteBtn from '@S/activity-media/delete-btn';
 import AddActivityMediaBtn from '@S/card/add-media-btn/add-media-btn';
 import CustomImage from '@S/custom-image/custom-image';
+import { errorToast } from '@S/error-toast/error-toast';
+import useLongPressGuard from '@S/pressable/use-long-press-guard';
 import { useActivityCard } from '../context';
 import { ACTIVITY_MEDIA_ASPECT_RATIO } from './const';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
@@ -30,13 +34,28 @@ export default function MediaList() {
     emotion,
   } = activity;
   const [isMapPressed, setIsMapPressed] = useState(false);
+  const [selectedMediaId, setSelectedMediaId] = useState<string | null>(null);
+  const longPressGuard = useLongPressGuard();
   const { dark } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { width } = useWindowDimensions();
   const { push } = useRouter();
+  const [deleteActivityMedia, { isLoading: isDeletingMedia }] = useDeleteActivityMediaMutation();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
   const isOwnActivity = Boolean(activityOwnerId && activityOwnerId === currentUserId);
+
+  const handleDeleteMedia = useCallback(
+    async (mediaId: string) => {
+      try {
+        await deleteActivityMedia({ activityId: id, mediaId }).unwrap();
+        setSelectedMediaId(null);
+      } catch (error) {
+        errorToast('', error);
+      }
+    },
+    [deleteActivityMedia, id],
+  );
 
   const displayedData = useMemo(() => {
     const activityMedia: DisplayedMediaItem[] = (media ?? []).map((item) => ({ ...item, isMap: false }));
@@ -49,17 +68,28 @@ export default function MediaList() {
       const isMap = item.isMap === true;
       return (
         <View
-          style={{ width: mediaWidth, aspectRatio: ACTIVITY_MEDIA_ASPECT_RATIO, position: 'relative' }}
-          testID={isMap ? 'activity-map-media-item' : undefined}>
+          testID={isMap ? 'activity-map-media-container' : undefined}
+          style={{ width: mediaWidth, aspectRatio: ACTIVITY_MEDIA_ASPECT_RATIO, position: 'relative' }}>
           <TouchableRipple
-            rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, ${isMap ? '.2' : '.08'})`}
+            testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
             onPressIn={() => {
+              longPressGuard.resetForGesture();
               if (isMap) setIsMapPressed(true);
             }}
             onPressOut={() => {
               if (isMap) setIsMapPressed(false);
             }}
+            onLongPress={
+              !isMap && isOwnActivity && item.id
+                ? () => {
+                    longPressGuard.markLongPress();
+                    setSelectedMediaId(item.id ?? null);
+                  }
+                : undefined
+            }
+            disabled={!isMap && selectedMediaId === item.id}
             onPress={() => {
+              if (!longPressGuard.shouldHandlePress()) return;
               push(
                 isMap
                   ? `/${ROUTES.map}/${id}`
@@ -74,8 +104,8 @@ export default function MediaList() {
                   ? 'Открыть карту тренировки'
                   : 'Open activity map'
                 : language === LANGUAGES.russian
-                  ? 'Открыть фото тренировки'
-                  : 'Open activity photo'
+                  ? 'Открыть медиа тренировки'
+                  : 'Open activity media'
             }>
             <CustomImage
               style={{ width: mediaWidth, aspectRatio: ACTIVITY_MEDIA_ASPECT_RATIO }}
@@ -89,6 +119,11 @@ export default function MediaList() {
               placeholder={item?.blurhash}
             />
           </TouchableRipple>
+          {!isMap && isOwnActivity && item.id && selectedMediaId === item.id ? (
+            <View style={styles.deleteButton}>
+              <ActivityMediaDeleteBtn onDelete={() => void handleDeleteMedia(item.id!)} isDeleting={isDeletingMedia} />
+            </View>
+          ) : null}
           {isMap ? (
             <>
               {isMapPressed ? (
@@ -125,11 +160,15 @@ export default function MediaList() {
       activityOwnerId,
       isMapPressed,
       isOwnActivity,
+      handleDeleteMedia,
+      isDeletingMedia,
+      longPressGuard,
       language,
       locationName,
       media,
       mediaWidth,
       push,
+      selectedMediaId,
       weatherCode,
       weatherTemperature,
       weatherWindSpeed,
@@ -153,6 +192,12 @@ export default function MediaList() {
 }
 
 const styles = StyleSheet.create({
+  deleteButton: {
+    position: 'absolute',
+    right: 8,
+    top: 8,
+    zIndex: 4,
+  },
   mapActions: {
     alignItems: 'center',
     bottom: 8,

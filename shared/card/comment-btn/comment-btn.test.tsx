@@ -1,13 +1,14 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { act, screen, userEvent } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
+import { resetLoading } from '@R/slices/loading/loading';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityCardCommentBtn from './comment-btn';
 import { ActivityCardContext } from '../context';
 
-function renderCommentBtn(activityId = 'someActivityId', commentsLength = 6) {
+function renderCommentBtn(activityId = 'someActivityId', commentsLength = 6, allowActivityInteractions = true) {
   return renderWithProviders(
     <ActivityCardContext.Provider
       value={{
@@ -19,7 +20,7 @@ function renderCommentBtn(activityId = 'someActivityId', commentsLength = 6) {
           duration: 0,
           distance: 0,
           elevationGain: 0,
-          profile: MOCK_PROFILE,
+          profile: { ...MOCK_PROFILE, allowActivityInteractions },
           commentsLength,
         },
         isFullView: false,
@@ -32,6 +33,13 @@ function renderCommentBtn(activityId = 'someActivityId', commentsLength = 6) {
   );
 }
 
+async function setCurrentUser(userId: string) {
+  await act(async () => {
+    mockStore.dispatch(resetLoading());
+    mockStore.dispatch(setMockUserId(userId));
+  });
+}
+
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
@@ -39,6 +47,8 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Activity card comment btn', () => {
+  afterEach(async () => setCurrentUser(''));
+
   it('should correctly renders', async () => {
     await renderCommentBtn();
     expect(screen.getByTestId('activityCardCommentBtnIcon')).toBeOnTheScreen();
@@ -59,8 +69,10 @@ describe('Activity card comment btn', () => {
 
   it('clears the previous edit mode before opening another activity comments modal', async () => {
     const user = userEvent.setup();
-    mockStore.dispatch(setCommentToUpdate('Comment from another activity'));
-    mockStore.dispatch(setIdOfUpdatingComment('comment-id'));
+    await act(async () => {
+      mockStore.dispatch(setCommentToUpdate('Comment from another activity'));
+      mockStore.dispatch(setIdOfUpdatingComment('comment-id'));
+    });
 
     await renderCommentBtn('newActivityId', 0);
     await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
@@ -68,5 +80,18 @@ describe('Activity card comment btn', () => {
     expect(mockStore.getState().comment).toEqual(
       expect.objectContaining({ commentActivityId: 'newActivityId', commentToUpdate: '', idOfUpdatingComment: '' }),
     );
+  });
+
+  it('disables comments for an external viewer when the activity owner has opted out', async () => {
+    await setCurrentUser('viewer-id');
+    await renderCommentBtn('activity-with-comments-disabled', 3, false);
+
+    expect(screen.getByTestId('activity-card-comment-button').props.accessibilityState?.disabled).toBe(true);
+  });
+
+  it('keeps the activity owner able to open comments to manage their activity', async () => {
+    await setCurrentUser('activity-owner');
+    await renderCommentBtn('owned-activity', 3, false);
+    expect(screen.getByTestId('activity-card-comment-button').props.accessibilityState?.disabled).toBe(false);
   });
 });
