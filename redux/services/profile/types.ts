@@ -14,6 +14,11 @@ export interface ProfileSettings {
   birthday?: string;
   sport?: string;
   emailNotifications?: boolean;
+  profileSearchVisible?: boolean;
+  allowActivityInteractions?: boolean;
+  hideActivityStatistics?: boolean;
+  hideFollowingList?: boolean;
+  hideProfilePhotos?: boolean;
 }
 
 export type ProfileResponse = ProfileType;

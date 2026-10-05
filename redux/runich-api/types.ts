@@ -25,17 +25,21 @@ export interface ActivityMigrationJobResponse {
 type ActivityLocationResponse = ActivityLocation;
 
 export interface ActivityMediaItemResponse {
+  id?: string;
+  activityId?: string;
   url: string;
   thumbnail: string | null;
   blurhash?: string | null;
 }
 
 interface ActivityProfileResponse {
+  userId?: string;
   name?: string | null;
   surname?: string | null;
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
   emailNotifications?: boolean | null;
+  allowActivityInteractions?: boolean;
   user?: { email?: string | null } | null;
 }
 
@@ -220,6 +224,13 @@ export interface LikeResponse {
 
 export interface LikeListResponse extends Omit<LikeResponse, 'profile'> {
   profile: ProfileType;
+}
+
+export interface LikeListPageResponse {
+  likes: LikeListResponse[];
+  hasMore: boolean;
+  nextCursor: string | null;
+  currentUserLike: Pick<LikeListResponse, 'id' | 'authorId'> | null;
 }
 
 interface FriendProfileResponse {

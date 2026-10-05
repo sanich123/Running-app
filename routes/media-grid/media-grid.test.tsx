@@ -6,6 +6,7 @@ import { BASE_URL } from '@T/utils/handlers';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { MEDIA_GRID_COLUMNS } from './const';
 import MediaGrid from './media-grid';
 
 jest.mock('expo-router', () => ({ useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.userId }) }));
@@ -38,12 +39,9 @@ describe('MediaGrid', () => {
     expect(await screen.findByTestId('media-grid-image')).toBeOnTheScreen();
     const list = screen.getByTestId('media-grid-list');
     expect(list.props.style).toEqual(expect.arrayContaining([expect.objectContaining({ width: expect.any(Number) })]));
-    expect(list.props.contentContainerStyle).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ width: '100%' }),
-        expect.objectContaining({ alignItems: 'flex-start', justifyContent: 'flex-start' }),
-      ]),
-    );
+    expect(list.props.contentContainerStyle).toEqual(expect.objectContaining({ width: '100%' }));
+    const secondRow = list.props.getItemLayout([], MEDIA_GRID_COLUMNS);
+    expect(secondRow.offset).toBe(secondRow.length);
     await act(async () => list.props.onEndReached());
     await waitFor(() => expect(cursors).toEqual(['', 'next-cursor']));
   });

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet, Platform } from 'react-native';
+import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { STATUSES } from '@const/enums';
 import {
@@ -14,6 +15,8 @@ import {
 } from '@R/slices/location/location';
 import { clearTrackingRecovery, setTrackingRecoveryStatus } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import ActivitySettingsButton from '@Routes/activity/activity-settings/activity-settings-button';
+import CloseBtn from '@Routes/activity/close-btn/close-btn';
 import IconChooseSport from '@Routes/activity/icon-choose-sport/icon-choose-sport';
 import Map from '@Routes/activity/map/map';
 import Metrics from '@Routes/activity/metrics/metrics';
@@ -96,32 +99,40 @@ export default function Activity() {
   useActivityDurationTimer(!isRecoveringTracking);
 
   return (
-    <SafeAreaView style={[styles.layout, { backgroundColor: colors.surfaceVariant }]} edges={['bottom']}>
-      <View style={styles.map}>
-        <View
-          style={[styles.mapLayer, !isMapVisible && styles.hiddenMapLayer]}
-          pointerEvents={isMapVisible ? 'auto' : 'none'}>
-          <Map onLocationReadinessChange={setIsLocationReadyForRecording} />
+    <>
+      <Stack.Screen
+        options={{
+          headerLeft: () => <CloseBtn />,
+          headerRight: () => <ActivitySettingsButton />,
+        }}
+      />
+      <SafeAreaView style={[styles.layout, { backgroundColor: colors.surfaceVariant }]} edges={['bottom']}>
+        <View style={styles.map}>
+          <View
+            style={[styles.mapLayer, !isMapVisible && styles.hiddenMapLayer]}
+            pointerEvents={isMapVisible ? 'auto' : 'none'}>
+            <Map onLocationReadinessChange={setIsLocationReadyForRecording} />
+          </View>
+          {activityStatus !== STATUSES.initial && <Metrics />}
         </View>
-        {activityStatus !== STATUSES.initial && <Metrics />}
-      </View>
-      <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
-        <View style={styles.metrics}>
-          {activityStatus === STATUSES.initial && (
-            <IconChooseSport
-              disabled={!isLocationReadyForRecording || isLocationLoading || isTrackingActionInProgress}
+        <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
+          <View style={styles.metrics}>
+            {activityStatus === STATUSES.initial && (
+              <IconChooseSport
+                disabled={!isLocationReadyForRecording || isLocationLoading || isTrackingActionInProgress}
+              />
+            )}
+            {activityStatus === STATUSES.paused && <PauseBtn />}
+            <StartBtn
+              isReadyToRecordLocation={isLocationReadyForRecording}
+              isGettingLocation={isLocationLoading}
+              onTrackingActionInProgressChange={setIsTrackingActionInProgress}
             />
-          )}
-          {activityStatus === STATUSES.paused && <PauseBtn />}
-          <StartBtn
-            isReadyToRecordLocation={isLocationReadyForRecording}
-            isGettingLocation={isLocationLoading}
-            onTrackingActionInProgressChange={setIsTrackingActionInProgress}
-          />
-          {activityStatus !== STATUSES.initial && <ShowMapBtn />}
+            {activityStatus !== STATUSES.initial && <ShowMapBtn />}
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 }
 

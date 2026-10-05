@@ -1,4 +1,4 @@
-import { fireEvent, screen, userEvent, within } from '@testing-library/react-native';
+import { fireEvent, screen, userEvent } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
 import { clearSubscriptionSnapshot, setSubscriptionSnapshot } from '@R/slices/subscription/subscription';
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
@@ -126,17 +126,15 @@ describe('media list', () => {
     );
     await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg', media: [] });
 
-    const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
-    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
   it('shows map actions for users without an active subscription', async () => {
     await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg', media: [] });
 
-    const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
-    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
   it('only shows the upload action to the activity owner', async () => {
@@ -155,9 +153,8 @@ describe('media list', () => {
     mockStore.dispatch(setMockUserId('another-user'));
     await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg', media: [] });
 
-    const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.queryByTestId('activity-card-add-media-button')).not.toBeOnTheScreen();
-    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
+    expect(screen.queryByTestId('activity-card-add-media-button')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
   it('continues covering regular photos in the card preview', async () => {
@@ -173,5 +170,43 @@ describe('media list', () => {
     await renderMediaList({ mapPhotoUrl: undefined, media: [{ url: photoUrl, thumbnail: null }] });
     await user.press(screen.getByTestId(photoUrl));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/activity-id?indexOfPhoto=0`);
+  });
+
+  it('offers media deletion after a long press only to the activity owner', async () => {
+    const media = {
+      id: 'media-1',
+      activityId: 'activity-id',
+      url: 'https://images.example.test/activity.jpg',
+      thumbnail: null,
+    };
+    await renderMediaList({ mapPhotoUrl: undefined, media: [media] });
+
+    await fireEvent(screen.getByTestId(`activity-media-${media.id}`), 'longPress');
+
+    expect(screen.getByTestId('activity-media-delete-button')).toBeOnTheScreen();
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it('does not offer media deletion to users viewing another activity', async () => {
+    const media = {
+      id: 'media-2',
+      activityId: 'activity-id',
+      url: 'https://images.example.test/another-activity.jpg',
+      thumbnail: null,
+    };
+    mockStore.dispatch(setMockUserId('another-user'));
+    await renderMediaList({ mapPhotoUrl: undefined, media: [media] });
+
+    await fireEvent(screen.getByTestId(`activity-media-${media.id}`), 'longPress');
+
+    expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen();
+  });
+
+  it('does not offer media deletion for the activity map', async () => {
+    await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg', media: [] });
+
+    await fireEvent(screen.getByTestId('activity-map-media-item'), 'longPress');
+
+    expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen();
   });
 });

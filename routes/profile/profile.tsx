@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Modal, Platform, Pressable, ScrollView, useWindowDimensions, View, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { IconButton, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { IconButton, List, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
@@ -11,6 +12,7 @@ import AvatarShowable from '@S/avatar/showable/showable';
 import CustomImage from '@S/custom-image/custom-image';
 import ErrorComponent from '@S/error-component/error-component';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
+import { PROFILE_PRIVACY_SETTINGS } from './privacy-settings/const';
 import ProfileSkeleton from './profile-skeleton/profile-skeleton';
 import ProfileStatistics from './statistics/profile-statistics';
 import { USERS_VARIANT } from './users-counter/const';
@@ -19,10 +21,13 @@ import UsersCounter from './users-counter/users-counter';
 export default function ProfilePage() {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
+  const { push } = useRouter();
   const { id: whosProfileViewing } = useLocalSearchParams();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { language } = useAppSelector(({ settings }) => settings);
   const [isProfilePhotoVisible, setIsProfilePhotoVisible] = useState(false);
   const whosProfile = whosProfileViewing ? whosProfileViewing : userId;
+  const isOwnProfile = String(whosProfile) === userId;
 
   const {
     isLoading,
@@ -32,6 +37,7 @@ export default function ProfilePage() {
     error,
     refetch,
   } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
+  const areFollowListsHidden = !isOwnProfile && profile?.hideFollowingList === true;
   return (
     <>
       <ScrollView
@@ -46,9 +52,11 @@ export default function ProfilePage() {
           },
           isError && styles.isInCenter,
         ]}>
-        <View style={styles.mediaPhotosWrapper}>
-          <ProfileMediaPhotos userId={`${whosProfile}`} />
-        </View>
+        {(isOwnProfile || (isSuccess && profile?.hideProfilePhotos !== true)) && (
+          <View style={styles.mediaPhotosWrapper}>
+            <ProfileMediaPhotos userId={`${whosProfile}`} />
+          </View>
+        )}
         {isLoading ? (
           <ProfileSkeleton />
         ) : isSuccess ? (
@@ -82,11 +90,27 @@ export default function ProfilePage() {
               <Text variant="bodyMedium">{profile?.bio}</Text>
             </View>
             <View style={styles.followersBtnsWrapper}>
-              <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
-              <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
-              {whosProfile !== userId && <FollowUnfollowBtn friendId={`${whosProfile}`} />}
+              <UsersCounter variant={USERS_VARIANT.whoUserFollows} isHidden={areFollowListsHidden} />
+              <UsersCounter variant={USERS_VARIANT.whoFollowsUser} isHidden={areFollowListsHidden} />
+              {!isOwnProfile && <FollowUnfollowBtn friendId={`${whosProfile}`} />}
             </View>
-            <ProfileStatistics whosProfile={`${whosProfile}`} />
+            {isOwnProfile || profile?.hideActivityStatistics !== true ? (
+              <ProfileStatistics whosProfile={`${whosProfile}`} />
+            ) : null}
+            {isOwnProfile && userId ? (
+              <List.Item
+                testID="profile-privacy-settings-button"
+                title={PROFILE_PRIVACY_SETTINGS[language].openSettings}
+                description={PROFILE_PRIVACY_SETTINGS[language].openSettingsDescription}
+                left={(props) => <List.Icon {...props} icon="shield-lock-outline" />}
+                right={(props) => <List.Icon {...props} icon="chevron-right" />}
+                onPress={() => push(`/${ROUTES.profile}/${ROUTES.profilePrivacySettings}`)}
+                style={[
+                  styles.privacySettingsLink,
+                  { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+                ]}
+              />
+            ) : null}
           </>
         ) : isError ? (
           <ErrorComponent error={error} refetch={refetch} />
@@ -178,6 +202,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileName: { fontFamily: FONT_FAMILIES.extraBold },
+  privacySettingsLink: {
+    borderRadius: 8,
+    borderWidth: 1,
+    marginTop: 12,
+  },
   photoModal: {
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.88)',

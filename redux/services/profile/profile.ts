@@ -1,4 +1,5 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
+import { createSearchParams } from '@R/runich-api/create-search-params';
 import { runichApi } from '@R/runich-api/runich-api';
 import type { FilteredProfilesResponse, ProfileResponse, SendProfile } from './types';
 const { profile, user } = Routes;
@@ -32,7 +33,13 @@ export const profileApi = runichApi.injectEndpoints({
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       },
       query: ({ queryArg: search, pageParam }) =>
-        `/${profile}/filter?take=10&name=${encodeURIComponent(search)}&surname=${encodeURIComponent(search)}&email=${encodeURIComponent(search)}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
+        `/${profile}/filter${createSearchParams({
+          take: 10,
+          name: search,
+          surname: search,
+          email: search,
+          cursor: pageParam || undefined,
+        })}`,
       providesTags: [Tags.profile],
     }),
   }),

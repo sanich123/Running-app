@@ -3,7 +3,8 @@ import { BottomSheetFooter, BottomSheetModal, type BottomSheetFooterProps } from
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
+import { LANGUAGES } from '@const/enums';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CommentInput from '@S/comments/comment-input/comment-input';
@@ -11,11 +12,12 @@ import Comments from '@S/comments/comments/comments';
 import { backdrop } from '@U/backdrop';
 import type { CommentsListModalProps } from '../types';
 
-export default function CommentsListModal({ commentsModalRef }: CommentsListModalProps) {
+export default function CommentsListModal({ commentsModalRef, allowNewComments = true }: CommentsListModalProps) {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   const { activityOwnerProfile, commentToUpdate, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
+  const { language } = useAppSelector(({ settings }) => settings);
   const renderBackdrop = useCallback((props: any) => backdrop(props), []);
   const clearCommentEditing = useCallback(() => {
     dispatch(setCommentToUpdate(''));
@@ -37,17 +39,35 @@ export default function CommentsListModal({ commentsModalRef }: CommentsListModa
                 borderTopColor: colors.outlineVariant,
               },
             ]}>
-            <CommentInput
-              key={idOfUpdatingComment || 'new-comment'}
-              profile={activityOwnerProfile}
-              commentId={idOfUpdatingComment}
-              commentToUpdate={commentToUpdate}
-            />
+            {allowNewComments || idOfUpdatingComment ? (
+              <CommentInput
+                key={idOfUpdatingComment || 'new-comment'}
+                profile={activityOwnerProfile}
+                commentId={idOfUpdatingComment}
+                commentToUpdate={commentToUpdate}
+              />
+            ) : (
+              <Text variant="bodySmall" style={[styles.disabledNotice, { color: colors.onSurfaceVariant }]}>
+                {language === LANGUAGES.russian
+                  ? 'Владелец активности отключил лайки и новые комментарии.'
+                  : 'The activity owner has disabled likes and new comments.'}
+              </Text>
+            )}
           </View>
         </KeyboardStickyView>
       </BottomSheetFooter>
     ),
-    [activityOwnerProfile, bottomInset, colors.outlineVariant, colors.surface, commentToUpdate, idOfUpdatingComment],
+    [
+      activityOwnerProfile,
+      allowNewComments,
+      bottomInset,
+      colors.onSurfaceVariant,
+      colors.outlineVariant,
+      colors.surface,
+      commentToUpdate,
+      idOfUpdatingComment,
+      language,
+    ],
   );
 
   return (
@@ -84,5 +104,10 @@ const styles = StyleSheet.create({
   },
   stickyComposer: {
     width: '100%',
+  },
+  disabledNotice: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    textAlign: 'center',
   },
 });

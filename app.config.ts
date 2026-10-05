@@ -154,7 +154,7 @@ export default {
               '-dontwarn com.google.mlkit.vision.common.**',
             ].join('\n'),
           },
-          ios: { ccacheEnabled: true, usePrecompiledModules: false },
+          ios: { ccacheEnabled: true },
         },
       ],
       [

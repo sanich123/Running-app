@@ -144,11 +144,11 @@ describe('Activity card', () => {
 
     await renderCard({ userId: 'premium-card-owner', mapPhotoUrl: 'https://cdn.example.test/premium-map.jpg' });
 
-    const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
-    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
+    const mapContainer = within(screen.getByTestId('activity-map-media-container'));
+    expect(mapContainer.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(mapContainer.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
 
-    await user.press(mapImage.getByTestId('activity-card-route-replay-button'));
+    await user.press(mapContainer.getByTestId('activity-card-route-replay-button'));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.map}/${MOCK_ACTIVITY.id}?replay=1&userId=premium-card-owner`);
   });
 
@@ -156,9 +156,9 @@ describe('Activity card', () => {
     mockStore.dispatch(setMockUserId('premium-card-owner'));
     await renderCard({ userId: 'premium-card-owner', mapPhotoUrl: 'https://cdn.example.test/no-premium-map.jpg' });
 
-    const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
-    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
+    const mapContainer = within(screen.getByTestId('activity-map-media-container'));
+    expect(mapContainer.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(mapContainer.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
   it('shows map actions for an expired subscription snapshot', async () => {
@@ -177,9 +177,9 @@ describe('Activity card', () => {
     );
     await renderCard({ userId: 'premium-card-owner', mapPhotoUrl: 'https://cdn.example.test/expired-map.jpg' });
 
-    const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
-    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
+    const mapContainer = within(screen.getByTestId('activity-map-media-container'));
+    expect(mapContainer.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(mapContainer.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
   it('routes to the activity map when its map preview is pressed', async () => {

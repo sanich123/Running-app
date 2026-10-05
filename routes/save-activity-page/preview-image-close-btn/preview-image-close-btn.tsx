@@ -1,35 +1,60 @@
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
+import { useDeleteActivityMediaMutation } from '@R/services/activity/activity';
 import { removePhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { errorToast } from '@S/error-toast/error-toast';
 import { deleteUploadedMedia } from '@U/file-sending';
 import type { PreviewImagesProps } from '../preview-images/types';
+import type { ActivityPhoto } from '@R/slices/activity/types';
+
+type PreviewImageCloseBtnProps = PreviewImagesProps &
+  (
+    | { media: ActivityPhoto; image?: never; thumbnail?: never }
+    | { media?: never; image: string; thumbnail?: string | null }
+  );
 
 export default function PreviewImageCloseBtn({
   setImages,
   images,
   isDisabled,
+  media,
   image,
   thumbnail,
   compact = false,
-}: PreviewImagesProps & { image: string; thumbnail?: string | null }) {
+  activityId,
+  isPersistedActivityMedia = false,
+}: PreviewImageCloseBtnProps) {
+  const mediaItem = media ?? { url: image, thumbnail: thumbnail ?? null };
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteActivityMedia] = useDeleteActivityMediaMutation();
   const shouldBeDisabled = isDisabled || isSavingDisabled || isDeleting;
 
   async function deleteImage() {
     setIsDeleting(true);
     try {
-      const isDeleted = await deleteUploadedMedia(
-        [image, thumbnail].filter((photo): photo is string => Boolean(photo)),
-      );
-      if (isDeleted) {
-        setImages(images.filter(({ url }) => url !== image));
-        dispatch(removePhotoUrl(image));
+      const isPersistedMedia = isPersistedActivityMedia || Boolean(mediaItem.id);
+      if (isPersistedMedia) {
+        if (!activityId || !mediaItem.id) {
+          errorToast('Не удалось определить фото или видео активности');
+          return;
+        }
+        await deleteActivityMedia({ activityId, mediaId: mediaItem.id }).unwrap();
+      } else {
+        const isDeleted = await deleteUploadedMedia(
+          [mediaItem.url, mediaItem.thumbnail].filter((photo): photo is string => Boolean(photo)),
+        );
+        if (!isDeleted) return;
       }
+
+      setImages(images.filter(({ url }) => url !== mediaItem.url));
+      dispatch(removePhotoUrl(mediaItem.url));
+    } catch (error) {
+      errorToast('', error);
     } finally {
       setIsDeleting(false);
     }
@@ -44,7 +69,9 @@ export default function PreviewImageCloseBtn({
       mode="contained"
       style={[styles.closeBtn, { borderColor: colors.surface }, compact && styles.compactCloseBtn]}
       onPress={() => void deleteImage()}
-      disabled={shouldBeDisabled}
+      disabled={
+        shouldBeDisabled || ((isPersistedActivityMedia || Boolean(mediaItem.id)) && (!activityId || !mediaItem.id))
+      }
       testID="deleteIcon"
     />
   );

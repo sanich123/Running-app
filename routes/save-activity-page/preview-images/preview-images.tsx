@@ -2,6 +2,7 @@ import { FlatList, View, StyleSheet } from 'react-native';
 import PreviewImage from '@Routes/save-activity-page/preview-image/preview-image';
 import PreviewImageCloseBtn from '../preview-image-close-btn/preview-image-close-btn';
 import type { PreviewImagesProps } from './types';
+import type { ActivityPhoto } from '@R/slices/activity/types';
 
 export default function PreviewImages({
   setImages,
@@ -9,17 +10,26 @@ export default function PreviewImages({
   isDisabled,
   compact = false,
   horizontal = false,
+  activityId,
+  isPersistedActivityMedia = false,
 }: PreviewImagesProps) {
-  const renderPreview = ({ url, thumbnail }: { url: string; thumbnail: string | null }, index: number) => (
-    <View style={[styles.imageContainer, { zIndex: images.length - index }]} key={`${url}/${index}`}>
-      <PreviewImage image={thumbnail || url} mediaUrl={url} isDisabled={isDisabled} index={index} compact={compact} />
+  const renderPreview = (media: ActivityPhoto, index: number) => (
+    <View style={[styles.imageContainer, { zIndex: images.length - index }]} key={`${media.url}/${index}`}>
+      <PreviewImage
+        image={media.thumbnail || media.url}
+        mediaUrl={media.url}
+        isDisabled={isDisabled}
+        index={index}
+        compact={compact}
+      />
       <PreviewImageCloseBtn
         setImages={setImages}
         images={images}
-        image={url}
-        thumbnail={thumbnail}
+        media={media}
         isDisabled={isDisabled}
         compact={compact}
+        activityId={activityId}
+        isPersistedActivityMedia={isPersistedActivityMedia}
       />
     </View>
   );

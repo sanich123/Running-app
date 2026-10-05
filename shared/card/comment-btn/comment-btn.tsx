@@ -18,9 +18,10 @@ import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function CommentBtn() {
   const { activity } = useActivityCard();
-  const { id: activityId, commentsLength, profile, mapPhotoUrl } = activity;
+  const { id: activityId, userId: activityOwnerId, commentsLength, profile, mapPhotoUrl } = activity;
   const dispatch = useAppDispatch();
-  const { dark, colors } = useTheme();
+  const { colors } = useTheme();
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { isLoading } = useAppSelector(({ loading }) => loading);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(false);
@@ -31,6 +32,7 @@ export default function CommentBtn() {
   } = useGetCommentsLengthByActivityIdQuery(`${activityId}`, { skip: !isNeedToGetUpdatedComments });
   const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : commentsCount;
   const commentsModalRef = useRef<BottomSheetModal>(null);
+  const isInteractionDisabled = profile?.allowActivityInteractions === false && activityOwnerId !== userId;
 
   useEffect(() => {
     if (activityIdWhichCommentsToUpdate === activityId) {
@@ -40,10 +42,10 @@ export default function CommentBtn() {
 
   return (
     <TouchableRipple
+      testID="activity-card-comment-button"
       style={styles.container}
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
-      disabled={isLoading || isErrorLoadingComments || isLoadingComments}
+      disabled={isLoading || isErrorLoadingComments || isLoadingComments || isInteractionDisabled}
       onPress={() => {
         dispatch(setCommentToUpdate(''));
         dispatch(setIdOfUpdatingComment(''));
@@ -62,9 +64,13 @@ export default function CommentBtn() {
           icon={COMMENT_BTN_ICON}
           iconColor={colors.primary}
           size={25}
-          disabled={isLoading || isErrorLoadingComments || isLoadingComments}
+          disabled={isLoading || isErrorLoadingComments || isLoadingComments || isInteractionDisabled}
         />
-        <CommentsListModal commentsModalRef={commentsModalRef} commentsLength={commentsLength} />
+        <CommentsListModal
+          commentsModalRef={commentsModalRef}
+          commentsLength={commentsLength}
+          allowNewComments={!isInteractionDisabled}
+        />
       </>
     </TouchableRipple>
   );

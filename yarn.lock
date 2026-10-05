@@ -11785,9 +11785,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gifted-charts@npm:^1.4.80":
-  version: 1.4.80
-  resolution: "react-native-gifted-charts@npm:1.4.80"
+"react-native-gifted-charts@npm:^1.4.81":
+  version: 1.4.81
+  resolution: "react-native-gifted-charts@npm:1.4.81"
   dependencies:
     gifted-charts-core: "npm:0.1.83"
   peerDependencies:
@@ -11801,7 +11801,7 @@ __metadata:
       optional: true
     react-native-linear-gradient:
       optional: true
-  checksum: 10c0/2c2aaf50f7fdff09ec782eba57357faa31935e90061c93b3fcbe0d1d9ad2581323a7cf9345957310bc3d70816f2b91a89031d4f732ac4ae35f780a871baf4e36
+  checksum: 10c0/db10e71bb77ed8da59410b9a3139f97fdbaf8fa394202ae6c0f61aaebe89d9d73b3a3e807510675be5fd428e344af985a42f2af2e4f3404e5549a98683e0dfa1
   languageName: node
   linkType: hard
 
@@ -12004,7 +12004,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-view-recorder@patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch":
+"react-native-view-recorder@patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch::version=0.4.1&hash=f50f98":
   version: 0.4.1
   resolution: "react-native-view-recorder@patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch::version=0.4.1&hash=f50f98"
   peerDependencies:
@@ -12015,6 +12015,20 @@ __metadata:
     expo:
       optional: true
   checksum: 10c0/7c24d55deaec07eed775990b32b08fcacaaa71bb935e85088ea99fb8e3041c95468faac74e6ae749ec5cd56b44db0d7879a0d26e73f6af7b2dd3ee6559c87ffc
+  languageName: node
+  linkType: hard
+
+"react-native-view-recorder@patch:react-native-view-recorder@patch%3Areact-native-view-recorder@npm%253A0.4.1%23~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch%3A%3Aversion=0.4.1&hash=f50f98#~/.yarn/patches/react-native-view-recorder-patch-2d465af017.patch":
+  version: 0.4.1
+  resolution: "react-native-view-recorder@patch:react-native-view-recorder@patch%3Areact-native-view-recorder@npm%253A0.4.1%23~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch%3A%3Aversion=0.4.1&hash=f50f98#~/.yarn/patches/react-native-view-recorder-patch-2d465af017.patch::version=0.4.1&hash=a737d3"
+  peerDependencies:
+    expo: ">=54.0.0"
+    react: ">=18"
+    react-native: ">=0.73"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: 10c0/72c8427424b8ef812910c9d88666801c9d75d618138fe57836b2b9cffacd0d7fc693125347b367626b800af1ace1bbf7ff028fe242f3d68005a798617bc94ab6
   languageName: node
   linkType: hard
 
@@ -12628,7 +12642,7 @@ __metadata:
     react-native-compressor: "npm:^2.0.3"
     react-native-edge-to-edge: "npm:1.8.1"
     react-native-gesture-handler: "npm:~3.2.1"
-    react-native-gifted-charts: "npm:^1.4.80"
+    react-native-gifted-charts: "npm:^1.4.81"
     react-native-keyboard-controller: "npm:1.22.4"
     react-native-mmkv: "npm:4.3.2"
     react-native-nitro-modules: "npm:0.37.1"
@@ -12643,7 +12657,7 @@ __metadata:
     react-native-toast-message: "npm:2.5.2"
     react-native-url-polyfill: "npm:^4.0.0"
     react-native-uuid: "npm:^2.0.4"
-    react-native-view-recorder: "patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch"
+    react-native-view-recorder: "patch:react-native-view-recorder@patch%3Areact-native-view-recorder@npm%253A0.4.1%23~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch%3A%3Aversion=0.4.1&hash=f50f98#~/.yarn/patches/react-native-view-recorder-patch-2d465af017.patch"
     react-native-view-shot: "npm:5.1.1"
     react-native-web: "npm:^0.21.0"
     react-native-worklets: "npm:0.13.0"

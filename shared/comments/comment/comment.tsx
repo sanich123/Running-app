@@ -21,9 +21,11 @@ export default function Comment({
   commentLike,
   commentsModalRef,
 }: CommentResponse & { commentsModalRef: RefObject<BottomSheetModal | null> }) {
-  const { idOfUpdatingComment, commentActivityId } = useAppSelector(({ comment }) => comment);
+  const { idOfUpdatingComment, commentActivityId, activityOwnerProfile } = useAppSelector(({ comment }) => comment);
   const { userId } = useAppSelector(({ auth }) => auth);
   const isYouAuthor = userId === authorId;
+  const isActivityOwner = activityOwnerProfile.userId === userId;
+  const canInteract = activityOwnerProfile.allowActivityInteractions !== false || isActivityOwner;
   const [commentAnimation] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
@@ -58,18 +60,20 @@ export default function Comment({
       </View>
       <View style={styles.likesWrapper}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <CommentLikeBtn
-            activityId={activityId}
-            commentId={id}
-            commentLikesFromComment={commentLike}
-            profile={profile}
-            comment={comment}
-          />
+          {(canInteract || commentLike.some(({ authorId: likerId }) => likerId === userId)) && (
+            <CommentLikeBtn
+              activityId={activityId}
+              commentId={id}
+              commentLikesFromComment={commentLike}
+              profile={profile}
+              comment={comment}
+            />
+          )}
           <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
         </View>
         <View style={styles.actions}>
           {isYouAuthor && <CommentEditBtn commentId={id} comment={comment} idOfUpdatingComment={idOfUpdatingComment} />}
-          {isYouAuthor && <CommentDeleteBtn commentId={id} activityId={commentActivityId} />}
+          {(isYouAuthor || isActivityOwner) && <CommentDeleteBtn commentId={id} activityId={commentActivityId} />}
         </View>
       </View>
       <Divider />

@@ -1,6 +1,7 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
+import { runichApi } from '@R/runich-api/runich-api';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
@@ -11,10 +12,11 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import ProfilePage from './profile';
 
 const mockPathname = `/${ROUTES.profile}`;
+const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.userId }),
   usePathname: () => mockPathname,
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: mockPush }),
 }));
 jest.mock('@S/avatar/showable/showable', () => {
   const { View } = jest.requireActual('react-native');
@@ -30,11 +32,16 @@ jest.mock('./statistics/profile-statistics', () => {
 });
 jest.mock('./users-counter/users-counter', () => {
   const { View } = jest.requireActual('react-native');
-  return () => <View testID="profile-users-counter" />;
+  return ({ variant, isHidden }: { variant: string; isHidden?: boolean }) => (
+    <View testID={`profile-users-counter-${variant}`} accessibilityLabel={isHidden ? 'hidden' : 'visible'} />
+  );
 });
 
 describe('ProfilePage', () => {
-  beforeEach(() => mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId)));
+  beforeEach(() => {
+    mockPush.mockReset();
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
+  });
 
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, loadingResponse));
@@ -50,6 +57,32 @@ describe('ProfilePage', () => {
     await renderWithProviders(<ProfilePage />);
     expect(await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`)).toBeOnTheScreen();
     expect(screen.getByTestId('profile-statistics')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-users-counter-whoUserFollows')).toBeOnTheScreen();
+  });
+
+  it('hides following and followers lists from other users when enabled', async () => {
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setMockUserId('another-user-id'));
+    server.use(
+      http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, () =>
+        HttpResponse.json({ ...MOCK_SERVER_PROFILE, hideFollowingList: true }),
+      ),
+    );
+
+    await renderWithProviders(<ProfilePage />);
+    await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
+
+    expect(screen.getByTestId('profile-users-counter-whoUserFollows')).toHaveProp('accessibilityLabel', 'hidden');
+    expect(screen.getByTestId('profile-users-counter-whoFollowsUser')).toHaveProp('accessibilityLabel', 'hidden');
+  });
+
+  it('opens privacy settings from the profile page', async () => {
+    const user = userEvent.setup();
+    await renderWithProviders(<ProfilePage />);
+
+    await user.press(await screen.findByTestId('profile-privacy-settings-button'));
+
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.profile}/${ROUTES.profilePrivacySettings}`);
   });
 
   it('opens the profile photo in a modal', async () => {
@@ -83,6 +116,45 @@ describe('ProfilePage', () => {
     await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
 
     expect(requestedUrl).toContain(`/activity/${viewedUserId}/media?take=4`);
+  });
+
+  it('hides the media preview from other users when profile photos are private', async () => {
+    const viewedUserId = MOCK_SERVER_IDS.userId;
+    let mediaRequests = 0;
+    mockStore.dispatch(setMockUserId('another-user-id'));
+    server.use(
+      http.get(`${BASE_URL}/user/${viewedUserId}/profile`, () =>
+        HttpResponse.json({ ...MOCK_SERVER_PROFILE, hideProfilePhotos: true }),
+      ),
+      http.get(`${BASE_URL}/activity/${viewedUserId}/media`, () => {
+        mediaRequests += 1;
+        return HttpResponse.json({ media: [], hasMore: false, nextCursor: null });
+      }),
+    );
+
+    await renderWithProviders(<ProfilePage />);
+    await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
+
+    expect(mediaRequests).toBe(0);
+    expect(screen.queryByTestId('profile-privacy-settings-button')).not.toBeOnTheScreen();
+  });
+
+  it('shows the privacy settings link to the profile owner', async () => {
+    let mediaRequests = 0;
+    server.use(
+      http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, () =>
+        HttpResponse.json({ ...MOCK_SERVER_PROFILE, hideProfilePhotos: true }),
+      ),
+      http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/media`, () => {
+        mediaRequests += 1;
+        return HttpResponse.json({ media: [], hasMore: false, nextCursor: null });
+      }),
+    );
+
+    await renderWithProviders(<ProfilePage />);
+
+    expect(await screen.findByTestId('profile-privacy-settings-button')).toBeOnTheScreen();
+    expect(mediaRequests).toBe(1);
   });
 
   it('renders error state', async () => {
