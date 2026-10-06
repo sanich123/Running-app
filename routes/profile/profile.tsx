@@ -12,6 +12,7 @@ import AvatarShowable from '@S/avatar/showable/showable';
 import CustomImage from '@S/custom-image/custom-image';
 import ErrorComponent from '@S/error-component/error-component';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
+import { PROFILE_SECTIONS } from './const';
 import { PROFILE_PRIVACY_SETTINGS } from './privacy-settings/const';
 import ProfileSkeleton from './profile-skeleton/profile-skeleton';
 import ProfileStatistics from './statistics/profile-statistics';
@@ -84,18 +85,33 @@ export default function ProfilePage() {
               </View>
             </View>
             <View style={[styles.bio, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
-              <Text variant="labelMedium" style={{ color: colors.primary, fontFamily: FONT_FAMILIES.semiBold }}>
-                ABOUT
+              <Text variant="titleMedium" style={{ color: colors.primary, fontFamily: FONT_FAMILIES.semiBold }}>
+                {PROFILE_SECTIONS[language].about}
               </Text>
-              <Text variant="bodyMedium">{profile?.bio}</Text>
+              <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                {profile?.bio || '—'}
+              </Text>
             </View>
-            <View style={styles.followersBtnsWrapper}>
-              <UsersCounter variant={USERS_VARIANT.whoUserFollows} isHidden={areFollowListsHidden} />
-              <UsersCounter variant={USERS_VARIANT.whoFollowsUser} isHidden={areFollowListsHidden} />
-              {!isOwnProfile && profile?.allowNewFollowers !== false && (
-                <FollowUnfollowBtn friendId={`${whosProfile}`} />
-              )}
-            </View>
+            {(isOwnProfile || !areFollowListsHidden || profile?.allowNewFollowers !== false) && (
+              <View
+                style={[styles.community, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}
+                testID="profile-community-section">
+                <Text variant="titleMedium" style={{ color: colors.primary, fontFamily: FONT_FAMILIES.semiBold }}>
+                  {PROFILE_SECTIONS[language].community}
+                </Text>
+                <View style={styles.communityContent}>
+                  <View style={styles.followersBtnsWrapper}>
+                    <UsersCounter variant={USERS_VARIANT.whoUserFollows} isHidden={areFollowListsHidden} />
+                    <UsersCounter variant={USERS_VARIANT.whoFollowsUser} isHidden={areFollowListsHidden} />
+                  </View>
+                  {!isOwnProfile && profile?.allowNewFollowers !== false && (
+                    <View style={styles.followAction}>
+                      <FollowUnfollowBtn friendId={`${whosProfile}`} />
+                    </View>
+                  )}
+                </View>
+              </View>
+            )}
             {isOwnProfile || profile?.hideActivityStatistics !== true ? (
               <ProfileStatistics whosProfile={`${whosProfile}`} />
             ) : null}
@@ -103,7 +119,7 @@ export default function ProfilePage() {
               <List.Item
                 testID="profile-privacy-settings-button"
                 title={PROFILE_PRIVACY_SETTINGS[language].openSettings}
-                description={PROFILE_PRIVACY_SETTINGS[language].openSettingsDescription}
+                titleNumberOfLines={1}
                 left={(props) => <List.Icon {...props} icon="shield-lock-outline" />}
                 right={(props) => <List.Icon {...props} icon="chevron-right" />}
                 onPress={() => push(`/${ROUTES.profile}/${ROUTES.profilePrivacySettings}`)}
@@ -172,15 +188,16 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 20,
     borderWidth: 1,
     display: 'flex',
     flexDirection: 'row',
     columnGap: 16,
-    padding: 16,
+    marginBottom: 12,
+    padding: 20,
   },
   avatarRing: {
-    borderRadius: 52,
+    borderRadius: 56,
     borderWidth: 2,
     padding: 3,
   },
@@ -190,18 +207,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bio: {
-    borderRadius: 8,
+    borderRadius: 16,
     borderWidth: 1,
     display: 'flex',
     gap: 8,
-    marginVertical: 12,
+    marginBottom: 12,
     padding: 16,
   },
+  community: {
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 12,
+    marginBottom: 12,
+    padding: 12,
+  },
+  communityContent: {
+    gap: 8,
+  },
   followersBtnsWrapper: {
-    display: 'flex',
     flexDirection: 'row',
     gap: 8,
-    alignItems: 'center',
+  },
+  followAction: {
+    alignSelf: 'flex-start',
   },
   profileName: { fontFamily: FONT_FAMILIES.extraBold },
   privacySettingsLink: {

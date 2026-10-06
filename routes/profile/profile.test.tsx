@@ -97,8 +97,10 @@ describe('ProfilePage', () => {
   it('opens privacy settings from the profile page', async () => {
     const user = userEvent.setup();
     await renderWithProviders(<ProfilePage />);
+    expect(await screen.findByText('Конфиденциальность')).toBeOnTheScreen();
+    expect(screen.queryByText(/Видимость профиля, подписки/)).not.toBeOnTheScreen();
 
-    await user.press(await screen.findByTestId('profile-privacy-settings-button'));
+    await user.press(screen.getByTestId('profile-privacy-settings-button'));
 
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.profile}/${ROUTES.profilePrivacySettings}`);
   });

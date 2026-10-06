@@ -87,8 +87,8 @@ export default function ProfilePrivacySettings({
       {PROFILE_PRIVACY_SETTING_FIELDS.map(({ key, label, description }) => (
         <View key={key} style={styles.setting}>
           <View style={styles.copy}>
-            <Text variant="bodyLarge">{text[label]}</Text>
-            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+            <Text variant="bodyMedium">{text[label]}</Text>
+            <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
               {text[description]}
             </Text>
           </View>
@@ -120,6 +120,6 @@ const styles = StyleSheet.create({
   },
   copy: {
     flex: 1,
-    gap: 4,
+    gap: 2,
   },
 });

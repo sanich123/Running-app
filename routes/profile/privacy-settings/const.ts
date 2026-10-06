@@ -3,9 +3,7 @@ import { LANGUAGES } from '@const/enums';
 export const PROFILE_PRIVACY_SETTINGS = {
   [LANGUAGES.english]: {
     title: 'Privacy',
-    openSettings: 'Privacy settings',
-    openSettingsDescription:
-      'Profile visibility, followers, activity interactions, likes, sharing, email notifications, statistics and photos.',
+    openSettings: 'Privacy',
     profileSearch: 'Show profile in search',
     profileSearchDescription: 'When disabled, other users cannot find your profile through search.',
     allowNewFollowers: 'Allow new followers',
@@ -29,21 +27,19 @@ export const PROFILE_PRIVACY_SETTINGS = {
   },
   [LANGUAGES.russian]: {
     title: 'Конфиденциальность',
-    openSettings: 'Настройки конфиденциальности',
-    openSettingsDescription:
-      'Видимость профиля, подписки, взаимодействия, лайки, распространение активностей, уведомления по электронной почте, статистика и фотографии.',
+    openSettings: 'Конфиденциальность',
     profileSearch: 'Показывать профиль в поиске',
     profileSearchDescription: 'Если выключить, другие пользователи не смогут найти вас через поиск.',
     allowNewFollowers: 'Разрешить подписываться на меня',
     allowNewFollowersDescription: 'Если выключить, другие пользователи не смогут подписаться на ваш профиль.',
     activityInteractions: 'Разрешить лайки и комментарии',
-    activityInteractionsDescription: 'Другие пользователи смогут лайкать и комментировать ваши активности.',
+    activityInteractionsDescription: 'Другие пользователи могут лайкать и комментировать ваши активности.',
     allowLikesListViewing: 'Разрешить просмотр списка лайков',
-    allowLikesListViewingDescription: 'Другие пользователи смогут открывать список тех, кто оценил ваши активности.',
+    allowLikesListViewingDescription: 'Другие пользователи могут открывать список тех, кто оценил ваши активности.',
     allowActivitySharing: 'Разрешить делиться активностями',
-    allowActivitySharingDescription: 'Другие пользователи смогут делиться вашими активностями.',
+    allowActivitySharingDescription: 'Другие пользователи могут делиться вашими активностями.',
     emailNotifications: 'Уведомления по электронной почте',
-    emailNotificationsDescription: 'Получать по электронной почте уведомления об активностях и событиях.',
+    emailNotificationsDescription: 'Получать по электронной почте уведомления об лайках и комментариях к тренировке.',
     hideActivityStatistics: 'Скрывать общую статистику тренировок',
     hideActivityStatisticsDescription: 'Скрывает суммарное число тренировок, дистанцию и время в профиле.',
     hideFollowingList: 'Скрывать списки подписок и подписчиков',

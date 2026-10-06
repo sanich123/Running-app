@@ -37,6 +37,7 @@ describe('ProfilePrivacySettings', () => {
     expect(screen.getByTestId('privacy-setting-hideActivityStatistics').props.value).toBe(false);
     expect(screen.getByTestId('privacy-setting-hideFollowingList').props.value).toBe(false);
     expect(screen.getByTestId('privacy-setting-hideProfilePhotos').props.value).toBe(false);
+    expect(screen.getByText('When disabled, other users cannot find your profile through search.')).toBeOnTheScreen();
   });
 
   it('saves the profile photo setting through the profile update mutation', async () => {
