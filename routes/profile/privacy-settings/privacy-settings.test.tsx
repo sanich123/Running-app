@@ -14,6 +14,7 @@ jest.mock('@R/services/profile/profile', () => ({
 const defaultSettings = {
   userId: 'owner-id',
   profileSearchVisible: true,
+  allowNewFollowers: true,
   allowActivityInteractions: true,
   hideActivityStatistics: false,
   hideFollowingList: false,
@@ -44,5 +45,14 @@ describe('ProfilePrivacySettings', () => {
     await fireEvent(screen.getByTestId('privacy-setting-hideProfilePhotos'), 'valueChange', true);
 
     expect(mockUpdateProfile).toHaveBeenCalledWith({ id: 'owner-id', body: { hideProfilePhotos: true } });
+  });
+
+  it('saves whether other users can follow the profile', async () => {
+    await renderWithProviders(<ProfilePrivacySettings {...defaultSettings} />);
+
+    expect(screen.getByTestId('privacy-setting-allowNewFollowers')).toHaveProp('value', true);
+    await fireEvent(screen.getByTestId('privacy-setting-allowNewFollowers'), 'valueChange', false);
+
+    expect(mockUpdateProfile).toHaveBeenCalledWith({ id: 'owner-id', body: { allowNewFollowers: false } });
   });
 });

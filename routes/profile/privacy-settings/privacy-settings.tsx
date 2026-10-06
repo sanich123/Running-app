@@ -10,6 +10,7 @@ import type { ProfileSettings } from '@R/services/profile/types';
 interface ProfilePrivacySettingsProps {
   userId: string;
   profileSearchVisible: boolean;
+  allowNewFollowers?: boolean;
   allowActivityInteractions: boolean;
   allowLikesListViewing?: boolean;
   allowActivitySharing?: boolean;
@@ -24,6 +25,7 @@ type ProfilePrivacyValues = Record<ProfilePrivacySettingKey, boolean>;
 function getPrivacyValues(props: ProfilePrivacySettingsProps): ProfilePrivacyValues {
   return {
     profileSearchVisible: props.profileSearchVisible,
+    allowNewFollowers: props.allowNewFollowers !== false,
     allowActivityInteractions: props.allowActivityInteractions,
     allowLikesListViewing: props.allowLikesListViewing !== false,
     allowActivitySharing: props.allowActivitySharing !== false,
@@ -37,6 +39,7 @@ function getPrivacyValues(props: ProfilePrivacySettingsProps): ProfilePrivacyVal
 export default function ProfilePrivacySettings({
   userId,
   profileSearchVisible,
+  allowNewFollowers,
   allowActivityInteractions,
   allowLikesListViewing,
   allowActivitySharing,
@@ -52,6 +55,7 @@ export default function ProfilePrivacySettings({
     getPrivacyValues({
       userId,
       profileSearchVisible,
+      allowNewFollowers,
       allowActivityInteractions,
       allowLikesListViewing,
       allowActivitySharing,

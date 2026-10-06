@@ -40,6 +40,7 @@ export default function ProfilePrivacySettingsPage() {
         <ProfilePrivacySettings
           key={[
             profile.profileSearchVisible !== false,
+            profile.allowNewFollowers !== false,
             profile.allowActivityInteractions !== false,
             profile.allowLikesListViewing !== false,
             profile.allowActivitySharing !== false,
@@ -50,6 +51,7 @@ export default function ProfilePrivacySettingsPage() {
           ].join(':')}
           userId={userId}
           profileSearchVisible={profile.profileSearchVisible !== false}
+          allowNewFollowers={profile.allowNewFollowers !== false}
           allowActivityInteractions={profile.allowActivityInteractions !== false}
           allowLikesListViewing={profile.allowLikesListViewing !== false}
           allowActivitySharing={profile.allowActivitySharing !== false}

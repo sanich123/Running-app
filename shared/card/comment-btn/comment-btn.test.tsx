@@ -1,5 +1,6 @@
 import { act, screen, userEvent } from '@testing-library/react-native';
 import { Platform } from 'react-native';
+import { MD3LightTheme } from 'react-native-paper';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { resetLoading } from '@R/slices/loading/loading';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
@@ -7,6 +8,17 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityCardCommentBtn from './comment-btn';
 import { ActivityCardContext } from '../context';
+
+jest.mock('react-native-paper', () => {
+  const actual = jest.requireActual('react-native-paper');
+  const { View } = jest.requireActual('react-native');
+  return {
+    ...actual,
+    IconButton: ({ testID, iconColor, disabled }: { testID?: string; iconColor?: string; disabled?: boolean }) => (
+      <View testID={testID} accessibilityLabel={iconColor} accessibilityState={{ disabled: Boolean(disabled) }} />
+    ),
+  };
+});
 
 function renderCommentBtn(activityId = 'someActivityId', commentsLength = 6, allowActivityInteractions = true) {
   return renderWithProviders(
@@ -51,7 +63,9 @@ describe('Activity card comment btn', () => {
 
   it('should correctly renders', async () => {
     await renderCommentBtn();
-    expect(screen.getByTestId('activityCardCommentBtnIcon')).toBeOnTheScreen();
+    const commentIcon = screen.getByTestId('activityCardCommentBtnIcon');
+    expect(commentIcon).toBeOnTheScreen();
+    expect(commentIcon).toHaveProp('accessibilityLabel', MD3LightTheme.colors.primary);
   });
 
   it('opens the activity comments modal and stores their context on web', async () => {
@@ -87,6 +101,10 @@ describe('Activity card comment btn', () => {
     await renderCommentBtn('activity-with-comments-disabled', 3, false);
 
     expect(screen.getByTestId('activity-card-comment-button').props.accessibilityState?.disabled).toBe(true);
+    expect(screen.getByTestId('activityCardCommentBtnIcon')).toHaveProp(
+      'accessibilityLabel',
+      MD3LightTheme.colors.onSurfaceDisabled,
+    );
   });
 
   it('keeps the activity owner able to open comments to manage their activity', async () => {

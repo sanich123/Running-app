@@ -25,6 +25,7 @@ export default function CommentBtn() {
   const { isLoading } = useAppSelector(({ loading }) => loading);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(false);
+
   const {
     data: commentsCount,
     isError: isErrorLoadingComments,
@@ -34,13 +35,11 @@ export default function CommentBtn() {
   const commentsModalRef = useRef<BottomSheetModal>(null);
   const isInteractionDisabled = profile?.allowActivityInteractions === false && activityOwnerId !== userId;
   const isButtonDisabled = isLoading || isErrorLoadingComments || isLoadingComments || isInteractionDisabled;
-
   useEffect(() => {
     if (activityIdWhichCommentsToUpdate === activityId) {
       setIsNeedToGetUpdatedComments(true);
     }
   }, [activityIdWhichCommentsToUpdate, activityId]);
-
   return (
     <TouchableRipple
       testID="activity-card-comment-button"
@@ -65,7 +64,7 @@ export default function CommentBtn() {
         <IconButton
           testID={COMMENT_BTN_TEST_ID}
           icon={COMMENT_BTN_ICON}
-          iconColor={colors.primary}
+          iconColor={isButtonDisabled ? colors.onSurfaceDisabled : colors.primary}
           size={25}
           disabled={isButtonDisabled}
         />

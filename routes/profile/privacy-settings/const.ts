@@ -5,9 +5,11 @@ export const PROFILE_PRIVACY_SETTINGS = {
     title: 'Privacy',
     openSettings: 'Privacy settings',
     openSettingsDescription:
-      'Profile visibility, activity interactions, likes, sharing, email notifications, statistics and photos.',
+      'Profile visibility, followers, activity interactions, likes, sharing, email notifications, statistics and photos.',
     profileSearch: 'Show profile in search',
     profileSearchDescription: 'When disabled, other users cannot find your profile through search.',
+    allowNewFollowers: 'Allow new followers',
+    allowNewFollowersDescription: 'When disabled, other users cannot follow your profile.',
     activityInteractions: 'Allow likes and comments',
     activityInteractionsDescription: 'Other users can like and comment on your activities.',
     allowLikesListViewing: 'Allow viewing the likes list',
@@ -29,9 +31,11 @@ export const PROFILE_PRIVACY_SETTINGS = {
     title: 'Конфиденциальность',
     openSettings: 'Настройки конфиденциальности',
     openSettingsDescription:
-      'Видимость профиля, взаимодействия, лайки, распространение активностей, уведомления по электронной почте, статистика и фотографии.',
+      'Видимость профиля, подписки, взаимодействия, лайки, распространение активностей, уведомления по электронной почте, статистика и фотографии.',
     profileSearch: 'Показывать профиль в поиске',
     profileSearchDescription: 'Если выключить, другие пользователи не смогут найти вас через поиск.',
+    allowNewFollowers: 'Разрешить подписываться на меня',
+    allowNewFollowersDescription: 'Если выключить, другие пользователи не смогут подписаться на ваш профиль.',
     activityInteractions: 'Разрешить лайки и комментарии',
     activityInteractionsDescription: 'Другие пользователи смогут лайкать и комментировать ваши активности.',
     allowLikesListViewing: 'Разрешить просмотр списка лайков',
@@ -52,6 +56,7 @@ export const PROFILE_PRIVACY_SETTINGS = {
 
 export const PROFILE_PRIVACY_SETTING_FIELDS = [
   { key: 'profileSearchVisible', label: 'profileSearch', description: 'profileSearchDescription' },
+  { key: 'allowNewFollowers', label: 'allowNewFollowers', description: 'allowNewFollowersDescription' },
   { key: 'allowActivityInteractions', label: 'activityInteractions', description: 'activityInteractionsDescription' },
   { key: 'allowLikesListViewing', label: 'allowLikesListViewing', description: 'allowLikesListViewingDescription' },
   { key: 'allowActivitySharing', label: 'allowActivitySharing', description: 'allowActivitySharingDescription' },

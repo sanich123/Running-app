@@ -50,4 +50,47 @@ describe('modal likes list', () => {
     expect(mockLikesQuery).toHaveBeenCalledWith({ activityId: 'activity-1' }, { skip: false });
     expect(mockFetchNextPage).toHaveBeenCalledTimes(1);
   });
+
+  it('renders liker avatars through the cached image loader', async () => {
+    mockLikesQuery.mockReturnValue({
+      data: {
+        pages: [
+          {
+            likes: [
+              {
+                id: 'like-1',
+                authorId: 'liked-user',
+                profile: {
+                  userId: 'liked-user',
+                  name: 'Liked',
+                  surname: 'Runner',
+                  profilePhoto: 'https://example.com/liked-user.jpg',
+                  profilePhotoBlurhash: null,
+                  allowNewFollowers: false,
+                },
+              },
+            ],
+            hasMore: false,
+            nextCursor: null,
+          },
+        ],
+        pageParams: [''],
+      },
+      isSuccess: true,
+      hasNextPage: false,
+      isFetchingNextPage: false,
+      fetchNextPage: mockFetchNextPage,
+    });
+    mockStore.dispatch(setActivityIdWhichLikesToDownload('activity-1'));
+
+    await renderWithProviders(
+      <ModalLikesList bottomSheetModalRef={{ current: null }} likesLength={1} canViewLikes={true} />,
+    );
+
+    const avatar = screen.getByTestId('user-list-item-avatar-liked-user');
+    expect(avatar).toHaveProp('source', { uri: 'https://example.com/liked-user.jpg' });
+    expect(avatar).toHaveProp('cachePolicy', 'memory-disk');
+    expect(avatar).toHaveProp('recyclingKey', 'liked-user');
+    expect(avatar).toHaveProp('transition', 0);
+  });
 });

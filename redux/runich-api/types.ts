@@ -240,6 +240,7 @@ interface FriendProfileResponse {
   surname?: string | null;
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
+  allowNewFollowers?: boolean;
 }
 
 export interface FollowingResponse {

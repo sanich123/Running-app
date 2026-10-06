@@ -73,6 +73,7 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength, canVi
             placeholder={profile?.profilePhotoBlurhash}
             city={profile?.city}
             userId={profile?.userId ?? ''}
+            allowNewFollowers={profile?.allowNewFollowers}
             commentsModalRef={bottomSheetModalRef}
           />
         )}

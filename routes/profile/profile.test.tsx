@@ -1,4 +1,4 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { act, screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
@@ -74,6 +74,24 @@ describe('ProfilePage', () => {
 
     expect(screen.getByTestId('profile-users-counter-whoUserFollows')).toHaveProp('accessibilityLabel', 'hidden');
     expect(screen.getByTestId('profile-users-counter-whoFollowsUser')).toHaveProp('accessibilityLabel', 'hidden');
+  });
+
+  it('hides the follow control when the profile disallows new followers', async () => {
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setMockUserId('another-user-id'));
+    server.use(
+      http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, () =>
+        HttpResponse.json({ ...MOCK_SERVER_PROFILE, allowNewFollowers: false }),
+      ),
+    );
+
+    await renderWithProviders(<ProfilePage />);
+    await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
+
+    expect(screen.queryByTestId('profile-follow')).not.toBeOnTheScreen();
+    await act(async () => {
+      mockStore.dispatch(runichApi.util.resetApiState());
+    });
   });
 
   it('opens privacy settings from the profile page', async () => {

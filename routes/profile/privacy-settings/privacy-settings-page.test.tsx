@@ -16,6 +16,7 @@ describe('ProfilePrivacySettingsPage', () => {
         HttpResponse.json({
           ...MOCK_SERVER_PROFILE,
           profileSearchVisible: false,
+          allowNewFollowers: false,
           allowActivityInteractions: true,
           hideActivityStatistics: true,
           hideFollowingList: false,
@@ -27,6 +28,7 @@ describe('ProfilePrivacySettingsPage', () => {
     await renderWithProviders(<ProfilePrivacySettingsPage />);
 
     expect(await screen.findByTestId('privacy-setting-profileSearchVisible')).toHaveProp('value', false);
+    expect(screen.getByTestId('privacy-setting-allowNewFollowers')).toHaveProp('value', false);
     expect(screen.getByTestId('privacy-setting-allowActivityInteractions')).toHaveProp('value', true);
     expect(screen.getByTestId('privacy-setting-hideActivityStatistics')).toHaveProp('value', true);
     expect(screen.getByTestId('privacy-setting-hideFollowingList')).toHaveProp('value', false);

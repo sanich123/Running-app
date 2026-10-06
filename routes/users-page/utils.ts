@@ -10,6 +10,7 @@ export const renderUserItem = ({ item }: { item: any }) =>
     profilePhoto: item?.profilePhoto,
     placeholder: item?.profilePhotoBlurhash,
     userId: item?.userId,
+    allowNewFollowers: item?.allowNewFollowers,
   });
 
 export const userKeyExtractor = (item: any) => item.userId;

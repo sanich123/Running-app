@@ -8,5 +8,6 @@ export interface UserListItemType {
   profilePhoto?: string | null;
   city?: string | null;
   userId: string;
+  allowNewFollowers?: boolean;
   commentsModalRef?: RefObject<BottomSheetModal | null>;
 }

@@ -92,7 +92,9 @@ export default function ProfilePage() {
             <View style={styles.followersBtnsWrapper}>
               <UsersCounter variant={USERS_VARIANT.whoUserFollows} isHidden={areFollowListsHidden} />
               <UsersCounter variant={USERS_VARIANT.whoFollowsUser} isHidden={areFollowListsHidden} />
-              {!isOwnProfile && <FollowUnfollowBtn friendId={`${whosProfile}`} />}
+              {!isOwnProfile && profile?.allowNewFollowers !== false && (
+                <FollowUnfollowBtn friendId={`${whosProfile}`} />
+              )}
             </View>
             {isOwnProfile || profile?.hideActivityStatistics !== true ? (
               <ProfileStatistics whosProfile={`${whosProfile}`} />

@@ -11,6 +11,7 @@ export const renderLikeItem = ({ item }: { item: any }) => {
     placeholder: profile?.profilePhotoBlurhash,
     city: profile?.city,
     userId: profile?.userId,
+    allowNewFollowers: profile?.allowNewFollowers,
   });
 };
 

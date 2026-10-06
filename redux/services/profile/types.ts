@@ -21,6 +21,7 @@ export interface ProfileSettings {
   hideActivityStatistics?: boolean;
   hideFollowingList?: boolean;
   hideProfilePhotos?: boolean;
+  allowNewFollowers?: boolean;
 }
 
 export type ProfileResponse = ProfileType;

@@ -14,6 +14,7 @@ export default function UserListItem({
   placeholder,
   city,
   userId,
+  allowNewFollowers,
   commentsModalRef,
 }: UserListItemType) {
   const { dark } = useTheme();
@@ -31,7 +32,17 @@ export default function UserListItem({
       }}>
       <View style={styles.userItemWrapper}>
         <View style={styles.contentWrapper}>
-          <UserAvatar size={35} profilePhoto={profilePhoto} name={name} surname={surname} placeholder={placeholder} />
+          <UserAvatar
+            size={35}
+            profilePhoto={profilePhoto}
+            name={name}
+            surname={surname}
+            placeholder={placeholder}
+            testID={`user-list-item-avatar-${userId}`}
+            cachePolicy="memory-disk"
+            recyclingKey={userId}
+            transition={0}
+          />
           <View style={styles.userInfo}>
             <View style={styles.nameSurnameWrapper}>
               <Text variant="bodyLarge" numberOfLines={1} ellipsizeMode="tail" style={{ fontWeight: 'bold' }}>
@@ -45,7 +56,7 @@ export default function UserListItem({
             ) : null}
           </View>
         </View>
-        {!isMineActivity && <FollowUnfollowBtn friendId={userId} />}
+        {!isMineActivity && allowNewFollowers !== false && <FollowUnfollowBtn friendId={userId} />}
       </View>
     </TouchableRipple>
   );

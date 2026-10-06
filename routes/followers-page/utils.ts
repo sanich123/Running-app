@@ -10,6 +10,7 @@ export const renderFollowerItem = ({ item }: { item: any }) =>
     profilePhoto: item.user?.profile?.profilePhoto,
     placeholder: item.user?.profile?.profilePhotoBlurhash,
     userId: item.userId,
+    allowNewFollowers: item.user?.profile?.allowNewFollowers,
   });
 
 export const followerKeyExtractor = (item: any) => item.id || item.userId;
