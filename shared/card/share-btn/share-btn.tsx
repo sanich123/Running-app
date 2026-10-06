@@ -22,7 +22,10 @@ export default function ShareBtn() {
   const { activity } = useActivityCard();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { isLoading } = useAppSelector(({ loading }) => loading);
+  const isSharingDisabled = activity.profile?.allowActivitySharing === false && activity.userId !== userId;
+  const isButtonDisabled = isLoading || isSharingDisabled;
   const dispatch = useAppDispatch();
   const cardRef = useRef<ComponentRef<typeof View>>(null);
   const shareImageReadyRef = useRef<(() => void) | null>(null);
@@ -99,7 +102,7 @@ export default function ShareBtn() {
         icon="share-outline"
         iconColor={colors.primary}
         size={25}
-        disabled={isLoading}
+        disabled={isButtonDisabled}
       />
     </>
   );

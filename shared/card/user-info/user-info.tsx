@@ -34,6 +34,9 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
           name={profile?.name}
           surname={profile?.surname}
           placeholder={profile?.profilePhotoBlurhash}
+          cachePolicy="memory-disk"
+          recyclingKey={userId}
+          transition={0}
         />
         <View style={styles.textWrapper}>
           <View style={styles.nameWrapper}>

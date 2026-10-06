@@ -12,6 +12,7 @@ interface ProfilePrivacySettingsProps {
   profileSearchVisible: boolean;
   allowActivityInteractions: boolean;
   allowLikesListViewing?: boolean;
+  allowActivitySharing?: boolean;
   emailNotifications?: boolean;
   hideActivityStatistics: boolean;
   hideFollowingList: boolean;
@@ -25,6 +26,7 @@ function getPrivacyValues(props: ProfilePrivacySettingsProps): ProfilePrivacyVal
     profileSearchVisible: props.profileSearchVisible,
     allowActivityInteractions: props.allowActivityInteractions,
     allowLikesListViewing: props.allowLikesListViewing !== false,
+    allowActivitySharing: props.allowActivitySharing !== false,
     emailNotifications: props.emailNotifications === true,
     hideActivityStatistics: props.hideActivityStatistics,
     hideFollowingList: props.hideFollowingList,
@@ -37,6 +39,7 @@ export default function ProfilePrivacySettings({
   profileSearchVisible,
   allowActivityInteractions,
   allowLikesListViewing,
+  allowActivitySharing,
   emailNotifications,
   hideActivityStatistics,
   hideFollowingList,
@@ -51,6 +54,7 @@ export default function ProfilePrivacySettings({
       profileSearchVisible,
       allowActivityInteractions,
       allowLikesListViewing,
+      allowActivitySharing,
       emailNotifications,
       hideActivityStatistics,
       hideFollowingList,

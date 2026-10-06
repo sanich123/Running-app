@@ -58,6 +58,7 @@ export interface ProfileType {
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
   allowLikesListViewing?: boolean;
+  allowActivitySharing?: boolean;
   hideActivityStatistics?: boolean;
   hideFollowingList?: boolean;
   hideProfilePhotos?: boolean;

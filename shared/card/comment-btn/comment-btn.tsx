@@ -33,6 +33,7 @@ export default function CommentBtn() {
   const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : commentsCount;
   const commentsModalRef = useRef<BottomSheetModal>(null);
   const isInteractionDisabled = profile?.allowActivityInteractions === false && activityOwnerId !== userId;
+  const isButtonDisabled = isLoading || isErrorLoadingComments || isLoadingComments || isInteractionDisabled;
 
   useEffect(() => {
     if (activityIdWhichCommentsToUpdate === activityId) {
@@ -45,7 +46,7 @@ export default function CommentBtn() {
       testID="activity-card-comment-button"
       style={styles.container}
       borderless
-      disabled={isLoading || isErrorLoadingComments || isLoadingComments || isInteractionDisabled}
+      disabled={isButtonDisabled}
       onPress={() => {
         dispatch(setCommentToUpdate(''));
         dispatch(setIdOfUpdatingComment(''));
@@ -57,14 +58,16 @@ export default function CommentBtn() {
       }}>
       <>
         {whatLengthToRender ? (
-          <Badge style={{ ...styles.badge, backgroundColor: colors.primary }}>{whatLengthToRender}</Badge>
+          <Badge style={[styles.badge, { backgroundColor: colors.primary }, isButtonDisabled && styles.disabled]}>
+            {whatLengthToRender}
+          </Badge>
         ) : null}
         <IconButton
           testID={COMMENT_BTN_TEST_ID}
           icon={COMMENT_BTN_ICON}
           iconColor={colors.primary}
           size={25}
-          disabled={isLoading || isErrorLoadingComments || isLoadingComments || isInteractionDisabled}
+          disabled={isButtonDisabled}
         />
         <CommentsListModal
           commentsModalRef={commentsModalRef}
@@ -82,6 +85,9 @@ const styles = StyleSheet.create({
     top: 8,
     right: 10,
     zIndex: 10,
+  },
+  disabled: {
+    opacity: 0.38,
   },
   container: {
     position: 'relative',
