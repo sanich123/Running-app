@@ -25,7 +25,9 @@ describe('modal likes list', () => {
 
   it('renders an empty state after a successful likes request', async () => {
     mockStore.dispatch(setActivityIdWhichLikesToDownload('activity-1'));
-    await renderWithProviders(<ModalLikesList bottomSheetModalRef={{ current: null }} likesLength={0} />);
+    await renderWithProviders(
+      <ModalLikesList bottomSheetModalRef={{ current: null }} likesLength={0} canViewLikes={true} />,
+    );
     expect(screen.getByText('Лайков пока нет')).toBeOnTheScreen();
     expect(screen.getByText('Эта активность ждёт своего первого виртуального «дай пять».')).toBeOnTheScreen();
   });
@@ -39,7 +41,9 @@ describe('modal likes list', () => {
       fetchNextPage: mockFetchNextPage,
     });
     mockStore.dispatch(setActivityIdWhichLikesToDownload('activity-1'));
-    await renderWithProviders(<ModalLikesList bottomSheetModalRef={{ current: null }} likesLength={31} />);
+    await renderWithProviders(
+      <ModalLikesList bottomSheetModalRef={{ current: null }} likesLength={31} canViewLikes={true} />,
+    );
 
     fireEvent(screen.getByTestId('likes-modal-list'), 'onEndReached');
 

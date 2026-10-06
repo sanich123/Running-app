@@ -16,6 +16,7 @@ export interface ProfileSettings {
   emailNotifications?: boolean;
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
+  allowLikesListViewing?: boolean;
   hideActivityStatistics?: boolean;
   hideFollowingList?: boolean;
   hideProfilePhotos?: boolean;

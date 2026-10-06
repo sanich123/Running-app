@@ -41,6 +41,8 @@ export default function ProfilePrivacySettingsPage() {
           key={[
             profile.profileSearchVisible !== false,
             profile.allowActivityInteractions !== false,
+            profile.allowLikesListViewing !== false,
+            profile.emailNotifications === true,
             profile.hideActivityStatistics === true,
             profile.hideFollowingList === true,
             profile.hideProfilePhotos === true,
@@ -48,6 +50,8 @@ export default function ProfilePrivacySettingsPage() {
           userId={userId}
           profileSearchVisible={profile.profileSearchVisible !== false}
           allowActivityInteractions={profile.allowActivityInteractions !== false}
+          allowLikesListViewing={profile.allowLikesListViewing !== false}
+          emailNotifications={profile.emailNotifications === true}
           hideActivityStatistics={profile.hideActivityStatistics === true}
           hideFollowingList={profile.hideFollowingList === true}
           hideProfilePhotos={profile.hideProfilePhotos === true}

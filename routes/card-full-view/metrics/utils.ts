@@ -43,6 +43,8 @@ export function getActivityAdditionalMetric({
   duration: number;
   language: LANGUAGES;
 }) {
+  if (steps != null && steps <= 1) return null;
+
   if (isWalkingActivity(sport) && steps != null && steps > 0) {
     return {
       title: HOME_ACTIVITY_FULL_VIEW[language].steps,

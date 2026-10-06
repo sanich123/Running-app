@@ -11,24 +11,21 @@ interface ProfilePrivacySettingsProps {
   userId: string;
   profileSearchVisible: boolean;
   allowActivityInteractions: boolean;
+  allowLikesListViewing?: boolean;
+  emailNotifications?: boolean;
   hideActivityStatistics: boolean;
   hideFollowingList: boolean;
   hideProfilePhotos: boolean;
 }
 
-type ProfilePrivacyValues = Pick<
-  ProfilePrivacySettingsProps,
-  | 'profileSearchVisible'
-  | 'allowActivityInteractions'
-  | 'hideActivityStatistics'
-  | 'hideFollowingList'
-  | 'hideProfilePhotos'
->;
+type ProfilePrivacyValues = Record<ProfilePrivacySettingKey, boolean>;
 
 function getPrivacyValues(props: ProfilePrivacySettingsProps): ProfilePrivacyValues {
   return {
     profileSearchVisible: props.profileSearchVisible,
     allowActivityInteractions: props.allowActivityInteractions,
+    allowLikesListViewing: props.allowLikesListViewing !== false,
+    emailNotifications: props.emailNotifications === true,
     hideActivityStatistics: props.hideActivityStatistics,
     hideFollowingList: props.hideFollowingList,
     hideProfilePhotos: props.hideProfilePhotos,
@@ -39,6 +36,8 @@ export default function ProfilePrivacySettings({
   userId,
   profileSearchVisible,
   allowActivityInteractions,
+  allowLikesListViewing,
+  emailNotifications,
   hideActivityStatistics,
   hideFollowingList,
   hideProfilePhotos,
@@ -51,6 +50,8 @@ export default function ProfilePrivacySettings({
       userId,
       profileSearchVisible,
       allowActivityInteractions,
+      allowLikesListViewing,
+      emailNotifications,
       hideActivityStatistics,
       hideFollowingList,
       hideProfilePhotos,

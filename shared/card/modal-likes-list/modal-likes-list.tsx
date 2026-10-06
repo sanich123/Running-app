@@ -10,7 +10,7 @@ import UserListItem from '@S/user-list-item/user-list-item';
 import type { ModalLikesListProps } from '../types';
 import type { LikeListResponse } from '@R/runich-api/types';
 
-export default function ModalLikesList({ bottomSheetModalRef, likesLength }: ModalLikesListProps) {
+export default function ModalLikesList({ bottomSheetModalRef, likesLength, canViewLikes }: ModalLikesListProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const { activityIdWhichLikesToDownload } = useAppSelector(({ mainFeed }) => mainFeed);
@@ -23,7 +23,7 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength }: Mod
     fetchNextPage,
   } = useGetLikesByActivityIdInfiniteQuery(
     { activityId: `${activityIdWhichLikesToDownload}` },
-    { skip: !activityIdWhichLikesToDownload },
+    { skip: !canViewLikes || !activityIdWhichLikesToDownload },
   );
   const likes = likesPages?.pages.flatMap(({ likes: pageLikes }) => pageLikes) ?? [];
   const renderBackdrop = useCallback(

@@ -40,6 +40,7 @@ interface ActivityProfileResponse {
   profilePhotoBlurhash?: string | null;
   emailNotifications?: boolean | null;
   allowActivityInteractions?: boolean;
+  allowLikesListViewing?: boolean;
   user?: { email?: string | null } | null;
 }
 

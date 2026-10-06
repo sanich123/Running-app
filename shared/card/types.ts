@@ -57,6 +57,7 @@ export interface ProfileType {
   emailNotifications?: boolean | null;
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
+  allowLikesListViewing?: boolean;
   hideActivityStatistics?: boolean;
   hideFollowingList?: boolean;
   hideProfilePhotos?: boolean;
@@ -106,6 +107,7 @@ export interface ActivityMediaItem {
 export interface ModalLikesListProps {
   bottomSheetModalRef: RefObject<BottomSheetModal | null>;
   likesLength: number;
+  canViewLikes: boolean;
 }
 
 export interface DisplayActivityMapProps {

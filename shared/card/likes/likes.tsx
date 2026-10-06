@@ -20,9 +20,11 @@ export default function Likes() {
   const dispatch = useAppDispatch();
   const { dark } = useTheme();
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const canViewLikes = activity.profile?.allowLikesListViewing !== false || activity.userId === userId;
   const { isLoading: isAppLoading } = useAppSelector(({ loading }) => loading);
   const isLikesMarkedForUpdate = activityIdWhichLikesToUpdate === activityId;
-  const shouldLoadLikes = likesLength !== 0 || isLikesMarkedForUpdate;
+  const shouldLoadLikes = canViewLikes && (likesLength !== 0 || isLikesMarkedForUpdate);
   const {
     data: likesPages,
     isLoading,
@@ -34,7 +36,7 @@ export default function Likes() {
     },
   );
   const likesList = likesPages?.pages.flatMap(({ likes }) => likes) ?? [];
-  const likesCount = isLikesMarkedForUpdate ? likesList.length : (likesLength ?? likesList.length);
+  const likesCount = canViewLikes && isLikesMarkedForUpdate ? likesList.length : (likesLength ?? likesList.length);
   const hasLikes = likesCount > 0;
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === LikesSize.big && likesCount > 0 && likesCount <= MAX_IN_ROW;
@@ -51,7 +53,7 @@ export default function Likes() {
             likesListModal.current?.present?.();
           }}
           borderless
-          disabled={isAppLoading || isLoading || isError}
+          disabled={!canViewLikes || isAppLoading || isLoading || isError}
           style={{ borderRadius: 10 }}>
           <View style={styles.likesWrapper}>
             <View
@@ -60,7 +62,7 @@ export default function Likes() {
                 lessThanNineLikes && { width: likesCount * SHIFT_RIGHT + 10 },
                 moreThanNineLikes && { width: MAX_IN_ROW * SHIFT_RIGHT + 10 },
               ]}>
-              {likesList.length > 0 ? (
+              {canViewLikes && likesList.length > 0 ? (
                 <View style={{ position: 'relative' }}>
                   {likesList
                     .slice(0, lastLikeInTheRow)
@@ -103,7 +105,7 @@ export default function Likes() {
       ) : (
         <View />
       )}
-      <ModalLikesList bottomSheetModalRef={likesListModal} likesLength={likesCount} />
+      <ModalLikesList bottomSheetModalRef={likesListModal} likesLength={likesCount} canViewLikes={canViewLikes} />
     </>
   );
 }
