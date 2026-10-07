@@ -5,6 +5,10 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ProfilePrivacySettings from './privacy-settings';
 
+const mockPush = jest.fn();
+
+jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+
 const mockUpdateProfile = jest.fn();
 
 jest.mock('@R/services/profile/profile', () => ({
@@ -27,6 +31,7 @@ describe('ProfilePrivacySettings', () => {
       mockStore.dispatch(changeLanguage(LANGUAGES.english));
     });
     mockUpdateProfile.mockReset();
+    mockPush.mockReset();
     mockUpdateProfile.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
   });
 
@@ -55,5 +60,12 @@ describe('ProfilePrivacySettings', () => {
     await fireEvent(screen.getByTestId('privacy-setting-allowNewFollowers'), 'valueChange', false);
 
     expect(mockUpdateProfile).toHaveBeenCalledWith({ id: 'owner-id', body: { allowNewFollowers: false } });
+  });
+
+  it('shows the watch connection directly below the privacy settings', async () => {
+    await renderWithProviders(<ProfilePrivacySettings {...defaultSettings} />);
+
+    expect(screen.getByTestId('watch-import-profile-row')).toBeOnTheScreen();
+    expect(screen.getByText('Connect a watch')).toBeOnTheScreen();
   });
 });

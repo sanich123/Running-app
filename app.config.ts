@@ -23,7 +23,10 @@ export default {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
-      entitlements: { 'com.apple.developer.networking.wifi-info': true },
+      entitlements: {
+        'com.apple.developer.networking.wifi-info': true,
+        'com.apple.developer.healthkit': true,
+      },
       config: { usesNonExemptEncryption: false },
       infoPlist: {
         UIBackgroundModes: ['location', 'fetch', 'remote-notification'],
@@ -41,6 +44,8 @@ export default {
           'Приложению Runich нужен доступ к геолокации во время использования для записи активной тренировки. Вне тренировки геолокация не используется.',
         NSMotionUsageDescription:
           'Приложение Runich использует данные о движении и шагах для определения активности и подсчета шагов во время тренировки',
+        NSHealthShareUsageDescription:
+          'Runich использует завершенные тренировки из Apple Health, чтобы сохранить их в вашем аккаунте',
       },
       bundleIdentifier: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
     },

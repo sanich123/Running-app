@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Switch, Text, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { PROFILE_PRIVACY_SETTING_FIELDS, PROFILE_PRIVACY_SETTINGS, type ProfilePrivacySettingKey } from './const';
+import SettingsRow from '../../settings-page/settings-row/settings-row';
 import type { ProfileSettings } from '@R/services/profile/types';
 
 interface ProfilePrivacySettingsProps {
@@ -49,6 +52,7 @@ export default function ProfilePrivacySettings({
   hideProfilePhotos,
 }: ProfilePrivacySettingsProps) {
   const { colors } = useTheme();
+  const { push } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
   const [updateProfile, { isLoading }] = useUpdateProfileByUserIdMutation();
   const [settings, setSettings] = useState<ProfilePrivacyValues>(() =>
@@ -101,6 +105,13 @@ export default function ProfilePrivacySettings({
           />
         </View>
       ))}
+      <SettingsRow
+        testID="watch-import-profile-row"
+        icon="watch-variant"
+        title={text.watchTitle}
+        description={text.watchDescription}
+        onPress={() => push(`/${ROUTES.watchImport}` as Parameters<typeof push>[0])}
+      />
     </View>
   );
 }

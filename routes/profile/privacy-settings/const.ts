@@ -23,6 +23,8 @@ export const PROFILE_PRIVACY_SETTINGS = {
       'Other users will not be able to open the lists of people you follow or who follow you.',
     hideProfilePhotos: 'Hide profile photos',
     hideProfilePhotosDescription: 'Other users will not see the photos shown at the top of your profile.',
+    watchTitle: 'Connect a watch',
+    watchDescription: 'Import completed workouts from Health Connect or Apple Health.',
     saveError: 'Could not save privacy settings.',
   },
   [LANGUAGES.russian]: {
@@ -46,6 +48,8 @@ export const PROFILE_PRIVACY_SETTINGS = {
     hideFollowingListDescription: 'Другие пользователи не смогут просматривать ваши списки подписок и подписчиков.',
     hideProfilePhotos: 'Скрывать фотографии в профиле',
     hideProfilePhotosDescription: 'Другие пользователи не будут видеть фотографии в верхней части профиля.',
+    watchTitle: 'Подключить часы',
+    watchDescription: 'Импортировать завершённые тренировки из Health Connect или Apple Health.',
     saveError: 'Не удалось сохранить настройки конфиденциальности.',
   },
 } as const;

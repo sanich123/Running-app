@@ -63,6 +63,7 @@ describe('RTK Query cache invalidation contracts', () => {
       'deleteFriend',
       'deleteLike',
       'deleteLikeToComment',
+      'importWatchWorkouts',
       'postCommentWithActivityId',
       'sendLike',
       'sendLikeToComment',
@@ -70,7 +71,7 @@ describe('RTK Query cache invalidation contracts', () => {
       'updateCommentByCommentId',
       'updateProfileByUserId',
     ]);
-    expect(invalidatingEndpoints).toHaveLength(16);
+    expect(invalidatingEndpoints).toHaveLength(17);
 
     for (const endpointName of invalidatingEndpoints) {
       expect(endpointDefinitions[endpointName].invalidatesTags).toBeDefined();

@@ -1,0 +1,10 @@
+{
+  "name": "runich-health",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/RunichHealth.ts",
+  "types": "src/RunichHealth.ts",
+  "peerDependencies": {
+    "expo": "*"
+  }
+}
