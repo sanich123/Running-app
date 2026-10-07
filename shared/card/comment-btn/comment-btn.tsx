@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
 import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
@@ -6,8 +6,6 @@ import {
   setCommentActivityId,
   setCommentToUpdate,
   setActivityOwnerProfile,
-  setMapPhotoUrl,
-  setCommentsLength,
   setIdOfUpdatingComment,
 } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -17,25 +15,24 @@ import { useActivityCard } from '../context';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function CommentBtn() {
-  const { activity } = useActivityCard();
-  const { id: activityId, userId: activityOwnerId, commentsLength, profile, mapPhotoUrl } = activity;
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isLoading } = useAppSelector(({ loading }) => loading);
-  const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
-  const isNeedToGetUpdatedComments = activityIdWhichCommentsToUpdate === activityId;
-
+  const { activity } = useActivityCard();
+  const { id: activityId, userId: activityOwnerId, commentsLength, profile } = activity;
+  const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(false);
   const {
     data: commentsCount,
-    isError: isErrorLoadingComments,
+    isError,
     isLoading: isLoadingComments,
-  } = useGetCommentsLengthByActivityIdQuery(`${activityId}`, { skip: !isNeedToGetUpdatedComments });
+  } = useGetCommentsLengthByActivityIdQuery(activityId, { skip: !isNeedToGetUpdatedComments });
   const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : commentsCount;
   const commentsModalRef = useRef<BottomSheetModal>(null);
   const canViewComments = profile?.allowActivityInteractions !== false || activityOwnerId === userId;
-  const isInteractionDisabled = !canViewComments;
-  const isButtonDisabled = isLoading || isErrorLoadingComments || isLoadingComments || isInteractionDisabled;
+
+  const isButtonDisabled = isLoading || isError || isLoadingComments || !canViewComments;
+
   return (
     <TouchableRipple
       testID="activity-card-comment-button"
@@ -43,12 +40,11 @@ export default function CommentBtn() {
       borderless
       disabled={isButtonDisabled}
       onPress={() => {
+        setIsNeedToGetUpdatedComments(true);
         dispatch(setCommentToUpdate(''));
         dispatch(setIdOfUpdatingComment(''));
-        dispatch(setCommentsLength(commentsLength));
         dispatch(setCommentActivityId(activityId));
         dispatch(setActivityOwnerProfile(profile));
-        dispatch(setMapPhotoUrl(mapPhotoUrl));
         commentsModalRef.current?.present?.();
       }}>
       <>
@@ -67,7 +63,7 @@ export default function CommentBtn() {
         <CommentsListModal
           commentsModalRef={commentsModalRef}
           commentsLength={commentsLength}
-          allowNewComments={!isInteractionDisabled}
+          allowNewComments={canViewComments}
         />
       </>
     </TouchableRipple>

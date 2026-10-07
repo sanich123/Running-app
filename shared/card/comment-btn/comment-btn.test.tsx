@@ -75,9 +75,7 @@ describe('Activity card comment btn', () => {
     await renderCommentBtn();
     await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
     expect(mockPush).not.toHaveBeenCalled();
-    expect(mockStore.getState().comment).toEqual(
-      expect.objectContaining({ commentActivityId: 'someActivityId', commentsLength: 6 }),
-    );
+    expect(mockStore.getState().comment).toEqual(expect.objectContaining({ commentActivityId: 'someActivityId' }));
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 
