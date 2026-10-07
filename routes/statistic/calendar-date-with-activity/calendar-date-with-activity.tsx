@@ -34,7 +34,10 @@ export default function CalendarDateWithActivity({
               if (activities.length === 1) {
                 push(`/${ROUTES.activity}/${activities[0].id}`);
               } else {
-                push(`/${ROUTES.activitiesList}/${activities.map(({ id }) => `ids=${id}`).join('&')}`);
+                push({
+                  pathname: `/${ROUTES.activitiesList}/${ROUTES.routeIds}`,
+                  params: { ids: activities.map(({ id }) => id) },
+                });
               }
             }
           }}>
