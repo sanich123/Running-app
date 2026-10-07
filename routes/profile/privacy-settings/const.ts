@@ -11,7 +11,7 @@ export const PROFILE_PRIVACY_SETTINGS = {
     activityInteractions: 'Allow likes, comments and likes list viewing',
     activityInteractionsDescription:
       'If disabled, other users cannot like or comment on your activities or view who liked them.',
-    allowActivityReplayViewing: 'Allow viewing activity replays',
+    allowActivityReplayViewing: 'Allow viewing activity locations and video replays',
     allowActivityReplayViewingDescription: 'Other users can replay the routes of your activities.',
     allowActivitySharing: 'Allow sharing activities',
     allowActivitySharingDescription: 'Other users can share your activities.',
@@ -36,7 +36,7 @@ export const PROFILE_PRIVACY_SETTINGS = {
     activityInteractions: 'Разрешить лайки, комментарии и просмотр списка лайкнувших',
     activityInteractionsDescription:
       'Если выключить, другие пользователи не смогут лайкать и комментировать активности и смотреть список лайкнувших.',
-    allowActivityReplayViewing: 'Разрешить просмотр replay активности',
+    allowActivityReplayViewing: 'Разрешить просмотр маршрута активности и повтор видео',
     allowActivityReplayViewingDescription: 'Другие пользователи могут проигрывать маршруты ваших активностей.',
     allowActivitySharing: 'Разрешить делиться активностями',
     allowActivitySharingDescription: 'Другие пользователи могут делиться вашими активностями.',

@@ -32,6 +32,7 @@ export default function MediaList() {
     weatherWindSpeed,
     weatherCode,
     emotion,
+    profile,
   } = activity;
   const [isMapPressed, setIsMapPressed] = useState(false);
   const [selectedMediaId, setSelectedMediaId] = useState<string | null>(null);
@@ -91,6 +92,9 @@ export default function MediaList() {
             disabled={!isMap && selectedMediaId === item.id}
             onPress={() => {
               if (!longPressGuard.shouldHandlePress()) return;
+              if (isMap && profile?.allowActivityReplayViewing === false) {
+                return errorToast('Пользователь запретил просматривать информацию о своем маршруте');
+              }
               push(
                 isMap
                   ? `/${ROUTES.map}/${id}`
@@ -155,25 +159,26 @@ export default function MediaList() {
       );
     },
     [
-      dark,
-      emotion,
-      id,
-      activityOwnerId,
-      canViewReplay,
-      isMapPressed,
-      isOwnActivity,
-      handleDeleteMedia,
-      isDeletingMedia,
-      longPressGuard,
-      language,
-      locationName,
-      media,
       mediaWidth,
-      push,
+      isOwnActivity,
       selectedMediaId,
-      weatherCode,
+      language,
+      isDeletingMedia,
+      isMapPressed,
+      dark,
+      locationName,
       weatherTemperature,
       weatherWindSpeed,
+      weatherCode,
+      emotion,
+      id,
+      media,
+      canViewReplay,
+      activityOwnerId,
+      longPressGuard,
+      profile?.allowActivityReplayViewing,
+      push,
+      handleDeleteMedia,
     ],
   );
 
