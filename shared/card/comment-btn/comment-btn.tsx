@@ -33,7 +33,8 @@ export default function CommentBtn() {
   } = useGetCommentsLengthByActivityIdQuery(`${activityId}`, { skip: !isNeedToGetUpdatedComments });
   const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : commentsCount;
   const commentsModalRef = useRef<BottomSheetModal>(null);
-  const isInteractionDisabled = profile?.allowActivityInteractions === false && activityOwnerId !== userId;
+  const canViewComments = profile?.allowActivityInteractions !== false || activityOwnerId === userId;
+  const isInteractionDisabled = !canViewComments;
   const isButtonDisabled = isLoading || isErrorLoadingComments || isLoadingComments || isInteractionDisabled;
   useEffect(() => {
     if (activityIdWhichCommentsToUpdate === activityId) {
@@ -56,7 +57,7 @@ export default function CommentBtn() {
         commentsModalRef.current?.present?.();
       }}>
       <>
-        {whatLengthToRender ? (
+        {canViewComments && whatLengthToRender ? (
           <Badge style={[styles.badge, { backgroundColor: colors.primary }, isButtonDisabled && styles.disabled]}>
             {whatLengthToRender}
           </Badge>

@@ -41,6 +41,7 @@ interface ActivityProfileResponse {
   emailNotifications?: boolean | null;
   allowActivityInteractions?: boolean;
   allowLikesListViewing?: boolean;
+  allowActivityReplayViewing?: boolean;
   allowActivitySharing?: boolean;
   user?: { email?: string | null } | null;
 }

@@ -16,6 +16,7 @@ const defaultSettings = {
   profileSearchVisible: true,
   allowNewFollowers: true,
   allowActivityInteractions: true,
+  allowActivityReplayViewing: true,
   hideActivityStatistics: false,
   hideFollowingList: false,
   hideProfilePhotos: false,
@@ -34,6 +35,7 @@ describe('ProfilePrivacySettings', () => {
     await renderWithProviders(<ProfilePrivacySettings {...defaultSettings} />);
     expect(screen.getByTestId('privacy-setting-profileSearchVisible').props.value).toBe(true);
     expect(screen.getByTestId('privacy-setting-allowActivityInteractions').props.value).toBe(true);
+    expect(screen.getByTestId('privacy-setting-allowActivityReplayViewing').props.value).toBe(true);
     expect(screen.getByTestId('privacy-setting-hideActivityStatistics').props.value).toBe(false);
     expect(screen.getByTestId('privacy-setting-hideFollowingList').props.value).toBe(false);
     expect(screen.getByTestId('privacy-setting-hideProfilePhotos').props.value).toBe(false);
@@ -55,5 +57,13 @@ describe('ProfilePrivacySettings', () => {
     await fireEvent(screen.getByTestId('privacy-setting-allowNewFollowers'), 'valueChange', false);
 
     expect(mockUpdateProfile).toHaveBeenCalledWith({ id: 'owner-id', body: { allowNewFollowers: false } });
+  });
+
+  it('saves whether other users can view activity replays', async () => {
+    await renderWithProviders(<ProfilePrivacySettings {...defaultSettings} />);
+
+    await fireEvent(screen.getByTestId('privacy-setting-allowActivityReplayViewing'), 'valueChange', false);
+
+    expect(mockUpdateProfile).toHaveBeenCalledWith({ id: 'owner-id', body: { allowActivityReplayViewing: false } });
   });
 });

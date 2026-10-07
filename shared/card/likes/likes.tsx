@@ -42,6 +42,8 @@ export default function Likes() {
   const lessThanNineLikes = size === LikesSize.big && likesCount > 0 && likesCount <= MAX_IN_ROW;
   const moreThanNineLikes = size === LikesSize.big && likesCount > MAX_IN_ROW;
   const likesListModal = useRef<BottomSheetModal>(null);
+  if (!canViewLikes) return <View />;
+
   return (
     <>
       {hasLikes ? (
@@ -62,7 +64,7 @@ export default function Likes() {
                 lessThanNineLikes && { width: likesCount * SHIFT_RIGHT + 10 },
                 moreThanNineLikes && { width: MAX_IN_ROW * SHIFT_RIGHT + 10 },
               ]}>
-              {canViewLikes && likesList.length > 0 ? (
+              {likesList.length > 0 ? (
                 <View style={{ position: 'relative' }}>
                   {likesList
                     .slice(0, lastLikeInTheRow)

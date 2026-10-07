@@ -101,6 +101,7 @@ describe('Activity card comment btn', () => {
     await renderCommentBtn('activity-with-comments-disabled', 3, false);
 
     expect(screen.getByTestId('activity-card-comment-button').props.accessibilityState?.disabled).toBe(true);
+    expect(screen.queryByText('3')).not.toBeOnTheScreen();
     expect(screen.getByTestId('activityCardCommentBtnIcon')).toHaveProp(
       'accessibilityLabel',
       MD3LightTheme.colors.onSurfaceDisabled,

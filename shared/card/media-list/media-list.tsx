@@ -44,6 +44,7 @@ export default function MediaList() {
   const [deleteActivityMedia, { isLoading: isDeletingMedia }] = useDeleteActivityMediaMutation();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
   const isOwnActivity = Boolean(activityOwnerId && activityOwnerId === currentUserId);
+  const canViewReplay = activity.profile?.allowActivityReplayViewing !== false || isOwnActivity;
 
   const handleDeleteMedia = useCallback(
     async (mediaId: string) => {
@@ -146,7 +147,7 @@ export default function MediaList() {
               />
               <View pointerEvents="box-none" style={styles.mapActions}>
                 {isOwnActivity ? <AddActivityMediaBtn activityId={id} media={media ?? []} /> : null}
-                <RouteReplayBtn activityId={id} userId={activityOwnerId} />
+                {canViewReplay ? <RouteReplayBtn activityId={id} userId={activityOwnerId} /> : null}
               </View>
             </>
           ) : null}
@@ -158,6 +159,7 @@ export default function MediaList() {
       emotion,
       id,
       activityOwnerId,
+      canViewReplay,
       isMapPressed,
       isOwnActivity,
       handleDeleteMedia,

@@ -43,6 +43,7 @@ export default function ProfilePrivacySettingsPage() {
             profile.allowNewFollowers !== false,
             profile.allowActivityInteractions !== false,
             profile.allowLikesListViewing !== false,
+            profile.allowActivityReplayViewing !== false,
             profile.allowActivitySharing !== false,
             profile.emailNotifications === true,
             profile.hideActivityStatistics === true,
@@ -54,6 +55,7 @@ export default function ProfilePrivacySettingsPage() {
           allowNewFollowers={profile.allowNewFollowers !== false}
           allowActivityInteractions={profile.allowActivityInteractions !== false}
           allowLikesListViewing={profile.allowLikesListViewing !== false}
+          allowActivityReplayViewing={profile.allowActivityReplayViewing !== false}
           allowActivitySharing={profile.allowActivitySharing !== false}
           emailNotifications={profile.emailNotifications === true}
           hideActivityStatistics={profile.hideActivityStatistics === true}

@@ -157,6 +157,17 @@ describe('media list', () => {
     expect(screen.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
+  it('hides route replay from an external viewer when the owner disables it', async () => {
+    mockStore.dispatch(setMockUserId('another-user'));
+    await renderMediaList({
+      mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg',
+      media: [],
+      profile: { allowActivityReplayViewing: false },
+    });
+
+    expect(screen.queryByTestId('activity-card-route-replay-button')).not.toBeOnTheScreen();
+  });
+
   it('continues covering regular photos in the card preview', async () => {
     const photoUrl = 'https://images.example.test/activity.jpg';
     await renderMediaList({ mapPhotoUrl: undefined, media: [{ url: photoUrl, thumbnail: null }] });
