@@ -55,7 +55,6 @@ export default function LegalInformationModal({
                 legalInformationModalRef.current?.dismiss();
                 push(documentPath(route, englishRoute));
               }}
-              rippleColor={colors.primaryContainer}
               style={[styles.item, { backgroundColor: colors.background }]}>
               <View style={styles.itemContent}>
                 <Text variant="bodyLarge" style={styles.itemTitle}>

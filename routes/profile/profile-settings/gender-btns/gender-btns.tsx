@@ -8,7 +8,7 @@ export default function GenderBtns({ isDisabled }: { isDisabled: boolean }) {
   const { language } = useAppSelector(({ settings }) => settings);
   const { gender } = useProfileFormParams();
   const { setGender } = useSetProfileFormParams();
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const options = [
     {
       value: GENDER_BTNS_VALUES.male,
@@ -35,7 +35,6 @@ export default function GenderBtns({ isDisabled }: { isDisabled: boolean }) {
             disabled={isDisabled}
             onPress={() => setGender(value)}
             borderless
-            rippleColor={dark ? 'rgba(255, 255, 255, .08)' : 'rgba(0, 0, 0, .08)'}
             accessibilityRole="radio"
             accessibilityState={{ disabled: isDisabled, selected: isSelected }}
             style={[

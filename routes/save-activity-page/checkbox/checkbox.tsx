@@ -16,7 +16,7 @@ export default function Checkbox() {
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { visibility } = useManualActivityParams();
   const { setVisibility } = useSetManualActivityParams();
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const disabled = isSavingDisabled;
   const options = [ACTIVITY_VISIBILITY.public, ACTIVITY_VISIBILITY.followers, ACTIVITY_VISIBILITY.private] as const;
 
@@ -33,7 +33,6 @@ export default function Checkbox() {
             testID={value === ACTIVITY_VISIBILITY.public ? CHECKBOX_TEST_ID : `activity-visibility-${value}`}
             disabled={disabled}
             onPress={() => setVisibility(value)}
-            rippleColor={dark ? 'rgba(255, 255, 255, .08)' : 'rgba(0, 0, 0, .08)'}
             accessibilityRole="radio"
             accessibilityState={{ disabled, selected: isSelected }}
             style={[

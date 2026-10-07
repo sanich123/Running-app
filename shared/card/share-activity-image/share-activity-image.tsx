@@ -63,7 +63,7 @@ export default function ShareActivityImage({
     ...(elevationGain && elevationGain > 0
       ? [{ label: CARD_METRICS[language].elevation, value: `${Math.round(elevationGain)} ${CARD_METRICS[language].m}` }]
       : []),
-    ...(steps != null && steps > 0 ? [{ label: CARD_METRICS[language].steps, value: `${steps}` }] : []),
+    ...(steps != null && steps > 1 ? [{ label: CARD_METRICS[language].steps, value: `${steps}` }] : []),
     ...(caloriesActive != null
       ? [{ label: CARD_METRICS[language].calories, value: `${caloriesActive} ${CARD_METRICS[language].kcal}` }]
       : []),

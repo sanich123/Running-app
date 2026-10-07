@@ -11,7 +11,7 @@ import { THEMES_ARRAY } from './const';
 export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: RefObject<BottomSheetModal | null> }) {
   const dispatch = useAppDispatch();
   const { language, theme } = useAppSelector(({ settings }) => settings);
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
 
   const renderBackdrop = useCallback(
     (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
@@ -33,7 +33,6 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
             <Fragment key={value}>
               <Divider />
               <TouchableRipple
-                rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
                 borderless
                 style={styles.radioBtn}
                 onPress={() => {

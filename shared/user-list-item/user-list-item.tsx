@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Text, TouchableRipple } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import UserAvatar from '@S/avatar/avatar';
@@ -17,14 +17,12 @@ export default function UserListItem({
   allowNewFollowers,
   commentsModalRef,
 }: UserListItemType) {
-  const { dark } = useTheme();
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { push } = useRouter();
   const isMineActivity = userId === currentUserId;
 
   return (
     <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       onPress={() => {
         commentsModalRef?.current?.dismiss();

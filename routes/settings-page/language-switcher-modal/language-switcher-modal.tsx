@@ -13,7 +13,7 @@ export default function LanguageSwitcherModal({
   languagesModalRef: RefObject<BottomSheetModal | null>;
 }) {
   const { language } = useAppSelector(({ settings }) => settings);
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const [checked, setChecked] = useState(language);
   const dispatch = useAppDispatch();
   const renderBackdrop = useCallback(
@@ -35,7 +35,6 @@ export default function LanguageSwitcherModal({
             <Fragment key={title}>
               <Divider />
               <TouchableRipple
-                rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
                 borderless
                 style={{ ...styles.radioBtn }}
                 onPress={() => {

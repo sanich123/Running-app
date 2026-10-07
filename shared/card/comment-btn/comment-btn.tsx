@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
 import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
@@ -24,7 +24,7 @@ export default function CommentBtn() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isLoading } = useAppSelector(({ loading }) => loading);
   const { activityIdWhichCommentsToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
-  const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(false);
+  const isNeedToGetUpdatedComments = activityIdWhichCommentsToUpdate === activityId;
 
   const {
     data: commentsCount,
@@ -36,11 +36,6 @@ export default function CommentBtn() {
   const canViewComments = profile?.allowActivityInteractions !== false || activityOwnerId === userId;
   const isInteractionDisabled = !canViewComments;
   const isButtonDisabled = isLoading || isErrorLoadingComments || isLoadingComments || isInteractionDisabled;
-  useEffect(() => {
-    if (activityIdWhichCommentsToUpdate === activityId) {
-      setIsNeedToGetUpdatedComments(true);
-    }
-  }, [activityIdWhichCommentsToUpdate, activityId]);
   return (
     <TouchableRipple
       testID="activity-card-comment-button"

@@ -16,7 +16,7 @@ export default function CommentsListModal({ commentsModalRef, allowNewComments =
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
-  const { activityOwnerProfile, commentToUpdate, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
+  const { commentToUpdate, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
   const { language } = useAppSelector(({ settings }) => settings);
   const renderBackdrop = useCallback((props: any) => backdrop(props), []);
   const clearCommentEditing = useCallback(() => {
@@ -42,7 +42,6 @@ export default function CommentsListModal({ commentsModalRef, allowNewComments =
             {allowNewComments || idOfUpdatingComment ? (
               <CommentInput
                 key={idOfUpdatingComment || 'new-comment'}
-                profile={activityOwnerProfile}
                 commentId={idOfUpdatingComment}
                 commentToUpdate={commentToUpdate}
               />
@@ -58,7 +57,6 @@ export default function CommentsListModal({ commentsModalRef, allowNewComments =
       </BottomSheetFooter>
     ),
     [
-      activityOwnerProfile,
       allowNewComments,
       bottomInset,
       colors.onSurfaceVariant,

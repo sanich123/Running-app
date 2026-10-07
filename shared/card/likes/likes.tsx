@@ -1,6 +1,6 @@
 import { Fragment, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Text, TouchableRipple } from 'react-native-paper';
 import { useGetLikesByActivityIdInfiniteQuery } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToDownload } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -18,10 +18,9 @@ export default function Likes() {
   const { id: activityId, likesLength } = activity;
   const size = isFullView ? LikesSize.big : LikesSize.small;
   const dispatch = useAppDispatch();
-  const { dark } = useTheme();
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
   const { userId } = useAppSelector(({ auth }) => auth);
-  const canViewLikes = activity.profile?.allowLikesListViewing !== false || activity.userId === userId;
+  const canViewLikes = activity.profile?.allowActivityInteractions !== false || activity.userId === userId;
   const { isLoading: isAppLoading } = useAppSelector(({ loading }) => loading);
   const isLikesMarkedForUpdate = activityIdWhichLikesToUpdate === activityId;
   const shouldLoadLikes = canViewLikes && (likesLength !== 0 || isLikesMarkedForUpdate);
@@ -49,7 +48,6 @@ export default function Likes() {
       {hasLikes ? (
         <TouchableRipple
           testID="pushToActivityLikes"
-          rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           onPress={() => {
             dispatch(setActivityIdWhichLikesToDownload(activityId));
             likesListModal.current?.present?.();

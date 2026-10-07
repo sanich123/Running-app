@@ -61,13 +61,7 @@ export default function Comment({
       <View style={styles.likesWrapper}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           {(canInteract || commentLike.some(({ authorId: likerId }) => likerId === userId)) && (
-            <CommentLikeBtn
-              activityId={activityId}
-              commentId={id}
-              commentLikesFromComment={commentLike}
-              profile={profile}
-              comment={comment}
-            />
+            <CommentLikeBtn activityId={activityId} commentId={id} commentLikesFromComment={commentLike} />
           )}
           <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
         </View>

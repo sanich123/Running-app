@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Animated } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import {
@@ -6,30 +6,18 @@ import {
   useGetLikesByCommentIdQuery,
   useDeleteLikeToCommentMutation,
 } from '@R/services/comments/comments';
-import { useSendEmailAfterSendingCommentLikeMutation } from '@R/services/emails/emails';
-import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_LIKE_BTN } from './const';
 import type { CommentLikeBtnProps } from '../types';
 
-export default function CommentLikeBtn({
-  activityId,
-  commentId,
-  commentLikesFromComment,
-  profile,
-  comment,
-}: CommentLikeBtnProps) {
+export default function CommentLikeBtn({ activityId, commentId, commentLikesFromComment }: CommentLikeBtnProps) {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
-  const { commentActivityId } = useAppSelector(({ comment }) => comment);
-  const { data: currentUserProfile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
-  const { profilePhoto, name, surname } = currentUserProfile ?? {};
 
-  const [sendLikeToComment, { isSuccess: isSuccessSending, isLoading: isSendingLike }] = useSendLikeToCommentMutation();
-  const [deleteLikeToComment, { isSuccess: isSuccessDeleting, isLoading: isDeletingLike }] =
-    useDeleteLikeToCommentMutation();
+  const [sendLikeToComment, { isLoading: isSendingLike }] = useSendLikeToCommentMutation();
+  const [deleteLikeToComment, { isLoading: isDeletingLike }] = useDeleteLikeToCommentMutation();
   const [optimisticLike, setOptimisticLike] = useState<{ authorId: string; id: string } | null>(null);
   const {
     isError: isErrorToGetLikes,
@@ -38,13 +26,11 @@ export default function CommentLikeBtn({
   } = useGetLikesByCommentIdQuery(commentId, {
     skip: !commentId || (!commentLikesFromComment.length && !optimisticLike),
   });
-  const [sendEmailNotificationAfterSendingLike] = useSendEmailAfterSendingCommentLikeMutation();
 
   const whatCommentLikesToIterate = [...(commentLikes ?? commentLikesFromComment ?? [])];
   if (optimisticLike && !whatCommentLikesToIterate.some(({ id }) => id === optimisticLike.id)) {
     whatCommentLikesToIterate.push(optimisticLike);
   }
-  const recipientEmail = profile?.email ?? profile?.user?.email;
   const youGaveCommentLike = whatCommentLikesToIterate?.length
     ? whatCommentLikesToIterate.filter(({ authorId }: { authorId: string }) => authorId === userId)
     : [];
@@ -67,39 +53,6 @@ export default function CommentLikeBtn({
       }),
     ]).start();
   }, [likeScale]);
-
-  useEffect(() => {
-    if (isSuccessSending || isSuccessDeleting) {
-      if (profile?.emailNotifications && recipientEmail) {
-        sendEmailNotificationAfterSendingLike({
-          name: name ?? '',
-          surname: surname ?? '',
-          profilePhoto: profilePhoto ?? '',
-          activityId: commentActivityId,
-          comment,
-          recepientName: profile.name ?? '',
-          recepientSurname: profile.surname ?? '',
-          recepientEmail: recipientEmail,
-        });
-      }
-    }
-  }, [
-    isSuccessSending,
-    isSuccessDeleting,
-    language,
-    commentId,
-    commentActivityId,
-    profile?.emailNotifications,
-    sendEmailNotificationAfterSendingLike,
-    name,
-    surname,
-    profilePhoto,
-    comment,
-    profile?.name,
-    profile?.surname,
-    profile.email,
-    recipientEmail,
-  ]);
 
   return (
     <Animated.View style={{ transform: [{ scale: likeScale }] }}>

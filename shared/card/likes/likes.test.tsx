@@ -96,10 +96,10 @@ describe('Card likes', () => {
     expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
   });
 
-  it('hides the likes count and list from an external viewer when the owner disables likes-list viewing', async () => {
+  it('hides the likes count and list from an external viewer when the owner disables activity interactions', async () => {
     mockStore.dispatch(setMockUserId('external-viewer'));
 
-    await renderLikes('activity-with-hidden-likes', false, 4, { allowLikesListViewing: false });
+    await renderLikes('activity-with-hidden-likes', false, 4, { allowActivityInteractions: false });
 
     expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
   });

@@ -13,7 +13,7 @@ import { getCardAdditionalMetric, getCardSpeedMetric } from './utils';
 export default function Metrics() {
   const { activity, isFullView, isShowDescription } = useActivityCard();
   const { distance, duration, title, description, userId, id, sport, steps, elevationGain, caloriesActive } = activity;
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { push } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
   const pathname = usePathname();
@@ -22,7 +22,6 @@ export default function Metrics() {
 
   return (
     <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => {
         if (pathname !== `/activity/${id}`) {
           push(`/${ROUTES.activity}/${id}?userId=${userId}`);

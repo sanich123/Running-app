@@ -38,12 +38,9 @@ interface ActivityProfileResponse {
   surname?: string | null;
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
-  emailNotifications?: boolean | null;
   allowActivityInteractions?: boolean;
-  allowLikesListViewing?: boolean;
   allowActivityReplayViewing?: boolean;
   allowActivitySharing?: boolean;
-  user?: { email?: string | null } | null;
 }
 
 interface ActivityCountResponse {
@@ -187,7 +184,6 @@ interface CommentProfileResponse {
   surname?: string | null;
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
-  emailNotifications?: boolean | null;
   user?: { email?: string | null } | null;
 }
 
