@@ -62,10 +62,9 @@ describe('ProfilePrivacySettings', () => {
     expect(mockUpdateProfile).toHaveBeenCalledWith({ id: 'owner-id', body: { allowNewFollowers: false } });
   });
 
-  it('shows the watch connection directly below the privacy settings', async () => {
+  it('keeps the watch connection outside the privacy settings', async () => {
     await renderWithProviders(<ProfilePrivacySettings {...defaultSettings} />);
 
-    expect(screen.getByTestId('watch-import-profile-row')).toBeOnTheScreen();
-    expect(screen.getByText('Connect a watch')).toBeOnTheScreen();
+    expect(screen.queryByTestId('watch-import-profile-row')).not.toBeOnTheScreen();
   });
 });

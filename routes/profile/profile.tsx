@@ -12,7 +12,7 @@ import AvatarShowable from '@S/avatar/showable/showable';
 import CustomImage from '@S/custom-image/custom-image';
 import ErrorComponent from '@S/error-component/error-component';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
-import { PROFILE_SECTIONS } from './const';
+import { PROFILE_SECTIONS, PROFILE_WATCH_IMPORT } from './const';
 import { PROFILE_PRIVACY_SETTINGS } from './privacy-settings/const';
 import ProfileSkeleton from './profile-skeleton/profile-skeleton';
 import ProfileStatistics from './statistics/profile-statistics';
@@ -114,6 +114,21 @@ export default function ProfilePage() {
             )}
             {isOwnProfile || profile?.hideActivityStatistics !== true ? (
               <ProfileStatistics whosProfile={`${whosProfile}`} />
+            ) : null}
+            {isOwnProfile && userId ? (
+              <List.Item
+                testID="watch-import-profile-row"
+                title={PROFILE_WATCH_IMPORT[language].title}
+                description={PROFILE_WATCH_IMPORT[language].description}
+                titleNumberOfLines={1}
+                left={(props) => <List.Icon {...props} icon="watch-variant" />}
+                right={(props) => <List.Icon {...props} icon="chevron-right" />}
+                onPress={() => push(`/${ROUTES.watchImport}` as Parameters<typeof push>[0])}
+                style={[
+                  styles.privacySettingsLink,
+                  { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+                ]}
+              />
             ) : null}
             {isOwnProfile && userId ? (
               <List.Item

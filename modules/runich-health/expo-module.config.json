@@ -1,9 +1,6 @@
 {
-  "platforms": ["apple", "android"],
+  "platforms": ["apple"],
   "apple": {
     "modules": ["RunichHealthModule"]
-  },
-  "android": {
-    "modules": ["expo.modules.runichhealth.RunichHealthModule"]
   }
 }

@@ -11804,6 +11804,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-health-connect@npm:4.1.3":
+  version: 4.1.3
+  resolution: "react-native-health-connect@npm:4.1.3"
+  peerDependencies:
+    "@expo/config-plugins": ">= 6.0.2"
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  peerDependenciesMeta:
+    "@expo/config-plugins":
+      optional: true
+    expo:
+      optional: true
+  checksum: 10c0/96c609a1bcd46ba81874bf045d5afa37b2523dd776649efed007bcc32a0acc205f906b9b26b1755a1ff217896bd29b8ba262e047f79db93250d2a4e0aaa7d328
+  languageName: node
+  linkType: hard
+
 "react-native-is-edge-to-edge@npm:^1.2.1, react-native-is-edge-to-edge@npm:^1.3.1":
   version: 1.3.1
   resolution: "react-native-is-edge-to-edge@npm:1.3.1"
@@ -12642,6 +12659,7 @@ __metadata:
     react-native-edge-to-edge: "npm:1.8.1"
     react-native-gesture-handler: "npm:~3.2.1"
     react-native-gifted-charts: "npm:^1.4.81"
+    react-native-health-connect: "npm:4.1.3"
     react-native-keyboard-controller: "npm:1.22.4"
     react-native-mmkv: "npm:4.3.2"
     react-native-nitro-modules: "npm:0.37.1"
