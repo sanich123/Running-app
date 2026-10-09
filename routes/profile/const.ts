@@ -12,3 +12,12 @@ export const PROFILE_SECTIONS = {
     trainingSummary: 'Общая статистика тренировок',
   },
 } as const;
+
+export const PROFILE_WATCH_IMPORT = {
+  [LANGUAGES.english]: {
+    title: 'Connect a watch',
+  },
+  [LANGUAGES.russian]: {
+    title: 'Подключить часы',
+  },
+} as const;

@@ -16,6 +16,14 @@ coverage
 android
 ios
 
+# Keep the source for the local health bridge; the app's generated native folders stay ignored.
+!modules/runich-health/android/
+!modules/runich-health/android/**
+modules/runich-health/android/build/
+!modules/runich-health/ios/
+!modules/runich-health/ios/**
+modules/runich-health/ios/build/
+
 # macOS
 .DS_Store
 .idea

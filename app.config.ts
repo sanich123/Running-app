@@ -23,7 +23,10 @@ export default {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
-      entitlements: { 'com.apple.developer.networking.wifi-info': true },
+      entitlements: {
+        'com.apple.developer.networking.wifi-info': true,
+        'com.apple.developer.healthkit': true,
+      },
       config: { usesNonExemptEncryption: false },
       infoPlist: {
         UIBackgroundModes: ['location', 'fetch', 'remote-notification'],
@@ -41,6 +44,8 @@ export default {
           'Приложению Runich нужен доступ к геолокации во время использования для записи активной тренировки. Вне тренировки геолокация не используется.',
         NSMotionUsageDescription:
           'Приложение Runich использует данные о движении и шагах для определения активности и подсчета шагов во время тренировки',
+        NSHealthShareUsageDescription:
+          'Runich использует завершенные тренировки из Apple Health, чтобы сохранить их в вашем аккаунте',
       },
       bundleIdentifier: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
     },
@@ -103,6 +108,10 @@ export default {
       permissions: [
         'android.permission.RECEIVE_BOOT_COMPLETED',
         'android.permission.ACTIVITY_RECOGNITION',
+        'android.permission.health.READ_EXERCISE',
+        'android.permission.health.READ_EXERCISE_ROUTES',
+        'android.permission.health.READ_DISTANCE',
+        'android.permission.health.READ_STEPS',
         'ACCESS_BACKGROUND_LOCATION',
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
@@ -119,6 +128,7 @@ export default {
     extra: { eas: { projectId: '413aa829-bbae-467c-9201-4688b894f2f7' } },
     plugins: [
       './custom.plugin',
+      'react-native-health-connect',
       'react-native-compressor',
       'expo-status-bar',
       'expo-image',
@@ -144,6 +154,7 @@ export default {
         'expo-build-properties',
         {
           android: {
+            minSdkVersion: 26,
             usePrecompiledHeaders: true,
             enableMinifyInReleaseBuilds: true,
             enableShrinkResourcesInReleaseBuilds: true,

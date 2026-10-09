@@ -140,6 +140,12 @@ export interface ActivityMutationResponse {
   sourceActivityId?: string | null;
 }
 
+export interface WatchWorkoutBatchImportResponse {
+  imported: number;
+  skipped: number;
+  activities: ActivityMutationResponse[];
+}
+
 export interface ActivityMediaMutationResponse {
   success: true;
   media: ActivityMediaItemResponse[];

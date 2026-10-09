@@ -42,6 +42,7 @@ export enum ROUTES {
   monthStatistics = 'month-statistic',
   activitiesList = 'activities-list',
   migration = 'migration',
+  watchImport = 'watch-import',
   signIn = 'sign-in',
   feedback = 'feedback',
   loginFromUrl = 'login-from-url',

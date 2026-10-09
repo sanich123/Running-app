@@ -9,6 +9,7 @@ import type {
   GetActivityLocationsRequest,
   GetActivitiesByIdsRequest,
   GetActivityMediaRequest,
+  WatchWorkoutsImportRequest,
 } from './types';
 import type {
   ActivitiesResponse,
@@ -19,6 +20,7 @@ import type {
   ActivityMediaResponse,
   ActivityMigrationJobResponse,
   ActivityResponse,
+  WatchWorkoutBatchImportResponse,
 } from '@R/runich-api/types';
 
 const ACTIVITY_PAGE_SIZE = 20;
@@ -99,6 +101,14 @@ const activityApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.activities, Tags.statistics],
     }),
+    importWatchWorkouts: mutation<WatchWorkoutBatchImportResponse, WatchWorkoutsImportRequest>({
+      query: ({ id, workouts }) => ({
+        url: `/activity/${id}/watch-import`,
+        method: Methods.post,
+        body: { workouts },
+      }),
+      invalidatesTags: [Tags.activities, Tags.statistics],
+    }),
     deleteActivityById: mutation<void, string>({
       query: (id: string) => ({
         url: `/activity/${id}`,
@@ -127,6 +137,7 @@ export const {
   useGetStravaMigrationStatusQuery,
   useGetCurrentStravaMigrationStatusQuery,
   useAddActivityByUserIdMutation,
+  useImportWatchWorkoutsMutation,
   useDeleteActivityByIdMutation,
   useGetSeveralActivitiesByTheirIdsQuery,
 } = activityApi;

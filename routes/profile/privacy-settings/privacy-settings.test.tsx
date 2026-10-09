@@ -5,6 +5,10 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ProfilePrivacySettings from './privacy-settings';
 
+const mockPush = jest.fn();
+
+jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+
 const mockUpdateProfile = jest.fn();
 
 jest.mock('@R/services/profile/profile', () => ({
@@ -28,6 +32,7 @@ describe('ProfilePrivacySettings', () => {
       mockStore.dispatch(changeLanguage(LANGUAGES.english));
     });
     mockUpdateProfile.mockReset();
+    mockPush.mockReset();
     mockUpdateProfile.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
   });
 
