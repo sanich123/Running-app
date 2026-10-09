@@ -1,8 +1,7 @@
 import { WORKOUT_IMPORT_COPY, READ_STAGE_LABELS, ROUTE_STATUS_LABELS, UPLOAD_SKIP_REASON_LABELS } from './const';
-import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
+import type { DiagnosticItem, ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
 import type {
   HealthConnectReadStage,
-  HealthPermissionsResult,
   WatchWorkout,
   WatchWorkoutRouteStatus,
 } from '../../../modules/runich-health/src/RunichHealth';
@@ -48,50 +47,40 @@ export function getConnectionKey(userId: string | null): string | null {
   return userId ? `runich.watch.connected.${userId}` : null;
 }
 
+export function getAutoSyncKey(userId: string | null): string | null {
+  return userId ? `runich.watch.auto-sync.enabled.${userId}` : null;
+}
+
 export function getRoutePointCount(workouts: WatchWorkout[]): number {
   return workouts.reduce((total, workout) => total + workout.locations.length, 0);
 }
 
-export function formatConnectionDiagnostics(
-  platform: string,
-  availability: string | null,
-  isConnected: boolean,
-  hasRunichAccount: boolean,
-  isRussian: boolean,
-): string {
+export function getReadDiagnosticItems(diagnostics: ReadDiagnostics | null, isRussian: boolean): DiagnosticItem[] {
   const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics;
-  return `${copy.platform}: ${platform} · ${copy.store}: ${availability ?? copy.checking} · ${copy.connected}: ${getBooleanLabel(isConnected, isRussian)} · ${copy.account}: ${getBooleanLabel(hasRunichAccount, isRussian)}`;
-}
-
-export function formatHealthPermissionsDiagnostics(
-  permissions: HealthPermissionsResult | null,
-  isRussian: boolean,
-): string {
-  const template = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics.permissionsDetails;
-  return template
-    .replace('{exerciseSession}', getBooleanLabel(permissions?.details?.exerciseSession, isRussian))
-    .replace('{distance}', getBooleanLabel(permissions?.details?.distance, isRussian))
-    .replace('{steps}', getBooleanLabel(permissions?.details?.steps, isRussian));
-}
-
-export function formatReadDiagnostics(diagnostics: ReadDiagnostics | null, isRussian: boolean): string {
-  const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics;
-  if (!diagnostics) return copy.noRead;
+  if (!diagnostics) return [{ label: copy.status, tone: 'muted', value: copy.noRead }];
 
   const dateLocale = isRussian ? 'ru-RU' : 'en-US';
-  const details = [
-    `${copy.lastRead}: ${new Date(diagnostics.at).toLocaleString(dateLocale)}`,
-    `${copy.range} ${diagnostics.startDate.slice(0, 10)} — ${diagnostics.endDate.slice(0, 10)}`,
-    `${copy.status}: ${diagnostics.outcome}`,
-    `${copy.stage}: ${diagnostics.stage ? getReadStageLabel(diagnostics.stage, isRussian) : copy.unknownStage}`,
+  const items: DiagnosticItem[] = [
+    { label: copy.lastRead, value: new Date(diagnostics.at).toLocaleString(dateLocale) },
+    { label: copy.range, value: `${diagnostics.startDate.slice(0, 10)} — ${diagnostics.endDate.slice(0, 10)}` },
+    {
+      label: copy.status,
+      tone: diagnostics.outcome === 'error' ? 'error' : diagnostics.outcome === 'success' ? 'success' : 'default',
+      value: copy.readOutcomes[diagnostics.outcome],
+    },
+    {
+      label: copy.stage,
+      value: diagnostics.stage ? getReadStageLabel(diagnostics.stage, isRussian) : copy.unknownStage,
+    },
   ];
-  if (diagnostics.sessionCount !== undefined) details.push(`${copy.found}: ${diagnostics.sessionCount}`);
+  if (diagnostics.sessionCount !== undefined)
+    items.push({ label: copy.found, value: String(diagnostics.sessionCount) });
   if (diagnostics.processedSessionCount !== undefined) {
     const total = diagnostics.sessionCount === undefined ? '' : `/${diagnostics.sessionCount}`;
-    details.push(`${copy.processed}: ${diagnostics.processedSessionCount}${total}`);
+    items.push({ label: copy.processed, value: `${diagnostics.processedSessionCount}${total}` });
   }
-  if (diagnostics.errorCode) details.push(`${copy.error} ${diagnostics.errorCode}`);
-  return details.join(' · ');
+  if (diagnostics.errorCode) items.push({ label: copy.error, tone: 'error', value: diagnostics.errorCode });
+  return items;
 }
 
 export function formatWorkoutDiagnostics(workout: WatchWorkout, index: number, isRussian: boolean): string {
@@ -117,23 +106,34 @@ export function formatWorkoutCountNotice(count: number, isRussian: boolean): str
   return template.replace('{shown}', '50').replace('{total}', String(count));
 }
 
-export function formatUploadDiagnostics(diagnostics: UploadDiagnostics | null, isRussian: boolean): string {
+export function getUploadDiagnosticItems(diagnostics: UploadDiagnostics | null, isRussian: boolean): DiagnosticItem[] {
   const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics;
-  if (!diagnostics) return copy.noUpload;
+  if (!diagnostics) return [{ label: copy.status, tone: 'muted', value: copy.noUpload }];
 
   const dateLocale = isRussian ? 'ru-RU' : 'en-US';
-  const details = [`${copy.uploadStatus}: ${new Date(diagnostics.at).toLocaleString(dateLocale)}`, diagnostics.outcome];
+  const items: DiagnosticItem[] = [
+    { label: copy.uploadStatus, value: new Date(diagnostics.at).toLocaleString(dateLocale) },
+    {
+      label: copy.status,
+      tone: diagnostics.outcome === 'error' ? 'error' : diagnostics.outcome === 'success' ? 'success' : 'default',
+      value: copy.uploadOutcomes[diagnostics.outcome],
+    },
+  ];
   if (diagnostics.skipReason)
-    details.push(`${copy.reason}: ${getUploadSkipReasonLabel(diagnostics.skipReason, isRussian)}`);
-  details.push(`${copy.workouts} ${diagnostics.workoutCount}`);
+    items.push({ label: copy.reason, value: getUploadSkipReasonLabel(diagnostics.skipReason, isRussian) });
+  items.push({ label: copy.workouts, value: String(diagnostics.workoutCount) });
   if (!diagnostics.skipReason) {
-    details.push(`${copy.gpsPoints} ${diagnostics.sourceRoutePointCount} → ${diagnostics.payloadRoutePointCount}`);
+    items.push({
+      label: copy.gpsPoints,
+      value: `${diagnostics.sourceRoutePointCount} → ${diagnostics.payloadRoutePointCount}`,
+    });
   }
   if (diagnostics.imported !== undefined) {
-    details.push(`${copy.imported} ${diagnostics.imported}, ${copy.skipped} ${diagnostics.skipped}`);
+    items.push({ label: copy.imported, tone: 'success', value: String(diagnostics.imported) });
+    items.push({ label: copy.skipped, value: String(diagnostics.skipped) });
   }
-  if (diagnostics.errorStatus) details.push(`${copy.responseError} ${diagnostics.errorStatus}`);
-  return details.join(' · ');
+  if (diagnostics.errorStatus) items.push({ label: copy.responseError, tone: 'error', value: diagnostics.errorStatus });
+  return items;
 }
 
 export function formatImportSelectedLabel(count: number, isRussian: boolean): string {

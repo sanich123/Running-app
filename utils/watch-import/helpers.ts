@@ -2,6 +2,7 @@ import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { WATCH_IMPORT_DAYS } from './const';
+import { calculateWatchWorkoutKilometreSplits } from './kilometre-splits';
 import type { WatchImportDateRange } from './types';
 import type { WatchWorkout } from '../../modules/runich-health/src/RunichHealth';
 import type { WatchWorkoutToSend } from '@R/services/activity/types';
@@ -32,7 +33,9 @@ function toLocationObject(location: WatchWorkout['locations'][number]): Location
 export function mapWatchWorkoutToActivity(workout: WatchWorkout): WatchWorkoutToSend {
   const duration = Math.max(0, Math.round(workout.duration));
   const distance = Math.max(0, Number.isFinite(workout.distance) ? workout.distance : 0);
-  const locations = getReducedLocations(workout.locations.map(toLocationObject), MAX_SAVED_ROUTE_LOCATIONS);
+  const routeLocations = workout.locations.map(toLocationObject);
+  const kilometresSplit = calculateWatchWorkoutKilometreSplits(routeLocations, duration, distance);
+  const locations = getReducedLocations(routeLocations, MAX_SAVED_ROUTE_LOCATIONS);
 
   return {
     source: workout.source,
@@ -45,6 +48,7 @@ export function mapWatchWorkoutToActivity(workout: WatchWorkout): WatchWorkoutTo
     distance,
     speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
     ...(workout.steps !== undefined && workout.steps >= 0 ? { steps: Math.round(workout.steps) } : {}),
+    ...(kilometresSplit.length > 0 ? { kilometresSplit } : {}),
     locations,
   };
 }

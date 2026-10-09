@@ -15,6 +15,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { useAppSelector } from '@R/typed-hooks';
 import SubscriptionStatusSync from '@Routes/subscription/subscription-status-sync';
+import HealthConnectAutoSync from '@Routes/watch-import/health-connect-auto-sync/health-connect-auto-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 import useAppInitialization from '@U/hooks/use-app-initialization';
 import { LazyUsersSettingsIcons, PUBLIC_ROUTES } from './const';
@@ -63,6 +64,7 @@ export default function AppShell() {
           }}>
           <BottomSheetModalProvider>
             <SubscriptionStatusSync />
+            <HealthConnectAutoSync />
             <Stack
               screenOptions={({ route }) => ({
                 gestureEnabled: false,

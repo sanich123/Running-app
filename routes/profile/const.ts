@@ -16,10 +16,8 @@ export const PROFILE_SECTIONS = {
 export const PROFILE_WATCH_IMPORT = {
   [LANGUAGES.english]: {
     title: 'Connect a watch',
-    description: 'Import completed workouts from Health Connect or Apple Health.',
   },
   [LANGUAGES.russian]: {
     title: 'Подключить часы',
-    description: 'Импортировать завершённые тренировки из Health Connect или Apple Health.',
   },
 } as const;

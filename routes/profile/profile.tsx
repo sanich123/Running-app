@@ -119,7 +119,6 @@ export default function ProfilePage() {
               <List.Item
                 testID="watch-import-profile-row"
                 title={PROFILE_WATCH_IMPORT[language].title}
-                description={PROFILE_WATCH_IMPORT[language].description}
                 titleNumberOfLines={1}
                 left={(props) => <List.Icon {...props} icon="watch-variant" />}
                 right={(props) => <List.Icon {...props} icon="chevron-right" />}

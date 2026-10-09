@@ -1,4 +1,6 @@
+import { getDistance } from '@U/location/location-utils';
 import { getWatchImportDateRange, mapWatchWorkoutToActivity } from './helpers';
+import type { WatchWorkout } from '../../modules/runich-health/src/RunichHealth';
 
 describe('watch import mapping', () => {
   it('uses a rolling thirty-day window', () => {
@@ -36,5 +38,27 @@ describe('watch import mapping', () => {
       speed: 5,
       locations: [{ coords: { latitude: 55.75, longitude: 37.61, altitude: null } }],
     });
+  });
+
+  it('adds kilometre splits when the imported workout contains a usable route', () => {
+    const locations: WatchWorkout['locations'] = [
+      { timestamp: 1_000, coords: { latitude: 0, longitude: 0 } },
+      { timestamp: 11_000, coords: { latitude: 0, longitude: 0.009 } },
+      { timestamp: 21_000, coords: { latitude: 0, longitude: 0.018 } },
+    ];
+    const routeDistance = getDistance(locations[0], locations[1]) + getDistance(locations[1], locations[2]);
+    const mappedWorkout = mapWatchWorkoutToActivity({
+      source: 'health-connect',
+      sourceActivityId: 'record-with-route',
+      date: '2026-10-05T07:00:00.000Z',
+      timeZone: 'Europe/Moscow',
+      sport: 'run',
+      duration: 20_000,
+      distance: routeDistance,
+      locations,
+    });
+
+    expect(mappedWorkout.kilometresSplit).toHaveLength(2);
+    expect(mappedWorkout.kilometresSplit?.[0].kilometerPoint.coords.longitude).toBeGreaterThan(0);
   });
 });

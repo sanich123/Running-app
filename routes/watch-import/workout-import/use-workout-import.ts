@@ -16,6 +16,7 @@ import {
 } from '../../../modules/runich-health/src/RunichHealth';
 import { HEALTH_CONNECT_PLAY_STORE_URL } from '../const';
 import {
+  getAutoSyncKey,
   getConnectionKey,
   getDiagnosticErrorCode,
   getRequestErrorStatus,
@@ -24,7 +25,12 @@ import {
 } from './helpers';
 import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
 
-export function useWorkoutImport() {
+interface UseWorkoutImportOptions {
+  autoSync?: boolean;
+  enabled?: boolean;
+}
+
+export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkoutImportOptions = {}) {
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
   const isRussian = language === LANGUAGES.russian;
@@ -36,6 +42,8 @@ export function useWorkoutImport() {
   const [isLoading, setIsLoading] = useState(true);
   const [isReading, setIsReading] = useState(false);
   const [isAutoSyncing, setIsAutoSyncing] = useState(false);
+  const [autoSyncEnabled, setAutoSyncEnabled] = useState(false);
+  const autoSyncEnabledRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<string | null>(null);
   const [healthStatusErrorCode, setHealthStatusErrorCode] = useState<string | null>(null);
@@ -147,13 +155,13 @@ export function useWorkoutImport() {
   );
 
   const syncLatestWorkouts = useCallback(
-    async (autoImport: boolean) => {
+    async (autoImport: boolean, autoImportAllowed = autoSyncEnabledRef.current) => {
       const result = await readWorkouts();
       if (result === null) {
         markUploadSkipped('read-failed');
         return;
       }
-      if (!autoImport) {
+      if (!autoImport || !autoImportAllowed) {
         markUploadSkipped('manual-selection', result);
         return;
       }
@@ -193,21 +201,31 @@ export function useWorkoutImport() {
       setError(null);
       setHealthStatusErrorCode(null);
       const connectionKey = getConnectionKey(userId);
+      const autoSyncKey = getAutoSyncKey(userId);
       const savedConnection = connectionKey ? SecureStore.getItemAsync(connectionKey) : Promise.resolve(null);
+      const savedAutoSync = autoSyncKey ? SecureStore.getItemAsync(autoSyncKey) : Promise.resolve(null);
 
       try {
-        const [nextAvailability, permissions, savedConnectionValue] = await Promise.all([
+        const [nextAvailability, permissions, savedConnectionValue, savedAutoSyncValue] = await Promise.all([
           RunichHealth.getAvailability(),
           RunichHealth.getPermissions(),
           savedConnection,
+          savedAutoSync,
         ]);
         if (!isActive()) return;
 
         setAvailability(nextAvailability);
         setHealthPermissions(permissions);
+        const savedAutoSyncEnabled = savedAutoSyncValue === 'true';
+        autoSyncEnabledRef.current = savedAutoSyncEnabled;
+        setAutoSyncEnabled(savedAutoSyncEnabled);
         const connected = permissions.available && (permissions.granted || savedConnectionValue === 'true');
         setIsConnected(connected);
-        if (connected) void syncLatestWorkouts(true);
+        if (connected && autoSync && userId && savedAutoSyncEnabled) {
+          void syncLatestWorkouts(true, true);
+        } else if (connected && !autoSync) {
+          void readWorkouts();
+        }
       } catch (loadError) {
         if (isActive()) {
           setHealthStatusErrorCode(getDiagnosticErrorCode(loadError));
@@ -222,29 +240,46 @@ export function useWorkoutImport() {
         if (isActive()) setIsLoading(false);
       }
     },
-    [isRussian, syncLatestWorkouts, userId],
+    [autoSync, isRussian, readWorkouts, syncLatestWorkouts, userId],
   );
 
   useEffect(() => {
+    if (!enabled) return;
     let isMounted = true;
-    void refreshHealthConnection(() => isMounted);
+    const refreshTimeout = setTimeout(() => {
+      void refreshHealthConnection(() => isMounted);
+    }, 0);
     return () => {
       isMounted = false;
+      clearTimeout(refreshTimeout);
     };
-  }, [refreshHealthConnection]);
+  }, [enabled, refreshHealthConnection]);
 
   const previousAppState = useRef(AppState.currentState);
   useEffect(() => {
+    if (!enabled) return;
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       const returnedToApp = previousAppState.current !== 'active' && nextAppState === 'active' && Boolean(userId);
       previousAppState.current = nextAppState;
       if (returnedToApp) {
-        if (availability === 'available' && isConnected) void syncLatestWorkouts(true);
-        else void refreshHealthConnection();
+        if (availability === 'available' && isConnected) {
+          if (autoSync && autoSyncEnabled) void syncLatestWorkouts(true);
+          else if (!autoSync) void readWorkouts();
+        } else void refreshHealthConnection();
       }
     });
     return () => subscription.remove();
-  }, [availability, isConnected, refreshHealthConnection, syncLatestWorkouts, userId]);
+  }, [
+    autoSync,
+    autoSyncEnabled,
+    availability,
+    enabled,
+    isConnected,
+    readWorkouts,
+    refreshHealthConnection,
+    syncLatestWorkouts,
+    userId,
+  ]);
 
   const connect = useCallback(async () => {
     setError(null);
@@ -308,6 +343,16 @@ export function useWorkoutImport() {
     setImportResult(null);
     try {
       const result = await sendWorkoutsToRunich(userId, selectedWorkouts);
+      const autoSyncKey = getAutoSyncKey(userId);
+      if (autoSyncKey) {
+        try {
+          await SecureStore.setItemAsync(autoSyncKey, 'true');
+        } catch {
+          // Automatic sync can still be enabled for this session.
+        }
+      }
+      autoSyncEnabledRef.current = true;
+      setAutoSyncEnabled(true);
       setImportResult(
         isRussian
           ? `Импортировано: ${result.imported}. Пропущено как уже загруженные: ${result.skipped}.`

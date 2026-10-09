@@ -25,3 +25,9 @@ export interface UploadDiagnostics {
   skipped?: number;
   errorStatus?: string;
 }
+
+export interface DiagnosticItem {
+  label: string;
+  tone?: 'default' | 'muted' | 'success' | 'error';
+  value: string;
+}
