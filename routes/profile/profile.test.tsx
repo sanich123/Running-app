@@ -72,8 +72,24 @@ describe('ProfilePage', () => {
     await renderWithProviders(<ProfilePage />);
     await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
 
-    expect(screen.getByTestId('profile-users-counter-whoUserFollows')).toHaveProp('accessibilityLabel', 'hidden');
-    expect(screen.getByTestId('profile-users-counter-whoFollowsUser')).toHaveProp('accessibilityLabel', 'hidden');
+    expect(screen.queryByTestId('profile-community-section')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('profile-users-counter-whoUserFollows')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('profile-users-counter-whoFollowsUser')).not.toBeOnTheScreen();
+  });
+
+  it('hides total activity statistics from other users when enabled', async () => {
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setMockUserId('another-user-id'));
+    server.use(
+      http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, () =>
+        HttpResponse.json({ ...MOCK_SERVER_PROFILE, hideActivityStatistics: true }),
+      ),
+    );
+
+    await renderWithProviders(<ProfilePage />);
+    await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
+
+    expect(screen.queryByTestId('profile-statistics')).not.toBeOnTheScreen();
   });
 
   it('hides the follow control when the profile disallows new followers', async () => {

@@ -30,7 +30,7 @@ export default function HomeStack() {
         name={ROUTES.index}
         options={{
           headerShown: true,
-          headerRight: () => <UsersSettingsIcons />,
+          headerRight: () => <UsersSettingsIcons showCreateActivity />,
           title: LABELS[language].feed,
         }}
       />

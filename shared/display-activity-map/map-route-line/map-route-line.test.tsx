@@ -26,4 +26,13 @@ describe('map route line', () => {
     expect(source.props.shape.features).toHaveLength(1);
     expect(source.props.shape.features[0].geometry.type).toBe('LineString');
   });
+
+  it('draws colored segments and skips a segment without an end point', async () => {
+    await render(<MapRouteLine locations={MOCK_LOCATIONS} segmentColors={['#f00', '#0f0', '#00f']} />);
+
+    const source = screen.getByTestId('route-shape-source');
+    expect(source.props.shape.features).toHaveLength(2);
+    expect(source.props.shape.features[0].properties).toEqual({ color: '#f00' });
+    expect(source.props.shape.features[1].properties).toEqual({ color: '#0f0' });
+  });
 });

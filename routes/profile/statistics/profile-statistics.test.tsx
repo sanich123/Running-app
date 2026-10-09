@@ -1,5 +1,5 @@
-import { screen } from '@testing-library/react-native';
-import { http } from 'msw';
+import { screen, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_SERVER_IDS, MOCK_SERVER_STATISTICS } from '@T/responses/runich';
@@ -21,6 +21,19 @@ describe('ProfileStatistics', () => {
   it('renders success state', async () => {
     await renderWithProviders(<ProfileStatistics whosProfile={MOCK_SERVER_IDS.userId} />);
     expect(await screen.findByText(`${MOCK_SERVER_STATISTICS.all.totalItems}`)).toBeOnTheScreen();
+    expect(screen.queryByText('Training summary')).not.toBeOnTheScreen();
+  });
+  it('does not render metrics when the user has no activities', async () => {
+    server.use(
+      http.get(`${BASE_URL}/statistics/${MOCK_SERVER_IDS.userId}/all`, () =>
+        HttpResponse.json({ totalDuration: 0, totalDistance: 0, totalItems: 0 }),
+      ),
+    );
+
+    await renderWithProviders(<ProfileStatistics whosProfile={MOCK_SERVER_IDS.userId} />);
+
+    await waitFor(() => expect(screen.queryByTestId('month-statistics-skeleton')).not.toBeOnTheScreen());
+    expect(screen.queryByText('Activities')).not.toBeOnTheScreen();
   });
   it('renders error state', async () => {
     server.use(http.get(`${BASE_URL}/statistics/${MOCK_SERVER_IDS.userId}/all`, errorResponse));

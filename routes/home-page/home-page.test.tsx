@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react-native';
+import { screen } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
 import { setAuthTokens } from '@R/slices/auth/auth';
@@ -18,10 +18,6 @@ jest.mock('@S/infinite-scroll-list/infinite-scroll-list', () => {
   const { Text } = jest.requireActual('react-native');
   return ({ dataToRender }: any) => <Text>{dataToRender[0].title}</Text>;
 });
-jest.mock('@Routes/home-page/floating-btn/floating-btn', () => {
-  const { Pressable } = jest.requireActual('react-native');
-  return ({ onPressFn }: any) => <Pressable testID="feed-add-activity" onPress={onPressFn} />;
-});
 
 describe('Feed', () => {
   beforeEach(() => {
@@ -37,23 +33,9 @@ describe('Feed', () => {
     expect(screen.getByTestId('homeActivityIndicator')).toBeOnTheScreen();
   });
 
-  it('renders server activities and opens manual activity', async () => {
+  it('renders server activities', async () => {
     await renderWithProviders(<Feed />);
     expect(await screen.findByText(MOCK_SERVER_ACTIVITY.title)).toBeOnTheScreen();
-    fireEvent.press(screen.getByTestId('feed-add-activity'));
-    expect(mockPush).toHaveBeenCalledWith(
-      expect.objectContaining({
-        pathname: `/${ROUTES.manualActivity}`,
-        params: expect.objectContaining({
-          cameraVisible: 'false',
-          manualDistance: '0',
-          manualHours: '0',
-          manualMinutes: '0',
-          manualSeconds: '0',
-          mode: 'manual',
-        }),
-      }),
-    );
   });
 
   it('renders error state', async () => {

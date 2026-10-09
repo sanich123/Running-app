@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react-native';
 import { http } from 'msw';
+import { StyleSheet } from 'react-native';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
@@ -47,6 +48,10 @@ describe('CardFullView', () => {
     expect(await screen.findByTestId('full-view-card')).toBeOnTheScreen();
     expect(screen.getByText(MOCK_SERVER_ACTIVITY.description)).toBeOnTheScreen();
     expect(screen.getByTestId('full-view-metrics')).toBeOnTheScreen();
+
+    expect(StyleSheet.flatten(screen.getByTestId('cross-platform-scroll-view').props.contentContainerStyle)).toEqual(
+      expect.not.objectContaining({ paddingHorizontal: 12 }),
+    );
   });
 
   it('renders error state', async () => {

@@ -83,7 +83,7 @@ export default function CardFullView() {
 }
 
 const styles = StyleSheet.create({
-  page: { paddingHorizontal: 12, paddingVertical: 12 },
+  page: { paddingVertical: 12 },
   content: { flex: 1, gap: 12 },
   state: {
     justifyContent: 'center',

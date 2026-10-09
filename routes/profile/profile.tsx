@@ -5,7 +5,10 @@ import { IconButton, List, Text, TouchableRipple, useTheme } from 'react-native-
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
+import { useGetAllActivityMediaByUserIdInfiniteQuery } from '@R/services/activity/activity';
+import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
+import { useGetAllTimeStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import ProfileMediaPhotos from '@Routes/profile/media-photos/media-photos';
 import AvatarShowable from '@S/avatar/showable/showable';
@@ -28,6 +31,7 @@ export default function ProfilePage() {
   const { language } = useAppSelector(({ settings }) => settings);
   const [isProfilePhotoVisible, setIsProfilePhotoVisible] = useState(false);
   const whosProfile = whosProfileViewing ? whosProfileViewing : userId;
+  const profileUserId = `${whosProfile}`;
   const isOwnProfile = String(whosProfile) === userId;
 
   const {
@@ -37,8 +41,30 @@ export default function ProfilePage() {
     data: profile,
     error,
     refetch,
-  } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
+  } = useGetUserProfileByUserIdQuery(profileUserId, { skip: !whosProfile });
   const areFollowListsHidden = !isOwnProfile && profile?.hideFollowingList === true;
+  const profileResolved = isSuccess && Boolean(profile);
+  const shouldLoadMedia = profileResolved && (isOwnProfile || profile?.hideProfilePhotos !== true);
+  const shouldLoadFollowLists = profileResolved && !areFollowListsHidden;
+  const shouldLoadStatistics = profileResolved && (isOwnProfile || profile?.hideActivityStatistics !== true);
+  const mediaQuery = useGetAllActivityMediaByUserIdInfiniteQuery(
+    { userId: profileUserId, take: 4 },
+    { skip: !shouldLoadMedia },
+  );
+  const followingQuery = useGetYouFollowUsersByUserIdQuery(profileUserId, { skip: !shouldLoadFollowLists });
+  const followersQuery = useGetFollowersByUserIdQuery(profileUserId, { skip: !shouldLoadFollowLists });
+  const statisticsQuery = useGetAllTimeStatisticsByUserIdQuery(
+    { userId: profileUserId },
+    { skip: !shouldLoadStatistics },
+  );
+  const isContentLoading =
+    isLoading ||
+    (profileResolved &&
+      ((shouldLoadMedia && !mediaQuery.isSuccess && !mediaQuery.isError) ||
+        (shouldLoadFollowLists &&
+          ((!followingQuery.isSuccess && !followingQuery.isError) ||
+            (!followersQuery.isSuccess && !followersQuery.isError))) ||
+        (shouldLoadStatistics && !statisticsQuery.isSuccess && !statisticsQuery.isError)));
   return (
     <>
       <ScrollView
@@ -53,12 +79,12 @@ export default function ProfilePage() {
           },
           isError && styles.isInCenter,
         ]}>
-        {(isOwnProfile || (isSuccess && profile?.hideProfilePhotos !== true)) && (
+        {!isContentLoading && isSuccess && (isOwnProfile || profile?.hideProfilePhotos !== true) && (
           <View style={styles.mediaPhotosWrapper}>
-            <ProfileMediaPhotos userId={`${whosProfile}`} />
+            <ProfileMediaPhotos userId={profileUserId} />
           </View>
         )}
-        {isLoading ? (
+        {isContentLoading ? (
           <ProfileSkeleton />
         ) : isSuccess ? (
           <>
@@ -92,24 +118,15 @@ export default function ProfilePage() {
                 {profile?.bio || '—'}
               </Text>
             </View>
-            {(isOwnProfile || !areFollowListsHidden || profile?.allowNewFollowers !== false) && (
-              <View
-                style={[styles.community, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}
-                testID="profile-community-section">
-                <Text variant="titleMedium" style={{ color: colors.primary, fontFamily: FONT_FAMILIES.semiBold }}>
-                  {PROFILE_SECTIONS[language].community}
-                </Text>
-                <View style={styles.communityContent}>
-                  <View style={styles.followersBtnsWrapper}>
-                    <UsersCounter variant={USERS_VARIANT.whoUserFollows} isHidden={areFollowListsHidden} />
-                    <UsersCounter variant={USERS_VARIANT.whoFollowsUser} isHidden={areFollowListsHidden} />
-                  </View>
-                  {!isOwnProfile && profile?.allowNewFollowers !== false && (
-                    <View style={styles.followAction}>
-                      <FollowUnfollowBtn friendId={`${whosProfile}`} />
-                    </View>
-                  )}
-                </View>
+            {(isOwnProfile || !areFollowListsHidden) && (
+              <View style={styles.followersBtnsWrapper} testID="profile-community-section">
+                <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
+                <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
+              </View>
+            )}
+            {!isOwnProfile && profile?.allowNewFollowers !== false && (
+              <View style={styles.followAction}>
+                <FollowUnfollowBtn friendId={`${whosProfile}`} />
               </View>
             )}
             {isOwnProfile || profile?.hideActivityStatistics !== true ? (
@@ -228,19 +245,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     padding: 16,
   },
-  community: {
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: 12,
-    marginBottom: 12,
-    padding: 12,
-  },
-  communityContent: {
-    gap: 8,
-  },
   followersBtnsWrapper: {
     flexDirection: 'row',
     gap: 8,
+    marginBottom: 12,
   },
   followAction: {
     alignSelf: 'flex-start',

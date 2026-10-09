@@ -6,18 +6,33 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { useDeleteActivityMediaMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
+import { isVideoUrl } from '@Routes/photo-viewer/utils';
 import ActivityMediaDeleteBtn from '@S/activity-media/delete-btn';
 import AddActivityMediaBtn from '@S/card/add-media-btn/add-media-btn';
 import CustomImage from '@S/custom-image/custom-image';
 import { errorToast } from '@S/error-toast/error-toast';
 import useLongPressGuard from '@S/pressable/use-long-press-guard';
 import { useActivityCard } from '../context';
-import { ACTIVITY_MEDIA_ASPECT_RATIO } from './const';
+import {
+  ACTIVITY_MEDIA_ASPECT_RATIO,
+  ACTIVITY_MEDIA_HEIGHT_RATIO,
+  ACTIVITY_MEDIA_MAX_HEIGHT,
+  ACTIVITY_MEDIA_MIN_HEIGHT,
+} from './const';
+import VideoMedia from './video-media';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import RouteReplayBtn from '../route-replay-btn/route-replay-btn';
 import type { ActivityMediaItem } from '../types';
 
-type DisplayedMediaItem = ActivityMediaItem & { isMap?: boolean };
+const MEDIA_VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 60 };
+
+interface DisplayedMediaItem extends ActivityMediaItem {
+  isMap?: boolean;
+}
+
+interface MediaViewToken {
+  index: number | undefined;
+}
 
 export default function MediaList() {
   const { activity } = useActivityCard();
@@ -43,9 +58,23 @@ export default function MediaList() {
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const [deleteActivityMedia, { isLoading: isDeletingMedia }] = useDeleteActivityMediaMutation();
-  const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
+  const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width, 0) : MAX_MOBILE_WIDTH;
+  const mediaHeight = Math.min(
+    Math.max(mediaWidth * ACTIVITY_MEDIA_HEIGHT_RATIO, ACTIVITY_MEDIA_MIN_HEIGHT),
+    ACTIVITY_MEDIA_MAX_HEIGHT,
+  );
   const isOwnActivity = Boolean(activityOwnerId && activityOwnerId === currentUserId);
   const canViewReplay = activity.profile?.allowActivityReplayViewing !== false || isOwnActivity;
+  const [mediaAspectRatios, setMediaAspectRatios] = useState<Record<string, number>>({});
+  const [visibleMediaIndices, setVisibleMediaIndices] = useState<Set<number>>(() => new Set([0]));
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: MediaViewToken[]; changed: MediaViewToken[] }) => {
+      setVisibleMediaIndices(
+        new Set(viewableItems.map(({ index }) => index).filter((index): index is number => index != null)),
+      );
+    },
+    [],
+  );
 
   const handleDeleteMedia = useCallback(
     async (mediaId: string) => {
@@ -65,13 +94,30 @@ export default function MediaList() {
       ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash, isMap: true }, ...activityMedia]
       : activityMedia;
   }, [mapPhotoUrl, mapPhotoUrlBlurhash, media]);
+  const getMediaWidth = useCallback(
+    (item: DisplayedMediaItem) => {
+      const aspectRatio = item.isMap ? ACTIVITY_MEDIA_ASPECT_RATIO : (mediaAspectRatios[item.url] ?? 1);
+      const minimumWidth = mediaHeight * 0.56;
+      return Math.min(mediaWidth, Math.max(mediaHeight * aspectRatio, minimumWidth));
+    },
+    [mediaAspectRatios, mediaHeight, mediaWidth],
+  );
   const renderItem = useCallback(
     ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => {
       const isMap = item.isMap === true;
+      const isVideo = !isMap && isVideoUrl(item.url);
+      const itemWidth = getMediaWidth(item);
+      const isActive = visibleMediaIndices.has(index);
+      const onMediaMetadata = (metadata: { aspectRatio?: number }) => {
+        if (!metadata.aspectRatio || !Number.isFinite(metadata.aspectRatio)) return;
+        setMediaAspectRatios((current) =>
+          current[item.url] === metadata.aspectRatio ? current : { ...current, [item.url]: metadata.aspectRatio! },
+        );
+      };
       return (
         <View
           testID={isMap ? 'activity-map-media-container' : undefined}
-          style={{ width: mediaWidth, aspectRatio: ACTIVITY_MEDIA_ASPECT_RATIO, position: 'relative' }}>
+          style={{ height: mediaHeight, position: 'relative', width: itemWidth }}>
           <TouchableRipple
             testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
             onPressIn={() => {
@@ -112,17 +158,36 @@ export default function MediaList() {
                   ? 'Открыть медиа тренировки'
                   : 'Open activity media'
             }>
-            <CustomImage
-              style={{ width: mediaWidth, aspectRatio: ACTIVITY_MEDIA_ASPECT_RATIO }}
-              source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
-              contentFit="cover"
-              placeholderContentFit="cover"
-              priority={index === 0 ? 'high' : 'normal'}
-              cachePolicy="memory-disk"
-              recyclingKey={item.url}
-              testID={item.url}
-              placeholder={item?.blurhash}
-            />
+            {isVideo ? (
+              <VideoMedia
+                url={item.url}
+                width={itemWidth}
+                height={mediaHeight}
+                isActive={isActive}
+                muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
+                unmuteLabel={language === LANGUAGES.russian ? 'Включить звук видео' : 'Unmute video'}
+                testID={`activity-video-${item.id ?? index}`}
+                onMetadata={onMediaMetadata}
+              />
+            ) : (
+              <CustomImage
+                style={{ width: itemWidth, height: mediaHeight }}
+                source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
+                contentFit="cover"
+                placeholderContentFit="cover"
+                priority={index === 0 ? 'high' : 'normal'}
+                cachePolicy="memory-disk"
+                recyclingKey={item.url}
+                testID={item.url}
+                placeholder={item?.blurhash}
+                onLoad={(event) => {
+                  const { width: loadedWidth, height: loadedHeight } = event.source;
+                  if (loadedWidth > 0 && loadedHeight > 0) {
+                    onMediaMetadata({ aspectRatio: loadedWidth / loadedHeight });
+                  }
+                }}
+              />
+            )}
           </TouchableRipple>
           {!isMap && isOwnActivity && item.id && selectedMediaId === item.id ? (
             <View style={styles.deleteButton}>
@@ -159,7 +224,8 @@ export default function MediaList() {
       );
     },
     [
-      mediaWidth,
+      getMediaWidth,
+      mediaHeight,
       isOwnActivity,
       selectedMediaId,
       language,
@@ -179,6 +245,8 @@ export default function MediaList() {
       profile?.allowActivityReplayViewing,
       push,
       handleDeleteMedia,
+      setMediaAspectRatios,
+      visibleMediaIndices,
     ],
   );
 
@@ -192,13 +260,16 @@ export default function MediaList() {
       windowSize={3}
       updateCellsBatchingPeriod={50}
       removeClippedSubviews={Platform.OS === 'android'}
+      ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+      viewabilityConfig={MEDIA_VIEWABILITY_CONFIG}
+      onViewableItemsChanged={onViewableItemsChanged}
       keyExtractor={(item) => item.url}
-      getItemLayout={(_, index) => ({ length: mediaWidth, offset: mediaWidth * index, index })}
     />
   );
 }
 
 const styles = StyleSheet.create({
+  itemSeparator: { width: 8 },
   deleteButton: {
     position: 'absolute',
     right: 8,

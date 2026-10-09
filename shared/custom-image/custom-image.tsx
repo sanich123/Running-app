@@ -50,7 +50,7 @@ export default function CustomImage({
   cachePolicy?: ImageProps['cachePolicy'];
   recyclingKey?: string | null;
   transition?: ImageProps['transition'];
-  onLoad?: () => void;
+  onLoad?: ImageProps['onLoad'];
   onError?: () => void;
 }) {
   const sourceUri = source.uri || '';
@@ -93,11 +93,11 @@ export default function CustomImage({
     };
   }, [shouldCheckCache, sourceUri]);
 
-  const handleLoad = () => {
+  const handleLoad: NonNullable<ImageProps['onLoad']> = (event) => {
     if (sourceUri && cachePolicy !== 'none') {
       cachedImageUris.add(sourceUri);
     }
-    onLoad?.();
+    onLoad?.(event);
   };
   const resolvedTransition = transition ?? (cacheStatus === 'cached' ? 0 : DEFAULT_IMAGE_TRANSITION);
 

@@ -1,7 +1,11 @@
 import { fireEvent, screen, userEvent } from '@testing-library/react-native';
-import { ROUTES } from '@const/enums';
+import { Platform, StyleSheet } from 'react-native';
+import { MAX_MOBILE_WIDTH } from '@const/const';
+import { LANGUAGES, ROUTES } from '@const/enums';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { clearSubscriptionSnapshot, setSubscriptionSnapshot } from '@R/slices/subscription/subscription';
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
+import * as errorToastModule from '@S/error-toast/error-toast';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { ActivityCardContext } from '../context';
@@ -44,10 +48,18 @@ function renderMediaList(activity: Partial<ActivityCardData>) {
   );
 }
 
+function overridePlatformOS(os: typeof Platform.OS) {
+  const originalOS = Platform.OS;
+  Object.defineProperty(Platform, 'OS', { configurable: true, value: os });
+  return () => Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
+}
+
 describe('media list', () => {
   beforeEach(() => {
+    mockPush.mockClear();
     mockStore.dispatch(clearSubscriptionSnapshot());
     mockStore.dispatch(setMockUserId('activity-owner'));
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
   });
 
   it('opens the route map when its preview is pressed', async () => {
@@ -175,12 +187,136 @@ describe('media list', () => {
     expect(screen.getByTestId(photoUrl).props.contentFit).toBe('cover');
   });
 
+  it('autoplays videos muted and exposes duration and a mute toggle', async () => {
+    const user = userEvent.setup();
+    const media = {
+      id: 'video-1',
+      url: 'https://images.example.test/activity.mp4',
+      thumbnail: 'https://images.example.test/activity-thumb.jpg',
+    };
+
+    await renderMediaList({ mapPhotoUrl: undefined, media: [media] });
+
+    expect(screen.getByTestId('activity-video-video-1')).toBeOnTheScreen();
+    expect(screen.getByText('0:13')).toBeOnTheScreen();
+    const muteButton = screen.getByTestId('activity-video-video-1-mute');
+    expect(muteButton).toHaveProp('accessibilityLabel', 'Включить звук видео');
+    expect(
+      StyleSheet.flatten(
+        screen.getByTestId('activity-video-video-1-mute-icon', { includeHiddenElements: true }).props.style,
+      ),
+    ).toEqual(expect.objectContaining({ color: '#fff' }));
+
+    await user.press(muteButton);
+
+    expect(muteButton).toHaveProp('accessibilityLabel', 'Выключить звук видео');
+  });
+
   it('opens the selected activity media', async () => {
     const user = userEvent.setup();
     const photoUrl = 'https://images.example.test/activity.jpg';
     await renderMediaList({ mapPhotoUrl: undefined, media: [{ url: photoUrl, thumbnail: null }] });
     await user.press(screen.getByTestId(photoUrl));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/activity-id?indexOfPhoto=0`);
+  });
+
+  it('uses English media labels and an encoded URL on web', async () => {
+    const restorePlatform = overridePlatformOS('web');
+    const user = userEvent.setup();
+    const photoUrl = 'https://images.example.test/activity photo.jpg';
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+
+    try {
+      await renderMediaList({ mapPhotoUrl: undefined, media: [{ url: photoUrl, thumbnail: null }] });
+      const mediaButton = screen.getByRole('button', { name: 'Open activity media' });
+      await user.press(mediaButton);
+      expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/${encodeURIComponent(photoUrl)}?indexOfPhoto=0`);
+    } finally {
+      restorePlatform();
+    }
+  });
+
+  it('updates photo dimensions only for valid metadata and blocks navigation after long press', async () => {
+    const user = userEvent.setup();
+    const photoUrl = 'https://images.example.test/activity-metadata.jpg';
+    await renderMediaList({
+      mapPhotoUrl: undefined,
+      media: [{ id: 'media-metadata', url: photoUrl, thumbnail: null }],
+    });
+    const media = screen.getByTestId(photoUrl);
+
+    await fireEvent(media, 'load', { source: { width: 0, height: 100 } });
+    await fireEvent(media, 'load', { source: { width: 200, height: 100 } });
+    const touchTarget = screen.getByTestId('activity-media-media-metadata');
+    await fireEvent(touchTarget, 'longPress');
+    await user.press(touchTarget);
+
+    expect(screen.getByTestId('activity-media-delete-button')).toBeOnTheScreen();
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it('uses the mobile width cap and handles a map without a media array', async () => {
+    const useWindowDimensions = jest.spyOn(require('react-native'), 'useWindowDimensions').mockReturnValue({
+      width: MAX_MOBILE_WIDTH + 200,
+      height: 800,
+      scale: 1,
+      fontScale: 1,
+    });
+    const mapUrl = 'https://cdn.example.test/wide-map.jpg';
+
+    try {
+      await renderMediaList({ mapPhotoUrl: mapUrl, media: undefined });
+      expect(screen.getByTestId(mapUrl)).toHaveProp('style', expect.objectContaining({ width: MAX_MOBILE_WIDTH }));
+
+      useWindowDimensions.mockReturnValue({ width: 320, height: 800, scale: 1, fontScale: 1 });
+      const narrowMapUrl = 'https://cdn.example.test/narrow-map.jpg';
+      await renderMediaList({ mapPhotoUrl: narrowMapUrl, media: [] });
+      expect(screen.getByTestId(narrowMapUrl)).toHaveProp('style', expect.objectContaining({ width: 320 }));
+    } finally {
+      useWindowDimensions.mockRestore();
+    }
+  });
+
+  it('uses English video labels', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await renderMediaList({
+      mapPhotoUrl: undefined,
+      media: [
+        {
+          id: 'video-english',
+          url: 'https://images.example.test/english.mp4',
+          thumbnail: 'https://images.example.test/english-thumb.jpg',
+        },
+      ],
+    });
+
+    expect(screen.getByTestId('activity-video-video-english-mute')).toHaveProp('accessibilityLabel', 'Unmute video');
+  });
+
+  it('uses a supplied thumbnail for a regular photo', async () => {
+    const photoUrl = 'https://images.example.test/second.jpg';
+    await renderMediaList({
+      mapPhotoUrl: undefined,
+      media: [{ url: photoUrl, thumbnail: 'second-thumb.jpg' }],
+    });
+
+    expect(screen.getByTestId(photoUrl)).toHaveProp('source', { uri: 'second-thumb.jpg' });
+  });
+
+  it('reports a forbidden route preview tap instead of navigating', async () => {
+    const errorToastSpy = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
+    mockStore.dispatch(setMockUserId('another-user'));
+    await renderMediaList({
+      mapPhotoUrl: 'https://cdn.example.test/hidden-map.jpg',
+      media: [],
+      profile: { allowActivityReplayViewing: false },
+    });
+
+    await fireEvent.press(screen.getByTestId('activity-map-media-item'));
+
+    expect(errorToastSpy).toHaveBeenCalledWith('Пользователь запретил просматривать информацию о своем маршруте');
+    expect(mockPush).not.toHaveBeenCalled();
+    errorToastSpy.mockRestore();
   });
 
   it('offers media deletion after a long press only to the activity owner', async () => {

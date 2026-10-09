@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { View } from 'react-native';
-import { ActivityIndicator, Card, Divider, Icon, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Card, Icon, Text, useTheme } from 'react-native-paper';
 import { WORKOUT_IMPORT_COPY } from './const';
 import {
   formatWorkoutCountNotice,
@@ -67,8 +67,6 @@ export default function DiagnosticsCard({
           </View>
         </DiagnosticsSection>
 
-        <Divider style={styles.divider} />
-
         <DiagnosticsSection icon="shield-check-outline" title={copy.sections.permissions}>
           <View style={styles.metricsGrid}>
             <DiagnosticMetric
@@ -106,8 +104,6 @@ export default function DiagnosticsCard({
           </View>
         )}
 
-        <Divider style={styles.divider} />
-
         <DiagnosticsSection icon="database-search-outline" title={copy.sections.reading}>
           <DiagnosticList items={getReadDiagnosticItems(readDiagnostics, isRussian)} />
           {isReading && <ActivityIndicator size="small" style={styles.readingIndicator} />}
@@ -133,8 +129,6 @@ export default function DiagnosticsCard({
             </View>
           )}
         </DiagnosticsSection>
-
-        <Divider style={styles.divider} />
 
         <DiagnosticsSection icon="cloud-upload-outline" title={copy.sections.upload}>
           <DiagnosticList items={getUploadDiagnosticItems(uploadDiagnostics, isRussian)} />
@@ -219,9 +213,7 @@ function DiagnosticList({ items }: { items: DiagnosticItem[] }) {
                 : colors.onSurface;
 
         return (
-          <View
-            key={`${item.label}-${index}`}
-            style={[styles.listRow, index < items.length - 1 && { borderBottomColor: colors.outlineVariant }]}>
+          <View key={`${item.label}-${index}`} style={styles.listRow}>
             <Text variant="labelMedium" style={[styles.listLabel, { color: colors.onSurfaceVariant }]}>
               {item.label}
             </Text>
@@ -298,7 +290,6 @@ const styles = {
     gap: 12,
     minHeight: 38,
     paddingVertical: 8,
-    borderBottomWidth: 1,
   },
   listLabel: {
     flex: 0.9,
@@ -307,9 +298,6 @@ const styles = {
     flex: 1.4,
     textAlign: 'right' as const,
     lineHeight: 18,
-  },
-  divider: {
-    marginVertical: 16,
   },
   errorNotice: {
     flexDirection: 'row' as const,

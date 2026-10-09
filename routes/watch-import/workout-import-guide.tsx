@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { Stack } from 'expo-router';
-import { ActivityIndicator, Button, Card, Checkbox, Divider, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, Checkbox, Text, useTheme } from 'react-native-paper';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import { WORKOUT_IMPORT_COPY } from './workout-import/const';
 import DiagnosticsCard from './workout-import/diagnostics-card';
@@ -114,7 +114,7 @@ export default function WorkoutImportGuidePage() {
             ) : workouts.length === 0 && isConnected ? (
               <Text style={[styles.message, { color: colors.onSurfaceVariant }]}>{copy.noWorkouts}</Text>
             ) : (
-              workouts.map((workout, index) => {
+              workouts.map((workout) => {
                 const id = getWorkoutId(workout);
                 const checked = selectedIds.has(id);
                 return (
@@ -130,7 +130,6 @@ export default function WorkoutImportGuidePage() {
                           </Text>
                         </View>
                       </View>
-                      {index < workouts.length - 1 && <Divider style={styles.divider} />}
                     </Card.Content>
                   </Card>
                 );
@@ -182,7 +181,6 @@ const styles = StyleSheet.create({
   statusCard: { marginTop: 2, borderColor: '#4caf50', borderWidth: 1 },
   row: { flexDirection: 'row', alignItems: 'center' },
   copy: { flex: 1, gap: 2 },
-  divider: { marginTop: 10 },
   button: { marginTop: 6 },
   message: { marginTop: 8 },
   loader: { marginVertical: 24 },
