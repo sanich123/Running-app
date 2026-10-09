@@ -1,13 +1,13 @@
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
 import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { WATCH_IMPORT_DAYS } from './const';
+import type { WatchImportDateRange } from './types';
 import type { WatchWorkout } from '../../modules/runich-health/src/RunichHealth';
 import type { WatchWorkoutToSend } from '@R/services/activity/types';
 import type { LocationObject } from 'expo-location';
 
-export const WATCH_IMPORT_DAYS = 30;
-
-export function getWatchImportDateRange(now = new Date()) {
+export function getWatchImportDateRange(now = new Date()): WatchImportDateRange {
   const end = now.toISOString();
   const startDate = new Date(now);
   startDate.setDate(startDate.getDate() - WATCH_IMPORT_DAYS);

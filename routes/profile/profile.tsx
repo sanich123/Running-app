@@ -115,7 +115,7 @@ export default function ProfilePage() {
             {isOwnProfile || profile?.hideActivityStatistics !== true ? (
               <ProfileStatistics whosProfile={`${whosProfile}`} />
             ) : null}
-            {isOwnProfile && userId ? (
+            {Platform.OS === 'android' && isOwnProfile && userId ? (
               <List.Item
                 testID="watch-import-profile-row"
                 title={PROFILE_WATCH_IMPORT[language].title}

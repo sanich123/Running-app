@@ -1,4 +1,4 @@
-import { getWatchImportDateRange, mapWatchWorkoutToActivity } from './watch-import';
+import { getWatchImportDateRange, mapWatchWorkoutToActivity } from './helpers';
 
 describe('watch import mapping', () => {
   it('uses a rolling thirty-day window', () => {
