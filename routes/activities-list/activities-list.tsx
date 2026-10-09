@@ -11,9 +11,11 @@ import { keyExtractor, renderCardsFunction } from '@S/infinite-scroll-list/utils
 
 export default function ActivitiesList() {
   const { language } = useAppSelector(({ settings }) => settings);
-  const {
-    ids: [stringFromIdsArray],
-  } = useLocalSearchParams();
+  const { ids: rawIds } = useLocalSearchParams<{ ids?: string | string[] }>();
+  const activityIds = (Array.isArray(rawIds) ? rawIds : rawIds ? [rawIds] : [])
+    .flatMap((value) => value.split(/[&,]/))
+    .map((value) => value.trim().replace(/^ids=/, ''))
+    .filter(Boolean);
   const {
     data: activities,
     isSuccess,
@@ -21,9 +23,7 @@ export default function ActivitiesList() {
     isLoading,
     error,
     refetch,
-  } = useGetSeveralActivitiesByTheirIdsQuery({
-    ids: stringFromIdsArray,
-  });
+  } = useGetSeveralActivitiesByTheirIdsQuery({ ids: activityIds.join(',') });
 
   return (
     <CrossPlatformLayout edges={[]} isError={isError} isLoading={isLoading} outerStyles={{ padding: 10 }}>

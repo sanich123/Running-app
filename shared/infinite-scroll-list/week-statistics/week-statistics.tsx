@@ -15,7 +15,7 @@ import WeekStatisticsMetric from './week-statistics-metrics';
 export default function WeekStatistics() {
   const { push } = useRouter();
   const { width } = useWindowDimensions();
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const timeZone = getDeviceTimeZone();
   const { week, year, month } = getCurrentWeekDates();
@@ -38,7 +38,6 @@ export default function WeekStatistics() {
 
   return (
     <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       onPress={() =>
         weekStatistics?.totalItems && push(`/${ROUTES.monthStatistics}?userId=${userId}&year=${year}&month=${month}`)

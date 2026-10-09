@@ -40,7 +40,6 @@ export interface ProfileType {
   birthday?: string | null;
   city?: string | null;
   createdAt?: string | null;
-  email?: string | null;
   gender?: string | null;
   height?: string | null;
   age?: string | null;
@@ -57,13 +56,12 @@ export interface ProfileType {
   emailNotifications?: boolean | null;
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
-  allowLikesListViewing?: boolean;
+  allowActivityReplayViewing?: boolean;
   allowActivitySharing?: boolean;
   allowNewFollowers?: boolean;
   hideActivityStatistics?: boolean;
   hideFollowingList?: boolean;
   hideProfilePhotos?: boolean;
-  user?: { email?: string | null } | null;
 }
 
 export interface ActivityCardData {

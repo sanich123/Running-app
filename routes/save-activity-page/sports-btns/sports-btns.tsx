@@ -13,7 +13,7 @@ export default function SportsBtns() {
   const { language } = useAppSelector(({ settings }) => settings);
   const { sport } = useManualActivityParams();
   const { setSport } = useSetManualActivityParams();
-  const { dark, colors } = useTheme();
+  const { colors } = useTheme();
   const chooseSportModal = useRef<BottomSheetModal>(null);
   const isSportPickerDisabled = isSavingDisabled;
 
@@ -27,7 +27,6 @@ export default function SportsBtns() {
           { backgroundColor: colors.primaryContainer, borderColor: colors.primary },
           isSportPickerDisabled && styles.disabledButton,
         ]}
-        rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
         onPress={() => chooseSportModal.current?.present()}>
         <View style={styles.content}>
           <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>

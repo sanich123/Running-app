@@ -5,12 +5,11 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ACTIVITY_SHOW_MAP_TEST_ID } from './const';
 
 export default function ShowMapBtn() {
-  const { dark, colors } = useTheme();
+  const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { isMapVisible } = useAppSelector(({ location }) => location);
   return (
     <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       style={styles.touchable}
       testID={ACTIVITY_SHOW_MAP_TEST_ID}

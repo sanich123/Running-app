@@ -21,7 +21,7 @@ import { pausePedometerActivity, resumePedometerActivity } from '@U/pedometer/pe
 import { getDeviceTimeZone } from '@U/time-zone';
 
 export default function PauseBtn() {
-  const { dark, colors } = useTheme();
+  const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const {
     activityStatus,
@@ -90,7 +90,6 @@ export default function PauseBtn() {
   return (
     <TouchableRipple
       testID="activity-pause-toggle"
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       style={styles.touchable}
       onPressIn={() =>

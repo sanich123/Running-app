@@ -32,6 +32,7 @@ export default function MediaList() {
     weatherWindSpeed,
     weatherCode,
     emotion,
+    profile,
   } = activity;
   const [isMapPressed, setIsMapPressed] = useState(false);
   const [selectedMediaId, setSelectedMediaId] = useState<string | null>(null);
@@ -44,6 +45,7 @@ export default function MediaList() {
   const [deleteActivityMedia, { isLoading: isDeletingMedia }] = useDeleteActivityMediaMutation();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
   const isOwnActivity = Boolean(activityOwnerId && activityOwnerId === currentUserId);
+  const canViewReplay = activity.profile?.allowActivityReplayViewing !== false || isOwnActivity;
 
   const handleDeleteMedia = useCallback(
     async (mediaId: string) => {
@@ -90,6 +92,9 @@ export default function MediaList() {
             disabled={!isMap && selectedMediaId === item.id}
             onPress={() => {
               if (!longPressGuard.shouldHandlePress()) return;
+              if (isMap && profile?.allowActivityReplayViewing === false) {
+                return errorToast('Пользователь запретил просматривать информацию о своем маршруте');
+              }
               push(
                 isMap
                   ? `/${ROUTES.map}/${id}`
@@ -146,7 +151,7 @@ export default function MediaList() {
               />
               <View pointerEvents="box-none" style={styles.mapActions}>
                 {isOwnActivity ? <AddActivityMediaBtn activityId={id} media={media ?? []} /> : null}
-                <RouteReplayBtn activityId={id} userId={activityOwnerId} />
+                {canViewReplay ? <RouteReplayBtn activityId={id} userId={activityOwnerId} /> : null}
               </View>
             </>
           ) : null}
@@ -154,24 +159,26 @@ export default function MediaList() {
       );
     },
     [
-      dark,
-      emotion,
-      id,
-      activityOwnerId,
-      isMapPressed,
-      isOwnActivity,
-      handleDeleteMedia,
-      isDeletingMedia,
-      longPressGuard,
-      language,
-      locationName,
-      media,
       mediaWidth,
-      push,
+      isOwnActivity,
       selectedMediaId,
-      weatherCode,
+      language,
+      isDeletingMedia,
+      isMapPressed,
+      dark,
+      locationName,
       weatherTemperature,
       weatherWindSpeed,
+      weatherCode,
+      emotion,
+      id,
+      media,
+      canViewReplay,
+      activityOwnerId,
+      longPressGuard,
+      profile?.allowActivityReplayViewing,
+      push,
+      handleDeleteMedia,
     ],
   );
 

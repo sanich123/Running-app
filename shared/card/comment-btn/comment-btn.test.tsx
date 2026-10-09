@@ -75,9 +75,7 @@ describe('Activity card comment btn', () => {
     await renderCommentBtn();
     await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
     expect(mockPush).not.toHaveBeenCalled();
-    expect(mockStore.getState().comment).toEqual(
-      expect.objectContaining({ commentActivityId: 'someActivityId', commentsLength: 6 }),
-    );
+    expect(mockStore.getState().comment).toEqual(expect.objectContaining({ commentActivityId: 'someActivityId' }));
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 
@@ -101,6 +99,7 @@ describe('Activity card comment btn', () => {
     await renderCommentBtn('activity-with-comments-disabled', 3, false);
 
     expect(screen.getByTestId('activity-card-comment-button').props.accessibilityState?.disabled).toBe(true);
+    expect(screen.queryByText('3')).not.toBeOnTheScreen();
     expect(screen.getByTestId('activityCardCommentBtnIcon')).toHaveProp(
       'accessibilityLabel',
       MD3LightTheme.colors.onSurfaceDisabled,

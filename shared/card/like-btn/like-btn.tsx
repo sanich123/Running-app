@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Animated } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
-import { useSendEmailAfterSendingLikeMutation } from '@R/services/emails/emails';
 import {
   useDeleteLikeMutation,
   useGetLikesByActivityIdInfiniteQuery,
@@ -22,17 +21,19 @@ import { LIKE_BTN } from '../likes/const';
 
 export default function LikeBtn() {
   const { activity } = useActivityCard();
-  const { id: activityId, userId: activityOwnerId, likesLength, profile, mapPhotoUrl } = activity;
+  const { id: activityId, userId: activityOwnerId, likesLength, profile } = activity;
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { data: currentUserProfile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const { language } = useAppSelector(({ settings }) => settings);
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
-  const { profilePhoto, name, surname } = currentUserProfile ?? {};
+  const { profilePhoto } = currentUserProfile ?? {};
 
+  const isActivityOwner = activityOwnerId === userId;
+  const canInteractWithActivity = profile?.allowActivityInteractions !== false || isActivityOwner;
   const isLikesMarkedForUpdate = activityIdWhichLikesToUpdate === activityId;
-  const shouldLoadLikes = likesLength !== 0 || isLikesMarkedForUpdate;
+  const shouldLoadLikes = canInteractWithActivity && (likesLength !== 0 || isLikesMarkedForUpdate);
 
   const {
     data: likesPages,
@@ -47,11 +48,9 @@ export default function LikeBtn() {
   const likesList = likesPages?.pages.flatMap(({ likes }) => likes) ?? [];
   const currentUserLike =
     likesPages?.pages[0]?.currentUserLike ?? likesList.find(({ authorId }) => authorId === userId) ?? null;
-  const [sendEmailNotification] = useSendEmailAfterSendingLikeMutation();
-  const [sendLike, { isLoading: isSendingLike, isSuccess: isSuccessSending }] = useSendLikeMutation();
+  const [sendLike, { isLoading: isSendingLike }] = useSendLikeMutation();
 
   const [deleteLike, { isLoading: isDeletingLike }] = useDeleteLikeMutation();
-  const recipientEmail = profile?.email ?? profile?.user?.email;
 
   const isLikedByYou = currentUserLike ? [currentUserLike] : [];
   const hasLikesFromOthers =
@@ -74,31 +73,6 @@ export default function LikeBtn() {
       }),
     ]).start();
   }, [likeScale]);
-
-  useEffect(() => {
-    if (isSuccessSending && profile?.emailNotifications && recipientEmail) {
-      sendEmailNotification({
-        name: name ?? '',
-        surname: surname ?? '',
-        profilePhoto: profilePhoto ?? '',
-        recepientName: profile.name ?? '',
-        recepientSurname: profile.surname ?? '',
-        recepientEmail: recipientEmail,
-        mapPhotoUrl: mapPhotoUrl || '',
-        activityId,
-      });
-    }
-  }, [
-    activityId,
-    isSuccessSending,
-    mapPhotoUrl,
-    name,
-    profile,
-    profilePhoto,
-    recipientEmail,
-    sendEmailNotification,
-    surname,
-  ]);
 
   return (
     <Animated.View style={{ transform: [{ scale: likeScale }] }}>
@@ -124,13 +98,7 @@ export default function LikeBtn() {
             }
           }
         }}
-        disabled={
-          isError ||
-          isLikesLoading ||
-          isSendingLike ||
-          isDeletingLike ||
-          (profile?.allowActivityInteractions === false && activityOwnerId !== userId)
-        }
+        disabled={isError || isLikesLoading || isSendingLike || isDeletingLike || !canInteractWithActivity}
       />
     </Animated.View>
   );

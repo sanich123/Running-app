@@ -51,7 +51,7 @@ export function getCardAdditionalMetric({
     };
   }
 
-  if (isWalkingActivity(sport) && steps != null && steps > 0) {
+  if (isWalkingActivity(sport) && steps != null && steps > 1) {
     return {
       title: CARD_METRICS[language].steps,
       metrics: `${steps}`,

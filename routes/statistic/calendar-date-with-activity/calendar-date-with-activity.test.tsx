@@ -38,6 +38,9 @@ describe('calendar date with activity', () => {
     expect(screen.getByText('×2')).toBeOnTheScreen();
     expect(screen.queryByTestId('calendar-activity-icon-first')).not.toBeOnTheScreen();
     await user.press(screen.getByTestId('calendar-activities-first-second'));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activitiesList}/ids=first&ids=second`);
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: `/${ROUTES.activitiesList}/${ROUTES.routeIds}`,
+      params: { ids: ['first', 'second'] },
+    });
   });
 });

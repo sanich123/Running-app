@@ -78,10 +78,8 @@ function makeComment(activityId: string, authorId: string, id: string, comment: 
     date: '2026-08-09T10:00:00.000Z',
     id,
     profile: {
-      emailNotifications: false,
       name: MOCK_PROFILE.name,
       surname: MOCK_PROFILE.surname,
-      user: { email: 'card-comment-author@example.test' },
     },
     profileId: 'card-comment-profile',
   };

@@ -6,7 +6,7 @@ import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 
 export default function FeedHeaderTitle({ children }: PropsWithChildren) {
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { replace } = useRouter();
   const title = <Text style={[styles.title, { color: colors.primary }]}>{children}</Text>;
 
@@ -15,12 +15,7 @@ export default function FeedHeaderTitle({ children }: PropsWithChildren) {
   }
 
   return (
-    <TouchableRipple
-      accessibilityRole="link"
-      borderless
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => replace(ROUTES.root)}
-      style={styles.link}>
+    <TouchableRipple accessibilityRole="link" borderless onPress={() => replace(ROUTES.root)} style={styles.link}>
       {title}
     </TouchableRipple>
   );

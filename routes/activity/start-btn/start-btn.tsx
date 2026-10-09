@@ -56,7 +56,7 @@ export default function StartBtn({
   onTrackingActionInProgressChange?: (isInProgress: boolean) => void;
 }) {
   const dispatch = useAppDispatch();
-  const { dark, colors } = useTheme();
+  const { colors } = useTheme();
   const {
     activityStatus,
     duration,
@@ -226,7 +226,6 @@ export default function StartBtn({
 
   return (
     <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       borderless
       style={styles.touchable}
       testID={ACTIVITY_START_BTN_TEST_ID}
