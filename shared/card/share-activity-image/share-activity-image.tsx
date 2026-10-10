@@ -15,7 +15,10 @@ import { CARD_METRICS } from '../metrics/const';
 import { getCardSpeedMetric } from '../metrics/utils';
 import type { ActivityCardData } from '../types';
 
-type ShareActivityImageProps = Pick<ActivityCardData, 'distance' | 'duration' | 'date' | 'title' | 'mapPhotoUrl'> & {
+type ShareActivityImageProps = Pick<
+  ActivityCardData,
+  'distance' | 'duration' | 'date' | 'title' | 'mapPhotoUrl' | 'mapPhotoUrlBlurhash'
+> & {
   profile?: ActivityCardData['profile'];
   sport?: string;
   emotion?: string | null;
@@ -36,6 +39,7 @@ export default function ShareActivityImage({
   date,
   title,
   mapPhotoUrl,
+  mapPhotoUrlBlurhash,
   cardRef,
   sport = 'run',
   onReady,
@@ -86,6 +90,7 @@ export default function ShareActivityImage({
             style={styles.map}
             source={{ uri: mapPhotoUrl }}
             contentFit="cover"
+            placeholder={mapPhotoUrlBlurhash}
             priority="low"
             cachePolicy="disk"
             recyclingKey={mapPhotoUrl}

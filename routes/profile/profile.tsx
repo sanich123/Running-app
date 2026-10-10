@@ -183,6 +183,7 @@ export default function ProfilePage() {
               testID="profile-photo-modal-image"
               source={{ uri: profile?.profilePhoto }}
               contentFit="contain"
+              placeholder={profile?.profilePhotoBlurhash}
               style={styles.photoModalImage}
             />
             <IconButton
@@ -253,7 +254,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   followAction: {
-    alignSelf: 'flex-start',
+    alignSelf: 'stretch',
+    marginBottom: 12,
   },
   profileName: { fontFamily: FONT_FAMILIES.extraBold },
   privacySettingsLink: {

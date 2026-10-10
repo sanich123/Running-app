@@ -18,7 +18,7 @@ import type { ActivityMediaItemResponse } from '@R/runich-api/types';
 import type { PageScrollStateChangedNativeEvent, PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
 
 export default function PhotoViewer() {
-  const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();
+  const { photoUrl, indexOfPhoto, userId, take, blurhash } = useLocalSearchParams();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const webPhotoUrl = getPhotoUrl(photoUrl);
@@ -83,6 +83,7 @@ export default function PhotoViewer() {
               source={{ uri: webPhotoUrl }}
               style={[styles.webImage, { backgroundColor: colors.background }]}
               contentFit="contain"
+              placeholder={typeof blurhash === 'string' ? blurhash : undefined}
             />
           )}
         </>

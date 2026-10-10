@@ -20,11 +20,10 @@ export default function Feed() {
       {
         id: userId,
       },
-      { skip: !userId },
+      { skip: !userId, refetchOnFocus: true },
     );
   const { data: appConfig } = useGetAppConfigQuery(undefined, { skip: !accessToken });
   const activities = useMemo(() => data?.pages.flatMap(({ activities }) => activities) ?? [], [data?.pages]);
-
   const isLastPage = !(data?.pages.at(-1)?.hasMore ?? false);
 
   useEffect(() => {

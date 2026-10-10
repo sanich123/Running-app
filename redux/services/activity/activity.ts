@@ -25,7 +25,7 @@ import type {
 
 const ACTIVITY_PAGE_SIZE = 20;
 
-const activityApi = runichApi.injectEndpoints({
+export const activityApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
     getActivitiesByUserId: infiniteQuery<ActivitiesResponse, { id: string }, string>({
@@ -107,7 +107,7 @@ const activityApi = runichApi.injectEndpoints({
         method: Methods.post,
         body: { workouts },
       }),
-      invalidatesTags: [Tags.activities, Tags.statistics],
+      invalidatesTags: (result) => (result ? [Tags.activities, Tags.statistics] : []),
     }),
     deleteActivityById: mutation<void, string>({
       query: (id: string) => ({

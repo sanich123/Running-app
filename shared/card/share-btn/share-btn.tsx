@@ -57,6 +57,7 @@ export default function ShareBtn() {
             date={activity.date}
             title={activity.title}
             mapPhotoUrl={activity.mapPhotoUrl}
+            mapPhotoUrlBlurhash={activity.mapPhotoUrlBlurhash}
             profile={activity.profile}
             sport={activity.sport}
             emotion={activity.emotion}

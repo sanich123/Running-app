@@ -204,7 +204,9 @@ describe('Activity card', () => {
       expect(screen.getByTestId(photoUrl).props.placeholder).toBe('blurhash:/photo-route-hash');
       await user.press(screen.getByTestId(photoUrl));
 
-      expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/${activityId}?indexOfPhoto=0`);
+      expect(mockPush).toHaveBeenCalledWith(
+        `/${ROUTES.media}/${activityId}?indexOfPhoto=0&blurhash=blurhash%3A%2Fphoto-route-hash`,
+      );
     } finally {
       restorePlatform();
     }
@@ -243,7 +245,7 @@ describe('Activity card', () => {
     expect(screen.getByText('18°C')).toBeOnTheScreen();
     expect(screen.getByText('6 м/с')).toBeOnTheScreen();
     expect(screen.getByTestId('map-emotion-icon')).toBeOnTheScreen();
-    expect(screen.getByTestId(mapPhotoUrl).props.placeholder).toBe('map-blurhash');
+    expect(screen.getByTestId(mapPhotoUrl).props.placeholder).toBe('blurhash:/map-blurhash');
   });
 
   it('renders full-view walking steps and calories without truncating activity text', async () => {

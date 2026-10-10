@@ -123,12 +123,20 @@ describe('ProfilePage', () => {
 
   it('opens the profile photo in a modal', async () => {
     const user = userEvent.setup();
+    server.use(
+      http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, () =>
+        HttpResponse.json({ ...MOCK_SERVER_PROFILE, profilePhotoBlurhash: 'profile-modal-blurhash' }),
+      ),
+    );
     await renderWithProviders(<ProfilePage />);
     const avatarButton = await screen.findByTestId('profile-avatar-open-button');
 
     await user.press(avatarButton);
 
-    expect(await screen.findByTestId('profile-photo-modal-image')).toBeOnTheScreen();
+    expect(await screen.findByTestId('profile-photo-modal-image')).toHaveProp(
+      'placeholder',
+      'blurhash:/profile-modal-blurhash',
+    );
     await user.press(screen.getByTestId('profile-photo-modal-close'));
     expect(screen.queryByTestId('profile-photo-modal-image')).not.toBeOnTheScreen();
   });

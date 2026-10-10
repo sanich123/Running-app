@@ -4,8 +4,9 @@ import { useRouter } from 'expo-router';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import { useDeleteActivityMediaMutation } from '@R/services/activity/activity';
-import { useAppSelector } from '@R/typed-hooks';
+import { createSearchParams } from '@R/runich-api/create-search-params';
+import { activityApi, useDeleteActivityMediaMutation } from '@R/services/activity/activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { isVideoUrl } from '@Routes/photo-viewer/utils';
 import ActivityMediaDeleteBtn from '@S/activity-media/delete-btn';
 import AddActivityMediaBtn from '@S/card/add-media-btn/add-media-btn';
@@ -57,6 +58,7 @@ export default function MediaList() {
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { width } = useWindowDimensions();
   const { push } = useRouter();
+  const dispatch = useAppDispatch();
   const [deleteActivityMedia, { isLoading: isDeletingMedia }] = useDeleteActivityMediaMutation();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width, 0) : MAX_MOBILE_WIDTH;
   const mediaHeight = Math.min(
@@ -131,20 +133,27 @@ export default function MediaList() {
               !isMap && isOwnActivity && item.id
                 ? () => {
                     longPressGuard.markLongPress();
-                    setSelectedMediaId(item.id ?? null);
+                    setSelectedMediaId((selectedId) => (selectedId === item.id ? null : (item.id ?? null)));
                   }
                 : undefined
             }
-            disabled={!isMap && selectedMediaId === item.id}
             onPress={() => {
               if (!longPressGuard.shouldHandlePress()) return;
               if (isMap && profile?.allowActivityReplayViewing === false) {
                 return errorToast('Пользователь запретил просматривать информацию о своем маршруте');
               }
+              if (isMap) {
+                void dispatch(
+                  activityApi.util.prefetch('getLocationsByActivityId', { activityId: id }, { ifOlderThan: 60 }),
+                );
+              }
               push(
                 isMap
                   ? `/${ROUTES.map}/${id}`
-                  : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}?indexOfPhoto=${index}`,
+                  : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}${createSearchParams({
+                      indexOfPhoto: index,
+                      blurhash: item.blurhash,
+                    })}`,
               );
             }}
             borderless={false}
@@ -234,6 +243,7 @@ export default function MediaList() {
       isDeletingMedia,
       isMapPressed,
       dark,
+      dispatch,
       locationName,
       weatherTemperature,
       weatherWindSpeed,
@@ -257,6 +267,7 @@ export default function MediaList() {
       data={displayedData}
       renderItem={renderItem}
       horizontal
+      showsHorizontalScrollIndicator={false}
       testID="activity-media-list"
       contentContainerStyle={styles.listContent}
       initialNumToRender={Math.max(1, Math.min(displayedData.length, 3))}

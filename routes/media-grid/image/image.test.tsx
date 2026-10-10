@@ -22,9 +22,11 @@ describe('image', () => {
   it('opens the selected media with its index and current page size', async () => {
     const user = userEvent.setup();
     const url = 'https://images.example.test/grid.jpg';
-    await renderWithProviders(<MediaGridImage url={url} thumbnail={null} index={3} take={28} />);
+    await renderWithProviders(
+      <MediaGridImage url={url} thumbnail={null} blurhash="grid-blurhash" index={3} take={28} />,
+    );
     await user.press(screen.getByTestId(url));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/3?userId=profile-id&take=28`);
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/3?userId=profile-id&take=28&blurhash=grid-blurhash`);
   });
 
   it('shows the delete button after a long press only for the profile owner', async () => {

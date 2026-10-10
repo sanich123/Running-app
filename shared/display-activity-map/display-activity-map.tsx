@@ -5,6 +5,7 @@ import { Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import ActivityMapMarkers from './activity-map-markers/activity-map-markers';
 import {
+  DISPLAY_ACTIVITY_MAP_CAMERA_PADDING,
   DISPLAY_ACTIVITY_MAP_INITIAL_ZOOM,
   DISPLAY_ACTIVITY_MAP_MAX_ZOOM,
   DISPLAY_ACTIVITY_MAP_MIN_ZOOM,
@@ -81,7 +82,7 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
                 animationMode="flyTo"
                 animationDuration={1000}
                 bounds={mapData.bounds}
-                padding={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20, paddingTop: 20 }}
+                padding={DISPLAY_ACTIVITY_MAP_CAMERA_PADDING}
               />
               <RouteLine locations={validLocations} segmentColors={routeSegmentColors} />
               <MapKmSplit kilometresSplit={kilometresSplit} kilometreUnit={copy.kilometreUnit} />

@@ -227,9 +227,12 @@ describe('media list', () => {
   it('opens the selected activity media', async () => {
     const user = userEvent.setup();
     const photoUrl = 'https://images.example.test/activity.jpg';
-    await renderMediaList({ mapPhotoUrl: undefined, media: [{ url: photoUrl, thumbnail: null }] });
+    await renderMediaList({
+      mapPhotoUrl: undefined,
+      media: [{ url: photoUrl, thumbnail: null, blurhash: 'card-photo-blurhash' }],
+    });
     await user.press(screen.getByTestId(photoUrl));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/activity-id?indexOfPhoto=0`);
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/activity-id?indexOfPhoto=0&blurhash=card-photo-blurhash`);
   });
 
   it('uses English media labels and an encoded URL on web', async () => {
@@ -248,8 +251,7 @@ describe('media list', () => {
     }
   });
 
-  it('updates photo dimensions only for valid metadata and blocks navigation after long press', async () => {
-    const user = userEvent.setup();
+  it('updates photo dimensions for valid metadata and toggles delete without navigating after long press', async () => {
     const photoUrl = 'https://images.example.test/activity-metadata.jpg';
     await renderMediaList({
       mapPhotoUrl: undefined,
@@ -265,10 +267,21 @@ describe('media list', () => {
     await fireEvent(media, 'load', { source: { width: 200, height: 100 } });
     expect(StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width).not.toBe(initialWidth);
 
-    await fireEvent(touchTarget, 'longPress');
-    await user.press(touchTarget);
+    const longPressMedia = async () => {
+      await fireEvent(touchTarget, 'pressIn');
+      await fireEvent(touchTarget, 'longPress');
+      await fireEvent(touchTarget, 'pressOut');
+      await fireEvent.press(touchTarget);
+    };
+
+    await longPressMedia();
 
     expect(screen.getByTestId('activity-media-delete-button')).toBeOnTheScreen();
+    expect(mockPush).not.toHaveBeenCalled();
+
+    await longPressMedia();
+
+    expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen();
     expect(mockPush).not.toHaveBeenCalled();
   });
 

@@ -58,7 +58,12 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
 
   const avatar = (
     <View style={styles.avatarContainer}>
-      <ProfileImage name={name} surname={surname} profilePhoto={profile?.profilePhoto} />
+      <ProfileImage
+        name={name}
+        surname={surname}
+        profilePhoto={profile?.profilePhoto}
+        profilePhotoBlurhash={profile?.profilePhotoBlurhash}
+      />
       <View pointerEvents="none" testID={AvatarEditableTestIds.editIcon} style={styles.editIcon}>
         <MaterialCommunityIcons name="camera-plus-outline" size={20} color="#fff" />
       </View>

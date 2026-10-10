@@ -31,3 +31,9 @@ export const DISPLAY_ACTIVITY_MAP_SPEED_COLORS = ['#22c55e', '#facc15', '#ef4444
 export const DISPLAY_ACTIVITY_MAP_INITIAL_ZOOM = 14;
 export const DISPLAY_ACTIVITY_MAP_MIN_ZOOM = 3;
 export const DISPLAY_ACTIVITY_MAP_MAX_ZOOM = 20;
+export const DISPLAY_ACTIVITY_MAP_CAMERA_PADDING = {
+  paddingTop: 84,
+  paddingBottom: 104,
+  paddingLeft: 24,
+  paddingRight: 88,
+} as const;

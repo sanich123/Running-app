@@ -60,9 +60,14 @@ describe('photo viewer', () => {
   });
 
   it('decodes a web image URL before rendering it', async () => {
-    mockUseLocalSearchParams.mockReturnValue({ photoUrl: encodeURIComponent('https://cdn.example.com/run.jpg') });
+    mockUseLocalSearchParams.mockReturnValue({
+      photoUrl: encodeURIComponent('https://cdn.example.com/run.jpg'),
+      blurhash: 'photo-blurhash',
+    });
     await renderWithProviders(<PhotoViewer />);
-    expect(screen.getByTestId('photo-viewer-image')).toHaveTextContent('https://cdn.example.com/run.jpg');
+    const image = screen.getByTestId('photo-viewer-image');
+    expect(image).toHaveTextContent('https://cdn.example.com/run.jpg');
+    expect(image).toHaveProp('placeholder', 'photo-blurhash');
   });
 
   it('renders video URLs with the video viewer', async () => {

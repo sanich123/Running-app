@@ -3,7 +3,8 @@ import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
-import { useAppSelector } from '@R/typed-hooks';
+import { profileApi } from '@R/services/profile/profile';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import UserAvatar from '@S/avatar/avatar';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
@@ -13,6 +14,7 @@ import type { SPORTS_BTNS_VALUES } from '@const/sports';
 export default function UserInfo({ profile, sport, date, userId, size, commentsModalRef }: UserInfoProps) {
   const { colors } = useTheme();
   const { push } = useRouter();
+  const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
   return (
     <TouchableRipple
@@ -22,6 +24,7 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
           modal.close();
         }
 
+        void dispatch(profileApi.util.prefetch('getUserProfileByUserId', userId, { ifOlderThan: 60 }));
         push(`/${ROUTES.profile}/${userId}`);
       }}
       borderless

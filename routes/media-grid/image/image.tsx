@@ -65,6 +65,7 @@ export default function MediaGridImage({
             `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}${createSearchParams({
               userId,
               take,
+              blurhash,
             })}`,
           );
         }}
