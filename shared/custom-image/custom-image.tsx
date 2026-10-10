@@ -6,6 +6,22 @@ import type { ImageContentFit, ImageProps } from 'expo-image';
 const DEFAULT_IMAGE_TRANSITION = { duration: 180, timing: 'ease-out' as const };
 const cachedImageUris = new Set<string>();
 
+export function normalizeImagePlaceholder(placeholder?: string | null) {
+  if (!placeholder) {
+    return undefined;
+  }
+
+  if (
+    placeholder.startsWith('blurhash:/') ||
+    placeholder.startsWith('thumbhash:/') ||
+    /^(?:https?|file|data):/.test(placeholder)
+  ) {
+    return placeholder;
+  }
+
+  return `blurhash:/${placeholder}`;
+}
+
 type CacheStatus = 'checking' | 'cached' | 'uncached';
 
 function shouldCheckDiskCache(uri: string, cachePolicy: ImageProps['cachePolicy'], hasExplicitTransition: boolean) {
@@ -107,7 +123,7 @@ export default function CustomImage({
       source={{ uri: sourceUri }}
       contentFit={contentFit}
       testID={Platform.OS !== 'web' ? testID : undefined}
-      placeholder={placeholder}
+      placeholder={normalizeImagePlaceholder(placeholder)}
       placeholderContentFit={placeholderContentFit ?? contentFit}
       priority={priority}
       cachePolicy={cachePolicy}

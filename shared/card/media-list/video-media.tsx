@@ -9,6 +9,8 @@ interface VideoMediaProps {
   width: number;
   height: number;
   isActive: boolean;
+  playLabel: string;
+  pauseLabel: string;
   muteLabel: string;
   unmuteLabel: string;
   testID: string;
@@ -40,6 +42,8 @@ export default function VideoMedia({
   width,
   height,
   isActive,
+  playLabel,
+  pauseLabel,
   muteLabel,
   unmuteLabel,
   testID,
@@ -50,15 +54,16 @@ export default function VideoMedia({
     currentPlayer.muted = true;
   });
   const [isMuted, setIsMuted] = useState(true);
+  const [isUserPaused, setIsUserPaused] = useState(false);
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
-    if (isActive) {
+    if (isActive && !isUserPaused) {
       player.play();
     } else {
       player.pause();
     }
-  }, [isActive, player]);
+  }, [isActive, isUserPaused, player]);
 
   useEffect(() => {
     const updateMetadata = () => {
@@ -93,8 +98,11 @@ export default function VideoMedia({
     setIsMuted(nextMuted);
   };
 
+  const togglePlay = () => setIsUserPaused((current) => !current);
+  const isPlaying = isActive && !isUserPaused;
+
   return (
-    <View style={{ width, height }} testID={testID}>
+    <View style={[styles.container, { width, height }]} testID={testID}>
       <VideoView
         player={player}
         style={[StyleSheet.absoluteFill, styles.video]}
@@ -107,6 +115,18 @@ export default function VideoMedia({
         </View>
       ) : null}
       <Pressable
+        accessibilityLabel={isPlaying ? pauseLabel : playLabel}
+        accessibilityRole="button"
+        onPress={(event) => {
+          event.stopPropagation();
+          togglePlay();
+        }}
+        onPressIn={(event) => event.stopPropagation()}
+        style={[styles.controlButton, styles.playButton]}
+        testID={`${testID}-play`}>
+        <Icon source={isPlaying ? 'pause' : 'play'} size={20} color="#fff" testID={`${testID}-play-icon`} />
+      </Pressable>
+      <Pressable
         accessibilityLabel={isMuted ? unmuteLabel : muteLabel}
         accessibilityRole="button"
         onPress={(event) => {
@@ -114,7 +134,7 @@ export default function VideoMedia({
           toggleMute();
         }}
         onPressIn={(event) => event.stopPropagation()}
-        style={[styles.muteButton, { backgroundColor: 'rgba(0, 0, 0, 0.62)' }]}
+        style={[styles.controlButton, styles.muteButton]}
         testID={`${testID}-mute`}>
         <Icon source={isMuted ? 'volume-off' : 'volume-high'} size={20} color="#fff" testID={`${testID}-mute-icon`} />
       </Pressable>
@@ -123,25 +143,28 @@ export default function VideoMedia({
 }
 
 const styles = StyleSheet.create({
+  container: { overflow: 'hidden' },
   video: { backgroundColor: '#000' },
   duration: {
     backgroundColor: 'rgba(0, 0, 0, 0.62)',
-    borderRadius: 12,
+    borderRadius: 10,
     paddingHorizontal: 8,
     paddingVertical: 4,
     position: 'absolute',
     right: 8,
     top: 8,
   },
-  muteButton: {
+  controlButton: {
     alignItems: 'center',
-    borderRadius: 18,
+    backgroundColor: 'rgba(0, 0, 0, 0.62)',
+    borderRadius: 10,
     bottom: 8,
     height: 36,
     justifyContent: 'center',
     position: 'absolute',
-    right: 8,
     width: 36,
   },
+  playButton: { left: 8 },
+  muteButton: { right: 8 },
   overlayText: { color: '#fff', fontSize: 12, fontWeight: '700' },
 });

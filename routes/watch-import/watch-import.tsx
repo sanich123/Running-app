@@ -1,9 +1,12 @@
+import { useCallback, useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Button, Card, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
+import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
+import { errorToast } from '@S/error-toast/error-toast';
 import {
   APP_GALLERY_INSTALL_URL,
   APP_GALLERY_URL,
@@ -26,6 +29,7 @@ import {
 import ExpandableStep from './expandable-step/expandable-step';
 import LinkButton from './link-button/link-button';
 import { openExternalLink } from './utils';
+import { RunichHealth } from '../../modules/runich-health/src/RunichHealth';
 
 export default function WatchImportPage() {
   const { colors } = useTheme();
@@ -35,6 +39,27 @@ export default function WatchImportPage() {
   const copy = WATCH_IMPORT_COPY[isRussian ? 'ru' : 'en'];
   const { stravaConnection, stravaInstall, healthSyncInstall, healthConnect, finish } = copy.steps;
   const title = copy.title;
+  const [isRequestingHealthAccess, setIsRequestingHealthAccess] = useState(false);
+  const [healthAccessGranted, setHealthAccessGranted] = useState(false);
+  const [healthAccessError, setHealthAccessError] = useState<string | null>(null);
+
+  const requestHealthAccess = useCallback(async () => {
+    setIsRequestingHealthAccess(true);
+    setHealthAccessError(null);
+    try {
+      const permissions = await RunichHealth.requestPermissions();
+      if (!permissions.granted) {
+        setHealthAccessError(healthConnect.actions.accessDenied);
+        return;
+      }
+      setHealthAccessGranted(true);
+    } catch (requestError) {
+      setHealthAccessError(healthConnect.actions.accessError);
+      errorToast('', requestError);
+    } finally {
+      setIsRequestingHealthAccess(false);
+    }
+  }, [healthConnect.actions.accessDenied, healthConnect.actions.accessError]);
 
   return (
     <>
@@ -66,9 +91,6 @@ export default function WatchImportPage() {
             <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
               {stravaInstall.description}
             </Text>
-            <Text variant="bodySmall" style={[styles.inlineNote, { color: colors.error }]}>
-              {stravaInstall.warning}
-            </Text>
             <LinkButton
               label={stravaInstall.compatibleWatches}
               url={STRAVA_DEVICE_COMPATIBILITY_URL}
@@ -91,6 +113,11 @@ export default function WatchImportPage() {
           <ExpandableStep number={3} title={healthSyncInstall.title}>
             <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
               {healthSyncInstall.description}
+            </Text>
+            <Text
+              variant="bodyMedium"
+              style={[styles.stabilityWarning, { color: colors.error, fontFamily: FONT_FAMILIES.semiBold }]}>
+              {healthSyncInstall.stabilityWarning}
             </Text>
             <Text variant="bodySmall" style={[styles.inlineNote, { color: colors.onSurfaceVariant }]}>
               {healthSyncInstall.note}
@@ -142,6 +169,14 @@ export default function WatchImportPage() {
               {healthConnect.note}
             </Text>
             <View style={styles.buttonStack}>
+              <Button
+                mode="contained"
+                onPress={() => void requestHealthAccess()}
+                loading={isRequestingHealthAccess}
+                disabled={isRequestingHealthAccess || healthAccessGranted}
+                testID="watch-import-health-connect-access">
+                {healthAccessGranted ? healthConnect.actions.accessGranted : healthConnect.actions.grantAccess}
+              </Button>
               <LinkButton
                 label={healthConnect.actions.openPlayStore}
                 url={HEALTH_CONNECT_PLAY_STORE_URL}
@@ -153,6 +188,7 @@ export default function WatchImportPage() {
                 onOpen={openExternalLink}
               />
             </View>
+            {healthAccessError && <Text style={[styles.errorText, { color: colors.error }]}>{healthAccessError}</Text>}
           </ExpandableStep>
 
           <ExpandableStep number={5} title={finish.title}>
@@ -181,8 +217,10 @@ const styles = StyleSheet.create({
   screenshotsSection: { marginTop: 20 },
   sectionTitle: { marginBottom: 6 },
   bodyText: { lineHeight: 22 },
+  stabilityWarning: { lineHeight: 22, marginTop: 12 },
   inlineNote: { lineHeight: 20, marginTop: 12 },
   buttonStack: { gap: 8, marginTop: 14 },
+  errorText: { marginTop: 8 },
   primaryButton: { borderRadius: 14, marginTop: 16 },
   primaryButtonContent: { minHeight: 50 },
   screenshot: {

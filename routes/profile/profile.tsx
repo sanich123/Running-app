@@ -137,6 +137,8 @@ export default function ProfilePage() {
                 testID="watch-import-profile-row"
                 title={PROFILE_WATCH_IMPORT[language].title}
                 titleNumberOfLines={1}
+                description={PROFILE_WATCH_IMPORT[language].subtitle}
+                descriptionNumberOfLines={1}
                 left={(props) => <List.Icon {...props} icon="watch-variant" />}
                 right={(props) => <List.Icon {...props} icon="chevron-right" />}
                 onPress={() => push(`/${ROUTES.watchImport}` as Parameters<typeof push>[0])}

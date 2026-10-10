@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react-native';
+import { act, fireEvent, screen } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import {
@@ -25,9 +25,13 @@ jest.mock('@R/services/activity/activity', () => ({
 }));
 jest.mock('@S/custom-image/custom-image', () => ({
   __esModule: true,
-  default: ({ source }: { source: { uri: string } }) => {
+  default: ({ source, ...props }: { source: { uri: string }; contentFit?: string }) => {
     const { Text } = require('react-native');
-    return <Text testID="photo-viewer-image">{source.uri}</Text>;
+    return (
+      <Text testID="photo-viewer-image" {...props}>
+        {source.uri}
+      </Text>
+    );
   },
 }));
 jest.mock('./video-viewer/video-viewer', () => ({
@@ -105,6 +109,45 @@ describe('photo viewer', () => {
 
     await act(async () => pager.props.onPageSelected({ nativeEvent: { position: 0 } }));
     expect(screen.getByTestId('photo-viewer-video').props.accessibilityHint).toBe('inactive');
+  });
+
+  it('fits landscape native photos to the display width without cropping them', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    mockUseLocalSearchParams.mockReturnValue({ photoUrl: '0', indexOfPhoto: '0', take: '2' });
+    mockUseActivity.mockReturnValue({ data: undefined });
+    mockUsePhotos.mockReturnValue({
+      data: {
+        pages: [{ media: [{ url: 'https://cdn.example.com/landscape.jpg', blurhash: null }], hasMore: false }],
+      },
+      fetchNextPage: jest.fn(),
+      isFetching: false,
+    });
+
+    await renderWithProviders(<PhotoViewer />);
+
+    const image = screen.getByTestId('photo-viewer-image');
+    expect(image).toHaveProp('contentFit', 'contain');
+    await fireEvent(image, 'load', { source: { width: 1600, height: 900 } });
+    expect(image).toHaveProp('contentFit', 'contain');
+  });
+
+  it('keeps portrait native photos covering the viewer after dimensions load', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    mockUseLocalSearchParams.mockReturnValue({ photoUrl: '0', indexOfPhoto: '0', take: '2' });
+    mockUseActivity.mockReturnValue({ data: undefined });
+    mockUsePhotos.mockReturnValue({
+      data: {
+        pages: [{ media: [{ url: 'https://cdn.example.com/portrait.jpg', blurhash: null }], hasMore: false }],
+      },
+      fetchNextPage: jest.fn(),
+      isFetching: false,
+    });
+
+    await renderWithProviders(<PhotoViewer />);
+
+    const image = screen.getByTestId('photo-viewer-image');
+    await fireEvent(image, 'load', { source: { width: 900, height: 1600 } });
+    expect(image).toHaveProp('contentFit', 'cover');
   });
 
   it('renders native user photos without an activity map offset', async () => {

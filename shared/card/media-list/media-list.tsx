@@ -117,7 +117,7 @@ export default function MediaList() {
       return (
         <View
           testID={isMap ? 'activity-map-media-container' : undefined}
-          style={{ height: mediaHeight, position: 'relative', width: itemWidth }}>
+          style={[styles.mediaTile, { height: mediaHeight, width: itemWidth }]}>
           <TouchableRipple
             testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
             onPressIn={() => {
@@ -164,6 +164,8 @@ export default function MediaList() {
                 width={itemWidth}
                 height={mediaHeight}
                 isActive={isActive}
+                playLabel={language === LANGUAGES.russian ? 'Воспроизвести видео' : 'Play video'}
+                pauseLabel={language === LANGUAGES.russian ? 'Приостановить видео' : 'Pause video'}
                 muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
                 unmuteLabel={language === LANGUAGES.russian ? 'Включить звук видео' : 'Unmute video'}
                 testID={`activity-video-${item.id ?? index}`}
@@ -255,11 +257,13 @@ export default function MediaList() {
       data={displayedData}
       renderItem={renderItem}
       horizontal
-      initialNumToRender={1}
+      testID="activity-media-list"
+      contentContainerStyle={styles.listContent}
+      initialNumToRender={Math.max(1, Math.min(displayedData.length, 3))}
       maxToRenderPerBatch={3}
-      windowSize={3}
+      windowSize={5}
       updateCellsBatchingPeriod={50}
-      removeClippedSubviews={Platform.OS === 'android'}
+      removeClippedSubviews={false}
       ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
       viewabilityConfig={MEDIA_VIEWABILITY_CONFIG}
       onViewableItemsChanged={onViewableItemsChanged}
@@ -269,7 +273,14 @@ export default function MediaList() {
 }
 
 const styles = StyleSheet.create({
+  listContent: { paddingVertical: 12 },
   itemSeparator: { width: 8 },
+  mediaTile: {
+    borderCurve: 'continuous',
+    borderRadius: 10,
+    overflow: 'hidden',
+    position: 'relative',
+  },
   deleteButton: {
     position: 'absolute',
     right: 8,

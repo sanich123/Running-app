@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
 import * as ExpoVideo from 'expo-video';
 import { renderWithProviders } from '@T/utils/test-utils';
 import VideoMedia, { formatVideoDuration } from './video-media';
@@ -44,6 +44,8 @@ describe('VideoMedia', () => {
         width={320}
         height={220}
         isActive={false}
+        playLabel="Play video"
+        pauseLabel="Pause video"
         muteLabel="Mute video"
         unmuteLabel="Unmute video"
         testID="inactive-video"
@@ -65,6 +67,8 @@ describe('VideoMedia', () => {
         width={320}
         height={220}
         isActive
+        playLabel="Play video"
+        pauseLabel="Pause video"
         muteLabel="Mute video"
         unmuteLabel="Unmute video"
         testID="metadata-only-video"
@@ -73,5 +77,36 @@ describe('VideoMedia', () => {
 
     expect(screen.getByText('1:01')).toBeOnTheScreen();
     expect(player.play).toHaveBeenCalledTimes(1);
+  });
+
+  it('toggles play and pause from the left control without affecting mute', async () => {
+    const user = userEvent.setup();
+    const player = makePlayer();
+    mockUseVideoPlayer.mockReturnValue(player);
+
+    await renderWithProviders(
+      <VideoMedia
+        url="https://images.example.test/toggle.mp4"
+        width={320}
+        height={220}
+        isActive
+        playLabel="Play video"
+        pauseLabel="Pause video"
+        muteLabel="Mute video"
+        unmuteLabel="Unmute video"
+        testID="toggle-video"
+      />,
+    );
+
+    const playButton = screen.getByTestId('toggle-video-play');
+    expect(playButton).toHaveProp('accessibilityLabel', 'Pause video');
+
+    await user.press(playButton);
+    expect(player.pause).toHaveBeenCalledTimes(1);
+    expect(playButton).toHaveProp('accessibilityLabel', 'Play video');
+
+    await user.press(playButton);
+    expect(player.play).toHaveBeenCalledTimes(2);
+    expect(playButton).toHaveProp('accessibilityLabel', 'Pause video');
   });
 });

@@ -20,7 +20,7 @@ describe('custom image', () => {
     const image = result.getByTestId('custom-image');
     expect(image.props.source).toEqual({ uri: 'https://example.com/photo.jpg' });
     expect(image.props.contentFit).toBe('cover');
-    expect(image.props.placeholder).toBe('blurhash');
+    expect(image.props.placeholder).toBe('blurhash:/blurhash');
     expect(image.props.placeholderContentFit).toBe('cover');
     expect(image.props.priority).toBe('high');
     expect(image.props.cachePolicy).toBe('memory-disk');
@@ -85,7 +85,7 @@ describe('custom image', () => {
 
       const image = result.getByTestId('custom-image-loading');
       expect(image.props.source).toEqual({ uri: 'https://example.com/slow-photo.jpg' });
-      expect(image.props.placeholder).toBe('blurhash');
+      expect(image.props.placeholder).toBe('blurhash:/blurhash');
     } finally {
       (Image as any).getCachePathAsync = originalGetCachePathAsync;
     }

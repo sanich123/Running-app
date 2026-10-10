@@ -199,9 +199,9 @@ describe('Activity card', () => {
     try {
       await renderCard({
         id: activityId,
-        media: [{ url: photoUrl, thumbnail: null, blurhash: 'photo-route-hash' }],
+        media: [{ url: photoUrl, thumbnail: null, blurhash: 'blurhash:/photo-route-hash' }],
       });
-      expect(screen.getByTestId(photoUrl).props.placeholder).toBe('photo-route-hash');
+      expect(screen.getByTestId(photoUrl).props.placeholder).toBe('blurhash:/photo-route-hash');
       await user.press(screen.getByTestId(photoUrl));
 
       expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/${activityId}?indexOfPhoto=0`);

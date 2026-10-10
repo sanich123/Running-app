@@ -89,6 +89,18 @@ describe('media list', () => {
     expect(screen.getByTestId(mapUrl).props.contentFit).toBe('cover');
   });
 
+  it('uses inset spacing and rounded media tiles like the reference card', async () => {
+    const mapUrl = 'https://cdn.example.test/activity-map-rounded.jpg';
+    await renderMediaList({ mapPhotoUrl: mapUrl, media: [] });
+
+    expect(StyleSheet.flatten(screen.getByTestId('activity-map-media-container').props.style)).toEqual(
+      expect.objectContaining({ borderRadius: 10, overflow: 'hidden' }),
+    );
+    expect(StyleSheet.flatten(screen.getByTestId('activity-media-list').props.contentContainerStyle)).toEqual(
+      expect.objectContaining({ paddingVertical: 12 }),
+    );
+  });
+
   it('uses the map blurhash and prioritized disk cache for fast scrolling', async () => {
     const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
     await renderMediaList({ mapPhotoUrl: mapUrl, mapPhotoUrlBlurhash: 'map-blurhash', media: [] });
@@ -244,10 +256,15 @@ describe('media list', () => {
       media: [{ id: 'media-metadata', url: photoUrl, thumbnail: null }],
     });
     const media = screen.getByTestId(photoUrl);
+    const touchTarget = screen.getByTestId('activity-media-media-metadata');
+    const initialWidth = StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width;
 
     await fireEvent(media, 'load', { source: { width: 0, height: 100 } });
+    expect(StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width).toBe(initialWidth);
+
     await fireEvent(media, 'load', { source: { width: 200, height: 100 } });
-    const touchTarget = screen.getByTestId('activity-media-media-metadata');
+    expect(StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width).not.toBe(initialWidth);
+
     await fireEvent(touchTarget, 'longPress');
     await user.press(touchTarget);
 
