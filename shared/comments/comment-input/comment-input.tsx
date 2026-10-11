@@ -7,7 +7,6 @@ import {
   useUpdateCommentByCommentIdMutation,
 } from '@R/services/comments/comments';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
-import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
@@ -52,20 +51,15 @@ export default function CommentInput({ commentToUpdate = '', commentId = '' }: C
   async function sendingComment(normalizedComment: string) {
     return await postComment({ body: { comment: normalizedComment }, id: commentActivityId })
       .unwrap()
-      .then(sendingUpdatingCommentSuccessHandler)
+      .then(closeInput)
       .catch((error) => errorToast('', error));
   }
 
   async function updatingComment(normalizedComment: string) {
     return await updateComment({ activityId: commentActivityId, commentId, body: { comment: normalizedComment } })
       .unwrap()
-      .then(sendingUpdatingCommentSuccessHandler)
+      .then(closeInput)
       .catch((error) => errorToast('', error));
-  }
-
-  async function sendingUpdatingCommentSuccessHandler() {
-    dispatch(setActivityIdWhichCommentsToUpdate(commentActivityId));
-    closeInput();
   }
 
   return (

@@ -15,6 +15,7 @@ export enum Tags {
   statistics = 'statistics',
   profile = 'profile',
   comments = 'comments',
+  commentCounts = 'commentCounts',
   commentLikes = 'commentLikes',
   likes = 'likes',
   friends = 'friends',

@@ -3,14 +3,10 @@ import { createSlice } from '@reduxjs/toolkit';
 const mainFeed = createSlice({
   name: 'mainFeed',
   initialState: {
-    activityIdWhichCommentsToUpdate: '',
     activityIdWhichLikesToDownload: '',
     activityIdWhichLikesToUpdate: '',
   },
   reducers: {
-    setActivityIdWhichCommentsToUpdate: (state, action) => {
-      state.activityIdWhichCommentsToUpdate = action.payload;
-    },
     setActivityIdWhichLikesToDownload: (state, action) => {
       state.activityIdWhichLikesToDownload = action.payload;
     },
@@ -20,10 +16,6 @@ const mainFeed = createSlice({
   },
 });
 
-export const {
-  setActivityIdWhichCommentsToUpdate,
-  setActivityIdWhichLikesToDownload,
-  setActivityIdWhichLikesToUpdate,
-} = mainFeed.actions;
+export const { setActivityIdWhichLikesToDownload, setActivityIdWhichLikesToUpdate } = mainFeed.actions;
 
 export default mainFeed.reducer;

@@ -43,6 +43,7 @@ describe('Comment input', () => {
         requestBody = await request.json();
         return HttpResponse.json({ id: 'new-comment-id' }, { status: 201 });
       }),
+      http.get(`${BASE_URL}/comment/someActivityId/count`, () => HttpResponse.json(1)),
     );
     await renderWithProviders(<CommentInput commentId="" />);
     await user.type(screen.getByTestId(COMMENT_INPUT_TEST_ID), 'A real test comment');

@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { StyleSheet } from 'react-native';
-import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
-import { commentsApi, useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
+import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
+import { commentsApi } from '@R/services/comments/comments';
 import {
   setCommentActivityId,
   setCommentToUpdate,
@@ -10,6 +10,7 @@ import {
 } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CommentsListModal from '@S/comments/comments-list-modal/comments-list-modal';
+import CommentCountBadge from './comment-count-badge';
 import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
 import { useActivityCard } from '../context';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -20,18 +21,11 @@ export default function CommentBtn() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isLoading } = useAppSelector(({ loading }) => loading);
   const { activity } = useActivityCard();
-  const { id: activityId, userId: activityOwnerId, commentsLength, profile } = activity;
-  const [isNeedToGetUpdatedComments, setIsNeedToGetUpdatedComments] = useState(false);
-  const {
-    data: commentsCount,
-    isError,
-    isLoading: isLoadingComments,
-  } = useGetCommentsLengthByActivityIdQuery(activityId, { skip: !isNeedToGetUpdatedComments });
-  const whatLengthToRender = !isNeedToGetUpdatedComments ? commentsLength : commentsCount;
-  const commentsModalRef = useRef<BottomSheetModal>(null);
+  const { id: activityId, userId: activityOwnerId, profile } = activity;
   const canViewComments = profile?.allowActivityInteractions !== false || activityOwnerId === userId;
+  const commentsModalRef = useRef<BottomSheetModal>(null);
 
-  const isButtonDisabled = isLoading || isError || isLoadingComments || !canViewComments;
+  const isButtonDisabled = isLoading || !canViewComments;
 
   return (
     <TouchableRipple
@@ -41,7 +35,6 @@ export default function CommentBtn() {
       disabled={isButtonDisabled}
       onPress={() => {
         void dispatch(commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }, { subscribe: false }));
-        setIsNeedToGetUpdatedComments(true);
         dispatch(setCommentToUpdate(''));
         dispatch(setIdOfUpdatingComment(''));
         dispatch(setCommentActivityId(activityId));
@@ -49,11 +42,7 @@ export default function CommentBtn() {
         commentsModalRef.current?.present?.();
       }}>
       <>
-        {canViewComments && whatLengthToRender ? (
-          <Badge style={[styles.badge, { backgroundColor: colors.primary }, isButtonDisabled && styles.disabled]}>
-            {whatLengthToRender}
-          </Badge>
-        ) : null}
+        <CommentCountBadge activity={activity} />
         <IconButton
           testID={COMMENT_BTN_TEST_ID}
           icon={COMMENT_BTN_ICON}
@@ -63,7 +52,7 @@ export default function CommentBtn() {
         />
         <CommentsListModal
           commentsModalRef={commentsModalRef}
-          commentsLength={commentsLength}
+          commentsLength={activity.commentsLength}
           allowNewComments={canViewComments}
         />
       </>
@@ -72,15 +61,6 @@ export default function CommentBtn() {
 }
 
 const styles = StyleSheet.create({
-  badge: {
-    position: 'absolute',
-    top: 8,
-    right: 10,
-    zIndex: 10,
-  },
-  disabled: {
-    opacity: 0.38,
-  },
   container: {
     position: 'relative',
     borderRadius: 50,

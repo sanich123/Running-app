@@ -1,10 +1,14 @@
-import { act, screen, userEvent } from '@testing-library/react-native';
+import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import { MD3LightTheme } from 'react-native-paper';
+import { commentsApi } from '@R/services/comments/comments';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { resetLoading } from '@R/slices/loading/loading';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityCardCommentBtn from './comment-btn';
 import { ActivityCardContext } from '../context';
@@ -59,13 +63,59 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Activity card comment btn', () => {
-  afterEach(async () => setCurrentUser(''));
+  beforeEach(() => {
+    server.use(http.get(`${BASE_URL}/comment/:activityId/count`, () => HttpResponse.json(6)));
+  });
+
+  afterEach(async () => {
+    await setCurrentUser('');
+  });
 
   it('should correctly renders', async () => {
     await renderCommentBtn();
     const commentIcon = screen.getByTestId('activityCardCommentBtnIcon');
     expect(commentIcon).toBeOnTheScreen();
     expect(commentIcon).toHaveProp('accessibilityLabel', MD3LightTheme.colors.primary);
+  });
+
+  it('loads the count for a visible activity without opening comments', async () => {
+    let countRequests = 0;
+    server.use(
+      http.get(`${BASE_URL}/comment/:activityId/count`, () => {
+        countRequests += 1;
+        return HttpResponse.json(9);
+      }),
+    );
+
+    await renderCommentBtn('counted-activity', 6);
+
+    await waitFor(() => expect(countRequests).toBe(1));
+    expect(await screen.findByText('9')).toBeOnTheScreen();
+  });
+
+  it('does not request a count for a known empty activity until a comment is sent', async () => {
+    let countRequests = 0;
+    server.use(
+      http.get(`${BASE_URL}/comment/:activityId/count`, () => {
+        countRequests += 1;
+        return HttpResponse.json(1);
+      }),
+    );
+
+    await renderCommentBtn('new-comment-activity', 0);
+    expect(countRequests).toBe(0);
+
+    await act(async () => {
+      await mockStore.dispatch(
+        commentsApi.endpoints.getCommentsLengthByActivityId.initiate('new-comment-activity', {
+          subscribe: false,
+          forceRefetch: true,
+        }),
+      );
+    });
+
+    await waitFor(() => expect(countRequests).toBe(1));
+    expect(await screen.findByText('1')).toBeOnTheScreen();
   });
 
   it('opens the activity comments modal and stores their context on web', async () => {
