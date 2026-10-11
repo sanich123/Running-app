@@ -1,3 +1,4 @@
+import { MEDIA_UPLOAD_REQUEST_TIMEOUT } from '@R/runich-api/const';
 import { resetAuthSlice, setAuthTokens } from '@R/slices/auth/auth';
 import { mockStore } from '@T/utils/mock-store';
 import { photosApi } from './photos';
@@ -55,7 +56,7 @@ describe('photo upload XHR transport', () => {
     const request = MockXMLHttpRequest.lastRequest;
     expect(request).toBeDefined();
     expect(request?.open).toHaveBeenCalledWith('POST', expect.stringMatching(/\/photo$/));
-    expect(request?.timeout).toBeGreaterThan(0);
+    expect(request?.timeout).toBe(MEDIA_UPLOAD_REQUEST_TIMEOUT);
     expect(request?.setRequestHeader).toHaveBeenCalledWith('x-device-id', expect.any(String));
     expect(request?.setRequestHeader).toHaveBeenCalledWith('authorization', 'Bearer test-access-token');
 
