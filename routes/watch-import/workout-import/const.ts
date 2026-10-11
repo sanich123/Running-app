@@ -41,10 +41,14 @@ export const WORKOUT_IMPORT_COPY = {
     connect: 'Разрешить Runich читать Health Connect',
     connected: 'Хранилище подключено',
     connectedDescription:
-      'После возвращения в Runich новые завершённые тренировки проверяются и отправляются автоматически. Повторные записи не создаются.',
+      'При включённой автосинхронизации после возвращения в Runich новые завершённые тренировки проверяются и отправляются автоматически. Повторные записи не создаются.',
     refresh: 'Обновить и синхронизировать',
     noWorkouts: 'Завершённых тренировок за последние 30 дней нет.',
     importSelected: 'Импортировать выбранные ({count})',
+    autoSync: {
+      title: 'Автосинхронизация Health Connect',
+      description: 'Автоматически проверять и добавлять новые завершённые тренировки при возвращении в Runich.',
+    },
     diagnostics: {
       title: 'Диагностика импорта',
       subtitle: 'Проверка подключения, разрешений и обмена данными',
@@ -100,7 +104,7 @@ export const WORKOUT_IMPORT_COPY = {
       skipped: 'пропущено',
       responseError: 'ответ/ошибка',
       noUpload: 'Запрос на импорт ещё не запускался.',
-      note: 'Первое подключение только читает хранилище: найденные записи нужно выбрать и импортировать кнопкой ниже. Диагностика показывает метаданные и число GPS-точек; координаты не отображаются.',
+      note: 'После выдачи разрешений найденные записи отправляются автоматически, если автосинхронизация включена. Диагностика показывает метаданные и число GPS-точек; координаты не отображаются.',
     },
   },
   en: {
@@ -118,10 +122,14 @@ export const WORKOUT_IMPORT_COPY = {
     connect: 'Allow Runich to read Health Connect',
     connected: 'Health store connected',
     connectedDescription:
-      'When you return to Runich, new completed workouts are checked and uploaded automatically. Existing records are skipped.',
+      'When auto-sync is enabled, new completed workouts are checked and uploaded automatically when you return to Runich. Existing records are skipped.',
     refresh: 'Refresh and sync',
     noWorkouts: 'No completed workouts in the last 30 days.',
     importSelected: 'Import selected ({count})',
+    autoSync: {
+      title: 'Health Connect auto-sync',
+      description: 'Automatically check and upload new completed workouts when you return to Runich.',
+    },
     diagnostics: {
       title: 'Import diagnostics',
       subtitle: 'Connection, permissions, and data transfer status',
@@ -177,7 +185,7 @@ export const WORKOUT_IMPORT_COPY = {
       skipped: 'skipped',
       responseError: 'response/error',
       noUpload: 'No import request has been made yet.',
-      note: 'The first connection only reads the health store: select the found workouts and import them with the button below. Diagnostics show metadata and GPS point counts; coordinates are not displayed.',
+      note: 'After permissions are granted, found records are uploaded automatically when auto-sync is enabled. Diagnostics show metadata and GPS point counts; coordinates are not displayed.',
     },
   },
 } as const;

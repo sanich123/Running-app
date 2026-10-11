@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { Stack } from 'expo-router';
-import { ActivityIndicator, Button, Card, Checkbox, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, Checkbox, Switch, Text, useTheme } from 'react-native-paper';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import { WORKOUT_IMPORT_COPY } from './workout-import/const';
 import DiagnosticsCard from './workout-import/diagnostics-card';
@@ -11,6 +11,7 @@ export default function WorkoutImportGuidePage() {
   const { colors } = useTheme();
   const {
     availability,
+    autoSyncEnabled,
     connect,
     error,
     healthPermissions,
@@ -29,6 +30,7 @@ export default function WorkoutImportGuidePage() {
     refreshHealthConnection,
     selectedIds,
     selectedWorkouts,
+    setAutoSyncEnabled,
     syncLatestWorkouts,
     toggleWorkout,
     uploadDiagnostics,
@@ -92,6 +94,20 @@ export default function WorkoutImportGuidePage() {
                   <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
                     {copy.connectedDescription}
                   </Text>
+                  <View style={styles.switchRow}>
+                    <View style={styles.copy}>
+                      <Text variant="titleSmall">{copy.autoSync.title}</Text>
+                      <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                        {copy.autoSync.description}
+                      </Text>
+                    </View>
+                    <Switch
+                      value={autoSyncEnabled}
+                      onValueChange={(value) => void setAutoSyncEnabled(value)}
+                      accessibilityLabel={copy.autoSync.title}
+                      testID="health-connect-auto-sync-switch"
+                    />
+                  </View>
                 </Card.Content>
               </Card>
             )}
@@ -180,6 +196,7 @@ const styles = StyleSheet.create({
   card: { marginTop: 2 },
   statusCard: { marginTop: 2, borderColor: '#4caf50', borderWidth: 1 },
   row: { flexDirection: 'row', alignItems: 'center' },
+  switchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 12 },
   copy: { flex: 1, gap: 2 },
   button: { marginTop: 6 },
   message: { marginTop: 8 },

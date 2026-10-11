@@ -105,13 +105,14 @@ describe('useWorkoutImport', () => {
     expect(result.current.selectedWorkouts).toHaveLength(1);
   });
 
-  it('enables automatic sync only after the first successful manual import', async () => {
+  it('does not enable automatic sync as a side effect of a manual import', async () => {
     mockGetItemAsync.mockImplementation((key: string) =>
-      Promise.resolve(key === getConnectionKey('user-1') ? 'true' : null),
+      Promise.resolve(key === getConnectionKey('user-1') ? 'true' : key === getAutoSyncKey('user-1') ? 'false' : null),
     );
     const { result } = await renderHook(() => useWorkoutImport(), { wrapper: Wrapper });
     await waitFor(() => expect(result.current.selectedWorkouts).toHaveLength(1));
     expect(result.current.userId).toBe('user-1');
+    expect(result.current.autoSyncEnabled).toBe(false);
 
     await act(async () => {
       await result.current.importSelected();
@@ -123,17 +124,18 @@ describe('useWorkoutImport', () => {
         workouts: [expect.objectContaining({ sourceActivityId: workout.sourceActivityId })],
       }),
     );
-    expect(mockSetItemAsync).toHaveBeenCalledWith(getAutoSyncKey('user-1'), 'true');
+    expect(mockSetItemAsync).not.toHaveBeenCalledWith(getAutoSyncKey('user-1'), 'true');
   });
 
-  it('automatically uploads new workouts on startup and foreground return after opt-in', async () => {
+  it('automatically uploads new workouts on startup and foreground return by default', async () => {
     mockGetItemAsync.mockImplementation((key: string) =>
-      Promise.resolve(key === getConnectionKey('user-1') || key === getAutoSyncKey('user-1') ? 'true' : null),
+      Promise.resolve(key === getConnectionKey('user-1') ? 'true' : null),
     );
     const { result } = await renderHook(() => useWorkoutImport({ autoSync: true }), { wrapper: Wrapper });
 
     await waitFor(() => expect(mockImportWorkouts).toHaveBeenCalledTimes(1));
     expect(result.current.isConnected).toBe(true);
+    expect(result.current.autoSyncEnabled).toBe(true);
 
     await act(async () => {
       appStateListener?.('background');
@@ -160,6 +162,24 @@ describe('useWorkoutImport', () => {
 
     expect(mockRequestPermissions).toHaveBeenCalledTimes(1);
     expect(mockSetItemAsync).toHaveBeenCalledWith(getConnectionKey('user-1'), 'true');
+    expect(mockSetItemAsync).toHaveBeenCalledWith(getAutoSyncKey('user-1'), 'true');
     expect(mockReadWorkouts).toHaveBeenCalledTimes(1);
+    expect(mockImportWorkouts).toHaveBeenCalledTimes(1);
+  });
+
+  it('persists changes to the auto-sync switch', async () => {
+    mockGetItemAsync.mockImplementation((key: string) =>
+      Promise.resolve(key === getConnectionKey('user-1') ? 'true' : key === getAutoSyncKey('user-1') ? 'true' : null),
+    );
+    const { result } = await renderHook(() => useWorkoutImport(), { wrapper: Wrapper });
+
+    await waitFor(() => expect(result.current.autoSyncEnabled).toBe(true));
+
+    await act(async () => {
+      await result.current.setAutoSyncEnabled(false);
+    });
+
+    expect(result.current.autoSyncEnabled).toBe(false);
+    expect(mockSetItemAsync).toHaveBeenCalledWith(getAutoSyncKey('user-1'), 'false');
   });
 });

@@ -42,7 +42,7 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
   const [isLoading, setIsLoading] = useState(true);
   const [isReading, setIsReading] = useState(false);
   const [isAutoSyncing, setIsAutoSyncing] = useState(false);
-  const [autoSyncEnabled, setAutoSyncEnabled] = useState(false);
+  const [autoSyncEnabled, setAutoSyncEnabledState] = useState(false);
   const autoSyncEnabledRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<string | null>(null);
@@ -53,6 +53,26 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
   const selectedWorkouts = useMemo(
     () => workouts.filter((workout) => selectedIds.has(getWorkoutId(workout))),
     [selectedIds, workouts],
+  );
+
+  const setAutoSyncEnabled = useCallback(
+    async (enabled: boolean) => {
+      autoSyncEnabledRef.current = enabled;
+      setAutoSyncEnabledState(enabled);
+
+      const autoSyncKey = getAutoSyncKey(userId);
+      if (!autoSyncKey) return;
+
+      try {
+        await SecureStore.setItemAsync(autoSyncKey, String(enabled));
+      } catch (saveError) {
+        errorToast(
+          isRussian ? 'Не удалось сохранить настройку автосинхронизации.' : 'Could not save auto-sync setting.',
+          saveError,
+        );
+      }
+    },
+    [isRussian, userId],
   );
 
   const markUploadSkipped = useCallback((reason: UploadSkipReason, sourceWorkouts: WatchWorkout[] = []) => {
@@ -216,9 +236,9 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
 
         setAvailability(nextAvailability);
         setHealthPermissions(permissions);
-        const savedAutoSyncEnabled = savedAutoSyncValue === 'true';
+        const savedAutoSyncEnabled = savedAutoSyncValue !== 'false';
         autoSyncEnabledRef.current = savedAutoSyncEnabled;
-        setAutoSyncEnabled(savedAutoSyncEnabled);
+        setAutoSyncEnabledState(savedAutoSyncEnabled);
         const connected = permissions.available && (permissions.granted || savedConnectionValue === 'true');
         setIsConnected(connected);
         if (connected && autoSync && userId && savedAutoSyncEnabled) {
@@ -302,11 +322,8 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
           // The health connection itself does not depend on local marker storage.
         }
       }
-      const workoutsAfterConnect = await readWorkouts();
-      if (workoutsAfterConnect === null) markUploadSkipped('read-failed');
-      else if (!userId) markUploadSkipped('no-user', workoutsAfterConnect);
-      else if (workoutsAfterConnect.length === 0) markUploadSkipped('no-workouts');
-      else markUploadSkipped('manual-selection', workoutsAfterConnect);
+      await setAutoSyncEnabled(true);
+      await syncLatestWorkouts(true, true);
     } catch (connectError) {
       setHealthStatusErrorCode(getDiagnosticErrorCode(connectError));
       setError(isRussian ? 'Не удалось подключить хранилище здоровья.' : 'Could not connect the health store.');
@@ -314,7 +331,7 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
     } finally {
       setIsLoading(false);
     }
-  }, [isRussian, markUploadSkipped, readWorkouts, userId]);
+  }, [isRussian, setAutoSyncEnabled, syncLatestWorkouts, userId]);
 
   const openExternalLink = useCallback(
     async (url: string, errorMessage = isRussian ? 'Не удалось открыть ссылку.' : 'Could not open the link.') => {
@@ -343,16 +360,6 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
     setImportResult(null);
     try {
       const result = await sendWorkoutsToRunich(userId, selectedWorkouts);
-      const autoSyncKey = getAutoSyncKey(userId);
-      if (autoSyncKey) {
-        try {
-          await SecureStore.setItemAsync(autoSyncKey, 'true');
-        } catch {
-          // Automatic sync can still be enabled for this session.
-        }
-      }
-      autoSyncEnabledRef.current = true;
-      setAutoSyncEnabled(true);
       setImportResult(
         isRussian
           ? `Импортировано: ${result.imported}. Пропущено как уже загруженные: ${result.skipped}.`
@@ -377,6 +384,7 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
 
   return {
     availability,
+    autoSyncEnabled,
     connect,
     error,
     healthPermissions,
@@ -396,6 +404,7 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
     refreshHealthConnection,
     selectedIds,
     selectedWorkouts,
+    setAutoSyncEnabled,
     syncLatestWorkouts,
     toggleWorkout,
     uploadDiagnostics,
