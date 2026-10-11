@@ -54,7 +54,7 @@ export default function UserListItem({
             ) : null}
           </View>
         </View>
-        {!isMineActivity && allowNewFollowers !== false && <FollowUnfollowBtn friendId={userId} />}
+        {!isMineActivity && allowNewFollowers !== false && <FollowUnfollowBtn compact friendId={userId} />}
       </View>
     </TouchableRipple>
   );

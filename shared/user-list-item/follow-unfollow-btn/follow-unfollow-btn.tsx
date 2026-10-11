@@ -10,7 +10,12 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { FOLLOW_UNFOLLOW_BTN } from './const';
 
-export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
+interface FollowUnfollowBtnProps {
+  friendId: string;
+  compact?: boolean;
+}
+
+export default function FollowUnfollowBtn({ friendId, compact = false }: FollowUnfollowBtnProps) {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const {
@@ -38,7 +43,7 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
       loading={isLoading}
       contentStyle={styles.content}
       labelStyle={styles.label}
-      style={[styles.button, isFollowing && { borderColor: colors.outlineVariant }]}
+      style={[compact ? styles.compactButton : styles.button, isFollowing && { borderColor: colors.outlineVariant }]}
       disabled={isLoading || isError}
       onPress={async () => {
         try {
@@ -59,6 +64,10 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 16,
     width: '100%',
+  },
+  compactButton: {
+    alignSelf: 'flex-start',
+    flexShrink: 0,
   },
   content: {
     alignItems: 'center',
