@@ -1,7 +1,7 @@
 import { Fragment, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
-import { useGetLikesByActivityIdInfiniteQuery } from '@R/services/likes/likes';
+import { likesApi, useGetLikesByActivityIdInfiniteQuery } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToDownload } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import UserAvatar from '@S/avatar/avatar';
@@ -49,6 +49,7 @@ export default function Likes() {
         <TouchableRipple
           testID="pushToActivityLikes"
           onPress={() => {
+            void dispatch(likesApi.endpoints.getLikesByActivityId.initiate({ activityId }, { subscribe: false }));
             dispatch(setActivityIdWhichLikesToDownload(activityId));
             likesListModal.current?.present?.();
           }}

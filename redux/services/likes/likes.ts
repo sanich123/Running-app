@@ -6,7 +6,7 @@ import type { LikeListPageResponse, LikeListResponse, LikeResponse } from '@R/ru
 
 const { like } = Routes;
 
-const likesApi = runichApi.injectEndpoints({
+export const likesApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ mutation, infiniteQuery }) => ({
     getLikesByActivityId: infiniteQuery<LikeListPageResponse, { activityId: string }, string>({

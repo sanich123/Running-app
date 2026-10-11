@@ -11,7 +11,7 @@ import type {
 
 const { comment, like } = Routes;
 
-const commentsApi = runichApi.injectEndpoints({
+export const commentsApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
     getCommentsByActivityId: infiniteQuery<CommentsResponse, { activityId: string }, string>({

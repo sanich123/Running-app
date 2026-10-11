@@ -4,7 +4,7 @@ import type { FollowerResponse, FollowingResponse } from '@R/runich-api/types';
 
 const { friend, followers } = Routes;
 
-const followersApi = runichApi.injectEndpoints({
+export const followersApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getYouFollowUsersByUserId: builder.query<FollowingResponse[], string>({

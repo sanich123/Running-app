@@ -3,8 +3,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
-import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
-import { useAppSelector } from '@R/typed-hooks';
+import {
+  followersApi,
+  useGetFollowersByUserIdQuery,
+  useGetYouFollowUsersByUserIdQuery,
+} from '@R/services/followers/followers';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import Skeleton from '@S/skeleton/skeleton';
 import { USERS_COUNT, USERS_VARIANT } from './const';
 
@@ -12,6 +16,7 @@ export default function UsersCounter({ variant, isHidden = false }: { variant: U
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
+  const dispatch = useAppDispatch();
   const { push } = useRouter();
   const { id: friendId } = useLocalSearchParams();
   const whosId = friendId ? `${friendId}` : userId;
@@ -38,7 +43,16 @@ export default function UsersCounter({ variant, isHidden = false }: { variant: U
 
   return (
     <TouchableRipple
-      onPress={() => push(`/${whereToPush}/${whosId}`)}
+      onPress={() => {
+        if (whosId) {
+          if (variant === USERS_VARIANT.whoUserFollows) {
+            void dispatch(followersApi.endpoints.getYouFollowUsersByUserId.initiate(whosId, { subscribe: false }));
+          } else {
+            void dispatch(followersApi.endpoints.getFollowersByUserId.initiate(whosId, { subscribe: false }));
+          }
+        }
+        push(`/${whereToPush}/${whosId}`);
+      }}
       disabled={isFollowersError || isLoading || isFollowingsError}
       borderless
       style={[styles.card, { backgroundColor: colors.background, borderColor: colors.outlineVariant }]}>

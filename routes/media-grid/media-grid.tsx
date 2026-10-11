@@ -9,7 +9,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
-import { getMediaGridCellSize, MEDIA_GRID_COLUMNS, MEDIA_GRID_GAP } from './const';
+import { getMediaGridCellSize, MEDIA_GRID_COLUMNS, MEDIA_GRID_GAP, MEDIA_GRID_PAGE_SIZE } from './const';
 import MediaGridImage from './image/image';
 import type { ActivityMediaItem } from '@S/card/types';
 
@@ -18,7 +18,7 @@ export default function MediaGrid() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { id: userId } = useLocalSearchParams();
-  const take = 28;
+  const take = MEDIA_GRID_PAGE_SIZE;
   const gridWidth = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   const {
     isLoading,

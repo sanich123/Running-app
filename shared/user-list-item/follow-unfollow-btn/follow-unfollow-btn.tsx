@@ -36,13 +36,14 @@ export default function FollowUnfollowBtn({ friendId, compact = false }: FollowU
 
   return (
     <Button
+      compact={compact}
       mode={isFollowing ? 'outlined' : 'contained'}
-      icon={isFollowing ? 'check' : 'account-plus-outline'}
+      icon={compact ? undefined : isFollowing ? 'check' : 'account-plus-outline'}
       buttonColor={isFollowing ? colors.surface : colors.primary}
       textColor={isFollowing ? colors.onSurface : colors.onPrimary}
       loading={isLoading}
-      contentStyle={styles.content}
-      labelStyle={styles.label}
+      contentStyle={[styles.content, compact && styles.compactContent]}
+      labelStyle={[styles.label, compact && styles.compactLabel]}
       style={[compact ? styles.compactButton : styles.button, isFollowing && { borderColor: colors.outlineVariant }]}
       disabled={isLoading || isError}
       onPress={async () => {
@@ -68,6 +69,7 @@ const styles = StyleSheet.create({
   compactButton: {
     alignSelf: 'flex-start',
     flexShrink: 0,
+    minWidth: 112,
   },
   content: {
     alignItems: 'center',
@@ -76,9 +78,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 0,
   },
+  compactContent: {
+    height: 32,
+    paddingHorizontal: 4,
+  },
   label: {
     fontFamily: FONT_FAMILIES.semiBold,
     fontSize: 14,
     lineHeight: 20,
+  },
+  compactLabel: {
+    fontSize: 12,
+    lineHeight: 16,
+    marginHorizontal: 4,
+    marginVertical: 0,
   },
 });

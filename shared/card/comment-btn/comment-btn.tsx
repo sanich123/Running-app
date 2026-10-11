@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { IconButton, Badge, TouchableRipple, useTheme } from 'react-native-paper';
-import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
+import { commentsApi, useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
 import {
   setCommentActivityId,
   setCommentToUpdate,
@@ -40,6 +40,7 @@ export default function CommentBtn() {
       borderless
       disabled={isButtonDisabled}
       onPress={() => {
+        void dispatch(commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }, { subscribe: false }));
         setIsNeedToGetUpdatedComments(true);
         dispatch(setCommentToUpdate(''));
         dispatch(setIdOfUpdatingComment(''));

@@ -5,15 +5,17 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import {
+  activityApi,
   useDeleteActivityMediaMutation,
   useGetAllActivityMediaByUserIdInfiniteQuery,
 } from '@R/services/activity/activity';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ActivityMediaDeleteBtn from '@S/activity-media/delete-btn';
 import CustomImage from '@S/custom-image/custom-image';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import useLongPressGuard from '@S/pressable/use-long-press-guard';
 import { PROFILE_MEDIA } from './const';
+import { MEDIA_GRID_PAGE_SIZE } from '../../media-grid/const';
 import type { ActivityMediaItem } from '@S/card/types';
 
 export default function ProfileMediaPhotos({ userId }: { userId: string }) {
@@ -25,6 +27,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   } = useGetAllActivityMediaByUserIdInfiniteQuery({ userId, take: 4 }, { skip: !userId });
   const { width } = useWindowDimensions();
   const { push } = useRouter();
+  const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
@@ -77,6 +80,12 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
               onPressIn={longPressGuard.resetForGesture}
               onPress={() => {
                 if (!longPressGuard.shouldHandlePress()) return;
+                void dispatch(
+                  activityApi.endpoints.getAllActivityMediaByUserId.initiate(
+                    { userId, take: MEDIA_GRID_PAGE_SIZE },
+                    { subscribe: false },
+                  ),
+                );
                 push(`/${ROUTES.mediaGrid}/${userId}`);
               }}
               onLongPress={
