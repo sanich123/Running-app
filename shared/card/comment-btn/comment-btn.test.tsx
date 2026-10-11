@@ -2,7 +2,6 @@ import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import { MD3LightTheme } from 'react-native-paper';
-import { commentsApi } from '@R/services/comments/comments';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { resetLoading } from '@R/slices/loading/loading';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
@@ -93,29 +92,10 @@ describe('Activity card comment btn', () => {
     expect(await screen.findByText('9')).toBeOnTheScreen();
   });
 
-  it('does not request a count for a known empty activity until a comment is sent', async () => {
-    let countRequests = 0;
-    server.use(
-      http.get(`${BASE_URL}/comment/:activityId/count`, () => {
-        countRequests += 1;
-        return HttpResponse.json(1);
-      }),
-    );
+  it('does not render a badge for a known empty activity', async () => {
+    await renderCommentBtn('empty-activity', 0);
 
-    await renderCommentBtn('new-comment-activity', 0);
-    expect(countRequests).toBe(0);
-
-    await act(async () => {
-      await mockStore.dispatch(
-        commentsApi.endpoints.getCommentsLengthByActivityId.initiate('new-comment-activity', {
-          subscribe: false,
-          forceRefetch: true,
-        }),
-      );
-    });
-
-    await waitFor(() => expect(countRequests).toBe(1));
-    expect(await screen.findByText('1')).toBeOnTheScreen();
+    expect(screen.queryByText('0')).not.toBeOnTheScreen();
   });
 
   it('opens the activity comments modal and stores their context on web', async () => {
@@ -145,9 +125,18 @@ describe('Activity card comment btn', () => {
   });
 
   it('disables comments for an external viewer when the activity owner has opted out', async () => {
+    let countRequests = 0;
+    server.use(
+      http.get(`${BASE_URL}/comment/:activityId/count`, () => {
+        countRequests += 1;
+        return HttpResponse.json(3);
+      }),
+    );
+
     await setCurrentUser('viewer-id');
     await renderCommentBtn('activity-with-comments-disabled', 3, false);
 
+    expect(countRequests).toBe(0);
     expect(screen.getByTestId('activity-card-comment-button').props.accessibilityState?.disabled).toBe(true);
     expect(screen.queryByText('3')).not.toBeOnTheScreen();
     expect(screen.getByTestId('activityCardCommentBtnIcon')).toHaveProp(

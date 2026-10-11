@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Badge, useTheme } from 'react-native-paper';
-import { commentsApi, useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
+import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import type { ActivityCardData } from '../types';
 
@@ -18,17 +18,12 @@ export default function CommentCountBadge({ activity }: CommentCountBadgeProps) 
   const { data: commentsCount } = useGetCommentsLengthByActivityIdQuery(activityId, {
     skip: !shouldLoadCommentsCount,
   });
-  const { data: cachedCommentsCount } = useAppSelector(
-    commentsApi.endpoints.getCommentsLengthByActivityId.select(activityId),
-  );
-  const countToRender = commentsCount ?? cachedCommentsCount ?? commentsLength;
 
-  if (!canViewComments || !countToRender) return null;
+  if (!canViewComments || !commentsCount) return null;
 
   return (
-    <Badge
-      style={[styles.badge, { backgroundColor: colors.primary }, (isLoading || !canViewComments) && styles.disabled]}>
-      {countToRender}
+    <Badge style={[styles.badge, { backgroundColor: colors.primary }, isLoading && styles.disabled]}>
+      {commentsCount}
     </Badge>
   );
 }

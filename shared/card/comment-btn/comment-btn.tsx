@@ -50,11 +50,7 @@ export default function CommentBtn() {
           size={25}
           disabled={isButtonDisabled}
         />
-        <CommentsListModal
-          commentsModalRef={commentsModalRef}
-          commentsLength={activity.commentsLength}
-          allowNewComments={canViewComments}
-        />
+        <CommentsListModal commentsModalRef={commentsModalRef} allowNewComments={canViewComments} />
       </>
     </TouchableRipple>
   );

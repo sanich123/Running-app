@@ -36,7 +36,6 @@ interface CommentModalProps {
 }
 
 export interface CommentsListModalProps extends CommentModalProps {
-  commentsLength?: number;
   allowNewComments?: boolean;
 }
 
