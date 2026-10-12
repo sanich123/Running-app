@@ -89,7 +89,7 @@ export default function ProfilePrivacySettings({
       return;
     }
 
-    const needsWritePermission = Platform.OS === 'ios' || (Platform.OS === 'android' && Number(Platform.Version) < 29);
+    const needsWritePermission = Platform.OS === 'ios' || (Platform.OS === 'android' && Number(Platform.Version) < 30);
     if (!needsWritePermission) {
       dispatch(setSaveCameraPhotosToGallery(true));
       return;
