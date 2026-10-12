@@ -7081,7 +7081,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-location@npm:~58.0.13":
+"expo-location@npm:58.0.13":
   version: 58.0.13
   resolution: "expo-location@npm:58.0.13"
   dependencies:
@@ -7095,6 +7095,23 @@ __metadata:
     expo-task-manager:
       optional: true
   checksum: 10c0/0315c7c0ae4d774c96605494326d09e8f04513d6abcb74c6cc50820b73ebf76bed9a32f65abdeeac201dd72c0de3fe132f5de5e59505c46f55b600f502f52c4e
+  languageName: node
+  linkType: hard
+
+"expo-location@patch:expo-location@npm%3A58.0.13#~/.yarn/patches/expo-location-npm-58.0.13-56e35cefef.patch":
+  version: 58.0.13
+  resolution: "expo-location@patch:expo-location@npm%3A58.0.13#~/.yarn/patches/expo-location-npm-58.0.13-56e35cefef.patch::version=58.0.13&hash=d5f471"
+  dependencies:
+    "@expo/image-utils": "npm:^0.12.4"
+  peerDependencies:
+    expo: "*"
+    expo-task-manager: "*"
+    react: "*"
+    react-native: "*"
+  peerDependenciesMeta:
+    expo-task-manager:
+      optional: true
+  checksum: 10c0/037240a523228d2a6a0824f66e1396db415b305538f8742dfd6d02facb288d18ba6e03f23bd9dc03acbe6d6d813049a42831cd41fab5d9161007ab68bf547fb4
   languageName: node
   linkType: hard
 
@@ -12681,7 +12698,7 @@ __metadata:
     expo-linear-gradient: "npm:~58.0.3"
     expo-linking: "npm:~58.0.11"
     expo-localization: "npm:~58.0.4"
-    expo-location: "npm:~58.0.13"
+    expo-location: "patch:expo-location@npm%3A58.0.13#~/.yarn/patches/expo-location-npm-58.0.13-56e35cefef.patch"
     expo-media-library: "npm:~58.0.7"
     expo-network: "npm:~58.0.3"
     expo-router: "npm:~58.0.17"

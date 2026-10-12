@@ -17,6 +17,9 @@ const location = createSlice({
     setInitialLocation: (state, action) => {
       state.initialLocation = action.payload;
     },
+    setLocationProvider: (state, action) => {
+      state.locationProvider = action.payload;
+    },
     setLocationsFromBackground: (state, action) => {
       state.locationsFromBackground = [...state.locationsFromBackground, action.payload];
     },
@@ -114,6 +117,7 @@ const location = createSlice({
       state.distance = 0;
       state.steps = 0;
       state.isMapVisible = true;
+      state.locationProvider = null;
       state.durationAtLastLocation = 0;
       state.durationTimerBase = 0;
       state.durationTimerStartedAt = null;
@@ -139,6 +143,7 @@ export const {
   restoreLocationsFromJournal,
   restoreTrackingMetrics,
   setInitialLocation,
+  setLocationProvider,
   setLocationsFromBackground,
   resetLocationsFromBackground,
   setDistance,

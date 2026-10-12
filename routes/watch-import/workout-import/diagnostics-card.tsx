@@ -1,42 +1,15 @@
-import type { PropsWithChildren } from 'react';
-import { View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, View } from 'react-native';
 import { ActivityIndicator, Card, Icon, Text, useTheme } from 'react-native-paper';
 import { WORKOUT_IMPORT_COPY } from './const';
-import {
-  formatWorkoutCountNotice,
-  formatWorkoutDiagnostics,
-  getReadDiagnosticItems,
-  getUploadDiagnosticItems,
-  getBooleanLabel,
-  getWorkoutId,
-} from './helpers';
-import type { DiagnosticItem, ReadDiagnostics, UploadDiagnostics } from './types';
-import type { HealthPermissionsResult, WatchWorkout } from '../../../modules/runich-health/src/RunichHealth';
-
-interface DiagnosticsCardProps {
-  availability: string | null;
-  healthPermissions: HealthPermissionsResult | null;
-  healthStatusErrorCode: string | null;
-  isConnected: boolean;
-  isReading: boolean;
-  isRussian: boolean;
-  readDiagnostics: ReadDiagnostics | null;
-  uploadDiagnostics: UploadDiagnostics | null;
-  userId: string | null;
-  workouts: WatchWorkout[];
-}
-
-interface DiagnosticsSectionProps extends PropsWithChildren {
-  icon: string;
-  title: string;
-}
-
-interface DiagnosticMetricProps {
-  isRussian: boolean;
-  label: string;
-  value?: string;
-  status?: boolean;
-}
+import { getReadDiagnosticItems, getUploadDiagnosticItems, getBooleanLabel } from './helpers';
+import type {
+  DiagnosticListProps,
+  DiagnosticMetricProps,
+  DiagnosticsCardProps,
+  DiagnosticsSectionProps,
+  ViewWithIconProps,
+} from '../types';
 
 export default function DiagnosticsCard({
   availability,
@@ -48,101 +21,92 @@ export default function DiagnosticsCard({
   readDiagnostics,
   uploadDiagnostics,
   userId,
-  workouts,
 }: DiagnosticsCardProps) {
   const { colors } = useTheme();
   const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics;
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <Card style={[styles.card, { borderColor: colors.outlineVariant }]}>
       <Card.Content>
-        <ViewWithIcon icon="stethoscope" title={copy.title} subtitle={copy.subtitle} />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={copy.title}
+          accessibilityState={{ expanded: isExpanded }}
+          onPress={() => setIsExpanded((expanded) => !expanded)}
+          style={styles.accordionHeader}>
+          <ViewWithIcon icon="stethoscope" title={copy.title} subtitle={copy.subtitle} />
+          <Icon source={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} color={colors.onSurfaceVariant} />
+        </Pressable>
 
-        <DiagnosticsSection icon="connection" title={copy.sections.connection}>
-          <View style={styles.metricsGrid}>
-            <DiagnosticMetric isRussian={isRussian} label={copy.platform} value="Android" />
-            <DiagnosticMetric isRussian={isRussian} label={copy.store} value={availability ?? copy.checking} />
-            <DiagnosticMetric isRussian={isRussian} label={copy.connected} status={isConnected} />
-            <DiagnosticMetric isRussian={isRussian} label={copy.account} status={Boolean(userId)} />
-          </View>
-        </DiagnosticsSection>
+        {isExpanded && (
+          <View style={styles.details}>
+            <DiagnosticsSection icon="connection" title={copy.sections.connection}>
+              <View style={styles.metricsGrid}>
+                <DiagnosticMetric isRussian={isRussian} label={copy.platform} value="Android" />
+                <DiagnosticMetric isRussian={isRussian} label={copy.store} value={availability ?? copy.checking} />
+                <DiagnosticMetric isRussian={isRussian} label={copy.connected} status={isConnected} />
+                <DiagnosticMetric isRussian={isRussian} label={copy.account} status={Boolean(userId)} />
+              </View>
+            </DiagnosticsSection>
 
-        <DiagnosticsSection icon="shield-check-outline" title={copy.sections.permissions}>
-          <View style={styles.metricsGrid}>
-            <DiagnosticMetric
-              isRussian={isRussian}
-              label={copy.requiredPermissions}
-              status={healthPermissions?.granted}
-            />
-            <DiagnosticMetric
-              isRussian={isRussian}
-              label={copy.permissionItems.exerciseSession}
-              status={healthPermissions?.details?.exerciseSession}
-            />
-            <DiagnosticMetric
-              isRussian={isRussian}
-              label={copy.permissionItems.distance}
-              status={healthPermissions?.details?.distance}
-            />
-            <DiagnosticMetric
-              isRussian={isRussian}
-              label={copy.permissionItems.steps}
-              status={healthPermissions?.details?.steps}
-            />
-          </View>
-          <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
-            {copy.routeAccessNote}
-          </Text>
-        </DiagnosticsSection>
+            <DiagnosticsSection icon="shield-check-outline" title={copy.sections.permissions}>
+              <View style={styles.metricsGrid}>
+                <DiagnosticMetric
+                  isRussian={isRussian}
+                  label={copy.requiredPermissions}
+                  status={healthPermissions?.granted}
+                />
+                <DiagnosticMetric
+                  isRussian={isRussian}
+                  label={copy.permissionItems.exerciseSession}
+                  status={healthPermissions?.details?.exerciseSession}
+                />
+                <DiagnosticMetric
+                  isRussian={isRussian}
+                  label={copy.permissionItems.distance}
+                  status={healthPermissions?.details?.distance}
+                />
+                <DiagnosticMetric
+                  isRussian={isRussian}
+                  label={copy.permissionItems.steps}
+                  status={healthPermissions?.details?.steps}
+                />
+              </View>
+              <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
+                {copy.routeAccessNote}
+              </Text>
+            </DiagnosticsSection>
 
-        {healthStatusErrorCode && (
-          <View style={[styles.errorNotice, { backgroundColor: colors.errorContainer }]}>
-            <Icon source="alert-circle-outline" size={20} color={colors.onErrorContainer} />
-            <Text variant="bodySmall" style={{ color: colors.onErrorContainer, flex: 1 }}>
-              {copy.statusError}: {healthStatusErrorCode}
+            {healthStatusErrorCode && (
+              <View style={[styles.errorNotice, { backgroundColor: colors.errorContainer }]}>
+                <Icon source="alert-circle-outline" size={20} color={colors.onErrorContainer} />
+                <Text variant="bodySmall" style={{ color: colors.onErrorContainer, flex: 1 }}>
+                  {copy.statusError}: {healthStatusErrorCode}
+                </Text>
+              </View>
+            )}
+
+            <DiagnosticsSection icon="database-search-outline" title={copy.sections.reading}>
+              <DiagnosticList items={getReadDiagnosticItems(readDiagnostics, isRussian)} />
+              {isReading && <ActivityIndicator size="small" style={styles.readingIndicator} />}
+            </DiagnosticsSection>
+
+            <DiagnosticsSection icon="cloud-upload-outline" title={copy.sections.upload}>
+              <DiagnosticList items={getUploadDiagnosticItems(uploadDiagnostics, isRussian)} />
+            </DiagnosticsSection>
+
+            <Text variant="bodySmall" style={[styles.note, { color: colors.onSurfaceVariant }]}>
+              {copy.note}
             </Text>
           </View>
         )}
-
-        <DiagnosticsSection icon="database-search-outline" title={copy.sections.reading}>
-          <DiagnosticList items={getReadDiagnosticItems(readDiagnostics, isRussian)} />
-          {isReading && <ActivityIndicator size="small" style={styles.readingIndicator} />}
-          {workouts.length > 0 && (
-            <View style={styles.workoutsBlock}>
-              <Text variant="labelLarge" style={{ color: colors.onSurface }}>
-                {copy.sections.workouts}
-              </Text>
-              {workouts.slice(0, 50).map((workout, index) => (
-                <View
-                  key={getWorkoutId(workout)}
-                  style={[styles.workoutRow, { backgroundColor: colors.surfaceVariant }]}>
-                  <Text variant="bodySmall" style={{ color: colors.onSurface }}>
-                    {formatWorkoutDiagnostics(workout, index, isRussian)}
-                  </Text>
-                </View>
-              ))}
-              {workouts.length > 50 && (
-                <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
-                  {formatWorkoutCountNotice(workouts.length, isRussian)}
-                </Text>
-              )}
-            </View>
-          )}
-        </DiagnosticsSection>
-
-        <DiagnosticsSection icon="cloud-upload-outline" title={copy.sections.upload}>
-          <DiagnosticList items={getUploadDiagnosticItems(uploadDiagnostics, isRussian)} />
-        </DiagnosticsSection>
-
-        <Text variant="bodySmall" style={[styles.note, { color: colors.onSurfaceVariant }]}>
-          {copy.note}
-        </Text>
       </Card.Content>
     </Card>
   );
 }
 
-function ViewWithIcon({ icon, subtitle, title }: { icon: string; subtitle: string; title: string }) {
+function ViewWithIcon({ icon, subtitle, title }: ViewWithIconProps) {
   const { colors } = useTheme();
 
   return (
@@ -197,7 +161,7 @@ function DiagnosticMetric({ isRussian, label, status, value }: DiagnosticMetricP
   );
 }
 
-function DiagnosticList({ items }: { items: DiagnosticItem[] }) {
+function DiagnosticList({ items }: DiagnosticListProps) {
   const { colors } = useTheme();
 
   return (
@@ -233,10 +197,18 @@ const styles = {
     borderWidth: 1,
   },
   header: {
+    flex: 1,
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
     gap: 12,
-    marginBottom: 18,
+    marginBottom: 0,
+    minWidth: 0,
+  },
+  accordionHeader: {
+    alignItems: 'center' as const,
+    flexDirection: 'row' as const,
+    gap: 8,
+    width: '100%' as const,
   },
   headerIcon: {
     width: 42,
@@ -248,9 +220,14 @@ const styles = {
   headerCopy: {
     flex: 1,
     gap: 2,
+    minWidth: 0,
   },
   section: {
     gap: 10,
+  },
+  details: {
+    gap: 18,
+    marginTop: 18,
   },
   sectionHeader: {
     flexDirection: 'row' as const,
@@ -308,13 +285,6 @@ const styles = {
   },
   readingIndicator: {
     alignSelf: 'flex-start' as const,
-  },
-  workoutsBlock: {
-    gap: 8,
-  },
-  workoutRow: {
-    borderRadius: 10,
-    padding: 10,
   },
   note: {
     lineHeight: 19,

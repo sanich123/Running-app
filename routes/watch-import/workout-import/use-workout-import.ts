@@ -22,6 +22,7 @@ import {
   getRequestErrorStatus,
   getWorkoutId,
   getRoutePointCount,
+  HIDDEN_WORKOUTS_KEY,
 } from './helpers';
 import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
 
@@ -38,12 +39,15 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
   const [healthPermissions, setHealthPermissions] = useState<HealthPermissionsResult | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [workouts, setWorkouts] = useState<WatchWorkout[]>([]);
+  const [hiddenWorkoutIds, setHiddenWorkoutIds] = useState<Set<string>>(new Set());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [isReading, setIsReading] = useState(false);
   const [isAutoSyncing, setIsAutoSyncing] = useState(false);
   const [autoSyncEnabled, setAutoSyncEnabledState] = useState(false);
   const autoSyncEnabledRef = useRef(false);
+  const hiddenWorkoutIdsRef = useRef<Set<string>>(new Set());
+  const hiddenWorkoutSaveQueueRef = useRef<Promise<void>>(Promise.resolve());
   const [error, setError] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<string | null>(null);
   const [healthStatusErrorCode, setHealthStatusErrorCode] = useState<string | null>(null);
@@ -53,6 +57,14 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
   const selectedWorkouts = useMemo(
     () => workouts.filter((workout) => selectedIds.has(getWorkoutId(workout))),
     [selectedIds, workouts],
+  );
+  const visibleWorkouts = useMemo(
+    () => workouts.filter((workout) => !hiddenWorkoutIds.has(getWorkoutId(workout))),
+    [hiddenWorkoutIds, workouts],
+  );
+  const hiddenWorkouts = useMemo(
+    () => workouts.filter((workout) => hiddenWorkoutIds.has(getWorkoutId(workout))),
+    [hiddenWorkoutIds, workouts],
   );
 
   const setAutoSyncEnabled = useCallback(
@@ -108,7 +120,8 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
         );
       });
       setWorkouts(result);
-      setSelectedIds(new Set(result.map(getWorkoutId)));
+      const availableWorkouts = result.filter((workout) => !hiddenWorkoutIdsRef.current.has(getWorkoutId(workout)));
+      setSelectedIds(new Set(availableWorkouts.map(getWorkoutId)));
       setReadDiagnostics({
         at: readAt,
         startDate,
@@ -119,7 +132,7 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
         sessionCount: result.length,
         processedSessionCount: result.length,
       });
-      return result;
+      return availableWorkouts;
     } catch (readError) {
       setWorkouts([]);
       setSelectedIds(new Set());
@@ -140,6 +153,51 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
       setIsReading(false);
     }
   }, [isRussian]);
+
+  const updateWorkoutHiddenState = useCallback(
+    async (workout: WatchWorkout, hidden: boolean) => {
+      const id = getWorkoutId(workout);
+      const update = hiddenWorkoutSaveQueueRef.current.then(async () => {
+        const nextIds = new Set(hiddenWorkoutIdsRef.current);
+        if (hidden) nextIds.add(id);
+        else nextIds.delete(id);
+
+        await SecureStore.setItemAsync(HIDDEN_WORKOUTS_KEY, JSON.stringify([...nextIds]));
+        hiddenWorkoutIdsRef.current = nextIds;
+        setHiddenWorkoutIds(nextIds);
+        if (hidden) {
+          setSelectedIds((current) => {
+            const next = new Set(current);
+            next.delete(id);
+            return next;
+          });
+        } else {
+          setSelectedIds((current) => new Set(current).add(id));
+        }
+      });
+      hiddenWorkoutSaveQueueRef.current = update.catch(() => undefined);
+
+      try {
+        await update;
+      } catch (saveError) {
+        errorToast(
+          isRussian ? 'Не удалось сохранить список скрытых тренировок.' : 'Could not save hidden workouts.',
+          saveError,
+        );
+      }
+    },
+    [isRussian],
+  );
+
+  const hideWorkout = useCallback(
+    (workout: WatchWorkout) => updateWorkoutHiddenState(workout, true),
+    [updateWorkoutHiddenState],
+  );
+
+  const restoreWorkout = useCallback(
+    (workout: WatchWorkout) => updateWorkoutHiddenState(workout, false),
+    [updateWorkoutHiddenState],
+  );
 
   const sendWorkoutsToRunich = useCallback(
     async (id: string, sourceWorkouts: WatchWorkout[]) => {
@@ -222,17 +280,32 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
       setHealthStatusErrorCode(null);
       const connectionKey = getConnectionKey(userId);
       const autoSyncKey = getAutoSyncKey(userId);
+      const savedHiddenWorkouts = SecureStore.getItemAsync(HIDDEN_WORKOUTS_KEY);
       const savedConnection = connectionKey ? SecureStore.getItemAsync(connectionKey) : Promise.resolve(null);
       const savedAutoSync = autoSyncKey ? SecureStore.getItemAsync(autoSyncKey) : Promise.resolve(null);
 
       try {
-        const [nextAvailability, permissions, savedConnectionValue, savedAutoSyncValue] = await Promise.all([
-          RunichHealth.getAvailability(),
-          RunichHealth.getPermissions(),
-          savedConnection,
-          savedAutoSync,
-        ]);
+        const [nextAvailability, permissions, savedConnectionValue, savedAutoSyncValue, savedHiddenWorkoutsValue] =
+          await Promise.all([
+            RunichHealth.getAvailability(),
+            RunichHealth.getPermissions(),
+            savedConnection,
+            savedAutoSync,
+            savedHiddenWorkouts,
+          ]);
         if (!isActive()) return;
+
+        let parsedHiddenWorkoutIds: Set<string>;
+        try {
+          const savedIds: unknown = savedHiddenWorkoutsValue ? JSON.parse(savedHiddenWorkoutsValue) : [];
+          parsedHiddenWorkoutIds = new Set(
+            Array.isArray(savedIds) ? savedIds.filter((id): id is string => typeof id === 'string') : [],
+          );
+        } catch {
+          parsedHiddenWorkoutIds = new Set();
+        }
+        hiddenWorkoutIdsRef.current = parsedHiddenWorkoutIds;
+        setHiddenWorkoutIds(parsedHiddenWorkoutIds);
 
         setAvailability(nextAvailability);
         setHealthPermissions(permissions);
@@ -389,6 +462,8 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
     error,
     healthPermissions,
     healthStatusErrorCode,
+    hiddenWorkouts,
+    hideWorkout,
     importResult,
     importSelected,
     isAutoSyncing,
@@ -404,11 +479,12 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
     refreshHealthConnection,
     selectedIds,
     selectedWorkouts,
+    restoreWorkout,
     setAutoSyncEnabled,
     syncLatestWorkouts,
     toggleWorkout,
     uploadDiagnostics,
     userId,
-    workouts,
+    workouts: visibleWorkouts,
   };
 }

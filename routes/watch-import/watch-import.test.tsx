@@ -39,7 +39,11 @@ describe('WatchImportPage', () => {
     expect(copy.steps.healthConnect.title).toBe('Настройте Runich в Health Connect');
     expect(copy.steps.healthConnect.actions.grantAccess).toBe('Дать доступ');
     expect(copy.steps.healthConnect.description).toContain('разрешите Runich все запрошенные разрешения');
-    expect(copy.steps.stravaInstall.description).toMatch(/^Если аккаунта ещё нет/);
+    expect(copy.steps.stravaInstall.description).toMatch(/^Откройте приложение производителя часов/);
+    expect(copy.steps.stravaInstall.description).toContain('Большинство популярных моделей часов');
+    expect(copy.steps.stravaInstall.description.indexOf('Откройте приложение производителя часов')).toBeLessThan(
+      copy.steps.stravaInstall.description.indexOf('Если аккаунта ещё нет'),
+    );
     expect(copy.steps.stravaInstall.description).not.toContain('Выберите актуальную совместимую версию');
     expect(copy.steps.healthSyncInstall.description).not.toContain('Для прямого варианта');
     expect(copy.steps.healthSyncInstall.description).toContain('проверки раз в 12 часов');

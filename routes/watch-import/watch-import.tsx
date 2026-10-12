@@ -65,10 +65,6 @@ export default function WatchImportPage() {
     <>
       <Stack.Screen options={{ title }} />
       <CrossPlatformLayout scrollViewEnabled outerStyles={styles.content}>
-        <Text variant="headlineSmall" style={styles.title}>
-          {title}
-        </Text>
-
         <>
           <Card style={[styles.warningCard, { backgroundColor: colors.errorContainer }]}>
             <Card.Content>
@@ -212,7 +208,6 @@ export default function WatchImportPage() {
 
 const styles = StyleSheet.create({
   content: { padding: 12, gap: 10 },
-  title: { marginBottom: 2 },
   warningCard: { marginTop: 2 },
   screenshotsSection: { marginTop: 20 },
   sectionTitle: { marginBottom: 6 },

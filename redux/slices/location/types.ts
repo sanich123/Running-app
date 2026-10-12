@@ -1,5 +1,5 @@
 import type { STATUSES } from '@const/enums';
-import type { LocationObject } from 'expo-location';
+import type { LocationObject, LocationProvider } from 'expo-location';
 
 export interface LastKmSplit {
   lastKilometerDuration: number;
@@ -15,6 +15,7 @@ export interface LocationInitialState {
   tooMuchSpeedTimestamp: number | null;
   isAppShutedByPhone: boolean;
   isMapVisible: boolean;
+  locationProvider: LocationProvider | null;
   initialLocation: LocationObject | null;
   distance: number;
   steps: number;

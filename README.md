@@ -128,6 +128,18 @@ yarn build:production:ios
 
 Local iOS builds require macOS. EAS project access, credentials and the Mapbox download secret must be configured before building.
 
+### Huawei AppGallery
+
+Create an Android app in AppGallery Connect with the package name from `app.config.ts`, register the SHA-256 fingerprint of the Android release signing key, and enable Location Kit. Keep the downloaded `agconnect-services.json` outside Git and make it available to the build as the `HUAWEI_AGCONNECT_SERVICES_FILE` file environment variable.
+
+For a local production build, point the variable at the private file:
+
+```bash
+HUAWEI_AGCONNECT_SERVICES_FILE=/path/to/agconnect-services.json yarn build:production:android
+```
+
+Android location uses Google Play Services when available, Huawei Location Kit when GMS is unavailable and HMS Core is ready, then the Android system provider if neither fused service can serve the request. The AppGallery Connect file is copied into the generated Android project during prebuild and is excluded from Git.
+
 ## Android route testing
 
 Start an Android Emulator, grant foreground and background location permissions, then replay the bundled Moscow GPX route:

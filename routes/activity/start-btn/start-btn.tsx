@@ -9,6 +9,7 @@ import {
   resetLocationsFromBackground,
   setActivityStartContext,
   setInitialLocation,
+  setLocationProvider,
   setActivityStatus,
   setEmptyLastArrayWhenPaused,
   setDurationAt,
@@ -152,7 +153,8 @@ export default function StartBtn({
           throw new Error('Position is unavailable');
         }
 
-        dispatch(setInitialLocation(initialLocation));
+        const { provider, ...initialPosition } = initialLocation;
+        dispatch(setInitialLocation(initialPosition));
         // A new recording must never inherit a persisted recording or a
         // location task left alive after an app restart.
         await stopLocationTracking();
@@ -160,6 +162,7 @@ export default function StartBtn({
         if (oldJournalId) removeLocationJournal(oldJournalId);
         dispatch(clearTrackingRecovery());
         dispatch(resetLocationsFromBackground());
+        dispatch(setLocationProvider(provider ?? null));
         dispatch(resetFinishedActivity());
         createdJournalId = createLocationJournal();
         dispatch(startTrackingRecovery(createdJournalId));
