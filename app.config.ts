@@ -116,7 +116,14 @@ export default {
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
       ],
-      blockedPermissions: ['android.permission.SYSTEM_ALERT_WINDOW'],
+      blockedPermissions: [
+        'android.permission.SYSTEM_ALERT_WINDOW',
+        'android.permission.READ_EXTERNAL_STORAGE',
+        'android.permission.READ_MEDIA_IMAGES',
+        'android.permission.READ_MEDIA_VIDEO',
+        'android.permission.READ_MEDIA_AUDIO',
+        'android.permission.READ_MEDIA_VISUAL_USER_SELECTED',
+      ],
       softwareKeyboardLayoutMode: 'resize',
       usesCleartextTraffic: IS_DEV,
     },
@@ -197,9 +204,9 @@ export default {
       [
         'expo-media-library',
         {
-          photosPermission: 'Разрешите приложению Runich доступ к фотографиям устройства',
+          photosPermission: false,
           savePhotosPermission: 'Разрешите приложению Runich сохранять фотографии тренировок в галерею устройства',
-          granularPermissions: ['photo'],
+          granularPermissions: [],
           isAccessMediaLocationEnabled: false,
         },
       ],

@@ -17,4 +17,5 @@ export interface ActivitySettings {
   activityVoiceIdentifier: string | null;
   activityReminderEnabled: boolean;
   activityReminders: ActivityReminder[];
+  saveCameraPhotosToGallery: boolean;
 }

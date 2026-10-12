@@ -13,6 +13,7 @@ export const SETTINGS_INITIAL_STATE: ActivitySettings = {
   activityVoiceIdentifier: null as string | null,
   activityReminderEnabled: false,
   activityReminders: [],
+  saveCameraPhotosToGallery: false,
 };
 
 export function getActivitySettings(settings: Partial<ActivitySettings>) {
@@ -77,6 +78,9 @@ const settings = createSlice({
     setActivityReminderEnabled: (state, action) => {
       state.activityReminderEnabled = action.payload;
     },
+    setSaveCameraPhotosToGallery: (state, action) => {
+      state.saveCameraPhotosToGallery = action.payload;
+    },
     addActivityReminder: (state, action) => {
       state.activityReminders = [...(state.activityReminders ?? []), action.payload];
     },
@@ -94,6 +98,7 @@ export const {
   setActivityVoiceMetrics,
   setActivityVoiceIdentifier,
   setActivityReminderEnabled,
+  setSaveCameraPhotosToGallery,
   addActivityReminder,
   removeActivityReminder,
 } = settings.actions;
