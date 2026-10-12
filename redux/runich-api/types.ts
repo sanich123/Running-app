@@ -25,18 +25,22 @@ export interface ActivityMigrationJobResponse {
 type ActivityLocationResponse = ActivityLocation;
 
 export interface ActivityMediaItemResponse {
+  id?: string;
+  activityId?: string;
   url: string;
   thumbnail: string | null;
   blurhash?: string | null;
 }
 
 interface ActivityProfileResponse {
+  userId?: string;
   name?: string | null;
   surname?: string | null;
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
-  emailNotifications?: boolean | null;
-  user?: { email?: string | null } | null;
+  allowActivityInteractions?: boolean;
+  allowActivityReplayViewing?: boolean;
+  allowActivitySharing?: boolean;
 }
 
 interface ActivityCountResponse {
@@ -136,6 +140,12 @@ export interface ActivityMutationResponse {
   sourceActivityId?: string | null;
 }
 
+export interface WatchWorkoutBatchImportResponse {
+  imported: number;
+  skipped: number;
+  activities: ActivityMutationResponse[];
+}
+
 export interface ActivityMediaMutationResponse {
   success: true;
   media: ActivityMediaItemResponse[];
@@ -180,7 +190,6 @@ interface CommentProfileResponse {
   surname?: string | null;
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
-  emailNotifications?: boolean | null;
   user?: { email?: string | null } | null;
 }
 
@@ -222,11 +231,19 @@ export interface LikeListResponse extends Omit<LikeResponse, 'profile'> {
   profile: ProfileType;
 }
 
+export interface LikeListPageResponse {
+  likes: LikeListResponse[];
+  hasMore: boolean;
+  nextCursor: string | null;
+  currentUserLike: Pick<LikeListResponse, 'id' | 'authorId'> | null;
+}
+
 interface FriendProfileResponse {
   name?: string | null;
   surname?: string | null;
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
+  allowNewFollowers?: boolean;
 }
 
 export interface FollowingResponse {

@@ -164,7 +164,14 @@ jest.mock('expo-video', () => {
 
   return {
     VideoView: View,
-    useVideoPlayer: () => ({}),
+    useVideoPlayer: () => ({
+      addListener: jest.fn(() => ({ remove: jest.fn() })),
+      duration: 13,
+      muted: true,
+      pause: jest.fn(),
+      play: jest.fn(),
+      videoTrack: { size: { width: 1, height: 1 } },
+    }),
     createVideoPlayer: jest.fn(() => ({
       status: 'readyToPlay',
       videoTrack: { averageBitrate: 8_000_000 },

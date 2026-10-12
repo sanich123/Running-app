@@ -41,7 +41,6 @@ export default function SettingsRow({
       testID={testID}
       borderless
       onPress={onPress}
-      rippleColor={colors.primaryContainer}
       style={[styles.container, { backgroundColor: colors.surface }]}>
       {content}
     </TouchableRipple>

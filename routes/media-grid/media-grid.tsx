@@ -9,6 +9,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
+import { getMediaGridCellSize, MEDIA_GRID_COLUMNS, MEDIA_GRID_GAP, MEDIA_GRID_PAGE_SIZE } from './const';
 import MediaGridImage from './image/image';
 import type { ActivityMediaItem } from '@S/card/types';
 
@@ -17,7 +18,7 @@ export default function MediaGrid() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { id: userId } = useLocalSearchParams();
-  const take = 28;
+  const take = MEDIA_GRID_PAGE_SIZE;
   const gridWidth = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   const {
     isLoading,
@@ -31,15 +32,15 @@ export default function MediaGrid() {
   } = useGetAllActivityMediaByUserIdInfiniteQuery({ userId: `${userId}`, take }, { skip: !userId });
   const data = pages?.pages.at(-1);
   const media = pages?.pages.flatMap(({ media: pageMedia }) => pageMedia) ?? [];
-  const gridItemHeight = (gridWidth - 9) / 4;
+  const gridItemHeight = getMediaGridCellSize(gridWidth);
 
   const renderItem = useCallback(
     ({ item, index }: { item: ActivityMediaItem; index: number }) => (
-      <MediaGridImage url={item.url} thumbnail={item.thumbnail} blurhash={item.blurhash} index={index} take={take} />
+      <MediaGridImage {...item} index={index} take={take} />
     ),
     [take],
   );
-  const keyExtractor = useCallback((item: ActivityMediaItem) => item.url, []);
+  const keyExtractor = useCallback((item: ActivityMediaItem) => item.id ?? item.url, []);
   const loadMore = useCallback(() => {
     if (!data?.hasMore || isFetching) {
       return;
@@ -58,14 +59,8 @@ export default function MediaGrid() {
           <FlatList
             testID="media-grid-list"
             style={[styles.list, { width: gridWidth }]}
-            contentContainerStyle={[
-              {
-                backgroundColor: colors.background,
-                width: '100%',
-              },
-              styles.layout,
-              (isLoading || isError) && styles.isInCenter,
-            ]}
+            contentContainerStyle={{ backgroundColor: colors.background, width: '100%' }}
+            columnWrapperStyle={styles.row}
             data={media}
             renderItem={renderItem}
             initialNumToRender={20}
@@ -76,13 +71,13 @@ export default function MediaGrid() {
             keyExtractor={keyExtractor}
             getItemLayout={(_, index) => ({
               length: gridItemHeight,
-              offset: gridItemHeight * Math.floor(index / 4),
+              offset: gridItemHeight * Math.floor(index / MEDIA_GRID_COLUMNS),
               index,
             })}
             onEndReachedThreshold={0.5}
             onEndReached={loadMore}
             ListFooterComponent={() => data?.hasMore && <ActivityIndicator size="large" />}
-            numColumns={4}
+            numColumns={MEDIA_GRID_COLUMNS}
             horizontal={false}
           />
         ) : (
@@ -103,14 +98,5 @@ const styles = StyleSheet.create({
   list: {
     alignSelf: 'center',
   },
-  layout: {
-    alignItems: 'flex-start',
-    display: 'flex',
-    columnGap: 2,
-    justifyContent: 'flex-start',
-  },
-  isInCenter: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  row: { columnGap: MEDIA_GRID_GAP },
 });

@@ -6,6 +6,7 @@ import SaveResult from './save-activity-page';
 
 let mockManualActivityParams = { mode: 'tracked', cameraVisible: 'false' };
 jest.mock('expo-router', () => ({
+  Stack: { Screen: () => null },
   useLocalSearchParams: () => mockManualActivityParams,
   useRouter: () => ({ replace: jest.fn(), setParams: jest.fn() }),
 }));

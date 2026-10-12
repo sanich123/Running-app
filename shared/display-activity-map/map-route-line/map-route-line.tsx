@@ -66,7 +66,7 @@ export default function MapRouteLine({
         id="activity-route-line"
         style={{
           lineColor: segmentColors?.length ? (['get', 'color'] as const) : colors.primary,
-          lineWidth: 4,
+          lineWidth: 5,
           lineCap: 'round',
           lineJoin: 'round',
         }}

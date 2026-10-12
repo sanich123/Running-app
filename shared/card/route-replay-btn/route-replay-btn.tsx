@@ -2,11 +2,13 @@ import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconButton, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
-import { useAppSelector } from '@R/typed-hooks';
+import { activityApi } from '@R/services/activity/activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ROUTE_REPLAY_BUTTON_COPY } from './const';
 
 export default function RouteReplayBtn({ activityId, userId }: { activityId: string; userId: string }) {
   const { push } = useRouter();
+  const dispatch = useAppDispatch();
   const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { isLoading } = useAppSelector(({ loading }) => loading);
@@ -20,7 +22,12 @@ export default function RouteReplayBtn({ activityId, userId }: { activityId: str
       containerColor={dark ? 'rgba(38, 38, 38, 0.68)' : 'rgba(255, 255, 255, 0.68)'}
       size={23}
       style={styles.iconButton}
-      onPress={() => push(`/${ROUTES.map}/${activityId}?replay=1&userId=${encodeURIComponent(userId)}`)}
+      onPress={() => {
+        void dispatch(
+          activityApi.util.prefetch('getLocationsByActivityId', { activityId, replay: true }, { ifOlderThan: 60 }),
+        );
+        push(`/${ROUTES.map}/${activityId}?replay=1&userId=${encodeURIComponent(userId)}`);
+      }}
       disabled={isLoading}
       accessibilityRole="button"
       accessibilityLabel={copy.open}

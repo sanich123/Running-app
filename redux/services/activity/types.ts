@@ -30,6 +30,18 @@ export interface ActivityToSend {
   id: string;
 }
 
+export interface WatchWorkoutToSend extends FinishedActivity {
+  source: 'health-connect' | 'healthkit';
+  sourceActivityId: string;
+  sport: SPORTS_BTNS_VALUES | string;
+  title?: string;
+}
+
+export interface WatchWorkoutsImportRequest {
+  id: string;
+  workouts: WatchWorkoutToSend[];
+}
+
 type ActivityEditableInfo = Pick<ActivityAdditionalInfo, 'title' | 'description' | 'sport' | 'emotion' | 'visibility'>;
 type ActivityEditableMetrics = Pick<FinishedActivity, 'date' | 'distance' | 'duration' | 'speed'>;
 
@@ -41,6 +53,11 @@ export interface ActivityUpdateRequest {
 export interface AppendActivityMediaRequest {
   id: string;
   media: ActivityAdditionalInfo['media'];
+}
+
+export interface DeleteActivityMediaRequest {
+  activityId: string;
+  mediaId: string;
 }
 
 export interface GetActivityLocationsRequest {

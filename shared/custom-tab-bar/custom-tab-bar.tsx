@@ -16,7 +16,7 @@ export default function CustomTabBar({
   descriptors: any;
   navigation: any;
 }) {
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId || Platform.OS === 'ios' });
   const pathname = usePathname();
@@ -88,7 +88,6 @@ export default function CustomTabBar({
               </TouchableOpacity>
             ) : (
               <TouchableRipple
-                rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
                 borderless
                 accessibilityRole="button"
                 accessibilityState={isFocused ? { selected: true } : {}}

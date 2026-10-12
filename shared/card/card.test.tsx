@@ -78,10 +78,8 @@ function makeComment(activityId: string, authorId: string, id: string, comment: 
     date: '2026-08-09T10:00:00.000Z',
     id,
     profile: {
-      emailNotifications: false,
       name: MOCK_PROFILE.name,
       surname: MOCK_PROFILE.surname,
-      user: { email: 'card-comment-author@example.test' },
     },
     profileId: 'card-comment-profile',
   };
@@ -144,11 +142,11 @@ describe('Activity card', () => {
 
     await renderCard({ userId: 'premium-card-owner', mapPhotoUrl: 'https://cdn.example.test/premium-map.jpg' });
 
-    const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
-    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
+    const mapContainer = within(screen.getByTestId('activity-map-media-container'));
+    expect(mapContainer.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(mapContainer.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
 
-    await user.press(mapImage.getByTestId('activity-card-route-replay-button'));
+    await user.press(mapContainer.getByTestId('activity-card-route-replay-button'));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.map}/${MOCK_ACTIVITY.id}?replay=1&userId=premium-card-owner`);
   });
 
@@ -156,9 +154,9 @@ describe('Activity card', () => {
     mockStore.dispatch(setMockUserId('premium-card-owner'));
     await renderCard({ userId: 'premium-card-owner', mapPhotoUrl: 'https://cdn.example.test/no-premium-map.jpg' });
 
-    const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
-    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
+    const mapContainer = within(screen.getByTestId('activity-map-media-container'));
+    expect(mapContainer.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(mapContainer.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
   it('shows map actions for an expired subscription snapshot', async () => {
@@ -177,9 +175,9 @@ describe('Activity card', () => {
     );
     await renderCard({ userId: 'premium-card-owner', mapPhotoUrl: 'https://cdn.example.test/expired-map.jpg' });
 
-    const mapImage = within(screen.getByTestId('activity-map-media-item'));
-    expect(mapImage.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
-    expect(mapImage.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
+    const mapContainer = within(screen.getByTestId('activity-map-media-container'));
+    expect(mapContainer.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
+    expect(mapContainer.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
   it('routes to the activity map when its map preview is pressed', async () => {
@@ -201,12 +199,14 @@ describe('Activity card', () => {
     try {
       await renderCard({
         id: activityId,
-        media: [{ url: photoUrl, thumbnail: null, blurhash: 'photo-route-hash' }],
+        media: [{ url: photoUrl, thumbnail: null, blurhash: 'blurhash:/photo-route-hash' }],
       });
-      expect(screen.getByTestId(photoUrl).props.placeholder).toBe('photo-route-hash');
+      expect(screen.getByTestId(photoUrl).props.placeholder).toBe('blurhash:/photo-route-hash');
       await user.press(screen.getByTestId(photoUrl));
 
-      expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/${activityId}?indexOfPhoto=0`);
+      expect(mockPush).toHaveBeenCalledWith(
+        `/${ROUTES.media}/${activityId}?indexOfPhoto=0&blurhash=blurhash%3A%2Fphoto-route-hash`,
+      );
     } finally {
       restorePlatform();
     }
@@ -245,7 +245,7 @@ describe('Activity card', () => {
     expect(screen.getByText('18°C')).toBeOnTheScreen();
     expect(screen.getByText('6 м/с')).toBeOnTheScreen();
     expect(screen.getByTestId('map-emotion-icon')).toBeOnTheScreen();
-    expect(screen.getByTestId(mapPhotoUrl).props.placeholder).toBe('map-blurhash');
+    expect(screen.getByTestId(mapPhotoUrl).props.placeholder).toBe('blurhash:/map-blurhash');
   });
 
   it('renders full-view walking steps and calories without truncating activity text', async () => {

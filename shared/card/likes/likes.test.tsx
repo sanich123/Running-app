@@ -12,7 +12,12 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { LIKE_BTN } from './const';
 import Likes from './likes';
 
-function renderLikes(activityId: string, isFullView = false, likesLength?: number) {
+function renderLikes(
+  activityId: string,
+  isFullView = false,
+  likesLength?: number,
+  profile: Record<string, unknown> = {},
+) {
   return renderWithProviders(
     <ActivityCardContext.Provider
       value={{
@@ -24,7 +29,7 @@ function renderLikes(activityId: string, isFullView = false, likesLength?: numbe
           duration: 0,
           distance: 0,
           elevationGain: 0,
-          profile: {},
+          profile,
           commentsLength: 0,
           likesLength,
         },
@@ -87,6 +92,14 @@ describe('Card likes', () => {
 
   it('renders an empty state when likes are skipped', async () => {
     await renderLikes('', true);
+
+    expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
+  });
+
+  it('hides the likes count and list from an external viewer when the owner disables activity interactions', async () => {
+    mockStore.dispatch(setMockUserId('external-viewer'));
+
+    await renderLikes('activity-with-hidden-likes', false, 4, { allowActivityInteractions: false });
 
     expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
   });

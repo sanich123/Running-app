@@ -9,7 +9,7 @@ export default function EmotionBtns() {
   const { language } = useAppSelector(({ settings }) => settings);
   const { emotion } = useManualActivityParams();
   const { setEmotion } = useSetManualActivityParams();
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const disabled = isSavingDisabled;
   const options = [
     {
@@ -47,7 +47,6 @@ export default function EmotionBtns() {
               disabled={disabled}
               borderless
               onPress={() => setEmotion(value)}
-              rippleColor={dark ? 'rgba(255, 255, 255, .08)' : 'rgba(0, 0, 0, .08)'}
               accessibilityRole="radio"
               accessibilityState={{ disabled, selected: isSelected }}
               style={[

@@ -1,18 +1,28 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
+import { createSearchParams } from '@R/runich-api/create-search-params';
 import { runichApi } from '@R/runich-api/runich-api';
 import type { DeleteLike, SendLike } from './types';
-import type { LikeListResponse, LikeResponse } from '@R/runich-api/types';
+import type { LikeListPageResponse, LikeListResponse, LikeResponse } from '@R/runich-api/types';
 
 const { like } = Routes;
 
-const likesApi = runichApi.injectEndpoints({
+export const likesApi = runichApi.injectEndpoints({
   overrideExisting: true,
-  endpoints: (builder) => ({
-    getLikesByActivityId: builder.query<LikeListResponse[], string>({
-      query: (id: string) => `/${like}/${id}`,
-      providesTags: (result, error, arg) => [{ type: Tags.likes, id: arg }],
+  endpoints: ({ mutation, infiniteQuery }) => ({
+    getLikesByActivityId: infiniteQuery<LikeListPageResponse, { activityId: string }, string>({
+      infiniteQueryOptions: {
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      },
+      query: ({ queryArg: { activityId }, pageParam }) =>
+        `/${like}/${activityId}${createSearchParams({ limit: 30, cursor: pageParam || undefined })}`,
+      transformResponse: (response: LikeListPageResponse | LikeListResponse[]) =>
+        Array.isArray(response)
+          ? { likes: response, hasMore: false, nextCursor: null, currentUserLike: null }
+          : response,
+      providesTags: (result, error, arg) => [{ type: Tags.likes, id: arg.activityId }],
     }),
-    sendLike: builder.mutation<LikeResponse, SendLike>({
+    sendLike: mutation<LikeResponse, SendLike>({
       query: ({ activityId }: SendLike) => ({
         url: `/${like}`,
         method: Methods.post,
@@ -22,10 +32,12 @@ const likesApi = runichApi.injectEndpoints({
       async onQueryStarted({ activityId, authorId, profilePhoto }, { dispatch, queryFulfilled }) {
         const optimisticLikeId = `optimistic-${activityId}-${authorId}`;
         const patchResult = dispatch(
-          likesApi.util.updateQueryData('getLikesByActivityId', activityId, (draft) => {
-            if (draft.some(({ authorId: existingAuthorId }) => existingAuthorId === authorId)) return;
+          likesApi.util.updateQueryData('getLikesByActivityId', { activityId }, (draft) => {
+            const firstPage = draft.pages[0];
+            if (!firstPage || firstPage.likes.some(({ authorId: existingAuthorId }) => existingAuthorId === authorId))
+              return;
 
-            draft.unshift({
+            firstPage.likes.unshift({
               id: optimisticLikeId,
               activityId,
               authorId,
@@ -33,27 +45,31 @@ const likesApi = runichApi.injectEndpoints({
               profileId: '',
               profile: { profilePhoto },
             });
+            firstPage.currentUserLike = { id: optimisticLikeId, authorId };
           }),
         );
 
         try {
           const { data: createdLike } = await queryFulfilled;
           dispatch(
-            likesApi.util.updateQueryData('getLikesByActivityId', activityId, (draft) => {
-              const optimisticLikeIndex = draft.findIndex(({ id }) => id === optimisticLikeId);
+            likesApi.util.updateQueryData('getLikesByActivityId', { activityId }, (draft) => {
+              const firstPage = draft.pages[0];
+              if (!firstPage) return;
+              const optimisticLikeIndex = firstPage.likes.findIndex(({ id }) => id === optimisticLikeId);
               if (optimisticLikeIndex === -1) return;
 
-              const hasCreatedLike = draft.some(({ id }) => id === createdLike.id);
+              const hasCreatedLike = draft.pages.some(({ likes }) => likes.some(({ id }) => id === createdLike.id));
               if (hasCreatedLike) {
-                draft.splice(optimisticLikeIndex, 1);
+                firstPage.likes.splice(optimisticLikeIndex, 1);
                 return;
               }
 
-              draft[optimisticLikeIndex] = {
-                ...draft[optimisticLikeIndex],
+              firstPage.likes[optimisticLikeIndex] = {
+                ...firstPage.likes[optimisticLikeIndex],
                 ...createdLike,
-                profile: createdLike.profile ?? draft[optimisticLikeIndex].profile,
+                profile: createdLike.profile ?? firstPage.likes[optimisticLikeIndex].profile,
               };
+              firstPage.currentUserLike = { id: createdLike.id, authorId: createdLike.authorId };
             }),
           );
         } catch {
@@ -61,7 +77,7 @@ const likesApi = runichApi.injectEndpoints({
         }
       },
     }),
-    deleteLike: builder.mutation<LikeResponse, DeleteLike>({
+    deleteLike: mutation<LikeResponse, DeleteLike>({
       query: ({ id, activityId }: DeleteLike) => ({
         url: `/${like}/${id}/${activityId}`,
         method: Methods.delete,
@@ -69,9 +85,13 @@ const likesApi = runichApi.injectEndpoints({
       invalidatesTags: (result, error, arg) => [{ type: Tags.likes, id: arg.activityId }],
       async onQueryStarted({ id, activityId }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
-          likesApi.util.updateQueryData('getLikesByActivityId', activityId, (draft) => {
-            const likeIndex = draft.findIndex((like) => like.id === id);
-            if (likeIndex !== -1) draft.splice(likeIndex, 1);
+          likesApi.util.updateQueryData('getLikesByActivityId', { activityId }, (draft) => {
+            draft.pages.forEach(({ likes }) => {
+              const likeIndex = likes.findIndex((like) => like.id === id);
+              if (likeIndex !== -1) likes.splice(likeIndex, 1);
+            });
+            const firstPage = draft.pages[0];
+            if (firstPage?.currentUserLike?.id === id) firstPage.currentUserLike = null;
           }),
         );
 
@@ -85,4 +105,4 @@ const likesApi = runichApi.injectEndpoints({
   }),
 });
 
-export const { useGetLikesByActivityIdQuery, useSendLikeMutation, useDeleteLikeMutation } = likesApi;
+export const { useGetLikesByActivityIdInfiniteQuery, useSendLikeMutation, useDeleteLikeMutation } = likesApi;

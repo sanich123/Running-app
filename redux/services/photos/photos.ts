@@ -1,4 +1,4 @@
-import { LIMIT_OF_REQUEST, Methods, Tags } from '@R/runich-api/const';
+import { MEDIA_UPLOAD_REQUEST_TIMEOUT, Methods, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
 import { deviceId, deviceMetadata, deviceName, platform } from '@U/device/device-id';
 import type { BaseQueryApi, FetchBaseQueryError } from '@reduxjs/toolkit/query';
@@ -72,7 +72,7 @@ function uploadWithXhr<T>(
     };
 
     request.open('POST', `${API_BASE_URL.replace(/\/$/, '')}${path}`);
-    request.timeout = LIMIT_OF_REQUEST;
+    request.timeout = MEDIA_UPLOAD_REQUEST_TIMEOUT;
 
     const { accessToken } = (api.getState() as AuthState).auth;
     if (accessToken) request.setRequestHeader('authorization', `Bearer ${accessToken}`);

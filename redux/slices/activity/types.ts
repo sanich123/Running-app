@@ -12,6 +12,8 @@ export interface PendingActivity {
 }
 
 export interface ActivityPhoto {
+  id?: string;
+  activityId?: string;
   url: string;
   thumbnail: string | null;
   blurhash?: string | null;

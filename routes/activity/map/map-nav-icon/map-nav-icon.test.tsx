@@ -38,7 +38,9 @@ describe('map nav icon', () => {
     const latestPosition = { ...MOCK_LOCATION, coords: { ...MOCK_LOCATION.coords, latitude: 55.8 } };
     mockStore.dispatch(setInitialLocation(MOCK_LOCATION));
     mockStore.dispatch(setLastPosition(latestPosition));
-    await renderWithProviders(<MapNavIcon profilePhoto="https://example.com/avatar.jpg" />);
+    await renderWithProviders(
+      <MapNavIcon profilePhoto="https://example.com/avatar.jpg" profilePhotoBlurhash="avatar-blurhash" />,
+    );
 
     expect(screen.getByTestId('map-nav-marker').props.coordinate).toEqual([
       latestPosition.coords.longitude,
@@ -46,5 +48,6 @@ describe('map nav icon', () => {
     ]);
     const avatar = screen.getByTestId('map-nav-avatar');
     expect(avatar.props.source).toEqual({ uri: 'https://example.com/avatar.jpg' });
+    expect(avatar.props.placeholder).toBe('blurhash:/avatar-blurhash');
   });
 });

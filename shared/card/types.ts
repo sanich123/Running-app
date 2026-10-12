@@ -40,7 +40,6 @@ export interface ProfileType {
   birthday?: string | null;
   city?: string | null;
   createdAt?: string | null;
-  email?: string | null;
   gender?: string | null;
   height?: string | null;
   age?: string | null;
@@ -55,7 +54,14 @@ export interface ProfileType {
   userId?: string;
   weight?: string | null;
   emailNotifications?: boolean | null;
-  user?: { email?: string | null } | null;
+  profileSearchVisible?: boolean;
+  allowActivityInteractions?: boolean;
+  allowActivityReplayViewing?: boolean;
+  allowActivitySharing?: boolean;
+  allowNewFollowers?: boolean;
+  hideActivityStatistics?: boolean;
+  hideFollowingList?: boolean;
+  hideProfilePhotos?: boolean;
 }
 
 export interface ActivityCardData {
@@ -91,6 +97,8 @@ export interface ActivityCardProps {
 }
 
 export interface ActivityMediaItem {
+  id?: string;
+  activityId?: string;
   url: string;
   thumbnail: string | null;
   blurhash?: string | null;
@@ -99,6 +107,7 @@ export interface ActivityMediaItem {
 export interface ModalLikesListProps {
   bottomSheetModalRef: RefObject<BottomSheetModal | null>;
   likesLength: number;
+  canViewLikes: boolean;
 }
 
 export interface DisplayActivityMapProps {

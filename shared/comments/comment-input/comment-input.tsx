@@ -6,33 +6,25 @@ import {
   usePostCommentWithActivityIdMutation,
   useUpdateCommentByCommentIdMutation,
 } from '@R/services/comments/comments';
-import { useSendEmailAfterSendingCommentMutation } from '@R/services/emails/emails';
-import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
-import { setActivityIdWhichCommentsToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
 import { getCommentInputHeight } from './utils';
 import type { CommentInputProps } from '../types';
 
-export default function CommentInput({ commentToUpdate = '', commentId = '', profile }: CommentInputProps) {
+export default function CommentInput({ commentToUpdate = '', commentId = '' }: CommentInputProps) {
   const [focused, setFocused] = useState(false);
   const [inputHeight, setInputHeight] = useState(52);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
-  const { userId } = useAppSelector(({ auth }) => auth);
-  const { commentActivityId, mapPhotoUrl } = useAppSelector(({ comment }) => comment);
-  const { data: currentUserProfile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
-  const { profilePhoto, name, surname } = currentUserProfile ?? {};
+  const { commentActivityId } = useAppSelector(({ comment }) => comment);
   const { language } = useAppSelector(({ settings }) => settings);
   const [comment, setComment] = useState(commentToUpdate);
-  const [sendEmailAfterSendingComment] = useSendEmailAfterSendingCommentMutation();
   const [postComment, { isLoading: isCommentSending }] = usePostCommentWithActivityIdMutation();
   const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
   const isSending = isCommentSending || isUpdatingComment;
   const isEditing = Boolean(commentId && commentToUpdate);
-  const recipientEmail = profile?.email ?? profile?.user?.email;
 
   const handleInputFocus = () => {
     setFocused(true);
@@ -59,34 +51,15 @@ export default function CommentInput({ commentToUpdate = '', commentId = '', pro
   async function sendingComment(normalizedComment: string) {
     return await postComment({ body: { comment: normalizedComment }, id: commentActivityId })
       .unwrap()
-      .then(() => sendingUpdatingCommentSuccessHandler(normalizedComment))
+      .then(closeInput)
       .catch((error) => errorToast('', error));
   }
 
   async function updatingComment(normalizedComment: string) {
     return await updateComment({ activityId: commentActivityId, commentId, body: { comment: normalizedComment } })
       .unwrap()
-      .then(() => sendingUpdatingCommentSuccessHandler(normalizedComment))
+      .then(closeInput)
       .catch((error) => errorToast('', error));
-  }
-
-  async function sendingUpdatingCommentSuccessHandler(sentComment = comment) {
-    dispatch(setActivityIdWhichCommentsToUpdate(commentActivityId));
-    closeInput();
-    if (profile.emailNotifications && recipientEmail && !commentToUpdate) {
-      const objectToSend = {
-        name: name ?? '',
-        surname: surname ?? '',
-        profilePhoto: profilePhoto ?? '',
-        activityId: commentActivityId,
-        comment: sentComment,
-        recepientName: profile.name ?? '',
-        recepientSurname: profile.surname ?? '',
-        recepientEmail: recipientEmail,
-        mapPhotoUrl: mapPhotoUrl ? mapPhotoUrl : '',
-      };
-      sendEmailAfterSendingComment(objectToSend);
-    }
   }
 
   return (

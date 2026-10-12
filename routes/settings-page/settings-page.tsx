@@ -3,7 +3,6 @@ import { useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import ChangeTheme from './change-theme/change-theme';
 import DeleteAccountBtn from './delete-account/delete-account';
-import EmailNotificationsBtn from './email-notifications/email-notifications';
 import FeedbackBtn from './feedback-btn/feedback-btn';
 import LanguageSwitcher from './language-switcher/language-switcher';
 import LegalInformation from './legal-information/legal-information';
@@ -27,7 +26,6 @@ export default function SettingsPage() {
       <LanguageSwitcher />
       <ChangeTheme />
       <MigrationBtn />
-      <EmailNotificationsBtn />
       <FeedbackBtn />
       <LogoutBtn />
       <DeleteAccountBtn />

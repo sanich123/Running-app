@@ -372,7 +372,6 @@ export default function ActivitySettings({
           testID="activity-location-info-button"
           borderless
           onPress={() => locationInfoModalRef.current?.present()}
-          rippleColor={colors.primaryContainer}
           style={styles.locationInfoRow}>
           <View style={styles.locationInfoRowContent}>
             <View style={styles.rowCopy}>

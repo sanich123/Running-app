@@ -32,6 +32,20 @@ describe('User list item', () => {
     expect(city).toHaveProp('numberOfLines', 1);
     expect(city).toHaveProp('ellipsizeMode', 'tail');
   });
+
+  it('renders profile photos through the cached image loader', async () => {
+    mockStore.dispatch(setMockUserId('avatar-owner'));
+    await renderWithProviders(
+      <UserListItem name="Runner" surname="One" profilePhoto="https://example.com/avatar.jpg" userId="avatar-owner" />,
+      { store: mockStore },
+    );
+
+    const avatar = screen.getByTestId('user-list-item-avatar-avatar-owner');
+    expect(avatar).toHaveProp('cachePolicy', 'memory-disk');
+    expect(avatar).toHaveProp('recyclingKey', 'avatar-owner');
+    expect(avatar).toHaveProp('transition', 0);
+  });
+
   it('should show follow btn, when userId !== user.id and userId is not in the list of friends', async () => {
     mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
@@ -51,6 +65,23 @@ describe('User list item', () => {
     expect(await screen.findByText(MOCK_PROFILE.city)).toBeOnTheScreen();
     expect(await screen.findByText(FOLLOW_UNFOLLOW_BTN.english.follow)).toBeOnTheScreen();
   });
+
+  it('hides the follow button when the user disallows new followers', async () => {
+    mockStore.dispatch(setMockUserId('viewer-user'));
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await renderWithProviders(
+      <UserListItem
+        name={MOCK_PROFILE.name}
+        surname={MOCK_PROFILE.surname}
+        userId="follow-disabled-user"
+        allowNewFollowers={false}
+      />,
+      { store: mockStore },
+    );
+
+    expect(screen.queryByText(FOLLOW_UNFOLLOW_BTN.english.follow)).not.toBeOnTheScreen();
+  });
+
   it('should correctly show unfollow btn, when user is in the list of friends', async () => {
     mockStore.dispatch(setMockUserId('926f4a53-08b5-43c6-99ee-cf31fdfbb49b'));
     mockStore.dispatch(changeLanguage(LANGUAGES.english));

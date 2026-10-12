@@ -16,7 +16,6 @@ export default function SocialAuthButtons() {
           accessibilityLabel={copy.yandex}
           style={[styles.button, styles.yandexButton]}
           onPress={() => void Linking.openURL(YANDEX_AUTH_URL)}
-          rippleColor="rgba(255, 255, 255, 0.2)"
           accessibilityRole="button">
           <View style={styles.buttonContent}>
             <View style={styles.iconFrame}>
@@ -30,7 +29,6 @@ export default function SocialAuthButtons() {
           accessibilityLabel={copy.vk}
           style={[styles.button, styles.vkButton]}
           onPress={() => void Linking.openURL(VK_AUTH_URL)}
-          rippleColor="rgba(255, 255, 255, 0.2)"
           accessibilityRole="button">
           <View style={styles.buttonContent}>
             <View style={styles.iconFrame}>

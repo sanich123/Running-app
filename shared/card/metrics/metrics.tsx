@@ -3,7 +3,8 @@ import { usePathname, useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
-import { useAppSelector } from '@R/typed-hooks';
+import { activityApi } from '@R/services/activity/activity';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ShowMetrics from '@S/card/show-metrics/show-metrics';
 import { formatDuration } from '@U/time-formatter';
 import { useActivityCard } from '../context';
@@ -13,8 +14,9 @@ import { getCardAdditionalMetric, getCardSpeedMetric } from './utils';
 export default function Metrics() {
   const { activity, isFullView, isShowDescription } = useActivityCard();
   const { distance, duration, title, description, userId, id, sport, steps, elevationGain, caloriesActive } = activity;
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { push } = useRouter();
+  const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
   const pathname = usePathname();
   const speedMetric = getCardSpeedMetric({ sport, distance, duration, language });
@@ -22,9 +24,9 @@ export default function Metrics() {
 
   return (
     <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => {
         if (pathname !== `/activity/${id}`) {
+          void dispatch(activityApi.util.prefetch('getActivityByActivityId', id, { ifOlderThan: 60 }));
           push(`/${ROUTES.activity}/${id}?userId=${userId}`);
         }
       }}

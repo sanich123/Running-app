@@ -8,6 +8,7 @@ export const runichApi = createApi({
     Tags.statistics,
     Tags.profile,
     Tags.comments,
+    Tags.commentCounts,
     Tags.likes,
     Tags.friends,
     Tags.users,

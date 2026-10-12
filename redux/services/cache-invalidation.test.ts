@@ -13,6 +13,7 @@ interface LikeMutationArgs {
   activityId: string;
 }
 type InvalidateTags = (result: unknown, error: unknown, args: LikeMutationArgs) => unknown;
+type CommentInvalidateTags = (result: unknown, error: unknown, args: { id?: string; activityId?: string }) => unknown;
 
 describe('RTK Query cache invalidation contracts', () => {
   it('declares invalidation for every cache-mutating endpoint', async () => {
@@ -58,10 +59,12 @@ describe('RTK Query cache invalidation contracts', () => {
       'appendActivityMedia',
       'createProfileByUserId',
       'deleteActivityById',
+      'deleteActivityMedia',
       'deleteCommentByCommentId',
       'deleteFriend',
       'deleteLike',
       'deleteLikeToComment',
+      'importWatchWorkouts',
       'postCommentWithActivityId',
       'sendLike',
       'sendLikeToComment',
@@ -69,7 +72,7 @@ describe('RTK Query cache invalidation contracts', () => {
       'updateCommentByCommentId',
       'updateProfileByUserId',
     ]);
-    expect(invalidatingEndpoints).toHaveLength(15);
+    expect(invalidatingEndpoints).toHaveLength(17);
 
     for (const endpointName of invalidatingEndpoints) {
       expect(endpointDefinitions[endpointName].invalidatesTags).toBeDefined();
@@ -82,6 +85,24 @@ describe('RTK Query cache invalidation contracts', () => {
     expect(sendLikeInvalidatesTags(undefined, undefined, { activityId })).toEqual([{ type: 'likes', id: activityId }]);
     expect(deleteLikeInvalidatesTags(undefined, undefined, { activityId })).toEqual([
       { type: 'likes', id: activityId },
+    ]);
+
+    const postCommentInvalidatesTags = endpointDefinitions.postCommentWithActivityId
+      .invalidatesTags as CommentInvalidateTags;
+    const deleteCommentInvalidatesTags = endpointDefinitions.deleteCommentByCommentId
+      .invalidatesTags as CommentInvalidateTags;
+    const updateCommentInvalidatesTags = endpointDefinitions.updateCommentByCommentId
+      .invalidatesTags as CommentInvalidateTags;
+    expect(postCommentInvalidatesTags(undefined, undefined, { id: activityId })).toEqual([
+      { type: 'comments', id: activityId },
+      { type: 'commentCounts', id: activityId },
+    ]);
+    expect(deleteCommentInvalidatesTags(undefined, undefined, { activityId })).toEqual([
+      { type: 'comments', id: activityId },
+      { type: 'commentCounts', id: activityId },
+    ]);
+    expect(updateCommentInvalidatesTags(undefined, undefined, { activityId })).toEqual([
+      { type: 'comments', id: activityId },
     ]);
     expect(endpointDefinitions.deleteActivityById.invalidatesTags).toEqual(['activities', 'statistics']);
 

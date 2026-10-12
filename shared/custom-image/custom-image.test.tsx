@@ -1,5 +1,6 @@
-import { render } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { Image } from 'expo-image';
+import { Platform } from 'react-native';
 import CustomImage from './custom-image';
 
 describe('custom image', () => {
@@ -19,7 +20,7 @@ describe('custom image', () => {
     const image = result.getByTestId('custom-image');
     expect(image.props.source).toEqual({ uri: 'https://example.com/photo.jpg' });
     expect(image.props.contentFit).toBe('cover');
-    expect(image.props.placeholder).toBe('blurhash');
+    expect(image.props.placeholder).toBe('blurhash:/blurhash');
     expect(image.props.placeholderContentFit).toBe('cover');
     expect(image.props.priority).toBe('high');
     expect(image.props.cachePolicy).toBe('memory-disk');
@@ -84,9 +85,91 @@ describe('custom image', () => {
 
       const image = result.getByTestId('custom-image-loading');
       expect(image.props.source).toEqual({ uri: 'https://example.com/slow-photo.jpg' });
-      expect(image.props.placeholder).toBe('blurhash');
+      expect(image.props.placeholder).toBe('blurhash:/blurhash');
     } finally {
       (Image as any).getCachePathAsync = originalGetCachePathAsync;
+    }
+  });
+
+  it('handles empty sources and web-specific image props', async () => {
+    const originalOS = Platform.OS;
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+
+    try {
+      const result = await render(
+        <CustomImage
+          testID="custom-image-web"
+          source={{ uri: null }}
+          cachePolicy="none"
+          recyclingKey="photo"
+          style={{ width: 100, height: 100 }}
+        />,
+      );
+
+      const image = result.toJSON() as { props: Record<string, unknown> };
+      expect(image.props.source).toEqual({ uri: '' });
+      expect(image.props.testID).toBeUndefined();
+      expect(image.props.recyclingKey).toBeUndefined();
+    } finally {
+      Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
+    }
+  });
+
+  it('handles a cache probe failure and an unmounted cache probe', async () => {
+    const originalGetCachePathAsync = (Image as any).getCachePathAsync;
+    const getCachePathAsync = jest.fn().mockRejectedValue(new Error('cache unavailable'));
+    (Image as any).getCachePathAsync = getCachePathAsync;
+
+    try {
+      await render(
+        <CustomImage
+          testID="custom-image-error"
+          source={{ uri: 'https://example.com/cache-error.jpg' }}
+          cachePolicy="memory-disk"
+          style={{ width: 100, height: 100 }}
+        />,
+      );
+      await waitFor(() => expect(getCachePathAsync).toHaveBeenCalled());
+
+      let resolveCache!: (value: string | null) => void;
+      (Image as any).getCachePathAsync = jest.fn(
+        () => new Promise<string | null>((resolve) => (resolveCache = resolve)),
+      );
+      const result = await render(
+        <CustomImage
+          testID="custom-image-unmounted"
+          source={{ uri: 'https://example.com/cache-unmounted.jpg' }}
+          cachePolicy="memory-disk"
+          style={{ width: 100, height: 100 }}
+        />,
+      );
+      result.unmount();
+      resolveCache(null);
+      await Promise.resolve();
+    } finally {
+      (Image as any).getCachePathAsync = originalGetCachePathAsync;
+    }
+  });
+
+  it('forwards image load events and handles a disabled cache policy', async () => {
+    const originalOS = Platform.OS;
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    const onLoad = jest.fn();
+    try {
+      const result = await render(
+        <CustomImage
+          testID="custom-image-load"
+          source={{ uri: 'https://example.com/load.jpg' }}
+          cachePolicy="none"
+          onLoad={onLoad}
+          style={{ width: 100, height: 100 }}
+        />,
+      );
+
+      fireEvent(result.getByTestId('custom-image-load'), 'load', { source: { width: 100, height: 100 } });
+      expect(onLoad).toHaveBeenCalledWith(expect.objectContaining({ source: { width: 100, height: 100 } }));
+    } finally {
+      Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
     }
   });
 });

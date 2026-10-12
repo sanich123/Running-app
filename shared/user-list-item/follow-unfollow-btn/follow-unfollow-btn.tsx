@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import {
   useGetYouFollowUsersByUserIdQuery,
@@ -10,7 +10,13 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { FOLLOW_UNFOLLOW_BTN } from './const';
 
-export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
+interface FollowUnfollowBtnProps {
+  friendId: string;
+  compact?: boolean;
+}
+
+export default function FollowUnfollowBtn({ friendId, compact = false }: FollowUnfollowBtnProps) {
+  const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const {
     isLoading: isLoadingListOfFriends,
@@ -26,15 +32,19 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
   const [deleteFriend, { isLoading: isLoadingDeleteFriend }] = useDeleteFriendMutation();
   const [addFriend, { isLoading: isLoadingAddFriend }] = useAddFriendMutation();
   const isLoading = isLoadingListOfFriends || isLoadingDeleteFriend || isLoadingAddFriend;
+  const isFollowing = friendCell.length > 0;
 
   return (
     <Button
-      mode="outlined"
-      compact
+      compact={compact}
+      mode={isFollowing ? 'outlined' : 'contained'}
+      icon={compact ? undefined : isFollowing ? 'check' : 'account-plus-outline'}
+      buttonColor={isFollowing ? colors.surface : colors.primary}
+      textColor={isFollowing ? colors.onSurface : colors.onPrimary}
       loading={isLoading}
-      contentStyle={styles.content}
-      labelStyle={styles.label}
-      style={styles.button}
+      contentStyle={[styles.content, compact && styles.compactContent]}
+      labelStyle={[styles.label, compact && styles.compactLabel]}
+      style={[compact ? styles.compactButton : styles.button, isFollowing && { borderColor: colors.outlineVariant }]}
       disabled={isLoading || isError}
       onPress={async () => {
         try {
@@ -44,8 +54,8 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
           errorToast(FOLLOW_UNFOLLOW_BTN[language].errorMsg, error);
         }
       }}>
-      {!isError && !isLoading && friendCell.length > 0 && FOLLOW_UNFOLLOW_BTN[language].unfollow}
-      {!isError && !isLoading && !friendCell.length && FOLLOW_UNFOLLOW_BTN[language].follow}
+      {!isError && !isLoading && isFollowing && FOLLOW_UNFOLLOW_BTN[language].unfollow}
+      {!isError && !isLoading && !isFollowing && FOLLOW_UNFOLLOW_BTN[language].follow}
       {isError && `${FOLLOW_UNFOLLOW_BTN[language].errorMsg}: ${getErrorMessageFromError(listOfFriendsError)}`}
     </Button>
   );
@@ -53,21 +63,34 @@ export default function FollowUnfollowBtn({ friendId }: { friendId: string }) {
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 12,
+    borderRadius: 16,
+    width: '100%',
+  },
+  compactButton: {
+    alignSelf: 'flex-start',
     flexShrink: 0,
-    marginLeft: 'auto',
-    width: 132,
+    minWidth: 112,
   },
   content: {
     alignItems: 'center',
-    height: 34,
+    height: 48,
     justifyContent: 'center',
-    paddingHorizontal: 9,
+    paddingHorizontal: 16,
     paddingVertical: 0,
+  },
+  compactContent: {
+    height: 32,
+    paddingHorizontal: 4,
   },
   label: {
     fontFamily: FONT_FAMILIES.semiBold,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  compactLabel: {
     fontSize: 12,
-    lineHeight: 14,
+    lineHeight: 16,
+    marginHorizontal: 4,
+    marginVertical: 0,
   },
 });

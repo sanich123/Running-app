@@ -74,7 +74,6 @@ export default function MapTools({
                 { color: isSelected ? colors.onPrimaryContainer : colors.onSurface },
                 isSelected ? styles.durationMenuItemTitleSelected : undefined,
               ]}
-              rippleColor={colors.primaryContainer}
               disabled={isDisabled}
               onPress={() => {
                 onSetPlaybackDuration(duration);

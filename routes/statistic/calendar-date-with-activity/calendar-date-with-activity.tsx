@@ -11,7 +11,7 @@ export default function CalendarDateWithActivity({
   dateValue,
   activities,
 }: CalendarDateWithActivityProps & Omit<CalendarDateProps, 'isEmptyCell'>) {
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { push } = useRouter();
   const activityIcon = getIconNameByTypeOfSport(activities[0]?.sport ?? 'unknown');
   return (
@@ -19,7 +19,6 @@ export default function CalendarDateWithActivity({
       {!isTitle ? (
         <TouchableRipple
           testID={`calendar-activities-${activities.map(({ id }) => id).join('-')}`}
-          rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           borderless
           style={[
             styles.dateItem,
@@ -34,7 +33,10 @@ export default function CalendarDateWithActivity({
               if (activities.length === 1) {
                 push(`/${ROUTES.activity}/${activities[0].id}`);
               } else {
-                push(`/${ROUTES.activitiesList}/${activities.map(({ id }) => `ids=${id}`).join('&')}`);
+                push({
+                  pathname: `/${ROUTES.activitiesList}/${ROUTES.routeIds}`,
+                  params: { ids: activities.map(({ id }) => id) },
+                });
               }
             }
           }}>

@@ -1,5 +1,4 @@
 import { View, StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useGetAllTimeStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
@@ -8,7 +7,6 @@ import MonthStatisticsMetrics from '@S/month-metric/month-metric';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 
 export default function ProfileStatistics({ whosProfile }: { whosProfile: string }) {
-  const { colors } = useTheme();
   const {
     data: allUserStatistics,
     isLoading,
@@ -23,7 +21,7 @@ export default function ProfileStatistics({ whosProfile }: { whosProfile: string
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={styles.metricsRow}>
       {isLoading || allUserStatistics?.totalItems ? (
         <>
           <MonthStatisticsMetrics
@@ -57,20 +55,8 @@ export default function ProfileStatistics({ whosProfile }: { whosProfile: string
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
+  metricsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 24,
-    columnGap: 8,
-  },
-  statistics: {
-    display: 'flex',
-    borderWidth: 1,
-    borderRadius: 55,
-    height: 110,
-    width: 110,
-    justifyContent: 'center',
-    alignItems: 'center',
+    gap: 8,
   },
 });

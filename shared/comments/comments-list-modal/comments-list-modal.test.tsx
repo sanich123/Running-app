@@ -37,7 +37,7 @@ describe('comments list modal', () => {
 
   it('shows a skeleton while comments are loading', async () => {
     mockCommentsViewState = 'loading';
-    await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} commentsLength={0} />);
+    await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} />);
     expect(screen.queryByTestId('comments-list')).not.toBeOnTheScreen();
     expect(screen.getByTestId('comments-skeleton')).toBeOnTheScreen();
     expect(screen.queryByText('Комментариев пока нет')).not.toBeOnTheScreen();

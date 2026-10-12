@@ -22,7 +22,7 @@ export default function ActivityCard({
   const { media, mapPhotoUrl, profile, sport, date, userId } = activity;
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
-  const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH;
+  const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width, 0) : MAX_MOBILE_WIDTH;
   const contextValue = { activity, isFullView, isShowDeleteBtn, isShowDescription };
 
   return (

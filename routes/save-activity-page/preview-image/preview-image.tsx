@@ -1,6 +1,6 @@
 import { useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
-import { TouchableRipple, useTheme } from 'react-native-paper';
+import { TouchableRipple } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import CustomImage from '@S/custom-image/custom-image';
@@ -15,13 +15,11 @@ export default function PreviewImage({
 }: PreviewImageProps) {
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const { width } = useWindowDimensions();
-  const { dark } = useTheme();
   const { push } = useRouter();
   const isPreviewDisabled = isDisabled || isSavingDisabled;
 
   return (
     <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
       onPress={() => push(`/${ROUTES.media}/${encodeURIComponent(mediaUrl)}`)}
       disabled={isPreviewDisabled}
       borderless>

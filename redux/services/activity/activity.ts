@@ -1,12 +1,15 @@
 import { Methods, Tags } from '@R/runich-api/const';
+import { createSearchParams } from '@R/runich-api/create-search-params';
 import { runichApi } from '@R/runich-api/runich-api';
 import type {
   ActivityToSend,
   ActivityUpdateRequest,
   AppendActivityMediaRequest,
+  DeleteActivityMediaRequest,
   GetActivityLocationsRequest,
   GetActivitiesByIdsRequest,
   GetActivityMediaRequest,
+  WatchWorkoutsImportRequest,
 } from './types';
 import type {
   ActivitiesResponse,
@@ -17,11 +20,12 @@ import type {
   ActivityMediaResponse,
   ActivityMigrationJobResponse,
   ActivityResponse,
+  WatchWorkoutBatchImportResponse,
 } from '@R/runich-api/types';
 
 const ACTIVITY_PAGE_SIZE = 20;
 
-const activityApi = runichApi.injectEndpoints({
+export const activityApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
     getActivitiesByUserId: infiniteQuery<ActivitiesResponse, { id: string }, string>({
@@ -30,7 +34,7 @@ const activityApi = runichApi.injectEndpoints({
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       },
       query: ({ queryArg: { id }, pageParam }) =>
-        `/activity/${id}?take=${ACTIVITY_PAGE_SIZE}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
+        `/activity/${id}${createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined })}`,
       providesTags: [Tags.activities],
     }),
     getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesResponse, { id: string }, string>({
@@ -39,7 +43,7 @@ const activityApi = runichApi.injectEndpoints({
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       },
       query: ({ queryArg: { id }, pageParam }) =>
-        `/activity/${id}/all?take=${ACTIVITY_PAGE_SIZE}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
+        `/activity/${id}/all${createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined })}`,
       providesTags: [Tags.activities],
     }),
     getAllActivityMediaByUserId: infiniteQuery<ActivityMediaResponse, GetActivityMediaRequest, string>({
@@ -48,7 +52,7 @@ const activityApi = runichApi.injectEndpoints({
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       },
       query: ({ queryArg: { userId, take }, pageParam }) =>
-        `/activity/${userId}/media?take=${take}${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
+        `/activity/${userId}/media${createSearchParams({ take, cursor: pageParam || undefined })}`,
       providesTags: [Tags.activities],
     }),
     getActivityByActivityId: query<ActivityResponse | null, string>({
@@ -57,7 +61,7 @@ const activityApi = runichApi.injectEndpoints({
     }),
     getLocationsByActivityId: query<ActivityLocationsResponse | null, GetActivityLocationsRequest>({
       query: ({ activityId, replay }: GetActivityLocationsRequest) =>
-        `/activity/${activityId}/locations${replay ? '?replay=true' : ''}`,
+        `/activity/${activityId}/locations${createSearchParams({ replay: replay || undefined })}`,
       providesTags: [Tags.activities],
     }),
     getStravaMigrationStatus: query<ActivityMigrationJobResponse, string>({
@@ -82,6 +86,13 @@ const activityApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.activities],
     }),
+    deleteActivityMedia: mutation<void, DeleteActivityMediaRequest>({
+      query: ({ activityId, mediaId }) => ({
+        url: `/activity/${activityId}/media/${mediaId}`,
+        method: Methods.delete,
+      }),
+      invalidatesTags: [Tags.activities],
+    }),
     addActivityByUserId: mutation<ActivityMutationResponse, ActivityToSend>({
       query: ({ body, id }: ActivityToSend) => ({
         url: `/activity/${id}`,
@@ -89,6 +100,14 @@ const activityApi = runichApi.injectEndpoints({
         body,
       }),
       invalidatesTags: [Tags.activities, Tags.statistics],
+    }),
+    importWatchWorkouts: mutation<WatchWorkoutBatchImportResponse, WatchWorkoutsImportRequest>({
+      query: ({ id, workouts }) => ({
+        url: `/activity/${id}/watch-import`,
+        method: Methods.post,
+        body: { workouts },
+      }),
+      invalidatesTags: (result) => (result ? [Tags.activities, Tags.statistics] : []),
     }),
     deleteActivityById: mutation<void, string>({
       query: (id: string) => ({
@@ -99,7 +118,7 @@ const activityApi = runichApi.injectEndpoints({
     }),
     getSeveralActivitiesByTheirIds: query<ActivityListItemResponse[], GetActivitiesByIdsRequest>({
       query: ({ ids }) => ({
-        url: `/activity/activityIds?${ids}`,
+        url: `/activity/activityIds${createSearchParams({ ids })}`,
       }),
       providesTags: [Tags.activities],
     }),
@@ -109,6 +128,7 @@ const activityApi = runichApi.injectEndpoints({
 export const {
   useUpdateActivityInfoMutation,
   useAppendActivityMediaMutation,
+  useDeleteActivityMediaMutation,
   useGetActivitiesByUserIdInfiniteQuery,
   useGetAllActivityMediaByUserIdInfiniteQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery,
@@ -117,6 +137,7 @@ export const {
   useGetStravaMigrationStatusQuery,
   useGetCurrentStravaMigrationStatusQuery,
   useAddActivityByUserIdMutation,
+  useImportWatchWorkoutsMutation,
   useDeleteActivityByIdMutation,
   useGetSeveralActivitiesByTheirIdsQuery,
 } = activityApi;

@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { Platform, useWindowDimensions, StyleSheet, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { HelperText, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
@@ -16,6 +16,7 @@ import {
 } from '@Routes/app-routes/const';
 import { HEIGHT_AGE } from '@Routes/profile/profile-settings/inputs-height-age/const';
 import { getInitialProfileSettingsParams } from '@Routes/profile/profile-settings/profile-settings-params';
+import ProfileUpdateBtn from '@Routes/profile/update-btn/update-btn';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import type { ProfileSettingsSearchParams } from '@Routes/profile/profile-settings/profile-settings-params';
 
@@ -49,35 +50,38 @@ export default function ProfileSettings() {
   const isFormDisabled = isDisabled || isProfileLoading;
 
   return (
-    <KeyboardAwareScrollView
-      keyboardShouldPersistTaps="handled"
-      bottomOffset={24}
-      style={[styles.scroll, { backgroundColor: colors.background }]}
-      contentContainerStyle={[
-        styles.container,
-        {
-          backgroundColor: colors.background,
-          width: width < MAX_MOBILE_WIDTH ? '100%' : MAX_MOBILE_WIDTH,
-          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
-        },
-      ]}>
-      <Suspense fallback={<FullPageActivityLoader />}>
-        <LazyAvatarIconEditable setIsDisabled={setIsDisabled} isDisabled={isFormDisabled} />
-        <LazyInputsNameSurname isDisabled={isFormDisabled} />
-        <LazyInputsWeightCity isDisabled={isFormDisabled} variant="city" />
-        <LazyInputBio isDisabled={isFormDisabled} />
-        <View style={styles.calorieInputsSection}>
-          <HelperText type="info" style={styles.calorieInputsHint}>
-            {HEIGHT_AGE[language].helper}
-          </HelperText>
-          <View style={styles.calorieMetricsRow}>
-            <LazyInputsWeightCity isDisabled={isFormDisabled} variant="weight" compact />
-            <LazyInputsHeightAge isDisabled={isFormDisabled} compact />
+    <>
+      <Stack.Screen options={{ headerRight: () => (userId ? <ProfileUpdateBtn /> : null) }} />
+      <KeyboardAwareScrollView
+        keyboardShouldPersistTaps="handled"
+        bottomOffset={24}
+        style={[styles.scroll, { backgroundColor: colors.background }]}
+        contentContainerStyle={[
+          styles.container,
+          {
+            backgroundColor: colors.background,
+            width: width < MAX_MOBILE_WIDTH ? '100%' : MAX_MOBILE_WIDTH,
+            marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          },
+        ]}>
+        <Suspense fallback={<FullPageActivityLoader />}>
+          <LazyAvatarIconEditable setIsDisabled={setIsDisabled} isDisabled={isFormDisabled} />
+          <LazyInputsNameSurname isDisabled={isFormDisabled} />
+          <LazyInputsWeightCity isDisabled={isFormDisabled} variant="city" />
+          <LazyInputBio isDisabled={isFormDisabled} />
+          <View style={styles.calorieInputsSection}>
+            <HelperText type="info" style={styles.calorieInputsHint}>
+              {HEIGHT_AGE[language].helper}
+            </HelperText>
+            <View style={styles.calorieMetricsRow}>
+              <LazyInputsWeightCity isDisabled={isFormDisabled} variant="weight" compact />
+              <LazyInputsHeightAge isDisabled={isFormDisabled} compact />
+            </View>
+            <LazyGenderBtns isDisabled={isFormDisabled} />
           </View>
-          <LazyGenderBtns isDisabled={isFormDisabled} />
-        </View>
-      </Suspense>
-    </KeyboardAwareScrollView>
+        </Suspense>
+      </KeyboardAwareScrollView>
+    </>
   );
 }
 

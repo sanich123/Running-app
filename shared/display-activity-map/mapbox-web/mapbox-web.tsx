@@ -6,6 +6,7 @@ import {
   ACTIVITY_ROUTE_REPLAY_TERRAIN_SOURCE_URL,
 } from '@S/activity-route-replay/const';
 import { getAvatarLabel } from '@S/avatar/avatar';
+import { DISPLAY_ACTIVITY_MAP_CAMERA_PADDING } from '../const';
 import type { WebMapControlsHandle } from '../map-controls/types';
 import type { ActivityKilometreSplit, ProfileType } from '@S/card/types';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -150,7 +151,14 @@ export default function MapboxWeb({
         : { bounds: boundBox }),
       pitch: cameraPitch,
       boxZoom: true,
-      fitBoundsOptions: { padding: { top: 20, bottom: 20, left: 20, right: 20 } },
+      fitBoundsOptions: {
+        padding: {
+          top: DISPLAY_ACTIVITY_MAP_CAMERA_PADDING.paddingTop,
+          bottom: DISPLAY_ACTIVITY_MAP_CAMERA_PADDING.paddingBottom,
+          left: DISPLAY_ACTIVITY_MAP_CAMERA_PADDING.paddingLeft,
+          right: DISPLAY_ACTIVITY_MAP_CAMERA_PADDING.paddingRight,
+        },
+      },
     });
     mapRef.current = mapboxMap;
     const mapControls = {

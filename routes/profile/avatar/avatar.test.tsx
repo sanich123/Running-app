@@ -9,10 +9,13 @@ describe('avatar', () => {
   });
 
   it('shows the saved profile photo when one exists', async () => {
-    await renderWithProviders(<ProfileAvatar profilePhoto="https://example.com/profile.jpg" />);
+    await renderWithProviders(
+      <ProfileAvatar profilePhoto="https://example.com/profile.jpg" profilePhotoBlurhash="profile-blurhash" />,
+    );
     expect(screen.getByTestId('avatarEditableImage').props.source).toEqual({
       uri: 'https://example.com/profile.jpg',
     });
+    expect(screen.getByTestId('avatarEditableImage').props.placeholder).toBe('blurhash:/profile-blurhash');
     expect(screen.queryByTestId('avatarEditableDefaultIcon')).not.toBeOnTheScreen();
   });
 });

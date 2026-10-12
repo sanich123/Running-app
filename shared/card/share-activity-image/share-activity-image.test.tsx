@@ -15,6 +15,7 @@ describe('share activity image', () => {
         date="2026-08-09T10:00:00.000Z"
         title="Утренняя пробежка"
         mapPhotoUrl="https://example.com/map.jpg"
+        mapPhotoUrlBlurhash="map-blurhash"
         emotion={EMOTIONS_BTNS_VALUES.good}
         elevationGain={208}
         steps={1234}
@@ -34,6 +35,7 @@ describe('share activity image', () => {
     expect(map.props.priority).toBe('low');
     expect(map.props.cachePolicy).toBe('disk');
     expect(map.props.transition).toBe(0);
+    expect(map.props.placeholder).toBe('blurhash:/map-blurhash');
     expect(screen.getByTestId('share-activity-image')).toHaveStyle({ left: -10000, top: -10000 });
     expect(screen.getByTestId('share-profile-avatar')).toBeOnTheScreen();
     expect(screen.getByTestId('share-profile-avatar').props.source).toEqual({ uri: MOCK_PROFILE.profilePhoto });

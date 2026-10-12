@@ -1,16 +1,22 @@
 import { useState } from 'react';
 import { Modal, Platform, Pressable, ScrollView, useWindowDimensions, View, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { IconButton, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { IconButton, List, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
+import { useGetAllActivityMediaByUserIdInfiniteQuery } from '@R/services/activity/activity';
+import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
+import { useGetAllTimeStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import ProfileMediaPhotos from '@Routes/profile/media-photos/media-photos';
 import AvatarShowable from '@S/avatar/showable/showable';
 import CustomImage from '@S/custom-image/custom-image';
 import ErrorComponent from '@S/error-component/error-component';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
+import { PROFILE_SECTIONS, PROFILE_WATCH_IMPORT } from './const';
+import { PROFILE_PRIVACY_SETTINGS } from './privacy-settings/const';
 import ProfileSkeleton from './profile-skeleton/profile-skeleton';
 import ProfileStatistics from './statistics/profile-statistics';
 import { USERS_VARIANT } from './users-counter/const';
@@ -19,10 +25,14 @@ import UsersCounter from './users-counter/users-counter';
 export default function ProfilePage() {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
+  const { push } = useRouter();
   const { id: whosProfileViewing } = useLocalSearchParams();
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { language } = useAppSelector(({ settings }) => settings);
   const [isProfilePhotoVisible, setIsProfilePhotoVisible] = useState(false);
   const whosProfile = whosProfileViewing ? whosProfileViewing : userId;
+  const profileUserId = `${whosProfile}`;
+  const isOwnProfile = String(whosProfile) === userId;
 
   const {
     isLoading,
@@ -31,7 +41,30 @@ export default function ProfilePage() {
     data: profile,
     error,
     refetch,
-  } = useGetUserProfileByUserIdQuery(`${whosProfile}`, { skip: !whosProfile });
+  } = useGetUserProfileByUserIdQuery(profileUserId, { skip: !whosProfile });
+  const areFollowListsHidden = !isOwnProfile && profile?.hideFollowingList === true;
+  const profileResolved = isSuccess && Boolean(profile);
+  const shouldLoadMedia = profileResolved && (isOwnProfile || profile?.hideProfilePhotos !== true);
+  const shouldLoadFollowLists = profileResolved && !areFollowListsHidden;
+  const shouldLoadStatistics = profileResolved && (isOwnProfile || profile?.hideActivityStatistics !== true);
+  const mediaQuery = useGetAllActivityMediaByUserIdInfiniteQuery(
+    { userId: profileUserId, take: 4 },
+    { skip: !shouldLoadMedia },
+  );
+  const followingQuery = useGetYouFollowUsersByUserIdQuery(profileUserId, { skip: !shouldLoadFollowLists });
+  const followersQuery = useGetFollowersByUserIdQuery(profileUserId, { skip: !shouldLoadFollowLists });
+  const statisticsQuery = useGetAllTimeStatisticsByUserIdQuery(
+    { userId: profileUserId },
+    { skip: !shouldLoadStatistics },
+  );
+  const isContentLoading =
+    isLoading ||
+    (profileResolved &&
+      ((shouldLoadMedia && !mediaQuery.isSuccess && !mediaQuery.isError) ||
+        (shouldLoadFollowLists &&
+          ((!followingQuery.isSuccess && !followingQuery.isError) ||
+            (!followersQuery.isSuccess && !followersQuery.isError))) ||
+        (shouldLoadStatistics && !statisticsQuery.isSuccess && !statisticsQuery.isError)));
   return (
     <>
       <ScrollView
@@ -46,10 +79,12 @@ export default function ProfilePage() {
           },
           isError && styles.isInCenter,
         ]}>
-        <View style={styles.mediaPhotosWrapper}>
-          <ProfileMediaPhotos userId={`${whosProfile}`} />
-        </View>
-        {isLoading ? (
+        {!isContentLoading && isSuccess && (isOwnProfile || profile?.hideProfilePhotos !== true) && (
+          <View style={styles.mediaPhotosWrapper}>
+            <ProfileMediaPhotos userId={profileUserId} />
+          </View>
+        )}
+        {isContentLoading ? (
           <ProfileSkeleton />
         ) : isSuccess ? (
           <>
@@ -76,17 +111,57 @@ export default function ProfilePage() {
               </View>
             </View>
             <View style={[styles.bio, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
-              <Text variant="labelMedium" style={{ color: colors.primary, fontFamily: FONT_FAMILIES.semiBold }}>
-                ABOUT
+              <Text variant="titleMedium" style={{ color: colors.primary, fontFamily: FONT_FAMILIES.semiBold }}>
+                {PROFILE_SECTIONS[language].about}
               </Text>
-              <Text variant="bodyMedium">{profile?.bio}</Text>
+              <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                {profile?.bio || '—'}
+              </Text>
             </View>
-            <View style={styles.followersBtnsWrapper}>
-              <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
-              <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
-              {whosProfile !== userId && <FollowUnfollowBtn friendId={`${whosProfile}`} />}
-            </View>
-            <ProfileStatistics whosProfile={`${whosProfile}`} />
+            {(isOwnProfile || !areFollowListsHidden) && (
+              <View style={styles.followersBtnsWrapper} testID="profile-community-section">
+                <UsersCounter variant={USERS_VARIANT.whoUserFollows} />
+                <UsersCounter variant={USERS_VARIANT.whoFollowsUser} />
+              </View>
+            )}
+            {!isOwnProfile && profile?.allowNewFollowers !== false && (
+              <View style={styles.followAction}>
+                <FollowUnfollowBtn friendId={`${whosProfile}`} />
+              </View>
+            )}
+            {isOwnProfile || profile?.hideActivityStatistics !== true ? (
+              <ProfileStatistics whosProfile={`${whosProfile}`} />
+            ) : null}
+            {Platform.OS === 'android' && isOwnProfile && userId ? (
+              <List.Item
+                testID="watch-import-profile-row"
+                title={PROFILE_WATCH_IMPORT[language].title}
+                titleNumberOfLines={1}
+                description={PROFILE_WATCH_IMPORT[language].subtitle}
+                descriptionNumberOfLines={1}
+                left={(props) => <List.Icon {...props} icon="watch-variant" />}
+                right={(props) => <List.Icon {...props} icon="chevron-right" />}
+                onPress={() => push(`/${ROUTES.watchImport}` as Parameters<typeof push>[0])}
+                style={[
+                  styles.privacySettingsLink,
+                  { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+                ]}
+              />
+            ) : null}
+            {isOwnProfile && userId ? (
+              <List.Item
+                testID="profile-privacy-settings-button"
+                title={PROFILE_PRIVACY_SETTINGS[language].openSettings}
+                titleNumberOfLines={1}
+                left={(props) => <List.Icon {...props} icon="shield-lock-outline" />}
+                right={(props) => <List.Icon {...props} icon="chevron-right" />}
+                onPress={() => push(`/${ROUTES.profile}/${ROUTES.profilePrivacySettings}`)}
+                style={[
+                  styles.privacySettingsLink,
+                  { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+                ]}
+              />
+            ) : null}
           </>
         ) : isError ? (
           <ErrorComponent error={error} refetch={refetch} />
@@ -108,6 +183,7 @@ export default function ProfilePage() {
               testID="profile-photo-modal-image"
               source={{ uri: profile?.profilePhoto }}
               contentFit="contain"
+              placeholder={profile?.profilePhotoBlurhash}
               style={styles.photoModalImage}
             />
             <IconButton
@@ -146,15 +222,16 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 20,
     borderWidth: 1,
     display: 'flex',
     flexDirection: 'row',
     columnGap: 16,
-    padding: 16,
+    marginBottom: 12,
+    padding: 20,
   },
   avatarRing: {
-    borderRadius: 52,
+    borderRadius: 56,
     borderWidth: 2,
     padding: 3,
   },
@@ -164,20 +241,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bio: {
-    borderRadius: 8,
+    borderRadius: 16,
     borderWidth: 1,
     display: 'flex',
     gap: 8,
-    marginVertical: 12,
+    marginBottom: 12,
     padding: 16,
   },
   followersBtnsWrapper: {
-    display: 'flex',
     flexDirection: 'row',
     gap: 8,
-    alignItems: 'center',
+    marginBottom: 12,
+  },
+  followAction: {
+    alignSelf: 'stretch',
+    marginBottom: 12,
   },
   profileName: { fontFamily: FONT_FAMILIES.extraBold },
+  privacySettingsLink: {
+    borderRadius: 8,
+    borderWidth: 1,
+    marginTop: 12,
+  },
   photoModal: {
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.88)',

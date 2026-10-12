@@ -5,22 +5,23 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 
-export default function FeedHeaderTitle({ children }: PropsWithChildren) {
-  const { colors, dark } = useTheme();
+export default function FeedHeaderTitle({ children, isBrand = false }: PropsWithChildren<{ isBrand?: boolean }>) {
+  const { colors } = useTheme();
   const { replace } = useRouter();
-  const title = <Text style={[styles.title, { color: colors.primary }]}>{children}</Text>;
+  const title = (
+    <Text
+      accessibilityLabel={isBrand ? 'Runich' : undefined}
+      style={[isBrand ? styles.brand : styles.title, { color: colors.primary }]}>
+      {isBrand ? 'RUNICH' : children}
+    </Text>
+  );
 
   if (Platform.OS !== 'web') {
     return title;
   }
 
   return (
-    <TouchableRipple
-      accessibilityRole="link"
-      borderless
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => replace(ROUTES.root)}
-      style={styles.link}>
+    <TouchableRipple accessibilityRole="link" borderless onPress={() => replace(ROUTES.root)} style={styles.link}>
       {title}
     </TouchableRipple>
   );
@@ -35,5 +36,10 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FONT_FAMILIES.semiBold,
     fontSize: 16,
+  },
+  brand: {
+    fontFamily: FONT_FAMILIES.extraBold,
+    fontSize: 18,
+    letterSpacing: 1.4,
   },
 });

@@ -1,4 +1,5 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
+import { createSearchParams } from '@R/runich-api/create-search-params';
 import { runichApi } from '@R/runich-api/runich-api';
 import type { DeleteCommentLike, SendComment, SendCommentLike, UpdateComment } from './types';
 import type {
@@ -10,7 +11,7 @@ import type {
 
 const { comment, like } = Routes;
 
-const commentsApi = runichApi.injectEndpoints({
+export const commentsApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
     getCommentsByActivityId: infiniteQuery<CommentsResponse, { activityId: string }, string>({
@@ -19,12 +20,12 @@ const commentsApi = runichApi.injectEndpoints({
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       },
       query: ({ queryArg: { activityId }, pageParam }) =>
-        `/${comment}/${activityId}?limit=10${pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : ''}`,
+        `/${comment}/${activityId}${createSearchParams({ limit: 10, cursor: pageParam || undefined })}`,
       providesTags: (result, error, arg) => [{ type: Tags.comments, id: arg.activityId }],
     }),
     getCommentsLengthByActivityId: query<number, string>({
       query: (id: string) => `/${comment}/${id}/count`,
-      providesTags: (result, error, arg) => [{ type: Tags.comments, id: arg }],
+      providesTags: (result, error, arg) => [{ type: Tags.commentCounts, id: arg }],
     }),
     postCommentWithActivityId: mutation<void, SendComment>({
       query: ({ body, id }: SendComment) => ({
@@ -34,8 +35,21 @@ const commentsApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, arg) => [
         { type: Tags.comments, id: arg.id },
-        { type: Tags.activities, id: arg.id },
+        { type: Tags.commentCounts, id: arg.id },
       ],
+      async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          void dispatch(
+            commentsApi.endpoints.getCommentsLengthByActivityId.initiate(id, {
+              subscribe: false,
+              forceRefetch: true,
+            }),
+          );
+        } catch {
+          // The mutation error is handled by the calling component.
+        }
+      },
     }),
     deleteCommentByCommentId: mutation<void, { commentId: string; activityId: string }>({
       query: ({ commentId }: { commentId: string; activityId: string }) => ({
@@ -44,8 +58,21 @@ const commentsApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, { activityId }) => [
         { type: Tags.comments, id: activityId },
-        { type: Tags.activities, id: activityId },
+        { type: Tags.commentCounts, id: activityId },
       ],
+      async onQueryStarted({ activityId }, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          void dispatch(
+            commentsApi.endpoints.getCommentsLengthByActivityId.initiate(activityId, {
+              subscribe: false,
+              forceRefetch: true,
+            }),
+          );
+        } catch {
+          // The mutation error is handled by the calling component.
+        }
+      },
     }),
     updateCommentByCommentId: mutation<CommentMutationResponse, UpdateComment>({
       query: ({ commentId, body }: UpdateComment) => ({
@@ -53,10 +80,7 @@ const commentsApi = runichApi.injectEndpoints({
         method: Methods.patch,
         body,
       }),
-      invalidatesTags: (result, error, { activityId }) => [
-        { type: Tags.comments, id: activityId },
-        { type: Tags.activities, id: activityId },
-      ],
+      invalidatesTags: (result, error, { activityId }) => [{ type: Tags.comments, id: activityId }],
     }),
     getLikesByCommentId: query<CommentLikeSummaryResponse[], string>({
       query: (commentId: string) => `/${comment}/${commentId}/${like}`,

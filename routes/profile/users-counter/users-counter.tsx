@@ -3,16 +3,21 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
-import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
-import { useAppSelector } from '@R/typed-hooks';
+import {
+  followersApi,
+  useGetFollowersByUserIdQuery,
+  useGetYouFollowUsersByUserIdQuery,
+} from '@R/services/followers/followers';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import Skeleton from '@S/skeleton/skeleton';
 import { USERS_COUNT, USERS_VARIANT } from './const';
 
-export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
+export default function UsersCounter({ variant, isHidden = false }: { variant: USERS_VARIANT; isHidden?: boolean }) {
+  const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
+  const dispatch = useAppDispatch();
   const { push } = useRouter();
-  const { dark } = useTheme();
   const { id: friendId } = useLocalSearchParams();
   const whosId = friendId ? `${friendId}` : userId;
   const whereToPush = variant === USERS_VARIANT.whoUserFollows ? ROUTES.following : ROUTES.followers;
@@ -22,13 +27,14 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
     isLoading: isFollowersLoading,
     isError: isFollowersError,
     data: whoFollowsUserList,
-  } = useGetFollowersByUserIdQuery(whosId, { skip: variant === USERS_VARIANT.whoUserFollows });
+  } = useGetFollowersByUserIdQuery(whosId, { skip: isHidden || variant === USERS_VARIANT.whoUserFollows });
 
   const {
     isLoading: isFollowingsLoading,
     isError: isFollowingsError,
     data: whoUserFollowsList,
-  } = useGetYouFollowUsersByUserIdQuery(whosId, { skip: variant === USERS_VARIANT.whoFollowsUser });
+  } = useGetYouFollowUsersByUserIdQuery(whosId, { skip: isHidden || variant === USERS_VARIANT.whoFollowsUser });
+  if (isHidden) return null;
   if (isFollowersError || isFollowingsError) {
     return null;
   }
@@ -37,12 +43,20 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
 
   return (
     <TouchableRipple
-      rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
-      onPress={() => push(`/${whereToPush}/${whosId}`)}
+      onPress={() => {
+        if (whosId) {
+          if (variant === USERS_VARIANT.whoUserFollows) {
+            void dispatch(followersApi.endpoints.getYouFollowUsersByUserId.initiate(whosId, { subscribe: false }));
+          } else {
+            void dispatch(followersApi.endpoints.getFollowersByUserId.initiate(whosId, { subscribe: false }));
+          }
+        }
+        push(`/${whereToPush}/${whosId}`);
+      }}
       disabled={isFollowersError || isLoading || isFollowingsError}
       borderless
-      style={{ borderRadius: 8 }}>
-      <View style={{ paddingHorizontal: 10, paddingVertical: 8 }}>
+      style={[styles.card, { backgroundColor: colors.background, borderColor: colors.outlineVariant }]}>
+      <View style={styles.cardContent}>
         {isLoading ? (
           <>
             <Skeleton testID={`users-counter-${variant}-loading`} style={styles.titleSkeleton} />
@@ -63,6 +77,16 @@ export default function UsersCounter({ variant }: { variant: USERS_VARIANT }) {
 }
 
 const styles = StyleSheet.create({
+  card: {
+    borderRadius: 12,
+    borderWidth: 1,
+    flex: 1,
+    minWidth: 0,
+  },
+  cardContent: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
   titleSkeleton: { width: 68, height: 13 },
   valueSkeleton: { width: 40, height: 22, marginTop: 4 },
 });

@@ -18,7 +18,7 @@ import type { ActivityMediaItemResponse } from '@R/runich-api/types';
 import type { PageScrollStateChangedNativeEvent, PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
 
 export default function PhotoViewer() {
-  const { photoUrl, indexOfPhoto, userId, take } = useLocalSearchParams();
+  const { photoUrl, indexOfPhoto, userId, take, blurhash } = useLocalSearchParams();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const webPhotoUrl = getPhotoUrl(photoUrl);
@@ -69,6 +69,7 @@ export default function PhotoViewer() {
   const mediaKey = `${photoUrl}:${indexOfPhoto ?? ''}:${userId ?? ''}`;
   const [pageSelection, setPageSelection] = useState<{ mediaKey: string; index: number } | null>(null);
   const [isPagerMoving, setIsPagerMoving] = useState(false);
+  const [isLandscapeByUrl, setIsLandscapeByUrl] = useState<Record<string, boolean>>({});
   const selectedPage = pageSelection?.mediaKey === mediaKey ? pageSelection.index : initialPage;
 
   return (
@@ -82,6 +83,7 @@ export default function PhotoViewer() {
               source={{ uri: webPhotoUrl }}
               style={[styles.webImage, { backgroundColor: colors.background }]}
               contentFit="contain"
+              placeholder={typeof blurhash === 'string' ? blurhash : undefined}
             />
           )}
         </>
@@ -102,15 +104,21 @@ export default function PhotoViewer() {
               }
               orientation="vertical">
               {itemsToRender.map(({ url, blurhash }: ActivityMediaItemResponse, index: number) => (
-                <View key={index}>
+                <View key={index} style={[styles.page, { backgroundColor: colors.background }]}>
                   {isVideoUrl(url) ? (
                     <VideoViewer url={url} isActive={!isPagerMoving && selectedPage === index} />
                   ) : (
                     <CustomImage
                       source={{ uri: url }}
                       style={{ width: '100%', height: '100%' }}
-                      contentFit="cover"
+                      contentFit={isLandscapeByUrl[url] === false ? 'cover' : 'contain'}
                       placeholder={blurhash}
+                      onLoad={(event) => {
+                        const { width, height } = event.source;
+                        if (width > 0 && height > 0) {
+                          setIsLandscapeByUrl((current) => ({ ...current, [url]: width > height }));
+                        }
+                      }}
                     />
                   )}
                 </View>
@@ -157,7 +165,8 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   page: {
-    justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
   },
 });

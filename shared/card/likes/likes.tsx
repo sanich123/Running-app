@@ -1,7 +1,7 @@
 import { Fragment, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { useGetLikesByActivityIdQuery } from '@R/services/likes/likes';
+import { Text, TouchableRipple } from 'react-native-paper';
+import { likesApi, useGetLikesByActivityIdInfiniteQuery } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToDownload } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import UserAvatar from '@S/avatar/avatar';
@@ -18,37 +18,43 @@ export default function Likes() {
   const { id: activityId, likesLength } = activity;
   const size = isFullView ? LikesSize.big : LikesSize.small;
   const dispatch = useAppDispatch();
-  const { dark } = useTheme();
   const { activityIdWhichLikesToUpdate } = useAppSelector(({ mainFeed }) => mainFeed);
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const canViewLikes = activity.profile?.allowActivityInteractions !== false || activity.userId === userId;
   const { isLoading: isAppLoading } = useAppSelector(({ loading }) => loading);
   const isLikesMarkedForUpdate = activityIdWhichLikesToUpdate === activityId;
-  const shouldLoadLikes = likesLength !== 0 || isLikesMarkedForUpdate;
+  const shouldLoadLikes = canViewLikes && (likesLength !== 0 || isLikesMarkedForUpdate);
   const {
-    data: likes,
+    data: likesPages,
     isLoading,
     isError,
-  } = useGetLikesByActivityIdQuery(activityId, {
-    skip: !activityId || !shouldLoadLikes,
-  });
-  const likesList = likes ?? [];
-  const likesCount = isLikesMarkedForUpdate ? likesList.length : (likesLength ?? likesList.length);
+  } = useGetLikesByActivityIdInfiniteQuery(
+    { activityId },
+    {
+      skip: !activityId || !shouldLoadLikes,
+    },
+  );
+  const likesList = likesPages?.pages.flatMap(({ likes }) => likes) ?? [];
+  const likesCount = canViewLikes && isLikesMarkedForUpdate ? likesList.length : (likesLength ?? likesList.length);
   const hasLikes = likesCount > 0;
   const lastLikeInTheRow = size === LikesSize.big ? MAX_IN_ROW : MAX_NUMBER_IN_ROW_OTHER_PAGE;
   const lessThanNineLikes = size === LikesSize.big && likesCount > 0 && likesCount <= MAX_IN_ROW;
   const moreThanNineLikes = size === LikesSize.big && likesCount > MAX_IN_ROW;
   const likesListModal = useRef<BottomSheetModal>(null);
+  if (!canViewLikes) return <View />;
+
   return (
     <>
       {hasLikes ? (
         <TouchableRipple
           testID="pushToActivityLikes"
-          rippleColor={`rgba(${dark ? '255, 255, 255' : '0, 0, 0'}, .08)`}
           onPress={() => {
+            void dispatch(likesApi.endpoints.getLikesByActivityId.initiate({ activityId }, { subscribe: false }));
             dispatch(setActivityIdWhichLikesToDownload(activityId));
             likesListModal.current?.present?.();
           }}
           borderless
-          disabled={isAppLoading || isLoading || isError}
+          disabled={!canViewLikes || isAppLoading || isLoading || isError}
           style={{ borderRadius: 10 }}>
           <View style={styles.likesWrapper}>
             <View
@@ -100,7 +106,7 @@ export default function Likes() {
       ) : (
         <View />
       )}
-      <ModalLikesList bottomSheetModalRef={likesListModal} likesLength={likesCount} />
+      <ModalLikesList bottomSheetModalRef={likesListModal} likesLength={likesCount} canViewLikes={canViewLikes} />
     </>
   );
 }

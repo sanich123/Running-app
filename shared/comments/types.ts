@@ -1,6 +1,5 @@
 import type { RefObject } from 'react';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
-import type { ProfileType } from '@S/card/types';
 
 export interface CommentDeleteButtonProps {
   commentId: string;
@@ -14,7 +13,6 @@ export interface CommentEditBtnProps {
 }
 
 export interface CommentInputProps {
-  profile: ProfileType;
   commentToUpdate?: string;
   commentId: string;
 }
@@ -23,8 +21,6 @@ export interface CommentLikeBtnProps {
   activityId?: string;
   commentId: string;
   commentLikesFromComment: { authorId: string; id: string }[];
-  comment: string;
-  profile: ProfileType;
 }
 
 export interface CommentLikesLengthProps {
@@ -40,7 +36,7 @@ interface CommentModalProps {
 }
 
 export interface CommentsListModalProps extends CommentModalProps {
-  commentsLength?: number;
+  allowNewComments?: boolean;
 }
 
 export type CommentsProps = CommentModalProps;
