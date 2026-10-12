@@ -1,6 +1,6 @@
 {
   "name": "runich-running-app",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -33,7 +33,8 @@
     "web:export:stage": "EXPO_PUBLIC_BASE_URL=https://stage.runich-app.ru EXPO_PUBLIC_MAPBOX_TOKEN=pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtc3Z0MnV5ZDA1ZW4yd3M3d212NTg1dGsifQ.ETJENZqd5m-yPfVbnCf4pg expo export -p web -c",
     "web:export:production": "EXPO_PUBLIC_BASE_URL=https://api.runich-app.ru EXPO_PUBLIC_MAPBOX_TOKEN=pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtc3Z0MnV5ZDA1ZW4yd3M3d212NTg1dGsifQ.ETJENZqd5m-yPfVbnCf4pg expo export -p web -c",
     "web:serve:single": "npx serve dist --single",
-    "prepare": "husky"
+    "prepare": "husky",
+    "deps": "yarn npm-check-updates"
   },
   "dependencies": {
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
@@ -41,7 +42,7 @@
     "@gorhom/bottom-sheet": "patch:@gorhom/bottom-sheet@npm%3A5.2.14#~/.yarn/patches/@gorhom-bottom-sheet-npm-5.2.14-369bca24fd.patch",
     "@mapbox/polyline": "^1.2.1",
     "@react-native-community/netinfo": "12.0.1",
-    "@react-native-vector-icons/material-design-icons": "^13.1.4",
+    "@react-native-vector-icons/material-design-icons": "^13.1.5",
     "@reduxjs/toolkit": "^2.13.0",
     "@rnmapbox/maps": "patch:@rnmapbox/maps@npm%3A10.3.5#~/.yarn/patches/@rnmapbox-maps-npm-10.3.5-2398561610.patch",
     "@turf/bbox": "^7.4.0",
@@ -144,7 +145,7 @@
     "npm-check-updates": "^23.1.1",
     "prettier": "^3.9.10",
     "redux-persist": "^6.0.0",
-    "test-renderer": "^1.3.0",
+    "test-renderer": "^1.3.1",
     "ts-prune": "^0.10.3",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.71.1"
