@@ -14,13 +14,13 @@ import { Button, Divider, IconButton, RadioButton, Switch, Text, TouchableRipple
 import { LANGUAGES } from '@const/enums';
 import {
   addActivityReminder,
-  getActivitySettings,
   removeActivityReminder,
   setActivityVoiceEnabled,
   setActivityVoiceIdentifier,
   setActivityVoiceMetrics,
   setActivityReminderEnabled,
 } from '@R/slices/settings/settings';
+import { getActivitySettings } from '@R/slices/settings/types';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ACTIVITY_SETTINGS, ACTIVITY_VOICE_METRICS, ACTIVITY_VOICE_PREVIEW, createActivityReminderId } from './const';
 import type { ActivitySettingsProps } from './types';

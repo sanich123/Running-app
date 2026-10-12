@@ -1,4 +1,4 @@
-import { DEFAULT_ACTIVITY_VOICE_METRICS, SETTINGS_INITIAL_STATE, getActivitySettings } from './settings';
+import { DEFAULT_ACTIVITY_VOICE_METRICS, getActivitySettings, SETTINGS_INITIAL_STATE } from './types';
 
 describe('getActivitySettings', () => {
   it('uses defaults for absent or invalid setting collections', () => {

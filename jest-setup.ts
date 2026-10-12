@@ -5,6 +5,10 @@ import { mockStore } from './tests/utils/mock-store';
 import { server } from './tests/utils/server';
 import type * as ExpoLinking from 'expo-linking';
 
+jest.mock('expo-localization', () => ({
+  getLocales: jest.fn(() => [{ languageCode: 'ru', languageTag: 'ru-RU' }]),
+}));
+
 let consoleErrorSpy: jest.SpiedFunction<typeof console.error>;
 
 jest.mock('react-native-mmkv', () => {
