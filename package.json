@@ -82,7 +82,7 @@
     "expo-video": "~58.0.10",
     "expo-video-thumbnails": "~58.0.2",
     "expo-vpn-checker": "^0.1.4",
-    "mapbox-gl": "^3.32.0",
+    "mapbox-gl": "^3.33.0",
     "moment": "^2.31.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
@@ -148,7 +148,7 @@
     "test-renderer": "^1.3.1",
     "ts-prune": "^0.10.3",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.71.1"
+    "typescript-eslint": "^8.71.2"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": [
