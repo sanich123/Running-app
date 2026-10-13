@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { StyleSheet } from 'react-native';
 import { updatePlayerPlayback } from '../const';
@@ -9,6 +9,11 @@ export default function ActiveVideoPlayer({ url, isMuted, isPaused, onMetadata }
     currentPlayer.loop = true;
     currentPlayer.muted = true;
   });
+  const onMetadataRef = useRef(onMetadata);
+
+  useEffect(() => {
+    onMetadataRef.current = onMetadata;
+  }, [onMetadata]);
 
   useEffect(() => {
     updatePlayerPlayback(player, isMuted, isPaused);
@@ -22,7 +27,7 @@ export default function ActiveVideoPlayer({ url, isMuted, isPaused, onMetadata }
 
       if (Number.isFinite(duration) && duration > 0) metadata.duration = duration;
       if (videoSize?.width && videoSize?.height) metadata.aspectRatio = videoSize.width / videoSize.height;
-      if (metadata.duration || metadata.aspectRatio) onMetadata?.(metadata);
+      if (metadata.duration || metadata.aspectRatio) onMetadataRef.current?.(metadata);
     };
 
     updateMetadata();
@@ -32,7 +37,7 @@ export default function ActiveVideoPlayer({ url, isMuted, isPaused, onMetadata }
       sourceSubscription.remove();
       trackSubscription.remove();
     };
-  }, [onMetadata, player]);
+  }, [player]);
 
   return <VideoView player={player} style={StyleSheet.absoluteFill} contentFit="cover" nativeControls={false} />;
 }

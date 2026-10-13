@@ -28,7 +28,10 @@ export default function VideoMedia({
   const [duration, setDuration] = useState(0);
   const isPlaying = isActive && !isPaused;
   const handleMetadata = (metadata: VideoMetadata) => {
-    if (metadata.duration) setDuration(metadata.duration);
+    if (metadata.duration) {
+      const nextDuration = metadata.duration;
+      setDuration((currentDuration) => (currentDuration === nextDuration ? currentDuration : nextDuration));
+    }
     onMetadata?.(metadata);
   };
 

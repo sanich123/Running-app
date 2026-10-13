@@ -46,7 +46,7 @@ export type UploadMediaBatchRequest = (
   control?: MediaUploadControl,
 ) => Promise<UploadedPhotoBatchResponse[]>;
 
-const VIDEO_BITRATE_MULTIPLIER = 0.9;
+const VIDEO_BITRATE_MULTIPLIER = 0.7;
 const VIDEO_TRACK_METADATA_TIMEOUT_MS = 10_000;
 
 export async function compressMediaFile(
