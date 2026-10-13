@@ -25,14 +25,8 @@ import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import RouteReplayBtn from '../route-replay-btn/route-replay-btn';
 import type { ActivityMediaItem } from '../types';
 
-const MEDIA_VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 60 };
-
 interface DisplayedMediaItem extends ActivityMediaItem {
   isMap?: boolean;
-}
-
-interface MediaViewToken {
-  index: number | undefined;
 }
 
 export default function MediaList() {
@@ -68,16 +62,12 @@ export default function MediaList() {
   const isOwnActivity = Boolean(activityOwnerId && activityOwnerId === currentUserId);
   const canViewReplay = activity.profile?.allowActivityReplayViewing !== false || isOwnActivity;
   const [mediaAspectRatios, setMediaAspectRatios] = useState<Record<string, number>>({});
-  const [visibleMediaIndices, setVisibleMediaIndices] = useState<Set<number>>(() => new Set([0]));
-  const onViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: MediaViewToken[]; changed: MediaViewToken[] }) => {
-      setVisibleMediaIndices(
-        new Set(viewableItems.map(({ index }) => index).filter((index): index is number => index != null)),
-      );
-    },
-    [],
-  );
-
+  const displayedData = useMemo(() => {
+    const activityMedia: DisplayedMediaItem[] = (media ?? []).map((item) => ({ ...item, isMap: false }));
+    return mapPhotoUrl
+      ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash, isMap: true }, ...activityMedia]
+      : activityMedia;
+  }, [mapPhotoUrl, mapPhotoUrlBlurhash, media]);
   const handleDeleteMedia = useCallback(
     async (mediaId: string) => {
       try {
@@ -90,12 +80,6 @@ export default function MediaList() {
     [deleteActivityMedia, id],
   );
 
-  const displayedData = useMemo(() => {
-    const activityMedia: DisplayedMediaItem[] = (media ?? []).map((item) => ({ ...item, isMap: false }));
-    return mapPhotoUrl
-      ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash, isMap: true }, ...activityMedia]
-      : activityMedia;
-  }, [mapPhotoUrl, mapPhotoUrlBlurhash, media]);
   const getMediaWidth = useCallback(
     (item: DisplayedMediaItem) => {
       const aspectRatio = item.isMap ? ACTIVITY_MEDIA_ASPECT_RATIO : (mediaAspectRatios[item.url] ?? 1);
@@ -109,7 +93,6 @@ export default function MediaList() {
       const isMap = item.isMap === true;
       const isVideo = !isMap && isVideoUrl(item.url);
       const itemWidth = getMediaWidth(item);
-      const isActive = visibleMediaIndices.has(index);
       const onMediaMetadata = (metadata: { aspectRatio?: number }) => {
         if (!metadata.aspectRatio || !Number.isFinite(metadata.aspectRatio)) return;
         setMediaAspectRatios((current) =>
@@ -170,9 +153,10 @@ export default function MediaList() {
             {isVideo ? (
               <VideoMedia
                 url={item.url}
+                thumbnail={item.thumbnail}
+                blurhash={item.blurhash}
                 width={itemWidth}
                 height={mediaHeight}
-                isActive={isActive}
                 playLabel={language === LANGUAGES.russian ? 'Воспроизвести видео' : 'Play video'}
                 pauseLabel={language === LANGUAGES.russian ? 'Приостановить видео' : 'Pause video'}
                 muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
@@ -258,7 +242,6 @@ export default function MediaList() {
       push,
       handleDeleteMedia,
       setMediaAspectRatios,
-      visibleMediaIndices,
     ],
   );
 
@@ -276,8 +259,6 @@ export default function MediaList() {
       updateCellsBatchingPeriod={50}
       removeClippedSubviews={false}
       ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-      viewabilityConfig={MEDIA_VIEWABILITY_CONFIG}
-      onViewableItemsChanged={onViewableItemsChanged}
       keyExtractor={(item) => item.url}
     />
   );

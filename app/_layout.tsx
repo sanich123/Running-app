@@ -16,6 +16,7 @@ import { toastConfig } from '@const/toast-config';
 import { subscribeToPersistenceErrors } from '@R/persistence-errors';
 import { persistor, store } from '@R/store';
 import AppShell from '@Routes/root-layout/app-shell';
+import { VideoPlaybackProvider } from '@S/card/media-list/video-playback-context';
 import { errorToast } from '@S/error-toast/error-toast';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
@@ -62,7 +63,9 @@ export default function RootLayout() {
     <Provider store={store}>
       <PersistGate loading={<FullPageActivityLoader />} persistor={persistor}>
         <SafeAreaProvider>
-          <AppShell />
+          <VideoPlaybackProvider>
+            <AppShell />
+          </VideoPlaybackProvider>
           <Toast visibilityTime={2000} topOffset={90} config={toastConfig} />
         </SafeAreaProvider>
       </PersistGate>

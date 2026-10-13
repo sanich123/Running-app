@@ -4,19 +4,19 @@ import { useGetCommentsLengthByActivityIdQuery } from '@R/services/comments/comm
 import { useAppSelector } from '@R/typed-hooks';
 import type { ActivityCardData } from '../types';
 
-interface CommentCountBadgeProps {
+export default function CommentCountBadge({
+  activity,
+}: {
   activity: Pick<ActivityCardData, 'id' | 'userId' | 'commentsLength' | 'profile'>;
-}
-
-export default function CommentCountBadge({ activity }: CommentCountBadgeProps) {
+}) {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isLoading } = useAppSelector(({ loading }) => loading);
-  const { id: activityId, userId: activityOwnerId, commentsLength, profile } = activity;
+  const { id: activityId, userId: activityOwnerId, profile } = activity;
   const canViewComments = profile?.allowActivityInteractions !== false || activityOwnerId === userId;
-  const shouldLoadCommentsCount = canViewComments && commentsLength > 0;
+
   const { data: commentsCount } = useGetCommentsLengthByActivityIdQuery(activityId, {
-    skip: !shouldLoadCommentsCount,
+    skip: !canViewComments,
   });
 
   if (!canViewComments || !commentsCount) return null;
