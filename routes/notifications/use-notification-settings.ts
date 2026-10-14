@@ -22,7 +22,7 @@ export function useNotificationSettings() {
   const locale = getNotificationLocale(language);
   const copy = NOTIFICATION_COPY[locale];
   const { data: profileInfo, isSuccess: isProfileLoaded } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
-  const [updateProfile, { isLoading: isUpdatingInAppPreference }] = useUpdateProfileByUserIdMutation();
+  const [updateProfile, { isLoading: isUpdatingProfilePreferences }] = useUpdateProfileByUserIdMutation();
   const [permissionChecked, setPermissionChecked] = useState(false);
   const [isRequestingPush, setIsRequestingPush] = useState(false);
   const { data: pushStatus, isLoading: isStatusLoading } = useGetPushTokenStatusQuery(undefined, {
@@ -32,7 +32,7 @@ export function useNotificationSettings() {
   const [unregisterToken, { isLoading: isUnregistering }] = useUnregisterPushTokenMutation();
   const inAppNotificationsEnabled = profileInfo?.inAppNotifications !== false;
   const canUpdateProfilePreferences = Boolean(userId && isProfileLoaded);
-  const busy = isStatusLoading || isRegistering || isUnregistering || isRequestingPush;
+  const busy = isStatusLoading || isRegistering || isUnregistering || isRequestingPush || isUpdatingProfilePreferences;
 
   const toggleInAppNotifications = async (enabled: boolean) => {
     try {
@@ -103,6 +103,7 @@ export function useNotificationSettings() {
       if (!projectId) throw new Error(copy.missingProjectId);
       const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
       await registerToken({ token, platform: 'android' }).unwrap();
+      await updateProfile({ body: { pushNotifications: true }, id: userId }).unwrap();
     } catch (error) {
       errorToast(copy.enablePushError, error);
     }
@@ -110,8 +111,10 @@ export function useNotificationSettings() {
 
   const togglePush = async () => {
     try {
-      if (pushStatus?.enabled) await unregisterToken().unwrap();
-      else {
+      if (profileInfo?.pushNotifications === true) {
+        await updateProfile({ body: { pushNotifications: false }, id: userId }).unwrap();
+        await unregisterToken().unwrap();
+      } else {
         setIsRequestingPush(true);
         try {
           await enablePush();
@@ -133,9 +136,9 @@ export function useNotificationSettings() {
     isRequestingPush,
     isStatusLoading,
     isUnregistering,
-    isUpdatingInAppPreference,
+    isUpdatingInAppPreference: isUpdatingProfilePreferences,
     permissionChecked,
-    pushEnabled: Boolean(pushStatus?.enabled),
+    pushEnabled: profileInfo?.pushNotifications === true,
     toggleInAppNotifications,
     togglePush,
   };

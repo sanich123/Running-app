@@ -55,7 +55,7 @@ export default function NotificationSettingsPage() {
             testID="pushNotificationsSwitch"
             accessibilityLabel={copy.push}
             value={pushEnabled}
-            disabled={busy || !permissionChecked || Platform.OS !== 'android'}
+            disabled={busy || !canUpdateProfilePreferences || !permissionChecked || Platform.OS !== 'android'}
             onValueChange={() => void togglePush()}
           />
         }

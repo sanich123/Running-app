@@ -14,6 +14,7 @@ export interface ProfileSettings {
   birthday?: string;
   sport?: string;
   emailNotifications?: boolean;
+  pushNotifications?: boolean;
   inAppNotifications?: boolean;
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;

@@ -70,13 +70,20 @@ describe('NotificationSettingsPage', () => {
 
   it('requests permission only after tapping the button, then sends the Expo token to the server', async () => {
     let registrationBody: unknown;
+    let profileUpdateBody: unknown;
     server.use(
       http.get(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: false })),
       http.post(`${BASE_URL}/notification/push-token`, async ({ request }) => {
         registrationBody = await request.json();
         return HttpResponse.json({ enabled: true });
       }),
-      http.get(`${BASE_URL}/user/notification-owner/profile`, () => HttpResponse.json({ emailNotifications: false })),
+      http.get(`${BASE_URL}/user/notification-owner/profile`, () =>
+        HttpResponse.json({ emailNotifications: false, pushNotifications: false }),
+      ),
+      http.patch(`${BASE_URL}/user/notification-owner/profile`, async ({ request }) => {
+        profileUpdateBody = await request.json();
+        return HttpResponse.json({ emailNotifications: false, pushNotifications: true });
+      }),
     );
 
     await renderWithProviders(<NotificationSettingsPage />);
@@ -92,6 +99,7 @@ describe('NotificationSettingsPage', () => {
     await waitFor(() =>
       expect(registrationBody).toEqual({ token: 'ExpoPushToken[device-token]', platform: 'android' }),
     );
+    await waitFor(() => expect(profileUpdateBody).toEqual({ pushNotifications: true }));
     expect(notificationMocks.setNotificationChannelAsync).toHaveBeenCalledWith(
       'default',
       expect.objectContaining({ importance: 4 }),
@@ -101,7 +109,7 @@ describe('NotificationSettingsPage', () => {
   });
 
   it('persists the in-app notification switch independently from push and email settings', async () => {
-    let profile = { emailNotifications: false, inAppNotifications: true };
+    let profile = { emailNotifications: false, pushNotifications: false, inAppNotifications: true };
     let updateBody: unknown;
     server.use(
       http.get(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: false })),
@@ -119,6 +127,34 @@ describe('NotificationSettingsPage', () => {
 
     await waitFor(() => expect(updateBody).toEqual({ inAppNotifications: false }));
     expect(notificationMocks.requestPermissionsAsync).not.toHaveBeenCalled();
+  });
+
+  it('persists the push preference separately and unregisters this device when disabled', async () => {
+    let profile = { emailNotifications: false, pushNotifications: true, inAppNotifications: true };
+    const updateBodies: unknown[] = [];
+    let unregisterCalls = 0;
+    notificationMocks.getPermissionsAsync.mockReset().mockResolvedValue({ granted: true, canAskAgain: true });
+    server.use(
+      http.get(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: true })),
+      http.delete(`${BASE_URL}/notification/push-token`, () => {
+        unregisterCalls += 1;
+        return HttpResponse.json({ enabled: false, updated: 1 });
+      }),
+      http.get(`${BASE_URL}/user/notification-owner/profile`, () => HttpResponse.json(profile)),
+      http.patch(`${BASE_URL}/user/notification-owner/profile`, async ({ request }) => {
+        const body = (await request.json()) as { pushNotifications: boolean };
+        updateBodies.push(body);
+        profile = { ...profile, ...body };
+        return HttpResponse.json(profile);
+      }),
+    );
+
+    await renderWithProviders(<NotificationSettingsPage />);
+    const pushSwitch = await screen.findByTestId('pushNotificationsSwitch');
+    await fireEvent(pushSwitch, 'valueChange', false);
+
+    await waitFor(() => expect(updateBodies).toEqual([{ pushNotifications: false }]));
+    await waitFor(() => expect(unregisterCalls).toBe(1));
   });
 
   it('shows the Android settings action when permission was permanently denied', async () => {
@@ -175,6 +211,7 @@ describe('NotificationSettingsPage', () => {
       http.get(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: false })),
       http.post(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: true })),
       http.get(`${BASE_URL}/user/notification-owner/profile`, () => HttpResponse.json({ emailNotifications: false })),
+      http.patch(`${BASE_URL}/user/notification-owner/profile`, () => HttpResponse.json({ pushNotifications: true })),
     );
     await renderWithProviders(<NotificationSettingsPage />);
     const pushSwitch = await screen.findByTestId('pushNotificationsSwitch');
