@@ -1,5 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
+import { StyleSheet } from 'react-native';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { changeLanguage } from '@R/slices/settings/settings';
@@ -63,6 +65,80 @@ describe('NotificationsPage', () => {
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activity}/activity-1`));
   });
 
+  it('marks an unread notification as read without opening the activity', async () => {
+    let isRead = false;
+    const notification = {
+      id: 'notification-mark-read',
+      type: 'comment',
+      targetType: 'activity',
+      targetId: 'activity-2',
+      relatedId: 'comment-2',
+      actorName: 'Alice',
+      actorSurname: 'Runner',
+      actorProfilePhoto: null,
+      content: 'A comment',
+      createdAt: new Date().toISOString(),
+      readAt: null,
+    };
+    server.use(
+      http.get(`${BASE_URL}/notification`, () =>
+        HttpResponse.json({
+          notifications: [{ ...notification, readAt: isRead ? new Date().toISOString() : null }],
+          hasMore: false,
+          nextCursor: null,
+        }),
+      ),
+      http.get(`${BASE_URL}/notification/unread-count`, () => HttpResponse.json(isRead ? 0 : 1)),
+      http.patch(`${BASE_URL}/notification/notification-mark-read/read`, () => {
+        isRead = true;
+        return HttpResponse.json({ updated: 1 });
+      }),
+    );
+
+    await renderWithProviders(<NotificationsPage />);
+    await screen.findByText('Alice Runner прокомментировал(а) вашу тренировку');
+    await fireEvent.press(screen.getByTestId('markNotificationRead-notification-mark-read'));
+
+    await waitFor(() => expect(isRead).toBe(true));
+    await waitFor(() => expect(screen.queryByTestId('markNotificationRead-notification-mark-read')).toBeNull());
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it('shows actor initials when the notification avatar image fails to load', async () => {
+    server.use(
+      http.get(`${BASE_URL}/notification`, () =>
+        HttpResponse.json({
+          notifications: [
+            {
+              id: 'notification-avatar-error',
+              type: 'activity-like',
+              targetType: 'activity',
+              targetId: 'activity-3',
+              relatedId: null,
+              actorName: 'Alice',
+              actorSurname: 'Runner',
+              actorProfilePhoto: 'https://images.example.test/alice.jpg',
+              content: null,
+              createdAt: new Date().toISOString(),
+              readAt: null,
+            },
+          ],
+          hasMore: false,
+          nextCursor: null,
+        }),
+      ),
+      http.get(`${BASE_URL}/notification/unread-count`, () => HttpResponse.json(1)),
+    );
+
+    await renderWithProviders(<NotificationsPage />);
+    const avatarImage = await screen.findByTestId('notification-avatar-notification-avatar-error');
+    expect(avatarImage.props.source).toEqual({ uri: 'https://images.example.test/alice.jpg' });
+
+    await fireEvent(avatarImage, 'onError', { nativeEvent: { error: 'Not found' } });
+
+    expect(await screen.findByText('A')).toBeOnTheScreen();
+  });
+
   it('marks all notifications as read', async () => {
     let readAllRequest = false;
     server.use(
@@ -103,6 +179,22 @@ describe('NotificationsPage', () => {
     await screen.findByText('Пока нет уведомлений');
     expect(requests).toBe(2);
     expect(screen.getByTestId('markAllNotificationsReadButton').props.accessibilityState.disabled).toBe(true);
+  });
+
+  it('uses the full available width on a narrow screen', async () => {
+    const useWindowDimensions = jest.spyOn(require('react-native'), 'useWindowDimensions').mockReturnValue({
+      width: MAX_MOBILE_WIDTH - 1,
+      height: 800,
+      scale: 1,
+      fontScale: 1,
+    });
+
+    try {
+      await renderWithProviders(<NotificationsPage />);
+      expect(StyleSheet.flatten(screen.getByTestId('notificationsContent').props.style).width).toBe('100%');
+    } finally {
+      useWindowDimensions.mockRestore();
+    }
   });
 
   it('loads the next cursor page and opens notification settings', async () => {

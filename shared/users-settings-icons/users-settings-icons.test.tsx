@@ -6,7 +6,7 @@ import UsersSettingsIcons from './users-settings-icons';
 import { mockStore, setMockUserId } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 const mockPush = jest.fn();
-const mockUnreadCount = 3;
+let mockUnreadCount = 3;
 let mockIsFocused = true;
 let mockUnreadQueryOptions: Record<string, unknown> | undefined;
 let mockPathname = `/${ROUTES.home}/${ROUTES.activity}/someActivityId`;
@@ -25,6 +25,7 @@ jest.mock('@R/services/notifications/notifications', () => ({
 }));
 describe('User settings icons', () => {
   beforeEach(() => {
+    mockUnreadCount = 3;
     mockIsFocused = true;
     mockUnreadQueryOptions = undefined;
     mockPush.mockClear();
@@ -91,6 +92,17 @@ describe('User settings icons', () => {
     await user.press(screen.getByTestId('notificationsIcon'));
 
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.notifications}`);
+  });
+
+  it('shows a compact 99+ badge when the unread count exceeds 99', async () => {
+    mockUnreadCount = 150;
+    mockPathname = `/${ROUTES.home}`;
+    mockParams = { userId: 'anotherUserId', id: '' };
+
+    await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
+
+    expect(screen.getByTestId('notificationsBadge')).toHaveTextContent('99+');
+    expect(screen.getByTestId('notificationsBadge')).toHaveStyle({ height: 16 });
   });
 
   it('stops polling the unread badge while the home page is not focused', async () => {

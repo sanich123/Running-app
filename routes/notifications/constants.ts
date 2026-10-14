@@ -16,6 +16,7 @@ export const NOTIFICATION_COPY = {
     loadError: 'Не удалось загрузить уведомления',
     retry: 'Повторить',
     markReadError: 'Не удалось отметить уведомление прочитанным',
+    markReadButton: 'Отметить прочитанным',
     markAllReadError: 'Не удалось прочитать уведомления',
     settingsIntro: 'Уведомления о событиях с активностью: лайки, комментарии.',
     inApp: 'В приложении',
@@ -51,6 +52,7 @@ export const NOTIFICATION_COPY = {
     loadError: 'Could not load notifications',
     retry: 'Retry',
     markReadError: 'Could not mark notification as read',
+    markReadButton: 'Mark as read',
     markAllReadError: 'Could not mark notifications as read',
     settingsIntro: 'Notifications about activity events: likes, comments.',
     inApp: 'In-app',
@@ -71,7 +73,6 @@ export const NOTIFICATION_COPY = {
   },
 } as const;
 
-export const NOTIFICATION_TIME_LOCALE = { russian: 'ru', english: 'en' } as const;
 export const NOTIFICATION_PUSH_CONFIG = {
   channelId: 'default',
   lightColor: '#6750A4',

@@ -40,6 +40,18 @@ export function useNotificationsPage() {
     }
   };
 
+  const markNotificationRead = async (item: NotificationItem) => {
+    if (item.readAt) return;
+    setBusyId(item.id);
+    try {
+      await markRead(item.id).unwrap();
+    } catch (error) {
+      errorToast(copy.markReadError, error);
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   const markAllNotificationsRead = async () => {
     try {
       await markAllRead().unwrap();
@@ -61,6 +73,7 @@ export function useNotificationsPage() {
     isMarkingAll,
     locale,
     markAllNotificationsRead,
+    markNotificationRead,
     notifications,
     openNotification,
     openNotificationSettings,

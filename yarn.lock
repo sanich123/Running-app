@@ -12098,16 +12098,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-tab-view@npm:^4.3.3":
-  version: 4.3.3
-  resolution: "react-native-tab-view@npm:4.3.3"
+"react-native-tab-view@npm:^4.3.4":
+  version: 4.3.4
+  resolution: "react-native-tab-view@npm:4.3.4"
   dependencies:
     use-latest-callback: "npm:^0.2.4"
   peerDependencies:
     react: ">= 18.2.0"
     react-native: "*"
     react-native-pager-view: ">= 6.0.0"
-  checksum: 10c0/961021b69caaa110dff9d12f89270bb9b95053a00bf9932679264a6555e856f9fa5e3e3b04376823da9f71c351d31bdc925146d092cb7e721b245759f11177fb
+  checksum: 10c0/4a3aeacd5fbdf4fae9ba320da053fab0329131e9faac7f7290ddaa737850ac22c301dd2ab7942a1f0b09221fe3a198cc53eddf9910c66de19aa9e0e575cc61f2
   languageName: node
   linkType: hard
 
@@ -12810,7 +12810,7 @@ __metadata:
     react-native-safe-area-context: "npm:~5.9.1"
     react-native-screens: "npm:~4.29.0"
     react-native-svg: "npm:15.15.5"
-    react-native-tab-view: "npm:^4.3.3"
+    react-native-tab-view: "npm:^4.3.4"
     react-native-toast-message: "npm:2.5.2"
     react-native-url-polyfill: "npm:^4.0.0"
     react-native-uuid: "npm:^2.0.4"

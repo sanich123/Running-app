@@ -97,7 +97,10 @@ export default function UsersSettingsIcons({ showCreateActivity = false }: Users
                 style={styles.iconButton}
               />
               {unreadCount > 0 ? (
-                <Badge testID="notificationsBadge" style={styles.badge}>
+                <Badge
+                  testID="notificationsBadge"
+                  size={16}
+                  style={[styles.badge, { backgroundColor: colors.primary, color: colors.onPrimary }]}>
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </Badge>
               ) : null}
