@@ -1,13 +1,15 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import * as MediaLibrary from 'expo-media-library';
+import { LANGUAGES } from '@const/enums';
 import { resetAuthSlice } from '@R/slices/auth/auth';
+import { changeLanguage, setSaveCameraPhotosToGallery } from '@R/slices/settings/settings';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ShotBtn from './shot-btn';
 import { uploadActivityMediaBatch } from '../../utils';
 
-jest.mock('expo-media-library', () => ({ Asset: { create: jest.fn() } }));
+jest.mock('expo-media-library', () => ({ Asset: { create: jest.fn().mockResolvedValue({}) } }));
 jest.mock('../../utils', () => ({ uploadActivityMediaBatch: jest.fn() }));
 
 const mockUploadActivityMediaBatch = uploadActivityMediaBatch as jest.Mock;
@@ -15,10 +17,13 @@ const mockUploadActivityMediaBatch = uploadActivityMediaBatch as jest.Mock;
 describe('shot btn', () => {
   beforeEach(() => {
     mockStore.dispatch(resetAuthSlice());
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    mockStore.dispatch(setSaveCameraPhotosToGallery(false));
     mockUploadActivityMediaBatch.mockReset();
+    (MediaLibrary.Asset.create as jest.Mock).mockReset().mockResolvedValue({});
   });
 
-  it('takes a photo, adds it to preview and saves it to the library', async () => {
+  it('takes a photo and adds it to preview without saving it to the library by default', async () => {
     const user = userEvent.setup();
     const setPhotos = jest.fn();
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://new-photo.jpg' });
@@ -27,6 +32,19 @@ describe('shot btn', () => {
     );
     await user.press(screen.getByTestId('camera-shot-button'));
     expect(setPhotos).toHaveBeenCalledWith([{ url: 'file://new-photo.jpg', thumbnail: null }]);
+    expect(MediaLibrary.Asset.create).not.toHaveBeenCalled();
+  });
+
+  it('saves the camera photo to the library when the profile option is enabled', async () => {
+    const user = userEvent.setup();
+    const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://new-photo.jpg' });
+    mockStore.dispatch(setSaveCameraPhotosToGallery(true));
+    await renderWithProviders(
+      <ShotBtn cameraRef={{ current: { takePictureAsync } } as any} setPhotos={jest.fn()} photos={[]} />,
+    );
+
+    await user.press(screen.getByTestId('camera-shot-button'));
+
     expect(MediaLibrary.Asset.create).toHaveBeenCalledWith('file://new-photo.jpg');
   });
 
@@ -111,7 +129,9 @@ describe('shot btn', () => {
       <ShotBtn cameraRef={{ current: { takePictureAsync: noPhoto } } as any} setPhotos={setPhotos} photos={[]} />,
     );
     await user.press(screen.getByTestId('camera-shot-button'));
-    expect(MediaLibrary.Asset.create).not.toHaveBeenCalledWith(undefined);
+    expect(noPhoto).toHaveBeenCalled();
+    expect(setPhotos).not.toHaveBeenCalled();
+    expect(mockUploadActivityMediaBatch).not.toHaveBeenCalled();
   });
 
   it('keeps the existing photos when upload returns nothing', async () => {
@@ -127,7 +147,6 @@ describe('shot btn', () => {
     await user.press(screen.getByTestId('camera-shot-button'));
 
     expect(setPhotos).not.toHaveBeenCalled();
-    expect(MediaLibrary.Asset.create).toHaveBeenCalledWith('file://photo.jpg');
   });
 
   it('reports camera errors and finishes the loading state', async () => {

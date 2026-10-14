@@ -154,7 +154,7 @@ describe('Activity start btn', () => {
     resolvePosition(MOCK_LOCATION);
     await waitFor(() => expect(mockStore.getState().location.activityStatus).toBe(STATUSES.started));
     expect(positionSpy).toHaveBeenCalledTimes(1);
-    expect(mockStore.getState().location.initialLocation).toBe(MOCK_LOCATION);
+    expect(mockStore.getState().location.initialLocation).toEqual(MOCK_LOCATION);
   });
 
   it('locks the button while starting and changes status only after success', async () => {

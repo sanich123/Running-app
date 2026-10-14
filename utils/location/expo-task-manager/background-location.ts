@@ -5,6 +5,7 @@ import {
   stopLocationUpdatesAsync,
 } from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
+import { setLocationProvider } from '@R/slices/location/location';
 import { setTrackingRecoveryProgress } from '@R/slices/tracking-recovery/tracking-recovery';
 import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -150,6 +151,10 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
   }
 
   for (const currentPosition of data.locations) {
-    processLocation(currentPosition);
+    const { provider, ...position } = currentPosition;
+    if (provider) {
+      store.dispatch(setLocationProvider(provider));
+    }
+    processLocation(position);
   }
 });

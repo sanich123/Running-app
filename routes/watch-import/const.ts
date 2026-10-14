@@ -37,7 +37,7 @@ export const WATCH_IMPORT_COPY = {
       stravaInstall: {
         title: 'Strava: more verified, but more steps',
         description:
-          'If you do not have an account, you can try creating one on Strava’s website. If Strava is unavailable in Google Play in Russia, you can download its XAPK from a third-party catalog.',
+          'Open the watch companion app, find Connected apps or Services, choose Strava, then sign in and approve the connection. Most popular watch models and companion apps can sync workouts with Strava; once connected, syncing is usually automatic.\n\nIf you do not have an account, you can try creating one on Strava’s website. If Strava is unavailable in Google Play in Russia, you can download its XAPK from a third-party catalog.',
         compatibleWatches: 'Compatible devices and apps for Strava',
         actions: {
           createAccount: 'Create a Strava account',
@@ -50,7 +50,7 @@ export const WATCH_IMPORT_COPY = {
       healthSyncInstall: {
         title: 'Configure Health Sync',
         description:
-          'Install Huawei AppGallery, then find HMS Core and Health Sync in it. HMS Core is usually already installed on Huawei phones; on other phones, install or update it through AppGallery.\n\nHealth Sync does not sync continuously: it checks for new workouts according to the sync interval selected in its settings. Choose an interval that suits you; checking every 15 minutes is usually unnecessary for workouts, so checking every 12 hours is often enough.',
+          'Install Huawei AppGallery, then find HMS Core and Health Sync in it. HMS Core is usually already installed on Huawei phones; on other phones, install or update it through AppGallery.\n\nOpen Health Connect, find Health Sync, and grant all available permissions under App permissions. Then, under Additional access permissions, enable every item, including background access, workout routes, and saved data.\n\nHealth Sync does not sync continuously: it checks for new workouts according to the sync interval selected in its settings. Choose an interval that suits you; checking every 15 minutes is usually unnecessary for workouts, so checking every 12 hours is often enough.',
         stabilityWarning:
           'This part is unstable. Health Sync sometimes synchronizes a workout from Strava normally, and sometimes does not without explanation. Sometimes only date-based selective synchronization works.',
         note: 'Health Sync is also available on Google Play, but users in Russia cannot pay for the license there. In Huawei AppGallery, it costs 600 ₽ as a one-time payment for a perpetual license.\n\nFirst try the one-week free trial to make sure the service fits your needs, and only then pay for it.',
@@ -65,7 +65,7 @@ export const WATCH_IMPORT_COPY = {
       healthConnect: {
         title: 'Configure Runich in Health Connect',
         description:
-          'Use the Google Play button below to open or install Health Connect. If it is already installed on your device, you do not need to install anything—just tap “Open”.\n\nOpen Health Sync under App permissions and allow every available permission. Then open Additional access permissions and enable every available item, including background access, workout routes, and saved data.\n\nAfter tapping “Give access”, allow Runich every permission it requests in Health Connect: workouts, distance, steps, and workout routes.',
+          'Use the Google Play button below to open or install Health Connect. If it is already installed on your device, you do not need to install anything—just tap “Open”.\n\nAfter tapping “Give access”, allow Runich every permission it requests in Health Connect: workouts, distance, steps, and workout routes.',
         note: 'Runich needs permissions for workout and route data to import activities. Health Connect grants these separately for each app.\n\nWe also recommend setting Health Connect to automatically delete data after three months.',
         actions: {
           grantAccess: 'Give access',
@@ -106,7 +106,7 @@ export const WATCH_IMPORT_COPY = {
       stravaInstall: {
         title: 'Strava: более проверенный вариант',
         description:
-          'Если аккаунта ещё нет, его можно попробовать создать на сайте Strava. Если Strava не удаётся скачать из Google Play в России, можно загрузить XAPK из стороннего каталога.',
+          'Откройте приложение производителя часов, найдите раздел подключённых приложений или сервисов, выберите Strava, войдите в аккаунт и подтвердите подключение. Большинство популярных моделей часов и приложений умеют передавать тренировки в Strava; после подключения синхронизация обычно работает автоматически.\n\nЕсли аккаунта ещё нет, его можно попробовать создать на сайте Strava. Если Strava не удаётся скачать из Google Play в России, можно загрузить XAPK из стороннего каталога.',
         compatibleWatches: 'Совместимые устройства и приложения со Strava',
         actions: {
           createAccount: 'Создать аккаунт Strava',
@@ -119,7 +119,7 @@ export const WATCH_IMPORT_COPY = {
       healthSyncInstall: {
         title: 'Настройте Health Sync',
         description:
-          'Установите Huawei AppGallery, затем найдите в ней HMS Core и Health Sync. На телефоне Huawei HMS Core обычно уже установлен; на других телефонах установите или обновите его через AppGallery.\n\nHealth Sync не синхронизирует данные непрерывно: приложение проверяет новые тренировки по выбранному в настройках интервалу (таймауту). Выберите интервал, который вам подходит: проверять каждые 15 минут обычно не нужно, для тренировок чаще всего достаточно проверки раз в 12 часов.',
+          'Установите Huawei AppGallery, затем найдите в ней HMS Core и Health Sync. На телефоне Huawei HMS Core обычно уже установлен; на других телефонах установите или обновите его через AppGallery.\n\nОткройте Health Connect, найдите Health Sync и в разделе «Доступ приложений» разрешите все доступные пункты. Затем в разделе «Дополнительные права доступа» включите все пункты, включая фоновый режим, маршруты тренировок и сохранённые данные.\n\nHealth Sync не синхронизирует данные непрерывно: приложение проверяет новые тренировки по выбранному в настройках интервалу (таймауту). Выберите интервал, который вам подходит: проверять каждые 15 минут обычно не нужно, для тренировок чаще всего достаточно проверки раз в 12 часов.',
         stabilityWarning:
           'Эта часть работает нестабильно. Health Sync то нормально синхронизирует тренировку из Strava, то без объяснения причин не делает этого. Иногда работает только выборочная синхронизация по дате.',
         note: 'Health Sync также доступен в Google Play, но пользователи из России не смогут оплатить лицензию через этот магазин. В Huawei AppGallery приложение стоит 600 ₽ единоразово, лицензия действует бессрочно.\n\nСначала попробуйте недельный пробный период, чтобы проверить, подходит ли сервис, и только потом оплачивайте его.',
@@ -134,7 +134,7 @@ export const WATCH_IMPORT_COPY = {
       healthConnect: {
         title: 'Настройте Runich в Health Connect',
         description:
-          'Нажмите кнопку Google Play ниже, чтобы открыть Health Connect и при необходимости установить приложение. Если Health Connect уже есть в системе, устанавливать ничего не нужно — просто нажмите «Открыть».\n\nОткройте Health Sync в разделе «Доступ приложений» и разрешите все доступные пункты. Затем в разделе «Дополнительные права доступа» включите все пункты, включая фоновый режим, маршруты тренировок и сохранённые данные.\n\nПосле нажатия «Дать доступ» разрешите Runich все запрошенные разрешения в Health Connect: тренировки, расстояние, шаги и маршруты тренировок.',
+          'Нажмите кнопку Google Play ниже, чтобы открыть Health Connect и при необходимости установить приложение. Если Health Connect уже есть в системе, устанавливать ничего не нужно — просто нажмите «Открыть».\n\nПосле нажатия «Дать доступ» разрешите Runich все запрошенные разрешения в Health Connect: тренировки, расстояние, шаги и маршруты тренировок.',
         note: 'Для импорта Runich нужны разрешения на данные тренировок и маршрута. Они выдаются отдельно для каждого приложения в Health Connect.\n\nТакже рекомендуем включить автоматическое удаление данных из Health Connect через 3 месяца.',
         actions: {
           grantAccess: 'Дать доступ',

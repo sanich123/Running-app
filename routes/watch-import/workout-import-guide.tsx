@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { ActivityIndicator, Button, Card, Checkbox, Switch, Text, useTheme } from 'react-native-paper';
@@ -16,6 +17,8 @@ export default function WorkoutImportGuidePage() {
     error,
     healthPermissions,
     healthStatusErrorCode,
+    hiddenWorkouts,
+    hideWorkout,
     importResult,
     importSelected,
     isAutoSyncing,
@@ -28,6 +31,7 @@ export default function WorkoutImportGuidePage() {
     openHealthConnectInstallPage,
     readDiagnostics,
     refreshHealthConnection,
+    restoreWorkout,
     selectedIds,
     selectedWorkouts,
     setAutoSyncEnabled,
@@ -38,6 +42,7 @@ export default function WorkoutImportGuidePage() {
     workouts,
   } = useWorkoutImport();
   const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'];
+  const [showHiddenWorkouts, setShowHiddenWorkouts] = useState(false);
 
   return (
     <>
@@ -127,7 +132,7 @@ export default function WorkoutImportGuidePage() {
 
             {isReading ? (
               <ActivityIndicator style={styles.loader} />
-            ) : workouts.length === 0 && isConnected ? (
+            ) : workouts.length === 0 && hiddenWorkouts.length === 0 && isConnected ? (
               <Text style={[styles.message, { color: colors.onSurfaceVariant }]}>{copy.noWorkouts}</Text>
             ) : (
               workouts.map((workout) => {
@@ -146,10 +151,60 @@ export default function WorkoutImportGuidePage() {
                           </Text>
                         </View>
                       </View>
+                      <Button
+                        compact
+                        mode="text"
+                        icon="eye-off-outline"
+                        onPress={() => void hideWorkout(workout)}
+                        accessibilityLabel={copy.hideFromImport}
+                        style={styles.rowAction}>
+                        {copy.hideFromImport}
+                      </Button>
                     </Card.Content>
                   </Card>
                 );
               })
+            )}
+
+            {hiddenWorkouts.length > 0 && (
+              <>
+                <Button
+                  compact
+                  mode="text"
+                  icon={showHiddenWorkouts ? 'chevron-up' : 'chevron-down'}
+                  onPress={() => setShowHiddenWorkouts((expanded) => !expanded)}
+                  accessibilityState={{ expanded: showHiddenWorkouts }}>
+                  {copy.hiddenWorkouts.replace('{count}', String(hiddenWorkouts.length))}
+                </Button>
+                {showHiddenWorkouts &&
+                  hiddenWorkouts.map((workout) => {
+                    const id = getWorkoutId(workout);
+                    return (
+                      <Card key={id} style={styles.card}>
+                        <Card.Content>
+                          <View style={styles.row}>
+                            <View style={[styles.copy, styles.hiddenCopy]}>
+                              <Text variant="titleMedium">{workout.title || workout.sport}</Text>
+                              <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                                {new Date(workout.date).toLocaleString(isRussian ? 'ru-RU' : 'en-US')} ·{' '}
+                                {Math.round(workout.distance)} m · {Math.round(workout.duration / 60_000)} min
+                              </Text>
+                            </View>
+                          </View>
+                          <Button
+                            compact
+                            mode="text"
+                            icon="eye-outline"
+                            onPress={() => void restoreWorkout(workout)}
+                            accessibilityLabel={copy.restoreToImport}
+                            style={styles.rowAction}>
+                            {copy.restoreToImport}
+                          </Button>
+                        </Card.Content>
+                      </Card>
+                    );
+                  })}
+              </>
             )}
 
             {isConnected && workouts.length > 0 && (
@@ -199,6 +254,8 @@ const styles = StyleSheet.create({
   switchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 12 },
   copy: { flex: 1, gap: 2 },
   button: { marginTop: 6 },
+  rowAction: { alignSelf: 'flex-end' },
+  hiddenCopy: { paddingLeft: 12 },
   message: { marginTop: 8 },
   loader: { marginVertical: 24 },
 });

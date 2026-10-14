@@ -4,8 +4,9 @@ import { Provider } from 'react-redux';
 import { AppState } from 'react-native';
 import type { AppStateStatus } from 'react-native';
 import { resetAuthSlice } from '@R/slices/auth/auth';
+import * as errorToastModule from '@S/error-toast/error-toast';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
-import { getAutoSyncKey, getConnectionKey } from './helpers';
+import { getAutoSyncKey, getConnectionKey, getWorkoutId, HIDDEN_WORKOUTS_KEY } from './helpers';
 import type * as WorkoutImportModule from './use-workout-import';
 import type { WatchWorkout } from '../../../modules/runich-health/src/RunichHealth';
 
@@ -181,5 +182,85 @@ describe('useWorkoutImport', () => {
 
     expect(result.current.autoSyncEnabled).toBe(false);
     expect(mockSetItemAsync).toHaveBeenCalledWith(getAutoSyncKey('user-1'), 'false');
+  });
+
+  it('persists a hidden workout and restores it to the import selection', async () => {
+    mockGetItemAsync.mockImplementation((key: string) =>
+      Promise.resolve(key === getConnectionKey('user-1') ? 'true' : null),
+    );
+    const { result } = await renderHook(() => useWorkoutImport(), { wrapper: Wrapper });
+
+    await waitFor(() => expect(result.current.selectedWorkouts).toEqual([workout]));
+
+    await act(async () => {
+      await result.current.hideWorkout(workout);
+    });
+
+    expect(result.current.workouts).toEqual([]);
+    expect(result.current.hiddenWorkouts).toEqual([workout]);
+    expect(result.current.selectedWorkouts).toEqual([]);
+    expect(mockSetItemAsync).toHaveBeenCalledWith(HIDDEN_WORKOUTS_KEY, JSON.stringify([getWorkoutId(workout)]));
+
+    await act(async () => {
+      await result.current.restoreWorkout(workout);
+    });
+
+    expect(result.current.workouts).toEqual([workout]);
+    expect(result.current.hiddenWorkouts).toEqual([]);
+    expect(result.current.selectedWorkouts).toEqual([workout]);
+    expect(mockSetItemAsync).toHaveBeenLastCalledWith(HIDDEN_WORKOUTS_KEY, JSON.stringify([]));
+
+    await act(async () => {
+      result.current.toggleWorkout(workout);
+      result.current.toggleWorkout(workout);
+    });
+
+    expect(result.current.selectedWorkouts).toEqual([workout]);
+  });
+
+  it('does not auto-import a saved hidden workout', async () => {
+    mockGetItemAsync.mockImplementation((key: string) =>
+      Promise.resolve(
+        key === getConnectionKey('user-1')
+          ? 'true'
+          : key === HIDDEN_WORKOUTS_KEY
+            ? JSON.stringify([getWorkoutId(workout), null])
+            : null,
+      ),
+    );
+    const { result } = await renderHook(() => useWorkoutImport({ autoSync: true }), { wrapper: Wrapper });
+
+    await waitFor(() => expect(result.current.hiddenWorkouts).toEqual([workout]));
+
+    expect(result.current.workouts).toEqual([]);
+    expect(result.current.selectedWorkouts).toEqual([]);
+    expect(result.current.uploadDiagnostics?.skipReason).toBe('no-workouts');
+    expect(mockImportWorkouts).not.toHaveBeenCalled();
+  });
+
+  it('continues reading workouts when the saved hidden list is malformed', async () => {
+    mockGetItemAsync.mockImplementation((key: string) =>
+      Promise.resolve(key === getConnectionKey('user-1') ? 'true' : key === HIDDEN_WORKOUTS_KEY ? '{broken' : null),
+    );
+    const { result } = await renderHook(() => useWorkoutImport(), { wrapper: Wrapper });
+
+    await waitFor(() => expect(result.current.workouts).toEqual([workout]));
+
+    expect(result.current.hiddenWorkouts).toEqual([]);
+    expect(result.current.selectedWorkouts).toEqual([workout]);
+  });
+
+  it('marks an auto-sync read failure as skipped', async () => {
+    const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
+    mockReadWorkouts.mockRejectedValue(new Error('Health Connect read failed'));
+    const { result } = await renderHook(() => useWorkoutImport({ enabled: false }), { wrapper: Wrapper });
+
+    await act(async () => {
+      await result.current.syncLatestWorkouts(true, true);
+    });
+
+    expect(result.current.uploadDiagnostics?.skipReason).toBe('read-failed');
+    expect(result.current.workouts).toEqual([]);
+    expect(errorToast).toHaveBeenCalled();
   });
 });

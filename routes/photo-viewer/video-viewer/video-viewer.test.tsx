@@ -1,16 +1,21 @@
 import { screen, render } from '@testing-library/react-native';
 const mockPlayer = { play: jest.fn(), pause: jest.fn() };
 const mockUseVideoPlayer = jest.fn(() => mockPlayer);
+const mockUseIsFocused = jest.fn(() => true);
 const { View } = require('react-native');
 jest.setMock('expo-video', {
   useVideoPlayer: mockUseVideoPlayer,
   VideoView: (props: any) => <View testID="video-view" {...props} />,
 });
+jest.setMock('expo-router', { useIsFocused: () => mockUseIsFocused() });
 // Load the component after the explicit mock is registered.
 const VideoViewer = require('./video-viewer').default;
 
 describe('video viewer', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUseIsFocused.mockReturnValue(true);
+  });
 
   it('creates a player for the URL and configures native playback controls', async () => {
     await render(<VideoViewer url="https://cdn.example.com/activity.mp4" />);
@@ -29,5 +34,15 @@ describe('video viewer', () => {
 
     await video.rerender(<VideoViewer url="https://cdn.example.com/activity.mp4" isActive />);
     expect(mockPlayer.play).toHaveBeenCalledTimes(1);
+  });
+
+  it('pauses when the route loses focus', async () => {
+    const video = await render(<VideoViewer url="https://cdn.example.com/activity.mp4" />);
+    expect(mockPlayer.play).toHaveBeenCalledTimes(1);
+
+    mockUseIsFocused.mockReturnValue(false);
+    await video.rerender(<VideoViewer url="https://cdn.example.com/activity.mp4" />);
+
+    expect(mockPlayer.pause).toHaveBeenCalledTimes(1);
   });
 });

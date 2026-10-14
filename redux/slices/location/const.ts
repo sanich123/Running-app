@@ -8,6 +8,7 @@ export const LOCATION_INITIAL_STATE: LocationInitialState = {
   tooMuchSpeedTimestamp: null,
   isAppShutedByPhone: false,
   isMapVisible: true,
+  locationProvider: null,
   initialLocation: null,
   distance: 0,
   steps: 0,

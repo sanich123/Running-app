@@ -15,7 +15,7 @@ import {
   setLocationsFromBackground,
   setLocationsWhenContinued,
 } from '@R/slices/location/location';
-import { getActivitySettings } from '@R/slices/settings/settings';
+import { getActivitySettings } from '@R/slices/settings/types';
 import { store } from '@R/store';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { speakActivityReminder, speakCompletedKilometer } from '@U/speech/activity-voice';

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Icon, Text, useTheme } from 'react-native-paper';
@@ -35,11 +34,9 @@ export default function CameraLauncher({
   const requestAccess = useCallback(async () => {
     try {
       const cameraPermission = await requestPermission();
-      if (cameraPermission.granted) {
-        await MediaLibrary.requestPermissionsAsync();
-      }
+      if (!cameraPermission.granted) return;
     } catch (error) {
-      errorToast('Не удалось получить доступ к камере и медиатеке', error);
+      errorToast('Не удалось получить доступ к камере', error);
     }
   }, [requestPermission]);
 

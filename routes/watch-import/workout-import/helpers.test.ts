@@ -64,5 +64,6 @@ describe('watch import diagnostics helpers', () => {
     );
     expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('источник: com.example.watch');
     expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('маршрут: маршрут в записи');
+    expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('точек: 1');
   });
 });

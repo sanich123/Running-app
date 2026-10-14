@@ -15,7 +15,7 @@ export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10 }
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { language } = useAppSelector(({ settings }) => settings);
+  const { language, saveCameraPhotosToGallery } = useAppSelector(({ settings }) => settings);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const uploadControllerRef = useRef<AbortController | null>(null);
@@ -67,7 +67,9 @@ export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10 }
                 setPhotos([...photos, uploadedPhoto]);
                 if (userId) dispatch(addPhotoUrl(uploadedPhoto));
               }
-              if (!controller.signal.aborted) await MediaLibrary.Asset.create(newPhoto.uri);
+              if (!controller.signal.aborted && saveCameraPhotosToGallery) {
+                await MediaLibrary.Asset.create(newPhoto.uri);
+              }
             }
           }
         } catch (error) {

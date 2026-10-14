@@ -10,10 +10,14 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { ActivityCardContext } from '../context';
 import MediaList from './media-list';
+import { VideoPlaybackProvider } from './video-playback-context';
 import type { ActivityCardData } from '../types';
 
 const mockPush = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: mockPush }),
+  useIsFocused: () => true,
+}));
 jest.mock('@S/custom-image/custom-image', () => ({
   __esModule: true,
   default: (props: { testID?: string; contentFit?: string }) => {
@@ -36,15 +40,17 @@ const defaultActivity: ActivityCardData = {
 
 function renderMediaList(activity: Partial<ActivityCardData>) {
   return renderWithProviders(
-    <ActivityCardContext.Provider
-      value={{
-        activity: { ...defaultActivity, ...activity },
-        isFullView: false,
-        isShowDeleteBtn: false,
-        isShowDescription: false,
-      }}>
-      <MediaList />
-    </ActivityCardContext.Provider>,
+    <VideoPlaybackProvider>
+      <ActivityCardContext.Provider
+        value={{
+          activity: { ...defaultActivity, ...activity },
+          isFullView: false,
+          isShowDeleteBtn: false,
+          isShowDescription: false,
+        }}>
+        <MediaList />
+      </ActivityCardContext.Provider>
+    </VideoPlaybackProvider>,
   );
 }
 
@@ -199,7 +205,7 @@ describe('media list', () => {
     expect(screen.getByTestId(photoUrl).props.contentFit).toBe('cover');
   });
 
-  it('autoplays videos muted and exposes duration and a mute toggle', async () => {
+  it('starts videos on request, muted, and exposes duration and a mute toggle', async () => {
     const user = userEvent.setup();
     const media = {
       id: 'video-1',
@@ -210,6 +216,10 @@ describe('media list', () => {
     await renderMediaList({ mapPhotoUrl: undefined, media: [media] });
 
     expect(screen.getByTestId('activity-video-video-1')).toBeOnTheScreen();
+    const playButton = screen.getByTestId('activity-video-video-1-play');
+    expect(playButton).toHaveProp('accessibilityLabel', 'Воспроизвести видео');
+    await user.press(playButton);
+    expect(playButton).toHaveProp('accessibilityLabel', 'Приостановить видео');
     expect(screen.getByText('0:13')).toBeOnTheScreen();
     const muteButton = screen.getByTestId('activity-video-video-1-mute');
     expect(muteButton).toHaveProp('accessibilityLabel', 'Включить звук видео');

@@ -45,6 +45,9 @@ export const WORKOUT_IMPORT_COPY = {
     refresh: 'Обновить и синхронизировать',
     noWorkouts: 'Завершённых тренировок за последние 30 дней нет.',
     importSelected: 'Импортировать выбранные ({count})',
+    hideFromImport: 'Скрыть из импорта',
+    hiddenWorkouts: 'Скрытые тренировки ({count})',
+    restoreToImport: 'Вернуть в список импорта',
     autoSync: {
       title: 'Автосинхронизация Health Connect',
       description: 'Автоматически проверять и добавлять новые завершённые тренировки при возвращении в Runich.',
@@ -126,6 +129,9 @@ export const WORKOUT_IMPORT_COPY = {
     refresh: 'Refresh and sync',
     noWorkouts: 'No completed workouts in the last 30 days.',
     importSelected: 'Import selected ({count})',
+    hideFromImport: 'Hide from import',
+    hiddenWorkouts: 'Hidden workouts ({count})',
+    restoreToImport: 'Show in import list',
     autoSync: {
       title: 'Health Connect auto-sync',
       description: 'Automatically check and upload new completed workouts when you return to Runich.',

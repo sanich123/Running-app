@@ -51,6 +51,8 @@ export function getAutoSyncKey(userId: string | null): string | null {
   return userId ? `runich.watch.auto-sync.enabled.${userId}` : null;
 }
 
+export const HIDDEN_WORKOUTS_KEY = 'runich.watch.hidden-workouts.v1';
+
 export function getRoutePointCount(workouts: WatchWorkout[]): number {
   return workouts.reduce((total, workout) => total + workout.locations.length, 0);
 }

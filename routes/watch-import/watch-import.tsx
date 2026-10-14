@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState, Image, StyleSheet, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Button, Card, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
@@ -42,8 +42,31 @@ export default function WatchImportPage() {
   const [isRequestingHealthAccess, setIsRequestingHealthAccess] = useState(false);
   const [healthAccessGranted, setHealthAccessGranted] = useState(false);
   const [healthAccessError, setHealthAccessError] = useState<string | null>(null);
+  const healthAccessCheckIdRef = useRef(0);
+
+  const refreshHealthAccess = useCallback(async () => {
+    const checkId = ++healthAccessCheckIdRef.current;
+    try {
+      const permissions = await RunichHealth.getPermissions();
+      if (checkId === healthAccessCheckIdRef.current) setHealthAccessGranted(permissions.granted);
+    } catch {
+      // The explicit access action below reports request errors to the user.
+    }
+  }, []);
+
+  useEffect(() => {
+    const initialCheck = setTimeout(() => void refreshHealthAccess(), 0);
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') void refreshHealthAccess();
+    });
+    return () => {
+      clearTimeout(initialCheck);
+      subscription.remove();
+    };
+  }, [refreshHealthAccess]);
 
   const requestHealthAccess = useCallback(async () => {
+    ++healthAccessCheckIdRef.current;
     setIsRequestingHealthAccess(true);
     setHealthAccessError(null);
     try {
@@ -65,10 +88,6 @@ export default function WatchImportPage() {
     <>
       <Stack.Screen options={{ title }} />
       <CrossPlatformLayout scrollViewEnabled outerStyles={styles.content}>
-        <Text variant="headlineSmall" style={styles.title}>
-          {title}
-        </Text>
-
         <>
           <Card style={[styles.warningCard, { backgroundColor: colors.errorContainer }]}>
             <Card.Content>
@@ -212,7 +231,6 @@ export default function WatchImportPage() {
 
 const styles = StyleSheet.create({
   content: { padding: 12, gap: 10 },
-  title: { marginBottom: 2 },
   warningCard: { marginTop: 2 },
   screenshotsSection: { marginTop: 20 },
   sectionTitle: { marginBottom: 6 },

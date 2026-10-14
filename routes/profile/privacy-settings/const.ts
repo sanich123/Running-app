@@ -24,6 +24,10 @@ export const PROFILE_PRIVACY_SETTINGS = {
       'Other users will not be able to open the lists of people you follow or who follow you.',
     hideProfilePhotos: 'Hide profile photos',
     hideProfilePhotosDescription: 'Other users will not see the photos shown at the top of your profile.',
+    saveCameraPhotosToGallery: 'Save camera photos to phone',
+    saveCameraPhotosToGalleryDescription: 'Keep a copy of photos taken with the Runich camera in your phone gallery.',
+    saveCameraPhotosPermissionDenied: 'Gallery write permission was not granted, so this setting remains off.',
+    saveCameraPhotosPermissionError: 'Could not enable saving camera photos to the phone.',
     saveError: 'Could not save privacy settings.',
   },
   [LANGUAGES.russian]: {
@@ -48,6 +52,11 @@ export const PROFILE_PRIVACY_SETTINGS = {
     hideFollowingListDescription: 'Другие пользователи не смогут просматривать ваши списки подписок и подписчиков.',
     hideProfilePhotos: 'Скрывать фотографии в профиле',
     hideProfilePhotosDescription: 'Другие пользователи не будут видеть фотографии в верхней части профиля.',
+    saveCameraPhotosToGallery: 'Сохранять фото с камеры в галерею телефона',
+    saveCameraPhotosToGalleryDescription:
+      'Копия снимков, сделанных камерой Runich, будет сохраняться в галерее телефона.',
+    saveCameraPhotosPermissionDenied: 'Нет разрешения на запись в галерею, настройка осталась выключенной.',
+    saveCameraPhotosPermissionError: 'Не удалось включить сохранение фото в галерею телефона.',
     saveError: 'Не удалось сохранить настройки конфиденциальности.',
   },
 } as const;

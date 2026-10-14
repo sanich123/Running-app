@@ -1,6 +1,5 @@
 import { fetch as getNetworkState } from '@react-native-community/netinfo';
 import * as ImagePicker from 'expo-image-picker';
-import { createVideoPlayer } from 'expo-video';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 import { Platform } from 'react-native';
@@ -46,8 +45,7 @@ export type UploadMediaBatchRequest = (
   control?: MediaUploadControl,
 ) => Promise<UploadedPhotoBatchResponse[]>;
 
-const VIDEO_BITRATE_MULTIPLIER = 0.9;
-const VIDEO_TRACK_METADATA_TIMEOUT_MS = 10_000;
+const VIDEO_MAX_SIZE = 720;
 
 export async function compressMediaFile(
   fileSrc: MediaSource,
@@ -199,17 +197,7 @@ async function compressVideo(fileSrc: MediaSource): Promise<MediaSource | null> 
     return null;
   }
 
-  const sourceBitrate = await getVideoAverageBitrate(String(fileSrc));
-  if (!sourceBitrate || !Number.isFinite(sourceBitrate)) {
-    errorToast('Не удалось определить битрейт исходного видео');
-    return null;
-  }
-
-  const compressedFile = await VideoCompressor.compress(String(fileSrc), {
-    compressionMethod: 'manual',
-    maxSize: Math.max(sourceMetadata.width ?? 0, sourceMetadata.height ?? 0, 640),
-    bitrate: Math.max(1, Math.round(sourceBitrate * VIDEO_BITRATE_MULTIPLIER)),
-  });
+  const compressedFile = await VideoCompressor.compress(String(fileSrc), { maxSize: VIDEO_MAX_SIZE });
   if (!compressedFile) return null;
 
   const compressedMetadata = await getVideoMetaData(String(compressedFile));
@@ -219,35 +207,6 @@ async function compressVideo(fileSrc: MediaSource): Promise<MediaSource | null> 
   }
 
   return compressedFile;
-}
-
-async function getVideoAverageBitrate(fileSrc: string): Promise<number | null> {
-  const player = createVideoPlayer(fileSrc);
-
-  try {
-    return await new Promise<number | null>((resolve) => {
-      let subscription: { remove: () => void } = { remove: () => undefined };
-      let isSettled = false;
-      const finish = (bitrate: number | null) => {
-        if (isSettled) return;
-        isSettled = true;
-        clearTimeout(timeout);
-        subscription.remove();
-        resolve(bitrate);
-      };
-      const timeout = setTimeout(() => finish(null), VIDEO_TRACK_METADATA_TIMEOUT_MS);
-      const readBitrateForStatus = (status: typeof player.status) => {
-        if (status === 'readyToPlay') finish(player.videoTrack?.averageBitrate ?? null);
-        else if (status === 'error') finish(null);
-      };
-
-      subscription = player.addListener('statusChange', ({ status }) => readBitrateForStatus(status));
-      if (isSettled) subscription.remove();
-      readBitrateForStatus(player.status);
-    });
-  } finally {
-    player.release();
-  }
 }
 
 async function getWebVideoInfo(fileSrc: MediaSource): Promise<{ duration: number; size: number }> {

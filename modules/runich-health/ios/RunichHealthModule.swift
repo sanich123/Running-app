@@ -12,20 +12,20 @@ public final class RunichHealthModule: Module {
       HKHealthStore.isHealthDataAvailable() ? "available" : "not-supported"
     }
 
-    AsyncFunction("getPermissions") async -> [String: Bool] {
+    AsyncFunction("getPermissions") { () async -> [String: Bool] in
       [
         "available": HKHealthStore.isHealthDataAvailable(),
         "granted": false
       ]
     }
 
-    AsyncFunction("requestPermissions") async throws -> [String: Bool] {
+    AsyncFunction("requestPermissions") { () async throws -> [String: Bool] in
       guard HKHealthStore.isHealthDataAvailable() else {
         return ["available": false, "granted": false]
       }
 
-      let success = try await healthStore.requestAuthorization(toShare: [], read: readTypes())
-      return ["available": true, "granted": success]
+      try await healthStore.requestAuthorization(toShare: [], read: readTypes())
+      return ["available": true, "granted": true]
     }
 
     AsyncFunction("readWorkouts") { (startDate: String, endDate: String) async throws -> [[String: Any]] in
