@@ -9,8 +9,18 @@ import {
 import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vector-icons/material-design-icons/static';
 import * as Speech from 'expo-speech';
 import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
-import { ActivityIndicator, Keyboard, StyleSheet, View } from 'react-native';
-import { Button, Divider, IconButton, RadioButton, Switch, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
+import {
+  Button,
+  Divider,
+  Icon,
+  IconButton,
+  RadioButton,
+  Switch,
+  Text,
+  TouchableRipple,
+  useTheme,
+} from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import {
   addActivityReminder,
@@ -26,6 +36,8 @@ import { ACTIVITY_SETTINGS, ACTIVITY_VOICE_METRICS, ACTIVITY_VOICE_PREVIEW, crea
 import type { ActivitySettingsProps } from './types';
 import type { ActivityVoiceMetric } from '@R/slices/settings/types';
 import type { Voice } from 'expo-speech';
+
+const ActivitySettingsTextInput = Platform.OS === 'web' ? TextInput : BottomSheetTextInput;
 
 export default function ActivitySettings({
   settingsModalRef,
@@ -213,7 +225,15 @@ export default function ActivitySettings({
                   style={styles.radioRow}>
                   <>
                     <Text style={{ color: colors.onSurface }}>{labels.systemVoice}</Text>
-                    <RadioButton value="system" status={activityVoiceIdentifier === null ? 'checked' : 'unchecked'} />
+                    {Platform.OS === 'web' ? (
+                      <Icon
+                        source={activityVoiceIdentifier === null ? 'radiobox-marked' : 'radiobox-blank'}
+                        size={24}
+                        color={colors.primary}
+                      />
+                    ) : (
+                      <RadioButton value="system" status={activityVoiceIdentifier === null ? 'checked' : 'unchecked'} />
+                    )}
                   </>
                 </TouchableRipple>
                 {voiceOptions.length ? (
@@ -233,10 +253,18 @@ export default function ActivitySettings({
                             {voice.language}
                           </Text>
                         </View>
-                        <RadioButton
-                          value={voice.identifier}
-                          status={activityVoiceIdentifier === voice.identifier ? 'checked' : 'unchecked'}
-                        />
+                        {Platform.OS === 'web' ? (
+                          <Icon
+                            source={activityVoiceIdentifier === voice.identifier ? 'radiobox-marked' : 'radiobox-blank'}
+                            size={24}
+                            color={colors.primary}
+                          />
+                        ) : (
+                          <RadioButton
+                            value={voice.identifier}
+                            status={activityVoiceIdentifier === voice.identifier ? 'checked' : 'unchecked'}
+                          />
+                        )}
                       </>
                     </TouchableRipple>
                   ))
@@ -286,7 +314,7 @@ export default function ActivitySettings({
             <Text variant="titleSmall" style={{ color: colors.onSurface }}>
               {labels.reminderInterval}
             </Text>
-            <BottomSheetTextInput
+            <ActivitySettingsTextInput
               testID="activity-reminder-interval"
               placeholder={labels.reminderIntervalPlaceholder}
               value={intervalInput}
@@ -306,26 +334,48 @@ export default function ActivitySettings({
             <Text variant="titleSmall" style={{ color: colors.onSurface }}>
               {labels.reminderText}
             </Text>
-            <BottomSheetTextInput
-              ref={reminderTextInputRef as unknown as ComponentPropsWithRef<typeof BottomSheetTextInput>['ref']}
-              testID="activity-reminder-text-input"
-              placeholder={labels.reminderTextPlaceholder}
-              value={reminderTextInput}
-              editable={activityReminderEnabled}
-              multiline
-              placeholderTextColor={colors.onSurfaceVariant}
-              style={[
-                styles.textInput,
-                styles.reminderTextInput,
-                { borderColor: colors.outline, color: colors.onSurface },
-              ]}
-              onChangeText={setReminderTextInput}
-              returnKeyType="done"
-              submitBehavior="submit"
-              enterKeyHint="done"
-              onFocus={scrollToReminderFields}
-              onSubmitEditing={installReminder}
-            />
+            {Platform.OS === 'web' ? (
+              <TextInput
+                testID="activity-reminder-text-input"
+                placeholder={labels.reminderTextPlaceholder}
+                value={reminderTextInput}
+                editable={activityReminderEnabled}
+                multiline
+                placeholderTextColor={colors.onSurfaceVariant}
+                style={[
+                  styles.textInput,
+                  styles.reminderTextInput,
+                  { borderColor: colors.outline, color: colors.onSurface },
+                ]}
+                onChangeText={setReminderTextInput}
+                returnKeyType="done"
+                submitBehavior="submit"
+                enterKeyHint="done"
+                onFocus={scrollToReminderFields}
+                onSubmitEditing={installReminder}
+              />
+            ) : (
+              <BottomSheetTextInput
+                ref={reminderTextInputRef as unknown as ComponentPropsWithRef<typeof BottomSheetTextInput>['ref']}
+                testID="activity-reminder-text-input"
+                placeholder={labels.reminderTextPlaceholder}
+                value={reminderTextInput}
+                editable={activityReminderEnabled}
+                multiline
+                placeholderTextColor={colors.onSurfaceVariant}
+                style={[
+                  styles.textInput,
+                  styles.reminderTextInput,
+                  { borderColor: colors.outline, color: colors.onSurface },
+                ]}
+                onChangeText={setReminderTextInput}
+                returnKeyType="done"
+                submitBehavior="submit"
+                enterKeyHint="done"
+                onFocus={scrollToReminderFields}
+                onSubmitEditing={installReminder}
+              />
+            )}
             <Button
               testID="activity-reminder-install"
               mode="contained"

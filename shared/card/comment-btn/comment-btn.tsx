@@ -1,6 +1,6 @@
 import { useRef } from 'react';
-import { StyleSheet } from 'react-native';
-import { IconButton, TouchableRipple, useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { IconButton, useTheme } from 'react-native-paper';
 import { commentsApi } from '@R/services/comments/comments';
 import {
   setCommentActivityId,
@@ -26,21 +26,17 @@ export default function CommentBtn() {
   const commentsModalRef = useRef<BottomSheetModal>(null);
 
   const isButtonDisabled = isLoading || !canViewComments;
+  const openComments = () => {
+    void dispatch(commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }, { subscribe: false }));
+    dispatch(setCommentToUpdate(''));
+    dispatch(setIdOfUpdatingComment(''));
+    dispatch(setCommentActivityId(activityId));
+    dispatch(setActivityOwnerProfile(profile));
+    commentsModalRef.current?.present?.();
+  };
 
   return (
-    <TouchableRipple
-      testID="activity-card-comment-button"
-      style={styles.container}
-      borderless
-      disabled={isButtonDisabled}
-      onPress={() => {
-        void dispatch(commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }, { subscribe: false }));
-        dispatch(setCommentToUpdate(''));
-        dispatch(setIdOfUpdatingComment(''));
-        dispatch(setCommentActivityId(activityId));
-        dispatch(setActivityOwnerProfile(profile));
-        commentsModalRef.current?.present?.();
-      }}>
+    <View testID="activity-card-comment-button" style={styles.container}>
       <>
         <CommentCountBadge activity={activity} />
         <IconButton
@@ -48,11 +44,12 @@ export default function CommentBtn() {
           icon={COMMENT_BTN_ICON}
           iconColor={isButtonDisabled ? colors.onSurfaceDisabled : colors.primary}
           size={25}
+          onPress={openComments}
           disabled={isButtonDisabled}
         />
         <CommentsListModal commentsModalRef={commentsModalRef} allowNewComments={canViewComments} />
       </>
-    </TouchableRipple>
+    </View>
   );
 }
 

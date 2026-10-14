@@ -12,7 +12,7 @@ interface DashboardChartPoint {
   label: string;
   dataPointRadius?: number;
   dataPointColor?: string;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 interface AnnualActivityChartProps {

@@ -14,11 +14,27 @@ import { ActivityCardContext } from '../context';
 
 jest.mock('react-native-paper', () => {
   const actual = jest.requireActual('react-native-paper');
-  const { View } = jest.requireActual('react-native');
+  const { Pressable } = jest.requireActual('react-native');
   return {
     ...actual,
-    IconButton: ({ testID, iconColor, disabled }: { testID?: string; iconColor?: string; disabled?: boolean }) => (
-      <View testID={testID} accessibilityLabel={iconColor} accessibilityState={{ disabled: Boolean(disabled) }} />
+    IconButton: ({
+      testID,
+      iconColor,
+      disabled,
+      onPress,
+    }: {
+      testID?: string;
+      iconColor?: string;
+      disabled?: boolean;
+      onPress?: () => void;
+    }) => (
+      <Pressable
+        testID={testID}
+        onPress={onPress}
+        disabled={disabled}
+        accessibilityLabel={iconColor}
+        accessibilityState={{ disabled: Boolean(disabled) }}
+      />
     ),
   };
 });
@@ -137,7 +153,7 @@ describe('Activity card comment btn', () => {
     await renderCommentBtn('activity-with-comments-disabled', 3, false);
 
     expect(countRequests).toBe(0);
-    expect(screen.getByTestId('activity-card-comment-button').props.accessibilityState?.disabled).toBe(true);
+    expect(screen.getByTestId('activityCardCommentBtnIcon').props.accessibilityState?.disabled).toBe(true);
     expect(screen.queryByText('3')).not.toBeOnTheScreen();
     expect(screen.getByTestId('activityCardCommentBtnIcon')).toHaveProp(
       'accessibilityLabel',
@@ -148,6 +164,6 @@ describe('Activity card comment btn', () => {
   it('keeps the activity owner able to open comments to manage their activity', async () => {
     await setCurrentUser('activity-owner');
     await renderCommentBtn('owned-activity', 3, false);
-    expect(screen.getByTestId('activity-card-comment-button').props.accessibilityState?.disabled).toBe(false);
+    expect(screen.getByTestId('activityCardCommentBtnIcon').props.accessibilityState?.disabled).toBe(false);
   });
 });

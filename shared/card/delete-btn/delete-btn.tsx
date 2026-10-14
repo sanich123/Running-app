@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Platform, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconButton, useTheme } from 'react-native-paper';
-import { ROUTES } from '@const/enums';
 import { useDeleteActivityByIdMutation } from '@R/services/activity/activity';
 import { finishLoading, startLoading } from '@R/slices/loading/loading';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -16,7 +15,7 @@ export default function CardDeleteBtn() {
   const { userId: ownerId, id: activityId } = activity;
   const [deleteActivityById, { isLoading: isDeleteRequestLoading }] = useDeleteActivityByIdMutation();
   const dispatch = useAppDispatch();
-  const { replace } = useRouter();
+  const { back } = useRouter();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const { isLoading } = useAppSelector(({ loading }) => loading);
@@ -29,7 +28,7 @@ export default function CardDeleteBtn() {
     dispatch(startLoading());
     try {
       await deleteActivityById(activityId).unwrap();
-      replace(ROUTES.root);
+      back();
     } catch (error) {
       errorToast('', error);
     } finally {

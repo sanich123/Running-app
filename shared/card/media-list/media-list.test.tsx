@@ -245,6 +245,24 @@ describe('media list', () => {
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/activity-id?indexOfPhoto=0&blurhash=card-photo-blurhash`);
   });
 
+  it('opens a video on web without nesting its control buttons', async () => {
+    const restorePlatform = overridePlatformOS('web');
+    const videoUrl = 'https://images.example.test/activity video.mp4';
+
+    try {
+      await renderMediaList({
+        mapPhotoUrl: undefined,
+        media: [{ id: 'video-web', url: videoUrl, thumbnail: 'activity-video-thumb.jpg' }],
+      });
+
+      fireEvent(screen.getByTestId('activity-media-video-web'), 'click');
+
+      expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/${encodeURIComponent(videoUrl)}?indexOfPhoto=0`);
+    } finally {
+      restorePlatform();
+    }
+  });
+
   it('uses English media labels and an encoded URL on web', async () => {
     const restorePlatform = overridePlatformOS('web');
     const user = userEvent.setup();

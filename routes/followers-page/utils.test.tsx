@@ -18,5 +18,6 @@ describe('followers page response mapping', () => {
       }),
     );
     expect(followerKeyExtractor(item)).toBe('friend-1');
+    expect(followerKeyExtractor({ userId: 'follower-2' })).toBe('follower-2');
   });
 });

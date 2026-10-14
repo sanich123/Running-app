@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { Keyboard, View, StyleSheet } from 'react-native';
+import { Keyboard, Platform, TextInput as NativeTextInput, View, StyleSheet } from 'react-native';
 import { Button, Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import {
   usePostCommentWithActivityIdMutation,
@@ -12,6 +12,8 @@ import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
 import { getCommentInputHeight } from './utils';
 import type { CommentInputProps } from '../types';
+
+const CommentTextInput = Platform.OS === 'web' ? NativeTextInput : BottomSheetTextInput;
 
 export default function CommentInput({ commentToUpdate = '', commentId = '' }: CommentInputProps) {
   const [focused, setFocused] = useState(false);
@@ -73,7 +75,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '' }: C
         </Button>
       </View>
       <View style={styles.inputRow}>
-        <BottomSheetTextInput
+        <CommentTextInput
           testID={COMMENT_INPUT_TEST_ID}
           placeholder={COMMENT_INPUT[language].placeholder}
           value={comment}

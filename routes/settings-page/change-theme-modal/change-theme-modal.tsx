@@ -2,8 +2,8 @@ import type { RefObject } from 'react';
 import { Fragment, useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import type { ColorSchemeName } from 'react-native';
-import { Appearance, View, StyleSheet } from 'react-native';
-import { useTheme, Text, Divider, RadioButton, TouchableRipple } from 'react-native-paper';
+import { Appearance, View, StyleSheet, Platform } from 'react-native';
+import { useTheme, Text, Divider, Icon, RadioButton, TouchableRipple } from 'react-native-paper';
 import { changeTheme } from '@R/slices/settings/settings';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { THEMES_ARRAY } from './const';
@@ -41,8 +41,15 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
                 }}>
                 <>
                   <Text variant="titleMedium">{title}</Text>
-                  <RadioButton value={`${value}`} status={theme === value ? 'checked' : 'unchecked'} />
-                  <RadioButton value={`${value}`} status={theme === value ? 'checked' : 'unchecked'} />
+                  {Platform.OS === 'web' ? (
+                    <Icon
+                      source={theme === value ? 'radiobox-marked' : 'radiobox-blank'}
+                      size={24}
+                      color={colors.primary}
+                    />
+                  ) : (
+                    <RadioButton value={`${value}`} status={theme === value ? 'checked' : 'unchecked'} />
+                  )}
                 </>
               </TouchableRipple>
             </Fragment>
