@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { ActivityIndicator, Card, Icon, Text, useTheme } from 'react-native-paper';
 import { WORKOUT_IMPORT_COPY } from './const';
-import { getReadDiagnosticItems, getUploadDiagnosticItems, getBooleanLabel } from './helpers';
+import {
+  formatWorkoutCountNotice,
+  formatWorkoutDiagnostics,
+  getBooleanLabel,
+  getReadDiagnosticItems,
+  getUploadDiagnosticItems,
+} from './helpers';
 import type {
   DiagnosticListProps,
   DiagnosticMetricProps,
@@ -10,6 +16,8 @@ import type {
   DiagnosticsSectionProps,
   ViewWithIconProps,
 } from '../types';
+
+const MAX_DIAGNOSTIC_WORKOUTS = 50;
 
 export default function DiagnosticsCard({
   availability,
@@ -21,6 +29,7 @@ export default function DiagnosticsCard({
   readDiagnostics,
   uploadDiagnostics,
   userId,
+  workouts,
 }: DiagnosticsCardProps) {
   const { colors } = useTheme();
   const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics;
@@ -90,6 +99,28 @@ export default function DiagnosticsCard({
             <DiagnosticsSection icon="database-search-outline" title={copy.sections.reading}>
               <DiagnosticList items={getReadDiagnosticItems(readDiagnostics, isRussian)} />
               {isReading && <ActivityIndicator size="small" style={styles.readingIndicator} />}
+            </DiagnosticsSection>
+
+            <DiagnosticsSection icon="map-marker-path" title={copy.sections.workouts}>
+              {workouts.length === 0 ? (
+                <DiagnosticList items={[{ label: copy.workouts, value: '0', tone: 'muted' }]} />
+              ) : (
+                <View style={styles.workoutList}>
+                  {workouts.slice(0, MAX_DIAGNOSTIC_WORKOUTS).map((workout, index) => (
+                    <Text
+                      key={`${workout.source}:${workout.sourceActivityId}`}
+                      variant="bodySmall"
+                      style={styles.workoutText}>
+                      {formatWorkoutDiagnostics(workout, index, isRussian)}
+                    </Text>
+                  ))}
+                  {workouts.length > MAX_DIAGNOSTIC_WORKOUTS && (
+                    <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
+                      {formatWorkoutCountNotice(workouts.length, isRussian)}
+                    </Text>
+                  )}
+                </View>
+              )}
             </DiagnosticsSection>
 
             <DiagnosticsSection icon="cloud-upload-outline" title={copy.sections.upload}>
@@ -285,6 +316,12 @@ const styles = {
   },
   readingIndicator: {
     alignSelf: 'flex-start' as const,
+  },
+  workoutList: {
+    gap: 8,
+  },
+  workoutText: {
+    lineHeight: 20,
   },
   note: {
     lineHeight: 19,

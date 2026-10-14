@@ -11,6 +11,9 @@ jest.mock('expo-video', () => {
 });
 
 const mockUseVideoPlayer = ExpoVideo.useVideoPlayer as jest.Mock;
+const mockUseIsFocused = jest.fn(() => true);
+
+jest.mock('expo-router', () => ({ useIsFocused: () => mockUseIsFocused() }));
 
 function makePlayer(overrides: Record<string, unknown> = {}) {
   return {
@@ -27,6 +30,7 @@ function makePlayer(overrides: Record<string, unknown> = {}) {
 describe('VideoMedia', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseIsFocused.mockReturnValue(true);
   });
 
   it('formats empty, minute, and hour-long durations', () => {
@@ -151,5 +155,48 @@ describe('VideoMedia', () => {
     await user.press(playButton);
     expect(player.play).toHaveBeenCalledTimes(2);
     expect(playButton).toHaveProp('accessibilityLabel', 'Pause video');
+  });
+
+  it('pauses the player when the route loses focus', async () => {
+    const player = makePlayer();
+    mockUseVideoPlayer.mockReturnValue(player);
+    const video = await renderWithProviders(
+      <VideoPlaybackProvider>
+        <VideoMedia
+          url="https://images.example.test/focus.mp4"
+          thumbnail={null}
+          width={320}
+          height={220}
+          playLabel="Play video"
+          pauseLabel="Pause video"
+          muteLabel="Mute video"
+          unmuteLabel="Unmute video"
+          testID="focus-video"
+        />
+      </VideoPlaybackProvider>,
+    );
+
+    await userEvent.setup().press(screen.getByTestId('focus-video-play'));
+    expect(player.play).toHaveBeenCalledTimes(1);
+
+    mockUseIsFocused.mockReturnValue(false);
+    await video.rerender(
+      <VideoPlaybackProvider>
+        <VideoMedia
+          url="https://images.example.test/focus.mp4"
+          thumbnail={null}
+          width={320}
+          height={220}
+          playLabel="Play video"
+          pauseLabel="Pause video"
+          muteLabel="Mute video"
+          unmuteLabel="Unmute video"
+          testID="focus-video"
+        />
+      </VideoPlaybackProvider>,
+    );
+
+    expect(player.pause).toHaveBeenCalled();
+    expect(screen.getByTestId('focus-video-play')).toHaveProp('accessibilityLabel', 'Play video');
   });
 });

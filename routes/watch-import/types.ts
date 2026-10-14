@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import type { DiagnosticItem, ReadDiagnostics, UploadDiagnostics } from './workout-import/types';
-import type { HealthPermissionsResult } from '../../modules/runich-health/src/RunichHealth';
+import type { HealthPermissionsResult, WatchWorkout } from '../../modules/runich-health/src/RunichHealth';
 
 export interface DiagnosticsCardProps {
   availability: string | null;
@@ -12,6 +12,7 @@ export interface DiagnosticsCardProps {
   readDiagnostics: ReadDiagnostics | null;
   uploadDiagnostics: UploadDiagnostics | null;
   userId: string | null;
+  workouts: WatchWorkout[];
 }
 
 export interface DiagnosticsSectionProps extends PropsWithChildren {

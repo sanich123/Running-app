@@ -8,6 +8,7 @@ import type * as WatchImportModule from './watch-import';
 const mockPush = jest.fn();
 const mockOpenExternalLink = jest.fn();
 const mockRequestPermissions = jest.fn();
+const mockGetPermissions = jest.fn();
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },
@@ -15,7 +16,7 @@ jest.mock('expo-router', () => ({
 }));
 jest.mock('./utils', () => ({ openExternalLink: mockOpenExternalLink }));
 jest.mock('../../modules/runich-health/src/RunichHealth', () => ({
-  RunichHealth: { requestPermissions: mockRequestPermissions },
+  RunichHealth: { getPermissions: mockGetPermissions, requestPermissions: mockRequestPermissions },
 }));
 
 const WatchImportPage = require('./watch-import').default as typeof WatchImportModule.default;
@@ -24,7 +25,9 @@ describe('WatchImportPage', () => {
   beforeEach(() => {
     mockPush.mockReset();
     mockOpenExternalLink.mockReset();
+    mockGetPermissions.mockReset();
     mockRequestPermissions.mockReset();
+    mockGetPermissions.mockResolvedValue({ available: true, granted: false });
     mockRequestPermissions.mockResolvedValue({ available: true, granted: true });
   });
 
@@ -102,5 +105,19 @@ describe('WatchImportPage', () => {
 
     expect(mockRequestPermissions).toHaveBeenCalledTimes(1);
     expect(screen.getByText(copy.steps.healthConnect.actions.accessGranted)).toBeOnTheScreen();
+  });
+
+  it('restores the granted state when Health Connect access already exists', async () => {
+    const user = userEvent.setup();
+    const copy = WATCH_IMPORT_COPY.ru;
+    mockGetPermissions.mockResolvedValue({ available: true, granted: true });
+
+    await renderWithProviders(<WatchImportPage />);
+    await user.press(screen.getByLabelText(copy.steps.healthConnect.title));
+
+    expect(await screen.findByText(copy.steps.healthConnect.actions.accessGranted)).toBeOnTheScreen();
+    expect(screen.getByTestId('watch-import-health-connect-access').props.accessibilityState).toEqual({
+      disabled: true,
+    });
   });
 });

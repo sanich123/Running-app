@@ -239,6 +239,7 @@ export default function WorkoutImportGuidePage() {
           readDiagnostics={readDiagnostics}
           uploadDiagnostics={uploadDiagnostics}
           userId={userId}
+          workouts={workouts}
         />
       </CrossPlatformLayout>
     </>

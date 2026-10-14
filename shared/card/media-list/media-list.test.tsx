@@ -14,7 +14,10 @@ import { VideoPlaybackProvider } from './video-playback-context';
 import type { ActivityCardData } from '../types';
 
 const mockPush = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: mockPush }),
+  useIsFocused: () => true,
+}));
 jest.mock('@S/custom-image/custom-image', () => ({
   __esModule: true,
   default: (props: { testID?: string; contentFit?: string }) => {

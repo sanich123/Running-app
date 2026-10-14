@@ -1,5 +1,6 @@
 import { useEffect, useId, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useIsFocused } from 'expo-router';
 import { Icon, Text } from 'react-native-paper';
 import CustomImage from '@S/custom-image/custom-image';
 import ActiveVideoPlayer from './active-video-player/active-video-player';
@@ -21,12 +22,13 @@ export default function VideoMedia({
   onMetadata,
 }: VideoMediaProps) {
   const videoId = useId();
+  const isFocused = useIsFocused();
   const { activeVideoId, setActiveVideoId } = useVideoPlayback();
   const isActive = activeVideoId === videoId;
   const [isMuted, setIsMuted] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const [duration, setDuration] = useState(0);
-  const isPlaying = isActive && !isPaused;
+  const isPlaying = isFocused && isActive && !isPaused;
   const handleMetadata = (metadata: VideoMetadata) => {
     if (metadata.duration) {
       const nextDuration = metadata.duration;
@@ -40,10 +42,16 @@ export default function VideoMedia({
     [setActiveVideoId, videoId],
   );
 
+  useEffect(() => {
+    if (isFocused) return;
+
+    setActiveVideoId((current) => (current === videoId ? null : current));
+  }, [isFocused, setActiveVideoId, videoId]);
+
   return (
     <View style={[styles.container, { width, height }]} testID={testID}>
       {isActive ? (
-        <ActiveVideoPlayer url={url} isMuted={isMuted} isPaused={isPaused} onMetadata={handleMetadata} />
+        <ActiveVideoPlayer url={url} isMuted={isMuted} isPaused={!isFocused || isPaused} onMetadata={handleMetadata} />
       ) : thumbnail ? (
         <CustomImage
           style={StyleSheet.absoluteFill}

@@ -19,6 +19,8 @@ export default function ActiveVideoPlayer({ url, isMuted, isPaused, onMetadata }
     updatePlayerPlayback(player, isMuted, isPaused);
   }, [isMuted, isPaused, player]);
 
+  useEffect(() => () => player.pause(), [player]);
+
   useEffect(() => {
     const updateMetadata = () => {
       const duration = player.duration;
