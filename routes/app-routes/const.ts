@@ -34,6 +34,8 @@ export const LazyProfilePage = lazy(() => import('@Routes/profile/profile'));
 export const LazyProfilePrivacySettingsPage = lazy(
   () => import('@Routes/profile/privacy-settings/privacy-settings-page'),
 );
+export const LazyNotificationsPage = lazy(() => import('@Routes/notifications/notifications-page'));
+export const LazyNotificationSettingsPage = lazy(() => import('@Routes/notifications/notification-settings-page'));
 export const LazySaveResult = lazy(() => import('@Routes/save-activity-page/save-activity-page'));
 export const LazySettingsPage = lazy(() => import('@Routes/settings-page/settings-page'));
 export const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-settings-icons'));

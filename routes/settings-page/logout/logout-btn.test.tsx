@@ -24,6 +24,7 @@ describe('logout btn', () => {
     const user = userEvent.setup();
     let logoutRequestReceived = false;
     server.use(
+      http.delete(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: false, updated: 1 })),
       http.post(`${BASE_URL}/auth/logout`, ({ request }) => {
         logoutRequestReceived = request.method === 'POST';
         return new HttpResponse(null, { status: 204 });

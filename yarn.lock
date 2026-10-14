@@ -4329,6 +4329,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"abort-controller@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "abort-controller@npm:3.0.0"
+  dependencies:
+    event-target-shim: "npm:^5.0.0"
+  checksum: 10c0/90ccc50f010250152509a344eb2e71977fbf8db0ab8f1061197e3275ddf6c61a41a6edfd7b9409c664513131dd96e962065415325ef23efa5db931b382d24ca5
+  languageName: node
+  linkType: hard
+
 "accepts@npm:^1.3.8":
   version: 1.3.8
   resolution: "accepts@npm:1.3.8"
@@ -4959,6 +4968,13 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0
   checksum: 10c0/ec5fd0276b5630b05f0c14bb97cc3815c6b31600c683ebb51372e54dcb776cff790bdeeabd5b8d01ede375a040337ccbf6a3ccd68d3a34219125945e167ad943
+  languageName: node
+  linkType: hard
+
+"badgin@npm:^1.1.5":
+  version: 1.2.3
+  resolution: "badgin@npm:1.2.3"
+  checksum: 10c0/f8ba1090240a8602a8d174214e3426b1a7ec3ecb820ec7e4561fd6181c07df572f02ad0e7ec9250e19dd9594d05a57719a5717a126d769f91fc0cc5d233119cf
   languageName: node
   linkType: hard
 
@@ -6761,6 +6777,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"event-target-shim@npm:^5.0.0":
+  version: 5.0.1
+  resolution: "event-target-shim@npm:5.0.1"
+  checksum: 10c0/0255d9f936215fd206156fd4caa9e8d35e62075d720dc7d847e89b417e5e62cf1ce6c9b4e0a1633a9256de0efefaf9f8d26924b1f3c8620cffb9db78e7d3076b
+  languageName: node
+  linkType: hard
+
 "execa@npm:^5.1.1":
   version: 5.1.1
   resolution: "execa@npm:5.1.1"
@@ -6819,6 +6842,15 @@ __metadata:
     jest-mock: "npm:30.5.1"
     jest-util: "npm:30.5.1"
   checksum: 10c0/351148b185c609a67c4ce5064572d02e7bba11febde47b5177e49fee7e6b680e945034c1ec9414d9fa1f7348a3eceb0d7429f9c9564c693e39c6d138f282370c
+  languageName: node
+  linkType: hard
+
+"expo-application@npm:~58.1.1":
+  version: 58.1.1
+  resolution: "expo-application@npm:58.1.1"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/f80b8e4ad87ef58e3371617d4872a872f37c8ae1cf840b45f4201f7afbc39b30029db413728f4993b83a2c6ce4a17c576cca7fbf2478ba988ccd9b2708afdf9b
   languageName: node
   linkType: hard
 
@@ -7207,6 +7239,23 @@ __metadata:
     expo: "*"
     react: "*"
   checksum: 10c0/be8ca23c0d9e35ef4b9ac1dd45ede3d34a8325fa2cfec23b298420ce4495caaf36d87e975387f3be9b6a4d7315a593741b360d3a23572f1cca57e6af8b171fbc
+  languageName: node
+  linkType: hard
+
+"expo-notifications@npm:~58.1.3":
+  version: 58.1.3
+  resolution: "expo-notifications@npm:58.1.3"
+  dependencies:
+    "@expo/image-utils": "npm:^0.12.4"
+    abort-controller: "npm:^3.0.0"
+    badgin: "npm:^1.1.5"
+    expo-application: "npm:~58.1.1"
+    expo-constants: "npm:~58.0.11"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/49062443a1c0e36002f70eb5375a26341bc14b7d16e831e5699eece991743ee2b28030e3690afcaa425e62f197e7904cfc3c2ed66f47db06318ab081fbe1f997
   languageName: node
   linkType: hard
 
@@ -12716,6 +12765,7 @@ __metadata:
     expo-location: "patch:expo-location@npm%3A58.0.15#~/.yarn/patches/expo-location-npm-58.0.13-56e35cefef.patch"
     expo-media-library: "npm:~58.0.8"
     expo-network: "npm:~58.0.3"
+    expo-notifications: "npm:~58.1.3"
     expo-router: "npm:~58.0.18"
     expo-secure-store: "npm:~58.0.2"
     expo-sensors: "npm:~58.0.4"

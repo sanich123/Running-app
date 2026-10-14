@@ -17,7 +17,7 @@ export const profileApi = runichApi.injectEndpoints({
         method: Methods.post,
         body,
       }),
-      invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments],
+      invalidatesTags: [Tags.profile, Tags.activities, Tags.likes, Tags.comments, Tags.notifications],
     }),
     updateProfileByUserId: mutation<ProfileResponse, SendProfile>({
       query: ({ body, id }: SendProfile) => ({

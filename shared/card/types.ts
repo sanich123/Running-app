@@ -54,6 +54,7 @@ export interface ProfileType {
   userId?: string;
   weight?: string | null;
   emailNotifications?: boolean | null;
+  inAppNotifications?: boolean;
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;

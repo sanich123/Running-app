@@ -14,6 +14,7 @@ import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { useAppSelector } from '@R/typed-hooks';
+import NotificationRuntime from '@Routes/notifications/notification-runtime';
 import SubscriptionStatusSync from '@Routes/subscription/subscription-status-sync';
 import HealthConnectAutoSync from '@Routes/watch-import/health-connect-auto-sync/health-connect-auto-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
@@ -45,6 +46,7 @@ export default function AppShell() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardProvider>
+        <NotificationRuntime />
         <SystemBars style="auto" />
         <PaperProvider
           theme={paperTheme}
@@ -85,6 +87,7 @@ export default function AppShell() {
                 },
               })}>
               <Stack.Screen name={ROUTES.tabs} options={{ headerShown: false, title: 'Главная', animation: 'none' }} />
+              <Stack.Screen name={ROUTES.notifications} options={{ title: LABELS[language].notifications }} />
               <Stack.Screen name={ROUTES.signIn} options={{ headerShown: false, animation: 'none' }} />
               <Stack.Screen
                 name={ROUTES.feedback}
@@ -167,6 +170,10 @@ export default function AppShell() {
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].settings,
                 }}
+              />
+              <Stack.Screen
+                name={`${ROUTES.settings}/${ROUTES.notificationSettings}/${ROUTES.index}`}
+                options={{ title: LABELS[language].notificationSettings }}
               />
               <Stack.Screen
                 name={`${ROUTES.users}/${ROUTES.index}`}

@@ -14,6 +14,7 @@ export const runichApi = createApi({
     Tags.users,
     Tags.commentLikes,
     Tags.subscription,
+    Tags.notifications,
   ],
   baseQuery: baseQueryWithReauth,
   endpoints: () => ({}),
