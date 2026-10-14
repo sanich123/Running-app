@@ -99,10 +99,73 @@ export default function MediaList() {
           current[item.url] === metadata.aspectRatio ? current : { ...current, [item.url]: metadata.aspectRatio! },
         );
       };
-      return (
-        <View
-          testID={isMap ? 'activity-map-media-container' : undefined}
-          style={[styles.mediaTile, { height: mediaHeight, width: itemWidth }]}>
+      const handleMediaPress = () => {
+        if (!longPressGuard.shouldHandlePress()) return;
+        if (isMap && profile?.allowActivityReplayViewing === false) {
+          return errorToast('Пользователь запретил просматривать информацию о своем маршруте');
+        }
+        if (isMap) {
+          void dispatch(activityApi.util.prefetch('getLocationsByActivityId', { activityId: id }, { ifOlderThan: 60 }));
+        }
+        push(
+          isMap
+            ? `/${ROUTES.map}/${id}`
+            : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}${createSearchParams({
+                indexOfPhoto: index,
+                blurhash: item.blurhash,
+              })}`,
+        );
+      };
+      const mediaContent = isVideo ? (
+        <VideoMedia
+          url={item.url}
+          thumbnail={item.thumbnail}
+          blurhash={item.blurhash}
+          width={itemWidth}
+          height={mediaHeight}
+          playLabel={language === LANGUAGES.russian ? 'Воспроизвести видео' : 'Play video'}
+          pauseLabel={language === LANGUAGES.russian ? 'Приостановить видео' : 'Pause video'}
+          muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
+          unmuteLabel={language === LANGUAGES.russian ? 'Включить звук видео' : 'Unmute video'}
+          testID={`activity-video-${item.id ?? index}`}
+          onMetadata={onMediaMetadata}
+        />
+      ) : (
+        <CustomImage
+          style={{ width: itemWidth, height: mediaHeight }}
+          source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
+          contentFit="cover"
+          placeholderContentFit="cover"
+          priority={index === 0 ? 'high' : 'normal'}
+          cachePolicy="memory-disk"
+          recyclingKey={item.url}
+          testID={item.url}
+          placeholder={item?.blurhash}
+          onLoad={(event) => {
+            const { width: loadedWidth, height: loadedHeight } = event.source;
+            if (loadedWidth > 0 && loadedHeight > 0) {
+              onMediaMetadata({ aspectRatio: loadedWidth / loadedHeight });
+            }
+          }}
+        />
+      );
+      const mediaItem =
+        Platform.OS === 'web' && isVideo ? (
+          <View
+            testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
+            accessibilityLabel={
+              isMap
+                ? language === LANGUAGES.russian
+                  ? 'Открыть карту тренировки'
+                  : 'Open activity map'
+                : language === LANGUAGES.russian
+                  ? 'Открыть медиа тренировки'
+                  : 'Open activity media'
+            }
+            onClick={handleMediaPress}>
+            {mediaContent}
+          </View>
+        ) : (
           <TouchableRipple
             testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
             onPressIn={() => {
@@ -120,25 +183,7 @@ export default function MediaList() {
                   }
                 : undefined
             }
-            onPress={() => {
-              if (!longPressGuard.shouldHandlePress()) return;
-              if (isMap && profile?.allowActivityReplayViewing === false) {
-                return errorToast('Пользователь запретил просматривать информацию о своем маршруте');
-              }
-              if (isMap) {
-                void dispatch(
-                  activityApi.util.prefetch('getLocationsByActivityId', { activityId: id }, { ifOlderThan: 60 }),
-                );
-              }
-              push(
-                isMap
-                  ? `/${ROUTES.map}/${id}`
-                  : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}${createSearchParams({
-                      indexOfPhoto: index,
-                      blurhash: item.blurhash,
-                    })}`,
-              );
-            }}
+            onPress={handleMediaPress}
             borderless={false}
             accessibilityRole="button"
             accessibilityLabel={
@@ -150,40 +195,14 @@ export default function MediaList() {
                   ? 'Открыть медиа тренировки'
                   : 'Open activity media'
             }>
-            {isVideo ? (
-              <VideoMedia
-                url={item.url}
-                thumbnail={item.thumbnail}
-                blurhash={item.blurhash}
-                width={itemWidth}
-                height={mediaHeight}
-                playLabel={language === LANGUAGES.russian ? 'Воспроизвести видео' : 'Play video'}
-                pauseLabel={language === LANGUAGES.russian ? 'Приостановить видео' : 'Pause video'}
-                muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
-                unmuteLabel={language === LANGUAGES.russian ? 'Включить звук видео' : 'Unmute video'}
-                testID={`activity-video-${item.id ?? index}`}
-                onMetadata={onMediaMetadata}
-              />
-            ) : (
-              <CustomImage
-                style={{ width: itemWidth, height: mediaHeight }}
-                source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
-                contentFit="cover"
-                placeholderContentFit="cover"
-                priority={index === 0 ? 'high' : 'normal'}
-                cachePolicy="memory-disk"
-                recyclingKey={item.url}
-                testID={item.url}
-                placeholder={item?.blurhash}
-                onLoad={(event) => {
-                  const { width: loadedWidth, height: loadedHeight } = event.source;
-                  if (loadedWidth > 0 && loadedHeight > 0) {
-                    onMediaMetadata({ aspectRatio: loadedWidth / loadedHeight });
-                  }
-                }}
-              />
-            )}
+            {mediaContent}
           </TouchableRipple>
+        );
+      return (
+        <View
+          testID={isMap ? 'activity-map-media-container' : undefined}
+          style={[styles.mediaTile, { height: mediaHeight, width: itemWidth }]}>
+          {mediaItem}
           {!isMap && isOwnActivity && item.id && selectedMediaId === item.id ? (
             <View style={styles.deleteButton}>
               <ActivityMediaDeleteBtn onDelete={() => void handleDeleteMedia(item.id!)} isDeleting={isDeletingMedia} />

@@ -31,10 +31,10 @@ jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(), shareAsync: jest
 jest.mock('react-native-view-shot', () => ({ captureRef: jest.fn() }));
 
 const mockPush = jest.fn();
-const mockReplace = jest.fn();
+const mockBack = jest.fn();
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockPush, replace: mockReplace }),
+  useRouter: () => ({ push: mockPush, back: mockBack }),
   usePathname: () => 'somePathname',
 }));
 
@@ -88,7 +88,7 @@ function makeComment(activityId: string, authorId: string, id: string, comment: 
 describe('Activity card', () => {
   beforeEach(() => {
     mockPush.mockClear();
-    mockReplace.mockClear();
+    mockBack.mockClear();
     (Sharing.isAvailableAsync as jest.Mock).mockReset();
     (Sharing.shareAsync as jest.Mock).mockReset();
     (captureRef as jest.Mock).mockReset();
@@ -459,7 +459,7 @@ describe('Activity card', () => {
       await user.press(screen.getByTestId('confirm-dialog-confirm-button'));
 
       await waitFor(() => expect(deletedActivityId).toBe(activityId));
-      expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
+      expect(mockBack).toHaveBeenCalledTimes(1);
     } finally {
       restorePlatform();
     }
@@ -485,7 +485,7 @@ describe('Activity card', () => {
 
       await waitFor(() => expect(errorToast).toHaveBeenCalled());
       expect(screen.getByTestId(CARD_DELETE_BTN_TEST_ID)).toBeOnTheScreen();
-      expect(mockReplace).not.toHaveBeenCalled();
+      expect(mockBack).not.toHaveBeenCalled();
     } finally {
       restorePlatform();
     }

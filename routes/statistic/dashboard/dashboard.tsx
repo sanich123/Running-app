@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES, ROUTES } from '@const/enums';
@@ -124,7 +124,7 @@ export default function Dashboard() {
     label: index % 2 === 0 ? months[index] : '',
     dataPointRadius: index === displayedSelectedMonth ? 10 : undefined,
     dataPointColor: index === displayedSelectedMonth ? colors.onPrimaryContainer : undefined,
-    onPress: () => setSelectedMonth(index),
+    onPress: Platform.OS === 'web' ? undefined : () => setSelectedMonth(index),
   }));
   const chartScale = getAnnualChartScale(
     chartData.map(({ value }) => value),

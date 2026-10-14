@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react-native';
+import { Platform } from 'react-native';
 import type * as ExpoRouterModule from 'expo-router';
 import type * as AutoSyncModule from './health-connect-auto-sync';
 import type * as WorkoutImportModule from '../workout-import/use-workout-import';
@@ -12,6 +13,11 @@ const { useWorkoutImport } = require('../workout-import/use-workout-import') as 
 
 const mockUsePathname = usePathname as jest.MockedFunction<typeof usePathname>;
 const mockUseWorkoutImport = useWorkoutImport as jest.MockedFunction<typeof useWorkoutImport>;
+const originalPlatformOS = Platform.OS;
+
+function setPlatformOS(platform: 'android' | 'web') {
+  Object.defineProperty(Platform, 'OS', { configurable: true, value: platform });
+}
 
 describe('HealthConnectAutoSync', () => {
   beforeEach(() => {
@@ -19,7 +25,12 @@ describe('HealthConnectAutoSync', () => {
     mockUseWorkoutImport.mockReturnValue({} as ReturnType<typeof useWorkoutImport>);
   });
 
+  afterEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
+  });
+
   it('enables the global controller outside the manual import guide', async () => {
+    setPlatformOS('android');
     mockUsePathname.mockReturnValue('/home');
 
     await render(<HealthConnectAutoSync />);
@@ -28,7 +39,17 @@ describe('HealthConnectAutoSync', () => {
   });
 
   it('disables the global controller on the manual import guide', async () => {
+    setPlatformOS('android');
     mockUsePathname.mockReturnValue('/watch-import/guide');
+
+    await render(<HealthConnectAutoSync />);
+
+    expect(mockUseWorkoutImport).toHaveBeenCalledWith({ autoSync: false, enabled: false });
+  });
+
+  it('disables the native controller on web', async () => {
+    setPlatformOS('web');
+    mockUsePathname.mockReturnValue('/home');
 
     await render(<HealthConnectAutoSync />);
 

@@ -1,5 +1,6 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
+import { Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_SERVER_STATISTICS, MOCK_SERVER_IDS } from '@T/responses/runich';
@@ -73,6 +74,20 @@ describe('statistics dashboard', () => {
 
     fireEvent.press(screen.getByTestId('dashboard-selected-month'));
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('month=4'));
+  });
+
+  it('does not attach SVG point press handlers on web', async () => {
+    const originalOS = Platform.OS;
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+
+    try {
+      await renderWithProviders(<Dashboard />);
+
+      const chart = await screen.findByTestId('dashboard-line-chart');
+      expect(chart.props.data[4].onPress).toBeUndefined();
+    } finally {
+      Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
+    }
   });
 
   it('shows the empty state when the server confirms there are no activities', async () => {

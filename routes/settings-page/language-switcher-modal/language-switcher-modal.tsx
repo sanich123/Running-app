@@ -1,8 +1,8 @@
 import type { RefObject } from 'react';
 import { Fragment, useCallback, useState } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { View, StyleSheet } from 'react-native';
-import { Divider, RadioButton, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { View, StyleSheet, Platform } from 'react-native';
+import { Divider, Icon, RadioButton, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES_ARRAY } from './const';
@@ -43,7 +43,15 @@ export default function LanguageSwitcherModal({
                 }}>
                 <>
                   <Text variant="titleMedium">{title}</Text>
-                  <RadioButton value={value} status={checked === value ? 'checked' : 'unchecked'} />
+                  {Platform.OS === 'web' ? (
+                    <Icon
+                      source={checked === value ? 'radiobox-marked' : 'radiobox-blank'}
+                      size={24}
+                      color={colors.primary}
+                    />
+                  ) : (
+                    <RadioButton value={value} status={checked === value ? 'checked' : 'unchecked'} />
+                  )}
                 </>
               </TouchableRipple>
             </Fragment>

@@ -10,6 +10,10 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('date picker web', () => {
+  it('returns an empty value for an invalid date', () => {
+    expect(toDateTimeInputValue('not-a-date')).toBe('');
+  });
+
   it('stores the date chosen by the user', async () => {
     const maximumDate = new Date('2026-08-06T15:00:00.000Z');
     const { container } = await renderWithProviders(<DatePickerWeb maximumDate={maximumDate} />);

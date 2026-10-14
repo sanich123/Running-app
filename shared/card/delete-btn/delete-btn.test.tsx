@@ -1,7 +1,6 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
-import { ROUTES } from '@const/enums';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
@@ -12,8 +11,8 @@ import ActivityCardDeleteBtn from './delete-btn';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
 import { ActivityCardContext } from '../context';
 
-const mockReplace = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) }));
+const mockBack = jest.fn();
+jest.mock('expo-router', () => ({ useRouter: () => ({ back: mockBack }) }));
 
 function renderDeleteBtn() {
   mockStore.dispatch(setMockUserId('activity-owner'));
@@ -53,10 +52,10 @@ describe('Activity card delete btn', () => {
     expect(await screen.findByText(CARD_DELETE_BTN.russian.accept)).toBeOnTheScreen();
   });
 
-  it('returns to the feed after deleting an activity', async () => {
+  it('returns to the previous page after deleting an activity', async () => {
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
-    mockReplace.mockClear();
+    mockBack.mockClear();
     let deletedUrl = '';
     server.use(
       http.delete(`${BASE_URL}/activity/:activityId`, ({ request }) => {
@@ -67,13 +66,14 @@ describe('Activity card delete btn', () => {
     await renderDeleteBtn();
     await userEvent.press(screen.getByTestId(CARD_DELETE_BTN_TEST_ID));
     await waitFor(() => expect(deletedUrl).toContain('/activity/someActivityId'));
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
+    await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1));
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 
   it('shows an error and stays on the page when deleting fails', async () => {
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+    mockBack.mockClear();
     const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
     server.use(
       http.delete(`${BASE_URL}/activity/:activityId`, () =>
@@ -85,7 +85,7 @@ describe('Activity card delete btn', () => {
     await userEvent.press(screen.getByTestId(CARD_DELETE_BTN_TEST_ID));
 
     await waitFor(() => expect(errorToast).toHaveBeenCalled());
-    expect(mockReplace).not.toHaveBeenCalledWith(ROUTES.root);
+    expect(mockBack).not.toHaveBeenCalled();
     errorToast.mockRestore();
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
