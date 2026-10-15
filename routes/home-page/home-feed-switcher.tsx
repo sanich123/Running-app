@@ -48,6 +48,7 @@ export default function HomeFeedSwitcher({ value, labels, onValueChange }: HomeF
       }}>
       {segmentWidth > 0 ? (
         <Animated.View
+          testID="home-feed-switcher-indicator"
           pointerEvents="none"
           style={[
             styles.selectedSurface,

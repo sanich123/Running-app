@@ -7,6 +7,8 @@ export const WEEK_STATISTICS = {
     distance: 'Расстояние',
     report: 'Ваш недельный отчет',
     error: 'Ошибка',
+    errorMessage: 'Не удалось загрузить',
+    retry: 'Повторить',
   },
   [LANGUAGES.english]: {
     activities: 'Activities',
@@ -14,5 +16,7 @@ export const WEEK_STATISTICS = {
     distance: 'Distance',
     report: 'Your week report',
     error: 'Error',
+    errorMessage: 'Could not load',
+    retry: 'Retry',
   },
 };

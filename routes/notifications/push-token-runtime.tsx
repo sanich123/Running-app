@@ -3,8 +3,8 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { AppState, Platform } from 'react-native';
-import { useRegisterPushTokenMutation } from '@R/services/notifications/notifications';
-import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
+import { useRegisterPushTokenMutation, useUnregisterPushTokenMutation } from '@R/services/notifications/notifications';
+import { useGetUserProfileByUserIdQuery, useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import { NOTIFICATION_PUSH_CONFIG } from './constants';
 import { getNotificationLocale } from './helpers';
@@ -19,7 +19,10 @@ export default function PushTokenRuntime() {
     refetchOnMountOrArgChange: true,
   });
   const [registerToken] = useRegisterPushTokenMutation();
+  const [unregisterToken] = useUnregisterPushTokenMutation();
+  const [updateProfile] = useUpdateProfileByUserIdMutation();
   const syncing = useRef(false);
+  const declinedPermissionUserId = useRef<string | null>(null);
 
   useEffect(() => {
     const syncPushToken = async (refreshProfile = false) => {
@@ -33,15 +36,25 @@ export default function PushTokenRuntime() {
         }
         if (!shouldRegister) return;
 
-        const permission = await Notifications.getPermissionsAsync();
-        if (!permission.granted) return;
-
         await Notifications.setNotificationChannelAsync(NOTIFICATION_PUSH_CONFIG.channelId, {
           name: getPushChannelName(locale),
           importance: Notifications.AndroidImportance.HIGH,
           vibrationPattern: NOTIFICATION_PUSH_CONFIG.vibrationPattern,
           lightColor: NOTIFICATION_PUSH_CONFIG.lightColor,
         });
+
+        let permission = await Notifications.getPermissionsAsync();
+        if (!permission.granted && declinedPermissionUserId.current !== userId) {
+          permission = await Notifications.requestPermissionsAsync();
+          if (!permission.granted) declinedPermissionUserId.current = userId;
+        }
+        if (!permission.granted) {
+          await updateProfile({ body: { pushNotifications: false }, id: userId }).unwrap();
+          await unregisterToken().unwrap();
+          return;
+        }
+        declinedPermissionUserId.current = null;
+
         const projectId = getExpoProjectId(Constants.expoConfig?.extra?.eas?.projectId, Constants.easConfig?.projectId);
         if (!projectId) return;
         const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
@@ -58,7 +71,7 @@ export default function PushTokenRuntime() {
       if (state === 'active') void syncPushToken(true);
     });
     return () => subscription.remove();
-  }, [locale, profileInfo?.pushNotifications, refetchProfile, registerToken, userId]);
+  }, [locale, profileInfo?.pushNotifications, refetchProfile, registerToken, unregisterToken, updateProfile, userId]);
 
   return null;
 }

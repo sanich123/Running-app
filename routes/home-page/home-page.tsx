@@ -11,11 +11,11 @@ import { useGetAppConfigQuery } from '@R/services/authentication/authentication'
 import { useAppSelector } from '@R/typed-hooks';
 import EmptyActivitiesList from '@Routes/home-page/empty-activities-list/empty-activities-list';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
-import ErrorComponent from '@S/error-component/error-component';
 import InfiniteScrollList from '@S/infinite-scroll-list/infinite-scroll-list';
 import WeekStatistics from '@S/infinite-scroll-list/week-statistics/week-statistics';
 import { isAppVersionOutdated } from '@U/is-app-version-outdated';
 import { HOME_FEED, HOME_FEED_COPY, type HomeFeed } from './const';
+import HomeFeedError from './home-feed-error';
 import HomeFeedSkeleton from './home-feed-skeleton';
 import HomeFeedSwitcher from './home-feed-switcher';
 
@@ -42,10 +42,12 @@ export default function Feed() {
       : activeFeed === HOME_FEED.favorites
         ? favoriteActivitiesQuery
         : followersActivitiesQuery;
-  const { data, error, isLoading, isSuccess, refetch, fetchNextPage, isFetchingNextPage, isError } =
+  const { data, error, isLoading, isFetching, isSuccess, refetch, fetchNextPage, isFetchingNextPage, isError } =
     activeActivitiesQuery;
   const { data: appConfig } = useGetAppConfigQuery(undefined, { skip: !accessToken });
   const activities = useMemo(() => data?.pages.flatMap(({ activities }) => activities) ?? [], [data?.pages]);
+  const isFeedLoading = isLoading || (isFetching && activities.length === 0);
+  const hasLoadedActivities = isSuccess || activities.length > 0;
   const isLastPage = !(data?.pages.at(-1)?.hasMore ?? false);
   const feedLabels = HOME_FEED_COPY[language];
   const feedSwitcher = <HomeFeedSwitcher value={activeFeed} labels={feedLabels} onValueChange={setActiveFeed} />;
@@ -58,14 +60,14 @@ export default function Feed() {
   }, [appConfig?.appVersion, replace]);
 
   return (
-    <CrossPlatformLayout edges={[]} isError={isError} scrollViewEnabled={activities.length === 0} refetch={refetch}>
-      {isLoading ? (
+    <CrossPlatformLayout edges={[]} scrollViewEnabled={activities.length === 0} refetch={refetch}>
+      {isFeedLoading ? (
         <>
           <WeekStatistics />
           {feedSwitcher}
           <HomeFeedSkeleton />
         </>
-      ) : isSuccess ? (
+      ) : hasLoadedActivities ? (
         <>
           {activities && activities?.length > 0 && (
             <InfiniteScrollList
@@ -89,7 +91,7 @@ export default function Feed() {
         <>
           <WeekStatistics />
           {feedSwitcher}
-          <ErrorComponent error={error} refetch={refetch} />
+          <HomeFeedError error={error} refetch={refetch} />
         </>
       ) : null}
     </CrossPlatformLayout>

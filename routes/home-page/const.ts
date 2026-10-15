@@ -21,6 +21,17 @@ export const HOME_FEED_COPY = {
   },
 } as const;
 
+export const HOME_FEED_ERROR_COPY = {
+  [LANGUAGES.english]: {
+    title: 'Could not load the activity feed',
+    retry: 'Try again',
+  },
+  [LANGUAGES.russian]: {
+    title: 'Не удалось загрузить ленту',
+    retry: 'Повторить',
+  },
+} as const;
+
 export const HOME_WELCOME_TEXT = {
   greeting: (name = '') => `Good morning${name ? `, ${name}` : ''}!`,
   subtitle: 'Ready to move?',
