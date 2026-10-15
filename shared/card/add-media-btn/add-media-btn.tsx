@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import uuid from 'react-native-uuid';
-import { StyleSheet } from 'react-native';
-import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Icon } from 'react-native-paper';
 import { useAppendActivityMediaMutation } from '@R/services/activity/activity';
 import { finishLoading, startLoading } from '@R/slices/loading/loading';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { MAX_ACTIVITY_MEDIA } from '@Routes/save-activity-page/upload-photos-btn/ const';
 import { uploadActivityMediaBatch } from '@Routes/save-activity-page/utils';
+import MapMetaButton from '@S/card/map-meta-overlay/map-meta-button';
 import { errorToast } from '@S/error-toast/error-toast';
 import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
 import { ADD_ACTIVITY_MEDIA_COPY } from './const';
@@ -14,7 +14,6 @@ import type { ActivityMediaItem } from '../types';
 import type { MediaUploadItem } from '@U/file-sending';
 
 export default function AddActivityMediaBtn({ activityId, media }: { activityId: string; media: ActivityMediaItem[] }) {
-  const { colors, dark } = useTheme();
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
@@ -23,7 +22,6 @@ export default function AddActivityMediaBtn({ activityId, media }: { activityId:
   const [isUploading, setIsUploading] = useState(false);
   const isDisabled = isLoading || isUploading || media.length >= MAX_ACTIVITY_MEDIA;
   const copy = ADD_ACTIVITY_MEDIA_COPY[language];
-  const icon = isUploading ? () => <ActivityIndicator size={18} color={colors.primary} /> : 'image-plus-outline';
 
   const handlePress = async () => {
     if (isDisabled) return;
@@ -67,22 +65,16 @@ export default function AddActivityMediaBtn({ activityId, media }: { activityId:
   };
 
   return (
-    <IconButton
-      mode="contained-tonal"
-      icon={icon}
-      iconColor={colors.primary}
-      containerColor={dark ? 'rgba(38, 38, 38, 0.68)' : 'rgba(255, 255, 255, 0.68)'}
-      size={23}
-      style={styles.iconButton}
-      onPress={handlePress}
-      disabled={isDisabled}
-      accessibilityRole="button"
-      accessibilityLabel={copy.add}
+    <MapMetaButton
       testID="activity-card-add-media-button"
-    />
+      accessibilityLabel={copy.add}
+      onPress={handlePress}
+      disabled={isDisabled}>
+      {isUploading ? (
+        <ActivityIndicator size={20} color="#FFFFFF" />
+      ) : (
+        <Icon source="image-plus-outline" size={20} color="#FFFFFF" />
+      )}
+    </MapMetaButton>
   );
 }
-
-const styles = StyleSheet.create({
-  iconButton: { height: 40, marginHorizontal: 0, width: 40 },
-});

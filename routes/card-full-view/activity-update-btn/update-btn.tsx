@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getHoursMinutesSecondsFromMilliseconds } from '@U/time-formatter';
 
-export default function UpdateBtn() {
+export default function ActivityUpdateBtn() {
   const { colors } = useTheme();
   const { push } = useRouter();
   const dispatch = useAppDispatch();

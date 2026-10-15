@@ -1,18 +1,37 @@
-import { screen } from '@testing-library/react-native';
+import { Suspense, type ReactElement, type ReactNode } from 'react';
+import { act, screen } from '@testing-library/react-native';
 import { http } from 'msw';
 import { StyleSheet } from 'react-native';
+import { runichApi } from '@R/runich-api/runich-api';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import ActivityUpdateBtn from './activity-update-btn/update-btn';
 import CardFullView from './card-full-view';
 
-jest.mock('expo-router', () => ({
-  Stack: { Screen: () => null },
-  useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }),
-}));
+const mockHeaderRight: { current?: () => ReactNode } = {};
+
+jest.mock('expo-router', () => {
+  return {
+    Stack: {
+      Screen: ({ options }: { options: { headerRight?: () => ReactNode } }) => {
+        mockHeaderRight.current = options.headerRight;
+        return null;
+      },
+    },
+    useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }),
+    usePathname: () => `/activity/${MOCK_SERVER_IDS.activityId}`,
+    useRouter: () => ({ push: jest.fn() }),
+  };
+});
+jest.mock('./activity-update-btn/update-btn', () => {
+  const { View } = jest.requireActual('react-native');
+  return { __esModule: true, default: () => <View testID="activity-update-button" /> };
+});
 jest.mock('@S/card/card', () => {
   const { Text, View } = jest.requireActual('react-native');
   return ({
@@ -52,6 +71,20 @@ describe('CardFullView', () => {
     expect(StyleSheet.flatten(screen.getByTestId('cross-platform-scroll-view').props.contentContainerStyle)).toEqual(
       expect.not.objectContaining({ paddingHorizontal: 12 }),
     );
+  });
+
+  it('shows the edit button in the header only for the activity owner', async () => {
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_ACTIVITY.userId));
+
+    await renderWithProviders(<CardFullView />);
+    await screen.findByTestId('full-view-card');
+    expect((mockHeaderRight.current?.() as ReactElement).type).toBe(ActivityUpdateBtn);
+
+    await act(async () => {
+      mockStore.dispatch(setMockUserId('external-viewer'));
+    });
+    expect((mockHeaderRight.current?.() as ReactElement).type).toBe(Suspense);
   });
 
   it('renders error state', async () => {

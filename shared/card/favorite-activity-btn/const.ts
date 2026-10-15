@@ -17,7 +17,3 @@ export const FAVORITE_ACTIVITY_BUTTON_ICONS = {
 } as const;
 
 export const FAVORITE_ACTIVITY_BUTTON_TEST_ID = 'activity-favorite-button';
-export const FAVORITE_ACTIVITY_BUTTON_CONTAINER_COLORS = {
-  light: 'rgba(255, 255, 255, 0.78)',
-  dark: 'rgba(38, 38, 38, 0.72)',
-} as const;

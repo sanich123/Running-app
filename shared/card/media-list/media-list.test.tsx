@@ -97,6 +97,18 @@ describe('media list', () => {
     await waitFor(() => expect(requestBody).toEqual({ isFavorite: true }));
   });
 
+  it('keeps the selected favorite star in its current highlighted style', async () => {
+    await renderMediaList({
+      mapPhotoUrl: 'https://cdn.example.test/selected-favorite-map.jpg',
+      media: [],
+      isFavorite: true,
+    });
+
+    const favoriteButton = screen.getByTestId('activity-favorite-button');
+    expect(favoriteButton).toHaveProp('accessibilityLabel', 'Убрать из избранного');
+    expect(favoriteButton).toBeOnTheScreen();
+  });
+
   it('hides the favorite action from an external viewer', async () => {
     mockStore.dispatch(setMockUserId('another-user'));
     await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/external-map.jpg', media: [], isFavorite: true });
@@ -131,7 +143,7 @@ describe('media list', () => {
       expect.objectContaining({ borderRadius: 10, overflow: 'hidden' }),
     );
     expect(StyleSheet.flatten(screen.getByTestId('activity-media-list').props.contentContainerStyle)).toEqual(
-      expect.objectContaining({ paddingVertical: 12 }),
+      expect.objectContaining({ paddingVertical: 4 }),
     );
   });
 

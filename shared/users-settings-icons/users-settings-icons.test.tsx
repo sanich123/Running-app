@@ -1,4 +1,4 @@
-import { act, screen, userEvent } from '@testing-library/react-native';
+import { act, fireEvent, screen, userEvent } from '@testing-library/react-native';
 import { AppState, Platform } from 'react-native';
 import { ACTIVITY_SAVE_BTN } from '@const/activity-save-btn';
 import { ROUTES } from '@const/enums';
@@ -20,6 +20,12 @@ jest.mock('expo-router', () => ({
   useGlobalSearchParams: () => mockParams,
 }));
 jest.mock('@R/services/notifications/notifications', () => ({
+  notificationsApi: {
+    endpoints: {
+      getNotifications: { initiate: () => ({ type: 'test/getNotificationsInitiated' }) },
+      getUnreadNotificationCount: { initiate: () => ({ type: 'test/getUnreadNotificationCountInitiated' }) },
+    },
+  },
   useGetUnreadNotificationCountQuery: (_arg: unknown, options: Record<string, unknown>) => {
     mockUnreadQueryOptions = options;
     return { data: mockUnreadCount, refetch: mockUnreadRefetch };
@@ -41,12 +47,14 @@ describe('User settings icons', () => {
 
   afterEach(() => jest.restoreAllMocks());
 
-  it('should correctly renders edit btn, when userId === user?.id', async () => {
+  it('renders the regular header icons on an owned activity', async () => {
     mockPathname = `/${ROUTES.home}/${ROUTES.activity}/someActivityId`;
     mockParams = { userId: 'someUserId', id: 'someActivityId' };
     mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(<UsersSettingsIcons />, { store: mockStore });
-    expect(await screen.findByText(ACTIVITY_SAVE_BTN.russian.edit)).toBeOnTheScreen();
+    expect(screen.getByTestId('usersIcon')).toBeOnTheScreen();
+    expect(screen.getByTestId('settingsIcon')).toBeOnTheScreen();
+    expect(screen.queryByText(ACTIVITY_SAVE_BTN.russian.edit)).not.toBeOnTheScreen();
   });
 
   it('opens users and settings from the header icons', async () => {
@@ -113,6 +121,18 @@ describe('User settings icons', () => {
 
     expect(screen.getByTestId('notificationsBadge')).toHaveTextContent('99+');
     expect(screen.getByTestId('notificationsBadge')).toHaveStyle({ height: 16 });
+  });
+
+  it('opens notifications when the circular button press has no coordinates', async () => {
+    mockPathname = `/${ROUTES.home}`;
+    mockParams = { userId: 'anotherUserId', id: '' };
+    await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
+
+    fireEvent.press(screen.getByTestId('notificationsIcon'), {
+      nativeEvent: { locationX: null, locationY: null },
+    });
+
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.notifications}`);
   });
 
   it('stops polling the unread badge while the home page is not focused', async () => {

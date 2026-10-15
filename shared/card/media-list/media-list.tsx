@@ -292,7 +292,7 @@ export default function MediaList() {
 }
 
 const styles = StyleSheet.create({
-  listContent: { paddingVertical: 12 },
+  listContent: { paddingVertical: 4 },
   itemSeparator: { width: 8 },
   mediaTile: {
     borderCurve: 'continuous',

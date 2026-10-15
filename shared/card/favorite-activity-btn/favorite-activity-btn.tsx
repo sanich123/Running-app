@@ -1,42 +1,38 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, type GestureResponderEvent } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useSetActivityFavoriteMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import {
-  FAVORITE_ACTIVITY_BUTTON_CONTAINER_COLORS,
   FAVORITE_ACTIVITY_BUTTON_COPY,
   FAVORITE_ACTIVITY_BUTTON_ICONS,
   FAVORITE_ACTIVITY_BUTTON_TEST_ID,
 } from './const';
 
 export default function FavoriteActivityBtn({ activityId, isFavorite }: { activityId: string; isFavorite: boolean }) {
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const [setActivityFavorite, { isLoading }] = useSetActivityFavoriteMutation();
   const copy = FAVORITE_ACTIVITY_BUTTON_COPY[language];
   const label = isFavorite ? copy.remove : copy.add;
+  const handlePress = (event: GestureResponderEvent) => {
+    event.stopPropagation();
+    void setActivityFavorite({ id: activityId, isFavorite: !isFavorite })
+      .unwrap()
+      .catch((error) => errorToast(label, error));
+  };
 
   return (
     <IconButton
       testID={FAVORITE_ACTIVITY_BUTTON_TEST_ID}
       accessibilityRole="button"
       accessibilityLabel={label}
-      mode="contained-tonal"
       icon={isFavorite ? FAVORITE_ACTIVITY_BUTTON_ICONS.remove : FAVORITE_ACTIVITY_BUTTON_ICONS.add}
-      iconColor={colors.primary}
-      containerColor={
-        dark ? FAVORITE_ACTIVITY_BUTTON_CONTAINER_COLORS.dark : FAVORITE_ACTIVITY_BUTTON_CONTAINER_COLORS.light
-      }
-      size={22}
+      iconColor={isFavorite ? colors.primary : '#FFFFFF'}
+      size={isFavorite ? 22 : 20}
       style={styles.button}
       disabled={isLoading}
-      onPress={(event) => {
-        event.stopPropagation();
-        void setActivityFavorite({ id: activityId, isFavorite: !isFavorite })
-          .unwrap()
-          .catch((error) => errorToast(label, error));
-      }}
+      onPress={handlePress}
     />
   );
 }
