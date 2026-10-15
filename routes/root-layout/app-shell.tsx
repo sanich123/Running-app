@@ -15,6 +15,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { useAppSelector } from '@R/typed-hooks';
 import NotificationRuntime from '@Routes/notifications/notification-runtime';
+import PushTokenRuntime from '@Routes/notifications/push-token-runtime';
 import SubscriptionStatusSync from '@Routes/subscription/subscription-status-sync';
 import HealthConnectAutoSync from '@Routes/watch-import/health-connect-auto-sync/health-connect-auto-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
@@ -47,6 +48,7 @@ export default function AppShell() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardProvider>
         <NotificationRuntime />
+        <PushTokenRuntime />
         <SystemBars style="auto" />
         <PaperProvider
           theme={paperTheme}

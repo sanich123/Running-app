@@ -40,6 +40,8 @@ export enum Routes {
   like = 'like',
   auth = 'auth',
   activityId = 'activityId',
+  favorites = 'favorites',
+  favorite = 'favorite',
   all = 'all',
   photos = 'photos',
   followers = 'followers',

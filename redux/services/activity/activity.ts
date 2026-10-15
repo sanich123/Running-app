@@ -1,4 +1,4 @@
-import { Methods, Tags } from '@R/runich-api/const';
+import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { createSearchParams } from '@R/runich-api/create-search-params';
 import { runichApi } from '@R/runich-api/runich-api';
 import type {
@@ -10,6 +10,7 @@ import type {
   GetActivitiesByIdsRequest,
   GetActivityMediaRequest,
   WatchWorkoutsImportRequest,
+  SetActivityFavoriteRequest,
 } from './types';
 import type {
   ActivitiesResponse,
@@ -20,6 +21,7 @@ import type {
   ActivityMediaResponse,
   ActivityMigrationJobResponse,
   ActivityResponse,
+  ActivityFavoriteMutationResponse,
   WatchWorkoutBatchImportResponse,
 } from '@R/runich-api/types';
 
@@ -35,6 +37,16 @@ export const activityApi = runichApi.injectEndpoints({
       },
       query: ({ queryArg: { id }, pageParam }) =>
         `/activity/${id}${createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined })}`,
+      providesTags: [Tags.activities],
+    }),
+    getFavoriteActivities: infiniteQuery<ActivitiesResponse, void, string>({
+      infiniteQueryOptions: {
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      },
+      query: ({ pageParam }) =>
+        `/${Routes.activity}/${Routes.favorites}` +
+        createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined }),
       providesTags: [Tags.activities],
     }),
     getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesResponse, { id: string }, string>({
@@ -69,6 +81,14 @@ export const activityApi = runichApi.injectEndpoints({
     }),
     getCurrentStravaMigrationStatus: query<ActivityMigrationJobResponse | null, void>({
       query: () => '/activity/migration-strava/current',
+    }),
+    setActivityFavorite: mutation<ActivityFavoriteMutationResponse, SetActivityFavoriteRequest>({
+      query: ({ id, isFavorite }) => ({
+        url: `/${Routes.activity}/${id}/${Routes.favorite}`,
+        method: Methods.patch,
+        body: { isFavorite },
+      }),
+      invalidatesTags: [Tags.activities],
     }),
     updateActivityInfo: mutation<ActivityMutationResponse, ActivityUpdateRequest>({
       query: ({ body, id }) => ({
@@ -130,6 +150,8 @@ export const {
   useAppendActivityMediaMutation,
   useDeleteActivityMediaMutation,
   useGetActivitiesByUserIdInfiniteQuery,
+  useGetFavoriteActivitiesInfiniteQuery,
+  useSetActivityFavoriteMutation,
   useGetAllActivityMediaByUserIdInfiniteQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery,
   useGetActivityByActivityIdQuery,

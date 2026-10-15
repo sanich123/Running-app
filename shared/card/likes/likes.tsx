@@ -49,7 +49,12 @@ export default function Likes() {
         <TouchableRipple
           testID="pushToActivityLikes"
           onPress={() => {
-            void dispatch(likesApi.endpoints.getLikesByActivityId.initiate({ activityId }, { subscribe: false }));
+            void dispatch(
+              likesApi.endpoints.getLikesByActivityId.initiate(
+                { activityId },
+                { subscribe: false, forceRefetch: true },
+              ),
+            );
             dispatch(setActivityIdWhichLikesToDownload(activityId));
             likesListModal.current?.present?.();
           }}

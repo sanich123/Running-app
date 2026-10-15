@@ -22,7 +22,9 @@ export default function CommentCountBadge({
   if (!canViewComments || !commentsCount) return null;
 
   return (
-    <Badge style={[styles.badge, { backgroundColor: colors.primary }, isLoading && styles.disabled]}>
+    <Badge
+      pointerEvents="none"
+      style={[styles.badge, { backgroundColor: colors.primary }, isLoading && styles.disabled]}>
       {commentsCount}
     </Badge>
   );

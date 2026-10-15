@@ -2,6 +2,7 @@ import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import { MD3LightTheme } from 'react-native-paper';
+import { commentsApi } from '@R/services/comments/comments';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { resetLoading } from '@R/slices/loading/loading';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
@@ -119,10 +120,33 @@ describe('Activity card comment btn', () => {
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     await renderCommentBtn();
+    const countBadge = await screen.findByText('6');
+    expect(countBadge).toHaveProp('pointerEvents', 'none');
     await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
     expect(mockPush).not.toHaveBeenCalled();
     expect(mockStore.getState().comment).toEqual(expect.objectContaining({ commentActivityId: 'someActivityId' }));
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
+  });
+
+  it('refetches comments on press even when the activity comments are cached', async () => {
+    const activityId = 'cached-comments-activity';
+    let requests = 0;
+    server.use(
+      http.get(BASE_URL + '/comment/' + activityId, () => {
+        requests += 1;
+        return HttpResponse.json({ comments: [], hasMore: false, nextCursor: null });
+      }),
+    );
+    const cachedComments = mockStore.dispatch(commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }));
+    await cachedComments.unwrap();
+    cachedComments.unsubscribe();
+    expect(requests).toBe(1);
+
+    const user = userEvent.setup();
+    await renderCommentBtn(activityId, 1);
+    await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
+
+    await waitFor(() => expect(requests).toBe(2));
   });
 
   it('clears the previous edit mode before opening another activity comments modal', async () => {

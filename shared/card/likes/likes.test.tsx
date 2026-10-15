@@ -1,7 +1,8 @@
-import { act, screen, userEvent } from '@testing-library/react-native';
+import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import * as router from 'expo-router';
+import { likesApi } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { AvatarShowableTestIds } from '@S/avatar/showable/const';
 import { ActivityCardContext } from '@S/card/context';
@@ -118,6 +119,27 @@ describe('Card likes', () => {
 
     expect(requests).toBe(0);
     expect(screen.queryByTestId('pushToActivityLikes')).not.toBeOnTheScreen();
+  });
+
+  it('refetches likes on press even when the activity likes are cached', async () => {
+    const activityId = 'cached-likes-activity';
+    let requests = 0;
+    server.use(
+      http.get(BASE_URL + '/like/' + activityId, () => {
+        requests += 1;
+        return HttpResponse.json([]);
+      }),
+    );
+    const cachedLikes = mockStore.dispatch(likesApi.endpoints.getLikesByActivityId.initiate({ activityId }));
+    await cachedLikes.unwrap();
+    cachedLikes.unsubscribe();
+    expect(requests).toBe(1);
+
+    const user = userEvent.setup();
+    await renderLikes(activityId, false, 1);
+    await user.press(await screen.findByTestId('pushToActivityLikes'));
+
+    await waitFor(() => expect(requests).toBe(2));
   });
 
   it('starts requesting likes after the activity is marked for update', async () => {

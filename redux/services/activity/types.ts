@@ -74,4 +74,9 @@ export interface GetActivitiesByIdsRequest {
   ids: string;
 }
 
+export interface SetActivityFavoriteRequest {
+  id: string;
+  isFavorite: boolean;
+}
+
 /** Kept as an alias for existing imports. */

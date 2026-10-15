@@ -1,4 +1,5 @@
-import { Platform, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { AppState, Platform, View } from 'react-native';
 import { useGlobalSearchParams, useIsFocused, usePathname, useRouter } from 'expo-router';
 import { Badge, IconButton, useTheme } from 'react-native-paper';
 import { ACTIVITY_VISIBILITY } from '@const/activity-visibility';
@@ -18,11 +19,22 @@ export default function UsersSettingsIcons({ showCreateActivity = false }: Users
   const pathname = usePathname();
   const { userId } = useGlobalSearchParams();
   const { userId: ownerId } = useAppSelector(({ auth }) => auth);
-  const { data: unreadCount = 0 } = useGetUnreadNotificationCountQuery(undefined, {
+  const { data: unreadCount = 0, refetch } = useGetUnreadNotificationCountQuery(undefined, {
     skip: !showCreateActivity,
+    refetchOnMountOrArgChange: true,
     pollingInterval: showCreateActivity && isFocused ? 60_000 : 0,
     skipPollingIfUnfocused: true,
   });
+  const wasFocused = useRef(isFocused);
+
+  useEffect(() => {
+    if (showCreateActivity && isFocused && !wasFocused.current) void refetch();
+    wasFocused.current = isFocused;
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active' && showCreateActivity && isFocused) void refetch();
+    });
+    return () => subscription.remove();
+  }, [isFocused, refetch, showCreateActivity]);
   const isMineActivity = userId === ownerId && pathname.includes(ROUTES.activity);
   const isSettingsPage = pathname === `/${ROUTES.settings}`;
   const isUsersPage = pathname === `/${ROUTES.users}`;
@@ -44,7 +56,7 @@ export default function UsersSettingsIcons({ showCreateActivity = false }: Users
               testID="createActivityIcon"
               icon="plus"
               iconColor={colors.primary}
-              size={Platform.OS === 'ios' ? 25 : 30}
+              size={Platform.OS === 'ios' ? 22 : 26}
               style={styles.iconButton}
               onPress={() => {
                 dispatch(resetActivityDraft());
@@ -73,7 +85,7 @@ export default function UsersSettingsIcons({ showCreateActivity = false }: Users
             testID="usersIcon"
             icon="account-search-outline"
             iconColor={colors.primary}
-            size={Platform.OS === 'ios' ? 25 : 30}
+            size={Platform.OS === 'ios' ? 22 : 26}
             onPress={() => openRoute(`/${ROUTES.users}`, isUsersPage)}
             style={styles.iconButton}
           />
@@ -82,7 +94,7 @@ export default function UsersSettingsIcons({ showCreateActivity = false }: Users
             icon="cog-outline"
             animated
             iconColor={colors.primary}
-            size={Platform.OS === 'ios' ? 25 : 30}
+            size={Platform.OS === 'ios' ? 22 : 26}
             style={styles.iconButton}
             onPress={() => openRoute(`/${ROUTES.settings}`, isSettingsPage)}
           />
@@ -92,12 +104,13 @@ export default function UsersSettingsIcons({ showCreateActivity = false }: Users
                 testID="notificationsIcon"
                 icon="bell-outline"
                 iconColor={colors.primary}
-                size={Platform.OS === 'ios' ? 25 : 30}
+                size={Platform.OS === 'ios' ? 22 : 26}
                 onPress={() => push(`/${ROUTES.notifications}` as never)}
                 style={styles.iconButton}
               />
               {unreadCount > 0 ? (
                 <Badge
+                  pointerEvents="none"
                   testID="notificationsBadge"
                   size={16}
                   style={[styles.badge, { backgroundColor: colors.primary, color: colors.onPrimary }]}>

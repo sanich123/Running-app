@@ -27,7 +27,9 @@ export default function CommentBtn() {
 
   const isButtonDisabled = isLoading || !canViewComments;
   const openComments = () => {
-    void dispatch(commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }, { subscribe: false }));
+    void dispatch(
+      commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }, { subscribe: false, forceRefetch: true }),
+    );
     dispatch(setCommentToUpdate(''));
     dispatch(setIdOfUpdatingComment(''));
     dispatch(setCommentActivityId(activityId));

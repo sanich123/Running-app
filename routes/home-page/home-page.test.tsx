@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
 import { setAuthTokens } from '@R/slices/auth/auth';
@@ -15,8 +15,13 @@ const mockPush = jest.fn();
 const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: mockReplace }) }));
 jest.mock('@S/infinite-scroll-list/infinite-scroll-list', () => {
-  const { Text } = jest.requireActual('react-native');
-  return ({ dataToRender }: any) => <Text>{dataToRender[0].title}</Text>;
+  const { Text, View } = jest.requireActual('react-native');
+  return ({ dataToRender, headerAfterWeekStatistics }: any) => (
+    <View>
+      {headerAfterWeekStatistics}
+      <Text>{dataToRender[0].title}</Text>
+    </View>
+  );
 });
 
 describe('Feed', () => {
@@ -30,7 +35,10 @@ describe('Feed', () => {
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/all`, loadingResponse));
     await renderWithProviders(<Feed />);
-    expect(screen.getByTestId('homeActivityIndicator')).toBeOnTheScreen();
+    expect(screen.getByText('Ваш недельный отчет')).toBeOnTheScreen();
+    expect(screen.getByTestId('home-feed-switcher')).toBeOnTheScreen();
+    expect(screen.getByTestId('home-feed-skeleton')).toBeOnTheScreen();
+    expect(screen.getByTestId('cross-platform-scroll-view')).toBeOnTheScreen();
   });
 
   it('renders server activities', async () => {
@@ -42,6 +50,45 @@ describe('Feed', () => {
     server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/all`, errorResponse));
     await renderWithProviders(<Feed />);
     expect(await screen.findByTestId(ERROR_COMPONENT_TEST_ID)).toBeOnTheScreen();
+  });
+
+  it('switches between own, following, and favorite activity feeds', async () => {
+    const favoriteRequestUrls: string[] = [];
+    server.use(
+      http.get(BASE_URL + '/activity/favorites', ({ request }) => {
+        favoriteRequestUrls.push(request.url);
+        return HttpResponse.json({
+          activities: [{ ...MOCK_SERVER_ACTIVITY, title: 'Favorite activity' }],
+          hasMore: false,
+          nextCursor: null,
+        });
+      }),
+      http.get(BASE_URL + '/activity/' + MOCK_SERVER_IDS.userId + '/all', () =>
+        HttpResponse.json({
+          activities: [{ ...MOCK_SERVER_ACTIVITY, title: 'Following activity' }],
+          hasMore: false,
+          nextCursor: null,
+        }),
+      ),
+      http.get(BASE_URL + '/activity/' + MOCK_SERVER_IDS.userId, () =>
+        HttpResponse.json({
+          activities: [{ ...MOCK_SERVER_ACTIVITY, title: 'My activity' }],
+          hasMore: false,
+          nextCursor: null,
+        }),
+      ),
+    );
+    const user = userEvent.setup();
+    await renderWithProviders(<Feed />);
+
+    expect(await screen.findByText('Following activity')).toBeOnTheScreen();
+    await user.press(screen.getByRole('button', { name: 'Мои' }));
+    expect(await screen.findByText('My activity')).toBeOnTheScreen();
+    await user.press(screen.getByRole('button', { name: 'Избранное' }));
+    expect(await screen.findByText('Favorite activity')).toBeOnTheScreen();
+
+    expect(favoriteRequestUrls).toHaveLength(1);
+    expect(new URL(favoriteRequestUrls[0]!).searchParams.get('take')).toBe('20');
   });
 
   it('checks the app version on the home page and redirects when an update is required', async () => {

@@ -46,23 +46,23 @@ export default function WeekStatistics() {
         styles.container,
         {
           backgroundColor: colors.surface,
-          width: width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH,
+          width: width < MAX_MOBILE_WIDTH ? Math.max(width, 0) : MAX_MOBILE_WIDTH,
           alignSelf: 'center',
           borderCurve: 'continuous',
           shadowColor: 'black',
-          shadowOffset: { width: 0, height: 10 },
-          shadowRadius: 10,
+          shadowOffset: { width: 0, height: 4 },
+          shadowRadius: 6,
           shadowOpacity: 0.1,
           borderColor: colors.outlineVariant,
           borderWidth: 1,
-          marginBottom: 10,
+          marginBottom: 4,
         },
       ]}>
       <>
-        <Text variant="titleMedium" style={{ fontFamily: FONT_FAMILIES.extraBold }}>
+        <Text variant="labelMedium" style={{ fontFamily: FONT_FAMILIES.extraBold }}>
           {WEEK_STATISTICS[language].report}
         </Text>
-        <View style={{ marginVertical: 10 }}>
+        <View style={{ marginVertical: 4 }}>
           <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
             <WeekStatisticsMetric
               isError={isError}
@@ -95,6 +95,6 @@ export default function WeekStatistics() {
 const styles = StyleSheet.create({
   container: {
     borderRadius: 8,
-    padding: 16,
+    padding: 8,
   },
 });
