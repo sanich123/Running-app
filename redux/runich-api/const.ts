@@ -21,6 +21,7 @@ export enum Tags {
   friends = 'friends',
   users = 'users',
   subscription = 'subscription',
+  notifications = 'notifications',
 }
 
 export enum Methods {
@@ -44,6 +45,7 @@ export enum Routes {
   followers = 'followers',
   statistics = 'statistics',
   email = 'email',
+  notification = 'notification',
 }
 
 export const API_NAME = 'runnichApi';

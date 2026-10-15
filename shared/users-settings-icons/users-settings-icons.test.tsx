@@ -6,14 +6,31 @@ import UsersSettingsIcons from './users-settings-icons';
 import { mockStore, setMockUserId } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 const mockPush = jest.fn();
+let mockUnreadCount = 3;
+let mockIsFocused = true;
+let mockUnreadQueryOptions: Record<string, unknown> | undefined;
 let mockPathname = `/${ROUTES.home}/${ROUTES.activity}/someActivityId`;
 let mockParams = { userId: 'someUserId', id: 'someActivityId' };
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
+  useIsFocused: () => mockIsFocused,
   usePathname: () => mockPathname,
   useGlobalSearchParams: () => mockParams,
 }));
+jest.mock('@R/services/notifications/notifications', () => ({
+  useGetUnreadNotificationCountQuery: (_arg: unknown, options: Record<string, unknown>) => {
+    mockUnreadQueryOptions = options;
+    return { data: mockUnreadCount };
+  },
+}));
 describe('User settings icons', () => {
+  beforeEach(() => {
+    mockUnreadCount = 3;
+    mockIsFocused = true;
+    mockUnreadQueryOptions = undefined;
+    mockPush.mockClear();
+  });
+
   it('should correctly renders edit btn, when userId === user?.id', async () => {
     mockPathname = `/${ROUTES.home}/${ROUTES.activity}/someActivityId`;
     mockParams = { userId: 'someUserId', id: 'someActivityId' };
@@ -56,6 +73,46 @@ describe('User settings icons', () => {
         visibility: 'followers',
       }),
     });
+  });
+
+  it('shows the unread badge and opens the notification center from the home header', async () => {
+    const user = userEvent.setup();
+    mockPathname = `/${ROUTES.home}`;
+    mockParams = { userId: 'anotherUserId', id: '' };
+    await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
+
+    expect(mockUnreadQueryOptions).toMatchObject({ pollingInterval: 60_000, skipPollingIfUnfocused: true });
+    expect(screen.getAllByTestId(/Icon$/).map((icon) => icon.props.testID)).toEqual([
+      'createActivityIcon',
+      'usersIcon',
+      'settingsIcon',
+      'notificationsIcon',
+    ]);
+    expect(screen.getByTestId('notificationsBadge')).toHaveTextContent('3');
+    await user.press(screen.getByTestId('notificationsIcon'));
+
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.notifications}`);
+  });
+
+  it('shows a compact 99+ badge when the unread count exceeds 99', async () => {
+    mockUnreadCount = 150;
+    mockPathname = `/${ROUTES.home}`;
+    mockParams = { userId: 'anotherUserId', id: '' };
+
+    await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
+
+    expect(screen.getByTestId('notificationsBadge')).toHaveTextContent('99+');
+    expect(screen.getByTestId('notificationsBadge')).toHaveStyle({ height: 16 });
+  });
+
+  it('stops polling the unread badge while the home page is not focused', async () => {
+    mockIsFocused = false;
+    mockPathname = `/${ROUTES.home}`;
+    mockParams = { userId: 'anotherUserId', id: '' };
+
+    await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
+
+    expect(mockUnreadQueryOptions).toMatchObject({ pollingInterval: 0, skipPollingIfUnfocused: true });
   });
 
   it('does not navigate when the current header route is already open', async () => {

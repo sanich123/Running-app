@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "335123904905",
+    "project_id": "runich-6be07",
+    "storage_bucket": "runich-6be07.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335123904905:android:a3db394674da2378920958",
+        "android_client_info": {
+          "package_name": "com.sanich123.runningapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKkGx1Vk7d83qEmHUkdmHCg3g-KyZzUbs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335123904905:android:0985ae2a166150c7920958",
+        "android_client_info": {
+          "package_name": "com.sanich123.runningapp.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKkGx1Vk7d83qEmHUkdmHCg3g-KyZzUbs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

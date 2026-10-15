@@ -1,36 +1,22 @@
 import { Switch } from 'react-native-paper';
-import { useGetUserProfileByUserIdQuery, useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
-import { useAppSelector } from '@R/typed-hooks';
-import { errorToast } from '@S/error-toast/error-toast';
-import { SETTINGS } from '../const';
+import { useEmailNotifications } from './use-email-notifications';
 import SettingsRow from '../settings-row/settings-row';
+import type { EmailNotificationsBtnProps } from './types';
 
-export default function EmailNotificationsBtn() {
-  const { userId } = useAppSelector(({ auth }) => auth);
-  const { language } = useAppSelector(({ settings }) => settings);
-  const { data: profileInfo, isSuccess } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
-  const [updateProfile] = useUpdateProfileByUserIdMutation();
+export default function EmailNotificationsBtn({ compact = false }: EmailNotificationsBtnProps) {
+  const { description, isEnabled, isVisible, title, toggleEmailNotifications } = useEmailNotifications(compact);
 
   return (
     <>
-      {isSuccess && profileInfo && (
+      {isVisible && (
         <SettingsRow
-          title={language === 'russian' ? 'Уведомления по почте' : 'Email notifications'}
-          description={`${profileInfo.emailNotifications ? SETTINGS[language].switchOff : SETTINGS[language].switchOn} ${SETTINGS[language].emailNotifications}`}
+          title={title}
+          description={description}
           leading={
             <Switch
               testID="email-notifications-switch"
-              value={!!profileInfo.emailNotifications}
-              onValueChange={async () => {
-                try {
-                  await updateProfile({
-                    body: { emailNotifications: !profileInfo.emailNotifications },
-                    id: userId,
-                  }).unwrap();
-                } catch (error) {
-                  errorToast('Не удалось изменить настройки уведомлений', error);
-                }
-              }}
+              value={isEnabled}
+              onValueChange={() => void toggleEmailNotifications()}
             />
           }
         />

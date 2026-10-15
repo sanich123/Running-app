@@ -57,6 +57,8 @@ describe('ProfilePrivacySettings', () => {
     expect(screen.getByTestId('privacy-setting-hideFollowingList').props.value).toBe(false);
     expect(screen.getByTestId('privacy-setting-hideProfilePhotos').props.value).toBe(false);
     expect(screen.getByTestId('privacy-setting-saveCameraPhotosToGallery').props.value).toBe(false);
+    expect(screen.queryByTestId('privacy-setting-emailNotifications')).not.toBeOnTheScreen();
+    expect(screen.queryByText('Email notifications')).not.toBeOnTheScreen();
     expect(MediaLibrary.requestPermissionsAsync).not.toHaveBeenCalled();
     expect(screen.getByText('When disabled, other users cannot find your profile through search.')).toBeOnTheScreen();
   });

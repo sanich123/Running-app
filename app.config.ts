@@ -105,6 +105,7 @@ export default {
         backgroundColor: '#292929',
       },
       package: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
+      googleServicesFile: './google-services.json',
       permissions: [
         'android.permission.RECEIVE_BOOT_COMPLETED',
         'android.permission.ACTIVITY_RECOGNITION',
@@ -140,6 +141,7 @@ export default {
       'expo-status-bar',
       'expo-image',
       'expo-sharing',
+      'expo-notifications',
       'expo-router',
       'expo-font',
       'expo-video',
