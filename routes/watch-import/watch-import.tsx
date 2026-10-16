@@ -1,43 +1,38 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Image, StyleSheet, View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import { Button, Card, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
-import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import { errorToast } from '@S/error-toast/error-toast';
 import {
   APP_GALLERY_INSTALL_URL,
   APP_GALLERY_URL,
-  HEALTH_CONNECT_GUIDE_URL,
-  HEALTH_CONNECT_PLAY_STORE_URL,
   HEALTH_SYNC_APP_GALLERY_URL,
   HEALTH_SYNC_CONFIG_SCREENSHOT_URL,
   HEALTH_SYNC_FAQ_URL,
   HEALTH_SYNC_GUIDE_URL,
   HEALTH_SYNC_SOURCE_SCREENSHOT_URL,
   HMS_CORE_GUIDE_URL,
-  STRAVA_ANDROID_SUPPORT_URL,
-  STRAVA_COUNTRY_SUPPORT_URL,
-  STRAVA_DEVICE_COMPATIBILITY_URL,
-  STRAVA_SIGN_UP_URL,
-  STRAVA_XAPK_URL,
   WATCH_IMPORT_COPY,
-  XAPK_INSTALL_GUIDE_URL,
 } from './const';
 import ExpandableStep from './expandable-step/expandable-step';
+import { renderHealthConnectLinks } from './health-connect-link';
 import LinkButton from './link-button/link-button';
 import { openExternalLink } from './utils';
+import WorkoutImportContent from './workout-import-content';
 import { RunichHealth } from '../../modules/runich-health/src/RunichHealth';
 
 export default function WatchImportPage() {
   const { colors } = useTheme();
-  const { push } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
   const isRussian = language === LANGUAGES.russian;
   const copy = WATCH_IMPORT_COPY[isRussian ? 'ru' : 'en'];
-  const { stravaConnection, stravaInstall, healthSyncInstall, healthConnect, finish } = copy.steps;
+  const { healthSyncInstall, healthConnect, finish } = copy.steps;
+  const [healthSyncInstallDescription, ...healthSyncAdditionalInstructions] =
+    healthSyncInstall.description.split('\n\n');
+  const healthConnectInstructions = healthConnect.description.split('\n\n');
   const title = copy.title;
   const [isRequestingHealthAccess, setIsRequestingHealthAccess] = useState(false);
   const [healthAccessGranted, setHealthAccessGranted] = useState(false);
@@ -99,48 +94,39 @@ export default function WatchImportPage() {
               </Text>
             </Card.Content>
           </Card>
+          <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
+            {copy.importMethods}
+          </Text>
 
-          <ExpandableStep number={1} title={stravaConnection.title}>
+          <ExpandableStep number={1} title={healthSyncInstall.title}>
             <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
-              {stravaConnection.description}
+              {renderHealthConnectLinks(healthSyncInstallDescription, colors.primary)}
             </Text>
-          </ExpandableStep>
+            {healthSyncAdditionalInstructions.map((instruction, index) => {
+              const key = `health-sync-instruction-${index}`;
+              if (instruction.startsWith('6.')) {
+                return (
+                  <View key={key} style={[styles.successInstruction, { backgroundColor: colors.tertiaryContainer }]}>
+                    <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onTertiaryContainer }]}>
+                      {renderHealthConnectLinks(instruction, colors.primary)}
+                    </Text>
+                  </View>
+                );
+              }
 
-          <ExpandableStep number={2} title={stravaInstall.title}>
-            <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
-              {stravaInstall.description}
-            </Text>
-            <LinkButton
-              label={stravaInstall.compatibleWatches}
-              url={STRAVA_DEVICE_COMPATIBILITY_URL}
-              onOpen={openExternalLink}
-              standalone
-            />
-            <View style={styles.buttonStack}>
-              {[
-                [stravaInstall.actions.createAccount, STRAVA_SIGN_UP_URL],
-                [stravaInstall.actions.xapk, STRAVA_XAPK_URL],
-                [stravaInstall.actions.installXapk, XAPK_INSTALL_GUIDE_URL],
-                [stravaInstall.actions.countryRestrictions, STRAVA_COUNTRY_SUPPORT_URL],
-                [stravaInstall.actions.androidRequirements, STRAVA_ANDROID_SUPPORT_URL],
-              ].map(([label, url]) => (
-                <LinkButton key={label} label={label} url={url} onOpen={openExternalLink} />
-              ))}
-            </View>
-          </ExpandableStep>
-
-          <ExpandableStep number={3} title={healthSyncInstall.title}>
-            <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
-              {healthSyncInstall.description}
-            </Text>
-            <Text
-              variant="bodyMedium"
-              style={[styles.stabilityWarning, { color: colors.error, fontFamily: FONT_FAMILIES.semiBold }]}>
-              {healthSyncInstall.stabilityWarning}
-            </Text>
-            <Text variant="bodySmall" style={[styles.inlineNote, { color: colors.onSurfaceVariant }]}>
-              {healthSyncInstall.note}
-            </Text>
+              return (
+                <Text
+                  key={key}
+                  variant="bodyMedium"
+                  style={[
+                    styles.bodyText,
+                    styles.instructionParagraph,
+                    { color: instruction.startsWith('5.') ? colors.error : colors.onSurfaceVariant },
+                  ]}>
+                  {renderHealthConnectLinks(instruction, colors.primary)}
+                </Text>
+              );
+            })}
             <View style={styles.buttonStack}>
               {[
                 [healthSyncInstall.actions.installAppGallery, APP_GALLERY_INSTALL_URL],
@@ -180,48 +166,47 @@ export default function WatchImportPage() {
             </View>
           </ExpandableStep>
 
-          <ExpandableStep number={4} title={healthConnect.title}>
-            <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
-              {healthConnect.description}
-            </Text>
-            <Text variant="bodySmall" style={[styles.inlineNote, { color: colors.onSurfaceVariant }]}>
-              {healthConnect.note}
-            </Text>
-            <View style={styles.buttonStack}>
-              <Button
-                mode="contained"
-                onPress={() => void requestHealthAccess()}
-                loading={isRequestingHealthAccess}
-                disabled={isRequestingHealthAccess || healthAccessGranted}
-                testID="watch-import-health-connect-access">
-                {healthAccessGranted ? healthConnect.actions.accessGranted : healthConnect.actions.grantAccess}
-              </Button>
-              <LinkButton
-                label={healthConnect.actions.openPlayStore}
-                url={HEALTH_CONNECT_PLAY_STORE_URL}
-                onOpen={openExternalLink}
-              />
-              <LinkButton
-                label={healthConnect.actions.setupGuide}
-                url={HEALTH_CONNECT_GUIDE_URL}
-                onOpen={openExternalLink}
-              />
-            </View>
-            {healthAccessError && <Text style={[styles.errorText, { color: colors.error }]}>{healthAccessError}</Text>}
+          <ExpandableStep number={2} title={healthConnect.title}>
+            {healthConnectInstructions.map((instruction, index) => {
+              return (
+                <Fragment key={`health-connect-instruction-${index}`}>
+                  <Text
+                    variant="bodyMedium"
+                    style={[
+                      styles.bodyText,
+                      ...(index > 0 ? [styles.instructionParagraph] : []),
+                      { color: colors.onSurfaceVariant },
+                    ]}>
+                    {renderHealthConnectLinks(instruction, colors.primary)}
+                  </Text>
+                  {index === 1 && (
+                    <>
+                      <View style={styles.buttonStack}>
+                        <Button
+                          mode="contained"
+                          onPress={() => void requestHealthAccess()}
+                          loading={isRequestingHealthAccess}
+                          disabled={isRequestingHealthAccess || healthAccessGranted}
+                          testID="watch-import-health-connect-access">
+                          {healthAccessGranted
+                            ? healthConnect.actions.accessGranted
+                            : healthConnect.actions.grantAccess}
+                        </Button>
+                      </View>
+                      {healthAccessError && (
+                        <Text style={[styles.errorText, { color: colors.error }]}>
+                          {renderHealthConnectLinks(healthAccessError, colors.primary)}
+                        </Text>
+                      )}
+                    </>
+                  )}
+                </Fragment>
+              );
+            })}
           </ExpandableStep>
 
-          <ExpandableStep number={5} title={finish.title}>
-            <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
-              {finish.description}
-            </Text>
-            <Button
-              mode="contained"
-              onPress={() => push('/watch-import/guide' as Parameters<typeof push>[0])}
-              style={styles.primaryButton}
-              contentStyle={styles.primaryButtonContent}
-              testID="watch-import-runich-action">
-              {finish.action}
-            </Button>
+          <ExpandableStep number={3} title={finish.title} keepMounted>
+            <WorkoutImportContent autoSync />
           </ExpandableStep>
         </>
       </CrossPlatformLayout>
@@ -235,12 +220,10 @@ const styles = StyleSheet.create({
   screenshotsSection: { marginTop: 20 },
   sectionTitle: { marginBottom: 6 },
   bodyText: { lineHeight: 22 },
-  stabilityWarning: { lineHeight: 22, marginTop: 12 },
-  inlineNote: { lineHeight: 20, marginTop: 12 },
+  instructionParagraph: { marginTop: 8 },
+  successInstruction: { marginTop: 8, padding: 10, borderRadius: 8 },
   buttonStack: { gap: 8, marginTop: 14 },
   errorText: { marginTop: 8 },
-  primaryButton: { borderRadius: 14, marginTop: 16 },
-  primaryButtonContent: { minHeight: 50 },
   screenshot: {
     width: '100%',
     height: 280,

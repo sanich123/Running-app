@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { ActivityIndicator, Card, Icon, Text, useTheme } from 'react-native-paper';
 import { WORKOUT_IMPORT_COPY } from './const';
+import { renderHealthConnectLinks } from '../health-connect-link';
 import {
   formatWorkoutCountNotice,
   formatWorkoutDiagnostics,
@@ -33,105 +33,94 @@ export default function DiagnosticsCard({
 }: DiagnosticsCardProps) {
   const { colors } = useTheme();
   const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics;
-  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <Card style={[styles.card, { borderColor: colors.outlineVariant }]}>
       <Card.Content>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={copy.title}
-          accessibilityState={{ expanded: isExpanded }}
-          onPress={() => setIsExpanded((expanded) => !expanded)}
-          style={styles.accordionHeader}>
-          <ViewWithIcon icon="stethoscope" title={copy.title} subtitle={copy.subtitle} />
-          <Icon source={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} color={colors.onSurfaceVariant} />
-        </Pressable>
+        <ViewWithIcon icon="stethoscope" title={copy.title} subtitle={copy.subtitle} />
 
-        {isExpanded && (
-          <View style={styles.details}>
-            <DiagnosticsSection icon="connection" title={copy.sections.connection}>
-              <View style={styles.metricsGrid}>
-                <DiagnosticMetric isRussian={isRussian} label={copy.platform} value="Android" />
-                <DiagnosticMetric isRussian={isRussian} label={copy.store} value={availability ?? copy.checking} />
-                <DiagnosticMetric isRussian={isRussian} label={copy.connected} status={isConnected} />
-                <DiagnosticMetric isRussian={isRussian} label={copy.account} status={Boolean(userId)} />
-              </View>
-            </DiagnosticsSection>
+        <View style={styles.details}>
+          <DiagnosticsSection icon="connection" title={copy.sections.connection}>
+            <View style={styles.metricsGrid}>
+              <DiagnosticMetric isRussian={isRussian} label={copy.platform} value="Android" />
+              <DiagnosticMetric isRussian={isRussian} label={copy.store} value={availability ?? copy.checking} />
+              <DiagnosticMetric isRussian={isRussian} label={copy.connected} status={isConnected} />
+              <DiagnosticMetric isRussian={isRussian} label={copy.account} status={Boolean(userId)} />
+            </View>
+          </DiagnosticsSection>
 
-            <DiagnosticsSection icon="shield-check-outline" title={copy.sections.permissions}>
-              <View style={styles.metricsGrid}>
-                <DiagnosticMetric
-                  isRussian={isRussian}
-                  label={copy.requiredPermissions}
-                  status={healthPermissions?.granted}
-                />
-                <DiagnosticMetric
-                  isRussian={isRussian}
-                  label={copy.permissionItems.exerciseSession}
-                  status={healthPermissions?.details?.exerciseSession}
-                />
-                <DiagnosticMetric
-                  isRussian={isRussian}
-                  label={copy.permissionItems.distance}
-                  status={healthPermissions?.details?.distance}
-                />
-                <DiagnosticMetric
-                  isRussian={isRussian}
-                  label={copy.permissionItems.steps}
-                  status={healthPermissions?.details?.steps}
-                />
-              </View>
-              <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
-                {copy.routeAccessNote}
+          <DiagnosticsSection icon="shield-check-outline" title={copy.sections.permissions}>
+            <View style={styles.metricsGrid}>
+              <DiagnosticMetric
+                isRussian={isRussian}
+                label={copy.requiredPermissions}
+                status={healthPermissions?.granted}
+              />
+              <DiagnosticMetric
+                isRussian={isRussian}
+                label={copy.permissionItems.exerciseSession}
+                status={healthPermissions?.details?.exerciseSession}
+              />
+              <DiagnosticMetric
+                isRussian={isRussian}
+                label={copy.permissionItems.distance}
+                status={healthPermissions?.details?.distance}
+              />
+              <DiagnosticMetric
+                isRussian={isRussian}
+                label={copy.permissionItems.steps}
+                status={healthPermissions?.details?.steps}
+              />
+            </View>
+            <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
+              {copy.routeAccessNote}
+            </Text>
+          </DiagnosticsSection>
+
+          {healthStatusErrorCode && (
+            <View style={[styles.errorNotice, { backgroundColor: colors.errorContainer }]}>
+              <Icon source="alert-circle-outline" size={20} color={colors.onErrorContainer} />
+              <Text variant="bodySmall" style={{ color: colors.onErrorContainer, flex: 1 }}>
+                {renderHealthConnectLinks(`${copy.statusError}: ${healthStatusErrorCode}`, colors.primary)}
               </Text>
-            </DiagnosticsSection>
+            </View>
+          )}
 
-            {healthStatusErrorCode && (
-              <View style={[styles.errorNotice, { backgroundColor: colors.errorContainer }]}>
-                <Icon source="alert-circle-outline" size={20} color={colors.onErrorContainer} />
-                <Text variant="bodySmall" style={{ color: colors.onErrorContainer, flex: 1 }}>
-                  {copy.statusError}: {healthStatusErrorCode}
-                </Text>
+          <DiagnosticsSection icon="database-search-outline" title={copy.sections.reading}>
+            <DiagnosticList items={getReadDiagnosticItems(readDiagnostics, isRussian)} />
+            {isReading && <ActivityIndicator size="small" style={styles.readingIndicator} />}
+          </DiagnosticsSection>
+
+          <DiagnosticsSection icon="map-marker-path" title={copy.sections.workouts}>
+            {workouts.length === 0 ? (
+              <DiagnosticList items={[{ label: copy.workouts, value: '0', tone: 'muted' }]} />
+            ) : (
+              <View style={styles.workoutList}>
+                {workouts.slice(0, MAX_DIAGNOSTIC_WORKOUTS).map((workout, index) => (
+                  <Text
+                    key={`${workout.source}:${workout.sourceActivityId}`}
+                    variant="bodySmall"
+                    style={styles.workoutText}>
+                    {renderHealthConnectLinks(formatWorkoutDiagnostics(workout, index, isRussian), colors.primary)}
+                  </Text>
+                ))}
+                {workouts.length > MAX_DIAGNOSTIC_WORKOUTS && (
+                  <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
+                    {formatWorkoutCountNotice(workouts.length, isRussian)}
+                  </Text>
+                )}
               </View>
             )}
+          </DiagnosticsSection>
 
-            <DiagnosticsSection icon="database-search-outline" title={copy.sections.reading}>
-              <DiagnosticList items={getReadDiagnosticItems(readDiagnostics, isRussian)} />
-              {isReading && <ActivityIndicator size="small" style={styles.readingIndicator} />}
-            </DiagnosticsSection>
+          <DiagnosticsSection icon="cloud-upload-outline" title={copy.sections.upload}>
+            <DiagnosticList items={getUploadDiagnosticItems(uploadDiagnostics, isRussian)} />
+          </DiagnosticsSection>
 
-            <DiagnosticsSection icon="map-marker-path" title={copy.sections.workouts}>
-              {workouts.length === 0 ? (
-                <DiagnosticList items={[{ label: copy.workouts, value: '0', tone: 'muted' }]} />
-              ) : (
-                <View style={styles.workoutList}>
-                  {workouts.slice(0, MAX_DIAGNOSTIC_WORKOUTS).map((workout, index) => (
-                    <Text
-                      key={`${workout.source}:${workout.sourceActivityId}`}
-                      variant="bodySmall"
-                      style={styles.workoutText}>
-                      {formatWorkoutDiagnostics(workout, index, isRussian)}
-                    </Text>
-                  ))}
-                  {workouts.length > MAX_DIAGNOSTIC_WORKOUTS && (
-                    <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
-                      {formatWorkoutCountNotice(workouts.length, isRussian)}
-                    </Text>
-                  )}
-                </View>
-              )}
-            </DiagnosticsSection>
-
-            <DiagnosticsSection icon="cloud-upload-outline" title={copy.sections.upload}>
-              <DiagnosticList items={getUploadDiagnosticItems(uploadDiagnostics, isRussian)} />
-            </DiagnosticsSection>
-
-            <Text variant="bodySmall" style={[styles.note, { color: colors.onSurfaceVariant }]}>
-              {copy.note}
-            </Text>
-          </View>
-        )}
+          <Text variant="bodySmall" style={[styles.note, { color: colors.onSurfaceVariant }]}>
+            {copy.note}
+          </Text>
+        </View>
       </Card.Content>
     </Card>
   );
@@ -175,11 +164,11 @@ function DiagnosticMetric({ isRussian, label, status, value }: DiagnosticMetricP
   return (
     <View style={styles.metric}>
       <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
-        {label}
+        {renderHealthConnectLinks(label, colors.primary)}
       </Text>
       {status === undefined ? (
         <Text variant="bodySmall" style={styles.metricValue}>
-          {value}
+          {typeof value === 'string' ? renderHealthConnectLinks(value, colors.primary) : value}
         </Text>
       ) : (
         <View style={[styles.status, { backgroundColor: status ? colors.primaryContainer : colors.errorContainer }]}>
@@ -210,10 +199,10 @@ function DiagnosticList({ items }: DiagnosticListProps) {
         return (
           <View key={`${item.label}-${index}`} style={styles.listRow}>
             <Text variant="labelMedium" style={[styles.listLabel, { color: colors.onSurfaceVariant }]}>
-              {item.label}
+              {renderHealthConnectLinks(item.label, colors.primary)}
             </Text>
             <Text variant="bodySmall" style={[styles.listValue, { color: valueColor }]}>
-              {item.value}
+              {renderHealthConnectLinks(item.value, colors.primary)}
             </Text>
           </View>
         );
@@ -234,12 +223,6 @@ const styles = {
     gap: 12,
     marginBottom: 0,
     minWidth: 0,
-  },
-  accordionHeader: {
-    alignItems: 'center' as const,
-    flexDirection: 'row' as const,
-    gap: 8,
-    width: '100%' as const,
   },
   headerIcon: {
     width: 42,

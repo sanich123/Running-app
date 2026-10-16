@@ -28,9 +28,8 @@ export const UPLOAD_SKIP_REASON_LABELS = {
 export const WORKOUT_IMPORT_COPY = {
   ru: {
     title: 'Импорт тренировок',
-    missingWorkoutTitle: 'Если тренировка не появилась',
-    missingWorkout:
-      'Вернитесь на предыдущую страницу и проверьте, что тренировка появилась в Health Connect. После этого нажмите «Обновить и синхронизировать».',
+    intro:
+      'Каждый раз, когда вы заходите в Runich, приложение синхронизирует импортированные тренировки из Health Connect. Основные проблемы, которые у меня возникали, были связаны с выгрузкой тренировок в Health Connect, а не с чтением из него. Как правило, если вы видите тренировку с маршрутом в Health Connect, она либо автоматически синхронизируется в Runich, либо ниже есть кнопка для ручной синхронизации. Также ниже есть диагностическая информация о том, какие тренировки Runich видит в Health Connect.',
     updateProvider: 'Обновите Health Connect через Google Play, затем вернитесь сюда и повторите подключение.',
     openGooglePlay: 'Открыть Google Play',
     retry: 'Проверить ещё раз',
@@ -38,10 +37,8 @@ export const WORKOUT_IMPORT_COPY = {
       'Health Connect не найден или не настроен. Откройте его через Google Play и при необходимости установите. Нужны Android 9 или новее и сервисы Google Play.',
     openHealthConnect: 'Открыть страницу Health Connect',
     minimumAndroid: 'Для Health Connect нужен Android 9 или новее и сервисы Google Play.',
-    connect: 'Разрешить Runich читать Health Connect',
+    connect: 'Разрешить Runich читать тренировки',
     connected: 'Хранилище подключено',
-    connectedDescription:
-      'При включённой автосинхронизации после возвращения в Runich новые завершённые тренировки проверяются и отправляются автоматически. Повторные записи не создаются.',
     refresh: 'Обновить и синхронизировать',
     noWorkouts: 'Завершённых тренировок за последние 30 дней нет.',
     importSelected: 'Импортировать выбранные ({count})',
@@ -49,8 +46,7 @@ export const WORKOUT_IMPORT_COPY = {
     hiddenWorkouts: 'Скрытые тренировки ({count})',
     restoreToImport: 'Вернуть в список импорта',
     autoSync: {
-      title: 'Автосинхронизация Health Connect',
-      description: 'Автоматически проверять и добавлять новые завершённые тренировки при возвращении в Runich.',
+      title: 'Автосинхронизация тренировок',
     },
     diagnostics: {
       title: 'Диагностика импорта',
@@ -112,9 +108,8 @@ export const WORKOUT_IMPORT_COPY = {
   },
   en: {
     title: 'Workout import',
-    missingWorkoutTitle: 'If a workout is missing',
-    missingWorkout:
-      'Return to the previous page and check that the workout appears in Health Connect. Then tap “Refresh and sync”.',
+    intro:
+      'Each time you open Runich, the app syncs imported workouts from Health Connect. The main problems I encountered were related to exporting workouts to Health Connect, not reading them from it. If you see a workout with a route in Health Connect, it will usually either sync to Runich automatically or you can use the manual sync button below. Diagnostic information below also shows which workouts Runich can see in Health Connect.',
     updateProvider: 'Update Health Connect through Google Play, then return here and connect again.',
     openGooglePlay: 'Open Google Play',
     retry: 'Check again',
@@ -122,10 +117,8 @@ export const WORKOUT_IMPORT_COPY = {
       'Health Connect was not found or is not set up. Open it through Google Play and install it if needed. Android 9 or later and Google Play services are required.',
     openHealthConnect: 'Open Health Connect page',
     minimumAndroid: 'Health Connect requires Android 9 or later and Google Play services.',
-    connect: 'Allow Runich to read Health Connect',
+    connect: 'Allow Runich to read workouts',
     connected: 'Health store connected',
-    connectedDescription:
-      'When auto-sync is enabled, new completed workouts are checked and uploaded automatically when you return to Runich. Existing records are skipped.',
     refresh: 'Refresh and sync',
     noWorkouts: 'No completed workouts in the last 30 days.',
     importSelected: 'Import selected ({count})',
@@ -133,8 +126,7 @@ export const WORKOUT_IMPORT_COPY = {
     hiddenWorkouts: 'Hidden workouts ({count})',
     restoreToImport: 'Show in import list',
     autoSync: {
-      title: 'Health Connect auto-sync',
-      description: 'Automatically check and upload new completed workouts when you return to Runich.',
+      title: 'Workout auto-sync',
     },
     diagnostics: {
       title: 'Import diagnostics',

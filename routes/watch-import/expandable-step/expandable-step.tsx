@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Card, Icon, Text, useTheme } from 'react-native-paper';
 import type { ExpandableStepProps } from './types';
 
-export default function ExpandableStep({ children, number, title }: ExpandableStepProps) {
+export default function ExpandableStep({ children, keepMounted = false, number, title }: ExpandableStepProps) {
   const { colors } = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -26,7 +26,9 @@ export default function ExpandableStep({ children, number, title }: ExpandableSt
           </Text>
           <Icon source={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} color={colors.onSurfaceVariant} />
         </Pressable>
-        {isExpanded && <View style={styles.stepContent}>{children}</View>}
+        {(isExpanded || keepMounted) && (
+          <View style={[styles.stepContent, !isExpanded && styles.hiddenStepContent]}>{children}</View>
+        )}
       </Card.Content>
     </Card>
   );
@@ -53,5 +55,8 @@ const styles = StyleSheet.create({
   },
   stepContent: {
     marginTop: 8,
+  },
+  hiddenStepContent: {
+    display: 'none',
   },
 });
