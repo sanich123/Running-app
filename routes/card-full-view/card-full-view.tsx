@@ -4,9 +4,11 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
+import { useAppSelector } from '@R/typed-hooks';
 import Card from '@S/card/card';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import ErrorComponent from '@S/error-component/error-component';
+import ActivityUpdateBtn from './activity-update-btn/update-btn';
 import KmSplit from './km-split/km-split';
 import Metrics from './metrics/metrics';
 
@@ -15,6 +17,7 @@ const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-
 export default function CardFullView() {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
+  const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { id: activityId } = useLocalSearchParams();
   const {
     isLoading,
@@ -29,11 +32,14 @@ export default function CardFullView() {
     <>
       <Stack.Screen
         options={{
-          headerRight: () => (
-            <Suspense fallback={null}>
-              <LazyUsersSettingsIcons />
-            </Suspense>
-          ),
+          headerRight: () =>
+            activity?.userId && activity.userId === currentUserId ? (
+              <ActivityUpdateBtn />
+            ) : (
+              <Suspense fallback={null}>
+                <LazyUsersSettingsIcons />
+              </Suspense>
+            ),
         }}
       />
       <CrossPlatformLayout

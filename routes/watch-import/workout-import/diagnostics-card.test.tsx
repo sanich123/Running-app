@@ -1,6 +1,5 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { screen } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { WORKOUT_IMPORT_COPY } from './const';
 import DiagnosticsCard from './diagnostics-card';
 import type { WatchWorkout } from '../../../modules/runich-health/src/RunichHealth';
 
@@ -26,7 +25,6 @@ const workout: WatchWorkout = {
 
 describe('DiagnosticsCard', () => {
   it('shows the route point count for each found workout', async () => {
-    const user = userEvent.setup();
     await renderWithProviders(
       <DiagnosticsCard
         availability="available"
@@ -45,8 +43,6 @@ describe('DiagnosticsCard', () => {
         workouts={[workout]}
       />,
     );
-
-    await user.press(screen.getByLabelText(WORKOUT_IMPORT_COPY.ru.diagnostics.title));
 
     expect(screen.getByText(/точек: 2/)).toBeOnTheScreen();
   });

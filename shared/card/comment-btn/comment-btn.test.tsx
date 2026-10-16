@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react';
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
-import { MD3LightTheme } from 'react-native-paper';
+import { commentsApi } from '@R/services/comments/comments';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { resetLoading } from '@R/slices/loading/loading';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
@@ -17,24 +18,31 @@ jest.mock('react-native-paper', () => {
   const { Pressable } = jest.requireActual('react-native');
   return {
     ...actual,
-    IconButton: ({
+    Icon: () => null,
+    TouchableRipple: ({
       testID,
-      iconColor,
       disabled,
       onPress,
+      accessibilityLabel,
+      accessibilityRole,
+      children,
     }: {
       testID?: string;
-      iconColor?: string;
       disabled?: boolean;
       onPress?: () => void;
+      accessibilityLabel?: string;
+      accessibilityRole?: 'button';
+      children?: ReactNode;
     }) => (
       <Pressable
         testID={testID}
         onPress={onPress}
         disabled={disabled}
-        accessibilityLabel={iconColor}
-        accessibilityState={{ disabled: Boolean(disabled) }}
-      />
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole={accessibilityRole}
+        accessibilityState={{ disabled: Boolean(disabled) }}>
+        {children}
+      </Pressable>
     ),
   };
 });
@@ -90,7 +98,7 @@ describe('Activity card comment btn', () => {
     await renderCommentBtn();
     const commentIcon = screen.getByTestId('activityCardCommentBtnIcon');
     expect(commentIcon).toBeOnTheScreen();
-    expect(commentIcon).toHaveProp('accessibilityLabel', MD3LightTheme.colors.primary);
+    expect(commentIcon).toHaveProp('accessibilityRole', 'button');
   });
 
   it('loads the count for a visible activity without opening comments', async () => {
@@ -119,10 +127,33 @@ describe('Activity card comment btn', () => {
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     await renderCommentBtn();
+    const countBadge = await screen.findByText('6');
+    expect(countBadge).toHaveProp('pointerEvents', 'none');
     await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
     expect(mockPush).not.toHaveBeenCalled();
     expect(mockStore.getState().comment).toEqual(expect.objectContaining({ commentActivityId: 'someActivityId' }));
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
+  });
+
+  it('refetches comments on press even when the activity comments are cached', async () => {
+    const activityId = 'cached-comments-activity';
+    let requests = 0;
+    server.use(
+      http.get(BASE_URL + '/comment/' + activityId, () => {
+        requests += 1;
+        return HttpResponse.json({ comments: [], hasMore: false, nextCursor: null });
+      }),
+    );
+    const cachedComments = mockStore.dispatch(commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }));
+    await cachedComments.unwrap();
+    cachedComments.unsubscribe();
+    expect(requests).toBe(1);
+
+    const user = userEvent.setup();
+    await renderCommentBtn(activityId, 1);
+    await user.press(screen.getByTestId('activityCardCommentBtnIcon'));
+
+    await waitFor(() => expect(requests).toBe(2));
   });
 
   it('clears the previous edit mode before opening another activity comments modal', async () => {
@@ -155,10 +186,7 @@ describe('Activity card comment btn', () => {
     expect(countRequests).toBe(0);
     expect(screen.getByTestId('activityCardCommentBtnIcon').props.accessibilityState?.disabled).toBe(true);
     expect(screen.queryByText('3')).not.toBeOnTheScreen();
-    expect(screen.getByTestId('activityCardCommentBtnIcon')).toHaveProp(
-      'accessibilityLabel',
-      MD3LightTheme.colors.onSurfaceDisabled,
-    );
+    expect(screen.getByTestId('activityCardCommentBtnIcon')).toHaveProp('accessibilityRole', 'button');
   });
 
   it('keeps the activity owner able to open comments to manage their activity', async () => {

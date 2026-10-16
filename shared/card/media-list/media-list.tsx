@@ -21,6 +21,7 @@ import {
   ACTIVITY_MEDIA_MIN_HEIGHT,
 } from './const';
 import VideoMedia from './video-media';
+import FavoriteActivityBtn from '../favorite-activity-btn/favorite-activity-btn';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import RouteReplayBtn from '../route-replay-btn/route-replay-btn';
 import type { ActivityMediaItem } from '../types';
@@ -37,6 +38,7 @@ export default function MediaList() {
     userId: activityOwnerId,
     id,
     mapPhotoUrlBlurhash,
+    isFavorite,
     locationName,
     weatherTemperature,
     weatherWindSpeed,
@@ -228,6 +230,11 @@ export default function MediaList() {
                 weatherCode={weatherCode}
                 emotion={emotion}
               />
+              {isOwnActivity ? (
+                <View pointerEvents="box-none" style={styles.favoriteButton}>
+                  <FavoriteActivityBtn activityId={id} isFavorite={Boolean(isFavorite)} />
+                </View>
+              ) : null}
               <View pointerEvents="box-none" style={styles.mapActions}>
                 {isOwnActivity ? <AddActivityMediaBtn activityId={id} media={media ?? []} /> : null}
                 {canViewReplay ? <RouteReplayBtn activityId={id} userId={activityOwnerId} /> : null}
@@ -253,6 +260,7 @@ export default function MediaList() {
       weatherCode,
       emotion,
       id,
+      isFavorite,
       media,
       canViewReplay,
       activityOwnerId,
@@ -284,7 +292,7 @@ export default function MediaList() {
 }
 
 const styles = StyleSheet.create({
-  listContent: { paddingVertical: 12 },
+  listContent: { paddingVertical: 4 },
   itemSeparator: { width: 8 },
   mediaTile: {
     borderCurve: 'continuous',
@@ -298,6 +306,7 @@ const styles = StyleSheet.create({
     top: 8,
     zIndex: 4,
   },
+  favoriteButton: { position: 'absolute', right: 8, top: 8, zIndex: 4 },
   mapActions: {
     alignItems: 'center',
     bottom: 8,

@@ -8,7 +8,7 @@ import { resetAuthSlice } from '@R/slices/auth/auth';
 import { setDistance, setLocationsFromBackground, setDurationAt, stopDurationTimer } from '@R/slices/location/location';
 import ActivitySaveBtn from '@Routes/activity/save-btn/save-btn';
 import StartBtn from '@Routes/activity/start-btn/start-btn';
-import UpdateBtn from '@S/users-settings-icons/activity-update-btn/update-btn';
+import ActivityUpdateBtn from '@Routes/card-full-view/activity-update-btn/update-btn';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
@@ -125,7 +125,7 @@ function TrackedActivityHarness() {
 function EditActivityHarness() {
   return (
     <>
-      <UpdateBtn />
+      <ActivityUpdateBtn />
       <SaveResult />
       <ActivitySaveBtn />
     </>

@@ -38,9 +38,9 @@ describe('HealthConnectAutoSync', () => {
     expect(mockUseWorkoutImport).toHaveBeenCalledWith({ autoSync: true, enabled: true });
   });
 
-  it('disables the global controller on the manual import guide', async () => {
+  it('disables the global controller on the workout import page', async () => {
     setPlatformOS('android');
-    mockUsePathname.mockReturnValue('/watch-import/guide');
+    mockUsePathname.mockReturnValue('/watch-import');
 
     await render(<HealthConnectAutoSync />);
 

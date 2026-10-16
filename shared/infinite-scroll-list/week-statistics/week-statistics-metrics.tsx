@@ -21,7 +21,7 @@ export default function WeekStatisticsMetric({
   const { language } = useAppSelector(({ settings }) => settings);
   return (
     <View style={{ display: 'flex', width: '33%', alignItems: 'center', minWidth: 0 }}>
-      <Text variant="bodySmall" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ fontSize: 11 }}>
+      <Text variant="bodySmall" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ fontSize: 10 }}>
         {title}
       </Text>
       <Text
@@ -32,8 +32,8 @@ export default function WeekStatisticsMetric({
         style={{
           color: colors.primary,
           fontFamily: FONT_FAMILIES.extraBold,
-          fontSize: 24,
-          lineHeight: 30,
+          fontSize: 18,
+          lineHeight: 22,
         }}>
         {isLoading && ' '}
         {isSuccess && metrics}

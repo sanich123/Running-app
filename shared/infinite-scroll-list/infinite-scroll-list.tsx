@@ -20,6 +20,7 @@ export default function InfiniteScrollList({
   isLastPage,
   nextPageCallback,
   isFetchingNextPage,
+  headerAfterWeekStatistics,
 }: InfiniteScrollListProps) {
   const { onRefresh, refreshing } = useRefresh(refetch);
   const { unsyncedActivities } = useAppSelector(({ activity }) => activity);
@@ -74,9 +75,13 @@ export default function InfiniteScrollList({
       onEndReachedThreshold={0.8}
       onEndReached={loadNextPage}
       ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" /> : undefined}
-      ListHeaderComponent={() =>
-        unsyncedActivities?.length ? <UnsendedActivitiesIndicator /> : dataToRender?.length ? <WeekStatistics /> : null
-      }
+      ListHeaderComponent={() => (
+        <>
+          {unsyncedActivities?.length ? <UnsendedActivitiesIndicator /> : null}
+          {dataToRender?.length ? <WeekStatistics /> : null}
+          {headerAfterWeekStatistics}
+        </>
+      )}
     />
   );
 }

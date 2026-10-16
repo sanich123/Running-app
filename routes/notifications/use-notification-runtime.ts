@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { Tags } from '@R/runich-api/const';
@@ -12,6 +13,8 @@ export function useNotificationRuntime() {
   const handledResponse = useRef<string | null>(null);
 
   useEffect(() => {
+    if (Platform.OS === 'web') return;
+
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldPlaySound: true,

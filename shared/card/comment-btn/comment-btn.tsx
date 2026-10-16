@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
+import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
+import { LANGUAGES } from '@const/enums';
 import { commentsApi } from '@R/services/comments/comments';
 import {
   setCommentActivityId,
@@ -20,14 +21,24 @@ export default function CommentBtn() {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isLoading } = useAppSelector(({ loading }) => loading);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { activity } = useActivityCard();
   const { id: activityId, userId: activityOwnerId, profile } = activity;
   const canViewComments = profile?.allowActivityInteractions !== false || activityOwnerId === userId;
   const commentsModalRef = useRef<BottomSheetModal>(null);
 
   const isButtonDisabled = isLoading || !canViewComments;
+  const buttonLabel = language === LANGUAGES.russian ? 'Открыть комментарии' : 'Open comments';
   const openComments = () => {
-    void dispatch(commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }, { subscribe: false }));
+    void dispatch(
+      commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }, { subscribe: false, forceRefetch: true }),
+    );
+    void dispatch(
+      commentsApi.endpoints.getCommentsLengthByActivityId.initiate(activityId, {
+        subscribe: false,
+        forceRefetch: true,
+      }),
+    );
     dispatch(setCommentToUpdate(''));
     dispatch(setIdOfUpdatingComment(''));
     dispatch(setCommentActivityId(activityId));
@@ -36,19 +47,25 @@ export default function CommentBtn() {
   };
 
   return (
-    <View testID="activity-card-comment-button" style={styles.container}>
-      <>
-        <CommentCountBadge activity={activity} />
-        <IconButton
-          testID={COMMENT_BTN_TEST_ID}
-          icon={COMMENT_BTN_ICON}
-          iconColor={isButtonDisabled ? colors.onSurfaceDisabled : colors.primary}
-          size={25}
-          onPress={openComments}
-          disabled={isButtonDisabled}
-        />
-        <CommentsListModal commentsModalRef={commentsModalRef} allowNewComments={canViewComments} />
-      </>
+    <View testID="activity-card-comment-button">
+      <TouchableRipple
+        testID={COMMENT_BTN_TEST_ID}
+        style={styles.container}
+        borderless
+        accessibilityRole="button"
+        accessibilityLabel={buttonLabel}
+        onPress={openComments}
+        disabled={isButtonDisabled}>
+        <View pointerEvents="none" style={styles.contents}>
+          <CommentCountBadge activity={activity} />
+          <Icon
+            source={COMMENT_BTN_ICON}
+            color={isButtonDisabled ? colors.onSurfaceDisabled : colors.primary}
+            size={25}
+          />
+        </View>
+      </TouchableRipple>
+      <CommentsListModal commentsModalRef={commentsModalRef} allowNewComments={canViewComments} />
     </View>
   );
 }
@@ -57,6 +74,14 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     borderRadius: 50,
-    padding: 2,
+    width: 57,
+    height: 57,
+  },
+  contents: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

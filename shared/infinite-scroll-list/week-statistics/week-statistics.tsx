@@ -1,3 +1,4 @@
+import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vector-icons/material-design-icons/static';
 import { useWindowDimensions, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -24,6 +25,7 @@ export default function WeekStatistics() {
     isSuccess,
     isError,
     isLoading,
+    refetch,
   } = useGetCurrentWeekStatisticsQuery(
     {
       userId,
@@ -39,53 +41,71 @@ export default function WeekStatistics() {
   return (
     <TouchableRipple
       borderless
-      onPress={() =>
-        weekStatistics?.totalItems && push(`/${ROUTES.monthStatistics}?userId=${userId}&year=${year}&month=${month}`)
-      }
+      onPress={() => {
+        if (isError) {
+          void refetch();
+          return;
+        }
+        if (weekStatistics?.totalItems) {
+          push(`/${ROUTES.monthStatistics}?userId=${userId}&year=${year}&month=${month}`);
+        }
+      }}
       style={[
         styles.container,
         {
           backgroundColor: colors.surface,
-          width: width < MAX_MOBILE_WIDTH ? Math.max(width - 24, 0) : MAX_MOBILE_WIDTH,
+          width: width < MAX_MOBILE_WIDTH ? Math.max(width, 0) : MAX_MOBILE_WIDTH,
           alignSelf: 'center',
           borderCurve: 'continuous',
           shadowColor: 'black',
-          shadowOffset: { width: 0, height: 10 },
-          shadowRadius: 10,
+          shadowOffset: { width: 0, height: 4 },
+          shadowRadius: 6,
           shadowOpacity: 0.1,
           borderColor: colors.outlineVariant,
           borderWidth: 1,
-          marginBottom: 10,
+          marginBottom: 4,
         },
       ]}>
       <>
-        <Text variant="titleMedium" style={{ fontFamily: FONT_FAMILIES.extraBold }}>
+        <Text variant="labelMedium" style={{ fontFamily: FONT_FAMILIES.extraBold }}>
           {WEEK_STATISTICS[language].report}
         </Text>
-        <View style={{ marginVertical: 10 }}>
-          <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-            <WeekStatisticsMetric
-              isError={isError}
-              isSuccess={isSuccess}
-              isLoading={isLoading}
-              metrics={`${weekStatistics?.totalItems ?? 0}`}
-              title={WEEK_STATISTICS[language].activities}
-            />
-            <WeekStatisticsMetric
-              isError={isError}
-              isSuccess={isSuccess}
-              isLoading={isLoading}
-              metrics={`${getHoursMinutesFromMilliseconds(weekStatistics?.totalDuration ?? 0).hours}${isRussian ? 'ч' : 'h'} ${getHoursMinutesFromMilliseconds(weekStatistics?.totalDuration ?? 0).minutes}${isRussian ? 'мин' : 'min'}`}
-              title={WEEK_STATISTICS[language].duration}
-            />
-            <WeekStatisticsMetric
-              isError={isError}
-              isSuccess={isSuccess}
-              isLoading={isLoading}
-              metrics={`${Math.round((weekStatistics?.totalDistance ?? 0) / 1000)} ${isRussian ? 'км' : 'km'}`}
-              title={WEEK_STATISTICS[language].distance}
-            />
-          </View>
+        <View style={{ marginVertical: 4, minHeight: 40, justifyContent: 'center' }}>
+          {isError ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <MaterialCommunityIcons name="refresh" size={15} color={colors.onSurfaceVariant} />
+              <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                {WEEK_STATISTICS[language].errorMessage}
+              </Text>
+              <Text variant="bodySmall" style={{ color: colors.primary }}>
+                · {WEEK_STATISTICS[language].retry}
+              </Text>
+            </View>
+          ) : (
+            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+              <WeekStatisticsMetric
+                isError={isError}
+                isSuccess={isSuccess}
+                isLoading={isLoading}
+                metrics={`${weekStatistics?.totalItems ?? 0}`}
+                title={WEEK_STATISTICS[language].activities}
+              />
+              <WeekStatisticsMetric
+                isError={isError}
+                isSuccess={isSuccess}
+                isLoading={isLoading}
+                metrics={`${getHoursMinutesFromMilliseconds(weekStatistics?.totalDuration ?? 0).hours}${isRussian ? 'ч' : 'h'} ${getHoursMinutesFromMilliseconds(weekStatistics?.totalDuration ?? 0).minutes}${isRussian ? 'мин' : 'min'}`}
+                title={WEEK_STATISTICS[language].duration}
+              />
+              <WeekStatisticsMetric
+                isError={isError}
+                isSuccess={isSuccess}
+                isLoading={isLoading}
+                metrics={`${Math.round((weekStatistics?.totalDistance ?? 0) / 1000)} ${isRussian ? 'км' : 'km'}`}
+                title={WEEK_STATISTICS[language].distance}
+              />
+            </View>
+          )}
         </View>
       </>
     </TouchableRipple>
@@ -95,6 +115,6 @@ export default function WeekStatistics() {
 const styles = StyleSheet.create({
   container: {
     borderRadius: 8,
-    padding: 16,
+    padding: 8,
   },
 });

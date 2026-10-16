@@ -75,6 +75,7 @@ export interface ActivityResponse {
   steps?: number | null;
   speed?: number | null;
   visibility?: ActivityVisibility | null;
+  isFavorite?: boolean;
   emotion?: string | null;
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
@@ -105,9 +106,15 @@ export type ActivityListItemResponse = Pick<
   | 'steps'
   | 'emotion'
   | 'visibility'
+  | 'isFavorite'
   | 'profile'
   | '_count'
 >;
+
+export interface ActivityFavoriteMutationResponse {
+  id: string;
+  isFavorite: boolean;
+}
 
 export interface ActivityMutationResponse {
   id: string;

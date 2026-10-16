@@ -1,20 +1,19 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { LANGUAGES, ROUTES } from '@const/enums';
+import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { WATCH_IMPORT_COPY } from './const';
 import { PROFILE_WATCH_IMPORT } from '../profile/const';
 import type * as WatchImportModule from './watch-import';
 
-const mockPush = jest.fn();
 const mockOpenExternalLink = jest.fn();
 const mockRequestPermissions = jest.fn();
 const mockGetPermissions = jest.fn();
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },
-  useRouter: () => ({ push: mockPush }),
 }));
 jest.mock('./utils', () => ({ openExternalLink: mockOpenExternalLink }));
+jest.mock('./workout-import-content', () => ({ __esModule: true, default: () => null }));
 jest.mock('../../modules/runich-health/src/RunichHealth', () => ({
   RunichHealth: { getPermissions: mockGetPermissions, requestPermissions: mockRequestPermissions },
 }));
@@ -23,7 +22,6 @@ const WatchImportPage = require('./watch-import').default as typeof WatchImportM
 
 describe('WatchImportPage', () => {
   beforeEach(() => {
-    mockPush.mockReset();
     mockOpenExternalLink.mockReset();
     mockGetPermissions.mockReset();
     mockRequestPermissions.mockReset();
@@ -38,26 +36,26 @@ describe('WatchImportPage', () => {
     expect(PROFILE_WATCH_IMPORT[LANGUAGES.russian].subtitle).toBe('(экспериментально)');
     expect(copy.warning.title).toBe('Предупреждение: настройка непростая и пока работает нестабильно');
     expect(copy.warning.description).toBe('Инструкция может быть неполной и будет изменяться.');
-    expect(copy.steps.stravaInstall.title).toBe('Strava: более проверенный вариант');
-    expect(copy.steps.healthConnect.title).toBe('Настройте Runich в Health Connect');
+    expect(copy.steps.healthConnect.title).toBe('Настройте Runich');
     expect(copy.steps.healthConnect.actions.grantAccess).toBe('Дать доступ');
-    expect(copy.steps.healthConnect.description).toContain('разрешите Runich все запрошенные разрешения');
-    expect(copy.steps.stravaInstall.description).toMatch(/^Откройте приложение производителя часов/);
-    expect(copy.steps.stravaInstall.description).toContain('Большинство популярных моделей часов');
-    expect(copy.steps.stravaInstall.description.indexOf('Откройте приложение производителя часов')).toBeLessThan(
-      copy.steps.stravaInstall.description.indexOf('Если аккаунта ещё нет'),
+    expect(copy.steps.healthConnect.description).toBe(
+      '1. Откройте Health Connect\n\n2. Дайте Runich все запрошенные разрешения в Health Connect.\n\n3. Также у Runich должно быть включено дополнительное разрешение на чтение маршрутов с режимом «Всегда».',
     );
-    expect(copy.steps.stravaInstall.description).not.toContain('Выберите актуальную совместимую версию');
     expect(copy.steps.healthSyncInstall.description).not.toContain('Для прямого варианта');
-    expect(copy.steps.healthSyncInstall.description).toContain('проверки раз в 12 часов');
-    expect(copy.steps.healthSyncInstall.stabilityWarning).toBe(
-      'Эта часть работает нестабильно. Health Sync то нормально синхронизирует тренировку из Strava, то без объяснения причин не делает этого. Иногда работает только выборочная синхронизация по дате.',
+    expect(copy.steps.healthSyncInstall.description).toContain('синхронизацию тренировок из желаемого источника');
+    expect(copy.steps.healthSyncInstall.description).toContain(
+      'Не все приложения поддерживают выгрузку тренировки с маршрутами. Тестировалось на Strava и Suunto — они могут выгружать тренировки с маршрутами.',
     );
+    expect(copy.steps.healthSyncInstall.description).toContain(
+      'из которого будут выгружаться тренировки.\nНе все приложения поддерживают',
+    );
+    expect(copy.steps.healthSyncInstall.description).not.toContain('Эта часть интуитивно понятна');
+    expect(WATCH_IMPORT_COPY.en.steps.healthSyncInstall.description).toContain(
+      'the workouts will be exported from.\nNot all apps support exporting workouts with routes.',
+    );
+    expect(WATCH_IMPORT_COPY.en.steps.healthSyncInstall.description).not.toContain('This part is intuitive');
+    expect(copy.steps.healthSyncInstall.description).not.toContain('раз в 12 часов');
     expect(copy.steps.finish.title).toBe('Проверьте подключение Runich');
-    expect(copy.steps.finish.description).toContain('откроется диагностическая страница');
-    expect(copy.steps.finish.description).toContain('какие тренировки найдены');
-    expect(copy.steps.finish.description).toContain('какие разрешения выданы Runich');
-    expect(copy.steps.finish.action).toBe('Открыть диагностическую страницу');
     expect(copy.screenshots.description).not.toContain('Для прямого варианта');
   });
 
@@ -66,22 +64,13 @@ describe('WatchImportPage', () => {
     const copy = WATCH_IMPORT_COPY.ru;
     await renderWithProviders(<WatchImportPage />);
 
-    const step = screen.getByLabelText(copy.steps.stravaConnection.title);
-    expect(screen.queryByText(copy.steps.stravaConnection.description)).not.toBeOnTheScreen();
+    const step = screen.getByLabelText(copy.steps.healthConnect.title);
+    expect(screen.queryByRole('link', { name: 'Откройте Health Connect' })).not.toBeOnTheScreen();
 
     await user.press(step);
-    expect(screen.getByText(copy.steps.stravaConnection.description)).toBeOnTheScreen();
-  });
-
-  it('opens the import guide from the final step', async () => {
-    const user = userEvent.setup();
-    const copy = WATCH_IMPORT_COPY.ru;
-    await renderWithProviders(<WatchImportPage />);
-
-    await user.press(screen.getByLabelText(copy.steps.finish.title));
-    await user.press(screen.getByTestId('watch-import-runich-action'));
-
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.watchImport}/guide`);
+    expect(screen.getByRole('link', { name: 'Откройте Health Connect' })).toBeOnTheScreen();
+    expect(screen.getByTestId('watch-import-health-connect-access')).toBeOnTheScreen();
+    expect(screen.getByText(/Также у Runich должно быть включено дополнительное разрешение/)).toBeOnTheScreen();
   });
 
   it('routes external setup actions through the shared link handler', async () => {

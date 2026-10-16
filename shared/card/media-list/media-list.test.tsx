@@ -1,4 +1,5 @@
-import { fireEvent, screen, userEvent } from '@testing-library/react-native';
+import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { Platform, StyleSheet } from 'react-native';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
@@ -6,7 +7,9 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { clearSubscriptionSnapshot, setSubscriptionSnapshot } from '@R/slices/subscription/subscription';
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import * as errorToastModule from '@S/error-toast/error-toast';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { ActivityCardContext } from '../context';
 import MediaList from './media-list';
@@ -76,6 +79,43 @@ describe('media list', () => {
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.map}/activity-id`);
   });
 
+  it('lets the activity owner add the map activity to favorites', async () => {
+    let requestBody: unknown;
+    server.use(
+      http.patch(BASE_URL + '/activity/:activityId/favorite', async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({ id: 'activity-id', isFavorite: true });
+      }),
+    );
+    const user = userEvent.setup();
+    await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/favorite-map.jpg', media: [], isFavorite: false });
+
+    const favoriteButton = screen.getByTestId('activity-favorite-button');
+    expect(favoriteButton).toHaveProp('accessibilityLabel', 'Добавить в избранное');
+    await user.press(favoriteButton);
+
+    await waitFor(() => expect(requestBody).toEqual({ isFavorite: true }));
+  });
+
+  it('keeps the selected favorite star in its current highlighted style', async () => {
+    await renderMediaList({
+      mapPhotoUrl: 'https://cdn.example.test/selected-favorite-map.jpg',
+      media: [],
+      isFavorite: true,
+    });
+
+    const favoriteButton = screen.getByTestId('activity-favorite-button');
+    expect(favoriteButton).toHaveProp('accessibilityLabel', 'Убрать из избранного');
+    expect(favoriteButton).toBeOnTheScreen();
+  });
+
+  it('hides the favorite action from an external viewer', async () => {
+    mockStore.dispatch(setMockUserId('another-user'));
+    await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/external-map.jpg', media: [], isFavorite: true });
+
+    expect(screen.queryByTestId('activity-favorite-button')).not.toBeOnTheScreen();
+  });
+
   it('shows visible feedback while the map image is being pressed', async () => {
     const mapUrl = 'https://cdn.example.test/activity-map-press.jpg';
     await renderMediaList({ mapPhotoUrl: mapUrl, media: [] });
@@ -103,7 +143,7 @@ describe('media list', () => {
       expect.objectContaining({ borderRadius: 10, overflow: 'hidden' }),
     );
     expect(StyleSheet.flatten(screen.getByTestId('activity-media-list').props.contentContainerStyle)).toEqual(
-      expect.objectContaining({ paddingVertical: 12 }),
+      expect.objectContaining({ paddingVertical: 4 }),
     );
   });
 

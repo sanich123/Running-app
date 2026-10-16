@@ -1,11 +1,13 @@
-import { screen, userEvent } from '@testing-library/react-native';
-import { Platform } from 'react-native';
+import { act, fireEvent, screen, userEvent } from '@testing-library/react-native';
+import { AppState, Platform } from 'react-native';
 import { ACTIVITY_SAVE_BTN } from '@const/activity-save-btn';
 import { ROUTES } from '@const/enums';
 import UsersSettingsIcons from './users-settings-icons';
 import { mockStore, setMockUserId } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 const mockPush = jest.fn();
+const mockUnreadRefetch = jest.fn();
+let mockAppStateListener: ((state: 'active') => void) | undefined;
 let mockUnreadCount = 3;
 let mockIsFocused = true;
 let mockUnreadQueryOptions: Record<string, unknown> | undefined;
@@ -18,9 +20,15 @@ jest.mock('expo-router', () => ({
   useGlobalSearchParams: () => mockParams,
 }));
 jest.mock('@R/services/notifications/notifications', () => ({
+  notificationsApi: {
+    endpoints: {
+      getNotifications: { initiate: () => ({ type: 'test/getNotificationsInitiated' }) },
+      getUnreadNotificationCount: { initiate: () => ({ type: 'test/getUnreadNotificationCountInitiated' }) },
+    },
+  },
   useGetUnreadNotificationCountQuery: (_arg: unknown, options: Record<string, unknown>) => {
     mockUnreadQueryOptions = options;
-    return { data: mockUnreadCount };
+    return { data: mockUnreadCount, refetch: mockUnreadRefetch };
   },
 }));
 describe('User settings icons', () => {
@@ -28,15 +36,25 @@ describe('User settings icons', () => {
     mockUnreadCount = 3;
     mockIsFocused = true;
     mockUnreadQueryOptions = undefined;
+    mockUnreadRefetch.mockClear();
+    mockAppStateListener = undefined;
     mockPush.mockClear();
+    jest.spyOn(AppState, 'addEventListener').mockImplementation((_event, listener) => {
+      mockAppStateListener = listener as (state: 'active') => void;
+      return { remove: jest.fn() };
+    });
   });
 
-  it('should correctly renders edit btn, when userId === user?.id', async () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  it('renders the regular header icons on an owned activity', async () => {
     mockPathname = `/${ROUTES.home}/${ROUTES.activity}/someActivityId`;
     mockParams = { userId: 'someUserId', id: 'someActivityId' };
     mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(<UsersSettingsIcons />, { store: mockStore });
-    expect(await screen.findByText(ACTIVITY_SAVE_BTN.russian.edit)).toBeOnTheScreen();
+    expect(screen.getByTestId('usersIcon')).toBeOnTheScreen();
+    expect(screen.getByTestId('settingsIcon')).toBeOnTheScreen();
+    expect(screen.queryByText(ACTIVITY_SAVE_BTN.russian.edit)).not.toBeOnTheScreen();
   });
 
   it('opens users and settings from the header icons', async () => {
@@ -105,6 +123,18 @@ describe('User settings icons', () => {
     expect(screen.getByTestId('notificationsBadge')).toHaveStyle({ height: 16 });
   });
 
+  it('opens notifications when the circular button press has no coordinates', async () => {
+    mockPathname = `/${ROUTES.home}`;
+    mockParams = { userId: 'anotherUserId', id: '' };
+    await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
+
+    fireEvent.press(screen.getByTestId('notificationsIcon'), {
+      nativeEvent: { locationX: null, locationY: null },
+    });
+
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.notifications}`);
+  });
+
   it('stops polling the unread badge while the home page is not focused', async () => {
     mockIsFocused = false;
     mockPathname = `/${ROUTES.home}`;
@@ -113,6 +143,28 @@ describe('User settings icons', () => {
     await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
 
     expect(mockUnreadQueryOptions).toMatchObject({ pollingInterval: 0, skipPollingIfUnfocused: true });
+  });
+
+  it('refreshes the unread count when the home page or app returns to the foreground', async () => {
+    mockPathname = '/' + ROUTES.home;
+    mockParams = { userId: 'anotherUserId', id: '' };
+    mockIsFocused = false;
+
+    const { rerender, unmount } = await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
+
+    expect(mockUnreadRefetch).not.toHaveBeenCalled();
+    await act(async () => {
+      mockIsFocused = true;
+      rerender(<UsersSettingsIcons showCreateActivity />);
+    });
+    expect(mockUnreadRefetch).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      mockAppStateListener?.('active');
+    });
+    expect(mockUnreadRefetch).toHaveBeenCalledTimes(2);
+
+    unmount();
   });
 
   it('does not navigate when the current header route is already open', async () => {

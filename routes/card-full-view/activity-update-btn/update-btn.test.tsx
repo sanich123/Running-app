@@ -3,7 +3,7 @@ import { ROUTES } from '@const/enums';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import UpdateBtn from './update-btn';
+import ActivityUpdateBtn from './update-btn';
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
@@ -15,7 +15,7 @@ jest.mock('expo-router', () => ({
 describe('update btn', () => {
   it('loads the activity into the editor and navigates to manual editing', async () => {
     const user = userEvent.setup();
-    await renderWithProviders(<UpdateBtn />);
+    await renderWithProviders(<ActivityUpdateBtn />);
     const updateButton = screen.getByTestId('activity-update-button');
     await waitFor(() => expect(updateButton.props.accessibilityState?.disabled).toBe(false));
     await user.press(updateButton);

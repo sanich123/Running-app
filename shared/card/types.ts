@@ -89,6 +89,7 @@ export interface ActivityCardData {
   profile: ProfileType;
   commentsLength: number;
   likesLength?: number;
+  isFavorite?: boolean;
 }
 
 export interface ActivityCardProps {

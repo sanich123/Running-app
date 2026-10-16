@@ -141,7 +141,12 @@ export default {
       'expo-status-bar',
       'expo-image',
       'expo-sharing',
-      'expo-notifications',
+      [
+        'expo-notifications',
+        {
+          largeIcon: './assets/images/runich-logo.png',
+        },
+      ],
       'expo-router',
       'expo-font',
       'expo-video',

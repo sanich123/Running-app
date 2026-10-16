@@ -1,15 +1,55 @@
+import { createElement, useEffect, useRef } from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 import { waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import auth from '@R/slices/auth/auth';
 import { MOCK_SERVER_IDS, MOCK_SERVER_STATISTICS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
+import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
-import { runichApi } from '../../runich-api/runich-api';
+import { renderWithProviders } from '@T/utils/test-utils';
 import '../statistics/statistics';
-import './activity';
+import { useGetFavoriteActivitiesInfiniteQuery } from './activity';
+import { runichApi } from '../../runich-api/runich-api';
+
+function FavoriteActivitiesPaginationProbe() {
+  const { isSuccess, fetchNextPage } = useGetFavoriteActivitiesInfiniteQuery();
+  const fetchedNextPage = useRef(false);
+
+  useEffect(() => {
+    if (!isSuccess || fetchedNextPage.current) return;
+    fetchedNextPage.current = true;
+    void fetchNextPage();
+  }, [fetchNextPage, isSuccess]);
+
+  return null;
+}
 
 describe('activity cache invalidation', () => {
+  it('requests the next favorite activity page with the returned cursor', async () => {
+    const requestedCursors: (string | null)[] = [];
+    server.use(
+      http.get(BASE_URL + '/activity/favorites', ({ request }) => {
+        const cursor = new URL(request.url).searchParams.get('cursor');
+        requestedCursors.push(cursor);
+        return HttpResponse.json({
+          activities: [],
+          hasMore: cursor === null,
+          nextCursor: cursor === null ? 'favorite-page-cursor' : null,
+        });
+      }),
+    );
+    mockStore.dispatch(runichApi.util.resetApiState());
+    const { unmount } = await renderWithProviders(createElement(FavoriteActivitiesPaginationProbe), {
+      store: mockStore,
+    });
+
+    await waitFor(() => expect(requestedCursors).toHaveLength(2));
+
+    expect(requestedCursors).toEqual([null, 'favorite-page-cursor']);
+    unmount();
+  });
+
   it('refreshes annual statistics after deleting an activity', async () => {
     let statisticsRequests = 0;
     server.use(
