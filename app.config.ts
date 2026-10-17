@@ -144,6 +144,8 @@ export default {
       [
         'expo-notifications',
         {
+          icon: './assets/images/notification-icon.png',
+          color: '#FF6030',
           largeIcon: './assets/images/runich-logo.png',
         },
       ],
