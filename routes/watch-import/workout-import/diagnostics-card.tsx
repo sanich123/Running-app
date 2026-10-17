@@ -71,6 +71,11 @@ export default function DiagnosticsCard({
                 label={copy.permissionItems.steps}
                 status={healthPermissions?.details?.steps}
               />
+              <DiagnosticMetric
+                isRussian={isRussian}
+                label={copy.permissionItems.heartRate}
+                status={healthPermissions?.details?.heartRate}
+              />
             </View>
             <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
               {copy.routeAccessNote}

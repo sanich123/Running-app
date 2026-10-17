@@ -34,6 +34,16 @@ export default function Metrics() {
         language,
       })
     : null;
+  const heartRateMetrics: { label: string; value: number }[] = [];
+  if (activity) {
+    [
+      { label: HOME_ACTIVITY_FULL_VIEW[language].averageHeartRate, value: activity.averageHeartRate },
+      { label: HOME_ACTIVITY_FULL_VIEW[language].minHeartRate, value: activity.minHeartRate },
+      { label: HOME_ACTIVITY_FULL_VIEW[language].maxHeartRate, value: activity.maxHeartRate },
+    ].forEach(({ label, value }) => {
+      if (typeof value === 'number' && Number.isFinite(value)) heartRateMetrics.push({ label, value });
+    });
+  }
 
   return (
     <View
@@ -87,6 +97,24 @@ export default function Metrics() {
               </View>
             </>
           )}
+          {heartRateMetrics.length > 0 && (
+            <>
+              <Divider />
+              <View style={styles.heartRateSection}>
+                <Text variant="bodyLarge">{HOME_ACTIVITY_FULL_VIEW[language].heartRate}</Text>
+                <View style={styles.columnLayout}>
+                  {heartRateMetrics.map(({ label, value }) => (
+                    <View key={label} style={styles.alignedCenter}>
+                      <Text variant="bodySmall">{label}</Text>
+                      <Text variant="titleMedium">
+                        {Math.round(value)} {HOME_ACTIVITY_FULL_VIEW[language].heartRateUnit}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            </>
+          )}
         </>
       )}
     </View>
@@ -117,5 +145,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  heartRateSection: {
+    paddingTop: 10,
   },
 });

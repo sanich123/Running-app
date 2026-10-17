@@ -15,6 +15,7 @@ export default function MapTools({
   onSetPlaybackDuration,
   canZoomIn,
   canZoomOut,
+  bottomOffset,
   isDisabled = false,
 }: MapToolsProps) {
   const { colors } = useTheme();
@@ -30,6 +31,7 @@ export default function MapTools({
       onMapStyleChange={onMapStyleChange}
       canZoomIn={canZoomIn}
       canZoomOut={canZoomOut}
+      bottomOffset={bottomOffset}
       isDisabled={isDisabled}
       testIdPrefix="activity-route-replay">
       <Menu

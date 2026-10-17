@@ -23,8 +23,10 @@ import {
   getWorkoutId,
   getRoutePointCount,
   HIDDEN_WORKOUTS_KEY,
+  splitWatchWorkoutsIntoBatches,
 } from './helpers';
 import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
+import type { WatchWorkoutBatchImportResponse } from '@R/runich-api/types';
 
 interface UseWorkoutImportOptions {
   autoSync?: boolean;
@@ -210,20 +212,33 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
         payloadRoutePointCount: mappedWorkouts.reduce((total, workout) => total + workout.locations.length, 0),
       };
       setUploadDiagnostics(diagnostics);
+      let imported = 0;
+      let skipped = 0;
+      const activities: WatchWorkoutBatchImportResponse['activities'] = [];
 
       try {
-        const result = await importWorkouts({ id, workouts: mappedWorkouts }).unwrap();
+        const batches = splitWatchWorkoutsIntoBatches(id, mappedWorkouts);
+        for (const workouts of batches) {
+          const batchResult = await importWorkouts({ id, workouts }).unwrap();
+          imported += batchResult.imported;
+          skipped += batchResult.skipped;
+          activities.push(...batchResult.activities);
+          setUploadDiagnostics({ ...diagnostics, imported, skipped });
+        }
+        const result = { imported, skipped, activities };
         setUploadDiagnostics({
           ...diagnostics,
           outcome: 'success',
-          imported: result.imported,
-          skipped: result.skipped,
+          imported,
+          skipped,
         });
         return result;
       } catch (uploadError) {
         setUploadDiagnostics({
           ...diagnostics,
           outcome: 'error',
+          imported,
+          skipped,
           errorStatus: getRequestErrorStatus(uploadError),
         });
         throw uploadError;

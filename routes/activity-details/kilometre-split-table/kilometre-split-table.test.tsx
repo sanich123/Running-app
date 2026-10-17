@@ -6,10 +6,10 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { formatDurationMinsSecs } from '@U/time-formatter';
 import { KM_SPLITS } from './const';
-import KmSplit from './km-split';
+import KilometreSplitTable from './kilometre-split-table';
 import { getFastestSplitDuration, getSplitBarWidth } from './utils';
 
-describe('Home activity full view km split', () => {
+describe('Activity detail kilometre split table', () => {
   it('handles empty and zero-duration split calculations', () => {
     expect(getFastestSplitDuration([])).toBe(0);
     expect(getSplitBarWidth(MOCK_ACTIVITY.kilometresSplit[0], 0)).toBe(0);
@@ -19,7 +19,7 @@ describe('Home activity full view km split', () => {
 
   it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    await renderWithProviders(<KmSplit kilometresSplit={MOCK_ACTIVITY.kilometresSplit} />, {
+    await renderWithProviders(<KilometreSplitTable kilometresSplit={MOCK_ACTIVITY.kilometresSplit} />, {
       store: mockStore,
     });
     [KM_SPLITS.english.splits, KM_SPLITS.english.km, KM_SPLITS.english.pace, KM_SPLITS.english.elev].map((item) =>
@@ -35,7 +35,7 @@ describe('Home activity full view km split', () => {
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    await renderWithProviders(<KmSplit kilometresSplit={MOCK_ACTIVITY.kilometresSplit} />, {
+    await renderWithProviders(<KilometreSplitTable kilometresSplit={MOCK_ACTIVITY.kilometresSplit} />, {
       store: mockStore,
     });
     [KM_SPLITS.russian.splits, KM_SPLITS.russian.km, KM_SPLITS.russian.pace, KM_SPLITS.russian.elev].map((item) =>
@@ -49,7 +49,7 @@ describe('Home activity full view km split', () => {
   it('keeps time and relative speed for walking splits', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(
-      <KmSplit
+      <KilometreSplitTable
         kilometresSplit={[
           {
             kilometerPoint: MOCK_ACTIVITY.kilometresSplit[0].kilometerPoint,
@@ -70,7 +70,7 @@ describe('Home activity full view km split', () => {
   it('rounds elevation and keeps three-digit values on one line', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(
-      <KmSplit
+      <KilometreSplitTable
         kilometresSplit={[
           {
             kilometerPoint: MOCK_ACTIVITY.kilometresSplit[0].kilometerPoint,

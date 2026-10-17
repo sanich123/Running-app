@@ -1,9 +1,11 @@
 import { useMemo, useRef, useEffect } from 'react';
-import { Map as MapboxMap, Marker as MapboxMarker, Popup as MapboxPopup } from 'mapbox-gl';
+import { AttributionControl, Map as MapboxMap, Marker as MapboxMarker, Popup as MapboxPopup } from 'mapbox-gl';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from 'react-native-paper';
 import {
   ACTIVITY_ROUTE_REPLAY_TERRAIN_EXAGGERATION,
   ACTIVITY_ROUTE_REPLAY_TERRAIN_SOURCE_URL,
+  getActivityRouteReplayMapboxBrandingBottomOffset,
 } from '@S/activity-route-replay/const';
 import { getAvatarLabel } from '@S/avatar/avatar';
 import { DISPLAY_ACTIVITY_MAP_CAMERA_PADDING } from '../const';
@@ -51,7 +53,9 @@ export default function MapboxWeb({
   followPlaybackCamera?: boolean;
 }) {
   const { colors, dark } = useTheme();
+  const { bottom: safeAreaBottomInset } = useSafeAreaInsets();
   const mapRef = useRef<MapboxMap | null>(null);
+  const brandingBottomInsetRef = useRef(safeAreaBottomInset);
   const mapNode = useRef<HTMLDivElement | null>(null);
   const playbackCoordinateRef = useRef(playbackCoordinate);
   const playbackHeadingRef = useRef(playbackHeading);
@@ -137,6 +141,8 @@ export default function MapboxWeb({
       container: node,
       style: mapStyleURL,
       accessToken: process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '',
+      attributionControl: false,
+      logoPosition: 'bottom-left',
       config: {
         basemap: {
           lightPreset: dark ? 'night' : 'day',
@@ -161,6 +167,8 @@ export default function MapboxWeb({
       },
     });
     mapRef.current = mapboxMap;
+    brandingBottomInsetRef.current = safeAreaBottomInset;
+    mapboxMap.addControl(new AttributionControl({ compact: true }), 'bottom-left');
     const mapControls = {
       zoomTo(zoomLevel: number, durationMs = 250) {
         mapboxMap.zoomTo(zoomLevel, { duration: durationMs });
@@ -192,6 +200,7 @@ export default function MapboxWeb({
       playbackCameraUpdateRef.current = updatePlaybackCamera;
     }
     mapboxMap.on('load', () => {
+      updateMapboxBrandingPosition(mapboxMap, brandingBottomInsetRef.current);
       if (enable3DTerrain) {
         mapboxMap.addSource('activity-route-replay-terrain', {
           type: 'raster-dem',
@@ -386,11 +395,25 @@ export default function MapboxWeb({
   ]);
 
   useEffect(() => {
+    brandingBottomInsetRef.current = safeAreaBottomInset;
+    const map = mapRef.current;
+    if (map) updateMapboxBrandingPosition(map, safeAreaBottomInset);
+  }, [safeAreaBottomInset]);
+
+  useEffect(() => {
     if (!playbackCoordinate) return;
     if (showPlaybackMarker) playbackMarkerRef.current?.setLngLat(playbackCoordinate);
   }, [playbackCoordinate, showPlaybackMarker]);
 
   return <div ref={mapNode} style={{ flex: 1, width: '100%', minHeight: 0 }} />;
+}
+
+function updateMapboxBrandingPosition(map: MapboxMap, safeAreaBottomInset: number) {
+  const bottomLeftControls = map.getContainer().querySelector<HTMLElement>('.mapboxgl-ctrl-bottom-left');
+  if (bottomLeftControls) {
+    const bottomOffset = getActivityRouteReplayMapboxBrandingBottomOffset(safeAreaBottomInset);
+    bottomLeftControls.style.bottom = bottomOffset ? `${bottomOffset}px` : '';
+  }
 }
 
 function styleKilometrePopup(popup: MapboxPopup, backgroundColor: string, textColor: string, borderColor: string) {

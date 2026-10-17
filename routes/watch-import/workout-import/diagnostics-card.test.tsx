@@ -31,7 +31,7 @@ describe('DiagnosticsCard', () => {
         healthPermissions={{
           available: true,
           granted: true,
-          details: { exerciseSession: true, distance: true, steps: true },
+          details: { exerciseSession: true, distance: true, steps: true, heartRate: true },
         }}
         healthStatusErrorCode={null}
         isConnected

@@ -11,6 +11,7 @@ export default function MapControls({
   onMapStyleChange,
   canZoomIn,
   canZoomOut,
+  bottomOffset,
   isDisabled = false,
   testIdPrefix = 'activity-route',
   children,
@@ -19,7 +20,9 @@ export default function MapControls({
   const { top } = useSafeAreaInsets();
 
   return (
-    <View pointerEvents="box-none" style={[styles.container, { top: top + 112 }]}>
+    <View
+      pointerEvents="box-none"
+      style={[styles.container, bottomOffset === undefined ? { top: top + 112 } : { bottom: bottomOffset }]}>
       <View style={styles.layerButtons}>
         <IconButton
           icon="map-outline"

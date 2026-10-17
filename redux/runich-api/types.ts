@@ -73,6 +73,9 @@ export interface ActivityResponse {
   distance: number;
   elevationGain: number;
   steps?: number | null;
+  averageHeartRate?: number | null;
+  minHeartRate?: number | null;
+  maxHeartRate?: number | null;
   speed?: number | null;
   visibility?: ActivityVisibility | null;
   isFavorite?: boolean;

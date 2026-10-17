@@ -61,12 +61,12 @@ describe('useWorkoutImport', () => {
     mockGetPermissions.mockResolvedValue({
       available: true,
       granted: true,
-      details: { exerciseSession: true, distance: true, steps: true },
+      details: { exerciseSession: true, distance: true, steps: true, heartRate: true },
     });
     mockRequestPermissions.mockResolvedValue({
       available: true,
       granted: true,
-      details: { exerciseSession: true, distance: true, steps: true },
+      details: { exerciseSession: true, distance: true, steps: true, heartRate: true },
     });
     mockReadWorkouts.mockResolvedValue([workout]);
     mockImportWorkouts.mockReturnValue({

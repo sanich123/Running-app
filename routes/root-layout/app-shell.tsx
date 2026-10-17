@@ -72,6 +72,7 @@ export default function AppShell() {
             <Stack
               screenOptions={({ route }) => ({
                 gestureEnabled: false,
+                headerBackButtonDisplayMode: Platform.OS === 'ios' ? 'minimal' : 'default',
                 contentStyle: getRootScreenContentStyle({
                   backgroundColor: appColors.background,
                   bottomInset: insets.bottom,

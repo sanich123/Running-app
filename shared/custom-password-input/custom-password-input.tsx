@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Platform } from 'react-native';
 import { HelperText, TextInput, useTheme } from 'react-native-paper';
 import { Controller } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
@@ -51,12 +50,14 @@ export default function CustomPasswordInput<T extends FieldValues>({
               marginTop: compact ? 4 : 12,
               opacity: shouldBeDisabled ? 0.7 : 1,
             }}
-            contentStyle={{
-              fontFamily: FONT_FAMILIES.regular,
-              includeFontPadding: compact ? false : undefined,
-              paddingBottom: compact && Platform.OS === 'android' ? 3 : undefined,
-              textAlignVertical: 'center',
-            }}
+            contentStyle={
+              compact
+                ? undefined
+                : {
+                    fontFamily: FONT_FAMILIES.regular,
+                    textAlignVertical: 'center',
+                  }
+            }
             outlineStyle={{ borderRadius: 8 }}
             onChangeText={(text) => {
               onChange(text);

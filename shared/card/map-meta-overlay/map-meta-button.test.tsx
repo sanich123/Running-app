@@ -4,7 +4,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import MapMetaButton from './map-meta-button';
 
 describe('map meta button', () => {
-  it('uses the circular map-chip size and responds to a press', async () => {
+  it('uses the favorite icon button size and responds to a press', async () => {
     const user = userEvent.setup();
     const onPress = jest.fn();
     await renderWithProviders(
@@ -15,7 +15,7 @@ describe('map meta button', () => {
 
     const button = screen.getByTestId('map-meta-button');
     expect(StyleSheet.flatten(button.props.style)).toEqual(
-      expect.objectContaining({ width: 42, height: 42, borderRadius: 21 }),
+      expect.objectContaining({ width: 48, height: 48, borderRadius: 24 }),
     );
     await user.press(button);
     expect(onPress).toHaveBeenCalledTimes(1);

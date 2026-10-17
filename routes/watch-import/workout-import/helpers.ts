@@ -5,6 +5,51 @@ import type {
   WatchWorkout,
   WatchWorkoutRouteStatus,
 } from '../../../modules/runich-health/src/RunichHealth';
+import type { WatchWorkoutToSend } from '@R/services/activity/types';
+
+const MAX_IMPORT_BATCH_BYTES = 4 * 1024 * 1024;
+const MAX_IMPORT_BATCH_WORKOUTS = 50;
+
+function getUtf8ByteLength(value: string): number {
+  let byteLength = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    const codePoint = value.charCodeAt(index);
+    if (codePoint <= 0x7f) byteLength += 1;
+    else if (codePoint <= 0x7ff) byteLength += 2;
+    else if (codePoint >= 0xd800 && codePoint <= 0xdbff && index + 1 < value.length) {
+      byteLength += 4;
+      index += 1;
+    } else byteLength += 3;
+  }
+  return byteLength;
+}
+
+export function splitWatchWorkoutsIntoBatches(id: string, workouts: WatchWorkoutToSend[]): WatchWorkoutToSend[][] {
+  const emptyPayloadBytes = getUtf8ByteLength(JSON.stringify({ id, workouts: [] }));
+  const batches: WatchWorkoutToSend[][] = [];
+  let batch: WatchWorkoutToSend[] = [];
+  let batchBytes = emptyPayloadBytes;
+
+  for (const workout of workouts) {
+    const workoutBytes = getUtf8ByteLength(JSON.stringify(workout));
+    if (emptyPayloadBytes + workoutBytes > MAX_IMPORT_BATCH_BYTES) {
+      throw new Error('An imported workout exceeds the upload size limit.');
+    }
+
+    const nextBytes = batchBytes + (batch.length > 0 ? 1 : 0) + workoutBytes;
+    if (batch.length > 0 && (batch.length >= MAX_IMPORT_BATCH_WORKOUTS || nextBytes > MAX_IMPORT_BATCH_BYTES)) {
+      batches.push(batch);
+      batch = [];
+      batchBytes = emptyPayloadBytes;
+    }
+
+    batch.push(workout);
+    batchBytes += (batch.length > 1 ? 1 : 0) + workoutBytes;
+  }
+
+  if (batch.length > 0) batches.push(batch);
+  return batches;
+}
 
 export function getDiagnosticErrorCode(error: unknown): string {
   if (typeof error !== 'object' || error === null) return 'UnknownError';
@@ -97,6 +142,7 @@ export function formatWorkoutDiagnostics(workout: WatchWorkout, index: number, i
     `${copy.origin}: ${workout.diagnostics?.dataOrigin ?? 'unknown'}`,
     `${copy.route}: ${getRouteStatusLabel(workout.diagnostics?.routeStatus, isRussian)}`,
     `${copy.points}: ${routePointCount}`,
+    `${copy.heartRateSamples}: ${workout.heartRateSamples?.length ?? 0}`,
   ];
   if (recordId) details.push(`id: ${recordId.slice(-8)}`);
   if (workout.diagnostics?.routeErrorCode) details.push(`error: ${workout.diagnostics.routeErrorCode}`);

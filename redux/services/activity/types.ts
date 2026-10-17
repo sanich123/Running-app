@@ -2,6 +2,7 @@ import type { ActivityVisibility } from '@const/activity-visibility';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 import type { LastKmSplit } from '@R/slices/location/types';
 import type { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
+import type { ActivityHeartRateSample } from '@S/card/types';
 import type { LocationObject } from 'expo-location';
 
 export interface FinishedActivity {
@@ -35,6 +36,7 @@ export interface WatchWorkoutToSend extends FinishedActivity {
   sourceActivityId: string;
   sport: SPORTS_BTNS_VALUES | string;
   title?: string;
+  heartRateSamples?: ActivityHeartRateSample[];
 }
 
 export interface WatchWorkoutsImportRequest {

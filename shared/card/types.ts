@@ -20,6 +20,12 @@ export interface ActivityLocation {
   mocked?: boolean | null;
 }
 
+export interface ActivityHeartRateSample {
+  /** Unix timestamp in milliseconds. */
+  timestamp: number;
+  beatsPerMinute: number;
+}
+
 export interface ActivityKilometreSplit {
   lastKilometerDuration: number;
   lastKilometerAltitude: number;

@@ -149,18 +149,19 @@ describe('RunichHealth', () => {
       { accessType: 'read', recordType: 'ExerciseSession' },
       { accessType: 'read', recordType: 'Distance' },
       { accessType: 'read', recordType: 'Steps' },
+      { accessType: 'read', recordType: 'HeartRate' },
     ]);
     await expect(health.RunichHealth.getPermissions()).resolves.toEqual({
       available: true,
       granted: true,
-      details: { exerciseSession: true, distance: true, steps: true },
+      details: { exerciseSession: true, distance: true, steps: true, heartRate: true },
     });
 
     mockGetGrantedPermissions.mockResolvedValue([{ accessType: 'write', recordType: 'Distance' }]);
     await expect(health.RunichHealth.getPermissions()).resolves.toEqual({
       available: true,
       granted: false,
-      details: { exerciseSession: false, distance: false, steps: false },
+      details: { exerciseSession: false, distance: false, steps: false, heartRate: false },
     });
   });
 
@@ -175,16 +176,18 @@ describe('RunichHealth', () => {
       { accessType: 'read', recordType: 'ExerciseSession' },
       { accessType: 'read', recordType: 'Distance' },
       { accessType: 'read', recordType: 'Steps' },
+      { accessType: 'read', recordType: 'HeartRate' },
     ]);
     await expect(health.RunichHealth.requestPermissions()).resolves.toEqual({
       available: true,
       granted: true,
-      details: { exerciseSession: true, distance: true, steps: true },
+      details: { exerciseSession: true, distance: true, steps: true, heartRate: true },
     });
     expect(mockRequestPermission).toHaveBeenCalledWith([
       { accessType: 'read', recordType: 'ExerciseSession' },
       { accessType: 'read', recordType: 'Distance' },
       { accessType: 'read', recordType: 'Steps' },
+      { accessType: 'read', recordType: 'HeartRate' },
     ]);
   });
 
@@ -316,7 +319,7 @@ describe('RunichHealth', () => {
     );
     expect(progress).toContain('availability');
     expect(progress).toContain('exercise-sessions');
-    expect(progress).toContain('distance-and-steps');
+    expect(progress).toContain('workout-measurements');
     expect(progress).toContain('exercise-route');
     expect(progress.at(-1)).toBe('complete');
   });
@@ -339,7 +342,7 @@ describe('RunichHealth', () => {
       errorCode: 'READ_FAILED',
     });
 
-    const nestedError = new health.HealthConnectReadError('distance-and-steps', 'NESTED');
+    const nestedError = new health.HealthConnectReadError('workout-measurements', 'NESTED');
     mockReadRecords.mockRejectedValueOnce(nestedError);
     await expect(health.RunichHealth.readWorkouts('start', 'end')).rejects.toBe(nestedError);
   });

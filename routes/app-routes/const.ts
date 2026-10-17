@@ -3,7 +3,7 @@ import { lazy } from 'react';
 export const LazyActivities = lazy(() => import('@Routes/activities/activities'));
 export const LazyActivitiesList = lazy(() => import('@Routes/activities-list/activities-list'));
 export const LazyActivity = lazy(() => import('@Routes/activity/activity'));
-export const LazyActivityFullViewPage = lazy(() => import('@Routes/card-full-view/card-full-view'));
+export const LazyActivityDetailsPage = lazy(() => import('@Routes/activity-details/activity-details'));
 export const LazyAvatarIconEditable = lazy(() => import('@Routes/profile/profile-settings/avatar-editable/editable'));
 export const LazyAvatarShowable = lazy(() => import('@S/avatar/showable/showable'));
 export const LazyGenderBtns = lazy(() => import('@Routes/profile/profile-settings/gender-btns/gender-btns'));

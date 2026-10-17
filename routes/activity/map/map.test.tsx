@@ -28,7 +28,7 @@ jest.mock('expo-location', () => ({
   useBackgroundPermissions: () => [{ granted: true }, jest.fn()],
 }));
 jest.mock('@Routes/activity/battery-optimization-modal/battery-optimization-modal', () => () => null);
-jest.mock('@S/display-activity-map/map-km-split/map-km-split', () => () => null);
+jest.mock('@S/display-activity-map/route-kilometre-markers/route-kilometre-markers', () => () => null);
 jest.mock('@S/display-activity-map/map-route-line/map-route-line', () => () => null);
 jest.mock('../location-indicator/location-indicator', () => () => null);
 jest.mock('./location-permissions/location-permissions', () => () => null);

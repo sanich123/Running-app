@@ -6,7 +6,7 @@ import { KM_SPLITS } from './const';
 import { getFastestSplitDuration, getSplitBarWidth, getSplitMetric } from './utils';
 import type { ActivityKilometreSplit } from '@S/card/types';
 
-export default function KmSplit({ kilometresSplit }: { kilometresSplit: ActivityKilometreSplit[] }) {
+export default function KilometreSplitTable({ kilometresSplit }: { kilometresSplit: ActivityKilometreSplit[] }) {
   const { language } = useAppSelector(({ settings }) => settings);
   const validSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
     (split) => Number.isFinite(split?.lastKilometerDuration) && split.lastKilometerDuration > 0,

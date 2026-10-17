@@ -113,6 +113,7 @@ export default {
         'android.permission.health.READ_EXERCISE_ROUTES',
         'android.permission.health.READ_DISTANCE',
         'android.permission.health.READ_STEPS',
+        'android.permission.health.READ_HEART_RATE',
         'ACCESS_BACKGROUND_LOCATION',
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',

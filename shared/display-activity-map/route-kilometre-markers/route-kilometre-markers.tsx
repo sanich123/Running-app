@@ -9,7 +9,7 @@ interface SelectedKilometre {
   number: number;
 }
 
-export default function MapKmSplit({
+export default function RouteKilometreMarkers({
   kilometresSplit,
   kilometreUnit = 'km',
 }: {

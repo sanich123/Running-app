@@ -71,9 +71,9 @@ export default function AddActivityMediaBtn({ activityId, media }: { activityId:
       onPress={handlePress}
       disabled={isDisabled}>
       {isUploading ? (
-        <ActivityIndicator size={20} color="#FFFFFF" />
+        <ActivityIndicator size={24} color="#FFFFFF" />
       ) : (
-        <Icon source="image-plus-outline" size={20} color="#FFFFFF" />
+        <Icon source="image-plus-outline" size={24} color="#FFFFFF" />
       )}
     </MapMetaButton>
   );

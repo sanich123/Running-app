@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { render } from '@testing-library/react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 const mockMap = {
   addControl: jest.fn(),
   addLayer: jest.fn(),
   addSource: jest.fn(),
   getSource: jest.fn(),
+  getContainer: jest.fn(() => ({ querySelector: jest.fn(() => null) })),
   jumpTo: jest.fn(),
   easeTo: jest.fn(),
   zoomTo: jest.fn(),
@@ -25,8 +27,24 @@ const markerConstructor = jest.fn((options: { element: HTMLDivElement; anchor: '
   void options;
   return mockPlaybackMarker;
 });
-jest.setMock('mapbox-gl', { Map: mapConstructor, Marker: markerConstructor });
+jest.setMock('mapbox-gl', {
+  AttributionControl: jest.fn(),
+  Map: mapConstructor,
+  Marker: markerConstructor,
+});
 const MapboxWeb = require('./mapbox-web').default;
+
+async function renderMapboxWeb(element: React.ReactElement) {
+  return render(
+    <SafeAreaProvider
+      initialMetrics={{
+        frame: { x: 0, y: 0, width: 390, height: 844 },
+        insets: { top: 0, right: 0, bottom: 0, left: 0 },
+      }}>
+      {element}
+    </SafeAreaProvider>,
+  );
+}
 
 function setMockDocument() {
   const createElement = jest.fn((tagName: string) => {
@@ -55,7 +73,7 @@ describe('mapbox web', () => {
     mapConstructor.mockClear();
     mockMap.remove.mockClear();
 
-    const result = await render(
+    const result = await renderMapboxWeb(
       <MapboxWeb
         boundBox={[37.6, 55.7, 37.8, 55.9]}
         routeCoordinates={[
@@ -76,7 +94,7 @@ describe('mapbox web', () => {
     mockMap.addSource.mockClear();
     mockMap.addLayer.mockClear();
     mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
-    await render(
+    await renderMapboxWeb(
       <MapboxWeb
         boundBox={[37.6, 55.7, 37.8, 55.9]}
         routeCoordinates={[
@@ -110,7 +128,7 @@ describe('mapbox web', () => {
     markerConstructor.mockClear();
     mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
 
-    await render(
+    await renderMapboxWeb(
       <MapboxWeb
         boundBox={boundBox}
         routeCoordinates={routeCoordinates}
@@ -137,7 +155,7 @@ describe('mapbox web', () => {
     };
     mockPlaybackMarker.setLngLat.mockClear();
 
-    await render(
+    await renderMapboxWeb(
       <MapboxWeb
         boundBox={[37.6, 55.7, 37.8, 55.9]}
         routeCoordinates={[
@@ -164,7 +182,7 @@ describe('mapbox web', () => {
     mockMap.addLayer.mockClear();
     mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
 
-    await render(
+    await renderMapboxWeb(
       <MapboxWeb
         boundBox={[37.6, 55.7, 37.8, 55.9]}
         routeCoordinates={[]}
@@ -213,7 +231,7 @@ describe('mapbox web', () => {
     const mapControlsRef: { current: { zoomTo: (zoomLevel: number, durationMs?: number) => void } | null } = {
       current: null,
     };
-    const result = await render(
+    const result = await renderMapboxWeb(
       <MapboxWeb
         boundBox={[37.6, 55.7, 37.8, 55.9]}
         routeCoordinates={[
@@ -266,7 +284,7 @@ describe('mapbox web', () => {
       .mockImplementationOnce(() => ({ current: {} }) as any);
     mapConstructor.mockClear();
 
-    await render(<MapboxWeb boundBox={[0, 0, 1, 1]} routeCoordinates={[]} kilometresSplit={[]} />);
+    await renderMapboxWeb(<MapboxWeb boundBox={[0, 0, 1, 1]} routeCoordinates={[]} kilometresSplit={[]} />);
 
     expect(mapConstructor).not.toHaveBeenCalled();
   });

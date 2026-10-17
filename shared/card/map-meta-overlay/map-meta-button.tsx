@@ -35,12 +35,11 @@ export default function MapMetaButton({
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    backgroundColor: 'rgba(15, 17, 22, 0.5)',
-    borderRadius: 21,
-    height: 42,
+    borderRadius: 24,
+    height: 48,
     justifyContent: 'center',
     overflow: 'hidden',
-    width: 42,
+    width: 48,
   },
   content: { alignItems: 'center', justifyContent: 'center' },
   disabled: { opacity: 0.5 },

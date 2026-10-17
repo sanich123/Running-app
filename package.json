@@ -39,6 +39,7 @@
   "dependencies": {
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
     "@expo/metro-runtime": "~58.0.14",
+    "@expo/ui": "~58.0.20",
     "@gorhom/bottom-sheet": "patch:@gorhom/bottom-sheet@npm%3A5.2.14#~/.yarn/patches/@gorhom-bottom-sheet-npm-5.2.14-369bca24fd.patch",
     "@mapbox/polyline": "^1.2.1",
     "@react-native-community/netinfo": "12.0.1",

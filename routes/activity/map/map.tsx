@@ -9,8 +9,8 @@ import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { setLocationProvider } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import BatteryOptimizationModal from '@Routes/activity/battery-optimization-modal/battery-optimization-modal';
-import MapKmSplit from '@S/display-activity-map/map-km-split/map-km-split';
 import MapRouteLine from '@S/display-activity-map/map-route-line/map-route-line';
+import RouteKilometreMarkers from '@S/display-activity-map/route-kilometre-markers/route-kilometre-markers';
 import { errorToast } from '@S/error-toast/error-toast';
 import LocationPermissions from './location-permissions/location-permissions';
 import MapControls from './map-controls/map-controls';
@@ -126,7 +126,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
             />
             <MapRouteLine locations={locationsWithPauses} />
             <PauseMarkers locations={locationsWithPauses} />
-            <MapKmSplit kilometresSplit={kilometresSplit} />
+            <RouteKilometreMarkers kilometresSplit={kilometresSplit} />
           </MapView>
           {locationSourceMessage && (
             <Surface

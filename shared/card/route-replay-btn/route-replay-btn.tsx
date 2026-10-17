@@ -24,7 +24,7 @@ export default function RouteReplayBtn({ activityId, userId }: { activityId: str
         push(`/${ROUTES.map}/${activityId}?replay=1&userId=${encodeURIComponent(userId)}`);
       }}
       disabled={isLoading}>
-      <Icon source="play-circle-outline" size={20} color="#FFFFFF" />
+      <Icon source="play-circle-outline" size={24} color="#FFFFFF" />
     </MapMetaButton>
   );
 }

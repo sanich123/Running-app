@@ -8,13 +8,13 @@ import { useAppSelector } from '@R/typed-hooks';
 import Card from '@S/card/card';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import ErrorComponent from '@S/error-component/error-component';
-import ActivityUpdateBtn from './activity-update-btn/update-btn';
-import KmSplit from './km-split/km-split';
+import ActivityActionsMenu from './activity-actions-menu/activity-actions-menu';
+import KilometreSplitTable from './kilometre-split-table/kilometre-split-table';
 import Metrics from './metrics/metrics';
 
 const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-settings-icons'));
 
-export default function CardFullView() {
+export default function ActivityDetails() {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
@@ -34,7 +34,7 @@ export default function CardFullView() {
         options={{
           headerRight: () =>
             activity?.userId && activity.userId === currentUserId ? (
-              <ActivityUpdateBtn />
+              <ActivityActionsMenu activity={activity} />
             ) : (
               <Suspense fallback={null}>
                 <LazyUsersSettingsIcons />
@@ -55,7 +55,7 @@ export default function CardFullView() {
             <>
               <Card
                 isFullView
-                isShowDeleteBtn
+                isShowDeleteBtn={false}
                 isShowDescription={!!activity.description}
                 activity={{
                   ...activity,
@@ -75,7 +75,7 @@ export default function CardFullView() {
                       marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
                     },
                   ]}>
-                  <KmSplit kilometresSplit={activity.kilometresSplit ?? []} />
+                  <KilometreSplitTable kilometresSplit={activity.kilometresSplit ?? []} />
                 </View>
               )}
             </>
