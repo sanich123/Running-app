@@ -19,7 +19,8 @@ export default function ActivityCard({
   isShowDeleteBtn,
   isShowDescription,
 }: ActivityCardProps) {
-  const { media, mapPhotoUrl, profile, sport, date, userId } = activity;
+  const { media, mapPhotoUrl, routeOnlyMapPhotoUrl, hideMap, profile, sport, date, userId } = activity;
+  const displayedMapPhotoUrl = hideMap ? routeOnlyMapPhotoUrl : mapPhotoUrl;
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width, 0) : MAX_MOBILE_WIDTH;
@@ -39,7 +40,7 @@ export default function ActivityCard({
           Platform.OS === 'web' ? styles.webStyles : null,
         ]}>
         <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
-        {mapPhotoUrl || Boolean(media?.length) ? <MediaList /> : null}
+        {displayedMapPhotoUrl || Boolean(media?.length) ? <MediaList /> : null}
         <Metrics />
         <View style={styles.likes}>
           <Likes />

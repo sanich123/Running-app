@@ -28,24 +28,38 @@ describe('Emotion btns', () => {
   it('should correctly render labels in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<EmotionBtns />, { store: mockStore });
-    [EMOTION_BTNS.english.normalLabel, EMOTION_BTNS.english.fineLabel, EMOTION_BTNS.english.fuckedLabel].map(
-      (emotion) => expect(screen.getByText(new RegExp(emotion))).toBeOnTheScreen(),
+    expect(screen.getByText(EMOTION_BTNS.english.sectionLabel)).toBeOnTheScreen();
+    expect(screen.getByText(EMOTION_BTNS.english.normalLabel)).toBeOnTheScreen();
+    expect(screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.goodInput)).toHaveProp(
+      'accessibilityLabel',
+      EMOTION_BTNS.english.fineLabel,
+    );
+    expect(screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.fuckedInput)).toHaveProp(
+      'accessibilityLabel',
+      EMOTION_BTNS.english.fuckedLabel,
     );
   });
   it('should correctly render labels in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<EmotionBtns />, { store: mockStore });
-    [EMOTION_BTNS.russian.normalLabel, EMOTION_BTNS.russian.fineLabel, EMOTION_BTNS.russian.fuckedLabel].map(
-      (emotion) => expect(screen.getByText(new RegExp(emotion))).toBeOnTheScreen(),
+    expect(screen.getByText(EMOTION_BTNS.russian.sectionLabel)).toBeOnTheScreen();
+    expect(screen.getByText(EMOTION_BTNS.russian.normalLabel)).toBeOnTheScreen();
+    expect(screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.goodInput)).toHaveProp(
+      'accessibilityLabel',
+      EMOTION_BTNS.russian.fineLabel,
+    );
+    expect(screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.fuckedInput)).toHaveProp(
+      'accessibilityLabel',
+      EMOTION_BTNS.russian.fuckedLabel,
     );
   });
   it('should correctly handle isSavingDisabled state', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setSavingDisabled(true));
     await renderWithProviders(<EmotionBtns />, { store: mockStore });
-    const normalInput = screen.getByText(EMOTION_BTNS.english.normalLabel);
-    const fuckedInput = screen.getByText(EMOTION_BTNS.english.fuckedLabel);
-    const fineInput = screen.getByText(EMOTION_BTNS.english.fineLabel);
+    const normalInput = screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.normalInput);
+    const fuckedInput = screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.fuckedInput);
+    const fineInput = screen.getByTestId(EMOTIONS_BTNS_TEST_IDS.goodInput);
     [normalInput, fuckedInput, fineInput].map((input) => expect(input).toBeDisabled());
   });
 });

@@ -123,6 +123,34 @@ describe('media list', () => {
     expect(screen.getByTestId(mapUrl).props.contentFit).toBe('cover');
   });
 
+  it('keeps the full-size map first and scrolls it left to reveal activity media in the card preview', async () => {
+    const mapUrl = 'https://cdn.example.test/activity-map.jpg';
+    const routeOnlyMapUrl = 'https://cdn.example.test/activity-route-only-map.jpg';
+    const photoUrl = 'https://images.example.test/activity-photo.jpg';
+    await renderMediaList({
+      mapPhotoUrl: mapUrl,
+      routeOnlyMapPhotoUrl: routeOnlyMapUrl,
+      media: [{ url: photoUrl, thumbnail: null }],
+    });
+
+    const mediaList = screen.getByTestId('activity-media-list');
+    const mapTileWidth = StyleSheet.flatten(screen.getByTestId('activity-map-media-container').props.style).width;
+    const mapImageStyle = StyleSheet.flatten(screen.getByTestId(mapUrl).props.style);
+    const photoWidth = StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width;
+
+    expect(mediaList.props.horizontal).toBe(true);
+    expect(mediaList.props.data.map((item: { url: string }) => item.url)).toEqual([mapUrl, photoUrl]);
+    expect(screen.getByTestId(mapUrl)).toBeOnTheScreen();
+    expect(screen.getByTestId(photoUrl)).toBeOnTheScreen();
+    expect(screen.queryByTestId(routeOnlyMapUrl)).not.toBeOnTheScreen();
+    expect(screen.getByTestId(mapUrl)).toHaveProp('contentFit', 'cover');
+    expect(screen.getByTestId(photoUrl)).toHaveProp('contentFit', 'cover');
+    expect(mapImageStyle.width).toBe(mapTileWidth);
+    expect(mapImageStyle.transform).toBeUndefined();
+    expect(photoWidth).toBeLessThan(mapTileWidth);
+    expect(mediaList.props.onContentSizeChange).toEqual(expect.any(Function));
+  });
+
   it('uses inset spacing and rounded media tiles like the reference card', async () => {
     const mapUrl = 'https://cdn.example.test/activity-map-rounded.jpg';
     await renderMediaList({ mapPhotoUrl: mapUrl, media: [] });

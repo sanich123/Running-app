@@ -81,7 +81,9 @@ export interface ActivityCardData {
   userId: string;
   media?: ActivityMediaItem[] | null;
   mapPhotoUrl?: string | null;
+  routeOnlyMapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  hideMap?: boolean;
   locationName?: string | null;
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;

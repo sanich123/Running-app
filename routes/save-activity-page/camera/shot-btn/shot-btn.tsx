@@ -3,20 +3,23 @@ import * as MediaLibrary from 'expo-media-library';
 import uuid from 'react-native-uuid';
 import { Pressable, View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { useAppendActivityMediaMutation } from '@R/services/activity/activity';
 import { addPhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import { deleteUploadedMedia } from '@U/file-sending';
 import UploadProgress from '../../upload-progress/upload-progress';
 import { uploadActivityMediaBatch } from '../../utils';
 import { CAMERA_SETTINGS, CAMERA_TEXT } from '../const';
 import type { ShotBtnProps } from '../types';
 
-export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10 }: ShotBtnProps) {
+export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10, activityId }: ShotBtnProps) {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language, saveCameraPhotosToGallery } = useAppSelector(({ settings }) => settings);
   const [isLoading, setIsLoading] = useState(false);
+  const [appendActivityMedia] = useAppendActivityMediaMutation();
   const [uploadProgress, setUploadProgress] = useState(0);
   const uploadControllerRef = useRef<AbortController | null>(null);
   const copy = CAMERA_TEXT[language];
@@ -64,8 +67,22 @@ export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10 }
 
               if (controller.signal.aborted) return;
               if (uploadedPhoto) {
-                setPhotos([...photos, uploadedPhoto]);
-                if (userId) dispatch(addPhotoUrl(uploadedPhoto));
+                let mediaToAdd = uploadedPhoto;
+                if (activityId && userId) {
+                  try {
+                    const response = await appendActivityMedia({ id: activityId, media: [uploadedPhoto] }).unwrap();
+                    const [persistedPhoto] = response.media;
+                    if (!persistedPhoto) throw new Error('Не удалось сохранить фото активности');
+                    mediaToAdd = persistedPhoto;
+                  } catch (error) {
+                    await deleteUploadedMedia(
+                      [uploadedPhoto.url, uploadedPhoto.thumbnail].filter((photo): photo is string => !!photo),
+                    );
+                    throw error;
+                  }
+                }
+                setPhotos([...photos, mediaToAdd]);
+                if (userId) dispatch(addPhotoUrl(mediaToAdd));
               }
               if (!controller.signal.aborted && saveCameraPhotosToGallery) {
                 await MediaLibrary.Asset.create(newPhoto.uri);

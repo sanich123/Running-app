@@ -1,12 +1,14 @@
 import { LANGUAGES } from '@const/enums';
+import type { ActivityPhoto } from '@R/slices/activity/types';
 
 export const MAX_ACTIVITY_MEDIA = 5;
 
 export interface UploadPhotoBtnProps {
   isDisabled: boolean;
   setIsDisabled: (arg: boolean) => void;
-  setImages: (arg: { url: string; thumbnail: string | null }[]) => void;
-  images: { url: string; thumbnail: string | null }[];
+  setImages: (arg: ActivityPhoto[]) => void;
+  images: ActivityPhoto[];
+  activityId?: string;
 }
 
 export const UPLOAD_PHOTO_BTN = {

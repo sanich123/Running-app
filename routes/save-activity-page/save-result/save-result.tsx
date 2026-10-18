@@ -15,6 +15,7 @@ import DeclineBtn from '../decline-btn/decline-btn';
 import EmotionBtns from '../emotion-btns/emotion-btns';
 import InputsDistanceTime from '../inputs-distance-time/inputs-distance-time';
 import { useManualActivityParams } from '../manual-activity-params';
+import MapVisibility from '../map-visibility/map-visibility';
 import MediaSection from '../media-section/media-section';
 import SportsBtns from '../sports-btns/sports-btns';
 import TextInputs from '../text-inputs/text-inputs';
@@ -48,8 +49,9 @@ export default function SaveResult() {
           <View style={{ paddingBottom: insets.bottom + 24 }}>
             <TextInputs />
             <SportsBtns />
-            <EmotionBtns />
             <Checkbox />
+            <EmotionBtns />
+            <MapVisibility />
             <MediaSection
               images={images}
               isEditingActivity={isEditingActivity}
@@ -71,7 +73,12 @@ export default function SaveResult() {
         </KeyboardAwareScrollView>
         {isCameraVisible && (
           <View style={styles.cameraOverlay}>
-            <CameraLauncher photos={images} setPhotos={setImages} maxPhotos={MAX_ACTIVITY_MEDIA} />
+            <CameraLauncher
+              photos={images}
+              setPhotos={setImages}
+              maxPhotos={MAX_ACTIVITY_MEDIA}
+              activityId={isEditingActivity ? activityId : undefined}
+            />
           </View>
         )}
       </View>

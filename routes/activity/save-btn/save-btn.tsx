@@ -35,6 +35,7 @@ export default function SaveBtn() {
     sport,
     emotion,
     visibility,
+    hideMap,
     manualHours,
     manualMinutes,
     manualSeconds,
@@ -74,6 +75,7 @@ export default function SaveBtn() {
               sport,
               emotion,
               visibility,
+              hideMap,
             };
             const activityDetails = { ...editableActivityDetails, media };
             const timeZone = getDeviceTimeZone();

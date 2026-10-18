@@ -96,29 +96,55 @@ jest.mock('react-native-gifted-charts', () => {
   const { View } = jest.requireActual('react-native');
   return { BarChart: View };
 });
-jest.mock('react-native-tab-view', () => {
+jest.mock('@react-native-segmented-control/segmented-control', () => {
   const { createElement } = jest.requireActual('react');
   const { Pressable, Text, View } = jest.requireActual('react-native');
-
-  return {
-    TabBar: ({ navigationState, jumpTo, testID }: any) =>
-      createElement(
-        View,
-        { testID, accessibilityRole: 'tablist' },
-        ...navigationState.routes.map(({ key, title }: { key: string; title: string }) =>
-          createElement(
-            Pressable,
-            {
-              key,
-              accessibilityRole: 'tab',
-              accessibilityLabel: title,
-              accessibilityState: { selected: navigationState.routes[navigationState.index]?.key === key },
-              onPress: () => jumpTo(key),
-            },
-            createElement(Text, null, title),
-          ),
+  const MockSegmentedControl = ({ values, selectedIndex, onChange, testID, testIDS, enabled = true }: any) =>
+    createElement(
+      View,
+      { testID, accessibilityRole: 'tablist' },
+      ...values.map((value: string, index: number) =>
+        createElement(
+          Pressable,
+          {
+            key: String(value),
+            testID: testIDS?.[index],
+            accessibilityRole: 'tab',
+            accessibilityLabel: value,
+            accessibilityState: { disabled: !enabled, selected: selectedIndex === index },
+            disabled: !enabled,
+            onPress: () => onChange({ nativeEvent: { selectedSegmentIndex: index, value } }),
+          },
+          createElement(Text, null, value),
         ),
       ),
+    );
+
+  return { __esModule: true, default: MockSegmentedControl };
+});
+jest.mock('@expo/ui', () => {
+  const { createElement } = jest.requireActual('react');
+  const { Pressable, View } = jest.requireActual('react-native');
+
+  return {
+    Host: ({ children, ...props }: any) => createElement(View, props, children),
+    Switch: ({ value, onValueChange, testID, disabled }: any) =>
+      createElement(Pressable, {
+        testID,
+        accessibilityRole: 'switch',
+        accessibilityState: { checked: value, disabled },
+        disabled,
+        onPress: () => onValueChange(!value),
+      }),
+  };
+});
+jest.mock('@expo/ui/community/bottom-sheet', () => {
+  const { createElement } = jest.requireActual('react');
+  const { View } = jest.requireActual('react-native');
+
+  return {
+    BottomSheet: ({ children }: any) => createElement(View, null, children),
+    BottomSheetView: View,
   };
 });
 jest.mock('mapbox-gl', () => ({

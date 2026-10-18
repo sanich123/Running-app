@@ -22,6 +22,7 @@ interface ActivityAdditionalInfo {
   sport: SPORTS_BTNS_VALUES;
   emotion: EMOTIONS_BTNS_VALUES;
   visibility: ActivityVisibility;
+  hideMap?: boolean;
   media: { url: string; thumbnail: null | string; blurhash?: string | null }[];
   timeZone: string;
 }
@@ -44,7 +45,10 @@ export interface WatchWorkoutsImportRequest {
   workouts: WatchWorkoutToSend[];
 }
 
-type ActivityEditableInfo = Pick<ActivityAdditionalInfo, 'title' | 'description' | 'sport' | 'emotion' | 'visibility'>;
+type ActivityEditableInfo = Pick<
+  ActivityAdditionalInfo,
+  'title' | 'description' | 'sport' | 'emotion' | 'visibility' | 'hideMap'
+>;
 type ActivityEditableMetrics = Pick<FinishedActivity, 'date' | 'distance' | 'duration' | 'speed'>;
 
 export interface ActivityUpdateRequest {

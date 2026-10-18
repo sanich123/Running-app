@@ -63,7 +63,9 @@ export interface ActivityResponse {
   sport: string;
   media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
+  routeOnlyMapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  hideMap?: boolean;
   locationName?: string | null;
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
@@ -97,7 +99,9 @@ export type ActivityListItemResponse = Pick<
   | 'sport'
   | 'media'
   | 'mapPhotoUrl'
+  | 'routeOnlyMapPhotoUrl'
   | 'mapPhotoUrlBlurhash'
+  | 'hideMap'
   | 'locationName'
   | 'weatherTemperature'
   | 'weatherWindSpeed'
@@ -132,7 +136,9 @@ export interface ActivityMutationResponse {
   sport: string;
   media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
+  routeOnlyMapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  hideMap?: boolean;
   locationName?: string | null;
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
@@ -158,7 +164,7 @@ export interface WatchWorkoutBatchImportResponse {
 
 export interface ActivityMediaMutationResponse {
   success: true;
-  media: ActivityMediaItemResponse[];
+  media: (ActivityMediaItemResponse & { id: string; activityId: string })[];
 }
 
 export interface ActivitiesResponse {
@@ -167,6 +173,12 @@ export interface ActivitiesResponse {
   hasMore: boolean;
   nextCursor: string | null;
   isLastPage?: boolean;
+}
+
+export interface HomeActivityFeedsResponse {
+  my: ActivitiesResponse;
+  followers: ActivitiesResponse;
+  favorites: ActivitiesResponse;
 }
 
 export interface ActivityMediaResponse {

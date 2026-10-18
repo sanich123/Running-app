@@ -1,6 +1,7 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { createSearchParams } from '@R/runich-api/create-search-params';
 import { runichApi } from '@R/runich-api/runich-api';
+import { HOME_FEED, HOME_FEED_DONE_CURSOR } from '@Routes/home-page/const';
 import type {
   ActivityToSend,
   ActivityUpdateRequest,
@@ -22,8 +23,13 @@ import type {
   ActivityMigrationJobResponse,
   ActivityResponse,
   ActivityFavoriteMutationResponse,
+  HomeActivityFeedsResponse,
   WatchWorkoutBatchImportResponse,
 } from '@R/runich-api/types';
+import type { HomeFeed } from '@Routes/home-page/const';
+
+const HOME_FEEDS = [HOME_FEED.my, HOME_FEED.followers, HOME_FEED.favorites] as const;
+type HomeFeedCursors = Record<HomeFeed, string>;
 
 const ACTIVITY_PAGE_SIZE = 20;
 
@@ -56,6 +62,29 @@ export const activityApi = runichApi.injectEndpoints({
       },
       query: ({ queryArg: { id }, pageParam }) =>
         `/activity/${id}/all${createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined })}`,
+      providesTags: [Tags.activities],
+    }),
+    getHomeActivityFeeds: infiniteQuery<HomeActivityFeedsResponse, void, HomeFeedCursors | null>({
+      infiniteQueryOptions: {
+        initialPageParam: null,
+        getNextPageParam: (lastPage) => {
+          if (!HOME_FEEDS.some((feed) => lastPage[feed].hasMore)) return undefined;
+
+          return Object.fromEntries(
+            HOME_FEEDS.map((feed) => [
+              feed,
+              lastPage[feed].hasMore ? (lastPage[feed].nextCursor ?? HOME_FEED_DONE_CURSOR) : HOME_FEED_DONE_CURSOR,
+            ]),
+          ) as HomeFeedCursors;
+        },
+      },
+      query: ({ pageParam }) =>
+        `/activity/home${createSearchParams({
+          take: ACTIVITY_PAGE_SIZE,
+          myCursor: pageParam?.my,
+          followersCursor: pageParam?.followers,
+          favoritesCursor: pageParam?.favorites,
+        })}`,
       providesTags: [Tags.activities],
     }),
     getAllActivityMediaByUserId: infiniteQuery<ActivityMediaResponse, GetActivityMediaRequest, string>({
@@ -154,6 +183,7 @@ export const {
   useSetActivityFavoriteMutation,
   useGetAllActivityMediaByUserIdInfiniteQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery,
+  useGetHomeActivityFeedsInfiniteQuery,
   useGetActivityByActivityIdQuery,
   useGetLocationsByActivityIdQuery,
   useGetStravaMigrationStatusQuery,

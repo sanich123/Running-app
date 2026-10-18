@@ -35,8 +35,8 @@ export const ACTIVITY_VISIBILITY_DESCRIPTIONS = {
 } as const;
 
 export const ACTIVITY_VISIBILITY_SECTION_LABELS = {
-  [LANGUAGES.english]: 'Who can see this workout?',
-  [LANGUAGES.russian]: 'Кто видит эту тренировку?',
+  [LANGUAGES.english]: 'Who can see the workout?',
+  [LANGUAGES.russian]: 'Кто видит тренировку?',
 } as const;
 
 export const ACTIVITY_VISIBILITY_ICONS = {

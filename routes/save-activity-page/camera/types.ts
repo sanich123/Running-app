@@ -28,10 +28,12 @@ export interface ShotBtnProps {
   setPhotos: (arg: ActivityMediaItem[]) => void;
   photos: ActivityMediaItem[];
   maxPhotos?: number;
+  activityId?: string;
 }
 
 export interface CameraLauncherProps {
   photos?: ActivityMediaItem[];
   setPhotos?: (arg: ActivityMediaItem[]) => void;
   maxPhotos?: number;
+  activityId?: string;
 }

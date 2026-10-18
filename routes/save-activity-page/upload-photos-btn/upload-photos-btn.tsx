@@ -2,22 +2,30 @@ import { useRef, useState } from 'react';
 import uuid from 'react-native-uuid';
 import { Platform, Pressable, View, StyleSheet } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
+import { useAppendActivityMediaMutation } from '@R/services/activity/activity';
 import { addPhotoUrls } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { getAccessToGallery } from '@U/file-sending';
+import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
 import UploadProgress from '../upload-progress/upload-progress';
 import { uploadActivityMediaBatch } from '../utils';
 import { MAX_ACTIVITY_MEDIA, UPLOAD_PHOTO_BTN } from './ const';
 import type { UploadPhotoBtnProps } from './ const';
 import type { MediaUploadControl, MediaUploadItem } from '@U/file-sending';
 
-export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, images }: UploadPhotoBtnProps) {
+export default function UploadPhotosBtn({
+  isDisabled,
+  setIsDisabled,
+  setImages,
+  images,
+  activityId,
+}: UploadPhotoBtnProps) {
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
   const [isUploading, setIsUploading] = useState(false);
+  const [appendActivityMedia] = useAppendActivityMediaMutation();
   const [uploadProgress, setUploadProgress] = useState(0);
   const uploadControllerRef = useRef<AbortController | null>(null);
   const { colors } = useTheme();
@@ -30,6 +38,20 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
 
     const uploadedMedia = uploadedResult.filter((media): media is NonNullable<typeof media> => media !== null);
     if (!uploadedMedia.length) return;
+
+    if (activityId) {
+      try {
+        const response = await appendActivityMedia({ id: activityId, media: uploadedMedia }).unwrap();
+        setImages([...images, ...response.media]);
+        dispatch(addPhotoUrls(response.media));
+      } catch (error) {
+        await deleteUploadedMedia(
+          uploadedMedia.flatMap(({ url, thumbnail }) => [url, thumbnail].filter((photo): photo is string => !!photo)),
+        );
+        throw error;
+      }
+      return;
+    }
 
     setImages([...images, ...uploadedMedia]);
     dispatch(addPhotoUrls(uploadedMedia));

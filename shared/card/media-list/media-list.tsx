@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { TouchableRipple } from 'react-native-paper';
@@ -26,10 +26,12 @@ import RouteReplayBtn from '../route-replay-btn/route-replay-btn';
 import type { DisplayedMediaItem } from './types';
 
 export default function MediaList() {
-  const { activity } = useActivityCard();
+  const { activity, isFullView } = useActivityCard();
   const {
     media,
     mapPhotoUrl,
+    routeOnlyMapPhotoUrl,
+    hideMap,
     userId: activityOwnerId,
     id,
     mapPhotoUrlBlurhash,
@@ -47,6 +49,8 @@ export default function MediaList() {
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const dispatch = useAppDispatch();
+  const mediaListRef = useRef<FlatList<DisplayedMediaItem>>(null);
+  const hasAppliedInitialOffset = useRef(false);
   const [deleteActivityMedia, { isLoading: isDeletingMedia }] = useDeleteActivityMediaMutation();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width, 0) : MAX_MOBILE_WIDTH;
   const mediaHeight = Math.min(
@@ -56,12 +60,17 @@ export default function MediaList() {
   const isOwnActivity = Boolean(activityOwnerId && activityOwnerId === currentUserId);
   const canViewReplay = activity.profile?.allowActivityReplayViewing !== false || isOwnActivity;
   const [mediaAspectRatios, setMediaAspectRatios] = useState<Record<string, number>>({});
+  const displayedMapPhotoUrl = hideMap ? routeOnlyMapPhotoUrl : mapPhotoUrl;
   const displayedData = useMemo(() => {
     const activityMedia: DisplayedMediaItem[] = (media ?? []).map((item) => ({ ...item, isMap: false }));
-    return mapPhotoUrl
-      ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash, isMap: true }, ...activityMedia]
+    return displayedMapPhotoUrl
+      ? [
+          { url: displayedMapPhotoUrl, thumbnail: null, blurhash: hideMap ? null : mapPhotoUrlBlurhash, isMap: true },
+          ...activityMedia,
+        ]
       : activityMedia;
-  }, [mapPhotoUrl, mapPhotoUrlBlurhash, media]);
+  }, [displayedMapPhotoUrl, hideMap, mapPhotoUrlBlurhash, media]);
+  const showSideBySideMedia = !isFullView && displayedData.length > 1;
   const handleDeleteMedia = useCallback(
     async (mediaId: string) => {
       try {
@@ -82,6 +91,17 @@ export default function MediaList() {
     },
     [mediaAspectRatios, mediaHeight, mediaWidth],
   );
+  const handleMediaContentSizeChange = useCallback(() => {
+    if (!showSideBySideMedia) {
+      hasAppliedInitialOffset.current = false;
+      return;
+    }
+    if (hasAppliedInitialOffset.current) return;
+    if (!mediaListRef.current) return;
+
+    hasAppliedInitialOffset.current = true;
+    mediaListRef.current.scrollToOffset({ offset: mediaWidth / 2, animated: false });
+  }, [mediaWidth, showSideBySideMedia]);
   const renderItem = useCallback(
     ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => {
       const isMap = item.isMap === true;
@@ -151,6 +171,7 @@ export default function MediaList() {
               }
               onPress={handleMediaPress}
               borderless={false}
+              style={{ height: mediaHeight, width: itemWidth }}
               accessibilityRole="button"
               accessibilityLabel={mediaAccessibilityLabel}>
               {isVideo ? (
@@ -243,12 +264,14 @@ export default function MediaList() {
 
   return (
     <FlatList
+      ref={mediaListRef}
       data={displayedData}
       renderItem={renderItem}
       horizontal
       showsHorizontalScrollIndicator={false}
       testID="activity-media-list"
       contentContainerStyle={styles.listContent}
+      onContentSizeChange={handleMediaContentSizeChange}
       initialNumToRender={Math.max(1, Math.min(displayedData.length, 3))}
       maxToRenderPerBatch={3}
       windowSize={5}

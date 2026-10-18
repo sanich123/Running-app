@@ -1,8 +1,9 @@
-import { StyleSheet, View } from 'react-native';
-import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Platform, StyleSheet, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
+import NativeSegmentedControl from '@S/segmented-control';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
-import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_ICONS, EMOTIONS_BTNS_TEST_IDS } from './const';
+import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS, EMOTIONS_BTNS_TEST_IDS } from './const';
 
 export default function EmotionBtns() {
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);
@@ -10,79 +11,61 @@ export default function EmotionBtns() {
   const { emotion } = useManualActivityParams();
   const { setEmotion } = useSetManualActivityParams();
   const { colors } = useTheme();
-  const disabled = isSavingDisabled;
   const options = [
     {
       value: EMOTIONS_BTNS_VALUES.good,
       label: EMOTION_BTNS[language].fineLabel,
-      icon: EMOTIONS_BTNS_ICONS.iconHappy,
       testID: EMOTIONS_BTNS_TEST_IDS.goodInput,
     },
     {
       value: EMOTIONS_BTNS_VALUES.normal,
       label: EMOTION_BTNS[language].normalLabel,
-      icon: EMOTIONS_BTNS_ICONS.iconNeutral,
       testID: EMOTIONS_BTNS_TEST_IDS.normalInput,
     },
     {
       value: EMOTIONS_BTNS_VALUES.fucked,
       label: EMOTION_BTNS[language].fuckedLabel,
-      icon: EMOTIONS_BTNS_ICONS.iconFucked,
       testID: EMOTIONS_BTNS_TEST_IDS.fuckedInput,
     },
   ] as const;
-
   return (
     <View style={styles.container}>
-      <Text variant="labelMedium" style={[styles.caption, { color: colors.onSurfaceVariant }]}>
-        {EMOTION_BTNS[language].sectionLabel}
-      </Text>
-      <View style={styles.options}>
-        {options.map(({ value, label, icon, testID }) => {
-          const isSelected = emotion === value;
-          return (
-            <TouchableRipple
-              key={value}
-              testID={testID}
-              disabled={disabled}
-              borderless
-              onPress={() => setEmotion(value)}
-              accessibilityRole="radio"
-              accessibilityState={{ disabled, selected: isSelected }}
-              style={[
-                styles.option,
-                {
-                  backgroundColor: isSelected ? colors.primaryContainer : colors.surface,
-                  borderColor: isSelected ? colors.primary : colors.outlineVariant,
-                },
-                disabled && styles.disabled,
-              ]}>
-              <View style={styles.optionContent}>
-                <Icon source={icon} size={28} color={isSelected ? colors.primary : colors.onSurfaceVariant} />
-                <Text variant="labelLarge" style={{ color: isSelected ? colors.onPrimaryContainer : colors.onSurface }}>
-                  {label}
-                </Text>
-              </View>
-            </TouchableRipple>
-          );
-        })}
+      <View style={styles.copy}>
+        <Text variant="labelMedium" style={{ color: colors.onSurface }}>
+          {EMOTION_BTNS[language].sectionLabel}
+        </Text>
       </View>
+      <NativeSegmentedControl
+        testID="activity-emotion"
+        testIDS={options.map(({ testID }) => testID)}
+        values={options.map(({ label }) => label)}
+        selectedIndex={options.findIndex(({ value }) => value === emotion)}
+        onChange={({ nativeEvent: { selectedSegmentIndex } }) => {
+          const selectedEmotion = options[selectedSegmentIndex]?.value;
+          if (selectedEmotion) setEmotion(selectedEmotion);
+        }}
+        enabled={!isSavingDisabled}
+        tintColor={colors.primary}
+        backgroundColor={colors.secondaryContainer}
+        fontStyle={{ color: colors.onSecondaryContainer, fontSize: 10 }}
+        activeFontStyle={{ color: colors.onPrimary, fontSize: 10, fontWeight: '600' }}
+        {...(Platform.OS === 'android' || Platform.OS === 'web' ? { sliderStyle: styles.slider } : {})}
+        style={styles.options}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { gap: 6, marginTop: 12 },
-  caption: { marginLeft: 4 },
-  options: { flexDirection: 'row', gap: 8 },
-  option: { borderRadius: 14, borderWidth: 1, flex: 1, minHeight: 78, overflow: 'hidden' },
-  optionContent: {
+  container: {
     alignItems: 'center',
-    flex: 1,
-    gap: 6,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 0,
     paddingHorizontal: 4,
-    paddingVertical: 10,
+    paddingVertical: 6,
   },
-  disabled: { opacity: 0.5 },
+  copy: { flex: 1, gap: 2, minWidth: 0 },
+  options: { borderRadius: 12, flexShrink: 0, height: 40, overflow: 'hidden', width: 216 },
+  slider: { borderColor: 'transparent', borderWidth: 0, elevation: 0, shadowOpacity: 0 },
 });

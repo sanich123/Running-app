@@ -87,5 +87,5 @@ const styles = StyleSheet.create({
     width: 30,
     zIndex: 10,
   },
-  compactCloseBtn: { top: 5 },
+  compactCloseBtn: { top: 0 },
 });

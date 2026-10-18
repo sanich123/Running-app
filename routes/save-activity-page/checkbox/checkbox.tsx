@@ -1,15 +1,9 @@
-import { StyleSheet, View } from 'react-native';
-import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Platform, StyleSheet, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
+import NativeSegmentedControl from '@S/segmented-control';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
-import {
-  ACTIVITY_VISIBILITY,
-  ACTIVITY_VISIBILITY_DESCRIPTIONS,
-  ACTIVITY_VISIBILITY_ICONS,
-  CHECKBOX,
-  CHECKBOX_TEST_ID,
-  ACTIVITY_VISIBILITY_SECTION_LABELS,
-} from './const';
+import { ACTIVITY_VISIBILITY, CHECKBOX, CHECKBOX_TEST_ID, ACTIVITY_VISIBILITY_SECTION_LABELS } from './const';
 
 export default function Checkbox() {
   const { language } = useAppSelector(({ settings }) => settings);
@@ -17,78 +11,39 @@ export default function Checkbox() {
   const { visibility } = useManualActivityParams();
   const { setVisibility } = useSetManualActivityParams();
   const { colors } = useTheme();
-  const disabled = isSavingDisabled;
   const options = [ACTIVITY_VISIBILITY.public, ACTIVITY_VISIBILITY.followers, ACTIVITY_VISIBILITY.private] as const;
 
   return (
     <View style={styles.container}>
-      <Text variant="labelMedium" style={[styles.caption, { color: colors.onSurfaceVariant }]}>
-        {ACTIVITY_VISIBILITY_SECTION_LABELS[language]}
-      </Text>
-      {options.map((value) => {
-        const isSelected = visibility === value;
-        return (
-          <TouchableRipple
-            key={value}
-            testID={value === ACTIVITY_VISIBILITY.public ? CHECKBOX_TEST_ID : `activity-visibility-${value}`}
-            disabled={disabled}
-            onPress={() => setVisibility(value)}
-            accessibilityRole="radio"
-            accessibilityState={{ disabled, selected: isSelected }}
-            style={[
-              styles.option,
-              {
-                backgroundColor: isSelected ? colors.primaryContainer : colors.surface,
-                borderColor: isSelected ? colors.primary : colors.outlineVariant,
-              },
-              disabled && styles.disabled,
-            ]}>
-            <View style={styles.optionContent}>
-              <View
-                style={[
-                  styles.iconContainer,
-                  { backgroundColor: isSelected ? colors.primary : colors.surfaceVariant },
-                ]}>
-                <Icon
-                  source={ACTIVITY_VISIBILITY_ICONS[value]}
-                  size={22}
-                  color={isSelected ? colors.onPrimary : colors.onSurfaceVariant}
-                />
-              </View>
-              <View style={styles.copy}>
-                <Text variant="titleSmall" style={{ color: colors.onSurface }}>
-                  {CHECKBOX[language][value]}
-                </Text>
-                <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                  {ACTIVITY_VISIBILITY_DESCRIPTIONS[language][value]}
-                </Text>
-              </View>
-              <Icon
-                source={isSelected ? 'check-circle' : 'circle-outline'}
-                size={24}
-                color={isSelected ? colors.primary : colors.outline}
-              />
-            </View>
-          </TouchableRipple>
-        );
-      })}
+      <View style={styles.copy}>
+        <Text variant="labelMedium" style={{ color: colors.onSurface }}>
+          {ACTIVITY_VISIBILITY_SECTION_LABELS[language]}
+        </Text>
+      </View>
+      <NativeSegmentedControl
+        testID={CHECKBOX_TEST_ID}
+        testIDS={options.map((value) => `activity-visibility-${value}`)}
+        values={options.map((value) => CHECKBOX[language][value])}
+        selectedIndex={options.indexOf(visibility)}
+        onChange={({ nativeEvent: { selectedSegmentIndex } }) => {
+          const selectedVisibility = options[selectedSegmentIndex];
+          if (selectedVisibility) setVisibility(selectedVisibility);
+        }}
+        enabled={!isSavingDisabled}
+        tintColor={colors.primary}
+        backgroundColor={colors.secondaryContainer}
+        fontStyle={{ color: colors.onSecondaryContainer, fontSize: 10 }}
+        activeFontStyle={{ color: colors.onPrimary, fontSize: 10, fontWeight: '600' }}
+        {...(Platform.OS === 'android' || Platform.OS === 'web' ? { sliderStyle: styles.slider } : {})}
+        style={styles.switcher}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { gap: 8, marginTop: 12 },
-  caption: { marginLeft: 4 },
-  option: { borderRadius: 10, borderWidth: 1, minHeight: 52, overflow: 'hidden' },
-  optionContent: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    gap: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  iconContainer: { alignItems: 'center', borderRadius: 16, height: 32, justifyContent: 'center', width: 32 },
-  copy: { flex: 1 },
-  disabled: { opacity: 0.5 },
+  container: { alignItems: 'center', flexDirection: 'row', marginTop: 0, paddingHorizontal: 4, paddingVertical: 6 },
+  copy: { flexShrink: 0, width: '33.333%' },
+  switcher: { borderRadius: 12, flexShrink: 0, height: 40, overflow: 'hidden', width: '66.667%' },
+  slider: { borderColor: 'transparent', borderWidth: 0, elevation: 0, shadowOpacity: 0 },
 });

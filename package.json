@@ -34,7 +34,8 @@
     "web:export:production": "EXPO_PUBLIC_BASE_URL=https://api.runich-app.ru EXPO_PUBLIC_MAPBOX_TOKEN=pk.eyJ1Ijoic2FuaWNoMTIzIiwiYSI6ImNtc3Z0MnV5ZDA1ZW4yd3M3d212NTg1dGsifQ.ETJENZqd5m-yPfVbnCf4pg expo export -p web -c",
     "web:serve:single": "npx serve dist --single",
     "prepare": "husky",
-    "deps": "yarn npm-check-updates"
+    "deps": "yarn npm-check-updates",
+    "lint": "expo lint"
   },
   "dependencies": {
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
@@ -43,6 +44,7 @@
     "@gorhom/bottom-sheet": "patch:@gorhom/bottom-sheet@npm%3A5.2.14#~/.yarn/patches/@gorhom-bottom-sheet-npm-5.2.14-369bca24fd.patch",
     "@mapbox/polyline": "^1.2.1",
     "@react-native-community/netinfo": "12.0.1",
+    "@react-native-segmented-control/segmented-control": "2.5.7",
     "@react-native-vector-icons/material-design-icons": "^13.1.5",
     "@reduxjs/toolkit": "^2.13.0",
     "@rnmapbox/maps": "patch:@rnmapbox/maps@npm%3A10.3.5#~/.yarn/patches/@rnmapbox-maps-npm-10.3.5-2398561610.patch",
@@ -106,7 +108,6 @@
     "react-native-safe-area-context": "~5.10.1",
     "react-native-screens": "~4.30.0",
     "react-native-svg": "15.16.0",
-    "react-native-tab-view": "^4.3.4",
     "react-native-toast-message": "2.5.2",
     "react-native-url-polyfill": "^4.0.0",
     "react-native-uuid": "^2.0.4",

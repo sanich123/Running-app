@@ -6,10 +6,18 @@ import { changeLanguage, setSaveCameraPhotosToGallery } from '@R/slices/settings
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { deleteUploadedMedia } from '@U/file-sending';
 import ShotBtn from './shot-btn';
 import { uploadActivityMediaBatch } from '../../utils';
 
 jest.mock('expo-media-library', () => ({ Asset: { create: jest.fn().mockResolvedValue({}) } }));
+jest.mock('@U/file-sending', () => ({ deleteUploadedMedia: jest.fn().mockResolvedValue(true) }));
+jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
+const mockAppendActivityMedia = jest.fn();
+jest.mock('@R/services/activity/activity', () => ({
+  ...jest.requireActual('@R/services/activity/activity'),
+  useAppendActivityMediaMutation: () => [mockAppendActivityMedia],
+}));
 jest.mock('../../utils', () => ({ uploadActivityMediaBatch: jest.fn() }));
 
 const mockUploadActivityMediaBatch = uploadActivityMediaBatch as jest.Mock;
@@ -20,6 +28,7 @@ describe('shot btn', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(setSaveCameraPhotosToGallery(false));
     mockUploadActivityMediaBatch.mockReset();
+    mockAppendActivityMedia.mockReset();
     (MediaLibrary.Asset.create as jest.Mock).mockReset().mockResolvedValue({});
   });
 
@@ -79,6 +88,58 @@ describe('shot btn', () => {
       url: 'https://cdn.example.com/photo.jpg',
       thumbnail: 'thumb',
     });
+  });
+
+  it('persists a camera photo to the activity being edited', async () => {
+    const user = userEvent.setup();
+    const setPhotos = jest.fn();
+    mockStore.dispatch(setMockUserId('shot-user'));
+    const uploadedPhoto = { url: 'https://temporary/photo.jpg', thumbnail: 'https://temporary/photo-thumb.jpg' };
+    const persistedPhoto = { id: 'media-id', activityId: 'activity-id', ...uploadedPhoto };
+    mockUploadActivityMediaBatch.mockResolvedValue([uploadedPhoto]);
+    mockAppendActivityMedia.mockReturnValue({
+      unwrap: jest.fn().mockResolvedValue({ success: true, media: [persistedPhoto] }),
+    });
+    const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
+    await renderWithProviders(
+      <ShotBtn
+        cameraRef={{ current: { takePictureAsync } } as any}
+        setPhotos={setPhotos}
+        photos={[]}
+        activityId="activity-id"
+      />,
+    );
+
+    await user.press(screen.getByTestId('camera-shot-button'));
+
+    await waitFor(() => expect(setPhotos).toHaveBeenCalledWith([persistedPhoto]));
+    expect(mockAppendActivityMedia).toHaveBeenCalledWith({ id: 'activity-id', media: [uploadedPhoto] });
+    expect(deleteUploadedMedia).not.toHaveBeenCalled();
+    expect(mockStore.getState().activity.media).toContainEqual(persistedPhoto);
+  });
+
+  it('removes the uploaded temporary photo if the server returns no persisted media', async () => {
+    const user = userEvent.setup();
+    const setPhotos = jest.fn();
+    mockStore.dispatch(setMockUserId('shot-user'));
+    const uploadedPhoto = { url: 'https://temporary/photo.jpg', thumbnail: null };
+    mockUploadActivityMediaBatch.mockResolvedValue([uploadedPhoto]);
+    mockAppendActivityMedia.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({ success: true, media: [] }) });
+    const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
+    await renderWithProviders(
+      <ShotBtn
+        cameraRef={{ current: { takePictureAsync } } as any}
+        setPhotos={setPhotos}
+        photos={[]}
+        activityId="activity-id"
+      />,
+    );
+
+    await user.press(screen.getByTestId('camera-shot-button'));
+
+    await waitFor(() => expect(deleteUploadedMedia).toHaveBeenCalledWith([uploadedPhoto.url]));
+    expect(setPhotos).not.toHaveBeenCalled();
+    expect(errorToastModule.errorToast).toHaveBeenCalled();
   });
 
   it('shows upload progress and cancels a camera upload', async () => {

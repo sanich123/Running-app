@@ -43,6 +43,7 @@ export default function EditActivityButton({ activity }: EditActivityButtonProps
             sport: activity.sport,
             emotion: activity.emotion,
             visibility: activity.visibility ?? ACTIVITY_VISIBILITY.public,
+            hideMap: String(Boolean(activity.hideMap)),
           },
         });
       }}

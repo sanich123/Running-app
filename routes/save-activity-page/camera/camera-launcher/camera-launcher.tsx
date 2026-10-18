@@ -19,6 +19,7 @@ export default function CameraLauncher({
   photos: controlledPhotos,
   setPhotos: controlledSetPhotos,
   maxPhotos = 10,
+  activityId,
 }: CameraLauncherProps = {}) {
   const cameraRef = useRef<CameraView>(null);
   const [localPhotos, setLocalPhotos] = useState<NonNullable<CameraLauncherProps['photos']>>([]);
@@ -85,12 +86,26 @@ export default function CameraLauncher({
             <View style={styles.bottomArea}>
               {photos.length > 0 && (
                 <View style={styles.previewPanel}>
-                  <PreviewImages setImages={setPhotos} images={photos} isDisabled={false} compact horizontal />
+                  <PreviewImages
+                    setImages={setPhotos}
+                    images={photos}
+                    isDisabled={false}
+                    compact
+                    horizontal
+                    activityId={activityId}
+                    isPersistedActivityMedia={Boolean(activityId)}
+                  />
                 </View>
               )}
               <View style={styles.controls}>
                 <FlashBtn setFlashEnable={setFlashEnable} flashEnable={flashEnable} />
-                <ShotBtn cameraRef={cameraRef} setPhotos={setPhotos} photos={photos} maxPhotos={maxPhotos} />
+                <ShotBtn
+                  cameraRef={cameraRef}
+                  setPhotos={setPhotos}
+                  photos={photos}
+                  maxPhotos={maxPhotos}
+                  activityId={activityId}
+                />
                 <ChangeView setType={setType} type={type} />
               </View>
             </View>
