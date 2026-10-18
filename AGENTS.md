@@ -1,5 +1,9 @@
 # Project instructions
 
+## Shared instructions
+
+- Keep `AGENTS.md` synchronized between Runich and Clean Car: whenever instruction changes are made in either project, apply the same changes to the counterpart file in the other project during the same task, while preserving project-specific instructions.
+
 ## JSX and TSX components
 
 - Put every `.jsx` and `.tsx` component in its own folder under its parent component folder, for example `parent/child/child.tsx`.
