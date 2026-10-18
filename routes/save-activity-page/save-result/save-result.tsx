@@ -9,6 +9,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import SaveBtn from '@Routes/activity/save-btn/save-btn';
 import Checkbox from '@Routes/save-activity-page/checkbox/checkbox';
 import DatePickerWeb from '@Routes/save-activity-page/date-picker-web/date-picker-web';
+import { getLocationJournalProgress } from '@U/location/location-journal';
 import CameraLauncher from '../camera/camera-launcher/camera-launcher';
 import DateTimePicker from '../date-picker/date-time-picker/date-time-picker';
 import DeclineBtn from '../decline-btn/decline-btn';
@@ -25,10 +26,13 @@ import type { ActivityPhoto } from '@R/slices/activity/types';
 export default function SaveResult() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const { activityId, isCameraVisible, isManualAdding, isEditingActivity } = useManualActivityParams();
-  const { media } = useAppSelector(({ activity }) => activity);
+  const { activityId, isCameraVisible, isManualAdding, isEditingActivity, mode } = useManualActivityParams();
+  const { finishedActivity, media } = useAppSelector(({ activity }) => activity);
   const [images, setImages] = useState<ActivityPhoto[]>(media);
   const shouldShowActivityDetails = isManualAdding || isEditingActivity;
+  const hasTrackedLocations =
+    mode === 'tracked' &&
+    Boolean(finishedActivity.routeJournalId && getLocationJournalProgress(finishedActivity.routeJournalId)?.pointCount);
   const maximumDate = isManualAdding ? new Date() : undefined;
 
   return (
@@ -51,7 +55,7 @@ export default function SaveResult() {
             <SportsBtns />
             <Checkbox />
             <EmotionBtns />
-            <MapVisibility />
+            {hasTrackedLocations ? <MapVisibility /> : null}
             <MediaSection
               images={images}
               isEditingActivity={isEditingActivity}
