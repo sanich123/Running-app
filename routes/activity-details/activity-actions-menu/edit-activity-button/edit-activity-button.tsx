@@ -11,7 +11,7 @@ import type { EditActivityButtonProps } from './types';
 export default function EditActivityButton({ activity }: EditActivityButtonProps) {
   const { push } = useRouter();
   const dispatch = useAppDispatch();
-  const language = useAppSelector(({ settings }) => settings.language);
+  const { language } = useAppSelector(({ settings }) => settings);
 
   return (
     <MenuItem

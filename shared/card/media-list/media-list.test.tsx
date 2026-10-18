@@ -116,18 +116,6 @@ describe('media list', () => {
     expect(screen.queryByTestId('activity-favorite-button')).not.toBeOnTheScreen();
   });
 
-  it('shows visible feedback while the map image is being pressed', async () => {
-    const mapUrl = 'https://cdn.example.test/activity-map-press.jpg';
-    await renderMediaList({ mapPhotoUrl: mapUrl, media: [] });
-
-    const mapTouchTarget = screen.getByRole('button', { name: 'Открыть карту тренировки' });
-    await fireEvent(mapTouchTarget, 'pressIn');
-    expect(screen.getByTestId('activity-map-press-overlay')).toBeOnTheScreen();
-
-    await fireEvent(mapTouchTarget, 'pressOut');
-    expect(screen.queryByTestId('activity-map-press-overlay')).not.toBeOnTheScreen();
-  });
-
   it('keeps the complete map image visible in the card preview', async () => {
     const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
     await renderMediaList({ mapPhotoUrl: mapUrl, media: [] });
@@ -336,10 +324,7 @@ describe('media list', () => {
     expect(StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width).not.toBe(initialWidth);
 
     const longPressMedia = async () => {
-      await fireEvent(touchTarget, 'pressIn');
       await fireEvent(touchTarget, 'longPress');
-      await fireEvent(touchTarget, 'pressOut');
-      await fireEvent.press(touchTarget);
     };
 
     await longPressMedia();

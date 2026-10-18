@@ -19,6 +19,10 @@
 
 - Keep a callback inline in its event handler when it is used by only one handler. Extract it into a named variable only when it is shared by multiple handlers.
 
+## Redux selectors
+
+- In new or modified code, destructure values from the selected state slice instead of selecting individual properties in the `useAppSelector` callback. For example, use `const { userId } = useAppSelector(({ auth }) => auth);` rather than `const userId = useAppSelector(({ auth }) => auth.userId);`.
+
 ## Helper functions
 
 - Do not create a helper for a simple one-line expression used once; keep it at the call site. Extract a helper when the logic is reused, non-obvious, or a useful name makes the domain intent clearer.

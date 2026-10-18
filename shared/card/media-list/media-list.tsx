@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { TouchableRipple, useTheme } from 'react-native-paper';
+import { TouchableRipple } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { createSearchParams } from '@R/runich-api/create-search-params';
@@ -12,7 +12,6 @@ import ActivityMediaDeleteBtn from '@S/activity-media/delete-btn';
 import AddActivityMediaBtn from '@S/card/add-media-btn/add-media-btn';
 import CustomImage from '@S/custom-image/custom-image';
 import { errorToast } from '@S/error-toast/error-toast';
-import useLongPressGuard from '@S/pressable/use-long-press-guard';
 import { useActivityCard } from '../context';
 import {
   ACTIVITY_MEDIA_ASPECT_RATIO,
@@ -46,10 +45,7 @@ export default function MediaList() {
     emotion,
     profile,
   } = activity;
-  const [isMapPressed, setIsMapPressed] = useState(false);
   const [selectedMediaId, setSelectedMediaId] = useState<string | null>(null);
-  const longPressGuard = useLongPressGuard();
-  const { dark } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { width } = useWindowDimensions();
@@ -102,7 +98,6 @@ export default function MediaList() {
         );
       };
       const handleMediaPress = () => {
-        if (!longPressGuard.shouldHandlePress()) return;
         if (isMap && profile?.allowActivityReplayViewing === false) {
           return errorToast('Пользователь запретил просматривать информацию о своем маршруте');
         }
@@ -170,17 +165,9 @@ export default function MediaList() {
         ) : (
           <TouchableRipple
             testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
-            onPressIn={() => {
-              longPressGuard.resetForGesture();
-              if (isMap) setIsMapPressed(true);
-            }}
-            onPressOut={() => {
-              if (isMap) setIsMapPressed(false);
-            }}
             onLongPress={
               !isMap && isOwnActivity && item.id
                 ? () => {
-                    longPressGuard.markLongPress();
                     setSelectedMediaId((selectedId) => (selectedId === item.id ? null : (item.id ?? null)));
                   }
                 : undefined
@@ -212,17 +199,6 @@ export default function MediaList() {
           ) : null}
           {isMap ? (
             <>
-              {isMapPressed ? (
-                <View
-                  pointerEvents="none"
-                  style={[
-                    StyleSheet.absoluteFill,
-                    styles.mapPressOverlay,
-                    { backgroundColor: dark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)' },
-                  ]}
-                  testID="activity-map-press-overlay"
-                />
-              ) : null}
               <MapMetaOverlay
                 locationName={locationName}
                 weatherTemperature={weatherTemperature}
@@ -251,8 +227,6 @@ export default function MediaList() {
       selectedMediaId,
       language,
       isDeletingMedia,
-      isMapPressed,
-      dark,
       dispatch,
       locationName,
       weatherTemperature,
@@ -264,7 +238,6 @@ export default function MediaList() {
       media,
       canViewReplay,
       activityOwnerId,
-      longPressGuard,
       profile?.allowActivityReplayViewing,
       push,
       handleDeleteMedia,
@@ -315,8 +288,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 8,
     zIndex: 3,
-  },
-  mapPressOverlay: {
-    zIndex: 1,
   },
 });

@@ -28,6 +28,7 @@ export default function CardDeleteBtn() {
     dispatch(startLoading());
     try {
       await deleteActivityById(activityId).unwrap();
+      setIsConfirmDialogVisible(false);
       back();
     } catch (error) {
       errorToast('', error);
@@ -54,11 +55,11 @@ export default function CardDeleteBtn() {
         title={CARD_DELETE_BTN[language].deleteActivity}
         message={CARD_DELETE_BTN[language].question}
         confirmText={CARD_DELETE_BTN[language].accept}
+        cancelText={CARD_DELETE_BTN[language].cancel}
+        destructive
+        loading={isDeleteRequestLoading}
         onDismiss={() => setIsConfirmDialogVisible(false)}
-        onConfirm={async () => {
-          setIsConfirmDialogVisible(false);
-          await successHandler();
-        }}
+        onConfirm={successHandler}
       />
     </View>
   );

@@ -6,15 +6,20 @@ import MenuView from './menu-view/menu-view';
 import type { ActivityActionsMenuProps } from './types';
 
 export default function ActivityActionsMenu({ activity }: ActivityActionsMenuProps) {
-  const language = useAppSelector(({ settings }) => settings.language);
-  const userId = useAppSelector(({ auth }) => auth.userId);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const { userId } = useAppSelector(({ auth }) => auth);
 
   if (userId !== activity.userId) return null;
 
   return (
-    <MenuView accessibilityLabel={ACTIVITY_ACTIONS_MENU[language].accessibilityLabel}>
-      <EditActivityButton activity={activity} />
-      <DeleteActivityButton activity={activity} />
-    </MenuView>
+    <DeleteActivityButton
+      activity={activity}
+      renderMenu={(deleteButton) => (
+        <MenuView accessibilityLabel={ACTIVITY_ACTIONS_MENU[language].accessibilityLabel}>
+          <EditActivityButton activity={activity} />
+          {deleteButton}
+        </MenuView>
+      )}
+    />
   );
 }

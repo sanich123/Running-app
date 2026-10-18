@@ -1,4 +1,3 @@
-import { fetch as getNetworkState } from '@react-native-community/netinfo';
 import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
@@ -19,7 +18,6 @@ import { MAX_MEDIA_BATCH_SIZE, MAX_MEDIA_FILE_SIZE } from './file-sending/file-u
 
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
 jest.mock('expo-video-thumbnails', () => ({ getThumbnailAsync: jest.fn() }));
-jest.mock('@react-native-community/netinfo', () => ({ fetch: jest.fn() }));
 jest.mock('react-native-compressor', () => ({
   Image: { compress: jest.fn() },
   Video: { compress: jest.fn() },
@@ -29,7 +27,6 @@ jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 const originalPlatform = Platform.OS;
 const uploadMedia = jest.fn() as jest.MockedFunction<UploadMediaRequest>;
 const uploadMediaBatch = jest.fn() as jest.MockedFunction<UploadMediaBatchRequest>;
-const mockGetNetworkState = getNetworkState as jest.MockedFunction<typeof getNetworkState>;
 const mockErrorToast = errorToast as jest.MockedFunction<typeof errorToast>;
 const originalDocumentDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'document');
 const originalCreateObjectURLDescriptor = Object.getOwnPropertyDescriptor(URL, 'createObjectURL');
@@ -65,7 +62,6 @@ describe('file sending', () => {
     (ImageCompressor.compress as jest.Mock).mockResolvedValue('compressed-image.jpg');
     (VideoCompressor.compress as jest.Mock).mockResolvedValue('compressed-video.mp4');
     (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 1_000, duration: 10 });
-    mockGetNetworkState.mockResolvedValue({ isConnected: true, isInternetReachable: true } as never);
     uploadMedia.mockResolvedValue({
       url: 'https://cdn.example/photo.jpg',
       key: 'user/photo.jpg',
@@ -122,8 +118,7 @@ describe('file sending', () => {
     expect(body.get('feedbackId')).toBe('feedback-id');
   });
 
-  it('warns about an offline network without blocking the upload attempt', async () => {
-    mockGetNetworkState.mockResolvedValue({ isConnected: false, isInternetReachable: false } as never);
+  it('does not show an offline warning when the upload succeeds', async () => {
     const compressedFile = {
       file: 'compressed-image.jpg',
       originalName: 'photo.jpg',
@@ -136,7 +131,7 @@ describe('file sending', () => {
       expect.objectContaining({ url: 'https://cdn.example/photo.jpg' }),
     );
     expect(uploadMedia).toHaveBeenCalled();
-    expect(errorToast).toHaveBeenCalledWith('Отсутствует соединение с Интернет. Попытка загрузки будет продолжена.');
+    expect(mockErrorToast).not.toHaveBeenCalled();
   });
 
   it('uploads a batch with repeated files and a manifest', async () => {
@@ -376,29 +371,8 @@ describe('file sending', () => {
     expect(errorToast).toHaveBeenLastCalledWith('Ошибка во время сжатия видео', expect.any(Error));
   });
 
-  it('allows upload to proceed when network state lookup fails or is unknown', async () => {
-    mockGetNetworkState.mockRejectedValueOnce(new Error('network state unavailable'));
-    const compressedFile = {
-      file: 'compressed-image.jpg',
-      originalName: 'photo.jpg',
-      extension: 'jpg',
-      isVideo: false,
-      mimeType: 'image/jpeg',
-    };
-
-    await expect(uploadMediaFile(compressedFile, undefined, uploadMedia)).resolves.toEqual(
-      expect.objectContaining({ url: 'https://cdn.example/photo.jpg' }),
-    );
-    mockGetNetworkState.mockResolvedValueOnce({ isConnected: null, isInternetReachable: null } as never);
-    await expect(uploadMediaFile(compressedFile, undefined, uploadMedia)).resolves.toEqual(
-      expect.objectContaining({ url: 'https://cdn.example/photo.jpg' }),
-    );
-    expect(errorToast).not.toHaveBeenCalled();
-  });
-
   it('returns null for empty batches and null server results', async () => {
     await expect(uploadMediaFiles([], undefined, [], uploadMediaBatch)).resolves.toEqual([]);
-    expect(mockGetNetworkState).not.toHaveBeenCalled();
     expect(uploadMediaBatch).not.toHaveBeenCalled();
 
     uploadMediaBatch.mockResolvedValueOnce(null as never);

@@ -1,4 +1,3 @@
-import { fetch as getNetworkState } from '@react-native-community/netinfo';
 import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
@@ -87,7 +86,6 @@ export async function uploadMediaFile(
   control?: MediaUploadControl,
 ): Promise<UploadedPhotoResponse | null> {
   try {
-    await ensureNetworkConnection(control);
     const formData = createMediaUploadFormData({
       file: compressedFile.file,
       originalName: compressedFile.originalName,
@@ -116,7 +114,6 @@ export async function uploadMediaFiles(
   if (!compressedFiles.length) return [];
 
   try {
-    await ensureNetworkConnection(control);
     const formData = createMediaUploadBatchFormData({
       files: compressedFiles,
       uploadOptions,
@@ -273,19 +270,5 @@ async function awaitUploadRequest<TResult>(
     return await request.unwrap();
   } finally {
     control?.signal?.removeEventListener('abort', abortRequest);
-  }
-}
-
-async function ensureNetworkConnection(control?: MediaUploadControl) {
-  if (control?.signal?.aborted) return;
-
-  let networkState: Awaited<ReturnType<typeof getNetworkState>> | null = null;
-  try {
-    networkState = await getNetworkState();
-  } catch {
-    return;
-  }
-  if (networkState?.isConnected === false || networkState?.isInternetReachable === false) {
-    errorToast('Отсутствует соединение с Интернет. Попытка загрузки будет продолжена.');
   }
 }

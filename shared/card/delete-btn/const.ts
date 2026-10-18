@@ -2,14 +2,16 @@ import { LANGUAGES } from '../../../constants/enums';
 
 export const CARD_DELETE_BTN = {
   [LANGUAGES.english]: {
-    deleteActivity: 'Deleteing activity',
-    question: 'Are you sure?',
-    accept: 'Yes, I am sure',
+    deleteActivity: 'Delete activity?',
+    question: 'This action cannot be undone.',
+    accept: 'Delete',
+    cancel: 'Cancel',
   },
   [LANGUAGES.russian]: {
-    deleteActivity: 'Удаление активности',
-    question: 'Вы уверены?',
-    accept: 'Да, я уверен',
+    deleteActivity: 'Удалить активность?',
+    question: 'Это действие нельзя отменить.',
+    accept: 'Удалить',
+    cancel: 'Отмена',
   },
 } as const;
 

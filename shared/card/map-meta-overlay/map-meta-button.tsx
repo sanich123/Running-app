@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, View, type GestureResponderEvent } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
+import { StyleSheet, type GestureResponderEvent } from 'react-native';
+import { IconButton } from 'react-native-paper';
 
 interface MapMetaButtonProps {
   accessibilityLabel: string;
@@ -18,29 +18,26 @@ export default function MapMetaButton({
   testID,
 }: MapMetaButtonProps) {
   return (
-    <TouchableRipple
+    <IconButton
       testID={testID}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
+      icon={() => children}
+      size={24}
+      iconColor="#FFFFFF"
       disabled={disabled}
       onPress={onPress}
-      style={[styles.container, disabled && styles.disabled]}>
-      <View pointerEvents="none" style={styles.content}>
-        {children}
-      </View>
-    </TouchableRipple>
+      rippleColor="rgba(255, 255, 255, 0.24)"
+      style={styles.button}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    borderRadius: 24,
-    height: 48,
-    justifyContent: 'center',
-    overflow: 'hidden',
-    width: 48,
+  button: {
+    borderRadius: 20,
+    height: 40,
+    margin: 0,
+    width: 40,
   },
-  content: { alignItems: 'center', justifyContent: 'center' },
-  disabled: { opacity: 0.5 },
 });
