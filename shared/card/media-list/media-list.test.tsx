@@ -48,7 +48,6 @@ function renderMediaList(activity: Partial<ActivityCardData>) {
         value={{
           activity: { ...defaultActivity, ...activity },
           isFullView: false,
-          isShowDeleteBtn: false,
           isShowDescription: false,
         }}>
         <MediaList />

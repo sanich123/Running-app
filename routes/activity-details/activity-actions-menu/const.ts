@@ -18,3 +18,18 @@ export const ACTIVITY_ACTIONS_MENU_TEST_IDS = {
   edit: 'activity-actions-menu-edit',
   delete: 'activity-actions-menu-delete',
 } as const;
+
+export const ACTIVITY_DELETE_CONFIRMATION = {
+  [LANGUAGES.english]: {
+    deleteActivity: 'Delete activity?',
+    question: 'This action cannot be undone.',
+    accept: 'Delete',
+    cancel: 'Cancel',
+  },
+  [LANGUAGES.russian]: {
+    deleteActivity: 'Удалить активность?',
+    question: 'Это действие нельзя отменить.',
+    accept: 'Удалить',
+    cancel: 'Отмена',
+  },
+} as const;

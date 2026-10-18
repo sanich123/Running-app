@@ -1,10 +1,11 @@
 import { screen } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
+import { runichApi } from '@R/runich-api/runich-api';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { getAverageCadence, getSpeedInKmPerHour } from '@U/location/location-utils';
@@ -18,6 +19,11 @@ jest.mock('expo-router', () => ({
 }));
 
 describe('Home activity full view', () => {
+  beforeEach(() => {
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setMockUserId('viewer-1'));
+  });
+
   it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<Metrics />, { store: mockStore });

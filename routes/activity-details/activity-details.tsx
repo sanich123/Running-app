@@ -25,7 +25,10 @@ export default function ActivityDetails() {
     error,
     isError,
     refetch,
-  } = useGetActivityByActivityIdQuery(`${activityId}`, { skip: !activityId });
+  } = useGetActivityByActivityIdQuery(
+    { activityId: `${activityId}`, viewerId: currentUserId ?? '' },
+    { skip: !activityId || !currentUserId },
+  );
 
   return (
     <>
@@ -54,7 +57,6 @@ export default function ActivityDetails() {
             <>
               <Card
                 isFullView
-                isShowDeleteBtn={false}
                 isShowDescription={!!activity.description}
                 activity={{
                   ...activity,

@@ -19,6 +19,7 @@ export interface ProfileSettings {
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;
+  allowActivityHeartRateViewing?: boolean;
   allowActivitySharing?: boolean;
   hideActivityStatistics?: boolean;
   hideFollowingList?: boolean;

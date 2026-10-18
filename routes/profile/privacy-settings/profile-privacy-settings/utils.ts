@@ -6,6 +6,7 @@ export function getPrivacyValues(props: ProfilePrivacySettingsProps): ProfilePri
     allowNewFollowers: props.allowNewFollowers !== false,
     allowActivityInteractions: props.allowActivityInteractions,
     allowActivityReplayViewing: props.allowActivityReplayViewing !== false,
+    allowActivityHeartRateViewing: props.allowActivityHeartRateViewing === true,
     allowActivitySharing: props.allowActivitySharing !== false,
     hideActivityStatistics: props.hideActivityStatistics,
     hideFollowingList: props.hideFollowingList,

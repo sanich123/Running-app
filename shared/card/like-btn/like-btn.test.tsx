@@ -32,7 +32,6 @@ function renderLikeBtn({
           likesLength,
         },
         isFullView: false,
-        isShowDeleteBtn: false,
         isShowDescription: false,
       }}>
       <ActivityCardLikeBtn />

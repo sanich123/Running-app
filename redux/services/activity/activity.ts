@@ -19,6 +19,7 @@ import type {
   ActivityMutationResponse,
   ActivityMediaMutationResponse,
   ActivityLocationsResponse,
+  ActivityChartDataResponse,
   ActivityMediaResponse,
   ActivityMigrationJobResponse,
   ActivityResponse,
@@ -96,14 +97,18 @@ export const activityApi = runichApi.injectEndpoints({
         `/activity/${userId}/media${createSearchParams({ take, cursor: pageParam || undefined })}`,
       providesTags: [Tags.activities],
     }),
-    getActivityByActivityId: query<ActivityResponse | null, string>({
-      query: (id: string) => `/activity/activityId/${id}`,
-      providesTags: (result, error, arg) => [Tags.activities, { type: Tags.activities, id: arg }],
+    getActivityByActivityId: query<ActivityResponse | null, { activityId: string; viewerId: string }>({
+      query: ({ activityId }) => `/activity/activityId/${activityId}`,
+      providesTags: (result, error, { activityId }) => [Tags.activities, { type: Tags.activities, id: activityId }],
     }),
     getLocationsByActivityId: query<ActivityLocationsResponse | null, GetActivityLocationsRequest>({
       query: ({ activityId, replay }: GetActivityLocationsRequest) =>
         `/activity/${activityId}/locations${createSearchParams({ replay: replay || undefined })}`,
       providesTags: [Tags.activities],
+    }),
+    getActivityChartData: query<ActivityChartDataResponse | null, { activityId: string; viewerId: string }>({
+      query: ({ activityId }) => '/activity/' + activityId + '/chart-data',
+      providesTags: (result, error, { activityId }) => [Tags.activities, { type: Tags.activities, id: activityId }],
     }),
     getStravaMigrationStatus: query<ActivityMigrationJobResponse, string>({
       query: (jobId: string) => `/activity/migration-strava/jobs/${jobId}`,
@@ -186,6 +191,7 @@ export const {
   useGetHomeActivityFeedsInfiniteQuery,
   useGetActivityByActivityIdQuery,
   useGetLocationsByActivityIdQuery,
+  useGetActivityChartDataQuery,
   useGetStravaMigrationStatusQuery,
   useGetCurrentStravaMigrationStatusQuery,
   useAddActivityByUserIdMutation,

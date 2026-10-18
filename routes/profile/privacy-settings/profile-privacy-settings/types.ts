@@ -6,6 +6,7 @@ export interface ProfilePrivacySettingsProps {
   allowNewFollowers?: boolean;
   allowActivityInteractions: boolean;
   allowActivityReplayViewing?: boolean;
+  allowActivityHeartRateViewing?: boolean;
   allowActivitySharing?: boolean;
   hideActivityStatistics: boolean;
   hideFollowingList: boolean;

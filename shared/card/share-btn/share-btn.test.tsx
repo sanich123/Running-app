@@ -23,8 +23,7 @@ const activity: ActivityCardData = {
 
 function renderShareBtn() {
   return renderWithProviders(
-    <ActivityCardContext.Provider
-      value={{ activity, isFullView: false, isShowDeleteBtn: false, isShowDescription: false }}>
+    <ActivityCardContext.Provider value={{ activity, isFullView: false, isShowDescription: false }}>
       <ShareBtn />
     </ActivityCardContext.Provider>,
   );

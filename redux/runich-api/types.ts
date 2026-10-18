@@ -1,6 +1,6 @@
 import type { ACTIVITY_MIGRATION_STATUS } from './migration-status';
 import type { ActivityVisibility } from '@const/activity-visibility';
-import type { ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
+import type { ActivityHeartRateSample, ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
 
 type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof typeof ACTIVITY_MIGRATION_STATUS];
 
@@ -40,6 +40,7 @@ interface ActivityProfileResponse {
   profilePhotoBlurhash?: string | null;
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;
+  allowActivityHeartRateViewing?: boolean;
   allowActivitySharing?: boolean;
 }
 
@@ -191,6 +192,11 @@ export interface ActivityMediaResponse {
 export interface ActivityLocationsResponse {
   locations: ActivityLocationResponse[] | null;
   kilometresSplit: ActivityKilometreSplitResponse[] | null;
+}
+
+export interface ActivityChartDataResponse {
+  heartRateSamples: ActivityHeartRateSample[];
+  locations: ActivityLocationResponse[] | null;
 }
 
 export interface CommentMutationResponse {

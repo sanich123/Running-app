@@ -65,6 +65,7 @@ export interface ProfileType {
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;
+  allowActivityHeartRateViewing?: boolean;
   allowActivitySharing?: boolean;
   allowNewFollowers?: boolean;
   hideActivityStatistics?: boolean;
@@ -103,7 +104,6 @@ export interface ActivityCardData {
 export interface ActivityCardProps {
   activity: ActivityCardData;
   isFullView?: boolean;
-  isShowDeleteBtn: boolean;
   isShowDescription: boolean;
 }
 

@@ -8,7 +8,6 @@ export function renderCardsFunction({ item }: { item: ActivityListItem }) {
   const { _count, ...activity } = item;
 
   return createElement(Card, {
-    isShowDeleteBtn: false,
     isShowDescription: false,
     activity: {
       ...activity,

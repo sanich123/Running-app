@@ -4,10 +4,9 @@ import { useRouter } from 'expo-router';
 import { useDeleteActivityByIdMutation } from '@R/services/activity/activity';
 import { finishLoading, startLoading } from '@R/slices/loading/loading';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { CARD_DELETE_BTN } from '@S/card/delete-btn/const';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { errorToast } from '@S/error-toast/error-toast';
-import { ACTIVITY_ACTIONS_MENU, ACTIVITY_ACTIONS_MENU_TEST_IDS } from '../const';
+import { ACTIVITY_ACTIONS_MENU, ACTIVITY_ACTIONS_MENU_TEST_IDS, ACTIVITY_DELETE_CONFIRMATION } from '../const';
 import MenuItem from '../menu-item/menu-item';
 import type { DeleteActivityButtonProps } from './types';
 
@@ -66,10 +65,10 @@ export default function DeleteActivityButton({ activity, renderMenu }: DeleteAct
       )}
       <ConfirmDialog
         visible={isConfirmDialogVisible}
-        title={CARD_DELETE_BTN[language].deleteActivity}
-        message={CARD_DELETE_BTN[language].question}
-        confirmText={CARD_DELETE_BTN[language].accept}
-        cancelText={CARD_DELETE_BTN[language].cancel}
+        title={ACTIVITY_DELETE_CONFIRMATION[language].deleteActivity}
+        message={ACTIVITY_DELETE_CONFIRMATION[language].question}
+        confirmText={ACTIVITY_DELETE_CONFIRMATION[language].accept}
+        cancelText={ACTIVITY_DELETE_CONFIRMATION[language].cancel}
         destructive
         loading={isDeleteRequestLoading}
         onDismiss={() => setIsConfirmDialogVisible(false)}

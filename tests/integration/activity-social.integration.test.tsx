@@ -27,7 +27,6 @@ jest.mock('expo-router', () => ({
 }));
 
 const cardProps = {
-  isShowDeleteBtn: false,
   isShowDescription: true,
   activity: {
     ...MOCK_SERVER_ACTIVITY,
@@ -98,7 +97,6 @@ describe('activity and social integration flows', () => {
         value={{
           activity: cardProps.activity,
           isFullView: false,
-          isShowDeleteBtn: false,
           isShowDescription: true,
         }}>
         <LikeBtn />
@@ -144,7 +142,6 @@ describe('activity and social integration flows', () => {
         value={{
           activity: cardProps.activity,
           isFullView: false,
-          isShowDeleteBtn: false,
           isShowDescription: true,
         }}>
         <CommentBtn />

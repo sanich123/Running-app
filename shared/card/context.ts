@@ -4,7 +4,6 @@ import type { ActivityCardData } from './types';
 interface ActivityCardContextValue {
   activity: ActivityCardData;
   isFullView: boolean;
-  isShowDeleteBtn: boolean;
   isShowDescription: boolean;
 }
 

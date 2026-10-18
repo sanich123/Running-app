@@ -37,13 +37,11 @@ jest.mock('@S/card/activity-card/activity-card', () => {
   return ({
     activity,
     isShowDescription,
-    isShowDeleteBtn,
   }: {
     activity?: { description?: string | null };
     isShowDescription?: boolean;
-    isShowDeleteBtn?: boolean;
   }) => (
-    <View testID="full-view-card" accessibilityState={{ disabled: !isShowDeleteBtn }}>
+    <View testID="full-view-card">
       {isShowDescription && activity?.description ? <Text>{activity.description}</Text> : null}
     </View>
   );
@@ -58,6 +56,11 @@ jest.mock('./kilometre-split-table/kilometre-split-table', () => {
 });
 
 describe('ActivityDetails', () => {
+  beforeEach(() => {
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setMockUserId('viewer-1'));
+  });
+
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/activity/activityId/${MOCK_SERVER_IDS.activityId}`, loadingResponse));
     await renderWithProviders(<ActivityDetails />);
@@ -82,7 +85,6 @@ describe('ActivityDetails', () => {
     await renderWithProviders(<ActivityDetails />);
     await screen.findByTestId('full-view-card');
     expect((mockHeaderRight.current?.() as ReactElement).type).toBe(ActivityActionsMenu);
-    expect(screen.getByTestId('full-view-card').props.accessibilityState.disabled).toBe(true);
 
     await act(async () => {
       mockStore.dispatch(setMockUserId('external-viewer'));

@@ -17,6 +17,7 @@ export default function Metrics() {
   const { colors } = useTheme();
   const { push } = useRouter();
   const dispatch = useAppDispatch();
+  const { userId: viewerId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const pathname = usePathname();
   const speedMetric = getCardSpeedMetric({ sport, distance, duration, language });
@@ -26,7 +27,11 @@ export default function Metrics() {
     <TouchableRipple
       onPress={() => {
         if (pathname !== `/activity/${id}`) {
-          void dispatch(activityApi.util.prefetch('getActivityByActivityId', id, { ifOlderThan: 60 }));
+          if (viewerId) {
+            void dispatch(
+              activityApi.util.prefetch('getActivityByActivityId', { activityId: id, viewerId }, { ifOlderThan: 60 }),
+            );
+          }
           push(`/${ROUTES.activity}/${id}?userId=${userId}`);
         }
       }}

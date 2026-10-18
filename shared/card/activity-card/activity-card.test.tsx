@@ -21,7 +21,6 @@ import { server } from '../../../tests/utils/server';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT_TEST_ID } from '../../comments/comment-input/const';
 import { COMMENT_BTN_TEST_ID } from '../comment-btn/const';
-import { CARD_DELETE_BTN, CARD_DELETE_BTN_TEST_ID } from '../delete-btn/const';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '../like-btn/const';
 import type { ActivityCardData, ActivityCardProps } from '../types';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
@@ -31,10 +30,9 @@ jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(), shareAsync: jest
 jest.mock('react-native-view-shot', () => ({ captureRef: jest.fn() }));
 
 const mockPush = jest.fn();
-const mockBack = jest.fn();
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockPush, back: mockBack }),
+  useRouter: () => ({ push: mockPush }),
   usePathname: () => 'somePathname',
 }));
 
@@ -54,12 +52,7 @@ const defaultActivity: ActivityCardData = {
 
 function renderCard(activity: Partial<ActivityCardData>, props: Partial<Omit<ActivityCardProps, 'activity'>> = {}) {
   return renderWithProviders(
-    <ActivityCard
-      activity={{ ...defaultActivity, ...activity }}
-      isShowDeleteBtn={false}
-      isShowDescription={false}
-      {...props}
-    />,
+    <ActivityCard activity={{ ...defaultActivity, ...activity }} isShowDescription={false} {...props} />,
   );
 }
 
@@ -88,7 +81,6 @@ function makeComment(activityId: string, authorId: string, id: string, comment: 
 describe('Activity card', () => {
   beforeEach(() => {
     mockPush.mockClear();
-    mockBack.mockClear();
     (Sharing.isAvailableAsync as jest.Mock).mockReset();
     (Sharing.shareAsync as jest.Mock).mockReset();
     (captureRef as jest.Mock).mockReset();
@@ -438,59 +430,6 @@ describe('Activity card', () => {
     await waitFor(() => expect(errorToast).toHaveBeenCalledTimes(3));
   });
 
-  it('deletes an activity after confirmation using a 204 MSW response', async () => {
-    const user = userEvent.setup();
-    const restorePlatform = overridePlatformOS('ios');
-    const activityId = 'card-delete-success';
-    let deletedActivityId = '';
-
-    server.use(
-      http.delete(`${BASE_URL}/activity/${activityId}`, ({ request }) => {
-        deletedActivityId = new URL(request.url).pathname.split('/').at(-1) ?? '';
-        return new HttpResponse(null, { status: 204 });
-      }),
-    );
-
-    mockStore.dispatch(setMockUserId('card-delete-owner'));
-    try {
-      await renderCard({ id: activityId, userId: 'card-delete-owner' }, { isShowDeleteBtn: true });
-      await user.press(screen.getByTestId(CARD_DELETE_BTN_TEST_ID));
-      expect(await screen.findByText(CARD_DELETE_BTN.russian.deleteActivity)).toBeOnTheScreen();
-      await user.press(screen.getByTestId('confirm-dialog-confirm-button'));
-
-      await waitFor(() => expect(deletedActivityId).toBe(activityId));
-      expect(mockBack).toHaveBeenCalledTimes(1);
-    } finally {
-      restorePlatform();
-    }
-  });
-
-  it('keeps the activity visible when its delete request fails', async () => {
-    const user = userEvent.setup();
-    const restorePlatform = overridePlatformOS('ios');
-    const activityId = 'card-delete-error';
-    const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
-
-    server.use(
-      http.delete(`${BASE_URL}/activity/${activityId}`, () =>
-        HttpResponse.json({ message: 'Delete rejected' }, { status: 500 }),
-      ),
-    );
-
-    mockStore.dispatch(setMockUserId('card-delete-error-owner'));
-    try {
-      await renderCard({ id: activityId, userId: 'card-delete-error-owner' }, { isShowDeleteBtn: true });
-      await user.press(screen.getByTestId(CARD_DELETE_BTN_TEST_ID));
-      await user.press(screen.getByTestId('confirm-dialog-confirm-button'));
-
-      await waitFor(() => expect(errorToast).toHaveBeenCalled());
-      expect(screen.getByTestId(CARD_DELETE_BTN_TEST_ID)).toBeOnTheScreen();
-      expect(mockBack).not.toHaveBeenCalled();
-    } finally {
-      restorePlatform();
-    }
-  });
-
   it('uploads a selected photo without a premium subscription through MSW', async () => {
     const user = userEvent.setup();
     const activityId = 'card-photo-upload';
@@ -637,7 +576,7 @@ describe('Activity card', () => {
         profile: MOCK_PROFILE,
         commentsLength: 6,
       },
-      { isShowDeleteBtn: true, isShowDescription: true },
+      { isShowDescription: true },
     );
     expect(screen.getByText(new RegExp(`${profile.name}`))).toBeOnTheScreen();
     expect(screen.getByText(new RegExp(`${profile.surname}`))).toBeOnTheScreen();
@@ -647,27 +586,18 @@ describe('Activity card', () => {
     );
   });
 
-  it('renders the social actions and shows delete only for the activity owner when enabled', async () => {
+  it('renders the social actions', async () => {
     mockStore.dispatch(setMockUserId('activity-owner'));
-    await renderCard({ userId: 'activity-owner' }, { isShowDeleteBtn: true });
+    await renderCard({ userId: 'activity-owner' });
 
     expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();
     expect(screen.getByTestId(COMMENT_BTN_TEST_ID)).toBeOnTheScreen();
     expect(screen.getByTestId('iconShareBtn')).toBeOnTheScreen();
-    expect(screen.getByTestId(CARD_DELETE_BTN_TEST_ID)).toBeOnTheScreen();
-  });
-
-  it('hides the delete action for another user activity', async () => {
-    mockStore.dispatch(setMockUserId('current-user'));
-    await renderCard({ userId: 'activity-owner' }, { isShowDeleteBtn: true });
-
-    expect(await screen.findByTestId(CARD_LIKE_BTN_TEST_ID_NOT_LIKED)).toBeOnTheScreen();
-    expect(screen.queryByTestId(CARD_DELETE_BTN_TEST_ID)).not.toBeOnTheScreen();
   });
 
   it('disables the card action buttons while the global loading slice is active', async () => {
     mockStore.dispatch(setMockUserId('activity-owner'));
-    await renderCard({ userId: 'activity-owner' }, { isShowDeleteBtn: true });
+    await renderCard({ userId: 'activity-owner' });
 
     await act(async () => {
       mockStore.dispatch(startLoading());
@@ -676,7 +606,6 @@ describe('Activity card', () => {
     await waitFor(() => {
       expect(screen.getByTestId(COMMENT_BTN_TEST_ID)).toBeDisabled();
       expect(screen.getByTestId('iconShareBtn')).toBeDisabled();
-      expect(screen.getByTestId(CARD_DELETE_BTN_TEST_ID)).toBeDisabled();
     });
 
     await act(async () => {

@@ -39,7 +39,6 @@ function renderCardMetrics(
       value={{
         activity: { ...defaultActivity, ...activity },
         isFullView: options.isFullView ?? false,
-        isShowDeleteBtn: false,
         isShowDescription: options.isShowDescription ?? false,
       }}>
       <CardMetrics />

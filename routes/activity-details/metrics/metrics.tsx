@@ -8,11 +8,17 @@ import ErrorComponent from '@S/error-component/error-component';
 import { formatDuration } from '@U/time-formatter';
 import { HOME_ACTIVITY_FULL_VIEW_TEST_ID, HOME_ACTIVITY_FULL_VIEW } from './const';
 import { getActivityAdditionalMetric, getActivityMainMetric } from './utils';
+import HeartRateChart from '../heart-rate-chart/heart-rate-chart';
 
 export default function Metrics() {
   const { width } = useWindowDimensions();
   const { id: activityId } = useLocalSearchParams();
-  const { isLoading, data: activity, error } = useGetActivityByActivityIdQuery(`${activityId}`);
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const {
+    isLoading,
+    data: activity,
+    error,
+  } = useGetActivityByActivityIdQuery({ activityId: `${activityId}`, viewerId: userId ?? '' }, { skip: !userId });
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const gainedElevation = activity?.elevationGain ?? 0;
@@ -115,6 +121,9 @@ export default function Metrics() {
               </View>
             </>
           )}
+          {heartRateMetrics.length > 0 && activity ? (
+            <HeartRateChart activityId={activity.id} activityDistance={activity.distance} sport={activity.sport} />
+          ) : null}
         </>
       )}
     </View>

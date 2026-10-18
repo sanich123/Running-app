@@ -14,10 +14,13 @@ export default function MapPage({ onVideoExportStateChange }: MapPageProps) {
   const { colors } = useTheme();
   const { id: activityId, replay, userId: profileId } = useLocalSearchParams<MapPageSearchParams>();
   const isReplay = replay === '1';
-  const { data: activityDetails } = useGetActivityByActivityIdQuery(activityId ?? '', {
-    skip: !isReplay || !activityId,
-  });
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
+  const { data: activityDetails } = useGetActivityByActivityIdQuery(
+    { activityId: activityId ?? '', viewerId: currentUserId ?? '' },
+    {
+      skip: !isReplay || !activityId || !currentUserId,
+    },
+  );
   const replayProfileId = profileId ?? currentUserId;
   const { data: replayProfile } = useGetUserProfileByUserIdQuery(replayProfileId ?? '', {
     skip: !isReplay || !replayProfileId,
