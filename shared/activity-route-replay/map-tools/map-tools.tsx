@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon, Menu, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import MapControls from '@S/display-activity-map/map-controls/map-controls';
 import { ACTIVITY_ROUTE_REPLAY_DURATIONS_MS } from '../const';
+import { formatDurationOption } from './utils';
 import type { MapToolsProps } from '../types';
 
 export default function MapTools({
@@ -90,12 +91,6 @@ export default function MapTools({
       </Menu>
     </MapControls>
   );
-}
-
-function formatDurationOption(duration: number, copy: MapToolsProps['copy']) {
-  return duration >= 60_000
-    ? `${duration / 60_000}${copy.durationMinutesUnit ?? 'm'}`
-    : `${duration / 1_000}${copy.durationSecondsUnit ?? 's'}`;
 }
 
 const styles = StyleSheet.create({

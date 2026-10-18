@@ -8,8 +8,8 @@ import { createSearchParams } from '@R/runich-api/create-search-params';
 import { activityApi, useDeleteActivityMediaMutation } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { isVideoUrl } from '@Routes/photo-viewer/utils';
-import ActivityMediaDeleteBtn from '@S/activity-media/delete-btn';
-import AddActivityMediaBtn from '@S/card/add-media-btn/add-media-btn';
+import ActivityMediaDeleteBtn from '@S/activity-media/activity-media-delete-btn/activity-media-delete-btn';
+import AddActivityMediaBtn from '@S/card/add-media-btn/add-activity-media-btn/add-activity-media-btn';
 import CustomImage from '@S/custom-image/custom-image';
 import { errorToast } from '@S/error-toast/error-toast';
 import { useActivityCard } from '../context';
@@ -19,15 +19,11 @@ import {
   ACTIVITY_MEDIA_MAX_HEIGHT,
   ACTIVITY_MEDIA_MIN_HEIGHT,
 } from './const';
-import VideoMedia from './video-media';
+import VideoMedia from './video-media/video-media';
 import FavoriteActivityBtn from '../favorite-activity-btn/favorite-activity-btn';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import RouteReplayBtn from '../route-replay-btn/route-replay-btn';
-import type { ActivityMediaItem } from '../types';
-
-interface DisplayedMediaItem extends ActivityMediaItem {
-  isMap?: boolean;
-}
+import type { DisplayedMediaItem } from './types';
 
 export default function MediaList() {
   const { activity } = useActivityCard();
@@ -113,85 +109,85 @@ export default function MediaList() {
               })}`,
         );
       };
-      const mediaContent = isVideo ? (
-        <VideoMedia
-          url={item.url}
-          thumbnail={item.thumbnail}
-          blurhash={item.blurhash}
-          width={itemWidth}
-          height={mediaHeight}
-          playLabel={language === LANGUAGES.russian ? 'Воспроизвести видео' : 'Play video'}
-          pauseLabel={language === LANGUAGES.russian ? 'Приостановить видео' : 'Pause video'}
-          muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
-          unmuteLabel={language === LANGUAGES.russian ? 'Включить звук видео' : 'Unmute video'}
-          testID={`activity-video-${item.id ?? index}`}
-          onMetadata={onMediaMetadata}
-        />
-      ) : (
-        <CustomImage
-          style={{ width: itemWidth, height: mediaHeight }}
-          source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
-          contentFit="cover"
-          placeholderContentFit="cover"
-          priority={index === 0 ? 'high' : 'normal'}
-          cachePolicy="memory-disk"
-          recyclingKey={item.url}
-          testID={item.url}
-          placeholder={item?.blurhash}
-          onLoad={(event) => {
-            const { width: loadedWidth, height: loadedHeight } = event.source;
-            if (loadedWidth > 0 && loadedHeight > 0) {
-              onMediaMetadata({ aspectRatio: loadedWidth / loadedHeight });
-            }
-          }}
-        />
-      );
-      const mediaItem =
-        Platform.OS === 'web' && isVideo ? (
-          <View
-            testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
-            accessibilityLabel={
-              isMap
-                ? language === LANGUAGES.russian
-                  ? 'Открыть карту тренировки'
-                  : 'Open activity map'
-                : language === LANGUAGES.russian
-                  ? 'Открыть медиа тренировки'
-                  : 'Open activity media'
-            }
-            onClick={handleMediaPress}>
-            {mediaContent}
-          </View>
-        ) : (
-          <TouchableRipple
-            testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
-            onLongPress={
-              !isMap && isOwnActivity && item.id
-                ? () => {
-                    setSelectedMediaId((selectedId) => (selectedId === item.id ? null : (item.id ?? null)));
-                  }
-                : undefined
-            }
-            onPress={handleMediaPress}
-            borderless={false}
-            accessibilityRole="button"
-            accessibilityLabel={
-              isMap
-                ? language === LANGUAGES.russian
-                  ? 'Открыть карту тренировки'
-                  : 'Open activity map'
-                : language === LANGUAGES.russian
-                  ? 'Открыть медиа тренировки'
-                  : 'Open activity media'
-            }>
-            {mediaContent}
-          </TouchableRipple>
-        );
+      const mediaAccessibilityLabel = isMap
+        ? language === LANGUAGES.russian
+          ? 'Открыть карту тренировки'
+          : 'Open activity map'
+        : language === LANGUAGES.russian
+          ? 'Открыть медиа тренировки'
+          : 'Open activity media';
       return (
         <View
           testID={isMap ? 'activity-map-media-container' : undefined}
           style={[styles.mediaTile, { height: mediaHeight, width: itemWidth }]}>
-          {mediaItem}
+          {Platform.OS === 'web' && isVideo ? (
+            <View
+              testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
+              accessibilityLabel={mediaAccessibilityLabel}
+              onClick={handleMediaPress}>
+              <VideoMedia
+                url={item.url}
+                thumbnail={item.thumbnail}
+                blurhash={item.blurhash}
+                width={itemWidth}
+                height={mediaHeight}
+                playLabel={language === LANGUAGES.russian ? 'Воспроизвести видео' : 'Play video'}
+                pauseLabel={language === LANGUAGES.russian ? 'Приостановить видео' : 'Pause video'}
+                muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
+                unmuteLabel={language === LANGUAGES.russian ? 'Включить звук видео' : 'Unmute video'}
+                testID={`activity-video-${item.id ?? index}`}
+                onMetadata={onMediaMetadata}
+              />
+            </View>
+          ) : (
+            <TouchableRipple
+              testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
+              onLongPress={
+                !isMap && isOwnActivity && item.id
+                  ? () => {
+                      setSelectedMediaId((selectedId) => (selectedId === item.id ? null : (item.id ?? null)));
+                    }
+                  : undefined
+              }
+              onPress={handleMediaPress}
+              borderless={false}
+              accessibilityRole="button"
+              accessibilityLabel={mediaAccessibilityLabel}>
+              {isVideo ? (
+                <VideoMedia
+                  url={item.url}
+                  thumbnail={item.thumbnail}
+                  blurhash={item.blurhash}
+                  width={itemWidth}
+                  height={mediaHeight}
+                  playLabel={language === LANGUAGES.russian ? 'Воспроизвести видео' : 'Play video'}
+                  pauseLabel={language === LANGUAGES.russian ? 'Приостановить видео' : 'Pause video'}
+                  muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
+                  unmuteLabel={language === LANGUAGES.russian ? 'Включить звук видео' : 'Unmute video'}
+                  testID={`activity-video-${item.id ?? index}`}
+                  onMetadata={onMediaMetadata}
+                />
+              ) : (
+                <CustomImage
+                  style={{ width: itemWidth, height: mediaHeight }}
+                  source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
+                  contentFit="cover"
+                  placeholderContentFit="cover"
+                  priority={index === 0 ? 'high' : 'normal'}
+                  cachePolicy="memory-disk"
+                  recyclingKey={item.url}
+                  testID={item.url}
+                  placeholder={item?.blurhash}
+                  onLoad={(event) => {
+                    const { width: loadedWidth, height: loadedHeight } = event.source;
+                    if (loadedWidth > 0 && loadedHeight > 0) {
+                      onMediaMetadata({ aspectRatio: loadedWidth / loadedHeight });
+                    }
+                  }}
+                />
+              )}
+            </TouchableRipple>
+          )}
           {!isMap && isOwnActivity && item.id && selectedMediaId === item.id ? (
             <View style={styles.deleteButton}>
               <ActivityMediaDeleteBtn onDelete={() => void handleDeleteMedia(item.id!)} isDeleting={isDeletingMedia} />

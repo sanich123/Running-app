@@ -74,29 +74,6 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
       .catch((error: unknown) => errorToast('Не удалось проверить оптимизацию батареи', error));
   }, [canUseLocation, shouldRefreshPermissionStatus]);
 
-  const centerMapOnCurrentLocation = async () => {
-    setIsCenteringOnCurrentLocation(true);
-    try {
-      const position = await getCurrentPositionAsync({ accuracy: 6 });
-      dispatch(setLocationProvider(position.provider ?? null));
-      setShouldFollowUserLocation(false);
-      setMapZoomLevel(18);
-      setTimeout(() => {
-        cameraRef.current?.setCamera({
-          centerCoordinate: [position.coords.longitude, position.coords.latitude],
-          zoomLevel: 18,
-          animationMode: 'flyTo',
-          animationDuration: 800,
-        });
-        setTimeout(() => setShouldFollowUserLocation(true), 900);
-      }, 50);
-    } catch (error) {
-      errorToast('Не удалось определить текущее местоположение', error);
-    } finally {
-      setIsCenteringOnCurrentLocation(false);
-    }
-  };
-
   return (
     <>
       {isLoadingLocationPrerequisites ? (
@@ -146,7 +123,28 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
               isCenteringOnCurrentLocation={isCenteringOnCurrentLocation}
               onZoomLevelChange={setMapZoomLevel}
               onFollowUserLocationChange={setShouldFollowUserLocation}
-              onCenterOnCurrentLocation={centerMapOnCurrentLocation}
+              onCenterOnCurrentLocation={async () => {
+                setIsCenteringOnCurrentLocation(true);
+                try {
+                  const position = await getCurrentPositionAsync({ accuracy: 6 });
+                  dispatch(setLocationProvider(position.provider ?? null));
+                  setShouldFollowUserLocation(false);
+                  setMapZoomLevel(18);
+                  setTimeout(() => {
+                    cameraRef.current?.setCamera({
+                      centerCoordinate: [position.coords.longitude, position.coords.latitude],
+                      zoomLevel: 18,
+                      animationMode: 'flyTo',
+                      animationDuration: 800,
+                    });
+                    setTimeout(() => setShouldFollowUserLocation(true), 900);
+                  }, 50);
+                } catch (error) {
+                  errorToast('Не удалось определить текущее местоположение', error);
+                } finally {
+                  setIsCenteringOnCurrentLocation(false);
+                }
+              }}
             />
             {isBatteryOptimizationActive && (
               <IconButton

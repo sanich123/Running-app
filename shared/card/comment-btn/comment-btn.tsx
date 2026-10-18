@@ -11,7 +11,7 @@ import {
 } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CommentsListModal from '@S/comments/comments-list-modal/comments-list-modal';
-import CommentCountBadge from './comment-count-badge';
+import CommentCountBadge from './comment-count-badge/comment-count-badge';
 import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
 import { useActivityCard } from '../context';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -29,23 +29,6 @@ export default function CommentBtn() {
 
   const isButtonDisabled = isLoading || !canViewComments;
   const buttonLabel = language === LANGUAGES.russian ? 'Открыть комментарии' : 'Open comments';
-  const openComments = () => {
-    void dispatch(
-      commentsApi.endpoints.getCommentsByActivityId.initiate({ activityId }, { subscribe: false, forceRefetch: true }),
-    );
-    void dispatch(
-      commentsApi.endpoints.getCommentsLengthByActivityId.initiate(activityId, {
-        subscribe: false,
-        forceRefetch: true,
-      }),
-    );
-    dispatch(setCommentToUpdate(''));
-    dispatch(setIdOfUpdatingComment(''));
-    dispatch(setCommentActivityId(activityId));
-    dispatch(setActivityOwnerProfile(profile));
-    commentsModalRef.current?.present?.();
-  };
-
   return (
     <View testID="activity-card-comment-button">
       <TouchableRipple
@@ -54,7 +37,25 @@ export default function CommentBtn() {
         borderless
         accessibilityRole="button"
         accessibilityLabel={buttonLabel}
-        onPress={openComments}
+        onPress={() => {
+          void dispatch(
+            commentsApi.endpoints.getCommentsByActivityId.initiate(
+              { activityId },
+              { subscribe: false, forceRefetch: true },
+            ),
+          );
+          void dispatch(
+            commentsApi.endpoints.getCommentsLengthByActivityId.initiate(activityId, {
+              subscribe: false,
+              forceRefetch: true,
+            }),
+          );
+          dispatch(setCommentToUpdate(''));
+          dispatch(setIdOfUpdatingComment(''));
+          dispatch(setCommentActivityId(activityId));
+          dispatch(setActivityOwnerProfile(profile));
+          commentsModalRef.current?.present?.();
+        }}
         disabled={isButtonDisabled}>
         <View pointerEvents="none" style={styles.contents}>
           <CommentCountBadge activity={activity} />

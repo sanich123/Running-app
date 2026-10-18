@@ -17,8 +17,8 @@ import { getNotificationLocale } from './helpers';
 import { getExpoProjectId, getPushChannelName, isAndroidPhysicalDevice } from './notification-settings.helpers';
 
 export function useNotificationSettings() {
-  const language = useAppSelector(({ settings }) => settings.language);
-  const userId = useAppSelector(({ auth }) => auth.userId);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const { userId } = useAppSelector(({ auth }) => auth);
   const locale = getNotificationLocale(language);
   const copy = NOTIFICATION_COPY[locale];
   const { data: profileInfo, isSuccess: isProfileLoaded } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });

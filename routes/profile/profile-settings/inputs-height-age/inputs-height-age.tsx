@@ -5,11 +5,7 @@ import { PROFILE_INPUT_LIMITS, normalizeAgeInput, normalizeHeightInput } from '@
 import { useAppSelector } from '@R/typed-hooks';
 import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
 import { AGE_TEST_ID, HEIGHT_AGE, HEIGHT_TEST_ID } from './const';
-
-interface InputsHeightAgeProps {
-  isDisabled: boolean;
-  compact?: boolean;
-}
+import type { InputsHeightAgeProps } from './types';
 
 export default function InputsHeightAge({ isDisabled, compact = false }: InputsHeightAgeProps) {
   const { language } = useAppSelector(({ settings }) => settings);

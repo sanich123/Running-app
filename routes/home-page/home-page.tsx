@@ -31,7 +31,7 @@ export default function HomePage() {
         </>
       ) : hasLoadedActivities ? (
         <>
-          {activities && activities?.length > 0 && (
+          {activities.length > 0 ? (
             <InfiniteScrollList
               dataToRender={activities}
               refetch={refetch}
@@ -40,8 +40,7 @@ export default function HomePage() {
               isFetchingNextPage={isFetchingNextPage}
               headerAfterWeekStatistics={<HomeFeedSwitcher value={activeFeed} onValueChange={setActiveFeed} />}
             />
-          )}
-          {!activities?.length && (
+          ) : (
             <>
               <WeekStatistics />
               <HomeFeedSwitcher value={activeFeed} onValueChange={setActiveFeed} />

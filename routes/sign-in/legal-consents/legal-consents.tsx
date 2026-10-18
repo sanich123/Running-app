@@ -3,16 +3,7 @@ import { useRouter } from 'expo-router';
 import { Checkbox, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-
-export interface LegalConsentValues {
-  agreementAndPolicy: boolean;
-  personalData: boolean;
-}
-
-interface LegalConsentsProps {
-  values: LegalConsentValues;
-  onChange: (key: keyof LegalConsentValues) => void;
-}
+import type { LegalConsentsProps } from './types';
 
 export default function LegalConsents({ values, onChange }: LegalConsentsProps) {
   const { colors } = useTheme();

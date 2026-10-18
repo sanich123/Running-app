@@ -5,14 +5,7 @@ import { PROFILE_INPUT_LIMITS, normalizeWeightInput } from '@const/input-limits'
 import { useAppSelector } from '@R/typed-hooks';
 import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
 import { CITY_TEST_ID, WEIGHT_CITY, WEIGHT_TEST_ID } from './const';
-
-export type InputsWeightCityVariant = 'both' | 'city' | 'weight';
-
-interface InputsWeightCityProps {
-  isDisabled: boolean;
-  variant?: InputsWeightCityVariant;
-  compact?: boolean;
-}
+import type { InputsWeightCityProps } from './types';
 
 export default function InputsWeightCity({ isDisabled, variant = 'both', compact = false }: InputsWeightCityProps) {
   const { language } = useAppSelector(({ settings }) => settings);
@@ -20,54 +13,42 @@ export default function InputsWeightCity({ isDisabled, variant = 'both', compact
   const { city, weight } = useProfileFormParams();
   const { setCity, setWeight } = useSetProfileFormParams();
   const shouldBeDisabled = isDisabled;
-
-  const cityInput = (
-    <TextInput
-      testID={CITY_TEST_ID}
-      mode="outlined"
-      style={[styles.input, { backgroundColor: colors.surface }, shouldBeDisabled && styles.disabledInput]}
-      contentStyle={styles.content}
-      outlineStyle={styles.outline}
-      outlineColor={colors.outlineVariant}
-      activeOutlineColor={colors.primary}
-      textColor={colors.onSurface}
-      label={WEIGHT_CITY[language].cityLabel}
-      placeholder={WEIGHT_CITY[language].cityPlaceholder}
-      maxLength={PROFILE_INPUT_LIMITS.city}
-      value={city}
-      onChangeText={setCity}
-      disabled={shouldBeDisabled}
-    />
-  );
-  const weightInput = (
-    <TextInput
-      testID={WEIGHT_TEST_ID}
-      mode="outlined"
-      style={[styles.input, { backgroundColor: colors.surface }, shouldBeDisabled && styles.disabledInput]}
-      contentStyle={styles.content}
-      outlineStyle={styles.outline}
-      outlineColor={colors.outlineVariant}
-      activeOutlineColor={colors.primary}
-      textColor={colors.onSurface}
-      label={WEIGHT_CITY[language].weightLabel}
-      placeholder={WEIGHT_CITY[language].weightPlaceholder}
-      maxLength={PROFILE_INPUT_LIMITS.weight}
-      inputMode="numeric"
-      value={weight}
-      onChangeText={(value) => setWeight(normalizeWeightInput(value))}
-      disabled={shouldBeDisabled}
-    />
-  );
-
-  if (variant === 'city') return <View style={styles.singleInput}>{cityInput}</View>;
-  if (variant === 'weight') {
-    return <View style={[styles.singleInput, compact && styles.compactInput]}>{weightInput}</View>;
-  }
+  const fields = variant === 'city' ? ['city'] : variant === 'weight' ? ['weight'] : ['city', 'weight'];
 
   return (
-    <View style={styles.inputWrapper}>
-      <View style={styles.inputColumn}>{cityInput}</View>
-      <View style={styles.inputColumn}>{weightInput}</View>
+    <View
+      style={
+        variant === 'both'
+          ? styles.inputWrapper
+          : [styles.singleInput, compact && variant === 'weight' && styles.compactInput]
+      }>
+      {fields.map((field) => (
+        <TextInput
+          key={field}
+          testID={field === 'city' ? CITY_TEST_ID : WEIGHT_TEST_ID}
+          mode="outlined"
+          style={[
+            styles.input,
+            variant === 'both' && styles.inputColumn,
+            { backgroundColor: colors.surface },
+            shouldBeDisabled && styles.disabledInput,
+          ]}
+          contentStyle={styles.content}
+          outlineStyle={styles.outline}
+          outlineColor={colors.outlineVariant}
+          activeOutlineColor={colors.primary}
+          textColor={colors.onSurface}
+          label={field === 'city' ? WEIGHT_CITY[language].cityLabel : WEIGHT_CITY[language].weightLabel}
+          placeholder={
+            field === 'city' ? WEIGHT_CITY[language].cityPlaceholder : WEIGHT_CITY[language].weightPlaceholder
+          }
+          maxLength={field === 'city' ? PROFILE_INPUT_LIMITS.city : PROFILE_INPUT_LIMITS.weight}
+          inputMode={field === 'weight' ? 'numeric' : undefined}
+          value={field === 'city' ? city : weight}
+          onChangeText={(value) => (field === 'city' ? setCity(value) : setWeight(normalizeWeightInput(value)))}
+          disabled={shouldBeDisabled}
+        />
+      ))}
     </View>
   );
 }

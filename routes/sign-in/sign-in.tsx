@@ -12,13 +12,14 @@ import CustomTextInput from '@S/custom-text-input/custom-text-input';
 import { getEmailValidation, getPasswordValidation, getRegistrationEmailValidation } from '@S/custom-text-input/types';
 import { SignInPageStates } from '@U/validate-email-password';
 import AuthDivider from './auth-divider/auth-divider';
-import AuthStepIntro from './auth-step-intro';
+import AuthStepIntro from './auth-step-intro/auth-step-intro';
 import { SIGN_IN_FIELD_LABELS, SIGN_IN_FOOTER_TEXT } from './const';
 import EmailRegistrationRestriction from './email-registration-restriction/email-registration-restriction';
-import LegalConsents, { type LegalConsentValues } from './legal-consents/legal-consents';
+import LegalConsents from './legal-consents/legal-consents';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
-import LoginRegisterNavigation from './login-register-navigation/login-register-navigation';
+import LoginRegisterNavigation from './login-register-navigation/register-navigation/register-navigation';
 import SocialAuthButtons from './social-auth-buttons/social-auth-buttons';
+import type { LegalConsentValues } from './legal-consents/types';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 
 export default function SignIn() {
@@ -45,10 +46,6 @@ export default function SignIn() {
   const requiresLegalConfirmation =
     currentAuthStep === SignInPageStates.login || currentAuthStep === SignInPageStates.register;
   const areLegalConsentsAccepted = legalConsents.agreementAndPolicy && legalConsents.personalData;
-
-  const setAuthStep = (nextAuthStep: SignInPageStates) => {
-    push({ pathname: `/${ROUTES.signIn}`, params: { authStep: nextAuthStep } });
-  };
 
   return (
     <CrossPlatformLayout edges={['top', 'bottom']} scrollViewEnabled outerStyles={styles.pageContent}>
@@ -100,7 +97,9 @@ export default function SignIn() {
         />
         <LoginRegisterNavigation
           authStep={currentAuthStep}
-          onAuthStepChange={setAuthStep}
+          onAuthStepChange={(nextAuthStep) =>
+            push({ pathname: `/${ROUTES.signIn}`, params: { authStep: nextAuthStep } })
+          }
           showEmailLinkNavigation={false}
         />
         <View style={styles.footer}>

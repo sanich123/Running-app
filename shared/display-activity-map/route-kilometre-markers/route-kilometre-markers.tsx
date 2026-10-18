@@ -2,12 +2,8 @@ import { useState } from 'react';
 import { CircleLayer, MarkerView, ShapeSource } from '@rnmapbox/maps';
 import { StyleSheet, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
+import type { SelectedKilometre } from './types';
 import type { ActivityKilometreSplit } from '@S/card/types';
-
-interface SelectedKilometre {
-  coordinate: [number, number];
-  number: number;
-}
 
 export default function RouteKilometreMarkers({
   kilometresSplit,
@@ -35,25 +31,23 @@ export default function RouteKilometreMarkers({
     return null;
   }
 
-  const handleSplitPress = (event: Parameters<NonNullable<React.ComponentProps<typeof ShapeSource>['onPress']>>[0]) => {
-    const feature = event.features.find(({ properties }) => properties?.label !== undefined);
-    if (!feature || feature.geometry.type !== 'Point') return;
-
-    const number = Number(feature.properties?.label);
-    if (!Number.isFinite(number)) return;
-
-    const [longitude, latitude] = feature.geometry.coordinates;
-    setSelectedKilometre((current) =>
-      current?.number === number ? null : { coordinate: [longitude, latitude], number },
-    );
-  };
-
   return (
     <>
       <ShapeSource
         id="kilometre-splits"
         hitbox={{ width: 44, height: 44 }}
-        onPress={handleSplitPress}
+        onPress={(event) => {
+          const feature = event.features.find(({ properties }) => properties?.label !== undefined);
+          if (!feature || feature.geometry.type !== 'Point') return;
+
+          const number = Number(feature.properties?.label);
+          if (!Number.isFinite(number)) return;
+
+          const [longitude, latitude] = feature.geometry.coordinates;
+          setSelectedKilometre((current) =>
+            current?.number === number ? null : { coordinate: [longitude, latitude], number },
+          );
+        }}
         shape={{
           type: 'FeatureCollection',
           features,

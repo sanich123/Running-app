@@ -14,35 +14,32 @@ export default function SettingsRow({
   destructive,
 }: SettingsRowProps) {
   const { colors } = useTheme();
-  const content = (
-    <View style={styles.content}>
-      {icon && (
-        <View style={[styles.icon, { backgroundColor: destructive ? colors.errorContainer : colors.primaryContainer }]}>
-          <MaterialCommunityIcons name={icon} size={21} color={destructive ? colors.error : colors.primary} />
-        </View>
-      )}
-      {leading && <View style={styles.leading}>{leading}</View>}
-      <View style={styles.copy}>
-        <Text variant="titleMedium" style={{ color: destructive ? colors.error : colors.onSurface }}>
-          {title}
-        </Text>
-        {description && (
-          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant, marginTop: 2 }}>
-            {description}
-          </Text>
-        )}
-      </View>
-      {right}
-    </View>
-  );
-
   return (
     <TouchableRipple
       testID={testID}
       borderless
       onPress={onPress}
       style={[styles.container, { backgroundColor: colors.surface }]}>
-      {content}
+      <View style={styles.content}>
+        {icon && (
+          <View
+            style={[styles.icon, { backgroundColor: destructive ? colors.errorContainer : colors.primaryContainer }]}>
+            <MaterialCommunityIcons name={icon} size={21} color={destructive ? colors.error : colors.primary} />
+          </View>
+        )}
+        {leading && <View style={styles.leading}>{leading}</View>}
+        <View style={styles.copy}>
+          <Text variant="titleMedium" style={{ color: destructive ? colors.error : colors.onSurface }}>
+            {title}
+          </Text>
+          {description && (
+            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant, marginTop: 2 }}>
+              {description}
+            </Text>
+          )}
+        </View>
+        {right}
+      </View>
     </TouchableRipple>
   );
 }

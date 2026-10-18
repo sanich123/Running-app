@@ -32,7 +32,7 @@ jest.mock('./activity-actions-menu/activity-actions-menu', () => {
   const { View } = jest.requireActual('react-native');
   return { __esModule: true, default: () => <View testID="activity-actions-menu" /> };
 });
-jest.mock('@S/card/card', () => {
+jest.mock('@S/card/activity-card/activity-card', () => {
   const { Text, View } = jest.requireActual('react-native');
   return ({
     activity,

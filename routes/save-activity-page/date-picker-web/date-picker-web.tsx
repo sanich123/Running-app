@@ -6,10 +6,7 @@ import { toDateTimeInputValue } from './utils';
 import { DATE_TIME_PICKER } from '../date-picker/const';
 import { clampDateToMaximum } from '../date-picker/utils';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
-
-interface DatePickerWebProps {
-  maximumDate?: Date;
-}
+import type { DatePickerWebProps } from './types';
 
 export default function DatePickerWeb({ maximumDate }: DatePickerWebProps) {
   const { isSavingDisabled } = useAppSelector(({ activity }) => activity);

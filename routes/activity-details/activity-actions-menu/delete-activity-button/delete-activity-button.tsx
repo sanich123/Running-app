@@ -33,25 +33,37 @@ export default function DeleteActivityButton({ activity, renderMenu }: DeleteAct
     }
   }
 
-  const deleteButton = (
-    <MenuItem
-      action="delete"
-      label={ACTIVITY_ACTIONS_MENU[language].delete}
-      testID={ACTIVITY_ACTIONS_MENU_TEST_IDS.delete}
-      onPress={() => {
-        if (isLoading || isDeleteRequestLoading) return;
-
-        if (Platform.OS === 'web') void deleteActivity();
-        else setIsConfirmDialogVisible(true);
-      }}
-    />
-  );
-
   if (userId !== activity.userId) return null;
 
   return (
     <>
-      {renderMenu ? renderMenu(deleteButton) : deleteButton}
+      {renderMenu ? (
+        renderMenu(
+          <MenuItem
+            action="delete"
+            label={ACTIVITY_ACTIONS_MENU[language].delete}
+            testID={ACTIVITY_ACTIONS_MENU_TEST_IDS.delete}
+            onPress={() => {
+              if (isLoading || isDeleteRequestLoading) return;
+
+              if (Platform.OS === 'web') void deleteActivity();
+              else setIsConfirmDialogVisible(true);
+            }}
+          />,
+        )
+      ) : (
+        <MenuItem
+          action="delete"
+          label={ACTIVITY_ACTIONS_MENU[language].delete}
+          testID={ACTIVITY_ACTIONS_MENU_TEST_IDS.delete}
+          onPress={() => {
+            if (isLoading || isDeleteRequestLoading) return;
+
+            if (Platform.OS === 'web') void deleteActivity();
+            else setIsConfirmDialogVisible(true);
+          }}
+        />
+      )}
       <ConfirmDialog
         visible={isConfirmDialogVisible}
         title={CARD_DELETE_BTN[language].deleteActivity}

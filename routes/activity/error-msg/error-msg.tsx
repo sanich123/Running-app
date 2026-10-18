@@ -12,7 +12,7 @@ import { TIMEOUT_MESSAGE } from '@Routes/activity/location-indicator/const';
 import { getMaxTrackingSpeedForSport } from '@U/location/location-utils';
 import { useGlobalActivitySportParams } from '../activity-params';
 import { ACTIVITY_ERROR_MSG } from './const';
-import ActivityMotionStatus from '../motion-status/motion-status';
+import ActivityMotionStatus from '../motion-status/activity-motion-status/activity-motion-status';
 
 export default function ErrorMsg() {
   const dispatch = useAppDispatch();
@@ -30,16 +30,6 @@ export default function ErrorMsg() {
         hour12: false,
       })
     : '--:--:--';
-
-  const dismissTooMuchSpeed = () => {
-    dispatch(setIsTooMuchSpeed(false));
-    dispatch(setTooMuchSpeed(0));
-    dispatch(setTooMuchSpeedTimestamp(null));
-  };
-
-  const dismissRecovery = () => {
-    dispatch(setIsAppShuted(false));
-  };
 
   useEffect(() => {
     if (isAppShutedByPhone) {
@@ -66,7 +56,7 @@ export default function ErrorMsg() {
             testID="dismiss-tracking-paused"
             icon="close"
             size={18}
-            onPress={dismissRecovery}
+            onPress={() => dispatch(setIsAppShuted(false))}
             accessibilityLabel="Закрыть уведомление о паузе отслеживания"
           />
         </View>
@@ -91,7 +81,11 @@ export default function ErrorMsg() {
             testID="dismiss-too-much-speed"
             icon="close"
             size={18}
-            onPress={dismissTooMuchSpeed}
+            onPress={() => {
+              dispatch(setIsTooMuchSpeed(false));
+              dispatch(setTooMuchSpeed(0));
+              dispatch(setTooMuchSpeedTimestamp(null));
+            }}
             accessibilityLabel="Закрыть предупреждение о GPS"
           />
         </View>

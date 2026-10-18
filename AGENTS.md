@@ -12,12 +12,16 @@
 - Put component-specific variables, types, and helpers in the component's folder when there are more than two. When there are only one or two, put them in the parent folder's `const.ts`, `types.ts`, or `utils.ts`, according to their role.
 - Keep Expo Router route modules at their required route paths and exports. Route-level lazy imports and Suspense fallbacks may stay in the route module; put screen UI in dedicated component folders.
 - When sibling elements share the same rendering condition, group them in one conditional fragment instead of repeating the condition.
+- When a render branch must show exactly one of two mutually exclusive results, express the choice once with a conditional expression instead of two independent conditions.
+- Do not repeat a check already guaranteed by an enclosing condition or a value's invariant. Keep only the condition that distinguishes the rendering branches; omit redundant truthy checks and optional chaining when the value is guaranteed to exist.
 - Keep JSX markup primarily in the component's `return` statement. Do not store JSX elements or fragments in variables; render components directly in the markup with their props.
 
 ## Component tests
 
 - Every component must have a colocated test file in its component folder, named after the component with a `.test.tsx` or `.test.jsx` suffix.
 - Component tests must cover the component's user-visible behavior and its callbacks.
+- Prioritize tests for scenarios that users can see or interact with.
+- When a test asserts a user-facing string rendered by a component, define that text as a shared constant and import it in both the component and its test.
 - Keep tests for Expo Router route modules outside the `app/` directory, in the corresponding screen implementation folder. Expo Router scans files in `app/` and may register test files as routes.
 
 ## Callback handlers

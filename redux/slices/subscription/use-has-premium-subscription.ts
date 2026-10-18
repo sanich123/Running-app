@@ -6,7 +6,7 @@ const MAX_TIMEOUT = 2_147_000_000;
 
 export default function useHasPremiumSubscription(): boolean {
   const subscription = useAppSelector(({ subscription: value }) => value);
-  const currentUserId = useAppSelector(({ auth }) => auth.userId);
+  const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const [now, setNow] = useState(Date.now);
 
   useEffect(() => {

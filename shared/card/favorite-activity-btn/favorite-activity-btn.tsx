@@ -1,4 +1,4 @@
-import { StyleSheet, type GestureResponderEvent } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useSetActivityFavoriteMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
@@ -15,13 +15,6 @@ export default function FavoriteActivityBtn({ activityId, isFavorite }: { activi
   const [setActivityFavorite, { isLoading }] = useSetActivityFavoriteMutation();
   const copy = FAVORITE_ACTIVITY_BUTTON_COPY[language];
   const label = isFavorite ? copy.remove : copy.add;
-  const handlePress = (event: GestureResponderEvent) => {
-    event.stopPropagation();
-    void setActivityFavorite({ id: activityId, isFavorite: !isFavorite })
-      .unwrap()
-      .catch((error) => errorToast(label, error));
-  };
-
   return (
     <IconButton
       testID={FAVORITE_ACTIVITY_BUTTON_TEST_ID}
@@ -32,7 +25,12 @@ export default function FavoriteActivityBtn({ activityId, isFavorite }: { activi
       size={isFavorite ? 22 : 20}
       style={styles.button}
       disabled={isLoading}
-      onPress={handlePress}
+      onPress={(event) => {
+        event.stopPropagation();
+        void setActivityFavorite({ id: activityId, isFavorite: !isFavorite })
+          .unwrap()
+          .catch((error) => errorToast(label, error));
+      }}
     />
   );
 }

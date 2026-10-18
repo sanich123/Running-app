@@ -16,3 +16,9 @@ export function getSplitBarWidth(split: ActivityKilometreSplit, fastestSplitDura
 
   return (fastestSplitDuration / split.lastKilometerDuration) * 100;
 }
+
+export function getColumnWidth(values: string[], minimumWidth: number) {
+  const longestValueLength = values.reduce((longestLength, value) => Math.max(longestLength, value.length), 0);
+
+  return Math.max(minimumWidth, longestValueLength * 9 + 8);
+}

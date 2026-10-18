@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useKeepAwake } from 'expo-keep-awake';
 import { SystemBars } from 'react-native-edge-to-edge';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, StyleSheet, View } from 'react-native';
@@ -13,14 +12,15 @@ import {
 } from './const';
 import Controls from './controls/controls';
 import EmptyState from './empty-state/empty-state';
-import ReplayMap from './map/map';
+import ReplayMap from './map/replay-map/replay-map';
 import MapTools from './map-tools/map-tools';
 import useMapControls from './use-map-controls';
 import useRouteData from './use-route-data';
 import useRoutePlayback from './use-route-playback';
+import { KeepAwakeDuringVideoExport, KeepAwakeDuringReplay } from './utils';
 import useVideoExport from './video-export/use-video-export';
-import VideoBrandOverlay from './video-export/video-brand-overlay';
-import VideoExportLoader from './video-export/video-export-loader';
+import VideoBrandOverlay from './video-export/video-brand-overlay/video-brand-overlay';
+import VideoExportLoader from './video-export/video-export-loader/video-export-loader';
 import type { ActivityRouteReplayProps, ReplayMapHandle } from './types';
 
 export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
@@ -140,16 +140,6 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
       )}
     </View>
   );
-}
-
-function KeepAwakeDuringVideoExport() {
-  useKeepAwake('activity-route-replay-video-export', { suppressDeactivateWarnings: true });
-  return null;
-}
-
-function KeepAwakeDuringReplay() {
-  useKeepAwake('activity-route-replay-playback', { suppressDeactivateWarnings: true });
-  return null;
 }
 
 const styles = StyleSheet.create({

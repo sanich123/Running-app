@@ -5,7 +5,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { HOME_WELCOME_TEXT } from '../const';
 import HomeWelcome from './home-welcome';
 
-jest.mock('@S/avatar/showable/showable', () => {
+jest.mock('@S/avatar/showable/avatar-showable/avatar-showable', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="welcome-avatar" />;
 });

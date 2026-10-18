@@ -2,7 +2,7 @@ import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
-import CalendarActivities from '@Routes/statistic/calendar/calendar';
+import CalendarActivities from '@Routes/statistic/calendar/calendar-activities/calendar-activities';
 import Charts from '@Routes/statistic/charts/charts';
 import MonthStatistics from '@Routes/statistic/month-statistics/month-statistics';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';

@@ -1,5 +1,5 @@
 import { createElement } from 'react';
-import Card from '@S/card/card';
+import Card from '@S/card/activity-card/activity-card';
 import type { ActivityListItemResponse } from '@R/runich-api/types';
 
 type ActivityListItem = ActivityListItemResponse;

@@ -55,23 +55,17 @@ export default function UploadPhotosBtn({ isDisabled, setIsDisabled, setImages, 
     }
   }
 
-  const cancelUpload = () => uploadControllerRef.current?.abort();
-
-  const progressButton = (
-    <Pressable
-      onPress={cancelUpload}
-      style={[styles.iconButton, styles.progressButton, { borderColor: colors.outlineVariant }]}
-      accessibilityLabel={UPLOAD_PHOTO_BTN[language].cancelUpload}
-      accessibilityRole="button"
-      testID="cancel-gallery-upload-button">
-      <UploadProgress progress={uploadProgress} size={32} testID="gallery-upload-progress" />
-    </Pressable>
-  );
-
   return (
     <View style={styles.container}>
       {isUploading ? (
-        progressButton
+        <Pressable
+          onPress={() => uploadControllerRef.current?.abort()}
+          style={[styles.iconButton, styles.progressButton, { borderColor: colors.outlineVariant }]}
+          accessibilityLabel={UPLOAD_PHOTO_BTN[language].cancelUpload}
+          accessibilityRole="button"
+          testID="cancel-gallery-upload-button">
+          <UploadProgress progress={uploadProgress} size={32} testID="gallery-upload-progress" />
+        </Pressable>
       ) : Platform.OS === 'web' ? (
         <label htmlFor="image-video-uploader" style={styles.webUploadLabel}>
           <input

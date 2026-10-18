@@ -2,7 +2,7 @@ import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-na
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
-import ProfilePage from '@Routes/profile/profile';
+import ProfilePage from '@Routes/profile/profile-page/profile-page';
 import GenderBtns from '@Routes/profile/profile-settings/gender-btns/gender-btns';
 import { INPUT_BIO_TEST_ID } from '@Routes/profile/profile-settings/input-bio/const';
 import InputBio from '@Routes/profile/profile-settings/input-bio/input-bio';
@@ -13,11 +13,11 @@ import InputsNameSurname from '@Routes/profile/profile-settings/inputs-name-surn
 import { CITY_TEST_ID, WEIGHT_TEST_ID } from '@Routes/profile/profile-settings/inputs-weight-city/const';
 import InputsWeightCity from '@Routes/profile/profile-settings/inputs-weight-city/inputs-weight-city';
 import { UPDATE_BTN } from '@Routes/profile/update-btn/const';
-import ProfileUpdateBtn from '@Routes/profile/update-btn/update-btn';
+import ProfileUpdateBtn from '@Routes/profile/update-btn/profile-update-btn/profile-update-btn';
 import { SETTINGS } from '@Routes/settings-page/const';
 import { DELETE_ACCOUNT } from '@Routes/settings-page/delete-account/const';
-import DeleteAccountBtn from '@Routes/settings-page/delete-account/delete-account';
-import LogoutBtn from '@Routes/settings-page/logout/logout-btn';
+import DeleteAccountBtn from '@Routes/settings-page/delete-account/delete-account-btn/delete-account-btn';
+import LogoutBtn from '@Routes/settings-page/logout/logout-btn/logout-btn';
 import SettingsPage from '@Routes/settings-page/settings-page';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';

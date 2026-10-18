@@ -6,14 +6,7 @@ import { removePhotoUrl } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { deleteUploadedMedia } from '@U/file-sending';
-import type { PreviewImagesProps } from '../preview-images/types';
-import type { ActivityPhoto } from '@R/slices/activity/types';
-
-type PreviewImageCloseBtnProps = PreviewImagesProps &
-  (
-    | { media: ActivityPhoto; image?: never; thumbnail?: never }
-    | { media?: never; image: string; thumbnail?: string | null }
-  );
+import type { PreviewImageCloseBtnProps } from './types';
 
 export default function PreviewImageCloseBtn({
   setImages,

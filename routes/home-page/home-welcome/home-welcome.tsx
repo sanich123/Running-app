@@ -3,7 +3,7 @@ import { IconButton, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
-import AvatarShowable from '@S/avatar/showable/showable';
+import AvatarShowable from '@S/avatar/showable/avatar-showable/avatar-showable';
 import { HOME_WELCOME_TEXT } from '../const';
 
 export default function HomeWelcome() {

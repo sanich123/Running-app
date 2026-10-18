@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { Platform } from 'react-native';
 import { Stack } from 'expo-router';
-import WatchImportPage from '@Routes/watch-import/watch-import';
+import WatchImportPage from '@Routes/watch-import/watch-import-page/watch-import-page';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 export default function WatchImportRoute() {

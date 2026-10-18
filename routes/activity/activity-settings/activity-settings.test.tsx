@@ -9,7 +9,7 @@ import {
 } from '@R/slices/settings/settings';
 import { mockStore, resetMockActivityReminders } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ActivityLocationInfoModal from './activity-location-info-modal';
+import ActivityLocationInfoModal from './activity-location-info-modal/activity-location-info-modal';
 import ActivitySettings from './activity-settings';
 
 describe('ActivitySettings', () => {

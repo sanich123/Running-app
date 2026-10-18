@@ -3,9 +3,9 @@ import { useTheme } from 'react-native-paper';
 import { resetMigration } from '@R/slices/migration/migration';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { MIGRATION_STATES } from './const';
-import MigrationInstructions from './migration-instructions';
-import MigrationStatus from './migration-status';
-import MigrationStatusSync from './migration-status-sync';
+import MigrationInstructions from './migration-instructions/migration-instructions';
+import MigrationStatus from './migration-status/migration-status';
+import MigrationStatusSync from './migration-status-sync/migration-status-sync';
 import useMigrationController from './use-migration-controller';
 
 export default function MigrationFromStrava() {

@@ -41,5 +41,13 @@ export default function ActiveVideoPlayer({ url, isMuted, isPaused, onMetadata }
     };
   }, [player]);
 
-  return <VideoView player={player} style={StyleSheet.absoluteFill} contentFit="cover" nativeControls={false} />;
+  return (
+    <VideoView
+      player={player}
+      style={StyleSheet.absoluteFill}
+      contentFit="cover"
+      nativeControls={false}
+      testID="active-video-player"
+    />
+  );
 }

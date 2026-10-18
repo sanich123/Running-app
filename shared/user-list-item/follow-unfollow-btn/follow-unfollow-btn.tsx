@@ -9,11 +9,7 @@ import {
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { FOLLOW_UNFOLLOW_BTN } from './const';
-
-interface FollowUnfollowBtnProps {
-  friendId: string;
-  compact?: boolean;
-}
+import type { FollowUnfollowBtnProps } from './types';
 
 export default function FollowUnfollowBtn({ friendId, compact = false }: FollowUnfollowBtnProps) {
   const { colors } = useTheme();

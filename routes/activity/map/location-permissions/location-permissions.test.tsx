@@ -22,10 +22,13 @@ jest.mock('@Routes/activity/background-location-switcher/background-location-swi
   const { View } = jest.requireActual('react-native');
   return () => <View testID="background-location-switcher" />;
 });
-jest.mock('@Routes/activity/foregroud-location-switcher/foreground-location-switcher', () => {
-  const { View } = jest.requireActual('react-native');
-  return () => <View testID="foreground-location-switcher" />;
-});
+jest.mock(
+  '@Routes/activity/foregroud-location-switcher/foreground-location-switcher/foreground-location-switcher',
+  () => {
+    const { View } = jest.requireActual('react-native');
+    return () => <View testID="foreground-location-switcher" />;
+  },
+);
 jest.mock('@Routes/activity/location-settings-switcher/location-settings-switcher', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View />;

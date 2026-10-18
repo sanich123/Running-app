@@ -8,21 +8,23 @@ import { FONT_FAMILIES } from '@const/fonts';
 export default function FeedHeaderTitle({ children, isBrand = false }: PropsWithChildren<{ isBrand?: boolean }>) {
   const { colors } = useTheme();
   const { replace } = useRouter();
-  const title = (
-    <Text
-      accessibilityLabel={isBrand ? 'Runich' : undefined}
-      style={[isBrand ? styles.brand : styles.title, { color: colors.primary }]}>
-      {isBrand ? 'RUNICH' : children}
-    </Text>
-  );
-
   if (Platform.OS !== 'web') {
-    return title;
+    return (
+      <Text
+        accessibilityLabel={isBrand ? 'Runich' : undefined}
+        style={[isBrand ? styles.brand : styles.title, { color: colors.primary }]}>
+        {isBrand ? 'RUNICH' : children}
+      </Text>
+    );
   }
 
   return (
     <TouchableRipple accessibilityRole="link" borderless onPress={() => replace(ROUTES.root)} style={styles.link}>
-      {title}
+      <Text
+        accessibilityLabel={isBrand ? 'Runich' : undefined}
+        style={[isBrand ? styles.brand : styles.title, { color: colors.primary }]}>
+        {isBrand ? 'RUNICH' : children}
+      </Text>
     </TouchableRipple>
   );
 }

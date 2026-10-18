@@ -10,13 +10,8 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { SHARE_BUTTON_TEXT } from './const';
 import { useActivityCard } from '../context';
+import { waitForShareImageRender } from './utils';
 import ShareActivityImage from '../share-activity-image/share-activity-image';
-
-function waitForShareImageRender() {
-  return new Promise<void>((resolve) => {
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-  });
-}
 
 export default function ShareBtn() {
   const { activity } = useActivityCard();

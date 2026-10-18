@@ -1,8 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import Skeleton from '@S/skeleton/skeleton';
-
-const SKELETON_ROWS = [0, 1, 2];
+import { SKELETON_ROWS } from './const';
 
 export default function CommentsSkeleton() {
   const { colors } = useTheme();

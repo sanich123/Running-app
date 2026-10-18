@@ -15,7 +15,7 @@ import {
 } from '@R/slices/location/location';
 import { clearTrackingRecovery, setTrackingRecoveryStatus } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import ActivitySettingsButton from '@Routes/activity/activity-settings/activity-settings-button';
+import ActivitySettingsButton from '@Routes/activity/activity-settings/activity-settings-button/activity-settings-button';
 import CloseBtn from '@Routes/activity/close-btn/close-btn';
 import IconChooseSport from '@Routes/activity/icon-choose-sport/icon-choose-sport';
 import Map from '@Routes/activity/map/map';

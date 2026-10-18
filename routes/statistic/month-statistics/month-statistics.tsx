@@ -9,11 +9,11 @@ import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import ErrorComponent from '@S/error-component/error-component';
 import { MONTH_STATISTICS } from '@S/month-metric/const';
-import MonthStatisticsMetrics from '@S/month-metric/month-metric';
+import MonthStatisticsMetrics from '@S/month-metric/month-statistics-metrics/month-statistics-metrics';
 import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { getDeviceTimeZone } from '@U/time-zone';
-import CalendarActivities from '../calendar/calendar';
-import MonthTypesChips from '../chips/month-types-chips';
+import CalendarActivities from '../calendar/calendar-activities/calendar-activities';
+import MonthTypesChips from '../chips/month-types-chips/month-types-chips';
 import YearMonthTitle from '../year-month-title/year-month-title';
 
 export default function MonthStatistics() {

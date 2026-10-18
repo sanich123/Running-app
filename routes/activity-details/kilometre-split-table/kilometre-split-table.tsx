@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Divider, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { KM_SPLITS } from './const';
-import { getFastestSplitDuration, getSplitBarWidth, getSplitMetric } from './utils';
+import { getFastestSplitDuration, getSplitBarWidth, getSplitMetric, getColumnWidth } from './utils';
 import type { ActivityKilometreSplit } from '@S/card/types';
 
 export default function KilometreSplitTable({ kilometresSplit }: { kilometresSplit: ActivityKilometreSplit[] }) {
@@ -106,9 +106,3 @@ const styles = StyleSheet.create({
   barTrack: { borderRadius: 4, height: 8, overflow: 'hidden', width: '100%' },
   bar: { borderRadius: 4, height: '100%' },
 });
-
-function getColumnWidth(values: string[], minimumWidth: number) {
-  const longestValueLength = values.reduce((longestLength, value) => Math.max(longestLength, value.length), 0);
-
-  return Math.max(minimumWidth, longestValueLength * 9 + 8);
-}

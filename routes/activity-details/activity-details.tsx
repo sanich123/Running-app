@@ -1,18 +1,17 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
-import Card from '@S/card/card';
+import Card from '@S/card/activity-card/activity-card';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import ErrorComponent from '@S/error-component/error-component';
 import ActivityActionsMenu from './activity-actions-menu/activity-actions-menu';
+import { LazyUsersSettingsIcons } from './const';
 import KilometreSplitTable from './kilometre-split-table/kilometre-split-table';
 import Metrics from './metrics/metrics';
-
-const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-settings-icons'));
 
 export default function ActivityDetails() {
   const { width } = useWindowDimensions();

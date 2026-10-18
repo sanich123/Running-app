@@ -5,7 +5,7 @@ import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { profileApi } from '@R/services/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import UserAvatar from '@S/avatar/avatar';
+import UserAvatar from '@S/avatar/user-avatar/user-avatar';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import type { UserInfoProps } from './const';

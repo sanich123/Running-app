@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { Keyboard, Platform, TextInput as NativeTextInput, View, StyleSheet } from 'react-native';
+import { Keyboard, View, StyleSheet } from 'react-native';
 import { Button, Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import {
   usePostCommentWithActivityIdMutation,
@@ -9,11 +8,9 @@ import {
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID } from './const';
+import { COMMENT_ICON_TEST_ID, COMMENT_INPUT, COMMENT_INPUT_TEST_ID, CommentTextInput } from './const';
 import { getCommentInputHeight } from './utils';
 import type { CommentInputProps } from '../types';
-
-const CommentTextInput = Platform.OS === 'web' ? NativeTextInput : BottomSheetTextInput;
 
 export default function CommentInput({ commentToUpdate = '', commentId = '' }: CommentInputProps) {
   const [focused, setFocused] = useState(false);
@@ -27,10 +24,6 @@ export default function CommentInput({ commentToUpdate = '', commentId = '' }: C
   const [updateComment, { isLoading: isUpdatingComment }] = useUpdateCommentByCommentIdMutation();
   const isSending = isCommentSending || isUpdatingComment;
   const isEditing = Boolean(commentId && commentToUpdate);
-
-  const handleInputFocus = () => {
-    setFocused(true);
-  };
 
   function closeInput() {
     Keyboard.dismiss();
@@ -92,7 +85,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '' }: C
           multiline
           onChangeText={setComment}
           onSubmitEditing={submitComment}
-          onFocus={handleInputFocus}
+          onFocus={() => setFocused(true)}
           onBlur={() => {
             setFocused(false);
           }}

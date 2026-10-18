@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { Text, TouchableRipple } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import UserAvatar from '@S/avatar/avatar';
+import UserAvatar from '@S/avatar/user-avatar/user-avatar';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
 import type { UserListItemType } from './const';
 

@@ -3,7 +3,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import InfiniteScrollList from './infinite-scroll-list';
 
 jest.mock('@S/infinite-scroll-list/week-statistics/week-statistics', () => () => null);
-jest.mock('@S/card/card', () => () => null);
+jest.mock('@S/card/activity-card/activity-card', () => () => null);
 
 const activities = Array.from({ length: 20 }, (_, index) => ({
   id: `activity-${index}`,

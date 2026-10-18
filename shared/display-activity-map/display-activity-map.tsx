@@ -52,25 +52,6 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
   );
   const routeSegmentColors = useMemo(() => getRouteSpeedColors(validLocations), [validLocations]);
 
-  const zoomIn = () => {
-    const nextZoomLevel = Math.min(DISPLAY_ACTIVITY_MAP_MAX_ZOOM, zoomLevel + 1);
-    setZoomLevel(nextZoomLevel);
-    if (Platform.OS === 'web') {
-      webMapControlsRef.current?.zoomTo(nextZoomLevel, 250);
-    } else {
-      cameraRef.current?.zoomTo(nextZoomLevel, 250);
-    }
-  };
-  const zoomOut = () => {
-    const nextZoomLevel = Math.max(DISPLAY_ACTIVITY_MAP_MIN_ZOOM, zoomLevel - 1);
-    setZoomLevel(nextZoomLevel);
-    if (Platform.OS === 'web') {
-      webMapControlsRef.current?.zoomTo(nextZoomLevel, 250);
-    } else {
-      cameraRef.current?.zoomTo(nextZoomLevel, 250);
-    }
-  };
-
   return (
     <View style={styles.mapWrapper}>
       {mapData ? (
@@ -118,8 +99,24 @@ export default function DisplayActivityMap({ locations, kilometresSplit }: Displ
           <MapControls
             mapStyle={mapStyle}
             copy={copy}
-            onZoomIn={zoomIn}
-            onZoomOut={zoomOut}
+            onZoomIn={() => {
+              const nextZoomLevel = Math.min(DISPLAY_ACTIVITY_MAP_MAX_ZOOM, zoomLevel + 1);
+              setZoomLevel(nextZoomLevel);
+              if (Platform.OS === 'web') {
+                webMapControlsRef.current?.zoomTo(nextZoomLevel, 250);
+              } else {
+                cameraRef.current?.zoomTo(nextZoomLevel, 250);
+              }
+            }}
+            onZoomOut={() => {
+              const nextZoomLevel = Math.max(DISPLAY_ACTIVITY_MAP_MIN_ZOOM, zoomLevel - 1);
+              setZoomLevel(nextZoomLevel);
+              if (Platform.OS === 'web') {
+                webMapControlsRef.current?.zoomTo(nextZoomLevel, 250);
+              } else {
+                cameraRef.current?.zoomTo(nextZoomLevel, 250);
+              }
+            }}
             onMapStyleChange={setMapStyle}
             canZoomIn={zoomLevel < DISPLAY_ACTIVITY_MAP_MAX_ZOOM}
             canZoomOut={zoomLevel > DISPLAY_ACTIVITY_MAP_MIN_ZOOM}

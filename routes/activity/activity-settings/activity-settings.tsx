@@ -32,12 +32,16 @@ import {
 } from '@R/slices/settings/settings';
 import { getActivitySettings } from '@R/slices/settings/types';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { ACTIVITY_SETTINGS, ACTIVITY_VOICE_METRICS, ACTIVITY_VOICE_PREVIEW, createActivityReminderId } from './const';
+import {
+  ACTIVITY_SETTINGS,
+  ACTIVITY_VOICE_METRICS,
+  ACTIVITY_VOICE_PREVIEW,
+  createActivityReminderId,
+  ActivitySettingsTextInput,
+} from './const';
 import type { ActivitySettingsProps } from './types';
 import type { ActivityVoiceMetric } from '@R/slices/settings/types';
 import type { Voice } from 'expo-speech';
-
-const ActivitySettingsTextInput = Platform.OS === 'web' ? TextInput : BottomSheetTextInput;
 
 export default function ActivitySettings({
   settingsModalRef,
