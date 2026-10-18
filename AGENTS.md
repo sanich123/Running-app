@@ -12,6 +12,7 @@
 - Put component-specific variables, types, and helpers in the component's folder when there are more than two. When there are only one or two, put them in the parent folder's `const.ts`, `types.ts`, or `utils.ts`, according to their role.
 - Keep Expo Router route modules at their required route paths and exports. Route-level lazy imports and Suspense fallbacks may stay in the route module; put screen UI in dedicated component folders.
 - When sibling elements share the same rendering condition, group them in one conditional fragment instead of repeating the condition.
+- Keep JSX markup primarily in the component's `return` statement. Do not store JSX elements or fragments in variables; render components directly in the markup with their props.
 
 ## Component tests
 

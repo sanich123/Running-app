@@ -1,5 +1,5 @@
-import Feed from '@Routes/home-page/home-page';
+import HomePageContent from '@Routes/home-page/home-page';
 
 export default function HomePage() {
-  return <Feed />;
+  return <HomePageContent />;
 }

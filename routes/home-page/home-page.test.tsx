@@ -9,7 +9,7 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import Feed from './home-page';
+import HomePage from './home-page';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
@@ -24,7 +24,7 @@ jest.mock('@S/infinite-scroll-list/infinite-scroll-list', () => {
   );
 });
 
-describe('Feed', () => {
+describe('HomePage', () => {
   beforeEach(() => {
     mockReplace.mockClear();
     mockStore.dispatch(setAuthTokens({ accessToken: 'feed-access-token' }));
@@ -34,7 +34,7 @@ describe('Feed', () => {
 
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/all`, loadingResponse));
-    await renderWithProviders(<Feed />);
+    await renderWithProviders(<HomePage />);
     expect(screen.getByText('Ваш недельный отчет')).toBeOnTheScreen();
     expect(screen.getByTestId('home-feed-switcher')).toBeOnTheScreen();
     expect(screen.getByTestId('home-feed-skeleton')).toBeOnTheScreen();
@@ -42,13 +42,13 @@ describe('Feed', () => {
   });
 
   it('renders server activities', async () => {
-    await renderWithProviders(<Feed />);
+    await renderWithProviders(<HomePage />);
     expect(await screen.findByText(MOCK_SERVER_ACTIVITY.title)).toBeOnTheScreen();
   });
 
   it('renders error state', async () => {
     server.use(http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/all`, errorResponse));
-    await renderWithProviders(<Feed />);
+    await renderWithProviders(<HomePage />);
     expect(await screen.findByTestId(ERROR_COMPONENT_TEST_ID)).toBeOnTheScreen();
   });
 
@@ -79,12 +79,12 @@ describe('Feed', () => {
       ),
     );
     const user = userEvent.setup();
-    await renderWithProviders(<Feed />);
+    await renderWithProviders(<HomePage />);
 
     expect(await screen.findByText('Following activity')).toBeOnTheScreen();
-    await user.press(screen.getByRole('button', { name: 'Мои' }));
+    await user.press(screen.getByRole('tab', { name: 'Мои' }));
     expect(await screen.findByText('My activity')).toBeOnTheScreen();
-    await user.press(screen.getByRole('button', { name: 'Избранное' }));
+    await user.press(screen.getByRole('tab', { name: 'Избранное' }));
     expect(await screen.findByText('Favorite activity')).toBeOnTheScreen();
 
     expect(favoriteRequestUrls).toHaveLength(1);
@@ -100,7 +100,7 @@ describe('Feed', () => {
       }),
     );
 
-    await renderWithProviders(<Feed />);
+    await renderWithProviders(<HomePage />);
 
     expect(await screen.findByText(MOCK_SERVER_ACTIVITY.title)).toBeOnTheScreen();
     expect(authorizationHeader).toBe('Bearer feed-access-token');

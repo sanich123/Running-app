@@ -7,10 +7,7 @@ import {
   ACTIVITY_MEDIA_MIN_HEIGHT,
 } from '@S/card/media-list/const';
 import Skeleton from '@S/skeleton/skeleton';
-
-const SKELETON_ITEMS = [0, 1];
-const METRICS = [0, 1, 2];
-const ACTIONS = [0, 1, 2];
+import { ACTIONS, METRICS, SKELETON_ITEMS } from './const';
 
 export default function HomeFeedSkeleton() {
   const { width } = useWindowDimensions();

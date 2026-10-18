@@ -96,6 +96,31 @@ jest.mock('react-native-gifted-charts', () => {
   const { View } = jest.requireActual('react-native');
   return { BarChart: View };
 });
+jest.mock('react-native-tab-view', () => {
+  const { createElement } = jest.requireActual('react');
+  const { Pressable, Text, View } = jest.requireActual('react-native');
+
+  return {
+    TabBar: ({ navigationState, jumpTo, testID }: any) =>
+      createElement(
+        View,
+        { testID, accessibilityRole: 'tablist' },
+        ...navigationState.routes.map(({ key, title }: { key: string; title: string }) =>
+          createElement(
+            Pressable,
+            {
+              key,
+              accessibilityRole: 'tab',
+              accessibilityLabel: title,
+              accessibilityState: { selected: navigationState.routes[navigationState.index]?.key === key },
+              onPress: () => jumpTo(key),
+            },
+            createElement(Text, null, title),
+          ),
+        ),
+      ),
+  };
+});
 jest.mock('mapbox-gl', () => ({
   Map: jest.fn(() => ({
     addControl: jest.fn(),

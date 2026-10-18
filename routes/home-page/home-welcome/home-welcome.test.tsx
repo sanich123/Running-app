@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react-native';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { HOME_WELCOME_TEXT } from './const';
+import { HOME_WELCOME_TEXT } from '../const';
 import HomeWelcome from './home-welcome';
 
 jest.mock('@S/avatar/showable/showable', () => {

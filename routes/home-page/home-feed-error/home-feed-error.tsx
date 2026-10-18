@@ -4,14 +4,8 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useAppSelector } from '@R/typed-hooks';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { getErrorMessageFromError } from '@S/error-toast/error-toast';
-import { HOME_FEED_ERROR_COPY } from './const';
-import type { SerializedError } from '@reduxjs/toolkit';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-
-interface HomeFeedErrorProps {
-  error: FetchBaseQueryError | SerializedError;
-  refetch: () => unknown;
-}
+import { HOME_FEED_ERROR_COPY } from '../const';
+import type { HomeFeedErrorProps } from './types';
 
 export default function HomeFeedError({ error, refetch }: HomeFeedErrorProps) {
   const { colors } = useTheme();

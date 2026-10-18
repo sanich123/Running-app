@@ -4,7 +4,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import AvatarShowable from '@S/avatar/showable/showable';
-import { HOME_WELCOME_TEXT } from './const';
+import { HOME_WELCOME_TEXT } from '../const';
 
 export default function HomeWelcome() {
   const { colors } = useTheme();
