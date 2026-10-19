@@ -199,9 +199,20 @@ export interface ActivityLocationsResponse {
   kilometresSplit: ActivityKilometreSplitResponse[] | null;
 }
 
+export interface ActivityChartLocationResponse {
+  timestamp: number;
+  coords: {
+    latitude?: number | null;
+    longitude?: number | null;
+    altitude?: number | null;
+    speed?: number | null;
+    timestamp?: number | null;
+  };
+}
+
 export interface ActivityChartDataResponse {
   heartRateSamples: ActivityHeartRateSample[];
-  locations: ActivityLocationResponse[] | null;
+  locations: ActivityChartLocationResponse[] | null;
 }
 
 export interface CommentMutationResponse {

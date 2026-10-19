@@ -21,9 +21,9 @@ jest.mock('@S/error-component/error-component', () => {
 
 const chartData: ActivityChartDataResponse = {
   locations: [
-    { coords: { latitude: 0, longitude: 0, altitude: 100, timestamp: 1_000 } },
-    { coords: { latitude: 0, longitude: 0.005, altitude: 110, timestamp: 121_000 } },
-    { coords: { latitude: 0, longitude: 0.01, altitude: 120, timestamp: 241_000 } },
+    { timestamp: 1_000, coords: { latitude: 0, longitude: 0, altitude: 100, timestamp: 1_000 } },
+    { timestamp: 121_000, coords: { latitude: 0, longitude: 0.005, altitude: 110, timestamp: 121_000 } },
+    { timestamp: 241_000, coords: { latitude: 0, longitude: 0.01, altitude: 120, timestamp: 241_000 } },
   ],
   heartRateSamples: [
     { timestamp: 1_000, beatsPerMinute: 110 },

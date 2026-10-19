@@ -8,7 +8,9 @@ import type {
   HeartRateZoneSettings,
 } from './types';
 import type { ActivityChartDataResponse } from '@R/runich-api/types';
-import type { ActivityHeartRateSample, ActivityLocation } from '@S/card/types';
+import type { ActivityHeartRateSample } from '@S/card/types';
+
+type ActivityChartLocation = NonNullable<ActivityChartDataResponse['locations']>[number];
 
 interface ValuePoint {
   position: number;
@@ -16,10 +18,16 @@ interface ValuePoint {
 }
 
 interface TimedRoutePoint {
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
   timestamp: number;
   altitude?: number;
+  speed?: number;
+}
+
+interface RouteCoordinates {
+  latitude: number;
+  longitude: number;
 }
 
 const CHART_POINT_COUNT = 81;
@@ -36,12 +44,24 @@ export const ACTIVITY_CHART_METRIC_COLORS: Record<ActivityChartMetric, string> =
   elevation: '#C026D3',
 };
 
-function getTimestamp(location: ActivityLocation) {
+function getTimestamp(location: ActivityChartLocation) {
   const timestamp = location.timestamp ?? location.coords.timestamp;
   return typeof timestamp === 'number' && Number.isFinite(timestamp) && timestamp > 0 ? timestamp : undefined;
 }
 
-function getDistanceBetweenPoints(first: TimedRoutePoint, second: TimedRoutePoint) {
+function getRouteCoordinates(point: TimedRoutePoint): RouteCoordinates | undefined {
+  if (
+    typeof point.latitude !== 'number' ||
+    typeof point.longitude !== 'number' ||
+    !Number.isFinite(point.latitude) ||
+    !Number.isFinite(point.longitude)
+  ) {
+    return undefined;
+  }
+  return { latitude: point.latitude, longitude: point.longitude };
+}
+
+function getDistanceBetweenPoints(first: RouteCoordinates, second: RouteCoordinates) {
   const earthRadiusMeters = 6_371_000;
   const latitudeDifference = ((second.latitude - first.latitude) * Math.PI) / 180;
   const longitudeDifference = ((second.longitude - first.longitude) * Math.PI) / 180;
@@ -114,13 +134,15 @@ export function buildActivityChartSeries(
     .flatMap((location): TimedRoutePoint[] => {
       const { latitude, longitude, altitude } = location.coords;
       const timestamp = getTimestamp(location);
-      return timestamp !== undefined && Number.isFinite(latitude) && Number.isFinite(longitude)
+      const speed = location.coords.speed;
+      return timestamp !== undefined
         ? [
             {
-              latitude,
-              longitude,
               timestamp,
+              ...(typeof latitude === 'number' && Number.isFinite(latitude) ? { latitude } : {}),
+              ...(typeof longitude === 'number' && Number.isFinite(longitude) ? { longitude } : {}),
               ...(typeof altitude === 'number' && Number.isFinite(altitude) ? { altitude } : {}),
+              ...(typeof speed === 'number' && Number.isFinite(speed) ? { speed } : {}),
             },
           ]
         : [];
@@ -132,8 +154,13 @@ export function buildActivityChartSeries(
   const elapsedDuration = timedRoute[timedRoute.length - 1].timestamp - startedAt;
   if (elapsedDuration <= 0) return [];
   const routeDistance = timedRoute.reduce((distance, point, index) => {
-    if (index === 0) return distance;
-    return distance + getDistanceBetweenPoints(timedRoute[index - 1], point);
+    const previous = timedRoute[index - 1];
+    if (!previous) return distance;
+    const previousCoordinates = getRouteCoordinates(previous);
+    const pointCoordinates = getRouteCoordinates(point);
+    return previousCoordinates && pointCoordinates
+      ? distance + getDistanceBetweenPoints(previousCoordinates, pointCoordinates)
+      : distance;
   }, 0);
   const distanceScale = activityDistance > 0 && routeDistance > 0 ? activityDistance / routeDistance : 1;
 
@@ -166,12 +193,20 @@ export function buildActivityChartSeries(
   const paceOrSpeedMetric = isRunningActivity(sport) ? 'pace' : 'speed';
   const paceOrSpeedSamples: ValuePoint[] = [];
   timedRoute.forEach((point, index) => {
-    if (index === 0) return;
-    const previous = timedRoute[index - 1];
-    const elapsedSeconds = (point.timestamp - previous.timestamp) / 1000;
-    const segmentDistance = getDistanceBetweenPoints(previous, point) * distanceScale;
-    if (elapsedSeconds <= 0 || segmentDistance <= 0) return;
-    const speedKilometresPerHour = (segmentDistance / elapsedSeconds) * 3.6;
+    let speedKilometresPerHour = point.speed;
+    let position = point.timestamp - startedAt;
+    if (typeof speedKilometresPerHour !== 'number') {
+      const previous = timedRoute[index - 1];
+      if (!previous) return;
+      const previousCoordinates = getRouteCoordinates(previous);
+      const pointCoordinates = getRouteCoordinates(point);
+      if (!previousCoordinates || !pointCoordinates) return;
+      const elapsedSeconds = (point.timestamp - previous.timestamp) / 1000;
+      const segmentDistance = getDistanceBetweenPoints(previousCoordinates, pointCoordinates) * distanceScale;
+      if (elapsedSeconds <= 0 || segmentDistance <= 0) return;
+      speedKilometresPerHour = (segmentDistance / elapsedSeconds) * 3.6;
+      position = (point.timestamp + previous.timestamp) / 2 - startedAt;
+    }
     if (
       (paceOrSpeedMetric === 'pace' && speedKilometresPerHour < MINIMUM_PACE_SPEED_KILOMETRES_PER_HOUR) ||
       speedKilometresPerHour < 0.5 ||
@@ -180,7 +215,7 @@ export function buildActivityChartSeries(
       return;
     }
     paceOrSpeedSamples.push({
-      position: (point.timestamp + previous.timestamp) / 2 - startedAt,
+      position,
       value: paceOrSpeedMetric === 'pace' ? 3600 / speedKilometresPerHour : speedKilometresPerHour,
     });
   });

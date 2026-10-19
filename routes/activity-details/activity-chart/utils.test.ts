@@ -125,9 +125,9 @@ describe('heart rate chart utilities', () => {
     const chartData: ActivityChartDataResponse = {
       heartRateSamples: [],
       locations: [
-        { coords: { latitude: 0, longitude: 0, altitude: 100, timestamp: 1_000 } },
-        { coords: { latitude: 0, longitude: 0.005, altitude: 110, timestamp: 121_000 } },
-        { coords: { latitude: 0, longitude: 0.01, altitude: 120, timestamp: 241_000 } },
+        { timestamp: 1_000, coords: { latitude: 0, longitude: 0, altitude: 100, timestamp: 1_000 } },
+        { timestamp: 121_000, coords: { latitude: 0, longitude: 0.005, altitude: 110, timestamp: 121_000 } },
+        { timestamp: 241_000, coords: { latitude: 0, longitude: 0.01, altitude: 120, timestamp: 241_000 } },
       ],
     };
 
@@ -142,10 +142,10 @@ describe('heart rate chart utilities', () => {
     const chartData: ActivityChartDataResponse = {
       heartRateSamples: [],
       locations: [
-        { coords: { latitude: 0, longitude: 0, altitude: 100, timestamp: 1_000 } },
-        { coords: { latitude: 0, longitude: 0.0001, altitude: 100, timestamp: 121_000 } },
-        { coords: { latitude: 0, longitude: 0.005, altitude: 101, timestamp: 241_000 } },
-        { coords: { latitude: 0, longitude: 0.01, altitude: 102, timestamp: 361_000 } },
+        { timestamp: 1_000, coords: { latitude: 0, longitude: 0, altitude: 100, timestamp: 1_000 } },
+        { timestamp: 121_000, coords: { latitude: 0, longitude: 0.0001, altitude: 100, timestamp: 121_000 } },
+        { timestamp: 241_000, coords: { latitude: 0, longitude: 0.005, altitude: 101, timestamp: 241_000 } },
+        { timestamp: 361_000, coords: { latitude: 0, longitude: 0.01, altitude: 102, timestamp: 361_000 } },
       ],
     };
 
