@@ -12,6 +12,7 @@ import {
   LazyInputBio,
   LazyInputsNameSurname,
   LazyInputsHeightAge,
+  LazyInputsHeartRate,
   LazyInputsWeightCity,
 } from '@Routes/app-routes/const';
 import { HEIGHT_AGE } from '@Routes/profile/profile-settings/inputs-height-age/const';
@@ -79,6 +80,7 @@ export default function ProfileSettings() {
             </View>
             <LazyGenderBtns isDisabled={isFormDisabled} />
           </View>
+          <LazyInputsHeartRate isDisabled={isFormDisabled} />
         </Suspense>
       </KeyboardAwareScrollView>
     </>

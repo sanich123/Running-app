@@ -7,7 +7,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 
 export default function FeedHeaderTitle({ children, isBrand = false }: PropsWithChildren<{ isBrand?: boolean }>) {
   const { colors } = useTheme();
-  const { replace } = useRouter();
+  const { canGoBack, replace } = useRouter();
   if (Platform.OS !== 'web') {
     return (
       <Text
@@ -18,12 +18,14 @@ export default function FeedHeaderTitle({ children, isBrand = false }: PropsWith
     );
   }
 
+  if (!isBrand && canGoBack()) {
+    return <Text style={[styles.title, { color: colors.primary }]}>{children}</Text>;
+  }
+
   return (
     <TouchableRipple accessibilityRole="link" borderless onPress={() => replace(ROUTES.root)} style={styles.link}>
-      <Text
-        accessibilityLabel={isBrand ? 'Runich' : undefined}
-        style={[isBrand ? styles.brand : styles.title, { color: colors.primary }]}>
-        {isBrand ? 'RUNICH' : children}
+      <Text accessibilityLabel="Runich" style={[styles.brand, { color: colors.primary }]}>
+        RUNICH
       </Text>
     </TouchableRipple>
   );

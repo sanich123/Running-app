@@ -28,11 +28,14 @@ const workout: WatchWorkout = {
   duration: 600_000,
   distance: 2_000,
   locations: [{ timestamp: 1_000, coords: { latitude: 55.75, longitude: 37.61 } }],
+  heartRateSamples: [{ timestamp: 1_000, beatsPerMinute: 140 }],
   diagnostics: {
     dataOrigin: 'com.example.watch',
     sessionRecordId: 'record-12345678',
     routeStatus: 'route-in-record',
     routePointCount: 1,
+    heartRatePermissionGranted: true,
+    heartRateSampleCount: 1,
   },
 };
 
@@ -70,6 +73,17 @@ describe('watch import diagnostics helpers', () => {
       workoutCount: 1,
       sourceRoutePointCount: 1,
       payloadRoutePointCount: 0,
+      sourceHeartRateSampleCount: 1,
+      payloadHeartRateSampleCount: 0,
+      workouts: [
+        {
+          source: 'health-connect',
+          sourceActivityId: workout.sourceActivityId,
+          sourceHeartRateSampleCount: 1,
+          payloadHeartRateSampleCount: 0,
+          outcome: 'not-sent',
+        },
+      ],
       skipReason: 'manual-selection',
     };
 
@@ -77,11 +91,23 @@ describe('watch import diagnostics helpers', () => {
       expect.arrayContaining([
         expect.objectContaining({ label: 'причина', value: 'ожидается выбор тренировок для первого импорта' }),
         expect.objectContaining({ label: 'тренировок', value: '1' }),
+        expect.objectContaining({ label: 'измерения пульса (Health Connect → Runich)', value: '1 → 0' }),
       ]),
     );
     expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('источник: com.example.watch');
     expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('маршрут: маршрут в записи');
     expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('точек: 1');
+    expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('разрешение на пульс: да');
+    expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('измерений пульса: 1');
+    expect(
+      formatWorkoutDiagnostics(workout, 0, true, {
+        source: 'health-connect',
+        sourceActivityId: workout.sourceActivityId,
+        sourceHeartRateSampleCount: 1,
+        payloadHeartRateSampleCount: 1,
+        outcome: 'uploaded',
+      }),
+    ).toContain('пульс в запросе: 1/1 (запрос принят)');
   });
 
   it('formats errors, labels, and workout metadata for both languages and missing values', () => {
@@ -237,6 +263,17 @@ describe('watch import diagnostics helpers', () => {
       workoutCount: 2,
       sourceRoutePointCount: 10,
       payloadRoutePointCount: 8,
+      sourceHeartRateSampleCount: 12,
+      payloadHeartRateSampleCount: 10,
+      workouts: [
+        {
+          source: 'health-connect',
+          sourceActivityId: workout.sourceActivityId,
+          sourceHeartRateSampleCount: 2,
+          payloadHeartRateSampleCount: 2,
+          outcome: 'error',
+        },
+      ],
       imported: 1,
       skipped: 1,
       errorStatus: '503',
@@ -245,6 +282,7 @@ describe('watch import diagnostics helpers', () => {
       expect.arrayContaining([
         expect.objectContaining({ tone: 'error', value: 'error' }),
         expect.objectContaining({ label: 'GPS points', value: '10 → 8' }),
+        expect.objectContaining({ label: 'heart-rate samples (Health Connect → Runich)', value: '12 → 10' }),
         expect.objectContaining({ label: 'imported', tone: 'success', value: '1' }),
         expect.objectContaining({ label: 'skipped', value: '1' }),
         expect.objectContaining({ label: 'response/error', tone: 'error', value: '503' }),

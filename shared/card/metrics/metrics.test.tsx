@@ -1,8 +1,9 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { act, screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
+import { activityApi } from '@R/services/activity/activity';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_DISTANCE, MOCK_DURATION } from '@T/mocks/mock-location';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { getSpeedInKmPerHour, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { formatDuration } from '@U/time-formatter';
@@ -92,6 +93,41 @@ describe('Card metrics', () => {
     expect(screen.getByText('742 ккал')).toBeOnTheScreen();
   });
 
+  it('hides restricted activity metrics from other viewers', async () => {
+    const originalUserId = mockStore.getState().auth.userId;
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    await act(async () => {
+      mockStore.dispatch(setMockUserId('external-viewer'));
+    });
+
+    try {
+      await renderCardMetrics(
+        {
+          userId: 'activity-owner',
+          averageHeartRate: 140,
+          minHeartRate: 90,
+          maxHeartRate: 175,
+          elevationGain: 42,
+          profile: {
+            allowActivityHeartRateViewing: false,
+            allowActivityElevationViewing: false,
+            allowActivityPaceViewing: false,
+          },
+        },
+        { isFullView: true },
+      );
+
+      expect(screen.queryByText(/Heart rate/i)).not.toBeOnTheScreen();
+      expect(screen.queryByText(/Pace/i)).not.toBeOnTheScreen();
+      expect(screen.queryByText(/Elevation gain/i)).not.toBeOnTheScreen();
+      expect(screen.getByText(/Distance/i)).toBeOnTheScreen();
+    } finally {
+      await act(async () => {
+        mockStore.dispatch(setMockUserId(originalUserId));
+      });
+    }
+  });
+
   it.each([
     ['running without elevation gain', 'run', undefined, 0, /Elevation gain/i],
     ['walking without steps', 'walk', undefined, 42, /Steps/i],
@@ -117,6 +153,40 @@ describe('Card metrics', () => {
     await renderCardMetrics({ title: 'some title', elevationGain: 0, description: '' });
     await user.press(screen.getByText('some title'));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activity}/someUUID?userId=someUserId`);
+  });
+
+  it('prefetches the activity chart before opening the activity details page', async () => {
+    const originalUserId = mockStore.getState().auth.userId;
+    const prefetch = jest
+      .spyOn(activityApi.util, 'prefetch')
+      .mockReturnValue((() => undefined) as ReturnType<typeof activityApi.util.prefetch>);
+    const user = userEvent.setup();
+    mockStore.dispatch(setMockUserId('viewer-1'));
+
+    const { unmount } = await renderCardMetrics({ title: 'some title', elevationGain: 0, description: '' });
+    try {
+      await user.press(screen.getByText('some title'));
+
+      expect(prefetch).toHaveBeenCalledWith(
+        'getActivityChartData',
+        { activityId: 'someUUID', viewerId: 'viewer-1' },
+        { ifOlderThan: 60 },
+      );
+      expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activity}/someUUID?userId=someUserId`);
+    } finally {
+      unmount();
+      mockStore.dispatch(setMockUserId(originalUserId));
+      prefetch.mockRestore();
+    }
+  });
+
+  it('opens the full workout statistics from the show-all metrics button', async () => {
+    const user = userEvent.setup();
+    await renderCardMetrics({ title: 'some title', elevationGain: 0, description: '' }, { isFullView: true });
+
+    await user.press(screen.getByTestId('activity-show-all-metrics-button'));
+
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activity}/someUUID/statistics`);
   });
 
   it('does not truncate the full activity description', async () => {

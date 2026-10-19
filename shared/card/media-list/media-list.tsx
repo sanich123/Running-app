@@ -114,6 +114,7 @@ export default function MediaList() {
         );
       };
       const handleMediaPress = () => {
+        if (isMap && hideMap) return;
         if (isMap && profile?.allowActivityReplayViewing === false) {
           return errorToast('Пользователь запретил просматривать информацию о своем маршруте');
         }
@@ -169,6 +170,7 @@ export default function MediaList() {
                     }
                   : undefined
               }
+              disabled={isMap && hideMap}
               onPress={handleMediaPress}
               borderless={false}
               style={{ height: mediaHeight, width: itemWidth }}
@@ -230,7 +232,7 @@ export default function MediaList() {
               ) : null}
               <View pointerEvents="box-none" style={styles.mapActions}>
                 {isOwnActivity ? <AddActivityMediaBtn activityId={id} media={media ?? []} /> : null}
-                {canViewReplay ? <RouteReplayBtn activityId={id} userId={activityOwnerId} /> : null}
+                {canViewReplay && !hideMap ? <RouteReplayBtn activityId={id} userId={activityOwnerId} /> : null}
               </View>
             </>
           ) : null}
@@ -254,6 +256,7 @@ export default function MediaList() {
       isFavorite,
       media,
       canViewReplay,
+      hideMap,
       activityOwnerId,
       profile?.allowActivityReplayViewing,
       push,
@@ -269,6 +272,7 @@ export default function MediaList() {
       renderItem={renderItem}
       horizontal
       showsHorizontalScrollIndicator={false}
+      style={Platform.OS === 'web' ? { flexGrow: 0, height: mediaHeight + 8 } : undefined}
       testID="activity-media-list"
       contentContainerStyle={styles.listContent}
       onContentSizeChange={handleMediaContentSizeChange}

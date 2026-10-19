@@ -19,13 +19,21 @@ import {
   getAutoSyncKey,
   getConnectionKey,
   getDiagnosticErrorCode,
+  getHeartRateSampleCount,
   getRequestErrorStatus,
+  getWatchWorkoutSourceKey,
   getWorkoutId,
   getRoutePointCount,
   HIDDEN_WORKOUTS_KEY,
   splitWatchWorkoutsIntoBatches,
 } from './helpers';
-import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
+import type {
+  ReadDiagnostics,
+  UploadDiagnostics,
+  UploadSkipReason,
+  WorkoutUploadDiagnostic,
+  WorkoutUploadOutcome,
+} from './types';
 import type { WatchWorkoutBatchImportResponse } from '@R/runich-api/types';
 
 interface UseWorkoutImportOptions {
@@ -97,6 +105,15 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
       workoutCount: sourceWorkouts.length,
       sourceRoutePointCount: getRoutePointCount(sourceWorkouts),
       payloadRoutePointCount: 0,
+      sourceHeartRateSampleCount: getHeartRateSampleCount(sourceWorkouts),
+      payloadHeartRateSampleCount: 0,
+      workouts: sourceWorkouts.map((workout) => ({
+        source: workout.source,
+        sourceActivityId: workout.sourceActivityId,
+        sourceHeartRateSampleCount: workout.heartRateSamples?.length ?? 0,
+        payloadHeartRateSampleCount: 0,
+        outcome: 'not-sent',
+      })),
     });
   }, []);
 
@@ -204,39 +221,63 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
   const sendWorkoutsToRunich = useCallback(
     async (id: string, sourceWorkouts: WatchWorkout[]) => {
       const mappedWorkouts = sourceWorkouts.map(mapWatchWorkoutToActivity);
+      let workoutDiagnostics: WorkoutUploadDiagnostic[] = mappedWorkouts.map((workout, index) => ({
+        source: sourceWorkouts[index].source,
+        sourceActivityId: sourceWorkouts[index].sourceActivityId,
+        sourceHeartRateSampleCount: sourceWorkouts[index].heartRateSamples?.length ?? 0,
+        payloadHeartRateSampleCount: workout.heartRateSamples?.length ?? 0,
+        outcome: 'not-sent',
+      }));
+      const updateWorkoutOutcomes = (sourceKeys: string[], outcome: WorkoutUploadOutcome) => {
+        const updatedSourceKeys = new Set(sourceKeys);
+        workoutDiagnostics = workoutDiagnostics.map((workout) =>
+          updatedSourceKeys.has(getWatchWorkoutSourceKey(workout)) ? { ...workout, outcome } : workout,
+        );
+      };
       const diagnostics: UploadDiagnostics = {
         at: new Date().toISOString(),
         outcome: 'sending',
         workoutCount: mappedWorkouts.length,
         sourceRoutePointCount: getRoutePointCount(sourceWorkouts),
         payloadRoutePointCount: mappedWorkouts.reduce((total, workout) => total + workout.locations.length, 0),
+        sourceHeartRateSampleCount: getHeartRateSampleCount(sourceWorkouts),
+        payloadHeartRateSampleCount: getHeartRateSampleCount(mappedWorkouts),
+        workouts: workoutDiagnostics,
       };
       setUploadDiagnostics(diagnostics);
       let imported = 0;
       let skipped = 0;
       const activities: WatchWorkoutBatchImportResponse['activities'] = [];
+      let currentBatchSourceKeys: string[] = [];
 
       try {
         const batches = splitWatchWorkoutsIntoBatches(id, mappedWorkouts);
         for (const workouts of batches) {
+          currentBatchSourceKeys = workouts.map(getWatchWorkoutSourceKey);
+          updateWorkoutOutcomes(currentBatchSourceKeys, 'sending');
+          setUploadDiagnostics({ ...diagnostics, workouts: workoutDiagnostics });
           const batchResult = await importWorkouts({ id, workouts }).unwrap();
+          updateWorkoutOutcomes(currentBatchSourceKeys, 'uploaded');
           imported += batchResult.imported;
           skipped += batchResult.skipped;
           activities.push(...batchResult.activities);
-          setUploadDiagnostics({ ...diagnostics, imported, skipped });
+          setUploadDiagnostics({ ...diagnostics, workouts: workoutDiagnostics, imported, skipped });
         }
         const result = { imported, skipped, activities };
         setUploadDiagnostics({
           ...diagnostics,
           outcome: 'success',
+          workouts: workoutDiagnostics,
           imported,
           skipped,
         });
         return result;
       } catch (uploadError) {
+        updateWorkoutOutcomes(currentBatchSourceKeys, 'error');
         setUploadDiagnostics({
           ...diagnostics,
           outcome: 'error',
+          workouts: workoutDiagnostics,
           imported,
           skipped,
           errorStatus: getRequestErrorStatus(uploadError),

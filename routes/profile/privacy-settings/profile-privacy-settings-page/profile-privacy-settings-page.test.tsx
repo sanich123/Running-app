@@ -19,6 +19,9 @@ describe('ProfilePrivacySettingsPage', () => {
           allowNewFollowers: false,
           allowActivityInteractions: true,
           allowActivityReplayViewing: false,
+          allowActivityHeartRateViewing: false,
+          allowActivityElevationViewing: true,
+          allowActivityPaceViewing: false,
           hideActivityStatistics: true,
           hideFollowingList: false,
           hideProfilePhotos: true,
@@ -32,8 +35,11 @@ describe('ProfilePrivacySettingsPage', () => {
     expect(screen.getByTestId('privacy-setting-allowNewFollowers')).toHaveProp('value', false);
     expect(screen.getByTestId('privacy-setting-allowActivityInteractions')).toHaveProp('value', true);
     expect(screen.getByTestId('privacy-setting-allowActivityReplayViewing')).toHaveProp('value', false);
-    expect(screen.getByTestId('privacy-setting-hideActivityStatistics')).toHaveProp('value', true);
-    expect(screen.getByTestId('privacy-setting-hideFollowingList')).toHaveProp('value', false);
-    expect(screen.getByTestId('privacy-setting-hideProfilePhotos')).toHaveProp('value', true);
+    expect(screen.getByTestId('privacy-setting-allowActivityHeartRateViewing')).toHaveProp('value', false);
+    expect(screen.getByTestId('privacy-setting-allowActivityElevationViewing')).toHaveProp('value', true);
+    expect(screen.getByTestId('privacy-setting-allowActivityPaceViewing')).toHaveProp('value', false);
+    expect(screen.getByTestId('privacy-setting-hideActivityStatistics')).toHaveProp('value', false);
+    expect(screen.getByTestId('privacy-setting-hideFollowingList')).toHaveProp('value', true);
+    expect(screen.getByTestId('privacy-setting-hideProfilePhotos')).toHaveProp('value', false);
   });
 });

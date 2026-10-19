@@ -114,6 +114,7 @@ export default {
         'android.permission.health.READ_DISTANCE',
         'android.permission.health.READ_STEPS',
         'android.permission.health.READ_HEART_RATE',
+        'android.permission.health.READ_ACTIVE_CALORIES_BURNED',
         'ACCESS_BACKGROUND_LOCATION',
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
@@ -142,6 +143,7 @@ export default {
       'expo-status-bar',
       'expo-image',
       'expo-sharing',
+      'expo-localization',
       [
         'expo-notifications',
         {

@@ -74,6 +74,11 @@ export function mapWatchWorkoutToActivity(workout: WatchWorkout): WatchWorkoutTo
     speed: getSpeedInMinsInKm(distance, duration).paceAsNumber,
     ...(workout.steps !== undefined && workout.steps >= 0 ? { steps: Math.round(workout.steps) } : {}),
     ...(heartRateSamples ? { heartRateSamples } : {}),
+    ...(typeof workout.caloriesActive === 'number' &&
+    Number.isFinite(workout.caloriesActive) &&
+    workout.caloriesActive >= 0
+      ? { caloriesActive: Math.round(workout.caloriesActive) }
+      : {}),
     ...(kilometresSplit.length > 0 ? { kilometresSplit } : {}),
     locations,
   };

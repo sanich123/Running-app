@@ -1,9 +1,11 @@
 import { Suspense, type ReactElement, type ReactNode } from 'react';
 import { act, screen } from '@testing-library/react-native';
-import { http } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { StyleSheet } from 'react-native';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { runichApi } from '@R/runich-api/runich-api';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
+import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
@@ -72,9 +74,26 @@ describe('ActivityDetails', () => {
     expect(await screen.findByTestId('full-view-card')).toBeOnTheScreen();
     expect(screen.getByText(MOCK_SERVER_ACTIVITY.description)).toBeOnTheScreen();
     expect(screen.getByTestId('full-view-metrics')).toBeOnTheScreen();
-
     expect(StyleSheet.flatten(screen.getByTestId('cross-platform-scroll-view').props.contentContainerStyle)).toEqual(
       expect.not.objectContaining({ paddingHorizontal: 12 }),
+    );
+  });
+
+  it('lets the splits card fill the content width on mobile web', async () => {
+    server.use(
+      http.get(`${BASE_URL}/activity/activityId/${MOCK_SERVER_IDS.activityId}`, () =>
+        HttpResponse.json({
+          ...MOCK_SERVER_ACTIVITY,
+          kilometresSplit: [MOCK_ACTIVITY.kilometresSplit[0]],
+        }),
+      ),
+    );
+
+    await renderWithProviders(<ActivityDetails />);
+
+    expect(await screen.findByTestId('activity-kilometre-splits-card')).toBeOnTheScreen();
+    expect(StyleSheet.flatten(screen.getByTestId('activity-kilometre-splits-card').props.style)).toEqual(
+      expect.objectContaining({ width: '100%', maxWidth: MAX_MOBILE_WIDTH }),
     );
   });
 

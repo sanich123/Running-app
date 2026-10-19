@@ -4,6 +4,9 @@ export const LazyActivities = lazy(() => import('@Routes/activities/activities')
 export const LazyActivitiesList = lazy(() => import('@Routes/activities-list/activities-list'));
 export const LazyActivity = lazy(() => import('@Routes/activity/activity'));
 export const LazyActivityDetailsPage = lazy(() => import('@Routes/activity-details/activity-details'));
+export const LazyActivityStatisticsPage = lazy(
+  () => import('@Routes/activity-details/activity-statistics-page/activity-statistics-page'),
+);
 export const LazyAvatarIconEditable = lazy(
   () => import('@Routes/profile/profile-settings/avatar-editable/avatar-icon-editable/avatar-icon-editable'),
 );
@@ -18,6 +21,9 @@ export const LazyInputsWeightCity = lazy(
 );
 export const LazyInputsHeightAge = lazy(
   () => import('@Routes/profile/profile-settings/inputs-height-age/inputs-height-age'),
+);
+export const LazyInputsHeartRate = lazy(
+  () => import('@Routes/profile/profile-settings/inputs-heart-rate/inputs-heart-rate'),
 );
 export const LazyLegalInformation = lazy(
   () => import('@Routes/legal-information/legal-information-page/legal-information-page'),

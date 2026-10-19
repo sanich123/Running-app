@@ -72,7 +72,15 @@ export default function DiagnosticsCard({
                 label={copy.permissionItems.heartRate}
                 status={healthPermissions?.details?.heartRate}
               />
+              <DiagnosticMetric
+                isRussian={isRussian}
+                label={copy.permissionItems.activeCalories}
+                status={healthPermissions?.details?.activeCalories}
+              />
             </View>
+            <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
+              {copy.heartRateAccessNote}
+            </Text>
             <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
               {copy.routeAccessNote}
             </Text>
@@ -102,7 +110,19 @@ export default function DiagnosticsCard({
                     key={`${workout.source}:${workout.sourceActivityId}`}
                     variant="bodySmall"
                     style={styles.workoutText}>
-                    {renderHealthConnectLinks(formatWorkoutDiagnostics(workout, index, isRussian), colors.primary)}
+                    {renderHealthConnectLinks(
+                      formatWorkoutDiagnostics(
+                        workout,
+                        index,
+                        isRussian,
+                        uploadDiagnostics?.workouts.find(
+                          (uploadWorkout) =>
+                            uploadWorkout.source === workout.source &&
+                            uploadWorkout.sourceActivityId === workout.sourceActivityId,
+                        ),
+                      ),
+                      colors.primary,
+                    )}
                   </Text>
                 ))}
                 {workouts.length > MAX_DIAGNOSTIC_WORKOUTS && (

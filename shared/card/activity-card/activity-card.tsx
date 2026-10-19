@@ -29,7 +29,7 @@ export default function ActivityCard({ activity, isFullView = false, isShowDescr
             backgroundColor: colors.surface,
             borderColor: colors.outlineVariant,
             width: mediaWidth,
-            marginBottom: isFullView ? 0 : 16,
+            marginBottom: isFullView ? 0 : 2,
           },
           Platform.OS === 'web' ? styles.webStyles : null,
         ]}>
@@ -39,7 +39,7 @@ export default function ActivityCard({ activity, isFullView = false, isShowDescr
         <View style={styles.likes}>
           <Likes />
         </View>
-        <Card.Actions style={styles.actions}>
+        <Card.Actions style={[styles.actions, Platform.OS === 'web' && styles.webActions]}>
           <LikeBtn />
           <CommentBtn />
           <ShareBtn />
@@ -78,5 +78,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: -6,
     paddingTop: 0,
+  },
+  webActions: {
+    marginTop: 8,
+    paddingBottom: 12,
   },
 });

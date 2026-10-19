@@ -1,4 +1,5 @@
 import { act, waitFor } from '@testing-library/react-native';
+import { Tags } from '@R/runich-api/const';
 import { renderWithProviders } from '@T/utils/test-utils';
 import NotificationRuntime from './notification-runtime';
 
@@ -7,13 +8,28 @@ let mockResponseHandler: ((response: never) => void) | undefined;
 let mockReceivedHandler: (() => void) | undefined;
 
 jest.mock('expo-router', () => ({ __esModule: true, router: { push: jest.fn() } }));
+jest.mock('@R/services/activity/activity', () => ({
+  activityApi: {
+    util: { invalidateTags: jest.fn((tags: unknown[]) => ({ type: 'activity/invalidate', payload: tags })) },
+  },
+}));
+jest.mock('@R/services/comments/comments', () => ({
+  commentsApi: {
+    util: { invalidateTags: jest.fn((tags: unknown[]) => ({ type: 'comments/invalidate', payload: tags })) },
+  },
+}));
+jest.mock('@R/services/likes/likes', () => ({
+  likesApi: {
+    util: { invalidateTags: jest.fn((tags: unknown[]) => ({ type: 'likes/invalidate', payload: tags })) },
+  },
+}));
 jest.mock('expo-notifications', () => ({
   __esModule: true,
   setNotificationHandler: jest.fn(),
   addNotificationResponseReceivedListener: jest.fn(),
   addNotificationReceivedListener: jest.fn(),
-  getLastNotificationResponseAsync: jest.fn(),
-  clearLastNotificationResponseAsync: jest.fn(),
+  getLastNotificationResponse: jest.fn(),
+  clearLastNotificationResponse: jest.fn(),
 }));
 jest.mock('@R/services/notifications/notifications', () => ({
   notificationsApi: {
@@ -23,12 +39,21 @@ jest.mock('@R/services/notifications/notifications', () => ({
 }));
 
 const mockRouterPush = (jest.requireMock('expo-router') as { router: { push: jest.Mock } }).router.push;
+const activityInvalidate = (
+  jest.requireMock('@R/services/activity/activity') as { activityApi: { util: { invalidateTags: jest.Mock } } }
+).activityApi.util.invalidateTags;
+const commentsInvalidate = (
+  jest.requireMock('@R/services/comments/comments') as { commentsApi: { util: { invalidateTags: jest.Mock } } }
+).commentsApi.util.invalidateTags;
+const likesInvalidate = (
+  jest.requireMock('@R/services/likes/likes') as { likesApi: { util: { invalidateTags: jest.Mock } } }
+).likesApi.util.invalidateTags;
 const notificationMocks = jest.requireMock('expo-notifications') as {
   setNotificationHandler: jest.Mock;
   addNotificationResponseReceivedListener: jest.Mock;
   addNotificationReceivedListener: jest.Mock;
-  getLastNotificationResponseAsync: jest.Mock;
-  clearLastNotificationResponseAsync: jest.Mock;
+  getLastNotificationResponse: jest.Mock;
+  clearLastNotificationResponse: jest.Mock;
 };
 const apiMocks = (
   jest.requireMock('@R/services/notifications/notifications') as {
@@ -46,6 +71,9 @@ const mockReceivedSubscriptionRemove = jest.fn();
 describe('NotificationRuntime', () => {
   beforeEach(() => {
     mockRouterPush.mockReset();
+    activityInvalidate.mockClear();
+    commentsInvalidate.mockClear();
+    likesInvalidate.mockClear();
     mockResponseSubscriptionRemove.mockReset();
     mockReceivedSubscriptionRemove.mockReset();
     mockMarkRead.mockReset().mockImplementation((id: string) => ({ type: 'notifications/markRead', payload: id }));
@@ -53,7 +81,7 @@ describe('NotificationRuntime', () => {
       .mockReset()
       .mockImplementation((tags: unknown[]) => ({ type: 'notifications/invalidate', payload: tags }));
     notificationMocks.setNotificationHandler.mockReset();
-    notificationMocks.clearLastNotificationResponseAsync.mockReset().mockResolvedValue(undefined);
+    notificationMocks.clearLastNotificationResponse.mockReset();
     notificationMocks.addNotificationResponseReceivedListener.mockReset().mockImplementation((handler) => {
       mockResponseHandler = handler;
       return { remove: mockResponseSubscriptionRemove };
@@ -62,7 +90,7 @@ describe('NotificationRuntime', () => {
       mockReceivedHandler = handler;
       return { remove: mockReceivedSubscriptionRemove };
     });
-    notificationMocks.getLastNotificationResponseAsync.mockImplementation(() => Promise.resolve(mockLastResponse));
+    notificationMocks.getLastNotificationResponse.mockImplementation(() => mockLastResponse);
     mockLastResponse = null;
     mockResponseHandler = undefined;
     mockReceivedHandler = undefined;
@@ -81,7 +109,16 @@ describe('NotificationRuntime', () => {
 
     await waitFor(() => expect(mockRouterPush).toHaveBeenCalledWith('/activity/activity-1'));
     expect(mockMarkRead).toHaveBeenCalledWith('notification-1');
-    expect(notificationMocks.clearLastNotificationResponseAsync).toHaveBeenCalledTimes(1);
+    expect(activityInvalidate).toHaveBeenCalledWith([{ type: Tags.activities, id: 'activity-1' }]);
+    expect(commentsInvalidate).toHaveBeenCalledWith([
+      { type: Tags.comments, id: 'activity-1' },
+      { type: Tags.commentCounts, id: 'activity-1' },
+    ]);
+    expect(likesInvalidate).toHaveBeenCalledWith([{ type: Tags.likes, id: 'activity-1' }]);
+    expect(activityInvalidate.mock.invocationCallOrder[0]).toBeLessThan(mockRouterPush.mock.invocationCallOrder[0]);
+    expect(commentsInvalidate.mock.invocationCallOrder[0]).toBeLessThan(mockRouterPush.mock.invocationCallOrder[0]);
+    expect(likesInvalidate.mock.invocationCallOrder[0]).toBeLessThan(mockRouterPush.mock.invocationCallOrder[0]);
+    expect(notificationMocks.clearLastNotificationResponse).toHaveBeenCalledTimes(1);
     const handler = notificationMocks.setNotificationHandler.mock.calls[0][0] as {
       handleNotification: () => Promise<unknown>;
     };
@@ -112,6 +149,6 @@ describe('NotificationRuntime', () => {
     await renderWithProviders(<NotificationRuntime />);
     await waitFor(() => expect(mockRouterPush).toHaveBeenCalledWith('/notifications'));
     expect(mockMarkRead).not.toHaveBeenCalled();
-    expect(notificationMocks.clearLastNotificationResponseAsync).toHaveBeenCalledTimes(1);
+    expect(notificationMocks.clearLastNotificationResponse).toHaveBeenCalledTimes(1);
   });
 });

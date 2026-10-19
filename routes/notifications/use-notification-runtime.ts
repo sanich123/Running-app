@@ -4,6 +4,9 @@ import { Platform } from 'react-native';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { Tags } from '@R/runich-api/const';
+import { activityApi } from '@R/services/activity/activity';
+import { commentsApi } from '@R/services/comments/comments';
+import { likesApi } from '@R/services/likes/likes';
 import { notificationsApi } from '@R/services/notifications/notifications';
 import { useAppDispatch } from '@R/typed-hooks';
 import type { PushNotificationData } from './types';
@@ -32,17 +35,24 @@ export function useNotificationRuntime() {
         void dispatch(notificationsApi.endpoints.markNotificationRead.initiate(data.notificationId));
       }
       if (data.targetType === 'activity' && typeof data.targetId === 'string') {
+        dispatch(activityApi.util.invalidateTags([{ type: Tags.activities, id: data.targetId }]));
+        dispatch(
+          commentsApi.util.invalidateTags([
+            { type: Tags.comments, id: data.targetId },
+            { type: Tags.commentCounts, id: data.targetId },
+          ]),
+        );
+        dispatch(likesApi.util.invalidateTags([{ type: Tags.likes, id: data.targetId }]));
         router.push(`/${ROUTES.activity}/${data.targetId}` as never);
       } else router.push(`/${ROUTES.notifications}` as never);
-      void Notifications.clearLastNotificationResponseAsync();
+      Notifications.clearLastNotificationResponse();
     };
     const responseSubscription = Notifications.addNotificationResponseReceivedListener(handleResponse);
     const receivedSubscription = Notifications.addNotificationReceivedListener(() => {
       dispatch(notificationsApi.util.invalidateTags([Tags.notifications]));
     });
-    void Notifications.getLastNotificationResponseAsync().then((response) => {
-      if (response) handleResponse(response);
-    });
+    const lastResponse = Notifications.getLastNotificationResponse();
+    if (lastResponse) handleResponse(lastResponse);
     return () => {
       responseSubscription.remove();
       receivedSubscription.remove();

@@ -59,6 +59,8 @@ export interface ProfileType {
   updatedAt?: string | null;
   userId?: string;
   weight?: string | null;
+  restingHeartRate?: string | null;
+  maxHeartRate?: string | null;
   emailNotifications?: boolean | null;
   pushNotifications?: boolean;
   inAppNotifications?: boolean;
@@ -66,6 +68,8 @@ export interface ProfileType {
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;
   allowActivityHeartRateViewing?: boolean;
+  allowActivityElevationViewing?: boolean;
+  allowActivityPaceViewing?: boolean;
   allowActivitySharing?: boolean;
   allowNewFollowers?: boolean;
   hideActivityStatistics?: boolean;
@@ -93,6 +97,9 @@ export interface ActivityCardData {
   duration: number;
   distance: number;
   elevationGain: number;
+  averageHeartRate?: number | null;
+  minHeartRate?: number | null;
+  maxHeartRate?: number | null;
   steps?: number | null;
   emotion?: string | null;
   profile: ProfileType;

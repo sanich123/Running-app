@@ -4,6 +4,8 @@ import {
   limitText,
   normalizeAgeInput,
   normalizeHeightInput,
+  normalizeMaxHeartRateInput,
+  normalizeRestingHeartRateInput,
   normalizeWeightInput,
 } from '@const/input-limits';
 import type { ProfileType } from '@S/card/types';
@@ -17,6 +19,8 @@ interface ProfileFormValues {
   city: string;
   bio: string;
   gender: string;
+  restingHeartRate: string;
+  maxHeartRate: string;
 }
 
 export interface ProfileSettingsSearchParams {
@@ -28,6 +32,8 @@ export interface ProfileSettingsSearchParams {
   city?: string | string[];
   bio?: string | string[];
   gender?: string | string[];
+  restingHeartRate?: string | string[];
+  maxHeartRate?: string | string[];
   profileSettingsInitialized?: string | string[];
 }
 
@@ -45,6 +51,8 @@ export function getProfileFormValues(params: Partial<ProfileSettingsSearchParams
     city: limitText(getFirstParam(params.city) ?? '', PROFILE_INPUT_LIMITS.city),
     bio: limitText(getFirstParam(params.bio) ?? '', PROFILE_INPUT_LIMITS.bio),
     gender: getFirstParam(params.gender) ?? '',
+    restingHeartRate: normalizeRestingHeartRateInput(getFirstParam(params.restingHeartRate) ?? ''),
+    maxHeartRate: normalizeMaxHeartRateInput(getFirstParam(params.maxHeartRate) ?? ''),
   };
 }
 
@@ -58,6 +66,8 @@ export function getInitialProfileSettingsParams(profile: ProfileType) {
     city: limitText(profile.city ?? '', PROFILE_INPUT_LIMITS.city),
     bio: limitText(profile.bio ?? '', PROFILE_INPUT_LIMITS.bio),
     gender: profile.gender ?? '',
+    restingHeartRate: normalizeRestingHeartRateInput(profile.restingHeartRate ?? ''),
+    maxHeartRate: normalizeMaxHeartRateInput(profile.maxHeartRate ?? ''),
   };
 }
 
@@ -74,6 +84,9 @@ export function useSetProfileFormParams() {
     setWeight: (weight: string) => setParams({ weight: normalizeWeightInput(weight) }),
     setHeight: (height: string) => setParams({ height: normalizeHeightInput(height) }),
     setAge: (age: string) => setParams({ age: normalizeAgeInput(age) }),
+    setRestingHeartRate: (restingHeartRate: string) =>
+      setParams({ restingHeartRate: normalizeRestingHeartRateInput(restingHeartRate) }),
+    setMaxHeartRate: (maxHeartRate: string) => setParams({ maxHeartRate: normalizeMaxHeartRateInput(maxHeartRate) }),
     setCity: (city: string) => setParams({ city: limitText(city, PROFILE_INPUT_LIMITS.city) }),
     setBio: (bio: string) => setParams({ bio: limitText(bio, PROFILE_INPUT_LIMITS.bio) }),
     setGender: (gender: string) => setParams({ gender }),

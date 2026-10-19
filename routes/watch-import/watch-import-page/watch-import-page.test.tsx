@@ -49,9 +49,21 @@ describe('WatchImportPage', () => {
     expect(copy.steps.healthSyncInstall.description).toContain(
       'из которого будут выгружаться тренировки.\nНе все приложения поддерживают',
     );
+    expect(copy.steps.healthSyncInstall.description).toContain(
+      'Если Health Sync или приложение-источник позволяет отдельно настроить выгрузку пульса, включите её.',
+    );
+    expect(copy.steps.healthSyncInstall.description).toContain(
+      'наличие самой тренировки не подтверждает, что пульс тоже выгрузился.',
+    );
     expect(copy.steps.healthSyncInstall.description).not.toContain('Эта часть интуитивно понятна');
     expect(WATCH_IMPORT_COPY.en.steps.healthSyncInstall.description).toContain(
       'the workouts will be exported from.\nNot all apps support exporting workouts with routes.',
+    );
+    expect(WATCH_IMPORT_COPY.en.steps.healthSyncInstall.description).toContain(
+      'If Health Sync or the source app offers a separate heart-rate export option, enable it too.',
+    );
+    expect(WATCH_IMPORT_COPY.en.steps.healthSyncInstall.description).toContain(
+      'seeing the workout alone does not confirm that heart rate was exported.',
     );
     expect(WATCH_IMPORT_COPY.en.steps.healthSyncInstall.description).not.toContain('This part is intuitive');
     expect(copy.steps.healthSyncInstall.description).not.toContain('раз в 12 часов');

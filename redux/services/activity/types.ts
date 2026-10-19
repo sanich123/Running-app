@@ -38,6 +38,7 @@ export interface WatchWorkoutToSend extends FinishedActivity {
   sport: SPORTS_BTNS_VALUES | string;
   title?: string;
   heartRateSamples?: ActivityHeartRateSample[];
+  caloriesActive?: number;
 }
 
 export interface WatchWorkoutsImportRequest {

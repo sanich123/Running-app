@@ -162,6 +162,22 @@ describe('media list', () => {
     );
   });
 
+  it('keeps web media-list height aligned with its media tiles', async () => {
+    const restorePlatform = overridePlatformOS('web');
+
+    try {
+      await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map-web.jpg', media: [] });
+
+      const mediaHeight = StyleSheet.flatten(screen.getByTestId('activity-map-media-container').props.style).height;
+      const listStyle = StyleSheet.flatten(screen.getByTestId('activity-media-list').props.style);
+
+      expect(listStyle.height).toBe(mediaHeight + 8);
+      expect(listStyle.flexGrow).toBe(0);
+    } finally {
+      restorePlatform();
+    }
+  });
+
   it('uses the map blurhash and prioritized disk cache for fast scrolling', async () => {
     const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
     await renderMediaList({ mapPhotoUrl: mapUrl, mapPhotoUrlBlurhash: 'map-blurhash', media: [] });

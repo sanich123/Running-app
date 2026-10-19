@@ -41,7 +41,12 @@ interface ActivityProfileResponse {
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;
   allowActivityHeartRateViewing?: boolean;
+  allowActivityElevationViewing?: boolean;
+  allowActivityPaceViewing?: boolean;
   allowActivitySharing?: boolean;
+  restingHeartRate?: string | null;
+  maxHeartRate?: string | null;
+  age?: string | null;
 }
 
 interface ActivityCountResponse {

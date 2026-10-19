@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -14,7 +14,6 @@ import KilometreSplitTable from './kilometre-split-table/kilometre-split-table';
 import Metrics from './metrics/metrics';
 
 export default function ActivityDetails() {
-  const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { id: activityId } = useLocalSearchParams();
@@ -64,21 +63,23 @@ export default function ActivityDetails() {
                   likesLength: activity._count.likes,
                 }}
               />
-              <Metrics />
               {Boolean(activity.kilometresSplit?.length) && (
                 <View
+                  testID="activity-kilometre-splits-card"
                   style={[
                     styles.splitsCard,
                     {
                       backgroundColor: colors.surface,
                       borderColor: colors.outlineVariant,
-                      width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+                      width: '100%',
+                      maxWidth: MAX_MOBILE_WIDTH,
                       marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
                     },
                   ]}>
                   <KilometreSplitTable kilometresSplit={activity.kilometresSplit ?? []} />
                 </View>
               )}
+              <Metrics />
             </>
           ) : isError ? (
             <ErrorComponent error={error} refetch={refetch} />

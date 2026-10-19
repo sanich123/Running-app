@@ -1,5 +1,6 @@
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useAppSelector } from '@R/typed-hooks';
 import NativeSegmentedControl from '@S/segmented-control';
 import { HOME_FEED_COPY } from '../const';
@@ -7,6 +8,7 @@ import { FEEDS } from './const';
 import type { HomeFeedSwitcherProps } from './types';
 
 export default function HomeFeedSwitcher({ value, onValueChange }: HomeFeedSwitcherProps) {
+  const { width } = useWindowDimensions();
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const labels = HOME_FEED_COPY[language];
@@ -25,7 +27,7 @@ export default function HomeFeedSwitcher({ value, onValueChange }: HomeFeedSwitc
       fontStyle={{ color: colors.onSecondaryContainer, fontSize: 14 }}
       activeFontStyle={{ color: colors.onPrimary, fontSize: 14, fontWeight: '600' }}
       {...(Platform.OS === 'android' || Platform.OS === 'web' ? { sliderStyle: styles.slider } : {})}
-      style={styles.control}
+      style={[styles.control, Platform.OS === 'web' && { width: Math.min(width, MAX_MOBILE_WIDTH) }]}
     />
   );
 }

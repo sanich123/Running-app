@@ -1,5 +1,11 @@
 import { WORKOUT_IMPORT_COPY, READ_STAGE_LABELS, ROUTE_STATUS_LABELS, UPLOAD_SKIP_REASON_LABELS } from './const';
-import type { DiagnosticItem, ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
+import type {
+  DiagnosticItem,
+  ReadDiagnostics,
+  UploadDiagnostics,
+  UploadSkipReason,
+  WorkoutUploadDiagnostic,
+} from './types';
 import type {
   HealthConnectReadStage,
   WatchWorkout,
@@ -84,8 +90,12 @@ export function getUploadSkipReasonLabel(reason: UploadSkipReason, isRussian: bo
   return UPLOAD_SKIP_REASON_LABELS[reason][isRussian ? 0 : 1];
 }
 
-export function getWorkoutId(workout: WatchWorkout): string {
+export function getWatchWorkoutSourceKey(workout: Pick<WatchWorkout, 'source' | 'sourceActivityId'>): string {
   return `${workout.source}:${workout.sourceActivityId}`;
+}
+
+export function getWorkoutId(workout: WatchWorkout): string {
+  return getWatchWorkoutSourceKey(workout);
 }
 
 export function getConnectionKey(userId: string | null): string | null {
@@ -100,6 +110,10 @@ export const HIDDEN_WORKOUTS_KEY = 'runich.watch.hidden-workouts.v1';
 
 export function getRoutePointCount(workouts: WatchWorkout[]): number {
   return workouts.reduce((total, workout) => total + workout.locations.length, 0);
+}
+
+export function getHeartRateSampleCount(workouts: readonly { heartRateSamples?: readonly unknown[] }[]): number {
+  return workouts.reduce((total, workout) => total + (workout.heartRateSamples?.length ?? 0), 0);
 }
 
 export function getReadDiagnosticItems(diagnostics: ReadDiagnostics | null, isRussian: boolean): DiagnosticItem[] {
@@ -130,10 +144,17 @@ export function getReadDiagnosticItems(diagnostics: ReadDiagnostics | null, isRu
   return items;
 }
 
-export function formatWorkoutDiagnostics(workout: WatchWorkout, index: number, isRussian: boolean): string {
+export function formatWorkoutDiagnostics(
+  workout: WatchWorkout,
+  index: number,
+  isRussian: boolean,
+  uploadDiagnostic?: WorkoutUploadDiagnostic,
+): string {
   const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics;
   const routePointCount = workout.diagnostics?.routePointCount ?? workout.locations.length;
   const recordId = workout.diagnostics?.sessionRecordId;
+  const heartRateSampleCount = workout.diagnostics?.heartRateSampleCount ?? workout.heartRateSamples?.length ?? 0;
+  const activeCaloriesRecordCount = workout.diagnostics?.activeCaloriesRecordCount ?? 0;
   const details = [
     `${index + 1}. ${new Date(workout.date).toLocaleString(isRussian ? 'ru-RU' : 'en-US')}`,
     workout.sport,
@@ -142,8 +163,17 @@ export function formatWorkoutDiagnostics(workout: WatchWorkout, index: number, i
     `${copy.origin}: ${workout.diagnostics?.dataOrigin ?? 'unknown'}`,
     `${copy.route}: ${getRouteStatusLabel(workout.diagnostics?.routeStatus, isRussian)}`,
     `${copy.points}: ${routePointCount}`,
-    `${copy.heartRateSamples}: ${workout.heartRateSamples?.length ?? 0}`,
+    `${copy.heartRatePermission}: ${getBooleanLabel(workout.diagnostics?.heartRatePermissionGranted, isRussian)}`,
+    `${copy.heartRateSamples}: ${heartRateSampleCount}`,
+    `${copy.activeCaloriesPermission}: ${getBooleanLabel(workout.diagnostics?.activeCaloriesPermissionGranted, isRussian)}`,
+    `${copy.activeCaloriesRecords}: ${activeCaloriesRecordCount}`,
+    `${copy.activeCalories}: ${workout.caloriesActive ?? '—'}`,
   ];
+  if (uploadDiagnostic) {
+    details.push(
+      `${copy.heartRateUpload}: ${uploadDiagnostic.payloadHeartRateSampleCount}/${uploadDiagnostic.sourceHeartRateSampleCount} (${copy.heartRateUploadOutcomes[uploadDiagnostic.outcome]})`,
+    );
+  }
   if (recordId) details.push(`id: ${recordId.slice(-8)}`);
   if (workout.diagnostics?.routeErrorCode) details.push(`error: ${workout.diagnostics.routeErrorCode}`);
   return details.join(' · ');
@@ -170,6 +200,10 @@ export function getUploadDiagnosticItems(diagnostics: UploadDiagnostics | null, 
   if (diagnostics.skipReason)
     items.push({ label: copy.reason, value: getUploadSkipReasonLabel(diagnostics.skipReason, isRussian) });
   items.push({ label: copy.workouts, value: String(diagnostics.workoutCount) });
+  items.push({
+    label: copy.heartRateUploadSamples,
+    value: `${diagnostics.sourceHeartRateSampleCount} → ${diagnostics.payloadHeartRateSampleCount}`,
+  });
   if (!diagnostics.skipReason) {
     items.push({
       label: copy.gpsPoints,

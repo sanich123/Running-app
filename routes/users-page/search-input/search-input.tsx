@@ -30,8 +30,8 @@ export default function SearchInput({ setSearch, setIsInitial, search }: SearchI
         styles.input,
         {
           backgroundColor: colors.surface,
-          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
-          marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+          width: width < MAX_MOBILE_WIDTH ? '100%' : MAX_MOBILE_WIDTH,
+          marginHorizontal: Platform.OS === 'web' && width >= MAX_MOBILE_WIDTH ? 'auto' : 0,
         },
       ]}
       contentStyle={styles.content}

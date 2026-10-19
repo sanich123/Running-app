@@ -43,6 +43,7 @@ export interface WatchWorkout {
   distance: number;
   steps?: number;
   heartRateSamples?: ActivityHeartRateSample[];
+  caloriesActive?: number;
   locations: WatchWorkoutLocation[];
   diagnostics?: WatchWorkoutDiagnostics;
 }
@@ -79,6 +80,10 @@ export interface WatchWorkoutDiagnostics {
   sessionRecordId?: string;
   routeStatus: WatchWorkoutRouteStatus;
   routePointCount: number;
+  heartRatePermissionGranted?: boolean;
+  heartRateSampleCount?: number;
+  activeCaloriesPermissionGranted?: boolean;
+  activeCaloriesRecordCount?: number;
   routeErrorCode?: string;
 }
 
@@ -90,6 +95,7 @@ export interface HealthPermissionsResult {
     distance: boolean;
     steps: boolean;
     heartRate: boolean;
+    activeCalories?: boolean;
   };
 }
 
@@ -105,6 +111,7 @@ const ANDROID_PERMISSIONS_TO_REQUEST = [
   { accessType: 'read', recordType: 'Distance' },
   { accessType: 'read', recordType: 'Steps' },
   { accessType: 'read', recordType: 'HeartRate' },
+  { accessType: 'read', recordType: 'ActiveCaloriesBurned' },
 ] satisfies Permission[];
 
 const nativeModule =
@@ -143,6 +150,9 @@ function getAndroidPermissionDetails(grantedPermissions: Awaited<ReturnType<type
     steps: grantedPermissions.some((granted) => granted.accessType === 'read' && granted.recordType === 'Steps'),
     heartRate: grantedPermissions.some(
       (granted) => granted.accessType === 'read' && granted.recordType === 'HeartRate',
+    ),
+    activeCalories: grantedPermissions.some(
+      (granted) => granted.accessType === 'read' && granted.recordType === 'ActiveCaloriesBurned',
     ),
   };
 }
@@ -242,7 +252,9 @@ async function readAndroidWorkouts(
   const sessions = await readAllRecords('ExerciseSession', {
     timeRangeFilter: { operator: 'between', startTime: startDate, endTime: endDate },
   });
-  const heartRatePermissionGranted = getAndroidPermissionDetails(await getGrantedPermissions()).heartRate;
+  const permissionDetails = getAndroidPermissionDetails(await getGrantedPermissions());
+  const heartRatePermissionGranted = permissionDetails.heartRate;
+  const activeCaloriesPermissionGranted = permissionDetails.activeCalories;
   const workouts: WatchWorkout[] = [];
   onProgress({
     stage: sessions.length > 0 ? 'workout-measurements' : 'complete',
@@ -262,11 +274,14 @@ async function readAndroidWorkouts(
       endTime: session.endTime,
     };
     const sourceFilter = session.metadata?.dataOrigin ? { dataOriginFilter: [session.metadata.dataOrigin] } : {};
-    const [distanceRecords, stepRecords, matchingHeartRateRecords] = await Promise.all([
+    const [distanceRecords, stepRecords, matchingHeartRateRecords, activeCaloriesRecords] = await Promise.all([
       readAllRecords('Distance', { timeRangeFilter, ...sourceFilter }),
       readAllRecords('Steps', { timeRangeFilter, ...sourceFilter }),
       heartRatePermissionGranted
         ? readAllRecords('HeartRate', { timeRangeFilter, ...sourceFilter })
+        : Promise.resolve([]),
+      activeCaloriesPermissionGranted
+        ? readAllRecords('ActiveCaloriesBurned', { timeRangeFilter, ...sourceFilter })
         : Promise.resolve([]),
     ]);
     const heartRateRecords =
@@ -305,6 +320,10 @@ async function readAndroidWorkouts(
     const duration = Date.parse(session.endTime) - Date.parse(session.startTime);
     const distance = distanceRecords.reduce((total, record) => total + (getLengthInMeters(record.distance) ?? 0), 0);
     const steps = stepRecords.reduce((total, record) => total + record.count, 0);
+    const caloriesActive = activeCaloriesRecords.reduce((total, record) => {
+      const calories = record.energy?.inKilocalories;
+      return typeof calories === 'number' && Number.isFinite(calories) && calories >= 0 ? total + calories : total;
+    }, 0);
     const sessionStart = Date.parse(session.startTime);
     const sessionEnd = Date.parse(session.endTime);
     const seenHeartRateSamples = new Set<string>();
@@ -344,6 +363,10 @@ async function readAndroidWorkouts(
         sessionRecordId: session.metadata?.id,
         routeStatus,
         routePointCount: route.length,
+        heartRatePermissionGranted,
+        heartRateSampleCount: heartRateSamples.length,
+        activeCaloriesPermissionGranted,
+        activeCaloriesRecordCount: activeCaloriesRecords.length,
         ...(routeErrorCode ? { routeErrorCode } : {}),
       },
     };
@@ -351,6 +374,9 @@ async function readAndroidWorkouts(
     if (session.title?.trim()) workout.title = session.title;
     if (steps > 0) workout.steps = steps;
     if (heartRateSamples.length > 0) workout.heartRateSamples = heartRateSamples;
+    if (activeCaloriesRecords.length > 0 && Number.isFinite(caloriesActive)) {
+      workout.caloriesActive = Math.round(caloriesActive);
+    }
     workouts.push(workout);
     onProgress({
       stage: workouts.length === sessions.length ? 'complete' : 'workout-measurements',
