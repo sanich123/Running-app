@@ -225,10 +225,7 @@ export default {
           isAccessMediaLocationEnabled: false,
         },
       ],
-      [
-        'react-native-edge-to-edge',
-        { android: { parentTheme: 'Material3.Dynamic' }, enforceNavigationBarContrast: false },
-      ],
+      ['expo-navigation-bar', { enforceContrast: false }],
       [
         'expo-splash-screen',
         {

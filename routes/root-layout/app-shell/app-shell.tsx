@@ -3,7 +3,8 @@ import {
   MaterialDesignIcons,
   type MaterialDesignIconsIconName,
 } from '@react-native-vector-icons/material-design-icons/static';
-import { SystemBars } from 'react-native-edge-to-edge';
+import { NavigationBar } from 'expo-navigation-bar';
+import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -49,7 +50,8 @@ export default function AppShell() {
       <KeyboardProvider>
         <NotificationRuntime />
         <PushTokenRuntime />
-        <SystemBars style="auto" />
+        <StatusBar style="auto" />
+        {Platform.OS === 'android' ? <NavigationBar style="auto" /> : null}
         <PaperProvider
           theme={paperTheme}
           settings={{

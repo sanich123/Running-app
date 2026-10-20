@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { SystemBars } from 'react-native-edge-to-edge';
+import { NavigationBar } from 'expo-navigation-bar';
+import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, StyleSheet, View } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
@@ -49,7 +50,10 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
       {videoExport.isExporting ? <KeepAwakeDuringVideoExport /> : null}
       {playback.isPlaying && !videoExport.isExporting ? <KeepAwakeDuringReplay /> : null}
       {videoExport.isExporting && Platform.OS !== 'web' ? (
-        <SystemBars hidden={{ statusBar: true, navigationBar: true }} />
+        <>
+          <StatusBar hidden />
+          {Platform.OS === 'android' ? <NavigationBar hidden /> : null}
+        </>
       ) : null}
       <ConfirmDialog
         visible={Boolean(videoExport.readyVideo)}
