@@ -60,7 +60,7 @@ export default function MediaList() {
   const isOwnActivity = Boolean(activityOwnerId && activityOwnerId === currentUserId);
   const canViewReplay = activity.profile?.allowActivityReplayViewing !== false || isOwnActivity;
   const [mediaAspectRatios, setMediaAspectRatios] = useState<Record<string, number>>({});
-  const displayedMapPhotoUrl = hideMap ? routeOnlyMapPhotoUrl : mapPhotoUrl;
+  const displayedMapPhotoUrl = hideMap ? (isOwnActivity ? (mapPhotoUrl ?? routeOnlyMapPhotoUrl) : null) : mapPhotoUrl;
   const displayedData = useMemo(() => {
     const activityMedia: DisplayedMediaItem[] = (media ?? []).map((item) => ({ ...item, isMap: false }));
     return displayedMapPhotoUrl
@@ -114,8 +114,8 @@ export default function MediaList() {
         );
       };
       const handleMediaPress = () => {
-        if (isMap && hideMap) return;
-        if (isMap && profile?.allowActivityReplayViewing === false) {
+        if (isMap && hideMap && !isOwnActivity) return;
+        if (isMap && !isOwnActivity && profile?.allowActivityReplayViewing === false) {
           return errorToast('Пользователь запретил просматривать информацию о своем маршруте');
         }
         if (isMap) {
@@ -170,7 +170,7 @@ export default function MediaList() {
                     }
                   : undefined
               }
-              disabled={isMap && hideMap}
+              disabled={isMap && hideMap && !isOwnActivity}
               onPress={handleMediaPress}
               borderless={false}
               style={{ height: mediaHeight, width: itemWidth }}
@@ -232,7 +232,9 @@ export default function MediaList() {
               ) : null}
               <View pointerEvents="box-none" style={styles.mapActions}>
                 {isOwnActivity ? <AddActivityMediaBtn activityId={id} media={media ?? []} /> : null}
-                {canViewReplay && !hideMap ? <RouteReplayBtn activityId={id} userId={activityOwnerId} /> : null}
+                {canViewReplay && (!hideMap || isOwnActivity) ? (
+                  <RouteReplayBtn activityId={id} userId={activityOwnerId} />
+                ) : null}
               </View>
             </>
           ) : null}

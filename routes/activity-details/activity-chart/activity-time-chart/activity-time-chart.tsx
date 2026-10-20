@@ -27,7 +27,7 @@ export default function ActivityTimeChart({ chartSeries, zoneSettings, language 
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const labels = HOME_ACTIVITY_FULL_VIEW[language];
-  const chartWidth = Math.max(230, Math.min(width, MAX_MOBILE_WIDTH) - 32);
+  const chartWidth = Math.max(230, Math.min(width, MAX_MOBILE_WIDTH) - 34);
   const plotWidth = chartWidth - CHART_LEFT - CHART_RIGHT;
   const plotHeight = CHART_HEIGHT - CHART_TOP - CHART_BOTTOM;
   const plotBottom = CHART_TOP + plotHeight;

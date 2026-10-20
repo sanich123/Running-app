@@ -1,4 +1,4 @@
-import { Platform, useWindowDimensions, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Divider, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityChartDataQuery } from '@R/services/activity/activity';
@@ -28,7 +28,6 @@ export default function ActivityChart({
   canViewElevation = true,
   canViewPace = true,
 }: ActivityChartProps) {
-  const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
@@ -83,11 +82,15 @@ export default function ActivityChart({
         <View
           style={[
             styles.section,
-            { width: Math.min(width, MAX_MOBILE_WIDTH), alignSelf: 'center' },
-            Platform.OS === 'web' && styles.webSection,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.outlineVariant,
+              width: '100%',
+              maxWidth: MAX_MOBILE_WIDTH,
+              marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
+            },
           ]}>
-          <Divider />
-          <Text variant="titleMedium" style={styles.title}>
+          <Text variant="titleLarge" style={styles.title}>
             {labels.graphTitle}
           </Text>
           <ActivityTimeChart chartSeries={chartSeries} zoneSettings={zoneSettings} language={language} />
@@ -133,13 +136,13 @@ export default function ActivityChart({
 
 const styles = StyleSheet.create({
   section: {
-    alignSelf: 'center',
+    borderRadius: 18,
+    borderWidth: 1,
     gap: 8,
+    overflow: 'hidden',
     paddingHorizontal: 16,
-    paddingTop: 10,
-  },
-  webSection: {
-    paddingBottom: 24,
+    paddingBottom: 12,
+    paddingTop: 8,
   },
   state: {
     alignItems: 'center',
@@ -147,7 +150,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   title: {
-    fontWeight: '600',
+    fontWeight: '800',
   },
   zones: {
     gap: 9,

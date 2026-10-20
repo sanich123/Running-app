@@ -1,6 +1,7 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import { usePathname, useRouter } from 'expo-router';
-import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { activityApi } from '@R/services/activity/activity';
@@ -14,6 +15,7 @@ import { getCardAdditionalMetric, getCardSpeedMetric } from './utils';
 import type { ActivityCardMetric } from './types';
 
 export default function Metrics() {
+  const { width } = useWindowDimensions();
   const { activity, isFullView, isShowDescription } = useActivityCard();
   const {
     distance,
@@ -45,6 +47,7 @@ export default function Metrics() {
   const additionalMetric = getCardAdditionalMetric({ sport, steps, elevationGain, language });
   const visibleAdditionalMetric =
     additionalMetric && (additionalMetric.title !== labels.elevation || canViewElevation) ? additionalMetric : null;
+  const fullViewMetricsWidth = width < MAX_MOBILE_WIDTH ? '100%' : '50%';
   const fullViewMetrics: ActivityCardMetric[] = [
     { title: isFullView ? labels.duration : labels.time, metrics: formatDuration(duration) },
     { title: labels.distance, metrics: `${(distance / 1000).toFixed(2)} ${labels.km}` },
@@ -113,8 +116,30 @@ export default function Metrics() {
             {title}
           </Text>
         ) : null}
+        {isShowDescription ? (
+          <View
+            style={[
+              styles.descriptionCard,
+              {
+                backgroundColor: colors.background,
+                borderColor: colors.outlineVariant,
+              },
+            ]}>
+            <Text
+              variant="bodyLarge"
+              numberOfLines={isFullView ? undefined : 4}
+              ellipsizeMode="tail"
+              style={[styles.descriptionText, { color: colors.onBackground }]}>
+              {description}
+            </Text>
+          </View>
+        ) : null}
         {isFullView ? (
-          <View style={[styles.fullViewCard, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
+          <View
+            style={[
+              styles.fullViewCard,
+              { backgroundColor: colors.surface, borderColor: colors.outlineVariant, width: fullViewMetricsWidth },
+            ]}>
             <View style={styles.metricsGrid}>
               {fullViewMetrics.map(({ title: metricTitle, metrics }, index) => {
                 const isLastRow = index >= fullViewMetrics.length - (fullViewMetrics.length % 2 || 2);
@@ -139,16 +164,6 @@ export default function Metrics() {
                 );
               })}
             </View>
-            <Divider />
-            <TouchableRipple
-              testID="activity-show-all-metrics-button"
-              accessibilityRole="button"
-              onPress={() => push(`/${ROUTES.activity}/${id}/statistics` as never)}
-              style={styles.showAllButton}>
-              <Text variant="titleSmall" style={{ color: colors.primary }}>
-                {labels.showAll}
-              </Text>
-            </TouchableRipple>
           </View>
         ) : (
           <View style={styles.metricsWrapper}>
@@ -160,24 +175,6 @@ export default function Metrics() {
             ) : null}
           </View>
         )}
-        {isShowDescription ? (
-          <View
-            style={[
-              styles.descriptionCard,
-              {
-                backgroundColor: colors.background,
-                borderColor: colors.outlineVariant,
-              },
-            ]}>
-            <Text
-              variant="bodyLarge"
-              numberOfLines={isFullView ? undefined : 4}
-              ellipsizeMode="tail"
-              style={[styles.descriptionText, { color: colors.onBackground }]}>
-              {description}
-            </Text>
-          </View>
-        ) : null}
       </>
     </TouchableRipple>
   );
@@ -194,6 +191,7 @@ const styles = StyleSheet.create({
   fullViewCard: {
     borderRadius: 16,
     borderWidth: 1,
+    alignSelf: 'flex-start',
     marginTop: 12,
     overflow: 'hidden',
   },
@@ -203,15 +201,14 @@ const styles = StyleSheet.create({
   },
   metricCell: {
     justifyContent: 'center',
-    minHeight: 72,
+    minHeight: 56,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 6,
     width: '50%',
   },
   metricCellLeft: { borderRightWidth: StyleSheet.hairlineWidth },
   metricCellSingle: { borderRightWidth: 0, width: '100%' },
   metricCellBottom: { borderBottomWidth: StyleSheet.hairlineWidth },
-  showAllButton: { alignItems: 'center', justifyContent: 'center', minHeight: 56 },
   title: {
     fontFamily: FONT_FAMILIES.semiBold,
     marginBottom: 2,

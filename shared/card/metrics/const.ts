@@ -20,7 +20,6 @@ export const CARD_METRICS = {
     averageCadence: 'Avg. cadence',
     duration: 'Duration',
     spm: 'spm',
-    showAll: 'SHOW ALL',
   },
   [LANGUAGES.russian]: {
     distance: 'Дистанция',
@@ -41,6 +40,5 @@ export const CARD_METRICS = {
     averageCadence: 'Ср. каденс',
     duration: 'Длительность',
     spm: 'шагов/мин',
-    showAll: 'ПОКАЗАТЬ ВСЕ',
   },
 } as const;

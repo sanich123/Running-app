@@ -64,7 +64,12 @@ export default function MapboxWeb({
   const kilometrePopupRef = useRef<MapboxPopup | null>(null);
   const kilometreSplitFeatures = useMemo(() => {
     const validKilometreSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
-      ({ kilometerPoint }) => {
+      (
+        split,
+      ): split is ActivityKilometreSplit & {
+        kilometerPoint: NonNullable<ActivityKilometreSplit['kilometerPoint']>;
+      } => {
+        const { kilometerPoint } = split;
         const { longitude, latitude } = kilometerPoint?.coords ?? {};
         return Number.isFinite(longitude) && Number.isFinite(latitude);
       },

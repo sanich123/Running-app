@@ -38,10 +38,10 @@ const CHART_TICK_INDICES = new Set([0, 27, 54, CHART_POINT_COUNT - 1]);
 export const HEART_RATE_ZONE_COLORS = ['#58BCEB', '#42C477', '#F2C94C', '#F2994A', '#EB5757'] as const;
 
 export const ACTIVITY_CHART_METRIC_COLORS: Record<ActivityChartMetric, string> = {
-  heartRate: '#EB5757',
-  pace: '#7C3AED',
+  heartRate: HEART_RATE_ZONE_COLORS[0],
+  pace: '#2563EB',
   speed: '#0F766E',
-  elevation: '#C026D3',
+  elevation: '#7C3AED',
 };
 
 function getTimestamp(location: ActivityChartLocation) {

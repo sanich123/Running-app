@@ -135,10 +135,12 @@ export function saveMetricsToStoreTaskManager(
   if (kilometerSplitCalculation.splits.length) {
     store.dispatch(resetLastKm());
     for (const [index, split] of kilometerSplitCalculation.splits.entries()) {
+      const splitPoint = split.kilometerPoint;
+      if (!splitPoint) continue;
       store.dispatch(setLastKmDuration(split.lastKilometerDuration));
       store.dispatch(setLastKmAltitude(split.lastKilometerAltitude));
-      store.dispatch(addDurationAndLocationToKmSplits(split.kilometerPoint));
-      const splitTimestamp = split.kilometerPoint.timestamp;
+      store.dispatch(addDurationAndLocationToKmSplits(splitPoint));
+      const splitTimestamp = splitPoint.timestamp;
       const previousTimestamp = previousPosition?.timestamp;
       const durationFromSegmentStart =
         typeof splitTimestamp === 'number' && typeof previousTimestamp === 'number'

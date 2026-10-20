@@ -91,7 +91,7 @@ export default function ActivityDetails() {
 }
 
 const styles = StyleSheet.create({
-  page: { paddingVertical: 12 },
+  page: { paddingBottom: 12 },
   content: { flex: 1, gap: 12 },
   state: {
     justifyContent: 'center',

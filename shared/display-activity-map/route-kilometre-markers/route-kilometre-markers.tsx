@@ -14,10 +14,16 @@ export default function RouteKilometreMarkers({
 }) {
   const { colors } = useTheme();
   const [selectedKilometre, setSelectedKilometre] = useState<SelectedKilometre | null>(null);
-  const validKilometreSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(({ kilometerPoint }) => {
-    const { longitude, latitude } = kilometerPoint?.coords ?? {};
-    return Number.isFinite(longitude) && Number.isFinite(latitude);
-  });
+  const validKilometreSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
+    (
+      split,
+    ): split is ActivityKilometreSplit & {
+      kilometerPoint: NonNullable<ActivityKilometreSplit['kilometerPoint']>;
+    } => {
+      const { longitude, latitude } = split.kilometerPoint?.coords ?? {};
+      return Number.isFinite(longitude) && Number.isFinite(latitude);
+    },
+  );
   const features = validKilometreSplits.map(({ kilometerPoint }, index) => ({
     type: 'Feature' as const,
     properties: { label: `${index + 1}`, sortKey: index },

@@ -5,6 +5,7 @@ import { Platform, View, StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { useGetLocationsByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import SaveBtn from '@Routes/activity/save-btn/save-btn';
 import Checkbox from '@Routes/save-activity-page/checkbox/checkbox';
@@ -28,11 +29,16 @@ export default function SaveResult() {
   const insets = useSafeAreaInsets();
   const { activityId, isCameraVisible, isManualAdding, isEditingActivity, mode } = useManualActivityParams();
   const { finishedActivity, media } = useAppSelector(({ activity }) => activity);
+  const { data: editedActivityLocations } = useGetLocationsByActivityIdQuery(
+    { activityId: activityId ?? '' },
+    { skip: !isEditingActivity || !activityId },
+  );
   const [images, setImages] = useState<ActivityPhoto[]>(media);
   const shouldShowActivityDetails = isManualAdding || isEditingActivity;
   const hasTrackedLocations =
     mode === 'tracked' &&
     Boolean(finishedActivity.routeJournalId && getLocationJournalProgress(finishedActivity.routeJournalId)?.pointCount);
+  const hasEditedLocations = isEditingActivity && Boolean(editedActivityLocations?.locations?.length);
   const maximumDate = isManualAdding ? new Date() : undefined;
 
   return (
@@ -55,7 +61,7 @@ export default function SaveResult() {
             <SportsBtns />
             <Checkbox />
             <EmotionBtns />
-            {hasTrackedLocations ? <MapVisibility /> : null}
+            {hasTrackedLocations || hasEditedLocations ? <MapVisibility /> : null}
             <MediaSection
               images={images}
               isEditingActivity={isEditingActivity}

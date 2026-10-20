@@ -1,8 +1,10 @@
 import { screen } from '@testing-library/react-native';
 import { http } from 'msw';
+import { runichApi } from '@R/runich-api/runich-api';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -25,6 +27,8 @@ describe('MapPage', () => {
     mockSearchParams.id = MOCK_SERVER_IDS.activityId;
     delete mockSearchParams.replay;
     delete mockSearchParams.userId;
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setMockUserId('map-page-viewer'));
   });
 
   it('renders loading state', async () => {

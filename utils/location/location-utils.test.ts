@@ -210,7 +210,7 @@ describe('kilometre split edge cases', () => {
     });
 
     expect(result.splits).toHaveLength(1);
-    expect(result.splits[0].kilometerPoint.coords.altitude).toBe(50);
+    expect(result.splits[0].kilometerPoint!.coords.altitude).toBe(50);
     expect(result.remainingDistance).toBe(0);
     expect(result.remainingDuration).toBe(0);
     expect(result.remainingAltitude).toBe(0);

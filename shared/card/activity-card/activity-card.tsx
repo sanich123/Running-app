@@ -1,6 +1,7 @@
 import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { Card, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { useAppSelector } from '@R/typed-hooks';
 import CommentBtn from '@S/card/comment-btn/comment-btn';
 import LikeBtn from '@S/card/like-btn/like-btn';
 import ShareBtn from '@S/card/share-btn/share-btn';
@@ -14,7 +15,9 @@ import type { ActivityCardProps } from '../types';
 
 export default function ActivityCard({ activity, isFullView = false, isShowDescription }: ActivityCardProps) {
   const { media, mapPhotoUrl, routeOnlyMapPhotoUrl, hideMap, profile, sport, date, userId } = activity;
-  const displayedMapPhotoUrl = hideMap ? routeOnlyMapPhotoUrl : mapPhotoUrl;
+  const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
+  const isOwnActivity = userId === currentUserId;
+  const displayedMapPhotoUrl = hideMap ? (isOwnActivity ? (mapPhotoUrl ?? routeOnlyMapPhotoUrl) : null) : mapPhotoUrl;
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width, 0) : MAX_MOBILE_WIDTH;

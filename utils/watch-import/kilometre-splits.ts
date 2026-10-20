@@ -16,8 +16,9 @@ function getTimestamp(location: LocationObject) {
   return typeof timestamp === 'number' && Number.isFinite(timestamp) && timestamp > 0 ? timestamp : null;
 }
 
-function normalizeSplit(split: ActivityKilometreSplit): LastKmSplit {
+function normalizeSplit(split: ActivityKilometreSplit): LastKmSplit | null {
   const point = split.kilometerPoint;
+  if (!point) return null;
   const timestamp = typeof point.timestamp === 'number' && Number.isFinite(point.timestamp) ? point.timestamp : 0;
   return {
     lastKilometerDuration: split.lastKilometerDuration,
@@ -112,5 +113,8 @@ export function calculateWatchWorkoutKilometreSplits(
     altitudeInCurrentKilometer = calculation.remainingAltitude;
   });
 
-  return splits.map(normalizeSplit);
+  return splits.flatMap((split) => {
+    const normalizedSplit = normalizeSplit(split);
+    return normalizedSplit ? [normalizedSplit] : [];
+  });
 }

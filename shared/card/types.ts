@@ -29,7 +29,7 @@ export interface ActivityHeartRateSample {
 export interface ActivityKilometreSplit {
   lastKilometerDuration: number;
   lastKilometerAltitude: number;
-  kilometerPoint: ActivityLocation;
+  kilometerPoint?: ActivityLocation;
   lastKilometerSteps?: number | null;
 }
 

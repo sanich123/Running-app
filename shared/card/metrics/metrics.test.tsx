@@ -180,13 +180,10 @@ describe('Card metrics', () => {
     }
   });
 
-  it('opens the full workout statistics from the show-all metrics button', async () => {
-    const user = userEvent.setup();
+  it('does not show a show-all action in the activity metrics card', async () => {
     await renderCardMetrics({ title: 'some title', elevationGain: 0, description: '' }, { isFullView: true });
 
-    await user.press(screen.getByTestId('activity-show-all-metrics-button'));
-
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activity}/someUUID/statistics`);
+    expect(screen.queryByTestId('activity-show-all-metrics-button')).toBeNull();
   });
 
   it('does not truncate the full activity description', async () => {

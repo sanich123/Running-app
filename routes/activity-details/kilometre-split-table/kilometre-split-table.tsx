@@ -84,7 +84,7 @@ export default function KilometreSplitTable({ kilometresSplit }: { kilometresSpl
               </Text>
             </View>
           </View>
-          <Divider style={{ backgroundColor: colors.outlineVariant }} />
+          {index < validSplits.length - 1 ? <Divider style={{ backgroundColor: colors.outlineVariant }} /> : null}
         </Fragment>
       ))}
     </>

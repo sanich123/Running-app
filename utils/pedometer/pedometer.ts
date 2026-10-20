@@ -193,7 +193,9 @@ export function getStepsForKilometreSplits(
   let previousSteps = pedometerData.samples[0]?.steps ?? 0;
 
   return kilometreSplits.map((split) => {
-    const timestamp = split.kilometerPoint.timestamp ?? split.kilometerPoint.coords.timestamp;
+    const kilometerPoint = split.kilometerPoint;
+    if (!kilometerPoint) return 0;
+    const timestamp = kilometerPoint.timestamp ?? kilometerPoint.coords.timestamp;
     if (typeof timestamp !== 'number' || !Number.isFinite(timestamp)) return 0;
 
     const stepsAtSplit = Math.max(previousSteps, getStepsAtTimestamp(timestamp, pedometerData.samples));

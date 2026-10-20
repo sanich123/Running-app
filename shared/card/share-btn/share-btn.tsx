@@ -20,7 +20,7 @@ export default function ShareBtn() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isLoading } = useAppSelector(({ loading }) => loading);
   const isSharingDisabled = activity.profile?.allowActivitySharing === false && activity.userId !== userId;
-  const displayedMapPhotoUrl = activity.hideMap ? activity.routeOnlyMapPhotoUrl : activity.mapPhotoUrl;
+  const displayedMapPhotoUrl = activity.hideMap ? null : activity.mapPhotoUrl;
   const isButtonDisabled = isLoading || isSharingDisabled;
   const dispatch = useAppDispatch();
   const cardRef = useRef<ComponentRef<typeof View>>(null);

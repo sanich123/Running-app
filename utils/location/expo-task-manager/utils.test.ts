@@ -73,10 +73,10 @@ describe('kilometre split calculation', () => {
 
     expect(result.splits).toHaveLength(2);
     expect(result.splits.map(({ lastKilometerDuration }) => lastKilometerDuration)).toEqual([1_000_000, 1_000_000]);
-    expect(result.splits[0].kilometerPoint.coords.latitude).toBeCloseTo(55.01);
-    expect(result.splits[1].kilometerPoint.coords.latitude).toBeCloseTo(55.02);
-    expect(result.splits[0].kilometerPoint.timestamp).toBe(1_000_000);
-    expect(result.splits[1].kilometerPoint.timestamp).toBe(2_000_000);
+    expect(result.splits[0].kilometerPoint!.coords.latitude).toBeCloseTo(55.01);
+    expect(result.splits[1].kilometerPoint!.coords.latitude).toBeCloseTo(55.02);
+    expect(result.splits[0].kilometerPoint!.timestamp).toBe(1_000_000);
+    expect(result.splits[1].kilometerPoint!.timestamp).toBe(2_000_000);
     expect(result.remainingDistance).toBe(500);
     expect(result.remainingDuration).toBe(500_000);
     expect(result.remainingAltitude).toBe(6);
