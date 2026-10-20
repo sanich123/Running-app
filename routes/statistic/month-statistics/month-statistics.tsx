@@ -15,6 +15,7 @@ import { getDeviceTimeZone } from '@U/time-zone';
 import CalendarActivities from '../calendar/calendar-activities/calendar-activities';
 import MonthTypesChips from '../chips/month-types-chips/month-types-chips';
 import YearMonthTitle from '../year-month-title/year-month-title';
+import type { MonthStatisticsResponse } from '@R/runich-api/types';
 
 export default function MonthStatistics() {
   const { width } = useWindowDimensions();
@@ -34,6 +35,10 @@ export default function MonthStatistics() {
   );
   const { language } = useAppSelector(({ settings }) => settings);
   const isRussian = language === LANGUAGES.russian;
+  const resolvedMonthStatistics: MonthStatisticsResponse = monthStatistics ?? {
+    activities: [],
+    activitiesReducedBySport: {},
+  };
   return (
     <CrossPlatformLayout
       edges={[]}
@@ -49,9 +54,7 @@ export default function MonthStatistics() {
           <MonthTypesChips
             selectedType={selectedType}
             setSelectedType={setSelectedType}
-            userId={`${userId}`}
-            year={`${year}`}
-            month={`${month}`}
+            typesOfSport={Object.keys(resolvedMonthStatistics.activitiesReducedBySport)}
           />
           <View
             style={[
@@ -86,7 +89,12 @@ export default function MonthStatistics() {
               isError={isError}
             />
           </View>
-          <CalendarActivities year={`${year}`} month={`${month}`} userId={`${userId}`} selectedType={selectedType} />
+          <CalendarActivities
+            year={`${year}`}
+            month={`${month}`}
+            selectedType={selectedType}
+            monthStatistics={resolvedMonthStatistics}
+          />
         </>
       ) : isError ? (
         <ErrorComponent error={error} refetch={refetch} />

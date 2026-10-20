@@ -1,3 +1,4 @@
+import type { PropsWithChildren, Ref } from 'react';
 import { fireEvent, screen } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -10,11 +11,11 @@ jest.mock('@gorhom/bottom-sheet', () => {
   const { View } = require('react-native');
   return {
     BottomSheetBackdrop: View,
-    BottomSheetModal: React.forwardRef(({ children, ...props }: any, forwardedRef: unknown) => {
+    BottomSheetModal: React.forwardRef(({ children }: PropsWithChildren, forwardedRef: Ref<unknown>) => {
       void forwardedRef;
-      return <View {...props}>{children}</View>;
+      return <View>{children}</View>;
     }),
-    BottomSheetModalProvider: ({ children }: any) => <View>{children}</View>,
+    BottomSheetModalProvider: ({ children }: PropsWithChildren) => <View>{children}</View>,
     BottomSheetView: View,
   };
 });

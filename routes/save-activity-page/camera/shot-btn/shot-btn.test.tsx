@@ -4,11 +4,13 @@ import { LANGUAGES } from '@const/enums';
 import { resetAuthSlice } from '@R/slices/auth/auth';
 import { changeLanguage, setSaveCameraPhotosToGallery } from '@R/slices/settings/settings';
 import * as errorToastModule from '@S/error-toast/error-toast';
+import { createMockMutableRef } from '@T/utils/mock-ref';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { deleteUploadedMedia } from '@U/file-sending';
 import ShotBtn from './shot-btn';
 import { uploadActivityMediaBatch } from '../../utils';
+import type { CameraView } from 'expo-camera';
 
 jest.mock('expo-media-library', () => ({ Asset: { create: jest.fn().mockResolvedValue({}) } }));
 jest.mock('@U/file-sending', () => ({ deleteUploadedMedia: jest.fn().mockResolvedValue(true) }));
@@ -37,7 +39,7 @@ describe('shot btn', () => {
     const setPhotos = jest.fn();
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://new-photo.jpg' });
     await renderWithProviders(
-      <ShotBtn cameraRef={{ current: { takePictureAsync } } as any} setPhotos={setPhotos} photos={[]} />,
+      <ShotBtn cameraRef={createMockMutableRef<CameraView>({ takePictureAsync })} setPhotos={setPhotos} photos={[]} />,
     );
     await user.press(screen.getByTestId('camera-shot-button'));
     expect(setPhotos).toHaveBeenCalledWith([{ url: 'file://new-photo.jpg', thumbnail: null }]);
@@ -49,7 +51,7 @@ describe('shot btn', () => {
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://new-photo.jpg' });
     mockStore.dispatch(setSaveCameraPhotosToGallery(true));
     await renderWithProviders(
-      <ShotBtn cameraRef={{ current: { takePictureAsync } } as any} setPhotos={jest.fn()} photos={[]} />,
+      <ShotBtn cameraRef={createMockMutableRef<CameraView>({ takePictureAsync })} setPhotos={jest.fn()} photos={[]} />,
     );
 
     await user.press(screen.getByTestId('camera-shot-button'));
@@ -64,7 +66,7 @@ describe('shot btn', () => {
     mockUploadActivityMediaBatch.mockResolvedValue([{ url: 'https://cdn.example.com/photo.jpg', thumbnail: 'thumb' }]);
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
     await renderWithProviders(
-      <ShotBtn cameraRef={{ current: { takePictureAsync } } as any} setPhotos={setPhotos} photos={[]} />,
+      <ShotBtn cameraRef={createMockMutableRef<CameraView>({ takePictureAsync })} setPhotos={setPhotos} photos={[]} />,
     );
 
     await user.press(screen.getByTestId('camera-shot-button'));
@@ -103,7 +105,7 @@ describe('shot btn', () => {
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
     await renderWithProviders(
       <ShotBtn
-        cameraRef={{ current: { takePictureAsync } } as any}
+        cameraRef={createMockMutableRef<CameraView>({ takePictureAsync })}
         setPhotos={setPhotos}
         photos={[]}
         activityId="activity-id"
@@ -128,7 +130,7 @@ describe('shot btn', () => {
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
     await renderWithProviders(
       <ShotBtn
-        cameraRef={{ current: { takePictureAsync } } as any}
+        cameraRef={createMockMutableRef<CameraView>({ takePictureAsync })}
         setPhotos={setPhotos}
         photos={[]}
         activityId="activity-id"
@@ -156,7 +158,7 @@ describe('shot btn', () => {
     });
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
     await renderWithProviders(
-      <ShotBtn cameraRef={{ current: { takePictureAsync } } as any} setPhotos={setPhotos} photos={[]} />,
+      <ShotBtn cameraRef={createMockMutableRef<CameraView>({ takePictureAsync })} setPhotos={setPhotos} photos={[]} />,
     );
 
     await user.press(screen.getByTestId('camera-shot-button'));
@@ -177,7 +179,9 @@ describe('shot btn', () => {
   it('does nothing when there is no camera', async () => {
     const user = userEvent.setup();
     const setPhotos = jest.fn();
-    await renderWithProviders(<ShotBtn cameraRef={{ current: null } as any} setPhotos={setPhotos} photos={[]} />);
+    await renderWithProviders(
+      <ShotBtn cameraRef={createMockMutableRef<CameraView>(null)} setPhotos={setPhotos} photos={[]} />,
+    );
     await user.press(screen.getByTestId('camera-shot-button'));
     expect(setPhotos).not.toHaveBeenCalled();
   });
@@ -187,7 +191,11 @@ describe('shot btn', () => {
     const setPhotos = jest.fn();
     const noPhoto = jest.fn().mockResolvedValue(null);
     await renderWithProviders(
-      <ShotBtn cameraRef={{ current: { takePictureAsync: noPhoto } } as any} setPhotos={setPhotos} photos={[]} />,
+      <ShotBtn
+        cameraRef={createMockMutableRef<CameraView>({ takePictureAsync: noPhoto })}
+        setPhotos={setPhotos}
+        photos={[]}
+      />,
     );
     await user.press(screen.getByTestId('camera-shot-button'));
     expect(noPhoto).toHaveBeenCalled();
@@ -202,7 +210,7 @@ describe('shot btn', () => {
     mockUploadActivityMediaBatch.mockResolvedValue([null]);
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
     await renderWithProviders(
-      <ShotBtn cameraRef={{ current: { takePictureAsync } } as any} setPhotos={setPhotos} photos={[]} />,
+      <ShotBtn cameraRef={createMockMutableRef<CameraView>({ takePictureAsync })} setPhotos={setPhotos} photos={[]} />,
     );
 
     await user.press(screen.getByTestId('camera-shot-button'));
@@ -216,7 +224,7 @@ describe('shot btn', () => {
     const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
     const takePictureAsync = jest.fn().mockRejectedValue(error);
     await renderWithProviders(
-      <ShotBtn cameraRef={{ current: { takePictureAsync } } as any} setPhotos={jest.fn()} photos={[]} />,
+      <ShotBtn cameraRef={createMockMutableRef<CameraView>({ takePictureAsync })} setPhotos={jest.fn()} photos={[]} />,
     );
 
     await user.press(screen.getByTestId('camera-shot-button'));

@@ -12,7 +12,7 @@ jest.mock('./bar-chart-wrapper/bar-chart-wrapper', () => ({
 }));
 jest.mock('./choose-metrics-btns/choose-metrics-btns', () => ({
   __esModule: true,
-  default: ({ setChartValue }: { setChartValue: (value: any) => void }) => {
+  default: ({ setChartValue }: { setChartValue: (value: unknown) => void }) => {
     const { Button } = require('react-native');
     return <Button testID="choose-duration" title="duration" onPress={() => setChartValue('duration')} />;
   },

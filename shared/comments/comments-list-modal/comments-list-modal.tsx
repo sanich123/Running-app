@@ -1,5 +1,10 @@
 import { useCallback } from 'react';
-import { BottomSheetFooter, BottomSheetModal, type BottomSheetFooterProps } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetFooter,
+  BottomSheetModal,
+  type BottomSheetBackdropProps,
+  type BottomSheetFooterProps,
+} from '@gorhom/bottom-sheet';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
@@ -18,7 +23,7 @@ export default function CommentsListModal({ commentsModalRef, allowNewComments =
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   const { commentToUpdate, idOfUpdatingComment } = useAppSelector(({ comment }) => comment);
   const { language } = useAppSelector(({ settings }) => settings);
-  const renderBackdrop = useCallback((props: any) => backdrop(props), []);
+  const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => backdrop(props), []);
   const clearCommentEditing = useCallback(() => {
     dispatch(setCommentToUpdate(''));
     dispatch(setIdOfUpdatingComment(''));

@@ -7,6 +7,7 @@ import { errorToast } from '@S/error-toast/error-toast';
 import { BACKGROUND_LOCATIONS } from './const';
 import LocationConsent from '../location-consent/location-consent';
 import type { BackgroundLocationModalProps } from '../types';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 
 export default function BackgroundLocationModal({
   backgroundLocationEnabledModalRef,
@@ -16,7 +17,7 @@ export default function BackgroundLocationModal({
   const { language } = useAppSelector(({ settings }) => settings);
   const [locationConsentAccepted, setLocationConsentAccepted] = useState(false);
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
   return (

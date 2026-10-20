@@ -5,7 +5,7 @@ import { Icon, Text } from 'react-native-paper';
 import CustomImage from '@S/custom-image/custom-image';
 import ActiveVideoPlayer from '../active-video-player/active-video-player';
 import { formatVideoDuration } from '../const';
-import { useVideoPlayback } from '../video-playback-context';
+import useVideoPlayback from '../use-video-playback';
 import type { VideoMediaProps, VideoMetadata } from '../types';
 
 export default function VideoMedia({

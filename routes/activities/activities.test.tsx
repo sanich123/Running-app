@@ -8,12 +8,19 @@ import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import Activities from './activities';
+import type { ActivityListItemResponse } from '@R/runich-api/types';
 
 const mockNextPage = jest.fn();
 
 jest.mock('@S/infinite-scroll-list/infinite-scroll-list', () => {
   const { Pressable, Text } = jest.requireActual('react-native');
-  return function MockInfiniteScrollList({ dataToRender, nextPageCallback }: any) {
+  return function MockInfiniteScrollList({
+    dataToRender,
+    nextPageCallback,
+  }: {
+    dataToRender: ActivityListItemResponse[];
+    nextPageCallback: () => Promise<unknown>;
+  }) {
     mockNextPage.mockImplementation(nextPageCallback);
     return (
       <Pressable testID="activities-next-page" onPress={mockNextPage}>

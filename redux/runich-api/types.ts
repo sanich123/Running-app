@@ -282,13 +282,10 @@ export interface LikeListPageResponse {
   currentUserLike: Pick<LikeListResponse, 'id' | 'authorId'> | null;
 }
 
-interface FriendProfileResponse {
-  name?: string | null;
-  surname?: string | null;
-  profilePhoto?: string | null;
-  profilePhotoBlurhash?: string | null;
-  allowNewFollowers?: boolean;
-}
+type FriendProfileResponse = Pick<
+  ProfileType,
+  'city' | 'name' | 'surname' | 'profilePhoto' | 'profilePhotoBlurhash' | 'allowNewFollowers'
+>;
 
 export interface FollowingResponse {
   createdAt: string;

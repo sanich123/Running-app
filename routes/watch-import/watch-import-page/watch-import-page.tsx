@@ -19,7 +19,7 @@ import {
   WATCH_IMPORT_COPY,
 } from '../const';
 import ExpandableStep from '../expandable-step/expandable-step';
-import { renderHealthConnectLinks } from '../health-connect-link';
+import { renderHealthConnectLinks } from '../health-connect-link/utils';
 import LinkButton from '../link-button/link-button';
 import { openExternalLink } from '../utils';
 import WorkoutImportContent from '../workout-import-content/workout-import-content';

@@ -1,16 +1,15 @@
 import { render, screen } from '@testing-library/react-native';
 import { MOCK_LOCATIONS } from '@T/mocks/mock-location';
 import MapRouteLine from './map-route-line';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 
 jest.mock('@rnmapbox/maps', () => {
-  const { View } = require('react-native');
+  const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
   return {
-    ShapeSource: ({ children, ...props }: any) => (
-      <View testID="route-shape-source" {...props}>
-        {children}
-      </View>
-    ),
-    LineLayer: View,
+    ShapeSource: ({ children, ...props }: MockNativeViewProps) =>
+      createMockNativeView(props, children, 'route-shape-source'),
+    LineLayer: ({ ...props }: MockNativeViewProps) => createMockNativeView(props),
   };
 });
 

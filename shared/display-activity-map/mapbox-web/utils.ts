@@ -1,7 +1,67 @@
 import { getActivityRouteReplayMapboxBrandingBottomOffset } from '@S/activity-route-replay/const';
 import { getAvatarLabel } from '../../avatar/user-avatar/utils';
-import type { ProfileType } from '@S/card/types';
+import type { ActivityKilometreSplit, ProfileType } from '@S/card/types';
 import type { ExpressionSpecification, Map as MapboxMap, Popup as MapboxPopup } from 'mapbox-gl';
+
+export interface RouteGeoJsonFeature {
+  type: 'Feature';
+  properties: Record<string, never>;
+  geometry: { type: 'LineString'; coordinates: number[][] };
+}
+
+export interface KilometreSplitGeoJsonFeature {
+  type: 'Feature';
+  properties: { label: string; sortKey: number };
+  geometry: { type: 'Point'; coordinates: number[] };
+}
+
+export function getKilometreSplitFeatures(kilometresSplit: ActivityKilometreSplit[]): KilometreSplitGeoJsonFeature[] {
+  const validKilometreSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
+    (
+      split,
+    ): split is ActivityKilometreSplit & {
+      kilometerPoint: NonNullable<ActivityKilometreSplit['kilometerPoint']>;
+    } => {
+      const { kilometerPoint } = split;
+      const { longitude, latitude } = kilometerPoint?.coords ?? {};
+      return Number.isFinite(longitude) && Number.isFinite(latitude);
+    },
+  );
+
+  return validKilometreSplits.map(({ kilometerPoint }, index) => ({
+    type: 'Feature',
+    properties: { label: `${index + 1}`, sortKey: index },
+    geometry: {
+      type: 'Point',
+      coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
+    },
+  }));
+}
+
+export function getRouteBaseFeatures(
+  routeCoordinates: number[][],
+  routeSegmentColors?: string[],
+): RouteGeoJsonFeature[] {
+  if (!routeSegmentColors?.length || routeCoordinates.length < 2) return [];
+
+  return [
+    {
+      type: 'Feature',
+      properties: {},
+      geometry: { type: 'LineString', coordinates: routeCoordinates },
+    },
+  ];
+}
+
+export function getRouteFeatures(routeCoordinates: number[][]): RouteGeoJsonFeature[] {
+  return [
+    {
+      type: 'Feature',
+      properties: {},
+      geometry: { type: 'LineString', coordinates: routeCoordinates },
+    },
+  ];
+}
 
 export function getRouteSpeedGradient(
   routeCoordinates: number[][],

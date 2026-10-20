@@ -1,14 +1,16 @@
+import type { ReactNode } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
 import { setIsProfileFilled } from '@R/slices/settings/settings';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
+import { makeLocationPermissionResponse } from '@T/utils/location-permission';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import LocationPermissions from './location-permissions';
 
 const mockNavigate = jest.fn();
 jest.mock('expo-router', () => ({
-  Link: ({ href, children, testID }: any) => {
+  Link: ({ href, children, testID }: { href: string; children?: ReactNode; testID?: string }) => {
     const { Pressable, Text } = jest.requireActual('react-native');
     return (
       <Pressable testID={testID} onPress={() => mockNavigate(href)}>
@@ -39,8 +41,8 @@ describe('location permissions', () => {
     const props = {
       isMapVisible: true,
       isLocationEnabled: true,
-      foregroundPermissionStatus: { granted: false } as any,
-      backgroundPermissionStatus: { granted: false } as any,
+      foregroundPermissionStatus: makeLocationPermissionResponse(false),
+      backgroundPermissionStatus: makeLocationPermissionResponse(false),
       setIsLocationEnabled: jest.fn(),
       requestForegroundPermission: jest.fn(),
       requestBackgroundPermission: jest.fn(),
@@ -48,7 +50,9 @@ describe('location permissions', () => {
     await renderWithProviders(<LocationPermissions {...props} />);
     expect(screen.queryByTestId('background-location-switcher')).not.toBeOnTheScreen();
 
-    await renderWithProviders(<LocationPermissions {...props} foregroundPermissionStatus={{ granted: true } as any} />);
+    await renderWithProviders(
+      <LocationPermissions {...props} foregroundPermissionStatus={makeLocationPermissionResponse(true)} />,
+    );
     expect(screen.getAllByTestId('background-location-switcher')).toHaveLength(1);
   });
 
@@ -60,8 +64,8 @@ describe('location permissions', () => {
       <LocationPermissions
         isMapVisible
         isLocationEnabled
-        foregroundPermissionStatus={{ granted: true } as any}
-        backgroundPermissionStatus={{ granted: true } as any}
+        foregroundPermissionStatus={makeLocationPermissionResponse(true)}
+        backgroundPermissionStatus={makeLocationPermissionResponse(true)}
         setIsLocationEnabled={jest.fn()}
         requestForegroundPermission={jest.fn()}
         requestBackgroundPermission={jest.fn()}
@@ -79,8 +83,8 @@ describe('location permissions', () => {
       <LocationPermissions
         isMapVisible
         isLocationEnabled
-        foregroundPermissionStatus={{ granted: true } as any}
-        backgroundPermissionStatus={{ granted: true } as any}
+        foregroundPermissionStatus={makeLocationPermissionResponse(true)}
+        backgroundPermissionStatus={makeLocationPermissionResponse(true)}
         setIsLocationEnabled={jest.fn()}
         requestForegroundPermission={jest.fn()}
         requestBackgroundPermission={jest.fn()}

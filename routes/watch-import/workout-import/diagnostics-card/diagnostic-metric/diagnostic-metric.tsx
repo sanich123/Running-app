@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { renderHealthConnectLinks } from '../../../health-connect-link';
+import { renderHealthConnectLinks } from '../../../health-connect-link/utils';
 import { getBooleanLabel } from '../../helpers';
 import type { DiagnosticMetricProps } from '../../../types';
 

@@ -13,7 +13,7 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { ActivityCardContext } from '../context';
 import MediaList from './media-list';
-import { VideoPlaybackProvider } from './video-playback-context';
+import VideoPlaybackProvider from './video-playback-provider/video-playback-provider';
 import type { ActivityCardData } from '../types';
 
 const mockPush = jest.fn();

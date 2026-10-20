@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { ActivityIndicator, Card, Icon, Text, useTheme } from 'react-native-paper';
-import { renderHealthConnectLinks } from '../../health-connect-link';
+import { renderHealthConnectLinks } from '../../health-connect-link/utils';
 import { WORKOUT_IMPORT_COPY } from '../const';
 import {
   formatWorkoutCountNotice,

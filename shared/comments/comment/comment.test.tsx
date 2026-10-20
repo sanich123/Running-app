@@ -1,9 +1,12 @@
 import { createRef } from 'react';
+import type { RefObject } from 'react';
 import { screen } from '@testing-library/react-native';
 import { setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import Comment from './comment';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { CommentResponse } from '@R/runich-api/types';
 
 jest.mock('@S/card/user-info/user-info', () => ({
   __esModule: true,
@@ -35,14 +38,16 @@ jest.mock('../comment-likes-length/comment-likes-length', () => ({
   default: () => null,
 }));
 
-const commentProps: any = {
+const commentProps: CommentResponse & { commentsModalRef: RefObject<BottomSheetModal | null> } = {
   authorId: 'user-1',
   comment: 'Отличная тренировка!',
+  activityId: 'activity-1',
   id: 'comment-1',
   date: '2026-08-09T10:00:00.000Z',
+  profileId: 'profile-1',
   profile: { name: 'Иван', surname: 'Иванов' },
   commentLike: [],
-  commentsModalRef: createRef(),
+  commentsModalRef: createRef<BottomSheetModal>(),
 };
 
 describe('comment', () => {

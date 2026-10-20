@@ -3,6 +3,7 @@ import { LANGUAGES, ROUTES } from '@const/enums';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
+import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { UserInfoSize } from './const';
@@ -53,7 +54,7 @@ describe('UserInfo', () => {
         date={`${new Date()}`}
         userId="someUserId"
         size={UserInfoSize.large}
-        commentsModalRef={{ current: { close } } as any}
+        commentsModalRef={createMockBottomSheetModalRef({ close })}
       />,
     );
     await user.press(screen.getByText(new RegExp(MOCK_PROFILE.name)));
@@ -70,7 +71,7 @@ describe('UserInfo', () => {
         date={`${new Date()}`}
         userId="someUserId"
         size={UserInfoSize.large}
-        commentsModalRef={{ current: { close: 'not-a-function' } } as any}
+        commentsModalRef={createMockBottomSheetModalRef({ close: 'not-a-function' as unknown as () => void })}
       />,
     );
 

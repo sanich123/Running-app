@@ -1,22 +1,18 @@
 import { act, render, screen } from '@testing-library/react-native';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import RouteKilometreMarkers from './route-kilometre-markers';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 
 jest.mock('@rnmapbox/maps', () => {
-  const { View } = require('react-native');
+  const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
   return {
-    ShapeSource: ({ children, ...props }: any) => (
-      <View testID="route-kilometre-shape-source" {...props}>
-        {children}
-      </View>
-    ),
-    CircleLayer: (props: any) => <View testID="route-kilometre-marker-layer" {...props} />,
-    SymbolLayer: (props: any) => <View testID="route-kilometre-symbol-layer" {...props} />,
-    MarkerView: ({ children, ...props }: any) => (
-      <View testID="route-kilometre-callout-marker" {...props}>
-        {children}
-      </View>
-    ),
+    ShapeSource: ({ children, ...props }: MockNativeViewProps) =>
+      createMockNativeView(props, children, 'route-kilometre-shape-source'),
+    CircleLayer: (props: MockNativeViewProps) => createMockNativeView(props, undefined, 'route-kilometre-marker-layer'),
+    SymbolLayer: (props: MockNativeViewProps) => createMockNativeView(props, undefined, 'route-kilometre-symbol-layer'),
+    MarkerView: ({ children, ...props }: MockNativeViewProps) =>
+      createMockNativeView(props, children, 'route-kilometre-callout-marker'),
   };
 });
 
@@ -29,7 +25,10 @@ describe('Route kilometre markers', () => {
   it('renders small points without labels and shows the kilometre after a tap', async () => {
     await render(
       <RouteKilometreMarkers
-        kilometresSplit={[{ kilometerPoint: MOCK_LOCATION } as any, { kilometerPoint: MOCK_LOCATION } as any]}
+        kilometresSplit={[
+          { lastKilometerDuration: 0, lastKilometerAltitude: 0, kilometerPoint: MOCK_LOCATION },
+          { lastKilometerDuration: 0, lastKilometerAltitude: 0, kilometerPoint: MOCK_LOCATION },
+        ]}
       />,
     );
     const shapeSource = screen.getByTestId('route-kilometre-shape-source');

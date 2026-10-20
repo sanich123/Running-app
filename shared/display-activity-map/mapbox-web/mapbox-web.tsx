@@ -9,12 +9,14 @@ import {
 import { DISPLAY_ACTIVITY_MAP_CAMERA_PADDING } from '../const';
 import {
   getRouteSpeedGradient,
+  getKilometreSplitFeatures,
+  getRouteBaseFeatures,
+  getRouteFeatures,
   updateMapboxBrandingPosition,
   styleKilometrePopup,
   updateWebAvatarMarker,
 } from './utils';
-import type { WebMapControlsHandle } from '../map-controls/types';
-import type { ActivityKilometreSplit, ProfileType } from '@S/card/types';
+import type { MapboxWebProps } from './types';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 export default function MapboxWeb({
@@ -34,28 +36,7 @@ export default function MapboxWeb({
   cameraZoomLevel = 14.5,
   enable3DTerrain = false,
   followPlaybackCamera = false,
-}: {
-  boundBox: [number, number, number, number];
-  routeCoordinates: number[][];
-  routeSegmentColors?: string[];
-  kilometresSplit: ActivityKilometreSplit[];
-  kilometreUnit?: string;
-  showPlaybackMarker?: boolean;
-  playbackCoordinate?: [number, number] | null;
-  playbackHeading?: number;
-  playbackCameraUpdateRef?: {
-    current:
-      | ((coordinate: [number, number], heading: number, zoomLevel?: number, animationDurationMs?: number) => void)
-      | null;
-  };
-  playbackProfile?: Pick<ProfileType, 'name' | 'surname' | 'profilePhoto'>;
-  mapControlsRef?: { current: WebMapControlsHandle | null };
-  mapStyleURL?: string;
-  cameraPitch?: number;
-  cameraZoomLevel?: number;
-  enable3DTerrain?: boolean;
-  followPlaybackCamera?: boolean;
-}) {
+}: MapboxWebProps) {
   const { colors, dark } = useTheme();
   const { bottom: safeAreaBottomInset } = useSafeAreaInsets();
   const mapRef = useRef<MapboxMap | null>(null);
@@ -67,48 +48,12 @@ export default function MapboxWeb({
   const playbackMarkerRef = useRef<MapboxMarker | null>(null);
   const playbackMarkerElementRef = useRef<HTMLDivElement | null>(null);
   const kilometrePopupRef = useRef<MapboxPopup | null>(null);
-  const kilometreSplitFeatures = useMemo(() => {
-    const validKilometreSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
-      (
-        split,
-      ): split is ActivityKilometreSplit & {
-        kilometerPoint: NonNullable<ActivityKilometreSplit['kilometerPoint']>;
-      } => {
-        const { kilometerPoint } = split;
-        const { longitude, latitude } = kilometerPoint?.coords ?? {};
-        return Number.isFinite(longitude) && Number.isFinite(latitude);
-      },
-    );
-
-    return validKilometreSplits.map(({ kilometerPoint }, index) => ({
-      type: 'Feature' as const,
-      properties: { label: `${index + 1}`, sortKey: index },
-      geometry: {
-        type: 'Point' as const,
-        coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
-      },
-    }));
-  }, [kilometresSplit]);
-  const routeBaseFeatures = useMemo(() => {
-    if (!routeSegmentColors?.length || routeCoordinates.length < 2) return [];
-
-    return [
-      {
-        type: 'Feature' as const,
-        properties: {},
-        geometry: { type: 'LineString' as const, coordinates: routeCoordinates },
-      },
-    ];
-  }, [routeCoordinates, routeSegmentColors]);
-  const routeFeatures = useMemo(() => {
-    return [
-      {
-        type: 'Feature' as const,
-        properties: {},
-        geometry: { type: 'LineString' as const, coordinates: routeCoordinates },
-      },
-    ];
-  }, [routeCoordinates]);
+  const kilometreSplitFeatures = useMemo(() => getKilometreSplitFeatures(kilometresSplit), [kilometresSplit]);
+  const routeBaseFeatures = useMemo(
+    () => getRouteBaseFeatures(routeCoordinates, routeSegmentColors),
+    [routeCoordinates, routeSegmentColors],
+  );
+  const routeFeatures = useMemo(() => getRouteFeatures(routeCoordinates), [routeCoordinates]);
   const routeSpeedGradient = useMemo(
     () => getRouteSpeedGradient(routeCoordinates, routeSegmentColors ?? []),
     [routeCoordinates, routeSegmentColors],

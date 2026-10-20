@@ -5,13 +5,14 @@ import { Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { ACTIVITY_SETTINGS } from '../const';
 import type { ActivityLocationInfoModalProps } from './types';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 
 export default function ActivityLocationInfoModal({ modalRef }: ActivityLocationInfoModalProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const labels = ACTIVITY_SETTINGS[language];
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
 

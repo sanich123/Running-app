@@ -51,7 +51,7 @@ export default function BarChartWrapper({ metricsArr, year }: BarChartWrapperPro
             fontSize: 10,
           },
         }}
-        onPress={(_: any, index: any) =>
+        onPress={(_: unknown, index: unknown) =>
           push(`/${ROUTES.monthStatistics}?userId=${userId}&year=${year}&month=${index}`)
         }
         frontColor={colors.primary}

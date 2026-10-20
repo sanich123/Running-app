@@ -1,4 +1,7 @@
 import { LANGUAGES } from '@const/enums';
+import jasonStathamPreviewPhoto from '../../../assets/images/jason-statham-2007.jpg';
+
+export const PROFILE_PREVIEW_PHOTO = jasonStathamPreviewPhoto;
 
 export const PROFILE_PRIVACY_SETTINGS = {
   [LANGUAGES.english]: {
@@ -13,8 +16,7 @@ export const PROFILE_PRIVACY_SETTINGS = {
     activityPreviewCardTab: 'Activity card',
     activityPreviewFullTab: 'Full activity',
     activityPreviewActivityName: 'Morning run',
-    activityPreviewProfileName: 'Alex Morgan',
-    activityPreviewInitials: 'AM',
+    activityPreviewProfileName: 'Jason Statham',
     activityPreviewDate: 'Today, 9:13 AM',
     activityPreviewTemperature: '7°C',
     activityPreviewWeather: 'Wind 4 m/s',
@@ -33,11 +35,11 @@ export const PROFILE_PRIVACY_SETTINGS = {
     activityPreviewPhotoTitle: 'Photos',
     activityPreviewPhotosHidden: 'Photos hidden',
     activityPreviewAbout: 'About me',
-    activityPreviewBio: 'I have loved running for quite a while.',
+    activityPreviewBio: 'If they give, take; if they don’t, take it anyway.',
     activityPreviewFollowers: 'Followers',
     activityPreviewFollowing: 'Following',
     activityPreviewListsHidden: 'Lists are hidden',
-    activityPreviewCity: 'Moscow',
+    activityPreviewCity: 'Shirebrook, England',
     activityPreviewFollow: 'Follow',
     activityPreviewFollowingDisabled: 'Following is disabled',
     activityPreviewStatistics: 'Training summary',
@@ -110,8 +112,7 @@ export const PROFILE_PRIVACY_SETTINGS = {
     activityPreviewCardTab: 'Карточка',
     activityPreviewFullTab: 'Полная активность',
     activityPreviewActivityName: 'Утренняя пробежка',
-    activityPreviewProfileName: 'Александр Воронин',
-    activityPreviewInitials: 'АВ',
+    activityPreviewProfileName: 'Джейсон Стетхем',
     activityPreviewDate: 'Сегодня, 09:13',
     activityPreviewTemperature: '7°C',
     activityPreviewWeather: 'Ветер 4 м/с',
@@ -130,11 +131,11 @@ export const PROFILE_PRIVACY_SETTINGS = {
     activityPreviewPhotoTitle: 'Фотографии',
     activityPreviewPhotosHidden: 'Фотографии скрыты',
     activityPreviewAbout: 'О себе',
-    activityPreviewBio: 'Люблю бегать, уже довольно давно.',
+    activityPreviewBio: 'Дают — бери, не дают — отбери',
     activityPreviewFollowers: 'Подписчики',
     activityPreviewFollowing: 'Подписки',
     activityPreviewListsHidden: 'Списки скрыты',
-    activityPreviewCity: 'Москва',
+    activityPreviewCity: 'Ширбрук, Англия',
     activityPreviewFollow: 'Подписаться',
     activityPreviewFollowingDisabled: 'Подписка недоступна',
     activityPreviewStatistics: 'Общая статистика тренировок',

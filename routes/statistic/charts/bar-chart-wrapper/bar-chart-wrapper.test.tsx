@@ -3,12 +3,14 @@ import { ROUTES } from '@const/enums';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import BarChartWrapper from './bar-chart-wrapper';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
 jest.mock('react-native-gifted-charts', () => {
-  const { View } = jest.requireActual('react-native');
-  return { BarChart: (props: any) => <View testID="interactive-bar-chart" {...props} /> };
+  const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
+  return { BarChart: (props: MockNativeViewProps) => createMockNativeView(props, undefined, 'interactive-bar-chart') };
 });
 
 describe('bar chart wrapper', () => {

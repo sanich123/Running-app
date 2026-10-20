@@ -34,7 +34,7 @@ export interface ProfileSettings {
 export type ProfileResponse = ProfileType;
 
 export interface FilteredProfilesResponse {
-  items: ProfileResponse[];
+  items: (ProfileResponse & { userId: string })[];
   hasMore: boolean;
   nextCursor: string | null;
 }

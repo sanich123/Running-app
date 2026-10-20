@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react';
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
+import type { PressableProps } from 'react-native';
 import { STATUSES } from '@const/enums';
 import { addDurationAndLocationToKmSplits, setActivityStatus } from '@R/slices/location/location';
 import * as errorToastModule from '@S/error-toast/error-toast';
@@ -15,9 +17,12 @@ jest.mock('react-native-paper', () => {
   const { Pressable } = jest.requireActual('react-native');
   return {
     ...actual,
-    TouchableRipple: ({ children, ...props }: Record<string, any>) => {
+    TouchableRipple: ({
+      children,
+      ...props
+    }: Record<string, unknown> & { children?: ReactNode; onPress?: () => Promise<void> }) => {
       mockOnPress = props.onPress;
-      return <Pressable {...props}>{children}</Pressable>;
+      return <Pressable {...(props as unknown as PressableProps)}>{children}</Pressable>;
     },
   };
 });

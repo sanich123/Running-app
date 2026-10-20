@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { makeLocationPermissionResponse } from '@T/utils/location-permission';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ForegroundLocationSwitcher from './foreground-location-switcher';
 
@@ -8,7 +9,7 @@ describe('foreground location switcher', () => {
     const requestForegroundPermission = jest.fn().mockResolvedValue({ granted: true });
     await renderWithProviders(
       <ForegroundLocationSwitcher
-        foregroundPermissionStatus={{ granted: false } as any}
+        foregroundPermissionStatus={makeLocationPermissionResponse(false)}
         requestForegroundPermission={requestForegroundPermission}
       />,
     );

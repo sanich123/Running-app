@@ -31,6 +31,7 @@ describe('ActivityPrivacyPreview', () => {
     expect(screen.getByTestId('privacy-activity-preview-avatar').props.style).toEqual(
       expect.arrayContaining([expect.objectContaining({ alignItems: 'center', justifyContent: 'center' })]),
     );
+    expect(screen.getByTestId('privacy-activity-preview-avatar-photo').props.source).toBeTruthy();
     expect(screen.queryByText(copy.activityPreviewLike)).not.toBeOnTheScreen();
     expect(screen.queryByText(copy.activityPreviewComment)).not.toBeOnTheScreen();
     expect(screen.queryByText(copy.activityPreviewShare)).not.toBeOnTheScreen();

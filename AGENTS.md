@@ -6,6 +6,8 @@
 
 ## JSX and TSX components
 
+- Do not use explicit `any` in TypeScript or TSX production code or tests. Use a concrete type, `unknown` with narrowing, or a narrowly scoped typed adapter instead.
+
 - Put every `.jsx` and `.tsx` component in its own folder under its parent component folder, for example `parent/child/child.tsx`.
 - Name the component file after its component using kebab-case, not camelCase; for example, `ReadyCheckCard` lives in `ready-check-card.tsx`.
 - A component file must default-export a function component that returns JSX. Aside from imports, keep only that component and its styles in the file; do not add named exports, helper functions, types, or unrelated constants there.

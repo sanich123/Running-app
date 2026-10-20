@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { errorToast } from '@S/error-toast/error-toast';
-import { useReplayVideoRecorder } from './recording-view';
+import useReplayVideoRecorder from './recording-view/use-replay-video-recorder';
 import useVideoExport from './use-video-export';
 import type { ReplayExportPlayback, ReplayRecordOptions, ReplayVideoRecorder } from './types';
 
@@ -13,7 +13,7 @@ jest.mock('expo-file-system', () => ({
   Paths: { cache: { uri: 'file:///cache' } },
 }));
 jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(), shareAsync: jest.fn() }));
-jest.mock('./recording-view', () => ({ useReplayVideoRecorder: jest.fn() }));
+jest.mock('./recording-view/use-replay-video-recorder', () => ({ __esModule: true, default: jest.fn() }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 
 const mockSharing = jest.requireMock('expo-sharing') as {

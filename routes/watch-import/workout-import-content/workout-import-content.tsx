@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Checkbox, Switch, Text, useTheme } from 'react-native-paper';
-import { renderHealthConnectLinks } from '../health-connect-link';
+import { renderHealthConnectLinks } from '../health-connect-link/utils';
 import { WORKOUT_IMPORT_COPY } from '../workout-import/const';
 import DiagnosticsCard from '../workout-import/diagnostics-card/diagnostics-card';
 import { formatImportSelectedLabel, getWorkoutId } from '../workout-import/helpers';

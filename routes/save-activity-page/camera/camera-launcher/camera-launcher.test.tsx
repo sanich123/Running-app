@@ -1,13 +1,15 @@
 import { screen } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CameraLauncher from './camera-launcher';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 
 let mockPermission: { granted: boolean } | null = null;
 const mockRequestPermission = jest.fn(() => Promise.resolve({ granted: true }));
 jest.mock('expo-camera', () => {
-  const { View } = require('react-native');
+  const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
   return {
-    CameraView: (props: any) => <View testID="camera-view" {...props} />,
+    CameraView: (props: MockNativeViewProps) => createMockNativeView(props, undefined, 'camera-view'),
     useCameraPermissions: () => [mockPermission, mockRequestPermission],
   };
 });

@@ -7,7 +7,7 @@ import auth from '@R/slices/auth/auth';
 import { MOCK_SERVER_FOLLOWINGS, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { server } from '@T/utils/server';
-import './followers';
+import { followersApi } from './followers';
 
 describe('followers cache invalidation', () => {
   it('refreshes the following list after following a user', async () => {
@@ -20,10 +20,8 @@ describe('followers cache invalidation', () => {
       http.post(`${BASE_URL}/${Routes.friend}/someFriendId`, () => HttpResponse.json({}, { status: 201 })),
     );
     const store = createStore();
-    const api = runichApi as any;
-
-    await store.dispatch(api.endpoints.getYouFollowUsersByUserId.initiate(MOCK_SERVER_IDS.userId)).unwrap();
-    await store.dispatch(api.endpoints.addFriend.initiate({ id: 'someFriendId' })).unwrap();
+    await store.dispatch(followersApi.endpoints.getYouFollowUsersByUserId.initiate(MOCK_SERVER_IDS.userId)).unwrap();
+    await store.dispatch(followersApi.endpoints.addFriend.initiate({ id: 'someFriendId' })).unwrap();
 
     await waitFor(() => expect(followingRequests).toBe(2));
   });
@@ -38,10 +36,8 @@ describe('followers cache invalidation', () => {
       http.delete(`${BASE_URL}/${Routes.friend}/:relationshipId`, () => new HttpResponse(null, { status: 204 })),
     );
     const store = createStore();
-    const api = runichApi as any;
-
-    await store.dispatch(api.endpoints.getYouFollowUsersByUserId.initiate(MOCK_SERVER_IDS.userId)).unwrap();
-    await store.dispatch(api.endpoints.deleteFriend.initiate(MOCK_SERVER_FOLLOWINGS[0].id)).unwrap();
+    await store.dispatch(followersApi.endpoints.getYouFollowUsersByUserId.initiate(MOCK_SERVER_IDS.userId)).unwrap();
+    await store.dispatch(followersApi.endpoints.deleteFriend.initiate(MOCK_SERVER_FOLLOWINGS[0].id)).unwrap();
 
     await waitFor(() => expect(followingRequests).toBe(2));
   });

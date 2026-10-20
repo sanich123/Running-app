@@ -23,6 +23,7 @@ describe('ProfilePrivacyPreview', () => {
     expect(screen.getByTestId('privacy-profile-preview-photos')).toBeOnTheScreen();
     expect(screen.getByText(copy.activityPreviewProfileName)).toBeOnTheScreen();
     expect(screen.getByText(copy.activityPreviewCity)).toBeOnTheScreen();
+    expect(screen.getByTestId('privacy-profile-preview-avatar-photo').props.source).toBeTruthy();
     expect(screen.getByText(copy.activityPreviewAbout)).toBeOnTheScreen();
     expect(screen.getByText(copy.activityPreviewBio)).toBeOnTheScreen();
     expect(screen.getByText(copy.activityPreviewFollow)).toBeOnTheScreen();

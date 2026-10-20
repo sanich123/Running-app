@@ -20,7 +20,7 @@ export default function CustomImage({
   onLoad,
   onError,
 }: {
-  style: any;
+  style?: ImageProps['style'];
   source: { uri: string | null | undefined };
   contentFit?: ImageContentFit;
   testID?: string;

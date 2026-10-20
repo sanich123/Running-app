@@ -1,6 +1,7 @@
+import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
-import { PROFILE_PRIVACY_SETTINGS } from '../../const';
+import { PROFILE_PREVIEW_PHOTO, PROFILE_PRIVACY_SETTINGS } from '../../const';
 import type { ProfilePrivacyPreviewProps } from './types';
 
 export default function ProfilePrivacyPreview({
@@ -41,9 +42,13 @@ export default function ProfilePrivacyPreview({
 
       <View style={[styles.profileHeader, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
         <View style={[styles.avatar, { backgroundColor: colors.primaryContainer }]}>
-          <Text variant="titleMedium" style={{ color: colors.primary }}>
-            {copy.activityPreviewInitials}
-          </Text>
+          <Image
+            testID="privacy-profile-preview-avatar-photo"
+            accessibilityLabel={copy.activityPreviewProfileName}
+            source={PROFILE_PREVIEW_PHOTO}
+            contentFit="cover"
+            style={styles.avatarPhoto}
+          />
         </View>
         <View style={styles.profileIdentity}>
           <Text variant="titleSmall" numberOfLines={1}>
@@ -54,7 +59,6 @@ export default function ProfilePrivacyPreview({
           </Text>
         </View>
       </View>
-
       <View
         testID="privacy-profile-preview-search"
         style={[
@@ -175,6 +179,7 @@ const styles = StyleSheet.create({
   inactiveBlock: { opacity: 0.55 },
   profileHeader: { alignItems: 'center', borderRadius: 10, borderWidth: 1, flexDirection: 'row', gap: 10, padding: 10 },
   avatar: { alignItems: 'center', borderRadius: 24, height: 42, justifyContent: 'center', width: 42 },
+  avatarPhoto: { borderRadius: 21, height: 42, width: 42 },
   profileIdentity: { flex: 1, gap: 2 },
   statusRow: {
     alignItems: 'center',

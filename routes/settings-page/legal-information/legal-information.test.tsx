@@ -1,3 +1,4 @@
+import type { PropsWithChildren, Ref } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -9,7 +10,7 @@ jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
 jest.mock('@gorhom/bottom-sheet', () => {
   const { forwardRef, useImperativeHandle } = jest.requireActual('react');
   const { View } = jest.requireActual('react-native');
-  const BottomSheetModal = forwardRef(({ children }: any, ref: any) => {
+  const BottomSheetModal = forwardRef(({ children }: PropsWithChildren, ref: Ref<unknown>) => {
     useImperativeHandle(ref, () => ({ present: jest.fn(), dismiss: jest.fn() }));
     return <View>{children}</View>;
   });

@@ -1,15 +1,18 @@
+import type { PropsWithChildren } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ChooseSportModal from './choose-sport-modal';
+import { CHOOSE_SPORT_MODAL_TEXT } from './const';
 
 jest.mock('@gorhom/bottom-sheet', () => {
   const { View } = jest.requireActual('react-native');
   return {
     BottomSheetBackdrop: View,
-    BottomSheetModal: ({ children }: any) => <View>{children}</View>,
+    BottomSheetModal: ({ children }: PropsWithChildren) => <View>{children}</View>,
     BottomSheetModalProvider: View,
     BottomSheetView: View,
   };
@@ -22,7 +25,7 @@ describe('choose sport modal', () => {
     const onSportChange = jest.fn();
     await renderWithProviders(
       <ChooseSportModal
-        chooseSportModalRef={{ current: { close } } as any}
+        chooseSportModalRef={createMockBottomSheetModalRef({ close })}
         selectedSport={SPORTS_BTNS_VALUES.run}
         onSportChange={onSportChange}
       />,
@@ -39,15 +42,15 @@ describe('choose sport modal', () => {
     mockStore.dispatch(changeLanguage('english'));
     await renderWithProviders(
       <ChooseSportModal
-        chooseSportModalRef={{ current: { close } } as any}
+        chooseSportModalRef={createMockBottomSheetModalRef({ close })}
         isDisabled
         selectedSport={SPORTS_BTNS_VALUES.run}
         onSportChange={onSportChange}
       />,
     );
 
-    expect(screen.getByText('Choose a sport')).toBeOnTheScreen();
-    expect(screen.getByText('Walking')).toBeOnTheScreen();
+    expect(screen.getByText(CHOOSE_SPORT_MODAL_TEXT.english.title)).toBeOnTheScreen();
+    expect(screen.getByText(CHOOSE_SPORT_MODAL_TEXT.english.sports.walk)).toBeOnTheScreen();
     const bikeButton = screen.getByTestId(`activity-sport-${SPORTS_BTNS_VALUES.bike}`);
     await user.press(bikeButton);
     expect(onSportChange).not.toHaveBeenCalled();

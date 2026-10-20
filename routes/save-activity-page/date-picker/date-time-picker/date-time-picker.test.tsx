@@ -7,6 +7,8 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { DATE_TIME_PICKER, DATE_TIME_PICKER_BTN_ID } from '../const';
 import DateTimePicker from './date-time-picker';
 import { formatSelectedDate, setTimeOnDate } from '../utils';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 
 const mockSetParams = jest.fn();
 jest.mock('expo-router', () => ({
@@ -15,10 +17,10 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('react-native-paper-dates', () => {
-  const { View } = jest.requireActual('react-native');
+  const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
   return {
-    DatePickerModal: (props: any) => <View testID="date-picker-modal" {...props} />,
-    TimePickerModal: (props: any) => <View testID="time-picker-modal" {...props} />,
+    DatePickerModal: (props: MockNativeViewProps) => createMockNativeView(props, undefined, 'date-picker-modal'),
+    TimePickerModal: (props: MockNativeViewProps) => createMockNativeView(props, undefined, 'time-picker-modal'),
     en: {},
     registerTranslation: jest.fn(),
     ru: {},

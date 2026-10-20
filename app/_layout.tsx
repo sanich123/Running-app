@@ -16,7 +16,7 @@ import { toastConfig } from '@const/toast-config';
 import { subscribeToPersistenceErrors } from '@R/persistence-errors';
 import { persistor, store } from '@R/store';
 import AppShell from '@Routes/root-layout/app-shell/app-shell';
-import { VideoPlaybackProvider } from '@S/card/media-list/video-playback-context';
+import VideoPlaybackProvider from '@S/card/media-list/video-playback-provider/video-playback-provider';
 import { errorToast } from '@S/error-toast/error-toast';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 

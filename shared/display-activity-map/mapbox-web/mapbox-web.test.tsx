@@ -84,8 +84,8 @@ describe('mapbox web', () => {
     Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
     jest
       .spyOn(React, 'useRef')
-      .mockImplementationOnce(() => ({ current: null }) as any)
-      .mockImplementationOnce(() => ({ current: {} }) as any);
+      .mockImplementationOnce(() => ({ current: null }))
+      .mockImplementationOnce(() => ({ current: {} }));
     mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
     mapConstructor.mockClear();
     mockMap.remove.mockClear();
@@ -192,6 +192,51 @@ describe('mapbox web', () => {
     expect(mockPlaybackMarker.setLngLat).toHaveBeenLastCalledWith([37.7, 55.8]);
   });
 
+  it('updates playback coordinates without rebuilding the map', async () => {
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
+    setMockDocument();
+    const routeCoordinates = [
+      [37.6, 55.7],
+      [37.8, 55.9],
+    ];
+    const boundBox: [number, number, number, number] = [37.6, 55.7, 37.8, 55.9];
+    const kilometresSplit: [] = [];
+    mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
+    mapConstructor.mockClear();
+    mockMap.remove.mockClear();
+    mockPlaybackMarker.setLngLat.mockClear();
+    const result = await renderMapboxWeb(
+      <MapboxWeb
+        boundBox={boundBox}
+        routeCoordinates={routeCoordinates}
+        kilometresSplit={kilometresSplit}
+        showPlaybackMarker
+        playbackCoordinate={[37.65, 55.75]}
+      />,
+    );
+
+    await result.rerender(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { x: 0, y: 0, width: 390, height: 844 },
+          insets: { top: 0, right: 0, bottom: 0, left: 0 },
+        }}>
+        <MapboxWeb
+          boundBox={boundBox}
+          routeCoordinates={routeCoordinates}
+          kilometresSplit={kilometresSplit}
+          showPlaybackMarker
+          playbackCoordinate={[37.7, 55.8]}
+        />
+      </SafeAreaProvider>,
+    );
+
+    expect(mockPlaybackMarker.setLngLat).toHaveBeenLastCalledWith([37.7, 55.8]);
+    expect(mapConstructor).toHaveBeenCalledTimes(1);
+    expect(mockMap.remove).not.toHaveBeenCalled();
+    await result.unmount();
+  });
+
   it('filters invalid kilometre points and adds valid split layers', async () => {
     Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
     mockMap.addSource.mockClear();
@@ -203,9 +248,9 @@ describe('mapbox web', () => {
         boundBox={[37.6, 55.7, 37.8, 55.9]}
         routeCoordinates={[]}
         kilometresSplit={[
-          { kilometerPoint: { coords: { longitude: 37.6, latitude: 55.7 } } } as any,
-          { kilometerPoint: { coords: { longitude: Number.NaN, latitude: 55.8 } } } as any,
-          { kilometerPoint: undefined } as any,
+          { kilometerPoint: { coords: { longitude: 37.6, latitude: 55.7 } } } as unknown,
+          { kilometerPoint: { coords: { longitude: Number.NaN, latitude: 55.8 } } } as unknown,
+          { kilometerPoint: undefined } as unknown,
         ]}
       />,
     );
@@ -317,8 +362,8 @@ describe('mapbox web', () => {
     Object.defineProperty(globalThis, 'window', { configurable: true, value: undefined });
     jest
       .spyOn(React, 'useRef')
-      .mockImplementationOnce(() => ({ current: null }) as any)
-      .mockImplementationOnce(() => ({ current: {} }) as any);
+      .mockImplementationOnce(() => ({ current: null }))
+      .mockImplementationOnce(() => ({ current: {} }));
     mapConstructor.mockClear();
 
     await renderMapboxWeb(<MapboxWeb boundBox={[0, 0, 1, 1]} routeCoordinates={[]} kilometresSplit={[]} />);

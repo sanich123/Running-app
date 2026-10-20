@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
@@ -10,13 +11,20 @@ import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import HomePage from './home-page';
+import type { ActivityListItemResponse } from '@R/runich-api/types';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: mockReplace }) }));
 jest.mock('@S/infinite-scroll-list/infinite-scroll-list', () => {
   const { Text, View } = jest.requireActual('react-native');
-  return ({ dataToRender, headerAfterWeekStatistics }: any) => (
+  return ({
+    dataToRender,
+    headerAfterWeekStatistics,
+  }: {
+    dataToRender: ActivityListItemResponse[];
+    headerAfterWeekStatistics?: ReactNode;
+  }) => (
     <View>
       {headerAfterWeekStatistics}
       <Text>{dataToRender[0].title}</Text>

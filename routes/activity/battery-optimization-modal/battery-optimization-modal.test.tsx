@@ -1,5 +1,7 @@
+import type { PropsWithChildren } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { startActivityAsync } from 'expo-intent-launcher';
+import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { renderWithProviders } from '@T/utils/test-utils';
 import BatteryOptimizationModal from './battery-optimization-modal';
 
@@ -7,7 +9,7 @@ jest.mock('@gorhom/bottom-sheet', () => {
   const { View } = jest.requireActual('react-native');
   return {
     BottomSheetBackdrop: View,
-    BottomSheetModal: ({ children }: any) => <View>{children}</View>,
+    BottomSheetModal: ({ children }: PropsWithChildren) => <View>{children}</View>,
     BottomSheetModalProvider: View,
     BottomSheetView: View,
   };
@@ -25,7 +27,7 @@ describe('battery optimization modal', () => {
     (startActivityAsync as jest.Mock).mockResolvedValue({ resultCode: 0 });
     await renderWithProviders(
       <BatteryOptimizationModal
-        batteryOptimizationEnabledModalRef={{ current: { close } } as any}
+        batteryOptimizationEnabledModalRef={createMockBottomSheetModalRef({ close })}
         setIsNeedToRefreshPermission={setIsNeedToRefreshPermission}
       />,
     );

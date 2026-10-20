@@ -11,7 +11,7 @@ import {
   ACTIVITY_ROUTE_REPLAY_EXPORT_MAX_SIZE_BYTES,
   ACTIVITY_ROUTE_REPLAY_MAX_DURATION_MS,
 } from '../const';
-import { useReplayVideoRecorder } from './recording-view';
+import useReplayVideoRecorder from './recording-view/use-replay-video-recorder';
 import {
   formatReplayVideoSize,
   getReplayVideoFilename,

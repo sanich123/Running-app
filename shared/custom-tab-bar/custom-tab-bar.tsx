@@ -7,15 +7,29 @@ import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import AvatarShowable from '@S/avatar/showable/avatar-showable/avatar-showable';
 
-export default function CustomTabBar({
-  state,
-  descriptors,
-  navigation,
-}: {
-  state: any;
-  descriptors: any;
-  navigation: any;
-}) {
+interface TabRoute {
+  key: string;
+  name: string;
+  params?: Record<string, unknown>;
+}
+
+interface TabDescriptor {
+  options: {
+    tabBarAccessibilityLabel?: string;
+    tabBarTestID?: string;
+  };
+}
+
+interface Props {
+  state: { routes: TabRoute[]; index: number };
+  descriptors: Record<string, TabDescriptor>;
+  navigation: {
+    emit: (event: { type: string; target: string; canPreventDefault?: boolean }) => { defaultPrevented: boolean };
+    navigate: (name: string, params?: Record<string, unknown>) => void;
+  };
+}
+
+export default function CustomTabBar({ state, descriptors, navigation }: Props) {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId || Platform.OS === 'ios' });
@@ -51,7 +65,7 @@ export default function CustomTabBar({
               : 'flex',
         },
       ]}>
-      {state.routes.map((route: any, index: any) => {
+      {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
         const onPress = () => {

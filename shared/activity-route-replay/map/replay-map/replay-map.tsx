@@ -17,7 +17,7 @@ import {
   ACTIVITY_ROUTE_REPLAY_TERRAIN_SOURCE_URL,
   getActivityRouteReplayMapboxBrandingBottomOffset,
 } from '../../const';
-import { ReplayRecordingView } from '../../video-export/recording-view';
+import ReplayRecordingView from '../../video-export/recording-view/recording-view';
 import type { CameraUpdate, ReplayMapHandle, ReplayMapProps } from '../../types';
 
 const ReplayMap = forwardRef<ReplayMapHandle, ReplayMapProps>(function ReplayMap(

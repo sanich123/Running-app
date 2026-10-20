@@ -47,8 +47,7 @@ describe('custom image', () => {
   });
 
   it('skips the transition when the image is already in the disk cache', async () => {
-    const originalGetCachePathAsync = (Image as any).getCachePathAsync;
-    (Image as any).getCachePathAsync = jest.fn().mockResolvedValue('/cache/photo.jpg');
+    const getCachePathAsync = jest.spyOn(Image, 'getCachePathAsync').mockResolvedValue('/cache/photo.jpg');
 
     try {
       const result = await render(
@@ -64,13 +63,12 @@ describe('custom image', () => {
       const image = result.getByTestId('custom-image-cached');
       expect(image.props.transition).toBe(0);
     } finally {
-      (Image as any).getCachePathAsync = originalGetCachePathAsync;
+      getCachePathAsync.mockRestore();
     }
   });
 
   it('keeps the image source available while the cache is being checked so the blurhash can render', async () => {
-    const originalGetCachePathAsync = (Image as any).getCachePathAsync;
-    (Image as any).getCachePathAsync = jest.fn().mockResolvedValue(null);
+    const getCachePathAsync = jest.spyOn(Image, 'getCachePathAsync').mockResolvedValue(null);
 
     try {
       const result = await render(
@@ -87,7 +85,7 @@ describe('custom image', () => {
       expect(image.props.source).toEqual({ uri: 'https://example.com/slow-photo.jpg' });
       expect(image.props.placeholder).toBe('blurhash:/blurhash');
     } finally {
-      (Image as any).getCachePathAsync = originalGetCachePathAsync;
+      getCachePathAsync.mockRestore();
     }
   });
 
@@ -116,9 +114,7 @@ describe('custom image', () => {
   });
 
   it('handles a cache probe failure and an unmounted cache probe', async () => {
-    const originalGetCachePathAsync = (Image as any).getCachePathAsync;
-    const getCachePathAsync = jest.fn().mockRejectedValue(new Error('cache unavailable'));
-    (Image as any).getCachePathAsync = getCachePathAsync;
+    const getCachePathAsync = jest.spyOn(Image, 'getCachePathAsync').mockRejectedValue(new Error('cache unavailable'));
 
     try {
       await render(
@@ -132,9 +128,7 @@ describe('custom image', () => {
       await waitFor(() => expect(getCachePathAsync).toHaveBeenCalled());
 
       let resolveCache!: (value: string | null) => void;
-      (Image as any).getCachePathAsync = jest.fn(
-        () => new Promise<string | null>((resolve) => (resolveCache = resolve)),
-      );
+      getCachePathAsync.mockImplementation(() => new Promise<string | null>((resolve) => (resolveCache = resolve)));
       const result = await render(
         <CustomImage
           testID="custom-image-unmounted"
@@ -147,7 +141,7 @@ describe('custom image', () => {
       resolveCache(null);
       await Promise.resolve();
     } finally {
-      (Image as any).getCachePathAsync = originalGetCachePathAsync;
+      getCachePathAsync.mockRestore();
     }
   });
 

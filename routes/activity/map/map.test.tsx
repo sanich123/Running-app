@@ -1,25 +1,29 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { getCurrentPositionAsync } from 'expo-location';
+import type * as ReactNative from 'react-native';
 import { setInitialLocation } from '@R/slices/location/location';
 import { setIsProfileFilled } from '@R/slices/settings/settings';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore, setMockUserId, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import Map from './map';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 
 const mockSetCamera = jest.fn();
 jest.mock('@rnmapbox/maps', () => {
   const React = jest.requireActual('react');
-  const { View } = jest.requireActual('react-native');
-  const Camera = React.forwardRef((props: any, ref: any) => {
+  const { View } = jest.requireActual('react-native') as typeof ReactNative;
+  const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
+  const Camera = React.forwardRef((props: MockNativeViewProps, ref: React.Ref<unknown>) => {
     React.useImperativeHandle(ref, () => ({ setCamera: mockSetCamera }));
-    return <View testID="recording-map-camera" {...props} />;
+    return createMockNativeView(props, undefined, 'recording-map-camera', ref);
   });
   return {
     MapView: View,
     Camera,
     MarkerView: View,
-    UserLocation: (props: any) => <View testID="mapbox-user-location" {...props} />,
+    UserLocation: (props: MockNativeViewProps) => createMockNativeView(props, undefined, 'mapbox-user-location'),
   };
 });
 jest.mock('expo-location', () => ({

@@ -7,7 +7,7 @@ import type { MonthStatisticsResponse, StatisticMetricResponse, YearStatisticsRe
 
 const { statistics } = Routes;
 
-const statisticsApi = runichApi.injectEndpoints({
+export const statisticsApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getAnnualStatisticsByUserId: builder.query<YearStatisticsResponse, { userId: string; timeZone?: string }>({

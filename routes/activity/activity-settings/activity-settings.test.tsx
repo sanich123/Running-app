@@ -7,6 +7,7 @@ import {
   setActivityVoiceEnabled,
   setActivityVoiceMetrics,
 } from '@R/slices/settings/settings';
+import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { mockStore, resetMockActivityReminders } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityLocationInfoModal from './activity-location-info-modal/activity-location-info-modal';
@@ -50,7 +51,10 @@ describe('ActivitySettings', () => {
   it('opens the location information modal from its settings row', async () => {
     const present = jest.fn();
     await renderWithProviders(
-      <ActivitySettings settingsModalRef={{ current: null }} locationInfoModalRef={{ current: { present } } as any} />,
+      <ActivitySettings
+        settingsModalRef={{ current: null }}
+        locationInfoModalRef={createMockBottomSheetModalRef({ present })}
+      />,
     );
 
     fireEvent.press(screen.getByTestId('activity-location-info-button'));

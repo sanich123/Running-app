@@ -10,7 +10,7 @@ jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
 
 jest.mock('@S/custom-image/custom-image', () => ({
   __esModule: true,
-  default: ({ testID, style, source }: { testID: string; style: any; source: { uri: string } }) => {
+  default: ({ testID, style, source }: { testID: string; style: unknown; source: { uri: string } }) => {
     const { Text } = require('react-native');
     return (
       <Text testID={testID} style={style}>

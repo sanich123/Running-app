@@ -10,6 +10,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { LEGAL_DOCUMENT_LABELS } from '@Routes/legal-documents/content';
 import { DOCUMENTS } from './const';
 import type { ROUTES } from '@const/enums';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 
 export default function LegalInformationModal({
   legalInformationModalRef,
@@ -23,7 +24,7 @@ export default function LegalInformationModal({
   const documentPath = (route: ROUTES, englishRoute: ROUTES) =>
     `/${isRussian ? route : englishRoute}` as Parameters<typeof push>[0];
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
 

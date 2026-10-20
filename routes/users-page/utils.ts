@@ -1,8 +1,9 @@
 import { createElement } from 'react';
 import { Divider } from 'react-native-paper';
 import UserListItem from '@S/user-list-item/user-list-item';
+import type { ProfileResponse } from '@R/services/profile/types';
 
-export const renderUserItem = ({ item }: { item: any }) =>
+export const renderUserItem = ({ item }: { item: ProfileResponse & { userId: string } }) =>
   createElement(UserListItem, {
     city: item?.city,
     name: item?.name,
@@ -13,5 +14,5 @@ export const renderUserItem = ({ item }: { item: any }) =>
     allowNewFollowers: item?.allowNewFollowers,
   });
 
-export const userKeyExtractor = (item: any) => item.userId;
+export const userKeyExtractor = (item: ProfileResponse & { userId: string }) => item.userId;
 export const renderDivider = () => createElement(Divider);
