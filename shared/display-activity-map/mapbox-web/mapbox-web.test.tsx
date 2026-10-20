@@ -2,12 +2,28 @@ import * as React from 'react';
 import { render } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
+const mockBrandingChildren = [
+  {
+    style: {},
+    classList: { contains: (className: string) => className === 'mapboxgl-ctrl-attrib' },
+  },
+  {
+    style: {},
+    classList: { contains: (className: string) => className === 'mapboxgl-ctrl-logo' },
+  },
+] as unknown as HTMLElement[];
+const mockBrandingContainer = { style: {}, children: mockBrandingChildren } as unknown as HTMLElement;
+const mockMapContainer = {
+  querySelector: jest.fn((selector: string) =>
+    selector === '.mapboxgl-ctrl-bottom-left' ? mockBrandingContainer : null,
+  ),
+};
 const mockMap = {
   addControl: jest.fn(),
   addLayer: jest.fn(),
   addSource: jest.fn(),
   getSource: jest.fn(),
-  getContainer: jest.fn(() => ({ querySelector: jest.fn(() => null) })),
+  getContainer: jest.fn(() => mockMapContainer),
   jumpTo: jest.fn(),
   easeTo: jest.fn(),
   zoomTo: jest.fn(),
@@ -64,12 +80,13 @@ function setMockDocument() {
 }
 
 describe('mapbox web', () => {
-  it('creates a bounded map and removes it on unmount', async () => {
+  it('creates a bounded map, aligns its branding, and removes it on unmount', async () => {
     Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
     jest
       .spyOn(React, 'useRef')
       .mockImplementationOnce(() => ({ current: null }) as any)
       .mockImplementationOnce(() => ({ current: {} }) as any);
+    mockMap.on.mockImplementationOnce((_event: string, callback: () => void) => callback());
     mapConstructor.mockClear();
     mockMap.remove.mockClear();
 
@@ -85,11 +102,14 @@ describe('mapbox web', () => {
     );
 
     expect(mapConstructor).toHaveBeenCalledWith(expect.objectContaining({ bounds: [37.6, 55.7, 37.8, 55.9] }));
+    expect(mockBrandingContainer.style).toMatchObject({ alignItems: 'center', display: 'flex', flexWrap: 'nowrap' });
+    expect(mockBrandingChildren[0]?.style).toMatchObject({ clear: 'none', float: 'none', order: '1' });
+    expect(mockBrandingChildren[1]?.style).toMatchObject({ clear: 'none', float: 'none', order: '0' });
     await result.unmount();
     expect(mockMap.remove).toHaveBeenCalledTimes(1);
   });
 
-  it('adds play and stop markers for the route endpoints', async () => {
+  it('does not add route endpoint icons', async () => {
     Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
     mockMap.addSource.mockClear();
     mockMap.addLayer.mockClear();
@@ -105,13 +125,9 @@ describe('mapbox web', () => {
       />,
     );
 
-    const markerSource = mockMap.addSource.mock.calls.find(([id]) => id === 'route-markers');
-    expect(markerSource?.[1].data.features).toEqual([
-      expect.objectContaining({ properties: { icon: '▶', markerType: 'start' } }),
-      expect.objectContaining({ properties: { icon: '■', markerType: 'end' } }),
-    ]);
-    expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'route-marker-background' }));
-    expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({ id: 'route-marker-icon' }));
+    expect(mockMap.addSource).not.toHaveBeenCalledWith('route-markers', expect.any(Object));
+    expect(mockMap.addLayer).not.toHaveBeenCalledWith(expect.objectContaining({ id: 'route-marker-background' }));
+    expect(mockMap.addLayer).not.toHaveBeenCalledWith(expect.objectContaining({ id: 'route-marker-icon' }));
   });
 
   it('creates and updates the moving route replay marker', async () => {
@@ -211,11 +227,9 @@ describe('mapbox web', () => {
     expect(splitHitAreaLayer.paint['circle-radius']).toBe(14);
     expect(splitHitAreaLayer.paint['circle-opacity']).toBe(0.01);
     expect(mockMap.addLayer).not.toHaveBeenCalledWith(expect.objectContaining({ id: 'kilometre-split-label' }));
-    const markerSource = mockMap.addSource.mock.calls.find(([id]) => id === 'route-markers');
-    expect(markerSource?.[1].data.features).toEqual([]);
   });
 
-  it('adds terrain, heat-colored route segments, fallback avatar, and animated playback camera controls', async () => {
+  it('adds terrain, a heat-colored route gradient, fallback avatar, and animated playback camera controls', async () => {
     Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
     setMockDocument();
     mockMap.addSource.mockClear();
@@ -236,6 +250,7 @@ describe('mapbox web', () => {
         boundBox={[37.6, 55.7, 37.8, 55.9]}
         routeCoordinates={[
           [37.6, 55.7],
+          [37.7, 55.8],
           [37.8, 55.9],
         ]}
         routeSegmentColors={['green', 'red']}
@@ -254,8 +269,30 @@ describe('mapbox web', () => {
       source: 'activity-route-replay-terrain',
       exaggeration: expect.any(Number),
     });
+    const routeBaseSource = mockMap.addSource.mock.calls.find(([id]) => id === 'route-base');
+    expect(routeBaseSource?.[1].data.features?.[0]?.geometry.coordinates).toEqual([
+      [37.6, 55.7],
+      [37.7, 55.8],
+      [37.8, 55.9],
+    ]);
     const routeSource = mockMap.addSource.mock.calls.find(([id]) => id === 'route');
-    expect(routeSource?.[1].data.features).toEqual([expect.objectContaining({ properties: { color: 'green' } })]);
+    expect(routeSource?.[1].lineMetrics).toBe(true);
+    expect(routeSource?.[1].data.features).toEqual([
+      expect.objectContaining({
+        geometry: {
+          type: 'LineString',
+          coordinates: [
+            [37.6, 55.7],
+            [37.7, 55.8],
+            [37.8, 55.9],
+          ],
+        },
+      }),
+    ]);
+    const routeLine = mockMap.addLayer.mock.calls.find(([layer]) => layer.id === 'route-line')?.[0];
+    expect(routeLine?.paint['line-gradient']).toEqual(expect.arrayContaining(['green', 'red']));
+    expect(routeLine?.paint['line-emissive-strength']).toBe(1);
+    expect(routeLine?.paint['line-width']).toBe(5);
     const markerElement = markerConstructor.mock.calls.at(-1)?.[0].element;
     expect(markerElement?.querySelector('span')?.textContent).toBe('RU');
 

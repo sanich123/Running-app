@@ -7,7 +7,12 @@ import {
   ACTIVITY_ROUTE_REPLAY_TERRAIN_SOURCE_URL,
 } from '@S/activity-route-replay/const';
 import { DISPLAY_ACTIVITY_MAP_CAMERA_PADDING } from '../const';
-import { updateMapboxBrandingPosition, styleKilometrePopup, updateWebAvatarMarker } from './utils';
+import {
+  getRouteSpeedGradient,
+  updateMapboxBrandingPosition,
+  styleKilometrePopup,
+  updateWebAvatarMarker,
+} from './utils';
 import type { WebMapControlsHandle } from '../map-controls/types';
 import type { ActivityKilometreSplit, ProfileType } from '@S/card/types';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -84,49 +89,30 @@ export default function MapboxWeb({
       },
     }));
   }, [kilometresSplit]);
-  const routeMarkerFeatures = useMemo(() => {
-    const start = routeCoordinates[0];
-    const end = routeCoordinates[routeCoordinates.length - 1];
-    if (!start || !end) return [];
+  const routeBaseFeatures = useMemo(() => {
+    if (!routeSegmentColors?.length || routeCoordinates.length < 2) return [];
 
     return [
       {
         type: 'Feature' as const,
-        properties: { icon: '▶', markerType: 'start' },
-        geometry: { type: 'Point' as const, coordinates: start },
+        properties: {},
+        geometry: { type: 'LineString' as const, coordinates: routeCoordinates },
       },
+    ];
+  }, [routeCoordinates, routeSegmentColors]);
+  const routeFeatures = useMemo(() => {
+    return [
       {
         type: 'Feature' as const,
-        properties: { icon: '■', markerType: 'end' },
-        geometry: { type: 'Point' as const, coordinates: end },
+        properties: {},
+        geometry: { type: 'LineString' as const, coordinates: routeCoordinates },
       },
     ];
   }, [routeCoordinates]);
-  const routeFeatures = useMemo(() => {
-    if (!routeSegmentColors?.length) {
-      return [
-        {
-          type: 'Feature' as const,
-          properties: {},
-          geometry: { type: 'LineString' as const, coordinates: routeCoordinates },
-        },
-      ];
-    }
-
-    return routeSegmentColors.flatMap((color, index) => {
-      const start = routeCoordinates[index];
-      const end = routeCoordinates[index + 1];
-      if (!start || !end) return [];
-
-      return [
-        {
-          type: 'Feature' as const,
-          properties: { color },
-          geometry: { type: 'LineString' as const, coordinates: [start, end] },
-        },
-      ];
-    });
-  }, [routeCoordinates, routeSegmentColors]);
+  const routeSpeedGradient = useMemo(
+    () => getRouteSpeedGradient(routeCoordinates, routeSegmentColors ?? []),
+    [routeCoordinates, routeSegmentColors],
+  );
 
   useEffect(() => {
     playbackCoordinateRef.current = playbackCoordinate;
@@ -170,6 +156,13 @@ export default function MapboxWeb({
         },
       },
     });
+    const mapResizeObserver =
+      typeof ResizeObserver === 'undefined'
+        ? null
+        : new ResizeObserver(() => {
+            mapboxMap.resize();
+          });
+    mapResizeObserver?.observe(node);
     mapRef.current = mapboxMap;
     brandingBottomInsetRef.current = safeAreaBottomInset;
     mapboxMap.addControl(new AttributionControl({ compact: true }), 'bottom-left');
@@ -218,8 +211,32 @@ export default function MapboxWeb({
         });
       }
 
+      if (routeBaseFeatures.length) {
+        mapboxMap.addSource('route-base', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: routeBaseFeatures,
+          },
+        });
+        mapboxMap.addLayer({
+          id: 'route-base-line',
+          type: 'line',
+          source: 'route-base',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round',
+          },
+          paint: {
+            'line-color': colors.primary,
+            'line-width': 4,
+          },
+        });
+      }
+
       mapboxMap.addSource('route', {
         type: 'geojson',
+        lineMetrics: Boolean(routeSpeedGradient),
         data: {
           type: 'FeatureCollection',
           features: routeFeatures,
@@ -234,8 +251,10 @@ export default function MapboxWeb({
           'line-cap': 'round',
         },
         paint: {
-          'line-color': routeSegmentColors?.length ? ['get', 'color'] : colors.primary,
-          'line-width': 4,
+          'line-color': colors.primary,
+          'line-emissive-strength': 1,
+          'line-width': 5,
+          ...(routeSpeedGradient ? { 'line-gradient': routeSpeedGradient } : {}),
         },
       });
 
@@ -269,6 +288,7 @@ export default function MapboxWeb({
           },
           paint: {
             'circle-color': colors.primary,
+            'circle-emissive-strength': 1,
             'circle-radius': 5.5,
             'circle-stroke-color': colors.primary,
             'circle-stroke-width': 1,
@@ -300,40 +320,6 @@ export default function MapboxWeb({
         });
       }
 
-      mapboxMap.addSource('route-markers', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: routeMarkerFeatures,
-        },
-      });
-      mapboxMap.addLayer({
-        id: 'route-marker-background',
-        type: 'circle',
-        source: 'route-markers',
-        paint: {
-          'circle-color': colors.surface,
-          'circle-radius': 9,
-          'circle-stroke-color': ['match', ['get', 'markerType'], 'start', colors.tertiary, colors.error],
-          'circle-stroke-width': 1,
-        },
-      });
-      mapboxMap.addLayer({
-        id: 'route-marker-icon',
-        type: 'symbol',
-        source: 'route-markers',
-        layout: {
-          'text-allow-overlap': true,
-          'text-anchor': 'center',
-          'text-field': ['get', 'icon'],
-          'text-ignore-placement': true,
-          'text-size': 9,
-        },
-        paint: {
-          'text-color': ['match', ['get', 'markerType'], 'start', colors.tertiary, colors.error],
-        },
-      });
-
       if (showPlaybackMarker) {
         const initialCoordinate =
           playbackCoordinateRef.current ?? (routeCoordinates[0] as [number, number] | undefined);
@@ -361,6 +347,7 @@ export default function MapboxWeb({
     });
 
     return () => {
+      mapResizeObserver?.disconnect();
       if (playbackCameraUpdateRef?.current === updatePlaybackCamera) {
         playbackCameraUpdateRef.current = null;
       }
@@ -375,12 +362,10 @@ export default function MapboxWeb({
     };
   }, [
     boundBox,
-    colors.error,
     colors.onSurface,
     colors.outlineVariant,
     colors.primary,
     colors.surface,
-    colors.tertiary,
     dark,
     mapStyleURL,
     cameraPitch,
@@ -391,10 +376,10 @@ export default function MapboxWeb({
     kilometreUnit,
     mapControlsRef,
     playbackCameraUpdateRef,
+    routeBaseFeatures,
     routeCoordinates,
     routeFeatures,
-    routeMarkerFeatures,
-    routeSegmentColors,
+    routeSpeedGradient,
     safeAreaBottomInset,
     showPlaybackMarker,
   ]);

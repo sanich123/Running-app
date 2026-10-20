@@ -20,7 +20,7 @@ export default function MapVisibility() {
 
   return (
     <>
-      <View style={[styles.row, { borderTopColor: colors.outlineVariant }]}>
+      <View style={styles.row}>
         <TouchableRipple onPress={() => setIsSheetOpen(true)} accessible={false} style={StyleSheet.absoluteFill}>
           <View style={StyleSheet.absoluteFill} />
         </TouchableRipple>
@@ -151,7 +151,6 @@ export default function MapVisibility() {
 
 const styles = StyleSheet.create({
   row: {
-    borderTopWidth: StyleSheet.hairlineWidth,
     marginTop: 0,
     paddingVertical: 6,
     paddingHorizontal: 4,

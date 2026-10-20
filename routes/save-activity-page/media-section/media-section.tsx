@@ -17,9 +17,6 @@ export default function MediaSection({ images, isEditingActivity, activityId, se
   if (isEditingActivity) {
     return (
       <View style={styles.editMedia}>
-        <Text variant="titleSmall" style={{ color: colors.onSurface }}>
-          {UPLOAD_PHOTO_BTN[language].activityMedia}
-        </Text>
         <View style={styles.mediaButtons}>
           <UploadPhotosBtn
             isDisabled={isMediaUploadDisabled}

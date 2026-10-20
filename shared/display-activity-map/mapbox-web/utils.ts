@@ -1,13 +1,62 @@
 import { getActivityRouteReplayMapboxBrandingBottomOffset } from '@S/activity-route-replay/const';
 import { getAvatarLabel } from '../../avatar/user-avatar/utils';
 import type { ProfileType } from '@S/card/types';
-import type { Map as MapboxMap, Popup as MapboxPopup } from 'mapbox-gl';
+import type { ExpressionSpecification, Map as MapboxMap, Popup as MapboxPopup } from 'mapbox-gl';
+
+export function getRouteSpeedGradient(
+  routeCoordinates: number[][],
+  routeSegmentColors: string[],
+): ExpressionSpecification | undefined {
+  if (routeCoordinates.length < 2 || routeSegmentColors.length !== routeCoordinates.length - 1) return undefined;
+
+  const projectedCoordinates = routeCoordinates.map(([longitude, latitude]) => {
+    const boundedLatitude = Math.max(-85.05112878, Math.min(85.05112878, latitude));
+    return [longitude * (Math.PI / 180), Math.log(Math.tan(Math.PI / 4 + boundedLatitude * (Math.PI / 360)))] as const;
+  });
+  const segmentLengths = projectedCoordinates
+    .slice(1)
+    .map((coordinate, index) =>
+      Math.hypot(coordinate[0] - projectedCoordinates[index][0], coordinate[1] - projectedCoordinates[index][1]),
+    );
+  const totalLength = segmentLengths.reduce((total, length) => total + length, 0);
+  if (totalLength === 0) return undefined;
+
+  const gradient: ExpressionSpecification = ['interpolate', ['linear'], ['line-progress'], 0, routeSegmentColors[0]];
+  let traversedLength = 0;
+  let previousProgress = 0;
+
+  routeSegmentColors.slice(1).forEach((color, index) => {
+    traversedLength += segmentLengths[index];
+    const progress = traversedLength / totalLength;
+    if (progress <= previousProgress || color === routeSegmentColors[index]) return;
+
+    gradient.push(progress, color);
+    previousProgress = progress;
+  });
+
+  if (previousProgress < 1) gradient.push(1, routeSegmentColors.at(-1) ?? routeSegmentColors[0]);
+  return gradient;
+}
 
 export function updateMapboxBrandingPosition(map: MapboxMap, safeAreaBottomInset: number) {
   const bottomLeftControls = map.getContainer().querySelector<HTMLElement>('.mapboxgl-ctrl-bottom-left');
   if (bottomLeftControls) {
     const bottomOffset = getActivityRouteReplayMapboxBrandingBottomOffset(safeAreaBottomInset);
     bottomLeftControls.style.bottom = bottomOffset ? `${bottomOffset}px` : '';
+    bottomLeftControls.style.alignItems = 'center';
+    bottomLeftControls.style.display = 'flex';
+    bottomLeftControls.style.flexWrap = 'nowrap';
+    bottomLeftControls.style.gap = '4px';
+
+    Array.from(bottomLeftControls.children).forEach((control) => {
+      const controlElement = control as HTMLElement;
+      controlElement.style.clear = 'none';
+      controlElement.style.float = 'none';
+      controlElement.style.margin = '0 0 10px 10px';
+
+      if (controlElement.classList.contains('mapboxgl-ctrl-logo')) controlElement.style.order = '0';
+      if (controlElement.classList.contains('mapboxgl-ctrl-attrib')) controlElement.style.order = '1';
+    });
   }
 }
 

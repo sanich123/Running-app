@@ -36,7 +36,7 @@ export default function MonthTypesChips({ userId, year, month, setSelectedType, 
         {
           backgroundColor: colors.surface,
           borderColor: colors.outlineVariant,
-          width: width < MAX_MOBILE_WIDTH ? 'auto' : MAX_MOBILE_WIDTH,
+          width: width < MAX_MOBILE_WIDTH ? (Platform.OS === 'web' ? '100%' : 'auto') : MAX_MOBILE_WIDTH,
           marginHorizontal: Platform.OS === 'web' ? 'auto' : 10,
         },
       ]}>

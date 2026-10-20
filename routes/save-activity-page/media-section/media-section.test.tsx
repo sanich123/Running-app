@@ -22,7 +22,7 @@ describe('MediaSection', () => {
       { store: mockStore },
     );
 
-    expect(screen.getByText('Фото и видео')).toBeOnTheScreen();
+    expect(screen.queryByText('Фото и видео')).not.toBeOnTheScreen();
     expect(screen.getByTestId('imagePreview-0')).toBeOnTheScreen();
     expect(screen.getByTestId('deleteIcon')).toBeOnTheScreen();
     expect(screen.getByTestId('upload-gallery-button')).toBeOnTheScreen();
@@ -35,7 +35,7 @@ describe('MediaSection', () => {
       { store: mockStore },
     );
 
-    expect(screen.getByText('Фото и видео')).toBeOnTheScreen();
+    expect(screen.queryByText('Фото и видео')).not.toBeOnTheScreen();
     expect(screen.getByTestId('upload-gallery-button')).toBeOnTheScreen();
     expect(screen.getByTestId('show-camera-button')).toBeOnTheScreen();
     expect(screen.getByText('Можно добавить до 5 фото или видео. Видео — до 1 минуты')).toBeOnTheScreen();
