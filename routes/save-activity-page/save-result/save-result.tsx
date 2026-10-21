@@ -27,7 +27,8 @@ import type { ActivityPhoto } from '@R/slices/activity/types';
 export default function SaveResult() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const { activityId, isCameraVisible, isManualAdding, isEditingActivity, mode } = useManualActivityParams();
+  const { activityId, hasMapPhoto, isCameraVisible, isManualAdding, isEditingActivity, mode } =
+    useManualActivityParams();
   const { finishedActivity, media } = useAppSelector(({ activity }) => activity);
   const { data: editedActivityLocations } = useGetLocationsByActivityIdQuery(
     { activityId: activityId ?? '' },
@@ -39,6 +40,7 @@ export default function SaveResult() {
     mode === 'tracked' &&
     Boolean(finishedActivity.routeJournalId && getLocationJournalProgress(finishedActivity.routeJournalId)?.pointCount);
   const hasEditedLocations = isEditingActivity && Boolean(editedActivityLocations?.locations?.length);
+  const hasEditedMapPhoto = isEditingActivity && hasMapPhoto;
   const maximumDate = isManualAdding ? new Date() : undefined;
 
   return (
@@ -61,7 +63,7 @@ export default function SaveResult() {
             <SportsBtns />
             <Checkbox />
             <EmotionBtns />
-            {hasTrackedLocations || hasEditedLocations ? <MapVisibility /> : null}
+            {hasTrackedLocations || hasEditedLocations || hasEditedMapPhoto ? <MapVisibility /> : null}
             <MediaSection
               images={images}
               isEditingActivity={isEditingActivity}

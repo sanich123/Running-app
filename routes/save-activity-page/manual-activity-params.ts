@@ -21,6 +21,7 @@ interface ManualActivitySearchParams {
   emotion?: string | string[];
   visibility?: string | string[];
   hideMap?: string | string[];
+  hasMapPhoto?: string | string[];
 }
 
 function getFirstParam(value: string | string[] | undefined) {
@@ -67,6 +68,7 @@ function getManualActivityParams(params: ManualActivitySearchParams) {
     emotion: (getFirstParam(params.emotion) ?? EMOTIONS_BTNS_VALUES.normal) as EMOTIONS_BTNS_VALUES,
     visibility: getActivityVisibility(params.visibility),
     hideMap: getFirstParam(params.hideMap) === 'true',
+    hasMapPhoto: getFirstParam(params.hasMapPhoto) === 'true',
   };
 }
 

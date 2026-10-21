@@ -73,6 +73,7 @@ export enum ROUTES {
 export const LABELS = {
   [LANGUAGES.english]: {
     feed: 'Main',
+    back: 'Back',
     activity: 'Activity',
     activities: 'Activities',
     statistics: 'Dashboard',
@@ -94,6 +95,7 @@ export const LABELS = {
   },
   [LANGUAGES.russian]: {
     feed: 'Главная',
+    back: 'Назад',
     activity: 'Тренировка',
     activities: 'Тренировки',
     statistics: 'Дашборд',

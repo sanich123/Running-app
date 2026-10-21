@@ -35,13 +35,13 @@ const MINIMUM_PACE_SPEED_KILOMETRES_PER_HOUR = 1.5;
 const MAXIMUM_ROUTE_SPEED_KILOMETRES_PER_HOUR = 126;
 const CHART_TICK_INDICES = new Set([0, 27, 54, CHART_POINT_COUNT - 1]);
 
-export const HEART_RATE_ZONE_COLORS = ['#58BCEB', '#42C477', '#F2C94C', '#F2994A', '#EB5757'] as const;
+export const HEART_RATE_ZONE_COLORS = ['#3B82F6', '#22C55E', '#FACC15', '#F97316', '#EF4444'] as const;
 
 export const ACTIVITY_CHART_METRIC_COLORS: Record<ActivityChartMetric, string> = {
   heartRate: HEART_RATE_ZONE_COLORS[0],
-  pace: '#2563EB',
-  speed: '#0F766E',
-  elevation: '#7C3AED',
+  pace: '#00A6A6',
+  speed: '#00A6A6',
+  elevation: '#C026D3',
 };
 
 function getTimestamp(location: ActivityChartLocation) {

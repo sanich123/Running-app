@@ -60,7 +60,11 @@ export default function MediaList() {
   const isOwnActivity = Boolean(activityOwnerId && activityOwnerId === currentUserId);
   const canViewReplay = activity.profile?.allowActivityReplayViewing !== false || isOwnActivity;
   const [mediaAspectRatios, setMediaAspectRatios] = useState<Record<string, number>>({});
-  const displayedMapPhotoUrl = hideMap ? (isOwnActivity ? (mapPhotoUrl ?? routeOnlyMapPhotoUrl) : null) : mapPhotoUrl;
+  const displayedMapPhotoUrl = hideMap
+    ? isOwnActivity
+      ? (mapPhotoUrl ?? routeOnlyMapPhotoUrl)
+      : routeOnlyMapPhotoUrl
+    : mapPhotoUrl;
   const displayedData = useMemo(() => {
     const activityMedia: DisplayedMediaItem[] = (media ?? []).map((item) => ({ ...item, isMap: false }));
     return displayedMapPhotoUrl

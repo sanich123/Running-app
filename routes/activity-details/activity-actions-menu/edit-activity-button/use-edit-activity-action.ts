@@ -39,6 +39,7 @@ export default function useEditActivityAction(activity?: ActivityResponse | null
         emotion: activity.emotion,
         visibility: activity.visibility ?? ACTIVITY_VISIBILITY.public,
         hideMap: String(Boolean(activity.hideMap)),
+        hasMapPhoto: String(Boolean(activity.mapPhotoUrl || activity.routeOnlyMapPhotoUrl)),
       },
     });
   }, [activity, dispatch, push]);

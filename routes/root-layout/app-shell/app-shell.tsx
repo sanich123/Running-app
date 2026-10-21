@@ -8,7 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Platform, useColorScheme } from 'react-native';
+import { Platform, Pressable, Text, useColorScheme } from 'react-native';
 import { Redirect, Stack, usePathname } from 'expo-router';
 import { configureFonts, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
@@ -72,9 +72,23 @@ export default function AppShell() {
             <SubscriptionStatusSync />
             <HealthConnectAutoSync />
             <Stack
-              screenOptions={({ route }) => ({
+              screenOptions={({ route, navigation }) => ({
                 gestureEnabled: false,
                 headerBackButtonDisplayMode: Platform.OS === 'ios' || Platform.OS === 'web' ? 'minimal' : 'default',
+                headerLeft:
+                  Platform.OS === 'android'
+                    ? ({ canGoBack, tintColor }) =>
+                        canGoBack ? (
+                          <Pressable
+                            accessibilityRole="button"
+                            accessibilityLabel={LABELS[language].back}
+                            hitSlop={8}
+                            onPress={() => navigation.goBack()}
+                            style={{ alignItems: 'flex-start', height: 48, justifyContent: 'center', width: 32 }}>
+                            <MaterialDesignIcons name="arrow-left" color={tintColor ?? appColors.onSurface} size={24} />
+                          </Pressable>
+                        ) : null
+                    : undefined,
                 contentStyle: getRootScreenContentStyle({
                   backgroundColor: appColors.background,
                   bottomInset: insets.bottom,
@@ -82,7 +96,22 @@ export default function AppShell() {
                   routeName: route.name,
                 }),
                 headerTitle:
-                  Platform.OS === 'web' ? ({ children }) => <FeedHeaderTitle>{children}</FeedHeaderTitle> : undefined,
+                  Platform.OS === 'web'
+                    ? ({ children }) => <FeedHeaderTitle>{children}</FeedHeaderTitle>
+                    : Platform.OS === 'android'
+                      ? ({ children }) => (
+                          <Text
+                            numberOfLines={1}
+                            style={{
+                              color: appColors.primary,
+                              fontFamily: FONT_FAMILIES.semiBold,
+                              fontSize: 16,
+                              transform: [{ translateY: -2 }],
+                            }}>
+                            {children}
+                          </Text>
+                        )
+                      : undefined,
                 headerStyle: { backgroundColor: appColors.surface },
                 headerTintColor: appColors.onSurface,
                 headerTitleStyle: {

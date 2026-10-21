@@ -17,7 +17,11 @@ export default function ActivityCard({ activity, isFullView = false, isShowDescr
   const { media, mapPhotoUrl, routeOnlyMapPhotoUrl, hideMap, profile, sport, date, userId } = activity;
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const isOwnActivity = userId === currentUserId;
-  const displayedMapPhotoUrl = hideMap ? (isOwnActivity ? (mapPhotoUrl ?? routeOnlyMapPhotoUrl) : null) : mapPhotoUrl;
+  const displayedMapPhotoUrl = hideMap
+    ? isOwnActivity
+      ? (mapPhotoUrl ?? routeOnlyMapPhotoUrl)
+      : routeOnlyMapPhotoUrl
+    : mapPhotoUrl;
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width, 0) : MAX_MOBILE_WIDTH;
