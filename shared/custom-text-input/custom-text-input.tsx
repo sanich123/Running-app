@@ -1,4 +1,3 @@
-import { Platform } from 'react-native';
 import { HelperText, TextInput, useTheme } from 'react-native-paper';
 import type { FieldValues } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
@@ -52,12 +51,14 @@ export default function CustomTextInput<T extends FieldValues>({
               minHeight: multiline ? 96 : 52,
               opacity: shouldBeDisabled ? 0.7 : 1,
             }}
-            contentStyle={{
-              fontFamily: FONT_FAMILIES.regular,
-              includeFontPadding: compact ? false : undefined,
-              paddingBottom: compact && !multiline && Platform.OS === 'android' ? 3 : undefined,
-              textAlignVertical: multiline ? 'top' : 'center',
-            }}
+            contentStyle={
+              compact
+                ? undefined
+                : {
+                    fontFamily: FONT_FAMILIES.regular,
+                    textAlignVertical: multiline ? 'top' : 'center',
+                  }
+            }
             outlineStyle={{ borderRadius: 8 }}
             onChangeText={(text) => {
               let editedText = text;

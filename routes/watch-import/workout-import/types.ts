@@ -1,4 +1,4 @@
-import type { HealthConnectReadStage } from '../../../modules/runich-health/src/RunichHealth';
+import type { HealthConnectReadStage, HealthStore } from '../../../modules/runich-health/src/RunichHealth';
 
 export interface ReadDiagnostics {
   at: string;
@@ -14,12 +14,25 @@ export interface ReadDiagnostics {
 
 export type UploadSkipReason = 'read-failed' | 'no-user' | 'no-workouts' | 'manual-selection';
 
+export type WorkoutUploadOutcome = 'not-sent' | 'sending' | 'uploaded' | 'error';
+
+export interface WorkoutUploadDiagnostic {
+  source: HealthStore;
+  sourceActivityId: string;
+  sourceHeartRateSampleCount: number;
+  payloadHeartRateSampleCount: number;
+  outcome: WorkoutUploadOutcome;
+}
+
 export interface UploadDiagnostics {
   at: string;
   outcome: 'sending' | 'success' | 'error' | 'skipped';
   workoutCount: number;
   sourceRoutePointCount: number;
   payloadRoutePointCount: number;
+  sourceHeartRateSampleCount: number;
+  payloadHeartRateSampleCount: number;
+  workouts: WorkoutUploadDiagnostic[];
   skipReason?: UploadSkipReason;
   imported?: number;
   skipped?: number;

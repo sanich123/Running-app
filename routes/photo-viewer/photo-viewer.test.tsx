@@ -7,6 +7,8 @@ import {
 } from '@R/services/activity/activity';
 import { renderWithProviders } from '@T/utils/test-utils';
 import PhotoViewer from './photo-viewer';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 
 const mockUseLocalSearchParams = useLocalSearchParams as jest.Mock;
 const mockUseActivity = useGetActivityByActivityIdQuery as jest.Mock;
@@ -46,12 +48,8 @@ jest.mock('./video-viewer/video-viewer', () => ({
   },
 }));
 jest.mock('react-native-pager-view', () => {
-  const { View } = jest.requireActual('react-native');
-  return ({ children, ...props }: any) => (
-    <View testID="photo-viewer-pager" {...props}>
-      {children}
-    </View>
-  );
+  const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
+  return ({ children, ...props }: MockNativeViewProps) => createMockNativeView(props, children, 'photo-viewer-pager');
 });
 
 describe('photo viewer', () => {

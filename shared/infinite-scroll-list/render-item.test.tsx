@@ -1,8 +1,9 @@
 import { renderCardsFunction, keyExtractor } from './utils';
+import type { ActivityListItemResponse } from '@R/runich-api/types';
 
 describe('render item', () => {
   it('maps an activity list item to the card props', () => {
-    const item: any = {
+    const item: ActivityListItemResponse = {
       title: 'Run',
       date: '2026-08-09',
       sport: 'run',
@@ -16,7 +17,7 @@ describe('render item', () => {
       id: 'activity-1',
       userId: 'user-1',
       profile: {},
-      _count: { comments: 3 },
+      _count: { comments: 3, likes: 2 },
     };
     const element = renderCardsFunction({ item });
     expect(element.props.activity).toEqual(
@@ -35,15 +36,16 @@ describe('render item', () => {
   });
 
   it('maps the current camelCase user id returned by the API', () => {
-    const item: any = {
+    const item: ActivityListItemResponse = {
       ...{
         date: '2026-08-09',
         sport: 'run',
         duration: 1000,
         distance: 2000,
+        elevationGain: 0,
         id: 'activity-2',
         profile: {},
-        _count: { comments: 0 },
+        _count: { comments: 0, likes: 0 },
       },
       userId: 'user-2',
     };

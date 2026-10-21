@@ -1,12 +1,14 @@
+import type { RefObject } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import IconChooseSport from './icon-choose-sport';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const mockPresent = jest.fn();
 jest.mock('@S/choose-sport-modal/choose-sport-modal', () => {
   const { View } = jest.requireActual('react-native');
-  return ({ chooseSportModalRef }: any) => {
-    chooseSportModalRef.current = { present: mockPresent };
+  return ({ chooseSportModalRef }: { chooseSportModalRef: RefObject<BottomSheetModal | null> }) => {
+    Reflect.set(chooseSportModalRef, 'current', { present: mockPresent });
     return <View testID="choose-sport-modal" />;
   };
 });

@@ -7,6 +7,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { BATTERY_OPTIMIZATION } from './const';
 import type { BatteryOptimizationModalProps } from '../types';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 
 export default function BatteryOptimizationModal({
   batteryOptimizationEnabledModalRef,
@@ -15,7 +16,7 @@ export default function BatteryOptimizationModal({
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
   return (

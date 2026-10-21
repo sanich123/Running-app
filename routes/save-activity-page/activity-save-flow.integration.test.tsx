@@ -8,7 +8,7 @@ import { resetAuthSlice } from '@R/slices/auth/auth';
 import { setDistance, setLocationsFromBackground, setDurationAt, stopDurationTimer } from '@R/slices/location/location';
 import ActivitySaveBtn from '@Routes/activity/save-btn/save-btn';
 import StartBtn from '@Routes/activity/start-btn/start-btn';
-import ActivityUpdateBtn from '@Routes/card-full-view/activity-update-btn/update-btn';
+import ActivityActionsMenu from '@Routes/activity-details/activity-actions-menu/activity-actions-menu';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
@@ -22,8 +22,9 @@ import { getDeviceTimeZone } from '@U/time-zone';
 import { DATE_TIME_PICKER_BTN_ID } from './date-picker/const';
 import { EMOTIONS_BTNS_TEST_IDS, EMOTIONS_BTNS_VALUES } from './emotion-btns/const';
 import { INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID, INPUT_SECONDS_ID } from './inputs-distance-time/const';
-import SaveResult from './save-activity-page';
+import SaveResult from './save-result/save-result';
 import { TEXT_INPUTS_DESCRIPTION_TEST_ID, TEXT_INPUTS_TITLE_TEST_ID } from './text-inputs/const';
+import type { ActivityResponse } from '@R/runich-api/types';
 
 const mockUserId = 'activity-flow-user';
 const mockActivityPhoto = { url: 'https://images.example.test/manual.jpg', thumbnail: null };
@@ -64,6 +65,23 @@ jest.mock('expo-router', () => {
     __push: push,
   };
 });
+jest.mock('@expo/ui/swift-ui', () => {
+  const React = jest.requireActual('react');
+  const { Pressable, Text, View } = jest.requireActual('react-native');
+
+  return {
+    Button: ({ label, onPress, testID }: { label: string; onPress?: () => void; testID?: string }) =>
+      React.createElement(
+        Pressable,
+        { accessibilityRole: 'button', onPress, testID },
+        React.createElement(Text, null, label),
+      ),
+    Host: ({ children }: { children: React.ReactNode }) => React.createElement(View, null, children),
+    Menu: ({ children, label, testID }: { children: React.ReactNode; label: string; testID?: string }) =>
+      React.createElement(View, { accessibilityLabel: label, testID }, children),
+  };
+});
+jest.mock('@expo/ui/swift-ui/modifiers', () => ({ labelStyle: jest.fn() }));
 
 const mockExpoRouter = jest.requireMock('expo-router') as {
   __getRouteParams: () => RouteParams;
@@ -125,7 +143,7 @@ function TrackedActivityHarness() {
 function EditActivityHarness() {
   return (
     <>
-      <ActivityUpdateBtn />
+      <ActivityActionsMenu activity={{ ...MOCK_SERVER_ACTIVITY, userId: mockUserId } as unknown as ActivityResponse} />
       <SaveResult />
       <ActivitySaveBtn />
     </>
@@ -235,6 +253,7 @@ describe('activity save flows', () => {
         sport: SPORTS_BTNS_VALUES.bike,
         emotion: EMOTIONS_BTNS_VALUES.good,
         visibility: 'followers',
+        hideMap: false,
         media: [mockActivityPhoto],
         date: '2026-08-18T12:30:00.000Z',
         timeZone: getDeviceTimeZone(),
@@ -311,6 +330,7 @@ describe('activity save flows', () => {
         sport: SPORTS_BTNS_VALUES.bike,
         emotion: EMOTIONS_BTNS_VALUES.good,
         visibility: 'followers',
+        hideMap: false,
         media: [mockActivityPhoto],
       });
       expect(sessionLocationBody).toEqual({
@@ -338,10 +358,8 @@ describe('activity save flows', () => {
     });
 
     const view = await renderWithProviders(<EditActivityHarness />);
-    await waitFor(() =>
-      expect(screen.getByTestId('activity-update-button').props.accessibilityState?.disabled).toBe(false),
-    );
-    await pressAsync('activity-update-button');
+    await pressAsync('activity-actions-menu-trigger');
+    await pressAsync('activity-actions-menu-edit');
     await waitFor(() => expect(mockRouteParams.mode).toBe('edit'));
     await view.rerender(<EditActivityHarness key="loaded" />);
     expect(screen.getByTestId(TEXT_INPUTS_TITLE_TEST_ID).props.value).toBe(MOCK_SERVER_ACTIVITY.title);
@@ -358,6 +376,7 @@ describe('activity save flows', () => {
         sport: SPORTS_BTNS_VALUES.bike,
         emotion: EMOTIONS_BTNS_VALUES.good,
         visibility: 'followers',
+        hideMap: false,
         date: '2026-08-18T12:30:00.000Z',
         distance: 12_500,
         duration,

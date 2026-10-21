@@ -1,8 +1,9 @@
 import { createElement } from 'react';
 import { Divider } from 'react-native-paper';
 import UserListItem from '@S/user-list-item/user-list-item';
+import type { FollowerResponse } from '@R/runich-api/types';
 
-export const renderFollowerItem = ({ item }: { item: any }) =>
+export const renderFollowerItem = ({ item }: { item: Pick<FollowerResponse, 'userId' | 'user'> }) =>
   createElement(UserListItem, {
     city: item.user?.profile?.city,
     name: item.user?.profile?.name,
@@ -13,5 +14,6 @@ export const renderFollowerItem = ({ item }: { item: any }) =>
     allowNewFollowers: item.user?.profile?.allowNewFollowers,
   });
 
-export const followerKeyExtractor = (item: any) => item.id || item.userId;
+export const followerKeyExtractor = (item: Pick<FollowerResponse, 'userId'> & Partial<Pick<FollowerResponse, 'id'>>) =>
+  item.id || item.userId;
 export const renderDivider = () => createElement(Divider);

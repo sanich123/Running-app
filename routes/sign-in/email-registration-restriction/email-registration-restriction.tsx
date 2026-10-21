@@ -27,7 +27,11 @@ export default function EmailRegistrationRestriction() {
       </Pressable>
 
       <Portal>
-        <Dialog visible={visible} onDismiss={() => setVisible(false)} style={{ backgroundColor: colors.surface }}>
+        <Dialog
+          testID="registration-email-restriction-dialog"
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          style={{ backgroundColor: colors.surface }}>
           <Dialog.Title>{isRussian ? 'Ограничение регистрации' : 'Email registration restriction'}</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium" style={styles.modalText}>
@@ -37,7 +41,10 @@ export default function EmailRegistrationRestriction() {
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button textColor={colors.primary} onPress={() => setVisible(false)}>
+            <Button
+              testID="registration-email-restriction-dialog-close"
+              textColor={colors.primary}
+              onPress={() => setVisible(false)}>
               {isRussian ? 'Закрыть' : 'Close'}
             </Button>
           </Dialog.Actions>

@@ -4,7 +4,7 @@ import { ROUTES } from '@const/enums';
 import { setActivityOwnerProfile, setCommentActivityId } from '@R/slices/comment/comment';
 import LikesList from '@Routes/likes-list/likes-list';
 import MapPage from '@Routes/map-page/map-page';
-import ActivityCard from '@S/card/card';
+import ActivityCard from '@S/card/activity-card/activity-card';
 import CommentBtn from '@S/card/comment-btn/comment-btn';
 import { ActivityCardContext } from '@S/card/context';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '@S/card/like-btn/const';
@@ -27,7 +27,6 @@ jest.mock('expo-router', () => ({
 }));
 
 const cardProps = {
-  isShowDeleteBtn: false,
   isShowDescription: true,
   activity: {
     ...MOCK_SERVER_ACTIVITY,
@@ -98,7 +97,6 @@ describe('activity and social integration flows', () => {
         value={{
           activity: cardProps.activity,
           isFullView: false,
-          isShowDeleteBtn: false,
           isShowDescription: true,
         }}>
         <LikeBtn />
@@ -144,7 +142,6 @@ describe('activity and social integration flows', () => {
         value={{
           activity: cardProps.activity,
           isFullView: false,
-          isShowDeleteBtn: false,
           isShowDescription: true,
         }}>
         <CommentBtn />

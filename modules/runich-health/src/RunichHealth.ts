@@ -14,6 +14,7 @@ import {
   type RecordType,
 } from 'react-native-health-connect';
 import { Platform } from 'react-native';
+import type { ActivityHeartRateSample } from '@S/card/types';
 
 export type HealthStore = 'health-connect' | 'healthkit';
 export type HealthAvailability = 'available' | 'not-supported' | 'provider-not-available' | 'provider-update-required';
@@ -41,6 +42,8 @@ export interface WatchWorkout {
   duration: number;
   distance: number;
   steps?: number;
+  heartRateSamples?: ActivityHeartRateSample[];
+  caloriesActive?: number;
   locations: WatchWorkoutLocation[];
   diagnostics?: WatchWorkoutDiagnostics;
 }
@@ -54,7 +57,7 @@ export type WatchWorkoutRouteStatus =
   | 'consent-denied-or-error';
 
 export type HealthConnectReadStage =
-  'availability' | 'exercise-sessions' | 'distance-and-steps' | 'exercise-route' | 'complete';
+  'availability' | 'exercise-sessions' | 'workout-measurements' | 'exercise-route' | 'complete';
 
 export interface HealthConnectReadProgress {
   stage: HealthConnectReadStage;
@@ -77,6 +80,10 @@ export interface WatchWorkoutDiagnostics {
   sessionRecordId?: string;
   routeStatus: WatchWorkoutRouteStatus;
   routePointCount: number;
+  heartRatePermissionGranted?: boolean;
+  heartRateSampleCount?: number;
+  activeCaloriesPermissionGranted?: boolean;
+  activeCaloriesRecordCount?: number;
   routeErrorCode?: string;
 }
 
@@ -87,6 +94,8 @@ export interface HealthPermissionsResult {
     exerciseSession: boolean;
     distance: boolean;
     steps: boolean;
+    heartRate: boolean;
+    activeCalories?: boolean;
   };
 }
 
@@ -97,10 +106,12 @@ interface RunichHealthNativeModule {
   readWorkouts(startDate: string, endDate: string): Promise<WatchWorkout[]>;
 }
 
-const REQUIRED_ANDROID_PERMISSIONS = [
+const ANDROID_PERMISSIONS_TO_REQUEST = [
   { accessType: 'read', recordType: 'ExerciseSession' },
   { accessType: 'read', recordType: 'Distance' },
   { accessType: 'read', recordType: 'Steps' },
+  { accessType: 'read', recordType: 'HeartRate' },
+  { accessType: 'read', recordType: 'ActiveCaloriesBurned' },
 ] satisfies Permission[];
 
 const nativeModule =
@@ -137,6 +148,12 @@ function getAndroidPermissionDetails(grantedPermissions: Awaited<ReturnType<type
     ),
     distance: grantedPermissions.some((granted) => granted.accessType === 'read' && granted.recordType === 'Distance'),
     steps: grantedPermissions.some((granted) => granted.accessType === 'read' && granted.recordType === 'Steps'),
+    heartRate: grantedPermissions.some(
+      (granted) => granted.accessType === 'read' && granted.recordType === 'HeartRate',
+    ),
+    activeCalories: grantedPermissions.some(
+      (granted) => granted.accessType === 'read' && granted.recordType === 'ActiveCaloriesBurned',
+    ),
   };
 }
 
@@ -145,7 +162,11 @@ async function getAndroidPermissions(): Promise<HealthPermissionsResult> {
   if (!available) return { available: false, granted: false };
 
   const details = getAndroidPermissionDetails(await getGrantedPermissions());
-  return { available: true, granted: Object.values(details).every(Boolean), details };
+  return {
+    available: true,
+    granted: details.exerciseSession && details.distance && details.steps,
+    details,
+  };
 }
 
 function getDiagnosticErrorCode(error: unknown): string {
@@ -231,16 +252,19 @@ async function readAndroidWorkouts(
   const sessions = await readAllRecords('ExerciseSession', {
     timeRangeFilter: { operator: 'between', startTime: startDate, endTime: endDate },
   });
+  const permissionDetails = getAndroidPermissionDetails(await getGrantedPermissions());
+  const heartRatePermissionGranted = permissionDetails.heartRate;
+  const activeCaloriesPermissionGranted = permissionDetails.activeCalories;
   const workouts: WatchWorkout[] = [];
   onProgress({
-    stage: sessions.length > 0 ? 'distance-and-steps' : 'complete',
+    stage: sessions.length > 0 ? 'workout-measurements' : 'complete',
     sessionCount: sessions.length,
     processedSessionCount: 0,
   });
 
   for (const session of sessions) {
     onProgress({
-      stage: 'distance-and-steps',
+      stage: 'workout-measurements',
       sessionCount: sessions.length,
       processedSessionCount: workouts.length,
     });
@@ -250,10 +274,20 @@ async function readAndroidWorkouts(
       endTime: session.endTime,
     };
     const sourceFilter = session.metadata?.dataOrigin ? { dataOriginFilter: [session.metadata.dataOrigin] } : {};
-    const [distanceRecords, stepRecords] = await Promise.all([
+    const [distanceRecords, stepRecords, matchingHeartRateRecords, activeCaloriesRecords] = await Promise.all([
       readAllRecords('Distance', { timeRangeFilter, ...sourceFilter }),
       readAllRecords('Steps', { timeRangeFilter, ...sourceFilter }),
+      heartRatePermissionGranted
+        ? readAllRecords('HeartRate', { timeRangeFilter, ...sourceFilter })
+        : Promise.resolve([]),
+      activeCaloriesPermissionGranted
+        ? readAllRecords('ActiveCaloriesBurned', { timeRangeFilter, ...sourceFilter })
+        : Promise.resolve([]),
     ]);
+    const heartRateRecords =
+      heartRatePermissionGranted && matchingHeartRateRecords.length === 0 && session.metadata?.dataOrigin
+        ? await readAllRecords('HeartRate', { timeRangeFilter })
+        : matchingHeartRateRecords;
 
     let route = session.exerciseRoute?.route ?? [];
     let routeStatus: WatchWorkoutRouteStatus = route.length > 0 ? 'route-in-record' : 'route-not-provided';
@@ -286,6 +320,34 @@ async function readAndroidWorkouts(
     const duration = Date.parse(session.endTime) - Date.parse(session.startTime);
     const distance = distanceRecords.reduce((total, record) => total + (getLengthInMeters(record.distance) ?? 0), 0);
     const steps = stepRecords.reduce((total, record) => total + record.count, 0);
+    const caloriesActive = activeCaloriesRecords.reduce((total, record) => {
+      const calories = record.energy?.inKilocalories;
+      return typeof calories === 'number' && Number.isFinite(calories) && calories >= 0 ? total + calories : total;
+    }, 0);
+    const sessionStart = Date.parse(session.startTime);
+    const sessionEnd = Date.parse(session.endTime);
+    const seenHeartRateSamples = new Set<string>();
+    const heartRateSamples = heartRateRecords
+      .flatMap(({ samples }) => samples)
+      .map(({ time, beatsPerMinute }) => ({ timestamp: Date.parse(time), beatsPerMinute }))
+      .filter(({ timestamp, beatsPerMinute }) => {
+        if (
+          !Number.isFinite(timestamp) ||
+          timestamp < sessionStart ||
+          timestamp > sessionEnd ||
+          !Number.isFinite(beatsPerMinute) ||
+          beatsPerMinute < 1 ||
+          beatsPerMinute > 300
+        ) {
+          return false;
+        }
+
+        const key = `${timestamp}:${beatsPerMinute}`;
+        if (seenHeartRateSamples.has(key)) return false;
+        seenHeartRateSamples.add(key);
+        return true;
+      })
+      .sort((first, second) => first.timestamp - second.timestamp);
     const fallbackId = `${session.startTime}:${session.endTime}:${session.exerciseType}`;
     const workout: WatchWorkout = {
       source: 'health-connect',
@@ -301,15 +363,23 @@ async function readAndroidWorkouts(
         sessionRecordId: session.metadata?.id,
         routeStatus,
         routePointCount: route.length,
+        heartRatePermissionGranted,
+        heartRateSampleCount: heartRateSamples.length,
+        activeCaloriesPermissionGranted,
+        activeCaloriesRecordCount: activeCaloriesRecords.length,
         ...(routeErrorCode ? { routeErrorCode } : {}),
       },
     };
 
     if (session.title?.trim()) workout.title = session.title;
     if (steps > 0) workout.steps = steps;
+    if (heartRateSamples.length > 0) workout.heartRateSamples = heartRateSamples;
+    if (activeCaloriesRecords.length > 0 && Number.isFinite(caloriesActive)) {
+      workout.caloriesActive = Math.round(caloriesActive);
+    }
     workouts.push(workout);
     onProgress({
-      stage: workouts.length === sessions.length ? 'complete' : 'distance-and-steps',
+      stage: workouts.length === sessions.length ? 'complete' : 'workout-measurements',
       sessionCount: sessions.length,
       processedSessionCount: workouts.length,
     });
@@ -336,7 +406,7 @@ export const RunichHealth = {
       const available = (await getAndroidAvailability()) === 'available';
       if (!available) return { available: false, granted: false };
 
-      await requestPermission(REQUIRED_ANDROID_PERMISSIONS);
+      await requestPermission(ANDROID_PERMISSIONS_TO_REQUEST);
       return getAndroidPermissions();
     }
     return nativeModule?.requestPermissions() ?? unavailable('requestPermissions');

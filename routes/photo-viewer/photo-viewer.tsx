@@ -26,9 +26,12 @@ export default function PhotoViewer() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId: ownerId } = useAppSelector(({ auth }) => auth);
-  const { data: activity } = useGetActivityByActivityIdQuery(`${photoUrl}`, {
-    skip: !photoUrl || !uuid.validate(`${photoUrl}`),
-  });
+  const { data: activity } = useGetActivityByActivityIdQuery(
+    { activityId: `${photoUrl}`, viewerId: ownerId ?? '' },
+    {
+      skip: !photoUrl || !uuid.validate(`${photoUrl}`) || !ownerId,
+    },
+  );
   const {
     data: photoPages,
     fetchNextPage,

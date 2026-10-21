@@ -2,17 +2,13 @@ import { useCallback, useEffect, useRef } from 'react';
 import { FlatList, Platform } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import UnsendedActivitiesIndicator from '@S/infinite-scroll-list/unsended-activities/unsended-activities-indicator';
+import UnsendedActivitiesIndicator from '@S/infinite-scroll-list/unsended-activities/unsended-activities-indicator/unsended-activities-indicator';
 import WeekStatistics from '@S/infinite-scroll-list/week-statistics/week-statistics';
 import useRefresh from '@U/hooks/use-refresh';
+import { PREFETCH_REMAINING_ITEMS, VIEWABILITY_CONFIG } from './const';
 import { keyExtractor, renderCardsFunction } from './utils';
 import type { InfiniteScrollListProps } from './type';
-
-const PREFETCH_REMAINING_ITEMS = 10;
-const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 50 };
-interface ViewToken {
-  index: number | undefined;
-}
+import type { ViewToken } from './types';
 
 export default function InfiniteScrollList({
   dataToRender,

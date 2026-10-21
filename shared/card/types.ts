@@ -20,10 +20,16 @@ export interface ActivityLocation {
   mocked?: boolean | null;
 }
 
+export interface ActivityHeartRateSample {
+  /** Unix timestamp in milliseconds. */
+  timestamp: number;
+  beatsPerMinute: number;
+}
+
 export interface ActivityKilometreSplit {
   lastKilometerDuration: number;
   lastKilometerAltitude: number;
-  kilometerPoint: ActivityLocation;
+  kilometerPoint?: ActivityLocation;
   lastKilometerSteps?: number | null;
 }
 
@@ -53,12 +59,17 @@ export interface ProfileType {
   updatedAt?: string | null;
   userId?: string;
   weight?: string | null;
+  restingHeartRate?: string | null;
+  maxHeartRate?: string | null;
   emailNotifications?: boolean | null;
   pushNotifications?: boolean;
   inAppNotifications?: boolean;
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;
+  allowActivityHeartRateViewing?: boolean;
+  allowActivityElevationViewing?: boolean;
+  allowActivityPaceViewing?: boolean;
   allowActivitySharing?: boolean;
   allowNewFollowers?: boolean;
   hideActivityStatistics?: boolean;
@@ -75,7 +86,9 @@ export interface ActivityCardData {
   userId: string;
   media?: ActivityMediaItem[] | null;
   mapPhotoUrl?: string | null;
+  routeOnlyMapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  hideMap?: boolean;
   locationName?: string | null;
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
@@ -84,6 +97,9 @@ export interface ActivityCardData {
   duration: number;
   distance: number;
   elevationGain: number;
+  averageHeartRate?: number | null;
+  minHeartRate?: number | null;
+  maxHeartRate?: number | null;
   steps?: number | null;
   emotion?: string | null;
   profile: ProfileType;
@@ -95,7 +111,6 @@ export interface ActivityCardData {
 export interface ActivityCardProps {
   activity: ActivityCardData;
   isFullView?: boolean;
-  isShowDeleteBtn: boolean;
   isShowDescription: boolean;
 }
 

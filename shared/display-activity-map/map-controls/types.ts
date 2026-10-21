@@ -17,6 +17,7 @@ export interface MapControlsProps {
   onMapStyleChange: (mapStyle: DisplayMapStyle) => void;
   canZoomIn: boolean;
   canZoomOut: boolean;
+  bottomOffset?: number;
   isDisabled?: boolean;
   testIdPrefix?: string;
   children?: ReactNode;

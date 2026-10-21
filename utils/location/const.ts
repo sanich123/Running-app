@@ -11,12 +11,12 @@ export interface TaskManagerLocationEvent {
 
 export const BACKGROUND_NOTIFICATION = {
   [LANGUAGES.english]: {
-    isActive: 'Runich is active',
-    turnOff: 'To turn off, go back to the app and switch something off.',
+    isActive: 'Recording your workout',
+    turnOff: 'Your route is recorded while Runich is in the background. Stop recording in the app.',
   },
   [LANGUAGES.russian]: {
-    isActive: 'Runich активен и работает в бэкграунде',
-    turnOff: 'Чтобы выключить надо зайти в приложение и выключить его',
+    isActive: 'Идёт запись тренировки',
+    turnOff: 'Маршрут записывается, пока приложение свёрнуто. Остановить запись можно в приложении.',
   },
 };
 

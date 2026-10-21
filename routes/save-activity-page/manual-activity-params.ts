@@ -20,6 +20,8 @@ interface ManualActivitySearchParams {
   sport?: string | string[];
   emotion?: string | string[];
   visibility?: string | string[];
+  hideMap?: string | string[];
+  hasMapPhoto?: string | string[];
 }
 
 function getFirstParam(value: string | string[] | undefined) {
@@ -65,6 +67,8 @@ function getManualActivityParams(params: ManualActivitySearchParams) {
     sport: (getFirstParam(params.sport) ?? SPORTS_BTNS_VALUES.run) as SPORTS_BTNS_VALUES,
     emotion: (getFirstParam(params.emotion) ?? EMOTIONS_BTNS_VALUES.normal) as EMOTIONS_BTNS_VALUES,
     visibility: getActivityVisibility(params.visibility),
+    hideMap: getFirstParam(params.hideMap) === 'true',
+    hasMapPhoto: getFirstParam(params.hasMapPhoto) === 'true',
   };
 }
 
@@ -96,5 +100,6 @@ export function useSetManualActivityParams() {
     setSport: (sport: string) => setParams({ sport }),
     setEmotion: (emotion: string) => setParams({ emotion }),
     setVisibility: (visibility: ActivityVisibility) => setParams({ visibility }),
+    setHideMap: (hideMap: boolean) => setParams({ hideMap: String(hideMap) }),
   };
 }

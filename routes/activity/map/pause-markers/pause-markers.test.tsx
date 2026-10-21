@@ -1,6 +1,6 @@
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import { renderWithProviders } from '@T/utils/test-utils';
-import PauseMarker from './pause-marker';
+import PauseMarker from './pause-marker/pause-marker';
 import PauseMarkers from './pause-markers';
 
 describe('pause markers', () => {

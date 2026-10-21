@@ -3,22 +3,21 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import DisplayActivityMap from './display-activity-map';
 import { getActivityMapBounds, getRouteSpeedColors } from './utils';
 import type { ActivityLocation } from '@S/card/types';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 import type { LocationObject } from 'expo-location';
 
 jest.mock('@rnmapbox/maps', () => {
-  const { View } = require('react-native');
+  const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
   return {
-    MapView: ({ children, ...props }: any) => (
-      <View testID="activity-map-view" {...props}>
-        {children}
-      </View>
-    ),
-    Camera: (props: any) => <View testID="activity-map-camera" {...props} />,
-    MarkerView: ({ children, ...props }: any) => <View {...props}>{children}</View>,
-    ShapeSource: ({ children, ...props }: any) => <View {...props}>{children}</View>,
-    LineLayer: View,
-    CircleLayer: View,
-    SymbolLayer: View,
+    MapView: ({ children, ...props }: MockNativeViewProps) =>
+      createMockNativeView(props, children, 'activity-map-view'),
+    Camera: (props: MockNativeViewProps) => createMockNativeView(props, undefined, 'activity-map-camera'),
+    MarkerView: ({ children, ...props }: MockNativeViewProps) => createMockNativeView(props, children),
+    ShapeSource: ({ children, ...props }: MockNativeViewProps) => createMockNativeView(props, children),
+    LineLayer: ({ ...props }: MockNativeViewProps) => createMockNativeView(props),
+    CircleLayer: ({ ...props }: MockNativeViewProps) => createMockNativeView(props),
+    SymbolLayer: ({ ...props }: MockNativeViewProps) => createMockNativeView(props),
   };
 });
 

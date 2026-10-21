@@ -1,13 +1,14 @@
 import { render, screen } from '@testing-library/react-native';
-import ActivityIcon from './activity-icon';
-import HomeIcon from './home-icon';
+import type { IconButtonProps } from 'react-native-paper';
+import ActivityIcon from './activity-icon/activity-icon';
+import HomeIcon from './home-icon/home-icon';
 
 jest.mock('react-native-paper', () => {
   const actual = jest.requireActual('react-native-paper');
   const { View, Text } = require('react-native');
   return {
     ...actual,
-    IconButton: (props: any) => (
+    IconButton: (props: IconButtonProps) => (
       <View testID="icon-button">
         <Text testID="icon-name">{props.icon}</Text>
         <Text testID="icon-size">{String(props.size)}</Text>

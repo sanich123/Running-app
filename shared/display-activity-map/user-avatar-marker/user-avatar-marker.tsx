@@ -1,7 +1,7 @@
 import { MarkerView } from '@rnmapbox/maps';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import UserAvatar from '@S/avatar/avatar';
+import UserAvatar from '@S/avatar/user-avatar/user-avatar';
 
 export default function UserAvatarMarker({
   coordinate,

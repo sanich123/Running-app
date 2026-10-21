@@ -9,8 +9,8 @@ import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { setLocationProvider } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import BatteryOptimizationModal from '@Routes/activity/battery-optimization-modal/battery-optimization-modal';
-import MapKmSplit from '@S/display-activity-map/map-km-split/map-km-split';
 import MapRouteLine from '@S/display-activity-map/map-route-line/map-route-line';
+import RouteKilometreMarkers from '@S/display-activity-map/route-kilometre-markers/route-kilometre-markers';
 import { errorToast } from '@S/error-toast/error-toast';
 import LocationPermissions from './location-permissions/location-permissions';
 import MapControls from './map-controls/map-controls';
@@ -74,29 +74,6 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
       .catch((error: unknown) => errorToast('Не удалось проверить оптимизацию батареи', error));
   }, [canUseLocation, shouldRefreshPermissionStatus]);
 
-  const centerMapOnCurrentLocation = async () => {
-    setIsCenteringOnCurrentLocation(true);
-    try {
-      const position = await getCurrentPositionAsync({ accuracy: 6 });
-      dispatch(setLocationProvider(position.provider ?? null));
-      setShouldFollowUserLocation(false);
-      setMapZoomLevel(18);
-      setTimeout(() => {
-        cameraRef.current?.setCamera({
-          centerCoordinate: [position.coords.longitude, position.coords.latitude],
-          zoomLevel: 18,
-          animationMode: 'flyTo',
-          animationDuration: 800,
-        });
-        setTimeout(() => setShouldFollowUserLocation(true), 900);
-      }, 50);
-    } catch (error) {
-      errorToast('Не удалось определить текущее местоположение', error);
-    } finally {
-      setIsCenteringOnCurrentLocation(false);
-    }
-  };
-
   return (
     <>
       {isLoadingLocationPrerequisites ? (
@@ -126,7 +103,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
             />
             <MapRouteLine locations={locationsWithPauses} />
             <PauseMarkers locations={locationsWithPauses} />
-            <MapKmSplit kilometresSplit={kilometresSplit} />
+            <RouteKilometreMarkers kilometresSplit={kilometresSplit} />
           </MapView>
           {locationSourceMessage && (
             <Surface
@@ -146,7 +123,28 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
               isCenteringOnCurrentLocation={isCenteringOnCurrentLocation}
               onZoomLevelChange={setMapZoomLevel}
               onFollowUserLocationChange={setShouldFollowUserLocation}
-              onCenterOnCurrentLocation={centerMapOnCurrentLocation}
+              onCenterOnCurrentLocation={async () => {
+                setIsCenteringOnCurrentLocation(true);
+                try {
+                  const position = await getCurrentPositionAsync({ accuracy: 6 });
+                  dispatch(setLocationProvider(position.provider ?? null));
+                  setShouldFollowUserLocation(false);
+                  setMapZoomLevel(18);
+                  setTimeout(() => {
+                    cameraRef.current?.setCamera({
+                      centerCoordinate: [position.coords.longitude, position.coords.latitude],
+                      zoomLevel: 18,
+                      animationMode: 'flyTo',
+                      animationDuration: 800,
+                    });
+                    setTimeout(() => setShouldFollowUserLocation(true), 900);
+                  }, 50);
+                } catch (error) {
+                  errorToast('Не удалось определить текущее местоположение', error);
+                } finally {
+                  setIsCenteringOnCurrentLocation(false);
+                }
+              }}
             />
             {isBatteryOptimizationActive && (
               <IconButton

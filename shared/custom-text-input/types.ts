@@ -1,6 +1,6 @@
 import isEmail from 'validator/lib/isEmail';
 import type { InputModeOptions, ReturnKeyTypeOptions } from 'react-native';
-import type { Control, FieldValues, Path, ValidateResult } from 'react-hook-form';
+import type { Control, FieldValues, Path, PathValue, ValidateResult } from 'react-hook-form';
 import { LANGUAGES } from '@const/enums';
 export interface CustomTextInputProps<T extends FieldValues> {
   label: string;
@@ -8,7 +8,7 @@ export interface CustomTextInputProps<T extends FieldValues> {
   fieldName: Path<T>;
   validation?: {
     required: string;
-    validate?: (value: any) => ValidateResult | Promise<ValidateResult>;
+    validate?: (value: PathValue<T, Path<T>>) => ValidateResult | Promise<ValidateResult>;
     pattern?: {
       value: RegExp;
       message: string;
@@ -19,7 +19,7 @@ export interface CustomTextInputProps<T extends FieldValues> {
   maxLength?: number;
   returnKeyType?: ReturnKeyTypeOptions;
   returnKeyLabel?: string;
-  callback?: (arg: any) => void;
+  callback?: (value: string) => void;
   inputMode?: InputModeOptions;
   multiline?: boolean;
   numberOfLines?: number;

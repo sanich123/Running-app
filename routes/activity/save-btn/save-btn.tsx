@@ -11,53 +11,12 @@ import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-reco
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useGlobalManualActivityParams } from '@Routes/save-activity-page/manual-activity-params';
 import { errorToast } from '@S/error-toast/error-toast';
-import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
-import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
-import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { deactivateLocationJournal, removeLocationJournal } from '@U/location/location-journal';
+import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
 import { getDeviceTimeZone } from '@U/time-zone';
+import { isServerUnavailableError, createTrackedActivityBody } from './utils';
 import type { ActivityToSend, ActivityUpdateRequest } from '@R/services/activity/types';
-import type { FinishedActivityDraft } from '@R/slices/activity/types';
-
-type ActivityDetails = Pick<
-  ActivityToSend['body'],
-  'title' | 'description' | 'sport' | 'emotion' | 'visibility' | 'media'
->;
-
-export function isServerUnavailableError(error: unknown) {
-  if (!error || typeof error !== 'object') return false;
-
-  const { status, originalStatus } = error as { status?: unknown; originalStatus?: unknown };
-
-  return (
-    status === 'FETCH_ERROR' ||
-    status === 'TIMEOUT_ERROR' ||
-    status === 502 ||
-    status === 503 ||
-    (status === 'PARSING_ERROR' && (originalStatus === 502 || originalStatus === 503))
-  );
-}
-
-function createTrackedActivityBody(
-  finishedActivity: FinishedActivityDraft,
-  activityDetails: ActivityDetails,
-): ActivityToSend['body'] {
-  const { routeJournalId, ...finishedActivityMetrics } = finishedActivity;
-  const routeLocations = routeJournalId ? (readLocationJournal(routeJournalId)?.locations ?? []) : [];
-  const locations = getReducedLocations(routeLocations, MAX_SAVED_ROUTE_LOCATIONS);
-
-  if (!locations.length) {
-    throw new Error('Маршрут тренировки не найден');
-  }
-
-  return {
-    ...finishedActivityMetrics,
-    locations,
-    duration: Math.round(finishedActivity.duration),
-    timeZone: finishedActivity.timeZone ?? getDeviceTimeZone(),
-    ...activityDetails,
-  };
-}
 
 export default function SaveBtn() {
   const dispatch = useAppDispatch();
@@ -76,6 +35,7 @@ export default function SaveBtn() {
     sport,
     emotion,
     visibility,
+    hideMap,
     manualHours,
     manualMinutes,
     manualSeconds,
@@ -115,6 +75,7 @@ export default function SaveBtn() {
               sport,
               emotion,
               visibility,
+              hideMap,
             };
             const activityDetails = { ...editableActivityDetails, media };
             const timeZone = getDeviceTimeZone();

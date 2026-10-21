@@ -2,12 +2,14 @@ import { useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import { formatDuration, formatDurationMinsSecs } from '@U/time-formatter';
+import { ACTIVITY_ROUTE_REPLAY_CONTROLS_BOTTOM_INSET } from '../const';
 import type { ControlsProps } from '../types';
 
 export default function Controls({
   progress,
   hasStarted,
   isPlaying,
+  bottomInset = ACTIVITY_ROUTE_REPLAY_CONTROLS_BOTTOM_INSET,
   playbackTime,
   playbackDuration,
   workoutTime,
@@ -21,6 +23,7 @@ export default function Controls({
   onSeekStart,
   onSeek,
   onSeekEnd,
+  onControlsLayout,
 }: ControlsProps) {
   const { colors } = useTheme();
   const seekWidthRef = useRef(0);
@@ -37,7 +40,9 @@ export default function Controls({
 
   return (
     <View pointerEvents={isDisabled ? 'none' : 'box-none'} style={styles.overlay}>
-      <View style={[styles.controls, { backgroundColor: colors.surface }]}>
+      <View
+        style={[styles.controls, { backgroundColor: colors.surface, bottom: bottomInset }]}
+        onLayout={(event) => onControlsLayout?.(event.nativeEvent.layout.height)}>
         <View style={styles.statsRow}>
           <View style={styles.stat}>
             <Text numberOfLines={1} style={[styles.statLabel, { color: colors.onSurfaceVariant }]}>
@@ -148,7 +153,7 @@ const styles = StyleSheet.create({
   overlay: { bottom: 0, left: 0, position: 'absolute', right: 0, top: 0 },
   controls: {
     borderRadius: 16,
-    bottom: 16,
+    bottom: ACTIVITY_ROUTE_REPLAY_CONTROLS_BOTTOM_INSET,
     elevation: 6,
     left: 12,
     paddingHorizontal: 10,

@@ -12,7 +12,8 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
 import { appendLocationToJournal, createLocationJournal } from '@U/location/location-journal';
-import ActivitySaveBtn, { isServerUnavailableError } from './save-btn';
+import ActivitySaveBtn from './save-btn';
+import { isServerUnavailableError } from './utils';
 
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 

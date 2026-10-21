@@ -10,7 +10,7 @@ import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
 import { getMediaGridCellSize, MEDIA_GRID_COLUMNS, MEDIA_GRID_GAP, MEDIA_GRID_PAGE_SIZE } from './const';
-import MediaGridImage from './image/image';
+import MediaGridImage from './image/media-grid-image/media-grid-image';
 import type { ActivityMediaItem } from '@S/card/types';
 
 export default function MediaGrid() {

@@ -35,7 +35,6 @@ function renderLikes(
           likesLength,
         },
         isFullView,
-        isShowDeleteBtn: false,
         isShowDescription: false,
       }}>
       <Likes />

@@ -51,7 +51,7 @@ module.exports = [
       'no-console': ['error', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
       '@typescript-eslint/no-require-imports': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/consistent-generic-constructors': 'off',

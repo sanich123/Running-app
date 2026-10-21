@@ -10,13 +10,8 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { SHARE_BUTTON_TEXT } from './const';
 import { useActivityCard } from '../context';
+import { waitForShareImageRender } from './utils';
 import ShareActivityImage from '../share-activity-image/share-activity-image';
-
-function waitForShareImageRender() {
-  return new Promise<void>((resolve) => {
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-  });
-}
 
 export default function ShareBtn() {
   const { activity } = useActivityCard();
@@ -25,6 +20,7 @@ export default function ShareBtn() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isLoading } = useAppSelector(({ loading }) => loading);
   const isSharingDisabled = activity.profile?.allowActivitySharing === false && activity.userId !== userId;
+  const displayedMapPhotoUrl = activity.hideMap ? null : activity.mapPhotoUrl;
   const isButtonDisabled = isLoading || isSharingDisabled;
   const dispatch = useAppDispatch();
   const cardRef = useRef<ComponentRef<typeof View>>(null);
@@ -56,8 +52,8 @@ export default function ShareBtn() {
             duration={activity.duration}
             date={activity.date}
             title={activity.title}
-            mapPhotoUrl={activity.mapPhotoUrl}
-            mapPhotoUrlBlurhash={activity.mapPhotoUrlBlurhash}
+            mapPhotoUrl={displayedMapPhotoUrl}
+            mapPhotoUrlBlurhash={activity.hideMap ? null : activity.mapPhotoUrlBlurhash}
             profile={activity.profile}
             sport={activity.sport}
             emotion={activity.emotion}

@@ -3,7 +3,7 @@ import { Icon } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { activityApi } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import MapMetaButton from '@S/card/map-meta-overlay/map-meta-button';
+import MapMetaButton from '@S/card/map-meta-overlay/map-meta-button/map-meta-button';
 import { ROUTE_REPLAY_BUTTON_COPY } from './const';
 
 export default function RouteReplayBtn({ activityId, userId }: { activityId: string; userId: string }) {
@@ -24,7 +24,7 @@ export default function RouteReplayBtn({ activityId, userId }: { activityId: str
         push(`/${ROUTES.map}/${activityId}?replay=1&userId=${encodeURIComponent(userId)}`);
       }}
       disabled={isLoading}>
-      <Icon source="play-circle-outline" size={20} color="#FFFFFF" />
+      <Icon source="play-circle-outline" size={24} color="#FFFFFF" />
     </MapMetaButton>
   );
 }

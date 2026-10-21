@@ -1,3 +1,5 @@
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { Platform, TextInput as NativeTextInput } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 
 export const COMMENT_INPUT = {
@@ -19,3 +21,5 @@ export const COMMENT_INPUT = {
 
 export const COMMENT_ICON_TEST_ID = 'commentInputIcon';
 export const COMMENT_INPUT_TEST_ID = 'commentInput';
+
+export const CommentTextInput = Platform.OS === 'web' ? NativeTextInput : BottomSheetTextInput;

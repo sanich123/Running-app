@@ -12,7 +12,7 @@ const TIMER_INTERVAL = 1_000;
 export default function useActivityDurationTimer(isEnabled = true) {
   const dispatch = useAppDispatch();
   const appStore = useStore<RootState>();
-  const activityStatus = useAppSelector(({ location }) => location.activityStatus);
+  const { activityStatus } = useAppSelector(({ location }) => location);
   const isRecording = activityStatus === STATUSES.started || activityStatus === STATUSES.continued;
 
   useEffect(() => {

@@ -20,18 +20,18 @@ describe('Checkbox', () => {
 
   it('should correctly renders in russia', async () => {
     await renderWithProviders(<Checkbox />, { store: mockStore });
-    expect(screen.getByText(CHECKBOX.russian.public)).toBeOnTheScreen();
+    expect(screen.getByText(CHECKBOX.russian.followers)).toBeOnTheScreen();
   });
   it('should correctly renders in english', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<Checkbox />, { store: mockStore });
-    expect(screen.getByText(CHECKBOX.english.public)).toBeOnTheScreen();
+    expect(screen.getByText(CHECKBOX.english.followers)).toBeOnTheScreen();
   });
 
   it('changes activity visibility', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<Checkbox />);
-    await fireEvent.press(screen.getByText(CHECKBOX.russian.followers));
-    expect(mockSetParams).toHaveBeenCalledWith({ visibility: 'followers' });
+    await fireEvent.press(screen.getByTestId('activity-visibility-public'));
+    expect(mockSetParams).toHaveBeenCalledWith({ visibility: 'public' });
   });
 });

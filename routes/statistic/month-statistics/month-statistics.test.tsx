@@ -14,7 +14,7 @@ import MonthStatistics from './month-statistics';
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ userId: MOCK_SERVER_IDS.userId, year: '2026', month: '7' }),
 }));
-jest.mock('../calendar/calendar', () => {
+jest.mock('../calendar/calendar-activities/calendar-activities', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="month-calendar" />;
 });

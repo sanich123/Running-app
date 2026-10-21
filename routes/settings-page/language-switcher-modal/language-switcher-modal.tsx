@@ -6,6 +6,7 @@ import { Divider, Icon, RadioButton, Text, TouchableRipple, useTheme } from 'rea
 import { changeLanguage } from '@R/slices/settings/settings';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { LANGUAGES_ARRAY } from './const';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 
 export default function LanguageSwitcherModal({
   languagesModalRef,
@@ -17,7 +18,7 @@ export default function LanguageSwitcherModal({
   const [checked, setChecked] = useState(language);
   const dispatch = useAppDispatch();
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
   return (

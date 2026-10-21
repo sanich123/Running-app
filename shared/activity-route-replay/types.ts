@@ -59,6 +59,7 @@ export interface ControlsProps {
   progress: number;
   hasStarted: boolean;
   isPlaying: boolean;
+  bottomInset?: number;
   playbackTime: number;
   playbackDuration: number;
   workoutTime: number;
@@ -72,6 +73,7 @@ export interface ControlsProps {
   onSeekStart: () => void;
   onSeek: (progress: number) => void;
   onSeekEnd: () => void;
+  onControlsLayout?: (height: number) => void;
 }
 
 export interface MapToolsProps {
@@ -84,6 +86,7 @@ export interface MapToolsProps {
   onSetPlaybackDuration: (duration: ReplayDuration) => void;
   canZoomIn: boolean;
   canZoomOut: boolean;
+  bottomOffset?: number;
   isDisabled?: boolean;
 }
 

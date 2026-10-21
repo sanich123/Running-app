@@ -6,7 +6,7 @@ import CustomTabBar from './custom-tab-bar';
 
 let mockPathname = `/${ROUTES.home}`;
 jest.mock('expo-router', () => ({ usePathname: () => mockPathname }));
-jest.mock('@S/avatar/showable/showable', () => {
+jest.mock('@S/avatar/showable/avatar-showable/avatar-showable', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="tab-avatar" />;
 });

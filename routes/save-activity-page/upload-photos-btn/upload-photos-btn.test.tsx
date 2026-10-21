@@ -5,7 +5,7 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { errorToast } from '@S/error-toast/error-toast';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { getAccessToGallery } from '@U/file-sending';
+import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
 import { uploadActivityMediaBatch } from '../utils';
 import { MAX_ACTIVITY_MEDIA } from './ const';
 import UploadPhotosBtn from './upload-photos-btn';
@@ -23,6 +23,12 @@ jest.mock('react-native-compressor', () => ({
 }));
 jest.mock('@U/file-sending', () => ({
   getAccessToGallery: jest.fn(),
+  deleteUploadedMedia: jest.fn().mockResolvedValue(true),
+}));
+const mockAppendActivityMedia = jest.fn();
+jest.mock('@R/services/activity/activity', () => ({
+  ...jest.requireActual('@R/services/activity/activity'),
+  useAppendActivityMediaMutation: () => [mockAppendActivityMedia],
 }));
 jest.mock('../utils', () => ({ uploadActivityMediaBatch: jest.fn() }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
@@ -32,6 +38,7 @@ const originalPlatform = Platform.OS;
 describe('Upload photos btn', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAppendActivityMedia.mockReset();
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setMockUserId('upload-user'));
@@ -247,6 +254,65 @@ describe('Upload photos btn', () => {
       ],
       expect.objectContaining({ onProgress: expect.any(Function), signal: expect.any(Object) }),
     );
+  });
+
+  it('persists media to the edited activity and keeps the returned media id', async () => {
+    const user = userEvent.setup();
+    const setImages = jest.fn();
+    const uploadedMedia = { url: 'https://temporary/photo.jpg', thumbnail: null };
+    const persistedMedia = { id: 'media-id', activityId: 'activity-id', ...uploadedMedia };
+    (getAccessToGallery as jest.Mock).mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'photo.jpg', fileName: 'photo.jpg', mimeType: 'image/jpeg' }],
+    });
+    (uploadActivityMediaBatch as jest.Mock).mockResolvedValue([uploadedMedia]);
+    mockAppendActivityMedia.mockReturnValue({
+      unwrap: jest.fn().mockResolvedValue({ success: true, media: [persistedMedia] }),
+    });
+    await renderWithProviders(
+      <UploadPhotosBtn
+        isDisabled={false}
+        setIsDisabled={jest.fn()}
+        setImages={setImages}
+        images={[]}
+        activityId="activity-id"
+      />,
+    );
+
+    await user.press(screen.getByTestId('upload-gallery-button'));
+
+    await waitFor(() => expect(setImages).toHaveBeenCalledWith([persistedMedia]));
+    expect(mockAppendActivityMedia).toHaveBeenCalledWith({ id: 'activity-id', media: [uploadedMedia] });
+    expect(deleteUploadedMedia).not.toHaveBeenCalled();
+    expect(mockStore.getState().activity.media).toContainEqual(persistedMedia);
+  });
+
+  it('cleans up uploaded temporary files when the activity append fails', async () => {
+    const user = userEvent.setup();
+    const setImages = jest.fn();
+    const uploadedMedia = { url: 'https://temporary/photo.jpg', thumbnail: 'https://temporary/thumb.jpg' };
+    (getAccessToGallery as jest.Mock).mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'photo.jpg', fileName: 'photo.jpg', mimeType: 'image/jpeg' }],
+    });
+    (uploadActivityMediaBatch as jest.Mock).mockResolvedValue([uploadedMedia]);
+    mockAppendActivityMedia.mockReturnValue({ unwrap: jest.fn().mockRejectedValue(new Error('append failed')) });
+    await renderWithProviders(
+      <UploadPhotosBtn
+        isDisabled={false}
+        setIsDisabled={jest.fn()}
+        setImages={setImages}
+        images={[]}
+        activityId="activity-id"
+      />,
+    );
+
+    await user.press(screen.getByTestId('upload-gallery-button'));
+
+    await waitFor(() => expect(deleteUploadedMedia).toHaveBeenCalledWith([uploadedMedia.url, uploadedMedia.thumbnail]));
+    expect(setImages).not.toHaveBeenCalled();
+    expect(mockStore.getState().activity.media).not.toContainEqual(uploadedMedia);
+    expect(errorToast).toHaveBeenCalled();
   });
 
   it('does nothing for a cancelled selection or a user without an id', async () => {

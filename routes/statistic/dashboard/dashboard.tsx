@@ -10,8 +10,8 @@ import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
-import ActivityHeatmap from './activity-heatmap';
-import AnnualActivityChart from './annual-activity-chart';
+import ActivityHeatmap from './activity-heatmap/activity-heatmap';
+import AnnualActivityChart from './annual-activity-chart/annual-activity-chart';
 import {
   DASHBOARD_LABELS,
   DASHBOARD_LAYOUT,
@@ -19,10 +19,10 @@ import {
   DASHBOARD_SPORTS,
   EMPTY_DASHBOARD_YEAR_DATA,
 } from './const';
-import DashboardHero from './dashboard-hero';
-import DashboardSkeleton from './dashboard-skeleton';
+import DashboardHero from './dashboard-hero/dashboard-hero';
+import DashboardSkeleton from './dashboard-skeleton/dashboard-skeleton';
 import { buildDashboardYears } from './data';
-import SportDistribution from './sport-distribution';
+import SportDistribution from './sport-distribution/sport-distribution';
 import {
   buildHeatmapColumns,
   getDateKey,

@@ -6,3 +6,4 @@ coverage
 jest-setup.ts
 android
 ios
+.expo/

@@ -1,3 +1,4 @@
+import type { ActivityMediaItem } from '../types';
 export interface VideoMetadata {
   duration?: number;
   aspectRatio?: number;
@@ -22,4 +23,8 @@ export interface ActiveVideoPlayerProps {
   isMuted: boolean;
   isPaused: boolean;
   onMetadata?: (metadata: VideoMetadata) => void;
+}
+
+export interface DisplayedMediaItem extends ActivityMediaItem {
+  isMap?: boolean;
 }

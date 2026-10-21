@@ -1,4 +1,4 @@
-import ActivityMapMarker from './activity-map-marker';
+import ActivityMapMarker from './activity-map-marker/activity-map-marker';
 import type { ActivityLocation } from '@S/card/types';
 
 export default function ActivityMapMarkers({ locations }: { locations: ActivityLocation[] }) {

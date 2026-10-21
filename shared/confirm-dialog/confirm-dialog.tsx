@@ -1,4 +1,5 @@
-import { ActivityIndicator, Dialog, Button, Portal, Text, useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, Dialog, Icon, Portal, Text, useTheme } from 'react-native-paper';
 import type { ConfirmDialogProps } from './types';
 
 export default function ConfirmDialog({
@@ -7,6 +8,7 @@ export default function ConfirmDialog({
   message,
   confirmText,
   cancelText,
+  destructive = false,
   loading = false,
   onConfirm,
   onDismiss,
@@ -22,10 +24,19 @@ export default function ConfirmDialog({
         }}
         dismissable={!loading}
         dismissableBackButton={!loading}
-        style={{ backgroundColor: colors.surface }}>
-        <Dialog.Title>{title}</Dialog.Title>
+        style={[destructive && styles.destructiveDialog, { backgroundColor: colors.surface }]}>
+        {destructive ? (
+          <View style={[styles.destructiveIcon, { backgroundColor: colors.errorContainer }]}>
+            <Icon source="delete-alert-outline" size={28} color={colors.error} />
+          </View>
+        ) : null}
+        <Dialog.Title style={destructive ? styles.destructiveTitle : undefined}>{title}</Dialog.Title>
         <Dialog.Content>
-          <Text variant="bodyMedium">{message}</Text>
+          <Text
+            variant="bodyMedium"
+            style={destructive ? [styles.destructiveMessage, { color: colors.onSurfaceVariant }] : undefined}>
+            {message}
+          </Text>
           {loading && <ActivityIndicator testID="confirm-dialog-loading" size="small" style={{ marginTop: 16 }} />}
         </Dialog.Content>
         <Dialog.Actions>
@@ -41,8 +52,10 @@ export default function ConfirmDialog({
           ) : null}
           <Button
             testID="confirm-dialog-confirm-button"
-            mode="text"
-            textColor={colors.primary}
+            mode={destructive ? 'contained' : 'text'}
+            buttonColor={destructive ? colors.error : undefined}
+            textColor={destructive ? colors.onError : colors.primary}
+            style={destructive ? styles.destructiveButton : undefined}
             onPress={onConfirm}
             disabled={loading}
             loading={loading}>
@@ -53,3 +66,19 @@ export default function ConfirmDialog({
     </Portal>
   );
 }
+
+const styles = StyleSheet.create({
+  destructiveDialog: { borderRadius: 24 },
+  destructiveIcon: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: 28,
+    height: 56,
+    justifyContent: 'center',
+    marginTop: 24,
+    width: 56,
+  },
+  destructiveTitle: { textAlign: 'center' },
+  destructiveMessage: { textAlign: 'center' },
+  destructiveButton: { borderRadius: 12 },
+});

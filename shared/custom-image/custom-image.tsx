@@ -1,47 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import { Platform } from 'react-native';
-import { getProductionBucketFallbackUri } from './utils';
+import { DEFAULT_IMAGE_TRANSITION, cachedImageUris } from './const';
+import {
+  getInitialCacheStatus,
+  getProductionBucketFallbackUri,
+  normalizeImagePlaceholder,
+  shouldCheckDiskCache,
+} from './utils';
+import type { CacheStatus } from './types';
 import type { ImageContentFit, ImageProps } from 'expo-image';
-
-const DEFAULT_IMAGE_TRANSITION = { duration: 180, timing: 'ease-out' as const };
-const cachedImageUris = new Set<string>();
-
-export function normalizeImagePlaceholder(placeholder?: string | null) {
-  if (!placeholder) {
-    return undefined;
-  }
-
-  if (
-    placeholder.startsWith('blurhash:/') ||
-    placeholder.startsWith('thumbhash:/') ||
-    /^(?:https?|file|data):/.test(placeholder)
-  ) {
-    return placeholder;
-  }
-
-  return `blurhash:/${placeholder}`;
-}
-
-type CacheStatus = 'checking' | 'cached' | 'uncached';
-
-function shouldCheckDiskCache(uri: string, cachePolicy: ImageProps['cachePolicy'], hasExplicitTransition: boolean) {
-  return (
-    !hasExplicitTransition &&
-    uri.startsWith('http') &&
-    cachePolicy !== 'none' &&
-    cachePolicy !== 'memory' &&
-    typeof Image.getCachePathAsync === 'function'
-  );
-}
-
-function getInitialCacheStatus(uri: string, shouldCheckCache: boolean): CacheStatus {
-  if (!shouldCheckCache) {
-    return 'uncached';
-  }
-
-  return cachedImageUris.has(uri) ? 'cached' : 'checking';
-}
 
 export default function CustomImage({
   style,
@@ -57,7 +25,7 @@ export default function CustomImage({
   onLoad,
   onError,
 }: {
-  style: any;
+  style?: ImageProps['style'];
   source: { uri: string | null | undefined };
   contentFit?: ImageContentFit;
   testID?: string;
@@ -112,12 +80,6 @@ export default function CustomImage({
     };
   }, [imageUri, shouldCheckCache]);
 
-  const handleLoad: NonNullable<ImageProps['onLoad']> = (event) => {
-    if (imageUri && cachePolicy !== 'none') {
-      cachedImageUris.add(imageUri);
-    }
-    onLoad?.(event);
-  };
   const resolvedTransition = transition ?? (cacheStatus === 'cached' ? 0 : DEFAULT_IMAGE_TRANSITION);
 
   return (
@@ -132,7 +94,12 @@ export default function CustomImage({
       cachePolicy={cachePolicy}
       recyclingKey={Platform.OS !== 'web' ? recyclingKey : undefined}
       transition={resolvedTransition}
-      onLoad={handleLoad}
+      onLoad={(event) => {
+        if (imageUri && cachePolicy !== 'none') {
+          cachedImageUris.add(imageUri);
+        }
+        onLoad?.(event);
+      }}
       onError={() => {
         if (imageUri === sourceUri) {
           const fallbackUri = getProductionBucketFallbackUri(sourceUri);

@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { renderWithProviders } from '@T/utils/test-utils';
 import BackgroundLocationSwitcher from './background-location-switcher';
 
@@ -9,7 +10,7 @@ describe('background location switcher', () => {
     await renderWithProviders(
       <BackgroundLocationSwitcher
         backgroundPermissionStatus={false}
-        backgroundLocationEnabledModalRef={{ current: { present } } as any}
+        backgroundLocationEnabledModalRef={createMockBottomSheetModalRef({ present })}
       />,
     );
     await user.press(screen.getByTestId('background-location-details'));

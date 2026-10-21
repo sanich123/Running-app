@@ -13,7 +13,7 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { ActivityCardContext } from '../context';
 import MediaList from './media-list';
-import { VideoPlaybackProvider } from './video-playback-context';
+import VideoPlaybackProvider from './video-playback-provider/video-playback-provider';
 import type { ActivityCardData } from '../types';
 
 const mockPush = jest.fn();
@@ -48,7 +48,6 @@ function renderMediaList(activity: Partial<ActivityCardData>) {
         value={{
           activity: { ...defaultActivity, ...activity },
           isFullView: false,
-          isShowDeleteBtn: false,
           isShowDescription: false,
         }}>
         <MediaList />
@@ -116,23 +115,39 @@ describe('media list', () => {
     expect(screen.queryByTestId('activity-favorite-button')).not.toBeOnTheScreen();
   });
 
-  it('shows visible feedback while the map image is being pressed', async () => {
-    const mapUrl = 'https://cdn.example.test/activity-map-press.jpg';
-    await renderMediaList({ mapPhotoUrl: mapUrl, media: [] });
-
-    const mapTouchTarget = screen.getByRole('button', { name: 'Открыть карту тренировки' });
-    await fireEvent(mapTouchTarget, 'pressIn');
-    expect(screen.getByTestId('activity-map-press-overlay')).toBeOnTheScreen();
-
-    await fireEvent(mapTouchTarget, 'pressOut');
-    expect(screen.queryByTestId('activity-map-press-overlay')).not.toBeOnTheScreen();
-  });
-
   it('keeps the complete map image visible in the card preview', async () => {
     const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
     await renderMediaList({ mapPhotoUrl: mapUrl, media: [] });
 
     expect(screen.getByTestId(mapUrl).props.contentFit).toBe('cover');
+  });
+
+  it('keeps the full-size map first and scrolls it left to reveal activity media in the card preview', async () => {
+    const mapUrl = 'https://cdn.example.test/activity-map.jpg';
+    const routeOnlyMapUrl = 'https://cdn.example.test/activity-route-only-map.jpg';
+    const photoUrl = 'https://images.example.test/activity-photo.jpg';
+    await renderMediaList({
+      mapPhotoUrl: mapUrl,
+      routeOnlyMapPhotoUrl: routeOnlyMapUrl,
+      media: [{ url: photoUrl, thumbnail: null }],
+    });
+
+    const mediaList = screen.getByTestId('activity-media-list');
+    const mapTileWidth = StyleSheet.flatten(screen.getByTestId('activity-map-media-container').props.style).width;
+    const mapImageStyle = StyleSheet.flatten(screen.getByTestId(mapUrl).props.style);
+    const photoWidth = StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width;
+
+    expect(mediaList.props.horizontal).toBe(true);
+    expect(mediaList.props.data.map((item: { url: string }) => item.url)).toEqual([mapUrl, photoUrl]);
+    expect(screen.getByTestId(mapUrl)).toBeOnTheScreen();
+    expect(screen.getByTestId(photoUrl)).toBeOnTheScreen();
+    expect(screen.queryByTestId(routeOnlyMapUrl)).not.toBeOnTheScreen();
+    expect(screen.getByTestId(mapUrl)).toHaveProp('contentFit', 'cover');
+    expect(screen.getByTestId(photoUrl)).toHaveProp('contentFit', 'cover');
+    expect(mapImageStyle.width).toBe(mapTileWidth);
+    expect(mapImageStyle.transform).toBeUndefined();
+    expect(photoWidth).toBeLessThan(mapTileWidth);
+    expect(mediaList.props.onContentSizeChange).toEqual(expect.any(Function));
   });
 
   it('uses inset spacing and rounded media tiles like the reference card', async () => {
@@ -145,6 +160,22 @@ describe('media list', () => {
     expect(StyleSheet.flatten(screen.getByTestId('activity-media-list').props.contentContainerStyle)).toEqual(
       expect.objectContaining({ paddingVertical: 4 }),
     );
+  });
+
+  it('keeps web media-list height aligned with its media tiles', async () => {
+    const restorePlatform = overridePlatformOS('web');
+
+    try {
+      await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map-web.jpg', media: [] });
+
+      const mediaHeight = StyleSheet.flatten(screen.getByTestId('activity-map-media-container').props.style).height;
+      const listStyle = StyleSheet.flatten(screen.getByTestId('activity-media-list').props.style);
+
+      expect(listStyle.height).toBe(mediaHeight + 8);
+      expect(listStyle.flexGrow).toBe(0);
+    } finally {
+      restorePlatform();
+    }
   });
 
   it('uses the map blurhash and prioritized disk cache for fast scrolling', async () => {
@@ -336,10 +367,7 @@ describe('media list', () => {
     expect(StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width).not.toBe(initialWidth);
 
     const longPressMedia = async () => {
-      await fireEvent(touchTarget, 'pressIn');
       await fireEvent(touchTarget, 'longPress');
-      await fireEvent(touchTarget, 'pressOut');
-      await fireEvent.press(touchTarget);
     };
 
     await longPressMedia();

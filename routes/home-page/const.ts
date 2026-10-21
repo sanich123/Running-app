@@ -6,6 +6,8 @@ export const HOME_FEED = {
   favorites: 'favorites',
 } as const;
 
+export const HOME_FEED_DONE_CURSOR = 'done';
+
 export type HomeFeed = (typeof HOME_FEED)[keyof typeof HOME_FEED];
 
 export const HOME_FEED_COPY = {

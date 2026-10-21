@@ -39,7 +39,6 @@ export default function CrossPlatformLayout({
               maxWidth: 600,
               marginLeft: 'auto',
               marginRight: 'auto',
-              height: '100%',
               width: '100%',
             },
             (isError || isLoading) && styles.centered,

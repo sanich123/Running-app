@@ -1,0 +1,1 @@
+export const MAX_DIAGNOSTIC_WORKOUTS = 50;

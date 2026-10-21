@@ -14,7 +14,7 @@ import { getNotificationLocale } from './helpers';
 import type { NotificationItem } from '@R/services/notifications/types';
 
 export function useNotificationsPage() {
-  const language = useAppSelector(({ settings }) => settings.language);
+  const { language } = useAppSelector(({ settings }) => settings);
   const locale = getNotificationLocale(language);
   const copy = NOTIFICATION_COPY[locale];
   const { push } = useRouter();

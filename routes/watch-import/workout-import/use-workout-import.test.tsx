@@ -46,6 +46,10 @@ const workout: WatchWorkout = {
   duration: 600_000,
   distance: 2_000,
   locations: [],
+  heartRateSamples: [
+    { timestamp: 1_791_442_800_000, beatsPerMinute: 120 },
+    { timestamp: 1_791_442_860_000, beatsPerMinute: 140 },
+  ],
 };
 
 function Wrapper({ children }: PropsWithChildren) {
@@ -61,16 +65,16 @@ describe('useWorkoutImport', () => {
     mockGetPermissions.mockResolvedValue({
       available: true,
       granted: true,
-      details: { exerciseSession: true, distance: true, steps: true },
+      details: { exerciseSession: true, distance: true, steps: true, heartRate: true },
     });
     mockRequestPermissions.mockResolvedValue({
       available: true,
       granted: true,
-      details: { exerciseSession: true, distance: true, steps: true },
+      details: { exerciseSession: true, distance: true, steps: true, heartRate: true },
     });
     mockReadWorkouts.mockResolvedValue([workout]);
     mockImportWorkouts.mockReturnValue({
-      unwrap: jest.fn().mockResolvedValue({ imported: 1, skipped: 0 }),
+      unwrap: jest.fn().mockResolvedValue({ imported: 1, skipped: 0, activities: [] }),
     });
     mockGetItemAsync.mockResolvedValue(null);
     mockSetItemAsync.mockResolvedValue(undefined);
@@ -122,10 +126,56 @@ describe('useWorkoutImport', () => {
     expect(mockImportWorkouts).toHaveBeenCalledWith(
       expect.objectContaining({
         id: 'user-1',
-        workouts: [expect.objectContaining({ sourceActivityId: workout.sourceActivityId })],
+        workouts: [
+          expect.objectContaining({
+            sourceActivityId: workout.sourceActivityId,
+            heartRateSamples: workout.heartRateSamples,
+          }),
+        ],
       }),
     );
+    expect(result.current.uploadDiagnostics).toMatchObject({
+      outcome: 'success',
+      sourceHeartRateSampleCount: 2,
+      payloadHeartRateSampleCount: 2,
+      workouts: [
+        expect.objectContaining({
+          sourceHeartRateSampleCount: 2,
+          payloadHeartRateSampleCount: 2,
+          outcome: 'uploaded',
+        }),
+      ],
+    });
     expect(mockSetItemAsync).not.toHaveBeenCalledWith(getAutoSyncKey('user-1'), 'true');
+  });
+
+  it('marks workout heart-rate samples as sent but not uploaded when the request fails', async () => {
+    jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
+    mockImportWorkouts.mockReturnValue({ unwrap: jest.fn().mockRejectedValue({ status: 500 }) });
+    const { result } = await renderHook(() => useWorkoutImport({ enabled: false }), { wrapper: Wrapper });
+
+    await act(async () => {
+      await result.current.refreshHealthConnection();
+    });
+    await waitFor(() => expect(result.current.selectedWorkouts).toEqual([workout]));
+
+    await act(async () => {
+      await result.current.importSelected();
+    });
+
+    expect(result.current.uploadDiagnostics).toMatchObject({
+      outcome: 'error',
+      errorStatus: '500',
+      sourceHeartRateSampleCount: 2,
+      payloadHeartRateSampleCount: 2,
+      workouts: [
+        expect.objectContaining({
+          sourceHeartRateSampleCount: 2,
+          payloadHeartRateSampleCount: 2,
+          outcome: 'error',
+        }),
+      ],
+    });
   });
 
   it('automatically uploads new workouts on startup and foreground return by default', async () => {

@@ -149,18 +149,20 @@ describe('RunichHealth', () => {
       { accessType: 'read', recordType: 'ExerciseSession' },
       { accessType: 'read', recordType: 'Distance' },
       { accessType: 'read', recordType: 'Steps' },
+      { accessType: 'read', recordType: 'HeartRate' },
+      { accessType: 'read', recordType: 'ActiveCaloriesBurned' },
     ]);
     await expect(health.RunichHealth.getPermissions()).resolves.toEqual({
       available: true,
       granted: true,
-      details: { exerciseSession: true, distance: true, steps: true },
+      details: { exerciseSession: true, distance: true, steps: true, heartRate: true, activeCalories: true },
     });
 
     mockGetGrantedPermissions.mockResolvedValue([{ accessType: 'write', recordType: 'Distance' }]);
     await expect(health.RunichHealth.getPermissions()).resolves.toEqual({
       available: true,
       granted: false,
-      details: { exerciseSession: false, distance: false, steps: false },
+      details: { exerciseSession: false, distance: false, steps: false, heartRate: false, activeCalories: false },
     });
   });
 
@@ -175,17 +177,84 @@ describe('RunichHealth', () => {
       { accessType: 'read', recordType: 'ExerciseSession' },
       { accessType: 'read', recordType: 'Distance' },
       { accessType: 'read', recordType: 'Steps' },
+      { accessType: 'read', recordType: 'HeartRate' },
+      { accessType: 'read', recordType: 'ActiveCaloriesBurned' },
     ]);
     await expect(health.RunichHealth.requestPermissions()).resolves.toEqual({
       available: true,
       granted: true,
-      details: { exerciseSession: true, distance: true, steps: true },
+      details: { exerciseSession: true, distance: true, steps: true, heartRate: true, activeCalories: true },
     });
     expect(mockRequestPermission).toHaveBeenCalledWith([
       { accessType: 'read', recordType: 'ExerciseSession' },
       { accessType: 'read', recordType: 'Distance' },
       { accessType: 'read', recordType: 'Steps' },
+      { accessType: 'read', recordType: 'HeartRate' },
+      { accessType: 'read', recordType: 'ActiveCaloriesBurned' },
     ]);
+  });
+
+  it('records whether heart-rate access was granted and which samples belong to each workout', async () => {
+    const health = loadHealth();
+    const session = makeSession(getHealthConnectModule().ExerciseType.RUNNING);
+    const samples = [
+      { time: '2026-10-08T07:00:10.000Z', beatsPerMinute: 120 },
+      { time: '2026-10-08T07:00:20.000Z', beatsPerMinute: 140 },
+    ];
+    mockGetGrantedPermissions.mockResolvedValue([{ accessType: 'read', recordType: 'HeartRate' }]);
+    mockReadRecords.mockImplementation(async (recordType: string) => {
+      if (recordType === 'ExerciseSession') return { records: [session] };
+      if (recordType === 'HeartRate') return { records: [{ samples }] };
+      return { records: [] };
+    });
+
+    const [workoutWithHeartRate] = await health.RunichHealth.readWorkouts('start', 'end');
+
+    expect(workoutWithHeartRate.heartRateSamples).toEqual([
+      { timestamp: Date.parse(samples[0].time), beatsPerMinute: 120 },
+      { timestamp: Date.parse(samples[1].time), beatsPerMinute: 140 },
+    ]);
+    expect(workoutWithHeartRate.diagnostics).toEqual(
+      expect.objectContaining({ heartRatePermissionGranted: true, heartRateSampleCount: 2 }),
+    );
+
+    mockGetGrantedPermissions.mockResolvedValue([]);
+    const [workoutWithoutHeartRate] = await health.RunichHealth.readWorkouts('start', 'end');
+
+    expect(workoutWithoutHeartRate.heartRateSamples).toBeUndefined();
+    expect(workoutWithoutHeartRate.diagnostics).toEqual(
+      expect.objectContaining({ heartRatePermissionGranted: false, heartRateSampleCount: 0 }),
+    );
+  });
+
+  it('imports active calories from Health Connect when the optional permission is granted', async () => {
+    const health = loadHealth();
+    const session = makeSession(getHealthConnectModule().ExerciseType.RUNNING);
+    mockGetGrantedPermissions.mockResolvedValue([{ accessType: 'read', recordType: 'ActiveCaloriesBurned' }]);
+    mockReadRecords.mockImplementation(async (recordType: string) => {
+      if (recordType === 'ExerciseSession') return { records: [session] };
+      if (recordType === 'ActiveCaloriesBurned') {
+        return {
+          records: [
+            { energy: { inKilocalories: 120.4 } },
+            { energy: { inKilocalories: 155.3 } },
+            { energy: { inKilocalories: Number.NaN } },
+          ],
+        };
+      }
+      return { records: [] };
+    });
+
+    const [workout] = await health.RunichHealth.readWorkouts('start', 'end');
+
+    expect(workout.caloriesActive).toBe(276);
+    expect(workout.diagnostics).toEqual(
+      expect.objectContaining({ activeCaloriesPermissionGranted: true, activeCaloriesRecordCount: 3 }),
+    );
+    expect(mockReadRecords).toHaveBeenCalledWith(
+      'ActiveCaloriesBurned',
+      expect.objectContaining({ timeRangeFilter: expect.any(Object) }),
+    );
   });
 
   it('reads paginated workouts, maps sports and route diagnostics, and reports progress', async () => {
@@ -316,7 +385,7 @@ describe('RunichHealth', () => {
     );
     expect(progress).toContain('availability');
     expect(progress).toContain('exercise-sessions');
-    expect(progress).toContain('distance-and-steps');
+    expect(progress).toContain('workout-measurements');
     expect(progress).toContain('exercise-route');
     expect(progress.at(-1)).toBe('complete');
   });
@@ -339,7 +408,7 @@ describe('RunichHealth', () => {
       errorCode: 'READ_FAILED',
     });
 
-    const nestedError = new health.HealthConnectReadError('distance-and-steps', 'NESTED');
+    const nestedError = new health.HealthConnectReadError('workout-measurements', 'NESTED');
     mockReadRecords.mockRejectedValueOnce(nestedError);
     await expect(health.RunichHealth.readWorkouts('start', 'end')).rejects.toBe(nestedError);
   });

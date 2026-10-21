@@ -8,7 +8,7 @@ import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
 import { useAppSelector } from '@R/typed-hooks';
 import { FEEDBACK_TEXT } from '@Routes/feedback/const';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
-import SwitchRow from '@S/feedback/switch-row';
+import SwitchRow from '@S/feedback/switch-row/switch-row';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
 import { uploadFeedbackAttachments } from '@U/feedback-sending';
 import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';

@@ -8,6 +8,7 @@ import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import UserListItem from '@S/user-list-item/user-list-item';
 import type { ModalLikesListProps } from '../types';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import type { LikeListResponse } from '@R/runich-api/types';
 
 export default function ModalLikesList({ bottomSheetModalRef, likesLength, canViewLikes }: ModalLikesListProps) {
@@ -27,7 +28,7 @@ export default function ModalLikesList({ bottomSheetModalRef, likesLength, canVi
   );
   const likes = likesPages?.pages.flatMap(({ likes: pageLikes }) => pageLikes) ?? [];
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
   function getIndexOfSnapPointByLikesLength(length: number) {

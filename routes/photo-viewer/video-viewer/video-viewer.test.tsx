@@ -1,11 +1,13 @@
 import { screen, render } from '@testing-library/react-native';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 const mockPlayer = { play: jest.fn(), pause: jest.fn() };
 const mockUseVideoPlayer = jest.fn(() => mockPlayer);
 const mockUseIsFocused = jest.fn(() => true);
-const { View } = require('react-native');
+const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
 jest.setMock('expo-video', {
   useVideoPlayer: mockUseVideoPlayer,
-  VideoView: (props: any) => <View testID="video-view" {...props} />,
+  VideoView: (props: MockNativeViewProps) => createMockNativeView(props, undefined, 'video-view'),
 });
 jest.setMock('expo-router', { useIsFocused: () => mockUseIsFocused() });
 // Load the component after the explicit mock is registered.

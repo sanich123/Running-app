@@ -2,16 +2,32 @@ import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
-import CalendarActivities from '@Routes/statistic/calendar/calendar';
+import CalendarActivities from '@Routes/statistic/calendar/calendar-activities/calendar-activities';
 import Charts from '@Routes/statistic/charts/charts';
 import MonthStatistics from '@Routes/statistic/month-statistics/month-statistics';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import type { MonthStatisticsResponse } from '@R/runich-api/types';
 import type { MonthMetrics } from '@Routes/statistic/charts/types';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 
 const mockPush = jest.fn();
 let mockParams = { userId: MOCK_SERVER_IDS.userId, year: '2026', month: '7' };
+const monthStatistics: MonthStatisticsResponse = {
+  activities: [
+    {
+      duration: MOCK_SERVER_ACTIVITY.duration,
+      distance: MOCK_SERVER_ACTIVITY.distance,
+      speed: 6.2,
+      date: MOCK_SERVER_ACTIVITY.date,
+      id: MOCK_SERVER_ACTIVITY.id,
+      sport: MOCK_SERVER_ACTIVITY.sport,
+    },
+  ],
+  activitiesReducedBySport: {},
+};
 
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockParams,
@@ -19,8 +35,8 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('react-native-gifted-charts', () => {
-  const { View } = jest.requireActual('react-native');
-  return { BarChart: (props: any) => <View testID="statistics-bar-chart" {...props} /> };
+  const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
+  return { BarChart: (props: MockNativeViewProps) => createMockNativeView(props, undefined, 'statistics-bar-chart') };
 });
 
 function AnnualStatisticsPage() {
@@ -64,7 +80,7 @@ describe('statistics integration flows', () => {
 
   it('opens an activity from a day with a recorded workout', async () => {
     await renderWithProviders(
-      <CalendarActivities userId={MOCK_SERVER_IDS.userId} year="2026" month="7" selectedType="all" />,
+      <CalendarActivities year="2026" month="7" selectedType="all" monthStatistics={monthStatistics} />,
     );
     const activityDay = await screen.findByTestId(`calendar-activities-${MOCK_SERVER_IDS.activityId}`);
     await userEvent.press(activityDay);

@@ -12,6 +12,8 @@ describe('profile settings params', () => {
         city: 'Moscow',
         bio: ['Runner'],
         gender: 'male',
+        restingHeartRate: '55',
+        maxHeartRate: '190',
       }),
     ).toEqual({
       name: 'Alexander',
@@ -22,6 +24,8 @@ describe('profile settings params', () => {
       city: 'Moscow',
       bio: 'Runner',
       gender: 'male',
+      restingHeartRate: '55',
+      maxHeartRate: '190',
     });
   });
 
@@ -35,6 +39,8 @@ describe('profile settings params', () => {
       city: '',
       bio: '',
       gender: '',
+      restingHeartRate: '',
+      maxHeartRate: '',
     });
   });
 
@@ -49,6 +55,8 @@ describe('profile settings params', () => {
         city: 'Moscow',
         bio: null,
         gender: 'male',
+        restingHeartRate: null,
+        maxHeartRate: null,
       }),
     ).toEqual({
       name: '',
@@ -59,6 +67,8 @@ describe('profile settings params', () => {
       city: 'Moscow',
       bio: '',
       gender: 'male',
+      restingHeartRate: '',
+      maxHeartRate: '',
     });
   });
 

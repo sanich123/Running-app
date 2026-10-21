@@ -11,12 +11,16 @@ export const PROFILE_INPUT_LIMITS = {
   weight: 3,
   height: 3,
   age: 3,
+  restingHeartRate: 3,
+  maxHeartRate: 3,
 } as const;
 
 const PROFILE_VALUE_LIMITS = {
   weight: 200,
   height: 230,
   age: 100,
+  restingHeartRate: 200,
+  maxHeartRate: 250,
 } as const;
 
 export function limitText(value: string, maxLength: number) {
@@ -33,6 +37,14 @@ export function normalizeHeightInput(value: string) {
 
 export function normalizeAgeInput(value: string) {
   return normalizeNumericInput(value, PROFILE_INPUT_LIMITS.age, PROFILE_VALUE_LIMITS.age);
+}
+
+export function normalizeRestingHeartRateInput(value: string) {
+  return normalizeNumericInput(value, PROFILE_INPUT_LIMITS.restingHeartRate, PROFILE_VALUE_LIMITS.restingHeartRate);
+}
+
+export function normalizeMaxHeartRateInput(value: string) {
+  return normalizeNumericInput(value, PROFILE_INPUT_LIMITS.maxHeartRate, PROFILE_VALUE_LIMITS.maxHeartRate);
 }
 
 function normalizeNumericInput(value: string, maxLength: number, maxValue: number) {

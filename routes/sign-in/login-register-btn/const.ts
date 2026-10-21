@@ -51,3 +51,5 @@ export const LoginBtnIcons = {
   [SignInPageStates.reset]: 'key-change',
   [SignInPageStates.emailLink]: 'email-outline',
 };
+
+export const EMAIL_SEND_ERROR = 'Не удалось отправить письмо';

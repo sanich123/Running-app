@@ -37,56 +37,6 @@ export default function PauseBtn() {
   const [pressScale] = useState(() => new Animated.Value(1));
   const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
 
-  const handlePress = async () => {
-    if (isTrackingActionInProgress) {
-      return;
-    }
-
-    setIsTrackingActionInProgress(true);
-    try {
-      if (activityStatus === STATUSES.paused) {
-        await startLocationTracking();
-        await resumePedometerActivity();
-        dispatch(startDurationTimer(Date.now()));
-        dispatch(setTrackingRecoveryStatus(STATUSES.continued));
-        dispatch(setActivityStatus(STATUSES.continued));
-      } else {
-        await stopLocationTracking();
-        await pausePedometerActivity();
-        const durationForSave = getCurrentActivityDuration({ duration, durationTimerBase, durationTimerStartedAt });
-        dispatch(setDurationAt(durationForSave));
-        dispatch(stopDurationTimer());
-        const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
-        dispatch(
-          setFinishedActivity({
-            duration: durationForSave,
-            date: recordingStartedAt ? new Date(recordingStartedAt).toISOString() : undefined,
-            timeZone: recordingTimeZone ?? getDeviceTimeZone(),
-            distance,
-            routeJournalId: getActiveLocationJournalId(),
-            kilometresSplit: kilometresSplit.map((split, index) => ({
-              ...split,
-              lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
-            })),
-            speed: getSpeedInMinsInKm(distance, durationForSave).paceAsNumber,
-          }),
-        );
-        dispatch(setTrackingRecoveryStatus(STATUSES.paused));
-        dispatch(setActivityStatus(STATUSES.paused));
-        dispatch(setEmptyLastArrayWhenPaused());
-      }
-    } catch (error) {
-      errorToast(
-        activityStatus === STATUSES.paused
-          ? 'Не удалось запустить отслеживание геопозиции'
-          : 'Не удалось остановить отслеживание геопозиции',
-        error,
-      );
-    } finally {
-      setIsTrackingActionInProgress(false);
-    }
-  };
-
   return (
     <TouchableRipple
       testID="activity-pause-toggle"
@@ -98,7 +48,55 @@ export default function PauseBtn() {
       onPressOut={() =>
         Animated.spring(pressScale, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 8 }).start()
       }
-      onPress={handlePress}
+      onPress={async () => {
+        if (isTrackingActionInProgress) {
+          return;
+        }
+
+        setIsTrackingActionInProgress(true);
+        try {
+          if (activityStatus === STATUSES.paused) {
+            await startLocationTracking();
+            await resumePedometerActivity();
+            dispatch(startDurationTimer(Date.now()));
+            dispatch(setTrackingRecoveryStatus(STATUSES.continued));
+            dispatch(setActivityStatus(STATUSES.continued));
+          } else {
+            await stopLocationTracking();
+            await pausePedometerActivity();
+            const durationForSave = getCurrentActivityDuration({ duration, durationTimerBase, durationTimerStartedAt });
+            dispatch(setDurationAt(durationForSave));
+            dispatch(stopDurationTimer());
+            const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
+            dispatch(
+              setFinishedActivity({
+                duration: durationForSave,
+                date: recordingStartedAt ? new Date(recordingStartedAt).toISOString() : undefined,
+                timeZone: recordingTimeZone ?? getDeviceTimeZone(),
+                distance,
+                routeJournalId: getActiveLocationJournalId(),
+                kilometresSplit: kilometresSplit.map((split, index) => ({
+                  ...split,
+                  lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
+                })),
+                speed: getSpeedInMinsInKm(distance, durationForSave).paceAsNumber,
+              }),
+            );
+            dispatch(setTrackingRecoveryStatus(STATUSES.paused));
+            dispatch(setActivityStatus(STATUSES.paused));
+            dispatch(setEmptyLastArrayWhenPaused());
+          }
+        } catch (error) {
+          errorToast(
+            activityStatus === STATUSES.paused
+              ? 'Не удалось запустить отслеживание геопозиции'
+              : 'Не удалось остановить отслеживание геопозиции',
+            error,
+          );
+        } finally {
+          setIsTrackingActionInProgress(false);
+        }
+      }}
       disabled={isTrackingActionInProgress}>
       <Animated.View style={{ transform: [{ scale: pressScale }] }}>
         <View style={[styles.pauseBtn, { backgroundColor: colors.primaryContainer }]}>

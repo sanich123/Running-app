@@ -1,4 +1,5 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { renderWithProviders } from '@T/utils/test-utils';
 import BatteryOptimizationSwitcher from './battery-optimization-switcher';
 
@@ -15,7 +16,7 @@ describe('battery optimization switcher', () => {
       <BatteryOptimizationSwitcher
         isAppOptimizedByPhone
         setIsAppOptimizedByPhone={setIsAppOptimizedByPhone}
-        batteryOptimizationEnabledModalRef={{ current: { present } } as any}
+        batteryOptimizationEnabledModalRef={createMockBottomSheetModalRef({ present })}
         setIsNeedToRefreshPermission={setIsNeedToRefreshPermission}
         isNeedToRefreshPermission={false}
       />,

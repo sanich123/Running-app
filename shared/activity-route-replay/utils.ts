@@ -1,3 +1,4 @@
+import { useKeepAwake } from 'expo-keep-awake';
 import { getRouteSpeedColorsFromValues, getRouteSpeedValues } from '@S/display-activity-map/utils';
 import {
   ACTIVITY_ROUTE_REPLAY_CAMERA_HEADING_LOOKAHEAD_METERS,
@@ -198,4 +199,14 @@ export function smoothRouteHeading(currentHeading: number, targetHeading: number
   const shortestDelta = ((targetHeading - currentHeading + 540) % 360) - 180;
   const smoothing = 1 - Math.exp(-Math.max(elapsedMs, 0) / ACTIVITY_ROUTE_REPLAY_CAMERA_HEADING_SMOOTHING_MS);
   return (currentHeading + shortestDelta * smoothing + 360) % 360;
+}
+
+export function KeepAwakeDuringVideoExport() {
+  useKeepAwake('activity-route-replay-video-export', { suppressDeactivateWarnings: true });
+  return null;
+}
+
+export function KeepAwakeDuringReplay() {
+  useKeepAwake('activity-route-replay-playback', { suppressDeactivateWarnings: true });
+  return null;
 }

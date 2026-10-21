@@ -1,18 +1,17 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { TouchableRipple, useTheme } from 'react-native-paper';
+import { TouchableRipple } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { createSearchParams } from '@R/runich-api/create-search-params';
 import { activityApi, useDeleteActivityMediaMutation } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { isVideoUrl } from '@Routes/photo-viewer/utils';
-import ActivityMediaDeleteBtn from '@S/activity-media/delete-btn';
-import AddActivityMediaBtn from '@S/card/add-media-btn/add-media-btn';
+import ActivityMediaDeleteBtn from '@S/activity-media/activity-media-delete-btn/activity-media-delete-btn';
+import AddActivityMediaBtn from '@S/card/add-media-btn/add-activity-media-btn/add-activity-media-btn';
 import CustomImage from '@S/custom-image/custom-image';
 import { errorToast } from '@S/error-toast/error-toast';
-import useLongPressGuard from '@S/pressable/use-long-press-guard';
 import { useActivityCard } from '../context';
 import {
   ACTIVITY_MEDIA_ASPECT_RATIO,
@@ -20,21 +19,19 @@ import {
   ACTIVITY_MEDIA_MAX_HEIGHT,
   ACTIVITY_MEDIA_MIN_HEIGHT,
 } from './const';
-import VideoMedia from './video-media';
+import VideoMedia from './video-media/video-media';
 import FavoriteActivityBtn from '../favorite-activity-btn/favorite-activity-btn';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import RouteReplayBtn from '../route-replay-btn/route-replay-btn';
-import type { ActivityMediaItem } from '../types';
-
-interface DisplayedMediaItem extends ActivityMediaItem {
-  isMap?: boolean;
-}
+import type { DisplayedMediaItem } from './types';
 
 export default function MediaList() {
-  const { activity } = useActivityCard();
+  const { activity, isFullView } = useActivityCard();
   const {
     media,
     mapPhotoUrl,
+    routeOnlyMapPhotoUrl,
+    hideMap,
     userId: activityOwnerId,
     id,
     mapPhotoUrlBlurhash,
@@ -46,15 +43,14 @@ export default function MediaList() {
     emotion,
     profile,
   } = activity;
-  const [isMapPressed, setIsMapPressed] = useState(false);
   const [selectedMediaId, setSelectedMediaId] = useState<string | null>(null);
-  const longPressGuard = useLongPressGuard();
-  const { dark } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { width } = useWindowDimensions();
   const { push } = useRouter();
   const dispatch = useAppDispatch();
+  const mediaListRef = useRef<FlatList<DisplayedMediaItem>>(null);
+  const hasAppliedInitialOffset = useRef(false);
   const [deleteActivityMedia, { isLoading: isDeletingMedia }] = useDeleteActivityMediaMutation();
   const mediaWidth = width < MAX_MOBILE_WIDTH ? Math.max(width, 0) : MAX_MOBILE_WIDTH;
   const mediaHeight = Math.min(
@@ -64,12 +60,21 @@ export default function MediaList() {
   const isOwnActivity = Boolean(activityOwnerId && activityOwnerId === currentUserId);
   const canViewReplay = activity.profile?.allowActivityReplayViewing !== false || isOwnActivity;
   const [mediaAspectRatios, setMediaAspectRatios] = useState<Record<string, number>>({});
+  const displayedMapPhotoUrl = hideMap
+    ? isOwnActivity
+      ? (mapPhotoUrl ?? routeOnlyMapPhotoUrl)
+      : routeOnlyMapPhotoUrl
+    : mapPhotoUrl;
   const displayedData = useMemo(() => {
     const activityMedia: DisplayedMediaItem[] = (media ?? []).map((item) => ({ ...item, isMap: false }));
-    return mapPhotoUrl
-      ? [{ url: mapPhotoUrl, thumbnail: null, blurhash: mapPhotoUrlBlurhash, isMap: true }, ...activityMedia]
+    return displayedMapPhotoUrl
+      ? [
+          { url: displayedMapPhotoUrl, thumbnail: null, blurhash: hideMap ? null : mapPhotoUrlBlurhash, isMap: true },
+          ...activityMedia,
+        ]
       : activityMedia;
-  }, [mapPhotoUrl, mapPhotoUrlBlurhash, media]);
+  }, [displayedMapPhotoUrl, hideMap, mapPhotoUrlBlurhash, media]);
+  const showSideBySideMedia = !isFullView && displayedData.length > 1;
   const handleDeleteMedia = useCallback(
     async (mediaId: string) => {
       try {
@@ -90,6 +95,17 @@ export default function MediaList() {
     },
     [mediaAspectRatios, mediaHeight, mediaWidth],
   );
+  const handleMediaContentSizeChange = useCallback(() => {
+    if (!showSideBySideMedia) {
+      hasAppliedInitialOffset.current = false;
+      return;
+    }
+    if (hasAppliedInitialOffset.current) return;
+    if (!mediaListRef.current) return;
+
+    hasAppliedInitialOffset.current = true;
+    mediaListRef.current.scrollToOffset({ offset: mediaWidth / 2, animated: false });
+  }, [mediaWidth, showSideBySideMedia]);
   const renderItem = useCallback(
     ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => {
       const isMap = item.isMap === true;
@@ -102,8 +118,8 @@ export default function MediaList() {
         );
       };
       const handleMediaPress = () => {
-        if (!longPressGuard.shouldHandlePress()) return;
-        if (isMap && profile?.allowActivityReplayViewing === false) {
+        if (isMap && hideMap && !isOwnActivity) return;
+        if (isMap && !isOwnActivity && profile?.allowActivityReplayViewing === false) {
           return errorToast('Пользователь запретил просматривать информацию о своем маршруте');
         }
         if (isMap) {
@@ -118,93 +134,87 @@ export default function MediaList() {
               })}`,
         );
       };
-      const mediaContent = isVideo ? (
-        <VideoMedia
-          url={item.url}
-          thumbnail={item.thumbnail}
-          blurhash={item.blurhash}
-          width={itemWidth}
-          height={mediaHeight}
-          playLabel={language === LANGUAGES.russian ? 'Воспроизвести видео' : 'Play video'}
-          pauseLabel={language === LANGUAGES.russian ? 'Приостановить видео' : 'Pause video'}
-          muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
-          unmuteLabel={language === LANGUAGES.russian ? 'Включить звук видео' : 'Unmute video'}
-          testID={`activity-video-${item.id ?? index}`}
-          onMetadata={onMediaMetadata}
-        />
-      ) : (
-        <CustomImage
-          style={{ width: itemWidth, height: mediaHeight }}
-          source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
-          contentFit="cover"
-          placeholderContentFit="cover"
-          priority={index === 0 ? 'high' : 'normal'}
-          cachePolicy="memory-disk"
-          recyclingKey={item.url}
-          testID={item.url}
-          placeholder={item?.blurhash}
-          onLoad={(event) => {
-            const { width: loadedWidth, height: loadedHeight } = event.source;
-            if (loadedWidth > 0 && loadedHeight > 0) {
-              onMediaMetadata({ aspectRatio: loadedWidth / loadedHeight });
-            }
-          }}
-        />
-      );
-      const mediaItem =
-        Platform.OS === 'web' && isVideo ? (
-          <View
-            testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
-            accessibilityLabel={
-              isMap
-                ? language === LANGUAGES.russian
-                  ? 'Открыть карту тренировки'
-                  : 'Open activity map'
-                : language === LANGUAGES.russian
-                  ? 'Открыть медиа тренировки'
-                  : 'Open activity media'
-            }
-            onClick={handleMediaPress}>
-            {mediaContent}
-          </View>
-        ) : (
-          <TouchableRipple
-            testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
-            onPressIn={() => {
-              longPressGuard.resetForGesture();
-              if (isMap) setIsMapPressed(true);
-            }}
-            onPressOut={() => {
-              if (isMap) setIsMapPressed(false);
-            }}
-            onLongPress={
-              !isMap && isOwnActivity && item.id
-                ? () => {
-                    longPressGuard.markLongPress();
-                    setSelectedMediaId((selectedId) => (selectedId === item.id ? null : (item.id ?? null)));
-                  }
-                : undefined
-            }
-            onPress={handleMediaPress}
-            borderless={false}
-            accessibilityRole="button"
-            accessibilityLabel={
-              isMap
-                ? language === LANGUAGES.russian
-                  ? 'Открыть карту тренировки'
-                  : 'Open activity map'
-                : language === LANGUAGES.russian
-                  ? 'Открыть медиа тренировки'
-                  : 'Open activity media'
-            }>
-            {mediaContent}
-          </TouchableRipple>
-        );
+      const mediaAccessibilityLabel = isMap
+        ? language === LANGUAGES.russian
+          ? 'Открыть карту тренировки'
+          : 'Open activity map'
+        : language === LANGUAGES.russian
+          ? 'Открыть медиа тренировки'
+          : 'Open activity media';
       return (
         <View
           testID={isMap ? 'activity-map-media-container' : undefined}
           style={[styles.mediaTile, { height: mediaHeight, width: itemWidth }]}>
-          {mediaItem}
+          {Platform.OS === 'web' && isVideo ? (
+            <View
+              testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
+              accessibilityLabel={mediaAccessibilityLabel}
+              onClick={handleMediaPress}>
+              <VideoMedia
+                url={item.url}
+                thumbnail={item.thumbnail}
+                blurhash={item.blurhash}
+                width={itemWidth}
+                height={mediaHeight}
+                playLabel={language === LANGUAGES.russian ? 'Воспроизвести видео' : 'Play video'}
+                pauseLabel={language === LANGUAGES.russian ? 'Приостановить видео' : 'Pause video'}
+                muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
+                unmuteLabel={language === LANGUAGES.russian ? 'Включить звук видео' : 'Unmute video'}
+                testID={`activity-video-${item.id ?? index}`}
+                onMetadata={onMediaMetadata}
+              />
+            </View>
+          ) : (
+            <TouchableRipple
+              testID={isMap ? 'activity-map-media-item' : `activity-media-${item.id ?? index}`}
+              onLongPress={
+                !isMap && isOwnActivity && item.id
+                  ? () => {
+                      setSelectedMediaId((selectedId) => (selectedId === item.id ? null : (item.id ?? null)));
+                    }
+                  : undefined
+              }
+              disabled={isMap && hideMap && !isOwnActivity}
+              onPress={handleMediaPress}
+              borderless={false}
+              style={{ height: mediaHeight, width: itemWidth }}
+              accessibilityRole="button"
+              accessibilityLabel={mediaAccessibilityLabel}>
+              {isVideo ? (
+                <VideoMedia
+                  url={item.url}
+                  thumbnail={item.thumbnail}
+                  blurhash={item.blurhash}
+                  width={itemWidth}
+                  height={mediaHeight}
+                  playLabel={language === LANGUAGES.russian ? 'Воспроизвести видео' : 'Play video'}
+                  pauseLabel={language === LANGUAGES.russian ? 'Приостановить видео' : 'Pause video'}
+                  muteLabel={language === LANGUAGES.russian ? 'Выключить звук видео' : 'Mute video'}
+                  unmuteLabel={language === LANGUAGES.russian ? 'Включить звук видео' : 'Unmute video'}
+                  testID={`activity-video-${item.id ?? index}`}
+                  onMetadata={onMediaMetadata}
+                />
+              ) : (
+                <CustomImage
+                  style={{ width: itemWidth, height: mediaHeight }}
+                  source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
+                  contentFit="cover"
+                  placeholderContentFit="cover"
+                  priority={index === 0 ? 'high' : 'normal'}
+                  cachePolicy="memory-disk"
+                  recyclingKey={item.url}
+                  testID={item.url}
+                  placeholder={item?.blurhash}
+                  onLoad={(event) => {
+                    const { width: loadedWidth, height: loadedHeight } = event.source;
+                    if (loadedWidth > 0 && loadedHeight > 0) {
+                      onMediaMetadata({ aspectRatio: loadedWidth / loadedHeight });
+                    }
+                  }}
+                />
+              )}
+            </TouchableRipple>
+          )}
           {!isMap && isOwnActivity && item.id && selectedMediaId === item.id ? (
             <View style={styles.deleteButton}>
               <ActivityMediaDeleteBtn onDelete={() => void handleDeleteMedia(item.id!)} isDeleting={isDeletingMedia} />
@@ -212,17 +222,6 @@ export default function MediaList() {
           ) : null}
           {isMap ? (
             <>
-              {isMapPressed ? (
-                <View
-                  pointerEvents="none"
-                  style={[
-                    StyleSheet.absoluteFill,
-                    styles.mapPressOverlay,
-                    { backgroundColor: dark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)' },
-                  ]}
-                  testID="activity-map-press-overlay"
-                />
-              ) : null}
               <MapMetaOverlay
                 locationName={locationName}
                 weatherTemperature={weatherTemperature}
@@ -237,7 +236,9 @@ export default function MediaList() {
               ) : null}
               <View pointerEvents="box-none" style={styles.mapActions}>
                 {isOwnActivity ? <AddActivityMediaBtn activityId={id} media={media ?? []} /> : null}
-                {canViewReplay ? <RouteReplayBtn activityId={id} userId={activityOwnerId} /> : null}
+                {canViewReplay && (!hideMap || isOwnActivity) ? (
+                  <RouteReplayBtn activityId={id} userId={activityOwnerId} />
+                ) : null}
               </View>
             </>
           ) : null}
@@ -251,8 +252,6 @@ export default function MediaList() {
       selectedMediaId,
       language,
       isDeletingMedia,
-      isMapPressed,
-      dark,
       dispatch,
       locationName,
       weatherTemperature,
@@ -263,8 +262,8 @@ export default function MediaList() {
       isFavorite,
       media,
       canViewReplay,
+      hideMap,
       activityOwnerId,
-      longPressGuard,
       profile?.allowActivityReplayViewing,
       push,
       handleDeleteMedia,
@@ -274,12 +273,15 @@ export default function MediaList() {
 
   return (
     <FlatList
+      ref={mediaListRef}
       data={displayedData}
       renderItem={renderItem}
       horizontal
       showsHorizontalScrollIndicator={false}
+      style={Platform.OS === 'web' ? { flexGrow: 0, height: mediaHeight + 8 } : undefined}
       testID="activity-media-list"
       contentContainerStyle={styles.listContent}
+      onContentSizeChange={handleMediaContentSizeChange}
       initialNumToRender={Math.max(1, Math.min(displayedData.length, 3))}
       maxToRenderPerBatch={3}
       windowSize={5}
@@ -315,8 +317,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 8,
     zIndex: 3,
-  },
-  mapPressOverlay: {
-    zIndex: 1,
   },
 });

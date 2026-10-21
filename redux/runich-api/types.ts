@@ -1,6 +1,6 @@
 import type { ACTIVITY_MIGRATION_STATUS } from './migration-status';
 import type { ActivityVisibility } from '@const/activity-visibility';
-import type { ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
+import type { ActivityHeartRateSample, ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
 
 type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof typeof ACTIVITY_MIGRATION_STATUS];
 
@@ -40,7 +40,13 @@ interface ActivityProfileResponse {
   profilePhotoBlurhash?: string | null;
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;
+  allowActivityHeartRateViewing?: boolean;
+  allowActivityElevationViewing?: boolean;
+  allowActivityPaceViewing?: boolean;
   allowActivitySharing?: boolean;
+  restingHeartRate?: string | null;
+  maxHeartRate?: string | null;
+  age?: string | null;
 }
 
 interface ActivityCountResponse {
@@ -63,7 +69,9 @@ export interface ActivityResponse {
   sport: string;
   media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
+  routeOnlyMapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  hideMap?: boolean;
   locationName?: string | null;
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
@@ -73,6 +81,9 @@ export interface ActivityResponse {
   distance: number;
   elevationGain: number;
   steps?: number | null;
+  averageHeartRate?: number | null;
+  minHeartRate?: number | null;
+  maxHeartRate?: number | null;
   speed?: number | null;
   visibility?: ActivityVisibility | null;
   isFavorite?: boolean;
@@ -94,7 +105,9 @@ export type ActivityListItemResponse = Pick<
   | 'sport'
   | 'media'
   | 'mapPhotoUrl'
+  | 'routeOnlyMapPhotoUrl'
   | 'mapPhotoUrlBlurhash'
+  | 'hideMap'
   | 'locationName'
   | 'weatherTemperature'
   | 'weatherWindSpeed'
@@ -129,7 +142,9 @@ export interface ActivityMutationResponse {
   sport: string;
   media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
+  routeOnlyMapPhotoUrl?: string | null;
   mapPhotoUrlBlurhash?: string | null;
+  hideMap?: boolean;
   locationName?: string | null;
   weatherTemperature?: number | null;
   weatherWindSpeed?: number | null;
@@ -155,7 +170,7 @@ export interface WatchWorkoutBatchImportResponse {
 
 export interface ActivityMediaMutationResponse {
   success: true;
-  media: ActivityMediaItemResponse[];
+  media: (ActivityMediaItemResponse & { id: string; activityId: string })[];
 }
 
 export interface ActivitiesResponse {
@@ -164,6 +179,12 @@ export interface ActivitiesResponse {
   hasMore: boolean;
   nextCursor: string | null;
   isLastPage?: boolean;
+}
+
+export interface HomeActivityFeedsResponse {
+  my: ActivitiesResponse;
+  followers: ActivitiesResponse;
+  favorites: ActivitiesResponse;
 }
 
 export interface ActivityMediaResponse {
@@ -176,6 +197,22 @@ export interface ActivityMediaResponse {
 export interface ActivityLocationsResponse {
   locations: ActivityLocationResponse[] | null;
   kilometresSplit: ActivityKilometreSplitResponse[] | null;
+}
+
+export interface ActivityChartLocationResponse {
+  timestamp: number;
+  coords: {
+    latitude?: number | null;
+    longitude?: number | null;
+    altitude?: number | null;
+    speed?: number | null;
+    timestamp?: number | null;
+  };
+}
+
+export interface ActivityChartDataResponse {
+  heartRateSamples: ActivityHeartRateSample[];
+  locations: ActivityChartLocationResponse[] | null;
 }
 
 export interface CommentMutationResponse {
@@ -245,13 +282,10 @@ export interface LikeListPageResponse {
   currentUserLike: Pick<LikeListResponse, 'id' | 'authorId'> | null;
 }
 
-interface FriendProfileResponse {
-  name?: string | null;
-  surname?: string | null;
-  profilePhoto?: string | null;
-  profilePhotoBlurhash?: string | null;
-  allowNewFollowers?: boolean;
-}
+type FriendProfileResponse = Pick<
+  ProfileType,
+  'city' | 'name' | 'surname' | 'profilePhoto' | 'profilePhotoBlurhash' | 'allowNewFollowers'
+>;
 
 export interface FollowingResponse {
   createdAt: string;

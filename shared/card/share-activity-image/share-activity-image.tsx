@@ -1,37 +1,20 @@
-import { useEffect, type ComponentRef, type MutableRefObject } from 'react';
+import { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import UserAvatar from '@S/avatar/avatar';
+import UserAvatar from '@S/avatar/user-avatar/user-avatar';
 import CustomImage from '@S/custom-image/custom-image';
 import { getIconNameByTypeOfSport, MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { formatDuration } from '@U/time-formatter';
 import { SHARE_IMAGE_WIDTH } from './const';
-import Metric from './metric';
+import Metric from './metric/metric';
+import { formatShareDate } from './utils';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import { CARD_METRICS } from '../metrics/const';
 import { getCardSpeedMetric } from '../metrics/utils';
-import type { ActivityCardData } from '../types';
-
-type ShareActivityImageProps = Pick<
-  ActivityCardData,
-  'distance' | 'duration' | 'date' | 'title' | 'mapPhotoUrl' | 'mapPhotoUrlBlurhash'
-> & {
-  profile?: ActivityCardData['profile'];
-  sport?: string;
-  emotion?: string | null;
-  elevationGain?: number;
-  steps?: number | null;
-  locationName?: string | null;
-  weatherTemperature?: number | null;
-  weatherWindSpeed?: number | null;
-  weatherCode?: number | null;
-  caloriesActive?: number | null;
-  cardRef: MutableRefObject<ComponentRef<typeof View> | null>;
-  onReady?: () => void;
-};
+import type { ShareActivityImageProps } from './types';
 
 export default function ShareActivityImage({
   distance,
@@ -148,19 +131,6 @@ export default function ShareActivityImage({
       </View>
     </View>
   );
-}
-
-function formatShareDate(date: string, duration: number, isRussian: boolean) {
-  const start = new Date(date);
-  if (Number.isNaN(start.getTime())) return '';
-
-  const end = new Date(start.getTime() + Math.max(0, duration));
-  const locale = isRussian ? 'ru-RU' : 'en-US';
-  const dateLabel = start.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
-  const formatTime = (value: Date) =>
-    value.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
-
-  return `${dateLabel}, ${formatTime(start)}–${formatTime(end)}`;
 }
 
 const styles = StyleSheet.create({

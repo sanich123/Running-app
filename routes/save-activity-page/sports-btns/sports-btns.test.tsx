@@ -1,8 +1,10 @@
+import type { RefObject } from 'react';
 import { act, screen, userEvent } from '@testing-library/react-native';
 import { setSavingDisabled } from '@R/slices/activity/activity';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import SportsBtns from './sports-btns';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ sport: 'run' }),
@@ -12,8 +14,8 @@ jest.mock('expo-router', () => ({
 const mockPresent = jest.fn();
 jest.mock('@S/choose-sport-modal/choose-sport-modal', () => {
   const { View } = jest.requireActual('react-native');
-  return ({ chooseSportModalRef }: any) => {
-    chooseSportModalRef.current = { present: mockPresent };
+  return ({ chooseSportModalRef }: { chooseSportModalRef: RefObject<BottomSheetModal | null> }) => {
+    Reflect.set(chooseSportModalRef, 'current', { present: mockPresent });
     return <View testID="manual-sport-modal" />;
   };
 });

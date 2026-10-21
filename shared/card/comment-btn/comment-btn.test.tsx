@@ -63,7 +63,6 @@ function renderCommentBtn(activityId = 'someActivityId', commentsLength = 6, all
           commentsLength,
         },
         isFullView: false,
-        isShowDeleteBtn: false,
         isShowDescription: false,
       }}>
       <ActivityCardCommentBtn />

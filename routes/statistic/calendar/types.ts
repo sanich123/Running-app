@@ -1,8 +1,10 @@
+import type { MonthStatisticsResponse } from '@R/runich-api/types';
+
 export interface CalendarStatisticsProps {
   year: string;
   month: string;
-  userId: string;
   selectedType: string;
+  monthStatistics: MonthStatisticsResponse;
 }
 
 export type StatisticActivities = { duration: number; distance: number; id: string; sport: string; date: string }[];

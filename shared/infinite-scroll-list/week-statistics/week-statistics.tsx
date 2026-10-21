@@ -11,7 +11,7 @@ import { getHoursMinutesFromMilliseconds } from '@U/time-formatter';
 import { getDeviceTimeZone } from '@U/time-zone';
 import { WEEK_STATISTICS } from './const';
 import { getCurrentWeekDates } from './util';
-import WeekStatisticsMetric from './week-statistics-metrics';
+import WeekStatisticsMetric from './week-statistics-metric/week-statistics-metric';
 
 export default function WeekStatistics() {
   const { push } = useRouter();

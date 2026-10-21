@@ -12,11 +12,12 @@ import {
   LazyInputBio,
   LazyInputsNameSurname,
   LazyInputsHeightAge,
+  LazyInputsHeartRate,
   LazyInputsWeightCity,
 } from '@Routes/app-routes/const';
 import { HEIGHT_AGE } from '@Routes/profile/profile-settings/inputs-height-age/const';
 import { getInitialProfileSettingsParams } from '@Routes/profile/profile-settings/profile-settings-params';
-import ProfileUpdateBtn from '@Routes/profile/update-btn/update-btn';
+import ProfileUpdateBtn from '@Routes/profile/update-btn/profile-update-btn/profile-update-btn';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import type { ProfileSettingsSearchParams } from '@Routes/profile/profile-settings/profile-settings-params';
 
@@ -79,6 +80,7 @@ export default function ProfileSettings() {
             </View>
             <LazyGenderBtns isDisabled={isFormDisabled} />
           </View>
+          <LazyInputsHeartRate isDisabled={isFormDisabled} />
         </Suspense>
       </KeyboardAwareScrollView>
     </>

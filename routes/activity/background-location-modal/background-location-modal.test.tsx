@@ -1,4 +1,6 @@
+import type { PropsWithChildren } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
+import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { renderWithProviders } from '@T/utils/test-utils';
 import BackgroundLocationModal from './background-location-modal';
 
@@ -6,7 +8,7 @@ jest.mock('@gorhom/bottom-sheet', () => {
   const { View } = jest.requireActual('react-native');
   return {
     BottomSheetBackdrop: View,
-    BottomSheetModal: ({ children }: any) => <View>{children}</View>,
+    BottomSheetModal: ({ children }: PropsWithChildren) => <View>{children}</View>,
     BottomSheetModalProvider: View,
     BottomSheetView: View,
   };
@@ -23,7 +25,7 @@ describe('background location modal', () => {
     const requestBackgroundPermission = jest.fn().mockResolvedValue({ granted: true });
     await renderWithProviders(
       <BackgroundLocationModal
-        backgroundLocationEnabledModalRef={{ current: { close } } as any}
+        backgroundLocationEnabledModalRef={createMockBottomSheetModalRef({ close })}
         requestBackgroundPermission={requestBackgroundPermission}
       />,
     );
@@ -40,7 +42,7 @@ describe('background location modal', () => {
 
     await renderWithProviders(
       <BackgroundLocationModal
-        backgroundLocationEnabledModalRef={{ current: { close } } as any}
+        backgroundLocationEnabledModalRef={createMockBottomSheetModalRef({ close })}
         requestBackgroundPermission={jest.fn()}
       />,
     );

@@ -10,7 +10,7 @@ import { MEDIA_GRID_COLUMNS } from './const';
 import MediaGrid from './media-grid';
 
 jest.mock('expo-router', () => ({ useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.userId }) }));
-jest.mock('./image/image', () => {
+jest.mock('./image/media-grid-image/media-grid-image', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="media-grid-image" />;
 });

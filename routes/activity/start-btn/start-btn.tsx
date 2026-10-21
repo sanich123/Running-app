@@ -100,11 +100,6 @@ export default function StartBtn({
     return () => animation.stop();
   }, [isRecording, pulse]);
 
-  const responseIcon = {
-    [STATUSES.started]: <Icon testID={STOP_ICON} source="pause" size={42} color={colors.onPrimary} />,
-    [STATUSES.paused]: <Icon testID={STOP_ICON} source="stop" size={42} color={colors.onError} />,
-    [STATUSES.continued]: <Icon testID={STOP_ICON} source="pause" size={42} color={colors.onPrimary} />,
-  };
   const isInitialLocationLoading =
     activityStatus === STATUSES.initial && (isGettingLocation || isTrackingActionInProgress);
   const isDisabled = isTrackingActionInProgress || (activityStatus === STATUSES.initial && !isReadyToRecordLocation);
@@ -138,95 +133,6 @@ export default function StartBtn({
     );
   };
 
-  const handlePress = async () => {
-    if (isDisabled) {
-      return;
-    }
-
-    setIsTrackingActionInProgress(true);
-    onTrackingActionInProgressChange?.(true);
-    let createdJournalId: string | null = null;
-    try {
-      if (activityStatus === STATUSES.initial) {
-        const initialLocation = await getCurrentOrLastKnownPosition();
-        if (!initialLocation) {
-          throw new Error('Position is unavailable');
-        }
-
-        const { provider, ...initialPosition } = initialLocation;
-        dispatch(setInitialLocation(initialPosition));
-        // A new recording must never inherit a persisted recording or a
-        // location task left alive after an app restart.
-        await stopLocationTracking();
-        const oldJournalId = getActiveLocationJournalId();
-        if (oldJournalId) removeLocationJournal(oldJournalId);
-        dispatch(clearTrackingRecovery());
-        dispatch(resetLocationsFromBackground());
-        dispatch(setLocationProvider(provider ?? null));
-        dispatch(resetFinishedActivity());
-        createdJournalId = createLocationJournal();
-        dispatch(startTrackingRecovery(createdJournalId));
-        await startPedometerActivity();
-        await startLocationTracking();
-        const startedAt = Date.now();
-        const timeZone = getDeviceTimeZone();
-        dispatch(setActivityStartContext({ startedAt, timeZone }));
-        dispatch(setTrackingRecoveryStartContext({ startedAt, timeZone }));
-        dispatch(startDurationTimer(startedAt));
-        dispatch(setActivityStatus(STATUSES.started));
-        return;
-      }
-
-      await stopLocationTracking();
-      const pedometerData = isRecording ? await pausePedometerActivity() : await finishPedometerActivity();
-      const durationForSave = getCurrentActivityDuration({ duration, durationTimerBase, durationTimerStartedAt });
-      dispatch(setDurationAt(durationForSave));
-      dispatch(stopDurationTimer());
-      saveCurrentActivity(durationForSave, pedometerData);
-
-      if (isRecording) {
-        const currentJournalId = getActiveLocationJournalId();
-        if (currentJournalId) markLocationJournalPause(currentJournalId);
-        dispatch(setTrackingRecoveryStatus(STATUSES.paused));
-        dispatch(setActivityStatus(STATUSES.paused));
-        dispatch(setEmptyLastArrayWhenPaused());
-        return;
-      }
-
-      dispatch(setTrackingRecoveryStatus(STATUSES.paused));
-      dispatch(setActivityStatus(STATUSES.initial));
-      dispatch(resetLocationsFromBackground());
-      dispatch(resetActivityDraft());
-      push({
-        pathname: `/${ROUTES.manualActivity}`,
-        params: {
-          cameraVisible: 'false',
-          description: '',
-          emotion: 'normal',
-          visibility: ACTIVITY_VISIBILITY.followers,
-          mode: 'tracked',
-          sport,
-          title: '',
-        },
-      });
-    } catch (error) {
-      if (createdJournalId) {
-        removeLocationJournal(createdJournalId);
-        dispatch(clearTrackingRecovery());
-      }
-      resetPedometerActivity();
-      errorToast(
-        activityStatus === STATUSES.initial
-          ? 'Не удалось запустить отслеживание геопозиции'
-          : 'Не удалось остановить отслеживание геопозиции',
-        error,
-      );
-    } finally {
-      setIsTrackingActionInProgress(false);
-      onTrackingActionInProgressChange?.(false);
-    }
-  };
-
   return (
     <TouchableRipple
       borderless
@@ -238,7 +144,94 @@ export default function StartBtn({
       onPressOut={() =>
         Animated.spring(pressScale, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 8 }).start()
       }
-      onPress={handlePress}
+      onPress={async () => {
+        if (isDisabled) {
+          return;
+        }
+
+        setIsTrackingActionInProgress(true);
+        onTrackingActionInProgressChange?.(true);
+        let createdJournalId: string | null = null;
+        try {
+          if (activityStatus === STATUSES.initial) {
+            const initialLocation = await getCurrentOrLastKnownPosition();
+            if (!initialLocation) {
+              throw new Error('Position is unavailable');
+            }
+
+            const { provider, ...initialPosition } = initialLocation;
+            dispatch(setInitialLocation(initialPosition));
+            // A new recording must never inherit a persisted recording or a
+            // location task left alive after an app restart.
+            await stopLocationTracking();
+            const oldJournalId = getActiveLocationJournalId();
+            if (oldJournalId) removeLocationJournal(oldJournalId);
+            dispatch(clearTrackingRecovery());
+            dispatch(resetLocationsFromBackground());
+            dispatch(setLocationProvider(provider ?? null));
+            dispatch(resetFinishedActivity());
+            createdJournalId = createLocationJournal();
+            dispatch(startTrackingRecovery(createdJournalId));
+            await startPedometerActivity();
+            await startLocationTracking();
+            const startedAt = Date.now();
+            const timeZone = getDeviceTimeZone();
+            dispatch(setActivityStartContext({ startedAt, timeZone }));
+            dispatch(setTrackingRecoveryStartContext({ startedAt, timeZone }));
+            dispatch(startDurationTimer(startedAt));
+            dispatch(setActivityStatus(STATUSES.started));
+            return;
+          }
+
+          await stopLocationTracking();
+          const pedometerData = isRecording ? await pausePedometerActivity() : await finishPedometerActivity();
+          const durationForSave = getCurrentActivityDuration({ duration, durationTimerBase, durationTimerStartedAt });
+          dispatch(setDurationAt(durationForSave));
+          dispatch(stopDurationTimer());
+          saveCurrentActivity(durationForSave, pedometerData);
+
+          if (isRecording) {
+            const currentJournalId = getActiveLocationJournalId();
+            if (currentJournalId) markLocationJournalPause(currentJournalId);
+            dispatch(setTrackingRecoveryStatus(STATUSES.paused));
+            dispatch(setActivityStatus(STATUSES.paused));
+            dispatch(setEmptyLastArrayWhenPaused());
+            return;
+          }
+
+          dispatch(setTrackingRecoveryStatus(STATUSES.paused));
+          dispatch(setActivityStatus(STATUSES.initial));
+          dispatch(resetLocationsFromBackground());
+          dispatch(resetActivityDraft());
+          push({
+            pathname: `/${ROUTES.manualActivity}`,
+            params: {
+              cameraVisible: 'false',
+              description: '',
+              emotion: 'normal',
+              visibility: ACTIVITY_VISIBILITY.followers,
+              mode: 'tracked',
+              sport,
+              title: '',
+            },
+          });
+        } catch (error) {
+          if (createdJournalId) {
+            removeLocationJournal(createdJournalId);
+            dispatch(clearTrackingRecovery());
+          }
+          resetPedometerActivity();
+          errorToast(
+            activityStatus === STATUSES.initial
+              ? 'Не удалось запустить отслеживание геопозиции'
+              : 'Не удалось остановить отслеживание геопозиции',
+            error,
+          );
+        } finally {
+          setIsTrackingActionInProgress(false);
+          onTrackingActionInProgressChange?.(false);
+        }
+      }}
       disabled={isDisabled}>
       <Animated.View style={[styles.buttonScale, { transform: [{ scale: pressScale }] }]}>
         {isRecording && (
@@ -287,8 +280,10 @@ export default function StartBtn({
             </>
           ) : isTrackingActionInProgress ? (
             <ActivityIndicator testID="tracking-action-loading" color={colors.onPrimary} size="large" />
+          ) : activityStatus === STATUSES.paused ? (
+            <Icon testID={STOP_ICON} source="stop" size={42} color={colors.onError} />
           ) : (
-            responseIcon[activityStatus]
+            <Icon testID={STOP_ICON} source="pause" size={42} color={colors.onPrimary} />
           )}
         </View>
       </Animated.View>

@@ -1,6 +1,7 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { createSearchParams } from '@R/runich-api/create-search-params';
 import { runichApi } from '@R/runich-api/runich-api';
+import { HOME_FEED, HOME_FEED_DONE_CURSOR } from '@Routes/home-page/const';
 import type {
   ActivityToSend,
   ActivityUpdateRequest,
@@ -18,12 +19,18 @@ import type {
   ActivityMutationResponse,
   ActivityMediaMutationResponse,
   ActivityLocationsResponse,
+  ActivityChartDataResponse,
   ActivityMediaResponse,
   ActivityMigrationJobResponse,
   ActivityResponse,
   ActivityFavoriteMutationResponse,
+  HomeActivityFeedsResponse,
   WatchWorkoutBatchImportResponse,
 } from '@R/runich-api/types';
+import type { HomeFeed } from '@Routes/home-page/const';
+
+const HOME_FEEDS = [HOME_FEED.my, HOME_FEED.followers, HOME_FEED.favorites] as const;
+type HomeFeedCursors = Record<HomeFeed, string>;
 
 const ACTIVITY_PAGE_SIZE = 20;
 
@@ -58,6 +65,29 @@ export const activityApi = runichApi.injectEndpoints({
         `/activity/${id}/all${createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined })}`,
       providesTags: [Tags.activities],
     }),
+    getHomeActivityFeeds: infiniteQuery<HomeActivityFeedsResponse, void, HomeFeedCursors | null>({
+      infiniteQueryOptions: {
+        initialPageParam: null,
+        getNextPageParam: (lastPage) => {
+          if (!HOME_FEEDS.some((feed) => lastPage[feed].hasMore)) return undefined;
+
+          return Object.fromEntries(
+            HOME_FEEDS.map((feed) => [
+              feed,
+              lastPage[feed].hasMore ? (lastPage[feed].nextCursor ?? HOME_FEED_DONE_CURSOR) : HOME_FEED_DONE_CURSOR,
+            ]),
+          ) as HomeFeedCursors;
+        },
+      },
+      query: ({ pageParam }) =>
+        `/activity/home${createSearchParams({
+          take: ACTIVITY_PAGE_SIZE,
+          myCursor: pageParam?.my,
+          followersCursor: pageParam?.followers,
+          favoritesCursor: pageParam?.favorites,
+        })}`,
+      providesTags: [Tags.activities],
+    }),
     getAllActivityMediaByUserId: infiniteQuery<ActivityMediaResponse, GetActivityMediaRequest, string>({
       infiniteQueryOptions: {
         initialPageParam: '',
@@ -67,14 +97,18 @@ export const activityApi = runichApi.injectEndpoints({
         `/activity/${userId}/media${createSearchParams({ take, cursor: pageParam || undefined })}`,
       providesTags: [Tags.activities],
     }),
-    getActivityByActivityId: query<ActivityResponse | null, string>({
-      query: (id: string) => `/activity/activityId/${id}`,
-      providesTags: (result, error, arg) => [Tags.activities, { type: Tags.activities, id: arg }],
+    getActivityByActivityId: query<ActivityResponse | null, { activityId: string; viewerId: string }>({
+      query: ({ activityId }) => `/activity/activityId/${activityId}`,
+      providesTags: (result, error, { activityId }) => [Tags.activities, { type: Tags.activities, id: activityId }],
     }),
     getLocationsByActivityId: query<ActivityLocationsResponse | null, GetActivityLocationsRequest>({
       query: ({ activityId, replay }: GetActivityLocationsRequest) =>
         `/activity/${activityId}/locations${createSearchParams({ replay: replay || undefined })}`,
       providesTags: [Tags.activities],
+    }),
+    getActivityChartData: query<ActivityChartDataResponse | null, { activityId: string; viewerId: string }>({
+      query: ({ activityId }) => '/activity/' + activityId + '/chart-data',
+      providesTags: (result, error, { activityId }) => [Tags.activities, { type: Tags.activities, id: activityId }],
     }),
     getStravaMigrationStatus: query<ActivityMigrationJobResponse, string>({
       query: (jobId: string) => `/activity/migration-strava/jobs/${jobId}`,
@@ -154,8 +188,10 @@ export const {
   useSetActivityFavoriteMutation,
   useGetAllActivityMediaByUserIdInfiniteQuery,
   useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery,
+  useGetHomeActivityFeedsInfiniteQuery,
   useGetActivityByActivityIdQuery,
   useGetLocationsByActivityIdQuery,
+  useGetActivityChartDataQuery,
   useGetStravaMigrationStatusQuery,
   useGetCurrentStravaMigrationStatusQuery,
   useAddActivityByUserIdMutation,

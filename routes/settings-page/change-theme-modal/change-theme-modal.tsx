@@ -7,6 +7,7 @@ import { useTheme, Text, Divider, Icon, RadioButton, TouchableRipple } from 'rea
 import { changeTheme } from '@R/slices/settings/settings';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { THEMES_ARRAY } from './const';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 
 export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: RefObject<BottomSheetModal | null> }) {
   const dispatch = useAppDispatch();
@@ -14,7 +15,7 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
   const { colors } = useTheme();
 
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
 

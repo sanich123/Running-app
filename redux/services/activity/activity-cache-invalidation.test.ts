@@ -8,9 +8,9 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import '../statistics/statistics';
-import { useGetFavoriteActivitiesInfiniteQuery } from './activity';
+import { activityApi, useGetFavoriteActivitiesInfiniteQuery } from './activity';
 import { runichApi } from '../../runich-api/runich-api';
+import { statisticsApi } from '../statistics/statistics';
 
 function FavoriteActivitiesPaginationProbe() {
   const { isSuccess, fetchNextPage } = useGetFavoriteActivitiesInfiniteQuery();
@@ -60,13 +60,12 @@ describe('activity cache invalidation', () => {
       http.delete(`${BASE_URL}/activity/:activityId`, () => new HttpResponse(null, { status: 204 })),
     );
     const store = createStore();
-    const api = runichApi as any;
     const statisticsSubscription = store.dispatch(
-      api.endpoints.getAnnualStatisticsByUserId.initiate({ userId: MOCK_SERVER_IDS.userId }),
+      statisticsApi.endpoints.getAnnualStatisticsByUserId.initiate({ userId: MOCK_SERVER_IDS.userId }),
     );
 
     await statisticsSubscription.unwrap();
-    await store.dispatch(api.endpoints.deleteActivityById.initiate(MOCK_SERVER_IDS.activityId)).unwrap();
+    await store.dispatch(activityApi.endpoints.deleteActivityById.initiate(MOCK_SERVER_IDS.activityId)).unwrap();
 
     await waitFor(() => expect(statisticsRequests).toBe(2));
     statisticsSubscription.unsubscribe();

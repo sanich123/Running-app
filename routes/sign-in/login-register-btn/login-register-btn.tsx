@@ -17,10 +17,8 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { successToast } from '@S/success-toast/success-toast';
 import { SignInPageStates } from '@U/validate-email-password';
-import { EMAIL_LINK_BTN, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN } from './const';
+import { EMAIL_LINK_BTN, REGISTER_BTN, LOGIN_BTN, LoginBtnIcons, RESET_BTN, EMAIL_SEND_ERROR } from './const';
 import type { EmailPasswordData } from '@R/services/authentication/types';
-
-const EMAIL_SEND_ERROR = 'Не удалось отправить письмо';
 
 export default function LoginRegisterBtn({
   handleSubmit,

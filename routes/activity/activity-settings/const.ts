@@ -1,3 +1,5 @@
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { Platform, TextInput } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import type { ActivityVoiceMetric } from '@R/slices/settings/types';
 
@@ -74,3 +76,5 @@ export const ACTIVITY_VOICE_PREVIEW = {
   [LANGUAGES.russian]:
     'Первый километр. Темп пять минут тридцать секунд на километр. Время движения пять минут тридцать секунд. Набор высоты десять метров.',
 } as const;
+
+export const ActivitySettingsTextInput = Platform.OS === 'web' ? TextInput : BottomSheetTextInput;

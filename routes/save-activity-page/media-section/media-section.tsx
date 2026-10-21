@@ -4,29 +4,31 @@ import { Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import PreviewImages from '../preview-images/preview-images';
 import ShowCameraBtn from '../show-camera-btn/show-camera-btn';
-import { UPLOAD_PHOTO_BTN } from '../upload-photos-btn/ const';
+import { MAX_ACTIVITY_MEDIA, UPLOAD_PHOTO_BTN } from '../upload-photos-btn/ const';
 import UploadPhotosBtn from '../upload-photos-btn/upload-photos-btn';
-import type { ActivityPhoto } from '@R/slices/activity/types';
-
-interface MediaSectionProps {
-  images: ActivityPhoto[];
-  isEditingActivity: boolean;
-  activityId?: string;
-  setImages: (arg: ActivityPhoto[]) => void;
-}
+import type { MediaSectionProps } from './types';
 
 export default function MediaSection({ images, isEditingActivity, activityId, setImages }: MediaSectionProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const [isMediaUploadDisabled, setIsMediaUploadDisabled] = useState(false);
+  const isAtMediaLimit = images.length >= MAX_ACTIVITY_MEDIA;
 
   if (isEditingActivity) {
-    if (!images.length) return null;
-
     return (
       <View style={styles.editMedia}>
-        <Text variant="titleSmall" style={{ color: colors.onSurface }}>
-          {UPLOAD_PHOTO_BTN[language].activityMedia}
+        <View style={styles.mediaButtons}>
+          <UploadPhotosBtn
+            isDisabled={isMediaUploadDisabled}
+            setIsDisabled={setIsMediaUploadDisabled}
+            setImages={setImages}
+            images={images}
+            activityId={activityId}
+          />
+          <ShowCameraBtn isDisabled={isMediaUploadDisabled || isAtMediaLimit} />
+        </View>
+        <Text style={[styles.mediaHint, { color: colors.onSurfaceVariant }]}>
+          {UPLOAD_PHOTO_BTN[language].uploadHint}
         </Text>
         <PreviewImages
           setImages={setImages}
@@ -48,7 +50,7 @@ export default function MediaSection({ images, isEditingActivity, activityId, se
           setImages={setImages}
           images={images}
         />
-        <ShowCameraBtn isDisabled={isMediaUploadDisabled} />
+        <ShowCameraBtn isDisabled={isMediaUploadDisabled || isAtMediaLimit} />
       </View>
       <Text style={[styles.mediaHint, { color: colors.onSurfaceVariant }]}>
         {UPLOAD_PHOTO_BTN[language].uploadHint}

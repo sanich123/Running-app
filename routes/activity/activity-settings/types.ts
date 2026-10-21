@@ -5,3 +5,7 @@ export interface ActivitySettingsProps {
   settingsModalRef: RefObject<BottomSheetModal | null>;
   locationInfoModalRef?: RefObject<BottomSheetModal | null>;
 }
+
+export interface ReminderSettingsProps {
+  scrollToReminderFields: () => void;
+}

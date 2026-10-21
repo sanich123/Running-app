@@ -15,13 +15,7 @@ import {
   MANUAL_ACTIVITY_TIME_LIMITS,
   normalizeManualActivityTimeInput,
 } from './const';
-
-interface InputValues {
-  distance: string;
-  hours: string;
-  minutes: string;
-  seconds: string;
-}
+import type { InputValues } from './types';
 
 export default function InputsDistanceTime() {
   const { manualDistance, manualHours, manualMinutes, manualSeconds } = useManualActivityParams();
@@ -39,13 +33,6 @@ export default function InputsDistanceTime() {
 
   const setInputValue = (field: keyof InputValues, value: string) => {
     setInputValues((currentValues) => ({ ...currentValues, [field]: value }));
-  };
-
-  const handleDistanceChange = (value: string) => {
-    const normalizedValue = normalizeManualActivityDistanceInput(value);
-
-    setInputValue('distance', normalizedValue);
-    setManualDistance(normalizedValue);
   };
 
   const handleTimeChange = (
@@ -85,7 +72,12 @@ export default function InputsDistanceTime() {
         inputMode="numeric"
         value={inputValues.distance}
         onFocus={() => clearZeroOnFocus('distance', inputValues.distance, setManualDistance)}
-        onChangeText={handleDistanceChange}
+        onChangeText={(value) => {
+          const normalizedValue = normalizeManualActivityDistanceInput(value);
+
+          setInputValue('distance', normalizedValue);
+          setManualDistance(normalizedValue);
+        }}
         disabled={shouldBeDisabled}
       />
       <TextInput

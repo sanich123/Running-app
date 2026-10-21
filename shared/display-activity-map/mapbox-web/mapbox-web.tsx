@@ -1,14 +1,22 @@
 import { useMemo, useRef, useEffect } from 'react';
-import { Map as MapboxMap, Marker as MapboxMarker, Popup as MapboxPopup } from 'mapbox-gl';
+import { AttributionControl, Map as MapboxMap, Marker as MapboxMarker, Popup as MapboxPopup } from 'mapbox-gl';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from 'react-native-paper';
 import {
   ACTIVITY_ROUTE_REPLAY_TERRAIN_EXAGGERATION,
   ACTIVITY_ROUTE_REPLAY_TERRAIN_SOURCE_URL,
 } from '@S/activity-route-replay/const';
-import { getAvatarLabel } from '@S/avatar/avatar';
 import { DISPLAY_ACTIVITY_MAP_CAMERA_PADDING } from '../const';
-import type { WebMapControlsHandle } from '../map-controls/types';
-import type { ActivityKilometreSplit, ProfileType } from '@S/card/types';
+import {
+  getRouteSpeedGradient,
+  getKilometreSplitFeatures,
+  getRouteBaseFeatures,
+  getRouteFeatures,
+  updateMapboxBrandingPosition,
+  styleKilometrePopup,
+  updateWebAvatarMarker,
+} from './utils';
+import type { MapboxWebProps } from './types';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 export default function MapboxWeb({
@@ -28,30 +36,11 @@ export default function MapboxWeb({
   cameraZoomLevel = 14.5,
   enable3DTerrain = false,
   followPlaybackCamera = false,
-}: {
-  boundBox: [number, number, number, number];
-  routeCoordinates: number[][];
-  routeSegmentColors?: string[];
-  kilometresSplit: ActivityKilometreSplit[];
-  kilometreUnit?: string;
-  showPlaybackMarker?: boolean;
-  playbackCoordinate?: [number, number] | null;
-  playbackHeading?: number;
-  playbackCameraUpdateRef?: {
-    current:
-      | ((coordinate: [number, number], heading: number, zoomLevel?: number, animationDurationMs?: number) => void)
-      | null;
-  };
-  playbackProfile?: Pick<ProfileType, 'name' | 'surname' | 'profilePhoto'>;
-  mapControlsRef?: { current: WebMapControlsHandle | null };
-  mapStyleURL?: string;
-  cameraPitch?: number;
-  cameraZoomLevel?: number;
-  enable3DTerrain?: boolean;
-  followPlaybackCamera?: boolean;
-}) {
+}: MapboxWebProps) {
   const { colors, dark } = useTheme();
+  const { bottom: safeAreaBottomInset } = useSafeAreaInsets();
   const mapRef = useRef<MapboxMap | null>(null);
+  const brandingBottomInsetRef = useRef(safeAreaBottomInset);
   const mapNode = useRef<HTMLDivElement | null>(null);
   const playbackCoordinateRef = useRef(playbackCoordinate);
   const playbackHeadingRef = useRef(playbackHeading);
@@ -59,66 +48,16 @@ export default function MapboxWeb({
   const playbackMarkerRef = useRef<MapboxMarker | null>(null);
   const playbackMarkerElementRef = useRef<HTMLDivElement | null>(null);
   const kilometrePopupRef = useRef<MapboxPopup | null>(null);
-  const kilometreSplitFeatures = useMemo(() => {
-    const validKilometreSplits = (Array.isArray(kilometresSplit) ? kilometresSplit : []).filter(
-      ({ kilometerPoint }) => {
-        const { longitude, latitude } = kilometerPoint?.coords ?? {};
-        return Number.isFinite(longitude) && Number.isFinite(latitude);
-      },
-    );
-
-    return validKilometreSplits.map(({ kilometerPoint }, index) => ({
-      type: 'Feature' as const,
-      properties: { label: `${index + 1}`, sortKey: index },
-      geometry: {
-        type: 'Point' as const,
-        coordinates: [kilometerPoint.coords.longitude, kilometerPoint.coords.latitude],
-      },
-    }));
-  }, [kilometresSplit]);
-  const routeMarkerFeatures = useMemo(() => {
-    const start = routeCoordinates[0];
-    const end = routeCoordinates[routeCoordinates.length - 1];
-    if (!start || !end) return [];
-
-    return [
-      {
-        type: 'Feature' as const,
-        properties: { icon: '▶', markerType: 'start' },
-        geometry: { type: 'Point' as const, coordinates: start },
-      },
-      {
-        type: 'Feature' as const,
-        properties: { icon: '■', markerType: 'end' },
-        geometry: { type: 'Point' as const, coordinates: end },
-      },
-    ];
-  }, [routeCoordinates]);
-  const routeFeatures = useMemo(() => {
-    if (!routeSegmentColors?.length) {
-      return [
-        {
-          type: 'Feature' as const,
-          properties: {},
-          geometry: { type: 'LineString' as const, coordinates: routeCoordinates },
-        },
-      ];
-    }
-
-    return routeSegmentColors.flatMap((color, index) => {
-      const start = routeCoordinates[index];
-      const end = routeCoordinates[index + 1];
-      if (!start || !end) return [];
-
-      return [
-        {
-          type: 'Feature' as const,
-          properties: { color },
-          geometry: { type: 'LineString' as const, coordinates: [start, end] },
-        },
-      ];
-    });
-  }, [routeCoordinates, routeSegmentColors]);
+  const kilometreSplitFeatures = useMemo(() => getKilometreSplitFeatures(kilometresSplit), [kilometresSplit]);
+  const routeBaseFeatures = useMemo(
+    () => getRouteBaseFeatures(routeCoordinates, routeSegmentColors),
+    [routeCoordinates, routeSegmentColors],
+  );
+  const routeFeatures = useMemo(() => getRouteFeatures(routeCoordinates), [routeCoordinates]);
+  const routeSpeedGradient = useMemo(
+    () => getRouteSpeedGradient(routeCoordinates, routeSegmentColors ?? []),
+    [routeCoordinates, routeSegmentColors],
+  );
 
   useEffect(() => {
     playbackCoordinateRef.current = playbackCoordinate;
@@ -137,6 +76,8 @@ export default function MapboxWeb({
       container: node,
       style: mapStyleURL,
       accessToken: process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '',
+      attributionControl: false,
+      logoPosition: 'bottom-left',
       config: {
         basemap: {
           lightPreset: dark ? 'night' : 'day',
@@ -160,7 +101,16 @@ export default function MapboxWeb({
         },
       },
     });
+    const mapResizeObserver =
+      typeof ResizeObserver === 'undefined'
+        ? null
+        : new ResizeObserver(() => {
+            mapboxMap.resize();
+          });
+    mapResizeObserver?.observe(node);
     mapRef.current = mapboxMap;
+    brandingBottomInsetRef.current = safeAreaBottomInset;
+    mapboxMap.addControl(new AttributionControl({ compact: true }), 'bottom-left');
     const mapControls = {
       zoomTo(zoomLevel: number, durationMs = 250) {
         mapboxMap.zoomTo(zoomLevel, { duration: durationMs });
@@ -192,6 +142,7 @@ export default function MapboxWeb({
       playbackCameraUpdateRef.current = updatePlaybackCamera;
     }
     mapboxMap.on('load', () => {
+      updateMapboxBrandingPosition(mapboxMap, brandingBottomInsetRef.current);
       if (enable3DTerrain) {
         mapboxMap.addSource('activity-route-replay-terrain', {
           type: 'raster-dem',
@@ -205,8 +156,32 @@ export default function MapboxWeb({
         });
       }
 
+      if (routeBaseFeatures.length) {
+        mapboxMap.addSource('route-base', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: routeBaseFeatures,
+          },
+        });
+        mapboxMap.addLayer({
+          id: 'route-base-line',
+          type: 'line',
+          source: 'route-base',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round',
+          },
+          paint: {
+            'line-color': colors.primary,
+            'line-width': 4,
+          },
+        });
+      }
+
       mapboxMap.addSource('route', {
         type: 'geojson',
+        lineMetrics: Boolean(routeSpeedGradient),
         data: {
           type: 'FeatureCollection',
           features: routeFeatures,
@@ -221,8 +196,10 @@ export default function MapboxWeb({
           'line-cap': 'round',
         },
         paint: {
-          'line-color': routeSegmentColors?.length ? ['get', 'color'] : colors.primary,
-          'line-width': 4,
+          'line-color': colors.primary,
+          'line-emissive-strength': 1,
+          'line-width': 5,
+          ...(routeSpeedGradient ? { 'line-gradient': routeSpeedGradient } : {}),
         },
       });
 
@@ -256,6 +233,7 @@ export default function MapboxWeb({
           },
           paint: {
             'circle-color': colors.primary,
+            'circle-emissive-strength': 1,
             'circle-radius': 5.5,
             'circle-stroke-color': colors.primary,
             'circle-stroke-width': 1,
@@ -287,40 +265,6 @@ export default function MapboxWeb({
         });
       }
 
-      mapboxMap.addSource('route-markers', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: routeMarkerFeatures,
-        },
-      });
-      mapboxMap.addLayer({
-        id: 'route-marker-background',
-        type: 'circle',
-        source: 'route-markers',
-        paint: {
-          'circle-color': colors.surface,
-          'circle-radius': 9,
-          'circle-stroke-color': ['match', ['get', 'markerType'], 'start', colors.tertiary, colors.error],
-          'circle-stroke-width': 1,
-        },
-      });
-      mapboxMap.addLayer({
-        id: 'route-marker-icon',
-        type: 'symbol',
-        source: 'route-markers',
-        layout: {
-          'text-allow-overlap': true,
-          'text-anchor': 'center',
-          'text-field': ['get', 'icon'],
-          'text-ignore-placement': true,
-          'text-size': 9,
-        },
-        paint: {
-          'text-color': ['match', ['get', 'markerType'], 'start', colors.tertiary, colors.error],
-        },
-      });
-
       if (showPlaybackMarker) {
         const initialCoordinate =
           playbackCoordinateRef.current ?? (routeCoordinates[0] as [number, number] | undefined);
@@ -348,6 +292,7 @@ export default function MapboxWeb({
     });
 
     return () => {
+      mapResizeObserver?.disconnect();
       if (playbackCameraUpdateRef?.current === updatePlaybackCamera) {
         playbackCameraUpdateRef.current = null;
       }
@@ -362,12 +307,10 @@ export default function MapboxWeb({
     };
   }, [
     boundBox,
-    colors.error,
     colors.onSurface,
     colors.outlineVariant,
     colors.primary,
     colors.surface,
-    colors.tertiary,
     dark,
     mapStyleURL,
     cameraPitch,
@@ -378,12 +321,19 @@ export default function MapboxWeb({
     kilometreUnit,
     mapControlsRef,
     playbackCameraUpdateRef,
+    routeBaseFeatures,
     routeCoordinates,
     routeFeatures,
-    routeMarkerFeatures,
-    routeSegmentColors,
+    routeSpeedGradient,
+    safeAreaBottomInset,
     showPlaybackMarker,
   ]);
+
+  useEffect(() => {
+    brandingBottomInsetRef.current = safeAreaBottomInset;
+    const map = mapRef.current;
+    if (map) updateMapboxBrandingPosition(map, safeAreaBottomInset);
+  }, [safeAreaBottomInset]);
 
   useEffect(() => {
     if (!playbackCoordinate) return;
@@ -391,59 +341,4 @@ export default function MapboxWeb({
   }, [playbackCoordinate, showPlaybackMarker]);
 
   return <div ref={mapNode} style={{ flex: 1, width: '100%', minHeight: 0 }} />;
-}
-
-function styleKilometrePopup(popup: MapboxPopup, backgroundColor: string, textColor: string, borderColor: string) {
-  const element = popup.getElement();
-  if (!element) return;
-  const content = element.querySelector<HTMLElement>('.mapboxgl-popup-content');
-  const tip = element.querySelector<HTMLElement>('.mapboxgl-popup-tip');
-
-  if (content) {
-    content.style.backgroundColor = backgroundColor;
-    content.style.border = `1px solid ${borderColor}`;
-    content.style.borderRadius = '8px';
-    content.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.2)';
-    content.style.color = textColor;
-    content.style.fontSize = '13px';
-    content.style.fontWeight = '600';
-    content.style.padding = '5px 9px';
-    content.style.whiteSpace = 'nowrap';
-  }
-
-  if (!tip) return;
-  if (element.classList.contains('mapboxgl-popup-anchor-bottom')) tip.style.borderTopColor = backgroundColor;
-  if (element.classList.contains('mapboxgl-popup-anchor-top')) tip.style.borderBottomColor = backgroundColor;
-  if (element.classList.contains('mapboxgl-popup-anchor-left')) tip.style.borderRightColor = backgroundColor;
-  if (element.classList.contains('mapboxgl-popup-anchor-right')) tip.style.borderLeftColor = backgroundColor;
-}
-
-function updateWebAvatarMarker(
-  element: HTMLDivElement | null,
-  profile?: Pick<ProfileType, 'name' | 'surname' | 'profilePhoto'>,
-) {
-  if (!element) return;
-  element.replaceChildren();
-
-  if (profile?.profilePhoto) {
-    const image = document.createElement('img');
-    image.alt = '';
-    image.draggable = false;
-    image.src = profile.profilePhoto;
-    image.style.borderRadius = '50%';
-    image.style.height = '36px';
-    image.style.objectFit = 'cover';
-    image.style.width = '36px';
-    element.append(image);
-    return;
-  }
-
-  const initials = getAvatarLabel(profile?.name, profile?.surname);
-  const fallback = document.createElement('span');
-  fallback.textContent = initials || '👤';
-  fallback.style.fontSize = initials ? '16px' : '22px';
-  fallback.style.lineHeight = '36px';
-  fallback.style.textAlign = 'center';
-  fallback.style.width = '36px';
-  element.append(fallback);
 }

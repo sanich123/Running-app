@@ -1,31 +1,42 @@
-import { useEffect, useRef } from 'react';
-import { useKeepAwake } from 'expo-keep-awake';
-import { SystemBars } from 'react-native-edge-to-edge';
+import { useEffect, useRef, useState } from 'react';
+import { NavigationBar } from 'expo-navigation-bar';
+import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, StyleSheet, View } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
-import { ACTIVITY_ROUTE_REPLAY_TEXT } from './const';
+import {
+  ACTIVITY_ROUTE_REPLAY_INITIAL_CONTROLS_HEIGHT,
+  ACTIVITY_ROUTE_REPLAY_MAP_CONTROLS_GAP,
+  ACTIVITY_ROUTE_REPLAY_TEXT,
+  getActivityRouteReplayControlsBottomInset,
+} from './const';
 import Controls from './controls/controls';
 import EmptyState from './empty-state/empty-state';
-import ReplayMap from './map/map';
+import ReplayMap from './map/replay-map/replay-map';
 import MapTools from './map-tools/map-tools';
 import useMapControls from './use-map-controls';
 import useRouteData from './use-route-data';
 import useRoutePlayback from './use-route-playback';
+import { KeepAwakeDuringVideoExport, KeepAwakeDuringReplay } from './utils';
 import useVideoExport from './video-export/use-video-export';
-import VideoBrandOverlay from './video-export/video-brand-overlay';
-import VideoExportLoader from './video-export/video-export-loader';
+import VideoBrandOverlay from './video-export/video-brand-overlay/video-brand-overlay';
+import VideoExportLoader from './video-export/video-export-loader/video-export-loader';
 import type { ActivityRouteReplayProps, ReplayMapHandle } from './types';
 
 export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
   const { onVideoExportStateChange } = props;
   const { language } = useAppSelector(({ settings }) => settings);
+  const { bottom: safeAreaBottomInset } = useSafeAreaInsets();
+  const [replayControlsHeight, setReplayControlsHeight] = useState(ACTIVITY_ROUTE_REPLAY_INITIAL_CONTROLS_HEIGHT);
   const activityMapRef = useRef<ReplayMapHandle>(null);
   const route = useRouteData(props);
   const playback = useRoutePlayback(route.timeline, activityMapRef);
   const mapControls = useMapControls(activityMapRef);
   const copy = ACTIVITY_ROUTE_REPLAY_TEXT[language];
   const videoExport = useVideoExport({ playback, copy, workoutDate: props.workoutDate });
+  const controlsBottomInset = getActivityRouteReplayControlsBottomInset(safeAreaBottomInset);
+  const controlsBottomOffset = replayControlsHeight + controlsBottomInset + ACTIVITY_ROUTE_REPLAY_MAP_CONTROLS_GAP;
 
   useEffect(() => {
     onVideoExportStateChange?.(videoExport.isExporting);
@@ -39,7 +50,10 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
       {videoExport.isExporting ? <KeepAwakeDuringVideoExport /> : null}
       {playback.isPlaying && !videoExport.isExporting ? <KeepAwakeDuringReplay /> : null}
       {videoExport.isExporting && Platform.OS !== 'web' ? (
-        <SystemBars hidden={{ statusBar: true, navigationBar: true }} />
+        <>
+          <StatusBar hidden />
+          {Platform.OS === 'android' ? <NavigationBar hidden /> : null}
+        </>
       ) : null}
       <ConfirmDialog
         visible={Boolean(videoExport.readyVideo)}
@@ -101,6 +115,7 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
                 onSetPlaybackDuration={playback.setPlaybackDuration}
                 canZoomIn={mapControls.canZoomIn}
                 canZoomOut={mapControls.canZoomOut}
+                bottomOffset={controlsBottomOffset}
               />
               <Controls
                 progress={playback.progress}
@@ -118,6 +133,8 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
                 onSeekStart={playback.startSeeking}
                 onSeek={playback.seekToProgress}
                 onSeekEnd={playback.finishSeeking}
+                onControlsLayout={setReplayControlsHeight}
+                bottomInset={controlsBottomInset}
               />
             </>
           )}
@@ -127,16 +144,6 @@ export default function ActivityRouteReplay(props: ActivityRouteReplayProps) {
       )}
     </View>
   );
-}
-
-function KeepAwakeDuringVideoExport() {
-  useKeepAwake('activity-route-replay-video-export', { suppressDeactivateWarnings: true });
-  return null;
-}
-
-function KeepAwakeDuringReplay() {
-  useKeepAwake('activity-route-replay-playback', { suppressDeactivateWarnings: true });
-  return null;
 }
 
 const styles = StyleSheet.create({

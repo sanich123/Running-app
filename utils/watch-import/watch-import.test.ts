@@ -61,4 +61,21 @@ describe('watch import mapping', () => {
     expect(mappedWorkout.kilometresSplit).toHaveLength(2);
     expect(mappedWorkout.kilometresSplit?.[0].kilometerPoint.coords.longitude).toBeGreaterThan(0);
   });
+
+  it('forwards valid Health Connect calories and omits invalid values', () => {
+    const workout: WatchWorkout = {
+      source: 'health-connect',
+      sourceActivityId: 'record-with-calories',
+      date: '2026-10-05T07:00:00.000Z',
+      timeZone: 'Europe/Moscow',
+      sport: 'run',
+      duration: 600_000,
+      distance: 2_000,
+      caloriesActive: 276.4,
+      locations: [],
+    };
+
+    expect(mapWatchWorkoutToActivity(workout)).toMatchObject({ caloriesActive: 276 });
+    expect(mapWatchWorkoutToActivity({ ...workout, caloriesActive: Number.NaN })).not.toHaveProperty('caloriesActive');
+  });
 });

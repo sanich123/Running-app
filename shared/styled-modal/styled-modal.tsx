@@ -2,6 +2,7 @@ import type { PropsWithChildren, RefObject } from 'react';
 import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from 'react-native-paper';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 
 export default function StyledModal({
   controlRef,
@@ -15,7 +16,7 @@ export default function StyledModal({
 }>) {
   const { colors } = useTheme();
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
   return (

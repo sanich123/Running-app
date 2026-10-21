@@ -4,15 +4,14 @@ import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import MapNavIcon from './map-nav-icon';
+import type { MockNativeViewProps } from '@T/utils/mock-native-view';
+import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 
 jest.mock('@rnmapbox/maps', () => {
-  const { View } = require('react-native');
+  const { createMockNativeView } = require('@T/utils/mock-native-view') as typeof MockNativeViewTools;
   return {
-    MarkerView: ({ children, ...props }: any) => (
-      <View testID="map-nav-marker" {...props}>
-        {children}
-      </View>
-    ),
+    MarkerView: ({ children, ...props }: MockNativeViewProps) =>
+      createMockNativeView(props, children, 'map-nav-marker'),
   };
 });
 describe('map nav icon', () => {

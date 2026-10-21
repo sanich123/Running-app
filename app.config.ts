@@ -6,7 +6,7 @@ export default {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
     scheme: IS_DEV ? 'runich-dev' : 'runich',
-    version: '1.2.2',
+    version: '1.2.3',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
@@ -113,6 +113,8 @@ export default {
         'android.permission.health.READ_EXERCISE_ROUTES',
         'android.permission.health.READ_DISTANCE',
         'android.permission.health.READ_STEPS',
+        'android.permission.health.READ_HEART_RATE',
+        'android.permission.health.READ_ACTIVE_CALORIES_BURNED',
         'ACCESS_BACKGROUND_LOCATION',
         'ACCESS_COARSE_LOCATION',
         'ACCESS_FINE_LOCATION',
@@ -141,9 +143,12 @@ export default {
       'expo-status-bar',
       'expo-image',
       'expo-sharing',
+      'expo-localization',
       [
         'expo-notifications',
         {
+          icon: './assets/images/notification-icon.png',
+          color: '#FF6030',
           largeIcon: './assets/images/runich-logo.png',
         },
       ],
@@ -220,10 +225,7 @@ export default {
           isAccessMediaLocationEnabled: false,
         },
       ],
-      [
-        'react-native-edge-to-edge',
-        { android: { parentTheme: 'Material3.Dynamic' }, enforceNavigationBarContrast: false },
-      ],
+      ['expo-navigation-bar', { enforceContrast: false }],
       [
         'expo-splash-screen',
         {

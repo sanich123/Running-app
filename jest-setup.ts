@@ -1,9 +1,35 @@
 import 'react-native-gesture-handler/jestSetup';
+import type { ReactNode } from 'react';
 import { cleanup } from '@testing-library/react-native';
+import type { Image as ReactNativeImage, StyleProp, ViewStyle } from 'react-native';
 import { runichApi } from './redux/runich-api/runich-api';
 import { mockStore } from './tests/utils/mock-store';
 import { server } from './tests/utils/server';
 import type * as ExpoLinking from 'expo-linking';
+
+interface SegmentedControlMockProps {
+  values: string[];
+  selectedIndex: number;
+  onChange: (event: { nativeEvent: { selectedSegmentIndex: number; value: string } }) => void;
+  testID?: string;
+  testIDS?: string[];
+  enabled?: boolean;
+}
+
+interface MockChildrenProps {
+  children?: ReactNode;
+}
+
+interface ExpoSwitchMockProps {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+  testID?: string;
+  disabled?: boolean;
+}
+
+interface BottomSheetMockProps extends MockChildrenProps {
+  footerComponent?: (props: { animatedFooterPosition: { get: () => number } }) => ReactNode;
+}
 
 jest.mock('expo-localization', () => ({
   getLocales: jest.fn(() => [{ languageCode: 'ru', languageTag: 'ru-RU' }]),
@@ -96,6 +122,65 @@ jest.mock('react-native-gifted-charts', () => {
   const { View } = jest.requireActual('react-native');
   return { BarChart: View };
 });
+jest.mock('@react-native-segmented-control/segmented-control', () => {
+  const { createElement } = jest.requireActual('react');
+  const { Pressable, Text, View } = jest.requireActual('react-native');
+  const MockSegmentedControl = ({
+    values,
+    selectedIndex,
+    onChange,
+    testID,
+    testIDS,
+    enabled = true,
+  }: SegmentedControlMockProps) =>
+    createElement(
+      View,
+      { testID, accessibilityRole: 'tablist' },
+      ...values.map((value: string, index: number) =>
+        createElement(
+          Pressable,
+          {
+            key: String(value),
+            testID: testIDS?.[index],
+            accessibilityRole: 'tab',
+            accessibilityLabel: value,
+            accessibilityState: { disabled: !enabled, selected: selectedIndex === index },
+            disabled: !enabled,
+            onPress: () => onChange({ nativeEvent: { selectedSegmentIndex: index, value } }),
+          },
+          createElement(Text, null, value),
+        ),
+      ),
+    );
+
+  return { __esModule: true, default: MockSegmentedControl };
+});
+jest.mock('@expo/ui', () => {
+  const { createElement } = jest.requireActual('react');
+  const { Pressable, View } = jest.requireActual('react-native');
+
+  return {
+    Host: ({ children, style, testID }: MockChildrenProps & { style?: StyleProp<ViewStyle>; testID?: string }) =>
+      createElement(View, { style, testID }, children),
+    Switch: ({ value, onValueChange, testID, disabled }: ExpoSwitchMockProps) =>
+      createElement(Pressable, {
+        testID,
+        accessibilityRole: 'switch',
+        accessibilityState: { checked: value, disabled },
+        disabled,
+        onPress: () => onValueChange(!value),
+      }),
+  };
+});
+jest.mock('@expo/ui/community/bottom-sheet', () => {
+  const { createElement } = jest.requireActual('react');
+  const { View } = jest.requireActual('react-native');
+
+  return {
+    BottomSheet: ({ children }: MockChildrenProps) => createElement(View, null, children),
+    BottomSheetView: View,
+  };
+});
 jest.mock('mapbox-gl', () => ({
   Map: jest.fn(() => ({
     addControl: jest.fn(),
@@ -109,8 +194,11 @@ jest.mock('mapbox-gl', () => ({
 }));
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
 jest.mock('expo-image', () => {
-  const { Image } = jest.requireActual('react-native');
-  return { __esModule: true, default: Image, Image };
+  const { Image } = jest.requireActual<{ Image: typeof ReactNativeImage }>('react-native');
+  const mockedImage = Object.assign(Image, {
+    getCachePathAsync: jest.fn((): Promise<string | null> => Promise.resolve(null)),
+  });
+  return { __esModule: true, default: mockedImage, Image: mockedImage };
 });
 jest.mock('@gorhom/bottom-sheet', () => {
   const { createElement } = jest.requireActual('react');
@@ -121,7 +209,7 @@ jest.mock('@gorhom/bottom-sheet', () => {
     __esModule: true,
     default: View,
     BottomSheetTextInput: TextInput,
-    BottomSheetModal: ({ children, footerComponent: FooterComponent }: any) =>
+    BottomSheetModal: ({ children, footerComponent: FooterComponent }: BottomSheetMockProps) =>
       createElement(
         View,
         null,
@@ -129,7 +217,7 @@ jest.mock('@gorhom/bottom-sheet', () => {
         FooterComponent ? createElement(FooterComponent, { animatedFooterPosition: { get: () => 0 } }) : null,
       ),
     BottomSheetModalProvider: View,
-    BottomSheetFooter: ({ children }: any) => createElement(View, null, children),
+    BottomSheetFooter: ({ children }: MockChildrenProps) => createElement(View, null, children),
     BottomSheetFlatList: FlatList,
     BottomSheetView: View,
     BottomSheetScrollView: ScrollView,

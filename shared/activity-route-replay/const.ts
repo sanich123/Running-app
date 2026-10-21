@@ -21,11 +21,41 @@ export const ACTIVITY_ROUTE_REPLAY_EXPORT_MAX_DIMENSION_PX = 1280;
 export const ACTIVITY_ROUTE_REPLAY_EXPORT_MAX_SIZE_BYTES = 25 * 1024 * 1024;
 export const ACTIVITY_ROUTE_REPLAY_EXPORT_MAX_BITRATE = 1_800_000;
 export const ACTIVITY_ROUTE_REPLAY_TERRAIN_EXAGGERATION = 1.5;
+export const ACTIVITY_ROUTE_REPLAY_CONTROLS_BOTTOM_INSET = 16;
+export const ACTIVITY_ROUTE_REPLAY_MAP_CONTROLS_GAP = 8;
+export const ACTIVITY_ROUTE_REPLAY_INITIAL_CONTROLS_HEIGHT = 128;
+export const ACTIVITY_ROUTE_REPLAY_MAPBOX_BRANDING_BOTTOM_OFFSET = -8;
+export const ACTIVITY_ROUTE_REPLAY_MAPBOX_BRANDING_HEIGHT = 24;
+export const ACTIVITY_ROUTE_REPLAY_MAPBOX_BRANDING_CLEARANCE = 8;
+export const ACTIVITY_ROUTE_REPLAY_MAPBOX_LOGO_LEFT_INSET = 8;
+export const ACTIVITY_ROUTE_REPLAY_MAPBOX_ATTRIBUTION_LEFT_INSET = 100;
+export const ACTIVITY_ROUTE_REPLAY_MAPBOX_ANDROID_ATTRIBUTION_LEFT_INSET = 116;
 export const ACTIVITY_ROUTE_REPLAY_MAP_STYLES = {
   satellite: 'mapbox://styles/mapbox/standard-satellite',
   map: 'mapbox://styles/mapbox/standard',
 } as const;
 export const ACTIVITY_ROUTE_REPLAY_TERRAIN_SOURCE_URL = 'mapbox://mapbox.mapbox-terrain-dem-v1';
+
+export function getActivityRouteReplayMapboxBrandingBottomOffset(safeAreaBottomInset: number) {
+  return Math.max(0, safeAreaBottomInset + ACTIVITY_ROUTE_REPLAY_MAPBOX_BRANDING_BOTTOM_OFFSET);
+}
+
+export function getActivityRouteReplayControlsBottomInset(safeAreaBottomInset: number) {
+  const brandingBottomInset =
+    getActivityRouteReplayMapboxBrandingBottomOffset(safeAreaBottomInset) +
+    ACTIVITY_ROUTE_REPLAY_MAPBOX_BRANDING_HEIGHT +
+    ACTIVITY_ROUTE_REPLAY_MAPBOX_BRANDING_CLEARANCE;
+
+  return Math.max(ACTIVITY_ROUTE_REPLAY_CONTROLS_BOTTOM_INSET, brandingBottomInset);
+}
+
+export function getActivityRouteReplayMapControlsBottomOffset(controlsHeight: number, safeAreaBottomInset: number) {
+  return (
+    controlsHeight +
+    getActivityRouteReplayControlsBottomInset(safeAreaBottomInset) +
+    ACTIVITY_ROUTE_REPLAY_MAP_CONTROLS_GAP
+  );
+}
 
 export const ACTIVITY_ROUTE_REPLAY_TEXT = {
   [LANGUAGES.english]: {

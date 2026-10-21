@@ -2,6 +2,7 @@ import type { ActivityVisibility } from '@const/activity-visibility';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 import type { LastKmSplit } from '@R/slices/location/types';
 import type { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
+import type { ActivityHeartRateSample } from '@S/card/types';
 import type { LocationObject } from 'expo-location';
 
 export interface FinishedActivity {
@@ -21,6 +22,7 @@ interface ActivityAdditionalInfo {
   sport: SPORTS_BTNS_VALUES;
   emotion: EMOTIONS_BTNS_VALUES;
   visibility: ActivityVisibility;
+  hideMap?: boolean;
   media: { url: string; thumbnail: null | string; blurhash?: string | null }[];
   timeZone: string;
 }
@@ -35,6 +37,8 @@ export interface WatchWorkoutToSend extends FinishedActivity {
   sourceActivityId: string;
   sport: SPORTS_BTNS_VALUES | string;
   title?: string;
+  heartRateSamples?: ActivityHeartRateSample[];
+  caloriesActive?: number;
 }
 
 export interface WatchWorkoutsImportRequest {
@@ -42,7 +46,10 @@ export interface WatchWorkoutsImportRequest {
   workouts: WatchWorkoutToSend[];
 }
 
-type ActivityEditableInfo = Pick<ActivityAdditionalInfo, 'title' | 'description' | 'sport' | 'emotion' | 'visibility'>;
+type ActivityEditableInfo = Pick<
+  ActivityAdditionalInfo,
+  'title' | 'description' | 'sport' | 'emotion' | 'visibility' | 'hideMap'
+>;
 type ActivityEditableMetrics = Pick<FinishedActivity, 'date' | 'distance' | 'duration' | 'speed'>;
 
 export interface ActivityUpdateRequest {

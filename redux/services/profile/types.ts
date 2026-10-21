@@ -6,6 +6,8 @@ export interface ProfileSettings {
   surname?: string;
   city?: string;
   weight?: string;
+  restingHeartRate?: string;
+  maxHeartRate?: string;
   height?: string;
   age?: string;
   bio?: string;
@@ -19,6 +21,9 @@ export interface ProfileSettings {
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;
+  allowActivityHeartRateViewing?: boolean;
+  allowActivityElevationViewing?: boolean;
+  allowActivityPaceViewing?: boolean;
   allowActivitySharing?: boolean;
   hideActivityStatistics?: boolean;
   hideFollowingList?: boolean;
@@ -29,7 +34,7 @@ export interface ProfileSettings {
 export type ProfileResponse = ProfileType;
 
 export interface FilteredProfilesResponse {
-  items: ProfileResponse[];
+  items: (ProfileResponse & { userId: string })[];
   hasMore: boolean;
   nextCursor: string | null;
 }

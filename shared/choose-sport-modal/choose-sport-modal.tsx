@@ -2,11 +2,11 @@ import { useCallback } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { View, StyleSheet } from 'react-native';
 import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
-import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
-import { SPORTS_NAMES } from './const';
+import { CHOOSE_SPORT_MODAL_TEXT, SPORTS_NAMES } from './const';
 import type { ChooseSportModalProps } from './types';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 
 export default function ChooseSportModal({
   chooseSportModalRef,
@@ -17,14 +17,9 @@ export default function ChooseSportModal({
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const sport = selectedSport;
-  const sportLabels = {
-    walk: language === LANGUAGES.russian ? 'Ходьба' : 'Walking',
-    run: language === LANGUAGES.russian ? 'Бег' : 'Running',
-    bike: language === LANGUAGES.russian ? 'Велосипед' : 'Cycling',
-    hike: language === LANGUAGES.russian ? 'Поход' : 'Hiking',
-  } as const;
+  const copy = CHOOSE_SPORT_MODAL_TEXT[language];
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     [],
   );
   return (
@@ -40,12 +35,12 @@ export default function ChooseSportModal({
         <View style={styles.header}>
           <View>
             <Text variant="titleLarge" style={[styles.title, isDisabled && { color: colors.onSurfaceDisabled }]}>
-              {language === LANGUAGES.russian ? 'Выберите спорт' : 'Choose a sport'}
+              {copy.title}
             </Text>
             <Text
               variant="bodySmall"
               style={{ color: isDisabled ? colors.onSurfaceDisabled : colors.onSurfaceVariant }}>
-              {language === LANGUAGES.russian ? 'Выберите вариант для активности' : 'Choose an activity type'}
+              {copy.subtitle}
             </Text>
           </View>
         </View>
@@ -94,7 +89,7 @@ export default function ChooseSportModal({
                             : colors.onSurface,
                       },
                     ]}>
-                    {sportLabels[value as keyof typeof sportLabels] ?? MAP_SPORT_TO_TITLE[value][language]}
+                    {copy.sports[value as keyof typeof copy.sports] ?? MAP_SPORT_TO_TITLE[value][language]}
                   </Text>
                 </View>
               </TouchableRipple>
