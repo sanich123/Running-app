@@ -358,6 +358,7 @@ describe('activity save flows', () => {
     });
 
     const view = await renderWithProviders(<EditActivityHarness />);
+    await pressAsync('activity-actions-menu-trigger');
     await pressAsync('activity-actions-menu-edit');
     await waitFor(() => expect(mockRouteParams.mode).toBe('edit'));
     await view.rerender(<EditActivityHarness key="loaded" />);

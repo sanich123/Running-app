@@ -1,38 +1,23 @@
-import { useState } from 'react';
-import { Platform } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useDeleteActivityByIdMutation } from '@R/services/activity/activity';
-import { finishLoading, startLoading } from '@R/slices/loading/loading';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
-import { errorToast } from '@S/error-toast/error-toast';
-import { ACTIVITY_ACTIONS_MENU, ACTIVITY_ACTIONS_MENU_TEST_IDS, ACTIVITY_DELETE_CONFIRMATION } from '../const';
+import { ACTIVITY_ACTIONS_MENU, ACTIVITY_ACTIONS_MENU_TEST_IDS } from '../const';
+import useDeleteActivityAction from './use-delete-activity-action';
 import MenuItem from '../menu-item/menu-item';
 import type { DeleteActivityButtonProps } from './types';
 
 export default function DeleteActivityButton({ activity, renderMenu }: DeleteActivityButtonProps) {
-  const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
-  const [deleteActivityById, { isLoading: isDeleteRequestLoading }] = useDeleteActivityByIdMutation();
-  const dispatch = useAppDispatch();
-  const { back } = useRouter();
+  const {
+    isConfirmDialogVisible,
+    isDeleteRequestLoading,
+    isActivityOwner,
+    confirmation,
+    onConfirm,
+    onDismiss,
+    onPress,
+  } = useDeleteActivityAction(activity);
   const { language } = useAppSelector(({ settings }) => settings);
-  const { userId } = useAppSelector(({ auth }) => auth);
-  const { isLoading } = useAppSelector(({ loading }) => loading);
 
-  async function deleteActivity() {
-    dispatch(startLoading());
-    try {
-      await deleteActivityById(activity.id).unwrap();
-      setIsConfirmDialogVisible(false);
-      back();
-    } catch (error) {
-      errorToast('', error);
-    } finally {
-      dispatch(finishLoading());
-    }
-  }
-
-  if (userId !== activity.userId) return null;
+  if (!isActivityOwner) return null;
 
   return (
     <>
@@ -42,12 +27,7 @@ export default function DeleteActivityButton({ activity, renderMenu }: DeleteAct
             action="delete"
             label={ACTIVITY_ACTIONS_MENU[language].delete}
             testID={ACTIVITY_ACTIONS_MENU_TEST_IDS.delete}
-            onPress={() => {
-              if (isLoading || isDeleteRequestLoading) return;
-
-              if (Platform.OS === 'web') void deleteActivity();
-              else setIsConfirmDialogVisible(true);
-            }}
+            onPress={onPress}
           />,
         )
       ) : (
@@ -55,24 +35,19 @@ export default function DeleteActivityButton({ activity, renderMenu }: DeleteAct
           action="delete"
           label={ACTIVITY_ACTIONS_MENU[language].delete}
           testID={ACTIVITY_ACTIONS_MENU_TEST_IDS.delete}
-          onPress={() => {
-            if (isLoading || isDeleteRequestLoading) return;
-
-            if (Platform.OS === 'web') void deleteActivity();
-            else setIsConfirmDialogVisible(true);
-          }}
+          onPress={onPress}
         />
       )}
       <ConfirmDialog
         visible={isConfirmDialogVisible}
-        title={ACTIVITY_DELETE_CONFIRMATION[language].deleteActivity}
-        message={ACTIVITY_DELETE_CONFIRMATION[language].question}
-        confirmText={ACTIVITY_DELETE_CONFIRMATION[language].accept}
-        cancelText={ACTIVITY_DELETE_CONFIRMATION[language].cancel}
+        title={confirmation.deleteActivity}
+        message={confirmation.question}
+        confirmText={confirmation.accept}
+        cancelText={confirmation.cancel}
         destructive
         loading={isDeleteRequestLoading}
-        onDismiss={() => setIsConfirmDialogVisible(false)}
-        onConfirm={deleteActivity}
+        onDismiss={onDismiss}
+        onConfirm={onConfirm}
       />
     </>
   );

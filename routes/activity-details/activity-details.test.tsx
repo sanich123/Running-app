@@ -1,7 +1,7 @@
 import { Suspense, type ReactElement, type ReactNode } from 'react';
-import { act, screen } from '@testing-library/react-native';
+import { act, screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { runichApi } from '@R/runich-api/runich-api';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
@@ -16,18 +16,35 @@ import ActivityActionsMenu from './activity-actions-menu/activity-actions-menu';
 import ActivityDetails from './activity-details';
 
 const mockHeaderRight: { current?: () => ReactNode } = {};
+const mockPush = jest.fn();
+const originalPlatformOS = Platform.OS;
 
 jest.mock('expo-router', () => {
+  const React = jest.requireActual('react');
+  const { Fragment } = React;
+  const { Pressable, Text, View } = jest.requireActual('react-native');
+  const Toolbar = Object.assign(({ children }: { children?: ReactNode }) => React.createElement(View, null, children), {
+    Menu: ({ children, accessibilityLabel }: { children?: ReactNode; accessibilityLabel?: string }) =>
+      React.createElement(View, { accessibilityLabel }, children),
+    MenuAction: ({ children, onPress }: { children?: ReactNode; onPress?: () => void }) =>
+      React.createElement(
+        Pressable,
+        { accessibilityRole: 'button', onPress },
+        React.createElement(Text, null, children),
+      ),
+  });
+
   return {
     Stack: {
-      Screen: ({ options }: { options: { headerRight?: () => ReactNode } }) => {
+      Screen: ({ options, children }: { options: { headerRight?: () => ReactNode }; children?: ReactNode }) => {
         mockHeaderRight.current = options.headerRight;
-        return null;
+        return React.createElement(Fragment, null, children);
       },
+      Toolbar,
     },
     useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }),
     usePathname: () => `/activity/${MOCK_SERVER_IDS.activityId}`,
-    useRouter: () => ({ push: jest.fn() }),
+    useRouter: () => ({ push: mockPush, back: jest.fn() }),
   };
 });
 jest.mock('./activity-actions-menu/activity-actions-menu', () => {
@@ -61,6 +78,11 @@ describe('ActivityDetails', () => {
   beforeEach(() => {
     mockStore.dispatch(runichApi.util.resetApiState());
     mockStore.dispatch(setMockUserId('viewer-1'));
+    mockPush.mockClear();
+  });
+
+  afterEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
   });
 
   it('renders loading state', async () => {
@@ -98,6 +120,7 @@ describe('ActivityDetails', () => {
   });
 
   it('shows the activity actions menu in the header only for the activity owner', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     mockStore.dispatch(runichApi.util.resetApiState());
     mockStore.dispatch(setMockUserId(MOCK_SERVER_ACTIVITY.userId));
 
@@ -109,6 +132,28 @@ describe('ActivityDetails', () => {
       mockStore.dispatch(setMockUserId('external-viewer'));
     });
     expect((mockHeaderRight.current?.() as ReactElement).type).toBe(Suspense);
+  });
+
+  it('uses the native iOS toolbar menu for activity actions', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_ACTIVITY.userId));
+    const user = userEvent.setup();
+
+    await renderWithProviders(<ActivityDetails />);
+    await screen.findByTestId('full-view-card');
+
+    expect(screen.getByLabelText('Действия с тренировкой')).toBeOnTheScreen();
+    await user.press(screen.getByText('Редактировать'));
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: expect.stringContaining('manual-activity'),
+        params: expect.objectContaining({ mode: 'edit' }),
+      }),
+    );
+
+    await user.press(screen.getByText('Удалить'));
+    expect(screen.getByText('Удалить активность?')).toBeOnTheScreen();
   });
 
   it('renders error state', async () => {

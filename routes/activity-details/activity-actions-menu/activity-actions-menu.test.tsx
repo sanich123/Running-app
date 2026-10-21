@@ -1,42 +1,35 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
+import { Platform } from 'react-native';
 import { MOCK_SERVER_ACTIVITY } from '@T/responses/runich';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityActionsMenu from './activity-actions-menu';
 import type { ActivityResponse } from '@R/runich-api/types';
 
-jest.mock('@expo/ui/swift-ui', () => {
-  const React = jest.requireActual('react');
-  const { Pressable, Text, View } = jest.requireActual('react-native');
+const originalPlatformOS = Platform.OS;
 
-  return {
-    Button: ({ label, onPress, testID }: { label: string; onPress?: () => void; testID?: string }) =>
-      React.createElement(
-        Pressable,
-        { accessibilityRole: 'button', onPress, testID },
-        React.createElement(Text, null, label),
-      ),
-    Host: ({ children }: { children: React.ReactNode }) => React.createElement(View, null, children),
-    Menu: ({ children, label, testID }: { children: React.ReactNode; label: string; testID?: string }) =>
-      React.createElement(View, { accessibilityLabel: label, testID }, children),
-  };
+afterEach(() => {
+  Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
 });
-jest.mock('@expo/ui/swift-ui/modifiers', () => ({ labelStyle: jest.fn() }));
 
 const activity = MOCK_SERVER_ACTIVITY as unknown as ActivityResponse;
 
 describe('activity actions menu', () => {
   it('renders separate edit and delete actions for the owner', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     mockStore.dispatch(setMockUserId(activity.userId));
+    const user = userEvent.setup();
 
     await renderWithProviders(<ActivityActionsMenu activity={activity} />);
 
+    await user.press(screen.getByTestId('activity-actions-menu-trigger'));
     expect(screen.getByLabelText('Действия с тренировкой')).toBeOnTheScreen();
     expect(screen.getByText('Редактировать')).toBeOnTheScreen();
     expect(screen.getByText('Удалить')).toBeOnTheScreen();
   });
 
   it('does not render the menu for another user', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     mockStore.dispatch(setMockUserId('external-viewer'));
 
     await renderWithProviders(<ActivityActionsMenu activity={activity} />);
