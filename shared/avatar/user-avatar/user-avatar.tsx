@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import CustomImage from '@S/custom-image/custom-image';
+import { getProductionBucketFallbackUri } from '@S/custom-image/utils';
 import { getAvatarLabel } from './utils';
 import type { UserAvatarProps } from './types';
 
@@ -27,7 +28,13 @@ export default function UserAvatar({
     return <Avatar.Icon testID={testID} size={size} icon="account" style={style} />;
   }
 
-  const shouldUseCustomImage = Boolean(placeholder || cachePolicy || recyclingKey || transition !== undefined);
+  const shouldUseCustomImage = Boolean(
+    placeholder ||
+    cachePolicy ||
+    recyclingKey ||
+    transition !== undefined ||
+    getProductionBucketFallbackUri(profilePhoto),
+  );
   if (shouldUseCustomImage) {
     return (
       <Avatar.Image

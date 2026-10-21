@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import { Platform } from 'react-native';
 import { DEFAULT_IMAGE_TRANSITION, cachedImageUris } from './const';
-import { normalizeImagePlaceholder, shouldCheckDiskCache, getInitialCacheStatus } from './utils';
+import {
+  getInitialCacheStatus,
+  getProductionBucketFallbackUri,
+  normalizeImagePlaceholder,
+  shouldCheckDiskCache,
+} from './utils';
 import type { CacheStatus } from './types';
 import type { ImageContentFit, ImageProps } from 'expo-image';
 
@@ -34,51 +39,53 @@ export default function CustomImage({
   onError?: () => void;
 }) {
   const sourceUri = source.uri || '';
-  const shouldCheckCache = shouldCheckDiskCache(sourceUri, cachePolicy, transition !== undefined);
+  const [fallbackSource, setFallbackSource] = useState<{ sourceUri: string; fallbackUri: string } | null>(null);
+  const imageUri = fallbackSource?.sourceUri === sourceUri ? fallbackSource.fallbackUri : sourceUri;
+  const shouldCheckCache = shouldCheckDiskCache(imageUri, cachePolicy, transition !== undefined);
   const [cacheProbe, setCacheProbe] = useState<{ uri: string; status: CacheStatus }>(() => ({
-    uri: sourceUri,
-    status: getInitialCacheStatus(sourceUri, shouldCheckCache),
+    uri: imageUri,
+    status: getInitialCacheStatus(imageUri, shouldCheckCache),
   }));
   const cacheStatus =
-    cacheProbe.uri === sourceUri && shouldCheckCache
+    cacheProbe.uri === imageUri && shouldCheckCache
       ? cacheProbe.status
-      : getInitialCacheStatus(sourceUri, shouldCheckCache);
+      : getInitialCacheStatus(imageUri, shouldCheckCache);
 
   useEffect(() => {
-    if (!shouldCheckCache || cachedImageUris.has(sourceUri)) {
+    if (!shouldCheckCache || cachedImageUris.has(imageUri)) {
       return;
     }
 
     let isMounted = true;
 
-    Image.getCachePathAsync(sourceUri)
+    Image.getCachePathAsync(imageUri)
       .then((cachePath) => {
         if (!isMounted) {
           return;
         }
 
         if (cachePath) {
-          cachedImageUris.add(sourceUri);
+          cachedImageUris.add(imageUri);
         }
-        setCacheProbe({ uri: sourceUri, status: cachePath ? 'cached' : 'uncached' });
+        setCacheProbe({ uri: imageUri, status: cachePath ? 'cached' : 'uncached' });
       })
       .catch(() => {
         if (isMounted) {
-          setCacheProbe({ uri: sourceUri, status: 'uncached' });
+          setCacheProbe({ uri: imageUri, status: 'uncached' });
         }
       });
 
     return () => {
       isMounted = false;
     };
-  }, [shouldCheckCache, sourceUri]);
+  }, [imageUri, shouldCheckCache]);
 
   const resolvedTransition = transition ?? (cacheStatus === 'cached' ? 0 : DEFAULT_IMAGE_TRANSITION);
 
   return (
     <Image
       style={style}
-      source={{ uri: sourceUri }}
+      source={{ uri: imageUri }}
       contentFit={contentFit}
       testID={Platform.OS !== 'web' ? testID : undefined}
       placeholder={normalizeImagePlaceholder(placeholder)}
@@ -88,12 +95,21 @@ export default function CustomImage({
       recyclingKey={Platform.OS !== 'web' ? recyclingKey : undefined}
       transition={resolvedTransition}
       onLoad={(event) => {
-        if (sourceUri && cachePolicy !== 'none') {
-          cachedImageUris.add(sourceUri);
+        if (imageUri && cachePolicy !== 'none') {
+          cachedImageUris.add(imageUri);
         }
         onLoad?.(event);
       }}
-      onError={onError}
+      onError={() => {
+        if (imageUri === sourceUri) {
+          const fallbackUri = getProductionBucketFallbackUri(sourceUri);
+          if (fallbackUri) {
+            setFallbackSource({ sourceUri, fallbackUri });
+            return;
+          }
+        }
+        onError?.();
+      }}
     />
   );
 }
