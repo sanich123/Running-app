@@ -51,12 +51,26 @@ export default function AddActivityMediaBtn({ activityId, media }: { activityId:
           if (!uploadedMedia.length) return;
 
           try {
-            await appendActivityMedia({ id: activityId, media: uploadedMedia }).unwrap();
+            await appendActivityMedia({
+              id: activityId,
+              media: uploadedMedia.map(({ url, thumbnail, blurhash, assetId, thumbnailAssetId }) => ({
+                ...(url && !assetId ? { url } : {}),
+                thumbnail: thumbnail ?? null,
+                ...(blurhash ? { blurhash } : {}),
+                ...(assetId ? { assetId } : {}),
+                ...(thumbnailAssetId ? { thumbnailAssetId } : {}),
+              })),
+            }).unwrap();
           } catch (error) {
             await deleteUploadedMedia(
-              uploadedMedia.flatMap(({ url, thumbnail }) =>
-                [url, thumbnail].filter((mediaUrl): mediaUrl is string => Boolean(mediaUrl)),
-              ),
+              uploadedMedia
+                .filter(({ assetId }) => !assetId)
+                .flatMap(({ url, thumbnail }) =>
+                  [url, thumbnail].filter((mediaUrl): mediaUrl is string => Boolean(mediaUrl)),
+                ),
+              uploadedMedia
+                .flatMap(({ assetId, thumbnailAssetId }) => [assetId, thumbnailAssetId])
+                .filter((assetId): assetId is string => Boolean(assetId)),
             );
             throw error;
           }

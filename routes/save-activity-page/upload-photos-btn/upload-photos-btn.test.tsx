@@ -309,7 +309,9 @@ describe('Upload photos btn', () => {
 
     await user.press(screen.getByTestId('upload-gallery-button'));
 
-    await waitFor(() => expect(deleteUploadedMedia).toHaveBeenCalledWith([uploadedMedia.url, uploadedMedia.thumbnail]));
+    await waitFor(() =>
+      expect(deleteUploadedMedia).toHaveBeenCalledWith([uploadedMedia.url, uploadedMedia.thumbnail], []),
+    );
     expect(setImages).not.toHaveBeenCalled();
     expect(mockStore.getState().activity.media).not.toContainEqual(uploadedMedia);
     expect(errorToast).toHaveBeenCalled();

@@ -1,4 +1,4 @@
-export type ActivityMenuAction = 'edit' | 'delete';
+export type ActivityMenuAction = 'edit' | 'delete' | 'report';
 
 export interface MenuItemProps {
   action: ActivityMenuAction;

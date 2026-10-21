@@ -38,14 +38,18 @@ export default function PreviewImageCloseBtn({
         }
         await deleteActivityMedia({ activityId, mediaId: mediaItem.id }).unwrap();
       } else {
-        const isDeleted = await deleteUploadedMedia(
-          [mediaItem.url, mediaItem.thumbnail].filter((photo): photo is string => Boolean(photo)),
+        const assetIds = [mediaItem.assetId, mediaItem.thumbnailAssetId].filter(
+          (assetId): assetId is string => !!assetId,
         );
+        const publicUrls = assetIds.length
+          ? []
+          : [mediaItem.url, mediaItem.thumbnail].filter((photo): photo is string => Boolean(photo));
+        const isDeleted = await deleteUploadedMedia(publicUrls, assetIds);
         if (!isDeleted) return;
       }
 
-      setImages(images.filter(({ url }) => url !== mediaItem.url));
-      dispatch(removePhotoUrl(mediaItem.url));
+      setImages(images.filter((image) => image !== mediaItem));
+      dispatch(removePhotoUrl({ url: mediaItem.url, assetId: mediaItem.assetId, id: mediaItem.id }));
     } catch (error) {
       errorToast('', error);
     } finally {

@@ -12,6 +12,8 @@ import UploadProgress from '../../upload-progress/upload-progress';
 import { uploadActivityMediaBatch } from '../../utils';
 import { CAMERA_SETTINGS, CAMERA_TEXT } from '../const';
 import type { ShotBtnProps } from '../types';
+import type { ActivityPhoto } from '@R/slices/activity/types';
+import type { UploadedMedia } from '@U/file-sending';
 
 export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10, activityId }: ShotBtnProps) {
   const { colors } = useTheme();
@@ -45,8 +47,8 @@ export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10, 
           if (cameraRef?.current) {
             const newPhoto = await cameraRef?.current.takePictureAsync(CAMERA_SETTINGS);
             if (newPhoto) {
-              const localPhoto = { url: newPhoto.uri, thumbnail: null };
-              const uploadedPhoto = userId
+              const localPhoto: UploadedMedia = { url: newPhoto.uri, thumbnail: null };
+              const uploadedPhoto: UploadedMedia | null = userId
                 ? ((
                     await uploadActivityMediaBatch(
                       [
@@ -67,16 +69,33 @@ export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10, 
 
               if (controller.signal.aborted) return;
               if (uploadedPhoto) {
-                let mediaToAdd = uploadedPhoto;
+                let mediaToAdd: ActivityPhoto = uploadedPhoto;
                 if (activityId && userId) {
                   try {
-                    const response = await appendActivityMedia({ id: activityId, media: [uploadedPhoto] }).unwrap();
+                    const response = await appendActivityMedia({
+                      id: activityId,
+                      media: [
+                        {
+                          ...(uploadedPhoto.url && !uploadedPhoto.assetId ? { url: uploadedPhoto.url } : {}),
+                          thumbnail: uploadedPhoto.thumbnail ?? null,
+                          ...(uploadedPhoto.assetId ? { assetId: uploadedPhoto.assetId } : {}),
+                          ...(uploadedPhoto.thumbnailAssetId
+                            ? { thumbnailAssetId: uploadedPhoto.thumbnailAssetId }
+                            : {}),
+                        },
+                      ],
+                    }).unwrap();
                     const [persistedPhoto] = response.media;
                     if (!persistedPhoto) throw new Error('Не удалось сохранить фото активности');
                     mediaToAdd = persistedPhoto;
                   } catch (error) {
                     await deleteUploadedMedia(
-                      [uploadedPhoto.url, uploadedPhoto.thumbnail].filter((photo): photo is string => !!photo),
+                      uploadedPhoto.assetId
+                        ? []
+                        : [uploadedPhoto.url, uploadedPhoto.thumbnail].filter((photo): photo is string => !!photo),
+                      [uploadedPhoto.assetId, uploadedPhoto.thumbnailAssetId].filter(
+                        (assetId): assetId is string => !!assetId,
+                      ),
                     );
                     throw error;
                   }

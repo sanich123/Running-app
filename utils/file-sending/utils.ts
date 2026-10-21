@@ -1,5 +1,11 @@
 import { errorToast } from '@S/error-toast/error-toast';
-import { compressMediaFile, createVideoThumbnail, uploadMediaFile, uploadMediaFiles } from '../file-sending';
+import {
+  compressMediaFile,
+  createVideoThumbnail,
+  uploadMediaFile,
+  uploadMediaFiles,
+  waitForMediaUploadReview,
+} from '../file-sending';
 import type {
   MediaSource,
   MediaSourceMetadata,
@@ -28,32 +34,57 @@ export async function uploadMediaWithThumbnail(
       ? await uploadMediaFile(compressedFile, uploadOptions, undefined, control)
       : await uploadMediaFile(compressedFile, uploadOptions);
     if (!uploadedFile) return null;
+    const isActivityUpload = (uploadOptions.scope ?? 'activity') === 'activity';
+    const reviewedFile = isActivityUpload ? uploadedFile : (await waitForMediaUploadReview([uploadedFile], control))[0];
+    if (!reviewedFile?.url && !(isActivityUpload && reviewedFile?.assetId)) {
+      errorToast(
+        reviewedFile?.status === 'rejected'
+          ? 'Модератор отклонил медиафайл'
+          : 'Не удалось проверить медиафайл. Он пока недоступен',
+      );
+      return null;
+    }
     reportProgress(control, 0.8);
+
+    const uploadedMedia: UploadedMedia = {
+      ...(reviewedFile.url ? { url: reviewedFile.url } : {}),
+      thumbnail: null,
+      ...(reviewedFile.assetId ? { assetId: reviewedFile.assetId } : {}),
+      ...(reviewedFile.status ? { mediaReviewStatus: reviewedFile.status } : {}),
+      ...(reviewedFile.contentType ? { contentType: reviewedFile.contentType } : {}),
+    };
 
     if (!compressedFile.isVideo) {
       reportProgress(control, 1);
-      return { url: uploadedFile.url, thumbnail: null };
+      return uploadedMedia;
     }
 
-    const thumbnailSource = await createVideoThumbnail(
-      typeof compressedFile.file === 'string' ? compressedFile.file : uploadedFile.url,
-    );
+    const thumbnailSource = await createVideoThumbnail(compressedFile.file);
     if (!thumbnailSource) {
       reportProgress(control, 1);
-      return { url: uploadedFile.url, thumbnail: null };
+      return uploadedMedia;
     }
 
     const compressedThumbnail = await compressMediaFile(thumbnailSource);
     if (!compressedThumbnail) {
       reportProgress(control, 1);
-      return { url: uploadedFile.url, thumbnail: null };
+      return uploadedMedia;
     }
 
     const uploadedThumbnail = control
       ? await uploadMediaFile(compressedThumbnail, uploadOptions, undefined, control)
       : await uploadMediaFile(compressedThumbnail, uploadOptions);
     reportProgress(control, 1);
-    return { url: uploadedFile.url, thumbnail: uploadedThumbnail?.url ?? null };
+    const reviewedThumbnail = uploadedThumbnail
+      ? isActivityUpload
+        ? uploadedThumbnail
+        : (await waitForMediaUploadReview([uploadedThumbnail], control))[0]
+      : undefined;
+    return {
+      ...uploadedMedia,
+      thumbnail: reviewedThumbnail?.url ?? null,
+      ...(isActivityUpload && reviewedThumbnail?.assetId ? { thumbnailAssetId: reviewedThumbnail.assetId } : {}),
+    };
   } catch (error) {
     if (!control?.signal?.aborted) errorToast(errorMessage, error);
     return null;
@@ -98,11 +129,27 @@ export async function uploadMediaBatchWithThumbnails(
         );
     if (!uploadedFiles) return emptyResult();
 
+    const isActivityUpload = (uploadOptions.scope ?? 'activity') === 'activity';
+    const reviewedFiles = isActivityUpload ? uploadedFiles : await waitForMediaUploadReview(uploadedFiles, control);
+    if (reviewedFiles.some(({ status }) => status === 'rejected')) {
+      errorToast('Модератор отклонил часть медиафайлов');
+    } else if (reviewedFiles.some(({ status }) => status === 'failed')) {
+      errorToast('Не удалось проверить часть медиафайлов. Они не будут прикреплены');
+    }
+
     const uploadedMedia: (UploadedMedia | null)[] = emptyResult();
-    const uploadedByMediaId = new Map(uploadedFiles.map((uploadedFile) => [uploadedFile.mediaId, uploadedFile]));
+    const uploadedByMediaId = new Map(reviewedFiles.map((uploadedFile) => [uploadedFile.mediaId, uploadedFile]));
     compressedItems.forEach(({ index, item }) => {
       const uploadedFile = uploadedByMediaId.get(item.mediaId);
-      if (uploadedFile?.role === 'media') uploadedMedia[index] = { url: uploadedFile.url, thumbnail: null };
+      if (uploadedFile?.role === 'media' && (uploadedFile.url || (isActivityUpload && uploadedFile.assetId))) {
+        uploadedMedia[index] = {
+          ...(uploadedFile.url ? { url: uploadedFile.url } : {}),
+          thumbnail: null,
+          ...(uploadedFile.assetId ? { assetId: uploadedFile.assetId } : {}),
+          ...(uploadedFile.status ? { mediaReviewStatus: uploadedFile.status } : {}),
+          ...(uploadedFile.contentType ? { contentType: uploadedFile.contentType } : {}),
+        };
+      }
     });
 
     const videoItems = compressedItems.flatMap((item) =>
@@ -113,11 +160,9 @@ export async function uploadMediaBatchWithThumbnails(
       async ({ file, item }) => {
         throwIfUploadAborted(control);
         const uploadedFile = uploadedByMediaId.get(item.mediaId);
-        if (!uploadedFile) return null;
+        if (!uploadedFile?.url && !(isActivityUpload && uploadedFile?.assetId)) return null;
 
-        const thumbnailSource = await createVideoThumbnail(
-          typeof file.file === 'string' ? file.file : uploadedFile.url,
-        );
+        const thumbnailSource = await createVideoThumbnail(file.file);
         return thumbnailSource ? { mediaId: item.mediaId, file: await compressMediaFile(thumbnailSource) } : null;
       },
       MEDIA_BATCH_CONCURRENCY,
@@ -150,13 +195,24 @@ export async function uploadMediaBatchWithThumbnails(
     const uploadedThumbnailsByMediaId = new Map(
       uploadedThumbnails.map((uploadedThumbnail) => [uploadedThumbnail.mediaId, uploadedThumbnail]),
     );
-    compressedThumbnails.forEach(({ mediaId }) => {
-      const thumbnailUrl = uploadedThumbnailsByMediaId.get(mediaId)?.url;
+    for (const { mediaId } of compressedThumbnails) {
+      const uploadedThumbnail = uploadedThumbnailsByMediaId.get(mediaId);
+      const reviewedThumbnail =
+        uploadedThumbnail && !isActivityUpload
+          ? (await waitForMediaUploadReview([uploadedThumbnail], control))[0]
+          : uploadedThumbnail;
+      const thumbnailUrl = reviewedThumbnail?.url;
       const videoItem = videoItems.find(({ item }) => item.mediaId === mediaId);
-      if (!thumbnailUrl || !videoItem) return;
+      if (!videoItem) continue;
       const media = uploadedMedia[videoItem.index];
-      if (media) uploadedMedia[videoItem.index] = { ...media, thumbnail: thumbnailUrl };
-    });
+      if (media) {
+        uploadedMedia[videoItem.index] = {
+          ...media,
+          ...(thumbnailUrl ? { thumbnail: thumbnailUrl } : {}),
+          ...(isActivityUpload && reviewedThumbnail?.assetId ? { thumbnailAssetId: reviewedThumbnail.assetId } : {}),
+        };
+      }
+    }
 
     reportProgress(control, 1);
     return uploadedMedia;

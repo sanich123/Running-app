@@ -14,8 +14,8 @@ export const LEGAL_OPERATOR = {
 } as const;
 
 export const LEGAL_DOCUMENT_VERSION = {
-  russian: '20 сентября 2026 г. Версия 1.4',
-  english: 'September 20, 2026. Version 1.4',
+  russian: '21 октября 2026 г. Версия 1.5',
+  english: 'October 21, 2026. Version 1.5',
 } as const;
 
 export type LegalDocumentId = 'privacy' | 'consents' | 'agreement' | 'locationConsent' | 'accountDeletion';
@@ -69,6 +69,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
           'OAuth: email и поля базового профиля, полученные от VK ID или Яндекс ID, — имя, фамилия, город и фото, если они предоставлены. Идентификатор OAuth используется для текущей авторизации и сопоставления аккаунта.',
           'профиль: имя, фамилия, город, пол, дата рождения, вид спорта, описание, фото, вес, рост и возраст. Все поля являются необязательными и указываются по желанию пользователя;',
           'тренировки и маршруты: вид спорта, дата, дистанция, длительность, темп/скорость, шаги, описание, видимость, фото/видео, временные точки, координаты, высота и другие параметры, переданные устройством;',
+          'данные здоровья, импортируемые из Apple Health (HealthKit) на iOS или Health Connect на Android: сведения о тренировке, дистанция, шаги и маршрут; Android также может передавать отдельные измерения пульса и активные калории. Подробный состав и обработка описаны в разделе 6;',
           'технические данные: идентификатор сессии и устройства, модель, платформа, версии ОС и приложения, user-agent, IP-адрес, журналы ошибок и геопозиция сессии, если она передана для авторизации или восстановления состояния.',
         ],
       },
@@ -94,20 +95,31 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         ],
       },
       {
-        heading: '6. Пользовательский контент',
+        heading: '6. Данные здоровья из Apple Health и Health Connect',
+        paragraphs: [
+          'При подключении хранилища здоровья и предоставлении системных разрешений Runich читает данные на устройстве из Apple Health через HealthKit на iOS или из Health Connect на Android. Импорт охватывает тренировки за последние 30 дней. Доступ используется только для чтения: Runich не записывает данные обратно в Apple Health или Health Connect. При включенной автосинхронизации Android проверяет новые записи при открытии или возвращении в приложение, а iOS — при открытии экрана импорта или возвращении на него; при выключенной автосинхронизации пользователь запускает чтение и импорт вручную.',
+          'Для каждой импортируемой тренировки могут считываться вид спорта, название (если передано источником), дата и время начала, часовой пояс, длительность, дистанция, количество шагов, идентификатор тренировки в источнике для предотвращения повторного импорта и связанный маршрут. Точки маршрута могут содержать время, широту, долготу, высоту и точность геопозиции; HealthKit также может передавать скорость и направление движения. На Android дополнительно считываются измерения пульса с временем и значением ударов в минуту, а также активные калории в килокалориях. На iOS Runich запрашивает разрешение HealthKit на чтение активной энергии, но текущая версия приложения не считывает и не отправляет это значение; разрешение на чтение пульса HealthKit не запрашивается.',
+          'Эти данные нужны, чтобы создать и обновлять импортированную тренировку в аккаунте Runich, показывать маршрут и спортивные показатели, рассчитывать темп и статистику и отображать график пульса, если он доступен. Данные здоровья не используются для рекламы, маркетингового профилирования или продажи.',
+          'После импорта данные передаются в API Runich и хранятся в аккаунте пользователя. В производственной среде серверы и база данных Runich размещаются в инфраструктуре Timeweb в Российской Федерации, а файлы маршрутов хранятся в S3-совместимом хранилище Timeweb. Для формирования карты сервер использует картографические ресурсы OpenFreeMap; если внутренняя генерация карты недоступна, сокращенный маршрут может быть передан Mapbox для создания статического изображения.',
+          'Импортированная тренировка по умолчанию имеет публичную видимость. Другие пользователи Runich могут видеть ее показатели и маршрут в пределах настроек видимости тренировки и профиля; просмотр пульса разрешен по умолчанию и отключается в настройках приватности профиля. Настройка «Скрыть карту» убирает картографическую подложку, но оставляет линию маршрута. Чтобы ограничить доступ к тренировке и ее маршруту, измените ее видимость на «Подписчики» или «Приватная».',
+          'Импортированная копия хранится в Runich до удаления тренировки или аккаунта. Отзыв разрешения в настройках Apple Health или Health Connect прекращает дальнейшее чтение данных. Выключение автосинхронизации останавливает автоматические проверки и отправку, но при сохраненном системном разрешении пользователь может запустить ручной импорт. Эти действия не удаляют ранее импортированные тренировки: их можно удалить в Runich отдельно или вместе с аккаунтом. Исходные записи остаются в Apple Health или Health Connect, пока пользователь сам не удалит их там.',
+        ],
+      },
+      {
+        heading: '7. Пользовательский контент',
         paragraphs: [
           'Фотографии, видео, описания, комментарии и другие материалы показываются в выбранном пользователем объеме; пользователь должен иметь права на их публикацию.',
         ],
       },
       {
-        heading: '7. Обработка, хранение и удаление',
+        heading: '8. Обработка, хранение и удаление',
         paragraphs: [
           'Оператор выполняет сбор, запись, систематизацию, хранение, уточнение, извлечение, использование, передачу подрядчикам, обезличивание, блокирование, удаление и уничтожение только в заявленных целях. Основные серверы приложения и базы данных Runich в рабочей среде размещаются в инфраструктуре Timeweb на территории Российской Федерации. Файлы и медиаматериалы хранятся в S3-совместимом хранилище Timeweb.',
           'Если иное не указано в документе, данные аккаунта, профиля, тренировок, маршрутов, обращений и технические данные хранятся до удаления пользователем аккаунта. После подтверждения удаления аккаунта данные удаляются.',
         ],
       },
       {
-        heading: '8. Подрядчики и передача',
+        heading: '9. Подрядчики и передача',
         paragraphs: [
           'Для работы Runich могут привлекаться VK ID и Яндекс ID, почтовый провайдер, провайдеры API, базы данных, файлов и резервных копий, карт и CDN. Каждый получает только необходимый объем данных. Государственным органам данные передаются только по закону.',
           `По вопросам обработки данных, удаления аккаунта, доступа, исправления или отзыва согласия можно обратиться по адресу: ${LEGAL_OPERATOR.email}.`,
@@ -131,7 +143,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Состав данных',
         paragraphs: [
-          'В зависимости от выбранных функций могут обрабатываться email, идентификатор аккаунта, данные профиля, включая пол, вес, рост и возраст, сведения о тренировках и маршрутах, координаты во время записи, фотографии, комментарии, данные устройства и технические журналы. Необязательные сведения обрабатываются только если пользователь сам их указал.',
+          'В зависимости от выбранных функций могут обрабатываться email, идентификатор аккаунта, данные профиля, включая пол, вес, рост и возраст, сведения о тренировках и маршрутах, координаты во время записи или импорта из Apple Health (HealthKit) и Health Connect, шаги, а на Android также измерения пульса и активные калории, фотографии, комментарии, данные устройства и технические журналы. Необязательные сведения обрабатываются только если пользователь сам их указал или разрешил соответствующий импорт.',
         ],
       },
       {
@@ -143,7 +155,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '4. Отзыв согласия',
         paragraphs: [
-          'Согласие можно отозвать, направив обращение оператору. Отзыв может сделать недоступными функции, для которых нужны соответствующие данные; он не влияет на законность обработки, выполненной до отзыва.',
+          'Согласие можно отозвать, направив обращение оператору. Доступ Runich к данным Apple Health или Health Connect можно прекратить в системных настройках телефона. Автосинхронизацию можно выключить в Runich; после этого автоматические проверки и отправка прекратятся, но при сохраненном системном разрешении ручной импорт останется доступен. Эти действия не удаляют уже импортированные тренировки — их можно удалить в Runich отдельно или вместе с аккаунтом. Отзыв не влияет на законность обработки, выполненной до отзыва.',
           `Email для отзыва согласия: ${LEGAL_OPERATOR.email}.`,
         ],
       },
@@ -153,6 +165,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
     title: 'Пользовательское соглашение Runich',
     intro: [
       'Нажимая кнопку регистрации или продолжая использование сервиса после ознакомления с документом, пользователь принимает соглашение.',
+      'Перед публикацией или загрузкой пользовательского контента необходимо принять действующую редакцию соглашения, включая правила сообщества.',
     ],
     sections: [
       {
@@ -185,26 +198,35 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         heading: '5. Запрещенное использование',
         paragraphs: ['Запрещается:'],
         bullets: [
-          'использовать фиктивные аккаунты, чужие данные, незаконную деятельность, угрозы, преследование, спам или вредоносный код;',
-          'нарушать работу инфраструктуры или собирать данные пользователей автоматизированно без разрешения;',
+          'использовать фиктивные аккаунты, чужие данные, выдавать себя за другого человека, заниматься мошенничеством, незаконной деятельностью или распространять вредоносный код;',
+          'публиковать угрозы, призывы к насилию, травлю, преследование или дискриминационные оскорбления;',
+          'публиковать сексуальные материалы с участием несовершеннолетних, интимные материалы без согласия изображённых лиц или чужие персональные данные без законного основания;',
+          'распространять спам или собирать данные пользователей автоматизированно без разрешения;',
+          'нарушать работу инфраструктуры;',
           'публиковать материалы, нарушающие права третьих лиц или применимое право.',
         ],
       },
       {
-        heading: '6. Спортивная информация и доступность',
+        heading: '6. Жалобы и модерация',
+        paragraphs: [
+          'Пользователь может пожаловаться на контент или аккаунт через приложение и заблокировать другого пользователя. Runich проверяет жалобы, может фильтровать материалы до публикации, временно скрывать их на время проверки, удалять контент, ограничивать функции аккаунта или приостанавливать доступ. Пользователю сообщается причина ограничения, если уведомление не создаёт угрозу безопасности или не запрещено законом. Решение можно обжаловать через приложение или по адресу поддержки.',
+        ],
+      },
+      {
+        heading: '7. Спортивная информация и доступность',
         paragraphs: [
           'Runich не является медицинской организацией и не заменяет врача, тренера или экстренную службу. Показатели носят информационный характер; пользователь самостоятельно оценивает состояние здоровья и безопасность тренировки.',
           'Оператор стремится поддерживать сервис доступным, но не гарантирует бесперебойную работу при сбоях связи, устройств, магазинов приложений, картографических и иных внешних сервисов, технических работах или форс-мажоре.',
         ],
       },
       {
-        heading: '7. Ограничение доступа и удаление',
+        heading: '8. Ограничение доступа и удаление',
         paragraphs: [
           'Оператор может ограничить доступ при нарушении соглашения, угрозе безопасности или требовании закона. Пользователь может удалить аккаунт в настройках приложения или по инструкции на странице «Удаление аккаунта». Удаление прекращает доступ и удаляет связанные данные с учетом законных исключений.',
         ],
       },
       {
-        heading: '8. Изменения и применимое право',
+        heading: '9. Изменения и применимое право',
         paragraphs: [
           'Новая редакция публикуется на этой странице. Продолжение использования означает принятие изменений, если закон не требует отдельного согласия.',
           `Вопросы и обращения принимаются по адресу: ${LEGAL_OPERATOR.email}.`,
@@ -290,6 +312,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
           'OAuth: email and basic-profile fields received from VK ID or Yandex ID — name, surname, city and photo when provided. The OAuth identifier is used for current authentication and account matching;',
           'profile: name, surname, city, optional gender, date of birth, sport, bio, photo, weight, height and age;',
           'workouts and routes: sport, date, distance, duration, pace/speed, steps, description, visibility, photos/videos, timestamps, coordinates, altitude and other parameters supplied by the device;',
+          'health data imported from Apple Health (HealthKit) on iOS or Health Connect on Android: workout details, distance, steps and route; Android may also provide heart-rate samples and active calories. Section 6 describes the exact data and processing;',
           'technical data: session and device identifier, model, platform, OS and app versions, user-agent, IP address, error logs and session location when supplied for authentication or state recovery.',
         ],
       },
@@ -315,20 +338,31 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         ],
       },
       {
-        heading: '6. User content',
+        heading: '6. Health data from Apple Health and Health Connect',
+        paragraphs: [
+          'When you connect a health store and grant system permissions, Runich reads data on your device from Apple Health through HealthKit on iOS or Health Connect on Android. Import covers workouts from the last 30 days. Access is read-only: Runich does not write data back to Apple Health or Health Connect. When auto-sync is enabled, Android checks for records when the app is opened or returned to, while iOS checks when you open or return to the import screen. When auto-sync is off, you start reading and import manually.',
+          'For each imported workout, Runich may read the sport, title if supplied by the source, start date and time, time zone, duration, distance, step count, source workout identifier used to prevent duplicates, and associated route. Route points may contain time, latitude, longitude, altitude and location accuracy; HealthKit may also provide speed and direction of travel. On Android, Runich additionally reads heart-rate samples with their time and beats-per-minute value, and active calories in kilocalories. On iOS, Runich requests HealthKit read permission for active energy, but the current app version does not read or send that value; it does not request HealthKit heart-rate access.',
+          'This data is used to create and update an imported workout in your Runich account, show its route and sports metrics, calculate pace and statistics, and display a heart-rate chart when available. Health data is not used for advertising, marketing profiling or sale.',
+          'After import, data is sent to the Runich API and stored in your account. In production, Runich servers and database are hosted in Timeweb infrastructure in the Russian Federation, and route files are stored in Timeweb S3-compatible storage. The server uses OpenFreeMap map resources to render maps; if internal map rendering is unavailable, a reduced route may be sent to Mapbox to create a static image.',
+          'An imported workout is public by default. Other Runich users may see its metrics and route subject to the workout and profile visibility settings; heart-rate viewing is enabled by default and can be disabled in profile privacy settings. The “Hide map” setting removes the map background but leaves the route line visible. To restrict access to the workout and its route, change its visibility to “Followers” or “Private”.',
+          'The imported copy is kept in Runich until you delete the workout or account. Revoking Apple Health or Health Connect permission in your device settings stops further reading. Turning off auto-sync stops automatic checks and transfers, but you can still start a manual import while system permission remains active. These actions do not delete workouts already imported; delete them in Runich individually or with your account. Source records remain in Apple Health or Health Connect unless you delete them there yourself.',
+        ],
+      },
+      {
+        heading: '7. User content',
         paragraphs: [
           'Photos, videos, descriptions, comments and other materials are displayed to the extent selected by the user; the user must have the rights required to publish them.',
         ],
       },
       {
-        heading: '7. Processing, storage and deletion',
+        heading: '8. Processing, storage and deletion',
         paragraphs: [
           'The controller collects, records, organizes, stores, updates, retrieves, uses, transfers to processors, anonymizes, blocks, deletes and destroys data only for the stated purposes. The main Runich application servers and databases in the production environment are hosted in Timeweb infrastructure in the Russian Federation. Files and media are stored in Timeweb S3-compatible storage.',
           'Unless this document states otherwise, account, profile, workout, route, support-request and technical data are kept until the user deletes the account. After deletion is confirmed, the data is deleted.',
         ],
       },
       {
-        heading: '8. Processors and transfers',
+        heading: '9. Processors and transfers',
         paragraphs: [
           'Runich may use VK ID and Yandex ID, a mail provider, API, database, file and backup, map and CDN providers. Each receives only the amount of data necessary for its task. Data is disclosed to public authorities only as required by law.',
           `For questions about processing, account deletion, access, correction or withdrawal of consent, contact: ${LEGAL_OPERATOR.email}.`,
@@ -352,7 +386,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Data categories',
         paragraphs: [
-          'Depending on the selected features, Runich may process email, account identifier, profile data including optional gender, weight, height and age, workout and route information, coordinates during recording, photos, comments, device data and technical logs. Optional information is processed only when the user provides it.',
+          'Depending on the selected features, Runich may process email, account identifier, profile data including optional gender, weight, height and age, workout and route information, coordinates during recording or import from Apple Health (HealthKit) and Health Connect, steps, and on Android heart-rate samples and active calories, photos, comments, device data and technical logs. Optional information is processed only when the user provides it or enables the relevant import.',
         ],
       },
       {
@@ -364,7 +398,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '4. Withdrawal',
         paragraphs: [
-          'You may withdraw consent by sending a request to the controller. Withdrawal may make features that require the relevant data unavailable; it does not affect the lawfulness of processing carried out before withdrawal.',
+          'You may withdraw consent by sending a request to the controller. You can stop Runich access to Apple Health or Health Connect in your device settings. Turning off auto-sync stops automatic checks and transfers, but manual import remains available while system permission is active. These actions do not delete workouts already imported; delete them in Runich individually or with your account. Withdrawal does not affect the lawfulness of processing carried out before withdrawal.',
           `Email for consent withdrawal: ${LEGAL_OPERATOR.email}.`,
         ],
       },
@@ -374,6 +408,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
     title: 'Runich User Agreement',
     intro: [
       'By pressing the registration button or continuing to use the service after reviewing this document, the user accepts the Agreement.',
+      'Users must accept the current version of this Agreement, including the Community Rules, before publishing or uploading user content.',
     ],
     sections: [
       {
@@ -406,26 +441,35 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         heading: '5. Prohibited use',
         paragraphs: ['The following is prohibited:'],
         bullets: [
-          'using fictitious accounts, other people’s data, unlawful activity, threats, harassment, spam or malicious code;',
-          'disrupting the infrastructure or collecting user data by automated means without permission;',
+          'using fictitious accounts or other people’s data, impersonating another person, committing fraud or unlawful activity, or distributing malicious code;',
+          'posting threats, calls for violence, bullying, harassment or discriminatory abuse;',
+          'posting sexual content involving minors, intimate content without the depicted person’s consent, or another person’s private information without a lawful basis;',
+          'distributing spam or collecting user data by automated means without permission;',
+          'disrupting the infrastructure;',
           'publishing materials that violate third-party rights or applicable law.',
         ],
       },
       {
-        heading: '6. Sports information and availability',
+        heading: '6. Reports and moderation',
+        paragraphs: [
+          'Users can report content or an account in the app and block another user. Runich reviews reports and may filter content before publication, temporarily hide it while it is reviewed, remove content, restrict account features or suspend access. We will tell the user why a restriction was applied unless notice could create a safety risk or is prohibited by law. Users can appeal a decision through the app or by contacting support.',
+        ],
+      },
+      {
+        heading: '7. Sports information and availability',
         paragraphs: [
           'Runich is not a medical organization and does not replace a doctor, coach or emergency service. The metrics are informational; the user independently assesses their health and workout safety.',
           'The operator seeks to keep the service available but does not guarantee uninterrupted operation during failures of communications, devices, app stores, map and other external services, maintenance or force majeure.',
         ],
       },
       {
-        heading: '7. Access restriction and deletion',
+        heading: '8. Access restriction and deletion',
         paragraphs: [
           'The operator may restrict access in the event of a breach of the Agreement, a security threat or a legal requirement. The user may delete the account in the app settings or using the instructions on the Account Deletion page. Deletion ends access and deletes related data, subject to legal exceptions.',
         ],
       },
       {
-        heading: '8. Changes and governing law',
+        heading: '9. Changes and governing law',
         paragraphs: [
           'A new version is published on this page. Continued use means acceptance of the changes unless the law requires separate consent.',
           `Questions and requests are accepted at: ${LEGAL_OPERATOR.email}.`,

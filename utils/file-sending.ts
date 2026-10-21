@@ -2,6 +2,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 import { Platform } from 'react-native';
+import { LANGUAGES } from '@const/enums';
 import {
   photosApi,
   type MediaUploadManifestEntry,
@@ -43,6 +44,74 @@ export type UploadMediaBatchRequest = (
   body: FormData,
   control?: MediaUploadControl,
 ) => Promise<UploadedPhotoBatchResponse[]>;
+
+export async function waitForMediaUploadReview<T extends UploadedPhotoResponse>(
+  uploads: T[],
+  control?: MediaUploadControl,
+): Promise<T[]> {
+  const assetIds = uploads.flatMap(({ assetId, status, url }) =>
+    assetId && !url && status && ['queued', 'processing'].includes(status) ? [assetId] : [],
+  );
+  if (!assetIds.length) return uploads;
+
+  const results = new Map<string, T>();
+  uploads.forEach((upload) => {
+    if (upload.assetId) results.set(upload.assetId, upload as T);
+  });
+  let pendingIds = assetIds;
+  let notifiedForReview = false;
+
+  for (let attempt = 0; pendingIds.length && attempt < 180; attempt += 1) {
+    if (control?.signal?.aborted) throw new Error('Загрузка медиафайлов отменена');
+    const request = store.dispatch(
+      photosApi.endpoints.getMediaUploadStatuses.initiate({ ids: pendingIds }, { forceRefetch: true }),
+    );
+    try {
+      const response = await request.unwrap();
+      response.items.forEach((status) => {
+        const previous = results.get(status.assetId);
+        if (!previous) return;
+        results.set(status.assetId, { ...previous, ...status });
+      });
+      if (!notifiedForReview && response.items.some(({ status }) => status === 'review_required')) {
+        notifiedForReview = true;
+        const isRussian = store.getState().settings.language === LANGUAGES.russian;
+        errorToast(
+          isRussian
+            ? 'Медиа отправлено модератору. Загрузка продолжится после проверки'
+            : 'Media sent to moderation. Upload will continue after review',
+        );
+      }
+      const approvedButUnpublished = response.items.filter(({ status, url }) => status === 'approved' && !url);
+      await Promise.all(
+        approvedButUnpublished.map(async ({ assetId }) => {
+          const publish = store.dispatch(photosApi.endpoints.publishApprovedMediaUpload.initiate({ assetId }));
+          try {
+            const result = await publish.unwrap();
+            const previous = results.get(assetId);
+            if (previous) results.set(assetId, { ...previous, status: 'approved', ...result });
+          } finally {
+            publish.reset();
+          }
+        }),
+      );
+    } finally {
+      request.unsubscribe();
+    }
+
+    pendingIds = pendingIds.filter((assetId) => {
+      const status = results.get(assetId)?.status;
+      return status === 'queued' || status === 'processing' || status === 'review_required';
+    });
+    if (pendingIds.some((assetId) => results.get(assetId)?.status === 'review_required')) {
+      control?.onProgress?.(0.95);
+    }
+    if (pendingIds.length) await new Promise((resolve) => setTimeout(resolve, 5_000));
+  }
+
+  if (pendingIds.length) throw new Error('Проверка медиа занимает больше времени. Файл пока недоступен.');
+  return uploads.map((upload) => (upload.assetId ? (results.get(upload.assetId) ?? upload) : upload));
+}
 
 const VIDEO_MAX_SIZE = 720;
 
@@ -126,13 +195,16 @@ export async function uploadMediaFiles(
   }
 }
 
-export async function createVideoThumbnail(videoUrl: string): Promise<string | null> {
+export async function createVideoThumbnail(videoSource: MediaSource): Promise<string | null> {
+  const objectUrl = typeof videoSource === 'string' ? null : URL.createObjectURL(videoSource);
   try {
-    const { uri } = await VideoThumbnails.getThumbnailAsync(videoUrl);
+    const { uri } = await VideoThumbnails.getThumbnailAsync(objectUrl ?? (videoSource as string));
     return uri;
   } catch (error) {
     errorToast('Не удалось создать превью видео', error);
     return null;
+  } finally {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
   }
 }
 
@@ -153,8 +225,11 @@ export async function getAccessToGallery(
   }
 }
 
-export async function deleteUploadedMedia(publicUrls: string[]) {
+export async function deleteUploadedMedia(publicUrls: string[], assetIds: string[] = []) {
   try {
+    for (const assetId of assetIds) {
+      await store.dispatch(photosApi.endpoints.deleteModerationUpload.initiate({ assetId })).unwrap();
+    }
     for (const url of publicUrls) {
       await store.dispatch(photosApi.endpoints.deletePhoto.initiate({ url })).unwrap();
     }

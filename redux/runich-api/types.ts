@@ -27,9 +27,10 @@ type ActivityLocationResponse = ActivityLocation;
 export interface ActivityMediaItemResponse {
   id?: string;
   activityId?: string;
-  url: string;
+  url: string | null;
   thumbnail: string | null;
   blurhash?: string | null;
+  mediaReviewStatus?: 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed' | null;
 }
 
 interface ActivityProfileResponse {

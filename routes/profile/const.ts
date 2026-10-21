@@ -23,3 +23,14 @@ export const PROFILE_WATCH_IMPORT = {
     subtitle: '(экспериментально)',
   },
 } as const;
+
+export const PROFILE_MODERATION = {
+  [LANGUAGES.english]: {
+    title: 'Moderation',
+    subtitle: 'Review content reports and appeals.',
+  },
+  [LANGUAGES.russian]: {
+    title: 'Модерация',
+    subtitle: 'Рассмотрение жалоб на контент и апелляций.',
+  },
+} as const;

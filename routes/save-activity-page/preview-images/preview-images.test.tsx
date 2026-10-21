@@ -60,7 +60,7 @@ describe('Preview images', () => {
     expect(deleteBtn).toBeOnTheScreen();
     await userEvent.press(deleteBtn);
     expect(setImages).toHaveBeenCalled();
-    expect(mockDeleteUploadedMedia).toHaveBeenCalledWith(['someUrl']);
+    expect(mockDeleteUploadedMedia).toHaveBeenCalledWith(['someUrl'], []);
   });
 
   it('deletes persisted activity media by its activity media id', async () => {

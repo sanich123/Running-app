@@ -41,13 +41,26 @@ export default function UploadPhotosBtn({
 
     if (activityId) {
       try {
-        const response = await appendActivityMedia({ id: activityId, media: uploadedMedia }).unwrap();
+        const response = await appendActivityMedia({
+          id: activityId,
+          media: uploadedMedia.map(({ url, thumbnail, blurhash, assetId, thumbnailAssetId }) => ({
+            ...(url && !assetId ? { url } : {}),
+            thumbnail: thumbnail ?? null,
+            ...(blurhash ? { blurhash } : {}),
+            ...(assetId ? { assetId } : {}),
+            ...(thumbnailAssetId ? { thumbnailAssetId } : {}),
+          })),
+        }).unwrap();
         setImages([...images, ...response.media]);
         dispatch(addPhotoUrls(response.media));
       } catch (error) {
-        await deleteUploadedMedia(
-          uploadedMedia.flatMap(({ url, thumbnail }) => [url, thumbnail].filter((photo): photo is string => !!photo)),
-        );
+        const assetIds = uploadedMedia
+          .flatMap(({ assetId, thumbnailAssetId }) => [assetId, thumbnailAssetId])
+          .filter((assetId): assetId is string => Boolean(assetId));
+        const publicUrls = uploadedMedia
+          .filter(({ assetId }) => !assetId)
+          .flatMap(({ url, thumbnail }) => [url, thumbnail].filter((photo): photo is string => !!photo));
+        await deleteUploadedMedia(publicUrls, assetIds);
         throw error;
       }
       return;

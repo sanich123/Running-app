@@ -13,6 +13,7 @@ import {
 import { useAppSelector } from '@R/typed-hooks';
 import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
 import CustomImage from '@S/custom-image/custom-image';
+import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
 import { getPhotoUrl, isDirectMediaUrl, isVideoUrl } from './utils';
 import type { ActivityMediaItemResponse } from '@R/runich-api/types';
 import type { PageScrollStateChangedNativeEvent, PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
@@ -106,9 +107,11 @@ export default function PhotoViewer() {
                 setIsPagerMoving(event.nativeEvent.pageScrollState !== 'idle')
               }
               orientation="vertical">
-              {itemsToRender.map(({ url, blurhash }: ActivityMediaItemResponse, index: number) => (
+              {itemsToRender.map(({ url, blurhash, mediaReviewStatus }: ActivityMediaItemResponse, index: number) => (
                 <View key={index} style={[styles.page, { backgroundColor: colors.background }]}>
-                  {isVideoUrl(url) ? (
+                  {!url ? (
+                    <MediaModerationPlaceholder status={mediaReviewStatus} />
+                  ) : isVideoUrl(url) ? (
                     <VideoViewer url={url} isActive={!isPagerMoving && selectedPage === index} />
                   ) : (
                     <CustomImage

@@ -44,6 +44,10 @@ export const LazyProfilePage = lazy(() => import('@Routes/profile/profile-page/p
 export const LazyProfilePrivacySettingsPage = lazy(
   () => import('@Routes/profile/privacy-settings/profile-privacy-settings-page/profile-privacy-settings-page'),
 );
+export const LazyBlockedUsersPage = lazy(
+  () => import('@Routes/profile/privacy-settings/blocked-users-page/blocked-users-page'),
+);
+export const LazyModerationDashboard = lazy(() => import('@Routes/profile/moderation/moderation-dashboard'));
 export const LazyNotificationsPage = lazy(() => import('@Routes/notifications/notifications-page/notifications-page'));
 export const LazyNotificationSettingsPage = lazy(
   () => import('@Routes/notifications/notification-settings-page/notification-settings-page'),

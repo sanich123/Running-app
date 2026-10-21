@@ -1,15 +1,39 @@
+import { useState } from 'react';
 import { useAppSelector } from '@R/typed-hooks';
+import ReportContentDialog from '@S/moderation/report-content-dialog/report-content-dialog';
 import { ACTIVITY_ACTIONS_MENU } from './const';
 import DeleteActivityButton from './delete-activity-button/delete-activity-button';
 import EditActivityButton from './edit-activity-button/edit-activity-button';
+import MenuItem from './menu-item/menu-item';
 import MenuView from './menu-view/menu-view';
 import type { ActivityActionsMenuProps } from './types';
 
 export default function ActivityActionsMenu({ activity }: ActivityActionsMenuProps) {
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
+  const [isReportVisible, setIsReportVisible] = useState(false);
+  const isOwner = userId === activity.userId;
 
-  if (userId !== activity.userId) return null;
+  if (!isOwner) {
+    return (
+      <>
+        <MenuView accessibilityLabel={ACTIVITY_ACTIONS_MENU[language].accessibilityLabel}>
+          <MenuItem
+            action="report"
+            label={ACTIVITY_ACTIONS_MENU[language].report}
+            testID="activity-actions-menu-report"
+            onPress={() => setIsReportVisible(true)}
+          />
+        </MenuView>
+        <ReportContentDialog
+          visible={isReportVisible}
+          targetType="activity"
+          targetId={activity.id}
+          onDismiss={() => setIsReportVisible(false)}
+        />
+      </>
+    );
+  }
 
   return (
     <DeleteActivityButton

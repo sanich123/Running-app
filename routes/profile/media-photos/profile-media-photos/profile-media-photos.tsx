@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ActivityMediaDeleteBtn from '@S/activity-media/activity-media-delete-btn/activity-media-delete-btn';
 import CustomImage from '@S/custom-image/custom-image';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
+import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
 import useLongPressGuard from '@S/pressable/use-long-press-guard';
 import { MEDIA_GRID_PAGE_SIZE } from '../../../media-grid/const';
 import { PROFILE_MEDIA } from '../const';
@@ -103,12 +104,16 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                     accessibilityLabel={PROFILE_MEDIA[language].label}
                     disabled={isError || isLoading || selectedMediaId === id}
                     borderless>
-                    <CustomImage
-                      style={{ width: widthOfScreen / 4, height: widthOfScreen / 4 }}
-                      source={{ uri: thumbnail || url }}
-                      contentFit="cover"
-                      placeholder={blurhash}
-                    />
+                    {url ? (
+                      <CustomImage
+                        style={{ width: widthOfScreen / 4, height: widthOfScreen / 4 }}
+                        source={{ uri: thumbnail || url }}
+                        contentFit="cover"
+                        placeholder={blurhash}
+                      />
+                    ) : (
+                      <MediaModerationPlaceholder status={item.mediaReviewStatus} compact />
+                    )}
                   </TouchableRipple>
                   <View pointerEvents="none" style={styles.labelBackdrop}>
                     <Text style={styles.label} variant="labelLarge">
@@ -157,12 +162,16 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                 accessibilityLabel={PROFILE_MEDIA[language].label}
                 disabled={isError || isLoading || selectedMediaId === id}
                 borderless>
-                <CustomImage
-                  style={{ width: widthOfScreen / 4, height: widthOfScreen / 4 }}
-                  source={{ uri: thumbnail || url }}
-                  contentFit="cover"
-                  placeholder={blurhash}
-                />
+                {url ? (
+                  <CustomImage
+                    style={{ width: widthOfScreen / 4, height: widthOfScreen / 4 }}
+                    source={{ uri: thumbnail || url }}
+                    contentFit="cover"
+                    placeholder={blurhash}
+                  />
+                ) : (
+                  <MediaModerationPlaceholder status={item.mediaReviewStatus} compact />
+                )}
               </TouchableRipple>
               {canDeleteMedia && selectedMediaId === id && activityId ? (
                 <View style={styles.deleteButton}>

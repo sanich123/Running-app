@@ -1,8 +1,9 @@
-import { Suspense, type ReactElement, type ReactNode } from 'react';
+import { type ReactElement, type ReactNode } from 'react';
 import { act, screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Platform, StyleSheet } from 'react-native';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { LANGUAGES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_ACTIVITY } from '@T/mocks/mock-activity';
@@ -13,7 +14,9 @@ import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityActionsMenu from './activity-actions-menu/activity-actions-menu';
+import { ACTIVITY_ACTIONS_MENU } from './activity-actions-menu/const';
 import ActivityDetails from './activity-details';
+import { REPORT_CONTENT_COPY } from '../../shared/moderation/report-content-dialog/const';
 
 const mockHeaderRight: { current?: () => ReactNode } = {};
 const mockPush = jest.fn();
@@ -119,7 +122,7 @@ describe('ActivityDetails', () => {
     );
   });
 
-  it('shows the activity actions menu in the header only for the activity owner', async () => {
+  it('shows an actions menu in the Android header for the owner and another user', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     mockStore.dispatch(runichApi.util.resetApiState());
     mockStore.dispatch(setMockUserId(MOCK_SERVER_ACTIVITY.userId));
@@ -131,7 +134,7 @@ describe('ActivityDetails', () => {
     await act(async () => {
       mockStore.dispatch(setMockUserId('external-viewer'));
     });
-    expect((mockHeaderRight.current?.() as ReactElement).type).toBe(Suspense);
+    expect((mockHeaderRight.current?.() as ReactElement).type).toBe(ActivityActionsMenu);
   });
 
   it('uses the native iOS toolbar menu for activity actions', async () => {
@@ -154,6 +157,20 @@ describe('ActivityDetails', () => {
 
     await user.press(screen.getByText('Удалить'));
     expect(screen.getByText('Удалить активность?')).toBeOnTheScreen();
+  });
+
+  it('offers reporting in the native iOS activity menu for another user', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(setMockUserId('external-viewer'));
+    const user = userEvent.setup();
+
+    await renderWithProviders(<ActivityDetails />);
+    await screen.findByTestId('full-view-card');
+
+    expect(screen.getByLabelText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].accessibilityLabel)).toBeOnTheScreen();
+    await user.press(screen.getByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].report));
+    expect(screen.getByText(REPORT_CONTENT_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
   });
 
   it('renders error state', async () => {

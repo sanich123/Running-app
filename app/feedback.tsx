@@ -80,7 +80,9 @@ export default function FeedbackPage() {
       const uploadedAttachments = await uploadFeedbackAttachments(mediaItems, feedbackId);
       const successfulUploadCount = uploadedAttachments.filter(Boolean).length;
       const successfulAttachments = uploadedAttachments.flatMap((attachment, index) =>
-        attachment && !removedPendingMediaIds.current.has(mediaItems[index].mediaId) ? [attachment] : [],
+        attachment?.url && !removedPendingMediaIds.current.has(mediaItems[index].mediaId)
+          ? [{ ...attachment, url: attachment.url }]
+          : [],
       );
       if (successfulAttachments.length) {
         setAttachments((currentAttachments) => [...currentAttachments, ...successfulAttachments]);

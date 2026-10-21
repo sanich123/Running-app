@@ -1,5 +1,6 @@
-import { FlatList, View, StyleSheet } from 'react-native';
+import { FlatList, View, StyleSheet, useWindowDimensions } from 'react-native';
 import PreviewImage from '@Routes/save-activity-page/preview-image/preview-image';
+import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
 import PreviewImageCloseBtn from '../preview-image-close-btn/preview-image-close-btn';
 import type { PreviewImagesProps } from './types';
 import type { ActivityPhoto } from '@R/slices/activity/types';
@@ -13,15 +14,32 @@ export default function PreviewImages({
   activityId,
   isPersistedActivityMedia = false,
 }: PreviewImagesProps) {
+  const { width } = useWindowDimensions();
+  const previewWidth = compact ? width / 4 - 14 : width / 3 - 10;
+  const previewHeight = compact ? 68 : 100;
   const renderPreview = (media: ActivityPhoto, index: number) => (
-    <View style={[styles.imageContainer, { zIndex: images.length - index }]} key={`${media.url}/${index}`}>
-      <PreviewImage
-        image={media.thumbnail || media.url}
-        mediaUrl={media.url}
-        isDisabled={isDisabled}
-        index={index}
-        compact={compact}
-      />
+    <View
+      style={[
+        styles.imageContainer,
+        !media.url && { height: previewHeight, width: previewWidth },
+        { zIndex: images.length - index },
+      ]}
+      key={`${media.id ?? media.assetId ?? media.url}/${index}`}>
+      {media.url ? (
+        <PreviewImage
+          image={media.thumbnail || media.url}
+          mediaUrl={media.url}
+          isDisabled={isDisabled}
+          index={index}
+          compact={compact}
+        />
+      ) : (
+        <MediaModerationPlaceholder
+          status={media.mediaReviewStatus}
+          compact={compact}
+          testID={`pending-media-preview-${index}`}
+        />
+      )}
       <PreviewImageCloseBtn
         setImages={setImages}
         images={images}
@@ -42,7 +60,7 @@ export default function PreviewImages({
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.horizontalImagesWrapper}
-        keyExtractor={({ url }, index) => `${url}/${index}`}
+        keyExtractor={(media, index) => `${media.id ?? media.assetId ?? media.url}/${index}`}
         renderItem={({ item, index }) => renderPreview(item, index)}
       />
     );

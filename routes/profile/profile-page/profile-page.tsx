@@ -7,6 +7,7 @@ import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useGetAllActivityMediaByUserIdInfiniteQuery } from '@R/services/activity/activity';
 import { useGetFollowersByUserIdQuery, useGetYouFollowUsersByUserIdQuery } from '@R/services/followers/followers';
+import { useGetModeratorAccessQuery } from '@R/services/moderation/moderation';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useGetAllTimeStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
@@ -14,8 +15,9 @@ import ProfileMediaPhotos from '@Routes/profile/media-photos/profile-media-photo
 import AvatarShowable from '@S/avatar/showable/avatar-showable/avatar-showable';
 import CustomImage from '@S/custom-image/custom-image';
 import ErrorComponent from '@S/error-component/error-component';
+import UserSafetyMenu from '@S/moderation/user-safety-menu/user-safety-menu';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
-import { PROFILE_SECTIONS, PROFILE_WATCH_IMPORT } from '../const';
+import { PROFILE_MODERATION, PROFILE_SECTIONS, PROFILE_WATCH_IMPORT } from '../const';
 import { PROFILE_PRIVACY_SETTINGS } from '../privacy-settings/const';
 import ProfileSkeleton from '../profile-skeleton/profile-skeleton';
 import ProfileStatistics from '../statistics/profile-statistics/profile-statistics';
@@ -33,6 +35,7 @@ export default function ProfilePage() {
   const whosProfile = whosProfileViewing ? whosProfileViewing : userId;
   const profileUserId = `${whosProfile}`;
   const isOwnProfile = String(whosProfile) === userId;
+  const { data: moderationAccess } = useGetModeratorAccessQuery(undefined, { skip: !isOwnProfile });
 
   const {
     isLoading,
@@ -109,6 +112,7 @@ export default function ProfilePage() {
                   {profile?.city}
                 </Text>
               </View>
+              {!isOwnProfile ? <UserSafetyMenu userId={profileUserId} /> : null}
             </View>
             <View style={[styles.bio, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
               <Text variant="titleMedium" style={{ color: colors.primary, fontFamily: FONT_FAMILIES.semiBold }}>
@@ -156,6 +160,21 @@ export default function ProfilePage() {
                 left={(props) => <List.Icon {...props} icon="shield-lock-outline" />}
                 right={(props) => <List.Icon {...props} icon="chevron-right" />}
                 onPress={() => push(`/${ROUTES.profile}/${ROUTES.profilePrivacySettings}`)}
+                style={[
+                  styles.privacySettingsLink,
+                  { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+                ]}
+              />
+            ) : null}
+            {isOwnProfile && moderationAccess?.isModerator ? (
+              <List.Item
+                testID="moderation-profile-link"
+                title={PROFILE_MODERATION[language].title}
+                description={PROFILE_MODERATION[language].subtitle}
+                titleNumberOfLines={1}
+                left={(props) => <List.Icon {...props} icon="shield-check-outline" />}
+                right={(props) => <List.Icon {...props} icon="chevron-right" />}
+                onPress={() => push(`/${ROUTES.profile}/${ROUTES.moderation}`)}
                 style={[
                   styles.privacySettingsLink,
                   { backgroundColor: colors.surface, borderColor: colors.outlineVariant },

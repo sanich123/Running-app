@@ -12,6 +12,9 @@ import ActivityMediaDeleteBtn from '@S/activity-media/activity-media-delete-btn/
 import AddActivityMediaBtn from '@S/card/add-media-btn/add-activity-media-btn/add-activity-media-btn';
 import CustomImage from '@S/custom-image/custom-image';
 import { errorToast } from '@S/error-toast/error-toast';
+import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
+import ContentActionsMenu from '@S/moderation/content-actions-menu/content-actions-menu';
+import ReportContentDialog from '@S/moderation/report-content-dialog/report-content-dialog';
 import { useActivityCard } from '../context';
 import {
   ACTIVITY_MEDIA_ASPECT_RATIO,
@@ -44,6 +47,7 @@ export default function MediaList() {
     profile,
   } = activity;
   const [selectedMediaId, setSelectedMediaId] = useState<string | null>(null);
+  const [reportedMediaId, setReportedMediaId] = useState<string | null>(null);
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { width } = useWindowDimensions();
@@ -88,8 +92,8 @@ export default function MediaList() {
   );
 
   const getMediaWidth = useCallback(
-    (item: DisplayedMediaItem) => {
-      const aspectRatio = item.isMap ? ACTIVITY_MEDIA_ASPECT_RATIO : (mediaAspectRatios[item.url] ?? 1);
+    (item: DisplayedMediaItem, mediaUrl: string) => {
+      const aspectRatio = item.isMap ? ACTIVITY_MEDIA_ASPECT_RATIO : (mediaAspectRatios[mediaUrl] ?? 1);
       const minimumWidth = mediaHeight * 0.56;
       return Math.min(mediaWidth, Math.max(mediaHeight * aspectRatio, minimumWidth));
     },
@@ -109,12 +113,25 @@ export default function MediaList() {
   const renderItem = useCallback(
     ({ item, index }: { item: (typeof displayedData)[number]; index: number }) => {
       const isMap = item.isMap === true;
-      const isVideo = !isMap && isVideoUrl(item.url);
-      const itemWidth = getMediaWidth(item);
+      if (!item.url) {
+        return (
+          <View
+            testID={`activity-media-${item.id ?? index}`}
+            style={[styles.mediaTile, { height: mediaHeight, width: mediaWidth }]}>
+            <MediaModerationPlaceholder
+              status={item.mediaReviewStatus}
+              testID={`pending-activity-media-${item.id ?? index}`}
+            />
+          </View>
+        );
+      }
+      const mediaUrl = item.url;
+      const isVideo = !isMap && isVideoUrl(mediaUrl);
+      const itemWidth = getMediaWidth(item, mediaUrl);
       const onMediaMetadata = (metadata: { aspectRatio?: number }) => {
         if (!metadata.aspectRatio || !Number.isFinite(metadata.aspectRatio)) return;
         setMediaAspectRatios((current) =>
-          current[item.url] === metadata.aspectRatio ? current : { ...current, [item.url]: metadata.aspectRatio! },
+          current[mediaUrl] === metadata.aspectRatio ? current : { ...current, [mediaUrl]: metadata.aspectRatio! },
         );
       };
       const handleMediaPress = () => {
@@ -128,7 +145,7 @@ export default function MediaList() {
         push(
           isMap
             ? `/${ROUTES.map}/${id}`
-            : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(item.url) : id}${createSearchParams({
+            : `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(mediaUrl) : id}${createSearchParams({
                 indexOfPhoto: index,
                 blurhash: item.blurhash,
               })}`,
@@ -151,7 +168,7 @@ export default function MediaList() {
               accessibilityLabel={mediaAccessibilityLabel}
               onClick={handleMediaPress}>
               <VideoMedia
-                url={item.url}
+                url={mediaUrl}
                 thumbnail={item.thumbnail}
                 blurhash={item.blurhash}
                 width={itemWidth}
@@ -182,7 +199,7 @@ export default function MediaList() {
               accessibilityLabel={mediaAccessibilityLabel}>
               {isVideo ? (
                 <VideoMedia
-                  url={item.url}
+                  url={mediaUrl}
                   thumbnail={item.thumbnail}
                   blurhash={item.blurhash}
                   width={itemWidth}
@@ -197,13 +214,13 @@ export default function MediaList() {
               ) : (
                 <CustomImage
                   style={{ width: itemWidth, height: mediaHeight }}
-                  source={{ uri: item.thumbnail ? item.thumbnail : item.url }}
+                  source={{ uri: item.thumbnail ? item.thumbnail : mediaUrl }}
                   contentFit="cover"
                   placeholderContentFit="cover"
                   priority={index === 0 ? 'high' : 'normal'}
                   cachePolicy="memory-disk"
-                  recyclingKey={item.url}
-                  testID={item.url}
+                  recyclingKey={mediaUrl}
+                  testID={mediaUrl}
                   placeholder={item?.blurhash}
                   onLoad={(event) => {
                     const { width: loadedWidth, height: loadedHeight } = event.source;
@@ -242,6 +259,19 @@ export default function MediaList() {
               </View>
             </>
           ) : null}
+          {!isOwnActivity && !isMap && item.id ? (
+            <View style={styles.reportButton}>
+              <ContentActionsMenu
+                accessibilityLabel={
+                  language === LANGUAGES.russian ? 'Дополнительные действия с медиа' : 'Media actions'
+                }
+                testID={`media-actions-menu-${item.id}`}
+                reportLabel={language === LANGUAGES.russian ? 'Пожаловаться' : 'Report'}
+                reportTestID={`report-media-${item.id}`}
+                onReport={() => setReportedMediaId(item.id ?? null)}
+              />
+            </View>
+          ) : null}
         </View>
       );
     },
@@ -268,34 +298,44 @@ export default function MediaList() {
       push,
       handleDeleteMedia,
       setMediaAspectRatios,
+      mediaWidth,
     ],
   );
 
   return (
-    <FlatList
-      ref={mediaListRef}
-      data={displayedData}
-      renderItem={renderItem}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={Platform.OS === 'web' ? { flexGrow: 0, height: mediaHeight + 8 } : undefined}
-      testID="activity-media-list"
-      contentContainerStyle={styles.listContent}
-      onContentSizeChange={handleMediaContentSizeChange}
-      initialNumToRender={Math.max(1, Math.min(displayedData.length, 3))}
-      maxToRenderPerBatch={3}
-      windowSize={5}
-      updateCellsBatchingPeriod={50}
-      removeClippedSubviews={false}
-      ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-      keyExtractor={(item) => item.url}
-    />
+    <>
+      <FlatList
+        ref={mediaListRef}
+        data={displayedData}
+        renderItem={renderItem}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={Platform.OS === 'web' ? { flexGrow: 0, height: mediaHeight + 8 } : undefined}
+        testID="activity-media-list"
+        contentContainerStyle={styles.listContent}
+        onContentSizeChange={handleMediaContentSizeChange}
+        initialNumToRender={Math.max(1, Math.min(displayedData.length, 3))}
+        maxToRenderPerBatch={3}
+        windowSize={5}
+        updateCellsBatchingPeriod={50}
+        removeClippedSubviews={false}
+        ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+        keyExtractor={(item, index) => item.id ?? item.url ?? String(index)}
+      />
+      <ReportContentDialog
+        visible={Boolean(reportedMediaId)}
+        targetType="media"
+        targetId={reportedMediaId ?? ''}
+        onDismiss={() => setReportedMediaId(null)}
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   listContent: { paddingVertical: 4 },
   itemSeparator: { width: 8 },
+  reportButton: { position: 'absolute', right: 4, top: 4 },
   mediaTile: {
     borderCurve: 'continuous',
     borderRadius: 10,

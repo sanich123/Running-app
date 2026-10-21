@@ -1,9 +1,12 @@
 import { useEffect, useState, type RefObject } from 'react';
 import { Animated, View, StyleSheet } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
+import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { UserInfoSize } from '@S/card/user-info/const';
 import UserInfo from '@S/card/user-info/user-info';
+import ContentActionsMenu from '@S/moderation/content-actions-menu/content-actions-menu';
+import ReportContentDialog from '@S/moderation/report-content-dialog/report-content-dialog';
 import CommentDeleteBtn from '../comment-delete-btn/comment-delete-btn';
 import CommentEditBtn from '../comment-edit-btn/comment-edit-btn';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
@@ -23,10 +26,12 @@ export default function Comment({
 }: CommentResponse & { commentsModalRef: RefObject<BottomSheetModal | null> }) {
   const { idOfUpdatingComment, commentActivityId, activityOwnerProfile } = useAppSelector(({ comment }) => comment);
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { language } = useAppSelector(({ settings }) => settings);
   const isYouAuthor = userId === authorId;
   const isActivityOwner = activityOwnerProfile.userId === userId;
   const canInteract = activityOwnerProfile.allowActivityInteractions !== false || isActivityOwner;
   const [commentAnimation] = useState(() => new Animated.Value(0));
+  const [isReportVisible, setIsReportVisible] = useState(false);
 
   useEffect(() => {
     Animated.timing(commentAnimation, {
@@ -66,10 +71,27 @@ export default function Comment({
           <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
         </View>
         <View style={styles.actions}>
+          {!isYouAuthor ? (
+            <ContentActionsMenu
+              accessibilityLabel={
+                language === LANGUAGES.russian ? 'Дополнительные действия с комментарием' : 'Comment actions'
+              }
+              testID={`comment-actions-menu-${id}`}
+              reportLabel={language === LANGUAGES.russian ? 'Пожаловаться' : 'Report'}
+              reportTestID={`report-comment-${id}`}
+              onReport={() => setIsReportVisible(true)}
+            />
+          ) : null}
           {isYouAuthor && <CommentEditBtn commentId={id} comment={comment} idOfUpdatingComment={idOfUpdatingComment} />}
           {(isYouAuthor || isActivityOwner) && <CommentDeleteBtn commentId={id} activityId={commentActivityId} />}
         </View>
       </View>
+      <ReportContentDialog
+        visible={isReportVisible}
+        targetType="comment"
+        targetId={id}
+        onDismiss={() => setIsReportVisible(false)}
+      />
       <Divider />
     </Animated.View>
   );

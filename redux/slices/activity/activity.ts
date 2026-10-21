@@ -24,8 +24,11 @@ const activity = createSlice({
     addPhotoUrls: (state, action: PayloadAction<ActivityPhoto[]>) => {
       state.media = [...action.payload, ...state.media];
     },
-    removePhotoUrl: (state, action: PayloadAction<string>) => {
-      state.media = state.media.filter(({ url }) => url !== action.payload);
+    removePhotoUrl: (state, action: PayloadAction<{ url?: string | null; assetId?: string; id?: string }>) => {
+      const { url, assetId, id } = action.payload;
+      state.media = state.media.filter((media) =>
+        id ? media.id !== id : assetId ? media.assetId !== assetId : media.url !== url,
+      );
     },
     resetActivityDraft: (state) => {
       state.sport = ACTIVITY_DRAFT_INITIAL_STATE.sport;
