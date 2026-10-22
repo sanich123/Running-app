@@ -1,15 +1,14 @@
 import { StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
-import { useDeleteCommentByCommentIdMutation } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
-import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_DELETE_BTN } from './const';
+import useCommentDeleteAction from './use-comment-delete-action';
 import type { CommentDeleteButtonProps } from '../types';
 
 export default function CommentDeleteBtn({ commentId, activityId }: CommentDeleteButtonProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
-  const [deleteComment, { isLoading }] = useDeleteCommentByCommentIdMutation();
+  const { onDelete, isLoading } = useCommentDeleteAction(commentId, activityId);
 
   return (
     <IconButton
@@ -22,13 +21,7 @@ export default function CommentDeleteBtn({ commentId, activityId }: CommentDelet
       size={19}
       loading={isLoading}
       style={styles.button}
-      onPress={async () => {
-        try {
-          await deleteComment({ commentId, activityId }).unwrap();
-        } catch (error) {
-          errorToast(COMMENT_DELETE_BTN[language].errorDeleting, error);
-        }
-      }}
+      onPress={() => void onDelete()}
       disabled={isLoading}
     />
   );

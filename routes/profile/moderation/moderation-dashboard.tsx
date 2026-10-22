@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, Linking, Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Image, Linking, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import {
   ActivityIndicator,
@@ -64,6 +64,7 @@ export default function ModerationDashboard() {
   const reportDetails = reportDetailsQuery.data;
   const selectedAppeal = appeals.find(({ id }) => id === selectedAppealId);
   const report = reportDetails?.report;
+  const isClosedSelectedReport = report?.status === 'resolved' || report?.status === 'rejected';
   const context = reportDetails?.context;
   const canApplyActions = report?.status === 'open' || report?.status === 'in_review';
   const isVideoUpload = report?.targetType === 'media_upload' && context?.contentType?.startsWith('video/');
@@ -191,7 +192,7 @@ export default function ModerationDashboard() {
 
     return (
       <View style={styles.detailContent}>
-        {!isWideLayout ? (
+        {!isWideLayout || isClosedSelectedReport ? (
           <Button mode="text" icon="arrow-left" onPress={() => setSelectedReportOverride('')}>
             {copy.back}
           </Button>
@@ -297,6 +298,8 @@ export default function ModerationDashboard() {
     { value: 'all', label: copy.filters.all },
     ...REPORT_STATUS_OPTIONS.map((status) => ({ value: status, label: copy.filters[status] })),
   ];
+  const hasQueueItems = activeTab === 'reports' ? reports.length > 0 : appeals.length > 0;
+  const showQueue = !((!isWideLayout && Boolean(selectedReportId)) || (isWideLayout && isClosedSelectedReport));
   const pendingActionLabel =
     pendingDecision?.kind === 'action' ? copy.action[pendingDecision.action] : copy.appealDecision;
 
@@ -305,10 +308,7 @@ export default function ModerationDashboard() {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={{ backgroundColor: colors.background }}
-        contentContainerStyle={[
-          styles.container,
-          { backgroundColor: colors.background, marginHorizontal: Platform.OS === 'web' ? 'auto' : 0 },
-        ]}>
+        contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
         <Text variant="headlineSmall" style={styles.title}>
           {copy.title}
         </Text>
@@ -327,16 +327,48 @@ export default function ModerationDashboard() {
           <View
             style={[
               styles.queue,
-              isWideLayout && styles.queueWide,
-              !isWideLayout && Boolean(selectedReportId) && styles.hidden,
+              isWideLayout && (showQueue ? styles.queueWide : styles.hidden),
+              isWideLayout && !hasQueueItems && !selectedReportId && styles.queueEmptyWide,
+              !isWideLayout && !showQueue && styles.hidden,
             ]}>
             {activeTab === 'reports' ? (
-              <SegmentedButtons
-                style={styles.filterButtons}
-                value={statusFilter}
-                onValueChange={(value) => setStatusFilter(value as ReportFilter)}
-                buttons={reportFilterButtons}
-              />
+              isWideLayout ? (
+                <SegmentedButtons
+                  style={styles.filterButtons}
+                  value={statusFilter}
+                  onValueChange={(value) => setStatusFilter(value as ReportFilter)}
+                  buttons={reportFilterButtons}
+                />
+              ) : (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.filterChips}>
+                  {reportFilterButtons.map(({ value, label }) => (
+                    <Pressable
+                      key={value}
+                      testID={`moderation-report-filter-${value}`}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: statusFilter === value }}
+                      onPress={() => setStatusFilter(value as ReportFilter)}
+                      style={[
+                        styles.filterChip,
+                        {
+                          backgroundColor: statusFilter === value ? colors.secondaryContainer : colors.surface,
+                          borderColor: statusFilter === value ? colors.primary : colors.outlineVariant,
+                        },
+                      ]}>
+                      <Text
+                        variant="labelMedium"
+                        style={{
+                          color: statusFilter === value ? colors.onSecondaryContainer : colors.onSurfaceVariant,
+                        }}>
+                        {label}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              )
             ) : null}
             {isQueueLoading ? <ActivityIndicator size="small" style={styles.loading} /> : null}
             {queueError ? (
@@ -362,7 +394,11 @@ export default function ModerationDashboard() {
                   />
                 ))
               ) : (
-                <Text style={{ color: colors.onSurfaceVariant }}>{copy.emptyReports}</Text>
+                <View style={[styles.emptyState, { backgroundColor: colors.surfaceVariant }]}>
+                  <Text variant="titleSmall" style={{ color: colors.onSurfaceVariant }}>
+                    {copy.emptyReports}
+                  </Text>
+                </View>
               )
             ) : appeals.length ? (
               appeals.map((item) => (
@@ -381,14 +417,20 @@ export default function ModerationDashboard() {
                 />
               ))
             ) : (
-              <Text style={{ color: colors.onSurfaceVariant }}>{copy.emptyAppeals}</Text>
+              <View style={[styles.emptyState, { backgroundColor: colors.surfaceVariant }]}>
+                <Text variant="titleSmall" style={{ color: colors.onSurfaceVariant }}>
+                  {copy.emptyAppeals}
+                </Text>
+              </View>
             )}
           </View>
           <View
             style={[
               styles.detail,
               isWideLayout && styles.detailWide,
+              isWideLayout && isClosedSelectedReport && styles.detailClosedWide,
               !isWideLayout && !selectedReportId && styles.hidden,
+              isWideLayout && !selectedReportId && !hasQueueItems && styles.hidden,
               { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
             ]}>
             {renderReportDetails()}
@@ -436,17 +478,29 @@ export default function ModerationDashboard() {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, gap: 12, maxWidth: 1140, padding: 16, width: '100%' },
+  container: { alignSelf: 'center', flexGrow: 1, gap: 16, maxWidth: 1280, padding: 16, width: '100%' },
   title: { marginBottom: 4 },
-  columns: { flex: 1, gap: 12 },
-  columnsWide: { alignItems: 'flex-start', flexDirection: 'row' },
-  queue: { gap: 8, width: '100%' },
-  queueWide: { flex: 0.8, maxWidth: 430 },
-  detail: { borderRadius: 10, borderWidth: 1, flex: 1, padding: 16, width: '100%' },
+  columns: { flex: 1, gap: 16, minWidth: 0 },
+  columnsWide: { alignItems: 'stretch', flexDirection: 'row' },
+  queue: { gap: 8, minWidth: 0, width: '100%' },
+  queueWide: { flex: 0.42, maxWidth: 480, minWidth: 300 },
+  queueEmptyWide: { flex: 1, maxWidth: '100%' },
+  detail: { borderRadius: 12, borderWidth: 1, flex: 1, minWidth: 0, padding: 20, width: '100%' },
   detailWide: { minHeight: 400 },
+  detailClosedWide: { alignSelf: 'center', maxWidth: 1120 },
   detailContent: { gap: 8 },
   queueItem: { borderRadius: 8, borderWidth: 1 },
   filterButtons: { marginBottom: 4 },
+  filterChips: { gap: 8, paddingBottom: 4 },
+  filterChip: {
+    alignItems: 'center',
+    borderRadius: 18,
+    borderWidth: 1,
+    justifyContent: 'center',
+    minHeight: 36,
+    paddingHorizontal: 12,
+  },
+  emptyState: { alignItems: 'center', borderRadius: 12, justifyContent: 'center', minHeight: 144, padding: 24 },
   actionButtons: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginVertical: 8 },
   divider: { marginVertical: 8 },
   context: { gap: 8 },

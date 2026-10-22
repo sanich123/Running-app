@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import UserAvatar from '@S/avatar/user-avatar/user-avatar';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
-import type { UserInfoProps } from './const';
+import { USER_INFO_FALLBACK_NAME, type UserInfoProps } from './const';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 
 export default function UserInfo({ profile, sport, date, userId, size, commentsModalRef }: UserInfoProps) {
@@ -16,6 +16,12 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
   const { push } = useRouter();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
+  const displayName = [profile?.name, profile?.surname]
+    .map((part) => part?.trim())
+    .filter((part): part is string => Boolean(part))
+    .join(' ');
+  const displayNameOrFallback = displayName || USER_INFO_FALLBACK_NAME[language];
+
   return (
     <TouchableRipple
       onPress={() => {
@@ -49,7 +55,9 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
               style={{
                 color: colors.onSurface,
                 fontFamily: FONT_FAMILIES.semiBold,
-              }}>{`${profile?.name} ${profile?.surname ?? ''}`}</Text>
+              }}>
+              {displayNameOrFallback}
+            </Text>
           </View>
           <View style={styles.metaRow}>
             <Text

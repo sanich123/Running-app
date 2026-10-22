@@ -150,7 +150,6 @@ describe('ModerationDashboard', () => {
 
   it('filters reports by status without hiding the open report', async () => {
     const user = userEvent.setup();
-    const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.russian];
     server.use(
       http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
       http.get(`${BASE_URL}/moderation/reports`, () =>
@@ -165,7 +164,7 @@ describe('ModerationDashboard', () => {
     await renderWithProviders(<ModerationDashboard />);
     expect(await screen.findByTestId('moderation-report-report-1')).toBeOnTheScreen();
     expect(screen.getByTestId('moderation-report-report-2')).toBeOnTheScreen();
-    await user.press(screen.getByText(copy.filters.open));
+    await user.press(screen.getByTestId('moderation-report-filter-open'));
     expect(screen.getByTestId('moderation-report-report-1')).toBeOnTheScreen();
     expect(screen.queryByTestId('moderation-report-report-2')).toBeNull();
   });

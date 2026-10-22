@@ -6,7 +6,7 @@ import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { UserInfoSize } from './const';
+import { USER_INFO_FALLBACK_NAME, UserInfoSize } from './const';
 import UserInfo from './user-info';
 
 const mockPush = jest.fn();
@@ -42,6 +42,21 @@ describe('UserInfo', () => {
       { store: mockStore },
     );
     expect(screen.getByText(new RegExp(`${MOCK_PROFILE.name}`))).toHaveProp('numberOfLines', 1);
+  });
+
+  it('shows a localized fallback when profile name fields are empty', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    await renderWithProviders(
+      <UserInfo
+        profile={{ name: null, surname: null }}
+        date={`${new Date()}`}
+        userId="someUserId"
+        size={UserInfoSize.large}
+      />,
+      { store: mockStore },
+    );
+
+    expect(screen.getByText(USER_INFO_FALLBACK_NAME.russian)).toBeOnTheScreen();
   });
 
   it('opens the user profile and closes an enclosing comments modal', async () => {

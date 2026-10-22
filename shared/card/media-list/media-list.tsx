@@ -265,6 +265,7 @@ export default function MediaList() {
                 accessibilityLabel={
                   language === LANGUAGES.russian ? 'Дополнительные действия с медиа' : 'Media actions'
                 }
+                iconColor="#fff"
                 testID={`media-actions-menu-${item.id}`}
                 reportLabel={language === LANGUAGES.russian ? 'Пожаловаться' : 'Report'}
                 reportTestID={`report-media-${item.id}`}
