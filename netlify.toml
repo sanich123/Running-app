@@ -5,6 +5,16 @@
 [build.environment]
   NODE_VERSION = "26.7.0"
 
+[[headers]]
+  for = "/_expo/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/assets/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
 [context.branch-deploy]
   command = "yarn web:export:stage"
 

@@ -1,6 +1,12 @@
+import { Suspense } from 'react';
 import { LANGUAGES } from '@const/enums';
-import LegalIndexPage from '@Routes/legal-documents/legal-index-page/legal-index-page';
+import { LazyLegalIndexPage } from '@Routes/app-routes/const';
+import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 export default function LegalScreen() {
-  return <LegalIndexPage language={LANGUAGES.russian} />;
+  return (
+    <Suspense fallback={<FullPageActivityLoader />}>
+      <LazyLegalIndexPage language={LANGUAGES.russian} />
+    </Suspense>
+  );
 }

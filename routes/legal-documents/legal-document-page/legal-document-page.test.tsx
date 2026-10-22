@@ -1,7 +1,8 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { LEGAL_DOCUMENT_LABELS, LEGAL_DOCUMENTS } from '../content';
+import { LEGAL_DOCUMENT_LABELS } from '../content';
+import { LEGAL_DOCUMENTS } from '../documents';
 import LegalDocumentPage from './legal-document-page';
 
 const mockPush = jest.fn();

@@ -1,6 +1,12 @@
+import { Suspense } from 'react';
 import { LANGUAGES } from '@const/enums';
-import LegalDocumentPage from '@Routes/legal-documents/legal-document-page/legal-document-page';
+import { LazyLegalDocumentPage } from '@Routes/app-routes/const';
+import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 export default function ConsentsScreen() {
-  return <LegalDocumentPage documentId="consents" language={LANGUAGES.russian} />;
+  return (
+    <Suspense fallback={<FullPageActivityLoader />}>
+      <LazyLegalDocumentPage documentId="consents" language={LANGUAGES.russian} />
+    </Suspense>
+  );
 }

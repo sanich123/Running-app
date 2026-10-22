@@ -28,6 +28,15 @@ export const LazyInputsHeartRate = lazy(
 export const LazyLegalInformation = lazy(
   () => import('@Routes/legal-information/legal-information-page/legal-information-page'),
 );
+export const LazyLegalDocumentPage = lazy(
+  () => import('@Routes/legal-documents/legal-document-page/legal-document-page'),
+);
+export const LazyLegalIndexPage = lazy(() => import('@Routes/legal-documents/legal-index-page/legal-index-page'));
+export const LazyChangePassword = lazy(() => import('@Routes/sign-in/change-password/change-password'));
+export const LazyConfirmEmailCodePage = lazy(() => import('@Routes/confirm-email-code-page/confirm-email-code-page'));
+export const LazyFeedbackPage = lazy(() => import('@Routes/feedback/feedback-page/feedback-page'));
+export const LazyHomePageContent = lazy(() => import('@Routes/home-page/home-page'));
+export const LazyDashboard = lazy(() => import('@Routes/statistic/dashboard/dashboard'));
 export const LazyLikesList = lazy(() => import('@Routes/likes-list/likes-list'));
 export const LazyListOfFollowers = lazy(() => import('@Routes/followers-page/list-of-followers/list-of-followers'));
 export const LazyListOfFollowing = lazy(() => import('@Routes/followings-page/list-of-following/list-of-following'));
@@ -38,7 +47,6 @@ export const LazyMediaGrid = lazy(() => import('@Routes/media-grid/media-grid'))
 export const LazyMigrationFromStrava = lazy(() => import('@Routes/migration-from-strava/migration-from-strava'));
 export const LazyMonthStatistics = lazy(() => import('@Routes/statistic/month-statistics/month-statistics'));
 export const LazyPhotoViewer = lazy(() => import('@Routes/photo-viewer/photo-viewer'));
-export const LazyPrivacyPolicy = lazy(() => import('@Routes/privacy-policy/privacy-policy-page/privacy-policy-page'));
 export const LazyProfileEditBtn = lazy(() => import('@Routes/profile/edit-btn/edit-btn'));
 export const LazyProfilePage = lazy(() => import('@Routes/profile/profile-page/profile-page'));
 export const LazyProfilePrivacySettingsPage = lazy(
@@ -49,11 +57,11 @@ export const LazyBlockedUsersPage = lazy(
 );
 export const LazyModerationDashboard = lazy(() => import('@Routes/profile/moderation/moderation-dashboard'));
 export const LazyNotificationsPage = lazy(() => import('@Routes/notifications/notifications-page/notifications-page'));
+export const LazyUpdateAppPage = lazy(() => import('@Routes/update-app/update-app-page/update-app-page'));
+export const LazyWatchImportPage = lazy(() => import('@Routes/watch-import/watch-import-page/watch-import-page'));
 export const LazyNotificationSettingsPage = lazy(
   () => import('@Routes/notifications/notification-settings-page/notification-settings-page'),
 );
 export const LazySaveResult = lazy(() => import('@Routes/save-activity-page/save-result/save-result'));
 export const LazySettingsPage = lazy(() => import('@Routes/settings-page/settings-page'));
 export const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons/users-settings-icons'));
-
-export const HOME_TAB_ROUTE = '(home)';

@@ -1,5 +1,11 @@
-import ChangePassword from '@Routes/sign-in/change-password/change-password';
+import { Suspense } from 'react';
+import { LazyChangePassword } from '@Routes/app-routes/const';
+import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 export default function ChangePasswordScreen() {
-  return <ChangePassword />;
+  return (
+    <Suspense fallback={<FullPageActivityLoader />}>
+      <LazyChangePassword />
+    </Suspense>
+  );
 }

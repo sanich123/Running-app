@@ -6,7 +6,7 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { uploadFeedbackAttachments } from '@U/feedback-sending';
 import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
-import FeedbackPage from '../app/feedback';
+import FeedbackPage from './feedback-page';
 
 jest.mock('@R/services/feedback/feedback', () => ({ useSendFeedbackMutation: jest.fn() }));
 jest.mock('@U/file-sending', () => ({
