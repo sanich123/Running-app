@@ -76,10 +76,21 @@ function setMockDocument() {
       ),
     } as unknown as HTMLElement;
   });
-  Object.defineProperty(globalThis, 'document', { configurable: true, value: { createElement } });
+  const stylesheet = { sheet: {} } as HTMLLinkElement;
+  Object.defineProperty(globalThis, 'document', {
+    configurable: true,
+    value: {
+      createElement,
+      querySelector: jest.fn((selector: string) => (selector === 'link[data-mapbox-styles]' ? stylesheet : null)),
+    },
+  });
 }
 
 describe('mapbox web', () => {
+  beforeEach(() => {
+    setMockDocument();
+  });
+
   it('creates a bounded map, aligns its branding, and removes it on unmount', async () => {
     Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
     jest

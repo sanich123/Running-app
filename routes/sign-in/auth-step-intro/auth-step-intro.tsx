@@ -4,6 +4,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import { SignInPageStates } from '@U/validate-email-password';
 import { AUTH_STEP_INTRO_CONTENT } from '../const';
+import authStepIntroLogo from './logo-source';
 
 export default function AuthStepIntro({ authStep }: { authStep: SignInPageStates }) {
   const { language } = useAppSelector(({ settings: settingsState }) => settingsState);
@@ -26,7 +27,7 @@ export default function AuthStepIntro({ authStep }: { authStep: SignInPageStates
           { backgroundColor: colors.primaryContainer },
         ]}>
         {isLogin ? (
-          <Image source={require('../../../assets/images/icon.png')} style={styles.logo} />
+          <Image source={authStepIntroLogo} style={styles.logo} />
         ) : (
           <Icon source={icon} size={24} color={colors.primary} />
         )}

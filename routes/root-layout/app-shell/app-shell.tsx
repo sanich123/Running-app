@@ -1,9 +1,7 @@
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import {
   MaterialDesignIcons,
   type MaterialDesignIconsIconName,
 } from '@react-native-vector-icons/material-design-icons/static';
-import { NavigationBar } from 'expo-navigation-bar';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
@@ -17,13 +15,16 @@ import { COLORS } from '@const/theme-colors';
 import { useAppSelector } from '@R/typed-hooks';
 import NotificationRuntime from '@Routes/notifications/notification-runtime/notification-runtime';
 import PushTokenRuntime from '@Routes/notifications/push-token-runtime/push-token-runtime';
-import SubscriptionStatusSync from '@Routes/subscription/subscription-status-sync/subscription-status-sync';
 import HealthConnectAutoSync from '@Routes/watch-import/health-connect-auto-sync/health-connect-auto-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
+import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import useAppInitialization from '@U/hooks/use-app-initialization';
+import BottomSheetProvider from '../bottom-sheet-provider/bottom-sheet-provider';
 import { LazyUsersSettingsIcons, PUBLIC_ROUTES } from '../const';
 import LazyHeader from '../lazy-header/lazy-header';
+import NavigationBar from '../navigation-bar/navigation-bar';
 import { getRootScreenContentStyle } from '../screen-content-style';
+import SubscriptionStatusRuntime from '../subscription-status-runtime/subscription-status-runtime';
 
 export default function AppShell() {
   useAppInitialization();
@@ -32,6 +33,7 @@ export default function AppShell() {
   const { accessToken, refreshToken } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const pathname = usePathname();
+  const hasSession = Boolean(accessToken || refreshToken);
   const colorScheme = theme ?? systemColorScheme;
   const appColors = colorScheme === 'dark' ? COLORS.dark : COLORS.light;
   const insets = useSafeAreaInsets();
@@ -41,7 +43,7 @@ export default function AppShell() {
       ? { ...MD3DarkTheme, roundness: 2, fonts, colors: appColors }
       : { ...MD3LightTheme, roundness: 2, fonts, colors: appColors };
 
-  if (!accessToken && !refreshToken && !PUBLIC_ROUTES.has(pathname)) {
+  if (!hasSession && !PUBLIC_ROUTES.has(pathname)) {
     return <Redirect href={`/${ROUTES.signIn}`} />;
   }
 
@@ -51,7 +53,7 @@ export default function AppShell() {
         <NotificationRuntime />
         <PushTokenRuntime />
         <StatusBar style="auto" />
-        {Platform.OS === 'android' ? <NavigationBar style="auto" /> : null}
+        {Platform.OS === 'android' ? <NavigationBar /> : null}
         <PaperProvider
           theme={paperTheme}
           settings={{
@@ -68,8 +70,10 @@ export default function AppShell() {
               />
             ),
           }}>
-          <BottomSheetModalProvider>
-            <SubscriptionStatusSync />
+          <BottomSheetProvider
+            enabled={hasSession && !PUBLIC_ROUTES.has(pathname)}
+            fallback={<FullPageActivityLoader />}>
+            <SubscriptionStatusRuntime />
             <HealthConnectAutoSync />
             <Stack
               screenOptions={({ route, navigation }) => ({
@@ -238,7 +242,7 @@ export default function AppShell() {
                 }}
               />
             </Stack>
-          </BottomSheetModalProvider>
+          </BottomSheetProvider>
         </PaperProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
