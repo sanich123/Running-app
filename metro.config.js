@@ -3,6 +3,10 @@ const { getDefaultConfig } = require('@expo/metro-config');
 const defaultConfig = getDefaultConfig(__dirname);
 defaultConfig.resolver.sourceExts.push('cjs');
 defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (platform === 'web' && moduleName === '@react-native-vector-icons/material-design-icons') {
+    return context.resolveRequest(context, `${moduleName}/static`, platform);
+  }
+
   if (
     (platform === 'web' &&
       [

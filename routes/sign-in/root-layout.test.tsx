@@ -7,13 +7,7 @@ import RootLayout from '../../app/_layout';
 
 let mockPathname = `/${ROUTES.settings}`;
 
-jest.mock('@expo-google-fonts/plus-jakarta-sans', () => ({
-  PlusJakartaSans_400Regular: 'regular',
-  PlusJakartaSans_500Medium: 'medium',
-  PlusJakartaSans_600SemiBold: 'semi-bold',
-  PlusJakartaSans_800ExtraBold: 'extra-bold',
-  useFonts: () => [true],
-}));
+jest.mock('@U/hooks/use-app-fonts', () => ({ __esModule: true, default: () => true }));
 jest.mock('@U/hooks/use-app-initialization', () => jest.fn());
 jest.mock('expo-splash-screen', () => ({
   hideAsync: jest.fn(),
