@@ -17,6 +17,7 @@ export default {
       backgroundColor: '#363636',
     },
     experiments: {
+      chunking: { mode: 'granular' },
       typedRoutes: true,
       tsconfigPaths: true,
       reactCompiler: true,

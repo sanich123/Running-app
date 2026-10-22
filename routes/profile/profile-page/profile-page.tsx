@@ -18,7 +18,7 @@ import ErrorComponent from '@S/error-component/error-component';
 import UserSafetyMenu from '@S/moderation/user-safety-menu/user-safety-menu';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
 import { PROFILE_MODERATION, PROFILE_SECTIONS, PROFILE_WATCH_IMPORT } from '../const';
-import { PROFILE_PRIVACY_SETTINGS } from '../privacy-settings/const';
+import { PROFILE_PRIVACY_LINK_LABELS } from './const';
 import ProfileSkeleton from '../profile-skeleton/profile-skeleton';
 import ProfileStatistics from '../statistics/profile-statistics/profile-statistics';
 import { USERS_VARIANT } from '../users-counter/const';
@@ -155,7 +155,7 @@ export default function ProfilePage() {
             {isOwnProfile && userId ? (
               <List.Item
                 testID="profile-privacy-settings-button"
-                title={PROFILE_PRIVACY_SETTINGS[language].openSettings}
+                title={PROFILE_PRIVACY_LINK_LABELS[language]}
                 titleNumberOfLines={1}
                 left={(props) => <List.Icon {...props} icon="shield-lock-outline" />}
                 right={(props) => <List.Icon {...props} icon="chevron-right" />}
