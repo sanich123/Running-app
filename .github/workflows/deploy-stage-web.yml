@@ -76,10 +76,14 @@ jobs:
           COMPOSE=(docker compose --project-name runich-stage -f /opt/runich-stage/docker-compose.timeweb.stage.yml)
 
           test -s /opt/runich-stage/nginx.stage.web.d/runich-web.conf
-          install -d -m 0750 "$WEB_ROOT/releases"
+          "${COMPOSE[@]}" exec -T nginx nginx -t
+          "${COMPOSE[@]}" exec -T nginx nginx -s reload
+          install -d -m 0755 "$WEB_ROOT/releases"
+          chmod 0755 "$WEB_ROOT" "$WEB_ROOT/releases"
           mkdir -p "$WEB_ROOT/$RELEASE"
           tar --no-same-owner -xzf "$ARCHIVE" -C "$WEB_ROOT/$RELEASE"
           rm -f "$ARCHIVE"
+          chmod -R a+rX "$WEB_ROOT/$RELEASE"
           test -s "$WEB_ROOT/$RELEASE/index.html"
           test -s "$WEB_ROOT/$RELEASE/.well-known/assetlinks.json"
 
