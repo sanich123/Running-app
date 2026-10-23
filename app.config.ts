@@ -57,11 +57,6 @@ export default {
           data: [
             {
               scheme: 'https',
-              host: 'runich.netlify.app',
-              pathPrefix: '/login-from-url',
-            },
-            {
-              scheme: 'https',
               host: 'runich-app.ru',
               pathPrefix: '/login-from-url',
             },
@@ -72,11 +67,6 @@ export default {
           action: 'VIEW',
           autoVerify: true,
           data: [
-            {
-              scheme: 'https',
-              host: 'stage--runich.netlify.app',
-              pathPrefix: '/login-from-url',
-            },
             {
               scheme: 'https',
               host: 'stage-web.runich-app.ru',
@@ -91,11 +81,6 @@ export default {
           data: [
             {
               scheme: 'https',
-              host: 'runich.netlify.app',
-              pathPrefix: '/activity',
-            },
-            {
-              scheme: 'https',
               host: 'runich-app.ru',
               pathPrefix: '/activity',
             },
@@ -106,11 +91,6 @@ export default {
           action: 'VIEW',
           autoVerify: true,
           data: [
-            {
-              scheme: 'https',
-              host: 'stage--runich.netlify.app',
-              pathPrefix: '/activity',
-            },
             {
               scheme: 'https',
               host: 'stage-web.runich-app.ru',

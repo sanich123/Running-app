@@ -1,8 +1,0 @@
-{
-  "$schema": "https://layero.ru/schema/layero-v2.json",
-  "framework": "generic",
-  "installCommand": "yarn install --immutable",
-  "buildCommand": "yarn web:export:stage",
-  "outputDirectory": "dist",
-  "nodeVersion": "22"
-}

@@ -30,4 +30,4 @@ Values are scoped to the frontend repository. Existing backend repository secret
 - Before enabling the Production workflow, install the root-owned helper once on the Production server: `sudo install -o root -g root -m 0755 install-production-vhost.sh /usr/local/sbin/runich-install-production-vhost`. Grant the Production deploy account non-interactive sudo for exactly `/usr/local/sbin/runich-install-production-vhost`; the workflow calls this fixed, root-owned path.
 - `runich-app.ru` already points to `72.56.9.5`. The Stage web A record has been added as `stage-web.runich-app.ru → 129.101.119.34` (TTL 600).
 
-No CDN is configured. Keep Netlify and Layer0 settings until both Timeweb URLs have been checked in a browser.
+No CDN is configured. GitHub Actions deploys both web environments directly to Timeweb.
