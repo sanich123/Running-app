@@ -23,8 +23,16 @@ interface ActivityAdditionalInfo {
   emotion: EMOTIONS_BTNS_VALUES;
   visibility: ActivityVisibility;
   hideMap?: boolean;
-  media: { url: string; thumbnail: null | string; blurhash?: string | null }[];
+  media: ActivityMediaInput[];
   timeZone: string;
+}
+
+export interface ActivityMediaInput {
+  url?: string;
+  thumbnail?: string | null;
+  blurhash?: string | null;
+  assetId?: string;
+  thumbnailAssetId?: string;
 }
 
 export interface ActivityToSend {
@@ -59,7 +67,7 @@ export interface ActivityUpdateRequest {
 
 export interface AppendActivityMediaRequest {
   id: string;
-  media: ActivityAdditionalInfo['media'];
+  media: ActivityMediaInput[];
 }
 
 export interface DeleteActivityMediaRequest {

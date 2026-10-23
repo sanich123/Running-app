@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
 import { Appearance } from 'react-native';
 import type { ColorSchemeName } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
@@ -67,8 +66,4 @@ export default function useAppInitialization() {
       Appearance.setColorScheme(theme ?? 'unspecified');
     }
   }, [isCustomAppearanceLoaded, theme]);
-
-  useEffect(() => {
-    mapboxgl.accessToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '';
-  }, []);
 }

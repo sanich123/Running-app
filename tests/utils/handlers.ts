@@ -47,6 +47,7 @@ import { addUser } from './endpoints/user';
 export const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL ?? 'http://localhost:3000';
 
 export const handlers = [
+  http.get(`${BASE_URL}/admin/access`, () => HttpResponse.json({ roles: [], permissions: [], isSuperuser: false })),
   http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, getServerProfile),
   http.get(`${BASE_URL}/profile/filter`, getServerUsers),
   http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}`, getServerActivities),

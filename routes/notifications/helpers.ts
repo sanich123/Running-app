@@ -21,6 +21,10 @@ export function getNotificationDisplayCopy(
       return { title: title(copy.commentTitle), body: item.content || copy.commentBody };
     case 'comment-like':
       return { title: title(copy.commentLikeTitle), body: item.content || copy.commentLikeBody };
+    case 'moderation-report-received':
+      return { title: copy.moderationReportReceivedTitle, body: item.content || '' };
+    case 'moderation-report-decision':
+      return { title: copy.moderationReportDecisionTitle, body: item.content || '' };
     default:
       return { title: copy.genericTitle, body: item.content || '' };
   }

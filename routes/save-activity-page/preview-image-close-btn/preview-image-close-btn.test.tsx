@@ -27,7 +27,7 @@ describe('Preview image close btn', () => {
     await userEvent.press(deleteIcon);
     expect(setImages).toHaveBeenCalled();
     expect(mockStore.getState().activity.media).toEqual([]);
-    expect(mockDeleteUploadedMedia).toHaveBeenCalledWith(['someUrl']);
+    expect(mockDeleteUploadedMedia).toHaveBeenCalledWith(['someUrl'], []);
   });
   it('should be disabled, when isDisabled', async () => {
     const setImages = jest.fn();

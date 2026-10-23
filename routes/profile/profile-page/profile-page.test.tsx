@@ -1,6 +1,6 @@
 import { act, screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { ROUTES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
@@ -9,6 +9,7 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { PROFILE_PRIVACY_LINK_LABELS } from './const';
 import ProfilePage from './profile-page';
 
 const mockPathname = `/${ROUTES.profile}`;
@@ -113,7 +114,7 @@ describe('ProfilePage', () => {
   it('opens privacy settings from the profile page', async () => {
     const user = userEvent.setup();
     await renderWithProviders(<ProfilePage />);
-    expect(await screen.findByText('Конфиденциальность')).toBeOnTheScreen();
+    expect(await screen.findByText(PROFILE_PRIVACY_LINK_LABELS[LANGUAGES.russian])).toBeOnTheScreen();
     expect(screen.queryByText(/Видимость профиля, подписки/)).not.toBeOnTheScreen();
 
     await user.press(screen.getByTestId('profile-privacy-settings-button'));

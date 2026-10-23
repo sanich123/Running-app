@@ -1,0 +1,39 @@
+@font-face {
+  font-family: 'PlusJakartaSans_400Regular';
+  src: url('/fonts/PlusJakartaSans_400Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PlusJakartaSans_500Medium';
+  src: url('/fonts/PlusJakartaSans_500Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PlusJakartaSans_600SemiBold';
+  src: url('/fonts/PlusJakartaSans_600SemiBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PlusJakartaSans_800ExtraBold';
+  src: url('/fonts/PlusJakartaSans_800ExtraBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaterialDesignIcons';
+  src: url('/fonts/MaterialDesignIcons.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

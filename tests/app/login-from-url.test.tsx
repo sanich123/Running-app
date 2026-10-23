@@ -62,7 +62,7 @@ describe('login from URL', () => {
         });
       }),
     );
-    mockUseLinkingURL.mockReturnValue('https://runich.netlify.app/login-from-url?code=login-code');
+    mockUseLinkingURL.mockReturnValue('https://runich-app.ru/login-from-url?code=login-code');
 
     await renderWithProviders(<LoginFromUrlRoute />, { store: mockStore });
 
@@ -84,7 +84,7 @@ describe('login from URL', () => {
         HttpResponse.json({ message: 'Код уже использован' }, { status: 401 }),
       ),
     );
-    mockUseLinkingURL.mockReturnValue('https://runich.netlify.app/login-from-url?code=used-code');
+    mockUseLinkingURL.mockReturnValue('https://runich-app.ru/login-from-url?code=used-code');
 
     await renderWithProviders(<LoginFromUrlRoute />, { store: mockStore });
 
@@ -98,7 +98,7 @@ describe('login from URL', () => {
 
   it('returns to sign-in and shows an OAuth error from the backend', async () => {
     mockUseLinkingURL.mockReturnValue(
-      'https://runich.netlify.app/login-from-url?oauthError=VK%20%D0%BD%D0%B5%20%D0%B2%D0%B5%D1%80%D0%BD%D1%83%D0%BB%20device_id&oauthProvider=vk',
+      'https://runich-app.ru/login-from-url?oauthError=VK%20%D0%BD%D0%B5%20%D0%B2%D0%B5%D1%80%D0%BD%D1%83%D0%BB%20device_id&oauthProvider=vk',
     );
 
     await renderWithProviders(<LoginFromUrlRoute />, { store: mockStore });

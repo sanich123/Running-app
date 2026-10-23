@@ -11,8 +11,11 @@ export interface MediaUploadOptions {
   feedbackId?: string;
 }
 
+export type MediaUploadPhase = 'compressing' | 'uploading';
+
 export interface MediaUploadControl {
   onProgress?: (progress: number) => void;
+  onStatusProgress?: (phase: MediaUploadPhase, progress: number) => void;
   signal?: AbortSignal;
 }
 
@@ -23,8 +26,13 @@ export interface MediaUploadItem {
 }
 
 export interface UploadedMedia {
-  url: string;
+  url?: string | null;
   thumbnail: string | null;
+  blurhash?: string | null;
+  assetId?: string;
+  thumbnailAssetId?: string;
+  mediaReviewStatus?: 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed' | null;
+  contentType?: string;
 }
 
 export interface CompressedMediaFile {

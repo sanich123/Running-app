@@ -1,14 +1,14 @@
 import { StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
-import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppSelector } from '@R/typed-hooks';
 import { COMMENT_EDIT_BTN } from './const';
+import useCommentEditAction from './use-comment-edit-action';
 import type { CommentEditBtnProps } from '../types';
 
 export default function CommentEditBtn({ idOfUpdatingComment, commentId, comment }: CommentEditBtnProps) {
   const { colors } = useTheme();
-  const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
+  const onEdit = useCommentEditAction(commentId, comment);
   return (
     (!idOfUpdatingComment || commentId !== idOfUpdatingComment) && (
       <IconButton
@@ -20,15 +20,7 @@ export default function CommentEditBtn({ idOfUpdatingComment, commentId, comment
         iconColor={colors.primary}
         containerColor={colors.primaryContainer}
         style={styles.button}
-        onPress={() => {
-          if (commentId !== idOfUpdatingComment) {
-            dispatch(setCommentToUpdate(comment));
-            dispatch(setIdOfUpdatingComment(commentId));
-          } else {
-            dispatch(setCommentToUpdate(''));
-            dispatch(setIdOfUpdatingComment(''));
-          }
-        }}
+        onPress={onEdit}
       />
     )
   );

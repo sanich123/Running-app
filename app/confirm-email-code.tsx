@@ -1,5 +1,11 @@
-import ConfirmEmailCodePage from '@Routes/confirm-email-code-page/confirm-email-code-page';
+import { Suspense } from 'react';
+import { LazyConfirmEmailCodePage } from '@Routes/app-routes/const';
+import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 export default function ConfirmEmailCodeScreen() {
-  return <ConfirmEmailCodePage />;
+  return (
+    <Suspense fallback={<FullPageActivityLoader />}>
+      <LazyConfirmEmailCodePage />
+    </Suspense>
+  );
 }

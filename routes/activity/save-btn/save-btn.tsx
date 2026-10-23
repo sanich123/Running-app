@@ -77,7 +77,14 @@ export default function SaveBtn() {
               visibility,
               hideMap,
             };
-            const activityDetails = { ...editableActivityDetails, media };
+            const activityMedia = media.map(({ url, thumbnail, blurhash, assetId, thumbnailAssetId }) => ({
+              ...(url && !assetId ? { url } : {}),
+              thumbnail: thumbnail ?? null,
+              ...(blurhash ? { blurhash } : {}),
+              ...(assetId ? { assetId } : {}),
+              ...(thumbnailAssetId ? { thumbnailAssetId } : {}),
+            }));
+            const activityDetails = { ...editableActivityDetails, media: activityMedia };
             const timeZone = getDeviceTimeZone();
             dispatch(setSavingDisabled(true));
             if (isEditingActivity) {
@@ -104,7 +111,7 @@ export default function SaveBtn() {
                 body: isManualAdding
                   ? {
                       ...editableActivityDetails,
-                      media,
+                      media: activityMedia,
                       timeZone,
                       date: new Date(manualDate).toISOString(),
                       distance: distance * 1000,

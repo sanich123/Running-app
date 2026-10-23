@@ -8,8 +8,8 @@ Pod::Spec.new do |s|
   s.summary        = 'HealthKit bridge for importing completed Runich workouts'
   s.description    = s.summary
   s.license        = { :type => 'MIT' }
-  s.authors        = { 'Runich' => 'https://runich.netlify.app' }
-  s.homepage       = 'https://runich.netlify.app'
+  s.authors        = { 'Runich' => 'https://runich-app.ru' }
+  s.homepage       = 'https://runich-app.ru'
   s.platforms      = { :ios => '16.4' }
   s.swift_version  = '5.9'
   s.source         = { :path => '.' }

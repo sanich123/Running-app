@@ -40,7 +40,7 @@ export default function MediaGrid() {
     ),
     [take],
   );
-  const keyExtractor = useCallback((item: ActivityMediaItem) => item.id ?? item.url, []);
+  const keyExtractor = useCallback((item: ActivityMediaItem) => item.id ?? item.url ?? 'pending-media', []);
   const loadMore = useCallback(() => {
     if (!data?.hasMore || isFetching) {
       return;

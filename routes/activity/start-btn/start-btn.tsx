@@ -36,6 +36,7 @@ import {
   readLocationJournal,
   removeLocationJournal,
 } from '@U/location/location-journal';
+import { getLocationProvider, stripLocationProvider } from '@U/location/location-provider';
 import { getElevationGainByKilometres, getSpeedInMinsInKm } from '@U/location/location-utils';
 import {
   finishPedometerActivity,
@@ -159,8 +160,7 @@ export default function StartBtn({
               throw new Error('Position is unavailable');
             }
 
-            const { provider, ...initialPosition } = initialLocation;
-            dispatch(setInitialLocation(initialPosition));
+            dispatch(setInitialLocation(stripLocationProvider(initialLocation)));
             // A new recording must never inherit a persisted recording or a
             // location task left alive after an app restart.
             await stopLocationTracking();
@@ -168,7 +168,7 @@ export default function StartBtn({
             if (oldJournalId) removeLocationJournal(oldJournalId);
             dispatch(clearTrackingRecovery());
             dispatch(resetLocationsFromBackground());
-            dispatch(setLocationProvider(provider ?? null));
+            dispatch(setLocationProvider(getLocationProvider(initialLocation)));
             dispatch(resetFinishedActivity());
             createdJournalId = createLocationJournal();
             dispatch(startTrackingRecovery(createdJournalId));

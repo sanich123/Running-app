@@ -1,8 +1,11 @@
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import { Platform, ScrollView, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { ROUTES } from '@const/enums';
+import { useGetAdminAccessQuery } from '@R/services/admin/admin';
 import { useAppSelector } from '@R/typed-hooks';
 import ChangeTheme from './change-theme/change-theme';
 import { SETTINGS } from './const';
@@ -16,9 +19,11 @@ import SettingsRow from './settings-row/settings-row';
 
 export default function SettingsPage() {
   const { colors } = useTheme();
+  const { push } = useRouter();
   const { width } = useWindowDimensions();
   const { language } = useAppSelector(({ settings }) => settings);
   const labels = SETTINGS[language];
+  const { data: adminAccess } = useGetAdminAccessQuery(undefined, { refetchOnMountOrArgChange: true });
   const deviceName =
     [Device.manufacturer, Device.modelName].filter((value): value is string => Boolean(value)).join(' ') ||
     (Platform.OS === 'web' ? labels.webBrowser : labels.unknown);
@@ -43,6 +48,15 @@ export default function SettingsPage() {
       <ChangeTheme />
       <MigrationBtn />
       <FeedbackBtn />
+      {adminAccess && adminAccess.permissions.length > 0 ? (
+        <SettingsRow
+          testID="admin-panel-settings-row"
+          icon="shield-account"
+          title={labels.adminPanel}
+          description={labels.adminPanelDescription}
+          onPress={() => push(`/${ROUTES.admin}`)}
+        />
+      ) : null}
       <LogoutBtn />
       <DeleteAccountBtn />
       <LegalInformation />

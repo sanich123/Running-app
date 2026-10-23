@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { Platform, View, StyleSheet } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
@@ -9,6 +9,7 @@ import Card from '@S/card/activity-card/activity-card';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import ErrorComponent from '@S/error-component/error-component';
+import ReportContentDialog from '@S/moderation/report-content-dialog/report-content-dialog';
 import ActivityActionsMenu from './activity-actions-menu/activity-actions-menu';
 import { ACTIVITY_ACTIONS_MENU } from './activity-actions-menu/const';
 import useDeleteActivityAction from './activity-actions-menu/delete-activity-button/use-delete-activity-action';
@@ -34,7 +35,8 @@ export default function ActivityDetails() {
     { skip: !activityId || !currentUserId },
   );
   const isActivityOwner = Boolean(activity?.userId && activity.userId === currentUserId);
-  const shouldShowToolbarMenu = Platform.OS === 'ios' && isActivityOwner;
+  const shouldShowToolbarMenu = Platform.OS === 'ios' && Boolean(activity);
+  const [isReportVisible, setIsReportVisible] = useState(false);
   const editActivityAction = useEditActivityAction(activity);
   const deleteActivityAction = useDeleteActivityAction(activity);
   const menuText = ACTIVITY_ACTIONS_MENU[language];
@@ -44,7 +46,7 @@ export default function ActivityDetails() {
       <Stack.Screen
         options={{
           headerRight: () => {
-            if (isActivityOwner && activity) {
+            if (activity) {
               return Platform.OS === 'ios' ? null : <ActivityActionsMenu activity={activity} />;
             }
 
@@ -58,17 +60,25 @@ export default function ActivityDetails() {
         {shouldShowToolbarMenu ? (
           <Stack.Toolbar placement="right">
             <Stack.Toolbar.Menu icon="ellipsis" accessibilityLabel={menuText.accessibilityLabel}>
-              <Stack.Toolbar.MenuAction icon="pencil" onPress={editActivityAction}>
-                {menuText.edit}
-              </Stack.Toolbar.MenuAction>
-              <Stack.Toolbar.MenuAction icon="trash" destructive onPress={deleteActivityAction.onPress}>
-                {menuText.delete}
-              </Stack.Toolbar.MenuAction>
+              {isActivityOwner ? (
+                <>
+                  <Stack.Toolbar.MenuAction icon="pencil" onPress={editActivityAction}>
+                    {menuText.edit}
+                  </Stack.Toolbar.MenuAction>
+                  <Stack.Toolbar.MenuAction icon="trash" destructive onPress={deleteActivityAction.onPress}>
+                    {menuText.delete}
+                  </Stack.Toolbar.MenuAction>
+                </>
+              ) : (
+                <Stack.Toolbar.MenuAction icon="flag" onPress={() => setIsReportVisible(true)}>
+                  {menuText.report}
+                </Stack.Toolbar.MenuAction>
+              )}
             </Stack.Toolbar.Menu>
           </Stack.Toolbar>
         ) : null}
       </Stack.Screen>
-      {shouldShowToolbarMenu ? (
+      {shouldShowToolbarMenu && isActivityOwner ? (
         <ConfirmDialog
           visible={deleteActivityAction.isConfirmDialogVisible}
           title={deleteActivityAction.confirmation.deleteActivity}
@@ -79,6 +89,14 @@ export default function ActivityDetails() {
           loading={deleteActivityAction.isDeleteRequestLoading}
           onDismiss={deleteActivityAction.onDismiss}
           onConfirm={deleteActivityAction.onConfirm}
+        />
+      ) : null}
+      {Platform.OS === 'ios' && activity && !isActivityOwner ? (
+        <ReportContentDialog
+          visible={isReportVisible}
+          targetType="activity"
+          targetId={activity.id}
+          onDismiss={() => setIsReportVisible(false)}
         />
       ) : null}
       <CrossPlatformLayout

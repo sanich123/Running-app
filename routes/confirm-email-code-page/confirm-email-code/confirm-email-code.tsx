@@ -9,7 +9,7 @@ import {
 } from '@R/services/authentication/authentication';
 import { setAuthSession } from '@R/slices/auth/auth';
 import { useAppDispatch } from '@R/typed-hooks';
-import { HOME_TAB_ROUTE } from '@Routes/app-routes/const';
+import { HOME_TAB_ROUTE } from '@Routes/app-routes/home-tab-route';
 import { errorToast } from '@S/error-toast/error-toast';
 import { CONFIRM_EMAIL_CODE_TEST_ID, CONFIRM_EMAIL_CODE_TEXT } from './const';
 import type { ConfirmEmailCodeProps } from './types';

@@ -12,6 +12,9 @@ export default function MenuItem({ action, label, onPress, testID }: MenuItemPro
     <Menu.Item
       title={label}
       leadingIcon={ACTIVITY_MENU_ITEM_ICONS[action].paper}
+      dense
+      rippleColor={colors.primaryContainer}
+      style={styles.item}
       titleStyle={action === 'delete' ? { color: colors.error } : undefined}
       testID={testID}
       onPress={() => {
@@ -21,3 +24,7 @@ export default function MenuItem({ action, label, onPress, testID }: MenuItemPro
     />
   );
 }
+
+const styles = {
+  item: { minHeight: 40, height: 40 },
+};

@@ -2,7 +2,8 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
-import { LEGAL_DOCUMENT_LABELS, LEGAL_DOCUMENT_VERSION, LEGAL_DOCUMENTS, type LegalDocumentId } from '../content';
+import { LEGAL_DOCUMENT_LABELS, LEGAL_DOCUMENT_VERSION, type LegalDocumentId } from '../content';
+import { LEGAL_DOCUMENTS } from '../documents';
 import { RELATED_DOCUMENTS, DOCUMENT_PATHS } from './const';
 import type { LANGUAGES } from '@const/enums';
 

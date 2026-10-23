@@ -7,7 +7,8 @@ import { Icon, useTheme } from 'react-native-paper';
 import { LABELS, ROUTES, STATUSES } from '@const/enums';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
-import { LazyAvatarShowable, HOME_TAB_ROUTE } from '@Routes/app-routes/const';
+import { LazyAvatarShowable } from '@Routes/app-routes/const';
+import { HOME_TAB_ROUTE } from '@Routes/app-routes/home-tab-route';
 
 export default function TabLayout() {
   const { replace } = useRouter();

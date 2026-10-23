@@ -4,11 +4,13 @@ export const ACTIVITY_ACTIONS_MENU = {
   [LANGUAGES.english]: {
     edit: 'Edit',
     delete: 'Delete',
+    report: 'Report activity',
     accessibilityLabel: 'Workout actions',
   },
   [LANGUAGES.russian]: {
     edit: 'Редактировать',
     delete: 'Удалить',
+    report: 'Пожаловаться на тренировку',
     accessibilityLabel: 'Действия с тренировкой',
   },
 } as const;
@@ -17,6 +19,7 @@ export const ACTIVITY_ACTIONS_MENU_TEST_IDS = {
   trigger: 'activity-actions-menu-trigger',
   edit: 'activity-actions-menu-edit',
   delete: 'activity-actions-menu-delete',
+  report: 'activity-actions-menu-report',
 } as const;
 
 export const ACTIVITY_DELETE_CONFIRMATION = {

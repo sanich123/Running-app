@@ -14,9 +14,13 @@ export interface PendingActivity {
 export interface ActivityPhoto {
   id?: string;
   activityId?: string;
-  url: string;
-  thumbnail: string | null;
+  url?: string | null;
+  thumbnail?: string | null;
   blurhash?: string | null;
+  assetId?: string;
+  thumbnailAssetId?: string;
+  mediaReviewStatus?: 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed' | null;
+  contentType?: string;
 }
 
 export interface ActivityState {

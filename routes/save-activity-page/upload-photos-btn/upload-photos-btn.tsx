@@ -11,7 +11,7 @@ import UploadProgress from '../upload-progress/upload-progress';
 import { uploadActivityMediaBatch } from '../utils';
 import { MAX_ACTIVITY_MEDIA, UPLOAD_PHOTO_BTN } from './ const';
 import type { UploadPhotoBtnProps } from './ const';
-import type { MediaUploadControl, MediaUploadItem } from '@U/file-sending';
+import type { MediaUploadControl, MediaUploadItem, MediaUploadPhase } from '@U/file-sending';
 
 export default function UploadPhotosBtn({
   isDisabled,
@@ -19,6 +19,7 @@ export default function UploadPhotosBtn({
   setImages,
   images,
   activityId,
+  onUploadStatusChange,
 }: UploadPhotoBtnProps) {
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
@@ -41,13 +42,26 @@ export default function UploadPhotosBtn({
 
     if (activityId) {
       try {
-        const response = await appendActivityMedia({ id: activityId, media: uploadedMedia }).unwrap();
+        const response = await appendActivityMedia({
+          id: activityId,
+          media: uploadedMedia.map(({ url, thumbnail, blurhash, assetId, thumbnailAssetId }) => ({
+            ...(url && !assetId ? { url } : {}),
+            thumbnail: thumbnail ?? null,
+            ...(blurhash ? { blurhash } : {}),
+            ...(assetId ? { assetId } : {}),
+            ...(thumbnailAssetId ? { thumbnailAssetId } : {}),
+          })),
+        }).unwrap();
         setImages([...images, ...response.media]);
         dispatch(addPhotoUrls(response.media));
       } catch (error) {
-        await deleteUploadedMedia(
-          uploadedMedia.flatMap(({ url, thumbnail }) => [url, thumbnail].filter((photo): photo is string => !!photo)),
-        );
+        const assetIds = uploadedMedia
+          .flatMap(({ assetId, thumbnailAssetId }) => [assetId, thumbnailAssetId])
+          .filter((assetId): assetId is string => Boolean(assetId));
+        const publicUrls = uploadedMedia
+          .filter(({ assetId }) => !assetId)
+          .flatMap(({ url, thumbnail }) => [url, thumbnail].filter((photo): photo is string => !!photo));
+        await deleteUploadedMedia(publicUrls, assetIds);
         throw error;
       }
       return;
@@ -62,10 +76,17 @@ export default function UploadPhotosBtn({
     uploadControllerRef.current = controller;
     setIsUploading(true);
     setUploadProgress(0);
+    const updateUploadStatus = (phase: MediaUploadPhase, progress: number) => {
+      if (!controller.signal.aborted) {
+        onUploadStatusChange?.({ phase, progress, cancel: () => controller.abort() });
+      }
+    };
+    updateUploadStatus('compressing', 0);
 
     try {
       await appendUploadedMedia(mediaToUpload, {
         onProgress: setUploadProgress,
+        onStatusProgress: updateUploadStatus,
         signal: controller.signal,
       });
     } catch (error) {
@@ -74,6 +95,7 @@ export default function UploadPhotosBtn({
       if (uploadControllerRef.current === controller) uploadControllerRef.current = null;
       setIsUploading(false);
       setUploadProgress(0);
+      onUploadStatusChange?.(null);
     }
   }
 

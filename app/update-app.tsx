@@ -1,5 +1,11 @@
-import UpdateAppPage from '@Routes/update-app/update-app-page/update-app-page';
+import { Suspense } from 'react';
+import { LazyUpdateAppPage } from '@Routes/app-routes/const';
+import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 export default function UpdateAppRoute() {
-  return <UpdateAppPage />;
+  return (
+    <Suspense fallback={<FullPageActivityLoader />}>
+      <LazyUpdateAppPage />
+    </Suspense>
+  );
 }

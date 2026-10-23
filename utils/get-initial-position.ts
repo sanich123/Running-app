@@ -2,6 +2,7 @@ import { getCurrentPositionAsync, getLastKnownPositionAsync } from 'expo-locatio
 import { setInitialLocation, setLocationProvider } from '@R/slices/location/location';
 import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
+import { getLocationProvider, stripLocationProvider } from './location/location-provider';
 import type { LocationObject } from 'expo-location';
 
 interface GetPositionProps {
@@ -29,9 +30,8 @@ export async function getLastKnownPosition({ setIsLoading, setIsError, setIsSucc
     }
 
     setIsSuccess(true);
-    const { provider, ...position } = currentPosition;
-    store.dispatch(setInitialLocation(position));
-    store.dispatch(setLocationProvider(provider ?? null));
+    store.dispatch(setInitialLocation(stripLocationProvider(currentPosition)));
+    store.dispatch(setLocationProvider(getLocationProvider(currentPosition)));
     setTimeout(() => setIsSuccess(false), 2000);
   } catch (error) {
     setIsLoading(false);

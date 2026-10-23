@@ -4,9 +4,24 @@ import { deviceId, deviceMetadata, deviceName, platform } from '@U/device/device
 import type { BaseQueryApi, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export interface UploadedPhotoResponse {
-  url: string;
-  key: string;
+  url?: string;
+  previewUrl?: string;
+  blurhash?: string | null;
+  key?: string;
+  assetId?: string;
+  status?: MediaUploadStatus;
   contentType: string;
+}
+
+export type MediaUploadStatus = 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed';
+
+export interface MediaUploadStatusResponse {
+  items: {
+    assetId: string;
+    status: MediaUploadStatus;
+    url?: string;
+    contentType: string;
+  }[];
 }
 
 type MediaUploadRole = 'media' | 'thumbnail';
@@ -28,6 +43,10 @@ interface PhotoUploadRequest {
 
 interface DeletePhotoRequest {
   url: string;
+}
+
+interface DeleteModerationUploadRequest {
+  assetId: string;
 }
 
 interface AuthState {
@@ -129,7 +148,7 @@ function uploadPhotosWithXhr({ body, onProgress }: PhotoUploadRequest, api: Base
 
 export const photosApi = runichApi.injectEndpoints({
   overrideExisting: true,
-  endpoints: ({ mutation }) => ({
+  endpoints: ({ mutation, query }) => ({
     uploadPhoto: mutation<UploadedPhotoResponse, PhotoUploadRequest>({
       queryFn: (body, api) => uploadPhotoWithXhr(body, api),
       invalidatesTags: [Tags.profile, Tags.activities],
@@ -142,5 +161,16 @@ export const photosApi = runichApi.injectEndpoints({
       query: (body) => ({ url: '/photo', method: Methods.delete, body }),
       invalidatesTags: [Tags.profile, Tags.activities],
     }),
+    deleteModerationUpload: mutation<void, DeleteModerationUploadRequest>({
+      query: ({ assetId }) => ({ url: `/photo/${assetId}`, method: Methods.delete }),
+    }),
+    getMediaUploadStatuses: query<MediaUploadStatusResponse, { ids: string[] }>({
+      query: ({ ids }) => ({ url: '/photo/status', params: { ids: ids.join(',') } }),
+    }),
+    publishApprovedMediaUpload: mutation<{ url: string; key: string }, { assetId: string }>({
+      query: ({ assetId }) => ({ url: `/photo/${assetId}/publish`, method: Methods.post }),
+    }),
   }),
 });
+
+export const { useGetMediaUploadStatusesQuery } = photosApi;

@@ -22,10 +22,18 @@ export enum Tags {
   users = 'users',
   subscription = 'subscription',
   notifications = 'notifications',
+  blockedUsers = 'blockedUsers',
+  moderationReports = 'moderationReports',
+  moderationReport = 'moderationReport',
+  moderationAppeals = 'moderationAppeals',
+  adminAccess = 'adminAccess',
+  adminUsers = 'adminUsers',
+  adminAccessAudit = 'adminAccessAudit',
 }
 
 export enum Methods {
   post = 'POST',
+  put = 'PUT',
   delete = 'DELETE',
   patch = 'PATCH',
 }
@@ -48,6 +56,8 @@ export enum Routes {
   statistics = 'statistics',
   email = 'email',
   notification = 'notification',
+  moderation = 'moderation',
+  admin = 'admin',
 }
 
 export const API_NAME = 'runnichApi';

@@ -3,13 +3,14 @@ import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { TouchableRipple } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { ROUTES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { createSearchParams } from '@R/runich-api/create-search-params';
 import { useDeleteActivityMediaMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import ActivityMediaDeleteBtn from '@S/activity-media/activity-media-delete-btn/activity-media-delete-btn';
 import CustomImage from '@S/custom-image/custom-image';
 import { errorToast } from '@S/error-toast/error-toast';
+import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
 import useLongPressGuard from '@S/pressable/use-long-press-guard';
 import { getMediaGridCellSize } from '../../const';
 import type { ActivityMediaItem } from '@S/card/types';
@@ -20,6 +21,7 @@ export default function MediaGridImage({
   url,
   thumbnail,
   blurhash,
+  mediaReviewStatus,
   index,
   take,
 }: ActivityMediaItem & { index: number; take: number }) {
@@ -27,6 +29,7 @@ export default function MediaGridImage({
   const { width } = useWindowDimensions();
   const { id: userId } = useLocalSearchParams();
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
+  const { language } = useAppSelector(({ settings }) => settings);
   const [deleteActivityMedia, { isLoading: isDeletingMedia }] = useDeleteActivityMediaMutation();
   const [isDeleteButtonVisible, setIsDeleteButtonVisible] = useState(false);
   const longPressGuard = useLongPressGuard();
@@ -46,40 +49,68 @@ export default function MediaGridImage({
 
   return (
     <View style={[styles.container, { height: cellSize, width: cellSize }]}>
-      <TouchableRipple
-        testID={`media-grid-image-${id ?? index}`}
-        key={url}
-        onPressIn={longPressGuard.resetForGesture}
-        onLongPress={
-          canDeleteMedia
-            ? () => {
-                longPressGuard.markLongPress();
-                setIsDeleteButtonVisible(true);
-              }
-            : undefined
-        }
-        disabled={isDeleteButtonVisible}
-        onPress={() => {
-          if (!longPressGuard.shouldHandlePress()) return;
-          push(
-            `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}${createSearchParams({
-              userId,
-              take,
-              blurhash,
-            })}`,
-          );
-        }}
-        accessibilityRole="button"
-        accessibilityLabel={url}
-        borderless>
-        <CustomImage
-          testID={url}
+      {url ? (
+        <TouchableRipple
+          testID={`media-grid-image-${id ?? index}`}
+          key={url}
+          onPressIn={longPressGuard.resetForGesture}
+          onLongPress={
+            canDeleteMedia
+              ? () => {
+                  longPressGuard.markLongPress();
+                  setIsDeleteButtonVisible(true);
+                }
+              : undefined
+          }
+          disabled={isDeleteButtonVisible}
+          onPress={() => {
+            if (!longPressGuard.shouldHandlePress()) return;
+            push(
+              `/${ROUTES.media}/${Platform.OS === 'web' ? encodeURIComponent(url) : index}${createSearchParams({
+                userId,
+                take,
+                blurhash,
+              })}`,
+            );
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={url}
+          borderless>
+          <CustomImage
+            testID={url}
+            style={{ height: cellSize, width: cellSize }}
+            source={{ uri: thumbnail || url }}
+            contentFit="cover"
+            placeholder={blurhash}
+          />
+        </TouchableRipple>
+      ) : (
+        <TouchableRipple
+          testID={`pending-media-grid-${id ?? index}`}
           style={{ height: cellSize, width: cellSize }}
-          source={{ uri: thumbnail || url }}
-          contentFit="cover"
-          placeholder={blurhash}
-        />
-      </TouchableRipple>
+          onPressIn={longPressGuard.resetForGesture}
+          onLongPress={
+            canDeleteMedia
+              ? () => {
+                  longPressGuard.markLongPress();
+                  setIsDeleteButtonVisible(true);
+                }
+              : undefined
+          }
+          disabled={isDeleteButtonVisible}
+          accessibilityRole="button"
+          accessibilityLabel={language === LANGUAGES.russian ? 'Медиа на проверке' : 'Media under review'}
+          borderless>
+          <MediaModerationPlaceholder status={mediaReviewStatus} blurhash={blurhash} compact />
+        </TouchableRipple>
+      )}
+      {url &&
+      canDeleteMedia &&
+      mediaReviewStatus &&
+      mediaReviewStatus !== 'approved' &&
+      mediaReviewStatus !== 'rejected' ? (
+        <MediaModerationPlaceholder status={mediaReviewStatus} compact overlay />
+      ) : null}
       {canDeleteMedia && isDeleteButtonVisible ? (
         <View style={styles.deleteButton}>
           <ActivityMediaDeleteBtn onDelete={() => void handleDelete()} isDeleting={isDeletingMedia} />

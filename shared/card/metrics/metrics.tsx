@@ -1,4 +1,4 @@
-import { View, StyleSheet, useWindowDimensions } from 'react-native';
+import { Platform, View, StyleSheet, useWindowDimensions } from 'react-native';
 import { usePathname, useRouter } from 'expo-router';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
@@ -139,6 +139,7 @@ export default function Metrics() {
             style={[
               styles.fullViewCard,
               { backgroundColor: colors.surface, borderColor: colors.outlineVariant, width: fullViewMetricsWidth },
+              Platform.OS === 'web' ? styles.fullViewCardWeb : undefined,
             ]}>
             <View style={styles.metricsGrid}>
               {fullViewMetrics.map(({ title: metricTitle, metrics }, index) => {
@@ -195,6 +196,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     overflow: 'hidden',
   },
+  fullViewCardWeb: { alignSelf: 'center' },
   metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',

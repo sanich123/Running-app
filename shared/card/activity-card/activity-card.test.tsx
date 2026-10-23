@@ -1,8 +1,10 @@
+import type * as ReactTypes from 'react';
 import { act, screen, userEvent, waitFor, within } from '@testing-library/react-native';
 import * as Sharing from 'expo-sharing';
 import { http, HttpResponse } from 'msw';
 import { captureRef } from 'react-native-view-shot';
 import { Platform } from 'react-native';
+import type * as ReactNativeTypes from 'react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { finishLoading, resetLoading, startLoading } from '@R/slices/loading/loading';
@@ -25,9 +27,36 @@ import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '..
 import type { ActivityCardData, ActivityCardProps } from '../types';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 import type { CommentResponse } from '@R/runich-api/types';
+import type { ContentActionsMenuProps } from '@S/moderation/content-actions-menu/types';
 
 jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(), shareAsync: jest.fn() }));
 jest.mock('react-native-view-shot', () => ({ captureRef: jest.fn() }));
+jest.mock('@S/moderation/content-actions-menu/content-actions-menu', () => {
+  const React = jest.requireActual('react') as typeof ReactTypes;
+  const { Pressable, Text, View } = jest.requireActual('react-native') as typeof ReactNativeTypes;
+  return {
+    __esModule: true,
+    default: ({ showReport = true, reportLabel, reportTestID, onReport, additionalActions }: ContentActionsMenuProps) =>
+      React.createElement(
+        View,
+        null,
+        ...(additionalActions ?? []).map((action) =>
+          React.createElement(
+            Pressable,
+            { disabled: action.disabled, key: action.testID, onPress: action.onPress, testID: action.testID },
+            React.createElement(Text, null, action.label),
+          ),
+        ),
+        showReport
+          ? React.createElement(
+              Pressable,
+              { onPress: onReport, testID: reportTestID },
+              React.createElement(Text, null, reportLabel),
+            )
+          : null,
+      ),
+  };
+});
 
 const mockPush = jest.fn();
 
@@ -361,7 +390,7 @@ describe('Activity card', () => {
     await user.press(await screen.findByTestId(COMMENT_BTN_TEST_ID));
     expect(await screen.findByText('Original card comment')).toBeOnTheScreen();
 
-    await user.press(screen.getByTestId('comment-edit-button'));
+    await user.press(screen.getByTestId(`edit-comment-${commentId}`));
     const editInput = screen.getByTestId(COMMENT_INPUT_TEST_ID);
     await user.clear(editInput);
     await user.type(editInput, 'Edited card comment');
@@ -369,7 +398,7 @@ describe('Activity card', () => {
     await waitFor(() => expect(updatedCommentBody).toEqual({ comment: 'Edited card comment' }));
     expect(await screen.findByText('Edited card comment')).toBeOnTheScreen();
 
-    await user.press(screen.getByTestId('comment-delete-button'));
+    await user.press(screen.getByTestId(`delete-comment-${commentId}`));
     await waitFor(() => expect(deletedCommentUrl).toContain(`/comment/${commentId}`));
     await waitFor(() => expect(screen.queryByText('Edited card comment')).not.toBeOnTheScreen());
 
@@ -412,14 +441,14 @@ describe('Activity card', () => {
     await user.press(await screen.findByTestId(COMMENT_BTN_TEST_ID));
     expect(await screen.findByText('Existing comment')).toBeOnTheScreen();
 
-    await user.press(screen.getByTestId('comment-edit-button'));
+    await user.press(screen.getByTestId(`edit-comment-${commentId}`));
     const editInput = screen.getByTestId(COMMENT_INPUT_TEST_ID);
     await user.clear(editInput);
     await user.type(editInput, 'Rejected edit');
     await user.press(screen.getByTestId(COMMENT_ICON_TEST_ID));
     await waitFor(() => expect(errorToast).toHaveBeenCalledTimes(1));
 
-    await user.press(screen.getByTestId('comment-delete-button'));
+    await user.press(screen.getByTestId(`delete-comment-${commentId}`));
     await waitFor(() => expect(errorToast).toHaveBeenCalledTimes(2));
     expect(screen.getByText('Existing comment')).toBeOnTheScreen();
 

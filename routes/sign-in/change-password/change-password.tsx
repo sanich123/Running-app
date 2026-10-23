@@ -6,7 +6,7 @@ import { ROUTES } from '@const/enums';
 import { useChangePasswordMutation } from '@R/services/authentication/authentication';
 import { setAuthSession } from '@R/slices/auth/auth';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { HOME_TAB_ROUTE } from '@Routes/app-routes/const';
+import { HOME_TAB_ROUTE } from '@Routes/app-routes/home-tab-route';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import CustomPasswordInput from '@S/custom-password-input/custom-password-input';
 import { errorToast } from '@S/error-toast/error-toast';

@@ -117,9 +117,13 @@ export interface ActivityCardProps {
 export interface ActivityMediaItem {
   id?: string;
   activityId?: string;
-  url: string;
+  url?: string | null;
   thumbnail: string | null;
   blurhash?: string | null;
+  assetId?: string;
+  thumbnailAssetId?: string;
+  mediaReviewStatus?: 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed' | null;
+  contentType?: string;
 }
 
 export interface ModalLikesListProps {

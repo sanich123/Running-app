@@ -13,7 +13,7 @@ The client targets Android, iOS and web and is built with Expo, React Native, Ex
 - React Native Paper
 - Mapbox maps and Expo Location
 - Jest, React Native Testing Library and MSW
-- EAS Build, Expo Updates and Netlify web deployment
+- EAS Build, Expo Updates and GitHub Actions deployment to Timeweb
 
 ## Requirements
 
@@ -103,7 +103,9 @@ yarn web:export:production
 yarn web:serve:single
 ```
 
-The static output is written to `dist/`. Stage and production deployments are configured through `netlify.toml`.
+The static output is written to `dist/`. GitHub Actions deploys commits to `stage` to
+`https://stage-web.runich-app.ru` and commits to `master` to `https://runich-app.ru`.
+See [Timeweb web deployment](docs/timeweb-web-deploy.md) for deployment details.
 
 ## EAS builds
 

@@ -12,6 +12,7 @@ import BatteryOptimizationModal from '@Routes/activity/battery-optimization-moda
 import MapRouteLine from '@S/display-activity-map/map-route-line/map-route-line';
 import RouteKilometreMarkers from '@S/display-activity-map/route-kilometre-markers/route-kilometre-markers';
 import { errorToast } from '@S/error-toast/error-toast';
+import { getLocationProvider } from '@U/location/location-provider';
 import LocationPermissions from './location-permissions/location-permissions';
 import MapControls from './map-controls/map-controls';
 import MapNavIcon from './map-nav-icon/map-nav-icon';
@@ -127,7 +128,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
                 setIsCenteringOnCurrentLocation(true);
                 try {
                   const position = await getCurrentPositionAsync({ accuracy: 6 });
-                  dispatch(setLocationProvider(position.provider ?? null));
+                  dispatch(setLocationProvider(getLocationProvider(position)));
                   setShouldFollowUserLocation(false);
                   setMapZoomLevel(18);
                   setTimeout(() => {

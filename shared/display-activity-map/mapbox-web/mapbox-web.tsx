@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect } from 'react';
+import { useMemo, useRef, useEffect, useState } from 'react';
 import { AttributionControl, Map as MapboxMap, Marker as MapboxMarker, Popup as MapboxPopup } from 'mapbox-gl';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from 'react-native-paper';
@@ -17,7 +17,33 @@ import {
   updateWebAvatarMarker,
 } from './utils';
 import type { MapboxWebProps } from './types';
-import 'mapbox-gl/dist/mapbox-gl.css';
+
+let mapboxStylesPromise: Promise<void> | undefined;
+
+function loadMapboxStyles() {
+  if (!mapboxStylesPromise) {
+    mapboxStylesPromise = new Promise<void>((resolve, reject) => {
+      const existingLink = document.querySelector<HTMLLinkElement>('link[data-mapbox-styles]');
+      if (existingLink?.sheet) {
+        resolve();
+        return;
+      }
+
+      const stylesheet = existingLink ?? document.createElement('link');
+      stylesheet.rel = 'stylesheet';
+      stylesheet.href = '/mapbox-gl.css';
+      stylesheet.dataset.mapboxStyles = 'true';
+      stylesheet.addEventListener('load', () => resolve(), { once: true });
+      stylesheet.addEventListener('error', () => reject(new Error('Failed to load Mapbox stylesheet')), { once: true });
+      if (!existingLink) document.head.appendChild(stylesheet);
+    }).catch((error: unknown) => {
+      mapboxStylesPromise = undefined;
+      throw error;
+    });
+  }
+
+  return mapboxStylesPromise;
+}
 
 export default function MapboxWeb({
   boundBox,
@@ -39,6 +65,7 @@ export default function MapboxWeb({
 }: MapboxWebProps) {
   const { colors, dark } = useTheme();
   const { bottom: safeAreaBottomInset } = useSafeAreaInsets();
+  const [mapboxStylesLoaded, setMapboxStylesLoaded] = useState(false);
   const mapRef = useRef<MapboxMap | null>(null);
   const brandingBottomInsetRef = useRef(safeAreaBottomInset);
   const mapNode = useRef<HTMLDivElement | null>(null);
@@ -70,6 +97,23 @@ export default function MapboxWeb({
   }, [playbackProfile]);
 
   useEffect(() => {
+    let isMounted = true;
+    void loadMapboxStyles().then(
+      () => {
+        if (isMounted) setMapboxStylesLoaded(true);
+      },
+      (error: unknown) => {
+        console.error('Failed to load Mapbox styles', error);
+      },
+    );
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mapboxStylesLoaded) return;
     const node = mapNode.current;
     if (typeof window === 'undefined' || node === null) return;
     const mapboxMap = new MapboxMap({
@@ -306,6 +350,7 @@ export default function MapboxWeb({
       mapRef.current = null;
     };
   }, [
+    mapboxStylesLoaded,
     boundBox,
     colors.onSurface,
     colors.outlineVariant,

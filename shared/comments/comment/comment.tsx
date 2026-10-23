@@ -1,11 +1,16 @@
 import { useEffect, useState, type RefObject } from 'react';
 import { Animated, View, StyleSheet } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
+import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { UserInfoSize } from '@S/card/user-info/const';
 import UserInfo from '@S/card/user-info/user-info';
-import CommentDeleteBtn from '../comment-delete-btn/comment-delete-btn';
-import CommentEditBtn from '../comment-edit-btn/comment-edit-btn';
+import ContentActionsMenu from '@S/moderation/content-actions-menu/content-actions-menu';
+import ReportContentDialog from '@S/moderation/report-content-dialog/report-content-dialog';
+import { COMMENT_DELETE_BTN } from '../comment-delete-btn/const';
+import useCommentDeleteAction from '../comment-delete-btn/use-comment-delete-action';
+import { COMMENT_EDIT_BTN } from '../comment-edit-btn/const';
+import useCommentEditAction from '../comment-edit-btn/use-comment-edit-action';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -23,10 +28,14 @@ export default function Comment({
 }: CommentResponse & { commentsModalRef: RefObject<BottomSheetModal | null> }) {
   const { idOfUpdatingComment, commentActivityId, activityOwnerProfile } = useAppSelector(({ comment }) => comment);
   const { userId } = useAppSelector(({ auth }) => auth);
+  const { language } = useAppSelector(({ settings }) => settings);
   const isYouAuthor = userId === authorId;
   const isActivityOwner = activityOwnerProfile.userId === userId;
   const canInteract = activityOwnerProfile.allowActivityInteractions !== false || isActivityOwner;
+  const onEdit = useCommentEditAction(id, comment);
+  const { onDelete, isLoading: isDeletingComment } = useCommentDeleteAction(id, commentActivityId);
   const [commentAnimation] = useState(() => new Animated.Value(0));
+  const [isReportVisible, setIsReportVisible] = useState(false);
 
   useEffect(() => {
     Animated.timing(commentAnimation, {
@@ -46,14 +55,54 @@ export default function Comment({
           },
         ],
       }}>
-      <View style={{ padding: 10 }}>
-        <UserInfo
-          profile={profile}
-          date={date}
-          userId={authorId}
-          size={UserInfoSize.small}
-          commentsModalRef={commentsModalRef}
-        />
+      <View style={styles.header}>
+        <View style={styles.author}>
+          <UserInfo
+            profile={profile}
+            date={date}
+            userId={authorId}
+            size={UserInfoSize.small}
+            commentsModalRef={commentsModalRef}
+          />
+        </View>
+        <View style={styles.actions}>
+          <ContentActionsMenu
+            accessibilityLabel={
+              language === LANGUAGES.russian ? 'Дополнительные действия с комментарием' : 'Comment actions'
+            }
+            testID={`comment-actions-menu-${id}`}
+            reportLabel={language === LANGUAGES.russian ? 'Пожаловаться' : 'Report'}
+            reportTestID={`report-comment-${id}`}
+            onReport={() => setIsReportVisible(true)}
+            showReport={!isYouAuthor}
+            additionalActions={[
+              ...(!isYouAuthor || idOfUpdatingComment === id
+                ? []
+                : [
+                    {
+                      label: COMMENT_EDIT_BTN[language].label,
+                      testID: `edit-comment-${id}`,
+                      leadingIcon: 'pencil-outline',
+                      systemImage: 'pencil' as const,
+                      onPress: onEdit,
+                    },
+                  ]),
+              ...(!isYouAuthor && !isActivityOwner
+                ? []
+                : [
+                    {
+                      label: COMMENT_DELETE_BTN[language].label,
+                      testID: `delete-comment-${id}`,
+                      leadingIcon: 'delete-outline',
+                      systemImage: 'trash' as const,
+                      onPress: () => void onDelete(),
+                      destructive: true,
+                      disabled: isDeletingComment,
+                    },
+                  ]),
+            ]}
+          />
+        </View>
       </View>
       <View style={styles.textCommentWrapper}>
         <Text variant="bodyLarge">{comment}</Text>
@@ -65,17 +114,26 @@ export default function Comment({
           )}
           <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
         </View>
-        <View style={styles.actions}>
-          {isYouAuthor && <CommentEditBtn commentId={id} comment={comment} idOfUpdatingComment={idOfUpdatingComment} />}
-          {(isYouAuthor || isActivityOwner) && <CommentDeleteBtn commentId={id} activityId={commentActivityId} />}
-        </View>
       </View>
+      <ReportContentDialog
+        visible={isReportVisible}
+        targetType="comment"
+        targetId={id}
+        onDismiss={() => setIsReportVisible(false)}
+      />
       <Divider />
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  author: { flex: 1, minWidth: 0 },
   commentWrapper: {
     flex: 1,
     flexDirection: 'row',
@@ -94,12 +152,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  actions: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 6,
-    paddingRight: 10,
-  },
+  actions: { alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
   dateTimeWrapper: {
     display: 'flex',
     flexDirection: 'row',

@@ -11,6 +11,7 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { MEDIA_MODERATION_PLACEHOLDER_COPY } from '../../media-moderation-placeholder/const';
 import { ActivityCardContext } from '../context';
 import MediaList from './media-list';
 import VideoPlaybackProvider from './video-playback-provider/video-playback-provider';
@@ -27,6 +28,14 @@ jest.mock('@S/custom-image/custom-image', () => ({
     const { View } = require('react-native');
     return <View {...props} />;
   },
+}));
+jest.mock('@S/moderation/content-actions-menu/content-actions-menu', () => ({
+  __esModule: true,
+  default: jest.requireActual('@S/moderation/content-actions-menu/content-actions-menu.tsx').default,
+}));
+jest.mock('@S/moderation/content-actions-menu/content-actions-menu.ios', () => ({
+  __esModule: true,
+  default: jest.requireActual('@S/moderation/content-actions-menu/content-actions-menu.tsx').default,
 }));
 
 const defaultActivity: ActivityCardData = {
@@ -274,6 +283,55 @@ describe('media list', () => {
     await renderMediaList({ mapPhotoUrl: undefined, media: [{ url: photoUrl, thumbnail: null }] });
 
     expect(screen.getByTestId(photoUrl).props.contentFit).toBe('cover');
+  });
+
+  it('shows a review placeholder while an activity upload is quarantined', async () => {
+    await renderMediaList({
+      mapPhotoUrl: undefined,
+      media: [{ id: 'pending-media', assetId: 'asset-1', thumbnail: null, mediaReviewStatus: 'review_required' }],
+    });
+
+    expect(screen.getByTestId('pending-activity-media-pending-media')).toBeOnTheScreen();
+    expect(screen.getByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].reviewRequired)).toBeOnTheScreen();
+  });
+
+  it('uses the media position as a stable placeholder identifier before the server assigns an id', async () => {
+    await renderMediaList({
+      media: [{ thumbnail: null, mediaReviewStatus: 'queued' }],
+    });
+
+    expect(screen.getByTestId('activity-media-0')).toBeOnTheScreen();
+    expect(screen.getByTestId('pending-activity-media-0')).toBeOnTheScreen();
+    expect(screen.getByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].queued)).toBeOnTheScreen();
+  });
+
+  it("opens the native action menu and submits a report for another user's media", async () => {
+    const user = userEvent.setup();
+    const receivedReports: unknown[] = [];
+    mockStore.dispatch(setMockUserId('viewer-user'));
+    server.use(
+      http.post(BASE_URL + '/moderation/reports', async ({ request }) => {
+        receivedReports.push(await request.json());
+        return HttpResponse.json({ id: 'report-1', status: 'open' }, { status: 201 });
+      }),
+    );
+    const restorePlatform = overridePlatformOS('android');
+    try {
+      await renderMediaList({
+        mapPhotoUrl: undefined,
+        media: [{ id: 'reported-media', url: 'https://cdn.example.test/report.jpg', thumbnail: null }],
+      });
+
+      await user.press(screen.getByTestId('media-actions-menu-reported-media'));
+      await user.press(await screen.findByTestId('report-media-reported-media'));
+      await user.press(screen.getByText('Отправить'));
+
+      await waitFor(() =>
+        expect(receivedReports).toEqual([{ targetType: 'media', targetId: 'reported-media', reason: 'harassment' }]),
+      );
+    } finally {
+      restorePlatform();
+    }
   });
 
   it('starts videos on request, muted, and exposes duration and a mute toggle', async () => {

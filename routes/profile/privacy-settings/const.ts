@@ -7,6 +7,8 @@ export const PROFILE_PRIVACY_SETTINGS = {
   [LANGUAGES.english]: {
     title: 'Privacy',
     openSettings: 'Privacy',
+    manageBlockedUsers: 'Blocked users',
+    manageBlockedUsersDescription: 'Review and unblock people you have blocked.',
     profileSectionTitle: 'Profile',
     activitySectionTitle: 'Activities',
     profilePreviewTitle: 'Profile preview',
@@ -103,6 +105,8 @@ export const PROFILE_PRIVACY_SETTINGS = {
   [LANGUAGES.russian]: {
     title: 'Конфиденциальность',
     openSettings: 'Конфиденциальность',
+    manageBlockedUsers: 'Заблокированные пользователи',
+    manageBlockedUsersDescription: 'Просмотрите список и разблокируйте пользователей.',
     profileSectionTitle: 'Профиль',
     activitySectionTitle: 'Активности',
     profilePreviewTitle: 'Пример профиля',

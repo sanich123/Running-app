@@ -33,6 +33,10 @@ export default function ProfileStack() {
         name={`${ROUTES.profilePrivacySettings}/${ROUTES.index}`}
         options={{ title: LABELS[language].profilePrivacySettings }}
       />
+      <Stack.Screen
+        name={`${ROUTES.profilePrivacySettings}/${ROUTES.blockedUsers}`}
+        options={{ title: LABELS[language].blockedUsers }}
+      />
     </Stack>
   );
 }

@@ -1,5 +1,11 @@
-import Dashboard from '@Routes/statistic/dashboard/dashboard';
+import { Suspense } from 'react';
+import { LazyDashboard } from '@Routes/app-routes/const';
+import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 export default function DashboardScreen() {
-  return <Dashboard />;
+  return (
+    <Suspense fallback={<FullPageActivityLoader />}>
+      <LazyDashboard />
+    </Suspense>
+  );
 }

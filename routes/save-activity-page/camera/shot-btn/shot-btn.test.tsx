@@ -139,7 +139,7 @@ describe('shot btn', () => {
 
     await user.press(screen.getByTestId('camera-shot-button'));
 
-    await waitFor(() => expect(deleteUploadedMedia).toHaveBeenCalledWith([uploadedPhoto.url]));
+    await waitFor(() => expect(deleteUploadedMedia).toHaveBeenCalledWith([uploadedPhoto.url], []));
     expect(setPhotos).not.toHaveBeenCalled();
     expect(errorToastModule.errorToast).toHaveBeenCalled();
   });

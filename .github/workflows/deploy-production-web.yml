@@ -1,0 +1,121 @@
+name: Deploy web to Timeweb Production
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: runich-web-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and deploy Production web
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment:
+      name: production
+      url: https://runich-app.ru
+    env:
+      WEB_DOMAIN: runich-app.ru
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+
+    steps:
+      - name: Check out the exact commit
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26.7.0
+
+      - name: Export the Production web app
+        run: |
+          set -euo pipefail
+          npm install --global @yarnpkg/cli-dist@4.18.1
+          yarn install --immutable
+          yarn web:export:production
+          test -s dist/index.html
+          test -s dist/.well-known/assetlinks.json
+
+      - name: Deploy the exact export over SSH
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          : "${DEPLOY_HOST:?GitHub environment secret DEPLOY_HOST is required}"
+          : "${DEPLOY_USER:?GitHub environment secret DEPLOY_USER is required}"
+          : "${DEPLOY_SSH_KEY:?GitHub environment secret DEPLOY_SSH_KEY is required}"
+          : "${DEPLOY_KNOWN_HOSTS:?GitHub environment secret DEPLOY_KNOWN_HOSTS is required}"
+
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 644 "$HOME/.ssh/known_hosts"
+          unset DEPLOY_SSH_KEY
+
+          SSH=(ssh -i "$HOME/.ssh/id_ed25519" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes)
+          SCP=(scp -i "$HOME/.ssh/id_ed25519" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes)
+          TARGET="$DEPLOY_USER@$DEPLOY_HOST"
+          ARCHIVE="$RUNNER_TEMP/runich-web-production-$GITHUB_SHA.tar.gz"
+          tar -C dist -czf "$ARCHIVE" .
+          "${SCP[@]}" "$ARCHIVE" "$TARGET:/tmp/runich-web-production-$GITHUB_SHA.tar.gz"
+          "${SCP[@]}" nginx.host.production.conf "$TARGET:/tmp/"
+
+          "${SSH[@]}" "$TARGET" "DEPLOY_SHA='$GITHUB_SHA' WEB_DOMAIN='$WEB_DOMAIN' bash -s" <<'REMOTE'
+          set -euo pipefail
+          WEB_ROOT=/opt/runich-web-production
+          RELEASE="releases/$DEPLOY_SHA"
+          ARCHIVE="/tmp/runich-web-production-$DEPLOY_SHA.tar.gz"
+
+          install -d -m 0755 "$WEB_ROOT/releases"
+          install -m 0644 /tmp/nginx.host.production.conf "$WEB_ROOT/nginx.host.production.conf"
+          rm -f /tmp/nginx.host.production.conf
+
+          mkdir -p "$WEB_ROOT/$RELEASE"
+          tar --no-same-owner -xzf "$ARCHIVE" -C "$WEB_ROOT/$RELEASE"
+          rm -f "$ARCHIVE"
+          chmod -R a+rX "$WEB_ROOT/$RELEASE"
+          test -s "$WEB_ROOT/$RELEASE/index.html"
+          test -s "$WEB_ROOT/$RELEASE/.well-known/assetlinks.json"
+
+          previous=''
+          if [ -L "$WEB_ROOT/current" ]; then
+            previous="$(readlink "$WEB_ROOT/current")"
+          elif [ -e "$WEB_ROOT/current" ]; then
+            echo 'Production web current path exists and is not a symlink; refusing to replace it.' >&2
+            exit 1
+          fi
+          rm -f "$WEB_ROOT/current.next"
+          ln -s "$RELEASE" "$WEB_ROOT/current.next"
+          mv -Tf "$WEB_ROOT/current.next" "$WEB_ROOT/current"
+
+          sudo -n /usr/local/sbin/runich-install-production-vhost
+          if ! curl --fail --silent --show-error --max-time 15 --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/" >/dev/null; then
+            if [ -n "$previous" ]; then
+              ln -sfn "$previous" "$WEB_ROOT/current.rollback"
+              mv -Tf "$WEB_ROOT/current.rollback" "$WEB_ROOT/current"
+            fi
+            echo 'Production public HTTPS readiness failed; restored the previous web release.' >&2
+            exit 1
+          fi
+          if ! curl --fail --silent --show-error --max-time 15 --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/.well-known/assetlinks.json" >/dev/null; then
+            if [ -n "$previous" ]; then
+              ln -sfn "$previous" "$WEB_ROOT/current.rollback"
+              mv -Tf "$WEB_ROOT/current.rollback" "$WEB_ROOT/current"
+            fi
+            echo 'Production assetlinks check failed; restored the previous web release.' >&2
+            exit 1
+          fi
+
+          printf '%s\n' "$DEPLOY_SHA" > "$WEB_ROOT/.deployed-sha"
+          echo "Production web is healthy at commit $DEPLOY_SHA: https://$WEB_DOMAIN"
+          REMOTE

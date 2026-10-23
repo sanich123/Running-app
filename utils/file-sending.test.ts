@@ -1,9 +1,15 @@
 import * as ImagePicker from 'expo-image-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
+import { http, HttpResponse } from 'msw';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 import { Platform } from 'react-native';
+import { LANGUAGES } from '@const/enums';
+import { runichApi } from '@R/runich-api/runich-api';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
+import { BASE_URL } from '@T/utils/handlers';
+import { server } from '@T/utils/server';
 import {
   compressMediaFile,
   createVideoThumbnail,
@@ -11,6 +17,7 @@ import {
   getAccessToGallery,
   uploadMediaFile,
   uploadMediaFiles,
+  waitForMediaUploadReview,
   type UploadMediaBatchRequest,
   type UploadMediaRequest,
 } from './file-sending';
@@ -58,6 +65,7 @@ function restoreGlobalProperty(target: object, key: string, descriptor?: Propert
 describe('file sending', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    store.dispatch(runichApi.util.resetApiState());
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     (ImageCompressor.compress as jest.Mock).mockResolvedValue('compressed-image.jpg');
     (VideoCompressor.compress as jest.Mock).mockResolvedValue('compressed-video.mp4');
@@ -415,6 +423,208 @@ describe('file sending', () => {
       ),
     ).resolves.toBeNull();
     expect(errorToast).not.toHaveBeenCalled();
+  });
+
+  it('returns uploads that do not need moderation status polling unchanged', async () => {
+    const uploads = [
+      { url: 'https://cdn.example/photo.jpg', contentType: 'image/jpeg' },
+      {
+        assetId: 'asset-with-url',
+        status: 'queued' as const,
+        url: 'https://cdn.example/video.mp4',
+        contentType: 'video/mp4',
+      },
+    ];
+
+    await expect(waitForMediaUploadReview(uploads)).resolves.toBe(uploads);
+  });
+
+  it('publishes an approved upload after the moderation status endpoint releases it', async () => {
+    store.dispatch(changeLanguage(LANGUAGES.english));
+    const statusRequests: string[] = [];
+    server.use(
+      http.get(`${BASE_URL}/photo/status`, ({ request }) => {
+        statusRequests.push(new URL(request.url).searchParams.get('ids') ?? '');
+        return HttpResponse.json({
+          items: [{ assetId: 'asset-approved', status: 'approved', contentType: 'image/jpeg' }],
+        });
+      }),
+      http.post(`${BASE_URL}/photo/asset-approved/publish`, () =>
+        HttpResponse.json({ url: 'https://cdn.example/approved.jpg', key: 'approved.jpg' }),
+      ),
+    );
+
+    await expect(
+      waitForMediaUploadReview([
+        {
+          assetId: 'asset-approved',
+          status: 'processing',
+          contentType: 'image/jpeg',
+        },
+      ]),
+    ).resolves.toEqual([
+      {
+        assetId: 'asset-approved',
+        status: 'approved',
+        contentType: 'image/jpeg',
+        url: 'https://cdn.example/approved.jpg',
+        key: 'approved.jpg',
+      },
+    ]);
+    expect(statusRequests).toEqual(['asset-approved']);
+  });
+
+  it('uses an approved URL returned by status polling without publishing the file again', async () => {
+    let statusRequests = 0;
+    let publishRequests = 0;
+    server.use(
+      http.get(`${BASE_URL}/photo/status`, () => {
+        statusRequests += 1;
+        return HttpResponse.json({
+          items: [
+            {
+              assetId: 'asset-already-published',
+              status: 'approved',
+              url: 'https://cdn.example/already-published.jpg',
+              contentType: 'image/jpeg',
+            },
+          ],
+        });
+      }),
+      http.post(`${BASE_URL}/photo/asset-already-published/publish`, () => {
+        publishRequests += 1;
+        return HttpResponse.json({ url: 'https://cdn.example/duplicate-publish.jpg', key: 'duplicate.jpg' });
+      }),
+    );
+
+    await expect(
+      waitForMediaUploadReview([
+        {
+          assetId: 'asset-already-published',
+          status: 'processing',
+          contentType: 'image/jpeg',
+        },
+      ]),
+    ).resolves.toEqual([
+      {
+        assetId: 'asset-already-published',
+        status: 'approved',
+        url: 'https://cdn.example/already-published.jpg',
+        contentType: 'image/jpeg',
+      },
+    ]);
+
+    expect(statusRequests).toBe(1);
+    expect(publishRequests).toBe(0);
+  });
+
+  it('notifies the user when manual review is required and returns the final rejection', async () => {
+    store.dispatch(changeLanguage(LANGUAGES.english));
+    let requestCount = 0;
+    server.use(
+      http.get(`${BASE_URL}/photo/status`, () => {
+        requestCount += 1;
+        return HttpResponse.json({
+          items: [
+            {
+              assetId: 'asset-review',
+              status: requestCount === 1 ? 'review_required' : 'rejected',
+              contentType: 'image/jpeg',
+            },
+          ],
+        });
+      }),
+    );
+    let resolveReviewNotice: (() => void) | undefined;
+    const reviewNotice = new Promise<void>((resolve) => {
+      resolveReviewNotice = resolve;
+    });
+    const onProgress = jest.fn((progress: number) => {
+      if (progress === 0.95) resolveReviewNotice?.();
+    });
+    const review = waitForMediaUploadReview(
+      [{ assetId: 'asset-review', status: 'queued', contentType: 'image/jpeg' }],
+      { onProgress },
+    );
+
+    await reviewNotice;
+    await jest.advanceTimersByTimeAsync(5_000);
+    await expect(review).resolves.toEqual([
+      {
+        assetId: 'asset-review',
+        status: 'rejected',
+        contentType: 'image/jpeg',
+      },
+    ]);
+    expect(errorToast).toHaveBeenCalledWith('Media sent to moderation. Upload will continue after review');
+    expect(requestCount).toBe(2);
+  });
+
+  it('shows the Russian review notice once and ignores status updates for unknown uploads', async () => {
+    store.dispatch(changeLanguage(LANGUAGES.russian));
+    let requestCount = 0;
+    server.use(
+      http.get(`${BASE_URL}/photo/status`, () => {
+        requestCount += 1;
+        return HttpResponse.json({
+          items: [
+            {
+              assetId: 'asset-review-repeat',
+              status: requestCount < 3 ? 'review_required' : 'rejected',
+              contentType: 'image/jpeg',
+            },
+            { assetId: 'unknown-asset', status: 'rejected', contentType: 'image/jpeg' },
+          ],
+        });
+      }),
+    );
+    const progressNotifications: number[] = [];
+    let resolveFirstReview: (() => void) | undefined;
+    let resolveSecondReview: (() => void) | undefined;
+    const firstReview = new Promise<void>((resolve) => {
+      resolveFirstReview = resolve;
+    });
+    const secondReview = new Promise<void>((resolve) => {
+      resolveSecondReview = resolve;
+    });
+    const review = waitForMediaUploadReview(
+      [{ assetId: 'asset-review-repeat', status: 'queued', contentType: 'image/jpeg' }],
+      {
+        onProgress: (progress) => {
+          progressNotifications.push(progress);
+          if (progressNotifications.length === 1) resolveFirstReview?.();
+          if (progressNotifications.length === 2) resolveSecondReview?.();
+        },
+      },
+    );
+
+    await firstReview;
+    await jest.advanceTimersByTimeAsync(5_000);
+    await secondReview;
+    await jest.advanceTimersByTimeAsync(5_000);
+    await expect(review).resolves.toEqual([
+      {
+        assetId: 'asset-review-repeat',
+        status: 'rejected',
+        contentType: 'image/jpeg',
+      },
+    ]);
+
+    expect(progressNotifications).toEqual([0.95, 0.95]);
+    expect(errorToast).toHaveBeenCalledTimes(1);
+    expect(errorToast).toHaveBeenCalledWith('Медиа отправлено модератору. Загрузка продолжится после проверки');
+    expect(requestCount).toBe(3);
+  });
+
+  it('stops status polling immediately when the upload has been cancelled', async () => {
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(
+      waitForMediaUploadReview([{ assetId: 'asset-cancelled', status: 'queued', contentType: 'image/jpeg' }], {
+        signal: controller.signal,
+      }),
+    ).rejects.toThrow('Загрузка медиафайлов отменена');
   });
 
   it('does not show a batch upload error after cancellation', async () => {
