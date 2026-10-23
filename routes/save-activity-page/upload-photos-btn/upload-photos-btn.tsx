@@ -29,6 +29,7 @@ export default function UploadPhotosBtn({
   const [appendActivityMedia] = useAppendActivityMediaMutation();
   const [uploadProgress, setUploadProgress] = useState(0);
   const uploadControllerRef = useRef<AbortController | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const { colors } = useTheme();
   const hasReachedMediaLimit = images.length >= MAX_ACTIVITY_MEDIA;
   const shouldBeDisabled = isDisabled || isSavingDisabled || hasReachedMediaLimit;
@@ -111,10 +112,10 @@ export default function UploadPhotosBtn({
           <UploadProgress progress={uploadProgress} size={32} testID="gallery-upload-progress" />
         </Pressable>
       ) : Platform.OS === 'web' ? (
-        <label htmlFor="image-video-uploader" style={styles.webUploadLabel}>
+        <>
           <input
+            ref={inputRef}
             style={{ display: 'none' }}
-            id="image-video-uploader"
             type="file"
             accept="image/*,video/mp4,video/quicktime,video/webm"
             multiple
@@ -122,6 +123,7 @@ export default function UploadPhotosBtn({
             onChange={async (e) => {
               const remainingSlots = MAX_ACTIVITY_MEDIA - images.length;
               const selectedFiles = e.target.files ? Array.from(e.target.files).slice(0, remainingSlots) : [];
+              e.target.value = '';
               if (userId && selectedFiles.length) {
                 try {
                   setIsDisabled(true);
@@ -144,19 +146,20 @@ export default function UploadPhotosBtn({
               }
             }}
           />
-          <View
+          <Pressable
+            onPress={() => inputRef.current?.click()}
             style={[
               styles.iconButton,
               { borderColor: colors.outlineVariant },
               shouldBeDisabled && styles.disabledButton,
             ]}
-            accessible
             accessibilityRole="button"
             accessibilityLabel={UPLOAD_PHOTO_BTN[language].accessibilityLabel}
-            testID="upload-gallery-button">
+            testID="upload-gallery-button"
+            disabled={shouldBeDisabled}>
             <Icon source="image-multiple-outline" size={28} color={colors.onSurface} />
-          </View>
-        </label>
+          </Pressable>
+        </>
       ) : (
         <Pressable
           onPress={async () => {
@@ -219,5 +222,4 @@ const styles = StyleSheet.create({
   disabledButton: { opacity: 0.7 },
   pressedButton: { opacity: 0.7 },
   progressButton: { paddingHorizontal: 12 },
-  webUploadLabel: { display: 'flex', flex: 1 },
 });
