@@ -21,6 +21,18 @@ describe('MediaModerationPlaceholder', () => {
     expect(screen.queryByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].detail)).toBeNull();
   });
 
+  it('renders a compact moderation overlay over a blurred quarantine preview', async () => {
+    const copy = MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian];
+
+    await renderWithProviders(
+      <MediaModerationPlaceholder status="processing" blurhash="LKO2?U%2Tw=w]~RBVZRi};RPxuwH" compact overlay />,
+    );
+
+    expect(screen.getByTestId('media-moderation-placeholder')).toBeOnTheScreen();
+    expect(screen.getByText(copy.processing)).toBeOnTheScreen();
+    expect(screen.queryByText(copy.detail)).toBeNull();
+  });
+
   it.each([
     ['processing', 'processing', 'detail'],
     ['approved', 'approved', 'detail'],

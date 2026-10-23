@@ -159,6 +159,27 @@ describe('uploadMediaWithThumbnail', () => {
     expect(mockWaitForMediaUploadReview).not.toHaveBeenCalled();
   });
 
+  it('shows the quarantined owner preview while an activity image is queued', async () => {
+    mockCompressMediaFile.mockResolvedValue(compressedImage());
+    mockUploadMediaFile.mockResolvedValue({
+      assetId: 'quarantined-asset',
+      status: 'queued',
+      previewUrl: 'https://quarantine.example/photo.jpg',
+      blurhash: 'LKO2?U%2Tw=w]~RBVZRi};RPxuwH',
+      contentType: 'image/jpeg',
+    });
+
+    await expect(uploadMediaWithThumbnail('photo.jpg', { scope: 'activity' }, 'Upload failed')).resolves.toEqual({
+      url: 'https://quarantine.example/photo.jpg',
+      thumbnail: null,
+      assetId: 'quarantined-asset',
+      blurhash: 'LKO2?U%2Tw=w]~RBVZRi};RPxuwH',
+      mediaReviewStatus: 'queued',
+      contentType: 'image/jpeg',
+    });
+    expect(mockWaitForMediaUploadReview).not.toHaveBeenCalled();
+  });
+
   it('keeps a video and its thumbnail attached while both are queued for moderation', async () => {
     mockCompressMediaFile
       .mockResolvedValueOnce(compressedVideo())

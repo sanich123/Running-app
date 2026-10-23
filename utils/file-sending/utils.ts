@@ -47,9 +47,10 @@ export async function uploadMediaWithThumbnail(
     reportProgress(control, 0.8);
 
     const uploadedMedia: UploadedMedia = {
-      ...(reviewedFile.url ? { url: reviewedFile.url } : {}),
+      ...(reviewedFile.url || reviewedFile.previewUrl ? { url: reviewedFile.url ?? reviewedFile.previewUrl } : {}),
       thumbnail: null,
       ...(reviewedFile.assetId ? { assetId: reviewedFile.assetId } : {}),
+      ...(reviewedFile.blurhash ? { blurhash: reviewedFile.blurhash } : {}),
       ...(reviewedFile.status ? { mediaReviewStatus: reviewedFile.status } : {}),
       ...(reviewedFile.contentType ? { contentType: reviewedFile.contentType } : {}),
     };
@@ -143,9 +144,10 @@ export async function uploadMediaBatchWithThumbnails(
       const uploadedFile = uploadedByMediaId.get(item.mediaId);
       if (uploadedFile?.role === 'media' && (uploadedFile.url || (isActivityUpload && uploadedFile.assetId))) {
         uploadedMedia[index] = {
-          ...(uploadedFile.url ? { url: uploadedFile.url } : {}),
+          ...(uploadedFile.url || uploadedFile.previewUrl ? { url: uploadedFile.url ?? uploadedFile.previewUrl } : {}),
           thumbnail: null,
           ...(uploadedFile.assetId ? { assetId: uploadedFile.assetId } : {}),
+          ...(uploadedFile.blurhash ? { blurhash: uploadedFile.blurhash } : {}),
           ...(uploadedFile.status ? { mediaReviewStatus: uploadedFile.status } : {}),
           ...(uploadedFile.contentType ? { contentType: uploadedFile.contentType } : {}),
         };
@@ -201,7 +203,7 @@ export async function uploadMediaBatchWithThumbnails(
         uploadedThumbnail && !isActivityUpload
           ? (await waitForMediaUploadReview([uploadedThumbnail], control))[0]
           : uploadedThumbnail;
-      const thumbnailUrl = reviewedThumbnail?.url;
+      const thumbnailUrl = reviewedThumbnail?.url ?? reviewedThumbnail?.previewUrl;
       const videoItem = videoItems.find(({ item }) => item.mediaId === mediaId);
       if (!videoItem) continue;
       const media = uploadedMedia[videoItem.index];
@@ -209,6 +211,7 @@ export async function uploadMediaBatchWithThumbnails(
         uploadedMedia[videoItem.index] = {
           ...media,
           ...(thumbnailUrl ? { thumbnail: thumbnailUrl } : {}),
+          ...(reviewedThumbnail?.blurhash ? { blurhash: reviewedThumbnail.blurhash } : {}),
           ...(isActivityUpload && reviewedThumbnail?.assetId ? { thumbnailAssetId: reviewedThumbnail.assetId } : {}),
         };
       }

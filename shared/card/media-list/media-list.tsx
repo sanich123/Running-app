@@ -120,6 +120,7 @@ export default function MediaList() {
             style={[styles.mediaTile, { height: mediaHeight, width: mediaWidth }]}>
             <MediaModerationPlaceholder
               status={item.mediaReviewStatus}
+              blurhash={item.blurhash}
               testID={`pending-activity-media-${item.id ?? index}`}
             />
           </View>
@@ -232,6 +233,12 @@ export default function MediaList() {
               )}
             </TouchableRipple>
           )}
+          {isOwnActivity &&
+          item.mediaReviewStatus &&
+          item.mediaReviewStatus !== 'approved' &&
+          item.mediaReviewStatus !== 'rejected' ? (
+            <MediaModerationPlaceholder status={item.mediaReviewStatus} compact overlay />
+          ) : null}
           {!isMap && isOwnActivity && item.id && selectedMediaId === item.id ? (
             <View style={styles.deleteButton}>
               <ActivityMediaDeleteBtn onDelete={() => void handleDeleteMedia(item.id!)} isDeleting={isDeletingMedia} />

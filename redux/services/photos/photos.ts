@@ -5,6 +5,8 @@ import type { BaseQueryApi, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export interface UploadedPhotoResponse {
   url?: string;
+  previewUrl?: string;
+  blurhash?: string | null;
   key?: string;
   assetId?: string;
   status?: MediaUploadStatus;

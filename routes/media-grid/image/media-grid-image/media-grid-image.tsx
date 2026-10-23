@@ -101,9 +101,16 @@ export default function MediaGridImage({
           accessibilityRole="button"
           accessibilityLabel={language === LANGUAGES.russian ? 'Медиа на проверке' : 'Media under review'}
           borderless>
-          <MediaModerationPlaceholder status={mediaReviewStatus} compact />
+          <MediaModerationPlaceholder status={mediaReviewStatus} blurhash={blurhash} compact />
         </TouchableRipple>
       )}
+      {url &&
+      canDeleteMedia &&
+      mediaReviewStatus &&
+      mediaReviewStatus !== 'approved' &&
+      mediaReviewStatus !== 'rejected' ? (
+        <MediaModerationPlaceholder status={mediaReviewStatus} compact overlay />
+      ) : null}
       {canDeleteMedia && isDeleteButtonVisible ? (
         <View style={styles.deleteButton}>
           <ActivityMediaDeleteBtn onDelete={() => void handleDelete()} isDeleting={isDeletingMedia} />

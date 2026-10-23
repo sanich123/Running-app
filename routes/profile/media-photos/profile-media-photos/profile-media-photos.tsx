@@ -112,9 +112,16 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                         placeholder={blurhash}
                       />
                     ) : (
-                      <MediaModerationPlaceholder status={item.mediaReviewStatus} compact />
+                      <MediaModerationPlaceholder status={item.mediaReviewStatus} blurhash={item.blurhash} compact />
                     )}
                   </TouchableRipple>
+                  {url &&
+                  canDeleteMedia &&
+                  item.mediaReviewStatus &&
+                  item.mediaReviewStatus !== 'approved' &&
+                  item.mediaReviewStatus !== 'rejected' ? (
+                    <MediaModerationPlaceholder status={item.mediaReviewStatus} compact overlay />
+                  ) : null}
                   <View pointerEvents="none" style={styles.labelBackdrop}>
                     <Text style={styles.label} variant="labelLarge">
                       {PROFILE_MEDIA[language].label}
@@ -170,9 +177,16 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                     placeholder={blurhash}
                   />
                 ) : (
-                  <MediaModerationPlaceholder status={item.mediaReviewStatus} compact />
+                  <MediaModerationPlaceholder status={item.mediaReviewStatus} blurhash={item.blurhash} compact />
                 )}
               </TouchableRipple>
+              {url &&
+              canDeleteMedia &&
+              item.mediaReviewStatus &&
+              item.mediaReviewStatus !== 'approved' &&
+              item.mediaReviewStatus !== 'rejected' ? (
+                <MediaModerationPlaceholder status={item.mediaReviewStatus} compact overlay />
+              ) : null}
               {canDeleteMedia && selectedMediaId === id && activityId ? (
                 <View style={styles.deleteButton}>
                   <ActivityMediaDeleteBtn

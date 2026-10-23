@@ -26,16 +26,24 @@ export default function PreviewImages({
       ]}
       key={`${media.id ?? media.assetId ?? media.url}/${index}`}>
       {media.url ? (
-        <PreviewImage
-          image={media.thumbnail || media.url}
-          mediaUrl={media.url}
-          isDisabled={isDisabled}
-          index={index}
-          compact={compact}
-        />
+        <>
+          <PreviewImage
+            image={media.thumbnail || media.url}
+            mediaUrl={media.url}
+            isDisabled={isDisabled}
+            index={index}
+            compact={compact}
+          />
+          {media.mediaReviewStatus &&
+          media.mediaReviewStatus !== 'approved' &&
+          media.mediaReviewStatus !== 'rejected' ? (
+            <MediaModerationPlaceholder status={media.mediaReviewStatus} compact overlay />
+          ) : null}
+        </>
       ) : (
         <MediaModerationPlaceholder
           status={media.mediaReviewStatus}
+          blurhash={media.blurhash}
           compact={compact}
           testID={`pending-media-preview-${index}`}
         />

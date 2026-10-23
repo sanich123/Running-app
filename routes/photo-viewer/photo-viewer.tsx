@@ -110,7 +110,7 @@ export default function PhotoViewer() {
               {itemsToRender.map(({ url, blurhash, mediaReviewStatus }: ActivityMediaItemResponse, index: number) => (
                 <View key={index} style={[styles.page, { backgroundColor: colors.background }]}>
                   {!url ? (
-                    <MediaModerationPlaceholder status={mediaReviewStatus} />
+                    <MediaModerationPlaceholder status={mediaReviewStatus} blurhash={blurhash} />
                   ) : isVideoUrl(url) ? (
                     <VideoViewer url={url} isActive={!isPagerMoving && selectedPage === index} />
                   ) : (
@@ -127,6 +127,9 @@ export default function PhotoViewer() {
                       }}
                     />
                   )}
+                  {url && mediaReviewStatus && mediaReviewStatus !== 'approved' && mediaReviewStatus !== 'rejected' ? (
+                    <MediaModerationPlaceholder status={mediaReviewStatus} compact overlay />
+                  ) : null}
                 </View>
               ))}
             </PagerView>
