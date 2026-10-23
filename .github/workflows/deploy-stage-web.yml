@@ -76,8 +76,8 @@ jobs:
           COMPOSE=(docker compose --project-name runich-stage -f /opt/runich-stage/docker-compose.timeweb.stage.yml)
 
           test -s /opt/runich-stage/nginx.stage.web.d/runich-web.conf
-          "${COMPOSE[@]}" exec -T nginx nginx -t
-          "${COMPOSE[@]}" exec -T nginx nginx -s reload
+          "${COMPOSE[@]}" exec -T --interactive=false nginx nginx -t
+          "${COMPOSE[@]}" exec -T --interactive=false nginx nginx -s reload
           install -d -m 0755 "$WEB_ROOT/releases"
           chmod 0755 "$WEB_ROOT" "$WEB_ROOT/releases"
           mkdir -p "$WEB_ROOT/$RELEASE"
@@ -98,7 +98,7 @@ jobs:
           ln -s "$RELEASE" "$WEB_ROOT/current.next"
           mv -Tf "$WEB_ROOT/current.next" "$WEB_ROOT/current"
 
-          if "${COMPOSE[@]}" exec -T nginx nginx -t \
+          if "${COMPOSE[@]}" exec -T --interactive=false nginx nginx -t \
             && curl --fail --silent --show-error --max-time 15 \
               --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/" >/dev/null \
             && curl --fail --silent --show-error --max-time 15 \
