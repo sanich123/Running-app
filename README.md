@@ -103,7 +103,9 @@ yarn web:export:production
 yarn web:serve:single
 ```
 
-The static output is written to `dist/`. Stage and production deployments are configured through `netlify.toml`.
+The static output is written to `dist/`. GitHub Actions deploys commits to `stage` to
+`https://stage-web.runich-app.ru` and commits to `master` to `https://runich-app.ru`.
+Netlify remains available during the migration; see [Timeweb web deployment](docs/timeweb-web-deploy.md).
 
 ## EAS builds
 

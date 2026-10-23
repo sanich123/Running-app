@@ -1,8 +1,10 @@
 # Android app links
 
-The Expo Android config registers `/sign-in` links for both web deployments:
+The Expo Android config registers the production and Stage web hosts for sign-in and activity links:
 
-- `https://runich.netlify.app/sign-in`
-- `https://stage--runich.netlify.app/sign-in`
+- `https://runich-app.ru/login-from-url`
+- `https://runich-app.ru/activity`
+- `https://stage-web.runich-app.ru/login-from-url`
+- `https://stage-web.runich-app.ru/activity`
 
-Android verification is served by `public/.well-known/assetlinks.json` for the production, development, and local debug certificates currently used by the project.
+Android verification is served by `public/.well-known/assetlinks.json` on both hosts. The former Netlify hosts remain registered during the hosting migration.

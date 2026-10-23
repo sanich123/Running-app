@@ -1,0 +1,114 @@
+name: Deploy web to Timeweb Stage
+
+on:
+  push:
+    branches:
+      - stage
+  workflow_dispatch:
+
+concurrency:
+  group: runich-web-stage
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and deploy Stage web
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: stage
+      url: https://stage-web.runich-app.ru
+    env:
+      STAGE_WEB_DOMAIN: stage-web.runich-app.ru
+      STAGE_DEPLOY_USER: runich-deploy
+
+    steps:
+      - name: Check out the exact commit
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26.7.0
+
+      - name: Export the Stage web app
+        run: |
+          set -euo pipefail
+          npm install --global @yarnpkg/cli-dist@4.18.1
+          yarn install --immutable
+          yarn web:export:stage
+          test -s dist/index.html
+          test -s dist/.well-known/assetlinks.json
+
+      - name: Deploy the exact export over SSH
+        env:
+          STAGE_DEPLOY_HOST: ${{ secrets.STAGE_DEPLOY_HOST }}
+          STAGE_DEPLOY_SSH_KEY: ${{ secrets.STAGE_DEPLOY_SSH_KEY }}
+          STAGE_DEPLOY_KNOWN_HOSTS: ${{ secrets.STAGE_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          : "${STAGE_DEPLOY_HOST:?GitHub environment secret STAGE_DEPLOY_HOST is required}"
+          : "${STAGE_DEPLOY_SSH_KEY:?GitHub environment secret STAGE_DEPLOY_SSH_KEY is required}"
+          : "${STAGE_DEPLOY_KNOWN_HOSTS:?GitHub environment secret STAGE_DEPLOY_KNOWN_HOSTS is required}"
+
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$STAGE_DEPLOY_SSH_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          printf '%s\n' "$STAGE_DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 644 "$HOME/.ssh/known_hosts"
+          unset STAGE_DEPLOY_SSH_KEY
+
+          SSH=(ssh -i "$HOME/.ssh/id_ed25519" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes)
+          SCP=(scp -i "$HOME/.ssh/id_ed25519" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes)
+          TARGET="$STAGE_DEPLOY_USER@$STAGE_DEPLOY_HOST"
+          ARCHIVE="$RUNNER_TEMP/runich-web-stage-$GITHUB_SHA.tar.gz"
+          tar -C dist -czf "$ARCHIVE" .
+          "${SCP[@]}" "$ARCHIVE" "$TARGET:/tmp/runich-web-stage-$GITHUB_SHA.tar.gz"
+
+          "${SSH[@]}" "$TARGET" "DEPLOY_SHA='$GITHUB_SHA' WEB_DOMAIN='$STAGE_WEB_DOMAIN' bash -s" <<'REMOTE'
+          set -euo pipefail
+          WEB_ROOT=/opt/runich-stage/web-stage
+          RELEASE="releases/$DEPLOY_SHA"
+          ARCHIVE="/tmp/runich-web-stage-$DEPLOY_SHA.tar.gz"
+          COMPOSE=(docker compose --project-name runich-stage -f /opt/runich-stage/docker-compose.timeweb.stage.yml)
+
+          test -s /opt/runich-stage/nginx.stage.web.d/runich-web.conf
+          install -d -m 0750 "$WEB_ROOT/releases"
+          mkdir -p "$WEB_ROOT/$RELEASE"
+          tar --no-same-owner -xzf "$ARCHIVE" -C "$WEB_ROOT/$RELEASE"
+          rm -f "$ARCHIVE"
+          test -s "$WEB_ROOT/$RELEASE/index.html"
+          test -s "$WEB_ROOT/$RELEASE/.well-known/assetlinks.json"
+
+          previous=''
+          if [ -L "$WEB_ROOT/current" ]; then
+            previous="$(readlink "$WEB_ROOT/current")"
+          elif [ -e "$WEB_ROOT/current" ]; then
+            echo 'Stage web current path exists and is not a symlink; refusing to replace it.' >&2
+            exit 1
+          fi
+          rm -f "$WEB_ROOT/current.next"
+          ln -s "$RELEASE" "$WEB_ROOT/current.next"
+          mv -Tf "$WEB_ROOT/current.next" "$WEB_ROOT/current"
+
+          if "${COMPOSE[@]}" exec -T nginx nginx -t \
+            && curl --fail --silent --show-error --max-time 15 \
+              --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/" >/dev/null \
+            && curl --fail --silent --show-error --max-time 15 \
+              --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/.well-known/assetlinks.json" >/dev/null; then
+            printf '%s\n' "$DEPLOY_SHA" > "$WEB_ROOT/.deployed-sha"
+            echo "Stage web is healthy at commit $DEPLOY_SHA: https://$WEB_DOMAIN"
+          else
+            if [ -n "$previous" ]; then
+              ln -sfn "$previous" "$WEB_ROOT/current.rollback"
+              mv -Tf "$WEB_ROOT/current.rollback" "$WEB_ROOT/current"
+            else
+              rm -f "$WEB_ROOT/current"
+            fi
+            exit 1
+          fi
+
+          REMOTE

@@ -60,6 +60,11 @@ export default {
               host: 'runich.netlify.app',
               pathPrefix: '/login-from-url',
             },
+            {
+              scheme: 'https',
+              host: 'runich-app.ru',
+              pathPrefix: '/login-from-url',
+            },
           ],
           category: ['BROWSABLE', 'DEFAULT'],
         },
@@ -70,6 +75,11 @@ export default {
             {
               scheme: 'https',
               host: 'stage--runich.netlify.app',
+              pathPrefix: '/login-from-url',
+            },
+            {
+              scheme: 'https',
+              host: 'stage-web.runich-app.ru',
               pathPrefix: '/login-from-url',
             },
           ],
@@ -84,6 +94,11 @@ export default {
               host: 'runich.netlify.app',
               pathPrefix: '/activity',
             },
+            {
+              scheme: 'https',
+              host: 'runich-app.ru',
+              pathPrefix: '/activity',
+            },
           ],
           category: ['BROWSABLE', 'DEFAULT'],
         },
@@ -94,6 +109,11 @@ export default {
             {
               scheme: 'https',
               host: 'stage--runich.netlify.app',
+              pathPrefix: '/activity',
+            },
+            {
+              scheme: 'https',
+              host: 'stage-web.runich-app.ru',
               pathPrefix: '/activity',
             },
           ],
