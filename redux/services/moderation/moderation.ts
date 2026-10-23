@@ -22,10 +22,6 @@ export const moderationApi = runichApi.injectEndpoints({
         body,
       }),
     }),
-    getModeratorAccess: query<{ isModerator: boolean }, void>({
-      query: () => `/${moderation}/access`,
-      providesTags: [Tags.moderatorAccess],
-    }),
     getModerationReports: query<ModerationReportItem[], { take?: number } | void>({
       query: (params) => ({ url: `/${moderation}/reports`, params: params ?? undefined }),
       providesTags: [Tags.moderationReports],
@@ -103,7 +99,6 @@ export const moderationApi = runichApi.injectEndpoints({
 
 export const {
   useSubmitContentReportMutation,
-  useGetModeratorAccessQuery,
   useGetModerationReportsQuery,
   useGetModerationReportDetailsQuery,
   useApplyModerationActionMutation,

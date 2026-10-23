@@ -40,7 +40,7 @@ export enum ROUTES {
   profileSettings = 'profile-settings',
   profilePrivacySettings = 'privacy-settings',
   blockedUsers = 'blocked-users',
-  moderation = 'moderation',
+  admin = 'admin',
   changePassword = 'change-password',
   statistic = 'statistic',
   monthStatistics = 'month-statistic',
@@ -94,7 +94,7 @@ export const LABELS = {
     profileSettings: 'Profile settings',
     profilePrivacySettings: 'Privacy settings',
     blockedUsers: 'Blocked users',
-    moderation: 'Moderation',
+    admin: 'Admin',
     migration: 'Migration',
   },
   [LANGUAGES.russian]: {
@@ -118,7 +118,7 @@ export const LABELS = {
     profileSettings: 'Настройки профиля',
     profilePrivacySettings: 'Настройки конфиденциальности',
     blockedUsers: 'Заблокированные пользователи',
-    moderation: 'Модерация',
+    admin: 'Админка',
     migration: 'Миграция',
   },
 };

@@ -36,6 +36,7 @@ export type {
   MediaUploadControl,
   MediaUploadItem,
   MediaUploadOptions,
+  MediaUploadPhase,
   UploadedMedia,
 } from './file-sending/file-sending-types';
 
@@ -118,6 +119,7 @@ const VIDEO_MAX_SIZE = 720;
 export async function compressMediaFile(
   fileSrc: MediaSource,
   metadata: MediaSourceMetadata = {},
+  control?: MediaUploadControl,
 ): Promise<CompressedMediaFile | null> {
   const { fileName, extension, isVideo, mimeType } = getMediaFileInfo(fileSrc, metadata);
 
@@ -132,8 +134,17 @@ export async function compressMediaFile(
   }
 
   try {
-    const compressedFile = isVideo ? await compressVideo(fileSrc) : await compressImage(fileSrc);
+    if (control?.signal?.aborted) return null;
+    const compression = (isVideo ? compressVideo(fileSrc, control) : compressImage(fileSrc)).catch((error: unknown) => {
+      if (!control?.signal?.aborted) {
+        errorToast(isVideo ? 'Ошибка во время сжатия видео' : 'Ошибка во время сжатия изображения', error);
+      }
+      return null;
+    });
+    const compressedFile = await waitForCompressionOrAbort(compression, control?.signal);
+    if (control?.signal?.aborted) return null;
     if (!compressedFile) return null;
+    control?.onStatusProgress?.('compressing', 1);
 
     return {
       file: compressedFile,
@@ -143,9 +154,35 @@ export async function compressMediaFile(
       mimeType,
     };
   } catch (error) {
-    errorToast(isVideo ? 'Ошибка во время сжатия видео' : 'Ошибка во время сжатия изображения', error);
+    if (!control?.signal?.aborted) {
+      errorToast(isVideo ? 'Ошибка во время сжатия видео' : 'Ошибка во время сжатия изображения', error);
+    }
     return null;
   }
+}
+
+function waitForCompressionOrAbort<T>(compression: Promise<T | null>, signal?: AbortSignal): Promise<T | null> {
+  if (!signal) return compression;
+  if (signal.aborted) return Promise.resolve(null);
+
+  return new Promise((resolve, reject) => {
+    const handleAbort = () => {
+      signal.removeEventListener('abort', handleAbort);
+      resolve(null);
+    };
+
+    signal.addEventListener('abort', handleAbort, { once: true });
+    compression.then(
+      (value) => {
+        signal.removeEventListener('abort', handleAbort);
+        resolve(value);
+      },
+      (error: unknown) => {
+        signal.removeEventListener('abort', handleAbort);
+        reject(error);
+      },
+    );
+  });
 }
 
 export async function uploadMediaFile(
@@ -240,9 +277,10 @@ export async function deleteUploadedMedia(publicUrls: string[], assetIds: string
   }
 }
 
-async function compressVideo(fileSrc: MediaSource): Promise<MediaSource | null> {
+async function compressVideo(fileSrc: MediaSource, control?: MediaUploadControl): Promise<MediaSource | null> {
   if (Platform.OS === 'web') {
     const videoInfo = await getWebVideoInfo(fileSrc);
+    if (control?.signal?.aborted) return null;
     if (!Number.isFinite(videoInfo.duration)) {
       errorToast('Не удалось определить длительность видео');
       return null;
@@ -256,10 +294,12 @@ async function compressVideo(fileSrc: MediaSource): Promise<MediaSource | null> 
       return null;
     }
 
+    control?.onStatusProgress?.('compressing', 1);
     return fileSrc;
   }
 
   const sourceMetadata = await getVideoMetaData(String(fileSrc));
+  if (control?.signal?.aborted) return null;
   if (!Number.isFinite(sourceMetadata.duration) || sourceMetadata.duration <= 0) {
     errorToast('Не удалось определить длительность видео');
     return null;
@@ -269,10 +309,37 @@ async function compressVideo(fileSrc: MediaSource): Promise<MediaSource | null> 
     return null;
   }
 
-  const compressedFile = await VideoCompressor.compress(String(fileSrc), { maxSize: VIDEO_MAX_SIZE });
+  if (control?.signal?.aborted) return null;
+  let cancellationId: string | undefined;
+  const cancelCompression = () => {
+    if (cancellationId) VideoCompressor.cancelCompression(cancellationId);
+  };
+  control?.signal?.addEventListener('abort', cancelCompression, { once: true });
+  if (control?.signal?.aborted) cancelCompression();
+
+  let compressedFile: string;
+  try {
+    compressedFile = control
+      ? await VideoCompressor.compress(
+          String(fileSrc),
+          {
+            maxSize: VIDEO_MAX_SIZE,
+            getCancellationId: (id) => {
+              cancellationId = id;
+              if (control.signal?.aborted) cancelCompression();
+            },
+          },
+          (progress) => control.onStatusProgress?.('compressing', Math.max(0, Math.min(progress, 1))),
+        )
+      : await VideoCompressor.compress(String(fileSrc), { maxSize: VIDEO_MAX_SIZE });
+  } finally {
+    control?.signal?.removeEventListener('abort', cancelCompression);
+  }
+  if (control?.signal?.aborted) return null;
   if (!compressedFile) return null;
 
   const compressedMetadata = await getVideoMetaData(String(compressedFile));
+  if (control?.signal?.aborted) return null;
   if (compressedMetadata.size > MAX_MEDIA_FILE_SIZE) {
     errorToast('Размер видео должен быть не более 50 МБ');
     return null;

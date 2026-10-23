@@ -25,7 +25,12 @@ import type { EmailPasswordData } from '@R/services/authentication/types';
 export default function SignIn() {
   const { email, password } = useAppSelector(({ logining }) => logining);
   const { language } = useAppSelector(({ settings }) => settings);
-  const { authStep } = useLocalSearchParams<{ authStep?: string; oauthError?: string }>();
+  const { authStep, returnTo, accessDenied } = useLocalSearchParams<{
+    authStep?: string;
+    oauthError?: string;
+    returnTo?: string;
+    accessDenied?: string;
+  }>();
 
   const { control, handleSubmit } = useForm<EmailPasswordData>({
     defaultValues: { email, password },
@@ -50,6 +55,13 @@ export default function SignIn() {
   return (
     <CrossPlatformLayout edges={['top', 'bottom']} scrollViewEnabled outerStyles={styles.pageContent}>
       <Surface mode="flat" style={styles.inputsWrapper}>
+        {accessDenied === 'true' ? (
+          <Text variant="bodyMedium" style={styles.accessDenied}>
+            {language === 'russian'
+              ? 'У этого аккаунта нет прав для входа в админку. Попросите администратора выдать вам соответствующие права.'
+              : 'This account does not have admin access. Ask an administrator to grant you the required permissions.'}
+          </Text>
+        ) : null}
         <AuthStepIntro authStep={currentAuthStep} />
         {currentAuthStep === SignInPageStates.login && (
           <>
@@ -94,11 +106,19 @@ export default function SignIn() {
           handleSubmit={handleSubmit}
           authStep={currentAuthStep}
           legalConsentAccepted={!requiresLegalConfirmation || areLegalConsentsAccepted}
+          returnTo={returnTo}
         />
         <LoginRegisterNavigation
           authStep={currentAuthStep}
           onAuthStepChange={(nextAuthStep) =>
-            push({ pathname: `/${ROUTES.signIn}`, params: { authStep: nextAuthStep } })
+            push({
+              pathname: `/${ROUTES.signIn}`,
+              params: {
+                authStep: nextAuthStep,
+                ...(returnTo ? { returnTo } : {}),
+                ...(accessDenied === 'true' ? { accessDenied } : {}),
+              },
+            })
           }
           showEmailLinkNavigation={false}
         />
@@ -142,6 +162,7 @@ const styles = StyleSheet.create({
     gap: 0,
     marginTop: 8,
   },
+  accessDenied: { color: '#B3261E', paddingBottom: 12 },
   version: {
     opacity: 0.65,
   },

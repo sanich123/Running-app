@@ -14,13 +14,13 @@ import {
   useTheme,
 } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
+import { useGetAdminAccessQuery } from '@R/services/admin/admin';
 import {
   useApplyModerationActionMutation,
   useDecideModerationAppealMutation,
   useGetModerationAppealsQuery,
   useGetModerationReportDetailsQuery,
   useGetModerationReportsQuery,
-  useGetModeratorAccessQuery,
 } from '@R/services/moderation/moderation';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
@@ -46,8 +46,8 @@ export default function ModerationDashboard() {
   const [pendingDecision, setPendingDecision] = useState<PendingDecision | null>(null);
   const [decisionNote, setDecisionNote] = useState('');
   const [suspensionDays, setSuspensionDays] = useState('7');
-  const { data: access, isLoading: isCheckingAccess } = useGetModeratorAccessQuery();
-  const isModerator = access?.isModerator === true;
+  const { data: access, isLoading: isCheckingAccess } = useGetAdminAccessQuery();
+  const isModerator = access?.permissions.includes('moderation.manage') === true;
   const reportsQuery = useGetModerationReportsQuery({ take: 100 }, { skip: !isModerator });
   const appealsQuery = useGetModerationAppealsQuery({ take: 100 }, { skip: !isModerator });
   const reportDetailsQuery = useGetModerationReportDetailsQuery(selectedReportId, {

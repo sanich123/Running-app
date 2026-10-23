@@ -55,7 +55,7 @@ export const LazyProfilePrivacySettingsPage = lazy(
 export const LazyBlockedUsersPage = lazy(
   () => import('@Routes/profile/privacy-settings/blocked-users-page/blocked-users-page'),
 );
-export const LazyModerationDashboard = lazy(() => import('@Routes/profile/moderation/moderation-dashboard'));
+export const LazyAdminDashboard = lazy(() => import('@Routes/admin/admin-dashboard'));
 export const LazyNotificationsPage = lazy(() => import('@Routes/notifications/notifications-page/notifications-page'));
 export const LazyUpdateAppPage = lazy(() => import('@Routes/update-app/update-app-page/update-app-page'));
 export const LazyWatchImportPage = lazy(() => import('@Routes/watch-import/watch-import-page/watch-import-page'));

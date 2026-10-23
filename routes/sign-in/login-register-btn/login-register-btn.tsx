@@ -24,10 +24,12 @@ export default function LoginRegisterBtn({
   handleSubmit,
   authStep = SignInPageStates.login,
   legalConsentAccepted = true,
+  returnTo,
 }: {
   handleSubmit: UseFormHandleSubmit<EmailPasswordData>;
   authStep?: SignInPageStates;
   legalConsentAccepted?: boolean;
+  returnTo?: string;
 }) {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
@@ -90,7 +92,7 @@ export default function LoginRegisterBtn({
               .then(async (session) => {
                 dispatch(setAuthSession(session));
                 await flushAuthPersistence();
-                replace(ROUTES.root);
+                replace(returnTo === `/${ROUTES.admin}` ? returnTo : ROUTES.root);
               })
               .catch((error) => errorToast('', error))
               .finally(() => dispatch(setIsDisabledWhenLogining(false)));

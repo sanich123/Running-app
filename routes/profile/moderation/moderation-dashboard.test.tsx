@@ -64,7 +64,7 @@ describe('ModerationDashboard', () => {
   it('does not request the moderation queue when the account is not a moderator', async () => {
     const queueRequests: string[] = [];
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: false })),
+      http.get(`${BASE_URL}/admin/access`, () => HttpResponse.json({ roles: [], permissions: [], isSuperuser: false })),
       http.get(`${BASE_URL}/moderation/reports`, ({ request }) => {
         queueRequests.push(request.url);
         return HttpResponse.json([]);
@@ -79,7 +79,9 @@ describe('ModerationDashboard', () => {
 
   it('shows the active report queue to a moderator', async () => {
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
     );
@@ -96,7 +98,9 @@ describe('ModerationDashboard', () => {
     const report = createReport();
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.russian];
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(createReportDetails(report))),
@@ -130,7 +134,9 @@ describe('ModerationDashboard', () => {
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.russian];
     mockRouteParams.current = { showAppeals: 'true', appealId: appeal.id };
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([appeal])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(createReportDetails(report))),
@@ -151,7 +157,9 @@ describe('ModerationDashboard', () => {
   it('filters reports by status without hiding the open report', async () => {
     const user = userEvent.setup();
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () =>
         HttpResponse.json([
           createReport(),
@@ -175,7 +183,9 @@ describe('ModerationDashboard', () => {
     const report = createReport({ targetType: 'media_upload', targetId: 'asset-1', reason: 'sexual_content' });
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.russian];
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () =>
@@ -215,7 +225,9 @@ describe('ModerationDashboard', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.english];
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () =>
@@ -252,7 +264,9 @@ describe('ModerationDashboard', () => {
     const report = createReport({ targetType: 'user', targetId: 'author-1', reason: 'harassment' });
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.russian];
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(createReportDetails(report))),
@@ -275,7 +289,9 @@ describe('ModerationDashboard', () => {
     const report = createReport({ id: 'closed-report', status: 'rejected', details: '' });
     mockRouteParams.current = { reportId: report.id };
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/closed-report`, () =>
@@ -313,7 +329,9 @@ describe('ModerationDashboard', () => {
     ];
     const openUrl = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined);
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(details)),
@@ -334,7 +352,9 @@ describe('ModerationDashboard', () => {
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.russian];
     const report = createReport();
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(createReportDetails(report))),
@@ -365,7 +385,9 @@ describe('ModerationDashboard', () => {
     };
     mockRouteParams.current = { showAppeals: 'true' };
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([appeal])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(createReportDetails(report))),
@@ -387,7 +409,9 @@ describe('ModerationDashboard', () => {
     let reportRequests = 0;
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.russian];
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => {
         reportRequests += 1;
         return reportRequests === 1
@@ -411,7 +435,9 @@ describe('ModerationDashboard', () => {
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.russian];
     mockRouteParams.current = { showAppeals: 'true' };
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/appeals`, () => {
         appealRequests += 1;
@@ -433,7 +459,9 @@ describe('ModerationDashboard', () => {
     const report = createReport();
     mockRouteParams.current = { reportId: report.id };
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () =>
@@ -450,7 +478,9 @@ describe('ModerationDashboard', () => {
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.russian];
     mockRouteParams.current = { reportId: 'missing-report' };
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/missing-report`, () =>
@@ -476,7 +506,9 @@ describe('ModerationDashboard', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.english];
     server.use(
-      http.get(`${BASE_URL}/moderation/access`, () => HttpResponse.json({ isModerator: true })),
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
       http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(createReportDetails(report))),

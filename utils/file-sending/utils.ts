@@ -103,17 +103,34 @@ export async function uploadMediaBatchWithThumbnails(
 
   try {
     throwIfUploadAborted(control);
-    const compressed = await mapWithConcurrency(
-      mediaItems,
-      ({ fileSrc, metadata }) => compressMediaFile(fileSrc, metadata),
-      MEDIA_BATCH_CONCURRENCY,
-      (completed) => reportProgress(control, (completed / mediaItems.length) * 0.2),
-    );
+    const compressionProgress = mediaItems.map(() => 0);
+    const updateCompressionProgress = (index: number, progress: number) => {
+      compressionProgress[index] = Math.max(compressionProgress[index], Math.max(0, Math.min(progress, 1)));
+      reportCompressionProgress(
+        control,
+        compressionProgress.reduce((total, itemProgress) => total + itemProgress, 0) / mediaItems.length,
+      );
+    };
+    const compressed = await mapWithConcurrency(mediaItems, async ({ fileSrc, metadata }, index) => {
+      throwIfUploadAborted(control);
+      try {
+        return await compressMediaFile(fileSrc, metadata, {
+          signal: control?.signal,
+          onStatusProgress: (phase, progress) => {
+            if (phase === 'compressing') updateCompressionProgress(index, progress);
+          },
+        });
+      } finally {
+        updateCompressionProgress(index, 1);
+      }
+    });
     throwIfUploadAborted(control);
     const compressedItems = compressed.flatMap((file, index) =>
       file ? [{ index, file, item: mediaItems[index] }] : [],
     );
     if (!compressedItems.length) return emptyResult();
+    reportUploadProgress(control, 0);
+    const hasVideoItems = compressedItems.some(({ file }) => file.isVideo);
 
     const uploadedFiles = control
       ? await uploadMediaFiles(
@@ -121,7 +138,7 @@ export async function uploadMediaBatchWithThumbnails(
           uploadOptions,
           compressedItems.map(({ item }) => ({ mediaId: item.mediaId, role: 'media' })),
           undefined,
-          withProgressRange(control, 0.2, 0.65),
+          withUploadProgressRange(control, 0, hasVideoItems ? 0.8 : 1),
         )
       : await uploadMediaFiles(
           compressedItems.map(({ file }) => file),
@@ -157,6 +174,7 @@ export async function uploadMediaBatchWithThumbnails(
     const videoItems = compressedItems.flatMap((item) =>
       item.file.isVideo && uploadedMedia[item.index] ? [item] : [],
     );
+    if (videoItems.length) reportUploadProgress(control, 0.8);
     const thumbnailItems = await mapWithConcurrency(
       videoItems,
       async ({ file, item }) => {
@@ -168,14 +186,14 @@ export async function uploadMediaBatchWithThumbnails(
         return thumbnailSource ? { mediaId: item.mediaId, file: await compressMediaFile(thumbnailSource) } : null;
       },
       MEDIA_BATCH_CONCURRENCY,
-      (completed) => reportProgress(control, 0.65 + (completed / videoItems.length) * 0.15),
+      (completed) => reportUploadProgress(control, 0.8 + (completed / videoItems.length) * 0.1),
     );
     const compressedThumbnails = thumbnailItems.flatMap((item) => {
       if (!item?.file) return [];
       return [{ mediaId: item.mediaId, file: item.file }];
     });
     if (!compressedThumbnails.length) {
-      reportProgress(control, 1);
+      reportUploadProgress(control, 1);
       return uploadedMedia;
     }
 
@@ -185,7 +203,7 @@ export async function uploadMediaBatchWithThumbnails(
           uploadOptions,
           compressedThumbnails.map(({ mediaId }) => ({ mediaId, role: 'thumbnail' })),
           undefined,
-          withProgressRange(control, 0.8, 1),
+          withUploadProgressRange(control, 0.9, 1),
         )
       : await uploadMediaFiles(
           compressedThumbnails.map(({ file }) => file),
@@ -217,7 +235,7 @@ export async function uploadMediaBatchWithThumbnails(
       }
     }
 
-    reportProgress(control, 1);
+    reportUploadProgress(control, 1);
     return uploadedMedia;
   } catch (error) {
     if (!control?.signal?.aborted) errorToast(errorMessage, error);
@@ -248,12 +266,26 @@ async function mapWithConcurrency<T, R>(
   return results;
 }
 
-function withProgressRange(control: MediaUploadControl | undefined, start: number, end: number) {
+function withUploadProgressRange(control: MediaUploadControl | undefined, start: number, end: number) {
   if (!control) return undefined;
   return {
     signal: control.signal,
-    onProgress: (progress: number) => reportProgress(control, start + (end - start) * progress),
+    onProgress: (progress: number) => reportUploadProgress(control, start + (end - start) * progress),
   } satisfies MediaUploadControl;
+}
+
+function reportCompressionProgress(control: MediaUploadControl | undefined, progress: number) {
+  const clampedProgress = Math.max(0, Math.min(progress, 1));
+  if (control?.signal?.aborted) return;
+  control?.onStatusProgress?.('compressing', clampedProgress);
+  reportProgress(control, clampedProgress * 0.2);
+}
+
+function reportUploadProgress(control: MediaUploadControl | undefined, progress: number) {
+  const clampedProgress = Math.max(0, Math.min(progress, 1));
+  if (control?.signal?.aborted) return;
+  control?.onStatusProgress?.('uploading', clampedProgress);
+  reportProgress(control, 0.2 + clampedProgress * 0.8);
 }
 
 function reportProgress(control: MediaUploadControl | undefined, progress: number) {

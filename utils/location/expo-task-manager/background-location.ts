@@ -14,6 +14,7 @@ import {
   getLocationJournalProgress,
   getActiveLocationJournalId,
 } from '@U/location/location-journal';
+import { getLocationProvider, stripLocationProvider } from '@U/location/location-provider';
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 import { BACKGROUND_NOTIFICATION, DISTANCE_INTERVAL, LOCATION_TRACKING, TIME_INTERVAL } from '../const';
 import type { TaskManagerLocationEvent } from '../const';
@@ -151,10 +152,10 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
   }
 
   for (const currentPosition of data.locations) {
-    const { provider, ...position } = currentPosition;
+    const provider = getLocationProvider(currentPosition);
     if (provider) {
       store.dispatch(setLocationProvider(provider));
     }
-    processLocation(position);
+    processLocation(stripLocationProvider(currentPosition));
   }
 });

@@ -44,7 +44,15 @@ export default function AppShell() {
       : { ...MD3LightTheme, roundness: 2, fonts, colors: appColors };
 
   if (!hasSession && !PUBLIC_ROUTES.has(pathname)) {
-    return <Redirect href={`/${ROUTES.signIn}`} />;
+    return (
+      <Redirect
+        href={
+          pathname === `/${ROUTES.admin}`
+            ? { pathname: `/${ROUTES.signIn}`, params: { returnTo: `/${ROUTES.admin}` } }
+            : `/${ROUTES.signIn}`
+        }
+      />
+    );
   }
 
   return (
@@ -125,6 +133,7 @@ export default function AppShell() {
                 },
               })}>
               <Stack.Screen name={ROUTES.tabs} options={{ headerShown: false, title: 'Главная', animation: 'none' }} />
+              <Stack.Screen name={ROUTES.admin} options={{ title: LABELS[language].admin }} />
               <Stack.Screen name={ROUTES.notifications} options={{ title: LABELS[language].notifications }} />
               <Stack.Screen name={ROUTES.signIn} options={{ headerShown: false, animation: 'none' }} />
               <Stack.Screen

@@ -37,7 +37,6 @@ export default function ProfileStack() {
         name={`${ROUTES.profilePrivacySettings}/${ROUTES.blockedUsers}`}
         options={{ title: LABELS[language].blockedUsers }}
       />
-      <Stack.Screen name={ROUTES.moderation} options={{ title: LABELS[language].moderation }} />
     </Stack>
   );
 }
