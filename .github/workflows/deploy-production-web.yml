@@ -99,7 +99,22 @@ jobs:
           mv -Tf "$WEB_ROOT/current.next" "$WEB_ROOT/current"
 
           sudo -n /usr/local/sbin/runich-install-production-vhost
-          if ! curl --fail --silent --show-error --max-time 15 --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/" >/dev/null; then
+
+          wait_for_https() {
+            local url="$1"
+            local attempt
+            for attempt in {1..10}; do
+              if curl --fail --silent --max-time 5 --resolve "$WEB_DOMAIN:443:127.0.0.1" "$url" >/dev/null 2>&1; then
+                return 0
+              fi
+              if [ "$attempt" -lt 10 ]; then
+                sleep 2
+              fi
+            done
+            return 1
+          }
+
+          if ! wait_for_https "https://$WEB_DOMAIN/"; then
             if [ -n "$previous" ]; then
               ln -sfn "$previous" "$WEB_ROOT/current.rollback"
               mv -Tf "$WEB_ROOT/current.rollback" "$WEB_ROOT/current"
@@ -107,7 +122,7 @@ jobs:
             echo 'Production public HTTPS readiness failed; restored the previous web release.' >&2
             exit 1
           fi
-          if ! curl --fail --silent --show-error --max-time 15 --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/.well-known/assetlinks.json" >/dev/null; then
+          if ! wait_for_https "https://$WEB_DOMAIN/.well-known/assetlinks.json"; then
             if [ -n "$previous" ]; then
               ln -sfn "$previous" "$WEB_ROOT/current.rollback"
               mv -Tf "$WEB_ROOT/current.rollback" "$WEB_ROOT/current"
