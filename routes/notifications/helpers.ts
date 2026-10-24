@@ -87,3 +87,14 @@ export function getNotificationAvatarLabel(item: NotificationItem, fallback: str
   const actor = [item.actorName, item.actorSurname].filter(Boolean).join(' ');
   return actor ? actor.slice(0, 1).toUpperCase() : fallback;
 }
+
+export function getNotificationIcon(type: string): string | undefined {
+  switch (type) {
+    case 'moderation-report-received':
+      return 'flag-outline';
+    case 'moderation-report-decision':
+      return 'shield-check-outline';
+    default:
+      return undefined;
+  }
+}

@@ -76,6 +76,7 @@ export interface ModerationReportContext {
   profilePhoto?: string | null;
   url?: string | null;
   thumbnail?: string | null;
+  media?: { id: string; url: string | null; thumbnail: string | null }[] | null;
   activityId?: string | null;
   moderationStatus?:
     'visible' | 'hidden' | 'removed' | 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed';

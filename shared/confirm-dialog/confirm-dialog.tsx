@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Dialog, Icon, Portal, Text, useTheme } from 'react-native-paper';
+import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import type { ConfirmDialogProps } from './types';
 
 export default function ConfirmDialog({
@@ -24,7 +25,7 @@ export default function ConfirmDialog({
         }}
         dismissable={!loading}
         dismissableBackButton={!loading}
-        style={[destructive && styles.destructiveDialog, { backgroundColor: colors.surface }]}>
+        style={[destructive && styles.destructiveDialog, RESPONSIVE_DIALOG_STYLE, { backgroundColor: colors.surface }]}>
         {destructive ? (
           <View style={[styles.destructiveIcon, { backgroundColor: colors.errorContainer }]}>
             <Icon source="delete-alert-outline" size={28} color={colors.error} />

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList, Platform, useWindowDimensions, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
@@ -31,8 +31,14 @@ export default function MediaGrid() {
     fetchNextPage,
   } = useGetAllActivityMediaByUserIdInfiniteQuery({ userId: `${userId}`, take }, { skip: !userId });
   const data = pages?.pages.at(-1);
-  const media = pages?.pages.flatMap(({ media: pageMedia }) => pageMedia) ?? [];
+  const media = (pages?.pages.flatMap(({ media: pageMedia }) => pageMedia) ?? []).filter(
+    (item) => item.mediaReviewStatus !== 'rejected',
+  );
   const gridItemHeight = getMediaGridCellSize(gridWidth);
+
+  useEffect(() => {
+    if (isSuccess && !isError && !isFetching && !media.length && data?.hasMore) void fetchNextPage();
+  }, [data?.hasMore, fetchNextPage, isError, isFetching, isSuccess, media.length]);
 
   const renderItem = useCallback(
     ({ item, index }: { item: ActivityMediaItem; index: number }) => (
@@ -80,6 +86,8 @@ export default function MediaGrid() {
             numColumns={MEDIA_GRID_COLUMNS}
             horizontal={false}
           />
+        ) : data?.hasMore ? (
+          <ActivityIndicator size="large" />
         ) : (
           <EmptyState
             icon="image-multiple-outline"

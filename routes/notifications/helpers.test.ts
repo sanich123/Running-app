@@ -2,6 +2,7 @@ import { LANGUAGES } from '@const/enums';
 import {
   getNotificationAvatarLabel,
   getNotificationDisplayCopy,
+  getNotificationIcon,
   getNotificationLocale,
   getNotificationRelativeTime,
 } from './helpers';
@@ -70,5 +71,11 @@ describe('notification display helpers', () => {
   it('uses the first actor initial or a fallback for the avatar', () => {
     expect(getNotificationAvatarLabel(item(), '?')).toBe('A');
     expect(getNotificationAvatarLabel(item({ actorName: null, actorSurname: null }), '?')).toBe('?');
+  });
+
+  it('uses moderation icons for report notifications', () => {
+    expect(getNotificationIcon('moderation-report-received')).toBe('flag-outline');
+    expect(getNotificationIcon('moderation-report-decision')).toBe('shield-check-outline');
+    expect(getNotificationIcon('activity-like')).toBeUndefined();
   });
 });

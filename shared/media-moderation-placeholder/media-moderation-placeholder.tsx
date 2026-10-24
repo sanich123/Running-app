@@ -9,7 +9,9 @@ import type { MediaModerationPlaceholderProps } from './types';
 export default function MediaModerationPlaceholder({
   status,
   blurhash,
+  borderRadius = 10,
   compact = false,
+  hideTitle = false,
   overlay = false,
   testID = 'media-moderation-placeholder',
 }: MediaModerationPlaceholderProps) {
@@ -36,26 +38,33 @@ export default function MediaModerationPlaceholder({
       testID={testID}
       accessible
       accessibilityRole="text"
-      accessibilityLabel={compact ? title : `${title}. ${detail}`}
-      style={[overlay ? styles.overlayContainer : styles.container, { backgroundColor: colors.surfaceVariant }]}
+      accessibilityLabel={compact || status === 'queued' ? title : `${title}. ${detail}`}
+      style={[
+        overlay ? styles.overlayContainer : styles.container,
+        { backgroundColor: overlay ? 'transparent' : colors.surfaceVariant, borderRadius },
+      ]}
       pointerEvents="none">
       {blurhash ? (
         <CustomImage source={{ uri: '' }} placeholder={blurhash} contentFit="cover" style={StyleSheet.absoluteFill} />
       ) : null}
-      <View style={[overlay ? styles.overlayContent : styles.content, blurhash ? styles.blurredContent : null]}>
+      <View style={overlay ? styles.overlayContent : compact ? styles.compactContent : styles.content}>
         <Icon
           source={status === 'rejected' || status === 'failed' ? 'alert-circle-outline' : 'clock-outline'}
-          size={overlay ? 16 : 24}
-          color={blurhash ? '#fff' : colors.onSurfaceVariant}
+          size={overlay || compact ? 16 : 24}
+          color={blurhash || overlay ? '#fff' : colors.onSurfaceVariant}
         />
-        <Text
-          variant={overlay ? 'labelSmall' : 'labelLarge'}
-          style={[styles.title, { color: blurhash ? '#fff' : colors.onSurface }]}
-          numberOfLines={overlay ? 1 : 2}>
-          {title}
-        </Text>
-        {!compact ? (
-          <Text variant="bodySmall" style={[styles.detail, { color: blurhash ? '#fff' : colors.onSurfaceVariant }]}>
+        {!hideTitle ? (
+          <Text
+            variant={overlay || compact ? 'labelSmall' : 'labelLarge'}
+            style={[styles.title, { color: blurhash || overlay ? '#fff' : colors.onSurface }]}
+            numberOfLines={overlay || compact ? 1 : 2}>
+            {title}
+          </Text>
+        ) : null}
+        {!compact && status !== 'queued' ? (
+          <Text
+            variant="bodySmall"
+            style={[styles.detail, { color: blurhash || overlay ? '#fff' : colors.onSurfaceVariant }]}>
             {detail}
           </Text>
         ) : null}
@@ -67,6 +76,7 @@ export default function MediaModerationPlaceholder({
 const styles = StyleSheet.create({
   container: {
     borderRadius: 10,
+    flex: 1,
     overflow: 'hidden',
     position: 'relative',
   },
@@ -87,7 +97,14 @@ const styles = StyleSheet.create({
     minHeight: 70,
     padding: 10,
   },
-  blurredContent: { backgroundColor: 'rgba(0, 0, 0, 0.46)', borderRadius: 8, margin: 6 },
+  compactContent: {
+    alignItems: 'center',
+    flex: 1,
+    gap: 4,
+    justifyContent: 'center',
+    minHeight: 50,
+    padding: 6,
+  },
   overlayContent: {
     alignItems: 'center',
     flexDirection: 'row',

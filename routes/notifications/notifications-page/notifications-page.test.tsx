@@ -62,7 +62,49 @@ describe('NotificationsPage', () => {
     await fireEvent.press(screen.getByTestId('notification-notification-1'));
 
     await waitFor(() => expect(readRequest).toBe(true));
+    expect(await screen.findByTestId('notification-details-dialog')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByTestId('open-notification-target'));
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.activity}/activity-1`));
+  });
+
+  it('shows the complete moderation notification text and its type icon in a dialog', async () => {
+    const message =
+      'Report 9a411abd has been reviewed: we could not confirm a violation. If you have new evidence, submit a new report with the added details.';
+    server.use(
+      http.get(`${BASE_URL}/notification`, () =>
+        HttpResponse.json({
+          notifications: [
+            {
+              id: 'moderation-decision',
+              type: 'moderation-report-decision',
+              targetType: 'moderation-report',
+              targetId: 'report-1',
+              relatedId: null,
+              actorName: null,
+              actorSurname: null,
+              actorProfilePhoto: null,
+              content: message,
+              createdAt: new Date().toISOString(),
+              readAt: null,
+            },
+          ],
+          hasMore: false,
+          nextCursor: null,
+        }),
+      ),
+      http.get(`${BASE_URL}/notification/unread-count`, () => HttpResponse.json(1)),
+      http.patch(`${BASE_URL}/notification/moderation-decision/read`, () => HttpResponse.json({ updated: 1 })),
+    );
+
+    await renderWithProviders(<NotificationsPage />);
+
+    expect(await screen.findByTestId('notification-avatar-moderation-decision')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByTestId('notification-moderation-decision'));
+
+    const messageElements = await screen.findAllByText(message);
+    expect(messageElements).toHaveLength(2);
+    expect(messageElements.some((element) => element.props.selectable === true)).toBe(true);
+    expect(screen.queryByTestId('open-notification-target')).toBeNull();
   });
 
   it('marks an unread notification as read without opening the activity', async () => {

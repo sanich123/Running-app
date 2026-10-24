@@ -7,7 +7,7 @@ import { useGetAdminAccessQuery } from '@R/services/admin/admin';
 import { useAppSelector } from '@R/typed-hooks';
 import ModerationDashboard from '@Routes/profile/moderation/moderation-dashboard';
 import ErrorComponent from '@S/error-component/error-component';
-import AdminAccessManagement from './admin-access-management';
+import AdminAccessManagement from './admin-access-management/admin-access-management';
 
 type AdminSection = 'moderation' | 'access';
 

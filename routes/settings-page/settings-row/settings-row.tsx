@@ -24,7 +24,12 @@ export default function SettingsRow({
         {icon && (
           <View
             style={[styles.icon, { backgroundColor: destructive ? colors.errorContainer : colors.primaryContainer }]}>
-            <MaterialCommunityIcons name={icon} size={21} color={destructive ? colors.error : colors.primary} />
+            <MaterialCommunityIcons
+              name={icon}
+              size={21}
+              color={destructive ? colors.error : colors.primary}
+              testID={testID ? `${testID}-icon` : undefined}
+            />
           </View>
         )}
         {leading && <View style={styles.leading}>{leading}</View>}

@@ -347,6 +347,36 @@ describe('ModerationDashboard', () => {
     await waitFor(() => expect(openUrl).toHaveBeenCalledWith('https://cdn.example/photo.jpg'));
   });
 
+  it('shows activity media previews when reviewing an activity report', async () => {
+    const user = userEvent.setup();
+    const report = createReport({ targetType: 'activity', targetId: 'activity-1' });
+    const details = createReportDetails(report, {
+      title: 'Morning run',
+      media: [
+        { id: 'activity-media-1', url: 'https://cdn.example/video.mp4', thumbnail: 'https://cdn.example/video.jpg' },
+      ],
+    });
+    const openUrl = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined);
+    server.use(
+      http.get(`${BASE_URL}/admin/access`, () =>
+        HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
+      ),
+      http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
+      http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
+      http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(details)),
+    );
+
+    await renderWithProviders(<ModerationDashboard />);
+    await user.press(await screen.findByTestId('moderation-report-report-1'));
+
+    expect(await screen.findByTestId('moderation-activity-media-list')).toBeOnTheScreen();
+    expect(screen.getByTestId('moderation-activity-media-preview-activity-media-1').props.source).toEqual({
+      uri: 'https://cdn.example/video.jpg',
+    });
+    await user.press(screen.getByTestId('moderation-activity-media-activity-media-1'));
+    await waitFor(() => expect(openUrl).toHaveBeenCalledWith('https://cdn.example/video.mp4'));
+  });
+
   it('keeps the decision dialog open when applying a moderation action fails', async () => {
     const user = userEvent.setup();
     const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.russian];

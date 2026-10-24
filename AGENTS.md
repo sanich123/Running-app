@@ -11,6 +11,7 @@
 - Put every `.jsx` and `.tsx` component in its own folder under its parent component folder, for example `parent/child/child.tsx`.
 - Name the component file after its component using kebab-case, not camelCase; for example, `ReadyCheckCard` lives in `ready-check-card.tsx`.
 - A component file must default-export a function component that returns JSX. Aside from imports, keep only that component and its styles in the file; do not add named exports, helper functions, types, or unrelated constants there.
+- When a component has only one or two props, write the prop type inline instead of creating a separate interface or type solely for those props.
 - Prefer a single `return` statement per JSX/TSX component when practical; keep multiple returns when they make distinct render states clearer.
 - Put component-specific variables, types, and helpers in the component's folder when there are more than two. When there are only one or two, put them in the parent folder's `const.ts`, `types.ts`, or `utils.ts`, according to their role.
 - Keep Expo Router route modules at their required route paths and exports. Route-level lazy imports and Suspense fallbacks may stay in the route module; put screen UI in dedicated component folders.

@@ -9,10 +9,10 @@ import MediaModerationPlaceholder from './media-moderation-placeholder';
 describe('MediaModerationPlaceholder', () => {
   beforeEach(() => mockStore.dispatch(changeLanguage(LANGUAGES.russian)));
 
-  it('explains that queued media is under review and may take several minutes', async () => {
+  it('shows only the review status for queued media', async () => {
     await renderWithProviders(<MediaModerationPlaceholder status="queued" />);
     expect(screen.getByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].queued)).toBeOnTheScreen();
-    expect(screen.getByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].detail)).toBeOnTheScreen();
+    expect(screen.queryByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].detail)).toBeNull();
   });
 
   it('shows review-required status without detail text in compact mode', async () => {

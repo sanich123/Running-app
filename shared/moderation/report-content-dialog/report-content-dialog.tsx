@@ -4,6 +4,7 @@ import { ActivityIndicator, Button, Dialog, Portal, RadioButton, Text, TextInput
 import { useSubmitContentReportMutation } from '@R/services/moderation/moderation';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import { successToast } from '@S/success-toast/success-toast';
 import { CONTENT_REPORT_REASONS, REPORT_CONTENT_COPY } from './const';
 import type { ReportContentDialogProps } from './types';
@@ -14,10 +15,21 @@ export default function ReportContentDialog({ visible, targetType, targetId, onD
   const { width, height } = useWindowDimensions();
   const { colors } = useTheme();
   const copy = REPORT_CONTENT_COPY[language];
-  const detailsLabel = targetType === 'user' ? copy.profileDetails : copy.details;
   const [reason, setReason] = useState<ContentReportReason>('harassment');
   const [details, setDetails] = useState('');
   const [submitReport, { isLoading }] = useSubmitContentReportMutation();
+  const requiresDetails = reason === 'other';
+  const detailsLabel = requiresDetails
+    ? copy.requiredDetails
+    : targetType === 'user'
+      ? copy.profileDetails
+      : copy.details;
+  const detailsHint = requiresDetails
+    ? copy.requiredDetailsHint
+    : targetType === 'user'
+      ? copy.profileDetailsHint
+      : null;
+  const isSubmitDisabled = isLoading || (requiresDetails && !details.trim());
 
   const dismiss = () => {
     if (isLoading) return;
@@ -27,6 +39,8 @@ export default function ReportContentDialog({ visible, targetType, targetId, onD
   };
 
   const submit = async () => {
+    if (isSubmitDisabled) return;
+
     try {
       await submitReport({
         targetType,
@@ -51,6 +65,7 @@ export default function ReportContentDialog({ visible, targetType, targetId, onD
         dismissable={!isLoading}
         dismissableBackButton={!isLoading}
         style={[
+          RESPONSIVE_DIALOG_STYLE,
           styles.dialog,
           {
             backgroundColor: colors.surface,
@@ -71,7 +86,7 @@ export default function ReportContentDialog({ visible, targetType, targetId, onD
           ]}>
           <ScrollView contentContainerStyle={styles.content}>
             <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-              {copy.prompt}
+              {copy.prompt[targetType]}
             </Text>
             <RadioButton.Group value={reason} onValueChange={(value) => setReason(value as ContentReportReason)}>
               {CONTENT_REPORT_REASONS.map((value) => (
@@ -107,9 +122,9 @@ export default function ReportContentDialog({ visible, targetType, targetId, onD
               testID="report-content-details"
               disabled={isLoading}
             />
-            {targetType === 'user' ? (
+            {detailsHint ? (
               <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                {copy.profileDetailsHint}
+                {detailsHint}
               </Text>
             ) : null}
           </ScrollView>
@@ -118,7 +133,7 @@ export default function ReportContentDialog({ visible, targetType, targetId, onD
           <Button compact onPress={dismiss} disabled={isLoading} textColor={colors.onSurfaceVariant}>
             {copy.cancel}
           </Button>
-          <Button compact mode="contained" onPress={() => void submit()} disabled={isLoading}>
+          <Button compact mode="contained" onPress={() => void submit()} disabled={isSubmitDisabled}>
             {isLoading ? <ActivityIndicator size="small" /> : copy.submit}
           </Button>
         </Dialog.Actions>

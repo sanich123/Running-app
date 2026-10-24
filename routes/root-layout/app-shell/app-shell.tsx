@@ -207,6 +207,7 @@ export default function AppShell() {
                 name={`${ROUTES.profile}/${ROUTES.routeId}`}
                 options={{
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
+                  headerTitle: LABELS[language].profile,
                   title: LABELS[language].profile,
                 }}
               />

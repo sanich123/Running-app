@@ -11,7 +11,7 @@ export const MODERATION_DASHBOARD_COPY = {
     loadError: 'Could not load moderation data.',
     emptyReports: 'No active reports.',
     emptyAppeals: 'No pending appeals.',
-    filters: { all: 'Active', open: 'New', in_review: 'In review', appealed: 'Appealed' },
+    filters: { all: 'All', open: 'New', in_review: 'In review' },
     status: { open: 'New', in_review: 'In review', resolved: 'Resolved', rejected: 'Rejected', appealed: 'Appealed' },
     targetType: {
       activity: 'Activity',
@@ -93,7 +93,7 @@ export const MODERATION_DASHBOARD_COPY = {
     loadError: 'Не удалось загрузить данные модерации.',
     emptyReports: 'Активных жалоб нет.',
     emptyAppeals: 'Апелляций на рассмотрении нет.',
-    filters: { all: 'Активные', open: 'Новые', in_review: 'В работе', appealed: 'Обжалованы' },
+    filters: { all: 'Все', open: 'Новые', in_review: 'В работе' },
     status: { open: 'Новая', in_review: 'В работе', resolved: 'Решена', rejected: 'Отклонена', appealed: 'Обжалована' },
     targetType: {
       activity: 'Тренировка',
@@ -168,7 +168,7 @@ export const MODERATION_DASHBOARD_COPY = {
   },
 } as const;
 
-export const REPORT_STATUS_OPTIONS = ['open', 'in_review', 'appealed'] as const;
+export const REPORT_STATUS_OPTIONS = ['open', 'in_review'] as const;
 export const MODERATION_ACTIONS: ModerationActionType[] = [
   'hide_content',
   'remove_content',

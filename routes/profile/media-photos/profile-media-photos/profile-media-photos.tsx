@@ -38,6 +38,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   const data = pages?.pages[0];
   const media = data?.media ?? [];
+  const visibleMedia = media.filter((item) => item.mediaReviewStatus !== 'rejected');
   const isOwnProfile = userId === currentUserId;
 
   const handleDeleteMedia = useCallback(
@@ -52,7 +53,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
     [deleteActivityMedia],
   );
 
-  if (!isLoading && !isError && !data?.media?.length) {
+  if (!isLoading && !isError && !visibleMedia.length) {
     return null;
   }
 
@@ -70,8 +71,8 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
       {isError && (
         <Text variant="bodyLarge">{`${PROFILE_MEDIA[language].error}: ${getErrorMessageFromError(error)}`}</Text>
       )}
-      {media.length > 0 &&
-        media.map((item: ActivityMediaItem, index: number) => {
+      {visibleMedia.length > 0 &&
+        visibleMedia.map((item: ActivityMediaItem, index: number) => {
           const { id, activityId, url, thumbnail, blurhash } = item;
           const canDeleteMedia = Boolean(isOwnProfile && id && activityId);
           if (index === 3) {
@@ -112,7 +113,13 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                         placeholder={blurhash}
                       />
                     ) : (
-                      <MediaModerationPlaceholder status={item.mediaReviewStatus} blurhash={item.blurhash} compact />
+                      <MediaModerationPlaceholder
+                        status={item.mediaReviewStatus}
+                        blurhash={item.blurhash}
+                        borderRadius={10}
+                        compact
+                        hideTitle={widthOfScreen / 4 < 130}
+                      />
                     )}
                   </TouchableRipple>
                   {url &&
@@ -177,7 +184,13 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                     placeholder={blurhash}
                   />
                 ) : (
-                  <MediaModerationPlaceholder status={item.mediaReviewStatus} blurhash={item.blurhash} compact />
+                  <MediaModerationPlaceholder
+                    status={item.mediaReviewStatus}
+                    blurhash={item.blurhash}
+                    borderRadius={10}
+                    compact
+                    hideTitle={widthOfScreen / 4 < 130}
+                  />
                 )}
               </TouchableRipple>
               {url &&
@@ -216,9 +229,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   imageWrapper: {
     position: 'relative',
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   deleteButton: {
     position: 'absolute',

@@ -1,4 +1,4 @@
-import { Appearance, View, StyleSheet } from 'react-native';
+import { Appearance, Platform, View, StyleSheet } from 'react-native';
 import { SegmentedButtons, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { changeTheme } from '@R/slices/settings/settings';
@@ -22,7 +22,9 @@ export default function ChangeTheme() {
       <SegmentedButtons
         value={selectedTheme}
         onValueChange={(value) => {
-          Appearance.setColorScheme(value === 'system' ? 'unspecified' : (value as 'light' | 'dark'));
+          if (Platform.OS !== 'web') {
+            Appearance.setColorScheme(value === 'system' ? 'unspecified' : (value as 'light' | 'dark'));
+          }
           dispatch(changeTheme(value === 'system' ? null : value));
         }}
         buttons={THEMES_ARRAY[language].map(({ value, title }) => ({ value: value ?? 'system', label: title }))}

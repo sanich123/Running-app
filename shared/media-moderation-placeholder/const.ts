@@ -4,7 +4,7 @@ export const MEDIA_MODERATION_PLACEHOLDER_COPY = {
   [LANGUAGES.russian]: {
     queued: 'Ожидает проверки',
     processing: 'Проверяем медиа',
-    reviewRequired: 'Передано модератору',
+    reviewRequired: 'Находится на модерации',
     approved: 'Готовим медиа',
     rejected: 'Медиа не прошло проверку',
     failed: 'Не удалось проверить медиа',
@@ -14,7 +14,7 @@ export const MEDIA_MODERATION_PLACEHOLDER_COPY = {
   [LANGUAGES.english]: {
     queued: 'Waiting for review',
     processing: 'Checking media',
-    reviewRequired: 'Sent to a moderator',
+    reviewRequired: 'Under moderation',
     approved: 'Preparing media',
     rejected: 'Media did not pass review',
     failed: 'Could not check media',

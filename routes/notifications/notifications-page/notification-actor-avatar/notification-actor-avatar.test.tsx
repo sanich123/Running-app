@@ -9,4 +9,13 @@ describe('NotificationActorAvatar', () => {
 
     expect(screen.getByText(actorLabel)).toBeOnTheScreen();
   });
+
+  it('shows the supplied moderation icon', async () => {
+    await renderWithProviders(
+      <NotificationActorAvatar photo={null} label="?" icon="flag-outline" testID="report-icon" />,
+    );
+
+    expect(screen.getByTestId('report-icon')).toBeOnTheScreen();
+    expect(screen.queryByText('?')).toBeNull();
+  });
 });

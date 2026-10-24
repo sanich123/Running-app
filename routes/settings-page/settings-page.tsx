@@ -51,7 +51,7 @@ export default function SettingsPage() {
       {adminAccess && adminAccess.permissions.length > 0 ? (
         <SettingsRow
           testID="admin-panel-settings-row"
-          icon="shield-account"
+          icon="flag-outline"
           title={labels.adminPanel}
           description={labels.adminPanelDescription}
           onPress={() => push(`/${ROUTES.admin}`)}

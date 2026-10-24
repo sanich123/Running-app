@@ -22,6 +22,7 @@ export default function CustomImage({
   cachePolicy,
   recyclingKey,
   transition,
+  blurRadius,
   onLoad,
   onError,
 }: {
@@ -35,6 +36,7 @@ export default function CustomImage({
   cachePolicy?: ImageProps['cachePolicy'];
   recyclingKey?: string | null;
   transition?: ImageProps['transition'];
+  blurRadius?: ImageProps['blurRadius'];
   onLoad?: ImageProps['onLoad'];
   onError?: () => void;
 }) {
@@ -94,6 +96,7 @@ export default function CustomImage({
       cachePolicy={cachePolicy}
       recyclingKey={Platform.OS !== 'web' ? recyclingKey : undefined}
       transition={resolvedTransition}
+      blurRadius={blurRadius}
       onLoad={(event) => {
         if (imageUri && cachePolicy !== 'none') {
           cachedImageUris.add(imageUri);
