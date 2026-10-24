@@ -73,6 +73,20 @@ jobs:
           WEB_ROOT=/opt/runich-stage/web-stage
           RELEASE="releases/$DEPLOY_SHA"
           ARCHIVE="/tmp/runich-web-stage-$DEPLOY_SHA.tar.gz"
+
+          # Compose validates required variables for every service, even for ps/exec.
+          BACKEND_CONTAINER="$(docker ps \
+            --filter 'label=com.docker.compose.project=runich-stage' \
+            --filter 'label=com.docker.compose.service=nestjs_app' \
+            --format '{{.ID}}' | sed -n '1p')"
+          if [ -z "$BACKEND_CONTAINER" ]; then
+            echo 'The Stage backend container is not running; cannot resolve BACKEND_IMAGE.' >&2
+            exit 1
+          fi
+          BACKEND_IMAGE="$(docker inspect --format '{{.Config.Image}}' "$BACKEND_CONTAINER")"
+          : "${BACKEND_IMAGE:?Could not resolve the running Stage backend image}"
+          export BACKEND_IMAGE
+
           COMPOSE=(docker compose --project-name runich-stage -f /opt/runich-stage/docker-compose.timeweb.stage.yml)
 
           if [ "$("${COMPOSE[@]}" ps --status running --services nginx)" != nginx ]; then
