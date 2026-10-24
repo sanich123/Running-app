@@ -138,6 +138,7 @@ export default {
     extra: { eas: { projectId: '413aa829-bbae-467c-9201-4688b894f2f7' } },
     plugins: [
       './custom.plugin',
+      'react-native-nitro-fetch',
       'react-native-health-connect',
       'react-native-compressor',
       'expo-status-bar',

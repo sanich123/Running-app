@@ -17,6 +17,7 @@ const config = {
   ],
   moduleNameMapper: {
     '^react-native/asset-registry$': '<rootDir>/node_modules/react-native/src/asset-registry.js',
+    '^react-native-nitro-fetch$': '<rootDir>/tests/utils/nitro-fetch-mock.ts',
     '\\.(css)$': '<rootDir>/tests/utils/style-mock.ts',
     '^@Routes/(.*)$': '<rootDir>/routes/$1',
     '^@S/(.*)$': '<rootDir>/shared/$1',

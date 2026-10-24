@@ -75,9 +75,11 @@ jobs:
           ARCHIVE="/tmp/runich-web-stage-$DEPLOY_SHA.tar.gz"
           COMPOSE=(docker compose --project-name runich-stage -f /opt/runich-stage/docker-compose.timeweb.stage.yml)
 
-          test -s /opt/runich-stage/nginx.stage.web.d/runich-web.conf
+          if [ "$("${COMPOSE[@]}" ps --status running --services nginx)" != nginx ]; then
+            echo 'The shared Stage Nginx service is not running.' >&2
+            exit 1
+          fi
           "${COMPOSE[@]}" exec -T --interactive=false nginx nginx -t
-          "${COMPOSE[@]}" exec -T --interactive=false nginx nginx -s reload
           install -d -m 0755 "$WEB_ROOT/releases"
           chmod 0755 "$WEB_ROOT" "$WEB_ROOT/releases"
           mkdir -p "$WEB_ROOT/$RELEASE"

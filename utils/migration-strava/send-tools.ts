@@ -1,4 +1,5 @@
 import { File as ExpoFile } from 'expo-file-system';
+import { fetch as nitroFetch } from 'react-native-nitro-fetch';
 import { errorToast } from '@S/error-toast/error-toast';
 import {
   nativeArchiveUploadTransport,
@@ -47,7 +48,7 @@ export async function cancelActiveMigrationUpload(jobId: string, accessToken: st
   activeUploadCancellers.get(jobId)?.();
 
   try {
-    await fetch(`${getBaseUrl()}/activity/migration-strava/jobs/${jobId}/cancel`, {
+    await nitroFetch(`${getBaseUrl()}/activity/migration-strava/jobs/${jobId}/cancel`, {
       method: 'POST',
       headers: { authorization: `Bearer ${accessToken}` },
     });
@@ -160,7 +161,7 @@ export async function sendArchiveToServerWeb({
 }
 
 async function startArchiveUpload(totalBytes: number, userId: string, accessToken: string) {
-  const response = await fetch(`${getBaseUrl()}/activity/migration-strava/${userId}/start`, {
+  const response = await nitroFetch(`${getBaseUrl()}/activity/migration-strava/${userId}/start`, {
     method: 'POST',
     headers: {
       authorization: `Bearer ${accessToken}`,

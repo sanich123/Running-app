@@ -78,6 +78,62 @@ describe('base query authentication and gateway handling', () => {
     expect(router.replace).not.toHaveBeenCalled();
   });
 
+  it('waits for an in-flight refresh before retrying another expired request', async () => {
+    mockStore.dispatch(setAuthTokens({ accessToken: 'expired-token', refreshToken: 'refresh-token' }));
+    let firstRequestCount = 0;
+    let secondRequestCount = 0;
+    let refreshRequestCount = 0;
+    let initialRequestCount = 0;
+    let resolveInitialRequests!: () => void;
+    const initialRequestsReceived = new Promise<void>((resolve) => {
+      resolveInitialRequests = resolve;
+    });
+    let resolveRefreshStarted!: () => void;
+    const refreshStarted = new Promise<void>((resolve) => {
+      resolveRefreshStarted = resolve;
+    });
+    let releaseRefresh!: () => void;
+    const refreshGate = new Promise<void>((resolve) => {
+      releaseRefresh = resolve;
+    });
+    server.use(
+      http.get(`${BASE_URL}/private-first`, () => {
+        firstRequestCount += 1;
+        if (firstRequestCount > 1) return HttpResponse.json({ ok: true });
+        initialRequestCount += 1;
+        if (initialRequestCount === 2) resolveInitialRequests();
+        return initialRequestsReceived.then(() => new HttpResponse(null, { status: 401 }));
+      }),
+      http.get(`${BASE_URL}/private-second`, () => {
+        secondRequestCount += 1;
+        if (secondRequestCount > 1) return HttpResponse.json({ ok: true });
+        initialRequestCount += 1;
+        if (initialRequestCount === 2) resolveInitialRequests();
+        return initialRequestsReceived.then(() => new HttpResponse(null, { status: 401 }));
+      }),
+      http.post(`${BASE_URL}/auth/refresh`, async () => {
+        refreshRequestCount += 1;
+        resolveRefreshStarted();
+        await refreshGate;
+        return HttpResponse.json({ accessToken: 'new-token', refreshToken: 'new-refresh-token' });
+      }),
+    );
+
+    const results = Promise.all([
+      baseQueryWithReauth('private-first', createApi(), {}),
+      baseQueryWithReauth('private-second', createApi(), {}),
+    ]);
+    await refreshStarted;
+    releaseRefresh();
+    const [firstResult, secondResult] = await results;
+
+    expect(firstResult.data).toEqual({ ok: true });
+    expect(secondResult.data).toEqual({ ok: true });
+    expect(firstRequestCount).toBe(2);
+    expect(secondRequestCount).toBe(2);
+    expect(refreshRequestCount).toBe(1);
+  });
+
   it('logs out when token refresh is rejected and returns a non-auth refresh error intact', async () => {
     mockStore.dispatch(setAuthTokens({ accessToken: 'expired-token', refreshToken: 'invalid-refresh-token' }));
     server.use(
@@ -112,8 +168,8 @@ describe('base query authentication and gateway handling', () => {
     expect(router.replace).toHaveBeenCalledWith(`/${ROUTES.maintenance}`);
   });
 
-  it('routes to maintenance mode for a parsing error caused by a gateway response', async () => {
-    server.use(http.get(`${BASE_URL}/gateway`, () => new HttpResponse('not json', { status: 502 })));
+  it.each([502, 503])('routes to maintenance mode for an invalid JSON HTTP %s gateway response', async (status) => {
+    server.use(http.get(`${BASE_URL}/gateway`, () => new HttpResponse('not json', { status })));
     const result = await baseQueryWithReauth('gateway', createApi(), {});
 
     expect(result.error?.status).toBe('PARSING_ERROR');

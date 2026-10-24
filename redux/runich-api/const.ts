@@ -1,5 +1,6 @@
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Mutex } from 'async-mutex';
+import { fetch as nitroFetch } from 'react-native-nitro-fetch';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { resetAuthSlice, setAuthTokens } from '@R/slices/auth/auth';
@@ -79,6 +80,7 @@ export const PUBLIC_AUTH_ENDPOINTS = new Set([
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.EXPO_PUBLIC_BASE_URL ?? 'http://localhost:3000',
   timeout: LIMIT_OF_REQUEST,
+  fetchFn: nitroFetch,
   prepareHeaders: (headers, { endpoint, getState }) => {
     const accessToken = (getState() as ApiState).auth.accessToken;
     if (accessToken && !PUBLIC_AUTH_ENDPOINTS.has(endpoint)) {
