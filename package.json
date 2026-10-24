@@ -47,7 +47,7 @@
     "@react-native-segmented-control/segmented-control": "2.5.7",
     "@react-native-vector-icons/material-design-icons": "^14.0.0",
     "@reduxjs/toolkit": "^2.13.0",
-    "@rnmapbox/maps": "patch:@rnmapbox/maps@npm%3A10.3.5#~/.yarn/patches/@rnmapbox-maps-npm-10.3.5-2398561610.patch",
+    "@rnmapbox/maps": "^10.3.11",
     "@turf/bbox": "^7.4.0",
     "@turf/distance": "^7.4.0",
     "aes-js": "^3.1.2",

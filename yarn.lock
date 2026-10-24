@@ -3285,35 +3285,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rnmapbox/maps@npm:10.3.5":
-  version: 10.3.5
-  resolution: "@rnmapbox/maps@npm:10.3.5"
-  dependencies:
-    "@turf/along": "npm:6.5.0"
-    "@turf/distance": "npm:6.5.0"
-    "@turf/helpers": "npm:6.5.0"
-    "@turf/length": "npm:6.5.0"
-    "@turf/nearest-point-on-line": "npm:6.5.0"
-    "@types/geojson": "npm:^7946.0.7"
-    debounce: "npm:^2.2.0"
-  peerDependencies:
-    expo: ">=47.0.0"
-    mapbox-gl: ^2.9.0
-    react: ">=17.0.0"
-    react-dom: ">= 17.0.0"
-    react-native: ">=0.79"
-  peerDependenciesMeta:
-    expo:
-      optional: true
-    mapbox-gl:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 10c0/47e7a578bf2d7ba0c97910f221f96a06d34339ea33bed3bbbc9f1261971a441574ae8c33a8e5cb95e471629f80e6051286da961fb6a5ac3c7ad9fcd1254b308f
-  languageName: node
-  linkType: hard
-
-"@rnmapbox/maps@patch:@rnmapbox/maps@npm%3A10.3.5#~/.yarn/patches/@rnmapbox-maps-npm-10.3.5-2398561610.patch":
+"@rnmapbox/maps@npm:^10.3.11":
   version: 10.3.11
   resolution: "@rnmapbox/maps@npm:10.3.11"
   dependencies:
@@ -12623,7 +12595,7 @@ __metadata:
     "@react-native-vector-icons/material-design-icons": "npm:^14.0.0"
     "@react-native/jest-preset": "npm:~0.88.0"
     "@reduxjs/toolkit": "npm:^2.13.0"
-    "@rnmapbox/maps": "patch:@rnmapbox/maps@npm%3A10.3.5#~/.yarn/patches/@rnmapbox-maps-npm-10.3.5-2398561610.patch"
+    "@rnmapbox/maps": "npm:^10.3.11"
     "@testing-library/react-native": "npm:^14.1.0"
     "@turf/bbox": "npm:^7.4.0"
     "@turf/distance": "npm:^7.4.0"
