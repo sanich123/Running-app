@@ -1,5 +1,5 @@
 diff --git a/android/src/main/java/com/reactnativeviewrecorder/ViewRecorderModule.kt b/android/src/main/java/com/reactnativeviewrecorder/ViewRecorderModule.kt
-index 911aa0aaa18354acecac5b5d7267d38126d778ec..c424ecec6efbc0dab9c95591c6728d90846535ed 100644
+index 911aa0aaa18354acecac5b5d7267d38126d778ec..37fb3db23c9e73bba8c3feb615d00f9f6c1fcc2c 100644
 --- a/android/src/main/java/com/reactnativeviewrecorder/ViewRecorderModule.kt
 +++ b/android/src/main/java/com/reactnativeviewrecorder/ViewRecorderModule.kt
 @@ -359,7 +359,7 @@ class ViewRecorderModule(
@@ -20,3 +20,28 @@ index 911aa0aaa18354acecac5b5d7267d38126d778ec..c424ecec6efbc0dab9c95591c6728d90
      if (activity == null) {
        promise.reject("NO_ACTIVITY", "No current activity available")
        return
+diff --git a/ios/react_native_view_recorder.h b/ios/react_native_view_recorder.h
+index 224befaba0e32d065e9451431b81c8daa819cf06..6a1e281c23525aa6e0dc57d6c184041f52511c73 100644
+--- a/ios/react_native_view_recorder.h
++++ b/ios/react_native_view_recorder.h
+@@ -1,6 +1,6 @@
+ /**
+  * Umbrella header for the react_native_view_recorder module.
+- * Required by the auto-generated -Swift.h bridging header.
++ * Import the real React Native superclass before the generated Swift header.
+  */
+ 
+-#import "ReactTypes.h"
++#import <React/RCTEventEmitter.h>
+diff --git a/react-native-view-recorder.podspec b/react-native-view-recorder.podspec
+index 917bcd43d663ec7a58697e5284a38f0eba7d4e58..98f5fc3918b5db19de2df2ab2bacde4c42f34ba9 100644
+--- a/react-native-view-recorder.podspec
++++ b/react-native-view-recorder.podspec
+@@ -15,6 +15,7 @@ Pod::Spec.new do |s|
+ 
+   s.source_files = 'ios/**/*.{h,m,mm,swift}'
+   s.exclude_files = 'ios/ObjCBridge/**/*', 'ios/ViewRecorder-Bridging-Header.h'
++  s.private_header_files = 'ios/ReactTypes.h'
+   s.header_dir = 'react_native_view_recorder'
+   s.swift_version = '5.9'
+ 

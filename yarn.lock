@@ -12030,7 +12030,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-view-recorder@npm:0.4.1, react-native-view-recorder@patch:react-native-view-recorder@patch%3Areact-native-view-recorder@npm%253A0.4.1%23~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch%3A%3Aversion=0.4.1&hash=f50f98#~/.yarn/patches/react-native-view-recorder-patch-2d465af017.patch":
+"react-native-view-recorder@npm:0.4.1":
   version: 0.4.1
   resolution: "react-native-view-recorder@npm:0.4.1"
   peerDependencies:
@@ -12044,9 +12044,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-view-recorder@patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch::version=0.4.1&hash=f50f98":
+"react-native-view-recorder@patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch":
   version: 0.4.1
-  resolution: "react-native-view-recorder@patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch::version=0.4.1&hash=f50f98"
+  resolution: "react-native-view-recorder@patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch::version=0.4.1&hash=39f578"
   peerDependencies:
     expo: ">=54.0.0"
     react: ">=18"
@@ -12054,7 +12054,7 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/7c24d55deaec07eed775990b32b08fcacaaa71bb935e85088ea99fb8e3041c95468faac74e6ae749ec5cd56b44db0d7879a0d26e73f6af7b2dd3ee6559c87ffc
+  checksum: 10c0/72c8427424b8ef812910c9d88666801c9d75d618138fe57836b2b9cffacd0d7fc693125347b367626b800af1ace1bbf7ff028fe242f3d68005a798617bc94ab6
   languageName: node
   linkType: hard
 
@@ -12700,7 +12700,7 @@ __metadata:
     react-native-toast-message: "npm:2.5.2"
     react-native-url-polyfill: "npm:^4.0.0"
     react-native-uuid: "npm:^2.0.4"
-    react-native-view-recorder: "patch:react-native-view-recorder@patch%3Areact-native-view-recorder@npm%253A0.4.1%23~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch%3A%3Aversion=0.4.1&hash=f50f98#~/.yarn/patches/react-native-view-recorder-patch-2d465af017.patch"
+    react-native-view-recorder: "patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch"
     react-native-view-shot: "npm:6.1.1"
     react-native-web: "npm:^0.21.4"
     react-native-worklets: "npm:0.13.0"

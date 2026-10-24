@@ -112,7 +112,7 @@
     "react-native-toast-message": "2.5.2",
     "react-native-url-polyfill": "^4.0.0",
     "react-native-uuid": "^2.0.4",
-    "react-native-view-recorder": "patch:react-native-view-recorder@patch%3Areact-native-view-recorder@npm%253A0.4.1%23~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch%3A%3Aversion=0.4.1&hash=f50f98#~/.yarn/patches/react-native-view-recorder-patch-2d465af017.patch",
+    "react-native-view-recorder": "patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch",
     "react-native-view-shot": "6.1.1",
     "react-native-web": "^0.21.4",
     "react-native-worklets": "0.13.0",
