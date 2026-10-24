@@ -6,7 +6,7 @@ export default {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
     scheme: IS_DEV ? 'runich-dev' : 'runich',
-    version: '1.2.3',
+    version: '1.3.0',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
@@ -138,6 +138,7 @@ export default {
     extra: { eas: { projectId: '413aa829-bbae-467c-9201-4688b894f2f7' } },
     plugins: [
       './custom.plugin',
+      'react-native-nitro-fetch',
       'react-native-health-connect',
       'react-native-compressor',
       'expo-status-bar',

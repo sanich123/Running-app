@@ -68,17 +68,15 @@ jobs:
           ARCHIVE="$RUNNER_TEMP/runich-web-production-$GITHUB_SHA.tar.gz"
           tar -C dist -czf "$ARCHIVE" .
           "${SCP[@]}" "$ARCHIVE" "$TARGET:/tmp/runich-web-production-$GITHUB_SHA.tar.gz"
-          "${SCP[@]}" nginx.host.production.conf "$TARGET:/tmp/"
 
           "${SSH[@]}" "$TARGET" "DEPLOY_SHA='$GITHUB_SHA' WEB_DOMAIN='$WEB_DOMAIN' bash -s" <<'REMOTE'
           set -euo pipefail
           WEB_ROOT=/opt/runich-web-production
+          BACKEND_ROOT=/opt/runich-backend/project
           RELEASE="releases/$DEPLOY_SHA"
           ARCHIVE="/tmp/runich-web-production-$DEPLOY_SHA.tar.gz"
 
           install -d -m 0755 "$WEB_ROOT/releases"
-          install -m 0644 /tmp/nginx.host.production.conf "$WEB_ROOT/nginx.host.production.conf"
-          rm -f /tmp/nginx.host.production.conf
 
           mkdir -p "$WEB_ROOT/$RELEASE"
           tar --no-same-owner -xzf "$ARCHIVE" -C "$WEB_ROOT/$RELEASE"
@@ -98,7 +96,15 @@ jobs:
           ln -s "$RELEASE" "$WEB_ROOT/current.next"
           mv -Tf "$WEB_ROOT/current.next" "$WEB_ROOT/current"
 
-          sudo -n /usr/local/sbin/runich-install-production-vhost
+          cd "$BACKEND_ROOT"
+          COMPOSE=(docker compose -f docker-compose.timeweb.yml)
+          docker_nginx_running=false
+          running_nginx="$("${COMPOSE[@]}" ps --status running --services nginx 2>/dev/null || true)"
+          if [ "$running_nginx" = nginx ]; then
+            docker_nginx_running=true
+            "${COMPOSE[@]}" exec -T nginx nginx -t
+          fi
+          cd - >/dev/null
 
           wait_for_https() {
             local url="$1"
@@ -121,6 +127,17 @@ jobs:
             fi
             echo 'Production public HTTPS readiness failed; restored the previous web release.' >&2
             exit 1
+          fi
+
+          if [ "$docker_nginx_running" = true ]; then
+            if ! curl --silent --show-error --max-time 10 -D - -o /dev/null \
+              --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/" \
+              | grep -iq '^alt-svc:.*h3='; then
+              echo 'Production web does not advertise HTTP/3.' >&2
+              exit 1
+            fi
+          else
+            echo 'Docker Nginx is not cut over yet; HTTP/3 verification will run after the backend deployment.'
           fi
           if ! wait_for_https "https://$WEB_DOMAIN/.well-known/assetlinks.json"; then
             if [ -n "$previous" ]; then
