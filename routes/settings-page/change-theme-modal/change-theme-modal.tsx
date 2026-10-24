@@ -37,7 +37,9 @@ export default function ChangeThemeModal({ themesModalRef }: { themesModalRef: R
                 borderless
                 style={styles.radioBtn}
                 onPress={() => {
-                  Appearance.setColorScheme((value ?? 'unspecified') as ColorSchemeName);
+                  if (Platform.OS !== 'web') {
+                    Appearance.setColorScheme((value ?? 'unspecified') as ColorSchemeName);
+                  }
                   dispatch(changeTheme(value));
                 }}>
                 <>

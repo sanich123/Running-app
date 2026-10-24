@@ -3,6 +3,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import { Button, Dialog, Portal, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
+import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 
 export default function EmailRegistrationRestriction() {
   const [visible, setVisible] = useState(false);
@@ -31,7 +32,7 @@ export default function EmailRegistrationRestriction() {
           testID="registration-email-restriction-dialog"
           visible={visible}
           onDismiss={() => setVisible(false)}
-          style={{ backgroundColor: colors.surface }}>
+          style={[RESPONSIVE_DIALOG_STYLE, { backgroundColor: colors.surface }]}>
           <Dialog.Title>{isRussian ? 'Ограничение регистрации' : 'Email registration restriction'}</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium" style={styles.modalText}>

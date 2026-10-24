@@ -46,7 +46,9 @@ export default function PhotoViewer() {
   );
   const userMedia = photoPages?.pages.flatMap(({ media }) => media) ?? [];
   const isActivityMedia = uuid.validate(`${photoUrl}`);
-  const itemsToRender = isActivityMedia ? (activity?.media ?? []) : userMedia;
+  const itemsToRender = (isActivityMedia ? (activity?.media ?? []) : userMedia).filter(
+    (item) => item.mediaReviewStatus !== 'rejected',
+  );
   const targetIndex = Number(photoUrl);
   const hasMorePhotos = photoPages?.pages.at(-1)?.hasMore ?? false;
   const canRenderPager = isActivityMedia

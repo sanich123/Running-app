@@ -101,7 +101,13 @@ export default function MediaGridImage({
           accessibilityRole="button"
           accessibilityLabel={language === LANGUAGES.russian ? 'Медиа на проверке' : 'Media under review'}
           borderless>
-          <MediaModerationPlaceholder status={mediaReviewStatus} blurhash={blurhash} compact />
+          <MediaModerationPlaceholder
+            status={mediaReviewStatus}
+            blurhash={blurhash}
+            borderRadius={10}
+            compact
+            hideTitle={cellSize < 130}
+          />
         </TouchableRipple>
       )}
       {url &&
@@ -121,7 +127,7 @@ export default function MediaGridImage({
 }
 
 const styles = StyleSheet.create({
-  container: { position: 'relative' },
+  container: { borderRadius: 10, overflow: 'hidden', position: 'relative' },
   deleteButton: {
     position: 'absolute',
     right: 4,

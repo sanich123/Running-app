@@ -16,7 +16,7 @@ describe('AdminAccessManagement', () => {
     mockStore.dispatch(setMockUserId('manager-1'));
   });
 
-  it('searches by a normalized email, grants a role, and refreshes users and audit history', async () => {
+  it('searches by a normalized partial email, edits permissions in a dialog, and saves the role changes', async () => {
     const user = userEvent.setup();
     const searchedEmails: string[] = [];
     const grantedRoles: string[] = [];
@@ -34,12 +34,14 @@ describe('AdminAccessManagement', () => {
     );
 
     await renderWithProviders(<AdminAccessManagement isSuperuser={false} />);
-    await screen.findByTestId('admin-role-moderator-user-2');
-    await user.type(screen.getByTestId('text-input-outlined'), ' Target@Example.test ');
+    await screen.findByTestId('admin-user-user-2');
+    await user.type(screen.getByTestId('admin-user-search'), ' Target@Example ');
     await user.press(screen.getByText('Найти'));
-    await user.press(screen.getByTestId('admin-role-moderator-user-2'));
+    await user.press(await screen.findByTestId('admin-edit-user-2'));
+    await user.press(await screen.findByTestId('admin-role-moderator-user-2'));
+    await user.press(screen.getByTestId('admin-access-save'));
 
-    await waitFor(() => expect(searchedEmails).toContain('target@example.test'));
+    await waitFor(() => expect(searchedEmails).toContain('target@example'));
     await waitFor(() => expect(grantedRoles).toEqual(['moderator']));
     expect(screen.getByText('Модерация контента')).toBeOnTheScreen();
   });
@@ -70,7 +72,9 @@ describe('AdminAccessManagement', () => {
     );
 
     await renderWithProviders(<AdminAccessManagement isSuperuser />);
+    await user.press(await screen.findByTestId('admin-edit-user-2'));
     await user.press(await screen.findByTestId('admin-role-moderator-user-2'));
+    await user.press(screen.getByTestId('admin-access-save'));
 
     await waitFor(() => expect(revokedRoles).toEqual(['moderator']));
     expect(screen.getByText('Модерация контента · target@example.test')).toBeOnTheScreen();
@@ -90,9 +94,8 @@ describe('AdminAccessManagement', () => {
 
     await renderWithProviders(<AdminAccessManagement isSuperuser={false} />);
 
-    expect(await screen.findByTestId('admin-role-moderator-user-1')).toBeDisabled();
-    expect(screen.getByTestId('admin-role-email_sender-user-1')).toBeOnTheScreen();
-    expect(screen.queryByTestId('admin-role-access_manager-user-1')).toBeNull();
+    expect(await screen.findByTestId('admin-edit-user-1')).toBeDisabled();
+    expect(screen.queryByTestId('admin-role-moderator-user-1')).toBeNull();
     expect(screen.getByText('Изменений пока нет.')).toBeOnTheScreen();
   });
 
@@ -151,7 +154,9 @@ describe('AdminAccessManagement', () => {
     );
 
     await renderWithProviders(<AdminAccessManagement isSuperuser={false} />);
+    await user.press(await screen.findByTestId('admin-edit-user-2'));
     await user.press(await screen.findByTestId('admin-role-moderator-user-2'));
+    await user.press(screen.getByTestId('admin-access-save'));
 
     expect(await screen.findByText('User access')).toBeOnTheScreen();
     expect(screen.getByText(/Revoked by admin@example\.test/)).toBeOnTheScreen();

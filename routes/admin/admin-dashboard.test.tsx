@@ -129,7 +129,9 @@ describe('AdminDashboard', () => {
     expect(await screen.findByTestId('admin-section-moderation')).toBeOnTheScreen();
     await user.press(screen.getByTestId('admin-section-access'));
     expect(await screen.findByText('Права пользователей')).toBeOnTheScreen();
+    await user.press(await screen.findByTestId('admin-edit-user-2'));
     expect(screen.getByText('Суперпользователь')).toBeOnTheScreen();
+    await user.press(screen.getByTestId('admin-access-cancel'));
 
     await user.press(screen.getByTestId('admin-section-moderation'));
     expect(await screen.findByText('Активных жалоб нет.')).toBeOnTheScreen();

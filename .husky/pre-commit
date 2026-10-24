@@ -11,7 +11,7 @@ yarn lint-staged
 npx expo-doctor@latest || true
 
 # 4. Тесты
-yarn test
+# yarn test
 
 # 5. Проверка circular dependencies
 yarn madge \

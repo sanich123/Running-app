@@ -26,6 +26,12 @@ export function useNotificationsPage() {
   const [markAllRead, { isLoading: isMarkingAll }] = useMarkAllNotificationsReadMutation();
   const notifications = data?.pages.flatMap((page) => page.notifications) ?? [];
 
+  const navigateToNotification = (item: NotificationItem) => {
+    if (item.targetType === 'activity' || item.targetType === 'comment') {
+      push(`/${ROUTES.activity}/${item.targetId}` as never);
+    }
+  };
+
   const openNotification = async (item: NotificationItem) => {
     setBusyId(item.id);
     try {
@@ -34,9 +40,7 @@ export function useNotificationsPage() {
       errorToast(copy.markReadError, error);
     } finally {
       setBusyId(null);
-      if (item.targetType === 'activity' || item.targetType === 'comment') {
-        push(`/${ROUTES.activity}/${item.targetId}` as never);
-      }
+      navigateToNotification(item);
     }
   };
 
@@ -75,6 +79,7 @@ export function useNotificationsPage() {
     markAllNotificationsRead,
     markNotificationRead,
     notifications,
+    navigateToNotification,
     openNotification,
     openNotificationSettings,
     refetch,

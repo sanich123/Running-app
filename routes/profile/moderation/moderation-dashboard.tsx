@@ -6,6 +6,7 @@ import {
   Button,
   Dialog,
   Divider,
+  IconButton,
   List,
   Portal,
   SegmentedButtons,
@@ -23,8 +24,10 @@ import {
   useGetModerationReportsQuery,
 } from '@R/services/moderation/moderation';
 import { useAppSelector } from '@R/typed-hooks';
+import { isVideoUrl } from '@Routes/photo-viewer/utils';
 import ErrorComponent from '@S/error-component/error-component';
 import { errorToast } from '@S/error-toast/error-toast';
+import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import { successToast } from '@S/success-toast/success-toast';
 import { MODERATION_ACTIONS, MODERATION_DASHBOARD_COPY, REPORT_STATUS_OPTIONS } from './const';
 import type { ModerationTab, PendingDecision, ReportFilter } from './types';
@@ -58,7 +61,7 @@ export default function ModerationDashboard() {
   const isSavingDecision = actionState.isLoading || appealState.isLoading;
 
   const reports = (reportsQuery.data ?? []).filter(
-    (report) => statusFilter === 'all' || report.status === statusFilter,
+    (report) => report.status !== 'appealed' && (statusFilter === 'all' || report.status === statusFilter),
   );
   const appeals = appealsQuery.data ?? [];
   const reportDetails = reportDetailsQuery.data;
@@ -137,6 +140,41 @@ export default function ModerationDashboard() {
       <View style={styles.context}>
         {contextText ? <Text selectable>{contextText}</Text> : null}
         {profileName ? <Text>{profileName}</Text> : null}
+        {report.targetType === 'activity' && context.media?.length ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.activityMediaContent}
+            testID="moderation-activity-media-list">
+            {context.media.map((media) => {
+              const mediaUrl = media.url ?? media.thumbnail;
+              if (!mediaUrl) return null;
+              const isVideo = Boolean(media.url && isVideoUrl(media.url));
+              return (
+                <Pressable
+                  key={media.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={copy.openMedia}
+                  onPress={() => void Linking.openURL(mediaUrl).catch((error) => errorToast(copy.openError, error))}
+                  testID={`moderation-activity-media-${media.id}`}
+                  style={styles.activityMediaTile}>
+                  {media.thumbnail || !isVideo ? (
+                    <Image
+                      source={{ uri: media.thumbnail ?? mediaUrl }}
+                      style={styles.activityMediaPreview}
+                      resizeMode="cover"
+                      testID={`moderation-activity-media-preview-${media.id}`}
+                    />
+                  ) : (
+                    <View style={[styles.activityMediaPreview, styles.activityVideoPlaceholder]}>
+                      <Text>{language === LANGUAGES.russian ? 'Видео' : 'Video'}</Text>
+                    </View>
+                  )}
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+        ) : null}
         {previewUrl ? <Image source={{ uri: previewUrl }} style={styles.preview} resizeMode="contain" /> : null}
         {context.scores ? (
           <Text selectable>
@@ -192,11 +230,6 @@ export default function ModerationDashboard() {
 
     return (
       <View style={styles.detailContent}>
-        {!isWideLayout || isClosedSelectedReport ? (
-          <Button mode="text" icon="arrow-left" onPress={() => setSelectedReportOverride('')}>
-            {copy.back}
-          </Button>
-        ) : null}
         <Text variant="titleMedium">
           {targetType} · {copy.status[report.status]}
         </Text>
@@ -235,12 +268,16 @@ export default function ModerationDashboard() {
           <View style={styles.actionButtons}>
             <Button
               mode="contained"
-              onPress={() => openDecisionDialog({ kind: 'appeal', appealId: selectedAppeal.id, decision: 'upheld' })}>
+              onPress={() => openDecisionDialog({ kind: 'appeal', appealId: selectedAppeal.id, decision: 'upheld' })}
+              style={styles.actionButton}
+              contentStyle={styles.actionButtonContent}>
               {copy.upholdAppeal}
             </Button>
             <Button
               mode="outlined"
-              onPress={() => openDecisionDialog({ kind: 'appeal', appealId: selectedAppeal.id, decision: 'rejected' })}>
+              onPress={() => openDecisionDialog({ kind: 'appeal', appealId: selectedAppeal.id, decision: 'rejected' })}
+              style={styles.actionButton}
+              contentStyle={styles.actionButtonContent}>
               {copy.rejectAppeal}
             </Button>
           </View>
@@ -255,6 +292,8 @@ export default function ModerationDashboard() {
                   key={action}
                   mode={action === 'remove_content' || action === 'permanent_suspend' ? 'outlined' : 'contained-tonal'}
                   onPress={() => openDecisionDialog({ kind: 'action', action })}
+                  style={styles.actionButton}
+                  contentStyle={styles.actionButtonContent}
                   testID={`moderation-action-${action}`}>
                   {copy.action[action]}
                 </Button>
@@ -320,7 +359,7 @@ export default function ModerationDashboard() {
           }}
           buttons={[
             { value: 'reports', label: copy.reports, icon: 'flag-outline' },
-            { value: 'appeals', label: copy.appeals, icon: 'message-alert-outline' },
+            { value: 'appeals', label: copy.appeals, icon: 'message-text-outline' },
           ]}
         />
         <View style={[styles.columns, isWideLayout && styles.columnsWide]}>
@@ -406,7 +445,7 @@ export default function ModerationDashboard() {
                   key={item.id}
                   title={`${copy.reportId}: ${item.reportId}`}
                   description={`${item.reason}\n${new Date(item.createdAt).toLocaleString(language === LANGUAGES.russian ? 'ru-RU' : 'en-US')}`}
-                  left={(props) => <List.Icon {...props} icon="message-alert-outline" />}
+                  left={(props) => <List.Icon {...props} icon="message-text-outline" />}
                   onPress={() => selectAppeal(item.id, item.reportId)}
                   style={[
                     styles.queueItem,
@@ -426,19 +465,37 @@ export default function ModerationDashboard() {
           </View>
           <View
             style={[
-              styles.detail,
-              isWideLayout && styles.detailWide,
+              styles.detailColumn,
               isWideLayout && isClosedSelectedReport && styles.detailClosedWide,
               !isWideLayout && !selectedReportId && styles.hidden,
               isWideLayout && !selectedReportId && !hasQueueItems && styles.hidden,
-              { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
             ]}>
-            {renderReportDetails()}
+            {!isWideLayout || isClosedSelectedReport ? (
+              <View style={styles.detailToolbar}>
+                <IconButton
+                  icon="arrow-left"
+                  accessibilityLabel={copy.back}
+                  onPress={() => setSelectedReportOverride('')}
+                  testID="moderation-back-to-queue"
+                />
+              </View>
+            ) : null}
+            <View
+              style={[
+                styles.detail,
+                isWideLayout && styles.detailWide,
+                { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+              ]}>
+              {renderReportDetails()}
+            </View>
           </View>
         </View>
       </ScrollView>
       <Portal>
-        <Dialog visible={Boolean(pendingDecision)} onDismiss={() => setPendingDecision(null)}>
+        <Dialog
+          visible={Boolean(pendingDecision)}
+          onDismiss={() => setPendingDecision(null)}
+          style={RESPONSIVE_DIALOG_STYLE}>
           <Dialog.Title>{pendingActionLabel}</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium">{copy.confirm}</Text>
@@ -485,6 +542,8 @@ const styles = StyleSheet.create({
   queue: { gap: 8, minWidth: 0, width: '100%' },
   queueWide: { flex: 0.42, maxWidth: 480, minWidth: 300 },
   queueEmptyWide: { flex: 1, maxWidth: '100%' },
+  detailColumn: { flex: 1, minWidth: 0, width: '100%' },
+  detailToolbar: { alignItems: 'flex-start', marginBottom: 4 },
   detail: { borderRadius: 12, borderWidth: 1, flex: 1, minWidth: 0, padding: 20, width: '100%' },
   detailWide: { minHeight: 400 },
   detailClosedWide: { alignSelf: 'center', maxWidth: 1120 },
@@ -501,9 +560,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   emptyState: { alignItems: 'center', borderRadius: 12, justifyContent: 'center', minHeight: 144, padding: 24 },
-  actionButtons: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginVertical: 8 },
+  actionButtons: { gap: 8, marginVertical: 8, maxWidth: 560, width: '100%' },
+  actionButton: { alignSelf: 'stretch' },
+  actionButtonContent: { minHeight: 48 },
   divider: { marginVertical: 8 },
   context: { gap: 8 },
+  activityMediaContent: { gap: 8, paddingVertical: 4 },
+  activityMediaTile: { borderRadius: 8, overflow: 'hidden' },
+  activityMediaPreview: { backgroundColor: '#808080', height: 220, width: 160 },
+  activityVideoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
   preview: { height: 260, maxWidth: '100%', width: 360 },
   appealReason: { backgroundColor: '#80808014', borderRadius: 8, gap: 4, padding: 10 },
   dialogInput: { marginTop: 12 },

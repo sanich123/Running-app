@@ -1,15 +1,24 @@
-import { FlatList, Platform, Pressable, View, useWindowDimensions } from 'react-native';
-import { Button, IconButton, Text, useTheme } from 'react-native-paper';
+import { useState } from 'react';
+import { FlatList, Platform, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
+import { Button, Dialog, IconButton, Portal, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import { NOTIFICATION_COPY } from '../constants';
-import { getNotificationAvatarLabel, getNotificationDisplayCopy, getNotificationRelativeTime } from '../helpers';
+import {
+  getNotificationAvatarLabel,
+  getNotificationDisplayCopy,
+  getNotificationIcon,
+  getNotificationRelativeTime,
+} from '../helpers';
 import { notificationsPageStyles as styles } from '../notifications-page.styles';
 import { useNotificationsPage } from '../use-notifications-page';
 import NotificationActorAvatar from './notification-actor-avatar/notification-actor-avatar';
+import type { NotificationItem } from '@R/services/notifications/types';
 
 export default function NotificationsPage() {
   const { colors } = useTheme();
-  const { width } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
+  const [selectedNotification, setSelectedNotification] = useState<NotificationItem | null>(null);
   const {
     busyId,
     copy,
@@ -23,11 +32,16 @@ export default function NotificationsPage() {
     markNotificationRead,
     markAllNotificationsRead,
     notifications,
-    openNotification,
+    navigateToNotification,
     openNotificationSettings,
     refetch,
     unreadCount,
   } = useNotificationsPage();
+  const selectedNotificationCopy = selectedNotification
+    ? getNotificationDisplayCopy(selectedNotification, locale)
+    : null;
+  const selectedNotificationHasTarget =
+    selectedNotification?.targetType === 'activity' || selectedNotification?.targetType === 'comment';
 
   return (
     <View style={[styles.page, { backgroundColor: colors.background }]}>
@@ -93,11 +107,15 @@ export default function NotificationsPage() {
                     accessibilityRole="button"
                     testID={`notification-${item.id}`}
                     disabled={busyId === item.id}
-                    onPress={() => void openNotification(item)}
+                    onPress={() => {
+                      setSelectedNotification(item);
+                      void markNotificationRead(item);
+                    }}
                     style={({ pressed }) => [styles.rowContent, { opacity: pressed ? 0.72 : 1 }]}>
                     <NotificationActorAvatar
                       photo={item.actorProfilePhoto}
                       label={getNotificationAvatarLabel(item, avatarFallback)}
+                      icon={getNotificationIcon(item.type)}
                       testID={`notification-avatar-${item.id}`}
                     />
                     <View style={styles.copy}>
@@ -139,6 +157,40 @@ export default function NotificationsPage() {
           />
         )}
       </View>
+      <Portal>
+        <Dialog
+          visible={Boolean(selectedNotification)}
+          onDismiss={() => setSelectedNotification(null)}
+          style={RESPONSIVE_DIALOG_STYLE}
+          testID="notification-details-dialog">
+          <Dialog.Title>{selectedNotificationCopy?.title}</Dialog.Title>
+          <Dialog.Content>
+            <ScrollView style={{ maxHeight: Math.min(height * 0.6, 500) }}>
+              <Text variant="bodyLarge" selectable>
+                {selectedNotificationCopy?.body || copy.notificationBodyFallback}
+              </Text>
+            </ScrollView>
+            {selectedNotification ? (
+              <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant, marginTop: 12 }}>
+                {getNotificationRelativeTime(selectedNotification.createdAt, locale)}
+              </Text>
+            ) : null}
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setSelectedNotification(null)}>{copy.closeNotification}</Button>
+            {selectedNotificationHasTarget && selectedNotification ? (
+              <Button
+                testID="open-notification-target"
+                onPress={() => {
+                  navigateToNotification(selectedNotification);
+                  setSelectedNotification(null);
+                }}>
+                {copy.openActivity}
+              </Button>
+            ) : null}
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 }

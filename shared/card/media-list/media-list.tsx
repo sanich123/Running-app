@@ -70,7 +70,9 @@ export default function MediaList() {
       : routeOnlyMapPhotoUrl
     : mapPhotoUrl;
   const displayedData = useMemo(() => {
-    const activityMedia: DisplayedMediaItem[] = (media ?? []).map((item) => ({ ...item, isMap: false }));
+    const activityMedia: DisplayedMediaItem[] = (media ?? [])
+      .filter((item) => item.mediaReviewStatus !== 'rejected')
+      .map((item) => ({ ...item, isMap: false }));
     return displayedMapPhotoUrl
       ? [
           { url: displayedMapPhotoUrl, thumbnail: null, blurhash: hideMap ? null : mapPhotoUrlBlurhash, isMap: true },
@@ -117,10 +119,12 @@ export default function MediaList() {
         return (
           <View
             testID={`activity-media-${item.id ?? index}`}
-            style={[styles.mediaTile, { height: mediaHeight, width: mediaWidth }]}>
+            style={[styles.mediaTile, { height: mediaHeight, width: Math.min(mediaWidth, mediaHeight * 0.75) }]}>
             <MediaModerationPlaceholder
               status={item.mediaReviewStatus}
               blurhash={item.blurhash}
+              borderRadius={10}
+              compact
               testID={`pending-activity-media-${item.id ?? index}`}
             />
           </View>
@@ -128,6 +132,10 @@ export default function MediaList() {
       }
       const mediaUrl = item.url;
       const isVideo = !isMap && isVideoUrl(mediaUrl);
+      const isAwaitingReview =
+        item.mediaReviewStatus === 'queued' ||
+        item.mediaReviewStatus === 'processing' ||
+        item.mediaReviewStatus === 'review_required';
       const itemWidth = getMediaWidth(item, mediaUrl);
       const onMediaMetadata = (metadata: { aspectRatio?: number }) => {
         if (!metadata.aspectRatio || !Number.isFinite(metadata.aspectRatio)) return;
@@ -218,6 +226,7 @@ export default function MediaList() {
                   source={{ uri: item.thumbnail ? item.thumbnail : mediaUrl }}
                   contentFit="cover"
                   placeholderContentFit="cover"
+                  blurRadius={isAwaitingReview ? 20 : undefined}
                   priority={index === 0 ? 'high' : 'normal'}
                   cachePolicy="memory-disk"
                   recyclingKey={mediaUrl}
@@ -312,24 +321,26 @@ export default function MediaList() {
 
   return (
     <>
-      <FlatList
-        ref={mediaListRef}
-        data={displayedData}
-        renderItem={renderItem}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={Platform.OS === 'web' ? { flexGrow: 0, height: mediaHeight + 8 } : undefined}
-        testID="activity-media-list"
-        contentContainerStyle={styles.listContent}
-        onContentSizeChange={handleMediaContentSizeChange}
-        initialNumToRender={Math.max(1, Math.min(displayedData.length, 3))}
-        maxToRenderPerBatch={3}
-        windowSize={5}
-        updateCellsBatchingPeriod={50}
-        removeClippedSubviews={false}
-        ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-        keyExtractor={(item, index) => item.id ?? item.url ?? String(index)}
-      />
+      {displayedData.length ? (
+        <FlatList
+          ref={mediaListRef}
+          data={displayedData}
+          renderItem={renderItem}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={Platform.OS === 'web' ? { flexGrow: 0, height: mediaHeight + 8 } : undefined}
+          testID="activity-media-list"
+          contentContainerStyle={styles.listContent}
+          onContentSizeChange={handleMediaContentSizeChange}
+          initialNumToRender={Math.max(1, Math.min(displayedData.length, 3))}
+          maxToRenderPerBatch={3}
+          windowSize={5}
+          updateCellsBatchingPeriod={50}
+          removeClippedSubviews={false}
+          ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+          keyExtractor={(item, index) => item.id ?? item.url ?? String(index)}
+        />
+      ) : null}
       <ReportContentDialog
         visible={Boolean(reportedMediaId)}
         targetType="media"

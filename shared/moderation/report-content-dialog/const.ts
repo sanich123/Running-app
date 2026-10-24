@@ -1,11 +1,18 @@
 import { LANGUAGES } from '@const/enums';
-import type { ContentReportReason } from '@R/services/moderation/types';
+import type { ContentReportReason, UserReportTargetType } from '@R/services/moderation/types';
 
 export const REPORT_CONTENT_COPY = {
   [LANGUAGES.english]: {
     title: 'Report content',
-    prompt: 'Why are you reporting this?',
+    prompt: {
+      activity: 'What exactly is wrong with this activity?',
+      comment: 'What exactly is wrong with this comment?',
+      media: 'What exactly is wrong with this photo?',
+      user: 'What exactly is wrong with this profile?',
+    } satisfies Record<UserReportTargetType, string>,
     details: 'Additional details (optional)',
+    requiredDetails: 'Describe in detail *',
+    requiredDetailsHint: 'For “Something else”, describe exactly what violates the rules.',
     profileDetails: 'Which profile field violates the rules?',
     profileDetailsHint: 'Photo, name, surname, or bio.',
     submit: 'Send report',
@@ -24,8 +31,15 @@ export const REPORT_CONTENT_COPY = {
   },
   [LANGUAGES.russian]: {
     title: 'Пожаловаться',
-    prompt: 'Укажите причину жалобы',
+    prompt: {
+      activity: 'Укажите, что именно вам не нравится в этой тренировке',
+      comment: 'Укажите, что именно вам не нравится в этом комментарии',
+      media: 'Укажите, что именно вам не нравится в этом фото',
+      user: 'Укажите, что именно вам не нравится в профиле пользователя',
+    } satisfies Record<UserReportTargetType, string>,
     details: 'Дополнительные сведения (необязательно)',
+    requiredDetails: 'Опишите подробнее *',
+    requiredDetailsHint: 'Для причины «Другое» опишите, что именно нарушает правила.',
     profileDetails: 'Какие данные профиля нарушают правила?',
     profileDetailsHint: 'Фото профиля, имя, фамилия или описание.',
     submit: 'Отправить',

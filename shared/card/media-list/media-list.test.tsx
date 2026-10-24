@@ -305,6 +305,23 @@ describe('media list', () => {
     expect(screen.getByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].queued)).toBeOnTheScreen();
   });
 
+  it('removes the media area from the card when every item was rejected', async () => {
+    await renderMediaList({
+      mapPhotoUrl: undefined,
+      media: [
+        {
+          id: 'rejected-video',
+          url: 'https://images.example.test/rejected-video.mp4',
+          thumbnail: 'https://images.example.test/rejected-video.jpg',
+          mediaReviewStatus: 'rejected',
+        },
+      ],
+    });
+
+    expect(screen.queryByTestId('activity-media-list')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('activity-media-rejected-video')).not.toBeOnTheScreen();
+  });
+
   it("opens the native action menu and submits a report for another user's media", async () => {
     const user = userEvent.setup();
     const receivedReports: unknown[] = [];

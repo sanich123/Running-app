@@ -4,8 +4,9 @@ import { Avatar } from 'react-native-paper';
 import CustomImage from '@S/custom-image/custom-image';
 import type { NotificationActorAvatarProps } from './types';
 
-export default function NotificationActorAvatar({ photo, label, testID }: NotificationActorAvatarProps) {
+export default function NotificationActorAvatar({ photo, label, icon, testID }: NotificationActorAvatarProps) {
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
+  if (icon) return <Avatar.Icon testID={testID} size={48} icon={icon} />;
   if (!photo || imageLoadFailed) return <Avatar.Text testID={testID} size={48} label={label} />;
 
   return (

@@ -14,7 +14,6 @@ import ProfileMediaPhotos from '@Routes/profile/media-photos/profile-media-photo
 import AvatarShowable from '@S/avatar/showable/avatar-showable/avatar-showable';
 import CustomImage from '@S/custom-image/custom-image';
 import ErrorComponent from '@S/error-component/error-component';
-import UserSafetyMenu from '@S/moderation/user-safety-menu/user-safety-menu';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
 import { PROFILE_SECTIONS, PROFILE_WATCH_IMPORT } from '../const';
 import { PROFILE_PRIVACY_LINK_LABELS } from './const';
@@ -110,7 +109,6 @@ export default function ProfilePage() {
                   {profile?.city}
                 </Text>
               </View>
-              {!isOwnProfile ? <UserSafetyMenu userId={profileUserId} /> : null}
             </View>
             <View style={[styles.bio, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
               <Text variant="titleMedium" style={{ color: colors.primary, fontFamily: FONT_FAMILIES.semiBold }}>
