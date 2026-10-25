@@ -1,11 +1,5 @@
-import { Suspense } from 'react';
-import { LazyHomePageContent } from '@Routes/app-routes/const';
-import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
+import HomePageContent from '@Routes/home-page/home-page';
 
 export default function HomePage() {
-  return (
-    <Suspense fallback={<FullPageActivityLoader />}>
-      <LazyHomePageContent />
-    </Suspense>
-  );
+  return <HomePageContent />;
 }

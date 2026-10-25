@@ -35,7 +35,6 @@ export const LazyLegalIndexPage = lazy(() => import('@Routes/legal-documents/leg
 export const LazyChangePassword = lazy(() => import('@Routes/sign-in/change-password/change-password'));
 export const LazyConfirmEmailCodePage = lazy(() => import('@Routes/confirm-email-code-page/confirm-email-code-page'));
 export const LazyFeedbackPage = lazy(() => import('@Routes/feedback/feedback-page/feedback-page'));
-export const LazyHomePageContent = lazy(() => import('@Routes/home-page/home-page'));
 export const LazyDashboard = lazy(() => import('@Routes/statistic/dashboard/dashboard'));
 export const LazyLikesList = lazy(() => import('@Routes/likes-list/likes-list'));
 export const LazyListOfFollowers = lazy(() => import('@Routes/followers-page/list-of-followers/list-of-followers'));

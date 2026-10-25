@@ -1,5 +1,8 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
+import { LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/settings/settings';
+import { MEDIA_MODERATION_PLACEHOLDER_COPY } from '@S/media-moderation-placeholder/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -16,6 +19,8 @@ jest.mock('react-native-compressor', () => ({
   }),
 }));
 describe('Preview images', () => {
+  beforeEach(() => mockStore.dispatch(changeLanguage(LANGUAGES.russian)));
+
   it('should correctly renders image', async () => {
     const setImages = jest.fn();
     await renderWithProviders(
@@ -47,6 +52,23 @@ describe('Preview images', () => {
     );
     expect(screen.getByTestId('horizontal-preview-list').props.horizontal).toBe(true);
     expect(screen.getByTestId('imagePreview-3')).toBeOnTheScreen();
+  });
+  it('shows only the moderation icon in camera previews while keeping its accessible status', async () => {
+    const copy = MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian];
+
+    await renderWithProviders(
+      <PreviewImages
+        images={[{ url: 'someUrl', thumbnail: null, mediaReviewStatus: 'review_required' }]}
+        setImages={jest.fn()}
+        isDisabled={false}
+        compact
+        horizontal
+      />,
+      { store: mockStore },
+    );
+
+    expect(screen.queryByText(copy.reviewRequired)).toBeNull();
+    expect(screen.getByTestId('media-moderation-placeholder')).toHaveProp('accessibilityLabel', copy.reviewRequired);
   });
   it('should correctly delete and image', async () => {
     const setImages = jest.fn();

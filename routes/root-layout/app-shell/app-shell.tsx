@@ -87,8 +87,9 @@ export default function AppShell() {
               screenOptions={({ route, navigation }) => ({
                 gestureEnabled: false,
                 headerBackButtonDisplayMode: Platform.OS === 'ios' || Platform.OS === 'web' ? 'minimal' : 'default',
+                headerBackVisible: Platform.OS === 'android' && route.name !== `${ROUTES.map}/[id]` ? false : undefined,
                 headerLeft:
-                  Platform.OS === 'android'
+                  Platform.OS === 'android' && route.name !== `${ROUTES.map}/[id]`
                     ? ({ canGoBack, tintColor }) =>
                         canGoBack ? (
                           <Pressable

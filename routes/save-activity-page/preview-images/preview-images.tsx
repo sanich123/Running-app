@@ -37,7 +37,12 @@ export default function PreviewImages({
           {media.mediaReviewStatus &&
           media.mediaReviewStatus !== 'approved' &&
           media.mediaReviewStatus !== 'rejected' ? (
-            <MediaModerationPlaceholder status={media.mediaReviewStatus} compact overlay />
+            <MediaModerationPlaceholder
+              status={media.mediaReviewStatus}
+              compact
+              overlay
+              hideTitle={compact && horizontal}
+            />
           ) : null}
         </>
       ) : (

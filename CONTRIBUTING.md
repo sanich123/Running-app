@@ -72,6 +72,17 @@ yarn add <package>
 yarn add --dev <package>
 ```
 
+Для выравнивания Expo-зависимостей по SDK используйте `yarn expo:fix`. Команда запускает `expo install --fix` и проверяет, что локальные патчи сохранились. Версию пакета держите в `dependencies`, а Yarn-дескриптор патча — в `resolutions`. После обновления patched-пакета перенесите патч на новую версию, обновите `resolutions` и запустите `yarn patches:check`. CI также проверяет Expo-совместимость и immutable lockfile.
+
+Чтобы перенести патч на новую версию, откройте исходники пакета, повторно применив старый патч, разрешите возможные конфликты и сохраните результат:
+
+```sh
+yarn patch <package>@npm:<new-version> --update
+yarn patch-commit -s <temporary-directory>
+yarn install
+yarn patches:check
+```
+
 При изменении native-зависимости:
 
 1. Обновите `app.config.ts`, если нужен plugin, permission или deep link.

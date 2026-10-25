@@ -16,7 +16,7 @@ const location = {
 
 describe('location provider compatibility', () => {
   it('reads and strips the legacy provider field without changing coordinates', () => {
-    const withProvider = { ...location, provider: 'google-play-services' };
+    const withProvider = { ...location, provider: 'google-play-services' as const };
 
     expect(getLocationProvider(withProvider)).toBe('google-play-services');
     expect(stripLocationProvider(withProvider)).toEqual(location);
