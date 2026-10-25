@@ -8,6 +8,7 @@ const mockPathname = jest.fn(() => '/private-route');
 const mockBottomSheetEnabled = jest.fn();
 const mockNavigationBar = jest.fn();
 const mockStackOptions = jest.fn();
+let mockRouteName = 'home';
 interface AppShellTestState {
   settings: { theme: 'dark' | 'light' | null; language: 'english' | 'russian' };
   auth: { accessToken: string | null; refreshToken: string | null };
@@ -39,7 +40,7 @@ jest.mock('expo-router', () => {
     screenOptions: (props: { route: { name: string }; navigation: { goBack: () => void } }) => MockStackOptions;
   }
   const MockStack = ({ children, screenOptions }: MockStackProps) => {
-    const options = screenOptions({ route: { name: 'home' }, navigation: { goBack: jest.fn() } });
+    const options = screenOptions({ route: { name: mockRouteName }, navigation: { goBack: jest.fn() } });
     mockStackOptions(options);
     options.headerLeft?.({ canGoBack: false });
     options.headerLeft?.({ canGoBack: true, tintColor: 'white' });
@@ -136,6 +137,7 @@ const AppShell = require('./app-shell').default as typeof AppShellModule.default
 
 describe('AppShell', () => {
   beforeEach(() => {
+    mockRouteName = 'home';
     mockPathname.mockReturnValue('/private-route');
     mockBottomSheetEnabled.mockClear();
     mockNavigationBar.mockClear();
@@ -167,6 +169,19 @@ describe('AppShell', () => {
     expect(mockBottomSheetEnabled).toHaveBeenCalledWith(true);
     expect(mockNavigationBar).toHaveBeenCalledTimes(1);
     expect(mockStackOptions).toHaveBeenCalled();
+    expect(mockStackOptions).toHaveBeenCalledWith(expect.objectContaining({ headerBackVisible: false }));
+  });
+
+  it('uses the native map back button instead of the Android custom header button', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    mockAppState.auth.refreshToken = 'refresh-token';
+    mockRouteName = `${ROUTES.map}/[id]`;
+
+    await render(<AppShell />);
+
+    expect(mockStackOptions).toHaveBeenCalledWith(
+      expect.objectContaining({ headerBackVisible: undefined, headerLeft: undefined }),
+    );
   });
 
   it('renders public routes without a session and uses the web header', async () => {
