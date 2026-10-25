@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonLabel: { color: '#FFFFFF', fontWeight: '600' },
-  yandexButton: { backgroundColor: '#FC3F1D' },
-  vkButton: { backgroundColor: '#0077FF' },
+  yandexButton: { backgroundColor: '#D12B16' },
+  vkButton: { backgroundColor: '#0061C9' },
   iconFrame: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
 });

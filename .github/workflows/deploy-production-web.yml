@@ -42,6 +42,7 @@ jobs:
           yarn web:export:production
           test -s dist/index.html
           test -s dist/.well-known/assetlinks.json
+          test -s dist/robots.txt
 
       - name: Deploy the exact export over SSH
         env:

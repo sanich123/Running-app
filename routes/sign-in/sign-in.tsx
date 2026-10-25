@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Constants from 'expo-constants';
+import Head from 'expo-router/head';
 import { View, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Surface, Text } from 'react-native-paper';
@@ -13,7 +14,7 @@ import { getEmailValidation, getPasswordValidation, getRegistrationEmailValidati
 import { SignInPageStates } from '@U/validate-email-password';
 import AuthDivider from './auth-divider/auth-divider';
 import AuthStepIntro from './auth-step-intro/auth-step-intro';
-import { SIGN_IN_FIELD_LABELS, SIGN_IN_FOOTER_TEXT } from './const';
+import { SIGN_IN_FIELD_LABELS, SIGN_IN_FOOTER_TEXT, SIGN_IN_SEO } from './const';
 import EmailRegistrationRestriction from './email-registration-restriction/email-registration-restriction';
 import LegalConsents from './legal-consents/legal-consents';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
@@ -53,82 +54,88 @@ export default function SignIn() {
   const areLegalConsentsAccepted = legalConsents.agreementAndPolicy && legalConsents.personalData;
 
   return (
-    <CrossPlatformLayout edges={['top', 'bottom']} scrollViewEnabled outerStyles={styles.pageContent}>
-      <Surface mode="flat" style={styles.inputsWrapper}>
-        {accessDenied === 'true' ? (
-          <Text variant="bodyMedium" style={styles.accessDenied}>
-            {language === 'russian'
-              ? 'У этого аккаунта нет прав для входа в админку. Попросите администратора выдать вам соответствующие права.'
-              : 'This account does not have admin access. Ask an administrator to grant you the required permissions.'}
-          </Text>
-        ) : null}
-        <AuthStepIntro authStep={currentAuthStep} />
-        {currentAuthStep === SignInPageStates.login && (
-          <>
-            <SocialAuthButtons />
-            <AuthDivider />
-          </>
-        )}
-        <CustomTextInput<EmailPasswordData>
-          control={control}
-          fieldName="email"
-          label={SIGN_IN_FIELD_LABELS[language].email}
-          validation={
-            currentAuthStep === SignInPageStates.register
-              ? getRegistrationEmailValidation(language)
-              : getEmailValidation(language)
-          }
-          inputMode="email"
-          autoComplete="email"
-          accessibilityLabel="auth-email"
-          compact
-        />
-        {currentAuthStep !== SignInPageStates.reset && currentAuthStep !== SignInPageStates.emailLink && (
-          <CustomPasswordInput<EmailPasswordData>
+    <>
+      <Head>
+        <title>{SIGN_IN_SEO[language].title}</title>
+        <meta name="description" content={SIGN_IN_SEO[language].description} />
+      </Head>
+      <CrossPlatformLayout edges={['top', 'bottom']} scrollViewEnabled outerStyles={styles.pageContent}>
+        <Surface mode="flat" style={styles.inputsWrapper}>
+          {accessDenied === 'true' ? (
+            <Text variant="bodyMedium" style={styles.accessDenied}>
+              {language === 'russian'
+                ? 'У этого аккаунта нет прав для входа в админку. Попросите администратора выдать вам соответствующие права.'
+                : 'This account does not have admin access. Ask an administrator to grant you the required permissions.'}
+            </Text>
+          ) : null}
+          <AuthStepIntro authStep={currentAuthStep} />
+          {currentAuthStep === SignInPageStates.login && (
+            <>
+              <SocialAuthButtons />
+              <AuthDivider />
+            </>
+          )}
+          <CustomTextInput<EmailPasswordData>
             control={control}
-            fieldName="password"
-            label={SIGN_IN_FIELD_LABELS[language].password}
-            validation={getPasswordValidation(language)}
-            returnKeyType="send"
-            returnKeyLabel="send"
-            accessibilityLabel="auth-password"
+            fieldName="email"
+            label={SIGN_IN_FIELD_LABELS[language].email}
+            validation={
+              currentAuthStep === SignInPageStates.register
+                ? getRegistrationEmailValidation(language)
+                : getEmailValidation(language)
+            }
+            inputMode="email"
+            autoComplete="email"
+            accessibilityLabel={SIGN_IN_FIELD_LABELS[language].email}
             compact
           />
-        )}
-        {currentAuthStep === SignInPageStates.register && <EmailRegistrationRestriction />}
-        {requiresLegalConfirmation && (
-          <LegalConsents
-            values={legalConsents}
-            onChange={(key) => setLegalConsents((current) => ({ ...current, [key]: !current[key] }))}
+          {currentAuthStep !== SignInPageStates.reset && currentAuthStep !== SignInPageStates.emailLink && (
+            <CustomPasswordInput<EmailPasswordData>
+              control={control}
+              fieldName="password"
+              label={SIGN_IN_FIELD_LABELS[language].password}
+              validation={getPasswordValidation(language)}
+              returnKeyType="send"
+              returnKeyLabel="send"
+              accessibilityLabel={SIGN_IN_FIELD_LABELS[language].password}
+              compact
+            />
+          )}
+          {currentAuthStep === SignInPageStates.register && <EmailRegistrationRestriction />}
+          {requiresLegalConfirmation && (
+            <LegalConsents
+              values={legalConsents}
+              onChange={(key) => setLegalConsents((current) => ({ ...current, [key]: !current[key] }))}
+            />
+          )}
+          <LoginRegisterBtn
+            handleSubmit={handleSubmit}
+            authStep={currentAuthStep}
+            legalConsentAccepted={!requiresLegalConfirmation || areLegalConsentsAccepted}
+            returnTo={returnTo}
           />
-        )}
-        <LoginRegisterBtn
-          handleSubmit={handleSubmit}
-          authStep={currentAuthStep}
-          legalConsentAccepted={!requiresLegalConfirmation || areLegalConsentsAccepted}
-          returnTo={returnTo}
-        />
-        <LoginRegisterNavigation
-          authStep={currentAuthStep}
-          onAuthStepChange={(nextAuthStep) =>
-            push({
-              pathname: `/${ROUTES.signIn}`,
-              params: {
-                authStep: nextAuthStep,
-                ...(returnTo ? { returnTo } : {}),
-                ...(accessDenied === 'true' ? { accessDenied } : {}),
-              },
-            })
-          }
-          showEmailLinkNavigation={false}
-        />
-        <View style={styles.footer}>
-          <Text variant="bodySmall" style={styles.version}>
-            {SIGN_IN_FOOTER_TEXT[language]} {Constants.expoConfig?.version ?? '—'}
-          </Text>
-        </View>
-      </Surface>
-    </CrossPlatformLayout>
+          <LoginRegisterNavigation
+            authStep={currentAuthStep}
+            onAuthStepChange={(nextAuthStep) =>
+              push({
+                pathname: `/${ROUTES.signIn}`,
+                params: {
+                  authStep: nextAuthStep,
+                  ...(returnTo ? { returnTo } : {}),
+                  ...(accessDenied === 'true' ? { accessDenied } : {}),
+                },
+              })
+            }
+            showEmailLinkNavigation={false}
+          />
+          <View style={styles.footer}>
+            <Text variant="bodySmall" style={styles.version}>
+              {SIGN_IN_FOOTER_TEXT[language]} {Constants.expoConfig?.version ?? '—'}
+            </Text>
+          </View>
+        </Surface>
+      </CrossPlatformLayout>
+    </>
   );
 }
 
