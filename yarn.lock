@@ -11778,14 +11778,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-compressor@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "react-native-compressor@npm:2.0.3"
+"react-native-compressor@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "react-native-compressor@npm:2.0.4"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: ">=0.35.0"
-  checksum: 10c0/910e9f1679aef8850298d01c17ebfaa4733f065fd195b6262ed27c7e897352fa08d3f7069d456f197a537f64cbf0ed1b02ad0a16d5629ec292b266fe74032ec3
+  checksum: 10c0/9767af78800cdbceb8e207391ce7ffe15cb08c2b78f455520e8ca55d32a9fe27cde3abf32de193e2ac785dd1c03a0910da5d30410d995ba7e051f262c941b9cd
   languageName: node
   linkType: hard
 
@@ -12682,7 +12682,7 @@ __metadata:
     react-hook-form: "npm:^7.91.0"
     react-native: "npm:0.88.0"
     react-native-battery-optimization-check: "npm:^1.0.8"
-    react-native-compressor: "npm:^2.0.3"
+    react-native-compressor: "npm:^2.0.4"
     react-native-gesture-handler: "npm:~3.3.0"
     react-native-gifted-charts: "npm:^1.4.81"
     react-native-health-connect: "npm:4.1.3"
