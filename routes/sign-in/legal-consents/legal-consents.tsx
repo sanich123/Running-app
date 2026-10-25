@@ -25,6 +25,7 @@ export default function LegalConsents({ values, onChange }: LegalConsentsProps) 
               : 'I accept the User Agreement and Personal Data Processing Policy'
           }
           accessibilityState={{ checked: values.agreementAndPolicy }}
+          aria-checked={values.agreementAndPolicy}
           status={values.agreementAndPolicy ? 'checked' : 'unchecked'}
           onPress={() => onChange('agreementAndPolicy')}
           color={colors.primary}
@@ -56,6 +57,7 @@ export default function LegalConsents({ values, onChange }: LegalConsentsProps) 
             isRussian ? 'Согласен на обработку персональных данных' : 'I consent to personal data processing'
           }
           accessibilityState={{ checked: values.personalData }}
+          aria-checked={values.personalData}
           status={values.personalData ? 'checked' : 'unchecked'}
           onPress={() => onChange('personalData')}
           color={colors.primary}
