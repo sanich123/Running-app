@@ -1,0 +1,49 @@
+name: Validate dependency patches
+
+on:
+  pull_request:
+    branches: [master, stage]
+    paths:
+      - .github/workflows/validate-dependency-patches.yml
+      - .yarn/patches/**
+      - package.json
+      - scripts/check-yarn-patches.mjs
+      - yarn.lock
+  push:
+    branches: [master, stage]
+    paths:
+      - .github/workflows/validate-dependency-patches.yml
+      - .yarn/patches/**
+      - package.json
+      - scripts/check-yarn-patches.mjs
+      - yarn.lock
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-check:
+    name: Check SDK versions and Yarn patches
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26.7.0
+
+      - name: Set up Yarn 4
+        run: npm install --global @yarnpkg/cli-dist@4.18.1
+
+      - name: Check patch references and versions
+        run: yarn patches:check
+
+      - name: Install dependencies without changing the lockfile
+        run: yarn install --immutable
+
+      - name: Check Expo SDK compatibility
+        run: yarn expo install --check
