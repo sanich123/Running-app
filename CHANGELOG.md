@@ -18,6 +18,7 @@ changed the supported platform or development workflow.
 
 ### Changed
 
+- Improved sign-in metadata, accessible form labels and text contrast.
 - Reworked authentication navigation and provider error handling.
 - Unified logout and account-deletion cleanup through the Redux store reset.
 - Improved activity saving, retrying and handling of interrupted recordings.

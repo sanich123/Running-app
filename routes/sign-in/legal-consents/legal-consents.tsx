@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Checkbox, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES, ROUTES } from '@const/enums';
@@ -10,14 +10,20 @@ export default function LegalConsents({ values, onChange }: LegalConsentsProps) 
   const { push } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
   const isRussian = language === LANGUAGES.russian;
+  const CheckboxComponent = Platform.OS === 'ios' ? Checkbox.IOS : Checkbox.Android;
   const documentPath = (route: ROUTES, englishRoute: ROUTES = route) =>
     `/${isRussian ? route : englishRoute}` as Parameters<typeof push>[0];
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Checkbox
+        <CheckboxComponent
           testID="legal-consent-agreement"
+          accessibilityLabel={
+            isRussian
+              ? 'Принимаю пользовательское соглашение и политику обработки персональных данных'
+              : 'I accept the User Agreement and Personal Data Processing Policy'
+          }
           status={values.agreementAndPolicy ? 'checked' : 'unchecked'}
           onPress={() => onChange('agreementAndPolicy')}
           color={colors.primary}
@@ -43,8 +49,11 @@ export default function LegalConsents({ values, onChange }: LegalConsentsProps) 
       </View>
 
       <View style={styles.row}>
-        <Checkbox
+        <CheckboxComponent
           testID="legal-consent-personal-data"
+          accessibilityLabel={
+            isRussian ? 'Согласен на обработку персональных данных' : 'I consent to personal data processing'
+          }
           status={values.personalData ? 'checked' : 'unchecked'}
           onPress={() => onChange('personalData')}
           color={colors.primary}

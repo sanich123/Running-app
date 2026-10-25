@@ -43,6 +43,17 @@ export const SIGN_IN_FIELD_LABELS = {
   [LANGUAGES.russian]: SIGN_IN_FIELDS,
 } as const;
 
+export const SIGN_IN_SEO = {
+  [LANGUAGES.english]: {
+    title: 'Sign in to Runich',
+    description: 'Runich is a running community for tracking workouts, exploring routes, and sharing progress.',
+  },
+  [LANGUAGES.russian]: {
+    title: 'Вход в Runich',
+    description: 'Runich — беговое сообщество: записывайте тренировки, смотрите маршруты и делитесь прогрессом.',
+  },
+} as const;
+
 export const AUTH_DIVIDER_TEXT = {
   [LANGUAGES.english]: 'or',
   [LANGUAGES.russian]: 'или',

@@ -1,11 +1,11 @@
 /** POWERHOURS color roles mapped to React Native Paper's Material 3 theme. */
 export const COLORS = {
   light: {
-    primary: 'rgb(236, 101, 60)',
+    primary: 'rgb(179, 75, 47)',
     onPrimary: 'rgb(255, 255, 255)',
     primaryContainer: 'rgb(255, 235, 229)',
     onPrimaryContainer: 'rgb(92, 26, 7)',
-    secondary: 'rgb(122, 122, 122)',
+    secondary: 'rgb(107, 107, 107)',
     onSecondary: 'rgb(255, 255, 255)',
     secondaryContainer: 'rgb(232, 232, 232)',
     onSecondaryContainer: 'rgb(38, 38, 38)',
@@ -22,7 +22,7 @@ export const COLORS = {
     surface: 'rgb(255, 255, 255)',
     onSurface: 'rgb(38, 38, 38)',
     surfaceVariant: 'rgb(255, 255, 255)',
-    onSurfaceVariant: 'rgb(122, 122, 122)',
+    onSurfaceVariant: 'rgb(107, 107, 107)',
     outline: 'rgb(184, 184, 184)',
     outlineVariant: 'rgb(232, 232, 232)',
     shadow: 'rgb(0, 0, 0)',

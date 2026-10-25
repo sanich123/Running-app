@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { HelperText, TextInput, useTheme } from 'react-native-paper';
 import { Controller } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
+import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import type { CustomPasswordInputProps } from './types';
@@ -25,6 +26,7 @@ export default function CustomPasswordInput<T extends FieldValues>({
   compact = false,
 }: CustomPasswordInputProps<T>) {
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
+  const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const shouldBeDisabled = isDisabledWhenLogining;
@@ -79,6 +81,15 @@ export default function CustomPasswordInput<T extends FieldValues>({
               <TextInput.Icon
                 testID={visibilityTestID}
                 icon={showPassword ? 'eye-off' : 'eye'}
+                accessibilityLabel={
+                  language === LANGUAGES.russian
+                    ? showPassword
+                      ? 'Скрыть пароль'
+                      : 'Показать пароль'
+                    : showPassword
+                      ? 'Hide password'
+                      : 'Show password'
+                }
                 onPress={() => setShowPassword((prevValue) => !prevValue)}
               />
             }

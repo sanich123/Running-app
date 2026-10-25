@@ -54,6 +54,8 @@ describe('sign in', () => {
     await renderWithProviders(<SignIn />);
     const emailInput = screen.getByTestId(SIGN_IN_FIELDS.email);
     const passwordInput = screen.getByTestId(SIGN_IN_FIELDS.password);
+    expect(emailInput.props.accessibilityLabel).toBe('Электронная почта');
+    expect(passwordInput.props.accessibilityLabel).toBe('Пароль');
     await user.clear(emailInput);
     await user.clear(passwordInput);
     await user.type(emailInput, 'runner@example.test');
