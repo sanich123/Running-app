@@ -2,6 +2,7 @@ import { fireEvent, screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MEDIA_MODERATION_PLACEHOLDER_COPY } from '@S/media-moderation-placeholder/const';
+import { DEFAULT_ACTIVITY_CARD, TEST_URLS } from '@T/mocks/const';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityMediaItem from './activity-media-item';
@@ -24,18 +25,6 @@ jest.mock('@S/custom-image/custom-image', () => ({
   },
 }));
 
-const defaultActivity: ActivityCardData = {
-  date: '2026-08-09T10:00:00.000Z',
-  sport: 'run',
-  id: 'activity-id',
-  userId: 'activity-owner',
-  duration: 0,
-  distance: 0,
-  elevationGain: 0,
-  profile: {},
-  commentsLength: 0,
-};
-
 async function renderActivityMediaItem({
   item,
   activity,
@@ -52,7 +41,7 @@ async function renderActivityMediaItem({
   return await renderWithProviders(
     <ActivityCardContext.Provider
       value={{
-        activity: { ...defaultActivity, ...activity },
+        activity: { ...DEFAULT_ACTIVITY_CARD, ...activity },
         isFullView: false,
         isShowDescription: false,
       }}>
@@ -106,7 +95,7 @@ describe('ActivityMediaItem', () => {
   });
 
   it('updates photo dimensions and opens it with the localized media label', async () => {
-    const photoUrl = 'https://images.example.test/activity-photo.jpg';
+    const photoUrl = TEST_URLS.imageActivityPhoto;
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderActivityMediaItem({
       item: { id: 'photo-id', url: photoUrl, thumbnail: null, blurhash: 'photo-blurhash' },

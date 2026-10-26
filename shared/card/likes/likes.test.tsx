@@ -6,6 +6,7 @@ import { likesApi } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { UserProfileAvatarTestIds } from '@S/avatar/user-profile-avatar/const';
 import { ActivityCardContext } from '@S/card/context';
+import { TEST_URLS } from '@T/mocks/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -70,7 +71,7 @@ describe('Card likes', () => {
         HttpResponse.json([
           {
             authorId: 'someUserId',
-            profile: { name: 'Some', surname: 'User', profilePhoto: 'https://example.com/avatar.jpg' },
+            profile: { name: 'Some', surname: 'User', profilePhoto: TEST_URLS.avatar },
           },
         ]),
       ),

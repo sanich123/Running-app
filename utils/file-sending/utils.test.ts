@@ -1,4 +1,5 @@
 import { errorToast } from '@S/error-toast/error-toast';
+import { TEST_URLS } from '@T/mocks/const';
 import {
   compressMediaFile,
   createVideoThumbnail,
@@ -57,13 +58,13 @@ describe('uploadMediaWithThumbnail', () => {
     };
     mockCompressMediaFile.mockResolvedValue(compressedFile);
     mockUploadMediaFile.mockResolvedValue({
-      url: 'https://cdn/photo.jpg',
+      url: TEST_URLS.cdnPhoto,
       key: 'photo.jpg',
       contentType: 'image/jpeg',
     });
 
     await expect(uploadMediaWithThumbnail('photo.jpg', { scope: 'activity' }, 'Upload failed')).resolves.toEqual({
-      url: 'https://cdn/photo.jpg',
+      url: TEST_URLS.cdnPhoto,
       thumbnail: null,
       contentType: 'image/jpeg',
     });
@@ -87,14 +88,14 @@ describe('uploadMediaWithThumbnail', () => {
     };
     mockCompressMediaFile.mockResolvedValueOnce(compressedVideo).mockResolvedValueOnce(compressedThumbnail);
     mockUploadMediaFile
-      .mockResolvedValueOnce({ url: 'https://cdn/video.mp4', key: 'video.mp4', contentType: 'video/mp4' })
-      .mockResolvedValueOnce({ url: 'https://cdn/thumbnail.jpg', key: 'thumbnail.jpg', contentType: 'image/jpeg' });
+      .mockResolvedValueOnce({ url: TEST_URLS.cdnVideo, key: 'video.mp4', contentType: 'video/mp4' })
+      .mockResolvedValueOnce({ url: TEST_URLS.cdnThumbnail, key: 'thumbnail.jpg', contentType: 'image/jpeg' });
     mockCreateVideoThumbnail.mockResolvedValue('thumbnail.jpg');
     const options = { scope: 'feedback' as const, feedbackId: 'feedback-id' };
 
     await expect(uploadMediaWithThumbnail('video.mp4', options, 'Upload failed')).resolves.toEqual({
-      url: 'https://cdn/video.mp4',
-      thumbnail: 'https://cdn/thumbnail.jpg',
+      url: TEST_URLS.cdnVideo,
+      thumbnail: TEST_URLS.cdnThumbnail,
       contentType: 'video/mp4',
     });
     expect(mockUploadMediaFile).toHaveBeenNthCalledWith(1, compressedVideo, options);
@@ -106,13 +107,13 @@ describe('uploadMediaWithThumbnail', () => {
       .mockResolvedValueOnce(compressedVideo())
       .mockResolvedValueOnce(compressedImage('thumbnail.jpg'));
     mockUploadMediaFile
-      .mockResolvedValueOnce({ url: 'https://cdn/video.mp4', key: 'video.mp4', contentType: 'video/mp4' })
+      .mockResolvedValueOnce({ url: TEST_URLS.cdnVideo, key: 'video.mp4', contentType: 'video/mp4' })
       .mockResolvedValueOnce({ assetId: 'rejected-thumbnail', status: 'queued', contentType: 'image/jpeg' });
     mockCreateVideoThumbnail.mockResolvedValue('thumbnail.jpg');
     mockWaitForMediaUploadReview
       .mockResolvedValueOnce([
         {
-          url: 'https://cdn/video.mp4',
+          url: TEST_URLS.cdnVideo,
           key: 'video.mp4',
           contentType: 'video/mp4',
         },
@@ -126,7 +127,7 @@ describe('uploadMediaWithThumbnail', () => {
       ]);
 
     await expect(uploadMediaWithThumbnail('video.mp4', { scope: 'feedback' }, 'Upload failed')).resolves.toEqual({
-      url: 'https://cdn/video.mp4',
+      url: TEST_URLS.cdnVideo,
       thumbnail: null,
       contentType: 'video/mp4',
     });
@@ -164,13 +165,13 @@ describe('uploadMediaWithThumbnail', () => {
     mockUploadMediaFile.mockResolvedValue({
       assetId: 'quarantined-asset',
       status: 'queued',
-      previewUrl: 'https://quarantine.example/photo.jpg',
+      previewUrl: TEST_URLS.quarantinePhoto,
       blurhash: 'LKO2?U%2Tw=w]~RBVZRi};RPxuwH',
       contentType: 'image/jpeg',
     });
 
     await expect(uploadMediaWithThumbnail('photo.jpg', { scope: 'activity' }, 'Upload failed')).resolves.toEqual({
-      url: 'https://quarantine.example/photo.jpg',
+      url: TEST_URLS.quarantinePhoto,
       thumbnail: null,
       assetId: 'quarantined-asset',
       blurhash: 'LKO2?U%2Tw=w]~RBVZRi};RPxuwH',
@@ -244,16 +245,16 @@ describe('uploadMediaWithThumbnail', () => {
       .mockResolvedValueOnce(compressedVideo())
       .mockResolvedValueOnce(compressedVideo())
       .mockResolvedValueOnce(null);
-    mockUploadMediaFile.mockResolvedValue({ url: 'https://cdn/video.mp4', key: 'video.mp4', contentType: 'video/mp4' });
+    mockUploadMediaFile.mockResolvedValue({ url: TEST_URLS.cdnVideo, key: 'video.mp4', contentType: 'video/mp4' });
     mockCreateVideoThumbnail.mockResolvedValueOnce(null).mockResolvedValueOnce('thumbnail.jpg');
 
     await expect(uploadMediaWithThumbnail('video.mp4', {}, 'Upload failed')).resolves.toEqual({
-      url: 'https://cdn/video.mp4',
+      url: TEST_URLS.cdnVideo,
       thumbnail: null,
       contentType: 'video/mp4',
     });
     await expect(uploadMediaWithThumbnail('video.mp4', {}, 'Upload failed')).resolves.toEqual({
-      url: 'https://cdn/video.mp4',
+      url: TEST_URLS.cdnVideo,
       thumbnail: null,
       contentType: 'video/mp4',
     });
@@ -265,13 +266,13 @@ describe('uploadMediaWithThumbnail', () => {
     const control: MediaUploadControl = { onProgress };
     mockCompressMediaFile.mockResolvedValue(compressedImage());
     mockUploadMediaFile.mockResolvedValue({
-      url: 'https://cdn/photo.jpg',
+      url: TEST_URLS.cdnPhoto,
       key: 'photo.jpg',
       contentType: 'image/jpeg',
     });
 
     await expect(uploadMediaWithThumbnail('photo.jpg', {}, 'Upload failed', undefined, control)).resolves.toEqual({
-      url: 'https://cdn/photo.jpg',
+      url: TEST_URLS.cdnPhoto,
       thumbnail: null,
       contentType: 'image/jpeg',
     });
@@ -312,14 +313,14 @@ describe('uploadMediaWithThumbnail', () => {
       });
     mockUploadMediaFiles.mockResolvedValue([
       {
-        url: 'https://cdn/one.jpg',
+        url: TEST_URLS.cdnFirstPhoto,
         key: 'one.jpg',
         contentType: 'image/jpeg',
         mediaId: 'media-1',
         role: 'media',
       },
       {
-        url: 'https://cdn/two.jpg',
+        url: TEST_URLS.cdnSecondPhoto,
         key: 'two.jpg',
         contentType: 'image/jpeg',
         mediaId: 'media-2',
@@ -337,8 +338,8 @@ describe('uploadMediaWithThumbnail', () => {
         'Upload failed',
       ),
     ).resolves.toEqual([
-      { url: 'https://cdn/one.jpg', thumbnail: null, contentType: 'image/jpeg' },
-      { url: 'https://cdn/two.jpg', thumbnail: null, contentType: 'image/jpeg' },
+      { url: TEST_URLS.cdnFirstPhoto, thumbnail: null, contentType: 'image/jpeg' },
+      { url: TEST_URLS.cdnSecondPhoto, thumbnail: null, contentType: 'image/jpeg' },
     ]);
     expect(mockUploadMediaFiles).toHaveBeenCalledWith(expect.any(Array), { scope: 'activity' }, [
       { mediaId: 'media-1', role: 'media' },
@@ -366,7 +367,7 @@ describe('uploadMediaWithThumbnail', () => {
     mockUploadMediaFiles
       .mockResolvedValueOnce([
         {
-          url: 'https://cdn/video.mp4',
+          url: TEST_URLS.cdnVideo,
           key: 'video.mp4',
           contentType: 'video/mp4',
           mediaId: 'video-1',
@@ -375,7 +376,7 @@ describe('uploadMediaWithThumbnail', () => {
       ])
       .mockResolvedValueOnce([
         {
-          url: 'https://cdn/video-thumbnail.jpg',
+          url: TEST_URLS.cdnVideoThumbnail,
           key: 'video-thumbnail.jpg',
           contentType: 'image/jpeg',
           mediaId: 'video-1',
@@ -387,8 +388,8 @@ describe('uploadMediaWithThumbnail', () => {
       uploadMediaBatchWithThumbnails([{ fileSrc: 'video.mp4', mediaId: 'video-1' }], {}, 'Upload failed'),
     ).resolves.toEqual([
       {
-        url: 'https://cdn/video.mp4',
-        thumbnail: 'https://cdn/video-thumbnail.jpg',
+        url: TEST_URLS.cdnVideo,
+        thumbnail: TEST_URLS.cdnVideoThumbnail,
         contentType: 'video/mp4',
       },
     ]);
@@ -450,7 +451,7 @@ describe('uploadMediaWithThumbnail', () => {
     mockCompressMediaFile.mockResolvedValue(compressedVideo());
     mockUploadMediaFiles.mockResolvedValue([
       {
-        url: 'https://cdn/video.mp4',
+        url: TEST_URLS.cdnVideo,
         key: 'video.mp4',
         contentType: 'video/mp4',
         mediaId: 'video',
@@ -461,7 +462,7 @@ describe('uploadMediaWithThumbnail', () => {
 
     await expect(
       uploadMediaBatchWithThumbnails([{ fileSrc: 'video.mp4', mediaId: 'video' }], {}, 'Upload failed'),
-    ).resolves.toEqual([{ url: 'https://cdn/video.mp4', thumbnail: null, contentType: 'video/mp4' }]);
+    ).resolves.toEqual([{ url: TEST_URLS.cdnVideo, thumbnail: null, contentType: 'video/mp4' }]);
 
     jest.clearAllMocks();
     const controller = new AbortController();
@@ -496,7 +497,7 @@ describe('uploadMediaWithThumbnail', () => {
     mockUploadMediaFiles
       .mockResolvedValueOnce([
         {
-          url: 'https://cdn/video.mp4',
+          url: TEST_URLS.cdnVideo,
           key: 'video.mp4',
           contentType: 'video/mp4',
           mediaId: 'video',
@@ -508,7 +509,7 @@ describe('uploadMediaWithThumbnail', () => {
 
     await expect(
       uploadMediaBatchWithThumbnails([{ fileSrc: browserVideo, mediaId: 'video' }], {}, 'Upload failed'),
-    ).resolves.toEqual([{ url: 'https://cdn/video.mp4', thumbnail: null, contentType: 'video/mp4' }]);
+    ).resolves.toEqual([{ url: TEST_URLS.cdnVideo, thumbnail: null, contentType: 'video/mp4' }]);
     expect(mockCreateVideoThumbnail).toHaveBeenCalledWith(browserVideo);
     expect(mockUploadMediaFiles).toHaveBeenCalledTimes(2);
   });
@@ -517,12 +518,12 @@ describe('uploadMediaWithThumbnail', () => {
     const browserVideo = { name: 'video.mp4', size: 10, type: 'video/mp4' } as File;
     mockCompressMediaFile.mockResolvedValueOnce(compressedVideo(browserVideo)).mockResolvedValueOnce(compressedImage());
     mockUploadMediaFile
-      .mockResolvedValueOnce({ url: 'https://cdn/video.mp4', key: 'video.mp4', contentType: 'video/mp4' })
+      .mockResolvedValueOnce({ url: TEST_URLS.cdnVideo, key: 'video.mp4', contentType: 'video/mp4' })
       .mockResolvedValueOnce(null);
     mockCreateVideoThumbnail.mockResolvedValue('browser-thumbnail.jpg');
 
     await expect(uploadMediaWithThumbnail(browserVideo, {}, 'Upload failed')).resolves.toEqual({
-      url: 'https://cdn/video.mp4',
+      url: TEST_URLS.cdnVideo,
       thumbnail: null,
       contentType: 'video/mp4',
     });

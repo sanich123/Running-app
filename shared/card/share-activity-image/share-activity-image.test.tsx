@@ -2,6 +2,7 @@ import { createRef, type ComponentRef } from 'react';
 import { screen } from '@testing-library/react-native';
 import type { View } from 'react-native';
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
+import { TEST_URLS } from '@T/mocks/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ShareActivityImage from './share-activity-image';
@@ -14,7 +15,7 @@ describe('share activity image', () => {
         duration={300000}
         date="2026-08-09T10:00:00.000Z"
         title="Утренняя пробежка"
-        mapPhotoUrl="https://example.com/map.jpg"
+        mapPhotoUrl={TEST_URLS.exampleMapPhoto}
         mapPhotoUrlBlurhash="map-blurhash"
         emotion={EMOTIONS_BTNS_VALUES.good}
         elevationGain={208}
@@ -29,7 +30,7 @@ describe('share activity image', () => {
       />,
     );
 
-    const map = screen.getByTestId('https://example.com/map.jpg');
+    const map = screen.getByTestId(TEST_URLS.exampleMapPhoto);
     expect(map).toBeOnTheScreen();
     expect(screen.getByTestId('share-map-section')).toHaveStyle({ aspectRatio: 5 / 3, width: '100%' });
     expect(map.props.priority).toBe('low');

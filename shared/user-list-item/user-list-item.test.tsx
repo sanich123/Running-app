@@ -4,6 +4,7 @@ import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { UserProfileAvatarTestIds } from '@S/avatar/user-profile-avatar/const';
 import { FOLLOW_UNFOLLOW_BTN } from '@S/user-list-item/follow-unfollow-btn/const';
+import { TEST_URLS } from '@T/mocks/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -38,7 +39,7 @@ describe('User list item', () => {
   it('renders profile photos through the cached image loader', async () => {
     mockStore.dispatch(setMockUserId('avatar-owner'));
     await renderWithProviders(
-      <UserListItem name="Runner" surname="One" profilePhoto="https://example.com/avatar.jpg" userId="avatar-owner" />,
+      <UserListItem name="Runner" surname="One" profilePhoto={TEST_URLS.avatar} userId="avatar-owner" />,
       { store: mockStore },
     );
 

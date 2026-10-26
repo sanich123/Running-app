@@ -1,4 +1,5 @@
 import { act, render, waitFor } from '@testing-library/react-native';
+import { TEST_URLS } from '@T/mocks/const';
 import UserAvatar from './user-avatar';
 import { getAvatarLabel } from './utils';
 
@@ -32,22 +33,14 @@ describe('user avatar', () => {
   });
 
   it('renders a profile photo through CustomImage', async () => {
-    const result = await render(
-      <UserAvatar size={40} profilePhoto="https://example.com/avatar.jpg" testID="avatar-image" />,
-    );
+    const result = await render(<UserAvatar size={40} profilePhoto={TEST_URLS.avatar} testID="avatar-image" />);
 
-    expect(result.getByTestId('avatar-image').props.source).toEqual({ uri: 'https://example.com/avatar.jpg' });
+    expect(result.getByTestId('avatar-image').props.source).toEqual({ uri: TEST_URLS.avatar });
   });
 
   it('shows the user initials when the profile photo cannot be loaded', async () => {
     const result = await render(
-      <UserAvatar
-        size={40}
-        name="Eliud"
-        surname="Kipchoge"
-        profilePhoto="https://example.com/avatar.jpg"
-        testID="avatar-image"
-      />,
+      <UserAvatar size={40} name="Eliud" surname="Kipchoge" profilePhoto={TEST_URLS.avatar} testID="avatar-image" />,
     );
 
     expect(result.getByTestId('avatar-image').props.onError).toBeDefined();
@@ -58,12 +51,7 @@ describe('user avatar', () => {
 
   it('clips custom profile photos to the avatar shape', async () => {
     const result = await render(
-      <UserAvatar
-        size={40}
-        profilePhoto="https://example.com/avatar.jpg"
-        placeholder="blurhash"
-        testID="custom-avatar-image"
-      />,
+      <UserAvatar size={40} profilePhoto={TEST_URLS.avatar} placeholder="blurhash" testID="custom-avatar-image" />,
     );
     expect(result.getByTestId('custom-avatar-image').props.style).toEqual([
       { overflow: 'hidden' },

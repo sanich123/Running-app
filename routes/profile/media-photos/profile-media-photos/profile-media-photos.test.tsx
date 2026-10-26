@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { getErrorMessageFromError } from '@S/error-toast/error-toast';
+import { TEST_URLS } from '@T/mocks/const';
 import { BAD_REQUEST } from '@T/mocks/mock-requests';
 import { BASE_URL } from '@T/utils/handlers';
 import { setMockUserId, mockStore } from '@T/utils/mock-store';
@@ -61,7 +62,7 @@ describe('Profile media photos', () => {
   it('offers media deletion after a long press only to the profile owner', async () => {
     const mediaId = 'media-id';
     const activityId = 'activity-id';
-    const mediaUrl = 'https://images.example.test/profile-photo.jpg';
+    const mediaUrl = TEST_URLS.profilePhoto;
     let deleteCalls = 0;
     server.use(
       http.get(`${BASE_URL}/activity/someUserId/media`, () =>
@@ -104,7 +105,7 @@ describe('Profile media photos', () => {
     server.use(
       http.get(`${BASE_URL}/activity/someUserId/media`, () =>
         HttpResponse.json({
-          media: [{ id: mediaId, activityId: 'activity-id', url: 'https://images.example.test/profile-photo.jpg' }],
+          media: [{ id: mediaId, activityId: 'activity-id', url: TEST_URLS.profilePhoto }],
           hasMore: false,
           nextCursor: null,
           isLastPage: true,

@@ -1,5 +1,6 @@
 import { MEDIA_UPLOAD_REQUEST_TIMEOUT } from '@R/runich-api/const';
 import { resetAuthSlice, setAuthTokens } from '@R/slices/auth/auth';
+import { TEST_URLS } from '@T/mocks/const';
 import { mockStore } from '@T/utils/mock-store';
 import { photosApi } from './photos';
 
@@ -13,7 +14,11 @@ class MockXMLHttpRequest {
   static lastRequest: MockXMLHttpRequest | undefined;
   upload: { onprogress: ((event: ProgressEventLike) => void) | null } = { onprogress: null };
   status = 200;
-  responseText = '{"url":"https://cdn.example/photo.jpg","key":"photo.jpg","contentType":"image/jpeg"}';
+  responseText = JSON.stringify({
+    url: TEST_URLS.cdnExamplePhoto,
+    key: 'photo.jpg',
+    contentType: 'image/jpeg',
+  });
   timeout = 0;
   open = jest.fn();
   setRequestHeader = jest.fn();
@@ -68,7 +73,7 @@ describe('photo upload XHR transport', () => {
 
     request!.onload?.();
     await expect(pendingUpload.unwrap()).resolves.toEqual({
-      url: 'https://cdn.example/photo.jpg',
+      url: TEST_URLS.cdnExamplePhoto,
       key: 'photo.jpg',
       contentType: 'image/jpeg',
     });
@@ -82,7 +87,7 @@ describe('photo upload XHR transport', () => {
 
     expect(request.setRequestHeader).not.toHaveBeenCalledWith('authorization', expect.any(String));
     request.onload?.();
-    await expect(pendingUpload.unwrap()).resolves.toMatchObject({ url: 'https://cdn.example/photo.jpg' });
+    await expect(pendingUpload.unwrap()).resolves.toMatchObject({ url: TEST_URLS.cdnExamplePhoto });
   });
 
   it('returns parsed server errors and preserves non-JSON response text', async () => {

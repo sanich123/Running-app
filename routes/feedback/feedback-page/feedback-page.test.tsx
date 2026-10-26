@@ -2,6 +2,7 @@ import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { TEST_URLS } from '@T/mocks/const';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { uploadFeedbackAttachments } from '@U/feedback-sending';
@@ -34,11 +35,11 @@ describe('feedback attachments', () => {
   it('shows previews for uploaded files, hides their URLs, and keeps links in the email request', async () => {
     const user = userEvent.setup();
     const firstAttachment = {
-      url: 'https://stage-cdn.example/feedback/photo.webp',
+      url: TEST_URLS.stageFeedbackPhoto,
       thumbnail: null,
     };
     const secondAttachment = {
-      url: 'https://stage-cdn.example/feedback/photo-2.webp',
+      url: TEST_URLS.stageFeedbackSecondPhoto,
       thumbnail: null,
     };
     const mockSendFeedback = jest.fn(() => ({
@@ -47,8 +48,8 @@ describe('feedback attachments', () => {
     mockGetAccessToGallery.mockResolvedValue({
       canceled: false,
       assets: [
-        { uri: 'file://photo.webp', fileName: 'photo.webp', mimeType: 'image/webp' },
-        { uri: 'file://photo-2.webp', fileName: 'photo-2.webp', mimeType: 'image/webp' },
+        { uri: TEST_URLS.feedbackPhotoFileUri, fileName: 'photo.webp', mimeType: 'image/webp' },
+        { uri: TEST_URLS.feedbackSecondPhotoFileUri, fileName: 'photo-2.webp', mimeType: 'image/webp' },
       ],
     });
     mockUploadFeedbackAttachments.mockResolvedValue([firstAttachment, secondAttachment]);
@@ -106,12 +107,12 @@ describe('feedback attachments', () => {
     expect(mockUploadFeedbackAttachments).toHaveBeenCalledWith(
       [
         {
-          fileSrc: 'file://photo.webp',
+          fileSrc: TEST_URLS.feedbackPhotoFileUri,
           metadata: { fileName: 'photo.webp', mimeType: 'image/webp', mediaType: 'image' },
           mediaId: expect.any(String),
         },
         {
-          fileSrc: 'file://photo-2.webp',
+          fileSrc: TEST_URLS.feedbackSecondPhotoFileUri,
           metadata: { fileName: 'photo-2.webp', mimeType: 'image/webp', mediaType: 'image' },
           mediaId: expect.any(String),
         },
@@ -128,7 +129,7 @@ describe('feedback attachments', () => {
     });
     mockGetAccessToGallery.mockResolvedValue({
       canceled: false,
-      assets: [{ uri: 'file://photo.webp', type: 'image' }],
+      assets: [{ uri: TEST_URLS.feedbackPhotoFileUri, type: 'image' }],
     });
     mockUploadFeedbackAttachments.mockReturnValue(uploadPromise);
 
@@ -149,11 +150,11 @@ describe('feedback attachments', () => {
 
     await waitFor(() => expect(screen.getByTestId('feedback-pending-attachment-preview-0')).toBeOnTheScreen());
     expect(screen.getByTestId('feedback-pending-attachment-preview-0').props.source).toEqual({
-      uri: 'file://photo.webp',
+      uri: TEST_URLS.feedbackPhotoFileUri,
     });
 
     await act(async () => {
-      resolveUpload([{ url: 'https://stage-cdn.example/feedback/photo.webp', thumbnail: null }]);
+      resolveUpload([{ url: TEST_URLS.stageFeedbackPhoto, thumbnail: null }]);
     });
     await waitFor(() => expect(screen.getByTestId('feedback-attachment-preview-0')).toBeOnTheScreen());
     expect(screen.queryByTestId('feedback-pending-attachment-preview-0')).not.toBeOnTheScreen();
@@ -225,7 +226,7 @@ describe('feedback attachments', () => {
     let resolveUpload: (attachments: ({ url: string; thumbnail: string | null } | null)[]) => void = () => undefined;
     mockGetAccessToGallery.mockResolvedValue({
       canceled: false,
-      assets: [{ uri: 'file://photo.webp', type: 'image' }],
+      assets: [{ uri: TEST_URLS.feedbackPhotoFileUri, type: 'image' }],
     });
     mockUploadFeedbackAttachments.mockReturnValue(
       new Promise((resolve) => {
@@ -256,7 +257,7 @@ describe('feedback attachments', () => {
     const user = userEvent.setup();
     mockGetAccessToGallery.mockResolvedValue({
       canceled: false,
-      assets: [{ uri: 'file://photo.webp', type: 'image' }],
+      assets: [{ uri: TEST_URLS.feedbackPhotoFileUri, type: 'image' }],
     });
     mockUploadFeedbackAttachments.mockResolvedValue([null]);
 

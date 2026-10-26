@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { errorToast } from '@S/error-toast/error-toast';
+import { TEST_URLS } from '@T/mocks/const';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
@@ -84,7 +85,7 @@ describe('Upload photos btn', () => {
     const user = userEvent.setup();
     const setIsDisabled = jest.fn();
     const setImages = jest.fn();
-    const uploadedImage = { url: 'https://cdn/photo.jpg', thumbnail: null };
+    const uploadedImage = { url: TEST_URLS.cdnPhoto, thumbnail: null };
     (getAccessToGallery as jest.Mock).mockResolvedValue({
       canceled: false,
       assets: [{ uri: 'photo.jpg', fileName: 'photo.jpg', mimeType: 'image/jpeg' }],
@@ -128,7 +129,7 @@ describe('Upload photos btn', () => {
     });
     (uploadActivityMediaBatch as jest.Mock).mockImplementation(async () => {
       wasProcessingActiveDuringUpload = mockStore.getState().activity.activeMediaUploadCount > 0;
-      return [{ url: 'https://cdn/photo.jpg', thumbnail: null }];
+      return [{ url: TEST_URLS.cdnPhoto, thumbnail: null }];
     });
     await renderWithProviders(
       <UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} setImages={setImages} images={[]} />,
@@ -175,7 +176,7 @@ describe('Upload photos btn', () => {
     const user = userEvent.setup();
     const setIsDisabled = jest.fn();
     const setImages = jest.fn();
-    const uploadedImage = { url: 'https://cdn/photo.jpg', thumbnail: null };
+    const uploadedImage = { url: TEST_URLS.cdnPhoto, thumbnail: null };
     let resolveUpload: (value: (typeof uploadedImage)[]) => void = () => undefined;
     let uploadControl: { onProgress?: (progress: number) => void; signal?: AbortSignal } | undefined;
     (getAccessToGallery as jest.Mock).mockResolvedValue({
@@ -212,7 +213,7 @@ describe('Upload photos btn', () => {
     const setIsDisabled = jest.fn();
     const setImages = jest.fn();
     const uploadedImages = [
-      { url: 'https://cdn/photo-1.jpg', thumbnail: null },
+      { url: TEST_URLS.cdnPhotoOne, thumbnail: null },
       { url: 'https://cdn/photo-2.jpg', thumbnail: null },
       { url: 'https://cdn/photo-3.jpg', thumbnail: null },
     ];
@@ -251,7 +252,7 @@ describe('Upload photos btn', () => {
         { uri: 'photo-2.jpg', fileName: 'photo-2.jpg', mimeType: 'image/jpeg' },
       ],
     });
-    (uploadActivityMediaBatch as jest.Mock).mockResolvedValue([{ url: 'https://cdn/photo-1.jpg', thumbnail: null }]);
+    (uploadActivityMediaBatch as jest.Mock).mockResolvedValue([{ url: TEST_URLS.cdnPhotoOne, thumbnail: null }]);
     await renderWithProviders(
       <UploadPhotosBtn
         isDisabled={false}
@@ -283,7 +284,7 @@ describe('Upload photos btn', () => {
   it('persists media to the edited activity and keeps the returned media id', async () => {
     const user = userEvent.setup();
     const setImages = jest.fn();
-    const uploadedMedia = { url: 'https://temporary/photo.jpg', thumbnail: null };
+    const uploadedMedia = { url: TEST_URLS.temporaryPhoto, thumbnail: null };
     const persistedMedia = { id: 'media-id', activityId: 'activity-id', ...uploadedMedia };
     (getAccessToGallery as jest.Mock).mockResolvedValue({
       canceled: false,
@@ -314,7 +315,7 @@ describe('Upload photos btn', () => {
   it('cleans up uploaded temporary files when the activity append fails', async () => {
     const user = userEvent.setup();
     const setImages = jest.fn();
-    const uploadedMedia = { url: 'https://temporary/photo.jpg', thumbnail: 'https://temporary/thumb.jpg' };
+    const uploadedMedia = { url: TEST_URLS.temporaryPhoto, thumbnail: 'https://temporary/thumb.jpg' };
     (getAccessToGallery as jest.Mock).mockResolvedValue({
       canceled: false,
       assets: [{ uri: 'photo.jpg', fileName: 'photo.jpg', mimeType: 'image/jpeg' }],

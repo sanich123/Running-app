@@ -5,6 +5,7 @@ import {
   useGetActivityByActivityIdQuery,
   useGetAllActivityMediaByUserIdInfiniteQuery,
 } from '@R/services/activity/activity';
+import { TEST_URLS } from '@T/mocks/const';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import PhotoViewer from './photo-viewer';
@@ -60,19 +61,19 @@ describe('photo viewer', () => {
 
   it('decodes a web image URL before rendering it', async () => {
     mockUseLocalSearchParams.mockReturnValue({
-      photoUrl: encodeURIComponent('https://cdn.example.com/run.jpg'),
+      photoUrl: encodeURIComponent(TEST_URLS.routeRunPhoto),
       blurhash: 'photo-blurhash',
     });
     await renderWithProviders(<PhotoViewer />);
     const image = screen.getByTestId('photo-viewer-image');
-    expect(image).toHaveTextContent('https://cdn.example.com/run.jpg');
+    expect(image).toHaveTextContent(TEST_URLS.routeRunPhoto);
     expect(image).toHaveProp('placeholder', 'photo-blurhash');
   });
 
   it('renders video URLs with the video viewer', async () => {
-    mockUseLocalSearchParams.mockReturnValue({ photoUrl: 'https://cdn.example.com/run.mp4' });
+    mockUseLocalSearchParams.mockReturnValue({ photoUrl: TEST_URLS.routeRunVideo });
     await renderWithProviders(<PhotoViewer />);
-    expect(screen.getByTestId('photo-viewer-video')).toHaveTextContent('https://cdn.example.com/run.mp4');
+    expect(screen.getByTestId('photo-viewer-video')).toHaveTextContent(TEST_URLS.routeRunVideo);
     expect(screen.queryByTestId('photo-viewer-image')).not.toBeOnTheScreen();
   });
 
@@ -88,7 +89,7 @@ describe('photo viewer', () => {
       data: {
         mapPhotoUrl: 'https://cdn.example.com/map.jpg',
         media: [
-          { url: 'https://cdn.example.com/run.jpg', blurhash: 'blurhash' },
+          { url: TEST_URLS.routeRunPhoto, blurhash: 'blurhash' },
           { url: 'mp4', blurhash: null },
         ],
       },
@@ -99,7 +100,7 @@ describe('photo viewer', () => {
 
     expect(screen.getByTestId('photo-viewer-pager').props.initialPage).toBe(1);
     expect(screen.getAllByTestId('photo-viewer-image').map((element) => element.props.children)).toContain(
-      'https://cdn.example.com/run.jpg',
+      TEST_URLS.routeRunPhoto,
     );
     const video = screen.getByTestId('photo-viewer-video');
     expect(video.props.children).toBe('mp4');
@@ -163,7 +164,7 @@ describe('photo viewer', () => {
         pages: [
           {
             media: [
-              { url: 'https://cdn.example.com/photo.jpg', blurhash: 'blurhash' },
+              { url: TEST_URLS.routePhoto, blurhash: 'blurhash' },
               { url: 'webm', blurhash: null },
             ],
             hasMore: false,
@@ -179,7 +180,7 @@ describe('photo viewer', () => {
 
     expect(screen.getByTestId('photo-viewer-pager').props.initialPage).toBe(0);
     expect(screen.getAllByTestId('photo-viewer-image').map((element) => element.props.children)).toContain(
-      'https://cdn.example.com/photo.jpg',
+      TEST_URLS.routePhoto,
     );
     expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain('webm');
   });
@@ -208,7 +209,7 @@ describe('photo viewer', () => {
     mockUseActivity.mockReturnValue({
       data: {
         userId: 'photo-owner',
-        media: [{ url: 'https://cdn.example.com/review.jpg', mediaReviewStatus: 'review_required' }],
+        media: [{ url: TEST_URLS.reviewPhoto, mediaReviewStatus: 'review_required' }],
       },
     });
 
@@ -227,7 +228,7 @@ describe('photo viewer', () => {
     mockUseActivity.mockReturnValue({
       data: {
         userId: 'photo-owner',
-        media: [{ url: 'https://cdn.example.com/review.jpg', mediaReviewStatus: 'review_required' }],
+        media: [{ url: TEST_URLS.reviewPhoto, mediaReviewStatus: 'review_required' }],
       },
     });
     await act(async () => mockStore.dispatch(setMockUserId('photo-owner')));

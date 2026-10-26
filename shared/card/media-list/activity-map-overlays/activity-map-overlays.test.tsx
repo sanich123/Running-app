@@ -1,5 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
+import { DEFAULT_ACTIVITY_CARD } from '@T/mocks/const';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityMapOverlays from './activity-map-overlays';
@@ -12,23 +13,11 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
-const defaultActivity: ActivityCardData = {
-  date: '2026-08-09T10:00:00.000Z',
-  sport: 'run',
-  id: 'activity-id',
-  userId: 'activity-owner',
-  duration: 0,
-  distance: 0,
-  elevationGain: 0,
-  profile: {},
-  commentsLength: 0,
-};
-
 async function renderActivityMapOverlays(activity: Partial<ActivityCardData> = {}) {
   return await renderWithProviders(
     <ActivityCardContext.Provider
       value={{
-        activity: { ...defaultActivity, ...activity },
+        activity: { ...DEFAULT_ACTIVITY_CARD, ...activity },
         isFullView: false,
         isShowDescription: false,
       }}>

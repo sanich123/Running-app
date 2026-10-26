@@ -1,17 +1,27 @@
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { errorToast } from '@S/error-toast/error-toast';
+import { TEST_URLS } from '@T/mocks/const';
 import useReplayVideoRecorder from './recording-view/use-replay-video-recorder';
 import useVideoExport from './use-video-export';
 import type { ReplayExportPlayback, ReplayRecordOptions, ReplayVideoRecorder } from './types';
 
-jest.mock('expo-file-system', () => ({
-  File: jest.fn().mockImplementation((path: string | { uri: string }, fileName?: string) => {
-    const basePath = typeof path === 'string' ? path : path.uri;
-    const uri = fileName ? `${basePath}/${fileName}` : basePath;
-    return { uri: uri.startsWith('file://') ? uri : `file://${uri}`, size: 1536, delete: jest.fn() };
-  }),
-  Paths: { cache: { uri: 'file:///cache' } },
-}));
+jest.mock('expo-file-system', () => {
+  const { TEST_URLS } = jest.requireActual<{
+    TEST_URLS: { cacheDirectoryFileUri: string; fileUriScheme: string };
+  }>('@T/mocks/const');
+  return {
+    File: jest.fn().mockImplementation((path: string | { uri: string }, fileName?: string) => {
+      const basePath = typeof path === 'string' ? path : path.uri;
+      const uri = fileName ? `${basePath}/${fileName}` : basePath;
+      return {
+        uri: uri.startsWith(TEST_URLS.fileUriScheme) ? uri : `${TEST_URLS.fileUriScheme}${uri}`,
+        size: 1536,
+        delete: jest.fn(),
+      };
+    }),
+    Paths: { cache: { uri: TEST_URLS.cacheDirectoryFileUri } },
+  };
+});
 jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(), shareAsync: jest.fn() }));
 jest.mock('./recording-view/use-replay-video-recorder', () => ({ __esModule: true, default: jest.fn() }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
@@ -134,10 +144,10 @@ describe('route video export hook', () => {
     expect(playback.setVideoFrameProgress).toHaveBeenNthCalledWith(4, 1, 1000 / 24);
     expect(playback.restoreAfterVideoRecording).toHaveBeenCalledWith(0.35, true, false);
     expect(result.current.isExporting).toBe(false);
-    expect(result.current.readyVideo).toEqual({ uri: 'file:///cache/workout.mp4', size: '2 KB' });
+    expect(result.current.readyVideo).toEqual({ uri: TEST_URLS.cachedWorkoutVideoFileUri, size: '2 KB' });
     await act(async () => result.current.shareReadyVideo());
     expect(result.current.readyVideo).toBeNull();
-    expect(mockSharing.shareAsync).toHaveBeenCalledWith('file:///cache/workout.mp4', {
+    expect(mockSharing.shareAsync).toHaveBeenCalledWith(TEST_URLS.cachedWorkoutVideoFileUri, {
       mimeType: 'video/mp4',
       UTI: 'public.mpeg-4',
       dialogTitle: copy.shareVideo,

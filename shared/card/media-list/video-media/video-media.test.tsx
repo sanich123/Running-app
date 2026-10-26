@@ -1,5 +1,6 @@
 import { fireEvent, screen, userEvent } from '@testing-library/react-native';
 import * as ExpoVideo from 'expo-video';
+import { TEST_URLS } from '@T/mocks/const';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { formatVideoDuration } from '../const';
 import VideoMedia from './video-media';
@@ -163,7 +164,7 @@ describe('VideoMedia', () => {
     const video = await renderWithProviders(
       <VideoPlaybackProvider>
         <VideoMedia
-          url="https://images.example.test/focus.mp4"
+          url={TEST_URLS.focusVideo}
           thumbnail={null}
           width={320}
           height={220}
@@ -183,7 +184,7 @@ describe('VideoMedia', () => {
     await video.rerender(
       <VideoPlaybackProvider>
         <VideoMedia
-          url="https://images.example.test/focus.mp4"
+          url={TEST_URLS.focusVideo}
           thumbnail={null}
           width={320}
           height={220}

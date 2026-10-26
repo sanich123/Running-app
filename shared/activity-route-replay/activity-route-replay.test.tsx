@@ -4,6 +4,7 @@ import { useKeepAwake } from 'expo-keep-awake';
 import { Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { TEST_URLS } from '@T/mocks/const';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityRouteReplay from './activity-route-replay';
@@ -77,13 +78,13 @@ describe('activity route replay controls', () => {
     await renderWithProviders(
       <ActivityRouteReplay
         locations={locations}
-        profile={{ name: 'Run', surname: 'User', profilePhoto: 'https://example.test/avatar.jpg' }}
+        profile={{ name: 'Run', surname: 'User', profilePhoto: TEST_URLS.exampleTestAvatar }}
       />,
     );
 
     expect(screen.getByTestId('activity-route-moving-marker')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-route-moving-avatar').props.source).toEqual({
-      uri: 'https://example.test/avatar.jpg',
+      uri: TEST_URLS.exampleTestAvatar,
     });
   });
 });

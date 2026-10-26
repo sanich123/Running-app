@@ -1,4 +1,5 @@
 import { backgroundUpload, cancelUpload, UploadType } from 'react-native-compressor';
+import { TEST_URLS } from '@T/mocks/const';
 import { nativeArchiveUploadTransport, webArchiveUploadTransport } from './upload-transport';
 import { MigrationArchiveCancelledError } from './utils';
 import type { ArchiveUploadRequest } from './upload-transport';
@@ -25,9 +26,9 @@ interface MockXhr {
 }
 
 const createRequest = (overrides: Partial<ArchiveUploadRequest> = {}): ArchiveUploadRequest => ({
-  url: 'https://api.example/archive',
+  url: TEST_URLS.archiveEndpoint,
   accessToken: 'token',
-  fileUri: 'file:///archive.zip',
+  fileUri: TEST_URLS.archiveFileUri,
   file: new Blob(['archive']),
   onProgress: jest.fn(),
   onCancelReady: jest.fn(),
@@ -82,8 +83,8 @@ describe('archive upload transports', () => {
     expect(UploadType.BINARY_CONTENT).toBe(0);
     expect(result).toEqual({ status: 0, body: '' });
     expect(backgroundUpload).toHaveBeenCalledWith(
-      'https://api.example/archive',
-      'file:///archive.zip',
+      TEST_URLS.archiveEndpoint,
+      TEST_URLS.archiveFileUri,
       expect.objectContaining({ headers: { authorization: 'Bearer token' } }),
       expect.any(Function),
     );
@@ -94,7 +95,7 @@ describe('archive upload transports', () => {
   it('reports only computable web progress and ignores duplicate completion events', async () => {
     const onProgress = jest.fn();
     const pending = webArchiveUploadTransport.upload(createRequest({ onProgress }));
-    expect(xhr.open).toHaveBeenCalledWith('POST', 'https://api.example/archive');
+    expect(xhr.open).toHaveBeenCalledWith('POST', TEST_URLS.archiveEndpoint);
     expect(xhr.setRequestHeader).toHaveBeenCalledWith('authorization', 'Bearer token');
     expect(xhr.setRequestHeader).toHaveBeenCalledWith('content-type', 'application/zip');
     expect(xhr.send).toHaveBeenCalled();

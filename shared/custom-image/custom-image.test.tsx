@@ -1,6 +1,7 @@
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { Image } from 'expo-image';
 import { Platform } from 'react-native';
+import { TEST_URLS } from '@T/mocks/const';
 import CustomImage from './custom-image';
 
 describe('custom image', () => {
@@ -8,7 +9,7 @@ describe('custom image', () => {
     const result = await render(
       <CustomImage
         testID="custom-image"
-        source={{ uri: 'https://example.com/photo.jpg' }}
+        source={{ uri: TEST_URLS.exampleComPhoto }}
         contentFit="cover"
         placeholder="blurhash"
         priority="high"
@@ -18,7 +19,7 @@ describe('custom image', () => {
       />,
     );
     const image = result.getByTestId('custom-image');
-    expect(image.props.source).toEqual({ uri: 'https://example.com/photo.jpg' });
+    expect(image.props.source).toEqual({ uri: TEST_URLS.exampleComPhoto });
     expect(image.props.contentFit).toBe('cover');
     expect(image.props.placeholder).toBe('blurhash:/blurhash');
     expect(image.props.placeholderContentFit).toBe('cover');
@@ -32,7 +33,7 @@ describe('custom image', () => {
     const result = await render(
       <CustomImage
         testID="custom-image-explicit"
-        source={{ uri: 'https://example.com/photo.jpg' }}
+        source={{ uri: TEST_URLS.exampleComPhoto }}
         contentFit="cover"
         placeholder="blurhash"
         placeholderContentFit="contain"
@@ -74,7 +75,7 @@ describe('custom image', () => {
       const result = await render(
         <CustomImage
           testID="custom-image-loading"
-          source={{ uri: 'https://example.com/slow-photo.jpg' }}
+          source={{ uri: TEST_URLS.exampleSlowPhoto }}
           placeholder="blurhash"
           cachePolicy="memory-disk"
           style={{ width: 100, height: 100 }}
@@ -82,7 +83,7 @@ describe('custom image', () => {
       );
 
       const image = result.getByTestId('custom-image-loading');
-      expect(image.props.source).toEqual({ uri: 'https://example.com/slow-photo.jpg' });
+      expect(image.props.source).toEqual({ uri: TEST_URLS.exampleSlowPhoto });
       expect(image.props.placeholder).toBe('blurhash:/blurhash');
     } finally {
       getCachePathAsync.mockRestore();

@@ -1,5 +1,6 @@
 import { act, render, screen } from '@testing-library/react-native';
 import { useVideoPlayer } from 'expo-video';
+import { TEST_URLS } from '@T/mocks/const';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActiveVideoPlayer from './active-video-player';
 
@@ -39,7 +40,7 @@ describe('ActiveVideoPlayer', () => {
     const onMetadata = jest.fn();
     await renderWithProviders(
       <ActiveVideoPlayer
-        url="https://cdn.example.test/activity.mp4"
+        url={TEST_URLS.activityVideoPreview}
         isMuted={false}
         isPaused={false}
         onMetadata={onMetadata}
@@ -61,7 +62,7 @@ describe('ActiveVideoPlayer', () => {
       return mockPlayer;
     });
     const rendered = await render(
-      <ActiveVideoPlayer url="https://cdn.example.test/activity.mp4" isMuted isPaused onMetadata={jest.fn()} />,
+      <ActiveVideoPlayer url={TEST_URLS.activityVideoPreview} isMuted isPaused onMetadata={jest.fn()} />,
     );
 
     expect(mockPlayer.pause).toHaveBeenCalled();
