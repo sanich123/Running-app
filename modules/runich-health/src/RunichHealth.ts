@@ -284,10 +284,37 @@ async function readAndroidWorkouts(
         ? readAllRecords('ActiveCaloriesBurned', { timeRangeFilter, ...sourceFilter })
         : Promise.resolve([]),
     ]);
-    const heartRateRecords =
-      heartRatePermissionGranted && matchingHeartRateRecords.length === 0 && session.metadata?.dataOrigin
-        ? await readAllRecords('HeartRate', { timeRangeFilter })
-        : matchingHeartRateRecords;
+    const sessionStart = Date.parse(session.startTime);
+    const sessionEnd = Date.parse(session.endTime);
+    const getSessionHeartRateSamples = (records: RecordResult<'HeartRate'>[]) => {
+      const seenHeartRateSamples = new Set<string>();
+      return records
+        .flatMap(({ samples }) => samples)
+        .map(({ time, beatsPerMinute }) => ({ timestamp: Date.parse(time), beatsPerMinute }))
+        .filter(({ timestamp, beatsPerMinute }) => {
+          if (
+            !Number.isFinite(timestamp) ||
+            timestamp < sessionStart ||
+            timestamp > sessionEnd ||
+            !Number.isFinite(beatsPerMinute) ||
+            beatsPerMinute < 1 ||
+            beatsPerMinute > 300
+          ) {
+            return false;
+          }
+
+          const key = `${timestamp}:${beatsPerMinute}`;
+          if (seenHeartRateSamples.has(key)) return false;
+          seenHeartRateSamples.add(key);
+          return true;
+        })
+        .sort((first, second) => first.timestamp - second.timestamp);
+    };
+    let heartRateSamples = getSessionHeartRateSamples(matchingHeartRateRecords);
+    if (heartRatePermissionGranted && heartRateSamples.length === 0 && session.metadata?.dataOrigin) {
+      const heartRateRecords = await readAllRecords('HeartRate', { timeRangeFilter });
+      heartRateSamples = getSessionHeartRateSamples(heartRateRecords);
+    }
 
     let route = session.exerciseRoute?.route ?? [];
     let routeStatus: WatchWorkoutRouteStatus = route.length > 0 ? 'route-in-record' : 'route-not-provided';
@@ -324,30 +351,6 @@ async function readAndroidWorkouts(
       const calories = record.energy?.inKilocalories;
       return typeof calories === 'number' && Number.isFinite(calories) && calories >= 0 ? total + calories : total;
     }, 0);
-    const sessionStart = Date.parse(session.startTime);
-    const sessionEnd = Date.parse(session.endTime);
-    const seenHeartRateSamples = new Set<string>();
-    const heartRateSamples = heartRateRecords
-      .flatMap(({ samples }) => samples)
-      .map(({ time, beatsPerMinute }) => ({ timestamp: Date.parse(time), beatsPerMinute }))
-      .filter(({ timestamp, beatsPerMinute }) => {
-        if (
-          !Number.isFinite(timestamp) ||
-          timestamp < sessionStart ||
-          timestamp > sessionEnd ||
-          !Number.isFinite(beatsPerMinute) ||
-          beatsPerMinute < 1 ||
-          beatsPerMinute > 300
-        ) {
-          return false;
-        }
-
-        const key = `${timestamp}:${beatsPerMinute}`;
-        if (seenHeartRateSamples.has(key)) return false;
-        seenHeartRateSamples.add(key);
-        return true;
-      })
-      .sort((first, second) => first.timestamp - second.timestamp);
     const fallbackId = `${session.startTime}:${session.endTime}:${session.exerciseType}`;
     const workout: WatchWorkout = {
       source: 'health-connect',
