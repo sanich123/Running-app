@@ -117,6 +117,30 @@ describe('Upload photos btn', () => {
     expect(mockStore.getState().activity.media).toContainEqual(uploadedImage);
   });
 
+  it('marks media processing as active until compression and upload finish', async () => {
+    const user = userEvent.setup();
+    const setIsDisabled = jest.fn();
+    const setImages = jest.fn();
+    let wasProcessingActiveDuringUpload = false;
+    (getAccessToGallery as jest.Mock).mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'photo.jpg', fileName: 'photo.jpg', mimeType: 'image/jpeg' }],
+    });
+    (uploadActivityMediaBatch as jest.Mock).mockImplementation(async () => {
+      wasProcessingActiveDuringUpload = mockStore.getState().activity.activeMediaUploadCount > 0;
+      return [{ url: 'https://cdn/photo.jpg', thumbnail: null }];
+    });
+    await renderWithProviders(
+      <UploadPhotosBtn isDisabled={false} setIsDisabled={setIsDisabled} setImages={setImages} images={[]} />,
+      { store: mockStore },
+    );
+
+    await user.press(screen.getByTestId('upload-gallery-button'));
+    await waitFor(() => expect(uploadActivityMediaBatch).toHaveBeenCalled());
+    await waitFor(() => expect(mockStore.getState().activity.activeMediaUploadCount).toBe(0));
+    expect(wasProcessingActiveDuringUpload).toBe(true);
+  });
+
   it('preserves a selected video as video media during upload', async () => {
     const user = userEvent.setup();
     const setIsDisabled = jest.fn();

@@ -5,6 +5,7 @@ import {
   useGetActivityByActivityIdQuery,
   useGetAllActivityMediaByUserIdInfiniteQuery,
 } from '@R/services/activity/activity';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import PhotoViewer from './photo-viewer';
 import type { MockNativeViewProps } from '@T/utils/mock-native-view';
@@ -195,5 +196,42 @@ describe('photo viewer', () => {
     await renderWithProviders(<PhotoViewer />);
 
     expect(screen.queryByTestId('photo-viewer-pager')).not.toBeOnTheScreen();
+  });
+
+  it('shows activity media stage icons to viewers', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    mockUseLocalSearchParams.mockReturnValue({
+      photoUrl: '550e8400-e29b-41d4-a716-446655440000',
+      indexOfPhoto: '0',
+    });
+    mockUsePhotos.mockReturnValue({ data: undefined, fetchNextPage: jest.fn(), isFetching: false });
+    mockUseActivity.mockReturnValue({
+      data: {
+        userId: 'photo-owner',
+        media: [{ url: 'https://cdn.example.com/review.jpg', mediaReviewStatus: 'review_required' }],
+      },
+    });
+
+    await act(async () => mockStore.dispatch(setMockUserId('viewer-id')));
+    await renderWithProviders(<PhotoViewer />);
+    expect(screen.getByTestId('media-moderation-placeholder')).toBeOnTheScreen();
+  });
+
+  it('hides activity media stage icons from the owner in the photo viewer', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    mockUseLocalSearchParams.mockReturnValue({
+      photoUrl: '550e8400-e29b-41d4-a716-446655440000',
+      indexOfPhoto: '0',
+    });
+    mockUsePhotos.mockReturnValue({ data: undefined, fetchNextPage: jest.fn(), isFetching: false });
+    mockUseActivity.mockReturnValue({
+      data: {
+        userId: 'photo-owner',
+        media: [{ url: 'https://cdn.example.com/review.jpg', mediaReviewStatus: 'review_required' }],
+      },
+    });
+    await act(async () => mockStore.dispatch(setMockUserId('photo-owner')));
+    await renderWithProviders(<PhotoViewer />);
+    expect(screen.queryByTestId('media-moderation-placeholder')).not.toBeOnTheScreen();
   });
 });

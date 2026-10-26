@@ -12,6 +12,8 @@ export interface ProfileSettings {
   age?: string;
   bio?: string;
   profilePhoto?: string;
+  profilePhotoAssetId?: string;
+  profilePhotoBlurhash?: string | null;
   email?: string;
   birthday?: string;
   sport?: string;

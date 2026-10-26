@@ -2,9 +2,9 @@ import { LANGUAGES } from '@const/enums';
 
 export const MEDIA_MODERATION_PLACEHOLDER_COPY = {
   [LANGUAGES.russian]: {
-    queued: 'Ожидает проверки',
-    processing: 'Проверяем медиа',
-    reviewRequired: 'Находится на модерации',
+    queued: 'Фото в очереди обработки',
+    processing: 'Фото обрабатывается',
+    reviewRequired: 'Фото на модерации',
     approved: 'Готовим медиа',
     rejected: 'Медиа не прошло проверку',
     failed: 'Не удалось проверить медиа',
@@ -12,9 +12,9 @@ export const MEDIA_MODERATION_PLACEHOLDER_COPY = {
     retry: 'Файл пока не опубликован. Попробуйте загрузить его ещё раз.',
   },
   [LANGUAGES.english]: {
-    queued: 'Waiting for review',
-    processing: 'Checking media',
-    reviewRequired: 'Under moderation',
+    queued: 'Photo is queued for processing',
+    processing: 'Photo is processing',
+    reviewRequired: 'Photo is under moderation',
     approved: 'Preparing media',
     rejected: 'Media did not pass review',
     failed: 'Could not check media',

@@ -11,9 +11,9 @@ import {
 } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ActivityMediaDeleteBtn from '@S/activity-media/activity-media-delete-btn/activity-media-delete-btn';
-import CustomImage from '@S/custom-image/custom-image';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
+import MediaThumbnail from '@S/media-thumbnail/media-thumbnail';
 import useLongPressGuard from '@S/pressable/use-long-press-guard';
 import { MEDIA_GRID_PAGE_SIZE } from '../../../media-grid/const';
 import { PROFILE_MEDIA } from '../const';
@@ -73,7 +73,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
       )}
       {visibleMedia.length > 0 &&
         visibleMedia.map((item: ActivityMediaItem, index: number) => {
-          const { id, activityId, url, thumbnail, blurhash } = item;
+          const { id, activityId, url, thumbnail, blurhash, contentType } = item;
           const canDeleteMedia = Boolean(isOwnProfile && id && activityId);
           if (index === 3) {
             return (
@@ -106,10 +106,11 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                     disabled={isError || isLoading || selectedMediaId === id}
                     borderless>
                     {url ? (
-                      <CustomImage
+                      <MediaThumbnail
                         style={{ width: widthOfScreen / 4, height: widthOfScreen / 4 }}
-                        source={{ uri: thumbnail || url }}
-                        contentFit="cover"
+                        mediaUrl={url}
+                        thumbnail={thumbnail}
+                        isVideo={contentType?.startsWith('video/') || undefined}
                         placeholder={blurhash}
                       />
                     ) : (
@@ -119,11 +120,11 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                         borderRadius={10}
                         compact
                         hideTitle={widthOfScreen / 4 < 130}
+                        showStatus={false}
                       />
                     )}
                   </TouchableRipple>
-                  {url &&
-                  canDeleteMedia &&
+                  {!isOwnProfile &&
                   item.mediaReviewStatus &&
                   item.mediaReviewStatus !== 'approved' &&
                   item.mediaReviewStatus !== 'rejected' ? (
@@ -177,10 +178,11 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                 disabled={isError || isLoading || selectedMediaId === id}
                 borderless>
                 {url ? (
-                  <CustomImage
+                  <MediaThumbnail
                     style={{ width: widthOfScreen / 4, height: widthOfScreen / 4 }}
-                    source={{ uri: thumbnail || url }}
-                    contentFit="cover"
+                    mediaUrl={url}
+                    thumbnail={thumbnail}
+                    isVideo={contentType?.startsWith('video/') || undefined}
                     placeholder={blurhash}
                   />
                 ) : (
@@ -190,11 +192,11 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                     borderRadius={10}
                     compact
                     hideTitle={widthOfScreen / 4 < 130}
+                    showStatus={false}
                   />
                 )}
               </TouchableRipple>
-              {url &&
-              canDeleteMedia &&
+              {!isOwnProfile &&
               item.mediaReviewStatus &&
               item.mediaReviewStatus !== 'approved' &&
               item.mediaReviewStatus !== 'rejected' ? (

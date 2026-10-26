@@ -10,7 +10,7 @@ export const ACTIVITY_ACTIONS_MENU = {
   [LANGUAGES.russian]: {
     edit: 'Редактировать',
     delete: 'Удалить',
-    report: 'Пожаловаться на тренировку',
+    report: 'Сообщить о нарушении',
     accessibilityLabel: 'Действия с тренировкой',
   },
 } as const;

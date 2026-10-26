@@ -217,7 +217,16 @@ describe('file sending', () => {
 
     const thumbnail = await createVideoThumbnail('https://cdn.example/video.mp4');
     expect(thumbnail).toBeNull();
-    expect(errorToast).toHaveBeenCalledWith('Не удалось создать превью видео', expect.anything());
+    expect(errorToast).not.toHaveBeenCalled();
+  });
+
+  it('skips video thumbnail generation on web without reporting an error', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+
+    await expect(createVideoThumbnail('https://cdn.example/video.mp4')).resolves.toBeNull();
+
+    expect(VideoThumbnails.getThumbnailAsync).not.toHaveBeenCalled();
+    expect(errorToast).not.toHaveBeenCalled();
   });
 
   it('creates a video thumbnail as a separate operation', async () => {
@@ -247,7 +256,7 @@ describe('file sending', () => {
     expect(errorToast).toHaveBeenCalledWith('Размер видео должен быть не более 50 МБ');
   });
 
-  it('reports compression, upload and thumbnail errors independently', async () => {
+  it('reports compression and upload errors but treats thumbnail failures as a fallback', async () => {
     const compressionError = new Error('image compression failed');
     (ImageCompressor.compress as jest.Mock).mockRejectedValue(compressionError);
     await expect(compressMediaFile('photo.jpg')).resolves.toBeNull();
@@ -273,7 +282,7 @@ describe('file sending', () => {
     const thumbnailError = new Error('thumbnail failed');
     (VideoThumbnails.getThumbnailAsync as jest.Mock).mockRejectedValue(thumbnailError);
     await expect(createVideoThumbnail('https://cdn.example/video.mp4')).resolves.toBeNull();
-    expect(errorToast).toHaveBeenCalledWith('Не удалось создать превью видео', thumbnailError);
+    expect(errorToast).toHaveBeenCalledTimes(2);
   });
 
   it('uses browser files as-is and reports gallery errors', async () => {

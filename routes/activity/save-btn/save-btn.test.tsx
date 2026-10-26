@@ -2,7 +2,12 @@ import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { LANGUAGES, ROUTES } from '@const/enums';
-import { clearUnsyncedActivities, setFinishedActivity } from '@R/slices/activity/activity';
+import {
+  clearUnsyncedActivities,
+  finishMediaUpload,
+  setFinishedActivity,
+  startMediaUpload,
+} from '@R/slices/activity/activity';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { errorToast } from '@S/error-toast/error-toast';
 import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
@@ -59,6 +64,9 @@ describe('Activity save btn', () => {
     mockReplace.mockClear();
     jest.mocked(errorToast).mockClear();
     mockStore.dispatch(clearUnsyncedActivities());
+    while (mockStore.getState().activity.activeMediaUploadCount > 0) {
+      mockStore.dispatch(finishMediaUpload());
+    }
     mockManualActivityMode = 'tracked';
     mockManualActivityId = 'someId';
     mockManualActivityParams = {
@@ -297,5 +305,18 @@ describe('Activity save btn', () => {
         }),
       );
     });
+  });
+
+  it('disables saving while media is being compressed or uploaded', async () => {
+    mockStore.dispatch(startMediaUpload());
+    mockStore.dispatch(startMediaUpload());
+    mockStore.dispatch(finishMediaUpload());
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+
+    const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
+    expect(saveBtn).toBeDisabled();
+    await userEvent.press(saveBtn);
+    expect(mockBack).not.toHaveBeenCalled();
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 });

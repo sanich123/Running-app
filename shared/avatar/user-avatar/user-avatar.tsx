@@ -18,7 +18,7 @@ export default function UserAvatar({
   recyclingKey,
   transition,
 }: UserAvatarProps) {
-  if (!profilePhoto) {
+  if (!profilePhoto && !placeholder) {
     const label = getAvatarLabel(name, surname);
 
     if (label) {
@@ -33,7 +33,7 @@ export default function UserAvatar({
     cachePolicy ||
     recyclingKey ||
     transition !== undefined ||
-    getProductionBucketFallbackUri(profilePhoto),
+    (profilePhoto ? getProductionBucketFallbackUri(profilePhoto) : null),
   );
   if (shouldUseCustomImage) {
     return (
@@ -43,7 +43,7 @@ export default function UserAvatar({
         source={() => (
           <CustomImage
             style={[styles.image, { width: size, height: size, borderRadius: size / 2 }]}
-            source={{ uri: profilePhoto }}
+            source={{ uri: profilePhoto ?? '' }}
             contentFit="cover"
             placeholder={placeholder}
             cachePolicy={cachePolicy}
@@ -56,7 +56,7 @@ export default function UserAvatar({
     );
   }
 
-  return <Avatar.Image testID={testID} size={size} source={{ uri: profilePhoto }} style={style} />;
+  return <Avatar.Image testID={testID} size={size} source={{ uri: profilePhoto ?? undefined }} style={style} />;
 }
 
 const styles = StyleSheet.create({

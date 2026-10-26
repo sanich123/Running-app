@@ -30,25 +30,17 @@ export default function PreviewImages({
           <PreviewImage
             image={media.thumbnail || media.url}
             mediaUrl={media.url}
+            isVideo={media.contentType?.startsWith('video/') || undefined}
             isDisabled={isDisabled}
             index={index}
             compact={compact}
           />
-          {media.mediaReviewStatus &&
-          media.mediaReviewStatus !== 'approved' &&
-          media.mediaReviewStatus !== 'rejected' ? (
-            <MediaModerationPlaceholder
-              status={media.mediaReviewStatus}
-              compact
-              overlay
-              hideTitle={compact && horizontal}
-            />
-          ) : null}
         </>
       ) : (
         <MediaModerationPlaceholder
           status={media.mediaReviewStatus}
           blurhash={media.blurhash}
+          showStatus={false}
           compact={compact}
           testID={`pending-media-preview-${index}`}
         />

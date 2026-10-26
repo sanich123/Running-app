@@ -54,6 +54,7 @@ export interface ProfileType {
   name?: string | null;
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
+  profilePhotoReviewStatus?: 'queued' | 'processing' | 'review_required' | null;
   sport?: string | null;
   surname?: string | null;
   updatedAt?: string | null;

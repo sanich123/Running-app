@@ -5,7 +5,7 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { compressMediaFile, getAccessToGallery, uploadMediaFile, waitForMediaUploadReview } from '@U/file-sending';
+import { compressMediaFile, getAccessToGallery, uploadMediaFile } from '@U/file-sending';
 import { AvatarEditableTestIds } from '../const';
 import AvatarIconEditable from './avatar-icon-editable';
 
@@ -28,7 +28,6 @@ jest.mock('@U/file-sending', () => ({
   uploadMediaFile: jest.fn(() =>
     Promise.resolve({ url: 'https://images.example.test/avatar.jpg', key: 'avatar.jpg', contentType: 'image/jpeg' }),
   ),
-  waitForMediaUploadReview: jest.fn((uploads) => Promise.resolve(uploads)),
 }));
 
 let userNumber = 0;
@@ -109,139 +108,54 @@ describe('Avatar icon editable', () => {
     expect(setIsDisabled).toHaveBeenLastCalledWith(false);
   });
 
-  it('waits for an avatar to pass moderation before updating the profile photo', async () => {
+  it('links a pending avatar immediately and keeps the owner preview visible', async () => {
     const user = userEvent.setup();
     const userId = setupProfile(MOCK_PROFILE.profilePhoto);
-    const updatedPhoto = 'https://images.example.test/approved-avatar.jpg';
+    const previewPhoto = 'https://images.example.test/pending-avatar-preview.jpg';
+    const pendingBlurhash = 'LKO2?U%2Tw=w]~RBVZRi};RPxuwH';
     let requestBody: unknown;
+    let currentPhoto = MOCK_PROFILE.profilePhoto;
+    let currentBlurhash = MOCK_PROFILE.profilePhotoBlurhash;
     (uploadMediaFile as jest.Mock).mockResolvedValueOnce({
       assetId: 'avatar-asset',
       status: 'queued',
+      blurhash: pendingBlurhash,
       contentType: 'image/jpeg',
     });
-    (waitForMediaUploadReview as jest.Mock).mockResolvedValueOnce([
-      {
-        assetId: 'avatar-asset',
-        status: 'approved',
-        url: updatedPhoto,
-        contentType: 'image/jpeg',
-      },
-    ]);
     server.use(
+      http.get(`${BASE_URL}/user/${userId}/profile`, () =>
+        HttpResponse.json({
+          ...MOCK_PROFILE,
+          userId,
+          profilePhoto: currentPhoto,
+          profilePhotoBlurhash: currentBlurhash,
+          profilePhotoReviewStatus: currentPhoto === previewPhoto ? 'queued' : null,
+        }),
+      ),
       http.patch(`${BASE_URL}/user/${userId}/profile`, async ({ request }) => {
         requestBody = await request.json();
-        return HttpResponse.json({ ...MOCK_PROFILE, userId, profilePhoto: updatedPhoto });
+        currentPhoto = previewPhoto;
+        currentBlurhash = pendingBlurhash;
+        return HttpResponse.json({
+          ...MOCK_PROFILE,
+          userId,
+          profilePhoto: previewPhoto,
+          profilePhotoBlurhash: pendingBlurhash,
+          profilePhotoReviewStatus: 'queued',
+        });
       }),
     );
 
     await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />);
     await user.press(await screen.findByTestId(AvatarEditableTestIds.editBtn));
 
-    await waitFor(() => expect(requestBody).toEqual({ profilePhoto: updatedPhoto }));
-    expect(waitForMediaUploadReview).toHaveBeenCalledWith(
-      [expect.objectContaining({ assetId: 'avatar-asset', status: 'queued' })],
-      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    await waitFor(() =>
+      expect(requestBody).toEqual({ profilePhotoAssetId: 'avatar-asset', profilePhotoBlurhash: pendingBlurhash }),
     );
-  });
-
-  it('does not update the profile photo when moderation rejects the avatar', async () => {
-    const user = userEvent.setup();
-    const userId = setupProfile(MOCK_PROFILE.profilePhoto);
-    let profileUpdateCount = 0;
-    (uploadMediaFile as jest.Mock).mockResolvedValueOnce({
-      assetId: 'rejected-avatar',
-      status: 'queued',
-      contentType: 'image/jpeg',
-    });
-    (waitForMediaUploadReview as jest.Mock).mockResolvedValueOnce([
-      {
-        assetId: 'rejected-avatar',
-        status: 'rejected',
-        contentType: 'image/jpeg',
-      },
-    ]);
-    server.use(
-      http.patch(`${BASE_URL}/user/${userId}/profile`, () => {
-        profileUpdateCount += 1;
-        return HttpResponse.json(MOCK_PROFILE);
-      }),
+    await waitFor(() =>
+      expect(screen.getByTestId(AvatarEditableTestIds.successImg).props.source.uri).toBe(previewPhoto),
     );
-
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />);
-    await user.press(await screen.findByTestId(AvatarEditableTestIds.editBtn));
-
-    await waitFor(() => expect(waitForMediaUploadReview).toHaveBeenCalled());
-    expect(profileUpdateCount).toBe(0);
-  });
-
-  it('does not update the profile photo when moderation cannot approve the avatar', async () => {
-    const user = userEvent.setup();
-    const userId = setupProfile(MOCK_PROFILE.profilePhoto);
-    let profileUpdateCount = 0;
-    (uploadMediaFile as jest.Mock).mockResolvedValueOnce({
-      assetId: 'failed-avatar',
-      status: 'queued',
-      contentType: 'image/jpeg',
-    });
-    (waitForMediaUploadReview as jest.Mock).mockResolvedValueOnce([
-      {
-        assetId: 'failed-avatar',
-        status: 'failed',
-        contentType: 'image/jpeg',
-      },
-    ]);
-    server.use(
-      http.patch(`${BASE_URL}/user/${userId}/profile`, () => {
-        profileUpdateCount += 1;
-        return HttpResponse.json(MOCK_PROFILE);
-      }),
-    );
-
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />);
-    await user.press(await screen.findByTestId(AvatarEditableTestIds.editBtn));
-
-    await waitFor(() => expect(waitForMediaUploadReview).toHaveBeenCalled());
-    expect(profileUpdateCount).toBe(0);
-  });
-
-  it('does not publish an avatar when the user cancels while moderation is pending', async () => {
-    const user = userEvent.setup();
-    const userId = setupProfile(MOCK_PROFILE.profilePhoto);
-    let profileUpdateCount = 0;
-    let resolveReview: (value: Awaited<ReturnType<typeof waitForMediaUploadReview>>) => void = () => undefined;
-    (uploadMediaFile as jest.Mock).mockResolvedValueOnce({
-      assetId: 'cancelled-avatar',
-      status: 'queued',
-      contentType: 'image/jpeg',
-    });
-    (waitForMediaUploadReview as jest.Mock).mockReturnValueOnce(
-      new Promise((resolve) => {
-        resolveReview = resolve;
-      }),
-    );
-    server.use(
-      http.patch(`${BASE_URL}/user/${userId}/profile`, () => {
-        profileUpdateCount += 1;
-        return HttpResponse.json(MOCK_PROFILE);
-      }),
-    );
-
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />);
-    await user.press(await screen.findByTestId(AvatarEditableTestIds.editBtn));
-    await waitFor(() => expect(waitForMediaUploadReview).toHaveBeenCalled());
-    await user.press(screen.getByTestId(AvatarEditableTestIds.loading));
-    await act(async () => {
-      resolveReview([
-        {
-          assetId: 'cancelled-avatar',
-          status: 'approved',
-          url: 'https://images.example.test/cancelled-avatar.jpg',
-          contentType: 'image/jpeg',
-        },
-      ]);
-    });
-
-    expect(profileUpdateCount).toBe(0);
+    expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeEnabled();
   });
 
   it.each([

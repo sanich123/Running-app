@@ -6,13 +6,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import ProfileImage from '@Routes/profile/avatar/profile-avatar/profile-avatar';
 import UploadProgress from '@Routes/save-activity-page/upload-progress/upload-progress';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
-import {
-  compressMediaFile,
-  getAccessToGallery,
-  uploadMediaFile,
-  waitForMediaUploadReview,
-  type MediaSource,
-} from '@U/file-sending';
+import { compressMediaFile, getAccessToGallery, uploadMediaFile, type MediaSource } from '@U/file-sending';
 import { useProfileFormParams } from '../../profile-settings-params';
 import { AvatarEditableTestIds } from '../const';
 import type { AvatarIconEditableProps } from '../const';
@@ -51,24 +45,14 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
       });
       if (!uploadedImage || controller.signal.aborted) return;
 
-      const reviewedImage = (
-        await waitForMediaUploadReview([uploadedImage], {
-          onProgress: setUploadProgress,
-          signal: controller.signal,
-        })
-      )[0];
-      if (!reviewedImage?.url || controller.signal.aborted) {
-        if (!controller.signal.aborted) {
-          errorToast(
-            reviewedImage?.status === 'rejected'
-              ? 'Модератор отклонил медиафайл'
-              : 'Не удалось проверить медиафайл. Он пока недоступен',
-          );
-        }
-        return;
-      }
+      const body = uploadedImage.assetId
+        ? { profilePhotoAssetId: uploadedImage.assetId, profilePhotoBlurhash: uploadedImage.blurhash }
+        : uploadedImage.url
+          ? { profilePhoto: uploadedImage.url }
+          : null;
+      if (!body) return;
 
-      await updateProfile({ id: userId, body: { profilePhoto: reviewedImage.url } }).unwrap();
+      await updateProfile({ id: userId, body }).unwrap();
       if (!controller.signal.aborted) await refetch();
     } finally {
       if (uploadControllerRef.current === controller) uploadControllerRef.current = null;

@@ -8,9 +8,9 @@ import { createSearchParams } from '@R/runich-api/create-search-params';
 import { useDeleteActivityMediaMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import ActivityMediaDeleteBtn from '@S/activity-media/activity-media-delete-btn/activity-media-delete-btn';
-import CustomImage from '@S/custom-image/custom-image';
 import { errorToast } from '@S/error-toast/error-toast';
 import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
+import MediaThumbnail from '@S/media-thumbnail/media-thumbnail';
 import useLongPressGuard from '@S/pressable/use-long-press-guard';
 import { getMediaGridCellSize } from '../../const';
 import type { ActivityMediaItem } from '@S/card/types';
@@ -21,6 +21,7 @@ export default function MediaGridImage({
   url,
   thumbnail,
   blurhash,
+  contentType,
   mediaReviewStatus,
   index,
   take,
@@ -35,7 +36,8 @@ export default function MediaGridImage({
   const longPressGuard = useLongPressGuard();
   const widthOfScreen = width < MAX_MOBILE_WIDTH ? width : MAX_MOBILE_WIDTH;
   const cellSize = getMediaGridCellSize(widthOfScreen);
-  const canDeleteMedia = Boolean(id && activityId && userId === currentUserId);
+  const isOwnProfile = userId === currentUserId;
+  const canDeleteMedia = Boolean(id && activityId && isOwnProfile);
 
   const handleDelete = async () => {
     if (!activityId || !id) return;
@@ -76,11 +78,12 @@ export default function MediaGridImage({
           accessibilityRole="button"
           accessibilityLabel={url}
           borderless>
-          <CustomImage
+          <MediaThumbnail
             testID={url}
             style={{ height: cellSize, width: cellSize }}
-            source={{ uri: thumbnail || url }}
-            contentFit="cover"
+            mediaUrl={url}
+            thumbnail={thumbnail}
+            isVideo={contentType?.startsWith('video/') || undefined}
             placeholder={blurhash}
           />
         </TouchableRipple>
@@ -107,14 +110,11 @@ export default function MediaGridImage({
             borderRadius={10}
             compact
             hideTitle={cellSize < 130}
+            showStatus={false}
           />
         </TouchableRipple>
       )}
-      {url &&
-      canDeleteMedia &&
-      mediaReviewStatus &&
-      mediaReviewStatus !== 'approved' &&
-      mediaReviewStatus !== 'rejected' ? (
+      {!isOwnProfile && mediaReviewStatus && mediaReviewStatus !== 'approved' && mediaReviewStatus !== 'rejected' ? (
         <MediaModerationPlaceholder status={mediaReviewStatus} compact overlay />
       ) : null}
       {canDeleteMedia && isDeleteButtonVisible ? (

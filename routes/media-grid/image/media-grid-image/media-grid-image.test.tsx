@@ -35,6 +35,7 @@ describe('image', () => {
       activityId: 'activity-1',
       url: 'https://images.example.test/owned.jpg',
       thumbnail: null,
+      mediaReviewStatus: 'processing' as const,
       index: 0,
       take: 28,
     };
@@ -44,6 +45,7 @@ describe('image', () => {
     await fireEvent(screen.getByTestId(`media-grid-image-${media.id}`), 'longPress');
 
     expect(screen.getByTestId('activity-media-delete-button')).toBeOnTheScreen();
+    expect(screen.queryByTestId('media-moderation-placeholder')).not.toBeOnTheScreen();
     expect(mockPush).not.toHaveBeenCalled();
   });
 
@@ -62,5 +64,21 @@ describe('image', () => {
     await fireEvent(screen.getByTestId(`media-grid-image-${media.id}`), 'longPress');
 
     expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen();
+  });
+
+  it('shows media stage icons to profile visitors', async () => {
+    const media = {
+      id: 'media-1',
+      activityId: 'activity-1',
+      url: 'https://images.example.test/processing.jpg',
+      thumbnail: null,
+      mediaReviewStatus: 'processing' as const,
+      index: 0,
+      take: 28,
+    };
+
+    await act(async () => mockStore.dispatch(setMockUserId('viewer-id')));
+    await renderWithProviders(<MediaGridImage {...media} />);
+    expect(screen.getByTestId('media-moderation-placeholder')).toBeOnTheScreen();
   });
 });

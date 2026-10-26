@@ -6,6 +6,8 @@ export interface MediaModerationPlaceholderProps {
   borderRadius?: number;
   compact?: boolean;
   hideTitle?: boolean;
+  showStatus?: boolean;
   overlay?: boolean;
+  topOffset?: number;
   testID?: string;
 }

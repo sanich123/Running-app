@@ -3,12 +3,13 @@ import { useRouter } from 'expo-router';
 import { TouchableRipple } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import CustomImage from '@S/custom-image/custom-image';
+import MediaThumbnail from '@S/media-thumbnail/media-thumbnail';
 import type { PreviewImageProps } from './types';
 
 export default function PreviewImage({
   image,
   mediaUrl = image,
+  isVideo,
   index,
   isDisabled,
   compact = false,
@@ -23,9 +24,11 @@ export default function PreviewImage({
       onPress={() => push(`/${ROUTES.media}/${encodeURIComponent(mediaUrl)}`)}
       disabled={isPreviewDisabled}
       borderless>
-      <CustomImage
+      <MediaThumbnail
         testID={`imagePreview-${index}`}
-        source={{ uri: image }}
+        mediaUrl={mediaUrl}
+        thumbnail={mediaUrl === image ? null : image}
+        isVideo={isVideo}
         style={[
           {
             marginTop: compact ? 0 : 12,
