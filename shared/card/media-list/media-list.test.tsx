@@ -1,6 +1,6 @@
 import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { Platform, StyleSheet } from 'react-native';
+import { FlatList, Platform, StyleSheet } from 'react-native';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
@@ -52,13 +52,13 @@ const defaultActivity: ActivityCardData = {
   commentsLength: 0,
 };
 
-function renderMediaList(activity: Partial<ActivityCardData>) {
+function renderMediaList(activity: Partial<ActivityCardData>, isFullView = false) {
   return renderWithProviders(
     <VideoPlaybackProvider>
       <ActivityCardContext.Provider
         value={{
           activity: { ...defaultActivity, ...activity },
-          isFullView: false,
+          isFullView,
           isShowDescription: false,
         }}>
         <MediaList />
@@ -143,6 +143,7 @@ describe('media list', () => {
       media: [{ url: photoUrl, thumbnail: null }],
     });
 
+    const scrollToOffset = jest.spyOn(FlatList.prototype, 'scrollToOffset').mockImplementation(() => undefined);
     const mediaList = screen.getByTestId('activity-media-list');
     const mapTileWidth = StyleSheet.flatten(screen.getByTestId('activity-map-media-container').props.style).width;
     const mapImageStyle = StyleSheet.flatten(screen.getByTestId(mapUrl).props.style);
@@ -159,6 +160,91 @@ describe('media list', () => {
     expect(mapImageStyle.transform).toBeUndefined();
     expect(photoWidth).toBeLessThan(mapTileWidth);
     expect(mediaList.props.onContentSizeChange).toEqual(expect.any(Function));
+
+    try {
+      mediaList.props.onContentSizeChange(1000, 220);
+      mediaList.props.onContentSizeChange(1000, 220);
+
+      expect(scrollToOffset).toHaveBeenCalledTimes(1);
+      expect(scrollToOffset).toHaveBeenCalledWith({ offset: mapTileWidth / 2, animated: false });
+    } finally {
+      scrollToOffset.mockRestore();
+    }
+  });
+
+  it('does not apply the card preview offset in full view', async () => {
+    const scrollToOffset = jest.spyOn(FlatList.prototype, 'scrollToOffset').mockImplementation(() => undefined);
+    try {
+      await renderMediaList(
+        {
+          mapPhotoUrl: 'https://cdn.example.test/full-view-map.jpg',
+          media: [{ url: 'https://images.example.test/full-view-photo.jpg', thumbnail: null }],
+        },
+        true,
+      );
+
+      screen.getByTestId('activity-media-list').props.onContentSizeChange(1000, 220);
+
+      expect(scrollToOffset).not.toHaveBeenCalled();
+    } finally {
+      scrollToOffset.mockRestore();
+    }
+  });
+
+  it('shows an owner the full map when map visibility is restricted', async () => {
+    const mapUrl = 'https://cdn.example.test/private-full-map.jpg';
+    const routeOnlyMapUrl = 'https://cdn.example.test/private-route-map.jpg';
+    await renderMediaList({ mapPhotoUrl: mapUrl, routeOnlyMapPhotoUrl: routeOnlyMapUrl, hideMap: true, media: [] });
+
+    expect(screen.getByTestId(mapUrl)).toBeOnTheScreen();
+    expect(screen.queryByTestId(routeOnlyMapUrl)).not.toBeOnTheScreen();
+  });
+
+  it('shows an external viewer only the route map and disables its map actions', async () => {
+    mockStore.dispatch(setMockUserId('another-user'));
+    const mapUrl = 'https://cdn.example.test/private-full-map.jpg';
+    const routeOnlyMapUrl = 'https://cdn.example.test/private-route-map.jpg';
+    await renderMediaList({
+      mapPhotoUrl: mapUrl,
+      routeOnlyMapPhotoUrl: routeOnlyMapUrl,
+      mapPhotoUrlBlurhash: 'private-map-blurhash',
+      hideMap: true,
+      media: [],
+    });
+
+    expect(screen.getByTestId(routeOnlyMapUrl)).toBeOnTheScreen();
+    expect(screen.getByTestId(routeOnlyMapUrl).props.placeholder).toBeNull();
+    expect(screen.queryByTestId(mapUrl)).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('activity-card-route-replay-button')).not.toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByTestId('activity-map-media-item'));
+
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it('does not expose a full map to an external viewer without a route preview', async () => {
+    mockStore.dispatch(setMockUserId('another-user'));
+    await renderMediaList({
+      mapPhotoUrl: 'https://cdn.example.test/private-full-map.jpg',
+      routeOnlyMapPhotoUrl: undefined,
+      hideMap: true,
+      media: [],
+    });
+
+    expect(screen.queryByTestId('activity-media-list')).not.toBeOnTheScreen();
+  });
+
+  it('falls back to the route map for the owner when a full map is unavailable', async () => {
+    const routeOnlyMapUrl = 'https://cdn.example.test/route-only-fallback.jpg';
+    await renderMediaList({ mapPhotoUrl: undefined, routeOnlyMapPhotoUrl: routeOnlyMapUrl, hideMap: true, media: [] });
+
+    expect(screen.getByTestId(routeOnlyMapUrl)).toBeOnTheScreen();
+  });
+
+  it('omits the media list when no map or activity media is available', async () => {
+    await renderMediaList({ mapPhotoUrl: undefined, media: [] });
+
+    expect(screen.queryByTestId('activity-media-list')).not.toBeOnTheScreen();
   });
 
   it('uses inset spacing and rounded media tiles like the reference card', async () => {
