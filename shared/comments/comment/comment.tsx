@@ -71,7 +71,7 @@ export default function Comment({
               language === LANGUAGES.russian ? 'Дополнительные действия с комментарием' : 'Comment actions'
             }
             testID={`comment-actions-menu-${id}`}
-            reportLabel={language === LANGUAGES.russian ? 'Пожаловаться' : 'Report'}
+            reportLabel={language === LANGUAGES.russian ? 'Сообщить о нарушении' : 'Report'}
             reportTestID={`report-comment-${id}`}
             onReport={() => setIsReportVisible(true)}
             showReport={!isYouAuthor}

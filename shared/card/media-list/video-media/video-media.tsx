@@ -2,7 +2,7 @@ import { useEffect, useId, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useIsFocused } from 'expo-router';
 import { Icon, Text } from 'react-native-paper';
-import CustomImage from '@S/custom-image/custom-image';
+import MediaThumbnail from '@S/media-thumbnail/media-thumbnail';
 import ActiveVideoPlayer from '../active-video-player/active-video-player';
 import { formatVideoDuration } from '../const';
 import useVideoPlayback from '../use-video-playback';
@@ -52,15 +52,13 @@ export default function VideoMedia({
     <View style={[styles.container, { width, height }]} testID={testID}>
       {isActive ? (
         <ActiveVideoPlayer url={url} isMuted={isMuted} isPaused={!isFocused || isPaused} onMetadata={handleMetadata} />
-      ) : thumbnail ? (
-        <CustomImage
+      ) : (
+        <MediaThumbnail
+          mediaUrl={url}
+          thumbnail={thumbnail}
+          isVideo
           style={StyleSheet.absoluteFill}
-          source={{ uri: thumbnail }}
           testID={testID + '-thumbnail'}
-          contentFit="cover"
-          placeholderContentFit="cover"
-          cachePolicy="memory-disk"
-          recyclingKey={thumbnail}
           placeholder={blurhash}
           onLoad={({ source }) => {
             if (source.width > 0 && source.height > 0) {
@@ -68,8 +66,6 @@ export default function VideoMedia({
             }
           }}
         />
-      ) : (
-        <View style={StyleSheet.absoluteFill} />
       )}
       {duration > 0 ? (
         <View style={styles.duration} pointerEvents="none">

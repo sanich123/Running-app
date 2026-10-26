@@ -27,6 +27,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { isVideoUrl } from '@Routes/photo-viewer/utils';
 import ErrorComponent from '@S/error-component/error-component';
 import { errorToast } from '@S/error-toast/error-toast';
+import MediaThumbnail from '@S/media-thumbnail/media-thumbnail';
 import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import { successToast } from '@S/success-toast/success-toast';
 import { MODERATION_ACTIONS, MODERATION_DASHBOARD_COPY, REPORT_STATUS_OPTIONS } from './const';
@@ -132,6 +133,7 @@ export default function ModerationDashboard() {
   const showContext = () => {
     if (!report || !context) return null;
     const contextText = context.comment ?? [context.title, context.description].filter(Boolean).join('\n\n');
+    const videoUploadUrl = context.url ?? context.thumbnail;
     const profileName = [context.name, context.surname].filter(Boolean).join(' ');
     const mediaStatusLabel = context.moderationStatus
       ? (copy.mediaStatus as Record<string, string>)[context.moderationStatus]
@@ -158,24 +160,31 @@ export default function ModerationDashboard() {
                   onPress={() => void Linking.openURL(mediaUrl).catch((error) => errorToast(copy.openError, error))}
                   testID={`moderation-activity-media-${media.id}`}
                   style={styles.activityMediaTile}>
-                  {media.thumbnail || !isVideo ? (
-                    <Image
-                      source={{ uri: media.thumbnail ?? mediaUrl }}
-                      style={styles.activityMediaPreview}
-                      resizeMode="cover"
-                      testID={`moderation-activity-media-preview-${media.id}`}
-                    />
-                  ) : (
-                    <View style={[styles.activityMediaPreview, styles.activityVideoPlaceholder]}>
-                      <Text>{language === LANGUAGES.russian ? 'Видео' : 'Video'}</Text>
-                    </View>
-                  )}
+                  <MediaThumbnail
+                    mediaUrl={mediaUrl}
+                    thumbnail={media.thumbnail}
+                    isVideo={isVideo}
+                    style={styles.activityMediaPreview}
+                    testID={`moderation-activity-media-preview-${media.id}`}
+                  />
                 </Pressable>
               );
             })}
           </ScrollView>
         ) : null}
-        {previewUrl ? <Image source={{ uri: previewUrl }} style={styles.preview} resizeMode="contain" /> : null}
+        {isVideoUpload ? (
+          videoUploadUrl ? (
+            <MediaThumbnail
+              mediaUrl={videoUploadUrl}
+              thumbnail={context.thumbnail}
+              isVideo
+              style={styles.preview}
+              testID="moderation-video-upload-preview"
+            />
+          ) : null
+        ) : previewUrl ? (
+          <Image source={{ uri: previewUrl }} style={styles.preview} resizeMode="contain" />
+        ) : null}
         {context.scores ? (
           <Text selectable>
             {copy.modelScores}:{' '}
@@ -568,7 +577,6 @@ const styles = StyleSheet.create({
   activityMediaContent: { gap: 8, paddingVertical: 4 },
   activityMediaTile: { borderRadius: 8, overflow: 'hidden' },
   activityMediaPreview: { backgroundColor: '#808080', height: 220, width: 160 },
-  activityVideoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
   preview: { height: 260, maxWidth: '100%', width: 360 },
   appealReason: { backgroundColor: '#80808014', borderRadius: 8, gap: 4, padding: 10 },
   dialogInput: { marginTop: 12 },

@@ -25,6 +25,7 @@ export interface ActivityPhoto {
 
 export interface ActivityState {
   isSavingDisabled: boolean;
+  activeMediaUploadCount: number;
   finishedActivity: FinishedActivityDraft;
   sport: SPORTS_BTNS_VALUES;
   media: ActivityPhoto[];

@@ -53,7 +53,7 @@ describe('Preview images', () => {
     expect(screen.getByTestId('horizontal-preview-list').props.horizontal).toBe(true);
     expect(screen.getByTestId('imagePreview-3')).toBeOnTheScreen();
   });
-  it('shows only the moderation icon in camera previews while keeping its accessible status', async () => {
+  it('hides moderation status icons from the user who uploaded the photo', async () => {
     const copy = MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian];
 
     await renderWithProviders(
@@ -68,7 +68,7 @@ describe('Preview images', () => {
     );
 
     expect(screen.queryByText(copy.reviewRequired)).toBeNull();
-    expect(screen.getByTestId('media-moderation-placeholder')).toHaveProp('accessibilityLabel', copy.reviewRequired);
+    expect(screen.queryByTestId('media-moderation-placeholder')).toBeNull();
   });
   it('should correctly delete and image', async () => {
     const setImages = jest.fn();

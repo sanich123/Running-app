@@ -3,7 +3,7 @@ import uuid from 'react-native-uuid';
 import { Platform, Pressable, View, StyleSheet } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 import { useAppendActivityMediaMutation } from '@R/services/activity/activity';
-import { addPhotoUrls } from '@R/slices/activity/activity';
+import { addPhotoUrls, finishMediaUpload, startMediaUpload } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
@@ -85,6 +85,7 @@ export default function UploadPhotosBtn({
     updateUploadStatus('compressing', 0);
 
     try {
+      dispatch(startMediaUpload());
       await appendUploadedMedia(mediaToUpload, {
         onProgress: setUploadProgress,
         onStatusProgress: updateUploadStatus,
@@ -97,6 +98,7 @@ export default function UploadPhotosBtn({
       setIsUploading(false);
       setUploadProgress(0);
       onUploadStatusChange?.(null);
+      dispatch(finishMediaUpload());
     }
   }
 

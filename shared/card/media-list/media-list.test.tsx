@@ -7,6 +7,7 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { clearSubscriptionSnapshot, setSubscriptionSnapshot } from '@R/slices/subscription/subscription';
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import * as errorToastModule from '@S/error-toast/error-toast';
+import * as infoToastModule from '@S/info-toast/info-toast';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -285,14 +286,53 @@ describe('media list', () => {
     expect(screen.getByTestId(photoUrl).props.contentFit).toBe('cover');
   });
 
-  it('shows a review placeholder while an activity upload is quarantined', async () => {
+  it('hides the review status from the activity owner while keeping its photo tile', async () => {
     await renderMediaList({
       mapPhotoUrl: undefined,
       media: [{ id: 'pending-media', assetId: 'asset-1', thumbnail: null, mediaReviewStatus: 'review_required' }],
     });
 
     expect(screen.getByTestId('pending-activity-media-pending-media')).toBeOnTheScreen();
-    expect(screen.getByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].reviewRequired)).toBeOnTheScreen();
+    expect(screen.queryByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].reviewRequired)).toBeNull();
+    expect(screen.queryByTestId('media-moderation-placeholder')).not.toBeOnTheScreen();
+  });
+
+  it('shows a stage icon to viewers and explains the stage in a toast', async () => {
+    mockStore.dispatch(setMockUserId('subscriber'));
+    const infoToast = jest.spyOn(infoToastModule, 'infoToast').mockImplementation(() => undefined);
+    await renderMediaList({
+      mapPhotoUrl: undefined,
+      media: [
+        {
+          id: 'pending-photo',
+          url: 'https://cdn.example.test/pending.jpg',
+          thumbnail: null,
+          mediaReviewStatus: 'queued',
+        },
+      ],
+    });
+
+    const statusButton = screen.getByTestId('media-moderation-placeholder');
+    expect(statusButton).toHaveProp('accessibilityLabel', MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].queued);
+    await userEvent.press(statusButton);
+    expect(infoToast).toHaveBeenCalledWith(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].queued);
+    infoToast.mockRestore();
+  });
+
+  it('hides an uploaded photo stage icon from the activity owner', async () => {
+    await renderMediaList({
+      mapPhotoUrl: undefined,
+      media: [
+        {
+          id: 'owned-pending-photo',
+          url: 'https://cdn.example.test/owned-pending.jpg',
+          thumbnail: null,
+          mediaReviewStatus: 'processing',
+        },
+      ],
+    });
+
+    expect(screen.queryByTestId('media-moderation-placeholder')).not.toBeOnTheScreen();
   });
 
   it('uses the media position as a stable placeholder identifier before the server assigns an id', async () => {
@@ -302,7 +342,7 @@ describe('media list', () => {
 
     expect(screen.getByTestId('activity-media-0')).toBeOnTheScreen();
     expect(screen.getByTestId('pending-activity-media-0')).toBeOnTheScreen();
-    expect(screen.getByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].queued)).toBeOnTheScreen();
+    expect(screen.queryByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].queued)).toBeNull();
   });
 
   it('removes the media area from the card when every item was rejected', async () => {

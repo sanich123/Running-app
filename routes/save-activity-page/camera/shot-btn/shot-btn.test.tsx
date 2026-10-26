@@ -62,8 +62,12 @@ describe('shot btn', () => {
   it('uploads a photo for an authenticated user and dispatches it', async () => {
     const user = userEvent.setup();
     const setPhotos = jest.fn();
+    let wasProcessingActiveDuringUpload = false;
     mockStore.dispatch(setMockUserId('shot-user'));
-    mockUploadActivityMediaBatch.mockResolvedValue([{ url: 'https://cdn.example.com/photo.jpg', thumbnail: 'thumb' }]);
+    mockUploadActivityMediaBatch.mockImplementation(async () => {
+      wasProcessingActiveDuringUpload = mockStore.getState().activity.activeMediaUploadCount > 0;
+      return [{ url: 'https://cdn.example.com/photo.jpg', thumbnail: 'thumb' }];
+    });
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: 'file://photo.jpg' });
     await renderWithProviders(
       <ShotBtn cameraRef={createMockMutableRef<CameraView>({ takePictureAsync })} setPhotos={setPhotos} photos={[]} />,
@@ -86,6 +90,8 @@ describe('shot btn', () => {
       expect.objectContaining({ onProgress: expect.any(Function), signal: expect.any(Object) }),
     );
     expect(setPhotos).toHaveBeenCalledWith([{ url: 'https://cdn.example.com/photo.jpg', thumbnail: 'thumb' }]);
+    expect(wasProcessingActiveDuringUpload).toBe(true);
+    expect(mockStore.getState().activity.activeMediaUploadCount).toBe(0);
     expect(mockStore.getState().activity.media).toContainEqual({
       url: 'https://cdn.example.com/photo.jpg',
       thumbnail: 'thumb',

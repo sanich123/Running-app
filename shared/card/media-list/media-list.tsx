@@ -125,8 +125,12 @@ export default function MediaList() {
               blurhash={item.blurhash}
               borderRadius={10}
               compact
+              showStatus={false}
               testID={`pending-activity-media-${item.id ?? index}`}
             />
+            {!isOwnActivity && item.mediaReviewStatus ? (
+              <MediaModerationPlaceholder status={item.mediaReviewStatus} compact overlay />
+            ) : null}
           </View>
         );
       }
@@ -242,7 +246,7 @@ export default function MediaList() {
               )}
             </TouchableRipple>
           )}
-          {isOwnActivity &&
+          {!isOwnActivity &&
           item.mediaReviewStatus &&
           item.mediaReviewStatus !== 'approved' &&
           item.mediaReviewStatus !== 'rejected' ? (
@@ -283,7 +287,7 @@ export default function MediaList() {
                 }
                 iconColor="#fff"
                 testID={`media-actions-menu-${item.id}`}
-                reportLabel={language === LANGUAGES.russian ? 'Пожаловаться' : 'Report'}
+                reportLabel={language === LANGUAGES.russian ? 'Сообщить о нарушении' : 'Report'}
                 reportTestID={`report-media-${item.id}`}
                 onReport={() => setReportedMediaId(item.id ?? null)}
               />

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import uuid from 'react-native-uuid';
-import { Image, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Card, IconButton, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { useSendFeedbackMutation } from '@R/services/feedback/feedback';
@@ -9,6 +9,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { FEEDBACK_TEXT } from '@Routes/feedback/const';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import SwitchRow from '@S/feedback/switch-row/switch-row';
+import MediaThumbnail from '@S/media-thumbnail/media-thumbnail';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
 import { uploadFeedbackAttachments } from '@U/feedback-sending';
 import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
@@ -69,7 +70,13 @@ export default function FeedbackPage() {
     }));
     removedPendingMediaIds.current.clear();
     setFeedbackError(null);
-    setPendingAttachmentPreviews(selectedPhotos.map(({ uri }, index) => ({ mediaId: mediaItems[index].mediaId, uri })));
+    setPendingAttachmentPreviews(
+      selectedPhotos.map(({ uri, type }, index) => ({
+        mediaId: mediaItems[index].mediaId,
+        uri,
+        isVideo: type === 'video',
+      })),
+    );
     setIsUploadingPhoto(true);
     try {
       const uploadedAttachments = await uploadFeedbackAttachments(mediaItems, feedbackId);
@@ -203,11 +210,11 @@ export default function FeedbackPage() {
                 <View style={styles.attachmentPreviews}>
                   {attachments.map((attachment, index) => (
                     <View key={`${attachment.url}-${index}`} style={styles.attachmentPreviewContainer}>
-                      <Image
+                      <MediaThumbnail
                         testID={`feedback-attachment-preview-${index}`}
-                        source={{ uri: attachment.thumbnail || attachment.url }}
+                        mediaUrl={attachment.url}
+                        thumbnail={attachment.thumbnail}
                         style={[styles.attachmentPreview, { borderColor: colors.outlineVariant }]}
-                        resizeMode="cover"
                       />
                       <IconButton
                         testID={`feedback-remove-attachment-${index}`}
@@ -223,13 +230,13 @@ export default function FeedbackPage() {
                       />
                     </View>
                   ))}
-                  {pendingAttachmentPreviews.map(({ mediaId, uri }, index) => (
+                  {pendingAttachmentPreviews.map(({ mediaId, uri, isVideo }, index) => (
                     <View key={`pending-${mediaId}`} style={styles.attachmentPreviewContainer}>
-                      <Image
+                      <MediaThumbnail
                         testID={`feedback-pending-attachment-preview-${index}`}
-                        source={{ uri }}
+                        mediaUrl={uri}
+                        isVideo={isVideo}
                         style={[styles.attachmentPreview, { borderColor: colors.outlineVariant }]}
-                        resizeMode="cover"
                       />
                       <IconButton
                         testID={`feedback-remove-pending-attachment-${index}`}

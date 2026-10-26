@@ -16,6 +16,7 @@ export const ACTIVITY_DRAFT_INITIAL_STATE = {
 
 export const ACTIVITY_INITIAL_STATE: ActivityState = {
   isSavingDisabled: false,
+  activeMediaUploadCount: 0,
   finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
   ...ACTIVITY_DRAFT_INITIAL_STATE,
   unsyncedActivities: [],

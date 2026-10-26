@@ -4,7 +4,7 @@ import uuid from 'react-native-uuid';
 import { Pressable, View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useAppendActivityMediaMutation } from '@R/services/activity/activity';
-import { addPhotoUrl } from '@R/slices/activity/activity';
+import { addPhotoUrl, finishMediaUpload, startMediaUpload } from '@R/slices/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { deleteUploadedMedia } from '@U/file-sending';
@@ -44,6 +44,7 @@ export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10, 
         const controller = new AbortController();
         uploadControllerRef.current = controller;
         try {
+          dispatch(startMediaUpload());
           if (cameraRef?.current) {
             const newPhoto = await cameraRef?.current.takePictureAsync(CAMERA_SETTINGS);
             if (newPhoto) {
@@ -114,6 +115,7 @@ export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10, 
           if (uploadControllerRef.current === controller) uploadControllerRef.current = null;
           setIsLoading(false);
           setUploadProgress(0);
+          dispatch(finishMediaUpload());
         }
       }}>
       {isLoading ? (

@@ -170,7 +170,7 @@ describe('ActivityDetails', () => {
 
     expect(screen.getByLabelText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].accessibilityLabel)).toBeOnTheScreen();
     await user.press(screen.getByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].report));
-    expect(screen.getByText(REPORT_CONTENT_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
+    expect(screen.getAllByText(REPORT_CONTENT_COPY[LANGUAGES.russian].title)).toHaveLength(2);
   });
 
   it('renders error state', async () => {

@@ -3,6 +3,7 @@ export const enum AvatarShowableTestIds {
   success = 'avatarShowableImage',
   error = 'avatarShowableErrorIcon',
   default = 'avatarShowableDefaultIcon',
+  moderationStatus = 'avatarShowableModerationStatus',
 }
 
 export const enum AvatarShowableIcons {

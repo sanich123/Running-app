@@ -9,6 +9,12 @@ const activity = createSlice({
     setSavingDisabled: (state, action: PayloadAction<boolean>) => {
       state.isSavingDisabled = action.payload;
     },
+    startMediaUpload: (state) => {
+      state.activeMediaUploadCount += 1;
+    },
+    finishMediaUpload: (state) => {
+      state.activeMediaUploadCount = Math.max(0, state.activeMediaUploadCount - 1);
+    },
     setFinishedActivity: (state, action: PayloadAction<FinishedActivityDraft>) => {
       state.finishedActivity = action.payload;
     },
@@ -48,6 +54,8 @@ const activity = createSlice({
 
 export const {
   setSavingDisabled,
+  startMediaUpload,
+  finishMediaUpload,
   setFinishedActivity,
   resetFinishedActivity,
   setSport,

@@ -30,7 +30,7 @@ export const REPORT_CONTENT_COPY = {
     } satisfies Record<ContentReportReason, string>,
   },
   [LANGUAGES.russian]: {
-    title: 'Пожаловаться',
+    title: 'Сообщить о нарушении',
     prompt: {
       activity: 'Укажите, что именно вам не нравится в этой тренировке',
       comment: 'Укажите, что именно вам не нравится в этом комментарии',

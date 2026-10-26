@@ -233,12 +233,14 @@ export async function uploadMediaFiles(
 }
 
 export async function createVideoThumbnail(videoSource: MediaSource): Promise<string | null> {
-  const objectUrl = typeof videoSource === 'string' ? null : URL.createObjectURL(videoSource);
+  if (Platform.OS === 'web') return null;
+
+  let objectUrl: string | null = null;
   try {
+    if (typeof videoSource !== 'string') objectUrl = URL.createObjectURL(videoSource);
     const { uri } = await VideoThumbnails.getThumbnailAsync(objectUrl ?? (videoSource as string));
     return uri;
-  } catch (error) {
-    errorToast('Не удалось создать превью видео', error);
+  } catch {
     return null;
   } finally {
     if (objectUrl) URL.revokeObjectURL(objectUrl);

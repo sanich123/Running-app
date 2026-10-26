@@ -23,6 +23,14 @@ describe('user avatar', () => {
     expect(result.queryByText('?')).toBeNull();
   });
 
+  it('renders the blurhash while a pending profile photo has no public URL', async () => {
+    const result = await render(
+      <UserAvatar size={40} placeholder="LKO2?U%2Tw=w]~RBVZRi};RPxuwH" testID="pending-avatar" />,
+    );
+
+    expect(result.getByTestId('pending-avatar')).toBeOnTheScreen();
+  });
+
   it('renders Avatar.Image for a profile photo', async () => {
     const result = await render(
       <UserAvatar size={40} profilePhoto="https://example.com/avatar.jpg" testID="avatar-image" />,

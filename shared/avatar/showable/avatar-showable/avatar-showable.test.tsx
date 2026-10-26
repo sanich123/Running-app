@@ -45,4 +45,21 @@ describe('Avatar showable', () => {
     expect(await screen.findByTestId(AvatarShowableTestIds.success)).toBeOnTheScreen();
     expect(requests).toBe(0);
   });
+
+  it('shows the pending photo stage to another user', async () => {
+    await renderWithProviders(
+      <AvatarShowable
+        size={92}
+        id="pending-author"
+        profile={{
+          userId: 'pending-author',
+          profilePhotoBlurhash: 'LKO2?U%2Tw=w]~RBVZRi};RPxuwH',
+          profilePhotoReviewStatus: 'review_required',
+        }}
+      />,
+      { store: mockStore },
+    );
+
+    expect(screen.getByTestId(AvatarShowableTestIds.moderationStatus)).toBeOnTheScreen();
+  });
 });

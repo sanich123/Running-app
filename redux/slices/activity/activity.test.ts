@@ -5,8 +5,10 @@ import { MOCK_UNSYNCED_ACTIVITY } from '@T/mocks/mock-unsynced-activity';
 import reducer, {
   addPhotoUrl,
   clearUnsyncedActivities,
+  finishMediaUpload,
   queueUnsyncedActivity,
   setFinishedActivity,
+  startMediaUpload,
   setSavingDisabled,
   setSport,
 } from './activity';
@@ -29,6 +31,16 @@ describe('Activity slice', () => {
       ...ACTIVITY_INITIAL_STATE,
       isSavingDisabled: true,
     });
+  });
+
+  it('tracks concurrent media uploads until all have finished', () => {
+    const firstUploadStarted = reducer(ACTIVITY_INITIAL_STATE, startMediaUpload());
+    const secondUploadStarted = reducer(firstUploadStarted, startMediaUpload());
+    const firstUploadFinished = reducer(secondUploadStarted, finishMediaUpload());
+
+    expect(firstUploadFinished.activeMediaUploadCount).toBe(1);
+    expect(reducer(firstUploadFinished, finishMediaUpload()).activeMediaUploadCount).toBe(0);
+    expect(reducer(ACTIVITY_INITIAL_STATE, finishMediaUpload()).activeMediaUploadCount).toBe(0);
   });
 
   it('should change finishedActivity', () => {

@@ -66,7 +66,16 @@ describe('Profile media photos', () => {
     server.use(
       http.get(`${BASE_URL}/activity/someUserId/media`, () =>
         HttpResponse.json({
-          media: [{ id: mediaId, activityId, url: mediaUrl, thumbnail: null, blurhash: null }],
+          media: [
+            {
+              id: mediaId,
+              activityId,
+              url: mediaUrl,
+              thumbnail: null,
+              blurhash: null,
+              mediaReviewStatus: 'processing',
+            },
+          ],
           hasMore: false,
           nextCursor: null,
           isLastPage: true,
@@ -83,6 +92,7 @@ describe('Profile media photos', () => {
     await fireEvent(await screen.findByTestId(`profile-activity-media-${mediaId}`), 'longPress');
 
     expect(screen.getByTestId('activity-media-delete-button')).toBeOnTheScreen();
+    expect(screen.queryByTestId('media-moderation-placeholder')).not.toBeOnTheScreen();
     await fireEvent.press(screen.getByTestId('activity-media-delete-button'));
 
     await waitFor(() => expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen());
@@ -106,5 +116,29 @@ describe('Profile media photos', () => {
     await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />);
     await fireEvent(await screen.findByTestId(`profile-activity-media-${mediaId}`), 'longPress');
     expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen();
+  });
+
+  it('shows processing status icons to profile visitors', async () => {
+    const pendingPhoto = {
+      id: 'pending-media-id',
+      activityId: 'activity-id',
+      url: 'https://images.example.test/processing-photo.jpg',
+      thumbnail: null,
+      mediaReviewStatus: 'processing',
+    };
+    server.use(
+      http.get(`${BASE_URL}/activity/someUserId/media`, () =>
+        HttpResponse.json({
+          media: [pendingPhoto],
+          hasMore: false,
+          nextCursor: null,
+          isLastPage: true,
+        }),
+      ),
+    );
+    await act(async () => mockStore.dispatch(setMockUserId('viewer-id')));
+    await renderWithProviders(<ProfileMediaPhotos userId="someUserId" />);
+
+    expect(await screen.findByTestId('media-moderation-placeholder')).toBeOnTheScreen();
   });
 });

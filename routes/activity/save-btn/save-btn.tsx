@@ -23,7 +23,10 @@ export default function SaveBtn() {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { back, replace } = useRouter();
-  const { isSavingDisabled, finishedActivity, media } = useAppSelector(({ activity }) => activity);
+  const { isSavingDisabled, activeMediaUploadCount, finishedActivity, media } = useAppSelector(
+    ({ activity }) => activity,
+  );
+  const isMediaUploadInProgress = activeMediaUploadCount > 0;
   const {
     activityId,
     isManualAdding,
@@ -173,7 +176,7 @@ export default function SaveBtn() {
           dispatch(setSavingDisabled(false));
         }
       }}
-      disabled={isSavingDisabled}>
+      disabled={isSavingDisabled || isMediaUploadInProgress}>
       {!isSaving && (
         <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
           {textOnBtn}

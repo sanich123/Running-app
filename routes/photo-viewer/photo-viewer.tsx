@@ -46,6 +46,9 @@ export default function PhotoViewer() {
   );
   const userMedia = photoPages?.pages.flatMap(({ media }) => media) ?? [];
   const isActivityMedia = uuid.validate(`${photoUrl}`);
+  const canSeeMediaStage = isActivityMedia
+    ? Boolean(activity?.userId && activity.userId !== ownerId)
+    : Boolean(userId && userId !== ownerId);
   const itemsToRender = (isActivityMedia ? (activity?.media ?? []) : userMedia).filter(
     (item) => item.mediaReviewStatus !== 'rejected',
   );
@@ -112,7 +115,7 @@ export default function PhotoViewer() {
               {itemsToRender.map(({ url, blurhash, mediaReviewStatus }: ActivityMediaItemResponse, index: number) => (
                 <View key={index} style={[styles.page, { backgroundColor: colors.background }]}>
                   {!url ? (
-                    <MediaModerationPlaceholder status={mediaReviewStatus} blurhash={blurhash} />
+                    <MediaModerationPlaceholder status={mediaReviewStatus} blurhash={blurhash} showStatus={false} />
                   ) : isVideoUrl(url) ? (
                     <VideoViewer url={url} isActive={!isPagerMoving && selectedPage === index} />
                   ) : (
@@ -129,8 +132,13 @@ export default function PhotoViewer() {
                       }}
                     />
                   )}
-                  {url && mediaReviewStatus && mediaReviewStatus !== 'approved' && mediaReviewStatus !== 'rejected' ? (
-                    <MediaModerationPlaceholder status={mediaReviewStatus} compact overlay />
+                  {canSeeMediaStage && mediaReviewStatus ? (
+                    <MediaModerationPlaceholder
+                      status={mediaReviewStatus}
+                      compact
+                      overlay
+                      topOffset={Math.max(insets.top, 8) + 56}
+                    />
                   ) : null}
                 </View>
               ))}
