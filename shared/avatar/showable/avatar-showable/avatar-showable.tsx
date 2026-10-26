@@ -6,17 +6,26 @@ import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-mo
 import UserAvatar from '../../user-avatar/user-avatar';
 import { AvatarShowableIcons, AvatarShowableTestIds } from '../const';
 import type { ProfileType } from '@S/card/types';
+import type { ImageProps } from 'expo-image';
 
 export default function AvatarShowable({
   size,
   id,
   focused,
   profile: profileFromProps,
+  testID,
+  cachePolicy,
+  recyclingKey,
+  transition,
 }: {
   size: number;
   id: string;
   focused?: boolean;
   profile?: ProfileType;
+  testID?: string;
+  cachePolicy?: ImageProps['cachePolicy'];
+  recyclingKey?: string | null;
+  transition?: ImageProps['transition'];
 }) {
   const { colors } = useTheme();
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
@@ -54,7 +63,10 @@ export default function AvatarShowable({
             name={profile?.name}
             surname={profile?.surname}
             placeholder={profile?.profilePhotoBlurhash}
-            testID={profile?.profilePhoto ? AvatarShowableTestIds.success : AvatarShowableTestIds.default}
+            testID={testID ?? (profile?.profilePhoto ? AvatarShowableTestIds.success : AvatarShowableTestIds.default)}
+            cachePolicy={cachePolicy}
+            recyclingKey={recyclingKey}
+            transition={transition}
             style={{ borderWidth: 1, borderColor: focused ? colors.primary : 'transparent' }}
           />
           {isPendingReview ? (

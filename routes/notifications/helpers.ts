@@ -3,6 +3,50 @@ import { NOTIFICATION_COPY } from './constants';
 import type { NotificationDisplayCopy, NotificationLocale } from './types';
 import type { NotificationItem } from '@R/services/notifications/types';
 
+const MODERATION_REPORT_TARGET_LABELS: Record<string, Record<NotificationLocale, string>> = {
+  activity: { russian: 'тренировку', english: 'activity' },
+  тренировка: { russian: 'тренировку', english: 'activity' },
+  comment: { russian: 'комментарий', english: 'comment' },
+  комментарий: { russian: 'комментарий', english: 'comment' },
+  'photo or video': { russian: 'фото или видео', english: 'photo or video' },
+  'фото или видео': { russian: 'фото или видео', english: 'photo or video' },
+  profile: { russian: 'профиль', english: 'profile' },
+  профиль: { russian: 'профиль', english: 'profile' },
+  user: { russian: 'профиль', english: 'profile' },
+};
+
+const MODERATION_REPORT_REASON_LABELS: Record<string, Record<NotificationLocale, string>> = {
+  threats: { russian: 'угрозы', english: 'threats' },
+  угрозы: { russian: 'угрозы', english: 'threats' },
+  harassment: { russian: 'преследование', english: 'harassment' },
+  преследование: { russian: 'преследование', english: 'harassment' },
+  hate_speech: { russian: 'язык ненависти', english: 'hate speech' },
+  'язык ненависти': { russian: 'язык ненависти', english: 'hate speech' },
+  sexual_content: { russian: 'сексуальный контент', english: 'sexual content' },
+  'сексуальный контент': { russian: 'сексуальный контент', english: 'sexual content' },
+  violence: { russian: 'насилие', english: 'violence' },
+  насилие: { russian: 'насилие', english: 'violence' },
+  spam: { russian: 'спам', english: 'spam' },
+  спам: { russian: 'спам', english: 'spam' },
+  other: { russian: 'другое', english: 'other' },
+  другое: { russian: 'другое', english: 'other' },
+};
+
+function getModerationReportLabels(content: string | null, locale: NotificationLocale) {
+  if (!content) return null;
+  const source =
+    /^Report\s+[^\s]+\s+about\s+(.+?)\s+\((.+?)\)\s+was received\./i.exec(content) ??
+    /^Жалоба №[^\s]+\s+на\s+(.+?)\s+\((.+?)\)\s+принята к рассмотрению\./i.exec(content);
+  if (!source) return null;
+
+  const targetKey = source[1].toLowerCase();
+  const reasonKey = source[2].toLowerCase();
+  return {
+    targetType: MODERATION_REPORT_TARGET_LABELS[targetKey]?.[locale],
+    reason: MODERATION_REPORT_REASON_LABELS[reasonKey]?.[locale],
+  };
+}
+
 export function getNotificationLocale(language: string): NotificationLocale {
   return language === LANGUAGES.russian ? 'russian' : 'english';
 }
@@ -21,8 +65,14 @@ export function getNotificationDisplayCopy(
       return { title: title(copy.commentTitle), body: item.content || copy.commentBody };
     case 'comment-like':
       return { title: title(copy.commentLikeTitle), body: item.content || copy.commentLikeBody };
-    case 'moderation-report-received':
-      return { title: copy.moderationReportReceivedTitle, body: item.content || '' };
+    case 'moderation-report-received': {
+      const labels = getModerationReportLabels(item.content, locale);
+      const body = copy.moderationReportReceivedBody
+        .replace('{reportId}', item.targetId.slice(0, 8))
+        .replace('{targetType}', labels?.targetType ?? copy.unknownReportTarget)
+        .replace('{reason}', labels?.reason ?? copy.unknownReportReason);
+      return { title: copy.moderationReportReceivedTitle, body };
+    }
     case 'moderation-report-decision':
       return { title: copy.moderationReportDecisionTitle, body: item.content || '' };
     default:

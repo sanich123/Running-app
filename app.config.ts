@@ -23,6 +23,7 @@ export default {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
+      associatedDomains: ['applinks:runich-app.ru', 'applinks:stage-web.runich-app.ru'],
       entitlements: {
         'com.apple.developer.networking.wifi-info': true,
         'com.apple.developer.healthkit': true,
@@ -95,6 +96,30 @@ export default {
               scheme: 'https',
               host: 'stage-web.runich-app.ru',
               pathPrefix: '/activity',
+            },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'https',
+              host: 'runich-app.ru',
+              pathPrefix: '/admin',
+            },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'https',
+              host: 'stage-web.runich-app.ru',
+              pathPrefix: '/admin',
             },
           ],
           category: ['BROWSABLE', 'DEFAULT'],

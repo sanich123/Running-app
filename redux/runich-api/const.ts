@@ -23,7 +23,6 @@ export enum Tags {
   users = 'users',
   subscription = 'subscription',
   notifications = 'notifications',
-  blockedUsers = 'blockedUsers',
   moderationReports = 'moderationReports',
   moderationReport = 'moderationReport',
   moderationAppeals = 'moderationAppeals',

@@ -15,7 +15,6 @@ export const runichApi = createApi({
     Tags.commentLikes,
     Tags.subscription,
     Tags.notifications,
-    Tags.blockedUsers,
     Tags.moderationReports,
     Tags.moderationReport,
     Tags.moderationAppeals,
