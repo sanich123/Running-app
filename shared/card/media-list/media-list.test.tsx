@@ -14,6 +14,7 @@ import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MEDIA_MODERATION_PLACEHOLDER_COPY } from '../../media-moderation-placeholder/const';
 import { ActivityCardContext } from '../context';
+import { ACTIVITY_MEDIA_COPY } from './activity-media-item/const';
 import MediaList from './media-list';
 import VideoPlaybackProvider from './video-playback-provider/video-playback-provider';
 import type { ActivityCardData } from '../types';
@@ -148,7 +149,7 @@ describe('media list', () => {
     const photoWidth = StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width;
 
     expect(mediaList.props.horizontal).toBe(true);
-    expect(mediaList.props.data.map((item: { url: string }) => item.url)).toEqual([mapUrl, photoUrl]);
+    expect(mediaList.props.data.map(({ url }: { url: string }) => url)).toEqual([mapUrl, photoUrl]);
     expect(screen.getByTestId(mapUrl)).toBeOnTheScreen();
     expect(screen.getByTestId(photoUrl)).toBeOnTheScreen();
     expect(screen.queryByTestId(routeOnlyMapUrl)).not.toBeOnTheScreen();
@@ -403,7 +404,7 @@ describe('media list', () => {
 
     expect(screen.getByTestId('activity-video-video-1')).toBeOnTheScreen();
     const playButton = screen.getByTestId('activity-video-video-1-play');
-    expect(playButton).toHaveProp('accessibilityLabel', 'Воспроизвести видео');
+    expect(playButton).toHaveProp('accessibilityLabel', ACTIVITY_MEDIA_COPY[LANGUAGES.russian].playVideo);
     await user.press(playButton);
     expect(playButton).toHaveProp('accessibilityLabel', 'Приостановить видео');
     expect(screen.getByText('0:13')).toBeOnTheScreen();

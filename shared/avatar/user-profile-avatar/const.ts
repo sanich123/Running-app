@@ -1,4 +1,4 @@
-export const enum AvatarShowableTestIds {
+export const enum UserProfileAvatarTestIds {
   isLoading = 'avatarShowableLoadingIcon',
   success = 'avatarShowableImage',
   error = 'avatarShowableErrorIcon',
@@ -6,6 +6,6 @@ export const enum AvatarShowableTestIds {
   moderationStatus = 'avatarShowableModerationStatus',
 }
 
-export const enum AvatarShowableIcons {
+export const enum UserProfileAvatarIcons {
   error = 'web-cancel',
 }

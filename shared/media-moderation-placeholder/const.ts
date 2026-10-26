@@ -1,5 +1,14 @@
 import { LANGUAGES } from '@const/enums';
 
+export const MEDIA_REVIEW_STATUSES = {
+  queued: 'queued',
+  processing: 'processing',
+  reviewRequired: 'review_required',
+  approved: 'approved',
+  rejected: 'rejected',
+  failed: 'failed',
+} as const;
+
 export const MEDIA_MODERATION_PLACEHOLDER_COPY = {
   [LANGUAGES.russian]: {
     queued: 'Фото в очереди обработки',
@@ -22,3 +31,52 @@ export const MEDIA_MODERATION_PLACEHOLDER_COPY = {
     retry: 'The file is not published. Please try uploading it again.',
   },
 } as const;
+
+export const MEDIA_MODERATION_PLACEHOLDER_STATUS_CONFIG = {
+  [MEDIA_REVIEW_STATUSES.queued]: {
+    title: 'queued',
+    detail: 'detail',
+    isStage: true,
+    stageIcon: 'timer-sand',
+    statusIcon: 'clock-outline',
+  },
+  [MEDIA_REVIEW_STATUSES.processing]: {
+    title: 'processing',
+    detail: 'detail',
+    isStage: true,
+    stageIcon: 'cog-sync-outline',
+    statusIcon: 'clock-outline',
+  },
+  [MEDIA_REVIEW_STATUSES.reviewRequired]: {
+    title: 'reviewRequired',
+    detail: 'detail',
+    isStage: true,
+    stageIcon: 'shield-search',
+    statusIcon: 'clock-outline',
+  },
+  [MEDIA_REVIEW_STATUSES.approved]: {
+    title: 'approved',
+    detail: 'detail',
+    isStage: false,
+    statusIcon: 'clock-outline',
+  },
+  [MEDIA_REVIEW_STATUSES.rejected]: {
+    title: 'rejected',
+    detail: 'retry',
+    isStage: false,
+    statusIcon: 'alert-circle-outline',
+  },
+  [MEDIA_REVIEW_STATUSES.failed]: {
+    title: 'failed',
+    detail: 'retry',
+    isStage: false,
+    statusIcon: 'alert-circle-outline',
+  },
+} as const satisfies Record<
+  (typeof MEDIA_REVIEW_STATUSES)[keyof typeof MEDIA_REVIEW_STATUSES],
+  {
+    title: keyof (typeof MEDIA_MODERATION_PLACEHOLDER_COPY)[LANGUAGES.english];
+    detail: 'detail' | 'retry';
+    statusIcon: string;
+  } & ({ isStage: true; stageIcon: string } | { isStage: false; stageIcon?: never })
+>;

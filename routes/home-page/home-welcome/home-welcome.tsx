@@ -3,7 +3,7 @@ import { IconButton, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
-import AvatarShowable from '@S/avatar/showable/avatar-showable/avatar-showable';
+import UserProfileAvatar from '@S/avatar/user-profile-avatar/user-profile-avatar';
 import { HOME_WELCOME_TEXT } from '../const';
 
 export default function HomeWelcome() {
@@ -14,7 +14,7 @@ export default function HomeWelcome() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
-      <AvatarShowable size={44} id={userId} profile={profile ?? undefined} />
+      <UserProfileAvatar size={44} id={userId} profile={profile ?? undefined} />
       <View style={styles.copy}>
         <Text variant="titleMedium" style={styles.title}>
           {HOME_WELCOME_TEXT.greeting(name)}

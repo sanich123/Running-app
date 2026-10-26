@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { Text, TouchableRipple } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import AvatarShowable from '@S/avatar/showable/avatar-showable/avatar-showable';
+import UserProfileAvatar from '@S/avatar/user-profile-avatar/user-profile-avatar';
 import FollowUnfollowBtn from '@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn';
 import type { UserListItemType } from './const';
 
@@ -31,7 +31,7 @@ export default function UserListItem({
       }}>
       <View style={styles.userItemWrapper}>
         <View style={styles.contentWrapper}>
-          <AvatarShowable
+          <UserProfileAvatar
             size={35}
             id={userId}
             profile={{ name, surname, profilePhoto, profilePhotoBlurhash: placeholder, profilePhotoReviewStatus }}

@@ -5,7 +5,7 @@ import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { profileApi } from '@R/services/profile/profile';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import AvatarShowable from '@S/avatar/showable/avatar-showable/avatar-showable';
+import UserProfileAvatar from '@S/avatar/user-profile-avatar/user-profile-avatar';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
 import { USER_INFO_FALLBACK_NAME, type UserInfoProps } from './const';
@@ -36,7 +36,7 @@ export default function UserInfo({ profile, sport, date, userId, size, commentsM
       borderless
       style={{ paddingVertical: 10, paddingHorizontal: 12 }}>
       <View style={styles.userInfoWrapper}>
-        <AvatarShowable
+        <UserProfileAvatar
           size={size === 'small' ? 35 : 40}
           id={userId}
           profile={profile}

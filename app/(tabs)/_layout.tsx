@@ -7,13 +7,13 @@ import { Icon, useTheme } from 'react-native-paper';
 import { LABELS, ROUTES, STATUSES } from '@const/enums';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
-import { LazyAvatarShowable } from '@Routes/app-routes/const';
+import { LazyUserProfileAvatar } from '@Routes/app-routes/const';
 import { HOME_TAB_ROUTE } from '@Routes/app-routes/home-tab-route';
 
 export default function TabLayout() {
   const { replace } = useRouter();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const { data: profile } = useGetUserProfileByUserIdQuery(userId, { skip: !userId || Platform.OS === 'ios' });
   const { language } = useAppSelector(({ settings }) => settings);
   const labels = LABELS[language];
   const { colors } = useTheme();
@@ -36,7 +36,11 @@ export default function TabLayout() {
         borderRadius: 20,
         backgroundColor: focused ? colors.primaryContainer : 'transparent',
       }}>
-      <Icon source={focused ? focusedSource : source} color={color ?? colors.primary} size={30} />
+      <Icon
+        source={focused ? focusedSource : source}
+        color={color ?? (focused ? colors.primary : colors.secondary)}
+        size={30}
+      />
     </View>
   );
   useEffect(() => {
@@ -63,31 +67,42 @@ export default function TabLayout() {
         <NativeTabs.Trigger
           name={HOME_TAB_ROUTE}
           accessibilityLabel={labels.feed}
+          disableAutomaticContentInsets={false}
           contentStyle={{ backgroundColor: colors.background }}>
-          <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} />
+          <NativeTabs.Trigger.Icon
+            sf={{ default: 'house', selected: 'house.fill' }}
+            md={{ default: 'home', selected: 'home_filled' }}
+          />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
           name={ROUTES.activity}
           accessibilityLabel={labels.activity}
+          disableAutomaticContentInsets={false}
           contentStyle={{ backgroundColor: colors.background }}>
-          <NativeTabs.Trigger.Icon sf="figure.run" />
+          <NativeTabs.Trigger.Icon sf="figure.run" md="directions_run" />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
           name={ROUTES.statistic}
           accessibilityLabel={labels.statistics}
+          disableAutomaticContentInsets={false}
           contentStyle={{ backgroundColor: colors.background }}>
           <NativeTabs.Trigger.Icon
             sf={{ default: 'chart.line.uptrend.xyaxis', selected: 'chart.line.uptrend.xyaxis' }}
+            md={{ default: 'bar_chart', selected: 'monitoring' }}
           />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
           name={ROUTES.profile}
           accessibilityLabel={labels.profile}
+          disableAutomaticContentInsets={false}
           contentStyle={{ backgroundColor: colors.background }}>
-          <NativeTabs.Trigger.Icon sf={{ default: 'person.crop.circle', selected: 'person.crop.circle.fill' }} />
+          <NativeTabs.Trigger.Icon
+            sf={{ default: 'person.crop.circle', selected: 'person.crop.circle.fill' }}
+            md={{ default: 'person_outline', selected: 'account_circle' }}
+          />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
       </NativeTabs>
@@ -112,7 +127,7 @@ export default function TabLayout() {
           paddingTop: 6,
           display: hideTabBar ? 'none' : 'flex',
         },
-        tabBarItemStyle: { paddingVertical: 4 },
+        tabBarItemStyle: { alignItems: 'center', justifyContent: 'center', paddingVertical: 4 },
       }}>
       <Tabs.Screen
         name={HOME_TAB_ROUTE}
@@ -128,8 +143,7 @@ export default function TabLayout() {
           href: Platform.OS === 'web' ? null : undefined,
           tabBarAccessibilityLabel: labels.activity,
           headerShown: false,
-          tabBarIcon: ({ focused }) =>
-            renderTabIcon('run-fast', 'run-fast', focused, focused ? colors.tertiary : colors.primary),
+          tabBarIcon: ({ focused }) => renderTabIcon('run', 'run-fast', focused),
         }}
       />
       <Tabs.Screen
@@ -156,7 +170,7 @@ export default function TabLayout() {
                 backgroundColor: focused ? colors.primaryContainer : 'transparent',
               }}>
               <Suspense fallback={null}>
-                <LazyAvatarShowable size={34} id={userId} focused={focused} profile={profile ?? undefined} />
+                <LazyUserProfileAvatar size={34} id={userId} focused={focused} profile={profile ?? undefined} />
               </Suspense>
             </View>
           ),

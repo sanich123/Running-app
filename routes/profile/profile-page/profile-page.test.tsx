@@ -2,6 +2,7 @@ import { act, screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
+import { UserProfileAvatarTestIds } from '@S/avatar/user-profile-avatar/const';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
@@ -19,10 +20,6 @@ jest.mock('expo-router', () => ({
   usePathname: () => mockPathname,
   useRouter: () => ({ push: mockPush }),
 }));
-jest.mock('@S/avatar/showable/avatar-showable/avatar-showable', () => {
-  const { View } = jest.requireActual('react-native');
-  return () => <View testID="profile-avatar" />;
-});
 jest.mock('@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="profile-follow" />;
@@ -57,6 +54,9 @@ describe('ProfilePage', () => {
   it('renders the profile returned by the server', async () => {
     await renderWithProviders(<ProfilePage />);
     expect(await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`)).toBeOnTheScreen();
+    expect(screen.getByTestId(UserProfileAvatarTestIds.success)).toHaveProp('source', {
+      uri: MOCK_SERVER_PROFILE.profilePhoto,
+    });
     expect(screen.getByTestId('profile-statistics')).toBeOnTheScreen();
     expect(screen.getByTestId('profile-users-counter-whoUserFollows')).toBeOnTheScreen();
   });

@@ -10,7 +10,7 @@ export const LazyActivityStatisticsPage = lazy(
 export const LazyAvatarIconEditable = lazy(
   () => import('@Routes/profile/profile-settings/avatar-editable/avatar-icon-editable/avatar-icon-editable'),
 );
-export const LazyAvatarShowable = lazy(() => import('@S/avatar/showable/avatar-showable/avatar-showable'));
+export const LazyUserProfileAvatar = lazy(() => import('@S/avatar/user-profile-avatar/user-profile-avatar'));
 export const LazyGenderBtns = lazy(() => import('@Routes/profile/profile-settings/gender-btns/gender-btns'));
 export const LazyInputBio = lazy(() => import('@Routes/profile/profile-settings/input-bio/input-bio'));
 export const LazyInputsNameSurname = lazy(

@@ -60,9 +60,9 @@ export default function VideoMedia({
           style={StyleSheet.absoluteFill}
           testID={testID + '-thumbnail'}
           placeholder={blurhash}
-          onLoad={({ source }) => {
-            if (source.width > 0 && source.height > 0) {
-              handleMetadata({ aspectRatio: source.width / source.height });
+          onLoad={({ source: { width: loadedWidth, height: loadedHeight } }) => {
+            if (loadedWidth > 0 && loadedHeight > 0) {
+              handleMetadata({ aspectRatio: loadedWidth / loadedHeight });
             }
           }}
         />

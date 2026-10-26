@@ -1,6 +1,8 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { UserProfileAvatarTestIds } from '@S/avatar/user-profile-avatar/const';
 import { FOLLOW_UNFOLLOW_BTN } from '@S/user-list-item/follow-unfollow-btn/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
@@ -44,6 +46,18 @@ describe('User list item', () => {
     expect(avatar).toHaveProp('cachePolicy', 'memory-disk');
     expect(avatar).toHaveProp('recyclingKey', 'avatar-owner');
     expect(avatar).toHaveProp('transition', 0);
+  });
+
+  it('keeps the moderation marker compact on the small user-list avatar', async () => {
+    mockStore.dispatch(setMockUserId('viewer-user'));
+    await renderWithProviders(
+      <UserListItem name="Runner" surname="Pending" userId="pending-user" profilePhotoReviewStatus="review_required" />,
+    );
+
+    const moderationButton = screen.getByTestId(`${UserProfileAvatarTestIds.moderationStatus}-container-outer-layer`);
+    expect(StyleSheet.flatten(moderationButton.props.style)).toEqual(
+      expect.objectContaining({ height: 28, top: 0, width: 28 }),
+    );
   });
 
   it('should show follow btn, when userId !== user.id and userId is not in the list of friends', async () => {

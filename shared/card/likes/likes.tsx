@@ -4,8 +4,8 @@ import { Text, TouchableRipple } from 'react-native-paper';
 import { likesApi, useGetLikesByActivityIdInfiniteQuery } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToDownload } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { AvatarShowableTestIds } from '@S/avatar/showable/const';
 import UserAvatar from '@S/avatar/user-avatar/user-avatar';
+import { UserProfileAvatarTestIds } from '@S/avatar/user-profile-avatar/const';
 import ModalLikesList from '@S/card/modal-likes-list/modal-likes-list';
 import NumberOfLikes from '@S/card/number-of-likes/number-of-likes';
 import { useActivityCard } from '../context';
@@ -95,7 +95,7 @@ export default function Likes() {
                             cachePolicy="memory-disk"
                             recyclingKey={authorId}
                             transition={0}
-                            testID={AvatarShowableTestIds.success}
+                            testID={UserProfileAvatarTestIds.success}
                           />
                         </View>
                       </Fragment>
