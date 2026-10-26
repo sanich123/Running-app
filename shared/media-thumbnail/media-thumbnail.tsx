@@ -3,18 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 import { isVideoUrl } from '@Routes/photo-viewer/utils';
 import CustomImage from '@S/custom-image/custom-image';
-import type { ImageProps } from 'expo-image';
-
-interface MediaThumbnailProps {
-  mediaUrl: string;
-  thumbnail?: string | null;
-  isVideo?: boolean;
-  style?: ImageProps['style'];
-  testID?: string;
-  placeholder?: string | null;
-  recyclingKey?: string | null;
-  onLoad?: ImageProps['onLoad'];
-}
+import type { MediaThumbnailProps } from './types';
 
 export default function MediaThumbnail({
   mediaUrl,
