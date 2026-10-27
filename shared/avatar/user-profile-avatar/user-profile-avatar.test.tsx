@@ -5,28 +5,29 @@ import { mockStore } from '@T/utils/mock-store';
 import { loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { AvatarShowableTestIds } from '../const';
-import AvatarShowable from './avatar-showable';
-describe('Avatar showable', () => {
+import { UserProfileAvatarTestIds } from './const';
+import UserProfileAvatar from './user-profile-avatar';
+
+describe('UserProfileAvatar', () => {
   it('shows a loading indicator while the profile is loading', async () => {
     server.use(http.get(`${BASE_URL}/user/loading-profile-user/profile`, loadingResponse));
 
-    await renderWithProviders(<AvatarShowable size={25} id="loading-profile-user" />, { store: mockStore });
+    await renderWithProviders(<UserProfileAvatar size={25} id="loading-profile-user" />, { store: mockStore });
 
-    expect(screen.getByTestId(AvatarShowableTestIds.isLoading)).toBeOnTheScreen();
+    expect(screen.getByTestId(UserProfileAvatarTestIds.isLoading)).toBeOnTheScreen();
   });
 
   it('should correctly handle isLoading and success state', async () => {
-    await renderWithProviders(<AvatarShowable size={25} id="someUserId" />, { store: mockStore });
-    expect(await screen.findByTestId(AvatarShowableTestIds.success)).toBeOnTheScreen();
+    await renderWithProviders(<UserProfileAvatar size={25} id="someUserId" />, { store: mockStore });
+    expect(await screen.findByTestId(UserProfileAvatarTestIds.success)).toBeOnTheScreen();
   });
   it('should correctly handle isLoading and error state', async () => {
-    await renderWithProviders(<AvatarShowable size={25} id="someUserIdWithAnError" />, { store: mockStore });
-    expect(await screen.findByTestId(AvatarShowableTestIds.error)).toBeOnTheScreen();
+    await renderWithProviders(<UserProfileAvatar size={25} id="someUserIdWithAnError" />, { store: mockStore });
+    expect(await screen.findByTestId(UserProfileAvatarTestIds.error)).toBeOnTheScreen();
   });
   it('should render a default icon, when !error !isLoading !profile', async () => {
-    await renderWithProviders(<AvatarShowable size={25} id="someUserIdWithoutPhoto" />, { store: mockStore });
-    expect(await screen.findByTestId(AvatarShowableTestIds.default)).toBeOnTheScreen();
+    await renderWithProviders(<UserProfileAvatar size={25} id="someUserIdWithoutPhoto" />, { store: mockStore });
+    expect(await screen.findByTestId(UserProfileAvatarTestIds.default)).toBeOnTheScreen();
   });
 
   it('uses a supplied profile without requesting it again', async () => {
@@ -38,17 +39,20 @@ describe('Avatar showable', () => {
       }),
     );
 
-    await renderWithProviders(<AvatarShowable size={25} id="feed-user" profile={{ profilePhoto: 'feed-avatar' }} />, {
-      store: mockStore,
-    });
+    await renderWithProviders(
+      <UserProfileAvatar size={25} id="feed-user" profile={{ profilePhoto: 'feed-avatar' }} />,
+      {
+        store: mockStore,
+      },
+    );
 
-    expect(await screen.findByTestId(AvatarShowableTestIds.success)).toBeOnTheScreen();
+    expect(await screen.findByTestId(UserProfileAvatarTestIds.success)).toBeOnTheScreen();
     expect(requests).toBe(0);
   });
 
   it('shows the pending photo stage to another user', async () => {
     await renderWithProviders(
-      <AvatarShowable
+      <UserProfileAvatar
         size={92}
         id="pending-author"
         profile={{
@@ -60,6 +64,6 @@ describe('Avatar showable', () => {
       { store: mockStore },
     );
 
-    expect(screen.getByTestId(AvatarShowableTestIds.moderationStatus)).toBeOnTheScreen();
+    expect(screen.getByTestId(UserProfileAvatarTestIds.moderationStatus)).toBeOnTheScreen();
   });
 });

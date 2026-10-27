@@ -1,3 +1,4 @@
+import { TEST_URLS } from '@T/mocks/const';
 import {
   createMediaUploadFormData,
   createMediaUploadBatchFormData,
@@ -37,7 +38,7 @@ describe('media file metadata', () => {
   });
 
   it('uses the picker media type when native metadata has no name or MIME type', () => {
-    expect(getMediaFileInfo('ph://video-id', { mediaType: 'video' })).toMatchObject({
+    expect(getMediaFileInfo(TEST_URLS.phVideoAssetUri, { mediaType: 'video' })).toMatchObject({
       isVideo: true,
       mimeType: 'video/mp4',
     });
@@ -55,7 +56,7 @@ describe('media file metadata', () => {
   it('keeps the actual MIME type in the native upload descriptor', () => {
     const appendSpy = jest.spyOn(FormData.prototype, 'append');
     const body = createMediaUploadFormData({
-      file: 'ph://video-id',
+      file: TEST_URLS.phVideoAssetUri,
       originalName: '',
       extension: 'webm',
       isVideo: true,
@@ -64,7 +65,7 @@ describe('media file metadata', () => {
     });
 
     expect(appendSpy).toHaveBeenCalledWith('file', {
-      uri: 'ph://video-id',
+      uri: TEST_URLS.phVideoAssetUri,
       name: expect.stringMatching(/\.webm$/),
       type: 'video/webm',
     });
@@ -80,14 +81,14 @@ describe('media file metadata', () => {
       mimeType: 'video/mp4',
     });
     expect(
-      getMediaFileInfo('content://asset-id', {
+      getMediaFileInfo(TEST_URLS.contentAssetUri, {
         fileName: 'recording',
         mimeType: 'application/octet-stream',
         mediaType: 'video',
       }),
     ).toEqual({ fileName: 'recording', extension: '', isVideo: true, mimeType: 'video/mp4' });
     expect(
-      getMediaFileInfo('content://asset-id', {
+      getMediaFileInfo(TEST_URLS.contentAssetUri, {
         fileName: 'picture',
         mimeType: 'application/octet-stream',
         mediaType: 'image',
@@ -118,7 +119,7 @@ describe('media file metadata', () => {
   ])('derives the fallback upload extension for %s', (mimeType, extension) => {
     const appendSpy = jest.spyOn(FormData.prototype, 'append');
     createMediaUploadFormData({
-      file: 'file://asset-id',
+      file: TEST_URLS.assetFileUri,
       originalName: '',
       extension: '',
       isVideo: mimeType.startsWith('video/'),
@@ -139,7 +140,7 @@ describe('media file metadata', () => {
     const formData = createMediaUploadBatchFormData({
       files: [
         {
-          file: 'content://route-video',
+          file: TEST_URLS.contentRouteVideoUri,
           originalName: 'route.mp4',
           extension: 'mp4',
           isVideo: true,
@@ -153,7 +154,7 @@ describe('media file metadata', () => {
     expect(formData.get('manifest')).toBe(JSON.stringify(manifest));
     expect(formData.get('scope')).toBeNull();
     expect(appendSpy).toHaveBeenCalledWith('files', {
-      uri: 'content://route-video',
+      uri: TEST_URLS.contentRouteVideoUri,
       name: 'route.mp4',
       type: 'video/mp4',
     });

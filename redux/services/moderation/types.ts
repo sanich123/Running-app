@@ -11,21 +11,6 @@ export interface SubmitContentReportRequest {
   details?: string;
 }
 
-export interface BlockedUserItem {
-  blockedUserId: string;
-  createdAt: string;
-  profile: {
-    name: string | null;
-    surname: string | null;
-    profilePhoto: string | null;
-    profilePhotoBlurhash: string | null;
-  } | null;
-}
-
-export interface BlockedUsersResponse {
-  items: BlockedUserItem[];
-}
-
 export type ContentReportStatus = 'open' | 'in_review' | 'resolved' | 'rejected' | 'appealed';
 export type ModerationActionType =
   | 'hide_content'

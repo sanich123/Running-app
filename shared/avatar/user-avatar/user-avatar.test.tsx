@@ -1,4 +1,5 @@
-import { render } from '@testing-library/react-native';
+import { act, render, waitFor } from '@testing-library/react-native';
+import { TEST_URLS } from '@T/mocks/const';
 import UserAvatar from './user-avatar';
 import { getAvatarLabel } from './utils';
 
@@ -31,26 +32,30 @@ describe('user avatar', () => {
     expect(result.getByTestId('pending-avatar')).toBeOnTheScreen();
   });
 
-  it('renders Avatar.Image for a profile photo', async () => {
+  it('renders a profile photo through CustomImage', async () => {
+    const result = await render(<UserAvatar size={40} profilePhoto={TEST_URLS.avatar} testID="avatar-image" />);
+
+    expect(result.getByTestId('avatar-image').props.source).toEqual({ uri: TEST_URLS.avatar });
+  });
+
+  it('shows the user initials when the profile photo cannot be loaded', async () => {
     const result = await render(
-      <UserAvatar size={40} profilePhoto="https://example.com/avatar.jpg" testID="avatar-image" />,
+      <UserAvatar size={40} name="Eliud" surname="Kipchoge" profilePhoto={TEST_URLS.avatar} testID="avatar-image" />,
     );
 
-    expect(result.getByTestId('avatar-image').props.source).toEqual({ uri: 'https://example.com/avatar.jpg' });
+    expect(result.getByTestId('avatar-image').props.onError).toBeDefined();
+    await act(async () => result.getByTestId('avatar-image').props.onError());
+
+    await waitFor(() => expect(result.getByText('EK')).toBeOnTheScreen());
   });
 
   it('clips custom profile photos to the avatar shape', async () => {
     const result = await render(
-      <UserAvatar
-        size={40}
-        profilePhoto="https://example.com/avatar.jpg"
-        placeholder="blurhash"
-        testID="custom-avatar-image"
-      />,
+      <UserAvatar size={40} profilePhoto={TEST_URLS.avatar} placeholder="blurhash" testID="custom-avatar-image" />,
     );
-    const root = result.root;
-    if (!root) throw new Error('Avatar root was not rendered');
-
-    expect(root.props.style[1]).toEqual([{ overflow: 'hidden' }, undefined]);
+    expect(result.getByTestId('custom-avatar-image').props.style).toEqual([
+      { overflow: 'hidden' },
+      { width: 40, height: 40, borderRadius: 20 },
+    ]);
   });
 });

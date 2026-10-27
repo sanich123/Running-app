@@ -4,8 +4,9 @@ import { Platform } from 'react-native';
 import * as router from 'expo-router';
 import { likesApi } from '@R/services/likes/likes';
 import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
-import { AvatarShowableTestIds } from '@S/avatar/showable/const';
+import { UserProfileAvatarTestIds } from '@S/avatar/user-profile-avatar/const';
 import { ActivityCardContext } from '@S/card/context';
+import { TEST_URLS } from '@T/mocks/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -70,14 +71,14 @@ describe('Card likes', () => {
         HttpResponse.json([
           {
             authorId: 'someUserId',
-            profile: { name: 'Some', surname: 'User', profilePhoto: 'https://example.com/avatar.jpg' },
+            profile: { name: 'Some', surname: 'User', profilePhoto: TEST_URLS.avatar },
           },
         ]),
       ),
     );
     await renderLikes('617dddae-05b3-418a-9a8e-5d408a1b897a', true);
     expect(await screen.findByTestId('pushToActivityLikes')).toBeOnTheScreen();
-    const avatar = await screen.findByTestId(AvatarShowableTestIds.success);
+    const avatar = await screen.findByTestId(UserProfileAvatarTestIds.success);
     expect(avatar).toBeOnTheScreen();
     expect(avatar.props.cachePolicy).toBe('memory-disk');
     expect(avatar.props.recyclingKey).toBe('someUserId');

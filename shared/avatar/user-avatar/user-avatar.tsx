@@ -1,8 +1,8 @@
+import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import CustomImage from '@S/custom-image/custom-image';
-import { getProductionBucketFallbackUri } from '@S/custom-image/utils';
 import { getAvatarLabel } from './utils';
 import type { UserAvatarProps } from './types';
 
@@ -18,7 +18,10 @@ export default function UserAvatar({
   recyclingKey,
   transition,
 }: UserAvatarProps) {
-  if (!profilePhoto && !placeholder) {
+  const [failedImageUri, setFailedImageUri] = useState<string | null>(null);
+  const imageHasFailed = Boolean(profilePhoto && failedImageUri === profilePhoto);
+
+  if (imageHasFailed || (!profilePhoto && !placeholder)) {
     const label = getAvatarLabel(name, surname);
 
     if (label) {
@@ -28,35 +31,25 @@ export default function UserAvatar({
     return <Avatar.Icon testID={testID} size={size} icon="account" style={style} />;
   }
 
-  const shouldUseCustomImage = Boolean(
-    placeholder ||
-    cachePolicy ||
-    recyclingKey ||
-    transition !== undefined ||
-    (profilePhoto ? getProductionBucketFallbackUri(profilePhoto) : null),
+  return (
+    <Avatar.Image
+      size={size}
+      style={[styles.imageContainer, style]}
+      source={() => (
+        <CustomImage
+          style={[styles.image, { width: size, height: size, borderRadius: size / 2 }]}
+          source={{ uri: profilePhoto ?? '' }}
+          contentFit="cover"
+          placeholder={placeholder}
+          cachePolicy={cachePolicy}
+          recyclingKey={recyclingKey}
+          transition={transition}
+          onError={() => setFailedImageUri(profilePhoto ?? '')}
+          testID={testID}
+        />
+      )}
+    />
   );
-  if (shouldUseCustomImage) {
-    return (
-      <Avatar.Image
-        size={size}
-        style={[styles.imageContainer, style]}
-        source={() => (
-          <CustomImage
-            style={[styles.image, { width: size, height: size, borderRadius: size / 2 }]}
-            source={{ uri: profilePhoto ?? '' }}
-            contentFit="cover"
-            placeholder={placeholder}
-            cachePolicy={cachePolicy}
-            recyclingKey={recyclingKey}
-            transition={transition}
-            testID={testID}
-          />
-        )}
-      />
-    );
-  }
-
-  return <Avatar.Image testID={testID} size={size} source={{ uri: profilePhoto ?? undefined }} style={style} />;
 }
 
 const styles = StyleSheet.create({

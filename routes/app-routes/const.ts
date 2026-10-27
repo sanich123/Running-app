@@ -10,7 +10,7 @@ export const LazyActivityStatisticsPage = lazy(
 export const LazyAvatarIconEditable = lazy(
   () => import('@Routes/profile/profile-settings/avatar-editable/avatar-icon-editable/avatar-icon-editable'),
 );
-export const LazyAvatarShowable = lazy(() => import('@S/avatar/showable/avatar-showable/avatar-showable'));
+export const LazyUserProfileAvatar = lazy(() => import('@S/avatar/user-profile-avatar/user-profile-avatar'));
 export const LazyGenderBtns = lazy(() => import('@Routes/profile/profile-settings/gender-btns/gender-btns'));
 export const LazyInputBio = lazy(() => import('@Routes/profile/profile-settings/input-bio/input-bio'));
 export const LazyInputsNameSurname = lazy(
@@ -50,9 +50,6 @@ export const LazyProfileEditBtn = lazy(() => import('@Routes/profile/edit-btn/ed
 export const LazyProfilePage = lazy(() => import('@Routes/profile/profile-page/profile-page'));
 export const LazyProfilePrivacySettingsPage = lazy(
   () => import('@Routes/profile/privacy-settings/profile-privacy-settings-page/profile-privacy-settings-page'),
-);
-export const LazyBlockedUsersPage = lazy(
-  () => import('@Routes/profile/privacy-settings/blocked-users-page/blocked-users-page'),
 );
 export const LazyAdminDashboard = lazy(() => import('@Routes/admin/admin-dashboard'));
 export const LazyNotificationsPage = lazy(() => import('@Routes/notifications/notifications-page/notifications-page'));

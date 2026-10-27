@@ -9,6 +9,10 @@ export const NOTIFICATION_COPY = {
     commentLikeTitle: '{actor} понравился ваш комментарий',
     commentLikeBody: 'Посмотрите обсуждение тренировки.',
     moderationReportReceivedTitle: 'Жалоба принята к рассмотрению',
+    moderationReportReceivedBody:
+      'Жалоба №{reportId} на {targetType} ({reason}) принята к рассмотрению. Модератор проверит материалы; обычно решение принимается в течение 7 календарных дней. В сложных случаях срок может увеличиться. О результате сообщим здесь и по электронной почте.',
+    unknownReportTarget: 'материал',
+    unknownReportReason: 'другое',
     moderationReportDecisionTitle: 'Решение по жалобе',
     openActivity: 'Открыть тренировку',
     closeNotification: 'Закрыть',
@@ -51,6 +55,10 @@ export const NOTIFICATION_COPY = {
     commentLikeTitle: '{actor} liked your comment',
     commentLikeBody: 'Open the activity to see the discussion.',
     moderationReportReceivedTitle: 'Report received for review',
+    moderationReportReceivedBody:
+      'Report {reportId} about {targetType} ({reason}) was received. A moderator will review the materials; decisions usually take up to 7 calendar days. Complex cases may take longer. We will notify you here and by email.',
+    unknownReportTarget: 'content',
+    unknownReportReason: 'other',
     moderationReportDecisionTitle: 'Report decision',
     openActivity: 'Open activity',
     closeNotification: 'Close',

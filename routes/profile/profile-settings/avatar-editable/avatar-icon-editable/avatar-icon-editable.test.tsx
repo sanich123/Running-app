@@ -1,5 +1,6 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
+import { TEST_URLS } from '@T/mocks/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
@@ -14,21 +15,26 @@ jest.mock('react-native-compressor', () => ({
     compress: jest.fn(),
   }),
 }));
-jest.mock('@U/file-sending', () => ({
-  getAccessToGallery: jest.fn(() => Promise.resolve({ canceled: false, assets: [{ uri: 'file://avatar.jpg' }] })),
-  compressMediaFile: jest.fn(() =>
-    Promise.resolve({
-      file: 'compressed-avatar.jpg',
-      originalName: 'avatar.jpg',
-      extension: 'jpg',
-      isVideo: false,
-      mimeType: 'image/jpeg',
-    }),
-  ),
-  uploadMediaFile: jest.fn(() =>
-    Promise.resolve({ url: 'https://images.example.test/avatar.jpg', key: 'avatar.jpg', contentType: 'image/jpeg' }),
-  ),
-}));
+jest.mock('@U/file-sending', () => {
+  const { TEST_URLS } = jest.requireActual<{
+    TEST_URLS: { imageAvatar: string; avatarFileUri: string };
+  }>('@T/mocks/const');
+  return {
+    getAccessToGallery: jest.fn(() => Promise.resolve({ canceled: false, assets: [{ uri: TEST_URLS.avatarFileUri }] })),
+    compressMediaFile: jest.fn(() =>
+      Promise.resolve({
+        file: 'compressed-avatar.jpg',
+        originalName: 'avatar.jpg',
+        extension: 'jpg',
+        isVideo: false,
+        mimeType: 'image/jpeg',
+      }),
+    ),
+    uploadMediaFile: jest.fn(() =>
+      Promise.resolve({ url: TEST_URLS.imageAvatar, key: 'avatar.jpg', contentType: 'image/jpeg' }),
+    ),
+  };
+});
 
 let userNumber = 0;
 function setupProfile(profilePhoto: string | null) {
@@ -83,7 +89,7 @@ describe('Avatar icon editable', () => {
     const user = userEvent.setup();
     const setIsDisabled = jest.fn();
     const userId = setupProfile(MOCK_PROFILE.profilePhoto);
-    const updatedPhoto = 'https://images.example.test/avatar.jpg';
+    const updatedPhoto = TEST_URLS.imageAvatar;
     let currentPhoto = MOCK_PROFILE.profilePhoto;
     let requestBody: unknown;
     server.use(

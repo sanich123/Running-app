@@ -1,7 +1,6 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
 import type {
-  BlockedUsersResponse,
   ModerationActionRequest,
   ModerationAppealDecisionRequest,
   ModerationAppealItem,
@@ -56,17 +55,12 @@ export const moderationApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.moderationReports, Tags.moderationAppeals, Tags.moderationReport],
     }),
-    getBlockedUsers: query<BlockedUsersResponse, void>({
-      query: () => `/${moderation}/blocks`,
-      providesTags: [Tags.blockedUsers],
-    }),
     blockUser: mutation<void, string>({
       query: (blockedUserId) => ({
         url: `/${moderation}/blocks/${blockedUserId}`,
         method: Methods.put,
       }),
       invalidatesTags: [
-        Tags.blockedUsers,
         Tags.profile,
         Tags.activities,
         Tags.comments,
@@ -83,7 +77,6 @@ export const moderationApi = runichApi.injectEndpoints({
         method: Methods.delete,
       }),
       invalidatesTags: [
-        Tags.blockedUsers,
         Tags.profile,
         Tags.activities,
         Tags.comments,
@@ -104,7 +97,6 @@ export const {
   useApplyModerationActionMutation,
   useGetModerationAppealsQuery,
   useDecideModerationAppealMutation,
-  useGetBlockedUsersQuery,
   useBlockUserMutation,
   useUnblockUserMutation,
 } = moderationApi;

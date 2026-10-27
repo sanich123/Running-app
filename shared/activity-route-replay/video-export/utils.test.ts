@@ -1,3 +1,4 @@
+import { TEST_URLS } from '@T/mocks/const';
 import {
   formatReplayVideoSize,
   getReplayVideoFilename,
@@ -14,10 +15,10 @@ describe('route video export utilities', () => {
   });
 
   it('converts encoded file paths and adds the file scheme when needed', () => {
-    expect(getReplayVideoPath('file:///cache/my%20workout.mp4')).toBe('/cache/my workout.mp4');
+    expect(getReplayVideoPath(TEST_URLS.encodedWorkoutVideoFileUri)).toBe('/cache/my workout.mp4');
     expect(getReplayVideoPath('/cache/workout.mp4')).toBe('/cache/workout.mp4');
-    expect(getReplayVideoUri('/cache/workout.mp4')).toBe('file:///cache/workout.mp4');
-    expect(getReplayVideoUri('file:///cache/workout.mp4')).toBe('file:///cache/workout.mp4');
+    expect(getReplayVideoUri('/cache/workout.mp4')).toBe(TEST_URLS.cachedWorkoutVideoFileUri);
+    expect(getReplayVideoUri(TEST_URLS.cachedWorkoutVideoFileUri)).toBe(TEST_URLS.cachedWorkoutVideoFileUri);
   });
 
   it('uses valid workout dates and falls back for missing or invalid dates', () => {

@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { TEST_URLS } from '@T/mocks/const';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { uploadActivityMedia } from '../utils';
@@ -9,11 +10,12 @@ jest.mock('react-native-compressor', () => ({
     compress: jest.fn(),
   }),
 }));
-jest.mock('../utils', () => ({
-  uploadActivityMedia: jest.fn(() =>
-    Promise.resolve({ url: 'https://images.example.test/activity.jpg', thumbnail: 'thumbnail.jpg' }),
-  ),
-}));
+jest.mock('../utils', () => {
+  const { TEST_URLS } = jest.requireActual<{ TEST_URLS: { activityPhoto: string } }>('@T/mocks/const');
+  return {
+    uploadActivityMedia: jest.fn(() => Promise.resolve({ url: TEST_URLS.activityPhoto, thumbnail: 'thumbnail.jpg' })),
+  };
+});
 describe('Preview uploadable image', () => {
   it('should correctly renders', async () => {
     mockStore.dispatch(setMockUserId('someUserId'));
@@ -33,11 +35,13 @@ describe('Preview uploadable image', () => {
   it('uploads and adds the selected image to the activity', async () => {
     const user = userEvent.setup();
     mockStore.dispatch(setMockUserId('someUserId'));
-    await renderWithProviders(<PreviewUploadableImage image="file://activity.jpg" index={0} isDisabled={false} />);
+    await renderWithProviders(
+      <PreviewUploadableImage image={TEST_URLS.activityPhotoFileUri} index={0} isDisabled={false} />,
+    );
     await user.press(screen.getByTestId('previewUploadable'));
-    expect(uploadActivityMedia).toHaveBeenCalledWith('file://activity.jpg');
+    expect(uploadActivityMedia).toHaveBeenCalledWith(TEST_URLS.activityPhotoFileUri);
     expect(mockStore.getState().activity.media[0]).toEqual({
-      url: 'https://images.example.test/activity.jpg',
+      url: TEST_URLS.activityPhoto,
       thumbnail: 'thumbnail.jpg',
     });
   });

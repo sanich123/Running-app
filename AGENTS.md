@@ -12,12 +12,13 @@
 - Name the component file after its component using kebab-case, not camelCase; for example, `ReadyCheckCard` lives in `ready-check-card.tsx`.
 - A component file must default-export a function component that returns JSX. Aside from imports, keep only that component and its styles in the file; do not add named exports, helper functions, types, or unrelated constants there.
 - When a component has only one or two props, write the prop type inline instead of creating a separate interface or type solely for those props.
+- Prefer destructuring objects wherever practical, especially in iteration callbacks: destructure every locally used property instead of repeatedly accessing it through the object, for example `taskMenuActions.map(({ key, dividerBefore, disabled, leadingIcon, title, onPress }) => ...)`. Keep the object intact when it is passed through or destructuring would make the code less clear.
 - Prefer a single `return` statement per JSX/TSX component when practical; keep multiple returns when they make distinct render states clearer.
 - Put component-specific variables, types, and helpers in the component's folder when there are more than two. When there are only one or two, put them in the parent folder's `const.ts`, `types.ts`, or `utils.ts`, according to their role.
 - Keep Expo Router route modules at their required route paths and exports. Route-level lazy imports and Suspense fallbacks may stay in the route module; put screen UI in dedicated component folders.
 - When sibling elements share the same rendering condition, group them in one conditional fragment instead of repeating the condition.
 - When a render branch must show exactly one of two mutually exclusive results, express the choice once with a conditional expression instead of two independent conditions.
-- Do not repeat a check already guaranteed by an enclosing condition or a value's invariant. Keep only the condition that distinguishes the rendering branches; omit redundant truthy checks and optional chaining when the value is guaranteed to exist.
+- Do not repeat a check already guaranteed by an enclosing condition, type narrowing, or value invariant. For example, inside `if (Platform.OS === 'ios')`, use iOS-only props directly instead of checking `Platform.OS` again. Keep only conditions that distinguish render branches, and omit redundant truthy checks or optional chaining for guaranteed values.
 - Keep JSX markup primarily in the component's `return` statement. Do not store JSX elements or fragments in variables; render components directly in the markup with their props.
 
 ## Component tests

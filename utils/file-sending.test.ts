@@ -8,6 +8,7 @@ import { runichApi } from '@R/runich-api/runich-api';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
+import { TEST_URLS } from '@T/mocks/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { server } from '@T/utils/server';
 import {
@@ -71,7 +72,7 @@ describe('file sending', () => {
     (VideoCompressor.compress as jest.Mock).mockResolvedValue('compressed-video.mp4');
     (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 1_000, duration: 10 });
     uploadMedia.mockResolvedValue({
-      url: 'https://cdn.example/photo.jpg',
+      url: TEST_URLS.cdnExamplePhoto,
       key: 'user/photo.jpg',
       contentType: 'image/jpeg',
     });
@@ -116,7 +117,7 @@ describe('file sending', () => {
     await expect(
       uploadMediaFile(compressedFile, { scope: 'feedback', feedbackId: 'feedback-id' }, uploadMedia),
     ).resolves.toEqual({
-      url: 'https://cdn.example/photo.jpg',
+      url: TEST_URLS.cdnExamplePhoto,
       key: 'user/photo.jpg',
       contentType: 'image/jpeg',
     });
@@ -136,7 +137,7 @@ describe('file sending', () => {
     };
 
     await expect(uploadMediaFile(compressedFile, undefined, uploadMedia)).resolves.toEqual(
-      expect.objectContaining({ url: 'https://cdn.example/photo.jpg' }),
+      expect.objectContaining({ url: TEST_URLS.cdnExamplePhoto }),
     );
     expect(uploadMedia).toHaveBeenCalled();
     expect(mockErrorToast).not.toHaveBeenCalled();
@@ -152,7 +153,7 @@ describe('file sending', () => {
     };
     uploadMediaBatch.mockResolvedValue([
       {
-        url: 'https://cdn.example/photo.jpg',
+        url: TEST_URLS.cdnExamplePhoto,
         key: 'user/photo.jpg',
         contentType: 'image/jpeg',
         mediaId: 'media-1',
@@ -215,7 +216,7 @@ describe('file sending', () => {
     });
     expect(VideoCompressor.compress).toHaveBeenCalledWith('activity.MP4', { maxSize: 720 });
 
-    const thumbnail = await createVideoThumbnail('https://cdn.example/video.mp4');
+    const thumbnail = await createVideoThumbnail(TEST_URLS.exampleVideo);
     expect(thumbnail).toBeNull();
     expect(errorToast).not.toHaveBeenCalled();
   });
@@ -223,7 +224,7 @@ describe('file sending', () => {
   it('skips video thumbnail generation on web without reporting an error', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
 
-    await expect(createVideoThumbnail('https://cdn.example/video.mp4')).resolves.toBeNull();
+    await expect(createVideoThumbnail(TEST_URLS.exampleVideo)).resolves.toBeNull();
 
     expect(VideoThumbnails.getThumbnailAsync).not.toHaveBeenCalled();
     expect(errorToast).not.toHaveBeenCalled();
@@ -232,8 +233,8 @@ describe('file sending', () => {
   it('creates a video thumbnail as a separate operation', async () => {
     (VideoThumbnails.getThumbnailAsync as jest.Mock).mockResolvedValue({ uri: 'thumbnail.jpg' });
 
-    await expect(createVideoThumbnail('https://cdn.example/video.mp4')).resolves.toBe('thumbnail.jpg');
-    expect(VideoThumbnails.getThumbnailAsync).toHaveBeenCalledWith('https://cdn.example/video.mp4');
+    await expect(createVideoThumbnail(TEST_URLS.exampleVideo)).resolves.toBe('thumbnail.jpg');
+    expect(VideoThumbnails.getThumbnailAsync).toHaveBeenCalledWith(TEST_URLS.exampleVideo);
   });
 
   it('reports unsupported and oversized files during compression', async () => {
@@ -281,7 +282,7 @@ describe('file sending', () => {
 
     const thumbnailError = new Error('thumbnail failed');
     (VideoThumbnails.getThumbnailAsync as jest.Mock).mockRejectedValue(thumbnailError);
-    await expect(createVideoThumbnail('https://cdn.example/video.mp4')).resolves.toBeNull();
+    await expect(createVideoThumbnail(TEST_URLS.exampleVideo)).resolves.toBeNull();
     expect(errorToast).toHaveBeenCalledTimes(2);
   });
 
@@ -377,14 +378,14 @@ describe('file sending', () => {
     } as Response);
     mockBrowserVideoMetadata(30);
 
-    await expect(compressMediaFile('https://cdn.example/clip.mp4')).resolves.toMatchObject({
+    await expect(compressMediaFile(TEST_URLS.clipVideo)).resolves.toMatchObject({
       originalName: 'clip.mp4',
       isVideo: true,
     });
-    expect(fetchSpy).toHaveBeenCalledWith('https://cdn.example/clip.mp4');
+    expect(fetchSpy).toHaveBeenCalledWith(TEST_URLS.clipVideo);
 
     restoreGlobalProperty(globalThis, 'document', undefined);
-    await expect(compressMediaFile('https://cdn.example/clip.mp4')).resolves.toBeNull();
+    await expect(compressMediaFile(TEST_URLS.clipVideo)).resolves.toBeNull();
     expect(errorToast).toHaveBeenLastCalledWith('Ошибка во время сжатия видео', expect.any(Error));
   });
 
@@ -436,11 +437,11 @@ describe('file sending', () => {
 
   it('returns uploads that do not need moderation status polling unchanged', async () => {
     const uploads = [
-      { url: 'https://cdn.example/photo.jpg', contentType: 'image/jpeg' },
+      { url: TEST_URLS.cdnExamplePhoto, contentType: 'image/jpeg' },
       {
         assetId: 'asset-with-url',
         status: 'queued' as const,
-        url: 'https://cdn.example/video.mp4',
+        url: TEST_URLS.exampleVideo,
         contentType: 'video/mp4',
       },
     ];
@@ -459,7 +460,7 @@ describe('file sending', () => {
         });
       }),
       http.post(`${BASE_URL}/photo/asset-approved/publish`, () =>
-        HttpResponse.json({ url: 'https://cdn.example/approved.jpg', key: 'approved.jpg' }),
+        HttpResponse.json({ url: TEST_URLS.approvedPhoto, key: 'approved.jpg' }),
       ),
     );
 
@@ -476,7 +477,7 @@ describe('file sending', () => {
         assetId: 'asset-approved',
         status: 'approved',
         contentType: 'image/jpeg',
-        url: 'https://cdn.example/approved.jpg',
+        url: TEST_URLS.approvedPhoto,
         key: 'approved.jpg',
       },
     ]);
@@ -494,7 +495,7 @@ describe('file sending', () => {
             {
               assetId: 'asset-already-published',
               status: 'approved',
-              url: 'https://cdn.example/already-published.jpg',
+              url: TEST_URLS.alreadyPublishedPhoto,
               contentType: 'image/jpeg',
             },
           ],
@@ -518,7 +519,7 @@ describe('file sending', () => {
       {
         assetId: 'asset-already-published',
         status: 'approved',
-        url: 'https://cdn.example/already-published.jpg',
+        url: TEST_URLS.alreadyPublishedPhoto,
         contentType: 'image/jpeg',
       },
     ]);
@@ -688,7 +689,7 @@ describe('file sending', () => {
 
   it('attaches and removes abort listeners around store-backed requests', async () => {
     const controller = new AbortController();
-    const response = { url: 'https://cdn.example/photo.jpg', key: 'photo.jpg', contentType: 'image/jpeg' };
+    const response = { url: TEST_URLS.cdnExamplePhoto, key: 'photo.jpg', contentType: 'image/jpeg' };
     const request = { unwrap: jest.fn().mockResolvedValue(response), abort: jest.fn() };
     jest.spyOn(store, 'dispatch').mockReturnValue(request as never);
     const addListener = jest.spyOn(controller.signal, 'addEventListener');

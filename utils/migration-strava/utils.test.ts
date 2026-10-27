@@ -1,4 +1,5 @@
 import { errorToast } from '@S/error-toast/error-toast';
+import { TEST_URLS } from '@T/mocks/const';
 import {
   createMigrationCancellation,
   getMigrationErrorMessage,
@@ -77,7 +78,7 @@ describe('migration error messages', () => {
   });
 
   it('preserves an existing file URI and converts a filesystem path', () => {
-    expect(toFileUri('file:///cache/archive.zip')).toBe('file:///cache/archive.zip');
-    expect(toFileUri('/cache/archive.zip')).toBe('file:///cache/archive.zip');
+    expect(toFileUri(TEST_URLS.cachedArchiveFileUri)).toBe(TEST_URLS.cachedArchiveFileUri);
+    expect(toFileUri('/cache/archive.zip')).toBe(TEST_URLS.cachedArchiveFileUri);
   });
 });

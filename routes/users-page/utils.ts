@@ -10,6 +10,7 @@ export const renderUserItem = ({ item }: { item: ProfileResponse & { userId: str
     surname: item?.surname,
     profilePhoto: item?.profilePhoto,
     placeholder: item?.profilePhotoBlurhash,
+    profilePhotoReviewStatus: item?.profilePhotoReviewStatus,
     userId: item?.userId,
     allowNewFollowers: item?.allowNewFollowers,
   });

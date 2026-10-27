@@ -13,6 +13,7 @@ import { clearSubscriptionSnapshot, setSubscriptionSnapshot } from '@R/slices/su
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import * as activityMediaUtils from '@Routes/save-activity-page/utils';
 import * as errorToastModule from '@S/error-toast/error-toast';
+import { TEST_URLS } from '@T/mocks/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import * as fileSending from '@U/file-sending';
 import ActivityCard from './activity-card';
@@ -138,7 +139,7 @@ describe('Activity card', () => {
   });
 
   it('keeps the saved map preview in the full view', async () => {
-    const mapPhotoUrl = 'https://cdn.example.test/activity-map.jpg';
+    const mapPhotoUrl = TEST_URLS.activityCardMap;
 
     await renderCard({ mapPhotoUrl }, { isFullView: true });
 
@@ -471,7 +472,7 @@ describe('Activity card', () => {
     ];
     const gallery = jest.spyOn(fileSending, 'getAccessToGallery').mockResolvedValue({
       canceled: false,
-      assets: [{ uri: 'file:///card-photo.jpg', fileName: 'card-photo.jpg', mimeType: 'image/jpeg' }],
+      assets: [{ uri: TEST_URLS.cardPhotoFileUri, fileName: 'card-photo.jpg', mimeType: 'image/jpeg' }],
     } as never);
     jest.spyOn(activityMediaUtils, 'uploadActivityMediaBatch').mockResolvedValue(uploadedMedia as never);
     let appendedMediaBody: unknown;
@@ -505,7 +506,7 @@ describe('Activity card', () => {
     ];
     jest.spyOn(fileSending, 'getAccessToGallery').mockResolvedValue({
       canceled: false,
-      assets: [{ uri: 'file:///failed-photo.jpg', fileName: 'failed-photo.jpg', mimeType: 'image/jpeg' }],
+      assets: [{ uri: TEST_URLS.failedPhotoFileUri, fileName: 'failed-photo.jpg', mimeType: 'image/jpeg' }],
     } as never);
     jest.spyOn(activityMediaUtils, 'uploadActivityMediaBatch').mockResolvedValue(uploadedMedia as never);
     const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);

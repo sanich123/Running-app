@@ -1,5 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 import { setActivityIdWhichLikesToDownload } from '@R/slices/main-feed/main-feed';
+import { TEST_URLS } from '@T/mocks/const';
 import { mockStore, resetMockMainFeed } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ModalLikesList from './modal-likes-list';
@@ -64,7 +65,7 @@ describe('modal likes list', () => {
                   userId: 'liked-user',
                   name: 'Liked',
                   surname: 'Runner',
-                  profilePhoto: 'https://example.com/liked-user.jpg',
+                  profilePhoto: TEST_URLS.exampleLikedUserPhoto,
                   profilePhotoBlurhash: null,
                   allowNewFollowers: false,
                 },
@@ -88,7 +89,7 @@ describe('modal likes list', () => {
     );
 
     const avatar = screen.getByTestId('user-list-item-avatar-liked-user');
-    expect(avatar).toHaveProp('source', { uri: 'https://example.com/liked-user.jpg' });
+    expect(avatar).toHaveProp('source', { uri: TEST_URLS.exampleLikedUserPhoto });
     expect(avatar).toHaveProp('cachePolicy', 'memory-disk');
     expect(avatar).toHaveProp('recyclingKey', 'liked-user');
     expect(avatar).toHaveProp('transition', 0);

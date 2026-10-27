@@ -39,6 +39,7 @@ interface ActivityProfileResponse {
   surname?: string | null;
   profilePhoto?: string | null;
   profilePhotoBlurhash?: string | null;
+  profilePhotoReviewStatus?: 'queued' | 'processing' | 'review_required' | null;
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;
   allowActivityHeartRateViewing?: boolean;

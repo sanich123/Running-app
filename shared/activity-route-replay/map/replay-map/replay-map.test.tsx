@@ -1,6 +1,7 @@
 import { createRef, type Ref } from 'react';
 import { act, screen } from '@testing-library/react-native';
 import { Platform } from 'react-native';
+import { TEST_URLS } from '@T/mocks/const';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ReplayMap from './replay-map';
 import type { ReplayMapHandle } from '../../types';
@@ -57,13 +58,13 @@ describe('route replay map', () => {
         mapStyle="satellite"
         playbackCoordinate={[37.65, 55.75]}
         playbackHeading={45}
-        profile={{ name: 'Run', surname: 'User', profilePhoto: 'https://example.test/avatar.jpg' }}
+        profile={{ name: 'Run', surname: 'User', profilePhoto: TEST_URLS.exampleTestAvatar }}
       />,
     );
 
     expect(screen.getByTestId('activity-route-moving-marker')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-route-moving-avatar').props.source).toEqual({
-      uri: 'https://example.test/avatar.jpg',
+      uri: TEST_URLS.exampleTestAvatar,
     });
 
     act(() => mapRef.current?.updateCamera([37.66, 55.76], 90));

@@ -1,4 +1,6 @@
-export type MediaReviewStatus = 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed' | null;
+import type { MEDIA_REVIEW_STATUSES } from './const';
+
+export type MediaReviewStatus = (typeof MEDIA_REVIEW_STATUSES)[keyof typeof MEDIA_REVIEW_STATUSES] | null;
 
 export interface MediaModerationPlaceholderProps {
   status?: MediaReviewStatus;
@@ -8,6 +10,7 @@ export interface MediaModerationPlaceholderProps {
   hideTitle?: boolean;
   showStatus?: boolean;
   overlay?: boolean;
+  overlayIconSize?: number;
   topOffset?: number;
   testID?: string;
 }

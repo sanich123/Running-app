@@ -5,6 +5,7 @@ import { LANGUAGES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { ERROR_COMPONENT_COPY, ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
+import { TEST_URLS } from '@T/mocks/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -191,7 +192,7 @@ describe('ModerationDashboard', () => {
       http.get(`${BASE_URL}/moderation/reports/report-1`, () =>
         HttpResponse.json(
           createReportDetails(report, {
-            url: 'https://cdn.example/video.mp4',
+            url: TEST_URLS.exampleVideo,
             thumbnail: 'https://cdn.example/video-preview.jpg',
             moderationStatus: 'review_required',
             contentType: 'video/mp4',
@@ -314,7 +315,7 @@ describe('ModerationDashboard', () => {
     const user = userEvent.setup();
     const report = createReport({ targetType: 'media', targetId: 'media-1' });
     const details = createReportDetails(report, {
-      url: 'https://cdn.example/photo.jpg',
+      url: TEST_URLS.cdnExamplePhoto,
       moderationStatus: 'hidden',
     });
     details.actions = [
@@ -344,7 +345,7 @@ describe('ModerationDashboard', () => {
     expect(screen.getByTestId('moderation-action-restore_content')).toBeOnTheScreen();
     expect(screen.getByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].history)).toBeOnTheScreen();
     await user.press(screen.getByTestId('moderation-open-media'));
-    await waitFor(() => expect(openUrl).toHaveBeenCalledWith('https://cdn.example/photo.jpg'));
+    await waitFor(() => expect(openUrl).toHaveBeenCalledWith(TEST_URLS.cdnExamplePhoto));
   });
 
   it('shows activity media previews when reviewing an activity report', async () => {
@@ -352,9 +353,7 @@ describe('ModerationDashboard', () => {
     const report = createReport({ targetType: 'activity', targetId: 'activity-1' });
     const details = createReportDetails(report, {
       title: 'Morning run',
-      media: [
-        { id: 'activity-media-1', url: 'https://cdn.example/video.mp4', thumbnail: 'https://cdn.example/video.jpg' },
-      ],
+      media: [{ id: 'activity-media-1', url: TEST_URLS.exampleVideo, thumbnail: TEST_URLS.cdnExampleVideoThumbnail }],
     });
     const openUrl = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined);
     server.use(
@@ -371,10 +370,10 @@ describe('ModerationDashboard', () => {
 
     expect(await screen.findByTestId('moderation-activity-media-list')).toBeOnTheScreen();
     expect(screen.getByTestId('moderation-activity-media-preview-activity-media-1').props.source).toEqual({
-      uri: 'https://cdn.example/video.jpg',
+      uri: TEST_URLS.cdnExampleVideoThumbnail,
     });
     await user.press(screen.getByTestId('moderation-activity-media-activity-media-1'));
-    await waitFor(() => expect(openUrl).toHaveBeenCalledWith('https://cdn.example/video.mp4'));
+    await waitFor(() => expect(openUrl).toHaveBeenCalledWith(TEST_URLS.exampleVideo));
   });
 
   it('keeps the decision dialog open when applying a moderation action fails', async () => {

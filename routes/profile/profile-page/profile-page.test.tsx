@@ -1,7 +1,9 @@
-import { act, screen, userEvent } from '@testing-library/react-native';
-import { http, HttpResponse } from 'msw';
+import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { delay, http, HttpResponse } from 'msw';
+import { Platform } from 'react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
+import { UserProfileAvatarTestIds } from '@S/avatar/user-profile-avatar/const';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
@@ -14,15 +16,12 @@ import ProfilePage from './profile-page';
 
 const mockPathname = `/${ROUTES.profile}`;
 const mockPush = jest.fn();
+const originalPlatformOS = Platform.OS;
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.userId }),
   usePathname: () => mockPathname,
   useRouter: () => ({ push: mockPush }),
 }));
-jest.mock('@S/avatar/showable/avatar-showable/avatar-showable', () => {
-  const { View } = jest.requireActual('react-native');
-  return () => <View testID="profile-avatar" />;
-});
 jest.mock('@S/user-list-item/follow-unfollow-btn/follow-unfollow-btn', () => {
   const { View } = jest.requireActual('react-native');
   return () => <View testID="profile-follow" />;
@@ -41,7 +40,12 @@ jest.mock('../users-counter/users-counter', () => {
 describe('ProfilePage', () => {
   beforeEach(() => {
     mockPush.mockReset();
+    mockStore.dispatch(runichApi.util.resetApiState());
     mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
+  });
+
+  afterEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
   });
 
   it('renders loading state', async () => {
@@ -54,9 +58,35 @@ describe('ProfilePage', () => {
     expect(screen.getByTestId('profile-skeleton-statistics')).toBeOnTheScreen();
   });
 
+  it('keeps the loading state while profile sections are loading', async () => {
+    let hasLoadedProfile = false;
+    let hasStartedMediaRequest = false;
+    server.use(
+      http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, () => {
+        hasLoadedProfile = true;
+        return HttpResponse.json(MOCK_SERVER_PROFILE);
+      }),
+      http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/media`, async () => {
+        hasStartedMediaRequest = true;
+        await delay('infinite');
+        return HttpResponse.json({ media: [], hasMore: false, nextCursor: null });
+      }),
+    );
+
+    await renderWithProviders(<ProfilePage />);
+
+    await waitFor(() => expect(hasLoadedProfile).toBe(true));
+    await waitFor(() => expect(hasStartedMediaRequest).toBe(true));
+    expect(screen.getByTestId('profile-page-skeleton')).toBeOnTheScreen();
+    expect(screen.queryByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`)).not.toBeOnTheScreen();
+  });
+
   it('renders the profile returned by the server', async () => {
     await renderWithProviders(<ProfilePage />);
     expect(await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`)).toBeOnTheScreen();
+    expect(screen.getByTestId(UserProfileAvatarTestIds.success)).toHaveProp('source', {
+      uri: MOCK_SERVER_PROFILE.profilePhoto,
+    });
     expect(screen.getByTestId('profile-statistics')).toBeOnTheScreen();
     expect(screen.getByTestId('profile-users-counter-whoUserFollows')).toBeOnTheScreen();
   });
@@ -94,7 +124,6 @@ describe('ProfilePage', () => {
   });
 
   it('hides the follow control when the profile disallows new followers', async () => {
-    mockStore.dispatch(runichApi.util.resetApiState());
     mockStore.dispatch(setMockUserId('another-user-id'));
     server.use(
       http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, () =>
@@ -106,9 +135,22 @@ describe('ProfilePage', () => {
     await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
 
     expect(screen.queryByTestId('profile-follow')).not.toBeOnTheScreen();
-    await act(async () => {
-      mockStore.dispatch(runichApi.util.resetApiState());
-    });
+  });
+
+  it('shows public profile sections and follow action to another user', async () => {
+    mockStore.dispatch(setMockUserId('another-user-id'));
+    server.use(
+      http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, () =>
+        HttpResponse.json({ ...MOCK_SERVER_PROFILE, allowNewFollowers: true }),
+      ),
+    );
+
+    await renderWithProviders(<ProfilePage />);
+
+    expect(await screen.findByTestId('profile-follow')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-community-section')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-statistics')).toBeOnTheScreen();
+    expect(screen.queryByTestId('profile-privacy-settings-button')).not.toBeOnTheScreen();
   });
 
   it('opens privacy settings from the profile page', async () => {
@@ -184,22 +226,60 @@ describe('ProfilePage', () => {
     expect(screen.queryByTestId('profile-privacy-settings-button')).not.toBeOnTheScreen();
   });
 
-  it('shows the privacy settings link to the profile owner', async () => {
+  it('shows private profile sections and settings to the profile owner', async () => {
     let mediaRequests = 0;
     server.use(
       http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, () =>
-        HttpResponse.json({ ...MOCK_SERVER_PROFILE, hideProfilePhotos: true }),
+        HttpResponse.json({
+          ...MOCK_SERVER_PROFILE,
+          hideProfilePhotos: true,
+          hideFollowingList: true,
+          hideActivityStatistics: true,
+          allowNewFollowers: false,
+        }),
       ),
       http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/media`, () => {
         mediaRequests += 1;
-        return HttpResponse.json({ media: [], hasMore: false, nextCursor: null });
+        return HttpResponse.json({
+          media: [
+            {
+              id: 'owner-private-profile-photo',
+              activityId: 'profile-activity',
+              url: 'https://images.example.test/private-profile-photo.jpg',
+              thumbnail: null,
+              blurhash: null,
+              mediaReviewStatus: 'approved',
+            },
+          ],
+          hasMore: false,
+          nextCursor: null,
+        });
       }),
     );
 
     await renderWithProviders(<ProfilePage />);
 
+    expect(await screen.findByTestId('profile-activity-media-owner-private-profile-photo')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-community-section')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-statistics')).toBeOnTheScreen();
     expect(await screen.findByTestId('profile-privacy-settings-button')).toBeOnTheScreen();
+    expect(screen.queryByTestId('profile-follow')).not.toBeOnTheScreen();
     expect(mediaRequests).toBe(1);
+  });
+
+  it('shows watch import on Android for the profile owner', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    await renderWithProviders(<ProfilePage />);
+
+    expect(await screen.findByTestId('watch-import-profile-row')).toBeOnTheScreen();
+  });
+
+  it('hides watch import on iOS for the profile owner', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    await renderWithProviders(<ProfilePage />);
+
+    expect(await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`)).toBeOnTheScreen();
+    expect(screen.queryByTestId('watch-import-profile-row')).not.toBeOnTheScreen();
   });
 
   it('renders error state', async () => {

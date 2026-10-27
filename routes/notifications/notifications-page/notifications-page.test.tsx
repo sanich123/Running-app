@@ -5,6 +5,7 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { TEST_URLS } from '@T/mocks/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
@@ -159,7 +160,7 @@ describe('NotificationsPage', () => {
               relatedId: null,
               actorName: 'Alice',
               actorSurname: 'Runner',
-              actorProfilePhoto: 'https://images.example.test/alice.jpg',
+              actorProfilePhoto: TEST_URLS.alicePhoto,
               content: null,
               createdAt: new Date().toISOString(),
               readAt: null,
@@ -174,7 +175,7 @@ describe('NotificationsPage', () => {
 
     await renderWithProviders(<NotificationsPage />);
     const avatarImage = await screen.findByTestId('notification-avatar-notification-avatar-error');
-    expect(avatarImage.props.source).toEqual({ uri: 'https://images.example.test/alice.jpg' });
+    expect(avatarImage.props.source).toEqual({ uri: TEST_URLS.alicePhoto });
 
     await fireEvent(avatarImage, 'onError', { nativeEvent: { error: 'Not found' } });
 
@@ -249,7 +250,7 @@ describe('NotificationsPage', () => {
       relatedId: null,
       actorName: null,
       actorSurname: null,
-      actorProfilePhoto: 'https://example.com/photo.jpg',
+      actorProfilePhoto: TEST_URLS.exampleComPhoto,
       content: null,
       createdAt: new Date().toISOString(),
       readAt: new Date().toISOString(),

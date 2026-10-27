@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react-native';
+import { TEST_URLS } from '@T/mocks/const';
 import { renderWithProviders } from '@T/utils/test-utils';
 import MediaThumbnail from './media-thumbnail';
 
@@ -22,7 +23,7 @@ jest.mock('@S/custom-image/custom-image', () => {
 
 describe('MediaThumbnail', () => {
   it('shows a default video image when no thumbnail is available', async () => {
-    await renderWithProviders(<MediaThumbnail mediaUrl="https://cdn.example/video.mp4" testID="video-preview" />);
+    await renderWithProviders(<MediaThumbnail mediaUrl={TEST_URLS.exampleVideo} testID="video-preview" />);
 
     expect(screen.getByTestId('video-preview-fallback')).toBeOnTheScreen();
     expect(screen.queryByTestId('video-preview')).not.toBeOnTheScreen();
@@ -31,7 +32,7 @@ describe('MediaThumbnail', () => {
   it('switches to the default video image when the thumbnail fails to load', async () => {
     await renderWithProviders(
       <MediaThumbnail
-        mediaUrl="https://cdn.example/video.mp4"
+        mediaUrl={TEST_URLS.exampleVideo}
         thumbnail="https://cdn.example/video-thumbnail.jpg"
         testID="video-preview"
       />,
@@ -43,9 +44,9 @@ describe('MediaThumbnail', () => {
   });
 
   it('keeps displaying a photo directly when it has no thumbnail', async () => {
-    await renderWithProviders(<MediaThumbnail mediaUrl="https://cdn.example/photo.jpg" testID="photo-preview" />);
+    await renderWithProviders(<MediaThumbnail mediaUrl={TEST_URLS.cdnExamplePhoto} testID="photo-preview" />);
 
-    expect(screen.getByTestId('photo-preview')).toHaveTextContent('https://cdn.example/photo.jpg');
+    expect(screen.getByTestId('photo-preview')).toHaveTextContent(TEST_URLS.cdnExamplePhoto);
     expect(screen.queryByTestId('photo-preview-fallback')).not.toBeOnTheScreen();
   });
 });

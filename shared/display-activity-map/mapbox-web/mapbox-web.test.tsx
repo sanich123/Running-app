@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { render } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { TEST_URLS } from '@T/mocks/const';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 const mockBrandingChildren = [
   {
@@ -162,13 +163,13 @@ describe('mapbox web', () => {
         kilometresSplit={[]}
         showPlaybackMarker
         playbackCoordinate={[37.65, 55.75]}
-        playbackProfile={{ name: 'Run', surname: 'User', profilePhoto: 'https://example.test/avatar.jpg' }}
+        playbackProfile={{ name: 'Run', surname: 'User', profilePhoto: TEST_URLS.exampleTestAvatar }}
       />,
     );
 
     expect(markerConstructor).toHaveBeenCalledWith(expect.objectContaining({ anchor: 'center' }));
     const markerElement = markerConstructor.mock.calls[0]?.[0].element;
-    expect(markerElement.querySelector('img')?.src).toBe('https://example.test/avatar.jpg');
+    expect(markerElement.querySelector('img')?.src).toBe(TEST_URLS.exampleTestAvatar);
     expect(mockPlaybackMarker.setLngLat).toHaveBeenLastCalledWith([37.65, 55.75]);
   });
 

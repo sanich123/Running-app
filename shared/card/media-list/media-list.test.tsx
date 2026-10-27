@@ -1,6 +1,6 @@
 import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { Platform, StyleSheet } from 'react-native';
+import { FlatList, Platform, StyleSheet } from 'react-native';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
@@ -8,12 +8,14 @@ import { clearSubscriptionSnapshot, setSubscriptionSnapshot } from '@R/slices/su
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import * as infoToastModule from '@S/info-toast/info-toast';
+import { DEFAULT_ACTIVITY_CARD, TEST_URLS } from '@T/mocks/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MEDIA_MODERATION_PLACEHOLDER_COPY } from '../../media-moderation-placeholder/const';
 import { ActivityCardContext } from '../context';
+import { ACTIVITY_MEDIA_COPY } from './activity-media-item/const';
 import MediaList from './media-list';
 import VideoPlaybackProvider from './video-playback-provider/video-playback-provider';
 import type { ActivityCardData } from '../types';
@@ -39,25 +41,13 @@ jest.mock('@S/moderation/content-actions-menu/content-actions-menu.ios', () => (
   default: jest.requireActual('@S/moderation/content-actions-menu/content-actions-menu.tsx').default,
 }));
 
-const defaultActivity: ActivityCardData = {
-  date: '2026-08-09T10:00:00.000Z',
-  sport: 'run',
-  id: 'activity-id',
-  userId: 'activity-owner',
-  duration: 0,
-  distance: 0,
-  elevationGain: 0,
-  profile: {},
-  commentsLength: 0,
-};
-
-function renderMediaList(activity: Partial<ActivityCardData>) {
+function renderMediaList(activity: Partial<ActivityCardData>, isFullView = false) {
   return renderWithProviders(
     <VideoPlaybackProvider>
       <ActivityCardContext.Provider
         value={{
-          activity: { ...defaultActivity, ...activity },
-          isFullView: false,
+          activity: { ...DEFAULT_ACTIVITY_CARD, ...activity },
+          isFullView,
           isShowDescription: false,
         }}>
         <MediaList />
@@ -82,7 +72,7 @@ describe('media list', () => {
 
   it('opens the route map when its preview is pressed', async () => {
     const user = userEvent.setup();
-    const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
+    const mapUrl = TEST_URLS.activityCardMapWithDimensions;
     await renderMediaList({ mapPhotoUrl: mapUrl, media: [] });
     await user.press(screen.getByTestId(mapUrl));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.map}/activity-id`);
@@ -126,29 +116,30 @@ describe('media list', () => {
   });
 
   it('keeps the complete map image visible in the card preview', async () => {
-    const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
+    const mapUrl = TEST_URLS.activityCardMapWithDimensions;
     await renderMediaList({ mapPhotoUrl: mapUrl, media: [] });
 
     expect(screen.getByTestId(mapUrl).props.contentFit).toBe('cover');
   });
 
   it('keeps the full-size map first and scrolls it left to reveal activity media in the card preview', async () => {
-    const mapUrl = 'https://cdn.example.test/activity-map.jpg';
+    const mapUrl = TEST_URLS.activityCardMap;
     const routeOnlyMapUrl = 'https://cdn.example.test/activity-route-only-map.jpg';
-    const photoUrl = 'https://images.example.test/activity-photo.jpg';
+    const photoUrl = TEST_URLS.imageActivityPhoto;
     await renderMediaList({
       mapPhotoUrl: mapUrl,
       routeOnlyMapPhotoUrl: routeOnlyMapUrl,
       media: [{ url: photoUrl, thumbnail: null }],
     });
 
+    const scrollToOffset = jest.spyOn(FlatList.prototype, 'scrollToOffset').mockImplementation(() => undefined);
     const mediaList = screen.getByTestId('activity-media-list');
     const mapTileWidth = StyleSheet.flatten(screen.getByTestId('activity-map-media-container').props.style).width;
     const mapImageStyle = StyleSheet.flatten(screen.getByTestId(mapUrl).props.style);
     const photoWidth = StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width;
 
     expect(mediaList.props.horizontal).toBe(true);
-    expect(mediaList.props.data.map((item: { url: string }) => item.url)).toEqual([mapUrl, photoUrl]);
+    expect(mediaList.props.data.map(({ url }: { url: string }) => url)).toEqual([mapUrl, photoUrl]);
     expect(screen.getByTestId(mapUrl)).toBeOnTheScreen();
     expect(screen.getByTestId(photoUrl)).toBeOnTheScreen();
     expect(screen.queryByTestId(routeOnlyMapUrl)).not.toBeOnTheScreen();
@@ -158,6 +149,95 @@ describe('media list', () => {
     expect(mapImageStyle.transform).toBeUndefined();
     expect(photoWidth).toBeLessThan(mapTileWidth);
     expect(mediaList.props.onContentSizeChange).toEqual(expect.any(Function));
+
+    try {
+      mediaList.props.onContentSizeChange(1000, 220);
+      mediaList.props.onContentSizeChange(1000, 220);
+
+      expect(scrollToOffset).toHaveBeenCalledTimes(1);
+      expect(scrollToOffset).toHaveBeenCalledWith({ offset: mapTileWidth / 2, animated: false });
+    } finally {
+      scrollToOffset.mockRestore();
+    }
+  });
+
+  it('does not apply the card preview offset in full view', async () => {
+    const scrollToOffset = jest.spyOn(FlatList.prototype, 'scrollToOffset').mockImplementation(() => undefined);
+    try {
+      await renderMediaList(
+        {
+          mapPhotoUrl: 'https://cdn.example.test/full-view-map.jpg',
+          media: [{ url: 'https://images.example.test/full-view-photo.jpg', thumbnail: null }],
+        },
+        true,
+      );
+
+      screen.getByTestId('activity-media-list').props.onContentSizeChange(1000, 220);
+
+      expect(scrollToOffset).not.toHaveBeenCalled();
+    } finally {
+      scrollToOffset.mockRestore();
+    }
+  });
+
+  it('shows an owner the full map when map visibility is restricted', async () => {
+    const mapUrl = TEST_URLS.activityCardPrivateFullMap;
+    const routeOnlyMapUrl = TEST_URLS.activityCardRouteOnlyMap;
+    await renderMediaList({ mapPhotoUrl: mapUrl, routeOnlyMapPhotoUrl: routeOnlyMapUrl, hideMap: true, media: [] });
+
+    expect(screen.getByTestId(mapUrl)).toBeOnTheScreen();
+    expect(screen.queryByTestId(routeOnlyMapUrl)).not.toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByTestId('activity-map-media-item'));
+
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.map}/activity-id`);
+  });
+
+  it('shows an external viewer only the route map and disables its map actions', async () => {
+    mockStore.dispatch(setMockUserId('another-user'));
+    const mapUrl = TEST_URLS.activityCardPrivateFullMap;
+    const routeOnlyMapUrl = TEST_URLS.activityCardRouteOnlyMap;
+    await renderMediaList({
+      mapPhotoUrl: mapUrl,
+      routeOnlyMapPhotoUrl: routeOnlyMapUrl,
+      mapPhotoUrlBlurhash: 'private-map-blurhash',
+      hideMap: true,
+      media: [],
+    });
+
+    expect(screen.getByTestId(routeOnlyMapUrl)).toBeOnTheScreen();
+    expect(screen.getByTestId(routeOnlyMapUrl).props.placeholder).toBeNull();
+    expect(screen.queryByTestId(mapUrl)).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('activity-card-route-replay-button')).not.toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByTestId('activity-map-media-item'));
+
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it('does not expose a full map to an external viewer without a route preview', async () => {
+    mockStore.dispatch(setMockUserId('another-user'));
+    await renderMediaList({
+      mapPhotoUrl: TEST_URLS.activityCardPrivateFullMap,
+      routeOnlyMapPhotoUrl: undefined,
+      hideMap: true,
+      media: [],
+    });
+
+    expect(screen.queryByTestId('activity-media-list')).not.toBeOnTheScreen();
+  });
+
+  it('falls back to the route map for the owner when a full map is unavailable', async () => {
+    const routeOnlyMapUrl = TEST_URLS.activityCardRouteOnlyMap;
+    await renderMediaList({ mapPhotoUrl: undefined, routeOnlyMapPhotoUrl: routeOnlyMapUrl, hideMap: true, media: [] });
+
+    expect(screen.getByTestId(routeOnlyMapUrl)).toBeOnTheScreen();
+  });
+
+  it('omits the media list when no map or activity media is available', async () => {
+    await renderMediaList({ mapPhotoUrl: undefined, media: [] });
+
+    expect(screen.queryByTestId('activity-media-list')).not.toBeOnTheScreen();
   });
 
   it('uses inset spacing and rounded media tiles like the reference card', async () => {
@@ -189,7 +269,7 @@ describe('media list', () => {
   });
 
   it('uses the map blurhash and prioritized disk cache for fast scrolling', async () => {
-    const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
+    const mapUrl = TEST_URLS.activityCardMapWithDimensions;
     await renderMediaList({ mapPhotoUrl: mapUrl, mapPhotoUrlBlurhash: 'map-blurhash', media: [] });
 
     expect(screen.getByTestId(mapUrl).props).toEqual(
@@ -204,7 +284,7 @@ describe('media list', () => {
   });
 
   it('renders location and weather over the map preview', async () => {
-    const mapUrl = 'https://cdn.example.test/activity-map-896x538.jpg';
+    const mapUrl = TEST_URLS.activityCardMapWithDimensions;
     await renderMediaList({
       mapPhotoUrl: mapUrl,
       media: [],
@@ -235,14 +315,14 @@ describe('media list', () => {
         cancelAtPeriodEnd: false,
       }),
     );
-    await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg', media: [] });
+    await renderMediaList({ mapPhotoUrl: TEST_URLS.activityCardMap, media: [] });
 
     expect(screen.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
   });
 
   it('shows map actions for users without an active subscription', async () => {
-    await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg', media: [] });
+    await renderMediaList({ mapPhotoUrl: TEST_URLS.activityCardMap, media: [] });
 
     expect(screen.getByTestId('activity-card-add-media-button')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
@@ -262,7 +342,7 @@ describe('media list', () => {
       }),
     );
     mockStore.dispatch(setMockUserId('another-user'));
-    await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg', media: [] });
+    await renderMediaList({ mapPhotoUrl: TEST_URLS.activityCardMap, media: [] });
 
     expect(screen.queryByTestId('activity-card-add-media-button')).not.toBeOnTheScreen();
     expect(screen.getByTestId('activity-card-route-replay-button')).toBeOnTheScreen();
@@ -271,7 +351,7 @@ describe('media list', () => {
   it('hides route replay from an external viewer when the owner disables it', async () => {
     mockStore.dispatch(setMockUserId('another-user'));
     await renderMediaList({
-      mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg',
+      mapPhotoUrl: TEST_URLS.activityCardMap,
       media: [],
       profile: { allowActivityReplayViewing: false },
     });
@@ -280,7 +360,7 @@ describe('media list', () => {
   });
 
   it('continues covering regular photos in the card preview', async () => {
-    const photoUrl = 'https://images.example.test/activity.jpg';
+    const photoUrl = TEST_URLS.activityPhoto;
     await renderMediaList({ mapPhotoUrl: undefined, media: [{ url: photoUrl, thumbnail: null }] });
 
     expect(screen.getByTestId(photoUrl).props.contentFit).toBe('cover');
@@ -345,6 +425,20 @@ describe('media list', () => {
     expect(screen.queryByText(MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].queued)).toBeNull();
   });
 
+  it('shows a moderation overlay for media without an uploaded preview to viewers', async () => {
+    mockStore.dispatch(setMockUserId('another-user'));
+    await renderMediaList({
+      mapPhotoUrl: undefined,
+      media: [{ id: 'pending-media-without-preview', thumbnail: null, mediaReviewStatus: 'processing' }],
+    });
+
+    expect(screen.getByTestId('pending-activity-media-pending-media-without-preview')).toBeOnTheScreen();
+    expect(screen.getByTestId('media-moderation-placeholder')).toHaveProp(
+      'accessibilityLabel',
+      MEDIA_MODERATION_PLACEHOLDER_COPY[LANGUAGES.russian].processing,
+    );
+  });
+
   it('removes the media area from the card when every item was rejected', async () => {
     await renderMediaList({
       mapPhotoUrl: undefined,
@@ -403,7 +497,7 @@ describe('media list', () => {
 
     expect(screen.getByTestId('activity-video-video-1')).toBeOnTheScreen();
     const playButton = screen.getByTestId('activity-video-video-1-play');
-    expect(playButton).toHaveProp('accessibilityLabel', 'Воспроизвести видео');
+    expect(playButton).toHaveProp('accessibilityLabel', ACTIVITY_MEDIA_COPY[LANGUAGES.russian].playVideo);
     await user.press(playButton);
     expect(playButton).toHaveProp('accessibilityLabel', 'Приостановить видео');
     expect(screen.getByText('0:13')).toBeOnTheScreen();
@@ -422,7 +516,7 @@ describe('media list', () => {
 
   it('opens the selected activity media', async () => {
     const user = userEvent.setup();
-    const photoUrl = 'https://images.example.test/activity.jpg';
+    const photoUrl = TEST_URLS.activityPhoto;
     await renderMediaList({
       mapPhotoUrl: undefined,
       media: [{ url: photoUrl, thumbnail: null, blurhash: 'card-photo-blurhash' }],
@@ -564,7 +658,7 @@ describe('media list', () => {
     const media = {
       id: 'media-1',
       activityId: 'activity-id',
-      url: 'https://images.example.test/activity.jpg',
+      url: TEST_URLS.activityPhoto,
       thumbnail: null,
     };
     await renderMediaList({ mapPhotoUrl: undefined, media: [media] });
@@ -591,7 +685,7 @@ describe('media list', () => {
   });
 
   it('does not offer media deletion for the activity map', async () => {
-    await renderMediaList({ mapPhotoUrl: 'https://cdn.example.test/activity-map.jpg', media: [] });
+    await renderMediaList({ mapPhotoUrl: TEST_URLS.activityCardMap, media: [] });
 
     await fireEvent(screen.getByTestId('activity-map-media-item'), 'longPress');
 
