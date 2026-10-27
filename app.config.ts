@@ -1,4 +1,6 @@
 const IS_DEV = process.env.APP_VARIANT === 'development';
+const IS_STAGE = process.env.EXPO_PUBLIC_BASE_URL === 'https://stage.runich-app.ru';
+const ROUTER_ORIGIN = IS_STAGE ? 'https://stage-web.runich-app.ru' : 'https://runich-app.ru';
 
 export default {
   expo: {
@@ -178,7 +180,7 @@ export default {
           largeIcon: './assets/images/runich-logo.png',
         },
       ],
-      'expo-router',
+      ['expo-router', { origin: ROUTER_ORIGIN }],
       'expo-font',
       'expo-video',
       'expo-secure-store',
