@@ -25,6 +25,7 @@
     "e2e:android:skip-build": "node scripts/e2e-android.mjs --skip-build",
     "android:release": "expo run:android --variant release",
     "location:android:route": "node scripts/location-route.mjs",
+    "location:route:both": "node scripts/location-route-both.mjs",
     "ios": "expo run:ios",
     "ios:release": "expo run:ios --configuration release",
     "clear-cache:android": "rm -rf android/.gradle && rm -rf android/app/build && rm -rf node_modules && rm -rf ~/.gradle/caches",
