@@ -6,17 +6,17 @@ import ProfileAvatar from './profile-avatar';
 describe('avatar', () => {
   it('shows the default avatar when no profile photo exists', async () => {
     await renderWithProviders(<ProfileAvatar />);
-    expect(screen.getByTestId('avatarEditableDefaultIcon')).toBeOnTheScreen();
+    expect(screen.getByTestId('profileAvatarDefaultIcon')).toBeOnTheScreen();
   });
 
   it('shows the saved profile photo when one exists', async () => {
     await renderWithProviders(
       <ProfileAvatar profilePhoto={TEST_URLS.exampleProfilePhoto} profilePhotoBlurhash="profile-blurhash" />,
     );
-    expect(screen.getByTestId('avatarEditableImage').props.source).toEqual({
+    expect(screen.getByTestId('profileAvatarImage').props.source).toEqual({
       uri: TEST_URLS.exampleProfilePhoto,
     });
-    expect(screen.getByTestId('avatarEditableImage').props.placeholder).toBe('blurhash:/profile-blurhash');
-    expect(screen.queryByTestId('avatarEditableDefaultIcon')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('profileAvatarImage').props.placeholder).toBe('blurhash:/profile-blurhash');
+    expect(screen.queryByTestId('profileAvatarDefaultIcon')).not.toBeOnTheScreen();
   });
 });

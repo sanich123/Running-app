@@ -7,7 +7,7 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import {
-  LazyAvatarIconEditable,
+  LazyProfileAvatarEditor,
   LazyGenderBtns,
   LazyInputBio,
   LazyInputsNameSurname,
@@ -52,7 +52,12 @@ export default function ProfileSettings() {
 
   return (
     <>
-      <Stack.Screen options={{ headerRight: () => (userId ? <ProfileUpdateBtn /> : null) }} />
+      <Stack.Screen
+        options={{
+          headerTitleAlign: 'left',
+          headerRight: () => (userId ? <ProfileUpdateBtn /> : null),
+        }}
+      />
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         bottomOffset={24}
@@ -66,7 +71,7 @@ export default function ProfileSettings() {
           },
         ]}>
         <Suspense fallback={<FullPageActivityLoader />}>
-          <LazyAvatarIconEditable setIsDisabled={setIsDisabled} isDisabled={isFormDisabled} />
+          <LazyProfileAvatarEditor setIsDisabled={setIsDisabled} isDisabled={isFormDisabled} />
           <LazyInputsNameSurname isDisabled={isFormDisabled} />
           <LazyInputsWeightCity isDisabled={isFormDisabled} variant="city" />
           <LazyInputBio isDisabled={isFormDisabled} />

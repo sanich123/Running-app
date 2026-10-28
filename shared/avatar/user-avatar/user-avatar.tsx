@@ -25,7 +25,15 @@ export default function UserAvatar({
     const label = getAvatarLabel(name, surname);
 
     if (label) {
-      return <Avatar.Text testID={testID} size={size} label={label} labelStyle={styles.text} style={style} />;
+      return (
+        <Avatar.Text
+          testID={testID}
+          size={size}
+          label={label}
+          labelStyle={[styles.text, { lineHeight: size / 2 }]}
+          style={style}
+        />
+      );
     }
 
     return <Avatar.Icon testID={testID} size={size} icon="account" style={style} />;

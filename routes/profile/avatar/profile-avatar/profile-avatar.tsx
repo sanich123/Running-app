@@ -1,5 +1,5 @@
-import { AvatarEditableTestIds } from '@Routes/profile/profile-settings/avatar-editable/const';
 import UserAvatar from '@S/avatar/user-avatar/user-avatar';
+import { ProfileAvatarTestIds } from './const';
 
 export default function ProfileAvatar({
   name,
@@ -19,7 +19,7 @@ export default function ProfileAvatar({
       placeholder={profilePhotoBlurhash}
       name={name}
       surname={surname}
-      testID={profilePhoto ? AvatarEditableTestIds.successImg : AvatarEditableTestIds.default}
+      testID={profilePhoto ? ProfileAvatarTestIds.image : ProfileAvatarTestIds.defaultIcon}
     />
   );
 }

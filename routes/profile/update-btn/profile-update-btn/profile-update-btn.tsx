@@ -9,7 +9,6 @@ import {
 } from '@Routes/profile/profile-settings/profile-settings-params';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { UPDATE_BTN } from '../const';
-import type { ProfileSettings } from '@R/services/profile/types';
 
 export default function ProfileUpdateBtn() {
   const { back } = useRouter();
@@ -17,7 +16,7 @@ export default function ProfileUpdateBtn() {
   const { userId } = useAppSelector(({ auth }) => auth);
   const formValuesFromRoute = getProfileFormValues(useGlobalSearchParams() as Partial<ProfileSettingsSearchParams>);
   const { language } = useAppSelector(({ settings }) => settings);
-  const { data: profile, isLoading: isProfileLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
+  const { isLoading: isProfileLoading } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileByUserIdMutation();
   const isSaving = isProfileLoading || isUpdating;
 
@@ -31,13 +30,8 @@ export default function ProfileUpdateBtn() {
           return;
         }
 
-        const body: ProfileSettings = {
-          ...formValuesFromRoute,
-          profilePhoto: profile?.profilePhoto ?? '',
-        };
-
         try {
-          await updateProfile({ body, id: userId }).unwrap();
+          await updateProfile({ body: formValuesFromRoute, id: userId }).unwrap();
           back();
         } catch (error) {
           errorToast('', getErrorMessageFromError(error));

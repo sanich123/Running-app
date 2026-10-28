@@ -17,6 +17,7 @@ export interface MediaUploadControl {
   onProgress?: (progress: number) => void;
   onStatusProgress?: (phase: MediaUploadPhase, progress: number) => void;
   signal?: AbortSignal;
+  notifyOnError?: boolean;
 }
 
 export interface MediaUploadItem {

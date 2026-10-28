@@ -1,14 +1,14 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
-import { TEST_URLS } from '@T/mocks/const';
+import { ProfileAvatarTestIds } from '@Routes/profile/avatar/profile-avatar/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { compressMediaFile, getAccessToGallery, uploadMediaFile } from '@U/file-sending';
-import { AvatarEditableTestIds } from '../const';
-import AvatarIconEditable from './avatar-icon-editable';
+import { ProfileAvatarEditorTestIds } from './const';
+import ProfileAvatarEditor from './profile-avatar-editor';
 
 jest.mock('react-native-compressor', () => ({
   Image: () => ({
@@ -46,70 +46,64 @@ function setupProfile(profilePhoto: string | null) {
   return userId;
 }
 
-describe('Avatar icon editable', () => {
+describe('Profile avatar editor', () => {
   it('should correctly renders', async () => {
     setupProfile(null);
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={jest.fn()} isDisabled={false} />, {
       store: mockStore,
     });
-    expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeOnTheScreen();
-    expect(screen.getByTestId(AvatarEditableTestIds.editIcon)).toBeOnTheScreen();
+    expect(screen.getByTestId(ProfileAvatarEditorTestIds.editButton)).toBeOnTheScreen();
+    expect(screen.getByTestId(ProfileAvatarEditorTestIds.editIcon)).toBeOnTheScreen();
   });
 
   it('should renders an image, when profile has an image url', async () => {
     setupProfile(MOCK_PROFILE.profilePhoto);
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={jest.fn()} isDisabled={false} />, {
       store: mockStore,
     });
-    const img = await screen.findByTestId(AvatarEditableTestIds.successImg);
+    const img = await screen.findByTestId(ProfileAvatarTestIds.image);
     expect(img.props.source.uri).toEqual(MOCK_PROFILE.profilePhoto);
   });
 
   it('should renders a default icon, when there is no image url in profile', async () => {
     setupProfile(null);
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={jest.fn()} isDisabled={false} />, {
       store: mockStore,
     });
-    expect(await screen.findByTestId(AvatarEditableTestIds.default)).toBeOnTheScreen();
+    expect(await screen.findByTestId(ProfileAvatarTestIds.defaultIcon)).toBeOnTheScreen();
   });
 
   it('should be disabled, when isDisabled', async () => {
     setupProfile(null);
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled />, { store: mockStore });
-    expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeDisabled();
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={jest.fn()} isDisabled />, { store: mockStore });
+    expect(screen.getByTestId(ProfileAvatarEditorTestIds.editButton)).toBeDisabled();
   });
 
   it('should show a loader while the avatar is uploading', async () => {
     setupProfile(null);
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled />, { store: mockStore });
-    expect(screen.getByTestId(AvatarEditableTestIds.loading)).toBeOnTheScreen();
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={jest.fn()} isDisabled />, { store: mockStore });
+    expect(screen.getByTestId(ProfileAvatarEditorTestIds.loadingOverlay)).toBeOnTheScreen();
   });
 
-  it('selects, uploads, refetches and displays the updated profile photo', async () => {
+  it('does not save the profile photo when upload returns a URL without a moderation asset id', async () => {
     const user = userEvent.setup();
     const setIsDisabled = jest.fn();
     const userId = setupProfile(MOCK_PROFILE.profilePhoto);
-    const updatedPhoto = TEST_URLS.imageAvatar;
-    let currentPhoto = MOCK_PROFILE.profilePhoto;
     let requestBody: unknown;
     server.use(
-      http.get(`${BASE_URL}/user/${userId}/profile`, () =>
-        HttpResponse.json({ ...MOCK_PROFILE, userId, profilePhoto: currentPhoto }),
-      ),
       http.patch(`${BASE_URL}/user/${userId}/profile`, async ({ request }) => {
         requestBody = await request.json();
-        currentPhoto = updatedPhoto;
-        return HttpResponse.json({ ...MOCK_PROFILE, userId, profilePhoto: updatedPhoto });
+        return HttpResponse.json({ ...MOCK_PROFILE, userId });
       }),
     );
 
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={setIsDisabled} isDisabled={false} />);
-    await user.press(await screen.findByTestId(AvatarEditableTestIds.editBtn));
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={setIsDisabled} isDisabled={false} />);
+    await user.press(await screen.findByTestId(ProfileAvatarEditorTestIds.editButton));
 
-    await waitFor(() => expect(requestBody).toEqual({ profilePhoto: updatedPhoto }));
-    await waitFor(() =>
-      expect(screen.getByTestId(AvatarEditableTestIds.successImg).props.source.uri).toBe(updatedPhoto),
-    );
+    await waitFor(() => expect(uploadMediaFile).toHaveBeenCalled());
+    await waitFor(() => expect(screen.getByTestId(ProfileAvatarEditorTestIds.editButton)).toBeEnabled());
+    expect(requestBody).toBeUndefined();
+    expect(screen.getByTestId(ProfileAvatarTestIds.image).props.source.uri).toBe(MOCK_PROFILE.profilePhoto);
     expect(setIsDisabled).toHaveBeenNthCalledWith(1, true);
     expect(setIsDisabled).toHaveBeenLastCalledWith(false);
   });
@@ -152,16 +146,14 @@ describe('Avatar icon editable', () => {
       }),
     );
 
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />);
-    await user.press(await screen.findByTestId(AvatarEditableTestIds.editBtn));
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={jest.fn()} isDisabled={false} />);
+    await user.press(await screen.findByTestId(ProfileAvatarEditorTestIds.editButton));
 
     await waitFor(() =>
       expect(requestBody).toEqual({ profilePhotoAssetId: 'avatar-asset', profilePhotoBlurhash: pendingBlurhash }),
     );
-    await waitFor(() =>
-      expect(screen.getByTestId(AvatarEditableTestIds.successImg).props.source.uri).toBe(previewPhoto),
-    );
-    expect(screen.getByTestId(AvatarEditableTestIds.editBtn)).toBeEnabled();
+    await waitFor(() => expect(screen.getByTestId(ProfileAvatarTestIds.image).props.source.uri).toBe(previewPhoto));
+    expect(screen.getByTestId(ProfileAvatarEditorTestIds.editButton)).toBeEnabled();
   });
 
   it.each([
@@ -171,11 +163,11 @@ describe('Avatar icon editable', () => {
   ])('does not upload when the gallery result is %s', async (_description, result) => {
     setupProfile(null);
     (getAccessToGallery as jest.Mock).mockResolvedValueOnce(result);
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={jest.fn()} isDisabled={false} />, {
       store: mockStore,
     });
 
-    await userEvent.setup().press(await screen.findByTestId(AvatarEditableTestIds.editBtn));
+    await userEvent.setup().press(await screen.findByTestId(ProfileAvatarEditorTestIds.editButton));
 
     expect(compressMediaFile).not.toHaveBeenCalled();
     expect(uploadMediaFile).not.toHaveBeenCalled();
@@ -196,11 +188,11 @@ describe('Avatar icon editable', () => {
   ])('stops before upload when the selected avatar is %s', async (_description, compressedMedia) => {
     setupProfile(null);
     (compressMediaFile as jest.Mock).mockResolvedValueOnce(compressedMedia);
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={jest.fn()} isDisabled={false} />, {
       store: mockStore,
     });
 
-    await userEvent.setup().press(await screen.findByTestId(AvatarEditableTestIds.editBtn));
+    await userEvent.setup().press(await screen.findByTestId(ProfileAvatarEditorTestIds.editButton));
 
     await waitFor(() => expect(compressMediaFile).toHaveBeenCalled());
     expect(uploadMediaFile).not.toHaveBeenCalled();
@@ -210,11 +202,11 @@ describe('Avatar icon editable', () => {
     setupProfile(null);
     (uploadMediaFile as jest.Mock).mockResolvedValueOnce(null);
     const setIsDisabled = jest.fn();
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={setIsDisabled} isDisabled={false} />, {
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={setIsDisabled} isDisabled={false} />, {
       store: mockStore,
     });
 
-    await userEvent.setup().press(await screen.findByTestId(AvatarEditableTestIds.editBtn));
+    await userEvent.setup().press(await screen.findByTestId(ProfileAvatarEditorTestIds.editButton));
 
     await waitFor(() => expect(uploadMediaFile).toHaveBeenCalled());
     expect(setIsDisabled).toHaveBeenLastCalledWith(false);
@@ -222,11 +214,11 @@ describe('Avatar icon editable', () => {
 
   it('skips the upload when the account has no user id', async () => {
     mockStore.dispatch(setMockUserId(''));
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={jest.fn()} isDisabled={false} />, {
       store: mockStore,
     });
 
-    await userEvent.setup().press(screen.getByTestId(AvatarEditableTestIds.editBtn));
+    await userEvent.setup().press(screen.getByTestId(ProfileAvatarEditorTestIds.editButton));
 
     expect(getAccessToGallery).toHaveBeenCalledWith(['images']);
     expect(compressMediaFile).not.toHaveBeenCalled();
@@ -242,12 +234,12 @@ describe('Avatar icon editable', () => {
         resolveCompression = resolve;
       }),
     );
-    await renderWithProviders(<AvatarIconEditable setIsDisabled={jest.fn()} isDisabled={false} />, {
+    await renderWithProviders(<ProfileAvatarEditor setIsDisabled={jest.fn()} isDisabled={false} />, {
       store: mockStore,
     });
 
-    await user.press(await screen.findByTestId(AvatarEditableTestIds.editBtn));
-    await user.press(await screen.findByTestId(AvatarEditableTestIds.loading));
+    await user.press(await screen.findByTestId(ProfileAvatarEditorTestIds.editButton));
+    await user.press(await screen.findByTestId(ProfileAvatarEditorTestIds.loadingOverlay));
     await act(async () => {
       resolveCompression({
         file: 'compressed-avatar.jpg',
@@ -258,7 +250,7 @@ describe('Avatar icon editable', () => {
       });
     });
 
-    await waitFor(() => expect(screen.queryByTestId(AvatarEditableTestIds.loading)).toBeNull());
+    await waitFor(() => expect(screen.queryByTestId(ProfileAvatarEditorTestIds.loadingOverlay)).toBeNull());
     expect(uploadMediaFile).not.toHaveBeenCalled();
   });
 });
