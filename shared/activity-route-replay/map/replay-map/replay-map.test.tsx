@@ -1,7 +1,7 @@
 import { createRef, type Ref } from 'react';
-import { act, screen } from '@testing-library/react-native';
+import { act, screen, waitFor } from '@testing-library/react-native';
 import { Platform } from 'react-native';
-import { TEST_URLS } from '@T/mocks/const';
+import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ReplayMap from './replay-map';
 import type { ReplayMapHandle } from '../../types';
@@ -58,14 +58,16 @@ describe('route replay map', () => {
         mapStyle="satellite"
         playbackCoordinate={[37.65, 55.75]}
         playbackHeading={45}
-        profile={{ name: 'Run', surname: 'User', profilePhoto: TEST_URLS.exampleTestAvatar }}
+        profile={{ name: 'Run', surname: 'User', userId: MOCK_SERVER_IDS.userId }}
       />,
     );
 
     expect(screen.getByTestId('activity-route-moving-marker')).toBeOnTheScreen();
-    expect(screen.getByTestId('activity-route-moving-avatar').props.source).toEqual({
-      uri: TEST_URLS.exampleTestAvatar,
-    });
+    await waitFor(() =>
+      expect(screen.getByTestId('activity-route-moving-avatar').props.source).toEqual({
+        uri: MOCK_SERVER_PROFILE.profilePhoto,
+      }),
+    );
 
     act(() => mapRef.current?.updateCamera([37.66, 55.76], 90));
     expect(mockSetCamera).toHaveBeenCalledWith({

@@ -12,11 +12,6 @@ export interface BackgroundLocationSwitcherProps {
   backgroundLocationEnabledModalRef: RefObject<BottomSheetModal | null>;
 }
 
-export interface BatteryOptimizationModalProps {
-  batteryOptimizationEnabledModalRef: RefObject<BottomSheetModal | null>;
-  setIsNeedToRefreshPermission: (arg: boolean) => void;
-}
-
 export interface BatteryOptimizationSwitcherProps {
   isAppOptimizedByPhone: boolean;
   setIsAppOptimizedByPhone: (arg: boolean) => void;

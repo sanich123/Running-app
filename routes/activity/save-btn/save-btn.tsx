@@ -177,11 +177,11 @@ export default function SaveBtn() {
         }
       }}
       disabled={isSavingDisabled || isMediaUploadInProgress}>
-      {!isSaving && (
+      {!isSaving ? (
         <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
           {textOnBtn}
         </Text>
-      )}
+      ) : null}
     </Button>
   );
 }

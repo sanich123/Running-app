@@ -25,6 +25,22 @@ const MIN_ELEVATION_DELTA_METERS = 10;
 const MAX_ALTITUDE_ACCURACY_METERS = 15;
 const MAX_VERTICAL_SPEED_METERS_PER_SECOND = 3;
 const ELEVATION_SMOOTHING_WINDOW = 5;
+const DEFAULT_LOCATION_ANIMATION_DURATION_MS = 1500;
+const MIN_LOCATION_ANIMATION_DURATION_MS = 1000;
+const MAX_LOCATION_ANIMATION_DURATION_MS = 2500;
+
+export function getLocationAnimationDuration(previousTimestamp?: number | null, currentTimestamp?: number | null) {
+  if (typeof previousTimestamp !== 'number' || typeof currentTimestamp !== 'number') {
+    return DEFAULT_LOCATION_ANIMATION_DURATION_MS;
+  }
+
+  const elapsed = currentTimestamp - previousTimestamp;
+  if (!Number.isFinite(elapsed) || elapsed <= 0) {
+    return DEFAULT_LOCATION_ANIMATION_DURATION_MS;
+  }
+
+  return Math.max(MIN_LOCATION_ANIMATION_DURATION_MS, Math.min(MAX_LOCATION_ANIMATION_DURATION_MS, elapsed));
+}
 
 interface KilometerSplitCalculation {
   splits: ActivityKilometreSplit[];

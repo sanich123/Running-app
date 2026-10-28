@@ -6,7 +6,10 @@ import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { makeLocationPermissionResponse } from '@T/utils/location-permission';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import ActivityMapContext from '../activity-map-context';
 import LocationPermissions from './location-permissions';
+import type { ActivityMapContextValue } from '../activity-map-context';
+import type { LocationPermissionsProps } from '@Routes/activity/types';
 
 const mockNavigate = jest.fn();
 jest.mock('expo-router', () => ({
@@ -36,6 +39,25 @@ jest.mock('@Routes/activity/location-settings-switcher/location-settings-switche
   return () => <View />;
 });
 
+const baseMapContext: Omit<ActivityMapContextValue, 'locationPermissions'> = {
+  mapControls: {
+    mapZoomLevel: 18,
+    isCenteringOnCurrentLocation: false,
+    onZoomIn: jest.fn(),
+    onZoomOut: jest.fn(),
+    onCenterOnCurrentLocation: jest.fn(),
+  },
+  batteryOptimization: { isActive: false, setIsNeedToRefreshPermission: jest.fn() },
+};
+
+async function renderLocationPermissions(locationPermissions: LocationPermissionsProps) {
+  return renderWithProviders(
+    <ActivityMapContext.Provider value={{ ...baseMapContext, locationPermissions }}>
+      <LocationPermissions />
+    </ActivityMapContext.Provider>,
+  );
+}
+
 describe('location permissions', () => {
   it('shows the background permission prompt only after foreground permission is granted', async () => {
     const props = {
@@ -47,12 +69,10 @@ describe('location permissions', () => {
       requestForegroundPermission: jest.fn(),
       requestBackgroundPermission: jest.fn(),
     };
-    await renderWithProviders(<LocationPermissions {...props} />);
+    await renderLocationPermissions(props);
     expect(screen.queryByTestId('background-location-switcher')).not.toBeOnTheScreen();
 
-    await renderWithProviders(
-      <LocationPermissions {...props} foregroundPermissionStatus={makeLocationPermissionResponse(true)} />,
-    );
+    await renderLocationPermissions({ ...props, foregroundPermissionStatus: makeLocationPermissionResponse(true) });
     expect(screen.getAllByTestId('background-location-switcher')).toHaveLength(1);
   });
 
@@ -60,17 +80,15 @@ describe('location permissions', () => {
     const user = userEvent.setup();
     mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(setIsProfileFilled(false));
-    await renderWithProviders(
-      <LocationPermissions
-        isMapVisible
-        isLocationEnabled
-        foregroundPermissionStatus={makeLocationPermissionResponse(true)}
-        backgroundPermissionStatus={makeLocationPermissionResponse(true)}
-        setIsLocationEnabled={jest.fn()}
-        requestForegroundPermission={jest.fn()}
-        requestBackgroundPermission={jest.fn()}
-      />,
-    );
+    await renderLocationPermissions({
+      isMapVisible: true,
+      isLocationEnabled: true,
+      foregroundPermissionStatus: makeLocationPermissionResponse(true),
+      backgroundPermissionStatus: makeLocationPermissionResponse(true),
+      setIsLocationEnabled: jest.fn(),
+      requestForegroundPermission: jest.fn(),
+      requestBackgroundPermission: jest.fn(),
+    });
     const links = await screen.findAllByTestId('create-profile-link');
     await user.press(links[0]);
     expect(mockNavigate).toHaveBeenCalledWith(`/${ROUTES.tabs}/${ROUTES.profile}/${ROUTES.profileSettings}`);
@@ -79,17 +97,15 @@ describe('location permissions', () => {
   it('does not request the profile when the local profile flag is set', async () => {
     mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(setIsProfileFilled(true));
-    await renderWithProviders(
-      <LocationPermissions
-        isMapVisible
-        isLocationEnabled
-        foregroundPermissionStatus={makeLocationPermissionResponse(true)}
-        backgroundPermissionStatus={makeLocationPermissionResponse(true)}
-        setIsLocationEnabled={jest.fn()}
-        requestForegroundPermission={jest.fn()}
-        requestBackgroundPermission={jest.fn()}
-      />,
-    );
+    await renderLocationPermissions({
+      isMapVisible: true,
+      isLocationEnabled: true,
+      foregroundPermissionStatus: makeLocationPermissionResponse(true),
+      backgroundPermissionStatus: makeLocationPermissionResponse(true),
+      setIsLocationEnabled: jest.fn(),
+      requestForegroundPermission: jest.fn(),
+      requestBackgroundPermission: jest.fn(),
+    });
 
     expect(screen.queryByTestId('create-profile-link')).not.toBeOnTheScreen();
     expect(screen.queryByTestId('profile-check-error')).not.toBeOnTheScreen();

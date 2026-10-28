@@ -40,7 +40,7 @@ export default function ErrorMsg() {
 
   return (
     <View style={styles.errorMsg}>
-      {isAppShutedByPhone && (
+      {isAppShutedByPhone ? (
         <View
           style={[styles.message, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}>
           <Icon source="backup-restore" size={22} color={colors.primary} />
@@ -60,8 +60,8 @@ export default function ErrorMsg() {
             accessibilityLabel="Закрыть уведомление о паузе отслеживания"
           />
         </View>
-      )}
-      {isTooMuchSpeed && (
+      ) : null}
+      {isTooMuchSpeed ? (
         <View
           style={[styles.message, { backgroundColor: colors.tertiaryContainer, borderColor: colors.outlineVariant }]}>
           <Icon source="map-marker-alert-outline" size={22} color={colors.tertiary} />
@@ -89,7 +89,7 @@ export default function ErrorMsg() {
             accessibilityLabel="Закрыть предупреждение о GPS"
           />
         </View>
-      )}
+      ) : null}
       <ActivityMotionStatus />
     </View>
   );

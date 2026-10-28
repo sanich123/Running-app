@@ -8,42 +8,45 @@ import BackgroundLocationModal from '@Routes/activity/background-location-modal/
 import BackgroundLocationSwitcher from '@Routes/activity/background-location-switcher/background-location-switcher';
 import ForegroundLocationSwitcher from '@Routes/activity/foregroud-location-switcher/foreground-location-switcher/foreground-location-switcher';
 import LocationSettingsSwitcher from '@Routes/activity/location-settings-switcher/location-settings-switcher';
+import { useActivityMapContext } from '../activity-map-context';
 import { LOCATION_PERMISSIONS_TEXT } from './const';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
-import type { LocationPermissionsProps } from '@Routes/activity/types';
 
-export default function LocationPermissions({
-  isMapVisible,
-  isLocationEnabled,
-  foregroundPermissionStatus,
-  backgroundPermissionStatus,
-  setIsLocationEnabled,
-  requestForegroundPermission,
-  requestBackgroundPermission,
-}: LocationPermissionsProps) {
+export default function LocationPermissions() {
   const { colors } = useTheme();
+  const {
+    locationPermissions: {
+      isMapVisible,
+      isLocationEnabled,
+      foregroundPermissionStatus,
+      backgroundPermissionStatus,
+      setIsLocationEnabled,
+      requestForegroundPermission,
+      requestBackgroundPermission,
+    },
+  } = useActivityMapContext();
   const backgroundLocationEnabledModalRef = useRef<BottomSheetModal>(null);
   const { userId } = useAppSelector(({ auth }) => auth);
   const { isProfileFilled, language } = useAppSelector(({ settings }) => settings);
   const copy = LOCATION_PERMISSIONS_TEXT[language];
   return (
     <View style={[styles.container, { backgroundColor: colors.background }, isMapVisible && { height: '60%' }]}>
-      {!isLocationEnabled && (
+      {!isLocationEnabled ? (
         <LocationSettingsSwitcher isLocationEnabled={isLocationEnabled} setIsLocationEnabled={setIsLocationEnabled} />
-      )}
-      {foregroundPermissionStatus && !foregroundPermissionStatus?.granted && (
+      ) : null}
+      {foregroundPermissionStatus && !foregroundPermissionStatus.granted ? (
         <ForegroundLocationSwitcher
           foregroundPermissionStatus={foregroundPermissionStatus}
           requestForegroundPermission={requestForegroundPermission}
         />
-      )}
-      {foregroundPermissionStatus?.granted && !backgroundPermissionStatus?.granted && (
+      ) : null}
+      {foregroundPermissionStatus?.granted && !backgroundPermissionStatus?.granted ? (
         <BackgroundLocationSwitcher
           backgroundPermissionStatus={!!backgroundPermissionStatus?.granted}
           backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}
         />
-      )}
-      {!isProfileFilled && userId && (
+      ) : null}
+      {!isProfileFilled && userId ? (
         <View
           style={[
             styles.profileNotice,
@@ -69,8 +72,8 @@ export default function LocationPermissions({
             </Link>
           </View>
         </View>
-      )}
-      {!userId && (
+      ) : null}
+      {!userId ? (
         <View
           testID="profile-check-error"
           style={[
@@ -89,7 +92,7 @@ export default function LocationPermissions({
             </Text>
           </View>
         </View>
-      )}
+      ) : null}
       <BackgroundLocationModal
         backgroundLocationEnabledModalRef={backgroundLocationEnabledModalRef}
         requestBackgroundPermission={requestBackgroundPermission}
