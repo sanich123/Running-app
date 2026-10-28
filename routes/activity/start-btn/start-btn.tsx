@@ -26,7 +26,6 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { getCurrentOrLastKnownPosition } from '@U/get-initial-position';
-import useGetCurrentLocation from '@U/hooks/use-get-current-location';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import {
   appendLocationToJournal,
@@ -76,10 +75,7 @@ export default function StartBtn({
   const [pressScale] = useState(() => new Animated.Value(1));
   const [pulse] = useState(() => new Animated.Value(0));
   const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
-  const { isLoading: isGettingLocationFromHook } = useGetCurrentLocation(
-    isGettingLocationProp === undefined && isReadyToRecordLocation,
-  );
-  const isGettingLocation = isGettingLocationProp ?? isGettingLocationFromHook;
+  const isGettingLocation = isGettingLocationProp ?? false;
   const isRecording = activityStatus === STATUSES.started || activityStatus === STATUSES.continued;
   const isFinishing = activityStatus === STATUSES.paused;
 
@@ -234,7 +230,7 @@ export default function StartBtn({
       }}
       disabled={isDisabled}>
       <Animated.View style={[styles.buttonScale, { transform: [{ scale: pressScale }] }]}>
-        {isRecording && (
+        {isRecording ? (
           <Animated.View
             pointerEvents="none"
             style={[
@@ -246,7 +242,7 @@ export default function StartBtn({
               },
             ]}
           />
-        )}
+        ) : null}
         <View
           style={[
             styles.startBtn,

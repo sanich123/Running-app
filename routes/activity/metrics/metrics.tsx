@@ -32,28 +32,28 @@ export default function Metrics() {
           metric={formattedDuration}
           isCentral={false}
         />
-        {!isMapVisible && (
+        {!isMapVisible ? (
           <MetricsItem
             isMapVisible={isMapVisible}
             title={`${topMetric.title}:`}
             metric={topMetric.metric}
             isCentral={false}
           />
-        )}
+        ) : null}
         <MetricsItem
           isMapVisible={isMapVisible}
           title={primaryMetric.title + ':'}
           metric={primaryMetric.metric}
           isCentral
         />
-        {!isMapVisible && (
+        {!isMapVisible ? (
           <MetricsItem
             isMapVisible={isMapVisible}
             title={`${MAP_METRICS[language].lastKm}:`}
             metric={lastKmMetric}
             isCentral={false}
           />
-        )}
+        ) : null}
         <MetricsItem
           isMapVisible={isMapVisible}
           title={`${MAP_METRICS[language].distance}:`}

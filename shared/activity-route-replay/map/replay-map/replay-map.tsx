@@ -142,10 +142,7 @@ const ReplayMap = forwardRef<ReplayMapHandle, ReplayMapProps>(function ReplayMap
         {showRouteEndpointMarkers ? <ActivityMapMarkers locations={locations} /> : null}
         <UserAvatarMarker
           coordinate={playbackCoordinate}
-          profilePhoto={profile?.profilePhoto}
-          placeholder={profile?.profilePhotoBlurhash}
-          name={profile?.name}
-          surname={profile?.surname}
+          userId={profile?.userId}
           markerTestID="activity-route-moving-marker"
           testID="activity-route-moving-avatar"
         />

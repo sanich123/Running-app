@@ -11,6 +11,7 @@ import {
   getSpeedInMinsInKm,
   getSpeedInKmPerHour,
   getMaxTrackingSpeedForSport,
+  getLocationAnimationDuration,
   isCyclingActivity,
   isHikingActivity,
   isRunningActivity,
@@ -20,6 +21,13 @@ import {
 import type { ActivityLocation } from '@S/card/types';
 
 describe('activity metrics', () => {
+  it('uses the GPS update cadence for marker and camera animation duration', () => {
+    expect(getLocationAnimationDuration(1_000, 2_400)).toBe(1_400);
+    expect(getLocationAnimationDuration(1_000, 1_100)).toBe(1_000);
+    expect(getLocationAnimationDuration(1_000, 10_000)).toBe(2_500);
+    expect(getLocationAnimationDuration(1_000, 1_000)).toBe(1_500);
+  });
+
   it('calculates average cadence in steps per minute', () => {
     expect(getAverageCadence(120, 60_000)).toBe(120);
     expect(getAverageCadence(0, 60_000)).toBe(0);

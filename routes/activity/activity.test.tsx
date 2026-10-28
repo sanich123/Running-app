@@ -1,6 +1,7 @@
-import { screen, waitFor } from '@testing-library/react-native';
+import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 import { STATUSES } from '@const/enums';
-import { setActivityStatus, setIsMapVisible } from '@R/slices/location/location';
+import { setActivityStatus } from '@R/slices/location/location';
 import {
   clearTrackingRecovery,
   setTrackingRecoveryStatus,
@@ -12,6 +13,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
 import { createLocationJournal } from '@U/location/location-journal';
 import Activity from './activity';
+import { ACTIVITY_SHOW_MAP_TEST_ID } from './show-map-btn/const';
 
 jest.mock('expo-router', () => ({ Stack: { Screen: () => null } }));
 
@@ -65,17 +67,6 @@ jest.mock('@Routes/activity/pause-btn/pause-btn', () => ({
     );
   },
 }));
-jest.mock('@Routes/activity/show-map-btn/show-map-btn', () => ({
-  __esModule: true,
-  default: () => {
-    const { View, Text } = require('react-native');
-    return (
-      <View testID="activity-show-map">
-        <Text>show-map</Text>
-      </View>
-    );
-  },
-}));
 jest.mock('@Routes/activity/start-btn/start-btn', () => ({
   __esModule: true,
   default: ({ isReadyToRecordLocation }: { isReadyToRecordLocation: boolean }) => {
@@ -106,7 +97,7 @@ describe('Activity', () => {
     expect(screen.getByTestId('activity-sport-picker')).toBeOnTheScreen();
     expect(screen.queryByTestId('activity-metrics')).not.toBeOnTheScreen();
     expect(screen.queryByTestId('activity-pause')).not.toBeOnTheScreen();
-    expect(screen.queryByTestId('activity-show-map')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId(ACTIVITY_SHOW_MAP_TEST_ID)).not.toBeOnTheScreen();
     expect(await screen.findByTestId('activity-start-ready')).toBeOnTheScreen();
   });
 
@@ -123,7 +114,7 @@ describe('Activity', () => {
 
     expect(screen.getByTestId('activity-metrics')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-start-ready')).toBeOnTheScreen();
-    expect(screen.getByTestId('activity-show-map')).toBeOnTheScreen();
+    expect(screen.getByTestId(ACTIVITY_SHOW_MAP_TEST_ID)).toBeOnTheScreen();
     expect(screen.queryByTestId('choose-activity-sport')).not.toBeOnTheScreen();
     expect(screen.queryByTestId('activity-sport-picker')).not.toBeOnTheScreen();
     if (shouldShowPause) {
@@ -134,12 +125,20 @@ describe('Activity', () => {
   });
 
   it('keeps the map mounted when it is hidden during an active activity', async () => {
+    const user = userEvent.setup();
     mockStore.dispatch(setActivityStatus(STATUSES.started));
-    mockStore.dispatch(setIsMapVisible(false));
     await renderWithProviders(<Activity />);
 
     expect(screen.getByTestId('activity-map')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-metrics')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-map-layer').props.pointerEvents).toBe('auto');
+
+    await user.press(screen.getByTestId(ACTIVITY_SHOW_MAP_TEST_ID));
+
+    const hiddenMapLayer = screen.getByTestId('activity-map-layer');
+    expect(hiddenMapLayer.props.pointerEvents).toBe('none');
+    expect(StyleSheet.flatten(hiddenMapLayer.props.style)).toEqual(expect.objectContaining({ opacity: 0 }));
+    expect(screen.getByTestId('activity-map')).toBeOnTheScreen();
   });
 
   it('pauses recovered tracking only after stopping the location service', async () => {

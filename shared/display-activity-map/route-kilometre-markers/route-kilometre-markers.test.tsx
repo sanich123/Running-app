@@ -1,5 +1,8 @@
-import { act, render, screen } from '@testing-library/react-native';
+import { act, screen } from '@testing-library/react-native';
+import { addDurationAndLocationToKmSplits } from '@R/slices/location/location';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
+import { mockStore, resetMockLocation } from '@T/utils/mock-store';
+import { renderWithProviders } from '@T/utils/test-utils';
 import RouteKilometreMarkers from './route-kilometre-markers';
 import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 import type { MockNativeViewProps } from '@T/utils/mock-native-view';
@@ -17,13 +20,17 @@ jest.mock('@rnmapbox/maps', () => {
 });
 
 describe('Route kilometre markers', () => {
+  beforeEach(() => {
+    mockStore.dispatch(resetMockLocation());
+  });
+
   it('does not render layers without valid kilometre points', async () => {
-    const { queryByText } = await render(<RouteKilometreMarkers kilometresSplit={[]} />);
+    const { queryByText } = await renderWithProviders(<RouteKilometreMarkers kilometresSplit={[]} />);
     expect(queryByText('1')).toBeNull();
   });
 
   it('renders small points without labels and shows the kilometre after a tap', async () => {
-    await render(
+    await renderWithProviders(
       <RouteKilometreMarkers
         kilometresSplit={[
           { lastKilometerDuration: 0, lastKilometerAltitude: 0, kilometerPoint: MOCK_LOCATION },
@@ -51,5 +58,15 @@ describe('Route kilometre markers', () => {
       }),
     );
     expect(screen.getByText('1 km')).toBeOnTheScreen();
+  });
+
+  it('reads kilometre splits from Redux when they are not passed as props', async () => {
+    mockStore.dispatch(addDurationAndLocationToKmSplits(MOCK_LOCATION));
+
+    await renderWithProviders(<RouteKilometreMarkers />);
+
+    expect(screen.getByTestId('route-kilometre-shape-source').props.shape.features).toEqual([
+      expect.objectContaining({ properties: { label: '1', sortKey: 0 } }),
+    ]);
   });
 });

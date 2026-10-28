@@ -1,8 +1,8 @@
-import { screen } from '@testing-library/react-native';
+import { screen, waitFor } from '@testing-library/react-native';
 import { setInitialLocation, setLastPosition } from '@R/slices/location/location';
-import { TEST_URLS } from '@T/mocks/const';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
-import { mockStore, resetMockLocation } from '@T/utils/mock-store';
+import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
+import { mockStore, resetMockLocation, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import MapNavIcon from './map-nav-icon';
 import type { MockNativeViewProps } from '@T/utils/mock-native-view';
@@ -34,18 +34,19 @@ describe('map nav icon', () => {
     expect(screen.getByTestId('map-nav-marker')).toBeOnTheScreen();
   });
 
-  it('prefers the latest position and displays the profile photo', async () => {
+  it('prefers the latest position and loads the current user profile internally', async () => {
     const latestPosition = { ...MOCK_LOCATION, coords: { ...MOCK_LOCATION.coords, latitude: 55.8 } };
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(setInitialLocation(MOCK_LOCATION));
     mockStore.dispatch(setLastPosition(latestPosition));
-    await renderWithProviders(<MapNavIcon profilePhoto={TEST_URLS.avatar} profilePhotoBlurhash="avatar-blurhash" />);
+    await renderWithProviders(<MapNavIcon />);
 
     expect(screen.getByTestId('map-nav-marker').props.coordinate).toEqual([
       latestPosition.coords.longitude,
       latestPosition.coords.latitude,
     ]);
-    const avatar = screen.getByTestId('map-nav-avatar');
-    expect(avatar.props.source).toEqual({ uri: TEST_URLS.avatar });
-    expect(avatar.props.placeholder).toBe('blurhash:/avatar-blurhash');
+    await waitFor(() =>
+      expect(screen.getByTestId('map-nav-avatar').props.source).toEqual({ uri: MOCK_SERVER_PROFILE.profilePhoto }),
+    );
   });
 });

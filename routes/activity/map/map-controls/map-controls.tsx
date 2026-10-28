@@ -1,21 +1,11 @@
 import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
-import type { MapControlsProps } from './types';
+import { useActivityMapContext } from '../activity-map-context';
 
-export default function MapControls({
-  cameraRef,
-  mapZoomLevel,
-  isCenteringOnCurrentLocation,
-  onZoomLevelChange,
-  onFollowUserLocationChange,
-  onCenterOnCurrentLocation,
-}: MapControlsProps) {
+export default function MapControls() {
   const { colors } = useTheme();
-
-  const changeZoom = (nextZoomLevel: number) => {
-    onZoomLevelChange(nextZoomLevel);
-    onFollowUserLocationChange(false);
-    cameraRef.current?.setCamera({ zoomLevel: nextZoomLevel, animationMode: 'easeTo', animationDuration: 250 });
-  };
+  const {
+    mapControls: { mapZoomLevel, isCenteringOnCurrentLocation, onZoomIn, onZoomOut, onCenterOnCurrentLocation },
+  } = useActivityMapContext();
 
   return (
     <>
@@ -27,7 +17,7 @@ export default function MapControls({
         containerColor={colors.surface}
         size={24}
         disabled={mapZoomLevel >= 20}
-        onPress={() => changeZoom(Math.min(20, mapZoomLevel + 1))}
+        onPress={onZoomIn}
         accessibilityLabel="Увеличить масштаб карты"
       />
       <IconButton
@@ -38,7 +28,7 @@ export default function MapControls({
         containerColor={colors.surface}
         size={24}
         disabled={mapZoomLevel <= 3}
-        onPress={() => changeZoom(Math.max(3, mapZoomLevel - 1))}
+        onPress={onZoomOut}
         accessibilityLabel="Уменьшить масштаб карты"
       />
       <IconButton

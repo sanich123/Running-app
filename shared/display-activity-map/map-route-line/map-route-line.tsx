@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
 import { useTheme } from 'react-native-paper';
+import { useAppSelector } from '@R/typed-hooks';
 import { getReducedLocations } from '@U/location/location-utils';
 import type { ActivityLocation } from '@S/card/types';
 
@@ -8,14 +9,16 @@ export default function MapRouteLine({
   locations,
   segmentColors,
 }: {
-  locations: ActivityLocation[] | ActivityLocation[][];
+  locations?: ActivityLocation[] | ActivityLocation[][];
   segmentColors?: string[];
-}) {
+} = {}) {
   const { colors } = useTheme();
+  const { locationsWithPauses } = useAppSelector(({ location }) => location);
+  const routeLocations = locations ?? locationsWithPauses;
   const { baseRouteFeatures, routeFeatures } = useMemo(() => {
-    const segments = Array.isArray(locations[0])
-      ? (locations as ActivityLocation[][])
-      : [locations as ActivityLocation[]];
+    const segments = Array.isArray(routeLocations[0])
+      ? (routeLocations as ActivityLocation[][])
+      : [routeLocations as ActivityLocation[]];
     const singleRoute = segments.length === 1 ? segments[0] : undefined;
     const baseRouteFeatures =
       segmentColors?.length && singleRoute && singleRoute.length > 1
@@ -69,7 +72,7 @@ export default function MapRouteLine({
           },
         })),
     };
-  }, [locations, segmentColors]);
+  }, [routeLocations, segmentColors]);
 
   if (!routeFeatures.length) {
     return null;
@@ -77,7 +80,7 @@ export default function MapRouteLine({
 
   return (
     <>
-      {baseRouteFeatures.length > 0 && (
+      {baseRouteFeatures.length > 0 ? (
         <ShapeSource
           id="activity-route-base"
           shape={{
@@ -94,7 +97,7 @@ export default function MapRouteLine({
             }}
           />
         </ShapeSource>
-      )}
+      ) : null}
       <ShapeSource
         id="activity-route"
         shape={{

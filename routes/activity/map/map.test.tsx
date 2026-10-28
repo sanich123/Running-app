@@ -1,7 +1,7 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { getCurrentPositionAsync } from 'expo-location';
 import type * as ReactNative from 'react-native';
-import { setInitialLocation } from '@R/slices/location/location';
+import { setInitialLocation, setLastPosition } from '@R/slices/location/location';
 import { setIsProfileFilled } from '@R/slices/settings/settings';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore, setMockUserId, resetMockLocation } from '@T/utils/mock-store';
@@ -34,7 +34,6 @@ jest.mock('expo-location', () => ({
 jest.mock('@Routes/activity/battery-optimization-modal/battery-optimization-modal', () => () => null);
 jest.mock('@S/display-activity-map/route-kilometre-markers/route-kilometre-markers', () => () => null);
 jest.mock('@S/display-activity-map/map-route-line/map-route-line', () => () => null);
-jest.mock('../location-indicator/location-indicator', () => () => null);
 jest.mock('./location-permissions/location-permissions', () => () => null);
 
 describe('activity recording map', () => {
@@ -48,15 +47,57 @@ describe('activity recording map', () => {
   it('marks recording ready and recenters the camera on the current location', async () => {
     const user = userEvent.setup();
     const onLocationReadinessChange = jest.fn();
-    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
-    (getCurrentPositionAsync as jest.Mock).mockResolvedValue({ coords: { longitude: 37.6, latitude: 55.7 } });
+    mockStore.dispatch(setInitialLocation({ timestamp: 1000, coords: { longitude: 37.6, latitude: 55.7 } }));
+    (getCurrentPositionAsync as jest.Mock).mockResolvedValue({
+      timestamp: 3000,
+      coords: { longitude: 37.61, latitude: 55.71 },
+    });
     await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);
     await waitFor(() => expect(onLocationReadinessChange).toHaveBeenCalledWith(true));
+    mockSetCamera.mockClear();
     await user.press(await screen.findByTestId('move-to-current-location'));
-    await act(async () => jest.advanceTimersByTime(1000));
     expect(getCurrentPositionAsync).toHaveBeenCalledWith({ accuracy: 6 });
-    expect(mockSetCamera).toHaveBeenCalledWith(
-      expect.objectContaining({ centerCoordinate: [37.6, 55.7], zoomLevel: 18 }),
+    await waitFor(() =>
+      expect(mockSetCamera).toHaveBeenLastCalledWith(
+        expect.objectContaining({ centerCoordinate: [37.61, 55.71], zoomLevel: 18, animationMode: 'easeTo' }),
+      ),
+    );
+
+    await act(async () => {
+      mockStore.dispatch(setLastPosition({ timestamp: 2000, coords: { longitude: 37.6, latitude: 55.7 } }));
+    });
+    expect(mockSetCamera).toHaveBeenLastCalledWith(
+      expect.objectContaining({ centerCoordinate: [37.61, 55.71], zoomLevel: 18 }),
+    );
+  });
+
+  it('follows the newest app location and centers instantly on the first point', async () => {
+    const onLocationReadinessChange = jest.fn();
+    mockStore.dispatch(setInitialLocation({ timestamp: 1000, coords: { longitude: 37.6, latitude: 55.7 } }));
+
+    await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);
+
+    await waitFor(() =>
+      expect(mockSetCamera).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          centerCoordinate: [37.6, 55.7],
+          zoomLevel: 18,
+          animationMode: 'none',
+          animationDuration: 0,
+        }),
+      ),
+    );
+    expect(screen.getByTestId('recording-map-camera').props.followUserLocation).toBe(false);
+
+    mockSetCamera.mockClear();
+    await act(async () => {
+      mockStore.dispatch(setLastPosition({ timestamp: 2000, coords: { longitude: 37.61, latitude: 55.71 } }));
+    });
+
+    await waitFor(() =>
+      expect(mockSetCamera).toHaveBeenLastCalledWith(
+        expect.objectContaining({ centerCoordinate: [37.61, 55.71], zoomLevel: 18, animationMode: 'easeTo' }),
+      ),
     );
   });
 
@@ -83,14 +124,31 @@ describe('activity recording map', () => {
   it('changes the map zoom with the plus and minus controls', async () => {
     const user = userEvent.setup();
     const onLocationReadinessChange = jest.fn();
-    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
+    mockStore.dispatch(setInitialLocation({ timestamp: 1000, coords: { longitude: 37.6, latitude: 55.7 } }));
     await renderWithProviders(<Map onLocationReadinessChange={onLocationReadinessChange} />);
 
     await user.press(await screen.findByTestId('increase-map-zoom'));
-    expect(mockSetCamera).toHaveBeenCalledWith(expect.objectContaining({ zoomLevel: 19 }));
+    await waitFor(() =>
+      expect(mockSetCamera).toHaveBeenLastCalledWith(
+        expect.objectContaining({ centerCoordinate: [37.6, 55.7], zoomLevel: 19 }),
+      ),
+    );
+
+    await act(async () => {
+      mockStore.dispatch(setLastPosition({ timestamp: 2000, coords: { longitude: 37.61, latitude: 55.71 } }));
+    });
+    await waitFor(() =>
+      expect(mockSetCamera).toHaveBeenLastCalledWith(
+        expect.objectContaining({ centerCoordinate: [37.61, 55.71], zoomLevel: 19 }),
+      ),
+    );
 
     await user.press(screen.getByTestId('decrease-map-zoom'));
-    expect(mockSetCamera).toHaveBeenCalledWith(expect.objectContaining({ zoomLevel: 18 }));
+    await waitFor(() =>
+      expect(mockSetCamera).toHaveBeenLastCalledWith(
+        expect.objectContaining({ centerCoordinate: [37.61, 55.71], zoomLevel: 18 }),
+      ),
+    );
   });
 
   it('hides the native puck after Redux has a canonical activity position', async () => {
