@@ -7,8 +7,8 @@ export const LazyActivityDetailsPage = lazy(() => import('@Routes/activity-detai
 export const LazyActivityStatisticsPage = lazy(
   () => import('@Routes/activity-details/activity-statistics-page/activity-statistics-page'),
 );
-export const LazyAvatarIconEditable = lazy(
-  () => import('@Routes/profile/profile-settings/avatar-editable/avatar-icon-editable/avatar-icon-editable'),
+export const LazyProfileAvatarEditor = lazy(
+  () => import('@Routes/profile/profile-settings/profile-avatar-editor/profile-avatar-editor'),
 );
 export const LazyUserProfileAvatar = lazy(() => import('@S/avatar/user-profile-avatar/user-profile-avatar'));
 export const LazyGenderBtns = lazy(() => import('@Routes/profile/profile-settings/gender-btns/gender-btns'));

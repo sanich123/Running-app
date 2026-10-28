@@ -7,11 +7,11 @@ import ProfileImage from '@Routes/profile/avatar/profile-avatar/profile-avatar';
 import UploadProgress from '@Routes/save-activity-page/upload-progress/upload-progress';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { compressMediaFile, getAccessToGallery, uploadMediaFile, type MediaSource } from '@U/file-sending';
-import { useProfileFormParams } from '../../profile-settings-params';
-import { AvatarEditableTestIds } from '../const';
-import type { AvatarIconEditableProps } from '../const';
+import { ProfileAvatarEditorTestIds } from './const';
+import { useProfileFormParams } from '../profile-settings-params';
+import type { ProfileAvatarEditorProps } from './types';
 
-export default function AvatarIconEditable({ isDisabled, setIsDisabled }: AvatarIconEditableProps) {
+export default function ProfileAvatarEditor({ isDisabled, setIsDisabled }: ProfileAvatarEditorProps) {
   const { userId } = useAppSelector(({ auth }) => auth);
   const {
     data: profile,
@@ -42,17 +42,19 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
       const uploadedImage = await uploadMediaFile(compressedImage, { scope: 'profile' }, undefined, {
         onProgress: setUploadProgress,
         signal: controller.signal,
+        notifyOnError: false,
       });
-      if (!uploadedImage || controller.signal.aborted) return;
+      if (controller.signal.aborted) return;
+      if (!uploadedImage) return errorToast('Не удалось загрузить фото профиля');
 
-      const body = uploadedImage.assetId
-        ? { profilePhotoAssetId: uploadedImage.assetId, profilePhotoBlurhash: uploadedImage.blurhash }
-        : uploadedImage.url
-          ? { profilePhoto: uploadedImage.url }
-          : null;
-      if (!body) return;
+      if (!uploadedImage.assetId) {
+        return errorToast('Не удалось сохранить фото профиля', 'Сервер не вернул идентификатор загрузки');
+      }
 
-      await updateProfile({ id: userId, body }).unwrap();
+      await updateProfile({
+        id: userId,
+        body: { profilePhotoAssetId: uploadedImage.assetId, profilePhotoBlurhash: uploadedImage.blurhash },
+      }).unwrap();
       if (!controller.signal.aborted) await refetch();
     } finally {
       if (uploadControllerRef.current === controller) uploadControllerRef.current = null;
@@ -76,8 +78,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
                 const file = e.target.files[0];
                 if (!file) return;
                 if (file.type.startsWith('video/') || /\.(mp4|mov|avi|m4v|webm|mkv|3gp)$/i.test(file.name)) {
-                  errorToast('Нельзя использовать видео файлы для аватары');
-                  return;
+                  return errorToast('Нельзя использовать видео файлы для аватары');
                 }
                 try {
                   setIsDisabled(true);
@@ -97,12 +98,12 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
               profilePhoto={profile?.profilePhoto}
               profilePhotoBlurhash={profile?.profilePhotoBlurhash}
             />
-            <View pointerEvents="none" testID={AvatarEditableTestIds.editIcon} style={styles.editIcon}>
+            <View pointerEvents="none" testID={ProfileAvatarEditorTestIds.editIcon} style={styles.editIcon}>
               <MaterialCommunityIcons name="camera-plus-outline" size={20} color="#fff" />
             </View>
             {isUploading ? (
               <Pressable
-                testID={AvatarEditableTestIds.loading}
+                testID={ProfileAvatarEditorTestIds.loadingOverlay}
                 onPress={() => uploadControllerRef.current?.abort()}
                 style={styles.loadingOverlay}
                 accessibilityRole="button"
@@ -110,7 +111,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
                 <UploadProgress
                   progress={uploadProgress}
                   size={64}
-                  testID={AvatarEditableTestIds.uploadProgress}
+                  testID={ProfileAvatarEditorTestIds.uploadProgress}
                   iconColor="#fff"
                 />
               </Pressable>
@@ -119,7 +120,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
         </label>
       ) : (
         <Pressable
-          testID={AvatarEditableTestIds.editBtn}
+          testID={ProfileAvatarEditorTestIds.editButton}
           onPress={async () => {
             setIsDisabled(true);
             try {
@@ -143,12 +144,12 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
               profilePhoto={profile?.profilePhoto}
               profilePhotoBlurhash={profile?.profilePhotoBlurhash}
             />
-            <View pointerEvents="none" testID={AvatarEditableTestIds.editIcon} style={styles.editIcon}>
+            <View pointerEvents="none" testID={ProfileAvatarEditorTestIds.editIcon} style={styles.editIcon}>
               <MaterialCommunityIcons name="camera-plus-outline" size={20} color="#fff" />
             </View>
             {isUploading ? (
               <Pressable
-                testID={AvatarEditableTestIds.loading}
+                testID={ProfileAvatarEditorTestIds.loadingOverlay}
                 onPress={() => uploadControllerRef.current?.abort()}
                 style={styles.loadingOverlay}
                 accessibilityRole="button"
@@ -156,7 +157,7 @@ export default function AvatarIconEditable({ isDisabled, setIsDisabled }: Avatar
                 <UploadProgress
                   progress={uploadProgress}
                   size={64}
-                  testID={AvatarEditableTestIds.uploadProgress}
+                  testID={ProfileAvatarEditorTestIds.uploadProgress}
                   iconColor="#fff"
                 />
               </Pressable>

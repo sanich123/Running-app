@@ -111,6 +111,7 @@ describe('Profile update btn', () => {
         gender: 'MALE',
       }),
     );
+    expect(requestBody).not.toHaveProperty('profilePhoto');
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

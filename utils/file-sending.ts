@@ -202,7 +202,9 @@ export async function uploadMediaFile(
     });
     return (await uploadRequest(formData, control)) ?? null;
   } catch (error) {
-    if (!control?.signal?.aborted) errorToast('Не удалось загрузить медиафайл', error);
+    if (!control?.signal?.aborted && control?.notifyOnError !== false) {
+      errorToast('Не удалось загрузить медиафайл', error);
+    }
     return null;
   }
 }
