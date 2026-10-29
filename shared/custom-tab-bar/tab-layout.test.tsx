@@ -6,6 +6,7 @@ import { ROUTES, STATUSES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { setActivityStatus } from '@R/slices/location/location';
 import { clearTrackingRecovery, startTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
+import { HOME_TAB_ROUTE } from '@Routes/app-routes/home-tab-route';
 import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { mockStore, resetMockLocation, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -29,17 +30,36 @@ let mockTabsScreenOptions:
 const mockTabIconStyles: { width?: number; height?: number; borderRadius?: number; backgroundColor?: unknown }[] = [];
 const mockNativeTriggerContentStyles: unknown[] = [];
 const mockNativeTriggerProps: { name?: string; disableAutomaticContentInsets?: boolean }[] = [];
-const mockNativeTriggerIconProps: { sf?: unknown; md?: unknown }[] = [];
+const mockTabsScreenNames: string[] = [];
+const mockNativeTriggerIconProps: { sf?: unknown; md?: unknown; selectedColor?: unknown }[] = [];
+const mockWorkoutIconProps: { source?: unknown; color?: unknown; size?: number }[] = [];
 
 jest.mock('expo-router', () => {
   const { View } = jest.requireActual('react-native');
-  const Screen = ({ options }: { options?: { tabBarIcon?: (props: { focused: boolean }) => ReactNode } }) => {
+  const Screen = ({
+    name,
+    options,
+  }: {
+    name?: string;
+    options?: { tabBarIcon?: (props: { focused: boolean }) => ReactNode };
+  }) => {
+    if (name) mockTabsScreenNames.push(name);
     const focusedIcon = options?.tabBarIcon?.({ focused: true });
     const unfocusedIcon = options?.tabBarIcon?.({ focused: false });
     for (const icon of [focusedIcon, unfocusedIcon]) {
       if (icon && typeof icon === 'object' && 'props' in icon) {
-        const { style } = icon.props as { style?: (typeof mockTabIconStyles)[number] };
+        const iconProps = icon.props as { style?: (typeof mockTabIconStyles)[number]; children?: unknown };
+        const { style } = iconProps;
         mockTabIconStyles.push(style ?? {});
+        if (name === 'activity') {
+          const { children } = iconProps;
+          if (children && typeof children === 'object' && 'props' in children) {
+            const childProps = children.props;
+            if (childProps && typeof childProps === 'object' && 'source' in childProps) {
+              mockWorkoutIconProps.push(childProps as (typeof mockWorkoutIconProps)[number]);
+            }
+          }
+        }
       }
     }
 
@@ -83,7 +103,7 @@ jest.mock('expo-router/native-tabs', () => {
     }
     return <View>{children}</View>;
   };
-  Trigger.Icon = (props: { sf?: unknown; md?: unknown }) => {
+  Trigger.Icon = (props: { sf?: unknown; md?: unknown; selectedColor?: unknown }) => {
     mockNativeTriggerIconProps.push(props);
     return null;
   };
@@ -106,7 +126,9 @@ describe('TabLayout', () => {
     mockTabIconStyles.length = 0;
     mockNativeTriggerContentStyles.length = 0;
     mockNativeTriggerProps.length = 0;
+    mockTabsScreenNames.length = 0;
     mockNativeTriggerIconProps.length = 0;
+    mockWorkoutIconProps.length = 0;
     mockStore.dispatch(runichApi.util.resetApiState());
     mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
     mockStore.dispatch(resetMockLocation());
@@ -159,9 +181,23 @@ describe('TabLayout', () => {
 
     expect(result.toJSON()).toBeTruthy();
     expect(mockReplace).not.toHaveBeenCalled();
+    expect(mockNativeTriggerProps.map(({ name }) => name).slice(-5)).toEqual([
+      HOME_TAB_ROUTE,
+      ROUTES.maps,
+      ROUTES.activity,
+      ROUTES.statistic,
+      ROUTES.profile,
+    ]);
     expect(mockNativeTriggerContentStyles.length).toBeGreaterThanOrEqual(4);
     expect(mockNativeTriggerContentStyles).toEqual(
       expect.arrayContaining([expect.objectContaining({ backgroundColor: expect.any(String) })]),
+    );
+    expect(mockNativeTriggerIconProps).toContainEqual(
+      expect.objectContaining({
+        sf: { default: 'record.circle', selected: 'record.circle.fill' },
+        md: { default: 'radio_button_unchecked', selected: 'radio_button_checked' },
+        selectedColor: expect.any(String),
+      }),
     );
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
@@ -206,6 +242,14 @@ describe('TabLayout', () => {
     expect(mockTabIconStyles[1]).toEqual(
       expect.objectContaining({ width: 52, height: 40, borderRadius: 20, backgroundColor: 'transparent' }),
     );
+    expect(mockTabIconStyles[4]).toEqual(expect.objectContaining({ width: 60, height: 48, borderRadius: 24 }));
+    expect(mockTabIconStyles[5]).toEqual(expect.objectContaining({ width: 60, height: 48, borderRadius: 24 }));
+    expect(mockWorkoutIconProps).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ source: 'record-circle-outline', color: expect.any(String), size: 36 }),
+        expect.objectContaining({ source: 'record-circle', color: expect.any(String), size: 36 }),
+      ]),
+    );
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 
@@ -221,6 +265,13 @@ describe('TabLayout', () => {
     expect(result.toJSON()).toBeTruthy();
     expect(mockReplace).not.toHaveBeenCalled();
     expect(mockTabsScreenOptions?.sceneStyle).toEqual({ backgroundColor: expect.any(String) });
+    expect(mockTabsScreenNames.slice(-5)).toEqual([
+      HOME_TAB_ROUTE,
+      ROUTES.maps,
+      ROUTES.activity,
+      ROUTES.statistic,
+      ROUTES.profile,
+    ]);
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 

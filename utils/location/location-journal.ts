@@ -1,4 +1,5 @@
 import { createMMKV } from 'react-native-mmkv';
+import { MAX_RAW_ACTIVITY_LOCATIONS } from './const';
 import type { LocationObject } from 'expo-location';
 
 const LOCATION_JOURNAL_VERSION = 1;
@@ -150,7 +151,7 @@ export function getActiveLocationJournalId() {
 
 export function appendLocationToJournal(journalId: string, location: LocationObject) {
   const meta = readMeta(journalId);
-  if (!meta) return false;
+  if (!meta || meta.pointCount >= MAX_RAW_ACTIVITY_LOCATIONS) return false;
 
   const lastTimestamp = meta.pointCount > 0 ? readChunk(journalId, meta.chunkCount - 1).at(-1)?.[2] : undefined;
   const timestamp = location.timestamp ?? getCoordinates(location).timestamp;

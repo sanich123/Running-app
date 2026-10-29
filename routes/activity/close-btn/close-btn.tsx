@@ -9,6 +9,7 @@ import {
   setDurationAt,
   setActivityStatus,
   setEmptyLastArrayWhenPaused,
+  setNavigationTrackId,
   stopDurationTimer,
 } from '@R/slices/location/location';
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
@@ -37,6 +38,7 @@ export default function CloseBtn() {
     dispatch(setActivityStatus(STATUSES.initial));
     dispatch(resetLastKm());
     dispatch(resetLocationsFromBackground());
+    dispatch(setNavigationTrackId(null));
     if (canGoBack()) {
       back();
     } else {

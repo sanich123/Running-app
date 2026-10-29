@@ -4,9 +4,10 @@ This ledger records which Runich client release is paired with which backend rel
 
 ## Current source baseline
 
-| Runich client | Compatible Runich Backend | Swagger `info.version` | Compatibility status                                                                        | Evidence and date                                                                                                                            |
-| ------------- | ------------------------- | ---------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `1.3.1`       | `1.3.1`                   | `1.3.1`                | Starting repository baseline; a separate client/backend compatibility test is not recorded. | Client and backend version metadata plus Swagger configuration checked on `2026-10-28`; deployed Stage/Production versions are not verified. |
+| Runich client | Compatible Runich Backend | Swagger `info.version` | Compatibility status                                                                        | Evidence and date                                                                                                                                                                                                                                |
+| ------------- | ------------------------- | ---------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `1.3.1`       | `1.3.1`                   | `1.3.1`                | Starting repository baseline; a separate client/backend compatibility test is not recorded. | Client and backend version metadata plus Swagger configuration checked on `2026-10-28`; deployed Stage/Production versions are not verified.                                                                                                     |
+| `1.3.2`       | `1.3.1`                   | `1.3.1`                | Source contract implemented; integration check pending.                                     | Activity save sends a reduced route, then an owner-authenticated endpoint stores up to 100,000 raw route points; ordinary route reads cap at 1,000 points. Source reviewed on `2026-10-29`; deployed Stage/Production versions are not verified. |
 
 ## Minimum supported client version
 

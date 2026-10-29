@@ -78,6 +78,12 @@ export interface DeleteActivityMediaRequest {
 export interface GetActivityLocationsRequest {
   activityId: string;
   replay?: boolean;
+  raw?: boolean;
+}
+
+export interface UploadRawActivityLocationsRequest {
+  activityId: string;
+  locations: LocationObject[];
 }
 
 export interface GetActivityMediaRequest {

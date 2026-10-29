@@ -1,6 +1,12 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { ACTIVITY_DRAFT_INITIAL_STATE, ACTIVITY_INITIAL_STATE, FINISHED_ACTIVITY_INITIAL_STATE } from './const';
-import type { ActivityPhoto, ActivityState, FinishedActivityDraft, PendingActivity } from './types';
+import type {
+  ActivityPhoto,
+  ActivityState,
+  FinishedActivityDraft,
+  PendingActivity,
+  PendingRawRouteUpload,
+} from './types';
 
 const activity = createSlice({
   name: 'activity',
@@ -49,6 +55,19 @@ const activity = createSlice({
     clearUnsyncedActivities: (state) => {
       state.unsyncedActivities = [];
     },
+    queuePendingRawRouteUpload: (state, action: PayloadAction<PendingRawRouteUpload>) => {
+      if (!state.pendingRawRouteUploads.some(({ activityId }) => activityId === action.payload.activityId)) {
+        state.pendingRawRouteUploads.push(action.payload);
+      }
+    },
+    removePendingRawRouteUpload: (state, action: PayloadAction<string>) => {
+      state.pendingRawRouteUploads = state.pendingRawRouteUploads.filter(
+        ({ activityId }) => activityId !== action.payload,
+      );
+    },
+    clearPendingRawRouteUploads: (state) => {
+      state.pendingRawRouteUploads = [];
+    },
   },
 });
 
@@ -66,6 +85,9 @@ export const {
   queueUnsyncedActivity,
   removeFirstUnsyncedActivity,
   clearUnsyncedActivities,
+  queuePendingRawRouteUpload,
+  removePendingRawRouteUpload,
+  clearPendingRawRouteUploads,
 } = activity.actions;
 
 export default activity.reducer;

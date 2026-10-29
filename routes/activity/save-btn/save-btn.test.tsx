@@ -1,10 +1,11 @@
-import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import {
   clearUnsyncedActivities,
   finishMediaUpload,
+  clearPendingRawRouteUploads,
   setFinishedActivity,
   startMediaUpload,
 } from '@R/slices/activity/activity';
@@ -16,14 +17,13 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
-import { appendLocationToJournal, createLocationJournal } from '@U/location/location-journal';
+import { appendLocationToJournal, createLocationJournal, readLocationJournal } from '@U/location/location-journal';
 import ActivitySaveBtn from './save-btn';
 import { isServerUnavailableError } from './utils';
 
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 
-function createFinishedActivityDraft(routeLocations = [MOCK_LOCATION]) {
-  const routeJournalId = createLocationJournal();
+function createFinishedActivityDraft(routeLocations = [MOCK_LOCATION], routeJournalId = createLocationJournal()) {
   routeLocations.forEach((location, index) => {
     appendLocationToJournal(routeJournalId, { ...location, timestamp: location.timestamp + index + 1 });
   });
@@ -64,6 +64,7 @@ describe('Activity save btn', () => {
     mockReplace.mockClear();
     jest.mocked(errorToast).mockClear();
     mockStore.dispatch(clearUnsyncedActivities());
+    mockStore.dispatch(clearPendingRawRouteUploads());
     while (mockStore.getState().activity.activeMediaUploadCount > 0) {
       mockStore.dispatch(finishMediaUpload());
     }
@@ -221,6 +222,41 @@ describe('Activity save btn', () => {
 
     await waitFor(() => expect((requestBody?.locations as unknown[])?.length).toBe(MAX_SAVED_ROUTE_LOCATIONS));
     await waitFor(() => expect(mockStore.getState().activity.isSavingDisabled).toBe(false));
+  });
+
+  it('saves the reduced activity first, then uploads the raw route after leaving the save screen', async () => {
+    let activityBody: Record<string, unknown> | undefined;
+    let rawRouteBody: Record<string, unknown> | undefined;
+    const routeJournalId = createLocationJournal();
+    const rawRoute = Array.from({ length: MAX_SAVED_ROUTE_LOCATIONS + 25 }, (_, index) => ({
+      ...MOCK_LOCATION,
+      timestamp: MOCK_LOCATION.timestamp + index + 1,
+    }));
+    server.use(
+      http.post(`${BASE_URL}/activity/someUserId`, async ({ request }) => {
+        activityBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({ id: 'saved-activity-id' }, { status: 201 });
+      }),
+      http.post(`${BASE_URL}/activity/saved-activity-id/locations/raw`, async ({ request }) => {
+        rawRouteBody = (await request.json()) as Record<string, unknown>;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    mockStore.dispatch(setMockUserId('someUserId'));
+    mockStore.dispatch(setFinishedActivity(createFinishedActivityDraft(rawRoute, routeJournalId)));
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+
+    await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
+    expect((activityBody?.locations as unknown[]) ?? []).toHaveLength(MAX_SAVED_ROUTE_LOCATIONS);
+
+    await act(async () => {
+      jest.advanceTimersByTime(0);
+      await Promise.resolve();
+    });
+    await waitFor(() => expect((rawRouteBody?.locations as unknown[]) ?? []).toHaveLength(rawRoute.length));
+    await waitFor(() => expect(mockStore.getState().activity.pendingRawRouteUploads).toHaveLength(0));
+    expect(readLocationJournal(routeJournalId)).toBeNull();
   });
 
   it.each([

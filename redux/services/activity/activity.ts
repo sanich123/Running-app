@@ -12,6 +12,7 @@ import type {
   GetActivityMediaRequest,
   WatchWorkoutsImportRequest,
   SetActivityFavoriteRequest,
+  UploadRawActivityLocationsRequest,
 } from './types';
 import type {
   ActivitiesResponse,
@@ -102,9 +103,16 @@ export const activityApi = runichApi.injectEndpoints({
       providesTags: (result, error, { activityId }) => [Tags.activities, { type: Tags.activities, id: activityId }],
     }),
     getLocationsByActivityId: query<ActivityLocationsResponse | null, GetActivityLocationsRequest>({
-      query: ({ activityId, replay }: GetActivityLocationsRequest) =>
-        `/activity/${activityId}/locations${createSearchParams({ replay: replay || undefined })}`,
+      query: ({ activityId, replay, raw }: GetActivityLocationsRequest) =>
+        `/activity/${activityId}/locations${createSearchParams({ replay: replay || undefined, raw: raw || undefined })}`,
       providesTags: [Tags.activities],
+    }),
+    uploadRawActivityLocations: mutation<void, UploadRawActivityLocationsRequest>({
+      query: ({ activityId, locations }) => ({
+        url: `/activity/${activityId}/locations/raw`,
+        method: Methods.post,
+        body: { locations },
+      }),
     }),
     getActivityChartData: query<ActivityChartDataResponse | null, { activityId: string; viewerId: string }>({
       query: ({ activityId }) => '/activity/' + activityId + '/chart-data',
@@ -191,10 +199,12 @@ export const {
   useGetHomeActivityFeedsInfiniteQuery,
   useGetActivityByActivityIdQuery,
   useGetLocationsByActivityIdQuery,
+  useLazyGetLocationsByActivityIdQuery,
   useGetActivityChartDataQuery,
   useGetStravaMigrationStatusQuery,
   useGetCurrentStravaMigrationStatusQuery,
   useAddActivityByUserIdMutation,
+  useUploadRawActivityLocationsMutation,
   useImportWatchWorkoutsMutation,
   useDeleteActivityByIdMutation,
   useGetSeveralActivitiesByTheirIdsQuery,

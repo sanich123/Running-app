@@ -26,20 +26,26 @@ export default function TabLayout() {
     pathname === `/${ROUTES.activity}`;
   const isActivityRoute = pathname === `/${ROUTES.activity}` || pathname.endsWith(`/${ROUTES.activity}`);
 
-  const renderTabIcon = (source: string, focusedSource: string, focused: boolean, color?: string) => (
+  const renderTabIcon = (
+    source: string,
+    focusedSource: string,
+    focused: boolean,
+    options?: { color?: string; size?: number; highlighted?: boolean; testID?: string },
+  ) => (
     <View
+      testID={options?.testID}
       style={{
         alignItems: 'center',
         justifyContent: 'center',
-        width: 52,
-        height: 40,
-        borderRadius: 20,
+        width: options?.highlighted ? 60 : 52,
+        height: options?.highlighted ? 48 : 40,
+        borderRadius: options?.highlighted ? 24 : 20,
         backgroundColor: focused ? colors.primaryContainer : 'transparent',
       }}>
       <Icon
         source={focused ? focusedSource : source}
-        color={color ?? (focused ? colors.primary : colors.secondary)}
-        size={30}
+        color={options?.color ?? (focused ? colors.primary : colors.secondary)}
+        size={options?.size ?? 30}
       />
     </View>
   );
@@ -76,11 +82,26 @@ export default function TabLayout() {
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
+          name={ROUTES.maps}
+          accessibilityLabel={labels.maps}
+          disableAutomaticContentInsets={false}
+          contentStyle={{ backgroundColor: colors.background }}>
+          <NativeTabs.Trigger.Icon
+            sf={{ default: 'map', selected: 'map.fill' }}
+            md={{ default: 'map', selected: 'map' }}
+          />
+          <NativeTabs.Trigger.Label hidden />
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger
           name={ROUTES.activity}
           accessibilityLabel={labels.activity}
           disableAutomaticContentInsets={false}
           contentStyle={{ backgroundColor: colors.background }}>
-          <NativeTabs.Trigger.Icon sf="figure.run" md="directions_run" />
+          <NativeTabs.Trigger.Icon
+            sf={{ default: 'record.circle', selected: 'record.circle.fill' }}
+            md={{ default: 'radio_button_unchecked', selected: 'radio_button_checked' }}
+            selectedColor={colors.error}
+          />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
@@ -138,12 +159,27 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name={ROUTES.maps}
+        options={{
+          href: Platform.OS === 'web' ? null : undefined,
+          tabBarAccessibilityLabel: labels.maps,
+          headerShown: false,
+          tabBarIcon: ({ focused }) => renderTabIcon('map-outline', 'map', focused),
+        }}
+      />
+      <Tabs.Screen
         name={ROUTES.activity}
         options={{
           href: Platform.OS === 'web' ? null : undefined,
           tabBarAccessibilityLabel: labels.activity,
           headerShown: false,
-          tabBarIcon: ({ focused }) => renderTabIcon('run', 'run-fast', focused),
+          tabBarIcon: ({ focused }) =>
+            renderTabIcon('record-circle-outline', 'record-circle', focused, {
+              color: colors.error,
+              highlighted: true,
+              size: 36,
+              testID: 'workout-record-tab-icon',
+            }),
         }}
       />
       <Tabs.Screen

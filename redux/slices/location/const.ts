@@ -27,4 +27,5 @@ export const LOCATION_INITIAL_STATE: LocationInitialState = {
   kilometresSplit: [],
   locationsWithPauses: [[]],
   locationsFromBackground: [],
+  navigationTrackId: null,
 };

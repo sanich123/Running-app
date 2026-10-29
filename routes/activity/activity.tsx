@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Stack } from 'expo-router';
@@ -13,14 +13,39 @@ import Metrics from '@Routes/activity/metrics/metrics';
 import PauseBtn from '@Routes/activity/pause-btn/pause-btn';
 import ShowMapBtn from '@Routes/activity/show-map-btn/show-map-btn';
 import StartBtn from '@Routes/activity/start-btn/start-btn';
+import { readSavedActivityTrack } from '@U/activity-track/track-library';
 import useActivityTrackingLifecycle from './use-activity-tracking-lifecycle';
+import type { ActivityLocation } from '@S/card/types';
 
 export default function Activity() {
   const { colors } = useTheme();
-  const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
+  const { activityStatus, isMapVisible, navigationTrackId } = useAppSelector(({ location }) => location);
   const [isLocationReadyForRecording, setIsLocationReadyForRecording] = useState(false);
   const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
+  const [navigationRoute, setNavigationRoute] = useState<{ trackId: string; locations: ActivityLocation[] } | null>(
+    null,
+  );
   const { isLocationLoading } = useActivityTrackingLifecycle(isLocationReadyForRecording);
+
+  useEffect(() => {
+    let isCurrent = true;
+    if (!navigationTrackId) {
+      return () => {
+        isCurrent = false;
+      };
+    }
+    void readSavedActivityTrack(navigationTrackId).then(
+      (locations) => {
+        if (isCurrent) setNavigationRoute({ trackId: navigationTrackId, locations });
+      },
+      () => {
+        if (isCurrent) setNavigationRoute({ trackId: navigationTrackId, locations: [] });
+      },
+    );
+    return () => {
+      isCurrent = false;
+    };
+  }, [navigationTrackId]);
 
   return (
     <>
@@ -36,7 +61,10 @@ export default function Activity() {
             testID="activity-map-layer"
             style={[styles.mapLayer, !isMapVisible && styles.hiddenMapLayer]}
             pointerEvents={isMapVisible ? 'auto' : 'none'}>
-            <Map onLocationReadinessChange={setIsLocationReadyForRecording} />
+            <Map
+              onLocationReadinessChange={setIsLocationReadyForRecording}
+              navigationRoute={navigationRoute?.trackId === navigationTrackId ? navigationRoute.locations : undefined}
+            />
           </View>
           {activityStatus !== STATUSES.initial ? <Metrics /> : null}
         </View>

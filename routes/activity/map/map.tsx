@@ -10,8 +10,15 @@ import MapControls from './map-controls/map-controls';
 import MapNavIcon from './map-nav-icon/map-nav-icon';
 import PauseMarkers from './pause-markers/pause-markers';
 import useActivityMap from './use-activity-map';
+import type { ActivityLocation } from '@S/card/types';
 
-export default function Map({ onLocationReadinessChange }: { onLocationReadinessChange: (isReady: boolean) => void }) {
+export default function Map({
+  onLocationReadinessChange,
+  navigationRoute,
+}: {
+  onLocationReadinessChange: (isReady: boolean) => void;
+  navigationRoute?: ActivityLocation[];
+}) {
   const { colors } = useTheme();
   const {
     canRenderMap,
@@ -38,6 +45,7 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
             />
             <MapNavIcon />
             <Camera ref={cameraRef} defaultSettings={cameraDefaultSettings} followUserLocation={false} />
+            {navigationRoute?.length ? <MapRouteLine locations={navigationRoute} variant="navigation" /> : null}
             <MapRouteLine />
             <PauseMarkers />
             <RouteKilometreMarkers />

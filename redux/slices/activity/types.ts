@@ -11,6 +11,14 @@ export interface PendingActivity {
   body: Omit<ActivityToSend['body'], 'locations'>;
 }
 
+export interface PendingRawRouteUpload {
+  activityId: string;
+  routeJournalId: string;
+  title: string;
+  date: string;
+  sport: string;
+}
+
 export interface ActivityPhoto {
   id?: string;
   activityId?: string;
@@ -30,4 +38,5 @@ export interface ActivityState {
   sport: SPORTS_BTNS_VALUES;
   media: ActivityPhoto[];
   unsyncedActivities: PendingActivity[];
+  pendingRawRouteUploads: PendingRawRouteUpload[];
 }

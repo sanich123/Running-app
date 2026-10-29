@@ -19,7 +19,7 @@ export default function InfiniteScrollList({
   headerAfterWeekStatistics,
 }: InfiniteScrollListProps) {
   const { onRefresh, refreshing } = useRefresh(refetch);
-  const { unsyncedActivities } = useAppSelector(({ activity }) => activity);
+  const { unsyncedActivities, pendingRawRouteUploads } = useAppSelector(({ activity }) => activity);
   const requestInFlight = useRef(false);
   const dataLength = useRef(dataToRender.length);
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function InfiniteScrollList({
       ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" /> : undefined}
       ListHeaderComponent={() => (
         <>
-          {unsyncedActivities?.length ? <UnsendedActivitiesIndicator /> : null}
+          {unsyncedActivities?.length || pendingRawRouteUploads?.length ? <UnsendedActivitiesIndicator /> : null}
           {dataToRender?.length ? <WeekStatistics /> : null}
           {headerAfterWeekStatistics}
         </>

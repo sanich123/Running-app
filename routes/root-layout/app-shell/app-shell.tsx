@@ -134,6 +134,7 @@ export default function AppShell() {
                 },
               })}>
               <Stack.Screen name={ROUTES.tabs} options={{ headerShown: false, title: 'Главная', animation: 'none' }} />
+              <Stack.Screen name={ROUTES.favoriteActivities} options={{ title: LABELS[language].favoriteActivities }} />
               <Stack.Screen name={ROUTES.admin} options={{ title: LABELS[language].admin }} />
               <Stack.Screen name={ROUTES.notifications} options={{ title: LABELS[language].notifications }} />
               <Stack.Screen name={ROUTES.signIn} options={{ headerShown: false, animation: 'none' }} />

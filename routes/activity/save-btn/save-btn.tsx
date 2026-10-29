@@ -3,15 +3,25 @@ import { useRouter } from 'expo-router';
 import { useTheme, Text, Button } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { ROUTES } from '@const/enums';
-import { useAddActivityByUserIdMutation, useUpdateActivityInfoMutation } from '@R/services/activity/activity';
+import {
+  useAddActivityByUserIdMutation,
+  useUpdateActivityInfoMutation,
+  useUploadRawActivityLocationsMutation,
+} from '@R/services/activity/activity';
 import { useUpdateSessionLocationMutation } from '@R/services/authentication/authentication';
-import { queueUnsyncedActivity, resetActivityDraft, setSavingDisabled } from '@R/slices/activity/activity';
-import { resetLocationsFromBackground } from '@R/slices/location/location';
+import {
+  queuePendingRawRouteUpload,
+  queueUnsyncedActivity,
+  removePendingRawRouteUpload,
+  resetActivityDraft,
+  setSavingDisabled,
+} from '@R/slices/activity/activity';
+import { resetLocationsFromBackground, setNavigationTrackId } from '@R/slices/location/location';
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useGlobalManualActivityParams } from '@Routes/save-activity-page/manual-activity-params';
 import { errorToast } from '@S/error-toast/error-toast';
-import { deactivateLocationJournal, removeLocationJournal } from '@U/location/location-journal';
+import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
 import { getDeviceTimeZone } from '@U/time-zone';
@@ -46,6 +56,7 @@ export default function SaveBtn() {
   const { language } = useAppSelector(({ settings }) => settings);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
   const [updateActivity, { isLoading: isUpdating }] = useUpdateActivityInfoMutation();
+  const [uploadRawLocations] = useUploadRawActivityLocationsMutation();
   const [updateSessionLocation] = useUpdateSessionLocationMutation();
   const isSaving = isLoading || isUpdating;
   const textOnBtn = isEditingActivity ? ACTIVITY_SAVE_BTN[language].update : ACTIVITY_SAVE_BTN[language].save;
@@ -106,6 +117,7 @@ export default function SaveBtn() {
                 .then(() => back())
                 .catch((error) => errorToast('', error))
                 .finally(() => {
+                  dispatch(setNavigationTrackId(null));
                   dispatch(resetActivityDraft());
                   dispatch(resetLocationsFromBackground());
                 });
@@ -137,12 +149,41 @@ export default function SaveBtn() {
               }
               await sendActivity(savedActivity)
                 .unwrap()
-                .then(() => {
+                .then((createdActivity) => {
                   if (!isManualAdding && finishedActivity.routeJournalId) {
-                    removeLocationJournal(finishedActivity.routeJournalId);
+                    const routeJournalId = finishedActivity.routeJournalId;
+                    deactivateLocationJournal(routeJournalId);
                     dispatch(clearTrackingRecovery());
+                    dispatch(
+                      queuePendingRawRouteUpload({
+                        activityId: createdActivity.id,
+                        routeJournalId,
+                        title: savedActivity.body.title,
+                        date: savedActivity.body.date ?? new Date().toISOString(),
+                        sport: savedActivity.body.sport,
+                      }),
+                    );
                   }
-                  return isManualAdding ? back() : replace(ROUTES.root);
+                  const navigationResult = isManualAdding ? back() : replace(ROUTES.root);
+                  if (!isManualAdding && finishedActivity.routeJournalId) {
+                    const routeJournalId = finishedActivity.routeJournalId;
+                    setTimeout(() => {
+                      const rawLocations = readLocationJournal(routeJournalId)?.locations ?? [];
+                      if (!rawLocations.length) {
+                        dispatch(removePendingRawRouteUpload(createdActivity.id));
+                        removeLocationJournal(routeJournalId);
+                        return;
+                      }
+                      void uploadRawLocations({ activityId: createdActivity.id, locations: rawLocations })
+                        .unwrap()
+                        .then(() => {
+                          dispatch(removePendingRawRouteUpload(createdActivity.id));
+                          removeLocationJournal(routeJournalId);
+                        })
+                        .catch(() => undefined);
+                    }, 0);
+                  }
+                  return navigationResult;
                 })
                 .catch((error) => {
                   if (!isEditingActivity && isServerUnavailableError(error)) {
@@ -165,6 +206,7 @@ export default function SaveBtn() {
                   errorToast('', error);
                 })
                 .finally(() => {
+                  dispatch(setNavigationTrackId(null));
                   dispatch(resetActivityDraft());
                   dispatch(resetLocationsFromBackground());
                 });

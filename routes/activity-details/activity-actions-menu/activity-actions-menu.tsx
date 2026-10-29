@@ -6,6 +6,7 @@ import DeleteActivityButton from './delete-activity-button/delete-activity-butto
 import EditActivityButton from './edit-activity-button/edit-activity-button';
 import MenuItem from './menu-item/menu-item';
 import MenuView from './menu-view/menu-view';
+import ActivityRouteActions from './route-actions/route-actions';
 import type { ActivityActionsMenuProps } from './types';
 
 export default function ActivityActionsMenu({ activity }: ActivityActionsMenuProps) {
@@ -41,6 +42,7 @@ export default function ActivityActionsMenu({ activity }: ActivityActionsMenuPro
       renderMenu={(deleteButton) => (
         <MenuView accessibilityLabel={ACTIVITY_ACTIONS_MENU[language].accessibilityLabel}>
           <EditActivityButton activity={activity} />
+          <ActivityRouteActions activity={activity} />
           {deleteButton}
         </MenuView>
       )}

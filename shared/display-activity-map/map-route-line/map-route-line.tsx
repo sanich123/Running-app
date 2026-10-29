@@ -8,13 +8,17 @@ import type { ActivityLocation } from '@S/card/types';
 export default function MapRouteLine({
   locations,
   segmentColors,
+  variant = 'activity',
 }: {
   locations?: ActivityLocation[] | ActivityLocation[][];
   segmentColors?: string[];
+  variant?: 'activity' | 'navigation';
 } = {}) {
   const { colors } = useTheme();
   const { locationsWithPauses } = useAppSelector(({ location }) => location);
   const routeLocations = locations ?? locationsWithPauses;
+  const routeColor = variant === 'navigation' ? colors.secondary : colors.primary;
+  const sourceId = variant === 'navigation' ? 'planned-route' : 'activity-route';
   const { baseRouteFeatures, routeFeatures } = useMemo(() => {
     const segments = Array.isArray(routeLocations[0])
       ? (routeLocations as ActivityLocation[][])
@@ -82,15 +86,15 @@ export default function MapRouteLine({
     <>
       {baseRouteFeatures.length > 0 ? (
         <ShapeSource
-          id="activity-route-base"
+          id={`${sourceId}-base`}
           shape={{
             type: 'FeatureCollection',
             features: baseRouteFeatures,
           }}>
           <LineLayer
-            id="activity-route-base-line"
+            id={`${sourceId}-base-line`}
             style={{
-              lineColor: colors.primary,
+              lineColor: routeColor,
               lineWidth: 4,
               lineCap: 'round',
               lineJoin: 'round',
@@ -99,16 +103,16 @@ export default function MapRouteLine({
         </ShapeSource>
       ) : null}
       <ShapeSource
-        id="activity-route"
+        id={sourceId}
         shape={{
           type: 'FeatureCollection',
           features: routeFeatures,
         }}>
         <LineLayer
-          id="activity-route-line"
+          id={`${sourceId}-line`}
           style={{
-            lineColor: segmentColors?.length ? (['get', 'color'] as const) : colors.primary,
-            lineWidth: 5,
+            lineColor: segmentColors?.length ? (['get', 'color'] as const) : routeColor,
+            lineWidth: variant === 'navigation' ? 4 : 5,
             lineCap: 'round',
             lineJoin: 'round',
           }}
