@@ -3,7 +3,7 @@ import type { InputModeOptions, ReturnKeyTypeOptions } from 'react-native';
 import type { Control, FieldValues, Path, PathValue, ValidateResult } from 'react-hook-form';
 import { LANGUAGES } from '@const/enums';
 export interface CustomTextInputProps<T extends FieldValues> {
-  label: string;
+  label?: string;
   control?: Control<T>;
   fieldName: Path<T>;
   validation?: {
@@ -85,6 +85,8 @@ export interface CustomTextInputProps<T extends FieldValues> {
   capitalizeValue?: boolean;
   onSubmitEditing?: () => void;
   accessibilityLabel?: string;
+  placeholder?: string;
+  testID?: string;
   compact?: boolean;
 }
 

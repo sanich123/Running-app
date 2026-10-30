@@ -95,13 +95,17 @@ describe('activity track library', () => {
       locations: [...locations, { coords: { latitude: Number.NaN, longitude: 37 } }],
     });
 
-    expect(track).toEqual({
-      id: 'activity-run-1',
-      activityId: 'run-1',
-      title: 'Morning <run>',
-      date: '2026-10-29T06:00:00.000Z',
-      pointCount: 2,
-    });
+    expect(track).toEqual(
+      expect.objectContaining({
+        id: 'activity-run-1',
+        activityId: 'run-1',
+        title: 'Morning <run>',
+        date: '2026-10-29T06:00:00.000Z',
+        pointCount: 2,
+        sport: 'running',
+        distanceMeters: expect.any(Number),
+      }),
+    );
     expect(mockStorage.__mockStorage.get(TRACK_INDEX_KEY)).toContain(track.title);
     expect(mockFiles.__mockFiles.get('file:///documents/runich-tracks/activity-run-1.json')).toContain('55.7');
     expect(mockFiles.__mockFiles.get('file:///documents/runich-tracks/activity-run-1.gpx')).toContain(

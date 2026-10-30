@@ -15,11 +15,11 @@ export const PROFILE_SECTIONS = {
 
 export const PROFILE_WATCH_IMPORT = {
   [LANGUAGES.english]: {
-    title: 'Connect a watch',
+    title: 'Watch',
     subtitle: '(experimental)',
   },
   [LANGUAGES.russian]: {
-    title: 'Подключить часы',
+    title: 'Часы',
     subtitle: '(экспериментально)',
   },
 } as const;

@@ -4,9 +4,17 @@ export const LazyActivities = lazy(() => import('@Routes/activities/activities')
 export const LazyActivitiesList = lazy(() => import('@Routes/activities-list/activities-list'));
 export const LazyActivity = lazy(() => import('@Routes/activity/activity'));
 export const LazyActivityDetailsPage = lazy(() => import('@Routes/activity-details/activity-details'));
+export const LazyAddTrackPage = lazy(() => import('@Routes/maps-page/add-track-page/add-track-page'));
 export const LazyActivityStatisticsPage = lazy(
   () => import('@Routes/activity-details/activity-statistics-page/activity-statistics-page'),
 );
+export const LazyCreateGroupPage = lazy(() => import('@Routes/groups/create-group-page/create-group-page'));
+export const LazyCreateOfflineMapPage = lazy(
+  () => import('@Routes/maps-page/create-offline-map-page/create-offline-map-page'),
+);
+export const LazyGroupDetailPage = lazy(() => import('@Routes/groups/group-detail-page/group-detail-page'));
+export const LazyGroupsPage = lazy(() => import('@Routes/groups/groups-page/groups-page'));
+export const LazyMapsPage = lazy(() => import('@Routes/maps-page/maps-page'));
 export const LazyProfileAvatarEditor = lazy(
   () => import('@Routes/profile/profile-settings/profile-avatar-editor/profile-avatar-editor'),
 );

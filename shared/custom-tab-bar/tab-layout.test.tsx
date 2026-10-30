@@ -183,7 +183,7 @@ describe('TabLayout', () => {
     expect(mockReplace).not.toHaveBeenCalled();
     expect(mockNativeTriggerProps.map(({ name }) => name).slice(-5)).toEqual([
       HOME_TAB_ROUTE,
-      ROUTES.maps,
+      ROUTES.groups,
       ROUTES.activity,
       ROUTES.statistic,
       ROUTES.profile,
@@ -242,8 +242,16 @@ describe('TabLayout', () => {
     expect(mockTabIconStyles[1]).toEqual(
       expect.objectContaining({ width: 52, height: 40, borderRadius: 20, backgroundColor: 'transparent' }),
     );
+    expect(mockTabIconStyles[2]).toEqual(
+      expect.objectContaining({ width: 52, height: 40, borderRadius: 20, backgroundColor: expect.any(String) }),
+    );
+    expect(mockTabIconStyles[3]).toEqual(
+      expect.objectContaining({ width: 52, height: 40, borderRadius: 20, backgroundColor: 'transparent' }),
+    );
     expect(mockTabIconStyles[4]).toEqual(expect.objectContaining({ width: 60, height: 48, borderRadius: 24 }));
     expect(mockTabIconStyles[5]).toEqual(expect.objectContaining({ width: 60, height: 48, borderRadius: 24 }));
+    expect(mockTabIconStyles[6]).toEqual(expect.objectContaining({ width: 52, height: 40, borderRadius: 20 }));
+    expect(mockTabIconStyles[7]).toEqual(expect.objectContaining({ width: 52, height: 40, borderRadius: 20 }));
     expect(mockWorkoutIconProps).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ source: 'record-circle-outline', color: expect.any(String), size: 36 }),
@@ -267,7 +275,7 @@ describe('TabLayout', () => {
     expect(mockTabsScreenOptions?.sceneStyle).toEqual({ backgroundColor: expect.any(String) });
     expect(mockTabsScreenNames.slice(-5)).toEqual([
       HOME_TAB_ROUTE,
-      ROUTES.maps,
+      ROUTES.groups,
       ROUTES.activity,
       ROUTES.statistic,
       ROUTES.profile,

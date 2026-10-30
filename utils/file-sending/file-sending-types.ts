@@ -7,8 +7,9 @@ export interface MediaSourceMetadata {
 }
 
 export interface MediaUploadOptions {
-  scope?: 'activity' | 'profile' | 'feedback';
+  scope?: 'activity' | 'profile' | 'group' | 'feedback';
   feedbackId?: string;
+  groupId?: string;
 }
 
 export type MediaUploadPhase = 'compressing' | 'uploading';

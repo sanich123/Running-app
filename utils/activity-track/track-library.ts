@@ -1,10 +1,23 @@
 import { Directory, File, Paths } from 'expo-file-system';
+import { getDistance } from '@U/location/location-utils';
 import { appStorage } from '@U/storage/storage';
 import { encodeActivityLocationsAsFit } from './fit-encoder';
 import type { ActivityLocation } from '@S/card/types';
 
 const TRACKS_DIRECTORY_NAME = 'runich-tracks';
 const TRACKS_INDEX_KEY = 'saved-activity-tracks:v1';
+const trackLibraryListeners = new Set<() => void>();
+
+export function subscribeToSavedActivityTracks(listener: () => void) {
+  trackLibraryListeners.add(listener);
+  return () => {
+    trackLibraryListeners.delete(listener);
+  };
+}
+
+function notifyTrackLibraryChanged() {
+  trackLibraryListeners.forEach((listener) => listener());
+}
 
 export interface SavedActivityTrack {
   id: string;
@@ -12,6 +25,8 @@ export interface SavedActivityTrack {
   title: string;
   date: string;
   pointCount: number;
+  distanceMeters?: number;
+  sport?: string;
 }
 
 type TrackFileFormat = 'gpx' | 'fit';
@@ -83,18 +98,24 @@ export async function saveActivityTrack({
   title,
   date,
   sport,
+  distanceMeters,
   locations,
 }: {
   activityId: string;
   title: string;
   date: string;
   sport?: string;
+  distanceMeters?: number;
   locations: ActivityLocation[];
 }) {
   const validLocations = locations.filter(
     ({ coords }) => Number.isFinite(coords.latitude) && Number.isFinite(coords.longitude),
   );
   if (validLocations.length < 2) throw new Error('Маршрут активности не содержит двух корректных точек');
+  const calculatedDistance = validLocations.slice(1).reduce((distance, location, index) => {
+    const previous = validLocations[index];
+    return previous ? distance + getDistance(previous, location) : distance;
+  }, 0);
 
   const directory = getTracksDirectory();
   directory.create({ idempotent: true, intermediates: true });
@@ -104,6 +125,8 @@ export async function saveActivityTrack({
     title: title.trim() || 'Активность Runich',
     date,
     pointCount: validLocations.length,
+    distanceMeters: distanceMeters ?? calculatedDistance,
+    ...(sport ? { sport } : {}),
   };
   const jsonFile = getTrackFile(savedTrack.id, 'json');
   const gpxFile = getTrackFile(savedTrack.id, 'gpx');
@@ -120,6 +143,7 @@ export async function saveActivityTrack({
   const existingTracks = readIndex(await appStorage.getItem(TRACKS_INDEX_KEY));
   const updatedTracks = [savedTrack, ...existingTracks.filter(({ id }) => id !== savedTrack.id)];
   await appStorage.setItem(TRACKS_INDEX_KEY, JSON.stringify(updatedTracks));
+  notifyTrackLibraryChanged();
   return savedTrack;
 }
 
@@ -157,6 +181,7 @@ export async function renameSavedActivityTrack(trackId: string, title: string) {
   const tracks = readIndex(await appStorage.getItem(TRACKS_INDEX_KEY));
   const updatedTracks = tracks.map((track) => (track.id === trackId ? { ...track, title: updatedTitle } : track));
   await appStorage.setItem(TRACKS_INDEX_KEY, JSON.stringify(updatedTracks));
+  notifyTrackLibraryChanged();
   return updatedTracks;
 }
 
@@ -168,5 +193,6 @@ export async function deleteSavedActivityTrack(trackId: string) {
   const tracks = readIndex(await appStorage.getItem(TRACKS_INDEX_KEY));
   const updatedTracks = tracks.filter((track) => track.id !== trackId);
   await appStorage.setItem(TRACKS_INDEX_KEY, JSON.stringify(updatedTracks));
+  notifyTrackLibraryChanged();
   return updatedTracks;
 }

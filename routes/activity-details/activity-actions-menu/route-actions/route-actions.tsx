@@ -37,6 +37,7 @@ export default function ActivityRouteActions({ activity }: { activity: ActivityR
         title: activity.title ?? copy.defaultTrackName,
         date: activity.date,
         sport: activity.sport,
+        distanceMeters: activity.distance,
         locations,
       });
       if (!(await Sharing.isAvailableAsync())) throw new Error(copy.sharingUnavailable);
@@ -63,6 +64,7 @@ export default function ActivityRouteActions({ activity }: { activity: ActivityR
         title: activity.title ?? copy.defaultTrackName,
         date: activity.date,
         sport: activity.sport,
+        distanceMeters: activity.distance,
         locations,
       });
       dispatch(setNavigationTrackId(track.id));

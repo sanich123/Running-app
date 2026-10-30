@@ -252,7 +252,7 @@ export default function AdminAccessManagement({ isSuperuser }: { isSuperuser: bo
                     disabled={isSaving}
                     onPress={() =>
                       setDraftRoles((current) =>
-                        isEnabled ? current.filter((item) => item !== role) : [...current, role],
+                        isEnabled ? current.filter((selectedRole) => selectedRole !== role) : [...current, role],
                       )
                     }
                     testID={`admin-role-${role}-${selectedUser?.id}`}

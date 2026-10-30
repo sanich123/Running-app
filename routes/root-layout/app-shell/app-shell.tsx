@@ -32,6 +32,7 @@ export default function AppShell() {
   const { theme } = useAppSelector(({ settings }) => settings);
   const { accessToken, refreshToken } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
+  const labels = LABELS[language];
   const pathname = usePathname();
   const hasSession = Boolean(accessToken || refreshToken);
   const colorScheme = theme ?? systemColorScheme;
@@ -134,6 +135,8 @@ export default function AppShell() {
                 },
               })}>
               <Stack.Screen name={ROUTES.tabs} options={{ headerShown: false, title: 'Главная', animation: 'none' }} />
+              <Stack.Screen name={ROUTES.maps} options={{ title: labels.maps }} />
+              <Stack.Screen name={ROUTES.routes} options={{ title: labels.routes }} />
               <Stack.Screen name={ROUTES.favoriteActivities} options={{ title: LABELS[language].favoriteActivities }} />
               <Stack.Screen name={ROUTES.admin} options={{ title: LABELS[language].admin }} />
               <Stack.Screen name={ROUTES.notifications} options={{ title: LABELS[language].notifications }} />

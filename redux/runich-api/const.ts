@@ -29,6 +29,7 @@ export enum Tags {
   adminAccess = 'adminAccess',
   adminUsers = 'adminUsers',
   adminAccessAudit = 'adminAccessAudit',
+  groups = 'groups',
 }
 
 export enum Methods {
@@ -58,6 +59,7 @@ export enum Routes {
   notification = 'notification',
   moderation = 'moderation',
   admin = 'admin',
+  groups = 'groups',
 }
 
 export const API_NAME = 'runnichApi';

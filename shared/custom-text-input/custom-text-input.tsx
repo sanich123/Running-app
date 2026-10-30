@@ -10,6 +10,7 @@ export default function CustomTextInput<T extends FieldValues>({
   fieldName,
   validation = { required: 'Обязательно для заполнения' },
   label,
+  placeholder,
   autoCapitalize = 'none',
   maxLength,
   returnKeyType = 'done',
@@ -23,6 +24,7 @@ export default function CustomTextInput<T extends FieldValues>({
   replaceCommaToDot = false,
   onSubmitEditing,
   accessibilityLabel,
+  testID,
   compact = false,
 }: CustomTextInputProps<T>) {
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
@@ -37,7 +39,7 @@ export default function CustomTextInput<T extends FieldValues>({
         <>
           <TextInput
             label={compact ? undefined : label}
-            placeholder={compact ? label : undefined}
+            placeholder={placeholder ?? (compact ? label : undefined)}
             autoCapitalize={autoCapitalize}
             autoCorrect={false}
             autoComplete={autoComplete}
@@ -89,7 +91,7 @@ export default function CustomTextInput<T extends FieldValues>({
             textColor={colors.onSurface}
             maxLength={maxLength}
             accessibilityLabel={accessibilityLabel}
-            testID={label}
+            testID={testID ?? label}
             disabled={shouldBeDisabled}
             returnKeyLabel={returnKeyLabel}
             returnKeyType={returnKeyType}

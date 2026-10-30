@@ -82,13 +82,13 @@ export default function TabLayout() {
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
-          name={ROUTES.maps}
-          accessibilityLabel={labels.maps}
+          name={ROUTES.groups}
+          accessibilityLabel={labels.groups}
           disableAutomaticContentInsets={false}
           contentStyle={{ backgroundColor: colors.background }}>
           <NativeTabs.Trigger.Icon
-            sf={{ default: 'map', selected: 'map.fill' }}
-            md={{ default: 'map', selected: 'map' }}
+            sf={{ default: 'person.3', selected: 'person.3.fill' }}
+            md={{ default: 'groups', selected: 'groups' }}
           />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
@@ -159,12 +159,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name={ROUTES.maps}
+        name={ROUTES.groups}
         options={{
-          href: Platform.OS === 'web' ? null : undefined,
-          tabBarAccessibilityLabel: labels.maps,
+          tabBarAccessibilityLabel: labels.groups,
           headerShown: false,
-          tabBarIcon: ({ focused }) => renderTabIcon('map-outline', 'map', focused),
+          title: labels.groups,
+          tabBarIcon: ({ focused }) => renderTabIcon('account-group-outline', 'account-group', focused),
         }}
       />
       <Tabs.Screen

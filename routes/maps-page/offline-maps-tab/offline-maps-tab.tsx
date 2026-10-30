@@ -2,35 +2,43 @@ import { useCallback, useEffect, useState } from 'react';
 import Mapbox from '@rnmapbox/maps';
 import { ScrollView, StyleSheet } from 'react-native';
 import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
+import EmptyState from '@S/empty-state/empty-state';
 import { errorToast } from '@S/error-toast/error-toast';
-import { listSavedOfflineMaps, type SavedOfflineMap } from '@U/offline-map-library';
-import MapRegionDownloader from './map-region-downloader/map-region-downloader';
+import { listSavedOfflineMaps, subscribeToOfflineMaps, type SavedOfflineMap } from '@U/offline-map-library';
 import OfflineMapList from './offline-map-list/offline-map-list';
+import { formatBytes } from './utils';
 import type { MapsPageCopy } from '../const';
 
 export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
   const { colors } = useTheme();
-  const { lastPosition, initialLocation } = useAppSelector(({ location }) => location);
   const [maps, setMaps] = useState<SavedOfflineMap[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const center = lastPosition ?? initialLocation;
-  const centerCoordinate: [number, number] = center
-    ? [center.coords.longitude, center.coords.latitude]
-    : [37.6173, 55.7558];
 
   const refreshMaps = useCallback(async () => {
     setIsRefreshing(true);
     try {
       const [savedMaps, packs] = await Promise.all([listSavedOfflineMaps(), Mapbox.offlineManager.getPacks()]);
-      const savedMapById = new Map(savedMaps.map((map) => [map.id, map]));
-      setMaps(
-        packs
-          .map((pack) => ({ id: pack.name ?? '', title: savedMapById.get(pack.name ?? '')?.title ?? pack.name ?? '' }))
-          .filter(({ id }) => id.length > 0),
+      const savedMapById = new Map(savedMaps.map((offlineMap) => [offlineMap.id, offlineMap]));
+      const mapDetails = await Promise.all(
+        packs.map(async (pack) => {
+          const id = pack.name ?? '';
+          if (!id) return null;
+          let sizeBytes: number | undefined;
+          try {
+            sizeBytes = (await pack.status()).completedResourceSize;
+          } catch {
+            sizeBytes = undefined;
+          }
+          return {
+            id,
+            title: savedMapById.get(id)?.title ?? id,
+            ...(sizeBytes === undefined ? {} : { sizeBytes }),
+          };
+        }),
       );
+      setMaps(mapDetails.filter((offlineMap): offlineMap is SavedOfflineMap => offlineMap !== null));
       setHasError(false);
     } catch (error) {
       setHasError(true);
@@ -43,13 +51,18 @@ export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
 
   useEffect(() => {
     void Promise.resolve().then(refreshMaps);
+    return subscribeToOfflineMaps?.(() => void refreshMaps());
   }, [refreshMaps]);
+
+  const totalStorageBytes = maps.reduce((total, offlineMap) => total + (offlineMap.sizeBytes ?? 0), 0);
+  const totalStorageLabel = maps.some((offlineMap) => offlineMap.sizeBytes === undefined)
+    ? '—'
+    : formatBytes(totalStorageBytes);
 
   return (
     <ScrollView contentContainerStyle={styles.content} style={styles.scroll}>
-      <MapRegionDownloader centerCoordinate={centerCoordinate} copy={copy} onDownloaded={refreshMaps} />
-      <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.onSurface }]}>
-        {copy.maps}
+      <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+        {totalStorageLabel}
       </Text>
       {!hasLoaded ? (
         <ActivityIndicator />
@@ -60,7 +73,12 @@ export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
       ) : maps.length ? (
         <OfflineMapList maps={maps} copy={copy} onMapsChange={setMaps} />
       ) : (
-        <Text style={{ color: colors.onSurfaceVariant }}>{copy.noOfflineMaps}</Text>
+        <EmptyState
+          icon="map-outline"
+          title={copy.noOfflineMaps}
+          message={copy.noOfflineMapsMessage}
+          style={styles.emptyState}
+        />
       )}
     </ScrollView>
   );
@@ -68,6 +86,6 @@ export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
 
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
-  content: { gap: 12, padding: 16, paddingBottom: 32 },
-  sectionTitle: { marginTop: 12 },
+  content: { gap: 12, padding: 16, paddingBottom: 24 },
+  emptyState: { margin: 0 },
 });

@@ -3,7 +3,7 @@ import { Modal, Platform, Pressable, ScrollView, useWindowDimensions, View, Styl
 import { useRouter } from 'expo-router';
 import { IconButton, List, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { ROUTES } from '@const/enums';
+import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import ProfileMediaPhotos from '@Routes/profile/media-photos/profile-media-photos/profile-media-photos';
@@ -104,6 +104,20 @@ export default function ProfilePage() {
               </View>
             ) : null}
             {shouldShowStatistics ? <ProfileStatistics whosProfile={profileUserId} /> : null}
+            {shouldShowPrivacySettings ? (
+              <List.Item
+                testID="profile-privacy-settings-button"
+                title={PROFILE_PRIVACY_LINK_LABELS[language]}
+                titleNumberOfLines={1}
+                left={(props) => <List.Icon {...props} icon="shield-lock-outline" />}
+                right={(props) => <List.Icon {...props} icon="chevron-right" />}
+                onPress={() => push(`/${ROUTES.profile}/${ROUTES.profilePrivacySettings}`)}
+                style={[
+                  styles.profileActionLink,
+                  { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+                ]}
+              />
+            ) : null}
             {shouldShowWatchImport ? (
               <List.Item
                 testID="watch-import-profile-row"
@@ -115,24 +129,38 @@ export default function ProfilePage() {
                 right={(props) => <List.Icon {...props} icon="chevron-right" />}
                 onPress={() => push(`/${ROUTES.watchImport}` as Parameters<typeof push>[0])}
                 style={[
-                  styles.privacySettingsLink,
+                  styles.profileActionLink,
                   { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
                 ]}
               />
             ) : null}
             {shouldShowPrivacySettings ? (
-              <List.Item
-                testID="profile-privacy-settings-button"
-                title={PROFILE_PRIVACY_LINK_LABELS[language]}
-                titleNumberOfLines={1}
-                left={(props) => <List.Icon {...props} icon="shield-lock-outline" />}
-                right={(props) => <List.Icon {...props} icon="chevron-right" />}
-                onPress={() => push(`/${ROUTES.profile}/${ROUTES.profilePrivacySettings}`)}
-                style={[
-                  styles.privacySettingsLink,
-                  { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
-                ]}
-              />
+              <>
+                <List.Item
+                  testID="profile-maps-button"
+                  title={LABELS[language].maps}
+                  titleNumberOfLines={1}
+                  left={(props) => <List.Icon {...props} icon="map-outline" />}
+                  right={(props) => <List.Icon {...props} icon="chevron-right" />}
+                  onPress={() => push(`/${ROUTES.maps}`)}
+                  style={[
+                    styles.profileActionLink,
+                    { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+                  ]}
+                />
+                <List.Item
+                  testID="profile-routes-button"
+                  title={LABELS[language].routes}
+                  titleNumberOfLines={1}
+                  left={(props) => <List.Icon {...props} icon="map-marker-path" />}
+                  right={(props) => <List.Icon {...props} icon="chevron-right" />}
+                  onPress={() => push(`/${ROUTES.routes}`)}
+                  style={[
+                    styles.profileActionLink,
+                    { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+                  ]}
+                />
+              </>
             ) : null}
           </>
         ) : profileError ? (
@@ -230,7 +258,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   profileName: { fontFamily: FONT_FAMILIES.extraBold },
-  privacySettingsLink: {
+  profileActionLink: {
     borderRadius: 8,
     borderWidth: 1,
     marginTop: 12,

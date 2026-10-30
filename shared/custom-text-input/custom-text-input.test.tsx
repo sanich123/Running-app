@@ -36,6 +36,11 @@ function NumericInputHarness({ callback }: { callback?: (value: string) => void 
   );
 }
 
+function PlaceholderInputHarness() {
+  const { control } = useForm<{ value: string }>({ defaultValues: { value: '' } });
+  return <CustomTextInput control={control} fieldName="value" placeholder="Write an update" testID="post-input" />;
+}
+
 describe('custom text input', () => {
   it('normalizes email input and reports its value', async () => {
     const user = userEvent.setup();
@@ -89,5 +94,11 @@ describe('custom text input', () => {
     await fireEvent.changeText(input, '');
 
     expect(await screen.findByText('Обязательно для заполнения')).toBeOnTheScreen();
+  });
+
+  it('supports a standalone placeholder without a field label', async () => {
+    await renderWithProviders(<PlaceholderInputHarness />);
+
+    expect(screen.getByTestId('post-input').props.placeholder).toBe('Write an update');
   });
 });

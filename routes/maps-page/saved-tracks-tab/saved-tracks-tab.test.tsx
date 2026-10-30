@@ -53,14 +53,16 @@ describe('saved tracks tab', () => {
     const user = userEvent.setup();
     await renderWithProviders(<SavedTracksTab copy={copy} />, { store: mockStore });
 
-    await user.press(await screen.findByLabelText(copy.rename));
+    await user.press(await screen.findByTestId(`track-actions-${savedTrack.id}`));
+    await user.press(await screen.findByText(copy.rename));
     const titleInput = screen.getByDisplayValue(savedTrack.title);
     await user.clear(titleInput);
     await user.type(titleInput, 'Park loop');
     await user.press(screen.getByLabelText(copy.save));
     await waitFor(() => expect(renameSavedActivityTrack).toHaveBeenCalledWith(savedTrack.id, 'Park loop'));
 
-    await user.press(screen.getByTestId(`share-saved-track-${savedTrack.id}-gpx`));
+    await user.press(screen.getByTestId(`track-actions-${savedTrack.id}`));
+    await user.press(await screen.findByText(copy.shareGpx));
     await waitFor(() => expect(Sharing.shareAsync).toHaveBeenCalledWith('file:///track.gpx', expect.any(Object)));
     await user.press(screen.getByTestId(`navigate-saved-track-${savedTrack.id}`));
 
@@ -74,7 +76,8 @@ describe('saved tracks tab', () => {
     const user = userEvent.setup();
     await renderWithProviders(<SavedTracksTab copy={copy} />, { store: mockStore });
 
-    await user.press(await screen.findByLabelText(copy.delete));
+    await user.press(await screen.findByTestId(`track-actions-${savedTrack.id}`));
+    await user.press(await screen.findByText(copy.delete));
     await waitFor(() => expect(deleteSavedActivityTrack).toHaveBeenCalledWith(savedTrack.id));
     expect(mockStore.getState().location.navigationTrackId).toBeNull();
   });

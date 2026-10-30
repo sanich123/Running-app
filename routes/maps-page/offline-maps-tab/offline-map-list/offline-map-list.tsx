@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { IconButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { errorToast } from '@S/error-toast/error-toast';
 import { removeOfflineMap, renameOfflineMap, type SavedOfflineMap } from '@U/offline-map-library';
+import { formatBytes } from '../utils';
 import type { MapsPageCopy } from '../../const';
 
 export default function OfflineMapList({
@@ -21,7 +22,13 @@ export default function OfflineMapList({
 
   async function saveTitle(id: string) {
     try {
-      onMapsChange(await renameOfflineMap(id, editedTitle));
+      const updatedMaps = await renameOfflineMap(id, editedTitle);
+      onMapsChange(
+        updatedMaps.map((offlineMap) => ({
+          ...offlineMap,
+          sizeBytes: maps.find(({ id: currentId }) => currentId === offlineMap.id)?.sizeBytes,
+        })),
+      );
       setEditingId(null);
     } catch (error) {
       errorToast(copy.mapManagementFailed, error);
@@ -31,20 +38,33 @@ export default function OfflineMapList({
   async function deleteMap(id: string) {
     try {
       await Mapbox.offlineManager.deletePack(id);
-      onMapsChange(await removeOfflineMap(id));
+      const updatedMaps = await removeOfflineMap(id);
+      onMapsChange(
+        updatedMaps.map((offlineMap) => ({
+          ...offlineMap,
+          sizeBytes: maps.find(({ id: currentId }) => currentId === offlineMap.id)?.sizeBytes,
+        })),
+      );
     } catch (error) {
       errorToast(copy.mapManagementFailed, error);
     }
   }
 
   return maps.map((offlineMap) => (
-    <View key={offlineMap.id} style={[styles.row, { borderColor: colors.outlineVariant }]}>
+    <View
+      key={offlineMap.id}
+      style={[styles.row, { borderColor: colors.outlineVariant, backgroundColor: colors.surface }]}>
       {editingId === offlineMap.id ? (
         <TextInput mode="outlined" dense value={editedTitle} onChangeText={setEditedTitle} style={styles.editInput} />
       ) : (
-        <Text variant="bodyLarge" style={[styles.rowTitle, { color: colors.onSurface }]}>
-          {offlineMap.title}
-        </Text>
+        <View style={styles.mapInfo}>
+          <Text variant="bodyLarge" style={{ color: colors.onSurface }}>
+            {offlineMap.title}
+          </Text>
+          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+            {offlineMap.sizeBytes === undefined ? '—' : formatBytes(offlineMap.sizeBytes)}
+          </Text>
+        </View>
       )}
       {editingId === offlineMap.id ? (
         <>
@@ -73,7 +93,14 @@ export default function OfflineMapList({
 }
 
 const styles = StyleSheet.create({
-  row: { alignItems: 'center', borderBottomWidth: StyleSheet.hairlineWidth, flexDirection: 'row', minHeight: 56 },
-  rowTitle: { flex: 1 },
+  row: {
+    alignItems: 'center',
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+    flexDirection: 'row',
+    minHeight: 64,
+    paddingLeft: 14,
+  },
+  mapInfo: { flex: 1, gap: 2 },
   editInput: { flex: 1, marginVertical: 4 },
 });

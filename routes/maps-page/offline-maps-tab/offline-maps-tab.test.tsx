@@ -55,7 +55,6 @@ describe('offline maps tab', () => {
     await renderWithProviders(<OfflineMapsTab copy={copy} />);
 
     expect(await screen.findByText('Москва, region-2')).toBeOnTheScreen();
-    expect(screen.getByText('Map region selector')).toBeOnTheScreen();
   });
 
   it('shows retry after map library loading fails', async () => {

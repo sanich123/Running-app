@@ -7,8 +7,8 @@ export function createSearchParams(parameters: Record<string, SearchParamValue>)
     if (value === undefined || value === null) return [];
 
     const values = Array.isArray(value) ? value : [value];
-    return values.flatMap((item) =>
-      item === undefined || item === null ? [] : [`${encodeURIComponent(key)}=${encodeURIComponent(String(item))}`],
+    return values.flatMap((value) =>
+      value === undefined || value === null ? [] : [`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`],
     );
   });
 

@@ -90,7 +90,7 @@
     "expo-video": "~58.0.13",
     "expo-video-thumbnails": "~58.0.2",
     "expo-vpn-checker": "^0.1.4",
-    "mapbox-gl": "^3.33.0",
+    "mapbox-gl": "^3.34.1",
     "moment": "^2.31.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",

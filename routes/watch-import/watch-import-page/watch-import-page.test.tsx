@@ -32,7 +32,7 @@ describe('WatchImportPage', () => {
   it('shows the experimental and revised setup copy', () => {
     const copy = WATCH_IMPORT_COPY.ru;
 
-    expect(PROFILE_WATCH_IMPORT[LANGUAGES.russian].title).toBe('Подключить часы');
+    expect(PROFILE_WATCH_IMPORT[LANGUAGES.russian].title).toBe('Часы');
     expect(PROFILE_WATCH_IMPORT[LANGUAGES.russian].subtitle).toBe('(экспериментально)');
     expect(copy.warning.title).toBe('Предупреждение: настройка непростая и пока работает нестабильно');
     expect(copy.warning.description).toBe('Инструкция может быть неполной и будет изменяться.');

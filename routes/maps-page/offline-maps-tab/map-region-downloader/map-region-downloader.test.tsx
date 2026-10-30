@@ -36,6 +36,7 @@ jest.mock('@rnmapbox/maps', () => {
     },
     Camera: View,
     MapView: MockMapView,
+    UserLocation: View,
   };
 });
 jest.mock('@U/offline-map-library', () => ({
@@ -73,7 +74,7 @@ describe('map region downloader', () => {
     );
     await act(async () => Promise.resolve());
     await user.type(screen.getByTestId('offline-region-name'), 'Москва');
-    await user.press(screen.getByText(copy.downloadRegion));
+    await user.press(screen.getByTestId('download-offline-region'));
 
     await waitFor(() => expect(mockSaveOfflineMap).toHaveBeenCalledWith(expect.objectContaining({ title: 'Москва' })));
     expect(mockCreatePack).toHaveBeenCalledWith(
@@ -100,7 +101,7 @@ describe('map region downloader', () => {
     );
     await act(async () => Promise.resolve());
     fireEvent(screen.getByTestId('offline-region-map'), 'layout');
-    await user.press(screen.getByText(copy.downloadRegion));
+    await user.press(screen.getByTestId('download-offline-region'));
     await user.press(screen.getByText(copy.cancelDownload));
 
     await waitFor(() => expect(mockDeletePack).toHaveBeenCalledTimes(1));
