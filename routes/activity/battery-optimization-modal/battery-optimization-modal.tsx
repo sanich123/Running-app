@@ -2,9 +2,10 @@ import { useCallback, useRef } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { View, StyleSheet } from 'react-native';
-import { useTheme, Button, IconButton, Text } from 'react-native-paper';
+import { useTheme, Button, Text } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import MapControlButton from '@S/map-control-button/map-control-button';
 import { BATTERY_OPTIMIZATION } from './const';
 import { useActivityMapContext } from '../map/activity-map-context';
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
@@ -23,13 +24,11 @@ export default function BatteryOptimizationModal() {
   return (
     <>
       {isActive ? (
-        <IconButton
+        <MapControlButton
           testID="battery-optimization-info"
-          mode="contained-tonal"
-          icon="battery-alert-variant-outline"
+          androidIcon="information-outline"
+          iosSymbol="info.circle"
           iconColor={colors.primary}
-          containerColor={colors.surface}
-          size={24}
           onPress={() => batteryOptimizationEnabledModalRef.current?.present()}
           accessibilityLabel="Информация об оптимизации батареи"
         />

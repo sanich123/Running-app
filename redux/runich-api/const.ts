@@ -50,6 +50,7 @@ export enum Routes {
   auth = 'auth',
   activityId = 'activityId',
   favorites = 'favorites',
+  withRoutes = 'with-routes',
   favorite = 'favorite',
   all = 'all',
   photos = 'photos',

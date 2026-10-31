@@ -31,7 +31,13 @@ const mockTabIconStyles: { width?: number; height?: number; borderRadius?: numbe
 const mockNativeTriggerContentStyles: unknown[] = [];
 const mockNativeTriggerProps: { name?: string; disableAutomaticContentInsets?: boolean }[] = [];
 const mockTabsScreenNames: string[] = [];
-const mockNativeTriggerIconProps: { sf?: unknown; md?: unknown; selectedColor?: unknown }[] = [];
+const mockNativeTriggerIconProps: {
+  sf?: unknown;
+  md?: unknown;
+  src?: unknown;
+  renderingMode?: unknown;
+  selectedColor?: unknown;
+}[] = [];
 const mockWorkoutIconProps: { source?: unknown; color?: unknown; size?: number }[] = [];
 
 jest.mock('expo-router', () => {
@@ -103,7 +109,13 @@ jest.mock('expo-router/native-tabs', () => {
     }
     return <View>{children}</View>;
   };
-  Trigger.Icon = (props: { sf?: unknown; md?: unknown; selectedColor?: unknown }) => {
+  Trigger.Icon = (props: {
+    sf?: unknown;
+    md?: unknown;
+    src?: unknown;
+    renderingMode?: unknown;
+    selectedColor?: unknown;
+  }) => {
     mockNativeTriggerIconProps.push(props);
     return null;
   };
@@ -194,8 +206,8 @@ describe('TabLayout', () => {
     );
     expect(mockNativeTriggerIconProps).toContainEqual(
       expect.objectContaining({
-        sf: { default: 'record.circle', selected: 'record.circle.fill' },
-        md: { default: 'radio_button_unchecked', selected: 'radio_button_checked' },
+        src: expect.anything(),
+        renderingMode: 'template',
         selectedColor: expect.any(String),
       }),
     );
@@ -248,14 +260,18 @@ describe('TabLayout', () => {
     expect(mockTabIconStyles[3]).toEqual(
       expect.objectContaining({ width: 52, height: 40, borderRadius: 20, backgroundColor: 'transparent' }),
     );
-    expect(mockTabIconStyles[4]).toEqual(expect.objectContaining({ width: 60, height: 48, borderRadius: 24 }));
-    expect(mockTabIconStyles[5]).toEqual(expect.objectContaining({ width: 60, height: 48, borderRadius: 24 }));
+    expect(mockTabIconStyles[4]).toEqual(
+      expect.objectContaining({ width: 52, height: 48, borderRadius: 24, backgroundColor: 'transparent' }),
+    );
+    expect(mockTabIconStyles[5]).toEqual(
+      expect.objectContaining({ width: 52, height: 48, borderRadius: 24, backgroundColor: 'transparent' }),
+    );
     expect(mockTabIconStyles[6]).toEqual(expect.objectContaining({ width: 52, height: 40, borderRadius: 20 }));
     expect(mockTabIconStyles[7]).toEqual(expect.objectContaining({ width: 52, height: 40, borderRadius: 20 }));
     expect(mockWorkoutIconProps).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ source: 'record-circle-outline', color: expect.any(String), size: 36 }),
-        expect.objectContaining({ source: 'record-circle', color: expect.any(String), size: 36 }),
+        expect.objectContaining({ source: 'record-circle-outline', color: expect.any(String), size: 38 }),
+        expect.objectContaining({ source: 'record-circle', color: expect.any(String), size: 38 }),
       ]),
     );
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });

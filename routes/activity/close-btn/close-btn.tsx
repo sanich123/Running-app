@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { SymbolView } from 'expo-symbols';
+import { Platform, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button, useTheme } from 'react-native-paper';
+import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
 import {
   resetLastKm,
@@ -16,6 +17,7 @@ import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-reco
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { errorToast } from '@S/error-toast/error-toast';
+import { MAP_CONTROL_BUTTON_BACKGROUND } from '@S/map-control-button/const';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getActiveLocationJournalId, removeLocationJournal } from '@U/location/location-journal';
@@ -74,16 +76,43 @@ export default function CloseBtn() {
 
   return (
     <>
-      <Button
-        mode="text"
-        compact
-        style={styles.layout}
-        onPress={stopTrackingAndClose}
-        loading={isStoppingTracking}
-        disabled={isStoppingTracking}
-        textColor={colors.onSurfaceVariant}>
-        {ACTIVITY_CLOSE_BTN[language].btnText}
-      </Button>
+      {Platform.OS === 'ios' ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={ACTIVITY_CLOSE_BTN[language].btnText}
+          accessibilityState={{ disabled: isStoppingTracking }}
+          disabled={isStoppingTracking}
+          onPress={stopTrackingAndClose}
+          style={[
+            styles.iconButton,
+            {
+              backgroundColor: MAP_CONTROL_BUTTON_BACKGROUND,
+              borderColor: colors.outlineVariant,
+              borderWidth: StyleSheet.hairlineWidth,
+            },
+          ]}
+          testID="activity-close-button">
+          {isStoppingTracking ? (
+            <ActivityIndicator size={18} color={colors.primary} />
+          ) : (
+            <SymbolView name="xmark" size={20} tintColor={colors.primary} weight="semibold" />
+          )}
+        </Pressable>
+      ) : (
+        <IconButton
+          accessibilityLabel={ACTIVITY_CLOSE_BTN[language].btnText}
+          containerColor={MAP_CONTROL_BUTTON_BACKGROUND}
+          disabled={isStoppingTracking}
+          icon="close"
+          iconColor={colors.primary}
+          loading={isStoppingTracking}
+          mode="contained-tonal"
+          onPress={stopTrackingAndClose}
+          size={22}
+          style={styles.iconButton}
+          testID="activity-close-button"
+        />
+      )}
       <ConfirmDialog
         visible={isConfirmDialogVisible}
         title={ACTIVITY_CLOSE_BTN[language].alertName}
@@ -100,11 +129,12 @@ export default function CloseBtn() {
 }
 
 const styles = StyleSheet.create({
-  layout: {
-    display: 'flex',
+  iconButton: {
     alignItems: 'center',
+    borderRadius: 20,
     justifyContent: 'center',
-    padding: 5,
-    borderRadius: 10,
+    margin: 0,
+    minHeight: 40,
+    minWidth: 40,
   },
 });

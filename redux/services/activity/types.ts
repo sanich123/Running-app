@@ -95,6 +95,14 @@ export interface GetActivitiesByIdsRequest {
   ids: string;
 }
 
+export interface GetActivitiesWithRoutesRequest {
+  search?: string;
+  month?: number;
+  day?: number;
+  year?: number;
+  timeZone: string;
+}
+
 export interface SetActivityFavoriteRequest {
   id: string;
   isFavorite: boolean;

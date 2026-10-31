@@ -3,6 +3,13 @@ import { LANGUAGES } from '@const/enums';
 
 export type ActivityVoiceMetric = 'pace' | 'movingTime' | 'elevation';
 
+export const DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS = 50;
+
+export function getNavigationAlertDistanceMeters(value: unknown) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS;
+  return Math.min(200, Math.max(10, Math.round(value / 10) * 10));
+}
+
 export interface ActivityReminder {
   id: string;
   intervalMinutes: number;
@@ -18,6 +25,7 @@ export interface ActivitySettings {
   activityVoiceIdentifier: string | null;
   activityReminderEnabled: boolean;
   activityReminders: ActivityReminder[];
+  navigationAlertDistanceMeters: number;
   saveCameraPhotosToGallery: boolean;
 }
 
@@ -32,6 +40,7 @@ export const SETTINGS_INITIAL_STATE: ActivitySettings = {
   activityVoiceIdentifier: null as string | null,
   activityReminderEnabled: false,
   activityReminders: [],
+  navigationAlertDistanceMeters: DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS,
   saveCameraPhotosToGallery: false,
 };
 

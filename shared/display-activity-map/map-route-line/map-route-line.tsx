@@ -115,6 +115,7 @@ export default function MapRouteLine({
             lineWidth: variant === 'navigation' ? 4 : 5,
             lineCap: 'round',
             lineJoin: 'round',
+            lineDasharray: variant === 'navigation' ? [2, 1.5] : undefined,
           }}
         />
       </ShapeSource>

@@ -3,6 +3,7 @@ import { LANGUAGES } from '@const/enums';
 import {
   buildKilometerAnnouncement,
   formatDurationForSpeech,
+  speakActivityMessage,
   speakActivityReminder,
   speakCompletedKilometer,
 } from './activity-voice';
@@ -71,6 +72,17 @@ describe('activity voice announcements', () => {
     speakActivityReminder('Пора сделать глоток воды.', LANGUAGES.russian, 'voice-id');
 
     expect(Speech.speak).toHaveBeenCalledWith('Пора сделать глоток воды.', {
+      language: 'ru-RU',
+      voice: 'voice-id',
+      rate: 0.95,
+      useApplicationAudioSession: false,
+    });
+  });
+
+  it('speaks route guidance using the shared activity voice settings', () => {
+    speakActivityMessage('Вы находитесь примерно в 60 метрах от маршрута.', LANGUAGES.russian, 'voice-id');
+
+    expect(Speech.speak).toHaveBeenCalledWith('Вы находитесь примерно в 60 метрах от маршрута.', {
       language: 'ru-RU',
       voice: 'voice-id',
       rate: 0.95,

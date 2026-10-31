@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
+import MapControlButton from '@S/map-control-button/map-control-button';
 
 export default function MapControls({
   copy,
@@ -9,56 +9,78 @@ export default function MapControls({
   onTogglePitch,
   onLocate,
   onSearch,
+  onZoomIn,
+  onZoomOut,
 }: {
-  copy: { satellite: string; street: string; switchTo2d: string; switchTo3d: string; locate: string; search: string };
+  copy: {
+    satellite: string;
+    street: string;
+    switchTo2d: string;
+    switchTo3d: string;
+    locate: string;
+    search: string;
+    zoomIn: string;
+    zoomOut: string;
+  };
   isSatellite: boolean;
   is3d: boolean;
   onToggleMapStyle: () => void;
   onTogglePitch: () => void;
   onLocate: () => void;
   onSearch: () => void;
+  onZoomIn?: () => void;
+  onZoomOut?: () => void;
 }) {
-  const { colors } = useTheme();
-
   return (
     <View style={styles.controls}>
-      <IconButton
+      <MapControlButton
         accessibilityLabel={isSatellite ? copy.satellite : copy.street}
-        icon="layers-outline"
-        mode="contained"
+        androidIcon="layers-outline"
+        iosSymbol="square.3.layers.3d"
         onPress={onToggleMapStyle}
-        style={[styles.button, { backgroundColor: colors.elevation.level3 }]}
+        selected={isSatellite}
         testID="toggle-map-style"
       />
-      <IconButton
+      <MapControlButton
         accessibilityLabel={is3d ? copy.switchTo2d : copy.switchTo3d}
-        icon={is3d ? 'numeric-2-box-outline' : 'numeric-3-box-outline'}
-        mode="contained"
+        androidIcon={is3d ? 'numeric-2-box-outline' : 'numeric-3-box-outline'}
+        iosSymbol={is3d ? '2.square' : '3.square'}
         onPress={onTogglePitch}
-        style={[styles.button, { backgroundColor: colors.elevation.level3 }]}
+        selected={is3d}
         testID="toggle-map-pitch"
       />
-      <IconButton
+      <MapControlButton
         accessibilityLabel={copy.locate}
-        icon="crosshairs-gps"
-        mode="contained"
+        androidIcon="crosshairs-gps"
+        iosSymbol="scope"
         onPress={onLocate}
-        style={[styles.button, { backgroundColor: colors.elevation.level3 }]}
         testID="center-map-on-location"
       />
-      <IconButton
+      <MapControlButton
         accessibilityLabel={copy.search}
-        icon="magnify"
-        mode="contained"
+        androidIcon="magnify"
+        iosSymbol="magnifyingglass"
         onPress={onSearch}
-        style={[styles.button, { backgroundColor: colors.elevation.level3 }]}
         testID="open-map-search"
+      />
+      <MapControlButton
+        accessibilityLabel={copy.zoomIn}
+        androidIcon="plus"
+        iosSymbol="plus"
+        onPress={() => onZoomIn?.()}
+        testID="zoom-map-in"
+      />
+      <MapControlButton
+        accessibilityLabel={copy.zoomOut}
+        androidIcon="minus"
+        iosSymbol="minus"
+        onPress={() => onZoomOut?.()}
+        testID="zoom-map-out"
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  controls: { gap: 8 },
-  button: { borderRadius: 24, margin: 0 },
+  controls: { gap: 6 },
 });

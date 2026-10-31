@@ -16,6 +16,11 @@ export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
+  const totalStorageBytes = maps.reduce((total, offlineMap) => total + (offlineMap.sizeBytes ?? 0), 0);
+  const totalStorageLabel = maps.some((offlineMap) => offlineMap.sizeBytes === undefined)
+    ? '—'
+    : formatBytes(totalStorageBytes);
+
   const refreshMaps = useCallback(async () => {
     setIsRefreshing(true);
     try {
@@ -53,11 +58,6 @@ export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
     void Promise.resolve().then(refreshMaps);
     return subscribeToOfflineMaps?.(() => void refreshMaps());
   }, [refreshMaps]);
-
-  const totalStorageBytes = maps.reduce((total, offlineMap) => total + (offlineMap.sizeBytes ?? 0), 0);
-  const totalStorageLabel = maps.some((offlineMap) => offlineMap.sizeBytes === undefined)
-    ? '—'
-    : formatBytes(totalStorageBytes);
 
   return (
     <ScrollView contentContainerStyle={styles.content} style={styles.scroll}>

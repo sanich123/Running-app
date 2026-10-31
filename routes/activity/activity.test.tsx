@@ -1,7 +1,9 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import * as Speech from 'expo-speech';
 import { StyleSheet } from 'react-native';
-import { STATUSES } from '@const/enums';
-import { setActivityStatus } from '@R/slices/location/location';
+import { LANGUAGES, STATUSES } from '@const/enums';
+import { setActivityStatus, setLastPosition, setNavigationTrackId } from '@R/slices/location/location';
+import { changeLanguage } from '@R/slices/settings/settings';
 import {
   clearTrackingRecovery,
   setTrackingRecoveryStatus,
@@ -10,6 +12,7 @@ import {
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import * as activityTrackLibrary from '@U/activity-track/track-library';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
 import { createLocationJournal } from '@U/location/location-journal';
 import Activity from './activity';
@@ -84,6 +87,7 @@ describe('Activity', () => {
   let mockErrorToast: jest.SpiedFunction<typeof errorToastModule.errorToast>;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     mockStore.dispatch(resetMockLocation());
     mockStore.dispatch(clearTrackingRecovery());
     mockStopLocationTracking = jest.spyOn(backgroundLocation, 'stopLocationTracking').mockResolvedValue(undefined);
@@ -139,6 +143,99 @@ describe('Activity', () => {
     expect(hiddenMapLayer.props.pointerEvents).toBe('none');
     expect(StyleSheet.flatten(hiddenMapLayer.props.style)).toEqual(expect.objectContaining({ opacity: 0 }));
     expect(screen.getByTestId('activity-map')).toBeOnTheScreen();
+  });
+
+  it.each([
+    {
+      language: LANGUAGES.russian,
+      locale: 'ru-RU',
+      text: 'Вы находитесь примерно в 110 метрах от маршрута.',
+    },
+    {
+      language: LANGUAGES.english,
+      locale: 'en-US',
+      text: 'You are about 110 metres from the route.',
+    },
+  ])('speaks once for confident route deviation in $language', async ({ language, locale, text }) => {
+    jest
+      .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
+      .mockResolvedValue([{ coords: { latitude: 0, longitude: 0 } }, { coords: { latitude: 0, longitude: 0.001 } }]);
+    mockStore.dispatch(changeLanguage(language));
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(setNavigationTrackId('saved-route'));
+    mockStore.dispatch(
+      setLastPosition({
+        timestamp: 1000,
+        coords: {
+          latitude: 0.001,
+          longitude: 0.0005,
+          accuracy: 5,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+      }),
+    );
+
+    await renderWithProviders(<Activity />);
+
+    await waitFor(() => expect(Speech.speak).toHaveBeenCalledWith(text, expect.objectContaining({ language: locale })));
+    expect(Speech.speak).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not speak when location accuracy is too low for route guidance', async () => {
+    jest
+      .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
+      .mockResolvedValue([{ coords: { latitude: 0, longitude: 0 } }, { coords: { latitude: 0, longitude: 0.001 } }]);
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(setNavigationTrackId('saved-route'));
+    mockStore.dispatch(
+      setLastPosition({
+        timestamp: 1000,
+        coords: {
+          latitude: 0.001,
+          longitude: 0.0005,
+          accuracy: 40,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+      }),
+    );
+
+    await renderWithProviders(<Activity />);
+
+    await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
+    expect(Speech.speak).not.toHaveBeenCalled();
+  });
+
+  it('does not announce a distance that has not exceeded the configured threshold', async () => {
+    jest
+      .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
+      .mockResolvedValue([{ coords: { latitude: 0, longitude: 0 } }, { coords: { latitude: 0, longitude: 0.001 } }]);
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(setNavigationTrackId('saved-route'));
+    mockStore.dispatch(
+      setLastPosition({
+        timestamp: 1000,
+        coords: {
+          latitude: 0.0004,
+          longitude: 0.0005,
+          accuracy: 5,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+      }),
+    );
+
+    await renderWithProviders(<Activity />);
+
+    await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
+    expect(Speech.speak).not.toHaveBeenCalled();
   });
 
   it('pauses recovered tracking only after stopping the location service', async () => {

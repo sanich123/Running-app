@@ -88,7 +88,7 @@ export function speakCompletedKilometer(announcement: KilometerVoiceAnnouncement
   }
 }
 
-export function speakActivityReminder(text: string, language: LANGUAGES, voiceIdentifier: string | null) {
+export function speakActivityMessage(text: string, language: LANGUAGES, voiceIdentifier: string | null) {
   if (!text.trim()) {
     return;
   }
@@ -103,4 +103,8 @@ export function speakActivityReminder(text: string, language: LANGUAGES, voiceId
   } catch {
     // Text-to-speech must never interrupt location tracking.
   }
+}
+
+export function speakActivityReminder(text: string, language: LANGUAGES, voiceIdentifier: string | null) {
+  speakActivityMessage(text, language, voiceIdentifier);
 }

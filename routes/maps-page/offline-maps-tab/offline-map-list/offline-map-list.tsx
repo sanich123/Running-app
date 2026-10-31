@@ -67,15 +67,26 @@ export default function OfflineMapList({
         </View>
       )}
       {editingId === offlineMap.id ? (
-        <>
-          <IconButton icon="check" accessibilityLabel={copy.save} onPress={() => void saveTitle(offlineMap.id)} />
-          <IconButton icon="close" accessibilityLabel={copy.cancel} onPress={() => setEditingId(null)} />
-        </>
+        <View style={styles.actions}>
+          <IconButton
+            icon="check"
+            accessibilityLabel={copy.save}
+            onPress={() => void saveTitle(offlineMap.id)}
+            style={styles.actionButton}
+          />
+          <IconButton
+            icon="close"
+            accessibilityLabel={copy.cancel}
+            onPress={() => setEditingId(null)}
+            style={styles.actionButton}
+          />
+        </View>
       ) : (
-        <>
+        <View style={styles.actions}>
           <IconButton
             icon="pencil-outline"
             accessibilityLabel={copy.rename}
+            style={styles.actionButton}
             onPress={() => {
               setEditingId(offlineMap.id);
               setEditedTitle(offlineMap.title);
@@ -84,9 +95,10 @@ export default function OfflineMapList({
           <IconButton
             icon="delete-outline"
             accessibilityLabel={copy.delete}
+            style={styles.actionButton}
             onPress={() => void deleteMap(offlineMap.id)}
           />
-        </>
+        </View>
       )}
     </View>
   ));
@@ -100,7 +112,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     minHeight: 64,
     paddingLeft: 14,
+    paddingRight: 8,
   },
   mapInfo: { flex: 1, gap: 2 },
+  actions: { alignItems: 'center', flexDirection: 'row' },
+  actionButton: { height: 40, margin: 0, width: 40 },
   editInput: { flex: 1, marginVertical: 4 },
 });

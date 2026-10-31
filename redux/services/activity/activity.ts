@@ -9,6 +9,7 @@ import type {
   DeleteActivityMediaRequest,
   GetActivityLocationsRequest,
   GetActivitiesByIdsRequest,
+  GetActivitiesWithRoutesRequest,
   GetActivityMediaRequest,
   WatchWorkoutsImportRequest,
   SetActivityFavoriteRequest,
@@ -16,6 +17,7 @@ import type {
 } from './types';
 import type {
   ActivitiesResponse,
+  ActivitiesWithRoutesResponse,
   ActivityListItemResponse,
   ActivityMutationResponse,
   ActivityMediaMutationResponse,
@@ -55,6 +57,19 @@ export const activityApi = runichApi.injectEndpoints({
       query: ({ pageParam }) =>
         `/${Routes.activity}/${Routes.favorites}` +
         createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined }),
+      providesTags: [Tags.activities],
+    }),
+    getActivitiesWithRoutes: infiniteQuery<ActivitiesWithRoutesResponse, GetActivitiesWithRoutesRequest, string>({
+      infiniteQueryOptions: {
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      },
+      query: ({ queryArg, pageParam }) =>
+        `/${Routes.activity}/${Routes.withRoutes}${createSearchParams({
+          ...queryArg,
+          take: ACTIVITY_PAGE_SIZE,
+          cursor: pageParam || undefined,
+        })}`,
       providesTags: [Tags.activities],
     }),
     getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesResponse, { id: string }, string>({
@@ -192,6 +207,7 @@ export const {
   useAppendActivityMediaMutation,
   useDeleteActivityMediaMutation,
   useGetActivitiesByUserIdInfiniteQuery,
+  useGetActivitiesWithRoutesInfiniteQuery,
   useGetFavoriteActivitiesInfiniteQuery,
   useSetActivityFavoriteMutation,
   useGetAllActivityMediaByUserIdInfiniteQuery,

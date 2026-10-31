@@ -24,6 +24,7 @@ jest.mock('@U/offline-map-library', () => ({
   subscribeToOfflineMaps: () => undefined,
 }));
 jest.mock('@U/activity-track/track-library', () => ({
+  getSavedActivityTracksStorageBytes: () => 0,
   listSavedActivityTracks: (...args: unknown[]) => mockListTracks(...args),
   subscribeToSavedActivityTracks: () => undefined,
 }));

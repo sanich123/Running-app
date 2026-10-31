@@ -1,4 +1,4 @@
-import type { ActivityListItemResponse } from '@R/runich-api/types';
+import { LANGUAGES } from '@const/enums';
 
 export interface ActivityDateFilters {
   month: number | null;
@@ -6,19 +6,10 @@ export interface ActivityDateFilters {
   year: number | null;
 }
 
-export function filterActivitiesByDate(activities: ActivityListItemResponse[], filters: ActivityDateFilters) {
-  return activities.filter(({ date }) => {
-    const activityDate = new Date(date);
-    return (
-      (filters.month === null || activityDate.getMonth() === filters.month) &&
-      (filters.day === null || activityDate.getDate() === filters.day) &&
-      (filters.year === null || activityDate.getFullYear() === filters.year)
-    );
+export function formatRouteActivityDate(date: string, language: LANGUAGES) {
+  return new Date(date).toLocaleDateString(language === LANGUAGES.english ? 'en-US' : 'ru-RU', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
   });
-}
-
-export function getActivityYears(activities: ActivityListItemResponse[]) {
-  return [...new Set(activities.map(({ date }) => new Date(date).getFullYear()))].sort(
-    (first, second) => second - first,
-  );
 }

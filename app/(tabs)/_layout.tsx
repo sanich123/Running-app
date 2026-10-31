@@ -25,6 +25,7 @@ export default function TabLayout() {
     pathname.includes(ROUTES.changePassword) ||
     pathname === `/${ROUTES.activity}`;
   const isActivityRoute = pathname === `/${ROUTES.activity}` || pathname.endsWith(`/${ROUTES.activity}`);
+  const isRouteLibraryRoute = pathname === `/${ROUTES.routes}` || pathname === `/${ROUTES.addTrack}`;
 
   const renderTabIcon = (
     source: string,
@@ -37,10 +38,10 @@ export default function TabLayout() {
       style={{
         alignItems: 'center',
         justifyContent: 'center',
-        width: options?.highlighted ? 60 : 52,
+        width: 52,
         height: options?.highlighted ? 48 : 40,
         borderRadius: options?.highlighted ? 24 : 20,
-        backgroundColor: focused ? colors.primaryContainer : 'transparent',
+        backgroundColor: options?.highlighted ? 'transparent' : focused ? colors.primaryContainer : 'transparent',
       }}>
       <Icon
         source={focused ? focusedSource : source}
@@ -52,10 +53,10 @@ export default function TabLayout() {
   useEffect(() => {
     const isTracking = trackingRecoveryStatus === STATUSES.started || trackingRecoveryStatus === STATUSES.continued;
 
-    if (isTracking && !isActivityRoute) {
+    if (isTracking && !isActivityRoute && !isRouteLibraryRoute) {
       replace(`/${ROUTES.activity}`);
     }
-  }, [isActivityRoute, replace, trackingRecoveryStatus]);
+  }, [isActivityRoute, isRouteLibraryRoute, replace, trackingRecoveryStatus]);
 
   if (Platform.OS === 'ios') {
     return (
@@ -97,9 +98,10 @@ export default function TabLayout() {
           accessibilityLabel={labels.activity}
           disableAutomaticContentInsets={false}
           contentStyle={{ backgroundColor: colors.background }}>
+          {/* NativeTabs fixes system symbols at 24pt; this SF Symbol image keeps Record at 36pt. */}
           <NativeTabs.Trigger.Icon
-            sf={{ default: 'record.circle', selected: 'record.circle.fill' }}
-            md={{ default: 'radio_button_unchecked', selected: 'radio_button_checked' }}
+            src={require('../../assets/images/record-circle@3x.png')}
+            renderingMode="template"
             selectedColor={colors.error}
           />
           <NativeTabs.Trigger.Label hidden />
@@ -177,7 +179,7 @@ export default function TabLayout() {
             renderTabIcon('record-circle-outline', 'record-circle', focused, {
               color: colors.error,
               highlighted: true,
-              size: 36,
+              size: 38,
               testID: 'workout-record-tab-icon',
             }),
         }}

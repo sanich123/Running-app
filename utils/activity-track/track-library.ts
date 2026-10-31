@@ -152,6 +152,18 @@ export async function listSavedActivityTracks() {
   return tracks.filter(({ id }) => getTrackFile(id, 'json').exists);
 }
 
+export function getSavedActivityTracksStorageBytes() {
+  return getTracksDirectory().size ?? 0;
+}
+
+export async function deleteAllSavedActivityTracks() {
+  const directory = getTracksDirectory();
+  if (directory.exists) directory.delete();
+  await appStorage.setItem(TRACKS_INDEX_KEY, JSON.stringify([]));
+  notifyTrackLibraryChanged();
+  return [];
+}
+
 export async function readSavedActivityTrack(trackId: string) {
   const rawLocations: unknown = JSON.parse(await getTrackFile(trackId, 'json').text());
   if (!Array.isArray(rawLocations)) throw new Error('Не удалось прочитать сохранённый маршрут');

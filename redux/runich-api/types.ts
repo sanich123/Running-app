@@ -183,6 +183,21 @@ export interface ActivitiesResponse {
   isLastPage?: boolean;
 }
 
+export interface ActivityRouteFilterOptionsResponse {
+  years: number[];
+  months: number[];
+  days: number[];
+}
+
+export interface ActivityRouteWorkoutListItemResponse extends ActivityListItemResponse {
+  routePointCount: number;
+}
+
+export interface ActivitiesWithRoutesResponse extends Omit<ActivitiesResponse, 'activities'> {
+  activities: ActivityRouteWorkoutListItemResponse[];
+  availableFilters: ActivityRouteFilterOptionsResponse;
+}
+
 export interface HomeActivityFeedsResponse {
   my: ActivitiesResponse;
   followers: ActivitiesResponse;

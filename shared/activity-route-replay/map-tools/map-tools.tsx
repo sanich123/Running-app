@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { SymbolView } from 'expo-symbols';
+import { Platform, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Icon, Menu, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import MapControls from '@S/display-activity-map/map-controls/map-controls';
+import { getMapControlButtonSize, getMapControlButtonStyle } from '@S/map-control-button/const';
 import { ACTIVITY_ROUTE_REPLAY_DURATIONS_MS } from '../const';
 import { formatDurationOption } from './utils';
 import type { MapToolsProps } from '../types';
@@ -20,6 +22,8 @@ export default function MapTools({
   isDisabled = false,
 }: MapToolsProps) {
   const { colors } = useTheme();
+  const { width } = useWindowDimensions();
+  const durationButtonSize = getMapControlButtonSize(width);
   const [isDurationMenuVisible, setIsDurationMenuVisible] = useState(false);
   const selectedDurationText = formatDurationOption(playbackDuration, copy);
 
@@ -43,7 +47,7 @@ export default function MapTools({
         contentStyle={[styles.durationMenu, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}
         anchor={
           <TouchableRipple
-            style={[styles.durationSelector, { backgroundColor: colors.surfaceVariant }]}
+            style={getMapControlButtonStyle(durationButtonSize)}
             onPress={() => setIsDurationMenuVisible(true)}
             disabled={isDisabled}
             accessibilityLabel={`${copy.duration}: ${selectedDurationText}`}
@@ -54,10 +58,14 @@ export default function MapTools({
               <Text
                 variant="labelSmall"
                 numberOfLines={1}
-                style={[styles.durationSelectorText, { color: colors.onSurface }]}>
+                style={[styles.durationSelectorText, { color: colors.primary }]}>
                 {selectedDurationText}
               </Text>
-              <Icon source="chevron-down" size={12} color={colors.onSurfaceVariant} />
+              {Platform.OS === 'ios' ? (
+                <SymbolView name="chevron.down" size={12} tintColor={colors.primary} />
+              ) : (
+                <Icon source="chevron-down" size={12} color={colors.primary} />
+              )}
             </View>
           </TouchableRipple>
         }>
@@ -94,22 +102,8 @@ export default function MapTools({
 }
 
 const styles = StyleSheet.create({
-  durationSelector: {
-    alignItems: 'center',
-    borderRadius: 12,
-    elevation: 4,
-    height: 44,
-    justifyContent: 'center',
-    margin: 0,
-    opacity: 0.9,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 4,
-    width: 44,
-  },
   durationSelectorContent: { alignItems: 'center', justifyContent: 'center' },
-  durationSelectorText: { fontSize: 10, lineHeight: 13 },
+  durationSelectorText: { fontSize: 11, lineHeight: 14 },
   durationMenu: { borderRadius: 12, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 4, paddingVertical: 4 },
   durationMenuItem: { borderRadius: 8, height: 36, marginHorizontal: 2, minWidth: 112 },
   durationMenuItemTitle: { fontSize: 13 },

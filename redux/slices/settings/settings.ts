@@ -26,6 +26,9 @@ const settings = createSlice({
     setActivityReminderEnabled: (state, action) => {
       state.activityReminderEnabled = action.payload;
     },
+    setNavigationAlertDistanceMeters: (state, action) => {
+      state.navigationAlertDistanceMeters = action.payload;
+    },
     setSaveCameraPhotosToGallery: (state, action) => {
       state.saveCameraPhotosToGallery = action.payload;
     },
@@ -46,6 +49,7 @@ export const {
   setActivityVoiceMetrics,
   setActivityVoiceIdentifier,
   setActivityReminderEnabled,
+  setNavigationAlertDistanceMeters,
   setSaveCameraPhotosToGallery,
   addActivityReminder,
   removeActivityReminder,

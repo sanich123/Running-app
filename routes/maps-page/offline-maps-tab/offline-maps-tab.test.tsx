@@ -48,13 +48,14 @@ describe('offline maps tab', () => {
   it('joins native offline packs with saved names', async () => {
     jest
       .mocked(Mapbox.offlineManager.getPacks)
-      .mockResolvedValue([{ name: 'region-1' }, { name: 'region-2' }] as unknown as Awaited<
+      .mockResolvedValue([{ name: 'region-1' }, { name: 'region-2' }, { name: '' }] as unknown as Awaited<
         ReturnType<typeof Mapbox.offlineManager.getPacks>
       >);
     jest.mocked(listSavedOfflineMaps).mockResolvedValue([{ id: 'region-1', title: 'Москва' }]);
     await renderWithProviders(<OfflineMapsTab copy={copy} />);
 
     expect(await screen.findByText('Москва, region-2')).toBeOnTheScreen();
+    expect(screen.getByText('—')).toBeOnTheScreen();
   });
 
   it('shows retry after map library loading fails', async () => {

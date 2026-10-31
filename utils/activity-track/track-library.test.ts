@@ -1,7 +1,9 @@
 import {
+  deleteAllSavedActivityTracks,
   deleteSavedActivityTrack,
   encodeActivityLocationsAsGpx,
   getSavedActivityTrackFile,
+  getSavedActivityTracksStorageBytes,
   listSavedActivityTracks,
   readSavedActivityTrack,
   renameSavedActivityTrack,
@@ -11,6 +13,7 @@ import type { ActivityLocation } from '@S/card/types';
 
 jest.mock('expo-file-system', () => {
   const fileContents = new Map<string, string>();
+  const existingDirectories = new Set<string>();
   class MockDirectory {
     uri: string;
 
@@ -20,6 +23,24 @@ jest.mock('expo-file-system', () => {
 
     create() {
       if (!this.uri) throw new Error('Invalid directory URI');
+      existingDirectories.add(this.uri);
+    }
+
+    get exists() {
+      return existingDirectories.has(this.uri);
+    }
+
+    get size() {
+      return [...fileContents.entries()]
+        .filter(([uri]) => uri.startsWith(`${this.uri}/`))
+        .reduce((size, [, contents]) => size + contents.length, 0);
+    }
+
+    delete() {
+      existingDirectories.delete(this.uri);
+      for (const uri of fileContents.keys()) {
+        if (uri.startsWith(`${this.uri}/`)) fileContents.delete(uri);
+      }
     }
   }
   class MockFile {
@@ -56,6 +77,7 @@ jest.mock('expo-file-system', () => {
     File: MockFile,
     Paths: { document: { uri: 'file:///documents' } },
     __mockFiles: fileContents,
+    __mockDirectories: existingDirectories,
   };
 });
 jest.mock('@U/storage/storage', () => {
@@ -71,6 +93,7 @@ jest.mock('@U/storage/storage', () => {
 
 const mockFiles = jest.requireMock('expo-file-system') as { __mockFiles: Map<string, string> };
 const mockStorage = jest.requireMock('@U/storage/storage') as { __mockStorage: Map<string, string> };
+const mockDirectories = jest.requireMock('expo-file-system') as { __mockDirectories: Set<string> };
 const TRACK_INDEX_KEY = 'saved-activity-tracks:v1';
 const locations: ActivityLocation[] = [
   {
@@ -84,6 +107,7 @@ describe('activity track library', () => {
   beforeEach(() => {
     mockFiles.__mockFiles.clear();
     mockStorage.__mockStorage.clear();
+    mockDirectories.__mockDirectories.clear();
   });
 
   it('saves route JSON, GPX and FIT files with metadata and reads them back', async () => {
@@ -167,5 +191,28 @@ describe('activity track library', () => {
     expect(mockFiles.__mockFiles.has(`file:///documents/runich-tracks/${track.id}.json`)).toBe(false);
     expect(mockFiles.__mockFiles.has(`file:///documents/runich-tracks/${track.id}.gpx`)).toBe(false);
     expect(mockFiles.__mockFiles.has(`file:///documents/runich-tracks/${track.id}.fit`)).toBe(false);
+  });
+
+  it('reports device storage usage and clears all tracks and files', async () => {
+    expect(getSavedActivityTracksStorageBytes()).toBe(0);
+    const track = await saveActivityTrack({
+      activityId: 'run-7',
+      title: 'Track to clear',
+      date: '2026-10-29T06:00:00.000Z',
+      locations,
+    });
+    expect(getSavedActivityTracksStorageBytes()).toBeGreaterThan(0);
+
+    await expect(deleteAllSavedActivityTracks()).resolves.toEqual([]);
+
+    expect(getSavedActivityTracksStorageBytes()).toBe(0);
+    expect(mockStorage.__mockStorage.get(TRACK_INDEX_KEY)).toBe('[]');
+    expect(mockFiles.__mockFiles.has(`file:///documents/runich-tracks/${track.id}.json`)).toBe(false);
+    await expect(listSavedActivityTracks()).resolves.toEqual([]);
+  });
+
+  it('clears an empty track index when the directory has not been created', async () => {
+    await expect(deleteAllSavedActivityTracks()).resolves.toEqual([]);
+    expect(mockStorage.__mockStorage.get(TRACK_INDEX_KEY)).toBe('[]');
   });
 });

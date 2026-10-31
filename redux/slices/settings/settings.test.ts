@@ -1,4 +1,19 @@
-import { DEFAULT_ACTIVITY_VOICE_METRICS, getActivitySettings, SETTINGS_INITIAL_STATE } from './types';
+import {
+  DEFAULT_ACTIVITY_VOICE_METRICS,
+  DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS,
+  getActivitySettings,
+  getNavigationAlertDistanceMeters,
+  SETTINGS_INITIAL_STATE,
+} from './types';
+
+describe('getNavigationAlertDistanceMeters', () => {
+  it('uses the default when the stored value is invalid and clamps to supported steps', () => {
+    expect(getNavigationAlertDistanceMeters(undefined)).toBe(DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS);
+    expect(getNavigationAlertDistanceMeters(0)).toBe(10);
+    expect(getNavigationAlertDistanceMeters(58)).toBe(60);
+    expect(getNavigationAlertDistanceMeters(500)).toBe(200);
+  });
+});
 
 describe('getActivitySettings', () => {
   it('uses defaults for absent or invalid setting collections', () => {
