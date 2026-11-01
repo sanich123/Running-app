@@ -65,8 +65,7 @@ export default function GroupEventForm({ groupId, copy }: { groupId: string; cop
           if (!title.trim()) return;
           const date = new Date(startsAt);
           if (Number.isNaN(date.getTime()) || date.getTime() <= Date.now()) {
-            errorToast(copy.eventDateInvalid);
-            return;
+            return errorToast(copy.eventDateInvalid);
           }
           try {
             await createEvent({

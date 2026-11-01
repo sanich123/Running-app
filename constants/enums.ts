@@ -47,6 +47,7 @@ export enum ROUTES {
   groups = 'groups',
   addTrack = 'add-track',
   createOfflineMap = 'create-offline-map',
+  offlineMap = 'offline-map',
   favoriteActivities = 'favorite-activities',
   monthStatistics = 'month-statistic',
   activitiesList = 'activities-list',

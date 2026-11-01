@@ -53,12 +53,10 @@ export default function CreateGroupPage() {
           testID="create-group-submit"
           onPress={async () => {
             if (!details.name.trim()) {
-              errorToast(copy.nameRequired);
-              return;
+              return errorToast(copy.nameRequired);
             }
             if (!options.sports.length) {
-              errorToast(copy.chooseSport);
-              return;
+              return errorToast(copy.chooseSport);
             }
             try {
               const group = await createGroup({

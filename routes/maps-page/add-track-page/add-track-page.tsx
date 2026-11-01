@@ -16,7 +16,6 @@ export default function AddTrackPage() {
     copy,
     fetchNextPage,
     filters,
-    importRoute,
     isError,
     isFetchingNextPage,
     isLoading,
@@ -77,26 +76,16 @@ export default function AddTrackPage() {
               </Text>
             ),
           headerTitleAlign: 'left',
-          headerRight: () => (
-            <View style={styles.headerActions}>
-              {!isSearchOpen ? (
-                <IconButton
-                  icon="magnify"
-                  accessibilityLabel={copy.searchActivities}
-                  onPress={() => setIsSearchOpen(true)}
-                  style={styles.headerActionButton}
-                  testID="open-workout-search"
-                />
-              ) : null}
+          headerRight: () =>
+            isSearchOpen ? null : (
               <IconButton
-                icon="plus"
-                accessibilityLabel={copy.importRoute}
-                onPress={() => void importRoute()}
+                icon="magnify"
+                accessibilityLabel={copy.searchActivities}
+                onPress={() => setIsSearchOpen(true)}
                 style={styles.headerActionButton}
-                testID="import-track-file"
+                testID="open-workout-search"
               />
-            </View>
-          ),
+            ),
         }}
       />
       {isLoading && !activities.length ? (
@@ -171,7 +160,6 @@ export default function AddTrackPage() {
 
 const styles = StyleSheet.create({
   page: { flex: 1, gap: 10, paddingHorizontal: 16, paddingTop: 12 },
-  headerActions: { alignItems: 'center', flexDirection: 'row', gap: 4 },
   headerActionButton: { height: 40, margin: 0, width: 40 },
   headerSearch: { flex: 1, height: 42, margin: 0, minHeight: 42, width: '100%' },
   headerSearchInput: { fontSize: 14, lineHeight: 18, minHeight: 36, paddingVertical: 0 },

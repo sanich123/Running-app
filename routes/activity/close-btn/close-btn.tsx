@@ -83,14 +83,7 @@ export default function CloseBtn() {
           accessibilityState={{ disabled: isStoppingTracking }}
           disabled={isStoppingTracking}
           onPress={stopTrackingAndClose}
-          style={[
-            styles.iconButton,
-            {
-              backgroundColor: MAP_CONTROL_BUTTON_BACKGROUND,
-              borderColor: colors.outlineVariant,
-              borderWidth: StyleSheet.hairlineWidth,
-            },
-          ]}
+          style={[styles.iconButton, { backgroundColor: 'transparent' }]}
           testID="activity-close-button">
           {isStoppingTracking ? (
             <ActivityIndicator size={18} color={colors.primary} />

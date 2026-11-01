@@ -6,9 +6,7 @@ import {
   setActivityReminderEnabled,
   setActivityVoiceEnabled,
   setActivityVoiceMetrics,
-  setNavigationAlertDistanceMeters,
 } from '@R/slices/settings/settings';
-import { DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS } from '@R/slices/settings/types';
 import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { mockStore, resetMockActivityReminders } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -21,26 +19,13 @@ describe('ActivitySettings', () => {
     mockStore.dispatch(setActivityVoiceEnabled(true));
     mockStore.dispatch(setActivityVoiceMetrics(['pace', 'movingTime', 'elevation']));
     mockStore.dispatch(setActivityReminderEnabled(false));
-    mockStore.dispatch(setNavigationAlertDistanceMeters(DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS));
-  });
-
-  it('updates the route voice alert distance in ten metre steps', async () => {
-    const user = userEvent.setup();
-    await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
-
-    expect(screen.getByTestId('navigation-alert-distance-value')).toHaveTextContent('50 м');
-    await user.press(screen.getByLabelText('Увеличить расстояние уведомления'));
-    expect(mockStore.getState().settings.navigationAlertDistanceMeters).toBe(60);
-    await waitFor(() => expect(screen.getByTestId('navigation-alert-distance-value')).toHaveTextContent('60 м'));
-    await user.press(screen.getByLabelText('Уменьшить расстояние уведомления'));
-    expect(mockStore.getState().settings.navigationAlertDistanceMeters).toBe(50);
-    await waitFor(() => expect(screen.getByTestId('navigation-alert-distance-value')).toHaveTextContent('50 м'));
   });
 
   it('shows settings under the corresponding enabled switch', async () => {
     await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
 
     expect(screen.getByText('Настройки активности')).toBeOnTheScreen();
+    expect(screen.queryByTestId('navigation-alert-distance-value')).toBeNull();
     expect(screen.getByTestId('activity-location-info-button')).toBeOnTheScreen();
     expect(screen.getByText('Информация о геопозиции и отслеживании тренировок')).toBeOnTheScreen();
     expect(screen.getByText('Разрешения, запись метрик и ограничения Android')).toBeOnTheScreen();

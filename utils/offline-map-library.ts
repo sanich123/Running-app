@@ -24,7 +24,9 @@ function parseOfflineMaps(value: string | null) {
   if (!value) return [];
   try {
     const maps = JSON.parse(value) as SavedOfflineMap[];
-    return Array.isArray(maps) ? maps.filter((map) => typeof map.id === 'string' && typeof map.title === 'string') : [];
+    return Array.isArray(maps)
+      ? maps.filter((map) => typeof map?.id === 'string' && Boolean(map.id) && typeof map?.title === 'string')
+      : [];
   } catch {
     return [];
   }

@@ -35,14 +35,12 @@ export default function GroupPhotoPicker({
       const compressedImage = await compressMediaFile(image.uri, { fileName: image.fileName, mediaType: 'image' });
       if (!compressedImage) {
         setPhotoUri(null);
-        errorToast(copy.photoUploadError);
-        return;
+        return errorToast(copy.photoUploadError);
       }
       const upload = await uploadMediaFile(compressedImage, { scope: 'group' });
       if (!upload?.assetId) {
         setPhotoUri(null);
-        errorToast(copy.photoUploadError);
-        return;
+        return errorToast(copy.photoUploadError);
       }
       setPhotoAssetId(upload.assetId);
       onPhotoAssetChange(upload.assetId);

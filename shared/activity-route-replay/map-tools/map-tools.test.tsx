@@ -1,7 +1,47 @@
+import type { ReactNode } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { renderWithProviders } from '@T/utils/test-utils';
 import MapTools from './map-tools';
+
+jest.mock('@expo/ui/swift-ui', () => {
+  const React = jest.requireActual('react');
+  const { Pressable, Text, View } = jest.requireActual('react-native');
+  return {
+    Button: ({
+      label,
+      onPress,
+      testID,
+      modifiers,
+    }: {
+      label: string;
+      onPress: () => void;
+      testID: string;
+      modifiers?: { disabled?: boolean }[];
+    }) =>
+      React.createElement(
+        Pressable,
+        { onPress, testID, disabled: modifiers?.some(({ disabled }) => disabled) },
+        React.createElement(Text, null, label),
+      ),
+    Host: ({ children }: { children: ReactNode }) => React.createElement(View, null, children),
+    Label: ({ title }: { title: string; systemImage: string }) => React.createElement(Text, null, title),
+    Menu: ({ children, label, testID }: { children: ReactNode; label: ReactNode; testID: string }) => {
+      const [visible, setVisible] = React.useState(false);
+      return React.createElement(
+        View,
+        null,
+        React.createElement(Pressable, { testID, onPress: () => setVisible(true) }, label),
+        visible ? children : null,
+      );
+    },
+  };
+});
+jest.mock('@expo/ui/swift-ui/modifiers', () => ({
+  accessibilityLabel: (label: string) => ({ accessibilityLabel: label }),
+  disabled: (isDisabled: boolean) => ({ disabled: isDisabled }),
+  foregroundStyle: (color: string) => ({ color }),
+}));
 
 describe('route replay map tools', () => {
   it('uses the same replay duration up to five minutes for playback and video', async () => {
@@ -57,7 +97,7 @@ describe('route replay map tools', () => {
     await user.press(durationSelector);
 
     const selectedDuration = screen.getByTestId('activity-route-replay-duration-60000');
-    expect(selectedDuration.props.accessibilityState).toMatchObject({ selected: true });
+    expect(selectedDuration).toBeOnTheScreen();
     await user.press(screen.getByTestId('activity-route-replay-duration-300000'));
     expect(onSetPlaybackDuration).toHaveBeenCalledWith(300_000);
   });

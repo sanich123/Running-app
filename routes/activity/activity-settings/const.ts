@@ -7,11 +7,6 @@ export const ACTIVITY_SETTINGS = {
   [LANGUAGES.english]: {
     title: 'Activity settings',
     open: 'Activity settings',
-    navigationAlertTitle: 'Route voice alert',
-    navigationAlertDescription: 'Notify when distance exceeds this value; inaccurate GPS fixes are ignored.',
-    navigationAlertDistanceDecrease: 'Decrease route alert distance',
-    navigationAlertDistanceIncrease: 'Increase route alert distance',
-    meters: 'm',
     showImportedRoute: 'Show imported route on map',
     hideImportedRoute: 'Hide imported route from map',
     finishNavigation: 'Finish route navigation',
@@ -49,11 +44,6 @@ export const ACTIVITY_SETTINGS = {
   [LANGUAGES.russian]: {
     title: 'Настройки активности',
     open: 'Настройки активности',
-    navigationAlertTitle: 'Голосовое уведомление о маршруте',
-    navigationAlertDescription: 'Сообщать при превышении расстояния; неточные координаты не учитываются.',
-    navigationAlertDistanceDecrease: 'Уменьшить расстояние уведомления',
-    navigationAlertDistanceIncrease: 'Увеличить расстояние уведомления',
-    meters: 'м',
     showImportedRoute: 'Показать импортированный трек на карте',
     hideImportedRoute: 'Скрыть импортированный трек с карты',
     finishNavigation: 'Завершить навигацию по треку',

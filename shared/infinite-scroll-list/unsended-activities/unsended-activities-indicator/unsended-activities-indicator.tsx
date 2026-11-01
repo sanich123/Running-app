@@ -34,8 +34,7 @@ export default function UnsendedActivitiesIndicator() {
       const journalId = pendingActivity.routeJournalId ?? null;
       const routeLocations = journalId ? (readLocationJournal(journalId)?.locations ?? []) : [];
       if (journalId && !routeLocations.length) {
-        errorToast('', copy.restoreRouteError);
-        return;
+        return errorToast('', copy.restoreRouteError);
       }
 
       await sendActivity({
@@ -82,8 +81,7 @@ export default function UnsendedActivitiesIndicator() {
     if (!pendingRouteUpload) return;
     const locations = readLocationJournal(pendingRouteUpload.routeJournalId)?.locations ?? [];
     if (!locations.length) {
-      errorToast('', copy.restoreRouteError);
-      return;
+      return errorToast('', copy.restoreRouteError);
     }
 
     await uploadRawLocations({ activityId: pendingRouteUpload.activityId, locations })

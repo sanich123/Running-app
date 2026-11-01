@@ -18,6 +18,23 @@ jest.mock('@S/error-component/error-component', () => {
     default: ({ refetch }: { refetch: () => void }) => <Pressable testID="activity-chart-retry" onPress={refetch} />,
   };
 });
+jest.mock('./activity-time-chart/axis-selector-menu/axis-selector-menu', () => {
+  const React = jest.requireActual('react');
+  const { Text } = jest.requireActual('react-native');
+  return {
+    __esModule: true,
+    default: ({
+      options,
+      selectedMetric,
+    }: {
+      options: { metric: string; axisTitle: string }[];
+      selectedMetric: string;
+    }) => {
+      const selectedOption = options.find(({ metric }) => metric === selectedMetric);
+      return React.createElement(Text, null, selectedOption?.axisTitle);
+    },
+  };
+});
 
 const chartData: ActivityChartDataResponse = {
   locations: [

@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { MapView, Camera, UserLocation } from '@rnmapbox/maps';
-import { Platform, View, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Platform, useWindowDimensions, View, StyleSheet } from 'react-native';
 import { ActivityIndicator, Surface, Text, useTheme } from 'react-native-paper';
 import BatteryOptimizationModal from '@Routes/activity/battery-optimization-modal/battery-optimization-modal';
 import MapRouteLine from '@S/display-activity-map/map-route-line/map-route-line';
 import RouteKilometreMarkers from '@S/display-activity-map/route-kilometre-markers/route-kilometre-markers';
+import { getMapControlButtonSize } from '@S/map-control-button/const';
 import MapControlButton from '@S/map-control-button/map-control-button';
 import ActivityMapContext from './activity-map-context';
 import LocationPermissions from './location-permissions/location-permissions';
@@ -12,6 +14,8 @@ import MapControls from './map-controls/map-controls';
 import MapNavIcon from './map-nav-icon/map-nav-icon';
 import PauseMarkers from './pause-markers/pause-markers';
 import useActivityMap from './use-activity-map';
+import NavigationAlertsMuteButton from '../navigation-settings/navigation-alerts-mute-button/navigation-alerts-mute-button';
+import NavigationSettingsButton from '../navigation-settings/navigation-settings-button/navigation-settings-button';
 import type { OfflineBounds } from '@Routes/maps-page/const';
 import type { ActivityLocation } from '@S/card/types';
 
@@ -41,6 +45,8 @@ export default function Map({
   onDownloadOfflineMap?: (bounds: OfflineBounds, centerCoordinate: [number, number]) => void;
 }) {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const {
     canRenderMap,
     isLoadingLocationPrerequisites,
@@ -84,6 +90,11 @@ export default function Map({
         : null,
     [navigationBounds],
   );
+  const canShowNavigationControls = hasNavigationTrack && onToggleNavigationRouteVisibility && onFinishNavigation;
+  const navigationActionCount = canShowNavigationControls
+    ? 2 + Number(Boolean(routeOfflineBounds && onDownloadOfflineMap))
+    : 0;
+  const navigationSettingsBottom = 24 + navigationActionCount * (getMapControlButtonSize(width) + 6);
 
   const openOfflineMapDownloader = useCallback(() => {
     if (!routeOfflineBounds || !onDownloadOfflineMap) return;
@@ -160,14 +171,14 @@ export default function Map({
               testID="location-source-notice"
               accessibilityRole="alert"
               elevation={2}
-              style={[styles.locationSourceNotice, { backgroundColor: colors.surface }]}>
+              style={[styles.locationSourceNotice, { backgroundColor: colors.surface, top: insets.top + 72 }]}>
               <Text variant="bodySmall" style={{ color: colors.onSurface }}>
                 {locationSourceMessage}
               </Text>
             </Surface>
           ) : null}
-          <View style={styles.navigationActions}>
-            {hasNavigationTrack && onToggleNavigationRouteVisibility && onFinishNavigation ? (
+          <View testID="navigation-actions" style={styles.navigationActions}>
+            {canShowNavigationControls ? (
               <>
                 <MapControlButton
                   testID="toggle-imported-route-visibility"
@@ -202,6 +213,14 @@ export default function Map({
               </>
             ) : null}
           </View>
+          {canShowNavigationControls ? (
+            <View
+              testID="navigation-preferences"
+              style={[styles.navigationPreferences, { bottom: navigationSettingsBottom }]}>
+              <NavigationSettingsButton />
+              <NavigationAlertsMuteButton />
+            </View>
+          ) : null}
           <View style={styles.mapActions}>
             <MapControls />
             <BatteryOptimizationModal />
@@ -225,10 +244,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     position: 'absolute',
     right: 12,
-    top: 12,
     zIndex: 1,
   },
   permissionLoading: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   navigationActions: { bottom: 24, gap: 6, left: 12, position: 'absolute' },
+  navigationPreferences: { gap: 6, left: 12, position: 'absolute' },
   mapActions: { bottom: 24, gap: 6, position: 'absolute', right: 12 },
 });

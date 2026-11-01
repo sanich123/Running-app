@@ -6,7 +6,7 @@ import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { LANGUAGES, STATUSES } from '@const/enums';
 import { setNavigationTrackId } from '@R/slices/location/location';
-import { getNavigationAlertDistanceMeters } from '@R/slices/settings/types';
+import { getNavigationAlertDistanceMeters, getNavigationAlertRepeatIntervalMinutes } from '@R/slices/settings/types';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ActivityRoutesButton from '@Routes/activity/activity-routes-button/activity-routes-button';
 import ActivitySettingsButton from '@Routes/activity/activity-settings/activity-settings-button/activity-settings-button';
@@ -23,6 +23,7 @@ import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import {
   getDistanceToRouteMeters,
   MAX_CONFIDENT_NAVIGATION_ACCURACY_METERS,
+  MAX_NUMERIC_NAVIGATION_ALERT_DISTANCE_METERS,
   NAVIGATION_ALERT_REARM_DISTANCE_METERS,
 } from '@U/activity-track/route-proximity';
 import { readSavedActivityTrack } from '@U/activity-track/track-library';
@@ -35,9 +36,13 @@ export default function Activity() {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { activityStatus, isMapVisible, lastPosition, navigationTrackId } = useAppSelector(({ location }) => location);
-  const { activityVoiceIdentifier, language, navigationAlertDistanceMeters } = useAppSelector(
-    ({ settings }) => settings,
-  );
+  const {
+    activityVoiceIdentifier,
+    language,
+    navigationAlertDistanceMeters,
+    navigationAlertRepeatIntervalMinutes,
+    navigationAlertsMuted,
+  } = useAppSelector(({ settings }) => settings);
   const activitySettingsLabels = ACTIVITY_SETTINGS[language];
   const mapsPageCopy = MAPS_PAGE_COPY[language];
   const [isLocationReadyForRecording, setIsLocationReadyForRecording] = useState(false);
@@ -53,7 +58,7 @@ export default function Activity() {
   const [navigationRoute, setNavigationRoute] = useState<{ trackId: string; locations: ActivityLocation[] } | null>(
     null,
   );
-  const didAnnounceRouteDeviation = useRef(false);
+  const lastRouteDeviationAnnouncementAt = useRef<number | null>(null);
   const { isLocationLoading } = useActivityTrackingLifecycle(isLocationReadyForRecording);
 
   useEffect(() => {
@@ -73,7 +78,7 @@ export default function Activity() {
   }, [navigationTrackId]);
 
   useEffect(() => {
-    didAnnounceRouteDeviation.current = false;
+    lastRouteDeviationAnnouncementAt.current = null;
   }, [navigationTrackId]);
 
   useEffect(() => {
@@ -101,7 +106,7 @@ export default function Activity() {
 
   const activeNavigationRoute = navigationRoute?.trackId === navigationTrackId ? navigationRoute.locations : null;
   const isRecording = activityStatus === STATUSES.started || activityStatus === STATUSES.continued;
-  const currentGuidancePosition = isRecording ? lastPosition : (guidancePosition ?? lastPosition);
+  const currentGuidancePosition = isRecording ? lastPosition : guidancePosition;
 
   useEffect(() => {
     if (!navigationTrackId || !activeNavigationRoute?.length || !currentGuidancePosition) return;
@@ -110,9 +115,7 @@ export default function Activity() {
     if (
       typeof accuracy !== 'number' ||
       !Number.isFinite(accuracy) ||
-      accuracy > MAX_CONFIDENT_NAVIGATION_ACCURACY_METERS ||
-      currentGuidancePosition.mocked === true ||
-      ('mocked' in currentGuidancePosition.coords && currentGuidancePosition.coords.mocked === true)
+      accuracy > MAX_CONFIDENT_NAVIGATION_ACCURACY_METERS
     ) {
       return;
     }
@@ -122,17 +125,34 @@ export default function Activity() {
 
     const alertDistance = getNavigationAlertDistanceMeters(navigationAlertDistanceMeters);
     if (distanceFromRoute <= alertDistance - NAVIGATION_ALERT_REARM_DISTANCE_METERS) {
-      didAnnounceRouteDeviation.current = false;
+      lastRouteDeviationAnnouncementAt.current = null;
       return;
     }
-    if (distanceFromRoute <= alertDistance || didAnnounceRouteDeviation.current) return;
+    if (distanceFromRoute <= alertDistance || navigationAlertsMuted) return;
 
-    didAnnounceRouteDeviation.current = true;
+    const currentTimestamp = currentGuidancePosition.timestamp;
+    const announcementTimestamp =
+      typeof currentTimestamp === 'number' && Number.isFinite(currentTimestamp) ? currentTimestamp : Date.now();
+    const repeatIntervalMilliseconds =
+      getNavigationAlertRepeatIntervalMinutes(navigationAlertRepeatIntervalMinutes) * 60_000;
+    const lastAnnouncementTimestamp = lastRouteDeviationAnnouncementAt.current;
+    if (
+      lastAnnouncementTimestamp !== null &&
+      announcementTimestamp - lastAnnouncementTimestamp < repeatIntervalMilliseconds
+    ) {
+      return;
+    }
+
+    lastRouteDeviationAnnouncementAt.current = announcementTimestamp;
     const roundedDistance = Math.max(10, Math.round(distanceFromRoute / 10) * 10);
     const text =
-      language === LANGUAGES.russian
-        ? `Вы находитесь примерно в ${roundedDistance} метрах от маршрута.`
-        : `You are about ${roundedDistance} metres from the route.`;
+      distanceFromRoute > MAX_NUMERIC_NAVIGATION_ALERT_DISTANCE_METERS
+        ? language === LANGUAGES.russian
+          ? 'Вы находитесь очень далеко от маршрута.'
+          : 'You are very far from the route.'
+        : language === LANGUAGES.russian
+          ? `Вы находитесь примерно в ${roundedDistance} метрах от маршрута.`
+          : `You are about ${roundedDistance} metres from the route.`;
     speakActivityMessage(text, language, activityVoiceIdentifier);
   }, [
     activityVoiceIdentifier,
@@ -140,6 +160,8 @@ export default function Activity() {
     currentGuidancePosition,
     language,
     navigationAlertDistanceMeters,
+    navigationAlertRepeatIntervalMinutes,
+    navigationAlertsMuted,
     navigationTrackId,
   ]);
 

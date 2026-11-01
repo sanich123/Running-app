@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import Svg, { Line, Path, Text as SvgText } from 'react-native-svg';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Icon, Menu, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import ActivityChartAxisMenu from './axis-selector-menu/axis-selector-menu';
 import { ACTIVITY_TIME_CHART_LAYOUT } from './const';
 import { HOME_ACTIVITY_FULL_VIEW } from '../../metrics/const';
 import {
@@ -81,6 +82,10 @@ export default function ActivityTimeChart({ chartSeries, zoneSettings, language 
             ? labels.speedAxisLabel
             : labels.elevationAxisLabel,
   }));
+  const axisMenuOptions = metricOptions.map((option) => ({
+    ...option,
+    color: ACTIVITY_CHART_METRIC_COLORS[option.metric],
+  }));
   const leftOption = metricOptions.find(({ metric }) => metric === leftMetric) ?? metricOptions[0];
   const rightOption = metricOptions.find(({ metric }) => metric === rightMetric) ?? metricOptions[0];
   const defaultSelectorWidth = chartWidth / (metricOptions.length > 1 ? 2 : 1);
@@ -91,7 +96,16 @@ export default function ActivityTimeChart({ chartSeries, zoneSettings, language 
         <View
           style={styles.axisSelectorColumn}
           onLayout={({ nativeEvent }) => setLeftSelectorWidth(nativeEvent.layout.width)}>
-          {hasOpenedLeftMenu ? (
+          {Platform.OS === 'ios' ? (
+            <ActivityChartAxisMenu
+              side="left"
+              axisLabel={labels.chartLeftAxis}
+              options={axisMenuOptions}
+              selectedMetric={leftMetric}
+              otherMetric={rightMetric}
+              onSelect={setSelectedLeftMetric}
+            />
+          ) : hasOpenedLeftMenu ? (
             <Menu
               visible={visibleMenu === 'left'}
               onDismiss={() => setVisibleMenu(null)}
@@ -180,7 +194,16 @@ export default function ActivityTimeChart({ chartSeries, zoneSettings, language 
           <View
             style={styles.axisSelectorColumn}
             onLayout={({ nativeEvent }) => setRightSelectorWidth(nativeEvent.layout.width)}>
-            {hasOpenedRightMenu ? (
+            {Platform.OS === 'ios' ? (
+              <ActivityChartAxisMenu
+                side="right"
+                axisLabel={labels.chartRightAxis}
+                options={axisMenuOptions}
+                selectedMetric={rightMetric}
+                otherMetric={leftMetric}
+                onSelect={setSelectedRightMetric}
+              />
+            ) : hasOpenedRightMenu ? (
               <Menu
                 visible={visibleMenu === 'right'}
                 onDismiss={() => setVisibleMenu(null)}

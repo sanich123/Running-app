@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
 import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import {
@@ -17,6 +18,7 @@ import ActivityMotionStatus from '../motion-status/activity-motion-status/activi
 export default function ErrorMsg() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const { isAppShutedByPhone, isTooMuchSpeed, tooMuchSpeed, tooMuchSpeedTimestamp } = useAppSelector(
     ({ location }) => location,
   );
@@ -39,7 +41,7 @@ export default function ErrorMsg() {
   }, [isAppShutedByPhone, dispatch]);
 
   return (
-    <View style={styles.errorMsg}>
+    <View style={[styles.errorMsg, { top: insets.top + 132 }]}>
       {isAppShutedByPhone ? (
         <View
           style={[styles.message, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}>
@@ -99,7 +101,6 @@ const styles = StyleSheet.create({
   errorMsg: {
     alignItems: 'center',
     position: 'absolute',
-    top: 0,
     width: '100%',
     zIndex: 2,
   },

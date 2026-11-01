@@ -12,6 +12,7 @@ export const LazyCreateGroupPage = lazy(() => import('@Routes/groups/create-grou
 export const LazyCreateOfflineMapPage = lazy(
   () => import('@Routes/maps-page/create-offline-map-page/create-offline-map-page'),
 );
+export const LazyOfflineMapPage = lazy(() => import('@Routes/maps-page/offline-map-page/offline-map-page'));
 export const LazyGroupDetailPage = lazy(() => import('@Routes/groups/group-detail-page/group-detail-page'));
 export const LazyGroupsPage = lazy(() => import('@Routes/groups/groups-page/groups-page'));
 export const LazyMapsPage = lazy(() => import('@Routes/maps-page/maps-page'));

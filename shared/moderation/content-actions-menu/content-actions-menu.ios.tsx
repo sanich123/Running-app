@@ -4,6 +4,7 @@ import {
   disabled,
   foregroundStyle,
 } from '@expo/ui/swift-ui/modifiers';
+import { useTheme } from 'react-native-paper';
 import type { ContentActionsMenuProps } from './types';
 
 export default function ContentActionsMenu({
@@ -19,8 +20,10 @@ export default function ContentActionsMenu({
   blockTestID,
   onBlock,
 }: ContentActionsMenuProps) {
+  const { colors } = useTheme();
+
   return (
-    <Host matchContents>
+    <Host matchContents seedColor={iconColor ?? colors.primary}>
       <Menu
         label={
           <Label

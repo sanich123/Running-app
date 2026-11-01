@@ -1,5 +1,7 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { MAP_CONTROL_BUTTON_BACKGROUND } from './const';
 import MapControlButton from './map-control-button';
 
 describe('map control button', () => {
@@ -18,6 +20,9 @@ describe('map control button', () => {
 
     const button = screen.getByTestId('zoom-in');
     expect(button.props.accessibilityLabel).toBe('Zoom in');
+    expect(StyleSheet.flatten(button.props.style)).toEqual(
+      expect.objectContaining({ backgroundColor: MAP_CONTROL_BUTTON_BACKGROUND }),
+    );
     await user.press(button);
     expect(onPress).toHaveBeenCalledTimes(1);
   });

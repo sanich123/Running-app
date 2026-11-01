@@ -7,6 +7,9 @@ export interface MapRegionDownloaderProps {
   onClose?: () => void;
   embedded?: boolean;
   initialVisibleBounds?: OfflineBounds | null;
+  initialIsSatellite?: boolean;
+  previewOnly?: boolean;
+  previewTitle?: string;
 }
 
 export interface OfflineDownloadProgress {

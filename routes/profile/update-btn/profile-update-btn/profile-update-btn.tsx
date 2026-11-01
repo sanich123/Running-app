@@ -26,8 +26,7 @@ export default function ProfileUpdateBtn() {
       loading={isSaving}
       onPress={async () => {
         if (!userId) {
-          errorToast('', 'Не удалось определить пользователя');
-          return;
+          return errorToast('', 'Не удалось определить пользователя');
         }
 
         try {

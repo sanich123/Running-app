@@ -5,7 +5,7 @@ import BottomSheet, {
   BottomSheetTextInput,
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
-import Mapbox, { Camera, MapView, UserLocation } from '@rnmapbox/maps';
+import Mapbox, { Camera, FillLayer, LineLayer, MapView, ShapeSource, UserLocation } from '@rnmapbox/maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle } from 'react-native-svg';
 import { StyleSheet, View } from 'react-native';
@@ -16,12 +16,15 @@ import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast
 import MapControlButton from '@S/map-control-button/map-control-button';
 import { successToast } from '@S/success-toast/success-toast';
 import { saveOfflineMap, removeOfflineMap } from '@U/offline-map-library';
+import { isMapboxTileLimitError } from '../utils';
 import {
   DOWNLOAD_PROGRESS_CENTER,
   DOWNLOAD_PROGRESS_CIRCUMFERENCE,
   DOWNLOAD_PROGRESS_RADIUS,
   DOWNLOAD_PROGRESS_SIZE,
   DOWNLOAD_PROGRESS_STROKE,
+  MAP_REGION_MAX_ZOOM,
+  MAP_REGION_MIN_ZOOM,
 } from './const';
 import MapControls from '../../map-controls/map-controls';
 import MapSearchPanel from '../../map-search-panel/map-search-panel';
@@ -35,6 +38,9 @@ export default function MapRegionDownloader({
   onClose,
   embedded = false,
   initialVisibleBounds,
+  initialIsSatellite = false,
+  previewOnly = false,
+  previewTitle,
 }: MapRegionDownloaderProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -47,7 +53,7 @@ export default function MapRegionDownloader({
   const [visibleBounds, setVisibleBounds] = useState<OfflineBounds | null>(initialVisibleBounds ?? null);
   const [downloadingMapId, setDownloadingMapId] = useState<string | null>(null);
   const [downloadPercent, setDownloadPercent] = useState(0);
-  const [isSatellite, setIsSatellite] = useState(false);
+  const [isSatellite, setIsSatellite] = useState(initialIsSatellite);
   const [is3d, setIs3d] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const renderBackdrop = useCallback(
@@ -56,6 +62,45 @@ export default function MapRegionDownloader({
     ),
     [],
   );
+  const cameraDefaultSettings = useMemo(
+    () => ({
+      ...(initialVisibleBounds
+        ? {
+            bounds: {
+              ne: initialVisibleBounds[0],
+              sw: initialVisibleBounds[1],
+              paddingTop: insets.top + 72,
+              paddingRight: 32,
+              paddingBottom: 32,
+              paddingLeft: 32,
+            },
+          }
+        : { centerCoordinate, zoomLevel: 11 }),
+      pitch: is3d ? 58 : 0,
+    }),
+    [centerCoordinate, initialVisibleBounds, insets.top, is3d],
+  );
+  const selectedBounds = previewOnly ? initialVisibleBounds : visibleBounds;
+  const selectedRegion = useMemo(() => {
+    if (embedded || !selectedBounds) return null;
+    const [[northEastLongitude, northEastLatitude], [southWestLongitude, southWestLatitude]] = selectedBounds;
+    return {
+      type: 'Feature' as const,
+      properties: {},
+      geometry: {
+        type: 'Polygon' as const,
+        coordinates: [
+          [
+            [southWestLongitude, northEastLatitude],
+            [northEastLongitude, northEastLatitude],
+            [northEastLongitude, southWestLatitude],
+            [southWestLongitude, southWestLatitude],
+            [southWestLongitude, northEastLatitude],
+          ],
+        ],
+      },
+    };
+  }, [embedded, selectedBounds]);
 
   useEffect(
     () => () => {
@@ -88,8 +133,8 @@ export default function MapRegionDownloader({
       southWest[1] <= 90;
     const requestDiagnostics = {
       style: isSatellite ? 'satellite' : 'map',
-      minZoom: 6,
-      maxZoom: 16,
+      minZoom: MAP_REGION_MIN_ZOOM,
+      maxZoom: MAP_REGION_MAX_ZOOM,
       boundsOrder: 'northEast,southWest',
       boundsValid: boundsValuesAreValid && latitudeSpanDegrees > 0 && longitudeSpanDegrees > 0,
       latitudeSpanDegrees: Number(latitudeSpanDegrees.toFixed(4)),
@@ -107,13 +152,13 @@ export default function MapRegionDownloader({
           {
             name: id,
             styleURL: isSatellite ? ACTIVITY_ROUTE_REPLAY_MAP_STYLES.satellite : ACTIVITY_ROUTE_REPLAY_MAP_STYLES.map,
-            minZoom: 6,
-            maxZoom: 16,
+            minZoom: MAP_REGION_MIN_ZOOM,
+            maxZoom: MAP_REGION_MAX_ZOOM,
             bounds: [
               [northEastLongitude, northEastLatitude],
               [southWestLongitude, southWestLatitude],
             ],
-            metadata: { title },
+            metadata: { title, style: isSatellite ? 'satellite' : 'map' },
           },
           (_pack, status) => {
             if ('completedResourceCount' in status) {
@@ -168,7 +213,11 @@ export default function MapRegionDownloader({
         if (error && typeof error === 'object' && 'diagnostics' in error) {
           console.error(`[Mapbox offline download] ${getErrorMessageFromError(error)}`);
         }
-        errorToast(copy.mapDownloadFailed, error);
+        if (isMapboxTileLimitError(error)) {
+          errorToast(copy.mapTileLimitExceeded);
+        } else {
+          errorToast(copy.mapDownloadFailed, error);
+        }
       }
     } finally {
       if (pendingDownloadRef.current?.id === id) pendingDownloadRef.current = null;
@@ -193,7 +242,7 @@ export default function MapRegionDownloader({
     try {
       const currentZoom = await mapRef.current?.getZoom();
       if (typeof currentZoom !== 'number') return;
-      cameraRef.current?.zoomTo(Math.min(22, Math.max(0, currentZoom + direction)), 250);
+      cameraRef.current?.zoomTo(Math.min(MAP_REGION_MAX_ZOOM, Math.max(0, currentZoom + direction)), 250);
     } catch {
       // Ignore zoom reads while the map is still initializing.
     }
@@ -217,19 +266,32 @@ export default function MapRegionDownloader({
               .then((bounds) => setVisibleBounds(bounds as OfflineBounds))
               .catch(() => undefined);
           }}>
-          <UserLocation visible />
+          <UserLocation visible={!previewOnly} />
+          {selectedRegion ? (
+            <ShapeSource id="offline-map-region-preview" shape={selectedRegion}>
+              <FillLayer
+                id="offline-map-region-preview-fill"
+                style={{ fillColor: colors.primary, fillOpacity: 0.12 }}
+              />
+              <LineLayer
+                id="offline-map-region-preview-outline"
+                style={{ lineColor: colors.primary, lineWidth: 3, lineOpacity: 1 }}
+              />
+            </ShapeSource>
+          ) : null}
           <Camera
             ref={cameraRef}
-            defaultSettings={{ centerCoordinate, zoomLevel: 11, pitch: is3d ? 58 : 0 }}
+            defaultSettings={cameraDefaultSettings}
             followUserLocation={false}
+            maxZoomLevel={MAP_REGION_MAX_ZOOM}
           />
         </MapView>
       ) : null}
       <View pointerEvents="box-none" style={styles.overlay}>
         {onClose && !embedded ? (
-          <View style={[styles.modalCloseButton, { left: 16, top: insets.top + 12 }]}>
+          <View style={[styles.closeButton, { left: 16, top: insets.top + 12 }]}>
             <MapControlButton
-              testID="close-offline-map-modal"
+              testID="close-offline-map-preview"
               androidIcon="close"
               iosSymbol="xmark"
               accessibilityLabel={copy.close}
@@ -237,7 +299,14 @@ export default function MapRegionDownloader({
             />
           </View>
         ) : null}
-        {!embedded ? (
+        {previewOnly && previewTitle ? (
+          <View pointerEvents="none" style={[styles.previewTitle, { top: insets.top + 12 }]}>
+            <Text variant="titleSmall" numberOfLines={1} style={{ color: colors.onSurface }}>
+              {previewTitle}
+            </Text>
+          </View>
+        ) : null}
+        {!embedded && !previewOnly ? (
           <View style={[styles.mapControls, { right: 16, top: insets.top + 112 }]}>
             <MapControls
               copy={copy}
@@ -258,121 +327,136 @@ export default function MapRegionDownloader({
             />
           </View>
         ) : null}
-        <BottomSheet
-          index={0}
-          snapPoints={snapPoints}
-          enableDynamicSizing={false}
-          enablePanDownToClose={embedded}
-          backdropComponent={embedded ? renderBackdrop : undefined}
-          onChange={(index) => {
-            if (embedded && index < 0) onClose?.();
-          }}
-          keyboardBehavior="extend"
-          keyboardBlurBehavior="restore"
-          android_keyboardInputMode="adjustResize"
-          bottomInset={0}
-          containerStyle={styles.sheetContainer}
-          backgroundStyle={[styles.sheetBackground, { backgroundColor: colors.surface }]}
-          handleStyle={[styles.sheetHandle, { backgroundColor: colors.surface }]}
-          handleIndicatorStyle={{ backgroundColor: colors.outline }}>
-          <BottomSheetScrollView contentContainerStyle={[styles.sheetContent, { paddingBottom: insets.bottom + 24 }]}>
-            <Text variant="titleMedium" style={{ color: colors.onSurface }}>
-              {copy.downloadRegion}
-            </Text>
-            <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-              {copy.mapRegionInfo}
-            </Text>
-            <View style={styles.regionDownloadRow}>
-              <TextInput
-                accessibilityLabel={copy.regionName}
-                mode="outlined"
-                label={copy.regionName}
-                placeholder={copy.regionPlaceholder}
-                style={[styles.regionNameInput, { backgroundColor: colors.surface }]}
-                contentStyle={styles.regionNameInputContent}
-                outlineStyle={styles.regionNameInputOutline}
-                outlineColor={colors.outlineVariant}
-                activeOutlineColor={colors.primary}
-                textColor={colors.onSurface}
-                render={(props) => <BottomSheetTextInput {...props} />}
-                testID="offline-region-name"
-                value={regionName}
-                onChangeText={setRegionName}
-              />
+        {!previewOnly ? (
+          <BottomSheet
+            index={0}
+            snapPoints={snapPoints}
+            enableDynamicSizing={false}
+            enablePanDownToClose={embedded}
+            backdropComponent={embedded ? renderBackdrop : undefined}
+            onChange={(index) => {
+              if (embedded && index < 0) onClose?.();
+            }}
+            keyboardBehavior="extend"
+            keyboardBlurBehavior="restore"
+            android_keyboardInputMode="adjustResize"
+            bottomInset={0}
+            containerStyle={styles.sheetContainer}
+            backgroundStyle={[styles.sheetBackground, { backgroundColor: colors.surface }]}
+            handleStyle={[styles.sheetHandle, { backgroundColor: colors.surface }]}
+            handleIndicatorStyle={{ backgroundColor: colors.outline }}>
+            <BottomSheetScrollView contentContainerStyle={[styles.sheetContent, { paddingBottom: insets.bottom + 24 }]}>
+              <Text variant="titleMedium" style={{ color: colors.onSurface }}>
+                {copy.downloadRegion}
+              </Text>
+              <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                {copy.mapRegionInfo}
+              </Text>
               {downloadingMapId ? (
-                <View style={styles.downloadProgressControls}>
-                  <View
-                    accessible
-                    accessibilityRole="progressbar"
-                    accessibilityLabel={copy.downloading}
-                    accessibilityValue={{ min: 0, max: 100, now: Math.max(0, Math.min(100, downloadPercent)) }}
-                    style={styles.downloadProgressCircle}
-                    testID="offline-map-download-progress">
-                    <Svg width={DOWNLOAD_PROGRESS_SIZE} height={DOWNLOAD_PROGRESS_SIZE} style={StyleSheet.absoluteFill}>
-                      <Circle
-                        cx={DOWNLOAD_PROGRESS_CENTER}
-                        cy={DOWNLOAD_PROGRESS_CENTER}
-                        r={DOWNLOAD_PROGRESS_RADIUS}
-                        fill="none"
-                        stroke={colors.outlineVariant}
-                        strokeWidth={DOWNLOAD_PROGRESS_STROKE}
-                      />
-                      <Circle
-                        cx={DOWNLOAD_PROGRESS_CENTER}
-                        cy={DOWNLOAD_PROGRESS_CENTER}
-                        r={DOWNLOAD_PROGRESS_RADIUS}
-                        fill="none"
-                        stroke={colors.primary}
-                        strokeLinecap="round"
-                        strokeWidth={DOWNLOAD_PROGRESS_STROKE}
-                        strokeDasharray={`${DOWNLOAD_PROGRESS_CIRCUMFERENCE} ${DOWNLOAD_PROGRESS_CIRCUMFERENCE}`}
-                        strokeDashoffset={
-                          DOWNLOAD_PROGRESS_CIRCUMFERENCE * (1 - Math.max(0, Math.min(100, downloadPercent)) / 100)
-                        }
-                        transform={`rotate(-90 ${DOWNLOAD_PROGRESS_CENTER} ${DOWNLOAD_PROGRESS_CENTER})`}
-                      />
-                    </Svg>
-                    <View pointerEvents="none" style={styles.downloadProgressPercent}>
-                      <Text
-                        variant="labelSmall"
-                        style={{ color: colors.onSurface, fontFamily: FONT_FAMILIES.semiBold }}>
-                        {Math.round(downloadPercent)}%
-                      </Text>
-                    </View>
-                  </View>
-                  <IconButton
-                    icon="close"
-                    accessibilityLabel={copy.cancelDownload}
-                    onPress={() => void cancelMapDownload()}
-                    style={styles.cancelDownloadButton}
-                    testID="cancel-offline-map-download"
-                  />
-                </View>
-              ) : (
-                <IconButton
-                  mode="contained"
-                  icon="download"
-                  iconColor={colors.onPrimary}
-                  containerColor={colors.primary}
-                  accessibilityLabel={copy.downloadRegion}
-                  testID="download-offline-region"
-                  disabled={!visibleBounds || !regionName.trim()}
-                  onPress={() => void downloadVisibleRegion()}
-                  style={styles.startDownloadButton}
+                <Text
+                  variant="bodySmall"
+                  style={{ color: colors.onSurfaceVariant }}
+                  testID="offline-map-download-page-warning">
+                  {copy.mapDownloadRequiresPageOpen}
+                </Text>
+              ) : null}
+              <View style={styles.regionDownloadRow}>
+                <TextInput
+                  accessibilityLabel={copy.regionName}
+                  mode="outlined"
+                  label={copy.regionName}
+                  placeholder={copy.regionPlaceholder}
+                  style={[styles.regionNameInput, { backgroundColor: colors.surface }]}
+                  contentStyle={styles.regionNameInputContent}
+                  outlineStyle={styles.regionNameInputOutline}
+                  outlineColor={colors.outlineVariant}
+                  activeOutlineColor={colors.primary}
+                  textColor={colors.onSurface}
+                  render={(props) => <BottomSheetTextInput {...props} />}
+                  testID="offline-region-name"
+                  value={regionName}
+                  onChangeText={setRegionName}
                 />
-              )}
-            </View>
-          </BottomSheetScrollView>
-        </BottomSheet>
+                {downloadingMapId ? (
+                  <View style={styles.downloadProgressControls}>
+                    <View
+                      accessible
+                      accessibilityRole="progressbar"
+                      accessibilityLabel={copy.downloading}
+                      accessibilityValue={{ min: 0, max: 100, now: Math.max(0, Math.min(100, downloadPercent)) }}
+                      style={styles.downloadProgressCircle}
+                      testID="offline-map-download-progress">
+                      <Svg
+                        width={DOWNLOAD_PROGRESS_SIZE}
+                        height={DOWNLOAD_PROGRESS_SIZE}
+                        style={StyleSheet.absoluteFill}>
+                        <Circle
+                          cx={DOWNLOAD_PROGRESS_CENTER}
+                          cy={DOWNLOAD_PROGRESS_CENTER}
+                          r={DOWNLOAD_PROGRESS_RADIUS}
+                          fill="none"
+                          stroke={colors.outlineVariant}
+                          strokeWidth={DOWNLOAD_PROGRESS_STROKE}
+                        />
+                        <Circle
+                          cx={DOWNLOAD_PROGRESS_CENTER}
+                          cy={DOWNLOAD_PROGRESS_CENTER}
+                          r={DOWNLOAD_PROGRESS_RADIUS}
+                          fill="none"
+                          stroke={colors.primary}
+                          strokeLinecap="round"
+                          strokeWidth={DOWNLOAD_PROGRESS_STROKE}
+                          strokeDasharray={`${DOWNLOAD_PROGRESS_CIRCUMFERENCE} ${DOWNLOAD_PROGRESS_CIRCUMFERENCE}`}
+                          strokeDashoffset={
+                            DOWNLOAD_PROGRESS_CIRCUMFERENCE * (1 - Math.max(0, Math.min(100, downloadPercent)) / 100)
+                          }
+                          transform={`rotate(-90 ${DOWNLOAD_PROGRESS_CENTER} ${DOWNLOAD_PROGRESS_CENTER})`}
+                        />
+                      </Svg>
+                      <View pointerEvents="none" style={styles.downloadProgressPercent}>
+                        <Text
+                          variant="labelSmall"
+                          style={{ color: colors.onSurface, fontFamily: FONT_FAMILIES.semiBold }}>
+                          {Math.round(downloadPercent)}%
+                        </Text>
+                      </View>
+                    </View>
+                    <IconButton
+                      icon="close"
+                      accessibilityLabel={copy.cancelDownload}
+                      onPress={() => void cancelMapDownload()}
+                      style={styles.cancelDownloadButton}
+                      testID="cancel-offline-map-download"
+                    />
+                  </View>
+                ) : (
+                  <IconButton
+                    mode="contained"
+                    icon="download"
+                    iconColor={colors.onPrimary}
+                    containerColor={colors.primary}
+                    accessibilityLabel={copy.downloadRegion}
+                    testID="download-offline-region"
+                    disabled={!visibleBounds || !regionName.trim()}
+                    onPress={() => void downloadVisibleRegion()}
+                    style={styles.startDownloadButton}
+                  />
+                )}
+              </View>
+            </BottomSheetScrollView>
+          </BottomSheet>
+        ) : null}
       </View>
-      <MapSearchPanel
-        visible={isSearchVisible}
-        copy={copy}
-        onDismiss={() => setIsSearchVisible(false)}
-        onSelectLocation={(coordinate) =>
-          cameraRef.current?.setCamera({ centerCoordinate: coordinate, zoomLevel: 12, animationDuration: 650 })
-        }
-      />
+      {!previewOnly ? (
+        <MapSearchPanel
+          visible={isSearchVisible}
+          copy={copy}
+          onDismiss={() => setIsSearchVisible(false)}
+          onSelectLocation={(coordinate) =>
+            cameraRef.current?.setCamera({ centerCoordinate: coordinate, zoomLevel: 12, animationDuration: 650 })
+          }
+        />
+      ) : null}
     </View>
   );
 }
@@ -382,7 +466,8 @@ const styles = StyleSheet.create({
   embeddedPage: { ...StyleSheet.absoluteFill, zIndex: 3 },
   overlay: { ...StyleSheet.absoluteFill, elevation: 1, zIndex: 1 },
   mapControls: { position: 'absolute' },
-  modalCloseButton: { position: 'absolute' },
+  closeButton: { position: 'absolute' },
+  previewTitle: { alignItems: 'center', left: 68, position: 'absolute', right: 68 },
   sheetContainer: { elevation: 2, zIndex: 2 },
   sheetBackground: { borderTopLeftRadius: 24, borderTopRightRadius: 24 },
   sheetHandle: { borderTopLeftRadius: 24, borderTopRightRadius: 24 },

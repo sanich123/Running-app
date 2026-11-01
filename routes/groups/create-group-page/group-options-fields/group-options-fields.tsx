@@ -42,8 +42,7 @@ export default function GroupOptionsFields({
       return;
     }
     if (options.categoryTags.length === 3) {
-      errorToast(copy.tooManyCategories);
-      return;
+      return errorToast(copy.tooManyCategories);
     }
     onChange({ ...options, categoryTags: [...options.categoryTags, categoryTag] });
   };

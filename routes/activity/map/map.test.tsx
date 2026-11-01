@@ -1,6 +1,7 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { getCurrentPositionAsync } from 'expo-location';
 import type * as ReactNative from 'react-native';
+import { StyleSheet } from 'react-native';
 import { setInitialLocation, setLastPosition } from '@R/slices/location/location';
 import { setIsProfileFilled } from '@R/slices/settings/settings';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
@@ -206,6 +207,9 @@ describe('activity recording map', () => {
     );
 
     expect(await screen.findByTestId('activity-map-route-navigation')).toBeOnTheScreen();
+    expect(screen.getByTestId('navigation-preferences')).toBeOnTheScreen();
+    expect(StyleSheet.flatten(screen.getByTestId('navigation-actions').props.style).bottom).toBe(24);
+    expect(StyleSheet.flatten(screen.getByTestId('navigation-preferences').props.style).bottom).toBeGreaterThan(24);
     await waitFor(() =>
       expect(mockFitBounds).toHaveBeenCalledWith([37.61, 55.71], [37.6, 55.7], [56, 56, 56, 56], 500),
     );

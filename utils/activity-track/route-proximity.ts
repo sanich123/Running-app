@@ -4,6 +4,7 @@ const EARTH_RADIUS_METERS = 6_371_008.8;
 const DEGREES_TO_RADIANS = Math.PI / 180;
 export const MAX_CONFIDENT_NAVIGATION_ACCURACY_METERS = 25;
 export const NAVIGATION_ALERT_REARM_DISTANCE_METERS = 10;
+export const MAX_NUMERIC_NAVIGATION_ALERT_DISTANCE_METERS = 10_000;
 
 function getValidCoordinates({ coords }: ActivityLocation) {
   const { latitude, longitude } = coords;

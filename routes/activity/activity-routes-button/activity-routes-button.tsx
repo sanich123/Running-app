@@ -22,8 +22,6 @@ export default function ActivityRoutesButton() {
       onPress={openRoutes}
       style={{
         alignItems: 'center',
-        backgroundColor: MAP_CONTROL_BUTTON_BACKGROUND,
-        borderRadius: 20,
         height: 40,
         justifyContent: 'center',
         width: 40,

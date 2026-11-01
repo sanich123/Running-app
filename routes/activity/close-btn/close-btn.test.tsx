@@ -1,4 +1,5 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 import { LANGUAGES, STATUSES } from '@const/enums';
 import { setDurationAt } from '@R/slices/location/location';
 import { changeLanguage } from '@R/slices/settings/settings';
@@ -29,9 +30,9 @@ describe('Activity close btn', () => {
 
   it('should correctly renders in english', async () => {
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
-    expect(screen.getByTestId('activity-close-button').props.accessibilityLabel).toBe(
-      ACTIVITY_CLOSE_BTN.russian.btnText,
-    );
+    const closeButton = screen.getByTestId('activity-close-button');
+    expect(closeButton.props.accessibilityLabel).toBe(ACTIVITY_CLOSE_BTN.russian.btnText);
+    expect(StyleSheet.flatten(closeButton.props.style)).toHaveProperty('backgroundColor', 'transparent');
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

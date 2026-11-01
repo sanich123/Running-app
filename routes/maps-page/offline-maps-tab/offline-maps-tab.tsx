@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import Mapbox from '@rnmapbox/maps';
 import { ScrollView, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import EmptyState from '@S/empty-state/empty-state';
 import { errorToast } from '@S/error-toast/error-toast';
 import { listSavedOfflineMaps, subscribeToOfflineMaps, type SavedOfflineMap } from '@U/offline-map-library';
@@ -10,6 +12,7 @@ import { formatBytes } from './utils';
 import type { MapsPageCopy } from '../const';
 
 export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
+  const router = useRouter();
   const { colors } = useTheme();
   const [maps, setMaps] = useState<SavedOfflineMap[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -71,7 +74,14 @@ export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
           {copy.retry}
         </Button>
       ) : maps.length ? (
-        <OfflineMapList maps={maps} copy={copy} onMapsChange={setMaps} />
+        <OfflineMapList
+          maps={maps}
+          copy={copy}
+          onMapsChange={setMaps}
+          onOpenMap={(offlineMap) =>
+            router.push({ pathname: `/${ROUTES.offlineMap}/[id]` as never, params: { id: offlineMap.id } })
+          }
+        />
       ) : (
         <EmptyState
           icon="map-outline"

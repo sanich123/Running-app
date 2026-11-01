@@ -4,6 +4,18 @@ import { LANGUAGES } from '@const/enums';
 export type ActivityVoiceMetric = 'pace' | 'movingTime' | 'elevation';
 
 export const DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS = 50;
+export const MIN_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES = 1;
+export const MAX_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES = 10;
+export type NavigationAlertRepeatIntervalMinutes = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export const DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES: NavigationAlertRepeatIntervalMinutes = 1;
+
+export function getNavigationAlertRepeatIntervalMinutes(value: unknown): NavigationAlertRepeatIntervalMinutes {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES;
+  return Math.min(
+    MAX_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES,
+    Math.max(MIN_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES, Math.round(value)),
+  ) as NavigationAlertRepeatIntervalMinutes;
+}
 
 export function getNavigationAlertDistanceMeters(value: unknown) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS;
@@ -26,6 +38,8 @@ export interface ActivitySettings {
   activityReminderEnabled: boolean;
   activityReminders: ActivityReminder[];
   navigationAlertDistanceMeters: number;
+  navigationAlertRepeatIntervalMinutes: NavigationAlertRepeatIntervalMinutes;
+  navigationAlertsMuted: boolean;
   saveCameraPhotosToGallery: boolean;
 }
 
@@ -41,6 +55,8 @@ export const SETTINGS_INITIAL_STATE: ActivitySettings = {
   activityReminderEnabled: false,
   activityReminders: [],
   navigationAlertDistanceMeters: DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS,
+  navigationAlertRepeatIntervalMinutes: DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES,
+  navigationAlertsMuted: false,
   saveCameraPhotosToGallery: false,
 };
 

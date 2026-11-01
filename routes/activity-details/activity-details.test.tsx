@@ -26,15 +26,17 @@ jest.mock('expo-router', () => {
   const React = jest.requireActual('react');
   const { Fragment } = React;
   const { Pressable, Text, View } = jest.requireActual('react-native');
+  const MenuAction = ({ children, onPress }: { children?: ReactNode; onPress?: () => void }) =>
+    React.createElement(Pressable, { accessibilityRole: 'button', onPress }, React.createElement(Text, null, children));
   const Toolbar = Object.assign(({ children }: { children?: ReactNode }) => React.createElement(View, null, children), {
-    Menu: ({ children, accessibilityLabel }: { children?: ReactNode; accessibilityLabel?: string }) =>
-      React.createElement(View, { accessibilityLabel }, children),
-    MenuAction: ({ children, onPress }: { children?: ReactNode; onPress?: () => void }) =>
-      React.createElement(
-        Pressable,
-        { accessibilityRole: 'button', onPress },
-        React.createElement(Text, null, children),
-      ),
+    Menu: ({ children, accessibilityLabel }: { children?: ReactNode; accessibilityLabel?: string }) => {
+      const menuActions = React.Children.toArray(children).filter(
+        (child: ReactNode) =>
+          typeof child === 'object' && child !== null && 'type' in child && child.type === MenuAction,
+      );
+      return React.createElement(View, { accessibilityLabel }, menuActions);
+    },
+    MenuAction,
   });
 
   return {

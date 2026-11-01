@@ -1,9 +1,14 @@
-import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import * as Speech from 'expo-speech';
 import { StyleSheet } from 'react-native';
 import { LANGUAGES, STATUSES } from '@const/enums';
 import { setActivityStatus, setLastPosition, setNavigationTrackId } from '@R/slices/location/location';
-import { changeLanguage } from '@R/slices/settings/settings';
+import {
+  changeLanguage,
+  setNavigationAlertRepeatIntervalMinutes,
+  setNavigationAlertsMuted,
+} from '@R/slices/settings/settings';
+import { DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES } from '@R/slices/settings/types';
 import {
   clearTrackingRecovery,
   setTrackingRecoveryStatus,
@@ -35,19 +40,38 @@ jest.mock('@Routes/activity/map/map', () => ({
   __esModule: true,
   default: function ActivityMapMock({
     onLocationReadinessChange,
+    onDownloadOfflineMap,
   }: {
     onLocationReadinessChange: (value: boolean) => void;
+    onDownloadOfflineMap?: (bounds: [[number, number], [number, number]], center: [number, number]) => void;
   }) {
     const React = require('react');
-    const { View, Text } = require('react-native');
+    const { Pressable, View, Text } = require('react-native');
     React.useEffect(() => onLocationReadinessChange(true), [onLocationReadinessChange]);
     return (
       <View testID="activity-map">
         <Text>map</Text>
+        <Pressable
+          testID="activity-open-offline-map-download"
+          onPress={() =>
+            onDownloadOfflineMap?.(
+              [
+                [38, 56],
+                [37, 55],
+              ],
+              [37.5, 55.5],
+            )
+          }
+        />
       </View>
     );
   },
 }));
+jest.mock('@Routes/maps-page/offline-maps-tab/map-region-downloader/map-region-downloader', () => {
+  const React = jest.requireActual('react');
+  const { View } = jest.requireActual('react-native');
+  return { __esModule: true, default: () => React.createElement(View, { testID: 'activity-offline-map-downloader' }) };
+});
 jest.mock('@Routes/activity/metrics/metrics', () => ({
   __esModule: true,
   default: () => {
@@ -90,6 +114,8 @@ describe('Activity', () => {
     jest.clearAllMocks();
     mockStore.dispatch(resetMockLocation());
     mockStore.dispatch(clearTrackingRecovery());
+    mockStore.dispatch(setNavigationAlertRepeatIntervalMinutes(DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES));
+    mockStore.dispatch(setNavigationAlertsMuted(false));
     mockStopLocationTracking = jest.spyOn(backgroundLocation, 'stopLocationTracking').mockResolvedValue(undefined);
     mockErrorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
   });
@@ -143,6 +169,15 @@ describe('Activity', () => {
     expect(hiddenMapLayer.props.pointerEvents).toBe('none');
     expect(StyleSheet.flatten(hiddenMapLayer.props.style)).toEqual(expect.objectContaining({ opacity: 0 }));
     expect(screen.getByTestId('activity-map')).toBeOnTheScreen();
+  });
+
+  it('opens the offline map downloader from the route map controls', async () => {
+    const user = userEvent.setup();
+    await renderWithProviders(<Activity />);
+
+    await user.press(screen.getByTestId('activity-open-offline-map-download'));
+
+    expect(screen.getByTestId('activity-offline-map-downloader')).toBeOnTheScreen();
   });
 
   it.each([
@@ -209,6 +244,284 @@ describe('Activity', () => {
 
     await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
     expect(Speech.speak).not.toHaveBeenCalled();
+  });
+
+  it('waits for a fresh GPS location before speaking while navigation is not recording', async () => {
+    jest
+      .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
+      .mockResolvedValue([{ coords: { latitude: 0, longitude: 0 } }, { coords: { latitude: 0, longitude: 0.001 } }]);
+    mockStore.dispatch(setNavigationTrackId('saved-route'));
+    mockStore.dispatch(
+      setLastPosition({
+        timestamp: 1000,
+        coords: {
+          latitude: 0.001,
+          longitude: 0.0005,
+          accuracy: 5,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+      }),
+    );
+
+    await renderWithProviders(<Activity />);
+
+    await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
+    expect(Speech.speak).not.toHaveBeenCalled();
+  });
+
+  it('speaks for an accurate simulated location in the iOS simulator', async () => {
+    jest
+      .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
+      .mockResolvedValue([{ coords: { latitude: 0, longitude: 0 } }, { coords: { latitude: 0, longitude: 0.001 } }]);
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(setNavigationTrackId('saved-route'));
+    mockStore.dispatch(
+      setLastPosition({
+        timestamp: 1000,
+        mocked: true,
+        coords: {
+          latitude: 0.001,
+          longitude: 0.0005,
+          accuracy: 5,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+      }),
+    );
+
+    await renderWithProviders(<Activity />);
+
+    await waitFor(() =>
+      expect(Speech.speak).toHaveBeenCalledWith(
+        'Вы находитесь примерно в 110 метрах от маршрута.',
+        expect.objectContaining({ language: 'ru-RU' }),
+      ),
+    );
+  });
+
+  it.each([
+    { language: LANGUAGES.russian, locale: 'ru-RU', text: 'Вы находитесь очень далеко от маршрута.' },
+    { language: LANGUAGES.english, locale: 'en-US', text: 'You are very far from the route.' },
+  ])(
+    'uses a short voice warning when the route is more than 10 km away in $language',
+    async ({ language, locale, text }) => {
+      jest
+        .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
+        .mockResolvedValue([{ coords: { latitude: 0, longitude: 0 } }, { coords: { latitude: 0, longitude: 0.001 } }]);
+      mockStore.dispatch(changeLanguage(language));
+      mockStore.dispatch(setActivityStatus(STATUSES.started));
+      mockStore.dispatch(setNavigationTrackId('saved-route'));
+      mockStore.dispatch(
+        setLastPosition({
+          timestamp: 1000,
+          coords: {
+            latitude: 36,
+            longitude: 0.0005,
+            accuracy: 5,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+          },
+        }),
+      );
+
+      await renderWithProviders(<Activity />);
+
+      await waitFor(() =>
+        expect(Speech.speak).toHaveBeenCalledWith(text, expect.objectContaining({ language: locale })),
+      );
+    },
+  );
+
+  it('repeats the warning at the selected interval while the user stays off route', async () => {
+    jest
+      .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
+      .mockResolvedValue([{ coords: { latitude: 0, longitude: 0 } }, { coords: { latitude: 0, longitude: 0.001 } }]);
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(setNavigationTrackId('saved-route'));
+    mockStore.dispatch(setNavigationAlertRepeatIntervalMinutes(1));
+    mockStore.dispatch(
+      setLastPosition({
+        timestamp: 1000,
+        coords: {
+          latitude: 0.001,
+          longitude: 0.0005,
+          accuracy: 5,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+      }),
+    );
+
+    await renderWithProviders(<Activity />);
+
+    await waitFor(() => expect(Speech.speak).toHaveBeenCalledTimes(1));
+    await act(async () => {
+      mockStore.dispatch(
+        setLastPosition({
+          timestamp: 60_999,
+          coords: {
+            latitude: 0.001,
+            longitude: 0.0005,
+            accuracy: 5,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+          },
+        }),
+      );
+    });
+    expect(Speech.speak).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      mockStore.dispatch(
+        setLastPosition({
+          timestamp: 61_000,
+          coords: {
+            latitude: 0.001,
+            longitude: 0.0005,
+            accuracy: 5,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+          },
+        }),
+      );
+    });
+    await waitFor(() => expect(Speech.speak).toHaveBeenCalledTimes(2));
+  });
+
+  it('announces again after the user returns to the route and leaves it again', async () => {
+    jest
+      .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
+      .mockResolvedValue([{ coords: { latitude: 0, longitude: 0 } }, { coords: { latitude: 0, longitude: 0.001 } }]);
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(setNavigationTrackId('saved-route'));
+    mockStore.dispatch(
+      setLastPosition({
+        timestamp: 1000,
+        coords: {
+          latitude: 0.001,
+          longitude: 0.0005,
+          accuracy: 5,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+      }),
+    );
+
+    await renderWithProviders(<Activity />);
+    await waitFor(() => expect(Speech.speak).toHaveBeenCalledTimes(1));
+
+    await act(async () => {
+      mockStore.dispatch(
+        setLastPosition({
+          timestamp: 2000,
+          coords: {
+            latitude: 0,
+            longitude: 0.0005,
+            accuracy: 5,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+          },
+        }),
+      );
+    });
+    await act(async () => {
+      mockStore.dispatch(
+        setLastPosition({
+          timestamp: 3000,
+          coords: {
+            latitude: 0.001,
+            longitude: 0.0005,
+            accuracy: 5,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+          },
+        }),
+      );
+    });
+
+    await waitFor(() => expect(Speech.speak).toHaveBeenCalledTimes(2));
+  });
+
+  it('does not announce when the saved route has no valid segments', async () => {
+    jest
+      .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
+      .mockResolvedValue([
+        { coords: { latitude: Number.NaN, longitude: 0 } },
+        { coords: { latitude: 0, longitude: Number.NaN } },
+      ]);
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(setNavigationTrackId('invalid-route'));
+    mockStore.dispatch(
+      setLastPosition({
+        timestamp: 1000,
+        coords: {
+          latitude: 0.001,
+          longitude: 0.0005,
+          accuracy: 5,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+      }),
+    );
+
+    await renderWithProviders(<Activity />);
+
+    await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
+    expect(Speech.speak).not.toHaveBeenCalled();
+  });
+
+  it('does not speak while route alerts are muted and resumes after unmuting', async () => {
+    jest
+      .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
+      .mockResolvedValue([{ coords: { latitude: 0, longitude: 0 } }, { coords: { latitude: 0, longitude: 0.001 } }]);
+    mockStore.dispatch(setActivityStatus(STATUSES.started));
+    mockStore.dispatch(setNavigationTrackId('saved-route'));
+    mockStore.dispatch(setNavigationAlertsMuted(true));
+    mockStore.dispatch(
+      setLastPosition({
+        timestamp: 1000,
+        coords: {
+          latitude: 0.001,
+          longitude: 0.0005,
+          accuracy: 5,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+      }),
+    );
+
+    await renderWithProviders(<Activity />);
+
+    await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
+    expect(Speech.speak).not.toHaveBeenCalled();
+    await act(async () => {
+      mockStore.dispatch(setNavigationAlertsMuted(false));
+    });
+    await waitFor(() => expect(Speech.speak).toHaveBeenCalledTimes(1));
   });
 
   it('does not announce a distance that has not exceeded the configured threshold', async () => {

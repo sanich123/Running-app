@@ -143,8 +143,7 @@ export async function stopLocationTracking() {
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLocationEvent) => {
   if (error) {
-    errorToast('Ошибка фонового отслеживания геопозиции', error);
-    return;
+    return errorToast('Ошибка фонового отслеживания геопозиции', error);
   }
 
   if (!data?.locations?.length) {

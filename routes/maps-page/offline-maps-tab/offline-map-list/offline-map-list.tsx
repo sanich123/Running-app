@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Mapbox from '@rnmapbox/maps';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { IconButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { errorToast } from '@S/error-toast/error-toast';
 import { removeOfflineMap, renameOfflineMap, type SavedOfflineMap } from '@U/offline-map-library';
@@ -11,10 +11,12 @@ export default function OfflineMapList({
   maps,
   copy,
   onMapsChange,
+  onOpenMap,
 }: {
   maps: SavedOfflineMap[];
   copy: MapsPageCopy;
   onMapsChange: (maps: SavedOfflineMap[]) => void;
+  onOpenMap?: (offlineMap: SavedOfflineMap) => void;
 }) {
   const { colors } = useTheme();
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -57,14 +59,19 @@ export default function OfflineMapList({
       {editingId === offlineMap.id ? (
         <TextInput mode="outlined" dense value={editedTitle} onChangeText={setEditedTitle} style={styles.editInput} />
       ) : (
-        <View style={styles.mapInfo}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`${copy.openMap}: ${offlineMap.title}`}
+          onPress={() => onOpenMap?.(offlineMap)}
+          style={styles.mapInfo}
+          testID={`open-offline-map-${offlineMap.id}`}>
           <Text variant="bodyLarge" style={{ color: colors.onSurface }}>
             {offlineMap.title}
           </Text>
           <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
             {offlineMap.sizeBytes === undefined ? '—' : formatBytes(offlineMap.sizeBytes)}
           </Text>
-        </View>
+        </Pressable>
       )}
       {editingId === offlineMap.id ? (
         <View style={styles.actions}>
@@ -114,7 +121,7 @@ const styles = StyleSheet.create({
     paddingLeft: 14,
     paddingRight: 8,
   },
-  mapInfo: { flex: 1, gap: 2 },
+  mapInfo: { flex: 1, gap: 2, paddingVertical: 10 },
   actions: { alignItems: 'center', flexDirection: 'row' },
   actionButton: { height: 40, margin: 0, width: 40 },
   editInput: { flex: 1, marginVertical: 4 },

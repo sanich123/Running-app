@@ -160,6 +160,8 @@ jest.mock('@expo/ui', () => {
   const { Pressable, View } = jest.requireActual('react-native');
 
   return {
+    BottomSheet: ({ children, isPresented, testID }: MockChildrenProps & { isPresented: boolean; testID?: string }) =>
+      isPresented ? createElement(View, { testID }, children) : null,
     Host: ({ children, style, testID }: MockChildrenProps & { style?: StyleProp<ViewStyle>; testID?: string }) =>
       createElement(View, { style, testID }, children),
     Switch: ({ value, onValueChange, testID, disabled }: ExpoSwitchMockProps) =>

@@ -98,10 +98,8 @@ export default function TabLayout() {
           accessibilityLabel={labels.activity}
           disableAutomaticContentInsets={false}
           contentStyle={{ backgroundColor: colors.background }}>
-          {/* NativeTabs fixes system symbols at 24pt; this SF Symbol image keeps Record at 36pt. */}
           <NativeTabs.Trigger.Icon
-            src={require('../../assets/images/record-circle.png')}
-            renderingMode="template"
+            sf={{ default: 'record.circle', selected: 'record.circle' }}
             selectedColor={colors.error}
           />
           <NativeTabs.Trigger.Label hidden />

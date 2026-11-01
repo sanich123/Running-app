@@ -12,8 +12,6 @@ import { mockStore, resetMockLocation, setMockUserId } from '@T/utils/mock-store
 import { renderWithProviders } from '@T/utils/test-utils';
 import TabLayout from '../../app/(tabs)/_layout';
 
-jest.mock('../../assets/images/record-circle.png', () => 1, { virtual: true });
-
 const mockReplace = jest.fn();
 let mockPathname = `/${ROUTES.home}`;
 let mockTabsScreenOptions:
@@ -208,8 +206,7 @@ describe('TabLayout', () => {
     );
     expect(mockNativeTriggerIconProps).toContainEqual(
       expect.objectContaining({
-        src: expect.anything(),
-        renderingMode: 'template',
+        sf: { default: 'record.circle', selected: 'record.circle' },
         selectedColor: expect.any(String),
       }),
     );

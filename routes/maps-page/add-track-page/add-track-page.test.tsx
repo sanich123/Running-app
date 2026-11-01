@@ -38,7 +38,6 @@ describe('add track page', () => {
       copy: MAPS_PAGE_COPY[LANGUAGES.english],
       fetchNextPage,
       filters: { month: null, day: null, year: null },
-      importRoute: jest.fn(),
       isError: false,
       isFetchingNextPage: false,
       isLoading: false,

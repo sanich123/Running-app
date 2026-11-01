@@ -141,8 +141,7 @@ export default function useVideoExport({
       const isSharingAvailable = await Sharing.isAvailableAsync();
       if (abortController.signal.aborted) return;
       if (!isSharingAvailable) {
-        errorToast(copy.shareUnavailable);
-        return;
+        return errorToast(copy.shareUnavailable);
       }
 
       const outputSize = getReplayVideoSize(mapSize.width, mapSize.height, PixelRatio.get());

@@ -71,8 +71,7 @@ export default function SaveBtn() {
           if (userId) {
             const activityOwnerId = isEditingActivity ? activityId : userId;
             if (!activityOwnerId) {
-              errorToast('Не удалось определить активность');
-              return;
+              return errorToast('Не удалось определить активность');
             }
             const distance = Number(manualDistance) || 0;
             const hours = Number(manualHours) || 0;
