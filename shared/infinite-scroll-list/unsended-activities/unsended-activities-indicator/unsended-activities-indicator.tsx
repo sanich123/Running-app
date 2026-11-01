@@ -4,14 +4,13 @@ import { useAddActivityByUserIdMutation, useUploadRawActivityLocationsMutation }
 import {
   clearPendingRawRouteUploads,
   clearUnsyncedActivities,
-  queuePendingRawRouteUpload,
   removeFirstUnsyncedActivity,
-  removePendingRawRouteUpload,
 } from '@R/slices/activity/activity';
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { successToast } from '@S/success-toast/success-toast';
+import { uploadRawRouteAndQueueOnFailure } from '@U/activity-track/upload-raw-route';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
 import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
 import { getReducedLocations } from '@U/location/location-utils';
@@ -22,7 +21,7 @@ export default function UnsendedActivitiesIndicator() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const copy = UNSYNCED_ACTIVITIES_TEXT[language];
-  const { unsyncedActivities, pendingRawRouteUploads } = useAppSelector(({ activity }) => activity);
+  const { unsyncedActivities = [], pendingRawRouteUploads = [] } = useAppSelector(({ activity }) => activity);
   const trackingRecovery = useAppSelector(({ trackingRecovery }) => trackingRecovery);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
   const [uploadRawLocations, { isLoading: isRouteUploadLoading }] = useUploadRawActivityLocationsMutation();
@@ -48,27 +47,23 @@ export default function UnsendedActivitiesIndicator() {
         .then((savedActivity) => {
           if (journalId && routeLocations.length) {
             deactivateLocationJournal(journalId);
-            dispatch(
-              queuePendingRawRouteUpload({
+            if (trackingRecovery.journalId === journalId) dispatch(clearTrackingRecovery());
+            void uploadRawRouteAndQueueOnFailure({
+              pendingUpload: {
                 activityId: savedActivity.id,
                 routeJournalId: journalId,
                 title: pendingActivity.body.title,
                 date: pendingActivity.body.date ?? new Date().toISOString(),
                 sport: pendingActivity.body.sport,
-              }),
-            );
-            if (trackingRecovery.journalId === journalId) dispatch(clearTrackingRecovery());
-            void uploadRawLocations({ activityId: savedActivity.id, locations: routeLocations })
-              .unwrap()
+              },
+              locations: routeLocations,
+              dispatch,
+              uploadRawLocations,
+            })
               .then(() => {
-                dispatch(removePendingRawRouteUpload(savedActivity.id));
-                removeLocationJournal(journalId);
                 successToast(copy.routeSuccess);
               })
               .catch((error: unknown) => errorToast(copy.routeError, getErrorMessageFromError(error)));
-          } else if (journalId) {
-            removeLocationJournal(journalId);
-            if (trackingRecovery.journalId === journalId) dispatch(clearTrackingRecovery());
           }
           dispatch(removeFirstUnsyncedActivity());
           successToast(copy.success);
@@ -78,17 +73,18 @@ export default function UnsendedActivitiesIndicator() {
     }
 
     const pendingRouteUpload = pendingRawRouteUploads[0];
-    if (!pendingRouteUpload) return;
     const locations = readLocationJournal(pendingRouteUpload.routeJournalId)?.locations ?? [];
     if (!locations.length) {
       return errorToast('', copy.restoreRouteError);
     }
 
-    await uploadRawLocations({ activityId: pendingRouteUpload.activityId, locations })
-      .unwrap()
+    await uploadRawRouteAndQueueOnFailure({
+      pendingUpload: pendingRouteUpload,
+      locations,
+      dispatch,
+      uploadRawLocations,
+    })
       .then(() => {
-        removeLocationJournal(pendingRouteUpload.routeJournalId);
-        dispatch(removePendingRawRouteUpload(pendingRouteUpload.activityId));
         successToast(copy.routeSuccess);
       })
       .catch((error: unknown) => errorToast(copy.routeError, getErrorMessageFromError(error)));
@@ -108,7 +104,7 @@ export default function UnsendedActivitiesIndicator() {
     dispatch(clearPendingRawRouteUploads());
   }
 
-  return (
+  return pendingCount > 0 ? (
     <View style={[styles.container, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}>
       <View style={styles.content}>
         <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
@@ -148,7 +144,7 @@ export default function UnsendedActivitiesIndicator() {
         />
       </View>
     </View>
-  );
+  ) : null;
 }
 
 const styles = StyleSheet.create({

@@ -1,5 +1,5 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { LANGUAGES, STATUSES } from '@const/enums';
 import { setDurationAt } from '@R/slices/location/location';
 import { changeLanguage } from '@R/slices/settings/settings';
@@ -32,7 +32,15 @@ describe('Activity close btn', () => {
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
     const closeButton = screen.getByTestId('activity-close-button');
     expect(closeButton.props.accessibilityLabel).toBe(ACTIVITY_CLOSE_BTN.russian.btnText);
-    expect(StyleSheet.flatten(closeButton.props.style)).toHaveProperty('backgroundColor', 'transparent');
+    const closeButtonStyle = StyleSheet.flatten(closeButton.props.style);
+    if (Platform.OS === 'ios') {
+      expect(closeButtonStyle.backgroundColor).toBeUndefined();
+      expect(closeButtonStyle.width).toBe(44);
+      expect(closeButtonStyle.height).toBe(44);
+    } else {
+      expect(closeButtonStyle.backgroundColor).not.toBe('transparent');
+      expect(closeButtonStyle.borderWidth).toBeGreaterThan(0);
+    }
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));

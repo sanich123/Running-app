@@ -7,7 +7,6 @@ import { ACCELEROMETER_UPDATE_INTERVAL } from '@U/motion/const';
 import { createMotionStatusDetector } from '@U/motion/motion-detector';
 import { getPedometerActivityData } from '@U/pedometer/pedometer';
 import { ACTIVITY_MOTION_STATUS } from '../const';
-import { getMotionSourcesLabel } from '../utils';
 import type { LANGUAGES } from '@const/enums';
 import type { MotionSource } from '@U/motion/types';
 
@@ -61,8 +60,6 @@ export default function ActiveMotionStatus({ language }: { language: LANGUAGES }
     return null;
   }
 
-  const sources = getMotionSourcesLabel(restingSources, ACTIVITY_MOTION_STATUS[language].sources);
-
   return (
     <View style={[styles.message, { backgroundColor: colors.secondaryContainer, borderColor: colors.outlineVariant }]}>
       <Icon source="motion-sensor" size={22} color={colors.secondary} />
@@ -72,9 +69,6 @@ export default function ActiveMotionStatus({ language }: { language: LANGUAGES }
         </Text>
         <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
           {ACTIVITY_MOTION_STATUS[language].description}
-        </Text>
-        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-          {ACTIVITY_MOTION_STATUS[language].basedOn(sources)}
         </Text>
       </View>
       <IconButton
@@ -96,10 +90,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignSelf: 'stretch',
-    marginHorizontal: 12,
-    marginTop: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    marginHorizontal: 0,
+    marginTop: 0,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   messageContent: { flex: 1, gap: 3 },
 });

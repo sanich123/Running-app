@@ -23,6 +23,7 @@ jest.mock('expo-sharing', () => ({
   shareAsync: (...args: unknown[]) => mockShareAsync(...args),
 }));
 jest.mock('@U/activity-track/track-library', () => ({
+  getActivityTrackExportFilename: () => '2026-11-01_run_15-55-38.gpx',
   getSavedActivityTrackFile: (...args: unknown[]) => mockGetSavedActivityTrackFile(...args),
   saveActivityTrack: (...args: unknown[]) => mockSaveActivityTrack(...args),
 }));

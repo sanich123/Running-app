@@ -24,6 +24,18 @@ interface KilometerVoiceText extends KilometerVoiceAnnouncement {
   enabledMetrics: ActivityVoiceMetric[];
 }
 
+export function stopActivitySpeech() {
+  try {
+    void Speech.stop().catch(() => undefined);
+  } catch {
+    // Speech cancellation must never interrupt location tracking.
+  }
+}
+
+function replaceCurrentSpeech() {
+  stopActivitySpeech();
+}
+
 export function formatDurationForSpeech(milliseconds: number, language: LANGUAGES) {
   const totalSeconds = Math.max(0, Math.round(milliseconds / 1000));
   const minutes = Math.floor(totalSeconds / 60);
@@ -77,6 +89,7 @@ export function speakCompletedKilometer(announcement: KilometerVoiceAnnouncement
   const text = buildKilometerAnnouncement({ ...announcement, enabledMetrics: settings.activityVoiceMetrics });
 
   try {
+    replaceCurrentSpeech();
     Speech.speak(text, {
       language: SPEECH_LOCALES[announcement.language],
       voice: settings.activityVoiceIdentifier ?? undefined,
@@ -94,6 +107,7 @@ export function speakActivityMessage(text: string, language: LANGUAGES, voiceIde
   }
 
   try {
+    replaceCurrentSpeech();
     Speech.speak(text, {
       language: SPEECH_LOCALES[language],
       voice: voiceIdentifier ?? undefined,

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Mapbox from '@rnmapbox/maps';
 import { ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -6,9 +6,19 @@ import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import EmptyState from '@S/empty-state/empty-state';
 import { errorToast } from '@S/error-toast/error-toast';
-import { listSavedOfflineMaps, subscribeToOfflineMaps, type SavedOfflineMap } from '@U/offline-map-library';
+import {
+  listSavedOfflineMaps,
+  saveOfflineMapThumbnail,
+  subscribeToOfflineMaps,
+  type SavedOfflineMap,
+} from '@U/offline-map-library';
 import OfflineMapList from './offline-map-list/offline-map-list';
-import { formatBytes } from './utils';
+import {
+  formatBytes,
+  OFFLINE_MAP_THUMBNAIL_ASPECT_RATIO,
+  parseOfflineMapPackBounds,
+  takeOfflineMapThumbnail,
+} from './utils';
 import type { MapsPageCopy } from '../const';
 
 export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
@@ -18,6 +28,7 @@ export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const thumbnailRequests = useRef(new Set<string>());
 
   const totalStorageBytes = maps.reduce((total, offlineMap) => total + (offlineMap.sizeBytes ?? 0), 0);
   const totalStorageLabel = maps.some((offlineMap) => offlineMap.sizeBytes === undefined)
@@ -39,14 +50,45 @@ export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
           } catch {
             sizeBytes = undefined;
           }
+          const metadata: unknown = pack.metadata;
+          const metadataRecord =
+            typeof metadata === 'object' && metadata !== null ? (metadata as Record<string, unknown>) : undefined;
+          const savedMap = savedMapById.get(id);
+          const hasCurrentThumbnail =
+            Boolean(savedMap?.thumbnailUri) && savedMap?.thumbnailAspectRatio === OFFLINE_MAP_THUMBNAIL_ASPECT_RATIO;
+          const title = savedMap?.title ?? (typeof metadataRecord?.title === 'string' ? metadataRecord.title : id);
           return {
-            id,
-            title: savedMapById.get(id)?.title ?? id,
-            ...(sizeBytes === undefined ? {} : { sizeBytes }),
+            offlineMap: {
+              id,
+              title,
+              ...(hasCurrentThumbnail ? { thumbnailUri: savedMap?.thumbnailUri } : {}),
+              ...(hasCurrentThumbnail ? { thumbnailAspectRatio: savedMap?.thumbnailAspectRatio } : {}),
+              ...(sizeBytes === undefined ? {} : { sizeBytes }),
+            },
+            bounds: parseOfflineMapPackBounds(pack.bounds),
+            isSatellite: metadataRecord?.style === 'satellite',
           };
         }),
       );
-      setMaps(mapDetails.filter((offlineMap): offlineMap is SavedOfflineMap => offlineMap !== null));
+      const loadedMaps = mapDetails.filter((mapDetailsForPack) => mapDetailsForPack !== null);
+      const offlineMaps = loadedMaps.map(({ offlineMap }) => offlineMap);
+      setMaps(offlineMaps);
+      loadedMaps.forEach(({ offlineMap, bounds, isSatellite }) => {
+        if (
+          (offlineMap.thumbnailUri && offlineMap.thumbnailAspectRatio === OFFLINE_MAP_THUMBNAIL_ASPECT_RATIO) ||
+          !bounds ||
+          thumbnailRequests.current.has(offlineMap.id)
+        ) {
+          return;
+        }
+        thumbnailRequests.current.add(offlineMap.id);
+        void takeOfflineMapThumbnail(bounds, isSatellite)
+          .then((thumbnail) =>
+            thumbnail ? saveOfflineMapThumbnail(offlineMap.id, thumbnail.uri, thumbnail.aspectRatio) : undefined,
+          )
+          .catch(() => undefined)
+          .finally(() => thumbnailRequests.current.delete(offlineMap.id));
+      });
       setHasError(false);
     } catch (error) {
       setHasError(true);

@@ -28,7 +28,6 @@ export default function BatteryOptimizationModal() {
           testID="battery-optimization-info"
           androidIcon="information-outline"
           iosSymbol="info.circle"
-          iconColor={colors.primary}
           onPress={() => batteryOptimizationEnabledModalRef.current?.present()}
           accessibilityLabel="Информация об оптимизации батареи"
         />

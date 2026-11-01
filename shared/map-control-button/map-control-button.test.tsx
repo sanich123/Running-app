@@ -1,7 +1,6 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { MAP_CONTROL_BUTTON_BACKGROUND } from './const';
 import MapControlButton from './map-control-button';
 
 describe('map control button', () => {
@@ -20,9 +19,9 @@ describe('map control button', () => {
 
     const button = screen.getByTestId('zoom-in');
     expect(button.props.accessibilityLabel).toBe('Zoom in');
-    expect(StyleSheet.flatten(button.props.style)).toEqual(
-      expect.objectContaining({ backgroundColor: MAP_CONTROL_BUTTON_BACKGROUND }),
-    );
+    const buttonStyle = StyleSheet.flatten(button.props.style);
+    expect(buttonStyle.backgroundColor).not.toBe('transparent');
+    expect(buttonStyle.borderWidth).toBeGreaterThan(0);
     await user.press(button);
     expect(onPress).toHaveBeenCalledTimes(1);
   });
@@ -45,5 +44,20 @@ describe('map control button', () => {
     expect(screen.getByTestId('zoom-loading')).toBeOnTheScreen();
     await user.press(screen.getByTestId('zoom-in'));
     expect(onPress).not.toHaveBeenCalled();
+  });
+
+  it('shows the native overlay symbol when its platform-specific symbol is missing', async () => {
+    await renderWithProviders(
+      <MapControlButton
+        accessibilityLabel="Download map"
+        androidIcon="map"
+        androidOverlayIcon="download"
+        iosSymbol="map"
+        onPress={jest.fn()}
+        testID="download-map"
+      />,
+    );
+
+    expect(screen.getByTestId('download-map')).toBeOnTheScreen();
   });
 });

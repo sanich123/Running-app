@@ -29,7 +29,7 @@ export interface SavedActivityTrack {
   sport?: string;
 }
 
-type TrackFileFormat = 'gpx' | 'fit';
+export type TrackFileFormat = 'gpx' | 'fit';
 
 function getTracksDirectory() {
   return new Directory(Paths.document, TRACKS_DIRECTORY_NAME);
@@ -37,6 +37,60 @@ function getTracksDirectory() {
 
 function getTrackFile(trackId: string, extension: 'json' | TrackFileFormat) {
   return new File(getTracksDirectory(), `${trackId}.${extension}`);
+}
+
+function getTrackDateParts(dateValue: string) {
+  const date = new Date(dateValue);
+  if (!Number.isFinite(date.getTime())) return { date: 'undated', time: '' };
+
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return {
+    date: `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`,
+    time: `${pad(date.getHours())}-${pad(date.getMinutes())}-${pad(date.getSeconds())}`,
+  };
+}
+
+function getTrackSportLabel(sport?: string) {
+  const normalizedSport = sport?.trim().toLowerCase() ?? '';
+  switch (normalizedSport) {
+    case 'run':
+    case 'running':
+      return 'run';
+    case 'hike':
+    case 'hiking':
+      return 'hike';
+    case 'walk':
+    case 'walking':
+      return 'walk';
+    case 'bike':
+    case 'cycling':
+    case 'cycle':
+    case 'ride':
+      return 'bike';
+    case 'swim':
+    case 'swimming':
+      return 'swim';
+    case 'workout':
+    case 'gym':
+      return 'workout';
+    default:
+      return normalizedSport.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'activity';
+  }
+}
+
+export function getActivityTrackExportFilename(
+  track: Pick<SavedActivityTrack, 'date' | 'sport'>,
+  format: TrackFileFormat,
+) {
+  const { date, time } = getTrackDateParts(track.date);
+  const timeSuffix = time ? `_${time}` : '';
+  return `${date}_${getTrackSportLabel(track.sport)}${timeSuffix}.${format}`;
+}
+
+function getActivityTrackGpxTitle(track: SavedActivityTrack) {
+  const { date, time } = getTrackDateParts(track.date);
+  const timestamp = time ? ` ${time.replace(/-/g, ':')}` : '';
+  return `${date} ${getTrackSportLabel(track.sport)}${timestamp} - ${track.title}`;
 }
 
 function readIndex(value: string | null): SavedActivityTrack[] {
@@ -136,7 +190,7 @@ export async function saveActivityTrack({
   fitFile.create({ overwrite: true });
   await Promise.all([
     jsonFile.write(JSON.stringify(validLocations)),
-    gpxFile.write(encodeActivityLocationsAsGpx(savedTrack.title, validLocations)),
+    gpxFile.write(encodeActivityLocationsAsGpx(getActivityTrackGpxTitle(savedTrack), validLocations)),
     fitFile.write(encodeActivityLocationsAsFit(validLocations, sport)),
   ]);
 
@@ -181,9 +235,14 @@ export async function readSavedActivityTrack(trackId: string) {
   );
 }
 
-export async function getSavedActivityTrackFile(trackId: string, format: TrackFileFormat) {
+export async function getSavedActivityTrackFile(trackId: string, format: TrackFileFormat, exportFilename?: string) {
   const file = getTrackFile(trackId, format);
   if (!file.exists) throw new Error('Файл маршрута не найден на устройстве');
+  if (exportFilename) {
+    const exportFile = new File(Paths.cache, exportFilename);
+    await file.copy(exportFile, { overwrite: true });
+    return exportFile;
+  }
   return file;
 }
 

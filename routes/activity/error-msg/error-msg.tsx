@@ -41,7 +41,7 @@ export default function ErrorMsg() {
   }, [isAppShutedByPhone, dispatch]);
 
   return (
-    <View style={[styles.errorMsg, { top: insets.top + 132 }]}>
+    <View style={[styles.errorMsg, { top: insets.top + 72 }]}>
       {isAppShutedByPhone ? (
         <View
           style={[styles.message, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}>
@@ -99,9 +99,12 @@ export default function ErrorMsg() {
 
 const styles = StyleSheet.create({
   errorMsg: {
-    alignItems: 'center',
+    alignItems: 'stretch',
+    gap: 6,
     position: 'absolute',
-    width: '100%',
+    right: 12,
+    width: '62%',
+    maxWidth: 480,
     zIndex: 2,
   },
   message: {
@@ -111,10 +114,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignSelf: 'stretch',
-    marginHorizontal: 12,
-    marginTop: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    marginHorizontal: 0,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   messageContent: { flex: 1, gap: 3 },
 });

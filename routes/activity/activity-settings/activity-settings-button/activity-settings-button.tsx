@@ -1,9 +1,10 @@
 import { useRef } from 'react';
 import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable } from 'react-native';
+import { Platform, Pressable, StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { MAP_CONTROL_BUTTON_BACKGROUND } from '@S/map-control-button/const';
+import { IOS_ACTIVITY_HEADER_ICON_COLOR } from '@Routes/activity/const';
+import { getMapControlButtonStyle } from '@S/map-control-button/const';
 import ActivityLocationInfoModal from '../activity-location-info-modal/activity-location-info-modal';
 import ActivitySettings from '../activity-settings';
 import { ACTIVITY_SETTINGS } from '../const';
@@ -23,24 +24,19 @@ export default function ActivitySettingsButton() {
           accessibilityRole="button"
           accessibilityLabel={ACTIVITY_SETTINGS[language].open}
           onPress={openActivitySettings}
-          style={{
-            alignItems: 'center',
-            height: 40,
-            justifyContent: 'center',
-            width: 40,
-          }}
+          style={styles.iosHeaderButton}
           testID="activity-settings-button">
-          <SymbolView name="gearshape" size={23} tintColor={colors.primary} weight="medium" />
+          <SymbolView name="gearshape" size={23} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="medium" />
         </Pressable>
       ) : (
         <IconButton
           testID="activity-settings-button"
           mode="contained-tonal"
           icon="cogs"
-          iconColor={colors.primary}
-          containerColor={MAP_CONTROL_BUTTON_BACKGROUND}
+          iconColor={colors.onSurface}
+          containerColor={colors.surface}
           size={24}
-          style={{ margin: 0 }}
+          style={getMapControlButtonStyle(40, colors.surface, colors.outlineVariant)}
           onPress={openActivitySettings}
           accessibilityLabel={ACTIVITY_SETTINGS[language].open}
         />
@@ -53,3 +49,7 @@ export default function ActivitySettingsButton() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  iosHeaderButton: { alignItems: 'center', height: 44, justifyContent: 'center', width: 44 },
+});

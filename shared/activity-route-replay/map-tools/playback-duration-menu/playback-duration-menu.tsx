@@ -27,7 +27,7 @@ export default function PlaybackDurationMenu({
       contentStyle={[styles.durationMenu, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}
       anchor={
         <TouchableRipple
-          style={getMapControlButtonStyle(durationButtonSize)}
+          style={getMapControlButtonStyle(durationButtonSize, colors.surface, colors.outlineVariant)}
           onPress={() => setVisible(true)}
           disabled={isDisabled}
           accessibilityLabel={`${copy.duration}: ${selectedDurationText}`}

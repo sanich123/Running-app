@@ -3,12 +3,16 @@ import { http, HttpResponse } from 'msw';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import {
+  addPhotoUrls,
   clearUnsyncedActivities,
   finishMediaUpload,
   clearPendingRawRouteUploads,
+  resetActivityDraft,
+  resetFinishedActivity,
   setFinishedActivity,
   startMediaUpload,
 } from '@R/slices/activity/activity';
+import { resetAuthSlice } from '@R/slices/auth/auth';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { errorToast } from '@S/error-toast/error-toast';
 import { MOCK_LOCATION, MOCK_DURATION, MOCK_SPEED, MOCK_DISTANCE } from '@T/mocks/mock-location';
@@ -17,7 +21,12 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
-import { appendLocationToJournal, createLocationJournal, readLocationJournal } from '@U/location/location-journal';
+import {
+  appendLocationToJournal,
+  createLocationJournal,
+  readLocationJournal,
+  removeLocationJournal,
+} from '@U/location/location-journal';
 import ActivitySaveBtn from './save-btn';
 import { isServerUnavailableError } from './utils';
 
@@ -60,6 +69,9 @@ jest.mock('expo-router', () => ({
 
 describe('Activity save btn', () => {
   beforeEach(() => {
+    mockStore.dispatch(resetAuthSlice());
+    mockStore.dispatch(resetActivityDraft());
+    mockStore.dispatch(resetFinishedActivity());
     mockBack.mockClear();
     mockReplace.mockClear();
     jest.mocked(errorToast).mockClear();
@@ -102,6 +114,107 @@ describe('Activity save btn', () => {
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_SAVE_BTN.russian.save)).toBeOnTheScreen();
   });
+
+  it('does not save when the user is not authenticated', async () => {
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
+
+    expect(mockReplace).not.toHaveBeenCalled();
+    expect(mockStore.getState().activity.isSavingDisabled).toBe(false);
+  });
+
+  it('reports when an edited activity has no ID', async () => {
+    mockStore.dispatch(setMockUserId('someUserId'));
+    mockManualActivityMode = 'edit';
+    mockManualActivityId = '';
+    mockManualActivityParams = { ...mockManualActivityParams, id: '', mode: 'edit' };
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
+
+    expect(errorToast).toHaveBeenCalledWith('Не удалось определить активность');
+    expect(mockBack).not.toHaveBeenCalled();
+  });
+
+  it('does not submit a tracked activity without a pace', async () => {
+    mockStore.dispatch(setMockUserId('someUserId'));
+    const finishedActivity = createFinishedActivityDraft();
+    mockStore.dispatch(
+      setFinishedActivity({
+        ...finishedActivity,
+        speed: 0,
+      }),
+    );
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
+
+    expect(errorToast).toHaveBeenCalledWith('Тренировка не имеет скорости или продолжительности');
+    expect(mockStore.getState().activity.unsyncedActivities).toHaveLength(0);
+    removeLocationJournal(finishedActivity.routeJournalId!);
+  });
+
+  it('queues manual activities without a route after a network failure', async () => {
+    mockStore.dispatch(setMockUserId('someWrongUserId'));
+    mockStore.dispatch(
+      setFinishedActivity({
+        duration: 0,
+        speed: 0,
+        distance: 0,
+        kilometresSplit: [],
+        routeJournalId: null,
+      }),
+    );
+    mockManualActivityMode = 'manual';
+    mockManualActivityParams = {
+      ...mockManualActivityParams,
+      manualDistance: '5',
+      manualHours: '1',
+      mode: 'manual',
+    };
+    server.use(http.post(`${BASE_URL}/activity/someWrongUserId`, () => HttpResponse.error()));
+
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
+
+    await waitFor(() => expect(mockStore.getState().activity.unsyncedActivities).toHaveLength(1));
+    expect(mockStore.getState().activity.unsyncedActivities[0].routeJournalId).toBeNull();
+    expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
+  });
+
+  it('preserves remote and uploaded media references when saving', async () => {
+    let requestBody: Record<string, unknown> | undefined;
+    server.use(
+      http.post(`${BASE_URL}/activity/someUserId`, async ({ request }) => {
+        requestBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({ id: 'saved-activity-id' }, { status: 201 });
+      }),
+    );
+    mockStore.dispatch(setMockUserId('someUserId'));
+    mockStore.dispatch(
+      addPhotoUrls([
+        { url: 'remote.jpg', thumbnail: 'remote-thumb.jpg', blurhash: 'blur-hash' },
+        { url: 'uploaded.jpg', thumbnail: null, assetId: 'photo-asset', thumbnailAssetId: 'thumb-asset' },
+        { thumbnail: null },
+      ]),
+    );
+    mockManualActivityMode = 'manual';
+    mockManualActivityParams = {
+      ...mockManualActivityParams,
+      manualDistance: '5',
+      manualHours: '1',
+      mode: 'manual',
+    };
+
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
+
+    await waitFor(() =>
+      expect(requestBody?.media).toEqual([
+        { url: 'remote.jpg', thumbnail: 'remote-thumb.jpg', blurhash: 'blur-hash' },
+        { thumbnail: null, assetId: 'photo-asset', thumbnailAssetId: 'thumb-asset' },
+        { thumbnail: null },
+      ]),
+    );
+  });
   it('should correctly change global state', async () => {
     mockStore.dispatch(setMockUserId('someUserId'));
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
@@ -141,6 +254,80 @@ describe('Activity save btn', () => {
     const saveBtn = screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID);
     expect(mockStore.getState().activity.isSavingDisabled).toEqual(false);
     await userEvent.press(saveBtn);
+  });
+
+  it('queues a raw route only after its upload fails', async () => {
+    const routeJournalId = createLocationJournal();
+    const routeLocation = { ...MOCK_LOCATION, timestamp: MOCK_LOCATION.timestamp + 1 };
+    let resolveRawRouteUpload!: (response: Response) => void;
+    let hasStartedRawRouteUpload = false;
+    const rawRouteUploadResponse = new Promise<Response>((resolve) => {
+      resolveRawRouteUpload = resolve;
+    });
+    server.use(
+      http.post(`${BASE_URL}/activity/someUserId`, () =>
+        HttpResponse.json({ id: 'saved-activity-id' }, { status: 201 }),
+      ),
+      http.post(`${BASE_URL}/activity/saved-activity-id/locations/raw`, () => {
+        hasStartedRawRouteUpload = true;
+        return rawRouteUploadResponse;
+      }),
+    );
+    mockStore.dispatch(setMockUserId('someUserId'));
+    mockStore.dispatch(setFinishedActivity(createFinishedActivityDraft([routeLocation], routeJournalId)));
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
+
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
+    await act(async () => {
+      jest.advanceTimersByTime(0);
+      await Promise.resolve();
+    });
+    await waitFor(() => expect(hasStartedRawRouteUpload).toBe(true));
+    expect(mockStore.getState().activity.pendingRawRouteUploads).toHaveLength(0);
+    await act(async () => {
+      resolveRawRouteUpload(HttpResponse.json({ message: 'Upload failed' }, { status: 503 }));
+      await Promise.resolve();
+    });
+    await waitFor(() => expect(mockStore.getState().activity.pendingRawRouteUploads).toHaveLength(1));
+    expect(readLocationJournal(routeJournalId)?.pointCount).toBe(1);
+    removeLocationJournal(routeJournalId);
+  });
+
+  it('skips raw route upload when its journal disappears before the deferred request', async () => {
+    const routeJournalId = createLocationJournal();
+    let resolveActivitySave!: (response: Response) => void;
+    let hasStartedActivitySave = false;
+    const activitySaveResponse = new Promise<Response>((resolve) => {
+      resolveActivitySave = resolve;
+    });
+    const uploadRawRoute = jest.fn(() => new HttpResponse(null, { status: 204 }));
+    server.use(
+      http.post(`${BASE_URL}/activity/someUserId`, () => {
+        hasStartedActivitySave = true;
+        return activitySaveResponse;
+      }),
+      http.post(`${BASE_URL}/activity/saved-activity-id/locations/raw`, uploadRawRoute),
+    );
+    mockStore.dispatch(setMockUserId('someUserId'));
+    mockStore.dispatch(setFinishedActivity(createFinishedActivityDraft([MOCK_LOCATION], routeJournalId)));
+    await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
+    await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
+
+    await waitFor(() => expect(hasStartedActivitySave).toBe(true));
+    removeLocationJournal(routeJournalId);
+    await act(async () => {
+      resolveActivitySave(HttpResponse.json({ id: 'saved-activity-id' }, { status: 201 }));
+      await Promise.resolve();
+    });
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
+    await act(async () => {
+      jest.advanceTimersByTime(0);
+      await Promise.resolve();
+    });
+
+    expect(uploadRawRoute).not.toHaveBeenCalled();
+    expect(mockStore.getState().activity.pendingRawRouteUploads).toHaveLength(0);
   });
 
   it('returns to the previous screen after saving a manual activity', async () => {

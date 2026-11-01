@@ -1,4 +1,4 @@
-import { getMapControlButtonSize, getMapControlButtonStyle, MAP_CONTROL_BUTTON_BACKGROUND } from './const';
+import { getMapControlButtonSize, getMapControlButtonStyle } from './const';
 
 describe('map control button styles', () => {
   it('selects a compact size for narrow screens and grows with available width', () => {
@@ -7,10 +7,11 @@ describe('map control button styles', () => {
     expect(getMapControlButtonSize(430)).toBe(56);
   });
 
-  it('uses a circular transparent surface', () => {
-    expect(getMapControlButtonStyle(48)).toEqual(
+  it('uses an opaque circular surface with a subtle outline', () => {
+    expect(getMapControlButtonStyle(48, '#ffffff', '#dddddd')).toEqual(
       expect.objectContaining({
-        backgroundColor: MAP_CONTROL_BUTTON_BACKGROUND,
+        backgroundColor: '#ffffff',
+        borderColor: '#dddddd',
         borderRadius: 24,
         height: 48,
         width: 48,

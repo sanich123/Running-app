@@ -1,0 +1,1 @@
+export const IOS_ACTIVITY_HEADER_ICON_COLOR = '#000000';

@@ -10,7 +10,6 @@ import {
 } from '@R/services/activity/activity';
 import { useUpdateSessionLocationMutation } from '@R/services/authentication/authentication';
 import {
-  queuePendingRawRouteUpload,
   queueUnsyncedActivity,
   removePendingRawRouteUpload,
   resetActivityDraft,
@@ -21,6 +20,7 @@ import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-reco
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { useGlobalManualActivityParams } from '@Routes/save-activity-page/manual-activity-params';
 import { errorToast } from '@S/error-toast/error-toast';
+import { uploadRawRouteAndQueueOnFailure } from '@U/activity-track/upload-raw-route';
 import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
@@ -149,23 +149,13 @@ export default function SaveBtn() {
               await sendActivity(savedActivity)
                 .unwrap()
                 .then((createdActivity) => {
-                  if (!isManualAdding && finishedActivity.routeJournalId) {
-                    const routeJournalId = finishedActivity.routeJournalId;
+                  const routeJournalId = isManualAdding ? null : finishedActivity.routeJournalId;
+                  if (routeJournalId) {
                     deactivateLocationJournal(routeJournalId);
                     dispatch(clearTrackingRecovery());
-                    dispatch(
-                      queuePendingRawRouteUpload({
-                        activityId: createdActivity.id,
-                        routeJournalId,
-                        title: savedActivity.body.title,
-                        date: savedActivity.body.date ?? new Date().toISOString(),
-                        sport: savedActivity.body.sport,
-                      }),
-                    );
                   }
                   const navigationResult = isManualAdding ? back() : replace(ROUTES.root);
-                  if (!isManualAdding && finishedActivity.routeJournalId) {
-                    const routeJournalId = finishedActivity.routeJournalId;
+                  if (routeJournalId) {
                     setTimeout(() => {
                       const rawLocations = readLocationJournal(routeJournalId)?.locations ?? [];
                       if (!rawLocations.length) {
@@ -173,13 +163,18 @@ export default function SaveBtn() {
                         removeLocationJournal(routeJournalId);
                         return;
                       }
-                      void uploadRawLocations({ activityId: createdActivity.id, locations: rawLocations })
-                        .unwrap()
-                        .then(() => {
-                          dispatch(removePendingRawRouteUpload(createdActivity.id));
-                          removeLocationJournal(routeJournalId);
-                        })
-                        .catch(() => undefined);
+                      void uploadRawRouteAndQueueOnFailure({
+                        pendingUpload: {
+                          activityId: createdActivity.id,
+                          routeJournalId,
+                          title: savedActivity.body.title,
+                          date: savedActivity.body.date ?? new Date().toISOString(),
+                          sport: savedActivity.body.sport,
+                        },
+                        locations: rawLocations,
+                        dispatch,
+                        uploadRawLocations,
+                      }).catch(() => undefined);
                     }, 0);
                   }
                   return navigationResult;

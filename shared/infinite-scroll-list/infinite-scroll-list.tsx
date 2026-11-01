@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { FlatList, Platform } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
 import UnsendedActivitiesIndicator from '@S/infinite-scroll-list/unsended-activities/unsended-activities-indicator/unsended-activities-indicator';
 import WeekStatistics from '@S/infinite-scroll-list/week-statistics/week-statistics';
 import useRefresh from '@U/hooks/use-refresh';
@@ -19,7 +18,6 @@ export default function InfiniteScrollList({
   headerAfterWeekStatistics,
 }: InfiniteScrollListProps) {
   const { onRefresh, refreshing } = useRefresh(refetch);
-  const { unsyncedActivities, pendingRawRouteUploads } = useAppSelector(({ activity }) => activity);
   const requestInFlight = useRef(false);
   const dataLength = useRef(dataToRender.length);
   useEffect(() => {
@@ -73,7 +71,7 @@ export default function InfiniteScrollList({
       ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" /> : undefined}
       ListHeaderComponent={() => (
         <>
-          {unsyncedActivities?.length || pendingRawRouteUploads?.length ? <UnsendedActivitiesIndicator /> : null}
+          <UnsendedActivitiesIndicator />
           {dataToRender?.length ? <WeekStatistics /> : null}
           {headerAfterWeekStatistics}
         </>

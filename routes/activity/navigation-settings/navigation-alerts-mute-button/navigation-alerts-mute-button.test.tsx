@@ -1,5 +1,4 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { StyleSheet } from 'react-native';
 import { setNavigationAlertsMuted } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -19,8 +18,6 @@ describe('NavigationAlertsMuteButton', () => {
 
     expect(mockStore.getState().settings.navigationAlertsMuted).toBe(true);
     expect(screen.getByLabelText('Включить голосовые уведомления навигации')).toBeOnTheScreen();
-    const muteButtonStyle = StyleSheet.flatten(screen.getByTestId('navigation-alerts-mute-button').props.style);
-    expect(muteButtonStyle.borderWidth).toBe(0);
     expect(screen.getByTestId('navigation-alerts-mute-button').props.accessibilityState.selected).toBe(false);
   });
 });

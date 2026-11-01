@@ -1,4 +1,9 @@
+import Mapbox from '@rnmapbox/maps';
+import { Platform } from 'react-native';
+import { ACTIVITY_ROUTE_REPLAY_MAP_STYLES } from '@S/activity-route-replay/const';
 import type { OfflineBounds } from '../const';
+
+export const OFFLINE_MAP_THUMBNAIL_ASPECT_RATIO = 3 / 4;
 
 export function formatBytes(sizeBytes: number) {
   if (sizeBytes < 1) return '0 MB';
@@ -28,6 +33,12 @@ function readCoordinate(value: unknown): [number, number] | null {
 }
 
 export function parseOfflineMapPackBounds(serializedBounds: unknown): OfflineBounds | null {
+  if (Array.isArray(serializedBounds) && serializedBounds.length === 2) {
+    const northEast = readCoordinate(serializedBounds[0]);
+    const southWest = readCoordinate(serializedBounds[1]);
+    return northEast && southWest && northEast[1] > southWest[1] ? [northEast, southWest] : null;
+  }
+
   if (Array.isArray(serializedBounds) && serializedBounds.length === 4) {
     const [northEastLongitude, northEastLatitude, southWestLongitude, southWestLatitude] = serializedBounds;
     const northEast = readCoordinate([northEastLongitude, northEastLatitude]);
@@ -58,4 +69,22 @@ export function getOfflineMapBoundsCenter(bounds: OfflineBounds): [number, numbe
   const longitudeSpan = ((northEast[0] - southWest[0] + 540) % 360) - 180;
   const longitude = ((southWest[0] + longitudeSpan / 2 + 540) % 360) - 180;
   return [longitude, (northEast[1] + southWest[1]) / 2];
+}
+
+export async function takeOfflineMapThumbnail(bounds: OfflineBounds, isSatellite: boolean) {
+  if (Platform.OS === 'web') return undefined;
+  const width = 384;
+  const height = 512;
+
+  return {
+    uri: await Mapbox.snapshotManager.takeSnap({
+      bounds,
+      height,
+      styleURL: isSatellite ? ACTIVITY_ROUTE_REPLAY_MAP_STYLES.satellite : ACTIVITY_ROUTE_REPLAY_MAP_STYLES.map,
+      width,
+      withLogo: false,
+      writeToDisk: true,
+    }),
+    aspectRatio: OFFLINE_MAP_THUMBNAIL_ASPECT_RATIO,
+  };
 }

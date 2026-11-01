@@ -15,9 +15,10 @@ import {
 } from '@R/slices/location/location';
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { IOS_ACTIVITY_HEADER_ICON_COLOR } from '@Routes/activity/const';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { errorToast } from '@S/error-toast/error-toast';
-import { MAP_CONTROL_BUTTON_BACKGROUND } from '@S/map-control-button/const';
+import { getMapControlButtonStyle } from '@S/map-control-button/const';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getActiveLocationJournalId, removeLocationJournal } from '@U/location/location-journal';
@@ -83,26 +84,26 @@ export default function CloseBtn() {
           accessibilityState={{ disabled: isStoppingTracking }}
           disabled={isStoppingTracking}
           onPress={stopTrackingAndClose}
-          style={[styles.iconButton, { backgroundColor: 'transparent' }]}
+          style={styles.iosHeaderButton}
           testID="activity-close-button">
           {isStoppingTracking ? (
-            <ActivityIndicator size={18} color={colors.primary} />
+            <ActivityIndicator size={18} color={IOS_ACTIVITY_HEADER_ICON_COLOR} />
           ) : (
-            <SymbolView name="xmark" size={20} tintColor={colors.primary} weight="semibold" />
+            <SymbolView name="xmark" size={20} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="semibold" />
           )}
         </Pressable>
       ) : (
         <IconButton
           accessibilityLabel={ACTIVITY_CLOSE_BTN[language].btnText}
-          containerColor={MAP_CONTROL_BUTTON_BACKGROUND}
+          containerColor={colors.surface}
           disabled={isStoppingTracking}
           icon="close"
-          iconColor={colors.primary}
+          iconColor={colors.onSurface}
           loading={isStoppingTracking}
           mode="contained-tonal"
           onPress={stopTrackingAndClose}
           size={22}
-          style={styles.iconButton}
+          style={[styles.iconButton, getMapControlButtonStyle(40, colors.surface, colors.outlineVariant)]}
           testID="activity-close-button"
         />
       )}
@@ -129,5 +130,11 @@ const styles = StyleSheet.create({
     margin: 0,
     minHeight: 40,
     minWidth: 40,
+  },
+  iosHeaderButton: {
+    alignItems: 'center',
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
   },
 });

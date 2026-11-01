@@ -4,6 +4,7 @@ import type * as ReactNative from 'react-native';
 import { StyleSheet } from 'react-native';
 import { setInitialLocation, setLastPosition } from '@R/slices/location/location';
 import { setIsProfileFilled } from '@R/slices/settings/settings';
+import ActivityNavigationContext, { type ActivityNavigationContextValue } from '@Routes/activity/navigation-context';
 import { MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore, setMockUserId, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -14,6 +15,36 @@ import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 const mockSetCamera = jest.fn();
 const mockFitBounds = jest.fn();
 const mockGetVisibleBounds = jest.fn();
+const defaultNavigationContext: ActivityNavigationContextValue = {
+  navigationTrackId: 'saved-route',
+  navigationRoute: null,
+  isNavigationActive: false,
+  hasNavigationStarted: false,
+  isNavigationRouteVisible: true,
+  startNavigationLabel: 'Start navigation',
+  pauseNavigationLabel: 'Pause navigation',
+  resumeNavigationLabel: 'Resume navigation',
+  finishNavigationLabel: 'Finish navigation',
+  showImportedRouteLabel: 'Show route',
+  hideImportedRouteLabel: 'Hide route',
+  downloadOfflineMapLabel: 'Download offline map',
+  onToggleNavigationActive: jest.fn(),
+  onToggleNavigationRouteVisibility: jest.fn(),
+  onFinishNavigation: jest.fn(),
+  onDownloadOfflineMap: jest.fn(),
+};
+
+function renderMapWithNavigation(
+  navigation: Partial<ActivityNavigationContextValue>,
+  onLocationReadinessChange: (isReady: boolean) => void = jest.fn(),
+) {
+  return renderWithProviders(
+    <ActivityNavigationContext.Provider value={{ ...defaultNavigationContext, ...navigation }}>
+      <Map onLocationReadinessChange={onLocationReadinessChange} />
+    </ActivityNavigationContext.Provider>,
+  );
+}
+
 jest.mock('@rnmapbox/maps', () => {
   const React = jest.requireActual('react');
   const { View } = jest.requireActual('react-native') as typeof ReactNative;
@@ -193,31 +224,32 @@ describe('activity recording map', () => {
   it('fits the imported route, toggles its visibility and opens offline download for its bounds', async () => {
     const user = userEvent.setup();
     const onToggleRoute = jest.fn();
+    const onToggleNavigationActive = jest.fn();
     const onFinishNavigation = jest.fn();
     const onDownloadOfflineMap = jest.fn();
     const route = [{ coords: { latitude: 55.7, longitude: 37.6 } }, { coords: { latitude: 55.71, longitude: 37.61 } }];
-    await renderWithProviders(
-      <Map
-        onLocationReadinessChange={jest.fn()}
-        navigationRoute={route}
-        onToggleNavigationRouteVisibility={onToggleRoute}
-        onFinishNavigation={onFinishNavigation}
-        onDownloadOfflineMap={onDownloadOfflineMap}
-      />,
-    );
+    await renderMapWithNavigation({
+      navigationRoute: route,
+      onToggleNavigationRouteVisibility: onToggleRoute,
+      onToggleNavigationActive,
+      onFinishNavigation,
+      onDownloadOfflineMap,
+    });
 
     expect(await screen.findByTestId('activity-map-route-navigation')).toBeOnTheScreen();
     expect(screen.getByTestId('navigation-preferences')).toBeOnTheScreen();
     expect(StyleSheet.flatten(screen.getByTestId('navigation-actions').props.style).bottom).toBe(24);
-    expect(StyleSheet.flatten(screen.getByTestId('navigation-preferences').props.style).bottom).toBeGreaterThan(24);
+    expect(StyleSheet.flatten(screen.getByTestId('navigation-preferences').props.style).top).toBeGreaterThan(0);
     await waitFor(() =>
       expect(mockFitBounds).toHaveBeenCalledWith([37.61, 55.71], [37.6, 55.7], [56, 56, 56, 56], 500),
     );
+    await user.press(screen.getByTestId('toggle-navigation-active'));
     await user.press(screen.getByTestId('toggle-imported-route-visibility'));
     await user.press(screen.getByTestId('finish-route-navigation'));
     await user.press(screen.getByTestId('download-offline-map-for-route'));
 
     expect(onToggleRoute).toHaveBeenCalledTimes(1);
+    expect(onToggleNavigationActive).toHaveBeenCalledTimes(1);
     expect(onFinishNavigation).toHaveBeenCalledTimes(1);
     await waitFor(() => expect(onDownloadOfflineMap).toHaveBeenCalledTimes(1));
     expect(onDownloadOfflineMap.mock.calls[0]?.[0]).toEqual([
@@ -234,16 +266,13 @@ describe('activity recording map', () => {
     const onToggleRoute = jest.fn();
     const onDownloadOfflineMap = jest.fn();
     const route = [{ coords: { latitude: 55.7, longitude: 37.6 } }, { coords: { latitude: 55.71, longitude: 37.61 } }];
-    await renderWithProviders(
-      <Map
-        onLocationReadinessChange={jest.fn()}
-        navigationRoute={route}
-        isNavigationRouteVisible={false}
-        onToggleNavigationRouteVisibility={onToggleRoute}
-        onFinishNavigation={jest.fn()}
-        onDownloadOfflineMap={onDownloadOfflineMap}
-      />,
-    );
+    await renderMapWithNavigation({
+      navigationRoute: route,
+      isNavigationRouteVisible: false,
+      onToggleNavigationRouteVisibility: onToggleRoute,
+      onFinishNavigation: jest.fn(),
+      onDownloadOfflineMap,
+    });
 
     expect(screen.queryByTestId('activity-map-route-navigation')).toBeNull();
     await user.press(screen.getByTestId('toggle-imported-route-visibility'));
@@ -260,15 +289,12 @@ describe('activity recording map', () => {
   });
 
   it('does not offer an offline download when the selected route has fewer than two points', async () => {
-    await renderWithProviders(
-      <Map
-        onLocationReadinessChange={jest.fn()}
-        navigationRoute={[{ coords: { latitude: 55.7, longitude: 37.6 } }]}
-        onToggleNavigationRouteVisibility={jest.fn()}
-        onFinishNavigation={jest.fn()}
-        onDownloadOfflineMap={jest.fn()}
-      />,
-    );
+    await renderMapWithNavigation({
+      navigationRoute: [{ coords: { latitude: 55.7, longitude: 37.6 } }],
+      onToggleNavigationRouteVisibility: jest.fn(),
+      onFinishNavigation: jest.fn(),
+      onDownloadOfflineMap: jest.fn(),
+    });
 
     expect(screen.getByTestId('toggle-imported-route-visibility')).toBeOnTheScreen();
     expect(screen.getByTestId('finish-route-navigation')).toBeOnTheScreen();

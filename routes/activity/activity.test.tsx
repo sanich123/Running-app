@@ -40,21 +40,22 @@ jest.mock('@Routes/activity/map/map', () => ({
   __esModule: true,
   default: function ActivityMapMock({
     onLocationReadinessChange,
-    onDownloadOfflineMap,
   }: {
     onLocationReadinessChange: (value: boolean) => void;
-    onDownloadOfflineMap?: (bounds: [[number, number], [number, number]], center: [number, number]) => void;
   }) {
     const React = require('react');
     const { Pressable, View, Text } = require('react-native');
+    const ActivityNavigationContext = require('./navigation-context').default;
+    const navigation = React.useContext(ActivityNavigationContext);
     React.useEffect(() => onLocationReadinessChange(true), [onLocationReadinessChange]);
     return (
       <View testID="activity-map">
         <Text>map</Text>
+        <Pressable testID="activity-start-navigation" onPress={() => navigation?.onToggleNavigationActive()} />
         <Pressable
           testID="activity-open-offline-map-download"
           onPress={() =>
-            onDownloadOfflineMap?.(
+            navigation?.onDownloadOfflineMap(
               [
                 [38, 56],
                 [37, 55],
@@ -109,6 +110,7 @@ jest.mock('@Routes/activity/start-btn/start-btn', () => ({
 describe('Activity', () => {
   let mockStopLocationTracking: jest.SpiedFunction<typeof backgroundLocation.stopLocationTracking>;
   let mockErrorToast: jest.SpiedFunction<typeof errorToastModule.errorToast>;
+  let mockDateNow: jest.SpiedFunction<typeof Date.now> | null = null;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -119,6 +121,16 @@ describe('Activity', () => {
     mockStopLocationTracking = jest.spyOn(backgroundLocation, 'stopLocationTracking').mockResolvedValue(undefined);
     mockErrorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
   });
+
+  afterEach(() => {
+    mockDateNow?.mockRestore();
+    mockDateNow = null;
+  });
+
+  async function startNavigation() {
+    const user = userEvent.setup();
+    await user.press(await screen.findByTestId('activity-start-navigation'));
+  }
 
   it('renders the initial activity controls and waits for the map to be ready', async () => {
     await renderWithProviders(<Activity />);
@@ -214,6 +226,7 @@ describe('Activity', () => {
     );
 
     await renderWithProviders(<Activity />);
+    await startNavigation();
 
     await waitFor(() => expect(Speech.speak).toHaveBeenCalledWith(text, expect.objectContaining({ language: locale })));
     expect(Speech.speak).toHaveBeenCalledTimes(1);
@@ -241,6 +254,7 @@ describe('Activity', () => {
     );
 
     await renderWithProviders(<Activity />);
+    await startNavigation();
 
     await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
     expect(Speech.speak).not.toHaveBeenCalled();
@@ -267,6 +281,7 @@ describe('Activity', () => {
     );
 
     await renderWithProviders(<Activity />);
+    await startNavigation();
 
     await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
     expect(Speech.speak).not.toHaveBeenCalled();
@@ -296,6 +311,7 @@ describe('Activity', () => {
     );
 
     await renderWithProviders(<Activity />);
+    await startNavigation();
 
     await waitFor(() =>
       expect(Speech.speak).toHaveBeenCalledWith(
@@ -333,6 +349,7 @@ describe('Activity', () => {
       );
 
       await renderWithProviders(<Activity />);
+      await startNavigation();
 
       await waitFor(() =>
         expect(Speech.speak).toHaveBeenCalledWith(text, expect.objectContaining({ language: locale })),
@@ -341,6 +358,7 @@ describe('Activity', () => {
   );
 
   it('repeats the warning at the selected interval while the user stays off route', async () => {
+    mockDateNow = jest.spyOn(Date, 'now').mockReturnValue(1_000);
     jest
       .spyOn(activityTrackLibrary, 'readSavedActivityTrack')
       .mockResolvedValue([{ coords: { latitude: 0, longitude: 0 } }, { coords: { latitude: 0, longitude: 0.001 } }]);
@@ -363,8 +381,10 @@ describe('Activity', () => {
     );
 
     await renderWithProviders(<Activity />);
+    await startNavigation();
 
     await waitFor(() => expect(Speech.speak).toHaveBeenCalledTimes(1));
+    mockDateNow.mockReturnValue(60_999);
     await act(async () => {
       mockStore.dispatch(
         setLastPosition({
@@ -383,6 +403,7 @@ describe('Activity', () => {
     });
     expect(Speech.speak).toHaveBeenCalledTimes(1);
 
+    mockDateNow.mockReturnValue(61_000);
     await act(async () => {
       mockStore.dispatch(
         setLastPosition({
@@ -424,6 +445,7 @@ describe('Activity', () => {
     );
 
     await renderWithProviders(<Activity />);
+    await startNavigation();
     await waitFor(() => expect(Speech.speak).toHaveBeenCalledTimes(1));
 
     await act(async () => {
@@ -487,6 +509,7 @@ describe('Activity', () => {
     );
 
     await renderWithProviders(<Activity />);
+    await startNavigation();
 
     await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
     expect(Speech.speak).not.toHaveBeenCalled();
@@ -515,6 +538,7 @@ describe('Activity', () => {
     );
 
     await renderWithProviders(<Activity />);
+    await startNavigation();
 
     await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
     expect(Speech.speak).not.toHaveBeenCalled();
@@ -546,6 +570,7 @@ describe('Activity', () => {
     );
 
     await renderWithProviders(<Activity />);
+    await startNavigation();
 
     await waitFor(() => expect(screen.getByTestId('activity-map')).toBeOnTheScreen());
     expect(Speech.speak).not.toHaveBeenCalled();

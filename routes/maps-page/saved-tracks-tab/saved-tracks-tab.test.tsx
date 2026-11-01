@@ -5,6 +5,7 @@ import * as Sharing from 'expo-sharing';
 import type * as ReactNative from 'react-native';
 import { ROUTES, LANGUAGES } from '@const/enums';
 import { setNavigationTrackId } from '@R/slices/location/location';
+import { errorToast } from '@S/error-toast/error-toast';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import {
@@ -22,7 +23,9 @@ const mockPush = jest.fn();
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
 jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(), shareAsync: jest.fn() }));
+jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 jest.mock('@U/activity-track/track-library', () => ({
+  getActivityTrackExportFilename: () => '2026-11-01_run_15-55-38.gpx',
   deleteAllSavedActivityTracks: jest.fn(),
   deleteSavedActivityTrack: jest.fn(),
   getSavedActivityTracksStorageBytes: jest.fn(),
@@ -49,6 +52,8 @@ const savedTrack = {
   activityId: 'run-1',
   title: 'Morning run',
   date: '2026-10-29T06:00:00.000Z',
+  sport: 'run',
+  distanceMeters: 5500,
   pointCount: 245,
 };
 
@@ -62,6 +67,7 @@ describe('saved tracks tab', () => {
     jest.mocked(deleteAllSavedActivityTracks).mockReset().mockResolvedValue([]);
     jest.mocked(getSavedActivityTracksStorageBytes).mockReset().mockReturnValue(1024);
     jest.mocked(getSavedActivityTrackFile).mockReset();
+    jest.mocked(errorToast).mockReset();
     jest.mocked(Sharing.isAvailableAsync).mockReset().mockResolvedValue(true);
     jest.mocked(Sharing.shareAsync).mockReset().mockResolvedValue(undefined);
   });
@@ -101,6 +107,81 @@ describe('saved tracks tab', () => {
     await user.press(await screen.findByText(copy.delete));
     await waitFor(() => expect(deleteSavedActivityTrack).toHaveBeenCalledWith(savedTrack.id));
     expect(mockStore.getState().location.navigationTrackId).toBeNull();
+  });
+
+  it('keeps a different active route when deleting a saved track', async () => {
+    jest.mocked(deleteSavedActivityTrack).mockResolvedValue([]);
+    mockStore.dispatch(setNavigationTrackId('another-track'));
+    const user = userEvent.setup();
+    await renderWithProviders(<SavedTracksTab copy={copy} />, { store: mockStore });
+
+    await user.press(await screen.findByTestId(`track-actions-${savedTrack.id}`));
+    await user.press(await screen.findByText(copy.delete));
+
+    await waitFor(() => expect(deleteSavedActivityTrack).toHaveBeenCalledWith(savedTrack.id));
+    expect(mockStore.getState().location.navigationTrackId).toBe('another-track');
+  });
+
+  it('shares the FIT course with its FIT export type', async () => {
+    jest
+      .mocked(getSavedActivityTrackFile)
+      .mockResolvedValue({ uri: 'file:///track.fit' } as Awaited<ReturnType<typeof getSavedActivityTrackFile>>);
+    const user = userEvent.setup();
+    await renderWithProviders(<SavedTracksTab copy={copy} />, { store: mockStore });
+
+    await user.press(await screen.findByTestId(`track-actions-${savedTrack.id}`));
+    await user.press(await screen.findByText(copy.shareFit));
+
+    await waitFor(() =>
+      expect(Sharing.shareAsync).toHaveBeenCalledWith(
+        'file:///track.fit',
+        expect.objectContaining({ dialogTitle: copy.shareFit, mimeType: 'application/vnd.ant.fit' }),
+      ),
+    );
+  });
+
+  it('reports a delete failure and keeps the saved track visible', async () => {
+    const deleteError = new Error('Storage unavailable');
+    jest.mocked(deleteSavedActivityTrack).mockRejectedValue(deleteError);
+    const user = userEvent.setup();
+    await renderWithProviders(<SavedTracksTab copy={copy} />, { store: mockStore });
+
+    await user.press(await screen.findByTestId(`track-actions-${savedTrack.id}`));
+    await user.press(await screen.findByText(copy.delete));
+
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(copy.trackManagementFailed, deleteError));
+    expect(screen.getByTestId(`saved-track-${savedTrack.id}`)).toBeOnTheScreen();
+  });
+
+  it('renders a saved track without distance metadata', async () => {
+    const legacyTrack = {
+      id: 'legacy-track',
+      activityId: 'legacy-activity',
+      title: 'Legacy route',
+      date: '2026-10-29T06:00:00.000Z',
+      pointCount: 12,
+    };
+    jest.mocked(listSavedActivityTracks).mockResolvedValue([legacyTrack]);
+
+    await renderWithProviders(<SavedTracksTab copy={copy} />, { store: mockStore });
+
+    expect(await screen.findByTestId('saved-track-legacy-track')).toBeOnTheScreen();
+    expect(screen.getByText('Legacy route')).toBeOnTheScreen();
+  });
+
+  it('reports when FIT sharing is unavailable', async () => {
+    jest
+      .mocked(getSavedActivityTrackFile)
+      .mockResolvedValue({ uri: 'file:///track.fit' } as Awaited<ReturnType<typeof getSavedActivityTrackFile>>);
+    jest.mocked(Sharing.isAvailableAsync).mockResolvedValue(false);
+    const user = userEvent.setup();
+    await renderWithProviders(<SavedTracksTab copy={copy} />, { store: mockStore });
+
+    await user.press(await screen.findByTestId(`track-actions-${savedTrack.id}`));
+    await user.press(await screen.findByText(copy.shareFit));
+
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(copy.trackShareFailed, expect.any(Error)));
+    expect(Sharing.shareAsync).not.toHaveBeenCalled();
   });
 
   it('confirms before clearing all tracks and clears active navigation after completion', async () => {

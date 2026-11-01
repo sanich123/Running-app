@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react';
 import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { View } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
@@ -7,8 +9,20 @@ import GroupsPage from './groups-page';
 
 const mockPush = jest.fn();
 const mockGetGroupsQuery = jest.fn();
+interface MockStackScreenProps {
+  options?: { headerTitle?: () => ReactNode; headerRight?: () => ReactNode };
+}
 
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+function mockStackScreen({ options }: MockStackScreenProps) {
+  return (
+    <View testID="groups-header">
+      {options?.headerTitle?.()}
+      {options?.headerRight?.()}
+    </View>
+  );
+}
+
+jest.mock('expo-router', () => ({ Stack: { Screen: mockStackScreen }, useRouter: () => ({ push: mockPush }) }));
 jest.mock('@R/services/groups/groups', () => ({
   useGetGroupsQuery: (...args: unknown[]) => mockGetGroupsQuery(...args),
 }));
@@ -119,7 +133,8 @@ describe('GroupsPage', () => {
     const user = userEvent.setup();
     await renderWithProviders(<GroupsPage />);
 
-    await user.type(screen.getByPlaceholderText('Search groups'), 'unknown');
+    await user.press(screen.getByTestId('open-groups-search'));
+    await user.type(screen.getByTestId('search-groups'), 'unknown');
 
     await waitFor(() =>
       expect(mockGetGroupsQuery).toHaveBeenLastCalledWith({ scope: 'all', search: 'unknown', sport: undefined }),

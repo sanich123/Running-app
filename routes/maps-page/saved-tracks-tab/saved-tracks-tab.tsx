@@ -13,6 +13,7 @@ import { errorToast } from '@S/error-toast/error-toast';
 import {
   deleteSavedActivityTrack,
   deleteAllSavedActivityTracks,
+  getActivityTrackExportFilename,
   getSavedActivityTracksStorageBytes,
   getSavedActivityTrackFile,
   listSavedActivityTracks,
@@ -100,9 +101,9 @@ export default function SavedTracksTab({ copy }: { copy: MapsPageCopy }) {
     }
   }
 
-  async function shareTrack(trackId: string, format: 'gpx' | 'fit') {
+  async function shareTrack(track: SavedActivityTrack, format: 'gpx' | 'fit') {
     try {
-      const file = await getSavedActivityTrackFile(trackId, format);
+      const file = await getSavedActivityTrackFile(track.id, format, getActivityTrackExportFilename(track, format));
       if (!(await Sharing.isAvailableAsync())) throw new Error('Sharing is not available on this device');
       await Sharing.shareAsync(file.uri, {
         dialogTitle: format === 'gpx' ? copy.shareGpx : copy.shareFit,
@@ -253,14 +254,14 @@ export default function SavedTracksTab({ copy }: { copy: MapsPageCopy }) {
                           testID: `share-gpx-${track.id}`,
                           leadingIcon: 'file-download-outline',
                           systemImage: 'arrow.down.doc',
-                          onPress: () => void shareTrack(track.id, 'gpx'),
+                          onPress: () => void shareTrack(track, 'gpx'),
                         },
                         {
                           label: copy.shareFit,
                           testID: `share-fit-${track.id}`,
                           leadingIcon: 'file-download-outline',
                           systemImage: 'arrow.down.doc',
-                          onPress: () => void shareTrack(track.id, 'fit'),
+                          onPress: () => void shareTrack(track, 'fit'),
                         },
                         {
                           label: copy.delete,

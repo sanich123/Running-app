@@ -56,12 +56,13 @@ const activity = createSlice({
       state.unsyncedActivities = [];
     },
     queuePendingRawRouteUpload: (state, action: PayloadAction<PendingRawRouteUpload>) => {
-      if (!state.pendingRawRouteUploads.some(({ activityId }) => activityId === action.payload.activityId)) {
-        state.pendingRawRouteUploads.push(action.payload);
+      const pendingUploads = (state.pendingRawRouteUploads ??= []);
+      if (!pendingUploads.some(({ activityId }) => activityId === action.payload.activityId)) {
+        pendingUploads.push(action.payload);
       }
     },
     removePendingRawRouteUpload: (state, action: PayloadAction<string>) => {
-      state.pendingRawRouteUploads = state.pendingRawRouteUploads.filter(
+      state.pendingRawRouteUploads = (state.pendingRawRouteUploads ?? []).filter(
         ({ activityId }) => activityId !== action.payload,
       );
     },

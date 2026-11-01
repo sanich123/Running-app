@@ -7,7 +7,11 @@ import { useLazyGetLocationsByActivityIdQuery } from '@R/services/activity/activ
 import { setNavigationTrackId } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { getSavedActivityTrackFile, saveActivityTrack } from '@U/activity-track/track-library';
+import {
+  getActivityTrackExportFilename,
+  getSavedActivityTrackFile,
+  saveActivityTrack,
+} from '@U/activity-track/track-library';
 import { ACTIVITY_ACTIONS_MENU, ACTIVITY_ACTIONS_MENU_TEST_IDS } from '../const';
 import MenuItem from '../menu-item/menu-item';
 import type { ActivityResponse } from '@R/runich-api/types';
@@ -41,7 +45,7 @@ export default function ActivityRouteActions({ activity }: { activity: ActivityR
         locations,
       });
       if (!(await Sharing.isAvailableAsync())) throw new Error(copy.sharingUnavailable);
-      const file = await getSavedActivityTrackFile(track.id, format);
+      const file = await getSavedActivityTrackFile(track.id, format, getActivityTrackExportFilename(track, format));
       await Sharing.shareAsync(file.uri, {
         dialogTitle: format === 'gpx' ? copy.downloadGpx : copy.downloadFit,
         mimeType: format === 'gpx' ? 'application/gpx+xml' : 'application/vnd.ant.fit',

@@ -22,14 +22,14 @@ export default function MapControlButton({
   const { width } = useWindowDimensions();
   const buttonSize = getMapControlButtonSize(width);
   const iconSize = Math.round(buttonSize * 0.43);
-  const resolvedIconColor = iconColor ?? colors.primary;
+  const resolvedIconColor = iconColor ?? colors.onSurface;
   const isUnavailable = disabled || loading;
-  const hasOverlayIcon = Boolean(androidOverlayIcon && iosOverlaySymbol);
+  const hasOverlayIcon = Boolean(androidOverlayIcon || iosOverlaySymbol);
   const buttonStyle = [
-    getMapControlButtonStyle(buttonSize),
+    getMapControlButtonStyle(buttonSize, colors.surface, colors.outlineVariant),
     {
-      borderColor: selected ? colors.primary : 'transparent',
-      borderWidth: selected ? 1.5 : 0,
+      borderColor: selected ? colors.primary : colors.outlineVariant,
+      borderWidth: selected ? 1.5 : StyleSheet.hairlineWidth,
       opacity: isUnavailable ? 0.45 : 1,
     },
   ];
@@ -39,7 +39,7 @@ export default function MapControlButton({
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled: isUnavailable, selected }}
-      android_ripple={Platform.OS === 'android' ? { color: 'rgba(0, 0, 0, 0.12)', radius: buttonSize / 2 } : undefined}
+      android_ripple={Platform.OS === 'android' ? { color: colors.onSurface, radius: buttonSize / 2 } : undefined}
       disabled={isUnavailable}
       onPress={onPress}
       style={buttonStyle}
@@ -58,11 +58,11 @@ export default function MapControlButton({
               <SymbolView
                 name={iosOverlaySymbol ?? 'arrow.down'}
                 size={10}
-                tintColor={resolvedIconColor}
+                tintColor={colors.onSurface}
                 weight="semibold"
               />
             ) : (
-              <Icon source={androidOverlayIcon ?? 'download'} size={11} color={resolvedIconColor} />
+              <Icon source={androidOverlayIcon ?? 'download'} size={11} color={colors.onSurface} />
             )}
           </View>
         </View>

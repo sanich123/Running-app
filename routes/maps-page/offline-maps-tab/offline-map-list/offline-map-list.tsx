@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import Mapbox from '@rnmapbox/maps';
+import { Image } from 'expo-image';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { IconButton, Text, TextInput, useTheme } from 'react-native-paper';
+import { Icon, IconButton, Menu, Text, TextInput, useTheme } from 'react-native-paper';
 import { errorToast } from '@S/error-toast/error-toast';
 import { removeOfflineMap, renameOfflineMap, type SavedOfflineMap } from '@U/offline-map-library';
-import { formatBytes } from '../utils';
+import { formatBytes, OFFLINE_MAP_THUMBNAIL_ASPECT_RATIO } from '../utils';
 import type { MapsPageCopy } from '../../const';
 
 export default function OfflineMapList({
@@ -21,6 +22,7 @@ export default function OfflineMapList({
   const { colors } = useTheme();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedTitle, setEditedTitle] = useState('');
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   async function saveTitle(id: string) {
     try {
@@ -57,20 +59,52 @@ export default function OfflineMapList({
       key={offlineMap.id}
       style={[styles.row, { borderColor: colors.outlineVariant, backgroundColor: colors.surface }]}>
       {editingId === offlineMap.id ? (
-        <TextInput mode="outlined" dense value={editedTitle} onChangeText={setEditedTitle} style={styles.editInput} />
+        <>
+          <View
+            style={[
+              styles.thumbnail,
+              {
+                aspectRatio: offlineMap.thumbnailAspectRatio ?? OFFLINE_MAP_THUMBNAIL_ASPECT_RATIO,
+                backgroundColor: colors.surfaceVariant,
+              },
+            ]}>
+            {offlineMap.thumbnailUri ? (
+              <Image source={{ uri: offlineMap.thumbnailUri }} contentFit="contain" style={styles.thumbnailImage} />
+            ) : (
+              <Icon source="map-outline" size={28} color={colors.onSurfaceVariant} />
+            )}
+          </View>
+          <TextInput mode="outlined" dense value={editedTitle} onChangeText={setEditedTitle} style={styles.editInput} />
+        </>
       ) : (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`${copy.openMap}: ${offlineMap.title}`}
           onPress={() => onOpenMap?.(offlineMap)}
-          style={styles.mapInfo}
+          style={styles.mapContent}
           testID={`open-offline-map-${offlineMap.id}`}>
-          <Text variant="bodyLarge" style={{ color: colors.onSurface }}>
-            {offlineMap.title}
-          </Text>
-          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-            {offlineMap.sizeBytes === undefined ? '—' : formatBytes(offlineMap.sizeBytes)}
-          </Text>
+          <View
+            style={[
+              styles.thumbnail,
+              {
+                aspectRatio: offlineMap.thumbnailAspectRatio ?? OFFLINE_MAP_THUMBNAIL_ASPECT_RATIO,
+                backgroundColor: colors.surfaceVariant,
+              },
+            ]}>
+            {offlineMap.thumbnailUri ? (
+              <Image source={{ uri: offlineMap.thumbnailUri }} contentFit="contain" style={styles.thumbnailImage} />
+            ) : (
+              <Icon source="map-outline" size={28} color={colors.onSurfaceVariant} />
+            )}
+          </View>
+          <View style={styles.mapInfo}>
+            <Text variant="bodyLarge" style={{ color: colors.onSurface }}>
+              {offlineMap.title}
+            </Text>
+            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+              {offlineMap.sizeBytes === undefined ? '—' : formatBytes(offlineMap.sizeBytes)}
+            </Text>
+          </View>
         </Pressable>
       )}
       {editingId === offlineMap.id ? (
@@ -89,23 +123,45 @@ export default function OfflineMapList({
           />
         </View>
       ) : (
-        <View style={styles.actions}>
-          <IconButton
-            icon="pencil-outline"
-            accessibilityLabel={copy.rename}
-            style={styles.actionButton}
+        <Menu
+          visible={openMenuId === offlineMap.id}
+          onDismiss={() => setOpenMenuId(null)}
+          contentStyle={{
+            backgroundColor: colors.surface,
+            borderColor: colors.outlineVariant,
+            borderRadius: 14,
+            borderWidth: StyleSheet.hairlineWidth,
+          }}
+          anchor={
+            <IconButton
+              icon="dots-vertical"
+              accessibilityLabel={copy.mapActions}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: openMenuId === offlineMap.id }}
+              onPress={() => setOpenMenuId(offlineMap.id)}
+              style={styles.actionButton}
+              testID={`offline-map-actions-${offlineMap.id}`}
+            />
+          }>
+          <Menu.Item
+            leadingIcon="pencil-outline"
+            title={copy.rename}
             onPress={() => {
+              setOpenMenuId(null);
               setEditingId(offlineMap.id);
               setEditedTitle(offlineMap.title);
             }}
           />
-          <IconButton
-            icon="delete-outline"
-            accessibilityLabel={copy.delete}
-            style={styles.actionButton}
-            onPress={() => void deleteMap(offlineMap.id)}
+          <Menu.Item
+            leadingIcon="delete-outline"
+            title={copy.delete}
+            titleStyle={{ color: colors.error }}
+            onPress={() => {
+              setOpenMenuId(null);
+              void deleteMap(offlineMap.id);
+            }}
           />
-        </View>
+        </Menu>
       )}
     </View>
   ));
@@ -117,12 +173,24 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
     flexDirection: 'row',
-    minHeight: 64,
-    paddingLeft: 14,
-    paddingRight: 8,
+    minHeight: 88,
+    padding: 10,
+    gap: 12,
   },
+  thumbnail: {
+    alignItems: 'center',
+    borderRadius: 10,
+    justifyContent: 'center',
+    overflow: 'hidden',
+    width: 96,
+  },
+  thumbnailImage: { height: '100%', width: '100%' },
+  mapContent: { alignItems: 'center', flex: 1, flexDirection: 'row', gap: 12, minHeight: 68 },
   mapInfo: { flex: 1, gap: 2, paddingVertical: 10 },
-  actions: { alignItems: 'center', flexDirection: 'row' },
+  actions: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
   actionButton: { height: 40, margin: 0, width: 40 },
   editInput: { flex: 1, marginVertical: 4 },
 });

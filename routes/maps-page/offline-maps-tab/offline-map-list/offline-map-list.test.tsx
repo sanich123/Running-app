@@ -27,14 +27,16 @@ describe('offline map list', () => {
     const user = userEvent.setup();
     await renderWithProviders(<OfflineMapList maps={[offlineMap]} copy={copy} onMapsChange={onMapsChange} />);
 
-    await user.press(screen.getByLabelText(copy.rename));
+    await user.press(screen.getByTestId(`offline-map-actions-${offlineMap.id}`));
+    await user.press(screen.getByText(copy.rename));
     const input = screen.getByDisplayValue(offlineMap.title);
     await user.clear(input);
     await user.type(input, 'Центр');
     await user.press(screen.getByLabelText(copy.save));
     await waitFor(() => expect(onMapsChange).toHaveBeenCalledWith([{ ...offlineMap, title: 'Центр' }]));
 
-    await user.press(screen.getByLabelText(copy.delete));
+    await user.press(screen.getByTestId(`offline-map-actions-${offlineMap.id}`));
+    await user.press(screen.getByText(copy.delete));
     await waitFor(() => expect(Mapbox.offlineManager.deletePack).toHaveBeenCalledWith(offlineMap.id));
     expect(removeOfflineMap).toHaveBeenCalledWith(offlineMap.id);
     expect(onMapsChange).toHaveBeenLastCalledWith([]);

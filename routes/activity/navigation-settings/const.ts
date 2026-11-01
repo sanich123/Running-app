@@ -18,6 +18,9 @@ export const NAVIGATION_SETTINGS_COPY = {
     voiceAlertsDescription: 'Speak route deviation warnings',
     mute: 'Mute navigation voice alerts',
     unmute: 'Unmute navigation voice alerts',
+    startNavigation: 'Start navigation',
+    pauseNavigation: 'Pause navigation',
+    resumeNavigation: 'Resume navigation',
   },
   [LANGUAGES.russian]: {
     title: 'Настройки навигации',
@@ -36,5 +39,8 @@ export const NAVIGATION_SETTINGS_COPY = {
     voiceAlertsDescription: 'Озвучивать отклонение от маршрута',
     mute: 'Выключить голосовые уведомления навигации',
     unmute: 'Включить голосовые уведомления навигации',
+    startNavigation: 'Запустить навигацию',
+    pauseNavigation: 'Приостановить навигацию',
+    resumeNavigation: 'Продолжить навигацию',
   },
 } as const;

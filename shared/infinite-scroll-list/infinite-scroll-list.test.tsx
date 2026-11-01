@@ -88,6 +88,25 @@ describe('infinite scroll list', () => {
     expect(nextPageCallback).toHaveBeenCalledTimes(1);
   });
 
+  it('does not prefetch when the visible item has no index or is far from the end', async () => {
+    const nextPageCallback = jest.fn().mockResolvedValue(undefined);
+    await renderWithProviders(
+      <InfiniteScrollList
+        dataToRender={activities}
+        refetch={jest.fn()}
+        isLastPage={false}
+        nextPageCallback={nextPageCallback}
+        isFetchingNextPage={false}
+      />,
+    );
+
+    await act(async () => {
+      screen.getByTestId('infinite-scroll-list').props.onViewableItemsChanged({ viewableItems: [{ index: null }] });
+    });
+
+    expect(nextPageCallback).not.toHaveBeenCalled();
+  });
+
   it('does not show a footer loader while the next page is idle', async () => {
     const nextPageCallback = jest.fn().mockResolvedValue(undefined);
     await renderWithProviders(

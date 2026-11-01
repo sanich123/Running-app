@@ -1,11 +1,13 @@
+import { StyleSheet } from 'react-native';
 import type { ViewStyle } from 'react-native';
 
 export const getMapControlButtonSize = (screenWidth: number) => (screenWidth < 380 ? 48 : screenWidth < 430 ? 52 : 56);
-export const MAP_CONTROL_BUTTON_BACKGROUND = 'rgba(255, 255, 255, 0.30)';
-export const getMapControlButtonStyle = (size: number): ViewStyle => ({
+export const getMapControlButtonStyle = (size: number, backgroundColor: string, outlineColor: string): ViewStyle => ({
   alignItems: 'center',
-  backgroundColor: MAP_CONTROL_BUTTON_BACKGROUND,
+  backgroundColor,
+  borderColor: outlineColor,
   borderRadius: size / 2,
+  borderWidth: StyleSheet.hairlineWidth,
   boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.18)',
   height: size,
   justifyContent: 'center',
