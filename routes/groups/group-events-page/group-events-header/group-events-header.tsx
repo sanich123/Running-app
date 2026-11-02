@@ -7,17 +7,21 @@ export default function GroupEventsHeader({
   period,
   onPeriodChange,
   copy,
+  showTitle = true,
 }: {
   groupName: string;
   period: GroupEventPeriod;
   onPeriodChange: (period: GroupEventPeriod) => void;
   copy: GroupEventsCopy;
+  showTitle?: boolean;
 }) {
   return (
     <View style={styles.container}>
-      <Text variant="headlineSmall" style={styles.heading}>
-        {copy.events} · {groupName}
-      </Text>
+      {showTitle && (
+        <Text variant="headlineSmall" style={styles.heading}>
+          {copy.events} · {groupName}
+        </Text>
+      )}
       <SegmentedButtons
         value={period}
         onValueChange={(value) => onPeriodChange(value as GroupEventPeriod)}

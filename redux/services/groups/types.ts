@@ -33,10 +33,13 @@ export interface GroupSummary {
   sports: GroupSport[];
   categoryTags: GroupCategoryTag[];
   photoUrl: string | null;
+  photoPreviewUrl: string | null;
+  photoPending: boolean;
   privacy: GroupPrivacy;
   locationName: string | null;
   createdAt: string;
   createdByUserId: string;
+  isOwner: boolean;
   memberCount: number;
   currentMembership: GroupMembership | null;
   canManage: boolean;
@@ -76,6 +79,17 @@ export interface CreateGroupRequest {
   locationName?: string;
 }
 
+export interface UpdateGroupRequest {
+  groupId: string;
+  name: string;
+  description: string | null;
+  sports: GroupSport[];
+  categoryTags: GroupCategoryTag[];
+  photoAssetId?: string | null;
+  privacy: GroupPrivacy;
+  locationName: string | null;
+}
+
 export interface UpdateGroupMemberRequest {
   groupId: string;
   userId: string;
@@ -103,6 +117,17 @@ export interface GroupMonthlyStatistics {
   items: GroupMonthlyStatisticsItem[];
 }
 
+export interface GroupMonthlyStatisticsPage extends GroupMonthlyStatistics {
+  hasMore: boolean;
+  nextCursor: string | null;
+}
+
+export interface GroupPage<T> {
+  items: T[];
+  hasMore: boolean;
+  nextCursor: string | null;
+}
+
 export interface GroupMonthlyStatisticsQuery {
   groupId: string;
   year: number;
@@ -122,6 +147,9 @@ export interface GroupPost {
   createdAt: string;
   author: { userId: string; name: string | null; profilePhoto: string | null } | null;
   photoUrl: string | null;
+  photoPreviewUrl?: string | null;
+  hasPhoto?: boolean;
+  photoPending?: boolean;
 }
 
 export interface CreateGroupPostRequest {
@@ -135,6 +163,8 @@ export interface GroupEvent {
   title: string;
   description: string | null;
   locationName: string | null;
+  sport: GroupSport | null;
+  distanceKm: number | null;
   startsAt: string;
   createdAt: string;
 }
@@ -149,5 +179,7 @@ export interface CreateGroupEventRequest {
   title: string;
   description?: string;
   locationName?: string;
+  sport?: GroupSport;
+  distanceKm?: number;
   startsAt: string;
 }

@@ -1,14 +1,17 @@
 import type { ReactNode } from 'react';
-import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent, screen, userEvent, waitFor, within } from '@testing-library/react-native';
 import { View } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupsPage from './groups-page';
+import { GROUPS_COPY } from '../const';
 
 const mockPush = jest.fn();
 const mockGetGroupsQuery = jest.fn();
+const mockGetUserProfile = jest.fn();
+const mockUpdateProfile = jest.fn();
 interface MockStackScreenProps {
   options?: { headerTitle?: () => ReactNode; headerRight?: () => ReactNode };
 }
@@ -25,6 +28,10 @@ function mockStackScreen({ options }: MockStackScreenProps) {
 jest.mock('expo-router', () => ({ Stack: { Screen: mockStackScreen }, useRouter: () => ({ push: mockPush }) }));
 jest.mock('@R/services/groups/groups', () => ({
   useGetGroupsQuery: (...args: unknown[]) => mockGetGroupsQuery(...args),
+}));
+jest.mock('@R/services/profile/profile', () => ({
+  useGetUserProfileByUserIdQuery: (...args: unknown[]) => mockGetUserProfile(...args),
+  useUpdateProfileByUserIdMutation: () => [mockUpdateProfile, { isLoading: false }],
 }));
 
 const group = {
@@ -45,6 +52,11 @@ describe('GroupsPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    mockGetUserProfile.mockReturnValue({
+      data: { groupPostsNotifications: true, groupEventsNotifications: true },
+      isSuccess: true,
+    });
+    mockUpdateProfile.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
     mockGetGroupsQuery.mockReturnValue({
       data: [group],
       isLoading: false,
@@ -58,10 +70,17 @@ describe('GroupsPage', () => {
     await renderWithProviders(<GroupsPage />);
 
     expect(screen.getByText('Saturday runners')).toBeOnTheScreen();
+    const header = screen.getByTestId('groups-header');
+    expect(within(header).queryByTestId('search-groups')).toBeNull();
+    expect(within(header).getByTestId('groups-create-button')).toBeOnTheScreen();
+    const filters = within(screen.getByTestId('groups-filter-row'));
+    expect(filters.getByTestId('groups-sport-filter')).toBeOnTheScreen();
+    expect(filters.getByTestId('search-groups')).toBeOnTheScreen();
+    await userEvent.press(screen.getByTestId('groups-sport-filter'));
     expect(screen.getByText('Running')).toBeOnTheScreen();
     expect(screen.getByText('Walking')).toBeOnTheScreen();
     expect(screen.getByText('Hiking')).toBeOnTheScreen();
-    expect(screen.getAllByText('Cycling').length).toBeGreaterThan(0);
+    expect(screen.getByText('Cycling')).toBeOnTheScreen();
     expect(screen.getByTestId('groups-sport-filter-bike')).toBeOnTheScreen();
     expect(screen.queryByTestId('groups-sport-filter-swim')).not.toBeOnTheScreen();
     expect(screen.queryByTestId('groups-sport-filter-workout')).not.toBeOnTheScreen();
@@ -82,6 +101,7 @@ describe('GroupsPage', () => {
 
   it('filters the catalog by one of the supported sports', async () => {
     await renderWithProviders(<GroupsPage />);
+    await userEvent.press(screen.getByTestId('groups-sport-filter'));
     await userEvent.press(screen.getByTestId('groups-sport-filter-walk'));
 
     await waitFor(() =>
@@ -96,17 +116,29 @@ describe('GroupsPage', () => {
     expect(mockPush).toHaveBeenCalledWith('/groups/create');
   });
 
+  it('opens group notification preferences from the tab settings button', async () => {
+    await renderWithProviders(<GroupsPage />);
+    await userEvent.press(screen.getByTestId('groups-settings-button'));
+
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].groupNotificationSettingsTitle)).toBeOnTheScreen();
+    expect(screen.getByTestId('group-post-notifications-switch')).toBeOnTheScreen();
+    expect(screen.getByTestId('group-event-notifications-switch')).toBeOnTheScreen();
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].groupNotificationDeliveryHint)).toBeOnTheScreen();
+  });
+
   it('switches scope, applies and clears a sport filter', async () => {
     await renderWithProviders(<GroupsPage />);
     const user = userEvent.setup();
 
     await user.press(screen.getByText('My groups'));
+    await user.press(screen.getByTestId('groups-sport-filter'));
     await user.press(screen.getByTestId('groups-sport-filter-walk'));
     await waitFor(() =>
       expect(mockGetGroupsQuery).toHaveBeenLastCalledWith({ scope: 'mine', search: '', sport: 'walk' }),
     );
 
-    await user.press(screen.getByTestId('groups-sport-filter-walk'));
+    await user.press(screen.getByTestId('groups-sport-filter'));
+    await user.press(screen.getByTestId('groups-sport-filter-all'));
     await waitFor(() =>
       expect(mockGetGroupsQuery).toHaveBeenLastCalledWith({ scope: 'mine', search: '', sport: undefined }),
     );
@@ -130,16 +162,18 @@ describe('GroupsPage', () => {
       isError: false,
       refetch: jest.fn(),
     });
-    const user = userEvent.setup();
     await renderWithProviders(<GroupsPage />);
-
-    await user.press(screen.getByTestId('open-groups-search'));
+    const user = userEvent.setup();
     await user.type(screen.getByTestId('search-groups'), 'unknown');
 
     await waitFor(() =>
       expect(mockGetGroupsQuery).toHaveBeenLastCalledWith({ scope: 'all', search: 'unknown', sport: undefined }),
     );
     expect(screen.getByText('No groups found')).toBeOnTheScreen();
+    await user.press(screen.getByTestId('clear-groups-search'));
+    await waitFor(() =>
+      expect(mockGetGroupsQuery).toHaveBeenLastCalledWith({ scope: 'all', search: '', sport: undefined }),
+    );
   });
 
   it('opens a pending group card without optional description and location', async () => {
@@ -175,11 +209,10 @@ describe('GroupsPage', () => {
     const user = userEvent.setup();
 
     expect(screen.getByText('Все')).toBeOnTheScreen();
+    await user.press(screen.getByTestId('groups-sport-filter'));
     const walkFilter = screen.getByTestId('groups-sport-filter-walk');
     await user.press(walkFilter);
-    await waitFor(() =>
-      expect(screen.getByTestId('groups-sport-filter-walk').props.accessibilityState.selected).toBe(true),
-    );
+    await waitFor(() => expect(screen.getByTestId('groups-sport-filter').props.accessibilityLabel).toBe('Ходьба'));
     await waitFor(() =>
       expect(mockGetGroupsQuery).toHaveBeenLastCalledWith({ scope: 'all', search: '', sport: 'walk' }),
     );

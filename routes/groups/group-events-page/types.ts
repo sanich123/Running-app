@@ -6,5 +6,5 @@ export interface GroupEventFormValues {
   title: string;
   description: string;
   locationName: string;
-  startsAt: string;
+  distanceKm: string;
 }

@@ -65,6 +65,8 @@ export interface ProfileType {
   emailNotifications?: boolean | null;
   pushNotifications?: boolean;
   inAppNotifications?: boolean;
+  groupPostsNotifications?: boolean;
+  groupEventsNotifications?: boolean;
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;

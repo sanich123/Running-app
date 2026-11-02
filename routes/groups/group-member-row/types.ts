@@ -15,4 +15,5 @@ export interface GroupMemberRowProps {
   onUpdateMember: (userId: string, status: GroupMemberUpdateStatus) => void;
   rank?: number;
   distanceLabel?: string;
+  onPressProfile?: () => void;
 }

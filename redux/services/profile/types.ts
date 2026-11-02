@@ -19,6 +19,8 @@ export interface ProfileSettings {
   emailNotifications?: boolean;
   pushNotifications?: boolean;
   inAppNotifications?: boolean;
+  groupPostsNotifications?: boolean;
+  groupEventsNotifications?: boolean;
   profileSearchVisible?: boolean;
   allowActivityInteractions?: boolean;
   allowActivityReplayViewing?: boolean;

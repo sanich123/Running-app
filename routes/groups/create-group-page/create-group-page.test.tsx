@@ -42,6 +42,7 @@ describe('CreateGroupPage', () => {
     await renderWithProviders(<CreateGroupPage />);
     const user = userEvent.setup();
     await user.type(screen.getByTestId('group-name-input'), 'City walkers');
+    await user.press(screen.getByTestId('group-sport-selector'));
     await user.press(screen.getByTestId('group-sport-option-walk'));
     await user.press(screen.getByTestId('create-group-submit'));
 
@@ -50,7 +51,7 @@ describe('CreateGroupPage', () => {
         name: 'City walkers',
         description: undefined,
         locationName: undefined,
-        sports: ['run', 'walk'],
+        sports: ['walk'],
         categoryTags: [],
         privacy: 'open',
       }),
@@ -60,6 +61,7 @@ describe('CreateGroupPage', () => {
 
   it('renders exactly the four supported group sport choices', async () => {
     await renderWithProviders(<CreateGroupPage />);
+    await userEvent.press(screen.getByTestId('group-sport-selector'));
 
     expect(screen.getByTestId('group-sport-option-run')).toBeOnTheScreen();
     expect(screen.getByTestId('group-sport-option-walk')).toBeOnTheScreen();
@@ -70,18 +72,12 @@ describe('CreateGroupPage', () => {
     expect(screen.queryByTestId('group-sport-option-workout')).not.toBeOnTheScreen();
   });
 
-  it('requires a name and at least one activity before creating a group', async () => {
+  it('requires a group name before creating', async () => {
     await renderWithProviders(<CreateGroupPage />);
     const user = userEvent.setup();
 
     await user.press(screen.getByTestId('create-group-submit'));
     expect(mockErrorToast).toHaveBeenCalledWith('Enter a group name');
-
-    await user.type(screen.getByTestId('group-name-input'), 'City team');
-    await user.press(screen.getByTestId('group-sport-option-run'));
-    await user.press(screen.getByTestId('create-group-submit'));
-
-    expect(mockErrorToast).toHaveBeenLastCalledWith('Choose at least one activity');
     expect(mockCreateGroup).not.toHaveBeenCalled();
   });
 
@@ -92,6 +88,7 @@ describe('CreateGroupPage', () => {
 
     await user.type(screen.getByTestId('group-name-input'), 'Closed runners');
     await user.press(screen.getByText(/Closed/));
+    await user.press(screen.getByTestId('group-sport-selector'));
     await user.press(screen.getByTestId('group-sport-option-hike'));
     await user.press(screen.getByTestId('create-group-submit'));
 
@@ -99,7 +96,7 @@ describe('CreateGroupPage', () => {
       expect(mockCreateGroup).toHaveBeenCalledWith(
         expect.objectContaining({
           name: 'Closed runners',
-          sports: ['run', 'hike'],
+          sports: ['hike'],
           privacy: 'closed',
         }),
       ),
@@ -144,6 +141,7 @@ describe('CreateGroupPage', () => {
     await renderWithProviders(<CreateGroupPage />);
     const user = userEvent.setup();
 
+    await user.press(screen.getByTestId('group-category-selector'));
     await user.press(screen.getByTestId('group-category-option-casual'));
     await user.press(screen.getByTestId('group-category-option-brand'));
     await user.press(screen.getByTestId('group-category-option-team'));
@@ -165,6 +163,7 @@ describe('CreateGroupPage', () => {
       expect(mockUploadMediaFile).toHaveBeenCalledWith('file:///compressed-group-photo.jpg', { scope: 'group' }),
     );
     await user.type(screen.getByTestId('group-name-input'), 'Global running team');
+    await user.press(screen.getByTestId('group-category-selector'));
     await user.press(screen.getByTestId('group-category-option-team'));
     await user.press(screen.getByTestId('group-category-option-local'));
     await user.press(screen.getByText('This group is for everyone, everywhere'));

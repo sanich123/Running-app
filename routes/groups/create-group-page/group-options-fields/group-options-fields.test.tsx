@@ -26,13 +26,15 @@ describe('GroupOptionsFields', () => {
     const onChange = jest.fn();
     await renderWithProviders(<GroupOptionsFields options={options} onChange={onChange} />);
 
+    await fireEvent.press(screen.getByTestId('group-sport-selector'));
     expect(screen.getByTestId('group-sport-option-run')).toBeOnTheScreen();
     expect(screen.getByTestId('group-sport-option-walk')).toBeOnTheScreen();
     expect(screen.getByTestId('group-sport-option-hike')).toBeOnTheScreen();
     expect(screen.getByTestId('group-sport-option-bike')).toBeOnTheScreen();
     expect(screen.queryByTestId('group-sport-option-swim')).not.toBeOnTheScreen();
     await fireEvent.press(screen.getByTestId('group-sport-option-bike'));
-    expect(onChange).toHaveBeenCalledWith({ ...options, sports: ['run', 'bike'] });
+    expect(onChange).toHaveBeenCalledWith({ ...options, sports: ['bike'] });
+    await fireEvent.press(screen.getByTestId('group-category-selector'));
     await fireEvent.press(screen.getByTestId('group-category-option-corporate'));
     expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].tooManyCategories);
   });
@@ -46,6 +48,7 @@ describe('GroupOptionsFields', () => {
     const onChange = jest.fn();
     await renderWithProviders(<GroupOptionsFields options={options} onChange={onChange} />);
 
+    await fireEvent.press(screen.getByTestId('group-category-selector'));
     await fireEvent.press(screen.getByTestId('group-category-option-casual'));
     expect(onChange).toHaveBeenLastCalledWith({ ...options, categoryTags: [] });
 

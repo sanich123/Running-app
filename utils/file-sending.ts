@@ -192,12 +192,13 @@ export async function uploadMediaFile(
   control?: MediaUploadControl,
 ): Promise<UploadedPhotoResponse | null> {
   try {
+    const uploadFile = await prepareMediaSourceForWeb(compressedFile);
     const formData = createMediaUploadFormData({
-      file: compressedFile.file,
-      originalName: compressedFile.originalName,
-      extension: compressedFile.extension,
-      isVideo: compressedFile.isVideo,
-      mimeType: compressedFile.mimeType,
+      file: uploadFile.file,
+      originalName: uploadFile.originalName,
+      extension: uploadFile.extension,
+      isVideo: uploadFile.isVideo,
+      mimeType: uploadFile.mimeType,
       uploadOptions,
     });
     return (await uploadRequest(formData, control)) ?? null;
@@ -222,8 +223,9 @@ export async function uploadMediaFiles(
   if (!compressedFiles.length) return [];
 
   try {
+    const uploadFiles = await Promise.all(compressedFiles.map(prepareMediaSourceForWeb));
     const formData = createMediaUploadBatchFormData({
-      files: compressedFiles,
+      files: uploadFiles,
       uploadOptions,
       manifest,
     });
@@ -232,6 +234,17 @@ export async function uploadMediaFiles(
     if (!control?.signal?.aborted) errorToast('Не удалось загрузить медиафайлы', error);
     return null;
   }
+}
+
+async function prepareMediaSourceForWeb(mediaFile: CompressedMediaFile): Promise<CompressedMediaFile> {
+  if (Platform.OS !== 'web' || typeof mediaFile.file !== 'string') return mediaFile;
+
+  const response = await fetch(mediaFile.file);
+  if (!response.ok) throw new Error('Не удалось прочитать выбранный файл');
+  const blob = await response.blob();
+  const type = mediaFile.mimeType || blob.type || 'application/octet-stream';
+  const name = mediaFile.originalName || `runich.${mediaFile.extension || 'bin'}`;
+  return { ...mediaFile, file: new File([blob], name, { type }) };
 }
 
 export async function createVideoThumbnail(videoSource: MediaSource): Promise<string | null> {

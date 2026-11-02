@@ -41,7 +41,10 @@ export default function NotificationsPage() {
     ? getNotificationDisplayCopy(selectedNotification, locale)
     : null;
   const selectedNotificationHasTarget =
-    selectedNotification?.targetType === 'activity' || selectedNotification?.targetType === 'comment';
+    selectedNotification?.targetType === 'activity' ||
+    selectedNotification?.targetType === 'comment' ||
+    selectedNotification?.targetType === 'group-post' ||
+    selectedNotification?.targetType === 'group-event';
 
   return (
     <View style={[styles.page, { backgroundColor: colors.background }]}>

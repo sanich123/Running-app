@@ -10,7 +10,7 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { MODERATION_DASHBOARD_COPY } from './const';
+import { MODERATION_DASHBOARD_COPY } from '../const';
 import ModerationDashboard from './moderation-dashboard';
 import type {
   ModerationAppealItem,

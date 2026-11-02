@@ -71,6 +71,6 @@ describe('GroupPhotoPicker', () => {
     await userEvent.press(screen.getByLabelText(GROUPS_COPY[LANGUAGES.english].addPhoto));
 
     await waitFor(() => expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].photoUploadError));
-    expect(onPhotoAssetChange).toHaveBeenLastCalledWith(null);
+    expect(onPhotoAssetChange).not.toHaveBeenCalled();
   });
 });

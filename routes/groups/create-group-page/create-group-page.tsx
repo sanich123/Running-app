@@ -85,7 +85,7 @@ export default function CreateGroupPage() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  content: { gap: 12, padding: 16, paddingBottom: 32 },
+  content: { alignSelf: 'center', gap: 12, maxWidth: 720, padding: 16, paddingBottom: 32, width: '100%' },
   heading: { fontWeight: '700', marginBottom: 2 },
   submit: { marginTop: 12 },
 });

@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, View } from 'react-native';
-import { Icon, RadioButton, Text, useTheme } from 'react-native-paper';
+import { useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Icon, Menu, RadioButton, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -22,17 +23,22 @@ export default function GroupOptionsFields({
   onChange: (options: GroupCreationOptions) => void;
 }) {
   const { colors } = useTheme();
+  const { width, height } = useWindowDimensions();
   const { language } = useAppSelector(({ settings }) => settings);
   const copy = GROUPS_COPY[language];
   const sportLabels = getGroupSportLabels(language);
   const categoryLabels = GROUP_CATEGORY_LABELS[language === LANGUAGES.english ? 'en' : 'ru'];
+  const selectedSport = options.sports[0] ?? GROUP_SPORTS[0];
+  const [isSportMenuVisible, setIsSportMenuVisible] = useState(false);
+  const [isCategoryMenuVisible, setIsCategoryMenuVisible] = useState(false);
+  const dropdownWidth = Math.min(Math.max(width - 32, 220), 688);
+  const categoryMenuHeight = Math.min(360, Math.max(height - 220, 180));
 
   const toggleSport = (sport: GroupSport) => {
+    if (options.sports[0] === sport) return;
     onChange({
       ...options,
-      sports: options.sports.includes(sport)
-        ? options.sports.filter((selectedSport) => selectedSport !== sport)
-        : [...options.sports, sport],
+      sports: [sport],
     });
   };
 
@@ -52,80 +58,131 @@ export default function GroupOptionsFields({
       <Text variant="titleMedium" style={styles.sectionTitle}>
         {copy.sports}
       </Text>
-      <View style={styles.chips}>
-        {GROUP_SPORTS.map((sport) => (
-          <Pressable
-            key={sport}
+      <Menu
+        visible={isSportMenuVisible}
+        onDismiss={() => setIsSportMenuVisible(false)}
+        elevation={3}
+        contentStyle={[styles.dropdownMenu, { backgroundColor: colors.surface, width: dropdownWidth }]}
+        anchor={
+          <TouchableRipple
+            accessibilityLabel={sportLabels[selectedSport]}
             accessibilityRole="button"
-            accessibilityLabel={sportLabels[sport]}
-            accessibilityState={{ selected: options.sports.includes(sport) }}
+            onPress={() => setIsSportMenuVisible(true)}
+            rippleColor={colors.primaryContainer}
+            style={[styles.dropdown, { backgroundColor: colors.surfaceVariant, borderColor: colors.outlineVariant }]}
+            testID="group-sport-selector">
+            <View style={styles.dropdownContent}>
+              <Icon source={getIconNameByTypeOfSport(selectedSport)} size={20} color={colors.primary} />
+              <Text variant="bodyLarge" numberOfLines={1} style={styles.dropdownLabel}>
+                {sportLabels[selectedSport]}
+              </Text>
+              <Icon source="chevron-down" size={20} color={colors.onSurfaceVariant} />
+            </View>
+          </TouchableRipple>
+        }>
+        {GROUP_SPORTS.map((sport) => (
+          <Menu.Item
+            key={sport}
+            title={sportLabels[sport]}
+            leadingIcon={getIconNameByTypeOfSport(sport)}
+            trailingIcon={selectedSport === sport ? 'check' : undefined}
             testID={`group-sport-option-${sport}`}
-            onPress={() => toggleSport(sport)}
-            style={[
-              styles.sportOption,
-              { backgroundColor: options.sports.includes(sport) ? colors.primaryContainer : colors.surfaceVariant },
-            ]}>
-            <Icon
-              source={getIconNameByTypeOfSport(sport)}
-              size={18}
-              color={options.sports.includes(sport) ? colors.primary : colors.onSurfaceVariant}
-            />
-            <Text
-              variant="bodyMedium"
-              style={{ color: options.sports.includes(sport) ? colors.primary : colors.onSurfaceVariant }}>
-              {sportLabels[sport]}
-            </Text>
-          </Pressable>
+            onPress={() => {
+              toggleSport(sport);
+              setIsSportMenuVisible(false);
+            }}
+          />
         ))}
-      </View>
+      </Menu>
 
       <Text variant="titleMedium" style={styles.sectionTitle}>
         {copy.categories}
       </Text>
-      <View style={styles.chips}>
-        {GROUP_CATEGORY_TAGS.map((categoryTag) => (
-          <Pressable
-            key={categoryTag}
+      <Menu
+        visible={isCategoryMenuVisible}
+        onDismiss={() => setIsCategoryMenuVisible(false)}
+        elevation={3}
+        contentStyle={[styles.dropdownMenu, { backgroundColor: colors.surface, width: dropdownWidth }]}
+        anchor={
+          <TouchableRipple
+            accessibilityLabel={
+              options.categoryTags.length
+                ? options.categoryTags.map((tag) => categoryLabels[tag]).join(', ')
+                : copy.chooseCategories
+            }
             accessibilityRole="button"
-            accessibilityState={{ selected: options.categoryTags.includes(categoryTag) }}
-            testID={`group-category-option-${categoryTag}`}
-            onPress={() => toggleCategory(categoryTag)}
-            style={[
-              styles.categoryOption,
-              {
-                backgroundColor: options.categoryTags.includes(categoryTag)
-                  ? colors.primaryContainer
-                  : colors.surfaceVariant,
-              },
-            ]}>
-            <Text
-              variant="bodyMedium"
-              style={{ color: options.categoryTags.includes(categoryTag) ? colors.primary : colors.onSurfaceVariant }}>
-              {categoryLabels[categoryTag]}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+            onPress={() => setIsCategoryMenuVisible(true)}
+            rippleColor={colors.primaryContainer}
+            style={[styles.dropdown, { backgroundColor: colors.surfaceVariant, borderColor: colors.outlineVariant }]}
+            testID="group-category-selector">
+            <View style={styles.dropdownContent}>
+              <Text
+                variant="bodyLarge"
+                numberOfLines={1}
+                style={[
+                  styles.dropdownLabel,
+                  { color: options.categoryTags.length ? colors.onSurface : colors.onSurfaceVariant },
+                ]}>
+                {options.categoryTags.length
+                  ? options.categoryTags.map((tag) => categoryLabels[tag]).join(' · ')
+                  : copy.chooseCategories}
+              </Text>
+              <Icon source="chevron-down" size={20} color={colors.onSurfaceVariant} />
+            </View>
+          </TouchableRipple>
+        }>
+        <ScrollView style={{ height: categoryMenuHeight }} nestedScrollEnabled keyboardShouldPersistTaps="handled">
+          {GROUP_CATEGORY_TAGS.map((categoryTag) => (
+            <Menu.Item
+              key={categoryTag}
+              title={categoryLabels[categoryTag]}
+              leadingIcon={options.categoryTags.includes(categoryTag) ? 'checkbox-marked' : 'checkbox-blank-outline'}
+              testID={`group-category-option-${categoryTag}`}
+              onPress={() => toggleCategory(categoryTag)}
+            />
+          ))}
+        </ScrollView>
+      </Menu>
 
       <Text variant="titleMedium" style={styles.sectionTitle}>
         {copy.privacy}
       </Text>
-      <RadioButton.Group
-        value={options.privacy}
-        onValueChange={(privacy) => onChange({ ...options, privacy: privacy as GroupCreationOptions['privacy'] })}>
-        <RadioButton.Item
-          value="open"
-          label={`${copy.open}\n${copy.openDescription}`}
-          position="leading"
-          style={styles.privacyOption}
-        />
-        <RadioButton.Item
-          value="closed"
-          label={`${copy.closed}\n${copy.closedDescription}`}
-          position="leading"
-          style={styles.privacyOption}
-        />
-      </RadioButton.Group>
+      <View accessibilityRole="radiogroup" style={styles.privacyOptions}>
+        {(['open', 'closed'] as const).map((privacy) => {
+          const isSelected = options.privacy === privacy;
+          return (
+            <Pressable
+              key={privacy}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: isSelected }}
+              testID={`group-privacy-${privacy}`}
+              onPress={() => onChange({ ...options, privacy })}
+              style={[
+                styles.privacyOption,
+                {
+                  backgroundColor: isSelected ? colors.primaryContainer : colors.surfaceVariant,
+                  borderColor: isSelected ? colors.primary : colors.outlineVariant,
+                },
+              ]}>
+              <RadioButton
+                value={privacy}
+                status={isSelected ? 'checked' : 'unchecked'}
+                onPress={() => onChange({ ...options, privacy })}
+                color={colors.primary}
+                uncheckedColor={colors.onSurfaceVariant}
+              />
+              <View style={styles.privacyText}>
+                <Text variant="titleSmall" style={{ color: colors.onSurface, fontWeight: '700' }}>
+                  {privacy === 'open' ? copy.open : copy.closed}
+                </Text>
+                <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                  {privacy === 'open' ? copy.openDescription : copy.closedDescription}
+                </Text>
+              </View>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
   );
 }
@@ -133,15 +190,25 @@ export default function GroupOptionsFields({
 const styles = StyleSheet.create({
   section: { gap: 8 },
   sectionTitle: { fontWeight: '700', marginTop: 8 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  sportOption: {
+  dropdown: { borderRadius: 14, borderWidth: 1, overflow: 'hidden', width: '100%' },
+  dropdownContent: {
     alignItems: 'center',
-    borderRadius: 20,
+    flexDirection: 'row',
+    gap: 10,
+    minHeight: 50,
+    paddingHorizontal: 14,
+  },
+  dropdownLabel: { color: 'white', flex: 1 },
+  dropdownMenu: { borderRadius: 14, maxHeight: 360, paddingVertical: 4 },
+  privacyOptions: { gap: 8 },
+  privacyOption: {
+    alignItems: 'center',
+    borderRadius: 16,
+    borderWidth: 1,
     flexDirection: 'row',
     gap: 8,
-    paddingHorizontal: 14,
+    paddingHorizontal: 8,
     paddingVertical: 10,
   },
-  categoryOption: { borderRadius: 16, paddingHorizontal: 12, paddingVertical: 9 },
-  privacyOption: { paddingHorizontal: 0 },
+  privacyText: { flex: 1, gap: 2 },
 });

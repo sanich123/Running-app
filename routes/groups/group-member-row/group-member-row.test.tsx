@@ -157,4 +157,30 @@ describe('GroupMemberRow', () => {
     expect(screen.getByText('2')).toBeOnTheScreen();
     expect(screen.getByText('45 km')).toBeOnTheScreen();
   });
+
+  it('opens the member profile when the profile area is pressed', async () => {
+    const member: GroupMember = {
+      userId: 'runner-1',
+      role: 'member',
+      status: 'active',
+      joinedAt: null,
+      profile: { name: 'Jordan', surname: 'Hill', city: null, profilePhoto: null },
+    };
+    const onPressProfile = jest.fn();
+    await renderWithProviders(
+      <GroupMemberRow
+        member={member}
+        copy={GROUPS_COPY[LANGUAGES.english]}
+        language={LANGUAGES.english}
+        canManage={false}
+        isUpdating={false}
+        onUpdateMember={jest.fn()}
+        onPressProfile={onPressProfile}
+      />,
+    );
+
+    await userEvent.press(screen.getByTestId('group-member-profile-runner-1'));
+
+    expect(onPressProfile).toHaveBeenCalledTimes(1);
+  });
 });

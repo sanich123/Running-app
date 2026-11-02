@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Avatar, Button, Icon, Surface, Text, useTheme } from 'react-native-paper';
 import type { GroupMemberRowProps } from './types';
 
@@ -11,6 +11,7 @@ export default function GroupMemberRow({
   onUpdateMember,
   rank,
   distanceLabel,
+  onPressProfile,
 }: GroupMemberRowProps) {
   const { colors } = useTheme();
   const name = [member.profile?.name, member.profile?.surname].filter(Boolean).join(' ');
@@ -22,29 +23,37 @@ export default function GroupMemberRow({
           {rank}
         </Text>
       )}
-      {member.profile?.profilePhoto ? (
-        <Avatar.Image size={44} source={{ uri: member.profile.profilePhoto }} />
-      ) : (
-        <View style={[styles.avatar, { backgroundColor: colors.primaryContainer }]}>
-          <Icon source="account" color={colors.primary} size={22} />
+      <Pressable
+        accessibilityLabel={onPressProfile ? name || copy.member : undefined}
+        accessibilityRole={onPressProfile ? 'button' : undefined}
+        disabled={!onPressProfile}
+        onPress={onPressProfile}
+        style={styles.profile}
+        testID={onPressProfile ? `group-member-profile-${member.userId}` : undefined}>
+        {member.profile?.profilePhoto ? (
+          <Avatar.Image size={44} source={{ uri: member.profile.profilePhoto }} />
+        ) : (
+          <View style={[styles.avatar, { backgroundColor: colors.primaryContainer }]}>
+            <Icon source="account" color={colors.primary} size={22} />
+          </View>
+        )}
+        <View style={styles.memberInfo}>
+          <Text variant="bodyLarge" numberOfLines={1} style={styles.memberName}>
+            {name || copy.member}
+          </Text>
+          {!!member.profile?.city && <Text variant="bodySmall">{member.profile.city}</Text>}
+          {distanceLabel && (
+            <Text variant="bodyMedium" style={styles.distance}>
+              {distanceLabel}
+            </Text>
+          )}
+          {(member.role === 'owner' || member.role === 'admin') && (
+            <Text variant="bodySmall" style={{ color: colors.primary }}>
+              {member.role === 'owner' ? copy.owner : copy.admin}
+            </Text>
+          )}
         </View>
-      )}
-      <View style={styles.memberInfo}>
-        <Text variant="bodyLarge" numberOfLines={1} style={styles.memberName}>
-          {name || copy.member}
-        </Text>
-        {!!member.profile?.city && <Text variant="bodySmall">{member.profile.city}</Text>}
-        {distanceLabel && (
-          <Text variant="bodyMedium" style={styles.distance}>
-            {distanceLabel}
-          </Text>
-        )}
-        {(member.role === 'owner' || member.role === 'admin') && (
-          <Text variant="bodySmall" style={{ color: colors.primary }}>
-            {member.role === 'owner' ? copy.owner : copy.admin}
-          </Text>
-        )}
-      </View>
+      </Pressable>
       {canManage && member.role !== 'owner' && (
         <View style={styles.actions}>
           {isRequest ? (
@@ -73,6 +82,7 @@ export default function GroupMemberRow({
 
 const styles = StyleSheet.create({
   member: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', gap: 12, padding: 12 },
+  profile: { alignItems: 'center', flex: 1, flexDirection: 'row', gap: 12 },
   rank: { minWidth: 24, textAlign: 'center' },
   avatar: { alignItems: 'center', borderRadius: 22, height: 44, justifyContent: 'center', width: 44 },
   memberInfo: { flex: 1, gap: 2 },

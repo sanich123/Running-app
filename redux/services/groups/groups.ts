@@ -9,21 +9,25 @@ import type {
   GroupEvent,
   GroupEventsQuery,
   GroupMember,
+  GroupPage,
   GroupMemberUpdateResult,
   GroupMonthlyStatistics,
+  GroupMonthlyStatisticsPage,
   GroupMonthlyStatisticsQuery,
   GroupPost,
   GroupSummary,
   GroupsQuery,
   UpdateGroupPreferencesRequest,
+  UpdateGroupRequest,
   UpdateGroupMemberRequest,
 } from './types';
 
 const groupsRoute = Routes.groups;
+const GROUP_PAGE_SIZE = 100;
 
 export const groupsApi = runichApi.injectEndpoints({
   overrideExisting: true,
-  endpoints: ({ query, mutation }) => ({
+  endpoints: ({ query, mutation, infiniteQuery }) => ({
     getGroups: query<GroupSummary[], GroupsQuery>({
       query: ({ scope = 'all', search, sport }) =>
         `/${groupsRoute}${createSearchParams({ scope, search: search?.trim() || undefined, sport })}`,
@@ -37,21 +41,86 @@ export const groupsApi = runichApi.injectEndpoints({
       query: ({ groupId, status }) => `/${groupsRoute}/${groupId}/members${createSearchParams({ status })}`,
       providesTags: [Tags.groups],
     }),
+    getGroupMembersInfinite: infiniteQuery<
+      GroupPage<GroupMember>,
+      { groupId: string; status: 'active' | 'pending' },
+      string
+    >({
+      infiniteQueryOptions: {
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      },
+      query: ({ queryArg: { groupId, status }, pageParam }) =>
+        `/${groupsRoute}/${groupId}/members${createSearchParams({
+          status,
+          limit: GROUP_PAGE_SIZE,
+          cursor: pageParam || undefined,
+        })}`,
+      providesTags: [Tags.groups],
+    }),
     getGroupMonthlyStatistics: query<GroupMonthlyStatistics, GroupMonthlyStatisticsQuery>({
       query: ({ groupId, year, month, timeZone }) =>
         `/${groupsRoute}/${groupId}/statistics/month${createSearchParams({ year, month, timeZone })}`,
+      providesTags: [Tags.groups],
+    }),
+    getGroupMonthlyStatisticsInfinite: infiniteQuery<GroupMonthlyStatisticsPage, GroupMonthlyStatisticsQuery, string>({
+      infiniteQueryOptions: {
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      },
+      query: ({ queryArg: { groupId, year, month, timeZone }, pageParam }) =>
+        `/${groupsRoute}/${groupId}/statistics/month${createSearchParams({
+          year,
+          month,
+          timeZone,
+          limit: GROUP_PAGE_SIZE,
+          cursor: pageParam || undefined,
+        })}`,
       providesTags: [Tags.groups],
     }),
     getGroupPosts: query<GroupPost[], string>({
       query: (groupId) => `/${groupsRoute}/${groupId}/posts`,
       providesTags: [Tags.groups],
     }),
+    getGroupPostsInfinite: infiniteQuery<GroupPage<GroupPost>, string, string>({
+      infiniteQueryOptions: {
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      },
+      query: ({ queryArg: groupId, pageParam }) =>
+        `/${groupsRoute}/${groupId}/posts${createSearchParams({
+          limit: GROUP_PAGE_SIZE,
+          cursor: pageParam || undefined,
+        })}`,
+      providesTags: [Tags.groups],
+    }),
     getGroupEvents: query<GroupEvent[], GroupEventsQuery>({
       query: ({ groupId, period }) => `/${groupsRoute}/${groupId}/events${createSearchParams({ period })}`,
       providesTags: [Tags.groups],
     }),
+    getGroupEventsInfinite: infiniteQuery<GroupPage<GroupEvent>, GroupEventsQuery, string>({
+      infiniteQueryOptions: {
+        initialPageParam: '',
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      },
+      query: ({ queryArg: { groupId, period }, pageParam }) =>
+        `/${groupsRoute}/${groupId}/events${createSearchParams({
+          period,
+          limit: GROUP_PAGE_SIZE,
+          cursor: pageParam || undefined,
+        })}`,
+      providesTags: [Tags.groups],
+    }),
     createGroup: mutation<GroupDetails, CreateGroupRequest>({
       query: (body) => ({ url: `/${groupsRoute}`, method: Methods.post, body }),
+      invalidatesTags: [Tags.groups],
+    }),
+    updateGroup: mutation<GroupDetails, UpdateGroupRequest>({
+      query: ({ groupId, ...body }) => ({ url: `/${groupsRoute}/${groupId}`, method: Methods.patch, body }),
+      invalidatesTags: [Tags.groups],
+    }),
+    deleteGroup: mutation<void, string>({
+      query: (id) => ({ url: `/${groupsRoute}/${id}`, method: Methods.delete }),
       invalidatesTags: [Tags.groups],
     }),
     joinGroup: mutation<GroupDetails, string>({
@@ -103,7 +172,13 @@ export const {
   useGetGroupMonthlyStatisticsQuery,
   useGetGroupPostsQuery,
   useGetGroupEventsQuery,
+  useGetGroupMembersInfiniteInfiniteQuery: useGetGroupMembersInfiniteQuery,
+  useGetGroupMonthlyStatisticsInfiniteInfiniteQuery: useGetGroupMonthlyStatisticsInfiniteQuery,
+  useGetGroupPostsInfiniteInfiniteQuery: useGetGroupPostsInfiniteQuery,
+  useGetGroupEventsInfiniteInfiniteQuery: useGetGroupEventsInfiniteQuery,
   useCreateGroupMutation,
+  useUpdateGroupMutation,
+  useDeleteGroupMutation,
   useJoinGroupMutation,
   useLeaveGroupMutation,
   useUpdateGroupMemberMutation,

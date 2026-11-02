@@ -91,6 +91,8 @@ describe('NotificationSettingsPage', () => {
     const pushSwitch = await screen.findByTestId('pushNotificationsSwitch');
     expect(await screen.findByTestId('in-app-notifications-switch')).toBeOnTheScreen();
     expect(screen.getByTestId('email-notifications-switch')).toBeOnTheScreen();
+    expect(screen.queryByTestId('group-post-notifications-switch')).toBeNull();
+    expect(screen.queryByTestId('group-event-notifications-switch')).toBeNull();
     expect(screen.getByText(NOTIFICATION_COPY[LANGUAGES.russian].settingsIntro)).toBeOnTheScreen();
     await waitFor(() => expect(pushSwitch.props.accessibilityState.disabled).toBe(false));
     expect(notificationMocks.requestPermissionsAsync).not.toHaveBeenCalled();

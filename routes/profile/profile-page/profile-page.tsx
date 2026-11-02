@@ -134,7 +134,7 @@ export default function ProfilePage() {
                 ]}
               />
             ) : null}
-            {shouldShowPrivacySettings ? (
+            {shouldShowPrivacySettings && Platform.OS !== 'web' ? (
               <>
                 <List.Item
                   testID="profile-maps-button"

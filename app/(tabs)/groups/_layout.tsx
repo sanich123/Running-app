@@ -20,7 +20,18 @@ export default function GroupsLayout() {
       <Stack.Screen name="index" options={{ title: LABELS[language].groups }} />
       <Stack.Screen name="create" options={{ title: language === 'russian' ? 'Создать группу' : 'Create group' }} />
       <Stack.Screen name="[groupId]" options={{ title: LABELS[language].groups }} />
-      <Stack.Screen name="[groupId]/events" options={{ title: language === 'russian' ? 'События' : 'Events' }} />
+      <Stack.Screen
+        name="[groupId]/edit"
+        options={{ title: language === 'russian' ? 'Изменить группу' : 'Edit group' }}
+      />
+      <Stack.Screen
+        name="[groupId]/create-content"
+        options={{ title: language === 'russian' ? 'Создать запись или событие' : 'Create a post or event' }}
+      />
+      <Stack.Screen
+        name="[groupId]/requests"
+        options={{ title: language === 'russian' ? 'Заявки в группу' : 'Join requests' }}
+      />
     </Stack>
   );
 }

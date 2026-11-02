@@ -48,8 +48,8 @@ export default function AppShell() {
     return (
       <Redirect
         href={
-          pathname === `/${ROUTES.admin}`
-            ? { pathname: `/${ROUTES.signIn}`, params: { returnTo: `/${ROUTES.admin}` } }
+          pathname === `/${ROUTES.admin}` || /^\/groups\/[0-9a-f-]+\/requests$/i.test(pathname)
+            ? { pathname: `/${ROUTES.signIn}`, params: { returnTo: pathname } }
             : `/${ROUTES.signIn}`
         }
       />

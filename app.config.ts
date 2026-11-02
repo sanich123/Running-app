@@ -1,3 +1,5 @@
+import { ANDROID_UNIVERSAL_LINK_FILTERS } from './config/universal-links';
+
 const IS_DEV = process.env.APP_VARIANT === 'development';
 const IS_STAGE = process.env.EXPO_PUBLIC_BASE_URL === 'https://stage.runich-app.ru';
 const ROUTER_ORIGIN = IS_STAGE ? 'https://stage-web.runich-app.ru' : 'https://runich-app.ru';
@@ -53,80 +55,7 @@ export default {
       bundleIdentifier: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
     },
     android: {
-      intentFilters: [
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'runich-app.ru',
-              pathPrefix: '/login-from-url',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'stage-web.runich-app.ru',
-              pathPrefix: '/login-from-url',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'runich-app.ru',
-              pathPrefix: '/activity',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'stage-web.runich-app.ru',
-              pathPrefix: '/activity',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'runich-app.ru',
-              pathPrefix: '/admin',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'stage-web.runich-app.ru',
-              pathPrefix: '/admin',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-      ],
+      intentFilters: ANDROID_UNIVERSAL_LINK_FILTERS,
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#292929',

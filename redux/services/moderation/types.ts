@@ -1,4 +1,4 @@
-export type UserReportTargetType = 'activity' | 'comment' | 'media' | 'user';
+export type UserReportTargetType = 'activity' | 'comment' | 'media' | 'user' | 'group';
 export type ContentReportTargetType = UserReportTargetType | 'media_upload';
 
 export type ContentReportReason =
