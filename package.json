@@ -36,7 +36,6 @@
     "web:serve:single": "npx serve dist --single",
     "expo:fix": "expo install --fix && yarn patches:check",
     "patches:check": "node scripts/check-yarn-patches.mjs",
-    "ts-prune": "ts-prune",
     "prepare": "husky",
     "deps": "yarn npm-check-updates",
     "lint": "expo lint"

@@ -1,4 +1,4 @@
 {
   "error": true,
-  "ignore": "^(app/|app\\.config\\.ts:|config/universal-links\\.d\\.ts:|.*\\.(android|ios|native|web)\\.(ts|tsx):|shared/media-moderation-placeholder/const\\.ts:.*(satisfies|Record)|shared/segmented-control/index\\.ts:|routes/profile/moderation/moderation-dashboard/index\\.ts:|.*\\.test\\.(ts|tsx)$|tests/utils/nitro-fetch-mock\\.ts:)"
+  "ignore": "^(app/|app\\.config\\.ts:|config/universal-links\\.d\\.ts:|.*\\.(android|ios|native|web)\\.(ts|tsx):|shared/media-moderation-placeholder/const\\.ts:.*(satisfies|Record)|shared/segmented-control/index\\.ts:|routes/profile/moderation/moderation-dashboard/index\\.ts:|.*\\.test\\.(ts|tsx)(:|$)|tests/utils/nitro-fetch-mock\\.ts:)"
 }
