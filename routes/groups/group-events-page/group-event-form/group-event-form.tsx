@@ -25,6 +25,8 @@ export default function GroupEventForm({ groupId, groupSports = GROUP_SPORTS, co
     eventLocation,
     eventStartsAt,
     eventTitleInvalid,
+    eventDescriptionInvalid,
+    eventLocationInvalid,
     eventDateInvalid,
     eventDistanceInvalid,
     eventError,
@@ -58,7 +60,7 @@ export default function GroupEventForm({ groupId, groupSports = GROUP_SPORTS, co
         label={eventTitle}
         maxLength={120}
         testID="group-event-title-input"
-        validation={{ required: '' }}
+        validation={{ required: eventTitleInvalid }}
       />
       <CustomTextInput<GroupEventFormValues>
         control={control}
@@ -66,7 +68,6 @@ export default function GroupEventForm({ groupId, groupSports = GROUP_SPORTS, co
         label={eventDistance}
         inputMode="decimal"
         maxLength={6}
-        validation={{ required: '' }}
         testID="group-event-distance-input"
       />
       <CustomTextInput<GroupEventFormValues>
@@ -75,14 +76,14 @@ export default function GroupEventForm({ groupId, groupSports = GROUP_SPORTS, co
         label={eventDescription}
         maxLength={2000}
         multiline
-        validation={{ required: '' }}
+        validation={{ required: eventDescriptionInvalid }}
       />
       <CustomTextInput<GroupEventFormValues>
         control={control}
         fieldName="locationName"
         label={eventLocation}
         maxLength={160}
-        validation={{ required: '' }}
+        validation={{ required: eventLocationInvalid }}
       />
       <View style={styles.field}>
         <Text variant="labelLarge">{eventStartsAt}</Text>
@@ -109,6 +110,8 @@ export default function GroupEventForm({ groupId, groupSports = GROUP_SPORTS, co
         loading={isCreating}
         onPress={async () => {
           if (title.trim().length < 2) return errorToast(eventTitleInvalid);
+          if (!description.trim()) return errorToast(eventDescriptionInvalid);
+          if (!locationName.trim()) return errorToast(eventLocationInvalid);
           if (startsAt.getTime() <= Date.now()) return errorToast(eventDateInvalid);
           const normalizedDistanceText = distanceText.trim().replace(',', '.');
           const distanceKm = normalizedDistanceText ? Number(normalizedDistanceText) : undefined;
@@ -124,8 +127,8 @@ export default function GroupEventForm({ groupId, groupSports = GROUP_SPORTS, co
               title: title.trim(),
               sport,
               ...(distanceKm !== undefined ? { distanceKm } : {}),
-              description: description.trim() || undefined,
-              locationName: locationName.trim() || undefined,
+              description: description.trim(),
+              locationName: locationName.trim(),
               startsAt: startsAt.toISOString(),
             }).unwrap();
             if (onCreated) onCreated();

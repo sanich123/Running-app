@@ -43,48 +43,52 @@ export default function GroupRequestsPage() {
   return (
     <>
       <Stack.Screen options={{ title: requestsPageTitle }} />
-      {isGroupLoading || areRequestsLoading ? (
-        <ActivityIndicator style={styles.loader} />
-      ) : isGroupError || !group || !canManageGroup ? (
-        <View style={styles.feedback}>
-          <EmptyState icon="account-group-outline" title={loadError} />
-          <Button onPress={() => refetch()}>{retry}</Button>
-        </View>
-      ) : (
-        <ScrollView
-          contentContainerStyle={[styles.content, Platform.OS === 'web' && styles.webContent]}
-          style={{ backgroundColor: colors.background }}>
-          <Text variant="headlineSmall" style={styles.title}>
-            {groupName}
-          </Text>
-          {requests.length ? (
-            requests.map(({ userId: memberId, ...member }) => (
-              <GroupMemberRow
-                key={memberId}
-                member={{ userId: memberId, ...member }}
-                isRequest
-                canManage
-                isUpdating={isUpdating}
-                onUpdateMember={updateRequest}
-                copy={GROUPS_COPY[language]}
-                language={language}
-              />
-            ))
-          ) : (
-            <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-              {noRequestsPage}
+      <View style={[styles.screen, { backgroundColor: colors.background }]}>
+        {isGroupLoading || areRequestsLoading ? (
+          <ActivityIndicator style={styles.loader} />
+        ) : isGroupError || !group || !canManageGroup ? (
+          <View style={styles.feedback}>
+            <EmptyState icon="account-group-outline" title={loadError} />
+            <Button onPress={() => refetch()}>{retry}</Button>
+          </View>
+        ) : (
+          <ScrollView
+            contentContainerStyle={styles.content}
+            style={[styles.scroll, Platform.OS === 'web' && styles.webScroll]}>
+            <Text variant="headlineSmall" style={styles.title}>
+              {groupName}
             </Text>
-          )}
-        </ScrollView>
-      )}
+            {requests.length ? (
+              requests.map(({ userId: memberId, ...member }) => (
+                <GroupMemberRow
+                  key={memberId}
+                  member={{ userId: memberId, ...member }}
+                  isRequest
+                  canManage
+                  isUpdating={isUpdating}
+                  onUpdateMember={updateRequest}
+                  copy={GROUPS_COPY[language]}
+                  language={language}
+                />
+              ))
+            ) : (
+              <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                {noRequestsPage}
+              </Text>
+            )}
+          </ScrollView>
+        )}
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: { flex: 1 },
+  scroll: { flex: 1 },
+  webScroll: { alignSelf: 'center', maxWidth: MAX_MOBILE_WIDTH, width: '100%' },
   loader: { flex: 1 },
   feedback: { flex: 1, justifyContent: 'center' },
   content: { gap: 10, padding: 12, paddingBottom: 24 },
-  webContent: { alignSelf: 'center', maxWidth: MAX_MOBILE_WIDTH, width: '100%' },
   title: { fontWeight: '700', marginBottom: 2 },
 });

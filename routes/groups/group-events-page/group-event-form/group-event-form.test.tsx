@@ -83,19 +83,21 @@ describe('GroupEventForm', () => {
     mockCreateEvent.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({ id: 'event-1' }) });
   });
 
-  it('submits a future event and trims optional details', async () => {
+  it('submits a future event with trimmed required details and no distance', async () => {
     const copy = GROUPS_COPY[LANGUAGES.english];
     await renderWithProviders(<GroupEventForm groupId="group-1" copy={copy} />);
     const user = userEvent.setup();
     await user.type(screen.getByTestId('group-event-title-input'), 'Sunday long run');
+    await user.type(screen.getByTestId(copy.eventDescription), '  Meet by the river  ');
+    await user.type(screen.getByTestId(copy.eventLocation), '  Riverside park  ');
     await user.press(screen.getByTestId('group-event-submit'));
 
     await waitFor(() =>
       expect(mockCreateEvent).toHaveBeenCalledWith({
         groupId: 'group-1',
         title: 'Sunday long run',
-        description: undefined,
-        locationName: undefined,
+        description: 'Meet by the river',
+        locationName: 'Riverside park',
         sport: 'run',
         startsAt: expect.any(String),
       }),
@@ -111,6 +113,8 @@ describe('GroupEventForm', () => {
     await renderWithProviders(<GroupEventForm groupId="group-1" copy={copy} />);
     const user = userEvent.setup();
     await user.type(screen.getByTestId('group-event-title-input'), 'Sunday long run');
+    await user.type(screen.getByTestId(copy.eventDescription), 'Meet by the river');
+    await user.type(screen.getByTestId(copy.eventLocation), 'Riverside park');
     await user.press(screen.getByTestId('group-event-submit'));
 
     await waitFor(() => expect(mockErrorToast).toHaveBeenCalledWith(copy.eventError, expect.any(Error)));
@@ -129,6 +133,8 @@ describe('GroupEventForm', () => {
     await renderWithProviders(<GroupEventForm groupId="group-1" groupSports={['walk', 'run']} copy={copy} />);
     const user = userEvent.setup();
     await user.type(screen.getByTestId('group-event-title-input'), 'Park walk');
+    await user.type(screen.getByTestId(copy.eventDescription), 'A walk in the park');
+    await user.type(screen.getByTestId(copy.eventLocation), 'Central park');
     await user.press(screen.getByTestId('group-event-submit'));
 
     await waitFor(() => expect(mockCreateEvent).toHaveBeenCalledWith(expect.objectContaining({ sport: 'walk' })));
@@ -139,6 +145,8 @@ describe('GroupEventForm', () => {
     await renderWithProviders(<GroupEventForm groupId="group-1" groupSports={[]} copy={copy} />);
     const user = userEvent.setup();
     await user.type(screen.getByTestId('group-event-title-input'), 'Park run');
+    await user.type(screen.getByTestId(copy.eventDescription), 'A run in the park');
+    await user.type(screen.getByTestId(copy.eventLocation), 'Central park');
     await user.press(screen.getByTestId('group-event-submit'));
 
     await waitFor(() => expect(mockCreateEvent).toHaveBeenCalledWith(expect.objectContaining({ sport: 'run' })));
@@ -162,6 +170,8 @@ describe('GroupEventForm', () => {
 
     const user = userEvent.setup();
     await user.type(screen.getByTestId('group-event-title-input'), 'Park run');
+    await user.type(screen.getByTestId(copy.eventDescription), 'A run in the park');
+    await user.type(screen.getByTestId(copy.eventLocation), 'Central park');
     await user.press(screen.getByTestId('group-event-submit'));
     nowSpy.mockRestore();
 
@@ -174,6 +184,8 @@ describe('GroupEventForm', () => {
     await renderWithProviders(<GroupEventForm groupId="group-1" copy={copy} />);
     const user = userEvent.setup();
     await user.type(screen.getByTestId('group-event-title-input'), 'Park run');
+    await user.type(screen.getByTestId(copy.eventDescription), 'A run in the park');
+    await user.type(screen.getByTestId(copy.eventLocation), 'Central park');
     await user.type(screen.getByTestId('group-event-distance-input'), '501');
     await user.press(screen.getByTestId('group-event-submit'));
 
