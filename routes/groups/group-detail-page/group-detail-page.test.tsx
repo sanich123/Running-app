@@ -18,7 +18,6 @@ const mockJoinMutation = jest.fn();
 const mockLeaveMutation = jest.fn();
 const mockUpdateMutation = jest.fn();
 const mockMonthlyStatisticsInfiniteQuery = jest.fn();
-const mockPreferencesMutation = jest.fn();
 const mockGetPostsInfinite = jest.fn();
 const mockGetEventsInfinite = jest.fn();
 const mockGetEvents = jest.fn();
@@ -26,7 +25,6 @@ const mockDeleteMutation = jest.fn();
 const mockJoin = jest.fn();
 const mockLeave = jest.fn();
 const mockUpdate = jest.fn();
-const mockUpdatePreferences = jest.fn();
 const mockDeleteGroup = jest.fn();
 const mockErrorToast = jest.fn();
 const mockSuccessToast = jest.fn();
@@ -59,7 +57,6 @@ jest.mock('@R/services/groups/groups', () => ({
   useJoinGroupMutation: (...args: unknown[]) => mockJoinMutation(...args),
   useLeaveGroupMutation: () => mockLeaveMutation(),
   useUpdateGroupMemberMutation: () => mockUpdateMutation(),
-  useUpdateGroupPreferencesMutation: () => mockPreferencesMutation(),
   useDeleteGroupMutation: () => mockDeleteMutation(),
 }));
 
@@ -130,11 +127,9 @@ describe('GroupDetailPage', () => {
     mockJoinMutation.mockReturnValue([mockJoin, { isLoading: false, reset: jest.fn() }]);
     mockLeave.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
     mockUpdate.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
-    mockUpdatePreferences.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
     mockDeleteGroup.mockReturnValue({ unwrap: jest.fn().mockResolvedValue(undefined) });
     mockLeaveMutation.mockReturnValue([mockLeave, { isLoading: false }]);
     mockUpdateMutation.mockReturnValue([mockUpdate, { isLoading: false }]);
-    mockPreferencesMutation.mockReturnValue([mockUpdatePreferences, { isLoading: false }]);
     mockDeleteMutation.mockReturnValue([mockDeleteGroup, { isLoading: false }]);
   });
 
@@ -533,89 +528,6 @@ describe('GroupDetailPage', () => {
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].statsError)).toBeOnTheScreen();
     fireEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].retry));
     expect(refetch).toHaveBeenCalledTimes(1);
-  });
-
-  it('saves notification and home-feed preferences for an active member', async () => {
-    mockGetGroup.mockReturnValue({
-      data: {
-        id: GROUP_FIXTURE.id,
-        name: GROUP_FIXTURE.name,
-        description: null,
-        sports: ['run'],
-        privacy: 'open',
-        locationName: null,
-        createdAt: '2026-10-29T10:00:00.000Z',
-        updatedAt: '2026-10-29T10:00:00.000Z',
-        memberCount: 1,
-        currentMembership: { status: 'active', role: 'member', notificationPreference: 'all', feedPreference: 'all' },
-        canManage: false,
-        pendingRequestCount: 0,
-      },
-      isLoading: false,
-      isError: false,
-      refetch: jest.fn(),
-    });
-    const user = userEvent.setup();
-    await renderWithProviders(<GroupDetailPage />);
-
-    await user.press(screen.getByLabelText('Members'));
-    await user.press(screen.getByText('Announcements only'));
-    await user.press(screen.getByText('Admin posts only'));
-
-    expect(mockUpdatePreferences).toHaveBeenNthCalledWith(1, {
-      groupId: GROUP_FIXTURE.id,
-      notificationPreference: 'announcements',
-      feedPreference: 'all',
-    });
-    expect(mockUpdatePreferences).toHaveBeenNthCalledWith(2, {
-      groupId: GROUP_FIXTURE.id,
-      notificationPreference: 'all',
-      feedPreference: 'admins',
-    });
-  });
-
-  it('uses preference defaults and reports when saving preferences fails', async () => {
-    mockGetGroup.mockReturnValue({
-      data: {
-        id: GROUP_FIXTURE.id,
-        name: GROUP_FIXTURE.name,
-        description: null,
-        sports: ['run'],
-        privacy: 'open',
-        locationName: null,
-        createdAt: '2026-10-29T10:00:00.000Z',
-        updatedAt: '2026-10-29T10:00:00.000Z',
-        memberCount: 1,
-        currentMembership: { status: 'active', role: 'member' },
-        canManage: false,
-        pendingRequestCount: 0,
-      },
-      isLoading: false,
-      isError: false,
-      refetch: jest.fn(),
-    });
-    mockUpdatePreferences.mockReturnValue({ unwrap: jest.fn().mockRejectedValue(new Error('offline')) });
-    await renderWithProviders(<GroupDetailPage />);
-    const user = userEvent.setup();
-    await user.press(screen.getByLabelText(GROUPS_COPY[LANGUAGES.english].membersTab));
-    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].announcementNotifications));
-
-    await waitFor(() =>
-      expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].saveError, expect.any(Error)),
-    );
-    expect(mockUpdatePreferences).toHaveBeenCalledWith({
-      groupId: GROUP_FIXTURE.id,
-      notificationPreference: 'announcements',
-      feedPreference: 'all',
-    });
-    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].adminPostsOnly));
-    await waitFor(() =>
-      expect(mockUpdatePreferences).toHaveBeenLastCalledWith({
-        groupId: GROUP_FIXTURE.id,
-        notificationPreference: 'all',
-        feedPreference: 'admins',
-      }),
-    );
   });
 
   it('renders the group feed for active members', async () => {

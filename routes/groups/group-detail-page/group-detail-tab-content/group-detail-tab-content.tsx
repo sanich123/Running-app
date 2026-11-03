@@ -42,7 +42,7 @@ export default function GroupDetailTabContent({
         }))}
       />
       {selectedTab === 'members' ? (
-        <GroupMembersList group={group} isActiveMember={isActiveMember} />
+        <GroupMembersList group={group} />
       ) : selectedTab === 'distance' ? (
         <GroupDistanceList group={group} />
       ) : selectedTab === 'posts' ? (

@@ -13,7 +13,6 @@ const mockGetMonthlyStatistics = jest.fn();
 const mockGetPosts = jest.fn();
 const mockGetEvents = jest.fn();
 const mockUpdateMember = jest.fn();
-const mockUpdatePreferences = jest.fn();
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -25,7 +24,6 @@ jest.mock('@R/services/groups/groups', () => ({
   useGetGroupPostsInfiniteQuery: (...args: unknown[]) => mockGetPosts(...args),
   useGetGroupEventsInfiniteQuery: (...args: unknown[]) => mockGetEvents(...args),
   useUpdateGroupMemberMutation: () => mockUpdateMember(),
-  useUpdateGroupPreferencesMutation: () => mockUpdatePreferences(),
 }));
 
 const group: GroupDetails = {
@@ -52,7 +50,6 @@ describe('GroupDetailTabContent', () => {
     mockGetEvents.mockReturnValue(emptyInfiniteQuery);
     mockGetPosts.mockReturnValue(emptyInfiniteQuery);
     mockUpdateMember.mockReturnValue([jest.fn(), { isLoading: false }]);
-    mockUpdatePreferences.mockReturnValue([jest.fn(), { isLoading: false }]);
   });
 
   it('shows the post request HTTP status and retries the failed request', async () => {

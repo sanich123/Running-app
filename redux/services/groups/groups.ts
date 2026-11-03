@@ -16,7 +16,6 @@ import type {
   GroupPost,
   GroupSummary,
   GroupsQuery,
-  UpdateGroupPreferencesRequest,
   UpdateGroupRequest,
   UpdateGroupMemberRequest,
 } from './types';
@@ -129,17 +128,6 @@ const groupsApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: [Tags.groups],
     }),
-    updateGroupPreferences: mutation<
-      Pick<UpdateGroupPreferencesRequest, 'notificationPreference' | 'feedPreference'>,
-      UpdateGroupPreferencesRequest
-    >({
-      query: ({ groupId, notificationPreference, feedPreference }) => ({
-        url: `/${groupsRoute}/${groupId}/preferences`,
-        method: Methods.patch,
-        body: { notificationPreference, feedPreference },
-      }),
-      invalidatesTags: [Tags.groups],
-    }),
     createGroupPost: mutation<{ id: string }, CreateGroupPostRequest>({
       query: ({ groupId, text, photoAssetId }) => ({
         url: `/${groupsRoute}/${groupId}/posts`,
@@ -170,7 +158,6 @@ export const {
   useJoinGroupMutation,
   useLeaveGroupMutation,
   useUpdateGroupMemberMutation,
-  useUpdateGroupPreferencesMutation,
   useCreateGroupPostMutation,
   useCreateGroupEventMutation,
 } = groupsApi;

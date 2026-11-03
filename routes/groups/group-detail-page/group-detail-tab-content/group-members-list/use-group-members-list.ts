@@ -1,9 +1,5 @@
 import { useRouter } from 'expo-router';
-import {
-  useGetGroupMembersInfiniteQuery,
-  useUpdateGroupMemberMutation,
-  useUpdateGroupPreferencesMutation,
-} from '@R/services/groups/groups';
+import { useGetGroupMembersInfiniteQuery, useUpdateGroupMemberMutation } from '@R/services/groups/groups';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { GROUPS_COPY } from '../../../const';
@@ -19,12 +15,10 @@ export default function useGroupMembersList(group: GroupDetails) {
   const isOwner = groupIsOwner || createdByUserId === userId;
   const canManageGroup = canManage || isOwner;
   const canSeeMembers = privacy === 'open' || currentMembership?.status === 'active' || isOwner;
-  const membership = currentMembership;
   const { data, isLoading, isError, error, refetch, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetGroupMembersInfiniteQuery({ groupId: id, status: 'active' }, { skip: !canSeeMembers });
   const members = data?.pages.flatMap(({ items }) => items) ?? [];
   const [updateMember, { isLoading: isUpdatingMember }] = useUpdateGroupMemberMutation();
-  const [updatePreferences, { isLoading: isUpdatingPreferences }] = useUpdateGroupPreferencesMutation();
   const onScroll = createGroupListScrollHandler({ hasNextPage, isFetchingNextPage, fetchNextPage });
   const openProfile = (profileId: string) => router.push(`/profile/${profileId}` as never);
   const changeMember = async (memberId: string, status: 'active' | 'rejected' | 'removed') => {
@@ -34,46 +28,18 @@ export default function useGroupMembersList(group: GroupDetails) {
       errorToast(saveError, updateError);
     }
   };
-  const changePreferences = async (preference: 'notificationPreference' | 'feedPreference', value: string) => {
-    if (!membership) return;
-    const notificationPreference =
-      preference === 'notificationPreference'
-        ? value === 'all' || value === 'announcements' || value === 'off'
-          ? value
-          : null
-        : (membership.notificationPreference ?? 'all');
-    const feedPreference =
-      preference === 'feedPreference'
-        ? value === 'all' || value === 'admins'
-          ? value
-          : null
-        : (membership.feedPreference ?? 'all');
-    if (!notificationPreference || !feedPreference) return;
-    try {
-      await updatePreferences({
-        groupId: id,
-        notificationPreference,
-        feedPreference,
-      }).unwrap();
-    } catch (updateError) {
-      errorToast(saveError, updateError);
-    }
-  };
 
   return {
     canManageGroup,
     canSeeMembers,
     changeMember,
-    changePreferences,
     copy: GROUPS_COPY[language],
     error,
     isError,
     isLoading,
     isUpdatingMember,
-    isUpdatingPreferences,
     language,
     members,
-    membership,
     onScroll,
     openProfile,
     refetch,

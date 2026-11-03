@@ -24,7 +24,6 @@ const group: GroupDetails = {
 
 describe('GroupMembersList', () => {
   const changeMember = jest.fn();
-  const changePreferences = jest.fn();
   const openProfile = jest.fn();
   const refetch = jest.fn();
   const copy = GROUPS_COPY[LANGUAGES.english];
@@ -39,16 +38,13 @@ describe('GroupMembersList', () => {
     canManageGroup: true,
     canSeeMembers: true,
     changeMember,
-    changePreferences,
     copy,
     error: undefined,
     isError: false,
     isLoading: false,
     isUpdatingMember: false,
-    isUpdatingPreferences: false,
     language: LANGUAGES.english,
     members: [member],
-    membership: group.currentMembership,
     onScroll: jest.fn(),
     openProfile,
     refetch,
@@ -60,19 +56,17 @@ describe('GroupMembersList', () => {
     mockUseGroupMembersList.mockReturnValue(makeResult());
   });
 
-  it('shows member preferences and forwards member and preference actions', async () => {
-    await renderWithProviders(<GroupMembersList group={group} isActiveMember />);
+  it('shows members and forwards member actions without group preference controls', async () => {
+    await renderWithProviders(<GroupMembersList group={group} />);
 
     expect(screen.getByText('Alex Runner')).toBeOnTheScreen();
+    expect(screen.queryByText('Group notifications')).not.toBeOnTheScreen();
+    expect(screen.queryByText('Show group posts in your home feed')).not.toBeOnTheScreen();
     const user = userEvent.setup();
     await user.press(screen.getByTestId('group-member-profile-member-1'));
-    await user.press(screen.getByText(copy.announcementNotifications));
-    await user.press(screen.getByText(copy.adminPostsOnly));
     await user.press(screen.getByText(copy.remove));
 
     expect(openProfile).toHaveBeenCalledWith('member-1');
-    expect(changePreferences).toHaveBeenNthCalledWith(1, 'notificationPreference', 'announcements');
-    expect(changePreferences).toHaveBeenNthCalledWith(2, 'feedPreference', 'admins');
     expect(changeMember).toHaveBeenCalledWith('member-1', 'removed');
   });
 
@@ -81,10 +75,11 @@ describe('GroupMembersList', () => {
       ...makeResult(),
       members: [],
     });
-    await renderWithProviders(<GroupMembersList group={group} isActiveMember={false} />);
+    await renderWithProviders(<GroupMembersList group={group} />);
 
     expect(screen.getByText(copy.noMembers)).toBeOnTheScreen();
-    expect(screen.queryByText(copy.notifications)).not.toBeOnTheScreen();
+    expect(screen.queryByText('Group notifications')).not.toBeOnTheScreen();
+    expect(screen.queryByText('Show group posts in your home feed')).not.toBeOnTheScreen();
     expect(StyleSheet.flatten(screen.getByTestId('group-detail-scroll').props.contentContainerStyle)).toEqual(
       expect.objectContaining({ flexGrow: 1 }),
     );
@@ -99,7 +94,7 @@ describe('GroupMembersList', () => {
       error: { status: 503, data: { message: 'Service unavailable' } },
       isError: true,
     });
-    await renderWithProviders(<GroupMembersList group={group} isActiveMember />);
+    await renderWithProviders(<GroupMembersList group={group} />);
 
     expect(screen.getByText('503, Service unavailable')).toBeOnTheScreen();
     await userEvent.press(screen.getByText(copy.retry));

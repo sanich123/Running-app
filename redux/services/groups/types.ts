@@ -138,12 +138,6 @@ export interface GroupMonthlyStatisticsQuery {
   timeZone: string;
 }
 
-export interface UpdateGroupPreferencesRequest {
-  groupId: string;
-  notificationPreference: GroupNotificationPreference;
-  feedPreference: GroupFeedPreference;
-}
-
 export interface GroupPost {
   id: string;
   text: string;
