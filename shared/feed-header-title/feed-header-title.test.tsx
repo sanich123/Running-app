@@ -54,16 +54,16 @@ describe('FeedHeaderTitle', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 
-  it('keeps the Runich root link on the home page even when navigation can go back', async () => {
+  it('hides the Runich brand on the home page when navigation can go back', async () => {
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
-    const user = userEvent.setup();
 
     await render(<FeedHeaderTitle isBrand>Home</FeedHeaderTitle>);
-    await user.press(screen.getByLabelText('Runich'));
 
-    expect(mockCanGoBack).not.toHaveBeenCalled();
-    expect(mockReplace).toHaveBeenCalledWith(ROUTES.root);
+    expect(mockCanGoBack).toHaveBeenCalled();
+    expect(screen.queryByText('RUNICH')).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText('Runich')).not.toBeOnTheScreen();
+    expect(mockReplace).not.toHaveBeenCalled();
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 });

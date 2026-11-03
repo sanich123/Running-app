@@ -8,6 +8,12 @@ import { FONT_FAMILIES } from '@const/fonts';
 export default function FeedHeaderTitle({ children, isBrand = false }: PropsWithChildren<{ isBrand?: boolean }>) {
   const { colors } = useTheme();
   const { canGoBack, replace } = useRouter();
+  const hasBackRoute = canGoBack();
+
+  if (isBrand && hasBackRoute) {
+    return null;
+  }
+
   if (Platform.OS !== 'web') {
     return (
       <Text
@@ -18,7 +24,7 @@ export default function FeedHeaderTitle({ children, isBrand = false }: PropsWith
     );
   }
 
-  if (!isBrand && canGoBack()) {
+  if (!isBrand && hasBackRoute) {
     return <Text style={[styles.title, { color: colors.primary }]}>{children}</Text>;
   }
 

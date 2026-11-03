@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Image, Pressable, Share, ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, Share, ScrollView, StyleSheet, View } from 'react-native';
 import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import {
@@ -18,6 +18,7 @@ import {
   Text,
   useTheme,
 } from 'react-native-paper';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES } from '@const/enums';
 import {
   useGetGroupByIdQuery,
@@ -41,6 +42,7 @@ import { GROUP_CATEGORY_LABELS, GROUPS_COPY, GROUP_SPORTS, getGroupShareUrl, get
 import GroupEventsHeader from '../group-events-page/group-events-header/group-events-header';
 import GroupEventsList from '../group-events-page/group-events-list/group-events-list';
 import GroupMemberRow from '../group-member-row/group-member-row';
+import GroupPhoto from '../group-photo/group-photo';
 import type { GroupEventPeriod } from '../group-events-page/types';
 
 export default function GroupDetailPage() {
@@ -58,6 +60,7 @@ export default function GroupDetailPage() {
     requestedTab === 'events' ? 'events' : 'distance',
   );
   const [eventPeriod, setEventPeriod] = useState<GroupEventPeriod>('upcoming');
+  const [joinedGroupId, setJoinedGroupId] = useState<string | null>(null);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
   const [isReportDialogVisible, setIsReportDialogVisible] = useState(false);
@@ -69,7 +72,11 @@ export default function GroupDetailPage() {
   }, [group?.photoPending, refetch]);
   const isGroupOwner = Boolean(group && (group.isOwner || (userId && group.createdByUserId === userId)));
   const canManageGroup = Boolean(group?.canManage || isGroupOwner);
-  const isActiveMember = Boolean(group?.currentMembership?.status === 'active' || isGroupOwner);
+  const isActiveMember = Boolean(
+    group?.currentMembership?.status === 'active' ||
+    isGroupOwner ||
+    (group && joinedGroupId === group.id && group.privacy === 'open'),
+  );
   const canSeeMembers = Boolean(
     group && (group.privacy === 'open' || group.currentMembership?.status === 'active' || isGroupOwner),
   );
@@ -92,7 +99,14 @@ export default function GroupDetailPage() {
   const postsQuery = useGetGroupPostsInfiniteQuery(groupId ?? '', {
     skip: !groupId || !canSeeMembers || selectedTab !== 'posts',
   });
+  const refetchPosts = postsQuery.refetch;
   const posts = postsQuery.data?.pages.flatMap(({ items }) => items) ?? [];
+  const hasPendingPostPhoto = selectedTab === 'posts' && posts.some((post) => post.photoPending);
+  useEffect(() => {
+    if (!hasPendingPostPhoto) return;
+    const interval = setInterval(() => void refetchPosts(), 8000);
+    return () => clearInterval(interval);
+  }, [hasPendingPostPhoto, refetchPosts]);
   const eventsQuery = useGetGroupEventsInfiniteQuery(
     { groupId: groupId ?? '', period: eventPeriod },
     { skip: !groupId || !canSeeMembers || selectedTab !== 'events' },
@@ -169,7 +183,7 @@ export default function GroupDetailPage() {
 
   const isOwner = isGroupOwner;
   const openContentComposer = () => router.push(`/groups/${group.id}/create-content` as never);
-  const isPending = group.currentMembership?.status === 'pending';
+  const isPending = group.currentMembership?.status === 'pending' || joinedGroupId === group.id;
   const monthLabel = new Intl.DateTimeFormat(language === LANGUAGES.russian ? 'ru-RU' : 'en-US', {
     month: 'long',
     year: 'numeric',
@@ -280,25 +294,19 @@ export default function GroupDetailPage() {
           ),
         }}
       />
-      <ScrollView
-        style={{ backgroundColor: colors.background }}
-        contentContainerStyle={styles.content}
-        onScroll={handleScroll}
-        scrollEventThrottle={200}
-        testID="group-detail-scroll">
+      <View style={[styles.page, Platform.OS === 'web' && styles.webPage, { backgroundColor: colors.background }]}>
         <Surface style={[styles.hero, { backgroundColor: colors.surface }]} elevation={1}>
           <View style={styles.heroTop}>
-            {group.photoUrl || group.photoPreviewUrl ? (
-              <Image
-                source={{ uri: group.photoUrl ?? group.photoPreviewUrl ?? undefined }}
-                style={styles.groupPhoto}
-                resizeMode="cover"
-              />
-            ) : (
-              <View style={[styles.heroIcon, { backgroundColor: colors.primaryContainer }]}>
-                <Icon source="account-group" size={28} color={colors.primary} />
-              </View>
-            )}
+            <GroupPhoto
+              photoUrl={group.photoUrl}
+              photoPreviewUrl={group.photoPreviewUrl}
+              photoBlurhash={group.photoBlurhash}
+              photoReviewStatus={group.photoReviewStatus}
+              photoPending={group.photoPending}
+              style={[styles.groupPhoto, { backgroundColor: colors.primaryContainer }]}
+              iconSize={28}
+              testID="group-detail-photo"
+            />
             <View style={styles.heroSummary}>
               <Text variant="titleLarge" numberOfLines={2} style={styles.title}>
                 {group.name}
@@ -336,13 +344,6 @@ export default function GroupDetailPage() {
               {group.description}
             </Text>
           )}
-          <View style={styles.sports}>
-            {GROUP_SPORTS.filter((sport) => group.sports.includes(sport)).map((sport) => (
-              <Chip key={sport} compact>
-                {sportLabels[sport]}
-              </Chip>
-            ))}
-          </View>
           {!!group.categoryTags?.length && (
             <View style={styles.sports}>
               {group.categoryTags.map((tag) => (
@@ -359,6 +360,7 @@ export default function GroupDetailPage() {
                 if (!groupId) return;
                 try {
                   await joinGroup(groupId).unwrap();
+                  setJoinedGroupId(group.id);
                   if (group.privacy === 'closed') successToast(copy.requestSent);
                 } catch (error) {
                   errorToast(copy.saveError, error);
@@ -421,198 +423,210 @@ export default function GroupDetailPage() {
           ]}
         />
 
-        {canSeeMembers && selectedTab === 'posts' && (
-          <View style={styles.section}>
-            {postsQuery.isLoading ? (
-              <ActivityIndicator />
-            ) : postsQuery.isError ? (
-              <Text variant="bodyMedium" style={{ color: colors.error }}>
-                {copy.loadError}
-              </Text>
-            ) : posts.length ? (
-              posts.map((post) => {
-                const postPhotoUrl = post.photoUrl ?? post.photoPreviewUrl;
-                return (
-                  <Surface key={post.id} style={[styles.post, { backgroundColor: colors.surface }]} elevation={1}>
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel={post.author?.name || copy.member}
-                      disabled={!post.author?.userId}
-                      onPress={() => {
-                        if (post.author?.userId) router.push(`/profile/${post.author.userId}` as never);
-                      }}
-                      style={styles.postHeader}
-                      testID={`group-post-author-${post.id}`}>
-                      {post.author?.profilePhoto ? (
-                        <Avatar.Image size={40} source={{ uri: post.author.profilePhoto }} />
-                      ) : (
-                        <Avatar.Icon size={40} icon="account" />
-                      )}
-                      <View style={styles.postAuthor}>
-                        <Text variant="titleSmall">{post.author?.name || copy.member}</Text>
-                        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                          {new Date(post.createdAt).toLocaleString(locale)}
-                        </Text>
-                      </View>
-                    </Pressable>
-                    <Text variant="bodyLarge">{post.text}</Text>
-                    {postPhotoUrl && (
-                      <Image source={{ uri: postPhotoUrl }} style={styles.postPhoto} resizeMode="cover" />
-                    )}
-                    {post.hasPhoto && (post.photoPending || !postPhotoUrl) && (
-                      <View style={styles.postPhotoNotice}>
-                        <Icon
-                          source={post.photoPending ? 'clock-outline' : 'image-off-outline'}
-                          size={16}
-                          color={colors.onSurfaceVariant}
+        <ScrollView
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+          onScroll={handleScroll}
+          scrollEventThrottle={200}
+          testID="group-detail-scroll">
+          {canSeeMembers && selectedTab === 'posts' && (
+            <View style={styles.section}>
+              {postsQuery.isLoading ? (
+                <ActivityIndicator />
+              ) : postsQuery.isError ? (
+                <Text variant="bodyMedium" style={{ color: colors.error }}>
+                  {copy.loadError}
+                </Text>
+              ) : posts.length ? (
+                posts.map((post) => {
+                  const postPhotoUrl = post.photoUrl ?? post.photoPreviewUrl;
+                  return (
+                    <Surface key={post.id} style={[styles.post, { backgroundColor: colors.surface }]} elevation={1}>
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel={post.author?.name || copy.member}
+                        disabled={!post.author?.userId}
+                        onPress={() => {
+                          if (post.author?.userId) router.push(`/profile/${post.author.userId}` as never);
+                        }}
+                        style={styles.postHeader}
+                        testID={`group-post-author-${post.id}`}>
+                        {post.author?.profilePhoto ? (
+                          <Avatar.Image size={40} source={{ uri: post.author.profilePhoto }} />
+                        ) : (
+                          <Avatar.Icon size={40} icon="account" />
+                        )}
+                        <View style={styles.postAuthor}>
+                          <Text variant="titleSmall">{post.author?.name || copy.member}</Text>
+                          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                            {new Date(post.createdAt).toLocaleString(locale)}
+                          </Text>
+                        </View>
+                      </Pressable>
+                      <Text variant="bodyLarge">{post.text}</Text>
+                      {post.hasPhoto && (postPhotoUrl || post.photoPending) ? (
+                        <GroupPhoto
+                          photoUrl={post.photoUrl}
+                          photoPreviewUrl={post.photoPreviewUrl}
+                          photoBlurhash={post.photoBlurhash}
+                          photoReviewStatus={post.photoReviewStatus}
+                          photoPending={post.photoPending}
+                          fallbackIcon="image-off-outline"
+                          style={[styles.postPhoto, { backgroundColor: colors.surfaceVariant }]}
+                          testID={`group-post-photo-${post.id}`}
                         />
-                        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                          {post.photoPending ? copy.postPhotoPending : copy.postPhotoUnavailable}
-                        </Text>
-                      </View>
-                    )}
-                  </Surface>
-                );
-              })
-            ) : (
-              <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-                {copy.noPosts}
-              </Text>
-            )}
-          </View>
-        )}
+                      ) : null}
+                      {post.hasPhoto && !post.photoPending && !postPhotoUrl && (
+                        <View style={styles.postPhotoNotice}>
+                          <Icon source="image-off-outline" size={16} color={colors.onSurfaceVariant} />
+                          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                            {copy.postPhotoUnavailable}
+                          </Text>
+                        </View>
+                      )}
+                    </Surface>
+                  );
+                })
+              ) : (
+                <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                  {copy.noPosts}
+                </Text>
+              )}
+            </View>
+          )}
 
-        {selectedTab === 'events' && (
-          <View style={styles.section}>
-            <GroupEventsHeader
-              groupName={group.name}
-              period={eventPeriod}
-              onPeriodChange={setEventPeriod}
-              copy={copy}
-              showTitle={false}
-            />
-            <GroupEventsList
-              groupId={group.id}
-              period={eventPeriod}
-              canSeeEvents={canSeeMembers}
-              copy={copy}
-              locale={locale}
-              events={events}
-              isLoading={eventsQuery.isLoading}
-            />
-          </View>
-        )}
-
-        {canSeeMembers && selectedTab === 'distance' && (
-          <View style={styles.section}>
-            <View style={styles.monthControls}>
-              <IconButton
-                icon="chevron-left"
-                accessibilityLabel={copy.previousMonth}
-                onPress={() => setSelectedMonth((month) => new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+          {selectedTab === 'events' && (
+            <View style={styles.section}>
+              <GroupEventsHeader
+                groupName={group.name}
+                period={eventPeriod}
+                onPeriodChange={setEventPeriod}
+                copy={copy}
+                showTitle={false}
               />
-              <Text variant="bodyMedium" style={styles.monthLabel}>
-                {monthLabel}
-              </Text>
-              <IconButton
-                icon="chevron-right"
-                accessibilityLabel={copy.nextMonth}
-                disabled={!canGoToNextMonth}
-                onPress={() => setSelectedMonth((month) => new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+              <GroupEventsList
+                groupId={group.id}
+                period={eventPeriod}
+                canSeeEvents={canSeeMembers}
+                copy={copy}
+                locale={locale}
+                events={events}
+                isLoading={eventsQuery.isLoading}
               />
             </View>
-            {monthlyStatisticsQuery.isLoading ? (
-              <ActivityIndicator />
-            ) : monthlyStatisticsQuery.isError ? (
-              <View>
-                <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-                  {copy.statsError}
+          )}
+
+          {canSeeMembers && selectedTab === 'distance' && (
+            <View style={styles.section}>
+              <View style={styles.monthControls}>
+                <IconButton
+                  icon="chevron-left"
+                  accessibilityLabel={copy.previousMonth}
+                  onPress={() => setSelectedMonth((month) => new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+                />
+                <Text variant="bodyMedium" style={styles.monthLabel}>
+                  {monthLabel}
                 </Text>
-                <Button onPress={() => void monthlyStatisticsQuery.refetch()}>{copy.retry}</Button>
+                <IconButton
+                  icon="chevron-right"
+                  accessibilityLabel={copy.nextMonth}
+                  disabled={!canGoToNextMonth}
+                  onPress={() => setSelectedMonth((month) => new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+                />
               </View>
-            ) : monthlyStatistics.length ? (
-              monthlyStatistics.map((memberStatistics, index) => (
-                <GroupMemberRow
-                  key={memberStatistics.userId}
-                  member={{
-                    userId: memberStatistics.userId,
-                    role: 'member',
-                    status: 'active',
-                    joinedAt: null,
-                    profile: memberStatistics.profile,
-                  }}
-                  canManage={false}
-                  isUpdating={false}
-                  onUpdateMember={changeMember}
-                  copy={copy}
-                  language={language}
-                  rank={index + 1}
-                  distanceLabel={`${(memberStatistics.totalDistance / 1000).toLocaleString(locale, { maximumFractionDigits: 1 })} ${copy.distanceUnit}`}
-                  onPressProfile={() => router.push(`/profile/${memberStatistics.userId}` as never)}
-                />
-              ))
-            ) : (
-              <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-                {copy.noMonthlyStats}
-              </Text>
-            )}
-          </View>
-        )}
+              {monthlyStatisticsQuery.isLoading ? (
+                <ActivityIndicator />
+              ) : monthlyStatisticsQuery.isError ? (
+                <View>
+                  <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                    {copy.statsError}
+                  </Text>
+                  <Button onPress={() => void monthlyStatisticsQuery.refetch()}>{copy.retry}</Button>
+                </View>
+              ) : monthlyStatistics.length ? (
+                monthlyStatistics.map((memberStatistics, index) => (
+                  <GroupMemberRow
+                    key={memberStatistics.userId}
+                    member={{
+                      userId: memberStatistics.userId,
+                      role: 'member',
+                      status: 'active',
+                      joinedAt: null,
+                      profile: memberStatistics.profile,
+                    }}
+                    canManage={false}
+                    isUpdating={false}
+                    onUpdateMember={changeMember}
+                    copy={copy}
+                    language={language}
+                    rank={index + 1}
+                    distanceLabel={`${(memberStatistics.totalDistance / 1000).toLocaleString(locale, { maximumFractionDigits: 1 })} ${copy.distanceUnit}`}
+                    onPressProfile={() => router.push(`/profile/${memberStatistics.userId}` as never)}
+                  />
+                ))
+              ) : (
+                <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                  {copy.noMonthlyStats}
+                </Text>
+              )}
+            </View>
+          )}
 
-        {selectedTab === 'members' && isActiveMember && membership && (
-          <View style={styles.section}>
-            <Text variant="titleLarge" style={styles.sectionTitle}>
-              {copy.notifications}
-            </Text>
-            <SegmentedButtons
-              value={membership.notificationPreference ?? 'all'}
-              onValueChange={(value) => void changePreferences('notificationPreference', value)}
-              buttons={[
-                { value: 'all', label: copy.allNotifications, disabled: isUpdatingPreferences },
-                { value: 'announcements', label: copy.announcementNotifications, disabled: isUpdatingPreferences },
-                { value: 'off', label: copy.notificationsOff, disabled: isUpdatingPreferences },
-              ]}
-            />
-            <Text variant="titleMedium" style={styles.sectionTitle}>
-              {copy.feedPreference}
-            </Text>
-            <SegmentedButtons
-              value={membership.feedPreference ?? 'all'}
-              onValueChange={(value) => void changePreferences('feedPreference', value)}
-              buttons={[
-                { value: 'all', label: copy.allGroupPosts, disabled: isUpdatingPreferences },
-                { value: 'admins', label: copy.adminPostsOnly, disabled: isUpdatingPreferences },
-              ]}
-            />
-          </View>
-        )}
-
-        {selectedTab === 'members' && canSeeMembers && (
-          <View style={styles.section}>
-            {membersQuery.isLoading ? (
-              <ActivityIndicator />
-            ) : members.length ? (
-              members.map((member) => (
-                <GroupMemberRow
-                  key={member.userId}
-                  member={member}
-                  canManage={canManageGroup}
-                  isUpdating={isUpdatingMember}
-                  onUpdateMember={changeMember}
-                  copy={copy}
-                  language={language}
-                  onPressProfile={() => router.push(`/profile/${member.userId}` as never)}
-                />
-              ))
-            ) : (
-              <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-                {copy.noMembers}
+          {selectedTab === 'members' && isActiveMember && membership && (
+            <View style={styles.section}>
+              <Text variant="titleLarge" style={styles.sectionTitle}>
+                {copy.notifications}
               </Text>
-            )}
-          </View>
-        )}
-        {isFetchingNextPage && <ActivityIndicator style={styles.nextPageLoader} />}
-      </ScrollView>
+              <SegmentedButtons
+                value={membership.notificationPreference ?? 'all'}
+                onValueChange={(value) => void changePreferences('notificationPreference', value)}
+                buttons={[
+                  { value: 'all', label: copy.allNotifications, disabled: isUpdatingPreferences },
+                  { value: 'announcements', label: copy.announcementNotifications, disabled: isUpdatingPreferences },
+                  { value: 'off', label: copy.notificationsOff, disabled: isUpdatingPreferences },
+                ]}
+              />
+              <Text variant="titleMedium" style={styles.sectionTitle}>
+                {copy.feedPreference}
+              </Text>
+              <SegmentedButtons
+                value={membership.feedPreference ?? 'all'}
+                onValueChange={(value) => void changePreferences('feedPreference', value)}
+                buttons={[
+                  { value: 'all', label: copy.allGroupPosts, disabled: isUpdatingPreferences },
+                  { value: 'admins', label: copy.adminPostsOnly, disabled: isUpdatingPreferences },
+                ]}
+              />
+            </View>
+          )}
+
+          {selectedTab === 'members' && canSeeMembers && (
+            <View style={styles.section}>
+              {membersQuery.isLoading ? (
+                <ActivityIndicator />
+              ) : members.length ? (
+                members.map((member) => (
+                  <GroupMemberRow
+                    key={member.userId}
+                    member={member}
+                    canManage={canManageGroup}
+                    isUpdating={isUpdatingMember}
+                    onUpdateMember={changeMember}
+                    copy={copy}
+                    language={language}
+                    onPressProfile={() => router.push(`/profile/${member.userId}` as never)}
+                  />
+                ))
+              ) : (
+                <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+                  {copy.noMembers}
+                </Text>
+              )}
+            </View>
+          )}
+          {isFetchingNextPage && <ActivityIndicator style={styles.nextPageLoader} />}
+        </ScrollView>
+      </View>
       <Portal>
         <Dialog visible={isDeleteDialogVisible} onDismiss={() => setIsDeleteDialogVisible(false)}>
           <Dialog.Title>{copy.deleteGroupTitle}</Dialog.Title>
@@ -642,14 +656,16 @@ export default function GroupDetailPage() {
 const styles = StyleSheet.create({
   loader: { flex: 1 },
   errorState: { flex: 1, justifyContent: 'center' },
-  content: { gap: 12, padding: 12, paddingBottom: 24 },
+  page: { flex: 1, gap: 12, paddingHorizontal: 12, paddingTop: 12 },
+  webPage: { alignSelf: 'center', maxWidth: MAX_MOBILE_WIDTH, width: '100%' },
+  list: { flex: 1 },
+  listContent: { gap: 12, paddingBottom: 24 },
   headerActions: { alignItems: 'center', flexDirection: 'row' },
   requestBadge: { position: 'absolute', right: 2, top: 2 },
   hero: { borderRadius: 18, gap: 8, padding: 12 },
   heroTop: { alignItems: 'center', flexDirection: 'row', gap: 12 },
   heroSummary: { flex: 1, gap: 4, minWidth: 0 },
   groupPhoto: { borderRadius: 14, height: 64, width: 64 },
-  heroIcon: { alignItems: 'center', borderRadius: 18, height: 64, justifyContent: 'center', width: 64 },
   title: { fontWeight: '800', lineHeight: 28 },
   metaLine: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 5 },
   description: { lineHeight: 20 },

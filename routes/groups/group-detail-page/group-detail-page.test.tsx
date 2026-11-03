@@ -129,9 +129,13 @@ describe('GroupDetailPage', () => {
   it('lets a visitor join an open group', async () => {
     await renderWithProviders(<GroupDetailPage />);
     expect(screen.getByText('Saturday runners')).toBeOnTheScreen();
-    fireEvent.press(screen.getByText('Join group'));
+    await fireEvent.press(screen.getByText('Join group'));
 
-    expect(mockJoin).toHaveBeenCalledWith('group-1');
+    await waitFor(() => {
+      expect(mockJoin).toHaveBeenCalledWith('group-1');
+      expect(screen.getByText('Leave group')).toBeOnTheScreen();
+    });
+    expect(screen.queryByText('Join group')).toBeNull();
   });
 
   it('shows a pending state for a closed group request', async () => {
@@ -182,9 +186,10 @@ describe('GroupDetailPage', () => {
     });
 
     await renderWithProviders(<GroupDetailPage />);
-    fireEvent.press(screen.getByText('Request to join'));
+    await userEvent.press(screen.getByText('Request to join'));
 
     await waitFor(() => expect(mockJoin).toHaveBeenCalledWith('group-1'));
+    await waitFor(() => expect(screen.getByText('Request pending')).toBeDisabled());
     expect(mockSuccessToast).toHaveBeenCalledWith('Your request was sent');
   });
 
@@ -683,7 +688,7 @@ describe('GroupDetailPage', () => {
     await user.press(screen.getByLabelText(GROUPS_COPY[LANGUAGES.english].postsTab));
 
     expect(screen.getByText('Photo ready')).toBeOnTheScreen();
-    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].postPhotoPending)).toBeOnTheScreen();
+    expect(screen.getByTestId('group-post-photo-photo-pending-moderation-status')).toBeOnTheScreen();
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].postPhotoUnavailable)).toBeOnTheScreen();
     expect(screen.getAllByText(GROUPS_COPY[LANGUAGES.english].member)).toHaveLength(2);
   });
@@ -795,6 +800,7 @@ describe('GroupDetailPage', () => {
       refetch,
     });
     const { unmount } = await renderWithProviders(<GroupDetailPage />);
+    expect(screen.getByTestId('group-detail-photo-moderation-status')).toBeOnTheScreen();
     unmount();
     expect(refetch).not.toHaveBeenCalled();
   });

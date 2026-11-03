@@ -88,7 +88,14 @@ describe('GroupsPage', () => {
 
   it('shows a group photo and human-readable category labels', async () => {
     mockGetGroupsQuery.mockReturnValue({
-      data: [{ ...group, photoUrl: 'https://example.test/group.jpg', categoryTags: ['team', 'local'] }],
+      data: [
+        {
+          ...group,
+          photoUrl: 'https://example.test/group.jpg',
+          categoryTags: ['team', 'local'],
+          photoPending: true,
+        },
+      ],
       isLoading: false,
       isFetching: false,
       isError: false,
@@ -97,6 +104,7 @@ describe('GroupsPage', () => {
     await renderWithProviders(<GroupsPage />);
 
     expect(screen.getByText('Team · Local community')).toBeOnTheScreen();
+    expect(screen.getByTestId('group-photo-group-1-moderation-status')).toBeOnTheScreen();
   });
 
   it('filters the catalog by one of the supported sports', async () => {

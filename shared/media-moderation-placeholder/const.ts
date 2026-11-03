@@ -57,7 +57,8 @@ export const MEDIA_MODERATION_PLACEHOLDER_STATUS_CONFIG = {
   [MEDIA_REVIEW_STATUSES.approved]: {
     title: 'approved',
     detail: 'detail',
-    isStage: false,
+    isStage: true,
+    stageIcon: 'clock-outline',
     statusIcon: 'clock-outline',
   },
   [MEDIA_REVIEW_STATUSES.rejected]: {

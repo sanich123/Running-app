@@ -1,6 +1,7 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetGroupByIdQuery, useGetGroupMembersQuery, useUpdateGroupMemberMutation } from '@R/services/groups/groups';
 import { useAppSelector } from '@R/typed-hooks';
 import EmptyState from '@S/empty-state/empty-state';
@@ -49,7 +50,9 @@ export default function GroupRequestsPage() {
           <Button onPress={() => refetch()}>{copy.retry}</Button>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.content} style={{ backgroundColor: colors.background }}>
+        <ScrollView
+          contentContainerStyle={[styles.content, Platform.OS === 'web' && styles.webContent]}
+          style={{ backgroundColor: colors.background }}>
           <Text variant="headlineSmall" style={styles.title}>
             {group.name}
           </Text>
@@ -81,5 +84,6 @@ const styles = StyleSheet.create({
   loader: { flex: 1 },
   feedback: { flex: 1, justifyContent: 'center' },
   content: { gap: 10, padding: 12, paddingBottom: 24 },
+  webContent: { alignSelf: 'center', maxWidth: MAX_MOBILE_WIDTH, width: '100%' },
   title: { fontWeight: '700', marginBottom: 2 },
 });

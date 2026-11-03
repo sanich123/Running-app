@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { FlatList, Image, Pressable, StyleSheet, View } from 'react-native';
+import { FlatList, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import {
   ActivityIndicator,
@@ -14,6 +14,7 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
+import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useGetGroupsQuery } from '@R/services/groups/groups';
@@ -22,6 +23,7 @@ import EmptyState from '@S/empty-state/empty-state';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
 import { GROUP_CATEGORY_LABELS, GROUPS_COPY, GROUP_SPORTS, getGroupSportLabels } from '../const';
 import GroupNotificationSettings from '../group-notification-settings/group-notification-settings';
+import GroupPhoto from '../group-photo/group-photo';
 import type { GroupListScope, GroupSport } from '@R/services/groups/types';
 
 export default function GroupsPage() {
@@ -81,7 +83,12 @@ export default function GroupsPage() {
           ),
         }}
       />
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View
+        style={[
+          styles.container,
+          Platform.OS === 'web' && styles.webContainer,
+          { backgroundColor: colors.background },
+        ]}>
         <View style={styles.controls}>
           <SegmentedButtons
             value={scope}
@@ -194,17 +201,15 @@ export default function GroupsPage() {
               <Pressable accessibilityRole="button" onPress={() => router.push(`/groups/${group.id}` as never)}>
                 <Surface style={[styles.groupCard, { backgroundColor: colors.surface }]} elevation={1}>
                   <View style={styles.cardTop}>
-                    {group.photoUrl || group.photoPreviewUrl ? (
-                      <Image
-                        source={{ uri: group.photoUrl ?? group.photoPreviewUrl ?? undefined }}
-                        style={styles.groupPhoto}
-                        resizeMode="cover"
-                      />
-                    ) : (
-                      <View style={[styles.groupIcon, { backgroundColor: colors.primaryContainer }]}>
-                        <Icon source="account-group" size={25} color={colors.primary} />
-                      </View>
-                    )}
+                    <GroupPhoto
+                      photoUrl={group.photoUrl}
+                      photoPreviewUrl={group.photoPreviewUrl}
+                      photoBlurhash={group.photoBlurhash}
+                      photoReviewStatus={group.photoReviewStatus}
+                      photoPending={group.photoPending}
+                      style={[styles.groupPhoto, { backgroundColor: colors.primaryContainer }]}
+                      testID={`group-photo-${group.id}`}
+                    />
                     <View style={styles.groupTitleBlock}>
                       <Text variant="titleMedium" numberOfLines={2} style={styles.groupName}>
                         {group.name}
@@ -275,6 +280,7 @@ export default function GroupsPage() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  webContainer: { alignSelf: 'center', maxWidth: MAX_MOBILE_WIDTH, width: '100%' },
   controls: { gap: 12, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
   filterRow: { alignItems: 'center', flexDirection: 'row', gap: 8 },
   filterSearch: {
@@ -306,7 +312,6 @@ const styles = StyleSheet.create({
   list: { gap: 12, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 20 },
   groupCard: { borderRadius: 16, gap: 7, padding: 12 },
   cardTop: { alignItems: 'center', flexDirection: 'row', gap: 10 },
-  groupIcon: { alignItems: 'center', borderRadius: 16, height: 48, justifyContent: 'center', width: 48 },
   groupPhoto: { borderRadius: 14, height: 48, width: 48 },
   groupTitleBlock: { flex: 1, gap: 4 },
   groupMeta: { alignItems: 'center', flexDirection: 'row', gap: 5 },

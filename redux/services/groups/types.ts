@@ -18,6 +18,7 @@ export type GroupMemberRole = 'owner' | 'admin' | 'member';
 export type GroupListScope = 'all' | 'mine';
 export type GroupNotificationPreference = 'all' | 'announcements' | 'off';
 export type GroupFeedPreference = 'all' | 'admins';
+export type GroupPhotoReviewStatus = 'queued' | 'processing' | 'review_required' | 'approved' | null;
 
 export interface GroupMembership {
   status: GroupMemberStatus;
@@ -34,6 +35,8 @@ export interface GroupSummary {
   categoryTags: GroupCategoryTag[];
   photoUrl: string | null;
   photoPreviewUrl: string | null;
+  photoBlurhash: string | null;
+  photoReviewStatus: GroupPhotoReviewStatus;
   photoPending: boolean;
   privacy: GroupPrivacy;
   locationName: string | null;
@@ -148,6 +151,8 @@ export interface GroupPost {
   author: { userId: string; name: string | null; profilePhoto: string | null } | null;
   photoUrl: string | null;
   photoPreviewUrl?: string | null;
+  photoBlurhash?: string | null;
+  photoReviewStatus?: GroupPhotoReviewStatus;
   hasPhoto?: boolean;
   photoPending?: boolean;
 }

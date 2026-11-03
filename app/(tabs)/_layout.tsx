@@ -164,7 +164,10 @@ export default function TabLayout() {
           tabBarAccessibilityLabel: labels.groups,
           headerShown: false,
           title: labels.groups,
-          tabBarIcon: ({ focused }) => renderTabIcon('account-group-outline', 'account-group', focused),
+          tabBarIcon: ({ focused }) =>
+            renderTabIcon('account-group-outline', 'account-group-outline', focused, {
+              color: focused ? colors.onPrimaryContainer : colors.secondary,
+            }),
         }}
       />
       <Tabs.Screen

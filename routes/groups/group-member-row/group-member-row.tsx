@@ -88,5 +88,5 @@ const styles = StyleSheet.create({
   memberInfo: { flex: 1, gap: 2 },
   memberName: { fontWeight: '600' },
   distance: { fontWeight: '700' },
-  actions: { alignItems: 'flex-end', gap: 2 },
+  actions: { alignItems: 'center', flexDirection: 'row', gap: 4 },
 });

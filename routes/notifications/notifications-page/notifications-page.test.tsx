@@ -13,7 +13,12 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import NotificationsPage from './notifications-page';
 
 const mockPush = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+jest.mock('expo-router', () => ({
+  Stack: {
+    Screen: ({ options }: { options: { headerRight?: () => React.ReactNode } }) => options.headerRight?.() ?? null,
+  },
+  useRouter: () => ({ push: mockPush }),
+}));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 const mockErrorToast = (jest.requireMock('@S/error-toast/error-toast') as { errorToast: jest.Mock }).errorToast;
 
@@ -272,7 +277,7 @@ describe('NotificationsPage', () => {
 
     await renderWithProviders(<NotificationsPage />);
     await screen.findByText('Новое уведомление');
-    await fireEvent.press(screen.getByTestId('notificationSettingsButton'));
+    await fireEvent.press(screen.getByTestId('notificationSettingsHeaderButton'));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.settings}/${ROUTES.notificationSettings}`);
     await fireEvent(screen.getByTestId('notificationsList'), 'onEndReached');
     await screen.findByTestId('notification-notification-page-2');
