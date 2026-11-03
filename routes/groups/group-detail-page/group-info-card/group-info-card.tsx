@@ -4,7 +4,13 @@ import useGroupInfoCard from './use-group-info-card';
 import GroupPhoto from '../../group-photo/group-photo';
 import type { GroupDetails } from '@R/services/groups/types';
 
-export default function GroupInfoCard({ group }: { group: GroupDetails }) {
+export default function GroupInfoCard({
+  group,
+  isRefreshing = false,
+}: {
+  group: GroupDetails;
+  isRefreshing?: boolean;
+}) {
   const {
     name,
     description,
@@ -33,7 +39,7 @@ export default function GroupInfoCard({ group }: { group: GroupDetails }) {
     onLeave,
     sportLabels,
     sports,
-  } = useGroupInfoCard(group);
+  } = useGroupInfoCard(group, isRefreshing);
   const { open, closed, members, pending, join, request, leave } = copy;
 
   return (

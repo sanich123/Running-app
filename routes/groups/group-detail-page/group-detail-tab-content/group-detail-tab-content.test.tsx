@@ -73,4 +73,38 @@ describe('GroupDetailTabContent', () => {
     await user.press(screen.getByText(copy.retry));
     expect(refetch).toHaveBeenCalledTimes(1);
   });
+
+  it('hides group tabs and skips tab queries for a visitor', async () => {
+    const copy = GROUPS_COPY[LANGUAGES.english];
+    await renderWithProviders(<GroupDetailTabContent group={group} isActiveMember={false} />);
+
+    expect(screen.getByText(copy.groupContentMembersOnly)).toBeOnTheScreen();
+    expect(screen.queryByLabelText(copy.membersTab)).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText(copy.postsTab)).not.toBeOnTheScreen();
+    expect(screen.getByTestId('group-detail-access-gate').props.style).toEqual(
+      expect.objectContaining({ flex: 1, justifyContent: 'center' }),
+    );
+    expect(mockGetMembers).not.toHaveBeenCalled();
+    expect(mockGetMonthlyStatistics).not.toHaveBeenCalled();
+    expect(mockGetPosts).not.toHaveBeenCalled();
+    expect(mockGetEvents).not.toHaveBeenCalled();
+  });
+
+  it('shows approval guidance without tabs while a join request is pending', async () => {
+    const copy = GROUPS_COPY[LANGUAGES.english];
+    const pendingGroup: GroupDetails = {
+      ...group,
+      privacy: 'closed',
+      currentMembership: {
+        status: 'pending',
+        role: 'member',
+        notificationPreference: 'all',
+        feedPreference: 'all',
+      },
+    };
+    await renderWithProviders(<GroupDetailTabContent group={pendingGroup} isActiveMember={false} />);
+
+    expect(screen.getByText(copy.groupContentApprovalPending)).toBeOnTheScreen();
+    expect(screen.queryByLabelText(copy.events)).not.toBeOnTheScreen();
+  });
 });

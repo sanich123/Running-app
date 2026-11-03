@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
@@ -84,6 +85,12 @@ describe('GroupMembersList', () => {
 
     expect(screen.getByText(copy.noMembers)).toBeOnTheScreen();
     expect(screen.queryByText(copy.notifications)).not.toBeOnTheScreen();
+    expect(StyleSheet.flatten(screen.getByTestId('group-detail-scroll').props.contentContainerStyle)).toEqual(
+      expect.objectContaining({ flexGrow: 1 }),
+    );
+    expect(StyleSheet.flatten(screen.getByText(copy.noMembers).props.style)).toEqual(
+      expect.objectContaining({ flex: 1, alignSelf: 'center', textAlign: 'center', textAlignVertical: 'center' }),
+    );
   });
 
   it('retries after member loading fails', async () => {

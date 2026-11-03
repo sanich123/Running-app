@@ -64,4 +64,43 @@ describe('GroupsList', () => {
 
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].noResults)).toBeOnTheScreen();
   });
+
+  it('shows joined and owned groups in My Groups and excludes pending requests', async () => {
+    const activeMembership = {
+      status: 'active' as const,
+      role: 'member' as const,
+      notificationPreference: 'all' as const,
+      feedPreference: 'all' as const,
+    };
+    const activeGroup = { ...GROUP_FIXTURE, name: 'Joined runners', currentMembership: activeMembership };
+    const ownedGroup = {
+      ...GROUP_FIXTURE,
+      id: 'owned-group',
+      name: 'My team',
+      isOwner: true,
+      currentMembership: null,
+    };
+    const pendingGroup = {
+      ...GROUP_FIXTURE,
+      id: 'pending-group',
+      name: 'Requested group',
+      privacy: 'closed' as const,
+      currentMembership: { ...activeMembership, status: 'pending' as const },
+    };
+    const visitorGroup = { ...GROUP_FIXTURE, id: 'visitor-group', name: 'Not joined' };
+    mockGetGroups.mockReturnValue({
+      data: [activeGroup, ownedGroup, pendingGroup, visitorGroup],
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    await renderWithProviders(<GroupsList filters={{ scope: 'mine', search: '', sport: undefined }} />);
+
+    expect(mockGetGroups).toHaveBeenCalledWith({ scope: 'mine', search: '', sport: undefined });
+    expect(screen.getByText('Joined runners')).toBeOnTheScreen();
+    expect(screen.getByText('My team')).toBeOnTheScreen();
+    expect(screen.queryByText('Requested group')).not.toBeOnTheScreen();
+    expect(screen.queryByText('Not joined')).not.toBeOnTheScreen();
+  });
 });

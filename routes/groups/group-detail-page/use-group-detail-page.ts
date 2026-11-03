@@ -10,7 +10,16 @@ export default function useGroupDetailPage() {
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
   const copy = GROUPS_COPY[language];
-  const { data: group, isLoading, isError, error, refetch } = useGetGroupByIdQuery(groupId ?? '', { skip: !groupId });
+  const {
+    data: group,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useGetGroupByIdQuery(groupId ?? '', {
+    skip: !groupId,
+  });
   const [, { data: joinResult }] = useJoinGroupMutation({
     fixedCacheKey: `group-join-${groupId ?? 'unresolved'}`,
   });
@@ -22,16 +31,16 @@ export default function useGroupDetailPage() {
   }, [group?.photoPending, refetch]);
 
   const isOwner = Boolean(group && (group.isOwner || (userId && group.createdByUserId === userId)));
-  const hasRecordedJoin = joinResult?.id === group?.id;
-  const isActiveMember = Boolean(
-    group?.currentMembership?.status === 'active' ||
-    isOwner ||
-    (group && group.currentMembership === null && hasRecordedJoin && group.privacy === 'open'),
-  );
+  const membership =
+    isFetching && group?.currentMembership === null && joinResult?.id === group.id
+      ? joinResult.currentMembership
+      : group?.currentMembership;
+  const isActiveMember = Boolean(membership?.status === 'active' || isOwner);
   return {
     copy,
     error,
     group,
+    isFetching,
     isActiveMember,
     isError,
     isLoading,

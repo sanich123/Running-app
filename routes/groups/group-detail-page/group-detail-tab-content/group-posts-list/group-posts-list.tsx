@@ -35,7 +35,7 @@ export default function GroupPostsList({ group }: { group: GroupDetails }) {
 }
 
 const styles = StyleSheet.create({
-  listContent: { gap: 12, paddingBottom: 24 },
-  emptyText: { alignSelf: 'center', marginTop: 12 },
+  listContent: { flexGrow: 1, gap: 12, paddingBottom: 24 },
+  emptyText: { alignSelf: 'center', flex: 1, marginTop: 12, textAlign: 'center', textAlignVertical: 'center' },
   nextPageLoader: { marginVertical: 12 },
 });

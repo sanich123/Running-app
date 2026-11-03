@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
@@ -82,5 +83,18 @@ describe('GroupEventsTab', () => {
     expect(screen.getByText('503, Service unavailable')).toBeOnTheScreen();
     await userEvent.press(screen.getByText(copy.retry));
     expect(refetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('centers the empty event state in a full-height tab', async () => {
+    mockUseGroupEventsTab.mockReturnValue({
+      ...makeResult(),
+      events: [],
+    });
+    await renderWithProviders(<GroupEventsTab group={group} />);
+
+    expect(screen.getByText(copy.noUpcomingEvents)).toBeOnTheScreen();
+    expect(StyleSheet.flatten(screen.getByTestId('group-detail-scroll').props.contentContainerStyle)).toEqual(
+      expect.objectContaining({ flexGrow: 1 }),
+    );
   });
 });

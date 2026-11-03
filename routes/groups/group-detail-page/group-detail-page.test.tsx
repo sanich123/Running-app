@@ -77,7 +77,12 @@ describe('GroupDetailPage', () => {
         createdAt: '2026-10-29T10:00:00.000Z',
         updatedAt: '2026-10-29T10:00:00.000Z',
         memberCount: 3,
-        currentMembership: null,
+        currentMembership: {
+          status: 'active',
+          role: 'member',
+          notificationPreference: 'all',
+          feedPreference: 'all',
+        },
         canManage: false,
         pendingRequestCount: 0,
       },
@@ -131,15 +136,20 @@ describe('GroupDetailPage', () => {
   });
 
   it('lets a visitor join an open group', async () => {
+    mockGetGroup.mockReturnValue({
+      data: { ...GROUP_FIXTURE, updatedAt: GROUP_FIXTURE.createdAt, currentMembership: null },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
     await renderWithProviders(<GroupDetailPage />);
     expect(screen.getByText(GROUP_FIXTURE.name)).toBeOnTheScreen();
     await fireEvent.press(screen.getByText('Join group'));
 
-    await waitFor(() => {
-      expect(mockJoin).toHaveBeenCalledWith(GROUP_FIXTURE.id);
-      expect(screen.getByText('Leave group')).toBeOnTheScreen();
-    });
-    expect(screen.queryByText('Join group')).toBeNull();
+    await waitFor(() => expect(mockJoin).toHaveBeenCalledWith(GROUP_FIXTURE.id));
+    expect(screen.getByText('Join group')).toBeOnTheScreen();
+    expect(screen.queryByText('Leave group')).not.toBeOnTheScreen();
   });
 
   it('shows a pending state for a closed group request', async () => {
@@ -192,7 +202,8 @@ describe('GroupDetailPage', () => {
     await userEvent.press(screen.getByText('Request to join'));
 
     await waitFor(() => expect(mockJoin).toHaveBeenCalledWith(GROUP_FIXTURE.id));
-    await waitFor(() => expect(screen.getByText('Awaiting approval')).toBeDisabled());
+    expect(screen.getByText('Request to join')).toBeOnTheScreen();
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].groupContentMembersOnly)).toBeOnTheScreen();
     expect(mockSuccessToast).toHaveBeenCalledWith('Your request was sent');
     expect(mockJoinMutation).toHaveBeenCalledWith({ fixedCacheKey: `group-join-${GROUP_FIXTURE.id}` });
   });
@@ -318,6 +329,12 @@ describe('GroupDetailPage', () => {
 
   it('reports an error when joining a group fails', async () => {
     mockJoin.mockReturnValue({ unwrap: jest.fn().mockRejectedValue(new Error('offline')) });
+    mockGetGroup.mockReturnValue({
+      data: { ...GROUP_FIXTURE, updatedAt: GROUP_FIXTURE.createdAt, currentMembership: null },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
     await renderWithProviders(<GroupDetailPage />);
     const user = userEvent.setup();
 
@@ -386,7 +403,7 @@ describe('GroupDetailPage', () => {
         createdAt: '2026-10-29T10:00:00.000Z',
         updatedAt: '2026-10-29T10:00:00.000Z',
         memberCount: 3,
-        currentMembership: null,
+        currentMembership: { status: 'active', role: 'member' },
         canManage: false,
         pendingRequestCount: 0,
       },
@@ -482,7 +499,7 @@ describe('GroupDetailPage', () => {
         createdAt: '2026-10-29T10:00:00.000Z',
         updatedAt: '2026-10-29T10:00:00.000Z',
         memberCount: 1,
-        currentMembership: null,
+        currentMembership: { status: 'active', role: 'member' },
         canManage: false,
         pendingRequestCount: 0,
       },

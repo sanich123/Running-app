@@ -83,10 +83,10 @@ export default function GroupDistanceList({ group }: { group: GroupDetails }) {
 }
 
 const styles = StyleSheet.create({
-  listContent: { paddingBottom: 24 },
-  section: { gap: 10 },
+  listContent: { flexGrow: 1, paddingBottom: 24 },
+  section: { flex: 1, gap: 10 },
   monthControls: { alignItems: 'center', flexDirection: 'row', justifyContent: 'center' },
   monthLabel: { minWidth: 140, textAlign: 'center', textTransform: 'capitalize' },
-  emptyText: { alignSelf: 'center', marginTop: 12 },
+  emptyText: { alignSelf: 'center', flex: 1, marginTop: 12, textAlign: 'center', textAlignVertical: 'center' },
   nextPageLoader: { marginVertical: 12 },
 });

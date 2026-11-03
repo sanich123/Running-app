@@ -50,6 +50,6 @@ export default function GroupEventsTab({ group }: { group: GroupDetails }) {
 }
 
 const styles = StyleSheet.create({
-  listContent: { gap: 10, paddingBottom: 24 },
+  listContent: { flexGrow: 1, gap: 10, paddingBottom: 24 },
   nextPageLoader: { marginVertical: 12 },
 });

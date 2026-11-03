@@ -98,8 +98,8 @@ export default function GroupMembersList({ group, isActiveMember }: { group: Gro
 }
 
 const styles = StyleSheet.create({
-  listContent: { gap: 10, paddingBottom: 24 },
+  listContent: { flexGrow: 1, gap: 10, paddingBottom: 24 },
   preferences: { gap: 10 },
   sectionTitle: { fontWeight: '700', marginBottom: 2 },
-  emptyText: { alignSelf: 'center', marginTop: 12 },
+  emptyText: { alignSelf: 'center', flex: 1, marginTop: 12, textAlign: 'center', textAlignVertical: 'center' },
 });

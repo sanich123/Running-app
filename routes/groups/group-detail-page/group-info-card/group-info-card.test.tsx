@@ -42,7 +42,48 @@ describe('GroupInfoCard', () => {
     });
     await userEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].join));
     await waitFor(() => expect(mockJoinGroup).toHaveBeenCalledWith(GROUP_FIXTURE.id));
-    await waitFor(() => expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].leave)).toBeOnTheScreen());
+    expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].leave)).not.toBeOnTheScreen();
+  });
+
+  it('shows leave only for an active non-owner membership', async () => {
+    await renderWithProviders(
+      <GroupInfoCard
+        group={{
+          ...group,
+          currentMembership: {
+            status: 'active',
+            role: 'member',
+            notificationPreference: 'all',
+            feedPreference: 'all',
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].leave)).toBeOnTheScreen();
+    expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].join)).not.toBeOnTheScreen();
+  });
+
+  it('uses the matching active join result while membership refreshes', async () => {
+    mockJoinMutation.mockReturnValue([
+      mockJoinGroup,
+      {
+        data: {
+          id: GROUP_FIXTURE.id,
+          currentMembership: {
+            status: 'active',
+            role: 'member',
+            notificationPreference: 'all',
+            feedPreference: 'all',
+          },
+        },
+        isLoading: false,
+      },
+    ]);
+    await renderWithProviders(<GroupInfoCard group={{ ...group, currentMembership: null }} isRefreshing />);
+
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].leave)).toBeOnTheScreen();
+    expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].join)).not.toBeOnTheScreen();
   });
 
   it('shows the awaiting approval state and disables join for pending members', async () => {

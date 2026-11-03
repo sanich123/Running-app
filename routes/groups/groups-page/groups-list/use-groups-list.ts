@@ -10,7 +10,9 @@ export default function useGroupsList(filters: GroupsQuery) {
   const copy = GROUPS_COPY[language];
   const { data: groups = [], isLoading, isFetching, isError, error, refetch } = useGetGroupsQuery(filters);
   const visibleGroups =
-    scope === 'mine' ? groups.filter(({ currentMembership }) => currentMembership?.status === 'active') : groups;
+    scope === 'mine'
+      ? groups.filter(({ currentMembership, isOwner }) => isOwner || currentMembership?.status === 'active')
+      : groups;
 
   useEffect(() => {
     if (!groups.some(({ photoPending }) => photoPending)) return;

@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 're
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ActivityIndicator, Button, SegmentedButtons, Surface, Text, useTheme } from 'react-native-paper';
 import { useForm, useWatch } from 'react-hook-form';
-import { useCreateGroupPostMutation, useGetGroupByIdQuery } from '@R/services/groups/groups';
+import { useCreateGroupPostMutation, useGetGroupByIdQuery, useJoinGroupMutation } from '@R/services/groups/groups';
 import { useAppSelector } from '@R/typed-hooks';
 import CustomTextInput from '@S/custom-text-input/custom-text-input';
 import EmptyState from '@S/empty-state/empty-state';
@@ -38,7 +38,17 @@ export default function CreateGroupContentPage() {
     publishPost,
   } = GROUPS_COPY[language];
   const [mode, setMode] = useState<ComposerMode>('post');
-  const { data: group, isLoading, isError, refetch } = useGetGroupByIdQuery(groupId ?? '', { skip: !groupId });
+  const {
+    data: group,
+    isLoading,
+    isFetching,
+    isError,
+    refetch,
+  } = useGetGroupByIdQuery(groupId ?? '', {
+    skip: !groupId,
+    refetchOnMountOrArgChange: true,
+  });
+  const [, { data: joinResult }] = useJoinGroupMutation({ fixedCacheKey: `group-join-${groupId ?? 'unresolved'}` });
   const [createPost, { isLoading: isPublishing }] = useCreateGroupPostMutation();
   const { control } = useForm<{ text: string }>({ defaultValues: { text: '' } });
   const text = useWatch({ control, name: 'text', defaultValue: '' });
@@ -46,13 +56,18 @@ export default function CreateGroupContentPage() {
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
   const isGroupOwner = Boolean(group && (group.isOwner || (userId && group.createdByUserId === userId)));
-  const canCreatePost = Boolean(group && (isGroupOwner || group.currentMembership?.status === 'active'));
+  const membership =
+    isFetching && group?.currentMembership === null && joinResult?.id === group.id
+      ? joinResult.currentMembership
+      : group?.currentMembership;
+  const canCreatePost = Boolean(group && (isGroupOwner || membership?.status === 'active'));
   const canCreateEvent = Boolean(group?.canManage || isGroupOwner);
+  const isResolvingMembership = Boolean(isFetching && !membership && !isGroupOwner);
 
   return (
     <>
       <Stack.Screen options={{ title: createContent }} />
-      {isLoading ? (
+      {isLoading || isResolvingMembership ? (
         <ActivityIndicator style={styles.loader} />
       ) : isError || !group ? (
         <View style={styles.feedback}>

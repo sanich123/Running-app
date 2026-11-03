@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
@@ -63,6 +64,12 @@ describe('GroupPostsList', () => {
     await renderWithProviders(<GroupPostsList group={group} />);
 
     expect(screen.getByText(copy.noPosts)).toBeOnTheScreen();
+    expect(StyleSheet.flatten(screen.getByTestId('group-detail-scroll').props.contentContainerStyle)).toEqual(
+      expect.objectContaining({ flexGrow: 1 }),
+    );
+    expect(StyleSheet.flatten(screen.getByText(copy.noPosts).props.style)).toEqual(
+      expect.objectContaining({ flex: 1, alignSelf: 'center', textAlign: 'center', textAlignVertical: 'center' }),
+    );
   });
 
   it('retries after the feed query fails', async () => {

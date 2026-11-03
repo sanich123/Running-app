@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { SegmentedButtons } from 'react-native-paper';
+import EmptyState from '@S/empty-state/empty-state';
 import { GROUP_DETAIL_TABS } from './const';
 import GroupDistanceList from './group-distance-list/group-distance-list';
 import GroupEventsTab from './group-events-tab/group-events-tab';
@@ -17,7 +18,18 @@ export default function GroupDetailTabContent({
 }) {
   const { copy, selectedTab, selectTab } = useGroupDetailTabContent();
 
-  return (
+  return !isActiveMember ? (
+    <View style={styles.accessGate} testID="group-detail-access-gate">
+      <EmptyState
+        icon="lock-outline"
+        title={
+          group.currentMembership?.status === 'pending'
+            ? copy.groupContentApprovalPending
+            : copy.groupContentMembersOnly
+        }
+      />
+    </View>
+  ) : (
     <View style={styles.content}>
       <SegmentedButtons
         value={selectedTab}
@@ -42,4 +54,7 @@ export default function GroupDetailTabContent({
   );
 }
 
-const styles = StyleSheet.create({ content: { flex: 1, gap: 12 } });
+const styles = StyleSheet.create({
+  accessGate: { flex: 1, justifyContent: 'center' },
+  content: { flex: 1, gap: 12 },
+});

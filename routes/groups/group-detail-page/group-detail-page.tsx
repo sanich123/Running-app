@@ -11,7 +11,7 @@ import useGroupDetailPage from './use-group-detail-page';
 
 export default function GroupDetailPage() {
   const { colors } = useTheme();
-  const { copy, error, group, isActiveMember, isError, isLoading, refetch } = useGroupDetailPage();
+  const { copy, error, group, isActiveMember, isError, isFetching, isLoading, refetch } = useGroupDetailPage();
   const { loadError, retry } = copy;
 
   return (
@@ -33,7 +33,7 @@ export default function GroupDetailPage() {
             }}
           />
           <View style={[styles.page, Platform.OS === 'web' && styles.webPage, { backgroundColor: colors.background }]}>
-            <GroupInfoCard group={group} />
+            <GroupInfoCard group={group} isRefreshing={isFetching} />
             <GroupDetailTabContent group={group} isActiveMember={isActiveMember} />
           </View>
         </>
