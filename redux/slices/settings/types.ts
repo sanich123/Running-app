@@ -6,7 +6,7 @@ export type ActivityVoiceMetric = 'pace' | 'movingTime' | 'elevation';
 export const DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS = 50;
 export const MIN_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES = 1;
 export const MAX_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES = 10;
-export type NavigationAlertRepeatIntervalMinutes = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+type NavigationAlertRepeatIntervalMinutes = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 export const DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES: NavigationAlertRepeatIntervalMinutes = 1;
 
 export function getNavigationAlertRepeatIntervalMinutes(value: unknown): NavigationAlertRepeatIntervalMinutes {
@@ -22,7 +22,7 @@ export function getNavigationAlertDistanceMeters(value: unknown) {
   return Math.min(200, Math.max(10, Math.round(value / 10) * 10));
 }
 
-export interface ActivityReminder {
+interface ActivityReminder {
   id: string;
   intervalMinutes: number;
   text: string;

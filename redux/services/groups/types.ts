@@ -13,14 +13,14 @@ export type GroupCategoryTag =
   | 'social'
   | 'other';
 export type GroupPrivacy = 'open' | 'closed';
-export type GroupMemberStatus = 'active' | 'pending' | 'rejected';
-export type GroupMemberRole = 'owner' | 'admin' | 'member';
+type GroupMemberStatus = 'active' | 'pending' | 'rejected';
+type GroupMemberRole = 'owner' | 'admin' | 'member';
 export type GroupListScope = 'all' | 'mine';
-export type GroupNotificationPreference = 'all' | 'announcements' | 'off';
-export type GroupFeedPreference = 'all' | 'admins';
-export type GroupPhotoReviewStatus = 'queued' | 'processing' | 'review_required' | 'approved' | null;
+type GroupNotificationPreference = 'all' | 'announcements' | 'off';
+type GroupFeedPreference = 'all' | 'admins';
+type GroupPhotoReviewStatus = 'queued' | 'processing' | 'review_required' | 'approved' | null;
 
-export interface GroupMembership {
+interface GroupMembership {
   status: GroupMemberStatus;
   role: GroupMemberRole;
   notificationPreference: GroupNotificationPreference;
@@ -107,13 +107,13 @@ export interface GroupMemberUpdateResult {
   profile?: GroupMember['profile'];
 }
 
-export interface GroupMonthlyStatisticsItem {
+interface GroupMonthlyStatisticsItem {
   userId: string;
   profile: GroupMember['profile'];
   totalDistance: number;
 }
 
-export interface GroupMonthlyStatistics {
+interface GroupMonthlyStatistics {
   year: number;
   month: number;
   timeZone: string;

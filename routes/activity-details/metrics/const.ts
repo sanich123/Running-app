@@ -1,7 +1,5 @@
 import { LANGUAGES } from '../../../constants/enums';
 
-export const HOME_ACTIVITY_FULL_VIEW_TEST_ID = 'activityFullViewMetricsIndicator';
-
 export const HOME_ACTIVITY_FULL_VIEW = {
   [LANGUAGES.english]: {
     distance: 'Distance',

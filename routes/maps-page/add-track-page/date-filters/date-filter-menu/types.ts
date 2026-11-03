@@ -1,4 +1,4 @@
-export interface DateFilterOption {
+interface DateFilterOption {
   label: string;
   value: number | null;
 }

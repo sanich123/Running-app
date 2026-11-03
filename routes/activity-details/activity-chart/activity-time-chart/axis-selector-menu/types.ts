@@ -1,6 +1,6 @@
 import type { ActivityChartMetric } from '../../types';
 
-export interface ActivityChartAxisMenuOption {
+interface ActivityChartAxisMenuOption {
   metric: ActivityChartMetric;
   title: string;
   axisTitle: string;

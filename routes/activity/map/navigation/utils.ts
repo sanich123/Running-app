@@ -1,7 +1,7 @@
 import type { OfflineBounds } from '@Routes/maps-page/const';
 import type { ActivityLocation } from '@S/card/types';
 
-export interface NavigationRouteBounds {
+interface NavigationRouteBounds {
   east: number;
   north: number;
   pointCount: number;

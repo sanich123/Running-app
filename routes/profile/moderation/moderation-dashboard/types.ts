@@ -10,9 +10,9 @@ import type {
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-export type ModerationDashboardCopy =
+type ModerationDashboardCopy =
   (typeof MODERATION_DASHBOARD_COPY)[LANGUAGES.english] | (typeof MODERATION_DASHBOARD_COPY)[LANGUAGES.russian];
-export type ModerationDashboardError = FetchBaseQueryError | SerializedError | undefined;
+type ModerationDashboardError = FetchBaseQueryError | SerializedError | undefined;
 
 export interface ModerationReportQueueProps {
   activeTab: ModerationTab;

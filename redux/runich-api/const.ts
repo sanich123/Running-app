@@ -9,8 +9,6 @@ import { deviceId, deviceName, deviceMetadata, platform } from '@U/device/device
 import type { ApiState, AuthResponse } from './types';
 import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';
 
-export const headers = { 'Content-type': 'application/json' };
-
 export enum Tags {
   activities = 'activities',
   statistics = 'statistics',
@@ -64,7 +62,7 @@ export enum Routes {
 }
 
 export const API_NAME = 'runnichApi';
-export const LIMIT_OF_REQUEST = 25000;
+const LIMIT_OF_REQUEST = 25000;
 export const MEDIA_UPLOAD_REQUEST_TIMEOUT = 60_000;
 
 export const PUBLIC_AUTH_ENDPOINTS = new Set([

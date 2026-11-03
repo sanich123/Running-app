@@ -1,4 +1,4 @@
-export interface TrackActionsMenuAction {
+interface TrackActionsMenuAction {
   label: string;
   testID: string;
   leadingIcon: 'pencil-outline' | 'file-download-outline' | 'delete-outline';

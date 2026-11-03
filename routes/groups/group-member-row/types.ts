@@ -2,8 +2,8 @@ import type { GROUPS_COPY } from '../const';
 import type { LANGUAGES } from '@const/enums';
 import type { GroupMember } from '@R/services/groups/types';
 
-export type GroupCopy = (typeof GROUPS_COPY)[keyof typeof GROUPS_COPY];
-export type GroupMemberUpdateStatus = 'active' | 'rejected' | 'removed';
+type GroupCopy = (typeof GROUPS_COPY)[keyof typeof GROUPS_COPY];
+type GroupMemberUpdateStatus = 'active' | 'rejected' | 'removed';
 
 export interface GroupMemberRowProps {
   member: GroupMember;

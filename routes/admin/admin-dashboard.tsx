@@ -53,10 +53,6 @@ export default function AdminDashboard() {
     }
   }, [access, hasPermissions, isLoading, replace]);
 
-  useEffect(() => {
-    if (canManageRoles && !canModerate) setActiveSection('access');
-  }, [canManageRoles, canModerate]);
-
   if (isLoading || (!hasPermissions && !isError)) {
     return <ActivityIndicator size="large" style={styles.loading} testID="admin-access-loading" />;
   }

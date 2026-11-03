@@ -1,7 +1,7 @@
 import type { MutableRefObject, RefObject } from 'react';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-export function createMockRef<Value extends object>(current: Partial<Value> | null): RefObject<Value | null> {
+function createMockRef<Value extends object>(current: Partial<Value> | null): RefObject<Value | null> {
   return { current: current as unknown as Value | null };
 }
 

@@ -1,6 +1,6 @@
 import type { ActivityLocation } from '@S/card/types';
 
-export interface ImportedRoute {
+interface ImportedRoute {
   title: string;
   locations: ActivityLocation[];
 }

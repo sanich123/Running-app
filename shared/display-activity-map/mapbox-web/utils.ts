@@ -3,13 +3,13 @@ import { getAvatarLabel } from '../../avatar/user-avatar/utils';
 import type { ActivityKilometreSplit, ProfileType } from '@S/card/types';
 import type { ExpressionSpecification, Map as MapboxMap, Popup as MapboxPopup } from 'mapbox-gl';
 
-export interface RouteGeoJsonFeature {
+interface RouteGeoJsonFeature {
   type: 'Feature';
   properties: Record<string, never>;
   geometry: { type: 'LineString'; coordinates: number[][] };
 }
 
-export interface KilometreSplitGeoJsonFeature {
+interface KilometreSplitGeoJsonFeature {
   type: 'Feature';
   properties: { label: string; sortKey: number };
   geometry: { type: 'Point'; coordinates: number[] };

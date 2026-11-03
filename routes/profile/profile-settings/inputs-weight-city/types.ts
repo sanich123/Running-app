@@ -1,4 +1,4 @@
-export type InputsWeightCityVariant = 'both' | 'city' | 'weight';
+type InputsWeightCityVariant = 'both' | 'city' | 'weight';
 
 export interface InputsWeightCityProps {
   isDisabled: boolean;

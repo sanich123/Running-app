@@ -1,6 +1,5 @@
 import { lazy } from 'react';
 
-export const LazyActivities = lazy(() => import('@Routes/activities/activities'));
 export const LazyActivitiesList = lazy(() => import('@Routes/activities-list/activities-list'));
 export const LazyActivity = lazy(() => import('@Routes/activity/activity'));
 export const LazyActivityDetailsPage = lazy(() => import('@Routes/activity-details/activity-details'));

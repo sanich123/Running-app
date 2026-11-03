@@ -11,7 +11,6 @@ import type {
   GroupMember,
   GroupPage,
   GroupMemberUpdateResult,
-  GroupMonthlyStatistics,
   GroupMonthlyStatisticsPage,
   GroupMonthlyStatisticsQuery,
   GroupPost,
@@ -25,7 +24,7 @@ import type {
 const groupsRoute = Routes.groups;
 const GROUP_PAGE_SIZE = 100;
 
-export const groupsApi = runichApi.injectEndpoints({
+const groupsApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
     getGroups: query<GroupSummary[], GroupsQuery>({
@@ -58,11 +57,6 @@ export const groupsApi = runichApi.injectEndpoints({
         })}`,
       providesTags: [Tags.groups],
     }),
-    getGroupMonthlyStatistics: query<GroupMonthlyStatistics, GroupMonthlyStatisticsQuery>({
-      query: ({ groupId, year, month, timeZone }) =>
-        `/${groupsRoute}/${groupId}/statistics/month${createSearchParams({ year, month, timeZone })}`,
-      providesTags: [Tags.groups],
-    }),
     getGroupMonthlyStatisticsInfinite: infiniteQuery<GroupMonthlyStatisticsPage, GroupMonthlyStatisticsQuery, string>({
       infiniteQueryOptions: {
         initialPageParam: '',
@@ -76,10 +70,6 @@ export const groupsApi = runichApi.injectEndpoints({
           limit: GROUP_PAGE_SIZE,
           cursor: pageParam || undefined,
         })}`,
-      providesTags: [Tags.groups],
-    }),
-    getGroupPosts: query<GroupPost[], string>({
-      query: (groupId) => `/${groupsRoute}/${groupId}/posts`,
       providesTags: [Tags.groups],
     }),
     getGroupPostsInfinite: infiniteQuery<GroupPage<GroupPost>, string, string>({
@@ -169,8 +159,6 @@ export const {
   useGetGroupsQuery,
   useGetGroupByIdQuery,
   useGetGroupMembersQuery,
-  useGetGroupMonthlyStatisticsQuery,
-  useGetGroupPostsQuery,
   useGetGroupEventsQuery,
   useGetGroupMembersInfiniteInfiniteQuery: useGetGroupMembersInfiniteQuery,
   useGetGroupMonthlyStatisticsInfiniteInfiniteQuery: useGetGroupMonthlyStatisticsInfiniteQuery,

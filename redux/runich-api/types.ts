@@ -183,7 +183,7 @@ export interface ActivitiesResponse {
   isLastPage?: boolean;
 }
 
-export interface ActivityRouteFilterOptionsResponse {
+interface ActivityRouteFilterOptionsResponse {
   years: number[];
   months: number[];
   days: number[];
@@ -216,7 +216,7 @@ export interface ActivityLocationsResponse {
   kilometresSplit: ActivityKilometreSplitResponse[] | null;
 }
 
-export interface ActivityChartLocationResponse {
+interface ActivityChartLocationResponse {
   timestamp: number;
   coords: {
     latitude?: number | null;

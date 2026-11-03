@@ -5,7 +5,7 @@ import type { PendingRawRouteUpload } from '@R/slices/activity/types';
 import type { AppDispatch } from '@R/store';
 import type { LocationObject } from 'expo-location';
 
-export type UploadRawActivityLocationsTrigger = (request: UploadRawActivityLocationsRequest) => {
+type UploadRawActivityLocationsTrigger = (request: UploadRawActivityLocationsRequest) => {
   unwrap: () => Promise<void>;
 };
 

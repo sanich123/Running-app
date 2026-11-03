@@ -13,9 +13,9 @@ export interface UploadedPhotoResponse {
   contentType: string;
 }
 
-export type MediaUploadStatus = 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed';
+type MediaUploadStatus = 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed';
 
-export interface MediaUploadStatusResponse {
+interface MediaUploadStatusResponse {
   items: {
     assetId: string;
     status: MediaUploadStatus;
@@ -172,5 +172,3 @@ export const photosApi = runichApi.injectEndpoints({
     }),
   }),
 });
-
-export const { useGetMediaUploadStatusesQuery } = photosApi;

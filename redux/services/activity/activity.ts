@@ -40,15 +40,6 @@ const ACTIVITY_PAGE_SIZE = 20;
 export const activityApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
-    getActivitiesByUserId: infiniteQuery<ActivitiesResponse, { id: string }, string>({
-      infiniteQueryOptions: {
-        initialPageParam: '',
-        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-      },
-      query: ({ queryArg: { id }, pageParam }) =>
-        `/activity/${id}${createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined })}`,
-      providesTags: [Tags.activities],
-    }),
     getFavoriteActivities: infiniteQuery<ActivitiesResponse, void, string>({
       infiniteQueryOptions: {
         initialPageParam: '',
@@ -70,15 +61,6 @@ export const activityApi = runichApi.injectEndpoints({
           take: ACTIVITY_PAGE_SIZE,
           cursor: pageParam || undefined,
         })}`,
-      providesTags: [Tags.activities],
-    }),
-    getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesResponse, { id: string }, string>({
-      infiniteQueryOptions: {
-        initialPageParam: '',
-        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-      },
-      query: ({ queryArg: { id }, pageParam }) =>
-        `/activity/${id}/all${createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined })}`,
       providesTags: [Tags.activities],
     }),
     getHomeActivityFeeds: infiniteQuery<HomeActivityFeedsResponse, void, HomeFeedCursors | null>({
@@ -206,12 +188,10 @@ export const {
   useUpdateActivityInfoMutation,
   useAppendActivityMediaMutation,
   useDeleteActivityMediaMutation,
-  useGetActivitiesByUserIdInfiniteQuery,
   useGetActivitiesWithRoutesInfiniteQuery,
   useGetFavoriteActivitiesInfiniteQuery,
   useSetActivityFavoriteMutation,
   useGetAllActivityMediaByUserIdInfiniteQuery,
-  useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery,
   useGetHomeActivityFeedsInfiniteQuery,
   useGetActivityByActivityIdQuery,
   useGetLocationsByActivityIdQuery,

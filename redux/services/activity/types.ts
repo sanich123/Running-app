@@ -27,7 +27,7 @@ interface ActivityAdditionalInfo {
   timeZone: string;
 }
 
-export interface ActivityMediaInput {
+interface ActivityMediaInput {
   url?: string;
   thumbnail?: string | null;
   blurhash?: string | null;
