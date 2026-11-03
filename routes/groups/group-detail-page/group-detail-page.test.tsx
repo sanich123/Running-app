@@ -12,6 +12,7 @@ const mockBack = jest.fn();
 const mockPush = jest.fn();
 let mockRouteParams: { groupId: string | string[]; tab?: string | string[] } = { groupId: GROUP_FIXTURE.id };
 const mockGetGroup = jest.fn();
+const mockGetGroups = jest.fn();
 const mockGetMembersInfinite = jest.fn();
 const mockJoinMutation = jest.fn();
 const mockLeaveMutation = jest.fn();
@@ -49,6 +50,7 @@ jest.mock('@S/success-toast/success-toast', () => ({
 }));
 jest.mock('@R/services/groups/groups', () => ({
   useGetGroupByIdQuery: (...args: unknown[]) => mockGetGroup(...args),
+  useGetGroupsQuery: (...args: unknown[]) => mockGetGroups(...args),
   useGetGroupMembersInfiniteQuery: (...args: unknown[]) => mockGetMembersInfinite(...args),
   useGetGroupMonthlyStatisticsInfiniteQuery: (...args: unknown[]) => mockMonthlyStatisticsInfiniteQuery(...args),
   useGetGroupPostsInfiniteQuery: (...args: unknown[]) => mockGetPostsInfinite(...args),
@@ -66,6 +68,7 @@ describe('GroupDetailPage', () => {
     jest.clearAllMocks();
     mockRouteParams = { groupId: GROUP_FIXTURE.id };
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    mockGetGroups.mockReturnValue({ data: [], isLoading: false });
     mockGetGroup.mockReturnValue({
       data: {
         id: GROUP_FIXTURE.id,

@@ -87,7 +87,12 @@ describe('GroupsList', () => {
       privacy: 'closed' as const,
       currentMembership: { ...activeMembership, status: 'pending' as const },
     };
-    const visitorGroup = { ...GROUP_FIXTURE, id: 'visitor-group', name: 'Not joined' };
+    const visitorGroup = {
+      ...GROUP_FIXTURE,
+      id: 'visitor-group',
+      name: 'Not joined',
+      privacy: 'closed' as const,
+    };
     mockGetGroups.mockReturnValue({
       data: [activeGroup, ownedGroup, pendingGroup, visitorGroup],
       isLoading: false,

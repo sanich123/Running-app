@@ -11,7 +11,10 @@ export default function useGroupsList(filters: GroupsQuery) {
   const { data: groups = [], isLoading, isFetching, isError, error, refetch } = useGetGroupsQuery(filters);
   const visibleGroups =
     scope === 'mine'
-      ? groups.filter(({ currentMembership, isOwner }) => isOwner || currentMembership?.status === 'active')
+      ? groups.filter(
+          ({ currentMembership, isOwner, privacy }) =>
+            isOwner || currentMembership?.status === 'active' || (privacy === 'open' && currentMembership === null),
+        )
       : groups;
 
   useEffect(() => {
